@@ -1,5 +1,159 @@
+.ingress {
+  padding: 1rem;
+}
+
+.padded {
+  padding: 1rem;
+}
+
+.halfsize {
+  max-width: 50%;
+  display: inline-block;
+}
+
+.size40 {
+  max-width: 40%;
+  display: inline-block;
+}
+
+.size-resten {
+  display: inline-block;
+}
+
+.thirdsize {
+  width: 33%;
+  display: inline-block;
+}
+
+.twothirdsize {
+  width: 66%;
+  display: inline-block;
+}
+
+.tddatepickernatural {
+  padding-top: 0.5rem;
+}
+
+.fullbredde {
+  width: 100%;
+}
+
+.endresykemelding,
+.endrebutton {
+  width: 33%;
+  align-self: end;
+}
+
+.endresykemeldingknapper {
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.datepickerescape {
+  width: 33%;
+  display: inline-block;
+}
+
+.datepickerlabel {
+  display: inline-block;
+  margin-bottom: var(--navds-spacing-2);
+}
+
+.datepickerescape input {
+  margin-top: 0 !important;
+}
+.oktekst,
+.noktekst,
+.maanedsinntekt {
+  font-size: var(--navds-font-size-xlarge);
+  margin: 0.5rem 0;
+  display: inline-block;
+}
+
+.oktekst {
+  color: green;
+  display: inline-block;
+}
+
+.noktekst {
+  color: red;
+  display: inline-block;
+}
+
+.fnr {
+  max-width: 15rem;
+}
+
+.tablenaturalytelse {
+  border-spacing: .5rem
+}
+.tablenaturalytelse th {
+  text-align: left;
+}
+
+.kontrollerknapp,
+.legtilbutton,
+.endrebutton {
+  min-width: 10rem;
+}
+
+.legtilbutton {
+  margin-top: 1rem;
+}
+
+.kontrollerknapp {
+  display: inline-block;
+}
+
+.sendbutton {
+  min-width: 10rem;
+  margin-top: 1rem;
+}
+
 .container {
   padding: 0 2rem;
+}
+
+.personinfowrapper {
+  display: flex;
+  gap: 2rem;
+}
+
+.virksomhetsnavn {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arbeidsgiverwrapper {
+  display: flex;
+  gap: 2rem;
+}
+
+.periodewrapper {
+  display: flex;
+  gap: 2rem;
+}
+
+.radiobuttonwrapper > div {
+  display: flex;
+  gap: 2rem;
+}
+
+.belopwrapper {
+  display: flex;
+  gap: 2rem;
+}
+
+.naturalytelser {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: var(--navds-spacing-2);
+}
+
+.naturalytelserknapp {
+  margin-bottom: 2rem;
 }
 
 .main {
