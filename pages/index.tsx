@@ -26,6 +26,7 @@ import BergnetMaanedsinntekt, {
 } from '../components/BeregnetMaanedsinntekt/BeregnetMaanedsinntekt';
 import { SuccessStroke } from '@navikt/ds-icons';
 import { element } from 'prop-types';
+import Script from 'next/script';
 
 const Home: NextPage = () => {
   const [state, dispatch] = useImmerReducer(formReducer, initialState);
@@ -536,7 +537,7 @@ const Home: NextPage = () => {
           </main>
         </PageContent>
         <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
-        <script type='text/javascript' src='https://www.nav.no/dekoratoren/client.js'></script>
+        <Script type='text/javascript' src='https://www.nav.no/dekoratoren/client.js'></Script>
       </div>
     </div>
   );
