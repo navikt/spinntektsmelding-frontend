@@ -25,7 +25,6 @@ import BergnetMaanedsinntekt, {
   OppdatertMaanedsintekt
 } from '../components/BeregnetMaanedsinntekt/BeregnetMaanedsinntekt';
 import { SuccessStroke } from '@navikt/ds-icons';
-import { element } from 'prop-types';
 import Script from 'next/script';
 
 const Home: NextPage = () => {
@@ -478,7 +477,7 @@ const Home: NextPage = () => {
 
                           <td className={styles.tddatepickernatural}>
                             <Datepicker
-                              inputId={'naturalytele-input-fra-dato-' + element}
+                              inputId={'naturalytele-input-fra-dato-' + element.id}
                               inputLabel='Dato naturalytelse bortfaller'
                               onChange={(dateString) => changeNaturalytelseDato(dateString, element.id)}
                               // value={dato}
