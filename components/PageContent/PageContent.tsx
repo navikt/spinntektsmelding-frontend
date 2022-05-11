@@ -11,7 +11,7 @@ export default function PageContent(props: PageContentProps) {
   return (
     <div className='page-content-wrapper'>
       <div className='page-content-breadcrumb'>
-        <Link>Breadkrumb</Link> / Breadkrumb
+        <Link>Breadkrumb</Link> / {props.title}
       </div>
       <div className='page-content-header'>
         <Heading size='small' level='2'>
