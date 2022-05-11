@@ -1,4 +1,4 @@
-import { BodyLong, BodyShort, Button, Checkbox, Heading, Modal, Select, TextField } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox, Heading, Modal, Select, TextField } from '@navikt/ds-react';
 import { useEffect, useState } from 'react';
 
 import styles from './BeregnetMaanedsinntekt.module.css';
@@ -78,15 +78,17 @@ export default function BeregnetMaanedsinntekt(props: BergnetMaanedsinntetProps)
           <Heading size='small'>Inntekten er basert på følgende måneder</Heading>
           <table className={styles.tablewrapper}>
             <thead>
-              <th>
-                <Heading size='small'>{props.maaned1navn}</Heading>
-              </th>
-              <th>
-                <Heading size='small'>{props.maaned2navn}</Heading>
-              </th>
-              <th>
-                <Heading size='small'>{props.maaned3navn}</Heading>
-              </th>
+              <tr>
+                <th>
+                  <Heading size='small'>{props.maaned1navn}</Heading>
+                </th>
+                <th>
+                  <Heading size='small'>{props.maaned2navn}</Heading>
+                </th>
+                <th>
+                  <Heading size='small'>{props.maaned3navn}</Heading>
+                </th>
+              </tr>
             </thead>
             <tbody>
               <tr>

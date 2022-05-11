@@ -4,9 +4,6 @@ import { YesNo } from './state';
 
 type ActionType =
   | {
-      type: 'slettAlleEgenmeldingsperioder';
-    }
-  | {
       type: 'toggleBetalerArbeidsgiverHeleEllerDeler';
       payload: YesNo;
     }
@@ -81,9 +78,6 @@ type ActionType =
     }
   | {
       type: 'visBekreftMaanedsinntekt';
-    }
-  | {
-      type: 'slettAlleFravaersperioder';
     }
   | {
       type: 'leggTilFravaersperiode';

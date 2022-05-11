@@ -1,5 +1,4 @@
 import { Button } from '@navikt/ds-react';
-// import styles from './Skillelinje.module.css';
 import { Delete } from '@navikt/ds-icons';
 
 interface ButtonSletteProps {

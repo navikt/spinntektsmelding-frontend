@@ -14,10 +14,13 @@
 .size40 {
   max-width: 40%;
   display: inline-block;
+
+  width: 40%;
 }
 
 .size-resten {
   display: inline-block;
+  width: 100%;
 }
 
 .thirdsize {

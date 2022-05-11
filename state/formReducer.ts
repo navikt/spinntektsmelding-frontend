@@ -28,10 +28,6 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
       return state;
     }
 
-    case 'slettAlleFravaersperioder':
-      state.fravaersperiode = [{ id: uuid() }];
-      return state;
-
     case 'leggTilEgenmeldingsperiode': {
       const nyEgenmeldingsperiode: Periode = { id: uuid() };
 
@@ -47,10 +43,6 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
 
       return state;
     }
-
-    case 'slettAlleEgenmeldingsperioder':
-      state.egenmeldingsperioder = [{ id: uuid() }];
-      return state;
 
     case 'toggleBetalerArbeidsgiverHeleEllerDeler':
       if (!state.betalerArbeidsgiverHeleEllerDeler) {

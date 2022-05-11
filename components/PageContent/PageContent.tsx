@@ -1,10 +1,10 @@
 import '@navikt/ds-css';
-import { Link } from '@navikt/ds-react';
-import { Heading } from '@navikt/ds-react';
+import { Link, Heading } from '@navikt/ds-react';
 import { ReactNode } from 'react';
 
 interface PageContentProps {
   children: ReactNode;
+  title: string;
 }
 
 export default function PageContent(props: PageContentProps) {
@@ -18,7 +18,7 @@ export default function PageContent(props: PageContentProps) {
           Inntektsgrunnlag og fravær
         </Heading>
         <Heading size='medium' level='1'>
-          Inntektsmelding
+          {props.title}
         </Heading>
       </div>
       <div className='page-content-body'>{props.children}</div>

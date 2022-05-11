@@ -1,0 +1,48 @@
+.ansattwrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.ytreansattwrapper {
+    display: flex;
+    gap: 2rem;
+}
+
+.fravaerwrapper {
+    width: 50%;
+    display: inline-block;
+    margin-top: .5rem;
+}
+
+.fravaertid {
+    font-weight: 600;
+}
+
+.ytrefravaerwrapper {
+    display: flex;
+    margin-top: 1rem;
+}
+
+.buttonwrapper {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.innerbuttonwrapper {
+    display: flex;
+    gap: 4rem;
+}
+
+.buttonwrapper button {
+    min-width: 10rem;
+}
+
+.skrivutknapp {
+    align-self: flex-end;
+}
+
+.lukkelenke {
+    margin-top: auto;
+    margin-bottom: auto;
+}

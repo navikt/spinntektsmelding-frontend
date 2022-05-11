@@ -205,7 +205,7 @@ const Home: NextPage = () => {
           altinnOrganisasjoner={mockOrg}
           onOrganisasjonChange={changeOrgUnderenhet}
         />
-        <PageContent>
+        <PageContent title='Inntektsmelding'>
           <main className='main-content'>
             <Ingress className={styles.ingress}>
               For at vi skal utbetale riktig beløp i forbindelse med langvarig sykemelding må dere bekrefte, eller
