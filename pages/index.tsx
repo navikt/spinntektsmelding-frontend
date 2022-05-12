@@ -35,6 +35,10 @@ const Home: NextPage = () => {
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     console.log(state); // eslint-disable-line
+
+    dispatch({
+      type: 'submitForm'
+    });
   };
 
   const changeOrgUnderenhet = (organisasjon: Organisasjon) => {
@@ -213,19 +217,19 @@ const Home: NextPage = () => {
             </Ingress>
             <form className={styles.padded} onSubmit={submitForm}>
               <div className={styles.personinfowrapper}>
-                <div className={styles.size40}>
+                <div className={styles.denansatte}>
                   <Heading3>Den ansatte</Heading3>
                   <TextField label='Fødselsnummer 11 siffer' className={styles.fnr}></TextField>
                 </div>
                 <div className={styles['size-resten']}>
                   <Heading3>Arbeidsgiveren</Heading3>
                   <div className={styles.arbeidsgiverwrapper}>
-                    <div className={styles.thirdsize}>
+                    <div className={styles.virksomhetsnavnwrapper}>
                       <TextLabel>Virksomhetsnavn</TextLabel>
                       <div className={styles.virksomhetsnavn}>{state.virksomhetsnavn}</div>
                     </div>
-                    <div className={styles['size-resten']}>
-                      <TextLabel>Organisasjonsnummer for underenhet</TextLabel>
+                    <div className={styles.orgnrnavnwrapper}>
+                      <TextLabel>Org.nr. for underenhet</TextLabel>
                       {state.orgnrUnderenhet}
                     </div>
                   </div>

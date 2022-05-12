@@ -85,6 +85,9 @@ type ActionType =
   | {
       type: 'slettFravaersperiode';
       payload: string;
+    }
+  | {
+      type: 'submitForm';
     };
 
 export default ActionType;

@@ -23,6 +23,12 @@
     margin-top: 1rem;
 }
 
+.fravaerstyper {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 25px;
+}
+
 .buttonwrapper {
     margin-top: 2rem;
     display: flex;
@@ -46,3 +52,13 @@
     margin-top: auto;
     margin-bottom: auto;
 }
+
+@media screen and (max-width: 600px) {
+    .ytrefravaerwrapper {
+      flex-direction: column;
+      margin-top: 0;
+    }
+    .fravaerwrapper {
+        margin-top: 1.5rem;
+    }
+  }
