@@ -123,21 +123,6 @@
   flex-direction: row;
 }
 
-@media screen and (max-width: 800px) {
-  .personinfowrapper {
-    flex-direction: column;
-  }
-
-  .denansatte {
-    width: initial;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .arbeidsgiverwrapper {
-    flex-direction: column;
-  }
-}
 
 .virksomhetsnavn {
   white-space: nowrap;
@@ -173,4 +158,44 @@
 
 .naturalytelserknapp {
   margin-bottom: 2rem;
+}
+
+@media screen and (max-width: 800px) {
+  .personinfowrapper {
+    flex-direction: column;
+  }
+
+  .denansatte {
+    width: initial;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .arbeidsgiverwrapper {
+    flex-direction: column;
+  }
+
+  .datepickerescape {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .periodewrapper {
+    flex-direction: column;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    background-color: var( --navds-semantic-color-canvas-background );
+    padding: 0.5rem;
+    box-shadow: 0.25rem 0.25rem 0.25rem var( --navds-semantic-color-canvas-background );
+    margin: 0.25rem 0;
+  }
+
+  .datepickerescape {
+    width: 1000%;
+  }
+
+  .endrebutton {
+    align-self: initial;
+  }
 }

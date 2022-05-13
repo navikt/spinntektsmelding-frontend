@@ -87,6 +87,20 @@ type ActionType =
       payload: string;
     }
   | {
+      type: 'setFravaersperiodeFraDato';
+      payload: {
+        periodeId: string;
+        value: string;
+      };
+    }
+  | {
+      type: 'setFravaersperiodeTilDato';
+      payload: {
+        periodeId: string;
+        value: string;
+      };
+    }
+  | {
       type: 'submitForm';
     };
 

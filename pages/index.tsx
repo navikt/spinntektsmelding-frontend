@@ -192,9 +192,25 @@ const Home: NextPage = () => {
     });
   };
 
-  const setSykemeldingFraDato = (dato: string) => {};
+  const setSykemeldingFraDato = (dateValue: string, periodeId: string) => {
+    dispatch({
+      type: 'setFravaersperiodeFraDato',
+      payload: {
+        periodeId,
+        value: dateValue
+      }
+    });
+  };
 
-  const setSykemeldingTilDato = (dato: string) => {};
+  const setSykemeldingTilDato = (dateValue: string, periodeId: string) => {
+    dispatch({
+      type: 'setFravaersperiodeTilDato',
+      payload: {
+        periodeId,
+        value: dateValue
+      }
+    });
+  };
 
   return (
     <div className={styles.container}>
@@ -258,7 +274,7 @@ const Home: NextPage = () => {
                       <Datepicker
                         inputLabel='Fra'
                         inputId='datepicker-egenmelding-fra'
-                        onChange={(dateString) => setSykemeldingFraDato(dateString)}
+                        onChange={(dateString) => setSykemeldingFraDato(dateString, periode.id)}
                         locale={'nb'}
                       />
                     </div>
@@ -278,7 +294,7 @@ const Home: NextPage = () => {
                       <Datepicker
                         inputLabel='Til'
                         inputId='datepicker-egenmelding-til'
-                        onChange={(dateString) => setSykemeldingTilDato(dateString)}
+                        onChange={(dateString) => setSykemeldingTilDato(dateString, periode.id)}
                         locale={'nb'}
                       />
                     </div>

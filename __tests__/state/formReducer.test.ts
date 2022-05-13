@@ -45,6 +45,38 @@ describe('formReducer', () => {
     expect(evenNewerState.fravaersperiode[0].id).toEqual(remainingPeriodeId);
   });
 
+  it('should set fraværsperiode fra to payload', () => {
+    const firstPeriode = initialState.fravaersperiode[0].id;
+
+    const newState = produce(initialState, (state) =>
+      formReducer(state, {
+        type: 'setFravaersperiodeFraDato',
+        payload: {
+          periodeId: firstPeriode,
+          value: '2002-02-02'
+        }
+      })
+    );
+
+    expect(newState.fravaersperiode[0].fra).toEqual(new Date('2002-02-02'));
+  });
+
+  it('should set fraværsperiode til to payload', () => {
+    const firstPeriode = initialState.fravaersperiode[0].id;
+
+    const newState = produce(initialState, (state) =>
+      formReducer(state, {
+        type: 'setFravaersperiodeTilDato',
+        payload: {
+          periodeId: firstPeriode,
+          value: '2002-02-02'
+        }
+      })
+    );
+
+    expect(newState.fravaersperiode[0].til).toEqual(new Date('2002-02-02'));
+  });
+
   it('should add a egenmeldingsperioder with unique id', () => {
     expect(initialState.egenmeldingsperioder.length).toBe(1);
 

@@ -62,8 +62,8 @@ const Kvittering: NextPage = () => {
             </div>
             <Skillelinje />
             <Heading2>Fraværsperiode</Heading2>
-            <div className={lokalStyles.ytrefravaerwrapper}>
-              <div className={lokalStyles.fravaerwrapper}>
+            <div className={lokalStyles.ytterstefravaerwrapper}>
+              <div className={lokalStyles.ytrefravaerswrapper}>
                 <BodyShort as='h4' className={lokalStyles.fravaerstyper}>
                   Egenmelding
                 </BodyShort>
@@ -84,7 +84,7 @@ const Kvittering: NextPage = () => {
                   <div>22.22.2022</div>
                 </div>
               </div>
-              <div className={lokalStyles.fravaerwrapper}>
+              <div className={lokalStyles.ytrefravaerswrapper}>
                 <BodyShort as='h4' className={lokalStyles.fravaerstyper}>
                   Bestemmende fraværsdag
                 </BodyShort>
@@ -98,8 +98,8 @@ const Kvittering: NextPage = () => {
                 </div>
               </div>
             </div>
-            <div className={lokalStyles.ytrefravaerwrapper}>
-              <div className={lokalStyles.fravaerwrapper}>
+            <div className={lokalStyles.ytterstefravaerwrapper}>
+              <div className={lokalStyles.ytrefravaerswrapper}>
                 <BodyShort as='h4' className={lokalStyles.fravaerstyper}>
                   Fravær knyttet til sykmelding
                 </BodyShort>
@@ -120,7 +120,7 @@ const Kvittering: NextPage = () => {
                   <div>22.22.2022</div>
                 </div>
               </div>
-              <div className={lokalStyles.fravaerwrapper}>
+              <div className={lokalStyles.ytrefravaerswrapper}>
                 <BodyShort as='h4' className={lokalStyles.fravaerstyper}>
                   Arbeidsgiverperiode
                 </BodyShort>

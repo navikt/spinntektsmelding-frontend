@@ -28,6 +28,26 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
       return state;
     }
 
+    case 'setFravaersperiodeFraDato': {
+      state.fravaersperiode = state.fravaersperiode.map((periode) => {
+        if (periode.id === action.payload.periodeId) {
+          periode.fra = parseIsoDate(action.payload.value);
+        }
+        return periode;
+      });
+      return state;
+    }
+
+    case 'setFravaersperiodeTilDato': {
+      state.fravaersperiode = state.fravaersperiode.map((periode) => {
+        if (periode.id === action.payload.periodeId) {
+          periode.til = parseIsoDate(action.payload.value);
+        }
+        return periode;
+      });
+      return state;
+    }
+
     case 'leggTilEgenmeldingsperiode': {
       const nyEgenmeldingsperiode: Periode = { id: uuid() };
 
@@ -173,6 +193,10 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
     case 'visBekreftMaanedsinntekt': {
       state.showBeregnetMaanedsinntektModal = true;
 
+      return state;
+    }
+
+    case 'submitForm': {
       return state;
     }
 
