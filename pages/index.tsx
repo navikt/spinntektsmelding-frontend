@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 
 import { Datepicker } from '@navikt/ds-datepicker';
 import { BodyLong, Button, Checkbox, ConfirmationPanel, Radio, RadioGroup, Select, TextField } from '@navikt/ds-react';
@@ -23,7 +22,6 @@ import ButtonSlette from '../components/ButtonSlette/ButtonSlette';
 import Script from 'next/script';
 import SelectNaturalytelser from '../components/SelectNaturalytelser/SelectNaturalytelser';
 
-import formatCurrency from '../utils/formatCurrency';
 import useRoute from '../components/Banner/useRoute';
 
 import Behandlingsdager from '../components/Behandlingsdager';
@@ -145,15 +143,6 @@ const Home: NextPage = () => {
     dispatch({
       type: 'toggleBetalerArbeidsgiverFullLonnIArbeidsgiverperioden',
       payload: event.currentTarget.value as YesNo
-    });
-  };
-
-  const clickEndreInntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    dispatch({
-      type: 'endreMaanedsinntekt',
-      payload: !state.endreMaanedsinntekt
     });
   };
 
@@ -379,78 +368,6 @@ const Home: NextPage = () => {
                 clickBekreftKorrektInntekt={clickBekreftKorrektInntekt}
               />
 
-              <Heading3>Bruttoinntekt siste 3 måneder</Heading3>
-              <p>
-                Vi har brukt opplysninger fra skatteetaten (a-ordningen) for å anslå månedsinntekten her. Desom det ikke
-                stemmer må dere endre dette. Dersom inntekten har gått opp pga. varig lønnsforhøyelse, og ikke for
-                eksempel representerer uforutsett overtid må dette korrigeres.
-              </p>
-              <p>
-                <strong>Vi har registrert en inntekt på</strong>
-              </p>
-              <div className={styles.belopwrapper}>
-                {!state.endreMaanedsinntekt && (
-                  <TextLabel className={styles.maanedsinntekt}>{state.bruttoinntekt?.bruttoInntekt} kr/måned</TextLabel>
-                )}
-                {state.endreMaanedsinntekt && (
-                  <div className={styles.endremaaanedsinntekt}>
-                    <TextField
-                      label='Inntekt per måned'
-                      onChange={setNyMaanedsinntekt}
-                      defaultValue={(state.bruttoinntekt ? state.bruttoinntekt.bruttoInntekt : 0).toString()}
-                    />
-                    <Select label='Forklaring til endring' onChange={selectEndringsaarsak}>
-                      <option value=''>Velg endringsårsak</option>
-                      <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
-                      <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
-                      <option value='Losji'>Losji</option>
-                      <option value='KostDøgn'>Kost (døgn)</option>
-                      <option value='Besøksreiser'>Besøksreiser i hjemmet annet</option>
-                      <option value='Kostbesparelse'>Kostbesparelse i hjemmet</option>
-                      <option value='Rentefordel'>Rentefordel lån</option>
-                      <option value='Bil'>Bil</option>
-                      <option value='KostDager'>Kost (dager)</option>
-                      <option value='Bolig'>Bolig</option>
-                      <option value='Forsikringer'>Skattepliktig del av visse forsikringer</option>
-                      <option value='FriTransport'>Fri transport</option>
-                      <option value='Opsjoner'>Opsjoner</option>
-                      <option value='Barnehageplass'>Tilskudd barnehageplass</option>
-                      <option value='YrkesbilKilometer'>Yrkesbil tjenestebehov kilometer</option>
-                      <option value='YrkesbilListepris'>Yrkesbil tjenestebehov listepris</option>
-                      <option value='UtenlandskPensjonsordning'>Innbetaling utenlandsk pensjonsordning</option>
-                    </Select>
-                    <Button
-                      variant='tertiary'
-                      className={styles.kontrollerknapp}
-                      onClick={clickTilbakestillMaanedsinntekt}
-                    >
-                      Tilbakestill
-                    </Button>
-                  </div>
-                )}
-                {!state.endreMaanedsinntekt && (
-                  <Button variant='tertiary' className={styles.kontrollerknapp} onClick={clickEndreInntekt}>
-                    Endre
-                  </Button>
-                )}
-              </div>
-              <p>
-                <strong>Inntekten er basert på følgende måneder</strong>
-              </p>
-              {state.tidligereinntekt?.map((inntekt) => (
-                <div key={inntekt.id}>
-                  <div className={styles.maanedsnavn}>{inntekt.maanedsnavn}:</div>
-                  <div className={styles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</div>
-                </div>
-              ))}
-              <p>
-                <strong>
-                  Hvis beløpet ikke er korrekt må dere endre dette. Det kan være at den ansatte nylig har fått
-                  lønnsøkning, bonus, redusering i arbeidstid eller har andre endringer i lønn som vi ikke registrert.
-                  Beregningen er gjort etter <Link href='#'>folketrygdloven $8-28.</Link>
-                </strong>
-              </p>
-              <Checkbox onClick={clickBekreftKorrektInntekt}>Jeg bekrefter at registrert inntekt er korrekt</Checkbox>
               <Skillelinje />
               <Heading3>Refusjon til arbeidsgiver</Heading3>
               <p>
