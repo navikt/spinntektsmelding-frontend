@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 
 import { Datepicker } from '@navikt/ds-datepicker';
-import { Button, Checkbox, ConfirmationPanel, Ingress, Radio, RadioGroup, Select, TextField } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox, ConfirmationPanel, Radio, RadioGroup, Select, TextField } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 import Banner, { Organisasjon } from '../components/Banner/Banner';
@@ -16,21 +16,27 @@ import LabelLabel from '../components/LabelLabel/LabelLabel';
 import styles from '../styles/Home.module.css';
 import '@navikt/ds-datepicker/lib/index.css';
 
-import mockOrg from '../mockdata/testOrganisasjoner';
 import formReducer, { initialState } from '../state/formReducer';
 import { YesNo } from '../state/state';
 import { useImmerReducer } from 'use-immer';
 import ButtonSlette from '../components/ButtonSlette/ButtonSlette';
-import BergnetMaanedsinntekt, {
-  OppdatertMaanedsintekt
-} from '../components/BeregnetMaanedsinntekt/BeregnetMaanedsinntekt';
-import { SuccessStroke } from '@navikt/ds-icons';
 import Script from 'next/script';
+import SelectNaturalytelser from '../components/SelectNaturalytelser/SelectNaturalytelser';
+
+import formatCurrency from '../utils/formatCurrency';
+import useRoute from '../components/Banner/useRoute';
+
+import Behandlingsdager from '../components/Behandlingsdager';
+import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
+import Egenmelding from '../components/Egenmelding';
+import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
 
 const Home: NextPage = () => {
+  const setRoute = useRoute();
+
   const [state, dispatch] = useImmerReducer(formReducer, initialState);
 
-  const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
+  const [arbeidsgivere, setArbeidsgivere] = useState([]);
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
@@ -59,6 +65,21 @@ const Home: NextPage = () => {
   const clickNaturalytelse = (event: React.MouseEvent<HTMLInputElement>) => {
     dispatch({
       type: 'toggleNaturalytelser',
+      payload: !!event.currentTarget.checked
+    });
+  };
+
+  const clickTilbakestillFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    dispatch({
+      type: 'tilbakestillFravaersperiode'
+    });
+  };
+
+  const clickBekreftKorrektInntekt = (event: React.MouseEvent<HTMLInputElement>) => {
+    dispatch({
+      type: 'toggleBekreftKorrektInntekt',
       payload: !!event.currentTarget.checked
     });
   };
@@ -127,11 +148,27 @@ const Home: NextPage = () => {
     });
   };
 
-  const clickBekreftInntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const clickEndreInntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     dispatch({
-      type: 'visBekreftMaanedsinntekt'
+      type: 'endreMaanedsinntekt',
+      payload: !state.endreMaanedsinntekt
+    });
+  };
+
+  const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    dispatch({
+      type: 'tilbakestillBruttoinntekt'
+    });
+  };
+
+  const clickRefusjonskravetOpphoerer = (event: React.MouseEvent<HTMLInputElement>) => {
+    dispatch({
+      type: 'toggleRefusjonskravetOpphoerer',
+      payload: Boolean(event.currentTarget.value === 'Ja')
     });
   };
 
@@ -185,10 +222,17 @@ const Home: NextPage = () => {
     });
   };
 
-  const closeBergnetMaanedsinntekt = (maanedsinntekt: OppdatertMaanedsintekt) => {
+  const selectEndringsaarsak = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    dispatch({
+      type: 'setEndringsaarsakMaanedsinntekt',
+      payload: event.target.value
+    });
+  };
+
+  const setNyMaanedsinntekt = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: 'setOppdatertMaanedsinntekt',
-      payload: maanedsinntekt
+      payload: event.target.value
     });
   };
 
@@ -212,6 +256,40 @@ const Home: NextPage = () => {
     });
   };
 
+  const setBehandlingsdager = (behandlingsdager?: Array<Date>) => {
+    dispatch({
+      type: 'setBehandlingsdager',
+      payload: behandlingsdager
+    });
+  };
+
+  const setRefusjonskravOpphoersdato = (dateValue: string) => {
+    dispatch({
+      type: 'setRefusjonskravOpphoersdato',
+      payload: dateValue
+    });
+  };
+
+  useEffect(() => {
+    fetch('/api/arbeidsgivere').then((data) => {
+      data.json().then((jsonData) => {
+        setArbeidsgivere(jsonData);
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/inntektsmelding').then((data) => {
+      data.json().then((jsonData) => {
+        dispatch({
+          type: 'fyllFormdata',
+          payload: jsonData
+        });
+        setRoute(jsonData.orgnrUnderenhet);
+      });
+    });
+  }, []);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -222,20 +300,29 @@ const Home: NextPage = () => {
       <div>
         <Banner
           tittelMedUnderTittel={'Sykepenger'}
-          altinnOrganisasjoner={mockOrg}
+          altinnOrganisasjoner={arbeidsgivere}
           onOrganisasjonChange={changeOrgUnderenhet}
         />
         <PageContent title='Inntektsmelding'>
           <main className='main-content'>
-            <Ingress className={styles.ingress}>
-              For at vi skal utbetale riktig beløp i forbindelse med langvarig sykemelding må dere bekrefte, eller
-              oppdatere opplysningene vi har i forbindelse med den ansatte, og sykefraværet.
-            </Ingress>
             <form className={styles.padded} onSubmit={submitForm}>
+              <p>
+                For at vi skal utbetale riktig beløp i forbindelse med langvarig sykemelding må dere bekrefte, eller
+                oppdatere opplysningene vi har i forbindelse med den ansatte, og sykefraværet.
+              </p>
               <div className={styles.personinfowrapper}>
                 <div className={styles.denansatte}>
                   <Heading3>Den ansatte</Heading3>
-                  <TextField label='Fødselsnummer 11 siffer' className={styles.fnr}></TextField>
+                  <div className={styles.arbeidsgiverwrapper}>
+                    <div className={styles.virksomhetsnavnwrapper}>
+                      <TextLabel>Navn</TextLabel>
+                      <div className={styles.virksomhetsnavn}>{state.navn}</div>
+                    </div>
+                    <div className={styles.orgnrnavnwrapper}>
+                      <TextLabel>Personnummer</TextLabel>
+                      {state.identitetsnummer}
+                    </div>
+                  </div>
                 </div>
                 <div className={styles['size-resten']}>
                   <Heading3>Arbeidsgiveren</Heading3>
@@ -251,129 +338,47 @@ const Home: NextPage = () => {
                   </div>
                 </div>
               </div>
+
               <Skillelinje />
-              <Heading3>Fraværsperiode</Heading3>
-              <p>
-                I følge sykmeldingen var den ansatte sykmeldt i perioden som er ferdigutfylt her. Endre fraværsperiode
-                dersom den ansatte vært på jobb noen av dagene eller om den på annen måte ikke er korrekt. Du skal ikke
-                ta med eventuelle egenmeldingsdager i dette steget.
-              </p>
-              {state.fravaersperiode.map((periode) => (
-                <div className={styles.periodewrapper} key={periode.id}>
-                  {!endreSykemelding && (
-                    <div className={styles.datepickerescape}>
-                      <TextLabel>Fra</TextLabel>
-                      <div>07.10.2021</div>
-                    </div>
-                  )}
-                  {endreSykemelding && (
-                    <div className={styles.datepickerescape}>
-                      <LabelLabel htmlFor='datepicker-egenmelding-fra' className={styles.datepickerlabel}>
-                        Fra
-                      </LabelLabel>
-                      <Datepicker
-                        inputLabel='Fra'
-                        inputId='datepicker-egenmelding-fra'
-                        onChange={(dateString) => setSykemeldingFraDato(dateString, periode.id)}
-                        locale={'nb'}
-                      />
-                    </div>
-                  )}
-
-                  {!endreSykemelding && (
-                    <div className={styles.datepickerescape}>
-                      <TextLabel>Til</TextLabel>
-                      <div>24.10.2021</div>
-                    </div>
-                  )}
-                  {endreSykemelding && (
-                    <div className={styles.datepickerescape}>
-                      <LabelLabel htmlFor='datepicker-egenmelding-til' className={styles.datepickerlabel}>
-                        Til
-                      </LabelLabel>
-                      <Datepicker
-                        inputLabel='Til'
-                        inputId='datepicker-egenmelding-til'
-                        onChange={(dateString) => setSykemeldingTilDato(dateString, periode.id)}
-                        locale={'nb'}
-                      />
-                    </div>
-                  )}
-                  <div className={styles.endresykemelding}>
-                    {!endreSykemelding && (
-                      <Button
-                        variant='secondary'
-                        className={styles.endrebutton}
-                        onClick={() => setEndreSykemelding(!endreSykemelding)}
-                      >
-                        Endre
-                      </Button>
-                    )}
-                    {endreSykemelding && state.fravaersperiode.length > 1 && (
-                      <ButtonSlette
-                        onClick={(event) => clickSlettFravaersperiode(event, periode.id)}
-                        title='Slett fraværsperiode'
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
-              {endreSykemelding && (
-                <div className={styles.endresykemeldingknapper}>
-                  <Button variant='secondary' className={styles.kontrollerknapp} onClick={clickLeggTilFravaersperiode}>
-                    Legg til periode
-                  </Button>
-
-                  <Button className={styles.kontrollerknapp} onClick={() => setEndreSykemelding(!endreSykemelding)}>
-                    Tilbakestill
-                  </Button>
-                </div>
+              {state.behandlingsdager && (
+                <Behandlingsdager periode={state.fravaersperiode[0]} onSelect={setBehandlingsdager} />
               )}
+
+              {!state.behandlingsdager && (
+                <Fravaersperiode
+                  perioder={state.fravaersperiode}
+                  setSykemeldingFraDato={setSykemeldingFraDato}
+                  setSykemeldingTilDato={setSykemeldingTilDato}
+                  clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
+                  clickSlettFravaersperiode={clickSlettFravaersperiode}
+                  clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
+                />
+              )}
+
+              {state.egenmeldingsperioder && !state.behandlingsdager && (
+                <>
+                  <Skillelinje />
+                  <Egenmelding
+                    egenmeldingsperioder={state.egenmeldingsperioder}
+                    setEgenmeldingFraDato={setEgenmeldingFraDato}
+                    setEgenmeldingTilDato={setEgenmeldingTilDato}
+                    clickSlettEgenmeldingsperiode={clickSlettEgenmeldingsperiode}
+                    clickLeggTilEgenmeldingsperiode={clickLeggTilEgenmeldingsperiode}
+                  />
+                </>
+              )}
+
               <Skillelinje />
-              <Heading3>Eventuell egenmelding (valgfri)</Heading3>
-              <p>
-                Dersom den ansatte var fraværende med egenmelding frem til sykmeldingen ble utstedt skal du oppgi første
-                fraværsdag med egenmelding i dette feltet.
-              </p>
-              {state.egenmeldingsperioder &&
-                state.egenmeldingsperioder.map((egenmeldingsperiode) => {
-                  return (
-                    <div key={egenmeldingsperiode.id} className={styles.periodewrapper}>
-                      <div className={styles.datepickerescape}>
-                        <LabelLabel htmlFor='datepicker-input-fra-dato' className={styles.datepickerlabel}>
-                          Egenmelding fra dato
-                        </LabelLabel>
-                        <Datepicker
-                          onChange={(dateString) => setEgenmeldingFraDato(dateString, egenmeldingsperiode.id)}
-                          inputLabel='Egenmelding fra dato'
-                        />
-                      </div>
-                      <div className={styles.datepickerescape}>
-                        <LabelLabel htmlFor='datepicker-input-til-dato' className={styles.datepickerlabel}>
-                          Egenmelding til dato
-                        </LabelLabel>
-                        <Datepicker
-                          inputLabel='Egenmelding til dato'
-                          inputId='datepicker-input-til-dato'
-                          onChange={(dateString) => setEgenmeldingTilDato(dateString, egenmeldingsperiode.id)}
-                          locale={'nb'}
-                        />
-                      </div>
-                      <div className={styles.endresykemelding}>
-                        <ButtonSlette
-                          onClick={(event) => clickSlettEgenmeldingsperiode(event, egenmeldingsperiode.id)}
-                          title='Slett egenmeldingsperiode'
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              <div>
-                <Button variant='secondary' className={styles.legtilbutton} onClick={clickLeggTilEgenmeldingsperiode}>
-                  Legg til egenmeldingsperiode
-                </Button>
-              </div>
-              <Skillelinje />
+
+              <Bruttoinntekt
+                bruttoinntekt={state.bruttoinntekt}
+                tidligereinntekt={state.tidligereinntekt}
+                setNyMaanedsinntekt={setNyMaanedsinntekt}
+                selectEndringsaarsak={selectEndringsaarsak}
+                clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+                clickBekreftKorrektInntekt={clickBekreftKorrektInntekt}
+              />
+
               <Heading3>Bruttoinntekt siste 3 måneder</Heading3>
               <p>
                 Vi har brukt opplysninger fra skatteetaten (a-ordningen) for å anslå månedsinntekten her. Desom det ikke
@@ -384,17 +389,60 @@ const Home: NextPage = () => {
                 <strong>Vi har registrert en inntekt på</strong>
               </p>
               <div className={styles.belopwrapper}>
-                <TextLabel className={styles.maanedsinntekt}>{state.bruttoinntekt?.bruttoInntekt} kr/måned</TextLabel>
-                {!state.bruttoinntekt?.bekreftet && <TextLabel className={styles.noktekst}>Må kontrolleres</TextLabel>}
-                {state.bruttoinntekt?.bekreftet && (
-                  <TextLabel className={styles.oktekst}>
-                    <SuccessStroke /> Bekreftet
-                  </TextLabel>
+                {!state.endreMaanedsinntekt && (
+                  <TextLabel className={styles.maanedsinntekt}>{state.bruttoinntekt?.bruttoInntekt} kr/måned</TextLabel>
                 )}
-                <Button variant='secondary' className={styles.kontrollerknapp} onClick={clickBekreftInntekt}>
-                  Kontroller / Endre
-                </Button>
+                {state.endreMaanedsinntekt && (
+                  <div className={styles.endremaaanedsinntekt}>
+                    <TextField
+                      label='Inntekt per måned'
+                      onChange={setNyMaanedsinntekt}
+                      defaultValue={(state.bruttoinntekt ? state.bruttoinntekt.bruttoInntekt : 0).toString()}
+                    />
+                    <Select label='Forklaring til endring' onChange={selectEndringsaarsak}>
+                      <option value=''>Velg endringsårsak</option>
+                      <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
+                      <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
+                      <option value='Losji'>Losji</option>
+                      <option value='KostDøgn'>Kost (døgn)</option>
+                      <option value='Besøksreiser'>Besøksreiser i hjemmet annet</option>
+                      <option value='Kostbesparelse'>Kostbesparelse i hjemmet</option>
+                      <option value='Rentefordel'>Rentefordel lån</option>
+                      <option value='Bil'>Bil</option>
+                      <option value='KostDager'>Kost (dager)</option>
+                      <option value='Bolig'>Bolig</option>
+                      <option value='Forsikringer'>Skattepliktig del av visse forsikringer</option>
+                      <option value='FriTransport'>Fri transport</option>
+                      <option value='Opsjoner'>Opsjoner</option>
+                      <option value='Barnehageplass'>Tilskudd barnehageplass</option>
+                      <option value='YrkesbilKilometer'>Yrkesbil tjenestebehov kilometer</option>
+                      <option value='YrkesbilListepris'>Yrkesbil tjenestebehov listepris</option>
+                      <option value='UtenlandskPensjonsordning'>Innbetaling utenlandsk pensjonsordning</option>
+                    </Select>
+                    <Button
+                      variant='tertiary'
+                      className={styles.kontrollerknapp}
+                      onClick={clickTilbakestillMaanedsinntekt}
+                    >
+                      Tilbakestill
+                    </Button>
+                  </div>
+                )}
+                {!state.endreMaanedsinntekt && (
+                  <Button variant='tertiary' className={styles.kontrollerknapp} onClick={clickEndreInntekt}>
+                    Endre
+                  </Button>
+                )}
               </div>
+              <p>
+                <strong>Inntekten er basert på følgende måneder</strong>
+              </p>
+              {state.tidligereinntekt?.map((inntekt) => (
+                <div key={inntekt.id}>
+                  <div className={styles.maanedsnavn}>{inntekt.maanedsnavn}:</div>
+                  <div className={styles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</div>
+                </div>
+              ))}
               <p>
                 <strong>
                   Hvis beløpet ikke er korrekt må dere endre dette. Det kan være at den ansatte nylig har fått
@@ -402,6 +450,7 @@ const Home: NextPage = () => {
                   Beregningen er gjort etter <Link href='#'>folketrygdloven $8-28.</Link>
                 </strong>
               </p>
+              <Checkbox onClick={clickBekreftKorrektInntekt}>Jeg bekrefter at registrert inntekt er korrekt</Checkbox>
               <Skillelinje />
               <Heading3>Refusjon til arbeidsgiver</Heading3>
               <p>
@@ -443,8 +492,32 @@ const Home: NextPage = () => {
                   Nei
                 </Radio>
               </RadioGroup>
-              {state.betalerArbeidsgiverHeleEllerDeler?.status === 'Ja' && (
-                <TextField label='Oppgi refusjonsbeløpet per måned' className={styles.halfsize} />
+              {state.lonnISykefravaeret?.status === 'Ja' && (
+                <>
+                  <TextField label='Oppgi refusjonsbeløpet per måned' className={styles.halfsize} />
+                  <BodyLong className={styles.opphrefkravforklaring}>
+                    Refusjonsbeløpet gjelder fra den første dagen arbeidstakeren har rett til utbetaling fra NAV
+                  </BodyLong>
+                  <RadioGroup legend='Opphører refusjonkravet i perioden?' className={styles.radiobuttonwrapper}>
+                    <Radio value='Ja' onClick={clickRefusjonskravetOpphoerer}>
+                      Ja
+                    </Radio>
+                    <Radio value='Nei' onClick={clickRefusjonskravetOpphoerer}>
+                      Nei
+                    </Radio>
+                  </RadioGroup>
+                  {state.refusjonskravetOpphoerer && (
+                    <div className={styles.datepickerescape}>
+                      <LabelLabel htmlFor='datepicker-input-fra-dato' className={styles.datepickerlabel}>
+                        Angi siste dag dere krever refusjon for
+                      </LabelLabel>
+                      <Datepicker
+                        onChange={(dateString) => setRefusjonskravOpphoersdato(dateString)}
+                        inputLabel='Egenmelding fra dato'
+                      />
+                    </div>
+                  )}
+                </>
               )}
               <Skillelinje />
               <Heading3>Eventuelle naturalytelser (valgfri)</Heading3>
@@ -469,30 +542,11 @@ const Home: NextPage = () => {
                     <th></th>
                   </thead>
                   <tbody>
-                    {state.naturalytelser.map((element, row) => {
+                    {state.naturalytelser.map((element) => {
                       return (
                         <tr key={element.id}>
                           <td>
-                            <Select label={''} onChange={(event) => changeNaturalytelseType(event, element.id)}>
-                              <option value=''>Velg naturalytelse</option>
-                              <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
-                              <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
-                              <option value='Losji'>Losji</option>
-                              <option value='KostDøgn'>Kost (døgn)</option>
-                              <option value='Besøksreiser'>Besøksreiser i hjemmet annet</option>
-                              <option value='Kostbesparelse'>Kostbesparelse i hjemmet</option>
-                              <option value='Rentefordel'>Rentefordel lån</option>
-                              <option value='Bil'>Bil</option>
-                              <option value='KostDager'>Kost (dager)</option>
-                              <option value='Bolig'>Bolig</option>
-                              <option value='Forsikringer'>Skattepliktig del av visse forsikringer</option>
-                              <option value='FriTransport'>Fri transport</option>
-                              <option value='Opsjoner'>Opsjoner</option>
-                              <option value='Barnehageplass'>Tilskudd barnehageplass</option>
-                              <option value='YrkesbilKilometer'>Yrkesbil tjenestebehov kilometer</option>
-                              <option value='YrkesbilListepris'>Yrkesbil tjenestebehov listepris</option>
-                              <option value='UtenlandskPensjonsordning'>Innbetaling utenlandsk pensjonsordning</option>
-                            </Select>
+                            <SelectNaturalytelser onChangeYtelse={changeNaturalytelseType} elementId={element.id} />
                           </td>
 
                           <td className={styles.tddatepickernatural}>
@@ -542,17 +596,6 @@ const Home: NextPage = () => {
               </ConfirmationPanel>
               <Button className={styles.sendbutton}>Send</Button>
             </form>
-            <BergnetMaanedsinntekt
-              maanedsinntekt={state.bruttoinntekt?.bruttoInntekt || 0}
-              maaned1navn={'Januar'}
-              maaned2navn={'Februar'}
-              maaned3navn={'Mars'}
-              maaned1sum={50000}
-              maaned2sum={23000}
-              maaned3sum={50000}
-              open={state.showBeregnetMaanedsinntektModal}
-              onClose={closeBergnetMaanedsinntekt}
-            />
           </main>
         </PageContent>
         <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>

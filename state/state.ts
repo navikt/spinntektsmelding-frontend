@@ -6,19 +6,25 @@ export interface Periode {
 
 export type YesNo = 'Ja' | 'Nei';
 
-interface Inntekt {
+export interface Inntekt {
   bruttoInntekt: number;
-  bekreftet: boolean;
+  bekreftet?: boolean;
   manueltKorrigert: boolean;
-  endringsaarsak: string;
+  endringsaarsak?: string;
 }
 
-interface FullLonnIArbeidsgiverPerioden {
+export interface HistoriskInntekt {
+  maanedsnavn: string;
+  inntekt: number;
+  id: string;
+}
+
+export interface LonnISykefravaeret {
   status?: YesNo;
   belop?: number;
 }
 
-interface BetalerArbeidsgiverHeleEllerDeler {
+export interface LonnIArbeidsgiverperioden {
   status?: YesNo;
   begrunnelse?: string;
 }
@@ -36,13 +42,19 @@ interface InntektsmeldingSkjema {
   virksomhetsnavn?: string;
   orgnrUnderenhet?: string;
   fravaersperiode: Array<Periode>;
+  opprinneligfravaersperiode: Array<Periode>;
   egenmeldingsperioder: Array<Periode>;
   bruttoinntekt?: Inntekt;
-  fullLonnIArbeidsgiverPerioden?: FullLonnIArbeidsgiverPerioden;
-  betalerArbeidsgiverHeleEllerDeler?: BetalerArbeidsgiverHeleEllerDeler;
+  opprinneligbruttoinntekt?: Inntekt;
+  tidligereinntekt?: Array<HistoriskInntekt>;
+  fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
+  lonnISykefravaeret?: LonnISykefravaeret;
   naturalytelser?: Array<Naturalytelse>;
   opplysningerBekreftet: boolean;
-  showBeregnetMaanedsinntektModal: boolean;
+  endreMaanedsinntekt: boolean;
+  refusjonskravetOpphoerer: boolean;
+  refusjonskravOpphoersdato?: Date;
+  behandlingsdager: boolean;
 }
 
 export default InntektsmeldingSkjema;

@@ -3,7 +3,8 @@
 }
 
 .padded {
-  padding: 1rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .halfsize {
@@ -24,12 +25,12 @@
 
 .virksomhetsnavnwrapper {
   display: inline-block;
-  flex-grow: 2;
+  flex-grow: 1;
 }
 
 .orgnrnavnwrapper {
   display: inline-block;
-  flex-grow: 1;
+  flex-grow: 2;
 }
 
 .tddatepickernatural {
@@ -88,7 +89,8 @@
 }
 
 .tablenaturalytelse {
-  border-spacing: .5rem
+  border-spacing: .5rem;
+  margin: 0 -.5rem;
 }
 .tablenaturalytelse th {
   text-align: left;
@@ -98,6 +100,10 @@
 .legtilbutton,
 .endrebutton {
   min-width: 10rem;
+}
+
+.endrebutton {
+  max-width: 10rem;
 }
 
 .legtilbutton {
@@ -119,7 +125,7 @@
 
 .personinfowrapper {
   display: flex;
-  gap: 2rem;
+  gap: 4rem;
   flex-direction: row;
 }
 
@@ -138,6 +144,7 @@
 .periodewrapper {
   display: flex;
   gap: 2rem;
+  margin: 1.5rem 0;
 }
 
 .radiobuttonwrapper > div {
@@ -145,9 +152,28 @@
   gap: 2rem;
 }
 
+.radiobuttonwrapper,
+.opphrefkravforklaring {
+  margin:   var(--navds-spacing-3) 0 ;
+}
+
+.opphrefkravperiode {
+  margin: 1rem 0 .5rem
+}
+
 .belopwrapper {
   display: flex;
   gap: 2rem;
+}
+
+.belopwrapper > div {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.belopwrapper input {
+  /* font-weight: 600; */
+  /* font-size: xx-large; */
 }
 
 .naturalytelser {
@@ -158,6 +184,27 @@
 
 .naturalytelserknapp {
   margin-bottom: 2rem;
+}
+
+.maanedsnavn,
+.maanedsinntekt {
+  display: inline-block;
+  margin: 0;
+  min-width: 5rem;
+}
+
+.maanedsinntekt {
+  text-align: right;
+}
+
+.endremaaanedsinntekt {
+  display: flex;
+  gap: 2rem;
+}
+
+.endremaaanedsinntekt .kontrollerknapp {
+  margin-top: auto;
+  height: 3rem;;
 }
 
 @media screen and (max-width: 800px) {

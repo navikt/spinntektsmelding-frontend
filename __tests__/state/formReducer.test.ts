@@ -117,7 +117,7 @@ describe('formReducer', () => {
     expect(evenNewerState.egenmeldingsperioder[0].id).toEqual(remainingPeriodeId);
   });
 
-  it('should toggle the status of the betalerArbeidsgiverHeleEllerDeler', () => {
+  it('should toggle the status of the lonnISykefravaeret', () => {
     const newState = produce(initialState, (state) =>
       formReducer(state, {
         type: 'toggleBetalerArbeidsgiverHeleEllerDeler',
@@ -125,7 +125,7 @@ describe('formReducer', () => {
       })
     );
 
-    expect(newState.betalerArbeidsgiverHeleEllerDeler).toEqual({ status: 'Ja' });
+    expect(newState.lonnISykefravaeret).toEqual({ status: 'Ja' });
 
     const newerState = produce(newState, (state) =>
       formReducer(state, {
@@ -134,7 +134,7 @@ describe('formReducer', () => {
       })
     );
 
-    expect(newerState.betalerArbeidsgiverHeleEllerDeler).toEqual({ status: 'Nei' });
+    expect(newerState.lonnISykefravaeret).toEqual({ status: 'Nei' });
   });
 
   it('should toggle the status of the fullLonnIArbeidsgiverPerioden', () => {
@@ -374,35 +374,31 @@ describe('formReducer', () => {
 
   it('should set bruttoinntekt og state to close modal', () => {
     const initialStateWithOpenModal: InntektsmeldingSkjema = JSON.parse(JSON.stringify(initialState));
-    initialStateWithOpenModal.showBeregnetMaanedsinntektModal = true;
+    initialStateWithOpenModal.endreMaanedsinntekt = true;
 
     const newState = produce(initialStateWithOpenModal, (state) =>
       formReducer(state, {
         type: 'setOppdatertMaanedsinntekt',
-        payload: {
-          oppdatertMaanedsinntekt: 1234,
-          oppdatert: true,
-          endringsaarsak: 'Endring'
-        }
+        payload: '1234'
       })
     );
 
-    expect(newState.showBeregnetMaanedsinntektModal).toBe(false);
     expect(newState.bruttoinntekt).toEqual({
       bruttoInntekt: 1234,
-      bekreftet: true,
+      bekreftet: false,
       manueltKorrigert: true,
-      endringsaarsak: 'Endring'
+      endringsaarsak: ''
     });
   });
 
-  it('should set showBeregnetMaanedsinntektModal', () => {
+  it('should set endreMaanedsinntekt', () => {
     const newState = produce(initialState, (state) =>
       formReducer(state, {
-        type: 'visBekreftMaanedsinntekt'
+        type: 'endreMaanedsinntekt',
+        payload: true
       })
     );
 
-    expect(newState.showBeregnetMaanedsinntektModal).toBe(true);
+    expect(newState.endreMaanedsinntekt).toBe(true);
   });
 });

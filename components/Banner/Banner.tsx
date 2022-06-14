@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import Bedriftsmeny from '@navikt/bedriftsmeny';
 import '@navikt/bedriftsmeny/lib/bedriftsmeny.css';
 import { createBrowserHistory, createMemoryHistory, History } from 'history';
-import { useRouter } from 'next/router';
 import LocationState = History.LocationState;
 import { Organisasjon as AltinnOrganisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
+import useRoute from './useRoute';
 
 export interface Organisasjon {
   Name: string;
@@ -28,12 +28,13 @@ const getHistory = () => {
 
 const Banner: React.FunctionComponent<Props> = (props) => {
   const { tittelMedUnderTittel, altinnOrganisasjoner } = props;
-  const router = useRouter();
+
   const [history] = useState<History<LocationState>>(getHistory());
+  const setRoute = useRoute();
 
   const onOrganisasjonChange = (organisasjon?: Organisasjon) => {
     if (organisasjon) {
-      router.push(`?bedrift=${organisasjon.OrganizationNumber}`);
+      setRoute(organisasjon.OrganizationNumber);
       if (props.onOrganisasjonChange) {
         props.onOrganisasjonChange(organisasjon);
       }

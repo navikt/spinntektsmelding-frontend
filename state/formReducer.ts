@@ -1,13 +1,28 @@
 import ActionType from './actiontype';
 import InntektsmeldingSkjema, { Naturalytelse, Periode } from './state';
 import { v4 as uuid } from 'uuid';
-import { parse } from 'date-fns';
+import { parse, parseISO } from 'date-fns';
+import MottattData from './MottattData';
 
 export const initialState: InntektsmeldingSkjema = {
   opplysningerBekreftet: false,
   egenmeldingsperioder: [{ id: uuid() }],
-  showBeregnetMaanedsinntektModal: false,
-  fravaersperiode: [{ id: uuid() }]
+  fravaersperiode: [{ id: uuid() }],
+  opprinneligfravaersperiode: [{ id: uuid() }],
+  refusjonskravetOpphoerer: false,
+  bruttoinntekt: {
+    bruttoInntekt: 0,
+    bekreftet: false,
+    manueltKorrigert: false,
+    endringsaarsak: ''
+  },
+  opprinneligbruttoinntekt: {
+    bruttoInntekt: 0,
+    bekreftet: false,
+    manueltKorrigert: false,
+    endringsaarsak: ''
+  },
+  behandlingsdager: false
 };
 
 export default function (state: InntektsmeldingSkjema, action: ActionType): InntektsmeldingSkjema {
@@ -65,9 +80,9 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
     }
 
     case 'toggleBetalerArbeidsgiverHeleEllerDeler':
-      if (!state.betalerArbeidsgiverHeleEllerDeler) {
-        state.betalerArbeidsgiverHeleEllerDeler = { status: action.payload };
-      } else state.betalerArbeidsgiverHeleEllerDeler.status = action.payload;
+      if (!state.lonnISykefravaeret) {
+        state.lonnISykefravaeret = { status: action.payload };
+      } else state.lonnISykefravaeret.status = action.payload;
       return state;
 
     case 'toggleBetalerArbeidsgiverFullLonnIArbeidsgiverperioden':
@@ -89,6 +104,15 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
       return state;
     }
 
+    case 'toggleRefusjonskravetOpphoerer':
+      state.refusjonskravetOpphoerer = action.payload;
+      return state;
+
+    case 'setRefusjonskravOpphoersdato': {
+      state.refusjonskravOpphoersdato = parseIsoDate(action.payload);
+      return state;
+    }
+
     case 'slettNaturalytelse': {
       const nyeNaturalytelser = state.naturalytelser!.filter((element) => element.id !== action.payload);
       state.naturalytelser = nyeNaturalytelser;
@@ -101,6 +125,12 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
       };
 
       state.naturalytelser!.push(nyNaturalytelseRad);
+
+      return state;
+    }
+
+    case 'toggleBekreftKorrektInntekt': {
+      state.bruttoinntekt!.bekreftet = action.payload;
 
       return state;
     }
@@ -180,19 +210,57 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
     }
 
     case 'setOppdatertMaanedsinntekt': {
-      state.showBeregnetMaanedsinntektModal = false;
-      state.bruttoinntekt = {
-        bruttoInntekt: action.payload.oppdatertMaanedsinntekt,
-        bekreftet: action.payload.oppdatert,
-        manueltKorrigert: action.payload.endringsaarsak !== '',
-        endringsaarsak: action.payload.endringsaarsak
-      };
+      state.bruttoinntekt!.bruttoInntekt = Number(action.payload);
+      state.bruttoinntekt!.manueltKorrigert = true;
+
       return state;
     }
 
-    case 'visBekreftMaanedsinntekt': {
-      state.showBeregnetMaanedsinntektModal = true;
+    case 'setEndringsaarsakMaanedsinntekt': {
+      state.bruttoinntekt!.endringsaarsak = action.payload;
+      state.bruttoinntekt!.manueltKorrigert = true;
+      return state;
+    }
 
+    case 'fyllFormdata': {
+      const fdata: MottattData = action.payload;
+      state.navn = fdata.navn;
+      state.identitetsnummer = fdata.identitetsnummer;
+      state.orgnrUnderenhet = fdata.orgnrUnderenhet;
+      state.bruttoinntekt = {
+        bruttoInntekt: fdata.bruttoinntekt,
+        bekreftet: false,
+        manueltKorrigert: false,
+        endringsaarsak: ''
+      };
+      state.opprinneligbruttoinntekt = JSON.parse(JSON.stringify(state.bruttoinntekt));
+      state.fravaersperiode = fdata.fravaersperiode.map((periode) => {
+        return {
+          fra: parseISO(periode.fra),
+          til: parseISO(periode.til),
+          id: uuid()
+        };
+      });
+
+      state.opprinneligfravaersperiode = state.fravaersperiode.map((periode) => periode);
+
+      state.tidligereinntekt = fdata.tidligereinntekt.map((inntekt) => ({
+        maanedsnavn: inntekt.maanedsnavn,
+        inntekt: inntekt.inntekt,
+        id: uuid()
+      }));
+
+      state.behandlingsdager = fdata.behandlingsdager;
+      return state;
+    }
+
+    case 'tilbakestillFravaersperiode': {
+      state.fravaersperiode = state.opprinneligfravaersperiode.map((periode) => periode);
+      return state;
+    }
+
+    case 'tilbakestillBruttoinntekt': {
+      state.bruttoinntekt = JSON.parse(JSON.stringify(state.opprinneligbruttoinntekt));
       return state;
     }
 
@@ -204,6 +272,6 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
       return state;
   }
 }
-function parseIsoDate(isoDateString: string) {
+function parseIsoDate(isoDateString: string): Date {
   return parse(isoDateString, 'yyyy-MM-dd', new Date());
 }

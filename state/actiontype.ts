@@ -27,6 +27,14 @@ type ActionType =
       payload: boolean;
     }
   | {
+      type: 'toggleRefusjonskravetOpphoerer';
+      payload: boolean;
+    }
+  | {
+      type: 'toggleBekreftKorrektInntekt';
+      payload: boolean;
+    }
+  | {
       type: 'leggTilEgenmeldingsperiode';
     }
   | {
@@ -74,10 +82,7 @@ type ActionType =
     }
   | {
       type: 'setOppdatertMaanedsinntekt';
-      payload: OppdatertMaanedsintekt;
-    }
-  | {
-      type: 'visBekreftMaanedsinntekt';
+      payload: string;
     }
   | {
       type: 'leggTilFravaersperiode';
@@ -101,7 +106,29 @@ type ActionType =
       };
     }
   | {
+      type: 'setRefusjonskravOpphoersdato';
+      payload: string;
+    }
+  | {
+      type: 'fyllFormdata';
+      payload: any; // TODO Stram til denne når apiet har satt seg!
+    }
+  | {
       type: 'submitForm';
+    }
+  | {
+      type: 'tilbakestillFravaersperiode';
+    }
+  | {
+      type: 'tilbakestillBruttoinntekt';
+    }
+  | {
+      type: 'setBehandlingsdager';
+      payload?: Array<Date>;
+    }
+  | {
+      type: 'setEndringsaarsakMaanedsinntekt';
+      payload: string;
     };
 
 export default ActionType;
