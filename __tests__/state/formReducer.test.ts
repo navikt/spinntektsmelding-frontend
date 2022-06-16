@@ -374,7 +374,6 @@ describe('formReducer', () => {
 
   it('should set bruttoinntekt og state to close modal', () => {
     const initialStateWithOpenModal: InntektsmeldingSkjema = JSON.parse(JSON.stringify(initialState));
-    initialStateWithOpenModal.endreMaanedsinntekt = true;
 
     const newState = produce(initialStateWithOpenModal, (state) =>
       formReducer(state, {
@@ -389,16 +388,5 @@ describe('formReducer', () => {
       manueltKorrigert: true,
       endringsaarsak: ''
     });
-  });
-
-  it('should set endreMaanedsinntekt', () => {
-    const newState = produce(initialState, (state) =>
-      formReducer(state, {
-        type: 'endreMaanedsinntekt',
-        payload: true
-      })
-    );
-
-    expect(newState.endreMaanedsinntekt).toBe(true);
   });
 });

@@ -1,0 +1,14 @@
+.multicalwrapper > div {
+    display: flex;
+    margin: 0;
+}
+
+.multicalwrapper > div > div {
+    margin: 0;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.multicalwrapper > div > div > div {
+    margin: 0;
+}

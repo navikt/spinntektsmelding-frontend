@@ -12,6 +12,8 @@ import Heading3 from '../components/Heading3/Heading3';
 import Skillelinje from '../components/Skillelinje/Skillelinje';
 import LabelLabel from '../components/LabelLabel/LabelLabel';
 
+import useSWR from 'swr';
+
 import styles from '../styles/Home.module.css';
 import '@navikt/ds-datepicker/lib/index.css';
 
@@ -29,8 +31,13 @@ import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
 import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
 
+const fetcher = (url: string) => fetch(url).then((data) => data.json());
+
+const ARBEIDSGIVER_URL = '/api/arbeidsgivere';
+
 const Home: NextPage = () => {
   const setRoute = useRoute();
+  const { data, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
 
   const [state, dispatch] = useImmerReducer(formReducer, initialState);
 
@@ -344,7 +351,7 @@ const Home: NextPage = () => {
                 />
               )}
 
-              {state.egenmeldingsperioder && !state.behandlingsdager && (
+              {state.egenmeldingsperioder && (
                 <>
                   <Skillelinje />
                   <Egenmelding

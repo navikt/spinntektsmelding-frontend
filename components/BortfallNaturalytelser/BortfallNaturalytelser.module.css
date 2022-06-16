@@ -1,0 +1,20 @@
+.naturalytelser td,
+.naturalytelser th {    
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+.naturalytelser td:last-child,
+.naturalytelser th:last-child {
+    padding-right: 0;
+    float: right;
+  }
+
+.naturalytelser th:first-child,
+.naturalytelser td:first-child {
+    padding-left: 0;
+  }
+
+.datokolonne {
+  text-align: end;
+}
