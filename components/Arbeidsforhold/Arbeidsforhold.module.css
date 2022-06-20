@@ -1,0 +1,19 @@
+.arbeidsforhold {
+    display: inline-block;
+    margin-left: 1.25rem;
+}
+
+.checktitle {
+    text-align: left;
+    display: inline-block;
+    width: 3rem;
+}
+
+.check label {
+    padding: .125rem;
+}
+
+.idtitle {
+    display: inline-block;
+    margin-right: 1rem;
+}

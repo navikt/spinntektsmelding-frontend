@@ -7,8 +7,6 @@ import MottattData from './MottattData';
 export const initialState: InntektsmeldingSkjema = {
   opplysningerBekreftet: false,
   egenmeldingsperioder: [{ id: uuid() }],
-  fravaersperiode: [{ id: uuid() }],
-  opprinneligfravaersperiode: [{ id: uuid() }],
   refusjonskravetOpphoerer: false,
   bruttoinntekt: {
     bruttoInntekt: 0,
@@ -29,37 +27,58 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
   switch (action.type) {
     case 'leggTilFravaersperiode': {
       const nyFravaersperiode: Periode = { id: uuid() };
-
-      state.fravaersperiode.push(nyFravaersperiode);
+      if (state.fravaersperiode) {
+        if (!state.fravaersperiode[action.payload]) {
+          state.fravaersperiode[action.payload] = [];
+        }
+      } else {
+        state.fravaersperiode = {};
+        state.fravaersperiode[action.payload] = [];
+      }
+      state.fravaersperiode[action.payload].push(nyFravaersperiode);
 
       return state;
     }
 
     case 'slettFravaersperiode': {
-      const nyePerioder = state.fravaersperiode.filter((element) => element.id !== action.payload);
-
-      state.fravaersperiode = nyePerioder;
+      if (state.fravaersperiode) {
+        const ansattforholdId: Array<string> = Object.keys(state.fravaersperiode);
+        ansattforholdId.forEach((forholdId) => {
+          if (state.fravaersperiode && state.fravaersperiode[forholdId]) {
+            const nyePerioder = state.fravaersperiode[forholdId].filter((element) => element.id !== action.payload);
+            state.fravaersperiode[forholdId] = nyePerioder;
+          }
+        });
+      }
 
       return state;
     }
 
     case 'setFravaersperiodeFraDato': {
-      state.fravaersperiode = state.fravaersperiode.map((periode) => {
-        if (periode.id === action.payload.periodeId) {
-          periode.fra = parseIsoDate(action.payload.value);
-        }
-        return periode;
-      });
+      if (state.fravaersperiode && state.fravaersperiode[action.payload.arbeidsforholdId]) {
+        state.fravaersperiode[action.payload.arbeidsforholdId] = state.fravaersperiode[
+          action.payload.arbeidsforholdId
+        ].map((periode) => {
+          if (periode.id === action.payload.periodeId) {
+            periode.fra = parseIsoDate(action.payload.value);
+          }
+          return periode;
+        });
+      }
       return state;
     }
 
     case 'setFravaersperiodeTilDato': {
-      state.fravaersperiode = state.fravaersperiode.map((periode) => {
-        if (periode.id === action.payload.periodeId) {
-          periode.til = parseIsoDate(action.payload.value);
-        }
-        return periode;
-      });
+      if (state.fravaersperiode && state.fravaersperiode[action.payload.arbeidsforholdId]) {
+        state.fravaersperiode[action.payload.arbeidsforholdId] = state.fravaersperiode[
+          action.payload.arbeidsforholdId
+        ].map((periode) => {
+          if (periode.id === action.payload.periodeId) {
+            periode.til = parseIsoDate(action.payload.value);
+          }
+          return periode;
+        });
+      }
       return state;
     }
 
@@ -233,16 +252,23 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
         manueltKorrigert: false,
         endringsaarsak: ''
       };
-      state.opprinneligbruttoinntekt = JSON.parse(JSON.stringify(state.bruttoinntekt));
-      state.fravaersperiode = fdata.fravaersperiode.map((periode) => {
-        return {
-          fra: parseISO(periode.fra),
-          til: parseISO(periode.til),
-          id: uuid()
-        };
-      });
+      state.opprinneligbruttoinntekt = structuredClone(state.bruttoinntekt);
+      const fravaersKeys = Object.keys(fdata.fravaersperiode) || [];
+      if (fravaersKeys.length > 0 && state.fravaersperiode) {
+        state.fravaersperiode = {};
+        // debugger; // eslint-disable-line
+        fravaersKeys.forEach((fKeys) => {
+          state.fravaersperiode[fKeys] = fdata.fravaersperiode[fKeys].map((periode) => {
+            return {
+              fra: parseISO(periode.fra),
+              til: parseISO(periode.til),
+              id: uuid()
+            };
+          });
+        });
+      }
 
-      state.opprinneligfravaersperiode = state.fravaersperiode.map((periode) => periode);
+      state.opprinneligfravaersperiode = structuredClone(state.fravaersperiode);
 
       state.tidligereinntekt = fdata.tidligereinntekt.map((inntekt) => ({
         maanedsnavn: inntekt.maanedsnavn,
@@ -251,16 +277,34 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
       }));
 
       state.behandlingsdager = fdata.behandlingsdager;
+
+      state.arbeidsforhold = fdata.arbeidsforhold.map((forhold) => ({
+        arbeidsforholdId: forhold.arbeidsforholdId,
+        arbeidsforhold: forhold.arbeidsforhold,
+        stillingsprosent: forhold.stillingsprosent,
+        aktiv: true
+      }));
       return state;
     }
 
     case 'tilbakestillFravaersperiode': {
-      state.fravaersperiode = state.opprinneligfravaersperiode.map((periode) => periode);
+      state.fravaersperiode[action.payload] = structuredClone(state.opprinneligfravaersperiode[action.payload]);
       return state;
     }
 
     case 'tilbakestillBruttoinntekt': {
       state.bruttoinntekt = JSON.parse(JSON.stringify(state.opprinneligbruttoinntekt));
+      return state;
+    }
+
+    case 'setArbeidsforhold': {
+      const oppdaterteForhold = state.arbeidsforhold?.map((forhold) => {
+        const aktiv = Boolean(action.payload && action.payload.indexOf(forhold.arbeidsforholdId) > -1);
+        forhold.aktiv = aktiv;
+        return forhold;
+      });
+
+      state.arbeidsforhold = oppdaterteForhold;
       return state;
     }
 

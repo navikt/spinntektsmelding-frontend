@@ -30,6 +30,7 @@ import Behandlingsdager from '../components/Behandlingsdager';
 import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
 import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
+import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -74,11 +75,12 @@ const Home: NextPage = () => {
     });
   };
 
-  const clickTilbakestillFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const clickTilbakestillFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
     event.preventDefault();
 
     dispatch({
-      type: 'tilbakestillFravaersperiode'
+      type: 'tilbakestillFravaersperiode',
+      payload: arbeidsforholdId
     });
   };
 
@@ -122,9 +124,10 @@ const Home: NextPage = () => {
     event.preventDefault();
   };
 
-  const clickLeggTilFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const clickLeggTilFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>, ansattforholdId: string) => {
     dispatch({
-      type: 'leggTilFravaersperiode'
+      type: 'leggTilFravaersperiode',
+      payload: ansattforholdId
     });
 
     event.preventDefault();
@@ -232,22 +235,24 @@ const Home: NextPage = () => {
     });
   };
 
-  const setSykemeldingFraDato = (dateValue: string, periodeId: string) => {
+  const setSykemeldingFraDato = (dateValue: string, periodeId: string, arbeidsforholdId: string) => {
     dispatch({
       type: 'setFravaersperiodeFraDato',
       payload: {
         periodeId,
-        value: dateValue
+        value: dateValue,
+        arbeidsforholdId
       }
     });
   };
 
-  const setSykemeldingTilDato = (dateValue: string, periodeId: string) => {
+  const setSykemeldingTilDato = (dateValue: string, periodeId: string, arbeidsforholdId: string) => {
     dispatch({
       type: 'setFravaersperiodeTilDato',
       payload: {
         periodeId,
-        value: dateValue
+        value: dateValue,
+        arbeidsforholdId
       }
     });
   };
@@ -263,6 +268,14 @@ const Home: NextPage = () => {
     dispatch({
       type: 'setRefusjonskravOpphoersdato',
       payload: dateValue
+    });
+  };
+
+  const onChangeArbeidsforhold = (value: any[]) => {
+    console.log(value); //eslint-disable-line
+    dispatch({
+      type: 'setArbeidsforhold',
+      payload: value
     });
   };
 
@@ -335,6 +348,16 @@ const Home: NextPage = () => {
                 </div>
               </div>
 
+              {state.arbeidsforhold && state.arbeidsforhold.length > 1 && (
+                <>
+                  <Skillelinje />
+                  <Arbeidsforhold
+                    arbeidsforhold={state.arbeidsforhold}
+                    onChangeArbeidsforhold={onChangeArbeidsforhold}
+                  />
+                </>
+              )}
+
               <Skillelinje />
               {state.behandlingsdager && (
                 <Behandlingsdager periode={state.fravaersperiode[0]} onSelect={setBehandlingsdager} />
@@ -343,6 +366,7 @@ const Home: NextPage = () => {
               {!state.behandlingsdager && (
                 <Fravaersperiode
                   perioder={state.fravaersperiode}
+                  arbeidsforhold={state.arbeidsforhold}
                   setSykemeldingFraDato={setSykemeldingFraDato}
                   setSykemeldingTilDato={setSykemeldingTilDato}
                   clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
@@ -356,6 +380,7 @@ const Home: NextPage = () => {
                   <Skillelinje />
                   <Egenmelding
                     egenmeldingsperioder={state.egenmeldingsperioder}
+                    arbeidsforhold={state.arbeidsforhold}
                     setEgenmeldingFraDato={setEgenmeldingFraDato}
                     setEgenmeldingTilDato={setEgenmeldingTilDato}
                     clickSlettEgenmeldingsperiode={clickSlettEgenmeldingsperiode}

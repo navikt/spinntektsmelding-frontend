@@ -54,8 +54,8 @@
 }
 
 .datepickerescape {
-  width: 33%;
   display: inline-block;
+  margin-right: 2rem;
 }
 
 .datepickerlabel {
@@ -144,7 +144,7 @@
 .periodewrapper {
   display: flex;
   gap: 2rem;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
 }
 
 .radiobuttonwrapper > div {

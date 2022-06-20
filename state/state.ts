@@ -36,13 +36,20 @@ export interface Naturalytelse {
   verdi?: number;
 }
 
+export interface IArbeidsforhold {
+  arbeidsforholdId: string;
+  arbeidsforhold: string;
+  stillingsprosent: number;
+  aktiv: boolean;
+}
+
 interface InntektsmeldingSkjema {
   navn?: string;
   identitetsnummer?: string;
   virksomhetsnavn?: string;
   orgnrUnderenhet?: string;
-  fravaersperiode: Array<Periode>;
-  opprinneligfravaersperiode: Array<Periode>;
+  fravaersperiode?: { [key: string]: Array<Periode> };
+  opprinneligfravaersperiode?: { [key: string]: Array<Periode> };
   egenmeldingsperioder: Array<Periode>;
   bruttoinntekt?: Inntekt;
   opprinneligbruttoinntekt?: Inntekt;
@@ -51,10 +58,10 @@ interface InntektsmeldingSkjema {
   lonnISykefravaeret?: LonnISykefravaeret;
   naturalytelser?: Array<Naturalytelse>;
   opplysningerBekreftet: boolean;
-  endreMaanedsinntekt: boolean;
   refusjonskravetOpphoerer: boolean;
   refusjonskravOpphoersdato?: Date;
   behandlingsdager: boolean;
+  arbeidsforhold?: Array<IArbeidsforhold>;
 }
 
 export default InntektsmeldingSkjema;

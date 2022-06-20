@@ -86,6 +86,7 @@ type ActionType =
     }
   | {
       type: 'leggTilFravaersperiode';
+      payload: string;
     }
   | {
       type: 'slettFravaersperiode';
@@ -96,6 +97,7 @@ type ActionType =
       payload: {
         periodeId: string;
         value: string;
+        arbeidsforholdId: string;
       };
     }
   | {
@@ -103,6 +105,7 @@ type ActionType =
       payload: {
         periodeId: string;
         value: string;
+        arbeidsforholdId: string;
       };
     }
   | {
@@ -118,6 +121,7 @@ type ActionType =
     }
   | {
       type: 'tilbakestillFravaersperiode';
+      payload: string;
     }
   | {
       type: 'tilbakestillBruttoinntekt';
@@ -125,6 +129,10 @@ type ActionType =
   | {
       type: 'setBehandlingsdager';
       payload?: Array<Date>;
+    }
+  | {
+      type: 'setArbeidsforhold';
+      payload?: Array<string>;
     }
   | {
       type: 'setEndringsaarsakMaanedsinntekt';

@@ -1,6 +1,6 @@
 import { Datepicker } from '@navikt/ds-datepicker';
 import { Button } from '@navikt/ds-react';
-import { Periode } from '../../state/state';
+import { IArbeidsforhold, Periode } from '../../state/state';
 import styles from '../../styles/Home.module.css';
 import ButtonSlette from '../ButtonSlette/ButtonSlette';
 import Heading3 from '../Heading3/Heading3';
@@ -8,6 +8,7 @@ import LabelLabel from '../LabelLabel/LabelLabel';
 
 interface EgenmeldingProps {
   egenmeldingsperioder: Array<Periode>;
+  arbeidsforhold?: Array<IArbeidsforhold>;
   setEgenmeldingFraDato: (dateValue: string, periodeId: string) => void;
   setEgenmeldingTilDato: (dateValue: string, periodeId: string) => void;
   clickSlettEgenmeldingsperiode: (event: React.MouseEvent<HTMLButtonElement>, periodeId: string) => void;
@@ -16,6 +17,7 @@ interface EgenmeldingProps {
 
 export default function Egenmelding({
   egenmeldingsperioder,
+  arbeidsforhold,
   setEgenmeldingFraDato,
   setEgenmeldingTilDato,
   clickSlettEgenmeldingsperiode,
