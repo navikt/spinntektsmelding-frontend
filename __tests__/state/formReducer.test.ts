@@ -6,75 +6,109 @@ import InntektsmeldingSkjema from '../../state/state';
 describe('formReducer', () => {
   timezone_mock.register('UTC');
   it('should add a fravaersperiode with unique id', () => {
-    expect(initialState.fravaersperiode.length).toBe(1);
+    expect(initialState.fravaersperiode).toBeUndefined();
 
     const newState = produce(initialState, (state) =>
       formReducer(state, {
-        type: 'leggTilFravaersperiode'
+        type: 'leggTilFravaersperiode',
+        payload: 'arbeidsforholdId'
       })
     );
 
-    expect(newState.fravaersperiode.length).toBe(2);
-    expect(newState.fravaersperiode[0].id).toBeTruthy(); // The id is a random textstring
-    expect(newState.fravaersperiode[1].id).toBeTruthy(); // The id is a random textstring
-    expect(newState.fravaersperiode[0].id).not.toBe(newState.fravaersperiode[1].id); // The ids should not be equal
+    expect(newState.fravaersperiode!.arbeidsforholdId.length).toBe(1);
+    expect(newState.fravaersperiode!.arbeidsforholdId[0]!.id).toBeTruthy(); // The id is a random textstring
+
+    const newerState = produce(newState, (state) =>
+      formReducer(state, {
+        type: 'leggTilFravaersperiode',
+        payload: 'arbeidsforholdId'
+      })
+    );
+
+    expect(newerState.fravaersperiode!.arbeidsforholdId.length).toBe(2);
+    expect(newerState.fravaersperiode!.arbeidsforholdId[0]!.id).not.toBe(
+      newerState.fravaersperiode!.arbeidsforholdId[1]!.id
+    ); // The ids should not be equal
   });
 
   it('should remove a fravaersperiode the correct id', () => {
-    expect(initialState.fravaersperiode.length).toBe(1);
+    expect(initialState.fravaersperiode).toBeUndefined();
 
     const newState = produce(initialState, (state) =>
       formReducer(state, {
-        type: 'leggTilFravaersperiode'
+        type: 'leggTilFravaersperiode',
+        payload: 'arbeidsforholdId'
+      })
+    );
+    expect(newState.fravaersperiode!.arbeidsforholdId.length).toBe(1);
+
+    const newerState = produce(newState, (state) =>
+      formReducer(state, {
+        type: 'leggTilFravaersperiode',
+        payload: 'arbeidsforholdId'
       })
     );
 
-    expect(newState.fravaersperiode.length).toBe(2);
+    expect(newerState.fravaersperiode!.arbeidsforholdId.length).toBe(2);
 
-    const periodeId = newState.fravaersperiode[0].id;
-    const remainingPeriodeId = newState.fravaersperiode[1].id;
+    const periodeId = newerState.fravaersperiode!.arbeidsforholdId[0]!.id;
+    const remainingPeriodeId = newerState.fravaersperiode!.arbeidsforholdId[1]!.id;
 
-    const evenNewerState = produce(newState, (state) =>
+    const evenNewerState = produce(newerState, (state) =>
       formReducer(state, {
         type: 'slettFravaersperiode',
         payload: periodeId
       })
     );
 
-    expect(evenNewerState.fravaersperiode.length).toBe(1);
-    expect(evenNewerState.fravaersperiode[0].id).toEqual(remainingPeriodeId);
+    expect(evenNewerState.fravaersperiode!.arbeidsforholdId.length).toBe(1);
+    expect(evenNewerState.fravaersperiode!.arbeidsforholdId[0]!.id).toEqual(remainingPeriodeId);
   });
 
   it('should set fraværsperiode fra to payload', () => {
-    const firstPeriode = initialState.fravaersperiode[0].id;
-
     const newState = produce(initialState, (state) =>
+      formReducer(state, {
+        type: 'leggTilFravaersperiode',
+        payload: 'arbeidsforholdId'
+      })
+    );
+    const firstPeriode = newState.fravaersperiode!.arbeidsforholdId[0]!.id;
+
+    const newerState = produce(newState, (state) =>
       formReducer(state, {
         type: 'setFravaersperiodeFraDato',
         payload: {
           periodeId: firstPeriode,
-          value: '2002-02-02'
+          value: '2002-02-02',
+          arbeidsforholdId: 'arbeidsforholdId'
         }
       })
     );
 
-    expect(newState.fravaersperiode[0].fra).toEqual(new Date('2002-02-02'));
+    expect(newerState.fravaersperiode!.arbeidsforholdId[0]!.fra).toEqual(new Date('2002-02-02'));
   });
 
   it('should set fraværsperiode til to payload', () => {
-    const firstPeriode = initialState.fravaersperiode[0].id;
-
     const newState = produce(initialState, (state) =>
+      formReducer(state, {
+        type: 'leggTilFravaersperiode',
+        payload: 'arbeidsforholdId'
+      })
+    );
+    const firstPeriode = newState.fravaersperiode!.arbeidsforholdId[0]!.id;
+
+    const newerState = produce(newState, (state) =>
       formReducer(state, {
         type: 'setFravaersperiodeTilDato',
         payload: {
           periodeId: firstPeriode,
-          value: '2002-02-02'
+          value: '2002-02-02',
+          arbeidsforholdId: 'arbeidsforholdId'
         }
       })
     );
 
-    expect(newState.fravaersperiode[0].til).toEqual(new Date('2002-02-02'));
+    expect(newerState.fravaersperiode!.arbeidsforholdId[0]!.til).toEqual(new Date('2002-02-02'));
   });
 
   it('should add a egenmeldingsperioder with unique id', () => {
