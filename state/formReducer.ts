@@ -1,12 +1,12 @@
 import ActionType from './actiontype';
 import InntektsmeldingSkjema, { Naturalytelse, Periode } from './state';
-import { v4 as uuid } from 'uuid';
+import { nanoid } from 'nanoid';
 import { parse, parseISO } from 'date-fns';
 import MottattData from './MottattData';
 
 export const initialState: InntektsmeldingSkjema = {
   opplysningerBekreftet: false,
-  egenmeldingsperioder: [{ id: uuid() }],
+  egenmeldingsperioder: [{ id: nanoid() }],
   refusjonskravetOpphoerer: false,
   bruttoinntekt: {
     bruttoInntekt: 0,
@@ -29,7 +29,7 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
 
   switch (action.type) {
     case 'leggTilFravaersperiode': {
-      const nyFravaersperiode: Periode = { id: uuid() };
+      const nyFravaersperiode: Periode = { id: nanoid() };
       if (state.fravaersperiode) {
         if (!state.fravaersperiode[action.payload]) {
           state.fravaersperiode[action.payload] = [];
@@ -86,7 +86,7 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
     }
 
     case 'leggTilEgenmeldingsperiode': {
-      const nyEgenmeldingsperiode: Periode = { id: uuid() };
+      const nyEgenmeldingsperiode: Periode = { id: nanoid() };
 
       state.egenmeldingsperioder.push(nyEgenmeldingsperiode);
 
@@ -96,7 +96,7 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
     case 'slettEgenmeldingsperiode': {
       const nyePerioder = state.egenmeldingsperioder.filter((element) => element.id !== action.payload);
 
-      state.egenmeldingsperioder = nyePerioder.length === 0 ? [{ id: uuid() }] : nyePerioder;
+      state.egenmeldingsperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
 
       return state;
     }
@@ -116,7 +116,7 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
     case 'toggleNaturalytelser': {
       if (action.payload === true) {
         const nyNaturalytelseRad: Naturalytelse = {
-          id: uuid()
+          id: nanoid()
         };
 
         state.naturalytelser = [nyNaturalytelseRad];
@@ -143,7 +143,7 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
 
     case 'leggTilNaturalytelseRad': {
       const nyNaturalytelseRad: Naturalytelse = {
-        id: uuid()
+        id: nanoid()
       };
 
       state.naturalytelser!.push(nyNaturalytelseRad);
@@ -261,11 +261,11 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
       if (fravaersKeys.length > 0) {
         state.fravaersperiode = {};
         fravaersKeys.forEach((fKeys) => {
-          state.fravaersperiode[fKeys] = fdata.fravaersperiode[fKeys].map((periode) => {
+          state.fravaersperiode![fKeys] = fdata.fravaersperiode[fKeys].map((periode) => {
             return {
               fra: parseISO(periode.fra),
               til: parseISO(periode.til),
-              id: uuid()
+              id: nanoid()
             };
           });
         });
@@ -276,7 +276,7 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
       state.tidligereinntekt = fdata.tidligereinntekt.map((inntekt) => ({
         maanedsnavn: inntekt.maanedsnavn,
         inntekt: inntekt.inntekt,
-        id: uuid()
+        id: nanoid()
       }));
 
       state.behandlingsdager = fdata.behandlingsdager;
@@ -335,7 +335,7 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
             state.fravaersperiode![arbeidsforholdId] = periodeMaster.map((periode) => {
               return {
                 ...periode,
-                id: uuid()
+                id: nanoid()
               };
             });
           }
