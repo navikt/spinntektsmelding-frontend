@@ -50,7 +50,7 @@ interface InntektsmeldingSkjema {
   orgnrUnderenhet?: string;
   fravaersperiode?: { [key: string]: Array<Periode> };
   opprinneligfravaersperiode?: { [key: string]: Array<Periode> };
-  egenmeldingsperioder: Array<Periode>;
+  egenmeldingsperioder: { [key: string]: Array<Periode> };
   bruttoinntekt?: Inntekt;
   opprinneligbruttoinntekt?: Inntekt;
   tidligereinntekt?: Array<HistoriskInntekt>;

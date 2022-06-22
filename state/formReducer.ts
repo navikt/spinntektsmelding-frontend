@@ -6,7 +6,7 @@ import MottattData from './MottattData';
 
 export const initialState: InntektsmeldingSkjema = {
   opplysningerBekreftet: false,
-  egenmeldingsperioder: [{ id: nanoid() }],
+  egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
   refusjonskravetOpphoerer: false,
   bruttoinntekt: {
     bruttoInntekt: 0,
@@ -94,9 +94,12 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
     }
 
     case 'slettEgenmeldingsperiode': {
-      const nyePerioder = state.egenmeldingsperioder.filter((element) => element.id !== action.payload);
+      const forholdKeys = Object.keys(state.egenmeldingsperioder);
 
-      state.egenmeldingsperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
+      forholdKeys.forEach((forholdKey) => {
+        const nyePerioder = state.egenmeldingsperioder[forholdKey].filter((element) => element.id !== action.payload);
+        state.egenmeldingsperioder[forholdKey] = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
+      });
 
       return state;
     }
@@ -163,26 +166,33 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
     }
 
     case 'setEgenmeldingFraDato': {
-      state.egenmeldingsperioder = state.egenmeldingsperioder.map((periode) => {
-        if (periode.id === action.payload.periodeId) {
-          const oppdatertPeriod: Periode = periode;
-          oppdatertPeriod.fra = parseIsoDate(action.payload.value);
-          return oppdatertPeriod;
-        }
-        return periode;
+      const forholdKeys = Object.keys(state.egenmeldingsperioder);
+
+      forholdKeys.forEach((forholdKey) => {
+        state.egenmeldingsperioder[forholdKey] = state.egenmeldingsperioder[forholdKey].map((periode) => {
+          if (periode.id === action.payload.periodeId) {
+            periode.fra = parseIsoDate(action.payload.value);
+            return periode;
+          }
+          return periode;
+        });
       });
       return state;
     }
 
     case 'setEgenmeldingTilDato': {
-      state.egenmeldingsperioder = state.egenmeldingsperioder.map((periode) => {
-        if (periode.id === action.payload.periodeId) {
-          const oppdatertPeriod: Periode = periode;
-          oppdatertPeriod.til = parseIsoDate(action.payload.value);
-          return oppdatertPeriod;
-        }
-        return periode;
+      const forholdKeys = Object.keys(state.egenmeldingsperioder);
+
+      forholdKeys.forEach((forholdKey) => {
+        state.egenmeldingsperioder[forholdKey] = state.egenmeldingsperioder[forholdKey].map((periode) => {
+          if (periode.id === action.payload.periodeId) {
+            periode.til = parseIsoDate(action.payload.value);
+            return periode;
+          }
+          return periode;
+        });
       });
+
       return state;
     }
 
@@ -287,6 +297,12 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
         stillingsprosent: forhold.stillingsprosent,
         aktiv: true
       }));
+
+      state.egenmeldingsperioder = {};
+      fdata.arbeidsforhold.forEach((forhold) => {
+        state.egenmeldingsperioder[forhold.arbeidsforholdId] = [{ id: nanoid() }];
+      });
+
       return state;
     }
 

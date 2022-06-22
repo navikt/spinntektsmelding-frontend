@@ -29,9 +29,6 @@ export default function Fravaersperiode({
 }: FravaersperiodeProps) {
   if (!arbeidsforhold) return null;
 
-  console.log(arbeidsforhold); // eslint-disable-line
-  console.log(perioder); // eslint-disable-line
-
   return (
     <>
       <Heading3>Fraværsperiode</Heading3>
@@ -40,24 +37,26 @@ export default function Fravaersperiode({
         den ansatte vært på jobb noen av dagene eller om den på annen måte ikke er korrekt. Du skal ikke ta med
         eventuelle egenmeldingsdager i dette steget.
       </p>
-      {arbeidsforhold.map((forhold, forholdIndex) => (
-        <FravaerEnkeltperiode
-          perioder={perioder[forhold.arbeidsforholdId]}
-          arbeidsforhold={forhold}
-          setSykemeldingFraDato={setSykemeldingFraDato}
-          setSykemeldingTilDato={setSykemeldingTilDato}
-          clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
-          clickSlettFravaersperiode={clickSlettFravaersperiode}
-          clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
-          harFlereArbeidsforhold={arbeidsforhold.length > 1}
-          forsteArbeidsforhold={forholdIndex === 0}
-          flereEnnToArbeidsforhold={arbeidsforhold.length > 2}
-          setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
-          clickEndreFravaersperiode={clickEndreFravaersperiode}
-          sammePeriodeForAlle={sammePeriodeForAlle}
-          key={forhold.arbeidsforholdId}
-        />
-      ))}
+      {arbeidsforhold
+        .filter((forhold) => forhold.aktiv)
+        .map((forhold, forholdIndex) => (
+          <FravaerEnkeltperiode
+            perioder={perioder[forhold.arbeidsforholdId]}
+            arbeidsforhold={forhold}
+            setSykemeldingFraDato={setSykemeldingFraDato}
+            setSykemeldingTilDato={setSykemeldingTilDato}
+            clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
+            clickSlettFravaersperiode={clickSlettFravaersperiode}
+            clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
+            harFlereArbeidsforhold={arbeidsforhold.length > 1}
+            forsteArbeidsforhold={forholdIndex === 0}
+            flereEnnToArbeidsforhold={arbeidsforhold.length > 2}
+            setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
+            clickEndreFravaersperiode={clickEndreFravaersperiode}
+            sammePeriodeForAlle={sammePeriodeForAlle}
+            key={forhold.arbeidsforholdId}
+          />
+        ))}
     </>
   );
 }

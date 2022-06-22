@@ -1,5 +1,4 @@
 import { Organisasjon } from '../components/Banner/Banner';
-import { OppdatertMaanedsintekt } from '../components/BeregnetMaanedsinntekt/BeregnetMaanedsinntekt';
 import { YesNo } from './state';
 
 type ActionType =

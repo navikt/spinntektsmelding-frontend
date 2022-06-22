@@ -272,7 +272,6 @@ const Home: NextPage = () => {
   };
 
   const onChangeArbeidsforhold = (value: any[]) => {
-    console.log(value); //eslint-disable-line
     dispatch({
       type: 'setArbeidsforhold',
       payload: value
@@ -395,17 +394,16 @@ const Home: NextPage = () => {
               {state.egenmeldingsperioder && (
                 <>
                   <Skillelinje />
-                  {state.arbeidsforhold &&
-                    state.arbeidsforhold.map((forhold) => {
-                      <Egenmelding
-                        egenmeldingsperioder={state.egenmeldingsperioder}
-                        arbeidsforhold={forhold}
-                        setEgenmeldingFraDato={setEgenmeldingFraDato}
-                        setEgenmeldingTilDato={setEgenmeldingTilDato}
-                        clickSlettEgenmeldingsperiode={clickSlettEgenmeldingsperiode}
-                        clickLeggTilEgenmeldingsperiode={clickLeggTilEgenmeldingsperiode}
-                      />;
-                    })}
+                  {state.arbeidsforhold && (
+                    <Egenmelding
+                      egenmeldingsperioder={state.egenmeldingsperioder}
+                      arbeidsforhold={state.arbeidsforhold}
+                      setEgenmeldingFraDato={setEgenmeldingFraDato}
+                      setEgenmeldingTilDato={setEgenmeldingTilDato}
+                      clickSlettEgenmeldingsperiode={clickSlettEgenmeldingsperiode}
+                      clickLeggTilEgenmeldingsperiode={clickLeggTilEgenmeldingsperiode}
+                    />
+                  )}
                 </>
               )}
 
