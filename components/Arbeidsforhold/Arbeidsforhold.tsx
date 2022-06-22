@@ -8,11 +8,7 @@ interface ArbeidsforholdProps {
 }
 
 export default function Arbeidsforhold({ arbeidsforhold, onChangeArbeidsforhold }: ArbeidsforholdProps) {
-  const isChecked = (forholdsId: string): boolean => {
-    return Boolean(arbeidsforhold.find((forhold) => forhold.arbeidsforholdId === forholdsId)?.aktiv === true);
-  };
-  //  checked={isChecked(forhold.arbeidsforholdId)}
-  const afgroupId = arbeidsforhold.map((forhold) => forhold.arbeidsforholdId);
+  const afgroupId = arbeidsforhold.filter((forhold) => forhold.aktiv).map((forhold) => forhold.arbeidsforholdId);
 
   return (
     <div>
