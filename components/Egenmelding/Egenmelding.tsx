@@ -8,7 +8,7 @@ import LabelLabel from '../LabelLabel/LabelLabel';
 
 interface EgenmeldingProps {
   egenmeldingsperioder: Array<Periode>;
-  arbeidsforhold?: Array<IArbeidsforhold>;
+  arbeidsforhold?: IArbeidsforhold;
   setEgenmeldingFraDato: (dateValue: string, periodeId: string) => void;
   setEgenmeldingTilDato: (dateValue: string, periodeId: string) => void;
   clickSlettEgenmeldingsperiode: (event: React.MouseEvent<HTMLButtonElement>, periodeId: string) => void;

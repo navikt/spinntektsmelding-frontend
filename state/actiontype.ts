@@ -135,6 +135,16 @@ type ActionType =
       payload?: Array<string>;
     }
   | {
+      type: 'setSammeFravarePaaArbeidsforhold';
+      payload: {
+        arbeidsforholdId: string;
+        set: boolean;
+      };
+    }
+  | {
+      type: 'endreFravaersperiode';
+    }
+  | {
       type: 'setEndringsaarsakMaanedsinntekt';
       payload: string;
     };

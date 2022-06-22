@@ -14,11 +14,14 @@ import { Button, Checkbox } from '@navikt/ds-react';
 interface FravaerEnkeltperiodeProps {
   perioder: Array<Periode>;
   arbeidsforhold: IArbeidsforhold;
+  sammePeriodeForAlle: boolean;
   setSykemeldingFraDato: (dateValue: string, periodeId: string, arbeidsforholdId: string) => void;
   setSykemeldingTilDato: (dateValue: string, periodeId: string, arbeidsforholdId: string) => void;
+  setSammeFravarePaaArbeidsforhold: (event: React.ChangeEvent<HTMLInputElement>, arbeidsforholdId: string) => void;
   clickSlettFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, periodeId: string) => void;
   clickLeggTilFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
   clickTilbakestillFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
+  clickEndreFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
   harFlereArbeidsforhold: boolean;
   forsteArbeidsforhold: boolean;
   flereEnnToArbeidsforhold: boolean;
@@ -27,11 +30,14 @@ interface FravaerEnkeltperiodeProps {
 export default function FravaerEnkeltperiode({
   perioder,
   arbeidsforhold,
+  sammePeriodeForAlle,
   setSykemeldingFraDato,
   setSykemeldingTilDato,
+  setSammeFravarePaaArbeidsforhold,
   clickSlettFravaersperiode,
   clickLeggTilFravaersperiode,
   clickTilbakestillFravaersperiode,
+  clickEndreFravaersperiode,
   harFlereArbeidsforhold,
   forsteArbeidsforhold,
   flereEnnToArbeidsforhold
@@ -45,6 +51,12 @@ export default function FravaerEnkeltperiode({
     setEndreSykemelding(!endreSykemelding);
 
     clickTilbakestillFravaersperiode(event, arbeidsforholdId);
+  };
+
+  const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
+    event.preventDefault();
+    clickEndreFravaersperiode(event, arbeidsforholdId);
+    setEndreSykemelding(!endreSykemelding);
   };
 
   return (
@@ -110,8 +122,21 @@ export default function FravaerEnkeltperiode({
           )}
           {harFlereArbeidsforhold && forsteArbeidsforhold && periodeIndex === perioder.length - 1 && (
             <div>
-              {!flereEnnToArbeidsforhold && <Checkbox>Bruk samme for det andre arbeidsforholdet</Checkbox>}
-              {flereEnnToArbeidsforhold && <Checkbox>Bruk samme for de andre arbeidsforholdene</Checkbox>}
+              {!flereEnnToArbeidsforhold && (
+                <Checkbox
+                  onChange={(event) => setSammeFravarePaaArbeidsforhold(event, arbeidsforhold.arbeidsforholdId)}
+                >
+                  Bruk samme for det andre arbeidsforholdet
+                </Checkbox>
+              )}
+              {flereEnnToArbeidsforhold && (
+                <Checkbox
+                  onChange={(event) => setSammeFravarePaaArbeidsforhold(event, arbeidsforhold.arbeidsforholdId)}
+                  checked={sammePeriodeForAlle}
+                >
+                  Bruk samme for de andre arbeidsforholdene
+                </Checkbox>
+              )}
             </div>
           )}
         </div>
@@ -120,7 +145,7 @@ export default function FravaerEnkeltperiode({
         <Button
           variant='secondary'
           className={styles.endrebutton}
-          onClick={() => setEndreSykemelding(!endreSykemelding)}
+          onClick={(event) => clickEndreFravaersperiodeHandler(event, arbeidsforhold.arbeidsforholdId)}
         >
           Endre
         </Button>

@@ -32,7 +32,7 @@ export default function Arbeidsforhold({ arbeidsforhold, onChangeArbeidsforhold 
           </thead>
           <tbody>
             {arbeidsforhold.map((forhold) => (
-              <tr>
+              <tr key={forhold.arbeidsforholdId}>
                 <td className={localStyle.check}>
                   <Checkbox value={forhold.arbeidsforholdId}>
                     <div className={localStyle.arbeidsforhold}>{forhold.arbeidsforhold}</div>

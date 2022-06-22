@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { IArbeidsforhold, Periode } from '../../state/state';
 import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltperiode from './FravaerEnkeltperiode';
@@ -6,23 +5,32 @@ import FravaerEnkeltperiode from './FravaerEnkeltperiode';
 interface FravaersperiodeProps {
   perioder: Array<Periode>;
   arbeidsforhold: Array<IArbeidsforhold>;
+  sammePeriodeForAlle: boolean;
   setSykemeldingFraDato: (dateValue: string, periodeId: string, arbeidsforholdId: string) => void;
   setSykemeldingTilDato: (dateValue: string, periodeId: string, arbeidsforholdId: string) => void;
+  setSammeFravarePaaArbeidsforhold: (event: React.ChangeEvent<HTMLInputElement>, arbeidsforholdId: string) => void;
   clickSlettFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, periodeId: string) => void;
   clickLeggTilFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
   clickTilbakestillFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  clickEndreFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
 }
 
 export default function Fravaersperiode({
   perioder,
   arbeidsforhold,
+  sammePeriodeForAlle,
   setSykemeldingFraDato,
   setSykemeldingTilDato,
   clickSlettFravaersperiode,
   clickLeggTilFravaersperiode,
-  clickTilbakestillFravaersperiode
+  clickTilbakestillFravaersperiode,
+  setSammeFravarePaaArbeidsforhold,
+  clickEndreFravaersperiode
 }: FravaersperiodeProps) {
   if (!arbeidsforhold) return null;
+
+  console.log(arbeidsforhold); // eslint-disable-line
+  console.log(perioder); // eslint-disable-line
 
   return (
     <>
@@ -44,6 +52,9 @@ export default function Fravaersperiode({
           harFlereArbeidsforhold={arbeidsforhold.length > 1}
           forsteArbeidsforhold={forholdIndex === 0}
           flereEnnToArbeidsforhold={arbeidsforhold.length > 2}
+          setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
+          clickEndreFravaersperiode={clickEndreFravaersperiode}
+          sammePeriodeForAlle={sammePeriodeForAlle}
           key={forhold.arbeidsforholdId}
         />
       ))}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
@@ -19,7 +19,7 @@ import '@navikt/ds-datepicker/lib/index.css';
 
 import formReducer, { initialState } from '../state/formReducer';
 import { YesNo } from '../state/state';
-import { useImmerReducer } from 'use-immer';
+
 import ButtonSlette from '../components/ButtonSlette/ButtonSlette';
 import Script from 'next/script';
 import SelectNaturalytelser from '../components/SelectNaturalytelser/SelectNaturalytelser';
@@ -40,7 +40,7 @@ const Home: NextPage = () => {
   const setRoute = useRoute();
   const { data, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
 
-  const [state, dispatch] = useImmerReducer(formReducer, initialState);
+  const [state, dispatch] = useReducer(formReducer, initialState);
 
   const [arbeidsgivere, setArbeidsgivere] = useState([]);
 
@@ -279,6 +279,20 @@ const Home: NextPage = () => {
     });
   };
 
+  const setSammeFravarePaaArbeidsforhold = (event: React.ChangeEvent<HTMLInputElement>, arbeidsforholdId: string) => {
+    dispatch({
+      type: 'setSammeFravarePaaArbeidsforhold',
+      payload: { arbeidsforholdId: arbeidsforholdId, set: !!event.currentTarget.checked }
+    });
+  };
+
+  const clickEndreFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>, _arbeidsforholdId: string) => {
+    event.preventDefault();
+    dispatch({
+      type: 'endreFravaersperiode'
+    });
+  };
+
   useEffect(() => {
     fetch('/api/arbeidsgivere').then((data) => {
       data.json().then((jsonData) => {
@@ -367,25 +381,31 @@ const Home: NextPage = () => {
                 <Fravaersperiode
                   perioder={state.fravaersperiode}
                   arbeidsforhold={state.arbeidsforhold}
+                  sammePeriodeForAlle={state.sammeFravaersperiode}
                   setSykemeldingFraDato={setSykemeldingFraDato}
                   setSykemeldingTilDato={setSykemeldingTilDato}
+                  setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
                   clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
                   clickSlettFravaersperiode={clickSlettFravaersperiode}
                   clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
+                  clickEndreFravaersperiode={clickEndreFravaersperiode}
                 />
               )}
 
               {state.egenmeldingsperioder && (
                 <>
                   <Skillelinje />
-                  <Egenmelding
-                    egenmeldingsperioder={state.egenmeldingsperioder}
-                    arbeidsforhold={state.arbeidsforhold}
-                    setEgenmeldingFraDato={setEgenmeldingFraDato}
-                    setEgenmeldingTilDato={setEgenmeldingTilDato}
-                    clickSlettEgenmeldingsperiode={clickSlettEgenmeldingsperiode}
-                    clickLeggTilEgenmeldingsperiode={clickLeggTilEgenmeldingsperiode}
-                  />
+                  {state.arbeidsforhold &&
+                    state.arbeidsforhold.map((forhold) => {
+                      <Egenmelding
+                        egenmeldingsperioder={state.egenmeldingsperioder}
+                        arbeidsforhold={forhold}
+                        setEgenmeldingFraDato={setEgenmeldingFraDato}
+                        setEgenmeldingTilDato={setEgenmeldingTilDato}
+                        clickSlettEgenmeldingsperiode={clickSlettEgenmeldingsperiode}
+                        clickLeggTilEgenmeldingsperiode={clickLeggTilEgenmeldingsperiode}
+                      />;
+                    })}
                 </>
               )}
 

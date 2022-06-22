@@ -62,6 +62,7 @@ interface InntektsmeldingSkjema {
   refusjonskravOpphoersdato?: Date;
   behandlingsdager: boolean;
   arbeidsforhold?: Array<IArbeidsforhold>;
+  sammeFravaersperiode: boolean;
 }
 
 export default InntektsmeldingSkjema;

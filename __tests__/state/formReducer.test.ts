@@ -2,6 +2,8 @@ import formReducer, { initialState } from '../../state/formReducer';
 import produce from 'immer';
 import timezone_mock from 'timezone-mock';
 import InntektsmeldingSkjema from '../../state/state';
+import v8 from 'v8';
+const structuredClone = (o) => v8.deserialize(v8.serialize(o));
 
 describe('formReducer', () => {
   timezone_mock.register('UTC');

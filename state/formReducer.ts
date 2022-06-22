@@ -20,10 +20,13 @@ export const initialState: InntektsmeldingSkjema = {
     manueltKorrigert: false,
     endringsaarsak: ''
   },
-  behandlingsdager: false
+  behandlingsdager: false,
+  sammeFravaersperiode: false
 };
 
-export default function (state: InntektsmeldingSkjema, action: ActionType): InntektsmeldingSkjema {
+export default function formReducer(orgState: InntektsmeldingSkjema, action: ActionType): InntektsmeldingSkjema {
+  const state = structuredClone(orgState);
+
   switch (action.type) {
     case 'leggTilFravaersperiode': {
       const nyFravaersperiode: Periode = { id: uuid() };
@@ -254,9 +257,9 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
       };
       state.opprinneligbruttoinntekt = structuredClone(state.bruttoinntekt);
       const fravaersKeys = Object.keys(fdata.fravaersperiode) || [];
-      if (fravaersKeys.length > 0 && state.fravaersperiode) {
+
+      if (fravaersKeys.length > 0) {
         state.fravaersperiode = {};
-        // debugger; // eslint-disable-line
         fravaersKeys.forEach((fKeys) => {
           state.fravaersperiode[fKeys] = fdata.fravaersperiode[fKeys].map((periode) => {
             return {
@@ -268,7 +271,7 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
         });
       }
 
-      state.opprinneligfravaersperiode = structuredClone(state.fravaersperiode);
+      state.opprinneligfravaersperiode = structuredClone({ ...state.fravaersperiode });
 
       state.tidligereinntekt = fdata.tidligereinntekt.map((inntekt) => ({
         maanedsnavn: inntekt.maanedsnavn,
@@ -288,7 +291,15 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
     }
 
     case 'tilbakestillFravaersperiode': {
-      state.fravaersperiode[action.payload] = structuredClone(state.opprinneligfravaersperiode[action.payload]);
+      if (
+        state.fravaersperiode &&
+        state.fravaersperiode[action.payload] &&
+        state.opprinneligfravaersperiode &&
+        state.opprinneligfravaersperiode[action.payload]
+      ) {
+        const clone = structuredClone(state.opprinneligfravaersperiode[action.payload]);
+        state.fravaersperiode[action.payload] = clone;
+      }
       return state;
     }
 
@@ -305,6 +316,40 @@ export default function (state: InntektsmeldingSkjema, action: ActionType): Innt
       });
 
       state.arbeidsforhold = oppdaterteForhold;
+      return state;
+    }
+
+    case 'setSammeFravarePaaArbeidsforhold': {
+      const fravaersKeys = Object.keys(state.fravaersperiode!);
+      if (state.fravaersperiode && fravaersKeys.indexOf(action.payload.arbeidsforholdId) > -1) {
+        state.sammeFravaersperiode = true;
+      }
+
+      if (state.fravaersperiode && state.fravaersperiode[action.payload.arbeidsforholdId]) {
+        const periodeMaster: Periode[] = state.fravaersperiode[action.payload.arbeidsforholdId];
+
+        const oppdaterbarePerioder = fravaersKeys.filter((key) => key !== action.payload.arbeidsforholdId);
+
+        oppdaterbarePerioder.forEach((arbeidsforholdId) => {
+          if (arbeidsforholdId !== action.payload.arbeidsforholdId) {
+            state.fravaersperiode![arbeidsforholdId] = periodeMaster.map((periode) => {
+              return {
+                ...periode,
+                id: uuid()
+              };
+            });
+          }
+        });
+      }
+
+      state.sammeFravaersperiode = action.payload.set;
+
+      return state;
+    }
+
+    case 'endreFravaersperiode': {
+      state.sammeFravaersperiode = false;
+
       return state;
     }
 
