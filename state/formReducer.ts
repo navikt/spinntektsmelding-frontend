@@ -3,11 +3,11 @@ import InntektsmeldingSkjema, { Naturalytelse, Periode } from './state';
 import { nanoid } from 'nanoid';
 import { parse, parseISO } from 'date-fns';
 import MottattData from './MottattData';
+import stringishToNumber from '../utils/stringishToNumber';
 
 export const initialState: InntektsmeldingSkjema = {
   opplysningerBekreftet: false,
   egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
-  refusjonskravetOpphoerer: false,
   bruttoinntekt: {
     bruttoInntekt: 0,
     bekreftet: false,
@@ -45,8 +45,8 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
 
     case 'slettFravaersperiode': {
       if (state.fravaersperiode) {
-        const ansattforholdId: Array<string> = Object.keys(state.fravaersperiode);
-        ansattforholdId.forEach((forholdId) => {
+        const arbeidsforholdId: Array<string> = Object.keys(state.fravaersperiode);
+        arbeidsforholdId.forEach((forholdId) => {
           if (state.fravaersperiode && state.fravaersperiode[forholdId]) {
             const nyePerioder = state.fravaersperiode[forholdId].filter((element) => element.id !== action.payload);
             state.fravaersperiode[forholdId] = nyePerioder;
@@ -87,8 +87,15 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
 
     case 'leggTilEgenmeldingsperiode': {
       const nyEgenmeldingsperiode: Periode = { id: nanoid() };
+      if (!state.egenmeldingsperioder) {
+        state.egenmeldingsperioder = {};
+      }
 
-      state.egenmeldingsperioder.push(nyEgenmeldingsperiode);
+      if (state.egenmeldingsperioder[action.payload]) {
+        state.egenmeldingsperioder[action.payload].push(nyEgenmeldingsperiode);
+      } else {
+        state.egenmeldingsperioder[action.payload] = [nyEgenmeldingsperiode];
+      }
 
       return state;
     }
@@ -104,16 +111,39 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
       return state;
     }
 
-    case 'toggleBetalerArbeidsgiverHeleEllerDeler':
+    case 'toggleBetalerArbeidsgiverHeleEllerDeler': {
       if (!state.lonnISykefravaeret) {
-        state.lonnISykefravaeret = { status: action.payload };
-      } else state.lonnISykefravaeret.status = action.payload;
+        state.lonnISykefravaeret = {};
+      }
+      if (!state.lonnISykefravaeret[action.payload.arbeidsforholdId]) {
+        state.lonnISykefravaeret[action.payload.arbeidsforholdId] = { status: action.payload.status };
+      } else {
+        state.lonnISykefravaeret[action.payload.arbeidsforholdId].status = action.payload.status;
+      }
       return state;
+    }
+
+    case 'setArbeidsgiverBetalerBelop': {
+      if (!state.lonnISykefravaeret) {
+        state.lonnISykefravaeret = {};
+      }
+      if (!state.lonnISykefravaeret[action.payload.arbeidsforholdId]) {
+        state.lonnISykefravaeret[action.payload.arbeidsforholdId] = { belop: stringishToNumber(action.payload.value) };
+      } else {
+        state.lonnISykefravaeret[action.payload.arbeidsforholdId].belop = stringishToNumber(action.payload.value);
+      }
+      return state;
+    }
 
     case 'toggleBetalerArbeidsgiverFullLonnIArbeidsgiverperioden':
       if (!state.fullLonnIArbeidsgiverPerioden) {
-        state.fullLonnIArbeidsgiverPerioden = { status: action.payload };
-      } else state.fullLonnIArbeidsgiverPerioden.status = action.payload;
+        state.fullLonnIArbeidsgiverPerioden = {};
+      }
+
+      if (!state.fullLonnIArbeidsgiverPerioden[action.payload.arbeidsforholdId]) {
+        state.fullLonnIArbeidsgiverPerioden[action.payload.arbeidsforholdId] = { status: action.payload.status };
+      } else state.fullLonnIArbeidsgiverPerioden[action.payload.arbeidsforholdId].status = action.payload.status;
+
       return state;
 
     case 'toggleNaturalytelser': {
@@ -130,11 +160,44 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
     }
 
     case 'toggleRefusjonskravetOpphoerer':
-      state.refusjonskravetOpphoerer = action.payload;
+      if (state.refusjonskravetOpphoerer?.[action.payload.arbeidsforholdId]) {
+        state.refusjonskravetOpphoerer[action.payload.arbeidsforholdId].status = action.payload.status;
+      } else {
+        if (!state.refusjonskravetOpphoerer) {
+          state.refusjonskravetOpphoerer = {};
+        }
+        state.refusjonskravetOpphoerer[action.payload.arbeidsforholdId] = {
+          status: action.payload.status
+        };
+      }
       return state;
 
     case 'setRefusjonskravOpphoersdato': {
-      state.refusjonskravOpphoersdato = parseIsoDate(action.payload);
+      if (state.refusjonskravetOpphoerer?.[action.payload.arbeidsforholdId]) {
+        state.refusjonskravetOpphoerer[action.payload.arbeidsforholdId].opphorsdato = parseIsoDate(
+          action.payload.value
+        );
+      } else {
+        if (!state.refusjonskravetOpphoerer) {
+          state.refusjonskravetOpphoerer = {};
+        }
+        state.refusjonskravetOpphoerer[action.payload.arbeidsforholdId] = {
+          opphorsdato: parseIsoDate(action.payload.value)
+        };
+      }
+
+      return state;
+    }
+
+    case 'setBegrunnelseRedusertUtbetaling': {
+      if (state.fullLonnIArbeidsgiverPerioden?.[action.payload.arbeidsforholdId]) {
+        state.fullLonnIArbeidsgiverPerioden[action.payload.arbeidsforholdId].begrunnelse = action.payload.value;
+      } else {
+        if (!state.fullLonnIArbeidsgiverPerioden) {
+          state.fullLonnIArbeidsgiverPerioden = {};
+        }
+        state.fullLonnIArbeidsgiverPerioden[action.payload.arbeidsforholdId] = { begrunnelse: action.payload.value };
+      }
       return state;
     }
 

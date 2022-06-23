@@ -3,15 +3,15 @@ import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltperiode from './FravaerEnkeltperiode';
 
 interface FravaersperiodeProps {
-  perioder: Array<Periode>;
-  arbeidsforhold: Array<IArbeidsforhold>;
+  perioder?: { [key: string]: Array<Periode> };
+  arbeidsforhold?: Array<IArbeidsforhold>;
   sammePeriodeForAlle: boolean;
   setSykemeldingFraDato: (dateValue: string, periodeId: string, arbeidsforholdId: string) => void;
   setSykemeldingTilDato: (dateValue: string, periodeId: string, arbeidsforholdId: string) => void;
   setSammeFravarePaaArbeidsforhold: (event: React.ChangeEvent<HTMLInputElement>, arbeidsforholdId: string) => void;
   clickSlettFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, periodeId: string) => void;
   clickLeggTilFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
-  clickTilbakestillFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  clickTilbakestillFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
   clickEndreFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
 }
 
@@ -27,7 +27,7 @@ export default function Fravaersperiode({
   setSammeFravarePaaArbeidsforhold,
   clickEndreFravaersperiode
 }: FravaersperiodeProps) {
-  if (!arbeidsforhold) return null;
+  if (!arbeidsforhold || !perioder) return null;
 
   return (
     <>

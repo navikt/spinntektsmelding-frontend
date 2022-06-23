@@ -12,7 +12,9 @@ export default function SelectNaturalytelser(props: SelectNaturalytelserProps) {
     <Select label={''} onChange={(event) => props.onChangeYtelse(event, props.elementId)}>
       <option value=''>Velg naturalytelse</option>
       {ytelsesKeys.map((ytelseKey) => (
-        <option value={ytelseKey}>{naturalytelser[ytelseKey]}</option>
+        <option value={ytelseKey} key={ytelseKey}>
+          {naturalytelser[ytelseKey]}
+        </option>
       ))}
     </Select>
   );

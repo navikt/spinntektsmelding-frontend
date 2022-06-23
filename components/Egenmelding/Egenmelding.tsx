@@ -13,7 +13,7 @@ interface EgenmeldingProps {
   setEgenmeldingFraDato: (dateValue: string, periodeId: string) => void;
   setEgenmeldingTilDato: (dateValue: string, periodeId: string) => void;
   clickSlettEgenmeldingsperiode: (event: React.MouseEvent<HTMLButtonElement>, periodeId: string) => void;
-  clickLeggTilEgenmeldingsperiode: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  clickLeggTilEgenmeldingsperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
 }
 
 export default function Egenmelding({
@@ -40,42 +40,45 @@ export default function Egenmelding({
               fraværsdag med egenmelding i dette feltet.
             </p>
             <div className={localStyles.egenmeldingswrapper}>
-              {egenmeldingsperioder &&
-                egenmeldingsperioder[forhold.arbeidsforholdId].map((egenmeldingsperiode) => {
-                  return (
-                    <div key={egenmeldingsperiode.id} className={styles.periodewrapper}>
-                      <div className={styles.datepickerescape}>
-                        <LabelLabel htmlFor='datepicker-input-fra-dato' className={styles.datepickerlabel}>
-                          Egenmelding fra dato
-                        </LabelLabel>
-                        <Datepicker
-                          onChange={(dateString) => setEgenmeldingFraDato(dateString, egenmeldingsperiode.id)}
-                          inputLabel='Egenmelding fra dato'
-                        />
-                      </div>
-                      <div className={styles.datepickerescape}>
-                        <LabelLabel htmlFor='datepicker-input-til-dato' className={styles.datepickerlabel}>
-                          Egenmelding til dato
-                        </LabelLabel>
-                        <Datepicker
-                          inputLabel='Egenmelding til dato'
-                          inputId='datepicker-input-til-dato'
-                          onChange={(dateString) => setEgenmeldingTilDato(dateString, egenmeldingsperiode.id)}
-                          locale={'nb'}
-                        />
-                      </div>
-                      <div className={styles.endresykemelding}>
-                        <ButtonSlette
-                          onClick={(event) => clickSlettEgenmeldingsperiode(event, egenmeldingsperiode.id)}
-                          title='Slett egenmeldingsperiode'
-                        />
-                      </div>
+              {egenmeldingsperioder?.[forhold.arbeidsforholdId].map((egenmeldingsperiode) => {
+                return (
+                  <div key={egenmeldingsperiode.id} className={styles.periodewrapper}>
+                    <div className={styles.datepickerescape}>
+                      <LabelLabel htmlFor='datepicker-input-fra-dato' className={styles.datepickerlabel}>
+                        Egenmelding fra dato
+                      </LabelLabel>
+                      <Datepicker
+                        onChange={(dateString) => setEgenmeldingFraDato(dateString, egenmeldingsperiode.id)}
+                        inputLabel='Egenmelding fra dato'
+                      />
                     </div>
-                  );
-                })}
+                    <div className={styles.datepickerescape}>
+                      <LabelLabel htmlFor='datepicker-input-til-dato' className={styles.datepickerlabel}>
+                        Egenmelding til dato
+                      </LabelLabel>
+                      <Datepicker
+                        inputLabel='Egenmelding til dato'
+                        inputId='datepicker-input-til-dato'
+                        onChange={(dateString) => setEgenmeldingTilDato(dateString, egenmeldingsperiode.id)}
+                        locale={'nb'}
+                      />
+                    </div>
+                    <div className={styles.endresykemelding}>
+                      <ButtonSlette
+                        onClick={(event) => clickSlettEgenmeldingsperiode(event, egenmeldingsperiode.id)}
+                        title='Slett egenmeldingsperiode'
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
             <div>
-              <Button variant='secondary' className={styles.legtilbutton} onClick={clickLeggTilEgenmeldingsperiode}>
+              <Button
+                variant='secondary'
+                className={styles.legtilbutton}
+                onClick={(event) => clickLeggTilEgenmeldingsperiode(event, forhold.arbeidsforholdId)}
+              >
                 Legg til egenmeldingsperiode
               </Button>
             </div>

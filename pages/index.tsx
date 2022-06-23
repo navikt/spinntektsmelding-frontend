@@ -31,6 +31,7 @@ import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
 import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
 import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
+import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -107,9 +108,10 @@ const Home: NextPage = () => {
     });
   };
 
-  const clickLeggTilEgenmeldingsperiode = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const clickLeggTilEgenmeldingsperiode = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
     dispatch({
-      type: 'leggTilEgenmeldingsperiode'
+      type: 'leggTilEgenmeldingsperiode',
+      payload: arbeidsforholdId
     });
 
     event.preventDefault();
@@ -124,10 +126,10 @@ const Home: NextPage = () => {
     event.preventDefault();
   };
 
-  const clickLeggTilFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>, ansattforholdId: string) => {
+  const clickLeggTilFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
     dispatch({
       type: 'leggTilFravaersperiode',
-      payload: ansattforholdId
+      payload: arbeidsforholdId
     });
 
     event.preventDefault();
@@ -142,17 +144,23 @@ const Home: NextPage = () => {
     event.preventDefault();
   };
 
-  const clickArbeidsgiverBetalerHeleEllerDeler = (event: React.MouseEvent<HTMLInputElement>) => {
+  const clickArbeidsgiverBetalerHeleEllerDeler = (
+    event: React.MouseEvent<HTMLInputElement>,
+    arbeidsforholdId: string
+  ) => {
     dispatch({
       type: 'toggleBetalerArbeidsgiverHeleEllerDeler',
-      payload: event.currentTarget.value as YesNo
+      payload: { status: event.currentTarget.value as YesNo, arbeidsforholdId: arbeidsforholdId }
     });
   };
 
-  const clickArbeidsgiverBetalerFullLonnIArbeidsgiverperioden = (event: React.MouseEvent<HTMLInputElement>) => {
+  const clickArbeidsgiverBetalerFullLonnIArbeidsgiverperioden = (
+    event: React.MouseEvent<HTMLInputElement>,
+    arbeidsforholdId: string
+  ) => {
     dispatch({
       type: 'toggleBetalerArbeidsgiverFullLonnIArbeidsgiverperioden',
-      payload: event.currentTarget.value as YesNo
+      payload: { status: event.currentTarget.value as YesNo, arbeidsforholdId: arbeidsforholdId }
     });
   };
 
@@ -164,10 +172,10 @@ const Home: NextPage = () => {
     });
   };
 
-  const clickRefusjonskravetOpphoerer = (event: React.MouseEvent<HTMLInputElement>) => {
+  const clickRefusjonskravetOpphoerer = (event: React.MouseEvent<HTMLInputElement>, arbeidsforholdId: string) => {
     dispatch({
       type: 'toggleRefusjonskravetOpphoerer',
-      payload: Boolean(event.currentTarget.value === 'Ja')
+      payload: { status: Boolean(event.currentTarget.value === 'Ja'), arbeidsforholdId: arbeidsforholdId }
     });
   };
 
@@ -201,11 +209,11 @@ const Home: NextPage = () => {
     });
   };
 
-  const changeNaturalytelseValue = (event: React.ChangeEvent<HTMLInputElement>, ytelseId: string) => {
+  const changeArbeidsgiverBetalerBelop = (event: React.ChangeEvent<HTMLInputElement>, arbeidsforholdId: string) => {
     dispatch({
-      type: 'setNaturalytelseVerdi',
+      type: 'setArbeidsgiverBetalerBelop',
       payload: {
-        ytelseId,
+        arbeidsforholdId,
         value: event.target.value
       }
     });
@@ -217,6 +225,19 @@ const Home: NextPage = () => {
       payload: {
         ytelseId,
         value: dateValue
+      }
+    });
+  };
+
+  const onChangeBegrunnelseRedusertUtbetaling = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    arbeidsforholdId: string
+  ) => {
+    dispatch({
+      type: 'setBegrunnelseRedusertUtbetaling',
+      payload: {
+        arbeidsforholdId,
+        value: event.target.value
       }
     });
   };
@@ -264,10 +285,13 @@ const Home: NextPage = () => {
     });
   };
 
-  const setRefusjonskravOpphoersdato = (dateValue: string) => {
+  const setRefusjonskravOpphoersdato = (dateValue: string, arbeidsforholdId: string) => {
     dispatch({
       type: 'setRefusjonskravOpphoersdato',
-      payload: dateValue
+      payload: {
+        value: dateValue,
+        arbeidsforholdId
+      }
     });
   };
 
@@ -293,16 +317,16 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    fetch('/api/arbeidsgivere').then((data) => {
-      data.json().then((jsonData) => {
+    fetch('/api/arbeidsgivere').then((mottattData) => {
+      mottattData.json().then((jsonData) => {
         setArbeidsgivere(jsonData);
       });
     });
   }, []);
 
   useEffect(() => {
-    fetch('/api/inntektsmelding').then((data) => {
-      data.json().then((jsonData) => {
+    fetch('/api/inntektsmelding').then((mottattData) => {
+      mottattData.json().then((jsonData) => {
         dispatch({
           type: 'fyllFormdata',
           payload: jsonData
@@ -419,73 +443,22 @@ const Home: NextPage = () => {
               />
 
               <Skillelinje />
-              <Heading3>Refusjon til arbeidsgiver</Heading3>
-              <p>
-                Vi må vite om arbeidsgiver betaler ut lønn under sykemeldingsperioden til arbeidstakeren, eller om NAV
-                skal betale ut sykepenger til den sykemeldte etter arbeidsgiverperioden.
-              </p>
-              <RadioGroup
-                legend='Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?'
-                className={styles.radiobuttonwrapper}
-              >
-                <Radio
-                  value='Ja'
-                  onClick={clickArbeidsgiverBetalerFullLonnIArbeidsgiverperioden}
-                  name='fullLonnIArbeidsgiverPerioden'
-                >
-                  Ja
-                </Radio>
-                <Radio
-                  value='Nei'
-                  onClick={clickArbeidsgiverBetalerFullLonnIArbeidsgiverperioden}
-                  name='fullLonnIArbeidsgiverPerioden'
-                >
-                  Nei
-                </Radio>
-              </RadioGroup>
-              {state.fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
-                <Select label='Velg begrunnelse for  ingen eller redusert utbetaling' className={styles.halfsize}>
-                  <option value=''>Velg</option>
-                </Select>
-              )}
-              <RadioGroup
-                legend='Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?'
-                className={styles.radiobuttonwrapper}
-              >
-                <Radio value='Ja' onClick={clickArbeidsgiverBetalerHeleEllerDeler}>
-                  Ja
-                </Radio>
-                <Radio value='Nei' onClick={clickArbeidsgiverBetalerHeleEllerDeler}>
-                  Nei
-                </Radio>
-              </RadioGroup>
-              {state.lonnISykefravaeret?.status === 'Ja' && (
-                <>
-                  <TextField label='Oppgi refusjonsbeløpet per måned' className={styles.halfsize} />
-                  <BodyLong className={styles.opphrefkravforklaring}>
-                    Refusjonsbeløpet gjelder fra den første dagen arbeidstakeren har rett til utbetaling fra NAV
-                  </BodyLong>
-                  <RadioGroup legend='Opphører refusjonkravet i perioden?' className={styles.radiobuttonwrapper}>
-                    <Radio value='Ja' onClick={clickRefusjonskravetOpphoerer}>
-                      Ja
-                    </Radio>
-                    <Radio value='Nei' onClick={clickRefusjonskravetOpphoerer}>
-                      Nei
-                    </Radio>
-                  </RadioGroup>
-                  {state.refusjonskravetOpphoerer && (
-                    <div className={styles.datepickerescape}>
-                      <LabelLabel htmlFor='datepicker-input-fra-dato' className={styles.datepickerlabel}>
-                        Angi siste dag dere krever refusjon for
-                      </LabelLabel>
-                      <Datepicker
-                        onChange={(dateString) => setRefusjonskravOpphoersdato(dateString)}
-                        inputLabel='Egenmelding fra dato'
-                      />
-                    </div>
-                  )}
-                </>
-              )}
+
+              <RefusjonArbeidsgiver
+                clickArbeidsgiverBetalerFullLonnIArbeidsgiverperioden={
+                  clickArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
+                }
+                clickArbeidsgiverBetalerHeleEllerDeler={clickArbeidsgiverBetalerHeleEllerDeler}
+                clickRefusjonskravetOpphoerer={clickRefusjonskravetOpphoerer}
+                setRefusjonskravOpphoersdato={setRefusjonskravOpphoersdato}
+                onChangeBegrunnelseRedusertUtbetaling={onChangeBegrunnelseRedusertUtbetaling}
+                changeArbeidsgiverBetalerBelop={changeArbeidsgiverBetalerBelop}
+                lonnISykefravaeret={state.lonnISykefravaeret}
+                fullLonnIArbeidsgiverPerioden={state.fullLonnIArbeidsgiverPerioden}
+                refusjonskravetOpphoerer={state.refusjonskravetOpphoerer}
+                arbeidsforhold={state.arbeidsforhold}
+              />
+
               <Skillelinje />
               <Heading3>Eventuelle naturalytelser (valgfri)</Heading3>
               <p>

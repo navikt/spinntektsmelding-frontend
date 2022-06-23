@@ -4,7 +4,7 @@ import styles from './Heading4.module.css';
 
 interface Heading4Props {
   children: ReactNode;
-  className: any;
+  className?: any;
 }
 
 export default function Heading4(props: Heading4Props) {

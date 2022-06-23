@@ -4,11 +4,11 @@ import { YesNo } from './state';
 type ActionType =
   | {
       type: 'toggleBetalerArbeidsgiverHeleEllerDeler';
-      payload: YesNo;
+      payload: { status: YesNo; arbeidsforholdId: string };
     }
   | {
       type: 'toggleBetalerArbeidsgiverFullLonnIArbeidsgiverperioden';
-      payload: YesNo;
+      payload: { status: YesNo; arbeidsforholdId: string };
     }
   | {
       type: 'toggleNaturalytelser';
@@ -27,7 +27,7 @@ type ActionType =
     }
   | {
       type: 'toggleRefusjonskravetOpphoerer';
-      payload: boolean;
+      payload: { status: boolean; arbeidsforholdId: string };
     }
   | {
       type: 'toggleBekreftKorrektInntekt';
@@ -35,6 +35,7 @@ type ActionType =
     }
   | {
       type: 'leggTilEgenmeldingsperiode';
+      payload: string;
     }
   | {
       type: 'slettEgenmeldingsperiode';
@@ -109,7 +110,14 @@ type ActionType =
     }
   | {
       type: 'setRefusjonskravOpphoersdato';
-      payload: string;
+      payload: { value: string; arbeidsforholdId: string };
+    }
+  | {
+      type: 'setBegrunnelseRedusertUtbetaling';
+      payload: {
+        value: string;
+        arbeidsforholdId: string;
+      };
     }
   | {
       type: 'fyllFormdata';
@@ -138,6 +146,13 @@ type ActionType =
       payload: {
         arbeidsforholdId: string;
         set: boolean;
+      };
+    }
+  | {
+      type: 'setArbeidsgiverBetalerBelop';
+      payload: {
+        arbeidsforholdId: string;
+        value: string;
       };
     }
   | {

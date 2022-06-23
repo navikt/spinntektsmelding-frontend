@@ -43,6 +43,11 @@ export interface IArbeidsforhold {
   aktiv: boolean;
 }
 
+export interface RefusjonskravetOpphoerer {
+  status?: boolean;
+  opphorsdato?: Date;
+}
+
 interface InntektsmeldingSkjema {
   navn?: string;
   identitetsnummer?: string;
@@ -54,11 +59,11 @@ interface InntektsmeldingSkjema {
   bruttoinntekt?: Inntekt;
   opprinneligbruttoinntekt?: Inntekt;
   tidligereinntekt?: Array<HistoriskInntekt>;
-  fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
-  lonnISykefravaeret?: LonnISykefravaeret;
+  fullLonnIArbeidsgiverPerioden?: { [key: string]: LonnIArbeidsgiverperioden };
+  lonnISykefravaeret?: { [key: string]: LonnISykefravaeret };
   naturalytelser?: Array<Naturalytelse>;
   opplysningerBekreftet: boolean;
-  refusjonskravetOpphoerer: boolean;
+  refusjonskravetOpphoerer?: { [key: string]: RefusjonskravetOpphoerer };
   refusjonskravOpphoersdato?: Date;
   behandlingsdager: boolean;
   arbeidsforhold?: Array<IArbeidsforhold>;
