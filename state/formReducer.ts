@@ -153,8 +153,10 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
         };
 
         state.naturalytelser = [nyNaturalytelseRad];
+        state.hasBortfallAvNaturalytelser = 'Ja';
       } else {
         state.naturalytelser = undefined;
+        state.hasBortfallAvNaturalytelser = 'Nei';
       }
       return state;
     }
@@ -346,11 +348,13 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
 
       state.opprinneligfravaersperiode = structuredClone({ ...state.fravaersperiode });
 
-      state.tidligereinntekt = fdata.tidligereinntekt.map((inntekt) => ({
-        maanedsnavn: inntekt.maanedsnavn,
-        inntekt: inntekt.inntekt,
-        id: nanoid()
-      }));
+      if (fdata.tidligereinntekt) {
+        state.tidligereinntekt = fdata.tidligereinntekt.map((inntekt) => ({
+          maanedsnavn: inntekt.maanedsnavn,
+          inntekt: inntekt.inntekt,
+          id: nanoid()
+        }));
+      }
 
       state.behandlingsdager = fdata.behandlingsdager;
 
