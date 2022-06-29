@@ -410,24 +410,11 @@ const Home: NextPage = () => {
                 </>
               )}
 
-              <Skillelinje />
               {state.behandlingsdager && (
-                <Behandlingsdager periode={state.fravaersperiode[0]} onSelect={setBehandlingsdager} />
-              )}
-
-              {!state.behandlingsdager && (
-                <Fravaersperiode
-                  perioder={state.fravaersperiode}
-                  arbeidsforhold={state.arbeidsforhold}
-                  sammePeriodeForAlle={state.sammeFravaersperiode}
-                  setSykemeldingFraDato={setSykemeldingFraDato}
-                  setSykemeldingTilDato={setSykemeldingTilDato}
-                  setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
-                  clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
-                  clickSlettFravaersperiode={clickSlettFravaersperiode}
-                  clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
-                  clickEndreFravaersperiode={clickEndreFravaersperiode}
-                />
+                <>
+                  <Skillelinje />
+                  <Behandlingsdager periode={state.fravaersperiode[0]} onSelect={setBehandlingsdager} />
+                </>
               )}
 
               {state.egenmeldingsperioder && (
@@ -443,6 +430,24 @@ const Home: NextPage = () => {
                       clickLeggTilEgenmeldingsperiode={clickLeggTilEgenmeldingsperiode}
                     />
                   )}
+                </>
+              )}
+
+              {!state.behandlingsdager && (
+                <>
+                  <Skillelinje />
+                  <Fravaersperiode
+                    perioder={state.fravaersperiode}
+                    arbeidsforhold={state.arbeidsforhold}
+                    sammePeriodeForAlle={state.sammeFravaersperiode}
+                    setSykemeldingFraDato={setSykemeldingFraDato}
+                    setSykemeldingTilDato={setSykemeldingTilDato}
+                    setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
+                    clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
+                    clickSlettFravaersperiode={clickSlettFravaersperiode}
+                    clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
+                    clickEndreFravaersperiode={clickEndreFravaersperiode}
+                  />
                 </>
               )}
 
