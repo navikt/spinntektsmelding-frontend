@@ -3,14 +3,13 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 
 import { Datepicker } from '@navikt/ds-datepicker';
-import { BodyLong, Button, Checkbox, ConfirmationPanel, Radio, RadioGroup, Select, TextField } from '@navikt/ds-react';
+import { Button, Checkbox, ConfirmationPanel, ErrorSummary, TextField } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 import Banner, { Organisasjon } from '../components/Banner/Banner';
 import TextLabel from '../components/TextLabel/TextLabel';
 import Heading3 from '../components/Heading3/Heading3';
 import Skillelinje from '../components/Skillelinje/Skillelinje';
-import LabelLabel from '../components/LabelLabel/LabelLabel';
 
 import useSWR from 'swr';
 
@@ -32,7 +31,7 @@ import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
 import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
-import submitInntektsmelding from '../utils/submitInntektsmelding';
+import submitInntektsmelding, { ValiderTekster } from '../utils/submitInntektsmelding';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -42,15 +41,18 @@ const Home: NextPage = () => {
   const setRoute = useRoute();
   const { data, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
 
+  const [feilmeldinger, setFeilmeldinger] = useState<Array<ValiderTekster> | undefined>([]);
   const [state, dispatch] = useReducer(formReducer, initialState);
 
-  const [arbeidsgivere, setArbeidsgivere] = useState([]);
+  const [arbeidsgivere, setArbeidsgivere] = useState<any>([]);
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     console.log(state); // eslint-disable-line
 
     const errorStatus = submitInntektsmelding(state);
+
+    setFeilmeldinger(errorStatus.errorTexts);
 
     console.log(errorStatus); // eslint-disable-line
 
@@ -554,6 +556,13 @@ const Home: NextPage = () => {
                 NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
                 er riktige eller fullstendige.
               </ConfirmationPanel>
+              <ErrorSummary size='medium' heading='Du må rette disse feilene før du kan sende inn.'>
+                {feilmeldinger?.map((melding) => (
+                  <ErrorSummary.Item key={melding.felt} href={`#${melding.felt}`}>
+                    {melding.text}
+                  </ErrorSummary.Item>
+                ))}
+              </ErrorSummary>
               <Button className={styles.sendbutton}>Send</Button>
             </form>
           </main>

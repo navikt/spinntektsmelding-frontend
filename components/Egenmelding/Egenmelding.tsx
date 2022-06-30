@@ -44,21 +44,22 @@ export default function Egenmelding({
                 return (
                   <div key={egenmeldingsperiode.id} className={styles.periodewrapper}>
                     <div className={styles.datepickerescape}>
-                      <LabelLabel htmlFor='datepicker-input-fra-dato' className={styles.datepickerlabel}>
+                      <LabelLabel htmlFor={`fra-${egenmeldingsperiode.id}`} className={styles.datepickerlabel}>
                         Egenmelding fra dato
                       </LabelLabel>
                       <Datepicker
                         onChange={(dateString) => setEgenmeldingFraDato(dateString, egenmeldingsperiode.id)}
                         inputLabel='Egenmelding fra dato'
+                        inputId={`fra-${egenmeldingsperiode.id}`}
                       />
                     </div>
                     <div className={styles.datepickerescape}>
-                      <LabelLabel htmlFor='datepicker-input-til-dato' className={styles.datepickerlabel}>
+                      <LabelLabel htmlFor={`til-${egenmeldingsperiode.id}`} className={styles.datepickerlabel}>
                         Egenmelding til dato
                       </LabelLabel>
                       <Datepicker
                         inputLabel='Egenmelding til dato'
-                        inputId='datepicker-input-til-dato'
+                        inputId={`til-${egenmeldingsperiode.id}`}
                         onChange={(dateString) => setEgenmeldingTilDato(dateString, egenmeldingsperiode.id)}
                         locale={'nb'}
                       />

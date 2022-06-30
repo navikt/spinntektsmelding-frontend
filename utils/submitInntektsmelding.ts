@@ -6,10 +6,16 @@ import validerFullLonnIArbeidsgiverPerioden, {
 } from '../validators/validerFullLonnIArbeidsgiverPerioden';
 import validerLonnISykefravaeret, { FullLonnISykefravaeret } from '../validators/validerLonnISykefravaeret';
 import validerNaturalytelser, { NaturalytelserFeilkoder } from '../validators/validerNaturalytelser';
+import feiltekster from './feiltekster';
 
-interface submitInntektsmeldingReturnvalues {
+export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
-  errorCodes?: Array<ValiderResultat>;
+  errorTexts?: Array<ValiderTekster>;
+}
+
+export interface ValiderTekster {
+  felt: string;
+  text: string;
 }
 
 export enum ErrorCodes {
@@ -30,8 +36,9 @@ export interface ValiderResultat {
     | NaturalytelserFeilkoder;
 }
 
-export default function submitInntektsmelding(state: InntektsmeldingSkjema): submitInntektsmeldingReturnvalues {
+export default function submitInntektsmelding(state: InntektsmeldingSkjema): SubmitInntektsmeldingReturnvalues {
   let valideringOK = true;
+  let errorTexts: Array<ValiderTekster> = [];
   let errorCodes: Array<ValiderResultat> = [];
   let feilkoderFravaersperioder: Array<ValiderResultat> = [];
   let feilkoderEgenmeldingsperioder: Array<ValiderResultat> = [];
@@ -131,16 +138,25 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): sub
     feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);
   }
 
+  errorCodes = [
+    ...errorCodes,
+    ...feilkoderFravaersperioder,
+    ...feilkoderEgenmeldingsperioder,
+    ...feilkoderBruttoinntekt,
+    ...feilkoderFullLonnIArbeidsgiverPerioden,
+    ...feilkoderLonnISykefravaeret,
+    ...feilkoderNaturalytelser
+  ];
+
+  if (errorCodes.length > 0) {
+    errorTexts = errorCodes.map((error) => ({
+      felt: error.felt,
+      text: error.code && feiltekster[error.code] ? feiltekster[error.code] : error.code
+    }));
+  }
+
   return {
-    valideringOK,
-    errorCodes: [
-      ...errorCodes,
-      ...feilkoderFravaersperioder,
-      ...feilkoderEgenmeldingsperioder,
-      ...feilkoderBruttoinntekt,
-      ...feilkoderFullLonnIArbeidsgiverPerioden,
-      ...feilkoderLonnISykefravaeret,
-      ...feilkoderNaturalytelser
-    ]
+    valideringOK: errorCodes.length === 0,
+    errorTexts
   };
 }

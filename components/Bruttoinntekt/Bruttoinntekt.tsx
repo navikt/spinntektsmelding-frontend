@@ -105,7 +105,9 @@ export default function Bruttoinntekt({
           etter <Link href='#'>folketrygdloven $8-28.</Link>
         </strong>
       </p>
-      <Checkbox onClick={clickBekreftKorrektInntekt}>Jeg bekrefter at registrert inntekt er korrekt</Checkbox>
+      <Checkbox onClick={clickBekreftKorrektInntekt} id='bruttoinntektbekreft'>
+        Jeg bekrefter at registrert inntekt er korrekt
+      </Checkbox>
     </>
   );
 }

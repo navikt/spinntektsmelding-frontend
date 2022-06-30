@@ -32,7 +32,7 @@ export default function validerBruttoinntekt(bruttoinntekt?: Inntekt): Array<Val
       });
     }
 
-    if (!bruttoinntekt.endringsaarsak || bruttoinntekt.endringsaarsak === '') {
+    if (bruttoinntekt.manueltKorrigert || bruttoinntekt.endringsaarsak === '') {
       valideringstatus.push({
         felt: 'bruttoinntekt',
         code: BruttoinntektFeilkode.ENDRINGSAARSAK_MANGLER
