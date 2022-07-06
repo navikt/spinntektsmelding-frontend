@@ -1,27 +1,50 @@
 import { Naturalytelse, YesNo } from '../state/state';
+import { ValiderResultat } from '../utils/submitForm';
+
+export enum NaturalytelserFeilkoder {
+  MANGLER_VALG_BORTFALL_AV_NATURALYTELSER = 'MANGLER_VALG_BORTFALL_AV_NATURALYTELSER',
+  MANGLER_BORTFALLSDATO = 'MANGLER_BORTFALLSDATO',
+  MANGLER_VERDI = 'MANGLER_VERDI',
+  MANGLER_TYPE = 'MANGLER_TYPE'
+}
 
 export default function validerNaturalytelser(
-  naturalytelser: Array<Naturalytelse>,
-  hasBortfallAvNaturalytelser: YesNo
-): boolean {
-  let isValid = true;
+  naturalytelser?: Array<Naturalytelse>,
+  hasBortfallAvNaturalytelser?: YesNo
+): Array<ValiderResultat> {
+  let feilkoder: Array<ValiderResultat> = [];
+
   if (hasBortfallAvNaturalytelser === 'Nei') {
-    isValid = true;
-    return isValid;
+    feilkoder.push({
+      felt: '',
+      code: NaturalytelserFeilkoder.MANGLER_VALG_BORTFALL_AV_NATURALYTELSER
+    });
   }
 
-  naturalytelser.forEach((ytelse) => {
-    if (!ytelse.bortfallsdato) {
-      isValid = false;
-    }
+  if (naturalytelser && naturalytelser.length > 0) {
+    naturalytelser.forEach((ytelse) => {
+      if (!ytelse.bortfallsdato) {
+        feilkoder.push({
+          felt: ytelse.id,
+          code: NaturalytelserFeilkoder.MANGLER_BORTFALLSDATO
+        });
+      }
 
-    if (!ytelse.verdi) {
-      isValid = false;
-    }
+      if (!ytelse.verdi) {
+        feilkoder.push({
+          felt: ytelse.id,
+          code: NaturalytelserFeilkoder.MANGLER_VERDI
+        });
+      }
 
-    if (!ytelse.type) {
-      isValid = false;
-    }
-  });
-  return isValid;
+      if (!ytelse.type) {
+        feilkoder.push({
+          felt: ytelse.id,
+          code: NaturalytelserFeilkoder.MANGLER_TYPE
+        });
+      }
+    });
+  }
+
+  return feilkoder;
 }

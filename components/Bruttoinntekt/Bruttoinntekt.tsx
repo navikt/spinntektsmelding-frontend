@@ -1,4 +1,4 @@
-import { Button, Checkbox, Link, Select, TextField } from '@navikt/ds-react';
+import { BodyShort, Button, Checkbox, Link, Select, TextField } from '@navikt/ds-react';
 import { useState } from 'react';
 import { HistoriskInntekt, Inntekt } from '../../state/state';
 import styles from '../../styles/Home.module.css';
@@ -7,8 +7,8 @@ import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 
 interface BruttoinntektProps {
-  bruttoinntekt: Inntekt;
-  tidligereinntekt: Array<HistoriskInntekt>;
+  bruttoinntekt?: Inntekt;
+  tidligereinntekt?: Array<HistoriskInntekt>;
   setNyMaanedsinntekt: (event: React.ChangeEvent<HTMLInputElement>) => void;
   selectEndringsaarsak: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -42,7 +42,9 @@ export default function Bruttoinntekt({
       </p>
       <div className={styles.belopwrapper}>
         {!endreMaanedsinntekt && (
-          <TextLabel className={styles.maanedsinntekt}>{bruttoinntekt.bruttoInntekt} kr/måned</TextLabel>
+          <TextLabel className={styles.maanedsinntekt}>
+            {(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
+          </TextLabel>
         )}
         {endreMaanedsinntekt && (
           <div className={styles.endremaaanedsinntekt}>
@@ -81,20 +83,21 @@ export default function Bruttoinntekt({
           </div>
         )}
         {!endreMaanedsinntekt && (
-          <Button variant='tertiary' className={styles.kontrollerknapp} onClick={() => setEndreMaanedsinntekt(true)}>
+          <Button variant='secondary' className={styles.endrebutton} onClick={() => setEndreMaanedsinntekt(true)}>
             Endre
           </Button>
         )}
       </div>
-      <p>
+      <BodyShort>
         <strong>Inntekten er basert på følgende måneder</strong>
-      </p>
+      </BodyShort>
       {tidligereinntekt?.map((inntekt) => (
         <div key={inntekt.id}>
           <div className={styles.maanedsnavn}>{inntekt.maanedsnavn}:</div>
           <div className={styles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</div>
         </div>
       ))}
+      {!tidligereinntekt && <BodyShort>Klarer ikke å finne inntekt for de 3 siste månedene.</BodyShort>}
       <p>
         <strong>
           Hvis beløpet ikke er korrekt må dere endre dette. Det kan være at den ansatte nylig har fått lønnsøkning,
