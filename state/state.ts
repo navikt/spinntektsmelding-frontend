@@ -62,6 +62,7 @@ interface InntektsmeldingSkjema {
   fullLonnIArbeidsgiverPerioden?: { [key: string]: LonnIArbeidsgiverperioden };
   lonnISykefravaeret?: { [key: string]: LonnISykefravaeret };
   naturalytelser?: Array<Naturalytelse>;
+  hasBortfallAvNaturalytelser?: YesNo;
   opplysningerBekreftet: boolean;
   refusjonskravetOpphoerer?: { [key: string]: RefusjonskravetOpphoerer };
   refusjonskravOpphoersdato?: Date;

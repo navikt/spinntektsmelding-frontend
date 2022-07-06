@@ -32,6 +32,7 @@ import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
 import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
+import submitInntektsmelding from '../utils/submitInntektsmelding';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -48,6 +49,10 @@ const Home: NextPage = () => {
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     console.log(state); // eslint-disable-line
+
+    const errorStatus = submitInntektsmelding(state);
+
+    console.log(errorStatus); // eslint-disable-line
 
     dispatch({
       type: 'submitForm'
@@ -202,6 +207,16 @@ const Home: NextPage = () => {
   const changeNaturalytelseType = (event: React.ChangeEvent<HTMLSelectElement>, ytelseId: string) => {
     dispatch({
       type: 'setNaturalytelseType',
+      payload: {
+        ytelseId,
+        value: event.target.value
+      }
+    });
+  };
+
+  const changeNaturalytelseVerdi = (event: React.ChangeEvent<HTMLInputElement>, ytelseId: string) => {
+    dispatch({
+      type: 'setNaturalytelseVerdi',
       payload: {
         ytelseId,
         value: event.target.value
@@ -395,24 +410,11 @@ const Home: NextPage = () => {
                 </>
               )}
 
-              <Skillelinje />
               {state.behandlingsdager && (
-                <Behandlingsdager periode={state.fravaersperiode[0]} onSelect={setBehandlingsdager} />
-              )}
-
-              {!state.behandlingsdager && (
-                <Fravaersperiode
-                  perioder={state.fravaersperiode}
-                  arbeidsforhold={state.arbeidsforhold}
-                  sammePeriodeForAlle={state.sammeFravaersperiode}
-                  setSykemeldingFraDato={setSykemeldingFraDato}
-                  setSykemeldingTilDato={setSykemeldingTilDato}
-                  setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
-                  clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
-                  clickSlettFravaersperiode={clickSlettFravaersperiode}
-                  clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
-                  clickEndreFravaersperiode={clickEndreFravaersperiode}
-                />
+                <>
+                  <Skillelinje />
+                  <Behandlingsdager periode={state.fravaersperiode[0]} onSelect={setBehandlingsdager} />
+                </>
               )}
 
               {state.egenmeldingsperioder && (
@@ -428,6 +430,24 @@ const Home: NextPage = () => {
                       clickLeggTilEgenmeldingsperiode={clickLeggTilEgenmeldingsperiode}
                     />
                   )}
+                </>
+              )}
+
+              {!state.behandlingsdager && (
+                <>
+                  <Skillelinje />
+                  <Fravaersperiode
+                    perioder={state.fravaersperiode}
+                    arbeidsforhold={state.arbeidsforhold}
+                    sammePeriodeForAlle={state.sammeFravaersperiode}
+                    setSykemeldingFraDato={setSykemeldingFraDato}
+                    setSykemeldingTilDato={setSykemeldingTilDato}
+                    setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
+                    clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
+                    clickSlettFravaersperiode={clickSlettFravaersperiode}
+                    clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
+                    clickEndreFravaersperiode={clickEndreFravaersperiode}
+                  />
                 </>
               )}
 
@@ -502,7 +522,7 @@ const Home: NextPage = () => {
                             <TextField
                               label={''}
                               className={styles.fnr}
-                              onChange={(event) => changeNaturalytelseValue(event, element.id)}
+                              onChange={(event) => changeNaturalytelseVerdi(event, element.id)}
                             ></TextField>
                           </td>
                           <td>
