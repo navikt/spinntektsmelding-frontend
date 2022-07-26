@@ -10,7 +10,7 @@ interface Heading4Props {
 export default function Heading4(props: Heading4Props) {
   const classes = !!props.className ? `${styles.heading4} ${props.className}` : styles.heading4;
   return (
-    <Heading size='small' level='4' className={classes}>
+    <Heading size='medium' level='4' className={classes}>
       {props.children}
     </Heading>
   );

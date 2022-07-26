@@ -75,12 +75,12 @@ export default function FravaerEnkeltperiode({
           )}
           {endreSykemelding && (
             <div className={styles.datepickerescape}>
-              <LabelLabel htmlFor='datepicker-egenmelding-fra' className={styles.datepickerlabel}>
+              <LabelLabel htmlFor={`fra-${periode.id}`} className={styles.datepickerlabel}>
                 Fra
               </LabelLabel>
               <Datepicker
                 inputLabel='Fra'
-                inputId='datepicker-egenmelding-fra'
+                inputId={`fra-${periode.id}`}
                 onChange={(dateString) =>
                   setSykemeldingFraDato(dateString, periode.id, arbeidsforhold.arbeidsforholdId)
                 }
@@ -98,12 +98,12 @@ export default function FravaerEnkeltperiode({
           )}
           {endreSykemelding && (
             <div className={styles.datepickerescape}>
-              <LabelLabel htmlFor='datepicker-egenmelding-til' className={styles.datepickerlabel}>
+              <LabelLabel htmlFor={`til-${periode.id}`} className={styles.datepickerlabel}>
                 Til
               </LabelLabel>
               <Datepicker
                 inputLabel='Til'
-                inputId='datepicker-egenmelding-til'
+                inputId={`til-${periode.id}`}
                 onChange={(dateString) =>
                   setSykemeldingTilDato(dateString, periode.id, arbeidsforhold.arbeidsforholdId)
                 }

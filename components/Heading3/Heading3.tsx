@@ -8,7 +8,7 @@ interface Heading3Props {
 
 export default function Heading3(props: Heading3Props) {
   return (
-    <Heading size='small' level='3' className={styles.heading3}>
+    <Heading size='medium' level='3' className={styles.heading3}>
       {props.children}
     </Heading>
   );
