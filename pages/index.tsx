@@ -333,6 +333,8 @@ const Home: NextPage = () => {
     });
   };
 
+  const harFeilmeldinger = feilmeldinger && feilmeldinger.length > 0;
+
   useEffect(() => {
     fetch('/api/arbeidsgivere').then((mottattData) => {
       mottattData.json().then((jsonData) => {
@@ -556,7 +558,7 @@ const Home: NextPage = () => {
                 NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
                 er riktige eller fullstendige.
               </ConfirmationPanel>
-              {feilmeldinger && (
+              {harFeilmeldinger && (
                 <ErrorSummary size='medium' heading='Du må rette disse feilene før du kan sende inn.'>
                   {feilmeldinger?.map((melding) => (
                     <ErrorSummary.Item key={melding.felt} href={`#${melding.felt}`}>

@@ -1,10 +1,8 @@
 import InntektsmeldingSkjema from '../state/state';
 import validerBruttoinntekt, { BruttoinntektFeilkode } from '../validators/validerBruttoinntekt';
 import validerPeriode, { PeriodeFeilkode } from '../validators/validerPeriode';
-import validerFullLonnIArbeidsgiverPerioden, {
-  FullLonnIArbeidsgiverPerioden
-} from '../validators/validerFullLonnIArbeidsgiverPerioden';
-import validerLonnISykefravaeret, { FullLonnISykefravaeret } from '../validators/validerLonnISykefravaeret';
+import { FullLonnIArbeidsgiverPerioden } from '../validators/validerFullLonnIArbeidsgiverPerioden';
+import { FullLonnISykefravaeret } from '../validators/validerLonnISykefravaeret';
 import validerNaturalytelser, { NaturalytelserFeilkoder } from '../validators/validerNaturalytelser';
 import feiltekster from './feiltekster';
 import validerLonnIArbeidsgiverPerioden, {
@@ -97,48 +95,6 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
   }
 
   feilkoderBruttoinntekt = validerBruttoinntekt(state.bruttoinntekt);
-  debugger; // eslint-disable-line
-  // if (state.fullLonnIArbeidsgiverPerioden) {
-  //   const arbeidsforholdKeys = Object.keys(state.fullLonnIArbeidsgiverPerioden);
-  //   if (arbeidsforholdKeys.length < 1) {
-  //     errorCodes.push({
-  //       felt: 'minus1',
-  //       code: ErrorCodes.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN
-  //     });
-
-  //     if (arbeidsforholdKeys.length > 0) {
-  //       feilkoderFullLonnIArbeidsgiverPerioden = arbeidsforholdKeys.flatMap((forhold) =>
-  //         validerFullLonnIArbeidsgiverPerioden(state.fullLonnIArbeidsgiverPerioden![forhold])
-  //       );
-  //     }
-  //   } else {
-  //     errorCodes.push({
-  //       felt: 'forste',
-  //       code: ErrorCodes.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN
-  //     });
-  //   }
-  // }
-
-  // if (state.lonnISykefravaeret) {
-  //   const arbeidsforholdKeys = Object.keys(state.lonnISykefravaeret);
-  //   if (arbeidsforholdKeys.length < 1) {
-  //     errorCodes.push({
-  //       felt: 'andre',
-  //       code: ErrorCodes.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN
-  //     });
-
-  //     if (arbeidsforholdKeys.length > 0) {
-  //       feilkoderLonnISykefravaeret = arbeidsforholdKeys.flatMap((forhold) =>
-  //         validerLonnISykefravaeret(state.lonnISykefravaeret![forhold])
-  //       );
-  //     }
-  //   } else {
-  //     errorCodes.push({
-  //       felt: 'tredje',
-  //       code: ErrorCodes.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN
-  //     });
-  //   }
-  // }
 
   if (state.naturalytelser) {
     feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);

@@ -6,8 +6,8 @@ import type { AppProps } from 'next/app';
 
 import '../components/PageContent/PageContent.css';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
 }
 
-export default MyApp;
+export default App;
