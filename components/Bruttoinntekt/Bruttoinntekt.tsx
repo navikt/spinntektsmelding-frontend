@@ -42,7 +42,7 @@ export default function Bruttoinntekt({
       </p>
       <div className={styles.belopwrapper}>
         {!endreMaanedsinntekt && (
-          <TextLabel className={styles.maanedsinntekt}>
+          <TextLabel className={styles.maanedsinntekt} id='bruttoinntekt-belop'>
             {(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
           </TextLabel>
         )}
@@ -53,7 +53,7 @@ export default function Bruttoinntekt({
               onChange={setNyMaanedsinntekt}
               defaultValue={(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0).toString()}
             />
-            <Select label='Forklaring til endring' onChange={selectEndringsaarsak}>
+            <Select label='Forklaring til endring' onChange={selectEndringsaarsak} id='bruttoinntekt-endringsaarsak'>
               <option value=''>Velg endringsårsak</option>
               <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
               <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>

@@ -182,7 +182,7 @@ const Home: NextPage = () => {
   const clickRefusjonskravetOpphoerer = (event: React.MouseEvent<HTMLInputElement>, arbeidsforholdId: string) => {
     dispatch({
       type: 'toggleRefusjonskravetOpphoerer',
-      payload: { status: Boolean(event.currentTarget.value === 'Ja'), arbeidsforholdId: arbeidsforholdId }
+      payload: { status: event.currentTarget.value as YesNo, arbeidsforholdId: arbeidsforholdId }
     });
   };
 
@@ -556,13 +556,15 @@ const Home: NextPage = () => {
                 NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
                 er riktige eller fullstendige.
               </ConfirmationPanel>
-              <ErrorSummary size='medium' heading='Du må rette disse feilene før du kan sende inn.'>
-                {feilmeldinger?.map((melding) => (
-                  <ErrorSummary.Item key={melding.felt} href={`#${melding.felt}`}>
-                    {melding.text}
-                  </ErrorSummary.Item>
-                ))}
-              </ErrorSummary>
+              {feilmeldinger && (
+                <ErrorSummary size='medium' heading='Du må rette disse feilene før du kan sende inn.'>
+                  {feilmeldinger?.map((melding) => (
+                    <ErrorSummary.Item key={melding.felt} href={`#${melding.felt}`}>
+                      {melding.text}
+                    </ErrorSummary.Item>
+                  ))}
+                </ErrorSummary>
+              )}
               <Button className={styles.sendbutton}>Send</Button>
             </form>
           </main>

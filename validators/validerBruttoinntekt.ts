@@ -27,14 +27,14 @@ export default function validerBruttoinntekt(bruttoinntekt?: Inntekt): Array<Val
 
     if (!bruttoinntekt.bruttoInntekt) {
       valideringstatus.push({
-        felt: 'bruttoinntekt',
+        felt: 'bruttoinntekt-belop',
         code: BruttoinntektFeilkode.BRUTTOINNTEKT_MANGLER
       });
     }
 
-    if (bruttoinntekt.manueltKorrigert || bruttoinntekt.endringsaarsak === '') {
+    if (bruttoinntekt.manueltKorrigert && bruttoinntekt.endringsaarsak === '') {
       valideringstatus.push({
-        felt: 'bruttoinntekt',
+        felt: 'bruttoinntekt-endringsaarsak',
         code: BruttoinntektFeilkode.ENDRINGSAARSAK_MANGLER
       });
     }

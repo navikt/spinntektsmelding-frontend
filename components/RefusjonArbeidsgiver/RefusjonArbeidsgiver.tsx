@@ -63,6 +63,7 @@ export default function RefusjonArbeidsgiver({
             <RadioGroup
               legend='Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?'
               className={styles.radiobuttonwrapper}
+              id={`lia-radio-${forhold.arbeidsforholdId}`}
             >
               <Radio
                 value='Ja'
@@ -88,6 +89,7 @@ export default function RefusjonArbeidsgiver({
                 label='Velg begrunnelse for ingen eller redusert utbetaling'
                 className={styles.halfsize}
                 onChange={(event) => onChangeBegrunnelseRedusertUtbetaling(event, forhold.arbeidsforholdId)}
+                id={`lia-select-${forhold.arbeidsforholdId}`}
               >
                 <option value=''>Velg</option>
                 <option value='annet'>Annet</option>
@@ -97,6 +99,7 @@ export default function RefusjonArbeidsgiver({
             <RadioGroup
               legend='Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?'
               className={styles.radiobuttonwrapper}
+              id={`lus-radio-${forhold.arbeidsforholdId}`}
             >
               <Radio
                 value='Ja'
@@ -117,11 +120,16 @@ export default function RefusjonArbeidsgiver({
                   label='Oppgi refusjonsbeløpet per måned'
                   className={styles.halfsize}
                   onChange={(event) => changeArbeidsgiverBetalerBelop(event, forhold.arbeidsforholdId)}
+                  id={`lus-input-${forhold.arbeidsforholdId}`}
                 />
                 <BodyLong className={styles.opphrefkravforklaring}>
                   Refusjonsbeløpet gjelder fra den første dagen arbeidstakeren har rett til utbetaling fra NAV
                 </BodyLong>
-                <RadioGroup legend='Opphører refusjonkravet i perioden?' className={styles.radiobuttonwrapper}>
+                <RadioGroup
+                  legend='Opphører refusjonkravet i perioden?'
+                  className={styles.radiobuttonwrapper}
+                  id={`lus-sluttdato-velg-${forhold.arbeidsforholdId}`}
+                >
                   <Radio value='Ja' onClick={(event) => clickRefusjonskravetOpphoerer(event, forhold.arbeidsforholdId)}>
                     Ja
                   </Radio>
@@ -134,12 +142,16 @@ export default function RefusjonArbeidsgiver({
                 </RadioGroup>
                 {refusjonskravetOpphoerer?.[forhold.arbeidsforholdId]?.status && (
                   <div className={styles.datepickerescape}>
-                    <LabelLabel htmlFor='datepicker-input-fra-dato' className={styles.datepickerlabel}>
+                    <LabelLabel
+                      htmlFor={`lus-sluttdato-${forhold.arbeidsforholdId}`}
+                      className={styles.datepickerlabel}
+                    >
                       Angi siste dag dere krever refusjon for
                     </LabelLabel>
                     <Datepicker
                       onChange={(dateString) => setRefusjonskravOpphoersdato(dateString, forhold.arbeidsforholdId)}
                       inputLabel='Egenmelding fra dato'
+                      inputId={`lus-sluttdato-${forhold.arbeidsforholdId}`}
                     />
                   </div>
                 )}

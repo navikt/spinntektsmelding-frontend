@@ -27,7 +27,7 @@ type ActionType =
     }
   | {
       type: 'toggleRefusjonskravetOpphoerer';
-      payload: { status: boolean; arbeidsforholdId: string };
+      payload: { status: YesNo; arbeidsforholdId: string };
     }
   | {
       type: 'toggleBekreftKorrektInntekt';

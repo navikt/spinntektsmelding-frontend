@@ -44,7 +44,7 @@ export interface IArbeidsforhold {
 }
 
 export interface RefusjonskravetOpphoerer {
-  status?: boolean;
+  status?: YesNo;
   opphorsdato?: Date;
 }
 
