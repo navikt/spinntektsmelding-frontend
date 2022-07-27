@@ -1,15 +1,7 @@
 import formReducer, { initialState } from '../../state/formReducer';
 import timezone_mock from 'timezone-mock';
-import InntektsmeldingSkjema from '../../state/state';
-
-jest.mock('nanoid', () => {
-  return { nanoid: () => '1234' };
-});
-
-console.log({
-  nodeVersion: process.versions.node,
-  structuredClone: global.structuredClone
-});
+import InntektsmeldingSkjema, { YesNo } from '../../state/state';
+import { expect, it, describe } from 'vitest';
 
 describe('formReducer', () => {
   timezone_mock.register('UTC');
@@ -105,69 +97,83 @@ describe('formReducer', () => {
   });
 
   it('should add a egenmeldingsperioder with unique id', () => {
-    expect(initialState.egenmeldingsperioder.length).toBe(1);
+    expect(initialState.egenmeldingsperioder.ukjent.length).toBe(1);
 
     const newState = formReducer(initialState, {
-      type: 'leggTilEgenmeldingsperiode'
+      type: 'leggTilEgenmeldingsperiode',
+      payload: 'ukjent'
     });
 
-    expect(newState.egenmeldingsperioder.length).toBe(2);
-    expect(newState.egenmeldingsperioder[0].id).toBeTruthy(); // The id is a random textstring
-    expect(newState.egenmeldingsperioder[1].id).toBeTruthy(); // The id is a random textstring
-    expect(newState.egenmeldingsperioder[0].id).not.toBe(newState.egenmeldingsperioder[1].id); // The ids should not be equal
+    expect(newState.egenmeldingsperioder.ukjent.length).toBe(2);
+    expect(newState.egenmeldingsperioder.ukjent[0].id).toBeTruthy(); // The id is a random textstring
+    expect(newState.egenmeldingsperioder.ukjent[1].id).toBeTruthy(); // The id is a random textstring
+    expect(newState.egenmeldingsperioder.ukjent[0].id).not.toBe(newState.egenmeldingsperioder.ukjent[1].id); // The ids should not be equal
   });
 
   it('should remove a egenmeldingsperioder the correct id', () => {
-    expect(initialState.egenmeldingsperioder.length).toBe(1);
+    expect(initialState.egenmeldingsperioder.ukjent.length).toBe(1);
 
     const newState = formReducer(initialState, {
-      type: 'leggTilEgenmeldingsperiode'
+      type: 'leggTilEgenmeldingsperiode',
+      payload: 'ukjent'
     });
 
-    expect(newState.egenmeldingsperioder.length).toBe(2);
+    expect(newState.egenmeldingsperioder.ukjent.length).toBe(2);
 
-    const periodeId = newState.egenmeldingsperioder[0].id;
-    const remainingPeriodeId = newState.egenmeldingsperioder[1].id;
+    const periodeId = newState.egenmeldingsperioder.ukjent[0].id;
+    const remainingPeriodeId = newState.egenmeldingsperioder.ukjent[1].id;
 
     const evenNewerState = formReducer(newState, {
       type: 'slettEgenmeldingsperiode',
       payload: periodeId
     });
 
-    expect(evenNewerState.egenmeldingsperioder.length).toBe(1);
-    expect(evenNewerState.egenmeldingsperioder[0].id).toEqual(remainingPeriodeId);
+    expect(evenNewerState.egenmeldingsperioder.ukjent.length).toBe(1);
+    expect(evenNewerState.egenmeldingsperioder.ukjent[0].id).toEqual(remainingPeriodeId);
   });
 
   it('should toggle the status of the lonnISykefravaeret', () => {
     const newState = formReducer(initialState, {
       type: 'toggleBetalerArbeidsgiverHeleEllerDeler',
-      payload: 'Ja'
+      payload: {
+        status: 'Ja',
+        arbeidsforholdId: 'ukjent'
+      }
     });
 
-    expect(newState.lonnISykefravaeret).toEqual({ status: 'Ja' });
+    expect(newState.lonnISykefravaeret).toEqual({ ukjent: { status: 'Ja' } });
 
     const newerState = formReducer(newState, {
       type: 'toggleBetalerArbeidsgiverHeleEllerDeler',
-      payload: 'Nei'
+      payload: {
+        status: 'Nei',
+        arbeidsforholdId: 'ukjent'
+      }
     });
 
-    expect(newerState.lonnISykefravaeret).toEqual({ status: 'Nei' });
+    expect(newerState.lonnISykefravaeret).toEqual({ ukjent: { status: 'Nei' } });
   });
 
   it('should toggle the status of the fullLonnIArbeidsgiverPerioden', () => {
     const newState = formReducer(initialState, {
       type: 'toggleBetalerArbeidsgiverFullLonnIArbeidsgiverperioden',
-      payload: 'Ja'
+      payload: {
+        status: 'Ja',
+        arbeidsforholdId: 'ukjent'
+      }
     });
 
-    expect(newState.fullLonnIArbeidsgiverPerioden).toEqual({ status: 'Ja' });
+    expect(newState.fullLonnIArbeidsgiverPerioden).toEqual({ ukjent: { status: 'Ja' } });
 
     const newerState = formReducer(newState, {
       type: 'toggleBetalerArbeidsgiverFullLonnIArbeidsgiverperioden',
-      payload: 'Nei'
+      payload: {
+        status: 'Nei',
+        arbeidsforholdId: 'ukjent'
+      }
     });
 
-    expect(newerState.fullLonnIArbeidsgiverPerioden).toEqual({ status: 'Nei' });
+    expect(newerState.fullLonnIArbeidsgiverPerioden).toEqual({ ukjent: { status: 'Nei' } });
   });
 
   it('should add the first row to naturalytelser and then delete it', () => {
@@ -231,7 +237,7 @@ describe('formReducer', () => {
   });
 
   it('should set egenmeldingsperioder fra to payload', () => {
-    const firstPeriode = initialState.egenmeldingsperioder[0].id;
+    const firstPeriode = initialState.egenmeldingsperioder.ukjent[0].id;
 
     const newState = formReducer(initialState, {
       type: 'setEgenmeldingFraDato',
@@ -241,11 +247,11 @@ describe('formReducer', () => {
       }
     });
 
-    expect(newState.egenmeldingsperioder[0].fra).toEqual(new Date('2002-02-02'));
+    expect(newState.egenmeldingsperioder.ukjent[0].fra).toEqual(new Date('2002-02-02'));
   });
 
   it('should set egenmeldingsperioder til to payload', () => {
-    const firstPeriode = initialState.egenmeldingsperioder[0].id;
+    const firstPeriode = initialState.egenmeldingsperioder.ukjent[0].id;
 
     const newState = formReducer(initialState, {
       type: 'setEgenmeldingTilDato',
@@ -255,7 +261,7 @@ describe('formReducer', () => {
       }
     });
 
-    expect(newState.egenmeldingsperioder[0].til).toEqual(new Date('2002-02-02'));
+    expect(newState.egenmeldingsperioder.ukjent[0].til).toEqual(new Date('2002-02-02'));
   });
 
   it('should set naturalytelser type to payload', () => {

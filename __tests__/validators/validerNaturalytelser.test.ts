@@ -1,5 +1,6 @@
 import { Naturalytelse } from '../../state/state';
 import validerNaturalytelser from '../../validators/validerNaturalytelser';
+import { expect, it, describe } from 'vitest';
 
 describe('validerNaturalytelser', () => {
   it('should validate that all is OK', () => {
@@ -11,7 +12,7 @@ describe('validerNaturalytelser', () => {
         verdi: 1234
       }
     ];
-    expect(validerNaturalytelser(input, 'Ja')).toBe(true);
+    expect(validerNaturalytelser(input, 'Ja')).toEqual([]);
   });
 
   it('should fail if bortfallsdato is missing', () => {
@@ -22,7 +23,15 @@ describe('validerNaturalytelser', () => {
         verdi: 1234
       }
     ];
-    expect(validerNaturalytelser(input, 'Ja')).toBe(false);
+
+    const expected = [
+      {
+        code: 'MANGLER_BORTFALLSDATO',
+        felt: 'tilfeldig'
+      }
+    ];
+
+    expect(validerNaturalytelser(input, 'Ja')).toEqual(expected);
   });
 
   it('should fail if type is missing', () => {
@@ -33,7 +42,15 @@ describe('validerNaturalytelser', () => {
         verdi: 1234
       }
     ];
-    expect(validerNaturalytelser(input, 'Ja')).toBe(false);
+
+    const expected = [
+      {
+        code: 'MANGLER_TYPE',
+        felt: 'tilfeldig'
+      }
+    ];
+
+    expect(validerNaturalytelser(input, 'Ja')).toEqual(expected);
   });
 
   it('should fail if verdi is missing', () => {
@@ -44,7 +61,15 @@ describe('validerNaturalytelser', () => {
         type: 'gratis'
       }
     ];
-    expect(validerNaturalytelser(input, 'Ja')).toBe(false);
+
+    const expected = [
+      {
+        code: 'MANGLER_VERDI',
+        felt: 'tilfeldig'
+      }
+    ];
+
+    expect(validerNaturalytelser(input, 'Ja')).toEqual(expected);
   });
 
   it('should not fail if verdi is missing and we dont expect any naturalytelser', () => {
@@ -55,6 +80,18 @@ describe('validerNaturalytelser', () => {
         type: 'gratis'
       }
     ];
-    expect(validerNaturalytelser(input, 'Nei')).toBe(true);
+
+    const expected = [
+      {
+        code: 'MANGLER_VALG_BORTFALL_AV_NATURALYTELSER',
+        felt: ''
+      },
+      {
+        code: 'MANGLER_VERDI',
+        felt: 'tilfeldig'
+      }
+    ];
+
+    expect(validerNaturalytelser(input, 'Nei')).toEqual(expected);
   });
 });

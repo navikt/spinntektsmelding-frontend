@@ -1,4 +1,5 @@
 import validerLonnUnderHeleSykefravaeret from '../../validators/validerLonnUnderHeleSykefravaeret';
+import { expect, it, describe } from 'vitest';
 
 describe('validerLonnUnderHeleSykefravaeret', () => {
   it('should return true when status is Ja', () => {
