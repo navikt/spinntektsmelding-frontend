@@ -3,7 +3,7 @@
 // import { FullLonnISykefravaeret } from '../validators/validerLonnISykefravaeret';
 // import { NaturalytelserFeilkoder } from '../validators/validerNaturalytelser';
 // import { PeriodeFeilkode } from '../validators/validerPeriode';
-import { ErrorCodes } from './submitInntektsmelding';
+// import { ErrorCodes } from './submitInntektsmelding';
 
 const feiltekster = {
   INGEN_ARBEIDSFORHOLD: 'Mangler arbeidsforhold.',

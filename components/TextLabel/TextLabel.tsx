@@ -1,9 +1,8 @@
 import styles from './TextLabel.module.css';
 
-interface TextLabelProps {
+interface TextLabelProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: 'small' | 'medium';
   children?: React.ReactNode;
-  className?: string;
 }
 
 export default function TextLabel(props: TextLabelProps) {

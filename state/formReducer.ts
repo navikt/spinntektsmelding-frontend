@@ -357,6 +357,11 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
       }
 
       state.behandlingsdager = fdata.behandlingsdager;
+      state.behandlingsperiode = {
+        fra: parseISO(fdata.behandlingsperiode.fra),
+        til: parseISO(fdata.behandlingsperiode.til),
+        id: nanoid()
+      };
 
       state.arbeidsforhold = fdata.arbeidsforhold.map((forhold) => ({
         arbeidsforholdId: forhold.arbeidsforholdId,

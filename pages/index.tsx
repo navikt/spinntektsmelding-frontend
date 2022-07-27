@@ -417,7 +417,7 @@ const Home: NextPage = () => {
               {state.behandlingsdager && (
                 <>
                   <Skillelinje />
-                  <Behandlingsdager periode={state.fravaersperiode[0]} onSelect={setBehandlingsdager} />
+                  <Behandlingsdager periode={state.behandlingsperiode!} onSelect={setBehandlingsdager} />
                 </>
               )}
 
