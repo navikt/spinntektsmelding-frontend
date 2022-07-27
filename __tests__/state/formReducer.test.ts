@@ -14,7 +14,7 @@ describe('formReducer', () => {
     });
 
     expect(newState.fravaersperiode?.arbeidsforholdId.length).toBe(1);
-    expect(newState.fravaersperiode?.arbeidsforholdId[0]!.id).toBeTruthy(); // The id is a random textstring
+    expect(newState.fravaersperiode?.arbeidsforholdId[0]?.id).toBeTruthy(); // The id is a random textstring
 
     const newerState = formReducer(newState, {
       type: 'leggTilFravaersperiode',
@@ -22,8 +22,8 @@ describe('formReducer', () => {
     });
 
     expect(newerState.fravaersperiode?.arbeidsforholdId.length).toBe(2);
-    expect(newerState.fravaersperiode?.arbeidsforholdId[0]!.id).not.toBe(
-      newerState.fravaersperiode?.arbeidsforholdId[1]!.id
+    expect(newerState.fravaersperiode?.arbeidsforholdId[0]?.id).not.toBe(
+      newerState.fravaersperiode?.arbeidsforholdId[1]?.id
     ); // The ids should not be equal
   });
 
@@ -44,16 +44,16 @@ describe('formReducer', () => {
 
     expect(newerState.fravaersperiode?.arbeidsforholdId.length).toBe(2);
 
-    const periodeId = newerState.fravaersperiode?.arbeidsforholdId[0]!.id;
-    const remainingPeriodeId = newerState.fravaersperiode?.arbeidsforholdId[1]!.id;
+    const periodeId = newerState.fravaersperiode?.arbeidsforholdId[0]?.id;
+    const remainingPeriodeId = newerState.fravaersperiode?.arbeidsforholdId[1]?.id;
 
     const evenNewerState = formReducer(newerState, {
       type: 'slettFravaersperiode',
-      payload: periodeId
+      payload: periodeId || 'fallback'
     });
 
     expect(evenNewerState.fravaersperiode?.arbeidsforholdId.length).toBe(1);
-    expect(evenNewerState.fravaersperiode?.arbeidsforholdId[0]!.id).toEqual(remainingPeriodeId);
+    expect(evenNewerState.fravaersperiode?.arbeidsforholdId[0]?.id).toEqual(remainingPeriodeId);
   });
 
   it('should set fraværsperiode fra to payload', () => {
@@ -62,7 +62,7 @@ describe('formReducer', () => {
       payload: 'arbeidsforholdId'
     });
 
-    const firstPeriode = newState.fravaersperiode?.arbeidsforholdId[0]!.id;
+    const firstPeriode = newState.fravaersperiode?.arbeidsforholdId[0]?.id;
 
     const newerState = formReducer(newState, {
       type: 'setFravaersperiodeFraDato',
@@ -82,7 +82,7 @@ describe('formReducer', () => {
       payload: 'arbeidsforholdId'
     });
 
-    const firstPeriode = newState.fravaersperiode?.arbeidsforholdId[0]!.id;
+    const firstPeriode = newState.fravaersperiode?.arbeidsforholdId[0]?.id;
 
     const newerState = formReducer(newState, {
       type: 'setFravaersperiodeTilDato',
