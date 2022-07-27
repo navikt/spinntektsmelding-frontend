@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Bedriftsmeny from '@navikt/bedriftsmeny';
 import '@navikt/bedriftsmeny/lib/bedriftsmeny.css';
 import { createBrowserHistory, createMemoryHistory, History } from 'history';
-import LocationState = History.LocationState;
 import { Organisasjon as AltinnOrganisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
 import useRoute from './useRoute';
 
@@ -29,7 +28,7 @@ const getHistory = () => {
 const Banner: React.FunctionComponent<Props> = (props) => {
   const { tittelMedUnderTittel, altinnOrganisasjoner } = props;
 
-  const [history] = useState<History<LocationState>>(getHistory());
+  const [history] = useState<History>(getHistory());
   const setRoute = useRoute();
 
   const onOrganisasjonChange = (organisasjon?: Organisasjon) => {
