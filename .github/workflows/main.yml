@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - run: yarn install --frozen-lockfile
       - run: yarn test
       - name: SonarCloud Scan
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - run: yarn install --frozen-lockfile
       - run: yarn lint
 
