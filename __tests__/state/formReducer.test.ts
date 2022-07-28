@@ -73,7 +73,7 @@ describe('formReducer', () => {
       }
     });
 
-    expect(newerState.fravaersperiode?.arbeidsforholdId[0]!.fra).toEqual(new Date('2002-02-02'));
+    expect(newerState.fravaersperiode?.arbeidsforholdId[0]?.fra).toEqual(new Date('2002-02-02'));
   });
 
   it('should set fraværsperiode til to payload', () => {
@@ -93,7 +93,7 @@ describe('formReducer', () => {
       }
     });
 
-    expect(newerState.fravaersperiode?.arbeidsforholdId[0]!.til).toEqual(new Date('2002-02-02'));
+    expect(newerState.fravaersperiode?.arbeidsforholdId[0]?.til).toEqual(new Date('2002-02-02'));
   });
 
   it('should add a egenmeldingsperioder with unique id', () => {
