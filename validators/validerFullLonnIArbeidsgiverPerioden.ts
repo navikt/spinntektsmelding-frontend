@@ -7,7 +7,7 @@ export enum FullLonnIArbeidsgiverPerioden {
 }
 
 export default function validerFullLonnIArbeidsgiverPerioden(lonn: LonnIArbeidsgiverperioden): Array<ValiderResultat> {
-  let feilkoder: Array<ValiderResultat> = [];
+  const feilkoder: Array<ValiderResultat> = [];
   if (!lonn.status) {
     feilkoder.push({
       felt: '',

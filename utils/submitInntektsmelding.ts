@@ -30,17 +30,19 @@ export enum ErrorCodes {
   INGEN_LONN_I_SYKEFRAVAERET = 'INGEN_LONN_I_SYKEFRAVAERET'
 }
 
+type codeUnion =
+  | PeriodeFeilkode
+  | BruttoinntektFeilkode
+  | ErrorCodes
+  | FullLonnIArbeidsgiverPerioden
+  | FullLonnISykefravaeret
+  | NaturalytelserFeilkoder
+  | LonnIArbeidsgiverperiodenFeilkode
+  | LonnUnderSykefravaeretFeilkode;
+
 export interface ValiderResultat {
   felt: string;
-  code:
-    | PeriodeFeilkode
-    | BruttoinntektFeilkode
-    | ErrorCodes
-    | FullLonnIArbeidsgiverPerioden
-    | FullLonnISykefravaeret
-    | NaturalytelserFeilkoder
-    | LonnIArbeidsgiverperiodenFeilkode
-    | LonnUnderSykefravaeretFeilkode;
+  code: codeUnion;
 }
 
 export default function submitInntektsmelding(state: InntektsmeldingSkjema): SubmitInntektsmeldingReturnvalues {
@@ -49,8 +51,6 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
   let feilkoderFravaersperioder: Array<ValiderResultat> = [];
   let feilkoderEgenmeldingsperioder: Array<ValiderResultat> = [];
   let feilkoderBruttoinntekt: Array<ValiderResultat> = [];
-  let feilkoderFullLonnIArbeidsgiverPerioden: Array<ValiderResultat> = [];
-  let feilkoderLonnISykefravaeret: Array<ValiderResultat> = [];
   let feilkoderNaturalytelser: Array<ValiderResultat> = [];
   let feilkoderLonnIArbeidsgiverperioden: Array<ValiderResultat> = [];
   let feilkoderLonnUnderSykefravaeret: Array<ValiderResultat> = [];
@@ -76,7 +76,7 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
     }
 
     feilkoderFravaersperioder = fravaersperiodeArbeidsforholdKeys.flatMap((forhold) =>
-      validerPeriode(state.fravaersperiode![forhold])
+      validerPeriode(state.fravaersperiode?.[forhold])
     );
   } else {
     errorCodes.push({
@@ -116,8 +116,6 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
     ...feilkoderFravaersperioder,
     ...feilkoderEgenmeldingsperioder,
     ...feilkoderBruttoinntekt,
-    ...feilkoderFullLonnIArbeidsgiverPerioden,
-    ...feilkoderLonnISykefravaeret,
     ...feilkoderNaturalytelser,
     ...feilkoderLonnIArbeidsgiverperioden,
     ...feilkoderLonnUnderSykefravaeret

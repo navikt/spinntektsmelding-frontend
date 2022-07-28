@@ -7,7 +7,7 @@ export enum FullLonnISykefravaeret {
 }
 
 export default function validerLonnISykefravaeret(lonn: LonnISykefravaeret): Array<ValiderResultat> {
-  let feilkoder: Array<ValiderResultat> = [];
+  const feilkoder: Array<ValiderResultat> = [];
   if (!lonn.status) {
     feilkoder.push({
       felt: '',

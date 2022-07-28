@@ -171,11 +171,6 @@
   margin-bottom: auto;
 }
 
-.belopwrapper input {
-  /* font-weight: 600; */
-  /* font-size: xx-large; */
-}
-
 .naturalytelser {
   display: flex;
   gap: 2rem;
@@ -204,7 +199,7 @@
 
 .endremaaanedsinntekt .kontrollerknapp {
   margin-top: auto;
-  height: 3rem;;
+  height: 3rem;
 }
 
 @media screen and (max-width: 800px) {
