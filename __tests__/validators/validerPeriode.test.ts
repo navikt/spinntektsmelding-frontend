@@ -12,9 +12,7 @@ describe('validerPeriode', () => {
       }
     ];
 
-    const expected = [];
-
-    expect(validerPerioder(input)).toEqual(expected);
+    expect(validerPerioder(input)).toEqual([]);
   });
 
   it('should fail if til is missing', () => {

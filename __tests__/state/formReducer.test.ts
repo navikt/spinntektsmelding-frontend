@@ -88,12 +88,12 @@ describe('formReducer', () => {
       type: 'setFravaersperiodeTilDato',
       payload: {
         periodeId: firstPeriode || 'fallback',
-        value: '2002-02-02',
+        value: '2002-02-03',
         arbeidsforholdId: 'arbeidsforholdId'
       }
     });
 
-    expect(newerState.fravaersperiode?.arbeidsforholdId[0]?.til).toEqual(new Date('2002-02-02'));
+    expect(newerState.fravaersperiode?.arbeidsforholdId[0]?.til).toEqual(new Date('2002-02-03'));
   });
 
   it('should add a egenmeldingsperioder with unique id', () => {
@@ -243,11 +243,11 @@ describe('formReducer', () => {
       type: 'setEgenmeldingFraDato',
       payload: {
         periodeId: firstPeriode,
-        value: '2002-02-02'
+        value: '2002-02-04'
       }
     });
 
-    expect(newState.egenmeldingsperioder.ukjent[0].fra).toEqual(new Date('2002-02-02'));
+    expect(newState.egenmeldingsperioder.ukjent[0].fra).toEqual(new Date('2002-02-04'));
   });
 
   it('should set egenmeldingsperioder til to payload', () => {
@@ -257,11 +257,11 @@ describe('formReducer', () => {
       type: 'setEgenmeldingTilDato',
       payload: {
         periodeId: firstPeriode,
-        value: '2002-02-02'
+        value: '2002-02-05'
       }
     });
 
-    expect(newState.egenmeldingsperioder.ukjent[0].til).toEqual(new Date('2002-02-02'));
+    expect(newState.egenmeldingsperioder.ukjent[0].til).toEqual(new Date('2002-02-05'));
   });
 
   it('should set naturalytelser type to payload', () => {
@@ -295,11 +295,11 @@ describe('formReducer', () => {
       type: 'setNaturalytelseDato',
       payload: {
         ytelseId: firstPeriode,
-        value: '2002-02-02'
+        value: '2002-02-06'
       }
     });
 
-    expect(newState.naturalytelser![0].bortfallsdato).toEqual(new Date('2002-02-02'));
+    expect(newState.naturalytelser![0].bortfallsdato).toEqual(new Date('2002-02-06'));
   });
 
   it('should set naturalytelser verdi to payload', () => {
