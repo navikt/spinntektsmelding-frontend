@@ -214,7 +214,11 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
         id: nanoid()
       };
 
-      state.naturalytelser!.push(nyNaturalytelseRad);
+      if (!state.naturalytelser) {
+        state.naturalytelser = [];
+      }
+
+      state.naturalytelser.push(nyNaturalytelseRad);
 
       return state;
     }

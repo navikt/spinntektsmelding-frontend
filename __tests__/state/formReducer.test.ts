@@ -206,18 +206,18 @@ describe('formReducer', () => {
 
     expect(newerState.naturalytelser?.length).toBe(2);
 
-    const firstId = newerState.naturalytelser![0].id;
-    const secondId = newerState.naturalytelser![1].id;
+    const firstId = newerState.naturalytelser?.[0].id;
+    const secondId = newerState.naturalytelser?.[1].id;
 
     expect(firstId).not.toEqual(secondId);
 
     const evenNewerState = formReducer(newerState, {
       type: 'slettNaturalytelse',
-      payload: firstId
+      payload: firstId || 'fallback'
     });
 
     expect(evenNewerState.naturalytelser?.length).toBe(1);
-    expect(evenNewerState.naturalytelser![0].id).toEqual(secondId);
+    expect(evenNewerState.naturalytelser?.[0].id).toEqual(secondId);
   });
 
   it('should toggleOpplysningerBekreftet by setting its value to payload', () => {
@@ -270,17 +270,17 @@ describe('formReducer', () => {
       payload: true
     });
 
-    const firstPeriode = preState.naturalytelser![0].id;
+    const firstPeriode = preState.naturalytelser?.[0]?.id;
 
     const newState = formReducer(preState, {
       type: 'setNaturalytelseType',
       payload: {
-        ytelseId: firstPeriode,
+        ytelseId: firstPeriode || 'fallback',
         value: 'Ytelse'
       }
     });
 
-    expect(newState.naturalytelser![0].type).toBe('Ytelse');
+    expect(newState.naturalytelser?.[0]?.type).toBe('Ytelse');
   });
 
   it('should set naturalytelser dato to payload', () => {
@@ -289,17 +289,17 @@ describe('formReducer', () => {
       payload: true
     });
 
-    const firstPeriode = preState.naturalytelser![0].id;
+    const firstPeriode = preState.naturalytelser?.[0]?.id;
 
     const newState = formReducer(preState, {
       type: 'setNaturalytelseDato',
       payload: {
-        ytelseId: firstPeriode,
+        ytelseId: firstPeriode || 'fallback',
         value: '2002-02-06'
       }
     });
 
-    expect(newState.naturalytelser![0].bortfallsdato).toEqual(new Date('2002-02-06'));
+    expect(newState.naturalytelser?.[0]?.bortfallsdato).toEqual(new Date('2002-02-06'));
   });
 
   it('should set naturalytelser verdi to payload', () => {
@@ -308,17 +308,17 @@ describe('formReducer', () => {
       payload: true
     });
 
-    const firstPeriode = preState.naturalytelser![0].id;
+    const firstPeriode = preState.naturalytelser?.[0]?.id;
 
     const newState = formReducer(preState, {
       type: 'setNaturalytelseVerdi',
       payload: {
-        ytelseId: firstPeriode,
+        ytelseId: firstPeriode || 'fallback',
         value: '123.4'
       }
     });
 
-    expect(newState.naturalytelser![0].verdi).toBe(123.4);
+    expect(newState.naturalytelser?.[0]?.verdi).toBe(123.4);
   });
 
   it('should set orgnrUnderenhet og virksomhetsnavn verdi payload', () => {
