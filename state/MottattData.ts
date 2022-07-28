@@ -24,6 +24,7 @@ interface MottattData {
   bruttoinntekt: number;
   tidligereinntekt: Array<MottattHistoriskInntekt>;
   behandlingsdager: boolean;
+  behandlingsperiode: MottattPeriode;
   arbeidsforhold: Array<MottattArbeidsforhold>;
 }
 

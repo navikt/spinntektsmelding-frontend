@@ -1,4 +1,5 @@
 import validerLonnTilArbeidstakerIArbeidsgiverperioden from '../../validators/validerLonnTilArbeidstakerIArbeidsgiverperioden';
+import { expect, it, describe } from 'vitest';
 
 describe('validerLonnTilArbeidstakerIArbeidsgiverperioden', () => {
   it('should return true when status is Ja', () => {

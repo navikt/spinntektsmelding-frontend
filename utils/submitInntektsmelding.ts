@@ -126,7 +126,9 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
   if (errorCodes.length > 0) {
     errorTexts = errorCodes.map((error) => ({
       felt: error.felt,
-      text: error.code && feiltekster[error.code] ? feiltekster[error.code] : error.code
+      // eslint-disable-next-line
+      // @ts-ignore
+      text: error.code && feiltekster[[error.code]] ? (feiltekster[[error.code]] as string) : error.code
     }));
   }
 

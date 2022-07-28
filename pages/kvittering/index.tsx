@@ -121,7 +121,11 @@ const Kvittering: NextPage = () => {
                   Egenmelding
                 </BodyShort>
                 {state.egenmeldingsperioder.map((periode) => (
-                  <PeriodeFraTil fra={periode.fra} til={periode.til} />
+                  <PeriodeFraTil
+                    fra={periode.fra}
+                    til={periode.til}
+                    key={`${periode.fra.getTime()}-${periode.til.getTime()}`}
+                  />
                 ))}
               </div>
               <div className={lokalStyles.ytrefravaerswrapper}>

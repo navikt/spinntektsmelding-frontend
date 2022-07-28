@@ -1,4 +1,5 @@
 import validerBekreftelse from '../../validators/validerBekreftelse';
+import { expect, it, describe } from 'vitest';
 
 describe('validerBekreftelse', () => {
   it('should return true when stuff is confirmed', () => {

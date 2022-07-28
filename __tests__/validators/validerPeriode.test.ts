@@ -1,5 +1,6 @@
 import { Periode } from '../../state/state';
 import validerPerioder from '../../validators/validerPeriode';
+import { expect, it, describe } from 'vitest';
 
 describe('validerPeriode', () => {
   it('should validate that all is OK', () => {
@@ -10,7 +11,10 @@ describe('validerPeriode', () => {
         fra: new Date()
       }
     ];
-    expect(validerPerioder(input)).toBe(true);
+
+    const expected = [];
+
+    expect(validerPerioder(input)).toEqual(expected);
   });
 
   it('should fail if til is missing', () => {
@@ -20,7 +24,15 @@ describe('validerPeriode', () => {
         fra: new Date()
       }
     ];
-    expect(validerPerioder(input)).toBe(false);
+
+    const expected = [
+      {
+        code: 'MANGLER_TIL',
+        felt: 'til-tilfeldig'
+      }
+    ];
+
+    expect(validerPerioder(input)).toEqual(expected);
   });
 
   it('should fail if fra is missing', () => {
@@ -30,7 +42,15 @@ describe('validerPeriode', () => {
         til: new Date()
       }
     ];
-    expect(validerPerioder(input)).toBe(false);
+
+    const expected = [
+      {
+        code: 'MANGLER_FRA',
+        felt: 'fra-tilfeldig'
+      }
+    ];
+
+    expect(validerPerioder(input)).toEqual(expected);
   });
 
   it('should fail if til and fra is missing', () => {
@@ -39,6 +59,18 @@ describe('validerPeriode', () => {
         id: 'tilfeldig'
       }
     ];
-    expect(validerPerioder(input)).toBe(false);
+
+    const expected = [
+      {
+        code: 'MANGLER_FRA',
+        felt: 'fra-tilfeldig'
+      },
+      {
+        code: 'MANGLER_TIL',
+        felt: 'til-tilfeldig'
+      }
+    ];
+
+    expect(validerPerioder(input)).toEqual(expected);
   });
 });

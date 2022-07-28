@@ -1,4 +1,5 @@
 import validerBehandlingsdager, { valideringBehandlingsdager } from '../../validators/validerBehandlingsdager';
+import { expect, it, describe } from 'vitest';
 
 describe('validerBehandlingsdager', () => {
   it('should return OK when the days are once a week and no more than fifteen days apart', () => {

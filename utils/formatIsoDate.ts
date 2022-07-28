@@ -5,9 +5,5 @@ export default function formatIsoDate(date?: Date): string {
     return '';
   }
 
-  if (typeof date !== Date) {
-    return '';
-  }
-
   return formatISO(date, { representation: 'date' });
 }
