@@ -1,33 +1,19 @@
-import { IArbeidsforhold, Periode } from '../../state/state';
+import useFravaersperiodeStore from '../../state/useFravaersperiodeStore';
+import { IArbeidsforhold } from '../../state/state';
 import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltperiode from './FravaerEnkeltperiode';
 
 interface FravaersperiodeProps {
-  perioder?: { [key: string]: Array<Periode> };
   arbeidsforhold?: Array<IArbeidsforhold>;
-  sammePeriodeForAlle: boolean;
-  setSykemeldingFraDato: (dateValue: string, periodeId: string, arbeidsforholdId: string) => void;
-  setSykemeldingTilDato: (dateValue: string, periodeId: string, arbeidsforholdId: string) => void;
-  setSammeFravarePaaArbeidsforhold: (event: React.ChangeEvent<HTMLInputElement>, arbeidsforholdId: string) => void;
-  clickSlettFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, periodeId: string) => void;
-  clickLeggTilFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
-  clickTilbakestillFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
-  clickEndreFravaersperiode: (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => void;
 }
 
-export default function Fravaersperiode({
-  perioder,
-  arbeidsforhold,
-  sammePeriodeForAlle,
-  setSykemeldingFraDato,
-  setSykemeldingTilDato,
-  clickSlettFravaersperiode,
-  clickLeggTilFravaersperiode,
-  clickTilbakestillFravaersperiode,
-  setSammeFravarePaaArbeidsforhold,
-  clickEndreFravaersperiode
-}: FravaersperiodeProps) {
-  if (!arbeidsforhold || !perioder) return null;
+export default function Fravaersperiode({ arbeidsforhold }: FravaersperiodeProps) {
+  const fravaersperiode = useFravaersperiodeStore((state) => state.fravaersperiode);
+
+  if (!arbeidsforhold || !fravaersperiode) return null;
+
+  console.log(arbeidsforhold); // eslint-disable-line
+  console.log(fravaersperiode); // eslint-disable-line
 
   return (
     <>
@@ -41,19 +27,10 @@ export default function Fravaersperiode({
         .filter((forhold) => forhold.aktiv)
         .map((forhold, forholdIndex) => (
           <FravaerEnkeltperiode
-            perioder={perioder[forhold.arbeidsforholdId]}
             arbeidsforhold={forhold}
-            setSykemeldingFraDato={setSykemeldingFraDato}
-            setSykemeldingTilDato={setSykemeldingTilDato}
-            clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
-            clickSlettFravaersperiode={clickSlettFravaersperiode}
-            clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
             harFlereArbeidsforhold={arbeidsforhold.length > 1}
             forsteArbeidsforhold={forholdIndex === 0}
             flereEnnToArbeidsforhold={arbeidsforhold.length > 2}
-            setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
-            clickEndreFravaersperiode={clickEndreFravaersperiode}
-            sammePeriodeForAlle={sammePeriodeForAlle}
             key={forhold.arbeidsforholdId}
           />
         ))}

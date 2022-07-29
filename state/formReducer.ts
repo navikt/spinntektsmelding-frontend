@@ -335,22 +335,6 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
         endringsaarsak: ''
       };
       state.opprinneligbruttoinntekt = structuredClone(state.bruttoinntekt);
-      const fravaersKeys = Object.keys(fdata.fravaersperiode) || [];
-
-      if (fravaersKeys.length > 0) {
-        state.fravaersperiode = {};
-        fravaersKeys.forEach((fKeys) => {
-          state.fravaersperiode![fKeys] = fdata.fravaersperiode[fKeys].map((periode) => {
-            return {
-              fra: parseISO(periode.fra),
-              til: parseISO(periode.til),
-              id: nanoid()
-            };
-          });
-        });
-      }
-
-      state.opprinneligfravaersperiode = structuredClone({ ...state.fravaersperiode });
 
       if (fdata.tidligereinntekt) {
         state.tidligereinntekt = fdata.tidligereinntekt.map((inntekt) => ({

@@ -32,6 +32,7 @@ import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
 import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 import submitInntektsmelding, { ValiderTekster } from '../utils/submitInntektsmelding';
+import useFravaersperiodeStore from '../state/useFravaersperiodeStore';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -40,6 +41,8 @@ const ARBEIDSGIVER_URL = '/api/arbeidsgivere';
 const Home: NextPage = () => {
   const setRoute = useRoute();
   const { data, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
+
+  const initFravaersperiode = useFravaersperiodeStore((fstate) => fstate.initFravaersperiode);
 
   const [feilmeldinger, setFeilmeldinger] = useState<Array<ValiderTekster> | undefined>([]);
   const [state, dispatch] = useReducer(formReducer, initialState);
@@ -273,28 +276,6 @@ const Home: NextPage = () => {
     });
   };
 
-  const setSykemeldingFraDato = (dateValue: string, periodeId: string, arbeidsforholdId: string) => {
-    dispatch({
-      type: 'setFravaersperiodeFraDato',
-      payload: {
-        periodeId,
-        value: dateValue,
-        arbeidsforholdId
-      }
-    });
-  };
-
-  const setSykemeldingTilDato = (dateValue: string, periodeId: string, arbeidsforholdId: string) => {
-    dispatch({
-      type: 'setFravaersperiodeTilDato',
-      payload: {
-        periodeId,
-        value: dateValue,
-        arbeidsforholdId
-      }
-    });
-  };
-
   const setBehandlingsdager = (behandlingsdager?: Array<Date>) => {
     dispatch({
       type: 'setBehandlingsdager',
@@ -346,6 +327,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     fetch('/api/inntektsmelding').then((mottattData) => {
       mottattData.json().then((jsonData) => {
+        initFravaersperiode(jsonData.fravaersperiode);
         dispatch({
           type: 'fyllFormdata',
           payload: jsonData
@@ -440,18 +422,7 @@ const Home: NextPage = () => {
               {!state.behandlingsdager && (
                 <>
                   <Skillelinje />
-                  <Fravaersperiode
-                    perioder={state.fravaersperiode}
-                    arbeidsforhold={state.arbeidsforhold}
-                    sammePeriodeForAlle={state.sammeFravaersperiode}
-                    setSykemeldingFraDato={setSykemeldingFraDato}
-                    setSykemeldingTilDato={setSykemeldingTilDato}
-                    setSammeFravarePaaArbeidsforhold={setSammeFravarePaaArbeidsforhold}
-                    clickLeggTilFravaersperiode={clickLeggTilFravaersperiode}
-                    clickSlettFravaersperiode={clickSlettFravaersperiode}
-                    clickTilbakestillFravaersperiode={clickTilbakestillFravaersperiode}
-                    clickEndreFravaersperiode={clickEndreFravaersperiode}
-                  />
+                  <Fravaersperiode arbeidsforhold={state.arbeidsforhold} />
                 </>
               )}
 
