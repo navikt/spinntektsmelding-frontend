@@ -36,6 +36,7 @@ import useFravaersperiodeStore from '../state/useFravaersperiodeStore';
 import useBruttoinntektStore from '../state/useBruttoinntektStore';
 import MottattData from '../state/MottattData';
 import useArbeidsforholdStore from '../state/useArbeidsforholdStore';
+import useEgenmeldingStore from '../state/useEgenmeldingStore';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -48,6 +49,7 @@ const Home: NextPage = () => {
   const initFravaersperiode = useFravaersperiodeStore((fstate) => fstate.initFravaersperiode);
   const initBruttoinntekt = useBruttoinntektStore((fstate) => fstate.initBruttioinntekt);
   const initArbeidsforhold = useArbeidsforholdStore((fstate) => fstate.initArbeidsforhold);
+  const initEgenmeldingsperiode = useEgenmeldingStore((fstate) => fstate.initEgenmeldingsperiode);
 
   const [feilmeldinger, setFeilmeldinger] = useState<Array<ValiderTekster> | undefined>([]);
   const [state, dispatch] = useReducer(formReducer, initialState);
@@ -107,24 +109,6 @@ const Home: NextPage = () => {
     });
   };
 
-  const clickLeggTilEgenmeldingsperiode = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
-    dispatch({
-      type: 'leggTilEgenmeldingsperiode',
-      payload: arbeidsforholdId
-    });
-
-    event.preventDefault();
-  };
-
-  const clickSlettEgenmeldingsperiode = (event: React.MouseEvent<HTMLButtonElement>, periodeId: string) => {
-    dispatch({
-      type: 'slettEgenmeldingsperiode',
-      payload: periodeId
-    });
-
-    event.preventDefault();
-  };
-
   const clickArbeidsgiverBetalerHeleEllerDeler = (
     event: React.MouseEvent<HTMLInputElement>,
     arbeidsforholdId: string
@@ -149,26 +133,6 @@ const Home: NextPage = () => {
     dispatch({
       type: 'toggleRefusjonskravetOpphoerer',
       payload: { status: event.currentTarget.value as YesNo, arbeidsforholdId: arbeidsforholdId }
-    });
-  };
-
-  const setEgenmeldingFraDato = (dateValue: string, periodeId: string) => {
-    dispatch({
-      type: 'setEgenmeldingFraDato',
-      payload: {
-        periodeId,
-        value: dateValue
-      }
-    });
-  };
-
-  const setEgenmeldingTilDato = (dateValue: string, periodeId: string) => {
-    dispatch({
-      type: 'setEgenmeldingTilDato',
-      payload: {
-        periodeId,
-        value: dateValue
-      }
     });
   };
 
@@ -241,14 +205,6 @@ const Home: NextPage = () => {
       }
     });
   };
-
-  const onChangeArbeidsforhold = (value: any[]) => {
-    dispatch({
-      type: 'setArbeidsforhold',
-      payload: value
-    });
-  };
-
   const harFeilmeldinger = feilmeldinger && feilmeldinger.length > 0;
 
   useEffect(() => {
@@ -265,6 +221,7 @@ const Home: NextPage = () => {
         initFravaersperiode(jsonData.fravaersperiode);
         initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekt);
         initArbeidsforhold(jsonData.arbeidsforhold);
+        initEgenmeldingsperiode(jsonData.arbeidsforhold, jsonData.egenmeldingsperioder);
         dispatch({
           type: 'fyllFormdata',
           payload: jsonData
@@ -326,10 +283,7 @@ const Home: NextPage = () => {
               {state.arbeidsforhold && state.arbeidsforhold.length > 1 && (
                 <>
                   <Skillelinje />
-                  <Arbeidsforhold
-                    arbeidsforhold={state.arbeidsforhold}
-                    onChangeArbeidsforhold={onChangeArbeidsforhold}
-                  />
+                  <Arbeidsforhold />
                 </>
               )}
 
@@ -343,23 +297,14 @@ const Home: NextPage = () => {
               {state.egenmeldingsperioder && (
                 <>
                   <Skillelinje />
-                  {state.arbeidsforhold && (
-                    <Egenmelding
-                      egenmeldingsperioder={state.egenmeldingsperioder}
-                      arbeidsforhold={state.arbeidsforhold}
-                      setEgenmeldingFraDato={setEgenmeldingFraDato}
-                      setEgenmeldingTilDato={setEgenmeldingTilDato}
-                      clickSlettEgenmeldingsperiode={clickSlettEgenmeldingsperiode}
-                      clickLeggTilEgenmeldingsperiode={clickLeggTilEgenmeldingsperiode}
-                    />
-                  )}
+                  {state.arbeidsforhold && <Egenmelding />}
                 </>
               )}
 
               {!state.behandlingsdager && (
                 <>
                   <Skillelinje />
-                  <Fravaersperiode arbeidsforhold={state.arbeidsforhold} />
+                  <Fravaersperiode />
                 </>
               )}
 

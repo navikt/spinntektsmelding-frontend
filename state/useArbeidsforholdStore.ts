@@ -7,9 +7,10 @@ interface ArbeidsforholdState {
   arbeidsforhold?: Array<IArbeidsforhold>;
   setAktiveArbeidsforhold: (aktiveArbeidsforhold: Array<string>) => void;
   initArbeidsforhold: (motattArbeidsforhold: Array<MottattArbeidsforhold>) => void;
+  aktiveArbeidsforhold: () => Array<IArbeidsforhold>;
 }
 
-const useArbeidsforholdStore = create<ArbeidsforholdState>((set) => ({
+const useArbeidsforholdStore = create<ArbeidsforholdState>((set, get) => ({
   arbeidsforhold: undefined,
   setAktiveArbeidsforhold: (aktiveArbeidsforhold: Array<string>) => {
     set(
@@ -36,6 +37,13 @@ const useArbeidsforholdStore = create<ArbeidsforholdState>((set) => ({
         }));
       })
     );
+  },
+  aktiveArbeidsforhold: () => {
+    const arbeidsforhold: Array<IArbeidsforhold> | undefined = get().arbeidsforhold;
+
+    if (!arbeidsforhold) return [];
+
+    return arbeidsforhold.filter((forhold) => forhold.aktiv);
   }
 }));
 

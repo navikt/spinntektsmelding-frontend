@@ -7,6 +7,7 @@ import useArbeidsforholdStore from '../../state/useArbeidsforholdStore';
 export default function Fravaersperiode() {
   const fravaersperiode = useFravaersperiodeStore((state) => state.fravaersperiode);
   const arbeidsforhold: Array<IArbeidsforhold> | undefined = useArbeidsforholdStore((state) => state.arbeidsforhold);
+  const aktiveArbeidsforhold = useArbeidsforholdStore((state) => state.aktiveArbeidsforhold);
   if (!arbeidsforhold || !fravaersperiode) return null;
 
   return (
@@ -17,17 +18,15 @@ export default function Fravaersperiode() {
         den ansatte vært på jobb noen av dagene eller om den på annen måte ikke er korrekt. Du skal ikke ta med
         eventuelle egenmeldingsdager i dette steget.
       </p>
-      {arbeidsforhold
-        .filter((forhold) => forhold.aktiv)
-        .map((forhold, forholdIndex) => (
-          <FravaerEnkeltAnsattforhold
-            arbeidsforhold={forhold}
-            harFlereArbeidsforhold={arbeidsforhold.length > 1}
-            forsteArbeidsforhold={forholdIndex === 0}
-            flereEnnToArbeidsforhold={arbeidsforhold.length > 2}
-            key={forhold.arbeidsforholdId}
-          />
-        ))}
+      {aktiveArbeidsforhold().map((forhold: IArbeidsforhold, forholdIndex: number) => (
+        <FravaerEnkeltAnsattforhold
+          arbeidsforhold={forhold}
+          harFlereArbeidsforhold={arbeidsforhold.length > 1}
+          forsteArbeidsforhold={forholdIndex === 0}
+          flereEnnToArbeidsforhold={arbeidsforhold.length > 2}
+          key={forhold.arbeidsforholdId}
+        />
+      ))}
     </>
   );
 }
