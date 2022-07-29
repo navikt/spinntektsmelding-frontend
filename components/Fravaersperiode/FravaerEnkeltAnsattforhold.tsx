@@ -12,19 +12,19 @@ import styles from '../../styles/Home.module.css';
 import { Button, Checkbox } from '@navikt/ds-react';
 import useFravaersperiodeStore from '../../state/useFravaersperiodeStore';
 
-interface FravaerEnkeltperiodeProps {
+interface FravaerEnkeltAnsattforholdProps {
   arbeidsforhold: IArbeidsforhold;
   harFlereArbeidsforhold: boolean;
   forsteArbeidsforhold: boolean;
   flereEnnToArbeidsforhold: boolean;
 }
 
-export default function FravaerEnkeltperiode({
+export default function FravaerEnkeltAnsattforhold({
   arbeidsforhold,
   harFlereArbeidsforhold,
   forsteArbeidsforhold,
   flereEnnToArbeidsforhold
-}: FravaerEnkeltperiodeProps) {
+}: FravaerEnkeltAnsattforholdProps) {
   const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
   const fravaersperiode = useFravaersperiodeStore((state) => state.fravaersperiode);
   const setSykemeldingFraDato = useFravaersperiodeStore((state) => state.setFravaersperiodeFraDato);

@@ -1,33 +1,27 @@
 import { BodyShort, Button, Checkbox, Link, Select, TextField } from '@navikt/ds-react';
 import { useState } from 'react';
 import { HistoriskInntekt, Inntekt } from '../../state/state';
+import useBruttoinntektStore from '../../state/useBruttoinntektStore';
 import styles from '../../styles/Home.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 
-interface BruttoinntektProps {
-  bruttoinntekt?: Inntekt;
-  tidligereinntekt?: Array<HistoriskInntekt>;
-  setNyMaanedsinntekt: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  selectEndringsaarsak: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  clickBekreftKorrektInntekt: (event: React.MouseEvent<HTMLInputElement>) => void;
-}
-
-export default function Bruttoinntekt({
-  bruttoinntekt,
-  tidligereinntekt,
-  setNyMaanedsinntekt,
-  selectEndringsaarsak,
-  clickTilbakestillMaanedsinntekt,
-  clickBekreftKorrektInntekt
-}: BruttoinntektProps) {
+export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const clickTilbakestillMaanedsinntektHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     setEndreMaanedsinntekt(false);
-    clickTilbakestillMaanedsinntekt(event);
+    tilbakestillMaanedsinntekt();
   };
+  const bruttoinntekt: Inntekt = useBruttoinntektStore((state) => state.bruttoinntekt);
+  const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBruttoinntektStore(
+    (state) => state.tidligereInntekt
+  );
+  const bekreftKorrektInntekt = useBruttoinntektStore((state) => state.bekreftKorrektInntekt);
+  const setNyMaanedsinntekt = useBruttoinntektStore((state) => state.setNyMaanedsinntekt);
+  const selectEndringsaarsak = useBruttoinntektStore((state) => state.selectEndringsaarsak);
+  const tilbakestillMaanedsinntekt = useBruttoinntektStore((state) => state.tilbakestillMaanedsinntekt);
 
   return (
     <>
@@ -50,10 +44,14 @@ export default function Bruttoinntekt({
           <div className={styles.endremaaanedsinntekt}>
             <TextField
               label='Inntekt per måned'
-              onChange={setNyMaanedsinntekt}
+              onChange={(event) => setNyMaanedsinntekt(event.target.value)}
               defaultValue={(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0).toString()}
             />
-            <Select label='Forklaring til endring' onChange={selectEndringsaarsak} id='bruttoinntekt-endringsaarsak'>
+            <Select
+              label='Forklaring til endring'
+              onChange={(event) => selectEndringsaarsak(event.target.value)}
+              id='bruttoinntekt-endringsaarsak'
+            >
               <option value=''>Velg endringsårsak</option>
               <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
               <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
@@ -105,7 +103,7 @@ export default function Bruttoinntekt({
           etter <Link href='#'>folketrygdloven $8-28.</Link>
         </strong>
       </p>
-      <Checkbox onClick={clickBekreftKorrektInntekt} id='bruttoinntektbekreft'>
+      <Checkbox onClick={(event) => bekreftKorrektInntekt(event.currentTarget.checked)} id='bruttoinntektbekreft'>
         Jeg bekrefter at registrert inntekt er korrekt
       </Checkbox>
     </>

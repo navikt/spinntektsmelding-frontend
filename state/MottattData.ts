@@ -3,7 +3,7 @@ export interface MottattPeriode {
   til: string;
 }
 
-interface MottattHistoriskInntekt {
+export interface MottattHistoriskInntekt {
   maanedsnavn: string;
   inntekt: number;
 }

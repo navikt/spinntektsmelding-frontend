@@ -1,19 +1,13 @@
 import useFravaersperiodeStore from '../../state/useFravaersperiodeStore';
 import { IArbeidsforhold } from '../../state/state';
 import Heading3 from '../Heading3/Heading3';
-import FravaerEnkeltperiode from './FravaerEnkeltperiode';
+import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
+import useArbeidsforholdStore from '../../state/useArbeidsforholdStore';
 
-interface FravaersperiodeProps {
-  arbeidsforhold?: Array<IArbeidsforhold>;
-}
-
-export default function Fravaersperiode({ arbeidsforhold }: FravaersperiodeProps) {
+export default function Fravaersperiode() {
   const fravaersperiode = useFravaersperiodeStore((state) => state.fravaersperiode);
-
+  const arbeidsforhold: Array<IArbeidsforhold> | undefined = useArbeidsforholdStore((state) => state.arbeidsforhold);
   if (!arbeidsforhold || !fravaersperiode) return null;
-
-  console.log(arbeidsforhold); // eslint-disable-line
-  console.log(fravaersperiode); // eslint-disable-line
 
   return (
     <>
@@ -26,7 +20,7 @@ export default function Fravaersperiode({ arbeidsforhold }: FravaersperiodeProps
       {arbeidsforhold
         .filter((forhold) => forhold.aktiv)
         .map((forhold, forholdIndex) => (
-          <FravaerEnkeltperiode
+          <FravaerEnkeltAnsattforhold
             arbeidsforhold={forhold}
             harFlereArbeidsforhold={arbeidsforhold.length > 1}
             forsteArbeidsforhold={forholdIndex === 0}

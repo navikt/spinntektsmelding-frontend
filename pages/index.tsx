@@ -33,6 +33,9 @@ import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 import submitInntektsmelding, { ValiderTekster } from '../utils/submitInntektsmelding';
 import useFravaersperiodeStore from '../state/useFravaersperiodeStore';
+import useBruttoinntektStore from '../state/useBruttoinntektStore';
+import MottattData from '../state/MottattData';
+import useArbeidsforholdStore from '../state/useArbeidsforholdStore';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -43,6 +46,8 @@ const Home: NextPage = () => {
   const { data, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
 
   const initFravaersperiode = useFravaersperiodeStore((fstate) => fstate.initFravaersperiode);
+  const initBruttoinntekt = useBruttoinntektStore((fstate) => fstate.initBruttioinntekt);
+  const initArbeidsforhold = useArbeidsforholdStore((fstate) => fstate.initArbeidsforhold);
 
   const [feilmeldinger, setFeilmeldinger] = useState<Array<ValiderTekster> | undefined>([]);
   const [state, dispatch] = useReducer(formReducer, initialState);
@@ -86,22 +91,6 @@ const Home: NextPage = () => {
     });
   };
 
-  const clickTilbakestillFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
-    event.preventDefault();
-
-    dispatch({
-      type: 'tilbakestillFravaersperiode',
-      payload: arbeidsforholdId
-    });
-  };
-
-  const clickBekreftKorrektInntekt = (event: React.MouseEvent<HTMLInputElement>) => {
-    dispatch({
-      type: 'toggleBekreftKorrektInntekt',
-      payload: !!event.currentTarget.checked
-    });
-  };
-
   const clickSlettNaturalytelse = (event: React.MouseEvent<HTMLButtonElement>, elementId: string) => {
     dispatch({
       type: 'slettNaturalytelse',
@@ -121,24 +110,6 @@ const Home: NextPage = () => {
   const clickLeggTilEgenmeldingsperiode = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
     dispatch({
       type: 'leggTilEgenmeldingsperiode',
-      payload: arbeidsforholdId
-    });
-
-    event.preventDefault();
-  };
-
-  const clickSlettFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>, periodeId: string) => {
-    dispatch({
-      type: 'slettFravaersperiode',
-      payload: periodeId
-    });
-
-    event.preventDefault();
-  };
-
-  const clickLeggTilFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
-    dispatch({
-      type: 'leggTilFravaersperiode',
       payload: arbeidsforholdId
     });
 
@@ -171,14 +142,6 @@ const Home: NextPage = () => {
     dispatch({
       type: 'toggleBetalerArbeidsgiverFullLonnIArbeidsgiverperioden',
       payload: { status: event.currentTarget.value as YesNo, arbeidsforholdId: arbeidsforholdId }
-    });
-  };
-
-  const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    dispatch({
-      type: 'tilbakestillBruttoinntekt'
     });
   };
 
@@ -262,20 +225,6 @@ const Home: NextPage = () => {
     });
   };
 
-  const selectEndringsaarsak = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    dispatch({
-      type: 'setEndringsaarsakMaanedsinntekt',
-      payload: event.target.value
-    });
-  };
-
-  const setNyMaanedsinntekt = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({
-      type: 'setOppdatertMaanedsinntekt',
-      payload: event.target.value
-    });
-  };
-
   const setBehandlingsdager = (behandlingsdager?: Array<Date>) => {
     dispatch({
       type: 'setBehandlingsdager',
@@ -300,20 +249,6 @@ const Home: NextPage = () => {
     });
   };
 
-  const setSammeFravarePaaArbeidsforhold = (event: React.ChangeEvent<HTMLInputElement>, arbeidsforholdId: string) => {
-    dispatch({
-      type: 'setSammeFravarePaaArbeidsforhold',
-      payload: { arbeidsforholdId: arbeidsforholdId, set: !!event.currentTarget.checked }
-    });
-  };
-
-  const clickEndreFravaersperiode = (event: React.MouseEvent<HTMLButtonElement>, _arbeidsforholdId: string) => {
-    event.preventDefault();
-    dispatch({
-      type: 'endreFravaersperiode'
-    });
-  };
-
   const harFeilmeldinger = feilmeldinger && feilmeldinger.length > 0;
 
   useEffect(() => {
@@ -326,8 +261,10 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     fetch('/api/inntektsmelding').then((mottattData) => {
-      mottattData.json().then((jsonData) => {
+      mottattData.json().then((jsonData: MottattData) => {
         initFravaersperiode(jsonData.fravaersperiode);
+        initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekt);
+        initArbeidsforhold(jsonData.arbeidsforhold);
         dispatch({
           type: 'fyllFormdata',
           payload: jsonData
@@ -428,14 +365,7 @@ const Home: NextPage = () => {
 
               <Skillelinje />
 
-              <Bruttoinntekt
-                bruttoinntekt={state.bruttoinntekt}
-                tidligereinntekt={state.tidligereinntekt}
-                setNyMaanedsinntekt={setNyMaanedsinntekt}
-                selectEndringsaarsak={selectEndringsaarsak}
-                clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-                clickBekreftKorrektInntekt={clickBekreftKorrektInntekt}
-              />
+              <Bruttoinntekt />
 
               <Skillelinje />
 

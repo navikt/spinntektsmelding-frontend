@@ -328,21 +328,6 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
       state.navn = fdata.navn;
       state.identitetsnummer = fdata.identitetsnummer;
       state.orgnrUnderenhet = fdata.orgnrUnderenhet;
-      state.bruttoinntekt = {
-        bruttoInntekt: fdata.bruttoinntekt,
-        bekreftet: false,
-        manueltKorrigert: false,
-        endringsaarsak: ''
-      };
-      state.opprinneligbruttoinntekt = structuredClone(state.bruttoinntekt);
-
-      if (fdata.tidligereinntekt) {
-        state.tidligereinntekt = fdata.tidligereinntekt.map((inntekt) => ({
-          maanedsnavn: inntekt.maanedsnavn,
-          inntekt: inntekt.inntekt,
-          id: nanoid()
-        }));
-      }
 
       state.behandlingsdager = fdata.behandlingsdager;
       if (fdata.behandlingsperiode) {
