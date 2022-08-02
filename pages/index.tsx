@@ -2,8 +2,7 @@ import React, { useEffect, useReducer, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
-import { Datepicker } from '@navikt/ds-datepicker';
-import { Button, Checkbox, ConfirmationPanel, ErrorSummary, TextField } from '@navikt/ds-react';
+import { Button, ConfirmationPanel, ErrorSummary } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 import Banner, { Organisasjon } from '../components/Banner/Banner';
@@ -17,11 +16,8 @@ import styles from '../styles/Home.module.css';
 import '@navikt/ds-datepicker/lib/index.css';
 
 import formReducer, { initialState } from '../state/formReducer';
-import { YesNo } from '../state/state';
 
-import ButtonSlette from '../components/ButtonSlette/ButtonSlette';
 import Script from 'next/script';
-import SelectNaturalytelser from '../components/SelectNaturalytelser/SelectNaturalytelser';
 
 import useRoute from '../components/Banner/useRoute';
 
@@ -32,11 +28,12 @@ import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
 import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 import submitInntektsmelding, { ValiderTekster } from '../utils/submitInntektsmelding';
+import MottattData from '../state/MottattData';
 import useFravaersperiodeStore from '../state/useFravaersperiodeStore';
 import useBruttoinntektStore from '../state/useBruttoinntektStore';
-import MottattData from '../state/MottattData';
 import useArbeidsforholdStore from '../state/useArbeidsforholdStore';
 import useEgenmeldingStore from '../state/useEgenmeldingStore';
+import Naturalytelser from '../components/Naturalytelser';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -50,6 +47,9 @@ const Home: NextPage = () => {
   const initBruttoinntekt = useBruttoinntektStore((fstate) => fstate.initBruttioinntekt);
   const initArbeidsforhold = useArbeidsforholdStore((fstate) => fstate.initArbeidsforhold);
   const initEgenmeldingsperiode = useEgenmeldingStore((fstate) => fstate.initEgenmeldingsperiode);
+
+  const arbeidsforhold = useArbeidsforholdStore((fstate) => fstate.arbeidsforhold);
+  const egenmeldingsperioder = useEgenmeldingStore((fstate) => fstate.egenmeldingsperioder);
 
   const [feilmeldinger, setFeilmeldinger] = useState<Array<ValiderTekster> | undefined>([]);
   const [state, dispatch] = useReducer(formReducer, initialState);
@@ -78,114 +78,10 @@ const Home: NextPage = () => {
     });
   };
 
-  const leggTilNaturalytelse = (event: React.MouseEvent<HTMLButtonElement>) => {
-    dispatch({
-      type: 'leggTilNaturalytelseRad'
-    });
-
-    event.preventDefault();
-  };
-
-  const clickNaturalytelse = (event: React.MouseEvent<HTMLInputElement>) => {
-    dispatch({
-      type: 'toggleNaturalytelser',
-      payload: !!event.currentTarget.checked
-    });
-  };
-
-  const clickSlettNaturalytelse = (event: React.MouseEvent<HTMLButtonElement>, elementId: string) => {
-    dispatch({
-      type: 'slettNaturalytelse',
-      payload: elementId
-    });
-
-    event.preventDefault();
-  };
-
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
     dispatch({
       type: 'toggleOpplysningerBekreftet',
       payload: !!event.currentTarget.checked
-    });
-  };
-
-  const clickArbeidsgiverBetalerHeleEllerDeler = (
-    event: React.MouseEvent<HTMLInputElement>,
-    arbeidsforholdId: string
-  ) => {
-    dispatch({
-      type: 'toggleBetalerArbeidsgiverHeleEllerDeler',
-      payload: { status: event.currentTarget.value as YesNo, arbeidsforholdId: arbeidsforholdId }
-    });
-  };
-
-  const clickArbeidsgiverBetalerFullLonnIArbeidsgiverperioden = (
-    event: React.MouseEvent<HTMLInputElement>,
-    arbeidsforholdId: string
-  ) => {
-    dispatch({
-      type: 'toggleBetalerArbeidsgiverFullLonnIArbeidsgiverperioden',
-      payload: { status: event.currentTarget.value as YesNo, arbeidsforholdId: arbeidsforholdId }
-    });
-  };
-
-  const clickRefusjonskravetOpphoerer = (event: React.MouseEvent<HTMLInputElement>, arbeidsforholdId: string) => {
-    dispatch({
-      type: 'toggleRefusjonskravetOpphoerer',
-      payload: { status: event.currentTarget.value as YesNo, arbeidsforholdId: arbeidsforholdId }
-    });
-  };
-
-  const changeNaturalytelseType = (event: React.ChangeEvent<HTMLSelectElement>, ytelseId: string) => {
-    dispatch({
-      type: 'setNaturalytelseType',
-      payload: {
-        ytelseId,
-        value: event.target.value
-      }
-    });
-  };
-
-  const changeNaturalytelseVerdi = (event: React.ChangeEvent<HTMLInputElement>, ytelseId: string) => {
-    dispatch({
-      type: 'setNaturalytelseVerdi',
-      payload: {
-        ytelseId,
-        value: event.target.value
-      }
-    });
-  };
-
-  const changeArbeidsgiverBetalerBelop = (event: React.ChangeEvent<HTMLInputElement>, arbeidsforholdId: string) => {
-    dispatch({
-      type: 'setArbeidsgiverBetalerBelop',
-      payload: {
-        arbeidsforholdId,
-        value: event.target.value
-      }
-    });
-  };
-
-  const changeNaturalytelseDato = (dateValue: string, ytelseId: string) => {
-    dispatch({
-      type: 'setNaturalytelseDato',
-      payload: {
-        ytelseId,
-        value: dateValue
-      }
-    });
-  };
-
-  const onChangeBegrunnelseRedusertUtbetaling = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    arbeidsforholdId: string
-  ) => {
-    dispatch({
-      type: 'setBegrunnelseRedusertUtbetaling',
-      payload: {
-        arbeidsforholdId,
-        value: event.target.value
-      }
     });
   };
 
@@ -196,15 +92,6 @@ const Home: NextPage = () => {
     });
   };
 
-  const setRefusjonskravOpphoersdato = (dateValue: string, arbeidsforholdId: string) => {
-    dispatch({
-      type: 'setRefusjonskravOpphoersdato',
-      payload: {
-        value: dateValue,
-        arbeidsforholdId
-      }
-    });
-  };
   const harFeilmeldinger = feilmeldinger && feilmeldinger.length > 0;
 
   useEffect(() => {
@@ -280,7 +167,7 @@ const Home: NextPage = () => {
                 </div>
               </div>
 
-              {state.arbeidsforhold && state.arbeidsforhold.length > 1 && (
+              {arbeidsforhold && arbeidsforhold.length > 1 && (
                 <>
                   <Skillelinje />
                   <Arbeidsforhold />
@@ -294,10 +181,10 @@ const Home: NextPage = () => {
                 </>
               )}
 
-              {state.egenmeldingsperioder && (
+              {egenmeldingsperioder && (
                 <>
                   <Skillelinje />
-                  {state.arbeidsforhold && <Egenmelding />}
+                  {arbeidsforhold && <Egenmelding />}
                 </>
               )}
 
@@ -314,88 +201,10 @@ const Home: NextPage = () => {
 
               <Skillelinje />
 
-              <RefusjonArbeidsgiver
-                clickArbeidsgiverBetalerFullLonnIArbeidsgiverperioden={
-                  clickArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
-                }
-                clickArbeidsgiverBetalerHeleEllerDeler={clickArbeidsgiverBetalerHeleEllerDeler}
-                clickRefusjonskravetOpphoerer={clickRefusjonskravetOpphoerer}
-                setRefusjonskravOpphoersdato={setRefusjonskravOpphoersdato}
-                onChangeBegrunnelseRedusertUtbetaling={onChangeBegrunnelseRedusertUtbetaling}
-                changeArbeidsgiverBetalerBelop={changeArbeidsgiverBetalerBelop}
-                lonnISykefravaeret={state.lonnISykefravaeret}
-                fullLonnIArbeidsgiverPerioden={state.fullLonnIArbeidsgiverPerioden}
-                refusjonskravetOpphoerer={state.refusjonskravetOpphoerer}
-                arbeidsforhold={state.arbeidsforhold}
-              />
+              <RefusjonArbeidsgiver />
 
               <Skillelinje />
-              <Heading3>Eventuelle naturalytelser (valgfri)</Heading3>
-              <p>
-                Har den ansatte noen naturalytelser som bortfaller ved sykemelding så må de angis, ellers vil den
-                ansatte ikke bli tilgoderegnet disse. Hvis den ansatte fotsatt beholder eventuelle naturalyteleser, så
-                trenger dere ikke gjøre noe.
-              </p>
-              <Checkbox
-                value='Naturalytelser'
-                // checked={state.naturalytelser && state.naturalytelser.length > 0}
-                onClick={clickNaturalytelse}
-              >
-                Ansatt har naturalytelser som bortfaller ved sykemeldingen
-              </Checkbox>
-              {state.naturalytelser && (
-                <table className={styles.tablenaturalytelse}>
-                  <thead>
-                    <th>Naturalytelse</th>
-                    <th>Dato naturalytelse bortfaller</th>
-                    <th>Verdi naturalytelse - kr/måned</th>
-                    <th></th>
-                  </thead>
-                  <tbody>
-                    {state.naturalytelser.map((element) => {
-                      return (
-                        <tr key={element.id}>
-                          <td>
-                            <SelectNaturalytelser onChangeYtelse={changeNaturalytelseType} elementId={element.id} />
-                          </td>
-
-                          <td className={styles.tddatepickernatural}>
-                            <Datepicker
-                              inputId={'naturalytele-input-fra-dato-' + element.id}
-                              inputLabel='Dato naturalytelse bortfaller'
-                              onChange={(dateString) => changeNaturalytelseDato(dateString, element.id)}
-                              // value={dato}
-                              locale={'nb'}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              label={''}
-                              className={styles.fnr}
-                              onChange={(event) => changeNaturalytelseVerdi(event, element.id)}
-                            ></TextField>
-                          </td>
-                          <td>
-                            <ButtonSlette
-                              onClick={(event) => clickSlettNaturalytelse(event, element.id)}
-                              title='Slett ytelse'
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                  <div className={styles.naturalytelserknapp}>
-                    <Button
-                      variant='secondary'
-                      className={styles.legtilbutton}
-                      onClick={(e) => leggTilNaturalytelse(e)}
-                    >
-                      Legg til naturalytelse
-                    </Button>
-                  </div>
-                </table>
-              )}
+              <Naturalytelser />
               <ConfirmationPanel
                 checked={state.opplysningerBekreftet}
                 onClick={clickOpplysningerBekreftet}

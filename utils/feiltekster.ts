@@ -13,6 +13,7 @@ const feiltekster = {
   MANGLER_FRA: 'Vennligst angi fra dato.',
   MANGLER_TIL: 'Vennligst angi til dato.',
   IKKE_BEKREFTET: 'Brutto inntekt er ikke bekreftet.',
+  BRUTTOINNTEKT_MANGLER: 'Vennligst anngi bruttoinntekt.',
   LONN_I_ARBEIDSGIVERPERIODEN_MANGLER:
     'Angi om arbeidsgiver betaler ut full lønn til arbeidstaker i arbeidsgiverperioden.',
   LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE:

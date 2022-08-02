@@ -338,13 +338,6 @@ export default function formReducer(orgState: InntektsmeldingSkjema, action: Act
         };
       }
 
-      state.arbeidsforhold = fdata.arbeidsforhold.map((forhold) => ({
-        arbeidsforholdId: forhold.arbeidsforholdId,
-        arbeidsforhold: forhold.arbeidsforhold,
-        stillingsprosent: forhold.stillingsprosent,
-        aktiv: true
-      }));
-
       state.egenmeldingsperioder = {};
       fdata.arbeidsforhold.forEach((forhold) => {
         state.egenmeldingsperioder[forhold.arbeidsforholdId] = [{ id: nanoid() }];
