@@ -17,7 +17,7 @@ interface NaturalytelserState {
   initNaturalytelser: () => void;
 }
 
-const useNaturalytelserStore = create<NaturalytelserState>((set, get) => ({
+const useNaturalytelserStore = create<NaturalytelserState>((set) => ({
   naturalytelser: undefined,
   hasBortfallAvNaturalytelser: undefined,
   setNaturalytelseType: (naturalytelseId: string, type: string) => {

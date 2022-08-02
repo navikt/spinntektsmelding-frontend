@@ -1,6 +1,6 @@
 import { Datepicker } from '@navikt/ds-datepicker';
 import { useState } from 'react';
-import { IArbeidsforhold, Periode } from '../../state/state';
+import { IArbeidsforhold } from '../../state/state';
 import formatDate from '../../utils/formatDate';
 import formatIsoDate from '../../utils/formatIsoDate';
 import ButtonSlette from '../ButtonSlette';
@@ -36,14 +36,11 @@ export default function FravaerEnkeltAnsattforhold({
   const endreFravaersperiode = useFravaersperiodeStore((state) => state.endreFravaersperiode);
   const sammePeriodeForAlle = useFravaersperiodeStore((state) => state.sammeFravaersperiode);
 
-  const clickTilbakestillFravaersperiodeHandler = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    arbeidsforholdId: string
-  ) => {
+  const clickTilbakestillFravaersperiodeHandler = (arbeidsforholdId: string) => {
     tilbakestillFravaersperiode(arbeidsforholdId);
   };
 
-  const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
+  const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     endreFravaersperiode();
     setEndreSykemelding(!endreSykemelding);
@@ -142,7 +139,7 @@ export default function FravaerEnkeltAnsattforhold({
         <Button
           variant='secondary'
           className={styles.endrebutton}
-          onClick={(event) => clickEndreFravaersperiodeHandler(event, arbeidsforhold.arbeidsforholdId)}
+          onClick={(event) => clickEndreFravaersperiodeHandler(event)}
         >
           Endre
         </Button>
@@ -159,7 +156,7 @@ export default function FravaerEnkeltAnsattforhold({
 
           <Button
             className={styles.kontrollerknapp}
-            onClick={(event) => clickTilbakestillFravaersperiodeHandler(event, arbeidsforhold.arbeidsforholdId)}
+            onClick={() => clickTilbakestillFravaersperiodeHandler(arbeidsforhold.arbeidsforholdId)}
           >
             Tilbakestill
           </Button>
