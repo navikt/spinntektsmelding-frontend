@@ -17,7 +17,7 @@ interface EgenmeldingState {
   ) => void;
 }
 
-const useEgenmeldingStore = create<EgenmeldingState>((set) => ({
+const useEgenmeldingStore = create<EgenmeldingState>()((set) => ({
   egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
   setEgenmeldingFraDato: (dateValue: string, periodeId: string) =>
     set(

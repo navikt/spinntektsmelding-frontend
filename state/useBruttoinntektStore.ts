@@ -15,7 +15,7 @@ interface BruttoinntektState {
   initBruttioinntekt: (bruttoInntekt: number, tidligereInntekt: Array<MottattHistoriskInntekt>) => void;
 }
 
-const useBruttoinntektStore = create<BruttoinntektState>((set) => ({
+const useBruttoinntektStore = create<BruttoinntektState>()((set) => ({
   bruttoinntekt: {
     bruttoInntekt: 0,
     bekreftet: false,

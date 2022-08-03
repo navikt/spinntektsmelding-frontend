@@ -6,8 +6,6 @@ import { Button, ConfirmationPanel, ErrorSummary } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 import Banner, { Organisasjon } from '../components/Banner/Banner';
-import TextLabel from '../components/TextLabel/TextLabel';
-import Heading3 from '../components/Heading3/Heading3';
 import Skillelinje from '../components/Skillelinje/Skillelinje';
 
 import useSWR from 'swr';
@@ -34,6 +32,8 @@ import useBruttoinntektStore from '../state/useBruttoinntektStore';
 import useArbeidsforholdStore from '../state/useArbeidsforholdStore';
 import useEgenmeldingStore from '../state/useEgenmeldingStore';
 import Naturalytelser from '../components/Naturalytelser';
+import usePersonStore from '../state/usePersonStore';
+import Person from '../components/Person/Person';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -47,6 +47,9 @@ const Home: NextPage = () => {
   const initBruttoinntekt = useBruttoinntektStore((fstate) => fstate.initBruttioinntekt);
   const initArbeidsforhold = useArbeidsforholdStore((fstate) => fstate.initArbeidsforhold);
   const initEgenmeldingsperiode = useEgenmeldingStore((fstate) => fstate.initEgenmeldingsperiode);
+  const initPerson = usePersonStore((fstate) => fstate.initPerson);
+
+  const setOrgUnderenhet = usePersonStore((fstate) => fstate.setOrgUnderenhet);
 
   const arbeidsforhold = useArbeidsforholdStore((fstate) => fstate.arbeidsforhold);
   const egenmeldingsperioder = useEgenmeldingStore((fstate) => fstate.egenmeldingsperioder);
@@ -109,6 +112,7 @@ const Home: NextPage = () => {
         initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekt);
         initArbeidsforhold(jsonData.arbeidsforhold);
         initEgenmeldingsperiode(jsonData.arbeidsforhold, jsonData.egenmeldingsperioder);
+        initPerson(jsonData.navn, jsonData.identitetsnummer, jsonData.orgnrUnderenhet);
         dispatch({
           type: 'fyllFormdata',
           payload: jsonData
@@ -129,43 +133,12 @@ const Home: NextPage = () => {
         <Banner
           tittelMedUnderTittel={'Sykepenger'}
           altinnOrganisasjoner={arbeidsgivere}
-          onOrganisasjonChange={changeOrgUnderenhet}
+          onOrganisasjonChange={setOrgUnderenhet}
         />
         <PageContent title='Inntektsmelding'>
           <main className='main-content'>
             <form className={styles.padded} onSubmit={submitForm}>
-              <p>
-                For at vi skal utbetale riktig beløp i forbindelse med langvarig sykemelding må dere bekrefte, eller
-                oppdatere opplysningene vi har i forbindelse med den ansatte, og sykefraværet.
-              </p>
-              <div className={styles.personinfowrapper}>
-                <div className={styles.denansatte}>
-                  <Heading3>Den ansatte</Heading3>
-                  <div className={styles.arbeidsgiverwrapper}>
-                    <div className={styles.virksomhetsnavnwrapper}>
-                      <TextLabel>Navn</TextLabel>
-                      <div className={styles.virksomhetsnavn}>{state.navn}</div>
-                    </div>
-                    <div className={styles.orgnrnavnwrapper}>
-                      <TextLabel>Personnummer</TextLabel>
-                      {state.identitetsnummer}
-                    </div>
-                  </div>
-                </div>
-                <div className={styles['size-resten']}>
-                  <Heading3>Arbeidsgiveren</Heading3>
-                  <div className={styles.arbeidsgiverwrapper}>
-                    <div className={styles.virksomhetsnavnwrapper}>
-                      <TextLabel>Virksomhetsnavn</TextLabel>
-                      <div className={styles.virksomhetsnavn}>{state.virksomhetsnavn}</div>
-                    </div>
-                    <div className={styles.orgnrnavnwrapper}>
-                      <TextLabel>Org.nr. for underenhet</TextLabel>
-                      {state.orgnrUnderenhet}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <Person />
 
               {arbeidsforhold && arbeidsforhold.length > 1 && (
                 <>

@@ -18,7 +18,7 @@ interface RefusjonArbeidsgiverState {
   initLonnISykefravaeret: () => void;
 }
 
-const useRefusjonArbeidsgiverStore = create<RefusjonArbeidsgiverState>((set) => ({
+const useRefusjonArbeidsgiverStore = create<RefusjonArbeidsgiverState>()((set) => ({
   fullLonnIArbeidsgiverPerioden: undefined,
   lonnISykefravaeret: undefined,
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (arbeidsforholdId: string, status: YesNo) =>

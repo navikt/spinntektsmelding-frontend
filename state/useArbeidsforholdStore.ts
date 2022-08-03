@@ -10,7 +10,7 @@ interface ArbeidsforholdState {
   aktiveArbeidsforhold: () => Array<IArbeidsforhold>;
 }
 
-const useArbeidsforholdStore = create<ArbeidsforholdState>((set, get) => ({
+const useArbeidsforholdStore = create<ArbeidsforholdState>()((set, get) => ({
   arbeidsforhold: undefined,
   setAktiveArbeidsforhold: (aktiveArbeidsforhold: Array<string>) => {
     set(

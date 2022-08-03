@@ -20,7 +20,7 @@ interface FravaersperiodeState {
   initFravaersperiode: (mottatFravaersperiode: { [key: string]: Array<MottattPeriode> }) => void;
 }
 
-const useFravaersperiodeStore = create<FravaersperiodeState>((set) => ({
+const useFravaersperiodeStore = create<FravaersperiodeState>()((set) => ({
   fravaersperiode: undefined,
   opprinneligFravaersperiode: undefined,
   sammeFravaersperiode: false,

@@ -2,7 +2,7 @@ import { Datepicker } from '@navikt/ds-datepicker';
 import { Button, Checkbox, TextField } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
-import SelectNaturalytelser from '../SelectNaturalytelser/SelectNaturalytelser';
+import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
 
 import styles from '../../styles/Home.module.css';
 import useNaturalytelserStore from '../../state/useNaturalytelserStore';
