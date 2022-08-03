@@ -69,7 +69,7 @@ interface InntektsmeldingSkjema {
   behandlingsdager: boolean;
   behandlingsperiode?: Periode;
   arbeidsforhold?: Array<IArbeidsforhold>;
-  sammeFravaersperiode: boolean;
+  sammeFravaersperiode?: boolean;
 }
 
 export default InntektsmeldingSkjema;

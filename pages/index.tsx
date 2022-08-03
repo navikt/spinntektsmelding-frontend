@@ -34,6 +34,9 @@ import useEgenmeldingStore from '../state/useEgenmeldingStore';
 import Naturalytelser from '../components/Naturalytelser';
 import usePersonStore from '../state/usePersonStore';
 import Person from '../components/Person/Person';
+import InntektsmeldingSkjema from '../state/state';
+import useRefusjonArbeidsgiverStore from '../state/useRefusjonArbeidsgiverStore';
+import useNaturalytelserStore from '../state/useNaturalytelserStore';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -43,30 +46,68 @@ const Home: NextPage = () => {
   const setRoute = useRoute();
   const { data, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
 
-  const initFravaersperiode = useFravaersperiodeStore((fstate) => fstate.initFravaersperiode);
-  const initBruttoinntekt = useBruttoinntektStore((fstate) => fstate.initBruttioinntekt);
+  const [initFravaersperiode, fravaersperiode] = useFravaersperiodeStore((fstate) => [
+    fstate.initFravaersperiode,
+    fstate.fravaersperiode
+  ]);
+  const [initBruttoinntekt, bruttoinntekt] = useBruttoinntektStore((fstate) => [
+    fstate.initBruttioinntekt,
+    fstate.bruttoinntekt
+  ]);
   const initArbeidsforhold = useArbeidsforholdStore((fstate) => fstate.initArbeidsforhold);
-  const initEgenmeldingsperiode = useEgenmeldingStore((fstate) => fstate.initEgenmeldingsperiode);
-  const initPerson = usePersonStore((fstate) => fstate.initPerson);
+  const [initEgenmeldingsperiode, egenmeldingsperioder] = useEgenmeldingStore((fstate) => [
+    fstate.initEgenmeldingsperiode,
+    fstate.egenmeldingsperioder
+  ]);
+  const [initPerson, navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = usePersonStore((fstate) => [
+    fstate.initPerson,
+    fstate.navn,
+    fstate.identitetsnummer,
+    fstate.virksomhetsnavn,
+    fstate.orgnrUnderenhet
+  ]);
+  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret] = useRefusjonArbeidsgiverStore((fstate) => [
+    fstate.fullLonnIArbeidsgiverPerioden,
+    fstate.lonnISykefravaeret
+  ]);
+  const naturalytelser = useNaturalytelserStore((fstate) => fstate.naturalytelser);
 
   const setOrgUnderenhet = usePersonStore((fstate) => fstate.setOrgUnderenhet);
 
   const arbeidsforhold = useArbeidsforholdStore((fstate) => fstate.arbeidsforhold);
-  const egenmeldingsperioder = useEgenmeldingStore((fstate) => fstate.egenmeldingsperioder);
 
   const [feilmeldinger, setFeilmeldinger] = useState<Array<ValiderTekster> | undefined>([]);
   const [state, dispatch] = useReducer(formReducer, initialState);
 
   const [arbeidsgivere, setArbeidsgivere] = useState<any>([]);
+  const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     console.log(state); // eslint-disable-line
 
-    const errorStatus = submitInntektsmelding(state);
+    const skjemaData: InntektsmeldingSkjema = {
+      navn: navn,
+      identitetsnummer: identitetsnummer,
+      virksomhetsnavn: virksomhetsnavn,
+      orgnrUnderenhet: orgnrUnderenhet,
+      fravaersperiode: fravaersperiode,
+      egenmeldingsperioder: egenmeldingsperioder,
+      bruttoinntekt: bruttoinntekt,
+      fullLonnIArbeidsgiverPerioden: fullLonnIArbeidsgiverPerioden,
+      lonnISykefravaeret: lonnISykefravaeret,
+      naturalytelser: naturalytelser,
+      opplysningerBekreftet: opplysningerBekreftet,
+      behandlingsdager: false,
+      sammeFravaersperiode: false,
+      arbeidsforhold: arbeidsforhold
+    };
+
+    const errorStatus = submitInntektsmelding(skjemaData);
 
     setFeilmeldinger(errorStatus.errorTexts);
 
+    console.log(skjemaData); // eslint-disable-line
     console.log(errorStatus); // eslint-disable-line
 
     dispatch({
@@ -74,18 +115,8 @@ const Home: NextPage = () => {
     });
   };
 
-  const changeOrgUnderenhet = (organisasjon: Organisasjon) => {
-    dispatch({
-      type: 'setOrganisasjonUnderenhet',
-      payload: organisasjon
-    });
-  };
-
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
-    dispatch({
-      type: 'toggleOpplysningerBekreftet',
-      payload: !!event.currentTarget.checked
-    });
+    setOpplysningerBekreftet(!!event.currentTarget.checked);
   };
 
   const setBehandlingsdager = (behandlingsdager?: Array<Date>) => {
@@ -179,9 +210,10 @@ const Home: NextPage = () => {
               <Skillelinje />
               <Naturalytelser />
               <ConfirmationPanel
-                checked={state.opplysningerBekreftet}
+                checked={opplysningerBekreftet}
                 onClick={clickOpplysningerBekreftet}
                 label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+                id='bekreft-opplysninger'
               >
                 NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
                 er riktige eller fullstendige.

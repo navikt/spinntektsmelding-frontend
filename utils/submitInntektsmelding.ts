@@ -12,6 +12,7 @@ import validerLonnUnderSykefravaeret, {
   LonnUnderSykefravaeretFeilkode
 } from '../validators/validerLonnUnderSykefravaeret';
 import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
+import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -38,7 +39,8 @@ type codeUnion =
   | FullLonnISykefravaeret
   | NaturalytelserFeilkoder
   | LonnIArbeidsgiverperiodenFeilkode
-  | LonnUnderSykefravaeretFeilkode;
+  | LonnUnderSykefravaeretFeilkode
+  | BekreftOpplysningerFeilkoder;
 
 export interface ValiderResultat {
   felt: string;
@@ -54,6 +56,7 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
   let feilkoderNaturalytelser: Array<ValiderResultat> = [];
   let feilkoderLonnIArbeidsgiverperioden: Array<ValiderResultat> = [];
   let feilkoderLonnUnderSykefravaeret: Array<ValiderResultat> = [];
+  let feilkoderBekreftOpplyninger: Array<ValiderResultat> = [];
 
   const aktuelleArbeidsforholdId = state.arbeidsforhold
     ?.filter((forhold) => forhold.aktiv === true)
@@ -111,6 +114,8 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
     state.refusjonskravetOpphoerer
   );
 
+  feilkoderBekreftOpplyninger = validerBekreftOpplysninger(state.opplysningerBekreftet);
+
   errorCodes = [
     ...errorCodes,
     ...feilkoderFravaersperioder,
@@ -118,7 +123,8 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
     ...feilkoderBruttoinntekt,
     ...feilkoderNaturalytelser,
     ...feilkoderLonnIArbeidsgiverperioden,
-    ...feilkoderLonnUnderSykefravaeret
+    ...feilkoderLonnUnderSykefravaeret,
+    ...feilkoderBekreftOpplyninger
   ];
 
   if (errorCodes.length > 0) {
