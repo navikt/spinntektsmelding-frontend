@@ -1,6 +1,6 @@
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
-import naturalytelser from '../SelectNaturalytelser/naturalytelser';
+import naturalytelser from '../Naturalytelser/SelectNaturalytelser/naturalytelser';
 import lokalStyles from './BortfallNaturalytelser.module.css';
 
 interface BortfallYtelser {
