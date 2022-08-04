@@ -20,7 +20,6 @@ export const initialState: InntektsmeldingSkjema = {
     manueltKorrigert: false,
     endringsaarsak: ''
   },
-  behandlingsdager: false,
   sammeFravaersperiode: false
 };
 

@@ -9,50 +9,42 @@ const formData = {
   identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
   orgnrUnderenhet: testOrg[5].OrganizationNumber,
   bruttoinntekt: 44000,
-  // fravaersperiode: [
-  //   {
-  //     fra: format(subDays(new Date(), 180), 'yyyy-MM-dd'),
-  //     til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
-  //   },
-  //   {
-  //     fra: format(subDays(new Date(), 4), 'yyyy-MM-dd'),
-  //     til: format(subDays(new Date(), 1), 'yyyy-MM-dd')
-  //   }
-  // ],
-  // behandlingsdager: true,
-  fravaersperiode: {
-    spillerid: [
-      {
-        fra: format(subDays(new Date(), 11), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
-      },
-      {
-        fra: format(subDays(new Date(), 4), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 1), 'yyyy-MM-dd')
-      }
-    ],
-    trenerid: [
-      {
-        fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 5), 'yyyy-MM-dd')
-      },
-      {
-        fra: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
-      }
-    ],
-    vaktmesterid: [
-      {
-        fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 5), 'yyyy-MM-dd')
-      },
-      {
-        fra: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
-      }
-    ]
+  behandlingsperiode: {
+    fra: format(subDays(new Date(), 180), 'yyyy-MM-dd'),
+    til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
   },
-  behandlingsdager: false,
+  // fravaersperiode: {
+  //   spillerid: [
+  //     {
+  //       fra: format(subDays(new Date(), 11), 'yyyy-MM-dd'),
+  //       til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
+  //     },
+  //     {
+  //       fra: format(subDays(new Date(), 4), 'yyyy-MM-dd'),
+  //       til: format(subDays(new Date(), 1), 'yyyy-MM-dd')
+  //     }
+  //   ],
+  //   trenerid: [
+  //     {
+  //       fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
+  //       til: format(subDays(new Date(), 5), 'yyyy-MM-dd')
+  //     },
+  //     {
+  //       fra: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
+  //       til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
+  //     }
+  //   ],
+  //   vaktmesterid: [
+  //     {
+  //       fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
+  //       til: format(subDays(new Date(), 5), 'yyyy-MM-dd')
+  //     },
+  //     {
+  //       fra: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
+  //       til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
+  //     }
+  //   ]
+  // },
   tidligereinntekt: [
     {
       maanedsnavn: 'Februar', // yyyy-MM

@@ -23,7 +23,7 @@ interface MottattData {
   egenmeldingsperioder: { [key: string]: Array<MottattPeriode> };
   bruttoinntekt: number;
   tidligereinntekt: Array<MottattHistoriskInntekt>;
-  behandlingsdager: boolean;
+  behandlingsdager: Array<string>;
   behandlingsperiode: MottattPeriode;
   arbeidsforhold: Array<MottattArbeidsforhold>;
 }

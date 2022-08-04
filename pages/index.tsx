@@ -1,19 +1,17 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
 import { Button, ConfirmationPanel, ErrorSummary } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
-import Banner, { Organisasjon } from '../components/Banner/Banner';
+import Banner from '../components/Banner/Banner';
 import Skillelinje from '../components/Skillelinje/Skillelinje';
 
 import useSWR from 'swr';
 
 import styles from '../styles/Home.module.css';
 import '@navikt/ds-datepicker/lib/index.css';
-
-import formReducer, { initialState } from '../state/formReducer';
 
 import Script from 'next/script';
 
@@ -27,16 +25,15 @@ import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 import submitInntektsmelding, { ValiderTekster } from '../utils/submitInntektsmelding';
 import MottattData from '../state/MottattData';
-import useFravaersperiodeStore from '../state/useFravaersperiodeStore';
-import useBruttoinntektStore from '../state/useBruttoinntektStore';
 import useArbeidsforholdStore from '../state/useArbeidsforholdStore';
 import useEgenmeldingStore from '../state/useEgenmeldingStore';
 import Naturalytelser from '../components/Naturalytelser';
 import usePersonStore from '../state/usePersonStore';
 import Person from '../components/Person/Person';
 import InntektsmeldingSkjema from '../state/state';
-import useRefusjonArbeidsgiverStore from '../state/useRefusjonArbeidsgiverStore';
-import useNaturalytelserStore from '../state/useNaturalytelserStore';
+import useBehandlingsdagerStore from '../state/useBehandlingsdagerStore';
+import useStateInit from '../state/useStateInit';
+import useFyllInnsending from '../state/useFyllInnsending';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -46,62 +43,26 @@ const Home: NextPage = () => {
   const setRoute = useRoute();
   const { data, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
 
-  const [initFravaersperiode, fravaersperiode] = useFravaersperiodeStore((fstate) => [
-    fstate.initFravaersperiode,
-    fstate.fravaersperiode
-  ]);
-  const [initBruttoinntekt, bruttoinntekt] = useBruttoinntektStore((fstate) => [
-    fstate.initBruttioinntekt,
-    fstate.bruttoinntekt
-  ]);
-  const initArbeidsforhold = useArbeidsforholdStore((fstate) => fstate.initArbeidsforhold);
-  const [initEgenmeldingsperiode, egenmeldingsperioder] = useEgenmeldingStore((fstate) => [
-    fstate.initEgenmeldingsperiode,
-    fstate.egenmeldingsperioder
-  ]);
-  const [initPerson, navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = usePersonStore((fstate) => [
-    fstate.initPerson,
-    fstate.navn,
-    fstate.identitetsnummer,
-    fstate.virksomhetsnavn,
-    fstate.orgnrUnderenhet
-  ]);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret] = useRefusjonArbeidsgiverStore((fstate) => [
-    fstate.fullLonnIArbeidsgiverPerioden,
-    fstate.lonnISykefravaeret
-  ]);
-  const naturalytelser = useNaturalytelserStore((fstate) => fstate.naturalytelser);
+  const egenmeldingsperioder = useEgenmeldingStore((fstate) => fstate.egenmeldingsperioder);
 
   const setOrgUnderenhet = usePersonStore((fstate) => fstate.setOrgUnderenhet);
+
+  const behandlingsperiode = useBehandlingsdagerStore((fstate) => fstate.behandlingsperiode);
 
   const arbeidsforhold = useArbeidsforholdStore((fstate) => fstate.arbeidsforhold);
 
   const [feilmeldinger, setFeilmeldinger] = useState<Array<ValiderTekster> | undefined>([]);
-  const [state, dispatch] = useReducer(formReducer, initialState);
 
   const [arbeidsgivere, setArbeidsgivere] = useState<any>([]);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
+  const initState = useStateInit();
+  const fyllInnsending = useFyllInnsending();
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(state); // eslint-disable-line
 
-    const skjemaData: InntektsmeldingSkjema = {
-      navn: navn,
-      identitetsnummer: identitetsnummer,
-      virksomhetsnavn: virksomhetsnavn,
-      orgnrUnderenhet: orgnrUnderenhet,
-      fravaersperiode: fravaersperiode,
-      egenmeldingsperioder: egenmeldingsperioder,
-      bruttoinntekt: bruttoinntekt,
-      fullLonnIArbeidsgiverPerioden: fullLonnIArbeidsgiverPerioden,
-      lonnISykefravaeret: lonnISykefravaeret,
-      naturalytelser: naturalytelser,
-      opplysningerBekreftet: opplysningerBekreftet,
-      behandlingsdager: false,
-      sammeFravaersperiode: false,
-      arbeidsforhold: arbeidsforhold
-    };
+    const skjemaData: InntektsmeldingSkjema = fyllInnsending(opplysningerBekreftet);
 
     const errorStatus = submitInntektsmelding(skjemaData);
 
@@ -110,44 +71,32 @@ const Home: NextPage = () => {
     console.log(skjemaData); // eslint-disable-line
     console.log(errorStatus); // eslint-disable-line
 
-    dispatch({
-      type: 'submitForm'
-    });
+    // dispatch({
+    //   type: 'submitForm'
+    // });
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
     setOpplysningerBekreftet(!!event.currentTarget.checked);
   };
 
-  const setBehandlingsdager = (behandlingsdager?: Array<Date>) => {
-    dispatch({
-      type: 'setBehandlingsdager',
-      payload: behandlingsdager
-    });
-  };
-
   const harFeilmeldinger = feilmeldinger && feilmeldinger.length > 0;
 
   useEffect(() => {
-    fetch('/api/arbeidsgivere').then((mottattData) => {
-      mottattData.json().then((jsonData) => {
-        setArbeidsgivere(jsonData);
-      });
-    });
-  }, []);
+    // fetch('/api/arbeidsgivere').then((mottattData) => {
+    //   mottattData.json().then((jsonData) => {
+    if (data) {
+      setArbeidsgivere(data);
+    }
+    //   });
+    // });
+  }, [data]);
 
   useEffect(() => {
     fetch('/api/inntektsmelding').then((mottattData) => {
       mottattData.json().then((jsonData: MottattData) => {
-        initFravaersperiode(jsonData.fravaersperiode);
-        initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekt);
-        initArbeidsforhold(jsonData.arbeidsforhold);
-        initEgenmeldingsperiode(jsonData.arbeidsforhold, jsonData.egenmeldingsperioder);
-        initPerson(jsonData.navn, jsonData.identitetsnummer, jsonData.orgnrUnderenhet);
-        dispatch({
-          type: 'fyllFormdata',
-          payload: jsonData
-        });
+        initState(jsonData);
+
         setRoute(jsonData.orgnrUnderenhet);
       });
     });
@@ -178,10 +127,10 @@ const Home: NextPage = () => {
                 </>
               )}
 
-              {state.behandlingsdager && state.behandlingsperiode && (
+              {behandlingsperiode && (
                 <>
                   <Skillelinje />
-                  <Behandlingsdager periode={state.behandlingsperiode} onSelect={setBehandlingsdager} />
+                  <Behandlingsdager />
                 </>
               )}
 
@@ -192,7 +141,7 @@ const Home: NextPage = () => {
                 </>
               )}
 
-              {!state.behandlingsdager && (
+              {!behandlingsperiode && (
                 <>
                   <Skillelinje />
                   <Fravaersperiode />

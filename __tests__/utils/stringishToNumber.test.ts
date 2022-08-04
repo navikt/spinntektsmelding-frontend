@@ -16,4 +16,8 @@ describe('stringishToNumber', () => {
   it('should return a undefined when input is empty string', () => {
     expect(stringishToNumber('')).toBeUndefined();
   });
+
+  it('should return a undefined when input is undefined', () => {
+    expect(stringishToNumber(undefined)).toBeUndefined();
+  });
 });

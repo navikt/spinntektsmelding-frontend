@@ -1,4 +1,3 @@
-import { Periode } from '../../state/state';
 import formatDate from '../../utils/formatDate';
 import Heading3 from '../Heading3/Heading3';
 import styles from '../../styles/Home.module.css';
@@ -10,17 +9,20 @@ import { useState } from 'react';
 import nb from 'date-fns/locale/nb';
 import { eachMonthOfInterval, getWeek } from 'date-fns';
 import { Alert } from '@navikt/ds-react';
+import useBehandlingsdagerStore from '../../state/useBehandlingsdagerStore';
 
-interface BehandlingsdagerProps {
-  periode: Periode;
-  onSelect: (dager: Array<Date> | undefined) => void;
-}
+export default function Behandlingsdager() {
+  const [behandlingsdager, behandlingsperiode, setBehandlingsdager] = useBehandlingsdagerStore((state) => [
+    state.behandlingsdager,
+    state.behandlingsperiode,
+    state.setBehandlingsdager
+  ]);
 
-export default function Behandlingsdager({ periode, onSelect }: BehandlingsdagerProps) {
-  const initialDays: Date[] = [];
-  const [days, setDays] = useState<Date[] | undefined>(initialDays);
   const [footer, setFooter] = useState<string>('');
-  const maaneder = eachMonthOfInterval({ start: periode.fra || new Date(), end: periode.til || new Date() });
+  const maaneder = eachMonthOfInterval({
+    start: behandlingsperiode?.fra || new Date(),
+    end: behandlingsperiode?.til || new Date()
+  });
 
   const handleSelectDays = (selectedDays: Date[] | undefined) => {
     const weeks: Array<number> | undefined = selectedDays?.map((day) => getWeek(day));
@@ -32,10 +34,9 @@ export default function Behandlingsdager({ periode, onSelect }: Behandlingsdager
       setFooter('');
     }
 
-    setDays(selectedDays);
-
-    onSelect(selectedDays);
+    setBehandlingsdager(selectedDays);
   };
+  if (!behandlingsperiode) return null;
   return (
     <>
       <Heading3>Fraværsperiode - behandlingsdager</Heading3>
@@ -47,11 +48,11 @@ export default function Behandlingsdager({ periode, onSelect }: Behandlingsdager
       <div className={styles.periodewrapper}>
         <div className={styles.datepickerescape}>
           <TextLabel>Behandlingsperiode start</TextLabel>
-          <div>{formatDate(periode.fra)}</div>
+          <div>{formatDate(behandlingsperiode.fra)}</div>
         </div>
         <div className={styles.datepickerescape}>
           <TextLabel>Behandlingsperiode slutt</TextLabel>
-          <div>{formatDate(periode.til)}</div>
+          <div>{formatDate(behandlingsperiode.til)}</div>
         </div>
       </div>
       <TextLabel>Velg behandlingsdager</TextLabel>
@@ -60,13 +61,13 @@ export default function Behandlingsdager({ periode, onSelect }: Behandlingsdager
         <DayPicker
           mode='multiple'
           min={1}
-          selected={days}
+          selected={behandlingsdager}
           onSelect={handleSelectDays}
           locale={nb}
           numberOfMonths={maaneder.length}
           month={maaneder[0]}
-          fromDate={periode.fra}
-          toDate={periode.til}
+          fromDate={behandlingsperiode.fra}
+          toDate={behandlingsperiode.til}
         />
       </div>
       {footer && footer.length > 0 && (
