@@ -11,7 +11,6 @@ import Skillelinje from '../components/Skillelinje/Skillelinje';
 import useSWR from 'swr';
 
 import styles from '../styles/Home.module.css';
-import '@navikt/ds-datepicker/lib/index.css';
 
 import Script from 'next/script';
 
@@ -41,7 +40,7 @@ const ARBEIDSGIVER_URL = '/api/arbeidsgivere';
 
 const Home: NextPage = () => {
   const setRoute = useRoute();
-  const { data, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
+  const { data: arbeidsgivere, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
 
   const egenmeldingsperioder = useEgenmeldingStore((fstate) => fstate.egenmeldingsperioder);
 
@@ -53,7 +52,6 @@ const Home: NextPage = () => {
 
   const [feilmeldinger, setFeilmeldinger] = useState<Array<ValiderTekster> | undefined>([]);
 
-  const [arbeidsgivere, setArbeidsgivere] = useState<any>([]);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
   const initState = useStateInit();
@@ -81,16 +79,6 @@ const Home: NextPage = () => {
   };
 
   const harFeilmeldinger = feilmeldinger && feilmeldinger.length > 0;
-
-  useEffect(() => {
-    // fetch('/api/arbeidsgivere').then((mottattData) => {
-    //   mottattData.json().then((jsonData) => {
-    if (data) {
-      setArbeidsgivere(data);
-    }
-    //   });
-    // });
-  }, [data]);
 
   useEffect(() => {
     fetch('/api/inntektsmelding').then((mottattData) => {
