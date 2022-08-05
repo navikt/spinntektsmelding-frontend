@@ -1,7 +1,27 @@
 import { format, subDays } from 'date-fns';
-import { initialState } from '../state/formReducer';
+import { nanoid } from 'nanoid';
+import InntektsmeldingSkjema from '../state/state';
+
 import testFnr from './testFnr';
 import testOrg from './testOrganisasjoner';
+
+const initialState: InntektsmeldingSkjema = {
+  opplysningerBekreftet: false,
+  egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
+  bruttoinntekt: {
+    bruttoInntekt: 0,
+    bekreftet: false,
+    manueltKorrigert: false,
+    endringsaarsak: ''
+  },
+  opprinneligbruttoinntekt: {
+    bruttoInntekt: 0,
+    bekreftet: false,
+    manueltKorrigert: false,
+    endringsaarsak: ''
+  },
+  sammeFravaersperiode: false
+};
 
 const formData = {
   ...initialState,

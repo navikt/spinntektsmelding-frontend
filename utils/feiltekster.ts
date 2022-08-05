@@ -23,7 +23,8 @@ const feiltekster = {
     'Angi refusjonsbeløpet arbeidsgiver har betalt under hele eller deler av sykefraværet.',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG: 'Angi om arbeidsgiver betaler lønn under hele elle deler av sykefraværet.',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO: 'Angi siste dato det kreves refusjon for.',
-  BEKREFT_OPPLYSNINGER: 'Bekreft at opplysningene gitt er riktig og fullstendige.'
+  BEKREFT_OPPLYSNINGER: 'Bekreft at opplysningene gitt er riktig og fullstendige.',
+  ENDRINGSAARSAK_MANGLER: 'Vennligst anngi årsak for endringen'
 };
 
 export default feiltekster;

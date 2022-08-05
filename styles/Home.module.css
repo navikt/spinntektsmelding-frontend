@@ -67,8 +67,7 @@
   margin-top: 0 !important;
 }
 .oktekst,
-.noktekst,
-.maanedsinntekt {
+.noktekst {
   font-size: var(--navds-font-size-xlarge);
   margin: 0.5rem 0;
   display: inline-block;
@@ -161,16 +160,6 @@
   margin: 1rem 0 .5rem
 }
 
-.belopwrapper {
-  display: flex;
-  gap: 2rem;
-}
-
-.belopwrapper > div {
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
 .naturalytelser {
   display: flex;
   gap: 2rem;
@@ -181,23 +170,7 @@
   margin-bottom: 2rem;
 }
 
-.maanedsnavn,
-.maanedsinntekt {
-  display: inline-block;
-  margin: 0;
-  min-width: 5rem;
-}
-
-.maanedsinntekt {
-  text-align: right;
-}
-
-.endremaaanedsinntekt {
-  display: flex;
-  gap: 2rem;
-}
-
-.endremaaanedsinntekt .kontrollerknapp {
+.kontrollerknapp {
   margin-top: auto;
   height: 3rem;
 }

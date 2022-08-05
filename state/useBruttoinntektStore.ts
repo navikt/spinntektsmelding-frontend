@@ -4,9 +4,15 @@ import { HistoriskInntekt, Inntekt } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import { nanoid } from 'nanoid';
 import { MottattHistoriskInntekt } from './MottattData';
+import feiltekster from '../utils/feiltekster';
 
 interface BruttoinntektState {
   bruttoinntekt: Inntekt;
+  bruttoinntektFeilmeldinger: {
+    bruttoInntekt?: string;
+    bekreftet?: string;
+    endringsaarsak?: string;
+  };
   tidligereInntekt?: Array<HistoriskInntekt>;
   setNyMaanedsinntekt: (belop: string) => void;
   selectEndringsaarsak: (aarsak: string) => void;
@@ -27,6 +33,11 @@ const useBruttoinntektStore = create<BruttoinntektState>()((set) => ({
     bekreftet: false,
     manueltKorrigert: false,
     endringsaarsak: undefined
+  },
+  bruttoinntektFeilmeldinger: {
+    bruttoInntekt: feiltekster.BRUTTOINNTEKT_MANGLER,
+    bekreftet: feiltekster.IKKE_BEKREFTET,
+    endringsaarsak: feiltekster.ENDRINGSAARSAK_MANGLER
   },
   tidligereInntekt: undefined,
   setNyMaanedsinntekt: (belop: string) =>
@@ -57,6 +68,7 @@ const useBruttoinntektStore = create<BruttoinntektState>()((set) => ({
     set(
       produce((state) => {
         state.bruttoinntekt!.bekreftet = bekreftet;
+        state.bruttoinntektFeilmeldinger.bekreftet = bekreftet ? '' : feiltekster.IKKE_BEKREFTET;
         return state;
       })
     ),
