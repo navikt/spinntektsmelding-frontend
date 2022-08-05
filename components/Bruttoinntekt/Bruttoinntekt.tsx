@@ -41,14 +41,14 @@ export default function Bruttoinntekt() {
       <p>
         <strong>Vi har registrert en inntekt på</strong>
       </p>
-      <div className={styles.belopwrapper}>
+      <div className={lokalStyles.belopwrapper}>
         {!endreMaanedsinntekt && (
-          <TextLabel className={styles.maanedsinntekt} id='bruttoinntekt-belop'>
+          <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
             {(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
           </TextLabel>
         )}
         {endreMaanedsinntekt && (
-          <div className={styles.endremaaanedsinntekt}>
+          <div className={lokalStyles.endremaaanedsinntekt}>
             <TextField
               label='Inntekt per måned'
               onChange={(event) => setNyMaanedsinntekt(event.target.value)}
