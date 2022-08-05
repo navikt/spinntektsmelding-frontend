@@ -68,10 +68,6 @@ const Home: NextPage = () => {
 
     console.log(skjemaData); // eslint-disable-line
     console.log(errorStatus); // eslint-disable-line
-
-    // dispatch({
-    //   type: 'submitForm'
-    // });
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
