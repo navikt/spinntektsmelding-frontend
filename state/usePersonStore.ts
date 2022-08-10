@@ -7,6 +7,8 @@ interface PersonState {
   identitetsnummer?: string;
   orgnrUnderenhet?: string;
   virksomhetsnavn?: string;
+  setNavn: (navn: string) => void;
+  setIdentitetsnummer: (identitetsnummer: string) => void;
   setOrgUnderenhet: (organisasjon: Organisasjon) => void;
   initPerson: (navn: string, identitetsnummer: string, orgnrUnderenhet: string) => void;
 }

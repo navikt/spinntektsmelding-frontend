@@ -4,6 +4,7 @@ import { Naturalytelse, YesNo } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import parseIsoDate from '../utils/parseIsoDate';
 import { nanoid } from 'nanoid';
+import { MottattNaturalytelse } from './MottattData';
 
 interface NaturalytelserState {
   naturalytelser?: Array<Naturalytelse>;
@@ -14,7 +15,7 @@ interface NaturalytelserState {
   slettNaturalytelse: (naturalytelseId: string) => void;
   slettAlleNaturalytelser: () => void;
   leggTilNaturalytelse: () => void;
-  initNaturalytelser: () => void;
+  initNaturalytelser: (naturalytelser: Array<MottattNaturalytelse>) => void;
 }
 
 const useNaturalytelserStore = create<NaturalytelserState>()((set) => ({
@@ -102,7 +103,23 @@ const useNaturalytelserStore = create<NaturalytelserState>()((set) => ({
       })
     );
   },
-  initNaturalytelser: () => {}
+  initNaturalytelser: (naturalytelser) => {
+    set(
+      produce((state) => {
+        if (!state.naturalytelser) {
+          state.naturalytelser = [];
+        }
+
+        state.naturalytelser = naturalytelser.map((ytelse) => ({
+          ...ytelse,
+          bortfallsdato: parseIsoDate(ytelse.bortfallsdato),
+          id: nanoid()
+        }));
+
+        return state;
+      })
+    );
+  }
 }));
 
 export default useNaturalytelserStore;

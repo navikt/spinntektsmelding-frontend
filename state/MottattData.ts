@@ -3,6 +3,12 @@ export interface MottattPeriode {
   til: string;
 }
 
+export interface MottattNaturalytelse {
+  type: string;
+  bortfallsdato: string;
+  verdi: number;
+}
+
 export interface MottattHistoriskInntekt {
   maanedsnavn: string;
   inntekt: number;

@@ -15,7 +15,7 @@ interface BruttoinntektState {
   };
   tidligereInntekt?: Array<HistoriskInntekt>;
   setNyMaanedsinntekt: (belop: string) => void;
-  selectEndringsaarsak: (aarsak: string) => void;
+  setEndringsaarsak: (aarsak: string) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean) => void;
   initBruttioinntekt: (bruttoInntekt: number, tidligereInntekt: Array<MottattHistoriskInntekt>) => void;
@@ -49,7 +49,7 @@ const useBruttoinntektStore = create<BruttoinntektState>()((set) => ({
         return state;
       })
     ),
-  selectEndringsaarsak: (aarsak: string) =>
+  setEndringsaarsak: (aarsak: string) =>
     set(
       produce((state) => {
         state.bruttoinntekt.endringsaarsak = aarsak;
@@ -60,7 +60,7 @@ const useBruttoinntektStore = create<BruttoinntektState>()((set) => ({
   tilbakestillMaanedsinntekt: () =>
     set(
       produce((state) => {
-        state.bruttoInntekt = { ...state.opprinneligbruttoinntekt };
+        state.bruttoinntekt = { ...state.opprinneligbruttoinntekt };
         return state;
       })
     ),
@@ -81,7 +81,12 @@ const useBruttoinntektStore = create<BruttoinntektState>()((set) => ({
           manueltKorrigert: false,
           endringsaarsak: ''
         };
-        state.opprinneligbruttoinntekt = structuredClone(state.bruttoinntekt);
+        state.opprinneligbruttoinntekt = {
+          bruttoInntekt: bruttoInntekt,
+          bekreftet: false,
+          manueltKorrigert: false,
+          endringsaarsak: ''
+        };
 
         if (tidligereInntekt) {
           state.tidligereInntekt = tidligereInntekt.map((inntekt) => ({

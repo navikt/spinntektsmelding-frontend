@@ -74,9 +74,6 @@ const useEgenmeldingStore = create<EgenmeldingState>()((set) => ({
     set(
       produce((state) => {
         const nyEgenmeldingsperiode: Periode = { id: nanoid() };
-        if (!state.egenmeldingsperioder) {
-          state.egenmeldingsperioder = {};
-        }
 
         if (state.egenmeldingsperioder[arbeidsforholdId]) {
           state.egenmeldingsperioder[arbeidsforholdId].push(nyEgenmeldingsperiode);
@@ -97,7 +94,7 @@ const useEgenmeldingStore = create<EgenmeldingState>()((set) => ({
         arbeidsforhold.forEach((forhold) => {
           if (egenmeldingsperioder && egenmeldingsperioder[forhold.arbeidsforholdId]) {
             state.egenmeldingsperioder[forhold.arbeidsforholdId] = egenmeldingsperioder[forhold.arbeidsforholdId].map(
-              (periode) => ({ ...periode, id: nanoid() })
+              (periode) => ({ fra: parseIsoDate(periode.fra), til: parseIsoDate(periode.til), id: nanoid() })
             );
           } else {
             state.egenmeldingsperioder[forhold.arbeidsforholdId] = [{ id: nanoid() }];

@@ -3,7 +3,7 @@ import produce from 'immer';
 import { IArbeidsforhold } from './state';
 import { MottattArbeidsforhold } from './MottattData';
 
-interface ArbeidsforholdState {
+export interface ArbeidsforholdState {
   arbeidsforhold?: Array<IArbeidsforhold>;
   setAktiveArbeidsforhold: (aktiveArbeidsforhold: Array<string>) => void;
   initArbeidsforhold: (motattArbeidsforhold: Array<MottattArbeidsforhold>) => void;
@@ -15,6 +15,9 @@ const useArbeidsforholdStore = create<ArbeidsforholdState>()((set, get) => ({
   setAktiveArbeidsforhold: (aktiveArbeidsforhold: Array<string>) => {
     set(
       produce((state) => {
+        if (!aktiveArbeidsforhold) {
+          aktiveArbeidsforhold = [];
+        }
         const oppdaterteForhold = state.arbeidsforhold?.map((forhold: IArbeidsforhold) => {
           const aktiv = Boolean(aktiveArbeidsforhold && aktiveArbeidsforhold.indexOf(forhold.arbeidsforholdId) > -1);
           forhold.aktiv = aktiv;
@@ -41,7 +44,9 @@ const useArbeidsforholdStore = create<ArbeidsforholdState>()((set, get) => ({
   aktiveArbeidsforhold: () => {
     const arbeidsforhold: Array<IArbeidsforhold> | undefined = get().arbeidsforhold;
 
-    if (!arbeidsforhold) return [];
+    if (!arbeidsforhold) {
+      return [];
+    }
 
     return arbeidsforhold.filter((forhold) => forhold.aktiv);
   }

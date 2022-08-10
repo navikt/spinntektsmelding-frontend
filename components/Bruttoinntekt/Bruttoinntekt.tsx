@@ -25,7 +25,7 @@ export default function Bruttoinntekt() {
   );
   const bekreftKorrektInntekt = useBruttoinntektStore((state) => state.bekreftKorrektInntekt);
   const setNyMaanedsinntekt = useBruttoinntektStore((state) => state.setNyMaanedsinntekt);
-  const selectEndringsaarsak = useBruttoinntektStore((state) => state.selectEndringsaarsak);
+  const setEndringsaarsak = useBruttoinntektStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBruttoinntektStore((state) => state.tilbakestillMaanedsinntekt);
 
   const { visFeilmeldingsTekst, visFeilmelding } = useFeilmeldinger();
@@ -57,7 +57,7 @@ export default function Bruttoinntekt() {
             />
             <Select
               label='Forklaring til endring'
-              onChange={(event) => selectEndringsaarsak(event.target.value)}
+              onChange={(event) => setEndringsaarsak(event.target.value)}
               id='bruttoinntekt-endringsaarsak'
               error={visFeilmeldingsTekst(bruttoinntektFeilmeldinger.endringsaarsak)}
             >
