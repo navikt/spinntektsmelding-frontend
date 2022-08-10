@@ -110,6 +110,8 @@
 }
 
 .kontrollerknapp {
+  margin-top: auto;
+  height: 3rem;
   display: inline-block;
 }
 
@@ -168,11 +170,6 @@
 
 .naturalytelserknapp {
   margin-bottom: 2rem;
-}
-
-.kontrollerknapp {
-  margin-top: auto;
-  height: 3rem;
 }
 
 @media screen and (max-width: 800px) {
