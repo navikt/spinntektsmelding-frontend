@@ -12,8 +12,8 @@ export default defineConfig({
     setupFiles: './__tests__/setup.ts',
     coverage: {
       reporter: ['text', 'json', 'html']
-    }
-    // reporters: 'vitest-sonar-reporter',
-    // outputFile: 'sonar-report.xml'
+    },
+    reporters: ['vitest-sonar-reporter', 'default'],
+    outputFile: 'sonar-report.xml'
   }
 });
