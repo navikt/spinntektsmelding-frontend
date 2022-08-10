@@ -1,33 +1,34 @@
-import { BodyShort, Button, Checkbox, Link, Select, TextField } from '@navikt/ds-react';
+import { BodyShort, Button, Checkbox, CheckboxGroup, Link, Select, TextField } from '@navikt/ds-react';
 import { useState } from 'react';
-import { HistoriskInntekt, Inntekt } from '../../state/state';
+import { HistoriskInntekt } from '../../state/state';
+import useBruttoinntektStore from '../../state/useBruttoinntektStore';
 import styles from '../../styles/Home.module.css';
+import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
+import useFeilmeldinger from '../../utils/useFeilmeldinger';
 import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 
-interface BruttoinntektProps {
-  bruttoinntekt?: Inntekt;
-  tidligereinntekt?: Array<HistoriskInntekt>;
-  setNyMaanedsinntekt: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  selectEndringsaarsak: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  clickBekreftKorrektInntekt: (event: React.MouseEvent<HTMLInputElement>) => void;
-}
-
-export default function Bruttoinntekt({
-  bruttoinntekt,
-  tidligereinntekt,
-  setNyMaanedsinntekt,
-  selectEndringsaarsak,
-  clickTilbakestillMaanedsinntekt,
-  clickBekreftKorrektInntekt
-}: BruttoinntektProps) {
+export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const clickTilbakestillMaanedsinntektHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     setEndreMaanedsinntekt(false);
-    clickTilbakestillMaanedsinntekt(event);
+    tilbakestillMaanedsinntekt();
   };
+  const [bruttoinntekt, bruttoinntektFeilmeldinger] = useBruttoinntektStore((state) => [
+    state.bruttoinntekt,
+    state.bruttoinntektFeilmeldinger
+  ]);
+  const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBruttoinntektStore(
+    (state) => state.tidligereInntekt
+  );
+  const bekreftKorrektInntekt = useBruttoinntektStore((state) => state.bekreftKorrektInntekt);
+  const setNyMaanedsinntekt = useBruttoinntektStore((state) => state.setNyMaanedsinntekt);
+  const setEndringsaarsak = useBruttoinntektStore((state) => state.setEndringsaarsak);
+  const tilbakestillMaanedsinntekt = useBruttoinntektStore((state) => state.tilbakestillMaanedsinntekt);
+
+  const { visFeilmeldingsTekst, visFeilmelding } = useFeilmeldinger();
 
   return (
     <>
@@ -40,20 +41,26 @@ export default function Bruttoinntekt({
       <p>
         <strong>Vi har registrert en inntekt på</strong>
       </p>
-      <div className={styles.belopwrapper}>
+      <div className={lokalStyles.belopwrapper}>
         {!endreMaanedsinntekt && (
-          <TextLabel className={styles.maanedsinntekt} id='bruttoinntekt-belop'>
+          <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
             {(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
           </TextLabel>
         )}
         {endreMaanedsinntekt && (
-          <div className={styles.endremaaanedsinntekt}>
+          <div className={lokalStyles.endremaaanedsinntekt}>
             <TextField
               label='Inntekt per måned'
-              onChange={setNyMaanedsinntekt}
-              defaultValue={(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0).toString()}
+              onChange={(event) => setNyMaanedsinntekt(event.target.value)}
+              defaultValue={formatCurrency(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0)}
+              error={visFeilmeldingsTekst(bruttoinntektFeilmeldinger.bruttoInntekt)}
             />
-            <Select label='Forklaring til endring' onChange={selectEndringsaarsak} id='bruttoinntekt-endringsaarsak'>
+            <Select
+              label='Forklaring til endring'
+              onChange={(event) => setEndringsaarsak(event.target.value)}
+              id='bruttoinntekt-endringsaarsak'
+              error={visFeilmeldingsTekst(bruttoinntektFeilmeldinger.endringsaarsak)}
+            >
               <option value=''>Velg endringsårsak</option>
               <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
               <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
@@ -91,12 +98,14 @@ export default function Bruttoinntekt({
       <BodyShort>
         <strong>Inntekten er basert på følgende måneder</strong>
       </BodyShort>
-      {tidligereinntekt?.map((inntekt) => (
-        <div key={inntekt.id}>
-          <div className={styles.maanedsnavn}>{inntekt.maanedsnavn}:</div>
-          <div className={styles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</div>
-        </div>
-      ))}
+      <table>
+        {tidligereinntekt?.map((inntekt) => (
+          <tr key={inntekt.id}>
+            <td className={lokalStyles.maanedsnavn}>{inntekt.maanedsnavn}:</td>
+            <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
+          </tr>
+        ))}
+      </table>
       {!tidligereinntekt && <BodyShort>Klarer ikke å finne inntekt for de 3 siste månedene.</BodyShort>}
       <p>
         <strong>
@@ -105,9 +114,15 @@ export default function Bruttoinntekt({
           etter <Link href='#'>folketrygdloven $8-28.</Link>
         </strong>
       </p>
-      <Checkbox onClick={clickBekreftKorrektInntekt} id='bruttoinntektbekreft'>
-        Jeg bekrefter at registrert inntekt er korrekt
-      </Checkbox>
+      <CheckboxGroup size='medium' error={visFeilmeldingsTekst(bruttoinntektFeilmeldinger.bekreftet)} legend=''>
+        <Checkbox
+          onClick={(event) => bekreftKorrektInntekt(event.currentTarget.checked)}
+          id='bruttoinntektbekreft'
+          error={visFeilmelding(bruttoinntektFeilmeldinger.bekreftet)}
+        >
+          Jeg bekrefter at registrert inntekt er korrekt
+        </Checkbox>
+      </CheckboxGroup>
     </>
   );
 }

@@ -1,7 +1,27 @@
 import { format, subDays } from 'date-fns';
-import { initialState } from '../state/formReducer';
+import { nanoid } from 'nanoid';
+import InntektsmeldingSkjema from '../state/state';
+
 import testFnr from './testFnr';
 import testOrg from './testOrganisasjoner';
+
+const initialState: InntektsmeldingSkjema = {
+  opplysningerBekreftet: false,
+  egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
+  bruttoinntekt: {
+    bruttoInntekt: 0,
+    bekreftet: false,
+    manueltKorrigert: false,
+    endringsaarsak: ''
+  },
+  opprinneligbruttoinntekt: {
+    bruttoInntekt: 0,
+    bekreftet: false,
+    manueltKorrigert: false,
+    endringsaarsak: ''
+  },
+  sammeFravaersperiode: false
+};
 
 const formData = {
   ...initialState,
@@ -9,17 +29,10 @@ const formData = {
   identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
   orgnrUnderenhet: testOrg[5].OrganizationNumber,
   bruttoinntekt: 44000,
-  // fravaersperiode: [
-  //   {
-  //     fra: format(subDays(new Date(), 180), 'yyyy-MM-dd'),
-  //     til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
-  //   },
-  //   {
-  //     fra: format(subDays(new Date(), 4), 'yyyy-MM-dd'),
-  //     til: format(subDays(new Date(), 1), 'yyyy-MM-dd')
-  //   }
-  // ],
-  // behandlingsdager: true,
+  // behandlingsperiode: {
+  //   fra: format(subDays(new Date(), 180), 'yyyy-MM-dd'),
+  //   til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
+  // },
   fravaersperiode: {
     spillerid: [
       {
@@ -52,7 +65,6 @@ const formData = {
       }
     ]
   },
-  behandlingsdager: false,
   tidligereinntekt: [
     {
       maanedsnavn: 'Februar', // yyyy-MM

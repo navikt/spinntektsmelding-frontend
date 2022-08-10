@@ -1,0 +1,167 @@
+import { Datepicker } from '@navikt/ds-datepicker';
+import { useState } from 'react';
+import { IArbeidsforhold } from '../../state/state';
+import formatDate from '../../utils/formatDate';
+import formatIsoDate from '../../utils/formatIsoDate';
+import ButtonSlette from '../ButtonSlette';
+import Heading4 from '../Heading4';
+import LabelLabel from '../LabelLabel';
+import TextLabel from '../TextLabel';
+import localStyles from './Fravaersperiode.module.css';
+import styles from '../../styles/Home.module.css';
+import { Button, Checkbox } from '@navikt/ds-react';
+import useFravaersperiodeStore from '../../state/useFravaersperiodeStore';
+
+interface FravaerEnkeltAnsattforholdProps {
+  arbeidsforhold: IArbeidsforhold;
+  harFlereArbeidsforhold: boolean;
+  forsteArbeidsforhold: boolean;
+  flereEnnToArbeidsforhold: boolean;
+}
+
+export default function FravaerEnkeltAnsattforhold({
+  arbeidsforhold,
+  harFlereArbeidsforhold,
+  forsteArbeidsforhold,
+  flereEnnToArbeidsforhold
+}: FravaerEnkeltAnsattforholdProps) {
+  const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
+  const fravaersperiode = useFravaersperiodeStore((state) => state.fravaersperiode);
+  const setSykemeldingFraDato = useFravaersperiodeStore((state) => state.setFravaersperiodeFraDato);
+  const setSykemeldingTilDato = useFravaersperiodeStore((state) => state.setFravaersperiodeTilDato);
+  const slettFravaersperiode = useFravaersperiodeStore((state) => state.slettFravaersperiode);
+  const leggTilFravaersperiode = useFravaersperiodeStore((state) => state.leggTilFravaersperiode);
+  const tilbakestillFravaersperiode = useFravaersperiodeStore((state) => state.tilbakestillFravaersperiode);
+  const setSammeFravarePaaArbeidsforhold = useFravaersperiodeStore((state) => state.setSammeFravarePaaArbeidsforhold);
+  const endreFravaersperiode = useFravaersperiodeStore((state) => state.endreFravaersperiode);
+  const sammePeriodeForAlle = useFravaersperiodeStore((state) => state.sammeFravaersperiode);
+
+  const clickTilbakestillFravaersperiodeHandler = (arbeidsforholdId: string) => {
+    tilbakestillFravaersperiode(arbeidsforholdId);
+  };
+
+  const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    endreFravaersperiode();
+    setEndreSykemelding(!endreSykemelding);
+  };
+
+  return (
+    <>
+      {harFlereArbeidsforhold && (
+        <Heading4 className={localStyles.heading4}>Fravær - {arbeidsforhold.arbeidsforhold}</Heading4>
+      )}
+
+      {fravaersperiode?.[arbeidsforhold.arbeidsforholdId] &&
+        fravaersperiode[arbeidsforhold.arbeidsforholdId].map((periode, periodeIndex) => (
+          <div className={styles.periodewrapper} key={periode.id}>
+            {!endreSykemelding && (
+              <div className={styles.datepickerescape}>
+                <TextLabel>Fra</TextLabel>
+                <div>{formatDate(periode.fra)}</div>
+              </div>
+            )}
+            {endreSykemelding && (
+              <div className={styles.datepickerescape}>
+                <LabelLabel htmlFor={`fra-${periode.id}`} className={styles.datepickerlabel}>
+                  Fra
+                </LabelLabel>
+                <Datepicker
+                  inputLabel='Fra'
+                  inputId={`fra-${periode.id}`}
+                  onChange={(dateString) =>
+                    setSykemeldingFraDato(arbeidsforhold.arbeidsforholdId, periode.id, dateString)
+                  }
+                  locale={'nb'}
+                  value={formatIsoDate(periode.fra)}
+                />
+              </div>
+            )}
+
+            {!endreSykemelding && (
+              <div className={styles.datepickerescape}>
+                <TextLabel>Til</TextLabel>
+                <div>{formatDate(periode.til)}</div>
+              </div>
+            )}
+            {endreSykemelding && (
+              <div className={styles.datepickerescape}>
+                <LabelLabel htmlFor={`til-${periode.id}`} className={styles.datepickerlabel}>
+                  Til
+                </LabelLabel>
+                <Datepicker
+                  inputLabel='Til'
+                  inputId={`til-${periode.id}`}
+                  onChange={(dateString) =>
+                    setSykemeldingTilDato(arbeidsforhold.arbeidsforholdId, periode.id, dateString)
+                  }
+                  locale={'nb'}
+                  value={formatIsoDate(periode.til)}
+                />
+              </div>
+            )}
+            {endreSykemelding && fravaersperiode[arbeidsforhold.arbeidsforholdId].length > 1 && (
+              <div className={styles.endresykemelding}>
+                <ButtonSlette
+                  onClick={() => slettFravaersperiode(arbeidsforhold.arbeidsforholdId, periode.id)}
+                  title='Slett fraværsperiode'
+                />
+              </div>
+            )}
+            {harFlereArbeidsforhold &&
+              forsteArbeidsforhold &&
+              periodeIndex === fravaersperiode[arbeidsforhold.arbeidsforholdId].length - 1 && (
+                <div>
+                  {!flereEnnToArbeidsforhold && (
+                    <Checkbox
+                      onChange={(event) =>
+                        setSammeFravarePaaArbeidsforhold(arbeidsforhold.arbeidsforholdId, event.currentTarget.checked)
+                      }
+                    >
+                      Bruk samme for det andre arbeidsforholdet
+                    </Checkbox>
+                  )}
+                  {flereEnnToArbeidsforhold && (
+                    <Checkbox
+                      onChange={(event) =>
+                        setSammeFravarePaaArbeidsforhold(arbeidsforhold.arbeidsforholdId, event.currentTarget.checked)
+                      }
+                      checked={sammePeriodeForAlle}
+                    >
+                      Bruk samme for de andre arbeidsforholdene
+                    </Checkbox>
+                  )}
+                </div>
+              )}
+          </div>
+        ))}
+      {!endreSykemelding && (
+        <Button
+          variant='secondary'
+          className={styles.endrebutton}
+          onClick={(event) => clickEndreFravaersperiodeHandler(event)}
+        >
+          Endre
+        </Button>
+      )}
+      {endreSykemelding && (
+        <div className={styles.endresykemeldingknapper}>
+          <Button
+            variant='secondary'
+            className={styles.kontrollerknapp}
+            onClick={() => leggTilFravaersperiode(arbeidsforhold.arbeidsforholdId)}
+          >
+            Legg til periode
+          </Button>
+
+          <Button
+            className={styles.kontrollerknapp}
+            onClick={() => clickTilbakestillFravaersperiodeHandler(arbeidsforhold.arbeidsforholdId)}
+          >
+            Tilbakestill
+          </Button>
+        </div>
+      )}
+    </>
+  );
+}

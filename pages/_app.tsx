@@ -1,5 +1,6 @@
 import '../styles/globals.css';
 import '@navikt/ds-css';
+import 'react-day-picker/dist/style.css';
 import '@navikt/ds-datepicker/lib/index.css';
 
 import type { AppProps } from 'next/app';

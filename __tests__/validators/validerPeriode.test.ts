@@ -7,8 +7,8 @@ describe('validerPeriode', () => {
     const input: Array<Periode> = [
       {
         id: 'tilfeldig',
-        til: new Date(),
-        fra: new Date()
+        til: new Date(2002, 10, 1),
+        fra: new Date(2002, 9, 1)
       }
     ];
 
@@ -66,6 +66,25 @@ describe('validerPeriode', () => {
       {
         code: 'MANGLER_TIL',
         felt: 'til-tilfeldig'
+      }
+    ];
+
+    expect(validerPerioder(input)).toEqual(expected);
+  });
+
+  it('should fail if fra and til is in the wrong order', () => {
+    const input: Array<Periode> = [
+      {
+        id: 'tilfeldig',
+        fra: new Date(2002, 10, 1),
+        til: new Date(2002, 9, 1)
+      }
+    ];
+
+    const expected = [
+      {
+        code: 'TIL_FOR_FRA',
+        felt: 'fra-tilfeldig'
       }
     ];
 
