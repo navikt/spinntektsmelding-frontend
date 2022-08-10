@@ -150,15 +150,8 @@ describe('useFravaersperiodeStore', () => {
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);
-    });
-
-    expect(result.current.fravaersperiode?.arbeidsforhold2?.length).toBe(3);
-
-    act(() => {
       result.current.leggTilFravaersperiode('arbeidsforhold2');
     });
-
-    expect(result.current.fravaersperiode?.arbeidsforhold2?.length).toBe(4);
 
     act(() => {
       result.current.tilbakestillFravaersperiode('arbeidsforhold2');

@@ -6,6 +6,11 @@ import { vi } from 'vitest';
 
 const initialState = useArbeidsforholdStore.getState();
 
+const inputData: Array<MottattArbeidsforhold> = [
+  { arbeidsforholdId: 'forhold1', arbeidsforhold: 'forhold1', stillingsprosent: 60 },
+  { arbeidsforholdId: 'forhold2', arbeidsforhold: 'forhold2', stillingsprosent: 40 }
+];
+
 describe('useArbeidsforholdStore', () => {
   beforeEach(() => {
     useArbeidsforholdStore.setState(initialState, true);
@@ -20,11 +25,6 @@ describe('useArbeidsforholdStore', () => {
   it('should initialize the data.', () => {
     const { result } = renderHook(() => useArbeidsforholdStore((state) => state));
 
-    const inputData: Array<MottattArbeidsforhold> = [
-      { arbeidsforholdId: 'forhold1', arbeidsforhold: 'forhold1', stillingsprosent: 60 },
-      { arbeidsforholdId: 'forhold2', arbeidsforhold: 'forhold2', stillingsprosent: 40 }
-    ];
-
     act(() => {
       result.current.initArbeidsforhold(inputData);
     });
@@ -37,11 +37,6 @@ describe('useArbeidsforholdStore', () => {
 
   it('should set the active state of the given forholdId to true.', () => {
     const { result } = renderHook(() => useArbeidsforholdStore((state) => state));
-
-    const inputData: Array<MottattArbeidsforhold> = [
-      { arbeidsforholdId: 'forhold1', arbeidsforhold: 'forhold1', stillingsprosent: 60 },
-      { arbeidsforholdId: 'forhold2', arbeidsforhold: 'forhold2', stillingsprosent: 40 }
-    ];
 
     act(() => {
       result.current.initArbeidsforhold(inputData);
@@ -56,11 +51,6 @@ describe('useArbeidsforholdStore', () => {
 
   it('should return the active state of the arbeidsforhold.', () => {
     const { result } = renderHook(() => useArbeidsforholdStore((state) => state));
-
-    const inputData: Array<MottattArbeidsforhold> = [
-      { arbeidsforholdId: 'forhold1', arbeidsforhold: 'forhold1', stillingsprosent: 60 },
-      { arbeidsforholdId: 'forhold2', arbeidsforhold: 'forhold2', stillingsprosent: 40 }
-    ];
 
     const expected = [
       {
@@ -109,46 +99,9 @@ describe('useArbeidsforholdStore', () => {
   it('should set the active state of the arbeidsforhold, without params.', () => {
     const { result } = renderHook(() => useArbeidsforholdStore((state) => state));
 
-    const inputData: Array<MottattArbeidsforhold> = [
-      { arbeidsforholdId: 'forhold1', arbeidsforhold: 'forhold1', stillingsprosent: 60 },
-      { arbeidsforholdId: 'forhold2', arbeidsforhold: 'forhold2', stillingsprosent: 40 }
-    ];
-
-    const expected = [
-      {
-        aktiv: true,
-        arbeidsforhold: 'forhold1',
-        arbeidsforholdId: 'forhold1',
-        stillingsprosent: 60
-      },
-      {
-        aktiv: true,
-        arbeidsforhold: 'forhold2',
-        arbeidsforholdId: 'forhold2',
-        stillingsprosent: 40
-      }
-    ];
-
     act(() => {
       result.current.initArbeidsforhold(inputData);
     });
-
-    const resultat1 = result.current.aktiveArbeidsforhold();
-    expect(resultat1).toEqual(expected);
-
-    act(() => {
-      result.current.setAktiveArbeidsforhold(['forhold2']);
-    });
-
-    const resultat = result.current.aktiveArbeidsforhold();
-    expect(resultat).toEqual([
-      {
-        aktiv: true,
-        arbeidsforhold: 'forhold2',
-        arbeidsforholdId: 'forhold2',
-        stillingsprosent: 40
-      }
-    ]);
 
     act(() => {
       result.current.setAktiveArbeidsforhold();
