@@ -14,8 +14,8 @@ interface RefusjonArbeidsgiverState {
   beloepArbeidsgiverBetalerISykefravaeret: (arbeidsforholdId: string, beloep: string) => void;
   refusjonskravetOpphoererStatus: (arbeidsforholdId: string, status: YesNo) => void;
   refusjonskravetOpphoererDato: (arbeidsforholdId: string, isoDato: string) => void;
-  initFullLonnIArbeidsgiverPerioden: () => void;
-  initLonnISykefravaeret: () => void;
+  initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: { [key: string]: LonnIArbeidsgiverperioden }) => void;
+  initLonnISykefravaeret: (lonnISykefravaeret: { [key: string]: LonnISykefravaeret }) => void;
 }
 
 const useRefusjonArbeidsgiverStore = create<RefusjonArbeidsgiverState>()((set) => ({
@@ -110,8 +110,22 @@ const useRefusjonArbeidsgiverStore = create<RefusjonArbeidsgiverState>()((set) =
         return state;
       })
     ),
-  initFullLonnIArbeidsgiverPerioden: () => set(produce((state) => {})),
-  initLonnISykefravaeret: () => set(produce((state) => {}))
+  initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: { [key: string]: LonnIArbeidsgiverperioden }) =>
+    set(
+      produce((state) => {
+        state.fullLonnIArbeidsgiverPerioden = lonnIArbeidsgiverperioden;
+
+        return state;
+      })
+    ),
+  initLonnISykefravaeret: (lonnISykefravaeret) =>
+    set(
+      produce((state) => {
+        state.lonnISykefravaeret = lonnISykefravaeret;
+
+        return state;
+      })
+    )
 }));
 
 export default useRefusjonArbeidsgiverStore;

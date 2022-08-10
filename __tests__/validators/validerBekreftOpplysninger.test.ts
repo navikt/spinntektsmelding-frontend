@@ -1,5 +1,4 @@
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../../validators/validerBekreftOpplysninger';
-// import { expect, it, describe } from 'vitest';
 
 describe('validerBekreftOpplysninger', () => {
   it('should return true when stuff is confirmed', () => {

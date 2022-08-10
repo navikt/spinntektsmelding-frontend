@@ -19,18 +19,6 @@ describe('useRefusjonArbeidsgiverStore', () => {
     cleanup();
   });
 
-  // it('should initialize the data.', () => {
-  //   const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
-
-  //   act(() => {
-  //     result.current.initFullLonnIArbeidsgiverPerioden(...inputPerson);
-  //   });
-
-  //   expect(result.current.navn).toBe(inputPerson[0]);
-  //   expect(result.current.identitetsnummer).toBe(inputPerson[1]);
-  //   expect(result.current.orgnrUnderenhet).toBe(inputPerson[2]);
-  // });
-
   it('should set the status on fullLonnIArbeidsgiverPerioden', () => {
     const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
 
@@ -202,40 +190,4 @@ describe('useRefusjonArbeidsgiverStore', () => {
 
     expect(result.current.refusjonskravetOpphoerer?.id1.opphorsdato).toEqual(new Date(2022, 2, 7));
   });
-
-  // it('should set the identitetsnummer.', () => {
-  //   const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
-
-  //   act(() => {
-  //     result.current.initFullLonnIArbeidsgiverPerioden(...inputPerson);
-  //   });
-
-  //   act(() => {
-  //     result.current.setIdentitetsnummer(testFnr.GyldigeFraDolly.TestPerson2);
-  //   });
-
-  //   expect(result.current.identitetsnummer).toEqual(testFnr.GyldigeFraDolly.TestPerson2);
-  // });
-
-  // it('should set the virksomhetsnavn.', () => {
-  //   const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
-
-  //   act(() => {
-  //     result.current.initFullLonnIArbeidsgiverPerioden(...inputPerson);
-  //   });
-
-  //   act(() => {
-  //     result.current.setOrgUnderenhet({
-  //       Name: 'NAV eksempelfirma',
-  //       Type: 'AS',
-  //       OrganizationNumber: '912834765',
-  //       OrganizationForm: 'Vet ikke',
-  //       Status: 'Eksempel',
-  //       ParentOrganizationNumber: '987654321'
-  //     });
-  //   });
-
-  //   expect(result.current.orgnrUnderenhet).toBe('912834765');
-  //   expect(result.current.virksomhetsnavn).toBe('NAV eksempelfirma');
-  // });
 });
