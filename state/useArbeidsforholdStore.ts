@@ -38,6 +38,7 @@ const useArbeidsforholdStore = create<ArbeidsforholdState>()((set, get) => ({
           stillingsprosent: forhold.stillingsprosent,
           aktiv: true
         }));
+        return state;
       })
     );
   },

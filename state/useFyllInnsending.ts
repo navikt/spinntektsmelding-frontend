@@ -3,34 +3,39 @@ import useArbeidsforholdStore from './useArbeidsforholdStore';
 import useBehandlingsdagerStore from './useBehandlingsdagerStore';
 import useBruttoinntektStore from './useBruttoinntektStore';
 import useEgenmeldingStore from './useEgenmeldingStore';
+import useFeilmeldingerStore from './useFeilmeldingerStore';
 import useFravaersperiodeStore from './useFravaersperiodeStore';
 import useNaturalytelserStore from './useNaturalytelserStore';
 import usePersonStore from './usePersonStore';
 import useRefusjonArbeidsgiverStore from './useRefusjonArbeidsgiverStore';
 
 export default function useFyllInnsending() {
-  const fravaersperiode = useFravaersperiodeStore((fstate) => fstate.fravaersperiode);
-  const bruttoinntekt = useBruttoinntektStore((fstate) => fstate.bruttoinntekt);
+  const fravaersperiode = useFravaersperiodeStore((state) => state.fravaersperiode);
+  const bruttoinntekt = useBruttoinntektStore((state) => state.bruttoinntekt);
 
-  const egenmeldingsperioder = useEgenmeldingStore((fstate) => fstate.egenmeldingsperioder);
-  const [navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = usePersonStore((fstate) => [
-    fstate.navn,
-    fstate.identitetsnummer,
-    fstate.virksomhetsnavn,
-    fstate.orgnrUnderenhet
+  const egenmeldingsperioder = useEgenmeldingStore((state) => state.egenmeldingsperioder);
+  const [navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = usePersonStore((state) => [
+    state.navn,
+    state.identitetsnummer,
+    state.virksomhetsnavn,
+    state.orgnrUnderenhet
   ]);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret] = useRefusjonArbeidsgiverStore((fstate) => [
-    fstate.fullLonnIArbeidsgiverPerioden,
-    fstate.lonnISykefravaeret
+  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret] = useRefusjonArbeidsgiverStore((state) => [
+    state.fullLonnIArbeidsgiverPerioden,
+    state.lonnISykefravaeret
   ]);
-  const naturalytelser = useNaturalytelserStore((fstate) => fstate.naturalytelser);
+  const naturalytelser = useNaturalytelserStore((state) => state.naturalytelser);
 
-  const [behandlingsperiode, behandlingsdager] = useBehandlingsdagerStore((fstate) => [
-    fstate.behandlingsperiode,
-    fstate.behandlingsdager
+  const [behandlingsperiode, behandlingsdager] = useBehandlingsdagerStore((state) => [
+    state.behandlingsperiode,
+    state.behandlingsdager
   ]);
 
-  const arbeidsforhold = useArbeidsforholdStore((fstate) => fstate.arbeidsforhold);
+  const setSkalViseFeilmeldinger = useFeilmeldingerStore((state) => state.setSkalViseFeilmeldinger);
+
+  const arbeidsforhold = useArbeidsforholdStore((state) => state.arbeidsforhold);
+
+  setSkalViseFeilmeldinger(true);
 
   return (opplysningerBekreftet: boolean): InntektsmeldingSkjema => {
     const skjemaData: InntektsmeldingSkjema = {

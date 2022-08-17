@@ -33,6 +33,7 @@ import InntektsmeldingSkjema from '../state/state';
 import useBehandlingsdagerStore from '../state/useBehandlingsdagerStore';
 import useStateInit from '../state/useStateInit';
 import useFyllInnsending from '../state/useFyllInnsending';
+import useFeilmeldingerStore from '../state/useFeilmeldingerStore';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -42,15 +43,19 @@ const Home: NextPage = () => {
   const setRoute = useRoute();
   const { data: arbeidsgivere, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
 
-  const egenmeldingsperioder = useEgenmeldingStore((fstate) => fstate.egenmeldingsperioder);
+  const egenmeldingsperioder = useEgenmeldingStore((state) => state.egenmeldingsperioder);
 
-  const setOrgUnderenhet = usePersonStore((fstate) => fstate.setOrgUnderenhet);
+  const setOrgUnderenhet = usePersonStore((state) => state.setOrgUnderenhet);
 
-  const behandlingsperiode = useBehandlingsdagerStore((fstate) => fstate.behandlingsperiode);
+  const behandlingsperiode = useBehandlingsdagerStore((state) => state.behandlingsperiode);
 
-  const arbeidsforhold = useArbeidsforholdStore((fstate) => fstate.arbeidsforhold);
+  const arbeidsforhold = useArbeidsforholdStore((state) => state.arbeidsforhold);
 
-  const [feilmeldinger, setFeilmeldinger] = useState<Array<ValiderTekster> | undefined>([]);
+  const [feilmeldinger, fyllFeilmeldinger, visFeilmeldingsTekst] = useFeilmeldingerStore((state) => [
+    state.feilmeldinger,
+    state.fyllFeilmeldinger,
+    state.visFeilmeldingsTekst
+  ]);
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
@@ -64,10 +69,12 @@ const Home: NextPage = () => {
 
     const errorStatus = submitInntektsmelding(skjemaData);
 
-    setFeilmeldinger(errorStatus.errorTexts);
+    if (errorStatus.errorTexts) {
+      fyllFeilmeldinger(errorStatus.errorTexts);
+    }
 
     console.log(skjemaData); // eslint-disable-line
-    console.log(errorStatus); // eslint-disable-line
+    console.log(feilmeldinger); // eslint-disable-line
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
@@ -147,6 +154,7 @@ const Home: NextPage = () => {
                 onClick={clickOpplysningerBekreftet}
                 label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
                 id='bekreft-opplysninger'
+                error={visFeilmeldingsTekst('bekreft-opplysninger')}
               >
                 NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
                 er riktige eller fullstendige.

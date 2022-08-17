@@ -8,6 +8,7 @@ import Heading4 from '../Heading4';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import useArbeidsforholdStore from '../../state/useArbeidsforholdStore';
 import useRefusjonArbeidsgiverStore from '../../state/useRefusjonArbeidsgiverStore';
+import useFeilmeldingerStore from '../../state/useFeilmeldingerStore';
 
 export default function RefusjonArbeidsgiver() {
   const arbeidsforhold: Array<IArbeidsforhold> | undefined = useArbeidsforholdStore((state) => state.arbeidsforhold);
@@ -16,6 +17,11 @@ export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useRefusjonArbeidsgiverStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useRefusjonArbeidsgiverStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useRefusjonArbeidsgiverStore((state) => state.refusjonskravetOpphoerer);
+
+  const [visFeilmeldingsTekst, visFeilmelding] = useFeilmeldingerStore((state) => [
+    state.visFeilmeldingsTekst,
+    state.visFeilmelding
+  ]);
 
   const arbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useRefusjonArbeidsgiverStore(
     (state) => state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden
@@ -48,6 +54,7 @@ export default function RefusjonArbeidsgiver() {
             legend='Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?'
             className={styles.radiobuttonwrapper}
             id={`lia-radio-${forhold.arbeidsforholdId}`}
+            error={visFeilmeldingsTekst(`lia-radio-${forhold.arbeidsforholdId}`)}
           >
             <Radio
               value='Ja'
@@ -80,6 +87,7 @@ export default function RefusjonArbeidsgiver() {
               className={styles.halfsize}
               onChange={(event) => begrunnelseRedusertUtbetaling(forhold.arbeidsforholdId, event.target.value)}
               id={`lia-select-${forhold.arbeidsforholdId}`}
+              error={visFeilmeldingsTekst(`lia-select-${forhold.arbeidsforholdId}`)}
             >
               <option value=''>Velg</option>
               <option value='annet'>Annet</option>
@@ -90,6 +98,7 @@ export default function RefusjonArbeidsgiver() {
             legend='Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?'
             className={styles.radiobuttonwrapper}
             id={`lus-radio-${forhold.arbeidsforholdId}`}
+            error={visFeilmeldingsTekst(`lus-radio-${forhold.arbeidsforholdId}`)}
           >
             <Radio
               value='Ja'
@@ -123,6 +132,7 @@ export default function RefusjonArbeidsgiver() {
                   beloepArbeidsgiverBetalerISykefravaeret(forhold.arbeidsforholdId, event.target.value)
                 }
                 id={`lus-input-${forhold.arbeidsforholdId}`}
+                error={visFeilmeldingsTekst(`lus-input-${forhold.arbeidsforholdId}`)}
               />
               <BodyLong className={styles.opphrefkravforklaring}>
                 Refusjonsbeløpet gjelder fra den første dagen arbeidstakeren har rett til utbetaling fra NAV
@@ -131,6 +141,7 @@ export default function RefusjonArbeidsgiver() {
                 legend='Opphører refusjonkravet i perioden?'
                 className={styles.radiobuttonwrapper}
                 id={`lus-sluttdato-velg-${forhold.arbeidsforholdId}`}
+                error={visFeilmeldingsTekst(`lus-sluttdato-velg-${forhold.arbeidsforholdId}`)}
               >
                 <Radio
                   value='Ja'
