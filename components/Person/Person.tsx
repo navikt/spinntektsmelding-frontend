@@ -25,7 +25,7 @@ export default function Person() {
             </div>
             <div className={styles.orgnrnavnwrapper}>
               <TextLabel>Personnummer</TextLabel>
-              {identitetsnummer}
+              <div className={styles.virksomhetsnavn}>{identitetsnummer}</div>
             </div>
           </div>
         </div>
@@ -38,7 +38,7 @@ export default function Person() {
             </div>
             <div className={styles.orgnrnavnwrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
-              {orgnrUnderenhet}
+              <div className={styles.virksomhetsnavn}>{orgnrUnderenhet}</div>
             </div>
           </div>
         </div>

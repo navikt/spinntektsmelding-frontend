@@ -7,6 +7,11 @@
   margin-bottom: 2rem;
 }
 
+.tbmargin {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
 .halfsize {
   width: 50%;
   display: inline-block;
@@ -135,6 +140,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 1rem;
 }
 
 .arbeidsgiverwrapper {

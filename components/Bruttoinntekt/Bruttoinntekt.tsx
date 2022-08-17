@@ -1,4 +1,14 @@
-import { BodyShort, Button, Checkbox, CheckboxGroup, Link, Select, TextField } from '@navikt/ds-react';
+import {
+  BodyLong,
+  BodyShort,
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Heading,
+  Link,
+  Select,
+  TextField
+} from '@navikt/ds-react';
 import { useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBruttoinntektStore from '../../state/useBruttoinntektStore';
@@ -33,14 +43,12 @@ export default function Bruttoinntekt() {
   return (
     <>
       <Heading3>Bruttoinntekt siste 3 måneder</Heading3>
-      <p>
+      <BodyLong>
         Vi har brukt opplysninger fra skatteetaten (a-ordningen) for å anslå månedsinntekten her. Desom det ikke stemmer
         må dere endre dette. Dersom inntekten har gått opp pga. varig lønnsforhøyelse, og ikke for eksempel
         representerer uforutsett overtid må dette korrigeres.
-      </p>
-      <p>
-        <strong>Vi har registrert en inntekt på</strong>
-      </p>
+      </BodyLong>
+      <TextLabel className={styles.tbmargin}>Vi har registrert en inntekt på</TextLabel>
       <div className={lokalStyles.belopwrapper}>
         {!endreMaanedsinntekt && (
           <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
@@ -90,14 +98,12 @@ export default function Bruttoinntekt() {
           </div>
         )}
         {!endreMaanedsinntekt && (
-          <Button variant='secondary' className={styles.endrebutton} onClick={() => setEndreMaanedsinntekt(true)}>
+          <Button variant='tertiary' className={styles.endrebutton} onClick={() => setEndreMaanedsinntekt(true)}>
             Endre
           </Button>
         )}
       </div>
-      <BodyShort>
-        <strong>Inntekten er basert på følgende måneder</strong>
-      </BodyShort>
+      <TextLabel className={styles.tbmargin}>Inntekten er basert på følgende måneder</TextLabel>
       <table>
         {tidligereinntekt?.map((inntekt) => (
           <tr key={inntekt.id}>
@@ -107,18 +113,20 @@ export default function Bruttoinntekt() {
         ))}
       </table>
       {!tidligereinntekt && <BodyShort>Klarer ikke å finne inntekt for de 3 siste månedene.</BodyShort>}
-      <p>
+      <BodyLong className={styles.tbmargin}>
         <strong>
-          Hvis beløpet ikke er korrekt må dere endre dette. Det kan være at den ansatte nylig har fått lønnsøkning,
-          bonus, redusering i arbeidstid eller har andre endringer i lønn som vi ikke registrert. Beregningen er gjort
-          etter <Link href='#'>folketrygdloven $8-28.</Link>
+          Beløpet er basert på en beregning av siste tre måneders lønn. Hvis beløpet ikke er korrekt må dere endre
+          dette. Det kan være at den ansatte nylig har fått lønnsøkning, redusering i arbeidstid eller har andre
+          endringer i lønn som vi ikke registrert. Beregningen er gjort etter{' '}
+          <Link href='#'>folketrygdloven $8-28.</Link>
         </strong>
-      </p>
+      </BodyLong>
       <CheckboxGroup size='medium' error={visFeilmeldingsTekst(bruttoinntektFeilmeldinger.bekreftet)} legend=''>
         <Checkbox
           onClick={(event) => bekreftKorrektInntekt(event.currentTarget.checked)}
           id='bruttoinntektbekreft'
           error={visFeilmelding(bruttoinntektFeilmeldinger.bekreftet)}
+          value='Ja'
         >
           Jeg bekrefter at registrert inntekt er korrekt
         </Checkbox>
