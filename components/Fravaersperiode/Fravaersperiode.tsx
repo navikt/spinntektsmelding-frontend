@@ -1,13 +1,12 @@
-import useFravaersperiodeStore from '../../state/useFravaersperiodeStore';
+import useBoundStore from '../../state/useBoundStore';
 import { IArbeidsforhold } from '../../state/state';
 import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
-import useArbeidsforholdStore from '../../state/useArbeidsforholdStore';
 
 export default function Fravaersperiode() {
-  const fravaersperiode = useFravaersperiodeStore((state) => state.fravaersperiode);
-  const arbeidsforhold: Array<IArbeidsforhold> | undefined = useArbeidsforholdStore((state) => state.arbeidsforhold);
-  const aktiveArbeidsforhold = useArbeidsforholdStore((state) => state.aktiveArbeidsforhold);
+  const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
+  const arbeidsforhold: Array<IArbeidsforhold> | undefined = useBoundStore((state) => state.arbeidsforhold);
+  const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
   if (!arbeidsforhold || !fravaersperiode) return null;
 
   return (

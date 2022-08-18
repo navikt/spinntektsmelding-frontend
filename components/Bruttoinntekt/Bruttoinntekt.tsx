@@ -1,11 +1,10 @@
 import { BodyLong, BodyShort, Button, Checkbox, CheckboxGroup, Link, Select, TextField } from '@navikt/ds-react';
 import { useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
-import useBruttoinntektStore from '../../state/useBruttoinntektStore';
+import useBoundStore from '../../state/useBoundStore';
 import styles from '../../styles/Home.module.css';
 import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
-import useFeilmeldingerStore from '../../state/useFeilmeldingerStore';
 import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 
@@ -16,16 +15,14 @@ export default function Bruttoinntekt() {
     setEndreMaanedsinntekt(false);
     tilbakestillMaanedsinntekt();
   };
-  const bruttoinntekt = useBruttoinntektStore((state) => state.bruttoinntekt);
-  const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBruttoinntektStore(
-    (state) => state.tidligereInntekt
-  );
-  const bekreftKorrektInntekt = useBruttoinntektStore((state) => state.bekreftKorrektInntekt);
-  const setNyMaanedsinntekt = useBruttoinntektStore((state) => state.setNyMaanedsinntekt);
-  const setEndringsaarsak = useBruttoinntektStore((state) => state.setEndringsaarsak);
-  const tilbakestillMaanedsinntekt = useBruttoinntektStore((state) => state.tilbakestillMaanedsinntekt);
+  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
+  const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
+  const bekreftKorrektInntekt = useBoundStore((state) => state.bekreftKorrektInntekt);
+  const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
+  const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
+  const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
 
-  const [visFeilmeldingsTekst, visFeilmelding] = useFeilmeldingerStore((state) => [
+  const [visFeilmeldingsTekst, visFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
     state.visFeilmelding
   ]);

@@ -1,11 +1,18 @@
 import { nanoid } from 'nanoid';
-import create from 'zustand';
+import { StateCreator } from 'zustand';
 import produce from 'immer';
 import { Periode } from './state';
 import parseIsoDate from '../utils/parseIsoDate';
 import { MottattArbeidsforhold, MottattPeriode } from './MottattData';
+import { BruttoinntektState } from './useBruttoinntektStore';
+import { ArbeidsforholdState } from './useArbeidsforholdStore';
+import { BehandlingsdagerState } from './useBehandlingsdagerStore';
+import { FeilmeldingerState } from './useFeilmeldingerStore';
+import { PersonState } from './usePersonStore';
+import { FravaersperiodeState } from './useFravaersperiodeStore';
+import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 
-interface EgenmeldingState {
+export interface EgenmeldingState {
   egenmeldingsperioder: { [key: string]: Array<Periode> };
   setEgenmeldingFraDato: (dateValue: string, periodeId: string) => void;
   setEgenmeldingTilDato: (dateValue: string, periodeId: string) => void;
@@ -17,7 +24,19 @@ interface EgenmeldingState {
   ) => void;
 }
 
-const useEgenmeldingStore = create<EgenmeldingState>()((set) => ({
+const useEgenmeldingStore: StateCreator<
+  RefusjonArbeidsgiverState &
+    FravaersperiodeState &
+    PersonState &
+    FeilmeldingerState &
+    EgenmeldingState &
+    BruttoinntektState &
+    ArbeidsforholdState &
+    BehandlingsdagerState,
+  [],
+  [],
+  EgenmeldingState
+> = (set) => ({
   egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
   setEgenmeldingFraDato: (dateValue: string, periodeId: string) =>
     set(
@@ -104,6 +123,6 @@ const useEgenmeldingStore = create<EgenmeldingState>()((set) => ({
         return state;
       })
     )
-}));
+});
 
 export default useEgenmeldingStore;

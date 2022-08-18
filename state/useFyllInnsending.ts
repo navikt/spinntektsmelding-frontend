@@ -1,39 +1,31 @@
 import InntektsmeldingSkjema from './state';
-import useArbeidsforholdStore from './useArbeidsforholdStore';
-import useBehandlingsdagerStore from './useBehandlingsdagerStore';
-import useBruttoinntektStore from './useBruttoinntektStore';
-import useEgenmeldingStore from './useEgenmeldingStore';
-import useFeilmeldingerStore from './useFeilmeldingerStore';
-import useFravaersperiodeStore from './useFravaersperiodeStore';
-import useNaturalytelserStore from './useNaturalytelserStore';
-import usePersonStore from './usePersonStore';
-import useRefusjonArbeidsgiverStore from './useRefusjonArbeidsgiverStore';
+import useBoundStore from './useBoundStore';
 
 export default function useFyllInnsending() {
-  const fravaersperiode = useFravaersperiodeStore((state) => state.fravaersperiode);
-  const bruttoinntekt = useBruttoinntektStore((state) => state.bruttoinntekt);
+  const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
+  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
-  const egenmeldingsperioder = useEgenmeldingStore((state) => state.egenmeldingsperioder);
-  const [navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = usePersonStore((state) => [
+  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  const [navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = useBoundStore((state) => [
     state.navn,
     state.identitetsnummer,
     state.virksomhetsnavn,
     state.orgnrUnderenhet
   ]);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret] = useRefusjonArbeidsgiverStore((state) => [
+  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret] = useBoundStore((state) => [
     state.fullLonnIArbeidsgiverPerioden,
     state.lonnISykefravaeret
   ]);
-  const naturalytelser = useNaturalytelserStore((state) => state.naturalytelser);
+  const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
-  const [behandlingsperiode, behandlingsdager] = useBehandlingsdagerStore((state) => [
+  const [behandlingsperiode, behandlingsdager] = useBoundStore((state) => [
     state.behandlingsperiode,
     state.behandlingsdager
   ]);
 
-  const setSkalViseFeilmeldinger = useFeilmeldingerStore((state) => state.setSkalViseFeilmeldinger);
+  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
-  const arbeidsforhold = useArbeidsforholdStore((state) => state.arbeidsforhold);
+  const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
 
   setSkalViseFeilmeldinger(true);
 

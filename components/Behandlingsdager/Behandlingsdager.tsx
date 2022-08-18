@@ -9,10 +9,10 @@ import { useState } from 'react';
 import nb from 'date-fns/locale/nb';
 import { eachMonthOfInterval, getWeek } from 'date-fns';
 import { Alert } from '@navikt/ds-react';
-import useBehandlingsdagerStore from '../../state/useBehandlingsdagerStore';
+import useBoundStore from '../../state/useBoundStore';
 
 export default function Behandlingsdager() {
-  const [behandlingsdager, behandlingsperiode, setBehandlingsdager] = useBehandlingsdagerStore((state) => [
+  const [behandlingsdager, behandlingsperiode, setBehandlingsdager] = useBoundStore((state) => [
     state.behandlingsdager,
     state.behandlingsperiode,
     state.setBehandlingsdager

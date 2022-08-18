@@ -1,12 +1,20 @@
-import create from 'zustand';
+import { StateCreator } from 'zustand';
 import produce from 'immer';
 import { HistoriskInntekt, Inntekt } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import { nanoid } from 'nanoid';
 import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
+import { ArbeidsforholdState } from './useArbeidsforholdStore';
+import { BehandlingsdagerState } from './useBehandlingsdagerStore';
+import { EgenmeldingState } from './useEgenmeldingStore';
+import { FeilmeldingerState } from './useFeilmeldingerStore';
+import { NaturalytelserState } from './useNaturalytelserStore';
+import { PersonState } from './usePersonStore';
+import { FravaersperiodeState } from './useFravaersperiodeStore';
+import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 
-interface BruttoinntektState {
+export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   bruttoinntektFeilmeldinger: {
     bruttoInntekt?: string;
@@ -21,7 +29,20 @@ interface BruttoinntektState {
   initBruttioinntekt: (bruttoInntekt: number, tidligereInntekt: Array<MottattHistoriskInntekt>) => void;
 }
 
-const useBruttoinntektStore = create<BruttoinntektState>()((set) => ({
+const useBruttoinntektStore: StateCreator<
+  RefusjonArbeidsgiverState &
+    FravaersperiodeState &
+    PersonState &
+    NaturalytelserState &
+    FeilmeldingerState &
+    BruttoinntektState &
+    ArbeidsforholdState &
+    BehandlingsdagerState &
+    EgenmeldingState,
+  [],
+  [],
+  BruttoinntektState
+> = (set) => ({
   bruttoinntekt: {
     bruttoInntekt: 0,
     bekreftet: false,
@@ -97,6 +118,6 @@ const useBruttoinntektStore = create<BruttoinntektState>()((set) => ({
         }
       })
     )
-}));
+});
 
 export default useBruttoinntektStore;

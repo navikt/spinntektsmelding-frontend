@@ -1,14 +1,14 @@
 import { Checkbox, CheckboxGroup } from '@navikt/ds-react';
 import { IArbeidsforhold } from '../../state/state';
-import useArbeidsforholdStore from '../../state/useArbeidsforholdStore';
+import useBoundStore from '../../state/useBoundStore';
 import localStyle from './Arbeidsforhold.module.css';
 
 export default function Arbeidsforhold() {
-  const arbeidsforhold: Array<IArbeidsforhold> | undefined = useArbeidsforholdStore((state) => state.arbeidsforhold);
+  const arbeidsforhold: Array<IArbeidsforhold> | undefined = useBoundStore((state) => state.arbeidsforhold);
   const afgroupId = arbeidsforhold
     ? arbeidsforhold.filter((forhold) => forhold.aktiv).map((forhold) => forhold.arbeidsforholdId)
     : [];
-  const setAktiveArbeidsforhold = useArbeidsforholdStore((store) => store.setAktiveArbeidsforhold);
+  const setAktiveArbeidsforhold = useBoundStore((store) => store.setAktiveArbeidsforhold);
 
   return (
     <div>

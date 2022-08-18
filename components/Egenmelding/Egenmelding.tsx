@@ -5,13 +5,13 @@ import localStyles from './Egenmelding.module.css';
 import ButtonSlette from '../ButtonSlette/ButtonSlette';
 import Heading3 from '../Heading3/Heading3';
 import LabelLabel from '../LabelLabel/LabelLabel';
-import useArbeidsforholdStore from '../../state/useArbeidsforholdStore';
+import useBoundStore from '../../state/useBoundStore';
 import useEgenmeldingStore from '../../state/useEgenmeldingStore';
 
 export default function Egenmelding() {
-  const arbeidsforhold = useArbeidsforholdStore((state) => state.arbeidsforhold);
+  const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
   const flereArbeidsforhold = arbeidsforhold && arbeidsforhold.length > 1;
-  const aktiveArbeidsforhold = useArbeidsforholdStore((state) => state.aktiveArbeidsforhold);
+  const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
   const egenmeldingsperioder = useEgenmeldingStore((state) => state.egenmeldingsperioder);
   const setEgenmeldingFraDato = useEgenmeldingStore((state) => state.setEgenmeldingFraDato);
   const setEgenmeldingTilDato = useEgenmeldingStore((state) => state.setEgenmeldingTilDato);

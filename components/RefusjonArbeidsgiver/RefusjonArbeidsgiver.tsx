@@ -6,19 +6,18 @@ import styles from '../../styles/Home.module.css';
 import { IArbeidsforhold, YesNo } from '../../state/state';
 import Heading4 from '../Heading4';
 import localStyles from './RefusjonArbeidsgiver.module.css';
-import useArbeidsforholdStore from '../../state/useArbeidsforholdStore';
+import useBoundStore from '../../state/useBoundStore';
 import useRefusjonArbeidsgiverStore from '../../state/useRefusjonArbeidsgiverStore';
-import useFeilmeldingerStore from '../../state/useFeilmeldingerStore';
 
 export default function RefusjonArbeidsgiver() {
-  const arbeidsforhold: Array<IArbeidsforhold> | undefined = useArbeidsforholdStore((state) => state.arbeidsforhold);
-  const aktiveArbeidsforhold = useArbeidsforholdStore((state) => state.aktiveArbeidsforhold);
+  const arbeidsforhold: Array<IArbeidsforhold> | undefined = useBoundStore((state) => state.arbeidsforhold);
+  const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
 
   const lonnISykefravaeret = useRefusjonArbeidsgiverStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useRefusjonArbeidsgiverStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useRefusjonArbeidsgiverStore((state) => state.refusjonskravetOpphoerer);
 
-  const [visFeilmeldingsTekst, visFeilmelding] = useFeilmeldingerStore((state) => [
+  const [visFeilmeldingsTekst, visFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
     state.visFeilmelding
   ]);

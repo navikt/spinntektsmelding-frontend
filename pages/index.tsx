@@ -24,16 +24,12 @@ import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 import submitInntektsmelding, { ValiderTekster } from '../utils/submitInntektsmelding';
 import MottattData from '../state/MottattData';
-import useArbeidsforholdStore from '../state/useArbeidsforholdStore';
-import useEgenmeldingStore from '../state/useEgenmeldingStore';
+import useBoundStore from '../state/useBoundStore';
 import Naturalytelser from '../components/Naturalytelser';
-import usePersonStore from '../state/usePersonStore';
 import Person from '../components/Person/Person';
 import InntektsmeldingSkjema from '../state/state';
-import useBehandlingsdagerStore from '../state/useBehandlingsdagerStore';
 import useStateInit from '../state/useStateInit';
 import useFyllInnsending from '../state/useFyllInnsending';
-import useFeilmeldingerStore from '../state/useFeilmeldingerStore';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -43,15 +39,15 @@ const Home: NextPage = () => {
   const setRoute = useRoute();
   const { data: arbeidsgivere, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
 
-  const egenmeldingsperioder = useEgenmeldingStore((state) => state.egenmeldingsperioder);
+  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
-  const setOrgUnderenhet = usePersonStore((state) => state.setOrgUnderenhet);
+  const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
 
-  const behandlingsperiode = useBehandlingsdagerStore((state) => state.behandlingsperiode);
+  const behandlingsperiode = useBoundStore((state) => state.behandlingsperiode);
 
-  const arbeidsforhold = useArbeidsforholdStore((state) => state.arbeidsforhold);
+  const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
 
-  const [feilmeldinger, fyllFeilmeldinger, visFeilmeldingsTekst] = useFeilmeldingerStore((state) => [
+  const [feilmeldinger, fyllFeilmeldinger, visFeilmeldingsTekst] = useBoundStore((state) => [
     state.feilmeldinger,
     state.fyllFeilmeldinger,
     state.visFeilmeldingsTekst

@@ -1,12 +1,20 @@
 import { nanoid } from 'nanoid';
-import create from 'zustand';
+import { StateCreator } from 'zustand';
 import { parseISO } from 'date-fns';
 import parseIsoDate from '../utils/parseIsoDate';
 import { MottattPeriode } from './MottattData';
 import { Periode } from './state';
 import produce from 'immer';
+import { PersonState } from './usePersonStore';
+import { NaturalytelserState } from './useNaturalytelserStore';
+import { FeilmeldingerState } from './useFeilmeldingerStore';
+import { ArbeidsforholdState } from './useArbeidsforholdStore';
+import { BehandlingsdagerState } from './useBehandlingsdagerStore';
+import { BruttoinntektState } from './useBruttoinntektStore';
+import { EgenmeldingState } from './useEgenmeldingStore';
+import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 
-interface FravaersperiodeState {
+export interface FravaersperiodeState {
   fravaersperiode?: { [key: string]: Array<Periode> };
   opprinneligFravaersperiode?: { [key: string]: Array<Periode> };
   sammeFravaersperiode: boolean;
@@ -20,7 +28,20 @@ interface FravaersperiodeState {
   initFravaersperiode: (mottatFravaersperiode: { [key: string]: Array<MottattPeriode> }) => void;
 }
 
-const useFravaersperiodeStore = create<FravaersperiodeState>()((set) => ({
+const useFravaersperiodeStore: StateCreator<
+  RefusjonArbeidsgiverState &
+    FravaersperiodeState &
+    PersonState &
+    NaturalytelserState &
+    FeilmeldingerState &
+    ArbeidsforholdState &
+    BehandlingsdagerState &
+    BruttoinntektState &
+    EgenmeldingState,
+  [],
+  [],
+  FravaersperiodeState
+> = (set) => ({
   fravaersperiode: undefined,
   opprinneligFravaersperiode: undefined,
   sammeFravaersperiode: false,
@@ -173,6 +194,6 @@ const useFravaersperiodeStore = create<FravaersperiodeState>()((set) => ({
         return state;
       })
     )
-}));
+});
 
 export default useFravaersperiodeStore;

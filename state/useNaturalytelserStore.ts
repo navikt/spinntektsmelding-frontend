@@ -1,12 +1,20 @@
-import create from 'zustand';
+import { StateCreator } from 'zustand';
 import produce from 'immer';
 import { Naturalytelse, YesNo } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import parseIsoDate from '../utils/parseIsoDate';
 import { nanoid } from 'nanoid';
 import { MottattNaturalytelse } from './MottattData';
+import { FeilmeldingerState } from './useFeilmeldingerStore';
+import { EgenmeldingState } from './useEgenmeldingStore';
+import { BruttoinntektState } from './useBruttoinntektStore';
+import { ArbeidsforholdState } from './useArbeidsforholdStore';
+import { BehandlingsdagerState } from './useBehandlingsdagerStore';
+import { PersonState } from './usePersonStore';
+import { FravaersperiodeState } from './useFravaersperiodeStore';
+import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 
-interface NaturalytelserState {
+export interface NaturalytelserState {
   naturalytelser?: Array<Naturalytelse>;
   hasBortfallAvNaturalytelser?: YesNo;
   setNaturalytelseType: (naturalytelseId: string, isoDato: string) => void;
@@ -18,7 +26,20 @@ interface NaturalytelserState {
   initNaturalytelser: (naturalytelser: Array<MottattNaturalytelse>) => void;
 }
 
-const useNaturalytelserStore = create<NaturalytelserState>()((set) => ({
+const useNaturalytelserStore: StateCreator<
+  RefusjonArbeidsgiverState &
+    FravaersperiodeState &
+    PersonState &
+    NaturalytelserState &
+    FeilmeldingerState &
+    EgenmeldingState &
+    BruttoinntektState &
+    ArbeidsforholdState &
+    BehandlingsdagerState,
+  [],
+  [],
+  NaturalytelserState
+> = (set) => ({
   naturalytelser: undefined,
   hasBortfallAvNaturalytelser: undefined,
   setNaturalytelseType: (naturalytelseId: string, type: string) => {
@@ -120,6 +141,6 @@ const useNaturalytelserStore = create<NaturalytelserState>()((set) => ({
       })
     );
   }
-}));
+});
 
 export default useNaturalytelserStore;

@@ -5,16 +5,16 @@ import Heading3 from '../Heading3';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
 
 import styles from '../../styles/Home.module.css';
-import useNaturalytelserStore from '../../state/useNaturalytelserStore';
+import useBoundStore from '../../state/useBoundStore';
 
 export default function Naturalytelser() {
-  const naturalytelser = useNaturalytelserStore((state) => state.naturalytelser);
-  const leggTilNaturalytelse = useNaturalytelserStore((state) => state.leggTilNaturalytelse);
-  const setNaturalytelseType = useNaturalytelserStore((state) => state.setNaturalytelseType);
-  const setNaturalytelseBortfallsdato = useNaturalytelserStore((state) => state.setNaturalytelseBortfallsdato);
-  const setNaturalytelseVerdi = useNaturalytelserStore((state) => state.setNaturalytelseVerdi);
-  const slettNaturalytelse = useNaturalytelserStore((state) => state.slettNaturalytelse);
-  const slettAlleNaturalytelser = useNaturalytelserStore((state) => state.slettAlleNaturalytelser);
+  const naturalytelser = useBoundStore((state) => state.naturalytelser);
+  const leggTilNaturalytelse = useBoundStore((state) => state.leggTilNaturalytelse);
+  const setNaturalytelseType = useBoundStore((state) => state.setNaturalytelseType);
+  const setNaturalytelseBortfallsdato = useBoundStore((state) => state.setNaturalytelseBortfallsdato);
+  const setNaturalytelseVerdi = useBoundStore((state) => state.setNaturalytelseVerdi);
+  const slettNaturalytelse = useBoundStore((state) => state.slettNaturalytelse);
+  const slettAlleNaturalytelser = useBoundStore((state) => state.slettAlleNaturalytelser);
 
   const visNaturalytelser = (event: React.MouseEvent<HTMLInputElement>) => {
     if (event.currentTarget.checked === true) {

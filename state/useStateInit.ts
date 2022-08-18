@@ -1,18 +1,13 @@
 import MottattData from './MottattData';
-import useArbeidsforholdStore from './useArbeidsforholdStore';
-import useBehandlingsdagerStore from './useBehandlingsdagerStore';
-import useBruttoinntektStore from './useBruttoinntektStore';
-import useEgenmeldingStore from './useEgenmeldingStore';
-import useFravaersperiodeStore from './useFravaersperiodeStore';
-import usePersonStore from './usePersonStore';
+import useBoundStore from './useBoundStore';
 
 export default function useStateInit() {
-  const initFravaersperiode = useFravaersperiodeStore((state) => state.initFravaersperiode);
-  const initBruttoinntekt = useBruttoinntektStore((state) => state.initBruttioinntekt);
-  const initArbeidsforhold = useArbeidsforholdStore((state) => state.initArbeidsforhold);
-  const initEgenmeldingsperiode = useEgenmeldingStore((state) => state.initEgenmeldingsperiode);
-  const initPerson = usePersonStore((state) => state.initPerson);
-  const initBehandlingsdager = useBehandlingsdagerStore((state) => state.initBehandlingsdager);
+  const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
+  const initBruttoinntekt = useBoundStore((state) => state.initBruttioinntekt);
+  const initArbeidsforhold = useBoundStore((state) => state.initArbeidsforhold);
+  const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
+  const initPerson = useBoundStore((state) => state.initPerson);
+  const initBehandlingsdager = useBoundStore((state) => state.initBehandlingsdager);
 
   return (jsonData: MottattData) => {
     if (jsonData.fravaersperiode) {

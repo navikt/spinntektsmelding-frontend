@@ -1,10 +1,18 @@
-import create from 'zustand';
+import { StateCreator } from 'zustand';
 import produce from 'immer';
 import { LonnIArbeidsgiverperioden, LonnISykefravaeret, RefusjonskravetOpphoerer, YesNo } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import parseIsoDate from '../utils/parseIsoDate';
+import { FravaersperiodeState } from './useFravaersperiodeStore';
+import { PersonState } from './usePersonStore';
+import { NaturalytelserState } from './useNaturalytelserStore';
+import { FeilmeldingerState } from './useFeilmeldingerStore';
+import { BruttoinntektState } from './useBruttoinntektStore';
+import { ArbeidsforholdState } from './useArbeidsforholdStore';
+import { BehandlingsdagerState } from './useBehandlingsdagerStore';
+import { EgenmeldingState } from './useEgenmeldingStore';
 
-interface RefusjonArbeidsgiverState {
+export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: { [key: string]: LonnIArbeidsgiverperioden };
   lonnISykefravaeret?: { [key: string]: LonnISykefravaeret };
   refusjonskravetOpphoerer?: { [key: string]: RefusjonskravetOpphoerer };
@@ -18,7 +26,20 @@ interface RefusjonArbeidsgiverState {
   initLonnISykefravaeret: (lonnISykefravaeret: { [key: string]: LonnISykefravaeret }) => void;
 }
 
-const useRefusjonArbeidsgiverStore = create<RefusjonArbeidsgiverState>()((set) => ({
+const useRefusjonArbeidsgiverStore: StateCreator<
+  RefusjonArbeidsgiverState &
+    FravaersperiodeState &
+    PersonState &
+    NaturalytelserState &
+    FeilmeldingerState &
+    BruttoinntektState &
+    ArbeidsforholdState &
+    BehandlingsdagerState &
+    EgenmeldingState,
+  [],
+  [],
+  RefusjonArbeidsgiverState
+> = (set) => ({
   fullLonnIArbeidsgiverPerioden: undefined,
   lonnISykefravaeret: undefined,
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (arbeidsforholdId: string, status: YesNo) =>
@@ -126,6 +147,6 @@ const useRefusjonArbeidsgiverStore = create<RefusjonArbeidsgiverState>()((set) =
         return state;
       })
     )
-}));
+});
 
 export default useRefusjonArbeidsgiverStore;

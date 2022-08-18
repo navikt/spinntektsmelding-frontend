@@ -1,11 +1,11 @@
 import Heading3 from '../Heading3';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
-import usePersonStore from '../../state/usePersonStore';
+import useBoundStore from '../../state/useBoundStore';
 import shallow from 'zustand/shallow';
 
 export default function Person() {
-  const [navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = usePersonStore(
+  const [navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = useBoundStore(
     (state) => [state.navn, state.identitetsnummer, state.virksomhetsnavn, state.orgnrUnderenhet],
     shallow
   );

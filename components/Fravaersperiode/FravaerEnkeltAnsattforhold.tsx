@@ -10,7 +10,7 @@ import TextLabel from '../TextLabel';
 import localStyles from './Fravaersperiode.module.css';
 import styles from '../../styles/Home.module.css';
 import { Button, Checkbox } from '@navikt/ds-react';
-import useFravaersperiodeStore from '../../state/useFravaersperiodeStore';
+import useBoundStore from '../../state/useBoundStore';
 
 interface FravaerEnkeltAnsattforholdProps {
   arbeidsforhold: IArbeidsforhold;
@@ -26,15 +26,15 @@ export default function FravaerEnkeltAnsattforhold({
   flereEnnToArbeidsforhold
 }: FravaerEnkeltAnsattforholdProps) {
   const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
-  const fravaersperiode = useFravaersperiodeStore((state) => state.fravaersperiode);
-  const setSykemeldingFraDato = useFravaersperiodeStore((state) => state.setFravaersperiodeFraDato);
-  const setSykemeldingTilDato = useFravaersperiodeStore((state) => state.setFravaersperiodeTilDato);
-  const slettFravaersperiode = useFravaersperiodeStore((state) => state.slettFravaersperiode);
-  const leggTilFravaersperiode = useFravaersperiodeStore((state) => state.leggTilFravaersperiode);
-  const tilbakestillFravaersperiode = useFravaersperiodeStore((state) => state.tilbakestillFravaersperiode);
-  const setSammeFravarePaaArbeidsforhold = useFravaersperiodeStore((state) => state.setSammeFravarePaaArbeidsforhold);
-  const endreFravaersperiode = useFravaersperiodeStore((state) => state.endreFravaersperiode);
-  const sammePeriodeForAlle = useFravaersperiodeStore((state) => state.sammeFravaersperiode);
+  const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
+  const setSykemeldingFraDato = useBoundStore((state) => state.setFravaersperiodeFraDato);
+  const setSykemeldingTilDato = useBoundStore((state) => state.setFravaersperiodeTilDato);
+  const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
+  const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
+  const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
+  const setSammeFravarePaaArbeidsforhold = useBoundStore((state) => state.setSammeFravarePaaArbeidsforhold);
+  const endreFravaersperiode = useBoundStore((state) => state.endreFravaersperiode);
+  const sammePeriodeForAlle = useBoundStore((state) => state.sammeFravaersperiode);
 
   const clickTilbakestillFravaersperiodeHandler = (arbeidsforholdId: string) => {
     tilbakestillFravaersperiode(arbeidsforholdId);
