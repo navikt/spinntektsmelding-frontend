@@ -30,6 +30,8 @@ import Person from '../components/Person/Person';
 import InntektsmeldingSkjema from '../state/state';
 import useStateInit from '../state/useStateInit';
 import useFyllInnsending from '../state/useFyllInnsending';
+import feiltekster from '../utils/feiltekster';
+import Feilsammendrag from '../components/Feilsammendrag';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
@@ -47,10 +49,11 @@ const Home: NextPage = () => {
 
   const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
 
-  const [feilmeldinger, fyllFeilmeldinger, visFeilmeldingsTekst] = useBoundStore((state) => [
-    state.feilmeldinger,
+  const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.fyllFeilmeldinger,
-    state.visFeilmeldingsTekst
+    state.visFeilmeldingsTekst,
+    state.slettFeilmelding,
+    state.leggTilFeilmelding
   ]);
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
@@ -70,14 +73,16 @@ const Home: NextPage = () => {
     }
 
     console.log(skjemaData); // eslint-disable-line
-    console.log(feilmeldinger); // eslint-disable-line
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
     setOpplysningerBekreftet(!!event.currentTarget.checked);
+    if (!!event.currentTarget.checked) {
+      slettFeilmelding('bekreft-opplysninger');
+    } else {
+      leggTilFeilmelding('bekreft-opplysninger', feiltekster.BEKREFT_OPPLYSNINGER);
+    }
   };
-
-  const harFeilmeldinger = feilmeldinger && feilmeldinger.length > 0;
 
   useEffect(() => {
     fetch('/api/inntektsmelding').then((mottattData) => {
@@ -155,15 +160,7 @@ const Home: NextPage = () => {
                 NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
                 er riktige eller fullstendige.
               </ConfirmationPanel>
-              {harFeilmeldinger && (
-                <ErrorSummary size='medium' heading='Du må rette disse feilene før du kan sende inn.'>
-                  {feilmeldinger?.map((melding) => (
-                    <ErrorSummary.Item key={melding.felt} href={`#${melding.felt}`}>
-                      {melding.text}
-                    </ErrorSummary.Item>
-                  ))}
-                </ErrorSummary>
-              )}
+              <Feilsammendrag />
               <Button className={styles.sendbutton}>Send</Button>
             </form>
           </main>

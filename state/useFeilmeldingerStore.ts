@@ -10,6 +10,21 @@ import { PersonState } from './usePersonStore';
 import { FravaersperiodeState } from './useFravaersperiodeStore';
 import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 
+export function slettFeilmelding(state, felt) {
+  state.feilmeldinger = state.feilmeldinger.filter((element: ValiderTekster) => element.felt !== felt);
+
+  return state;
+}
+
+export function leggTilFeilmelding(state, felt, melding) {
+  state.feilmeldinger.push({
+    felt: felt,
+    text: melding
+  });
+
+  return state;
+}
+
 export interface FeilmeldingerState {
   skalViseFeilmeldinger: boolean;
   feilmeldinger: Array<ValiderTekster> | [];
@@ -71,7 +86,7 @@ const useFeilmeldingerStore: StateCreator<
   slettFeilmelding: (felt) => {
     set(
       produce((state) => {
-        delete state.feilmeldinger[felt];
+        state.feilmeldinger = state.feilmeldinger.filter((element: ValiderTekster) => element.felt !== felt);
 
         return state;
       })

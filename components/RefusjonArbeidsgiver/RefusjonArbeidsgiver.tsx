@@ -7,33 +7,32 @@ import { IArbeidsforhold, YesNo } from '../../state/state';
 import Heading4 from '../Heading4';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import useBoundStore from '../../state/useBoundStore';
-import useRefusjonArbeidsgiverStore from '../../state/useRefusjonArbeidsgiverStore';
 
 export default function RefusjonArbeidsgiver() {
   const arbeidsforhold: Array<IArbeidsforhold> | undefined = useBoundStore((state) => state.arbeidsforhold);
   const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
 
-  const lonnISykefravaeret = useRefusjonArbeidsgiverStore((state) => state.lonnISykefravaeret);
-  const fullLonnIArbeidsgiverPerioden = useRefusjonArbeidsgiverStore((state) => state.fullLonnIArbeidsgiverPerioden);
-  const refusjonskravetOpphoerer = useRefusjonArbeidsgiverStore((state) => state.refusjonskravetOpphoerer);
+  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
+  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
 
   const [visFeilmeldingsTekst, visFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
     state.visFeilmelding
   ]);
 
-  const arbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useRefusjonArbeidsgiverStore(
+  const arbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useBoundStore(
     (state) => state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden
   );
-  const arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret = useRefusjonArbeidsgiverStore(
+  const arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret = useBoundStore(
     (state) => state.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret
   );
-  const begrunnelseRedusertUtbetaling = useRefusjonArbeidsgiverStore((state) => state.begrunnelseRedusertUtbetaling);
-  const beloepArbeidsgiverBetalerISykefravaeret = useRefusjonArbeidsgiverStore(
+  const begrunnelseRedusertUtbetaling = useBoundStore((state) => state.begrunnelseRedusertUtbetaling);
+  const beloepArbeidsgiverBetalerISykefravaeret = useBoundStore(
     (state) => state.beloepArbeidsgiverBetalerISykefravaeret
   );
-  const refusjonskravetOpphoererStatus = useRefusjonArbeidsgiverStore((state) => state.refusjonskravetOpphoererStatus);
-  const refusjonskravetOpphoererDato = useRefusjonArbeidsgiverStore((state) => state.refusjonskravetOpphoererDato);
+  const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
+  const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
   if (!arbeidsforhold) return null;
 
   const flereArbeidsforhold: boolean = arbeidsforhold.length > 1;

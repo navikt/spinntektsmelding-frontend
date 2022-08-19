@@ -8,11 +8,12 @@ import feiltekster from '../utils/feiltekster';
 import { ArbeidsforholdState } from './useArbeidsforholdStore';
 import { BehandlingsdagerState } from './useBehandlingsdagerStore';
 import { EgenmeldingState } from './useEgenmeldingStore';
-import { FeilmeldingerState } from './useFeilmeldingerStore';
+import { FeilmeldingerState, leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 import { NaturalytelserState } from './useNaturalytelserStore';
 import { PersonState } from './usePersonStore';
 import { FravaersperiodeState } from './useFravaersperiodeStore';
 import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
+import { ValiderTekster } from '../utils/submitInntektsmelding';
 
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
@@ -42,7 +43,7 @@ const useBruttoinntektStore: StateCreator<
   [],
   [],
   BruttoinntektState
-> = (set) => ({
+> = (set, get) => ({
   bruttoinntekt: {
     bruttoInntekt: 0,
     bekreftet: false,
@@ -89,7 +90,12 @@ const useBruttoinntektStore: StateCreator<
     set(
       produce((state) => {
         state.bruttoinntekt!.bekreftet = bekreftet;
-        state.bruttoinntektFeilmeldinger.bekreftet = bekreftet ? '' : feiltekster.IKKE_BEKREFTET;
+        if (bekreftet === true) {
+          state = slettFeilmelding(state, 'bruttoinntektbekreft');
+        } else {
+          state = leggTilFeilmelding(state, 'bruttoinntektbekreft', feiltekster.IKKE_BEKREFTET);
+        }
+
         return state;
       })
     ),

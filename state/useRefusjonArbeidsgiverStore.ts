@@ -6,11 +6,12 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { FravaersperiodeState } from './useFravaersperiodeStore';
 import { PersonState } from './usePersonStore';
 import { NaturalytelserState } from './useNaturalytelserStore';
-import { FeilmeldingerState } from './useFeilmeldingerStore';
+import { FeilmeldingerState, leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 import { BruttoinntektState } from './useBruttoinntektStore';
 import { ArbeidsforholdState } from './useArbeidsforholdStore';
 import { BehandlingsdagerState } from './useBehandlingsdagerStore';
 import { EgenmeldingState } from './useEgenmeldingStore';
+import feiltekster from '../utils/feiltekster';
 
 export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: { [key: string]: LonnIArbeidsgiverperioden };
@@ -53,6 +54,8 @@ const useRefusjonArbeidsgiverStore: StateCreator<
           state.fullLonnIArbeidsgiverPerioden[arbeidsforholdId] = { status: status };
         } else state.fullLonnIArbeidsgiverPerioden[arbeidsforholdId].status = status;
 
+        state = slettFeilmelding(state, `lia-radio-${arbeidsforholdId}`);
+
         return state;
       })
     ),
@@ -66,6 +69,8 @@ const useRefusjonArbeidsgiverStore: StateCreator<
         if (!state.lonnISykefravaeret[arbeidsforholdId]) {
           state.lonnISykefravaeret[arbeidsforholdId] = { status: status };
         } else state.lonnISykefravaeret[arbeidsforholdId].status = status;
+
+        state = slettFeilmelding(state, `lus-radio-${arbeidsforholdId}`);
 
         return state;
       })
@@ -81,6 +86,15 @@ const useRefusjonArbeidsgiverStore: StateCreator<
           }
           state.fullLonnIArbeidsgiverPerioden[arbeidsforholdId] = { begrunnelse: begrunnelse };
         }
+        if (begrunnelse && begrunnelse.length > 0) {
+          state = slettFeilmelding(state, `lia-select-${arbeidsforholdId}`);
+        } else {
+          state = leggTilFeilmelding(
+            state,
+            `lia-select-${arbeidsforholdId}`,
+            feiltekster.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE
+          );
+        }
         return state;
       })
     ),
@@ -94,6 +108,16 @@ const useRefusjonArbeidsgiverStore: StateCreator<
           state.lonnISykefravaeret[arbeidsforholdId] = { belop: stringishToNumber(beloep) };
         } else {
           state.lonnISykefravaeret[arbeidsforholdId].belop = stringishToNumber(beloep);
+        }
+
+        if (beloep && stringishToNumber(beloep)! >= 0) {
+          state = slettFeilmelding(state, `lus-input-${arbeidsforholdId}`);
+        } else {
+          state = leggTilFeilmelding(
+            state,
+            `lus-input-${arbeidsforholdId}`,
+            feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP
+          );
         }
         return state;
       })
