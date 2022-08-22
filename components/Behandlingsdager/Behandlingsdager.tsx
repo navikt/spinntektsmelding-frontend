@@ -10,6 +10,7 @@ import nb from 'date-fns/locale/nb';
 import { eachMonthOfInterval, getWeek } from 'date-fns';
 import { Alert } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
+import Skillelinje from '../Skillelinje/Skillelinje';
 
 export default function Behandlingsdager() {
   const [behandlingsdager, behandlingsperiode, setBehandlingsdager] = useBoundStore((state) => [
@@ -39,6 +40,7 @@ export default function Behandlingsdager() {
   if (!behandlingsperiode) return null;
   return (
     <>
+      <Skillelinje />
       <Heading3>Fraværsperiode - behandlingsdager</Heading3>
       <p>
         I følge sykmeldingen hadde den ansatte sykmelding for enkeltstående behandlingsdager, i perioden som er

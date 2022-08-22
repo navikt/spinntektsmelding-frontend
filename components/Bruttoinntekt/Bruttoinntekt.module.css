@@ -24,4 +24,20 @@
 .belopwrapper > div {
   margin-top: auto;
   margin-bottom: auto;
+  height: auto;
+}
+
+.bruttoinntektendringsbelop > label {
+  max-height: var(--navds-font-line-height-large);
+}
+
+.bruttoinntektendringsbelop > input {
+  margin-bottom: auto;
+}
+
+.kontrollerknapp {
+  margin-top: calc(var(--navds-font-line-height-large) + .5rem);
+  height: 3rem;
+  display: inline-block;
+
 }

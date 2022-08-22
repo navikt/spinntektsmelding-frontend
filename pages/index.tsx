@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
-import { Button, ConfirmationPanel, ErrorSummary } from '@navikt/ds-react';
+import { Button, ConfirmationPanel } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 import Banner from '../components/Banner/Banner';
@@ -22,7 +22,7 @@ import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
 import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
-import submitInntektsmelding, { ValiderTekster } from '../utils/submitInntektsmelding';
+import submitInntektsmelding from '../utils/submitInntektsmelding';
 import MottattData from '../state/MottattData';
 import useBoundStore from '../state/useBoundStore';
 import Naturalytelser from '../components/Naturalytelser';
@@ -119,12 +119,7 @@ const Home: NextPage = () => {
                 </>
               )}
 
-              {behandlingsperiode && (
-                <>
-                  <Skillelinje />
-                  <Behandlingsdager />
-                </>
-              )}
+              <Behandlingsdager />
 
               {egenmeldingsperioder && (
                 <>

@@ -20,4 +20,8 @@ describe('stringishToNumber', () => {
   it('should return a undefined when input is undefined', () => {
     expect(stringishToNumber(undefined)).toBeUndefined();
   });
+
+  it('should return a number when input is string big number', () => {
+    expect(stringishToNumber('12 345,12')).toBe(12345.12);
+  });
 });

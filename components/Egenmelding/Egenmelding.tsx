@@ -6,17 +6,16 @@ import ButtonSlette from '../ButtonSlette/ButtonSlette';
 import Heading3 from '../Heading3/Heading3';
 import LabelLabel from '../LabelLabel/LabelLabel';
 import useBoundStore from '../../state/useBoundStore';
-import useEgenmeldingStore from '../../state/useEgenmeldingStore';
 
 export default function Egenmelding() {
   const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
   const flereArbeidsforhold = arbeidsforhold && arbeidsforhold.length > 1;
   const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
-  const egenmeldingsperioder = useEgenmeldingStore((state) => state.egenmeldingsperioder);
-  const setEgenmeldingFraDato = useEgenmeldingStore((state) => state.setEgenmeldingFraDato);
-  const setEgenmeldingTilDato = useEgenmeldingStore((state) => state.setEgenmeldingTilDato);
-  const slettEgenmeldingsperiode = useEgenmeldingStore((state) => state.slettEgenmeldingsperiode);
-  const leggTilEgenmeldingsperiode = useEgenmeldingStore((state) => state.leggTilEgenmeldingsperiode);
+  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  const setEgenmeldingFraDato = useBoundStore((state) => state.setEgenmeldingFraDato);
+  const setEgenmeldingTilDato = useBoundStore((state) => state.setEgenmeldingTilDato);
+  const slettEgenmeldingsperiode = useBoundStore((state) => state.slettEgenmeldingsperiode);
+  const leggTilEgenmeldingsperiode = useBoundStore((state) => state.leggTilEgenmeldingsperiode);
 
   return (
     <div className={localStyles.egenmeldingswrapper}>

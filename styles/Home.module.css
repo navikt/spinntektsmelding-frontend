@@ -108,6 +108,7 @@
 
 .endrebutton {
   max-width: 10rem;
+  align-self: initial;
 }
 
 .legtilbutton {
@@ -211,9 +212,5 @@
 
   .datepickerescape {
     width: 1000%;
-  }
-
-  .endrebutton {
-    align-self: initial;
   }
 }

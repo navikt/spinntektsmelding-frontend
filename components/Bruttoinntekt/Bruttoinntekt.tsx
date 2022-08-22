@@ -21,11 +21,8 @@ export default function Bruttoinntekt() {
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
-
-  const [visFeilmeldingsTekst, visFeilmelding] = useBoundStore((state) => [
-    state.visFeilmeldingsTekst,
-    state.visFeilmelding
-  ]);
+  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
 
   return (
     <>
@@ -44,49 +41,56 @@ export default function Bruttoinntekt() {
         )}
         {endreMaanedsinntekt && (
           <div className={lokalStyles.endremaaanedsinntekt}>
-            <TextField
-              label='Inntekt per måned'
-              onChange={(event) => setNyMaanedsinntekt(event.target.value)}
-              defaultValue={formatCurrency(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0)}
-              id='bruttoinntekt-endringsbelop'
-              error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
-            />
-            <Select
-              label='Forklaring til endring'
-              onChange={(event) => setEndringsaarsak(event.target.value)}
-              id='bruttoinntekt-endringsaarsak'
-              error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
-            >
-              <option value=''>Velg endringsårsak</option>
-              <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
-              <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
-              <option value='Losji'>Losji</option>
-              <option value='KostDøgn'>Kost (døgn)</option>
-              <option value='Besøksreiser'>Besøksreiser i hjemmet annet</option>
-              <option value='Kostbesparelse'>Kostbesparelse i hjemmet</option>
-              <option value='Rentefordel'>Rentefordel lån</option>
-              <option value='Bil'>Bil</option>
-              <option value='KostDager'>Kost (dager)</option>
-              <option value='Bolig'>Bolig</option>
-              <option value='Forsikringer'>Skattepliktig del av visse forsikringer</option>
-              <option value='FriTransport'>Fri transport</option>
-              <option value='Opsjoner'>Opsjoner</option>
-              <option value='Barnehageplass'>Tilskudd barnehageplass</option>
-              <option value='YrkesbilKilometer'>Yrkesbil tjenestebehov kilometer</option>
-              <option value='YrkesbilListepris'>Yrkesbil tjenestebehov listepris</option>
-              <option value='UtenlandskPensjonsordning'>Innbetaling utenlandsk pensjonsordning</option>
-            </Select>
-            <Button
-              variant='tertiary'
-              className={styles.kontrollerknapp}
-              onClick={clickTilbakestillMaanedsinntektHandler}
-            >
-              Tilbakestill
-            </Button>
+            <div>
+              <TextField
+                label='Inntekt per måned'
+                onChange={(event) => setNyMaanedsinntekt(event.target.value)}
+                defaultValue={formatCurrency(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0)}
+                id='bruttoinntekt-endringsbelop'
+                error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
+                className={lokalStyles.bruttoinntektendringsbelop}
+              />
+            </div>
+            <div>
+              <Select
+                label='Forklaring til endring'
+                onChange={(event) => setEndringsaarsak(event.target.value)}
+                id='bruttoinntekt-endringsaarsak'
+                error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
+              >
+                <option value=''>Velg endringsårsak</option>
+                <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
+                <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
+                <option value='Losji'>Losji</option>
+                <option value='KostDøgn'>Kost (døgn)</option>
+                <option value='Besøksreiser'>Besøksreiser i hjemmet annet</option>
+                <option value='Kostbesparelse'>Kostbesparelse i hjemmet</option>
+                <option value='Rentefordel'>Rentefordel lån</option>
+                <option value='Bil'>Bil</option>
+                <option value='KostDager'>Kost (dager)</option>
+                <option value='Bolig'>Bolig</option>
+                <option value='Forsikringer'>Skattepliktig del av visse forsikringer</option>
+                <option value='FriTransport'>Fri transport</option>
+                <option value='Opsjoner'>Opsjoner</option>
+                <option value='Barnehageplass'>Tilskudd barnehageplass</option>
+                <option value='YrkesbilKilometer'>Yrkesbil tjenestebehov kilometer</option>
+                <option value='YrkesbilListepris'>Yrkesbil tjenestebehov listepris</option>
+                <option value='UtenlandskPensjonsordning'>Innbetaling utenlandsk pensjonsordning</option>
+              </Select>
+            </div>
+            <div>
+              <Button
+                variant='tertiary'
+                className={lokalStyles.kontrollerknapp}
+                onClick={clickTilbakestillMaanedsinntektHandler}
+              >
+                Tilbakestill
+              </Button>
+            </div>
           </div>
         )}
         {!endreMaanedsinntekt && (
-          <Button variant='tertiary' className={styles.endrebutton} onClick={() => setEndreMaanedsinntekt(true)}>
+          <Button variant='tertiary' className={lokalStyles.endrebutton} onClick={() => setEndreMaanedsinntekt(true)}>
             Endre
           </Button>
         )}

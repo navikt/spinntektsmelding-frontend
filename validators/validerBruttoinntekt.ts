@@ -26,8 +26,9 @@ export default function validerBruttoinntekt(bruttoinntekt?: Inntekt): Array<Val
     }
 
     if (!bruttoinntekt.bruttoInntekt) {
+      console.log('bruttoInntekt', bruttoinntekt.bruttoInntekt); //eslint-disable-line
       valideringstatus.push({
-        felt: 'bruttoinntekt-belop',
+        felt: 'bruttoinntekt-endringsbelop',
         code: BruttoinntektFeilkode.BRUTTOINNTEKT_MANGLER
       });
     }

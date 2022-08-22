@@ -13,15 +13,9 @@ import { NaturalytelserState } from './useNaturalytelserStore';
 import { PersonState } from './usePersonStore';
 import { FravaersperiodeState } from './useFravaersperiodeStore';
 import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
-import { ValiderTekster } from '../utils/submitInntektsmelding';
 
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
-  bruttoinntektFeilmeldinger: {
-    bruttoInntekt?: string;
-    bekreftet?: string;
-    endringsaarsak?: string;
-  };
   tidligereInntekt?: Array<HistoriskInntekt>;
   setNyMaanedsinntekt: (belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
@@ -56,15 +50,11 @@ const useBruttoinntektStore: StateCreator<
     manueltKorrigert: false,
     endringsaarsak: undefined
   },
-  bruttoinntektFeilmeldinger: {
-    bruttoInntekt: feiltekster.BRUTTOINNTEKT_MANGLER,
-    bekreftet: feiltekster.IKKE_BEKREFTET,
-    endringsaarsak: feiltekster.ENDRINGSAARSAK_MANGLER
-  },
   tidligereInntekt: undefined,
   setNyMaanedsinntekt: (belop: string) =>
     set(
       produce((state) => {
+        console.log('belop', belop); // eslint-disable-line
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
         state.bruttoinntekt.manueltKorrigert = true;
 
@@ -76,6 +66,13 @@ const useBruttoinntektStore: StateCreator<
       produce((state) => {
         state.bruttoinntekt.endringsaarsak = aarsak;
         state.bruttoinntekt.manueltKorrigert = true;
+
+        if (aarsak && aarsak !== '') {
+          state = slettFeilmelding(state, 'bruttoinntekt-endringsaarsak');
+        } else {
+          state = leggTilFeilmelding(state, 'bruttoinntekt-endringsaarsak', feiltekster.ENDRINGSAARSAK_MANGLER);
+        }
+
         return state;
       })
     ),
