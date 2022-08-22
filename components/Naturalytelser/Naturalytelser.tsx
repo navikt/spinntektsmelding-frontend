@@ -1,5 +1,5 @@
 import { Datepicker } from '@navikt/ds-datepicker';
-import { Button, Checkbox, TextField } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
@@ -27,11 +27,11 @@ export default function Naturalytelser() {
   return (
     <>
       <Heading3>Eventuelle naturalytelser (valgfri)</Heading3>
-      <p>
+      <BodyLong>
         Har den ansatte noen naturalytelser som bortfaller ved sykemelding så må de angis, ellers vil den ansatte ikke
         bli tilgoderegnet disse. Hvis den ansatte fotsatt beholder eventuelle naturalyteleser, så trenger dere ikke
         gjøre noe.
-      </p>
+      </BodyLong>
       <Checkbox
         value='Naturalytelser'
         // checked={state.naturalytelser && state.naturalytelser.length > 0}

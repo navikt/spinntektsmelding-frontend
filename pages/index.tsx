@@ -146,6 +146,7 @@ const Home: NextPage = () => {
               <Skillelinje />
               <Naturalytelser />
               <ConfirmationPanel
+                className={styles.confirmationpanel}
                 checked={opplysningerBekreftet}
                 onClick={clickOpplysningerBekreftet}
                 label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'

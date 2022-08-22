@@ -54,9 +54,13 @@ const useBruttoinntektStore: StateCreator<
   setNyMaanedsinntekt: (belop: string) =>
     set(
       produce((state) => {
-        console.log('belop', belop); // eslint-disable-line
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
         state.bruttoinntekt.manueltKorrigert = true;
+        if (state.bruttoinntekt.bruttoInntekt && state.bruttoinntekt.bruttoInntekt > 0) {
+          state = slettFeilmelding(state, 'bruttoinntekt-endringsbelop');
+        } else {
+          state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
+        }
 
         return state;
       })

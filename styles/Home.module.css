@@ -179,6 +179,10 @@
   margin-bottom: 2rem;
 }
 
+.confirmationpanel {
+  margin-top: 1.5rem;
+}
+
 @media screen and (max-width: 800px) {
   .personinfowrapper {
     flex-direction: column;
