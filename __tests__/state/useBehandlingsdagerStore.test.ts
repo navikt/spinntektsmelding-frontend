@@ -1,16 +1,16 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { cleanup } from '@testing-library/react';
-import useBehandlingsdagerStore from '../../state/useBehandlingsdagerStore';
+import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../state/MottattData';
 import { vi } from 'vitest';
 
 const inputPeriode: MottattPeriode = { fra: '2022-05-01', til: '2022-11-01' };
 const inputDager: Array<string> = ['2022-05-10', '2022-06-10', '2022-07-10', '2022-08-10', '2022-09-10', '2022-10-10'];
-const initialState = useBehandlingsdagerStore.getState();
+const initialState = useBoundStore.getState();
 
-describe('useBehandlingsdagerStore', () => {
+describe('useBoundStore', () => {
   beforeEach(() => {
-    useBehandlingsdagerStore.setState(initialState, true);
+    useBoundStore.setState(initialState, true);
   });
 
   afterEach(() => {
@@ -20,7 +20,7 @@ describe('useBehandlingsdagerStore', () => {
   });
 
   it('should initialize the data.', () => {
-    const { result } = renderHook(() => useBehandlingsdagerStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initBehandlingsdager(inputPeriode, inputDager);
@@ -40,7 +40,7 @@ describe('useBehandlingsdagerStore', () => {
   });
 
   it('should set the behandlingsdager.', () => {
-    const { result } = renderHook(() => useBehandlingsdagerStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     const oppdaterteDager: Array<Date> = [new Date(2022, 4, 15), new Date(2022, 6, 15), new Date(2022, 9, 15)];
 

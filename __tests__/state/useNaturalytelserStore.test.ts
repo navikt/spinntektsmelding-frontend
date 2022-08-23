@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { cleanup } from '@testing-library/react';
-import useNaturalytelserStore from '../../state/useNaturalytelserStore';
+import useBoundStore from '../../state/useBoundStore';
 import { MottattArbeidsforhold, MottattNaturalytelse } from '../../state/MottattData';
 import { vi } from 'vitest';
 
@@ -15,11 +15,11 @@ const inputNaturalytelser: Array<MottattNaturalytelse> = [
   { type: 'TELEFON', bortfallsdato: '2022-07-06', verdi: 350 }
 ];
 
-const initialState = useNaturalytelserStore.getState();
+const initialState = useBoundStore.getState();
 
-describe('useNaturalytelserStore', () => {
+describe('useBoundStore', () => {
   beforeEach(() => {
-    useNaturalytelserStore.setState(initialState, true);
+    useBoundStore.setState(initialState, true);
   });
 
   afterEach(() => {
@@ -29,7 +29,7 @@ describe('useNaturalytelserStore', () => {
   });
 
   it('should initialize the data.', () => {
-    const { result } = renderHook(() => useNaturalytelserStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initNaturalytelser(inputNaturalytelser);
@@ -41,7 +41,7 @@ describe('useNaturalytelserStore', () => {
   });
 
   it('should set the naturalyteles type for a given id.', () => {
-    const { result } = renderHook(() => useNaturalytelserStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initNaturalytelser(inputNaturalytelser);
@@ -57,7 +57,7 @@ describe('useNaturalytelserStore', () => {
   });
 
   it('should set the naturalytelse bortfallsdato for a given id.', () => {
-    const { result } = renderHook(() => useNaturalytelserStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initNaturalytelser(inputNaturalytelser);
@@ -73,7 +73,7 @@ describe('useNaturalytelserStore', () => {
   });
 
   it('should set the naturalytelse verdi for a given id.', () => {
-    const { result } = renderHook(() => useNaturalytelserStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initNaturalytelser(inputNaturalytelser);
@@ -89,7 +89,7 @@ describe('useNaturalytelserStore', () => {
   });
 
   it('should delete the naturalytelser for å given id.', () => {
-    const { result } = renderHook(() => useNaturalytelserStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initNaturalytelser(inputNaturalytelser);
@@ -107,7 +107,7 @@ describe('useNaturalytelserStore', () => {
   });
 
   it('should add a naturalytelse for å given arbeidsforholdId.', () => {
-    const { result } = renderHook(() => useNaturalytelserStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initNaturalytelser(inputNaturalytelser);
@@ -123,7 +123,7 @@ describe('useNaturalytelserStore', () => {
   });
 
   it('should add a naturalytelse even if the store is empty.', () => {
-    const { result } = renderHook(() => useNaturalytelserStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.leggTilNaturalytelse();
@@ -133,7 +133,7 @@ describe('useNaturalytelserStore', () => {
   });
 
   it('should delete all naturalytelser.', () => {
-    const { result } = renderHook(() => useNaturalytelserStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initNaturalytelser(inputNaturalytelser);

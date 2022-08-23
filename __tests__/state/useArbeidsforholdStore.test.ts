@@ -1,19 +1,19 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { cleanup } from '@testing-library/react';
-import useArbeidsforholdStore from '../../state/useArbeidsforholdStore';
+import useBoundStore from '../../state/useBoundStore';
 import { MottattArbeidsforhold } from '../../state/MottattData';
 import { vi } from 'vitest';
 
-const initialState = useArbeidsforholdStore.getState();
+const initialState = useBoundStore.getState();
 
 const inputData: Array<MottattArbeidsforhold> = [
   { arbeidsforholdId: 'forhold1', arbeidsforhold: 'forhold1', stillingsprosent: 60 },
   { arbeidsforholdId: 'forhold2', arbeidsforhold: 'forhold2', stillingsprosent: 40 }
 ];
 
-describe('useArbeidsforholdStore', () => {
+describe('useBoundStore', () => {
   beforeEach(() => {
-    useArbeidsforholdStore.setState(initialState, true);
+    useBoundStore.setState(initialState, true);
   });
 
   afterEach(() => {
@@ -23,7 +23,7 @@ describe('useArbeidsforholdStore', () => {
   });
 
   it('should initialize the data.', () => {
-    const { result } = renderHook(() => useArbeidsforholdStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initArbeidsforhold(inputData);
@@ -36,7 +36,7 @@ describe('useArbeidsforholdStore', () => {
   });
 
   it('should set the active state of the given forholdId to true.', () => {
-    const { result } = renderHook(() => useArbeidsforholdStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initArbeidsforhold(inputData);
@@ -50,7 +50,7 @@ describe('useArbeidsforholdStore', () => {
   });
 
   it('should return the active state of the arbeidsforhold.', () => {
-    const { result } = renderHook(() => useArbeidsforholdStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     const expected = [
       {
@@ -97,7 +97,7 @@ describe('useArbeidsforholdStore', () => {
   });
 
   it('should set the active state of the arbeidsforhold, without params.', () => {
-    const { result } = renderHook(() => useArbeidsforholdStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initArbeidsforhold(inputData);
@@ -112,7 +112,7 @@ describe('useArbeidsforholdStore', () => {
   });
 
   it('should return the active state of the arbeidsforhold when the thing has not been initialized.', () => {
-    const { result: clean } = renderHook(() => useArbeidsforholdStore((state) => state));
+    const { result: clean } = renderHook(() => useBoundStore((state) => state));
 
     const resultat3 = clean.current.aktiveArbeidsforhold();
     expect(resultat3).toEqual([]);

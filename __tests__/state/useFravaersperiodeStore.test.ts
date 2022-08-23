@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { cleanup } from '@testing-library/react';
-import useFravaersperiodeStore from '../../state/useFravaersperiodeStore';
+import useBoundStore from '../../state/useBoundStore';
 import { MottattArbeidsforhold, MottattPeriode } from '../../state/MottattData';
 import { vi } from 'vitest';
 
@@ -21,11 +21,11 @@ const fravaersperiode: { [key: string]: Array<MottattPeriode> } = {
   ]
 };
 
-const initialState = useFravaersperiodeStore.getState();
+const initialState = useBoundStore.getState();
 
-describe('useFravaersperiodeStore', () => {
+describe('useBoundStore', () => {
   beforeEach(() => {
-    useFravaersperiodeStore.setState(initialState, true);
+    useBoundStore.setState(initialState, true);
   });
 
   afterEach(() => {
@@ -35,7 +35,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   it('should initialize the data.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);
@@ -47,7 +47,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   it('should set the fravaersmelding fra dato for å given periode.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);
@@ -63,7 +63,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   it('should set the fravaersmelding til dato for å given periode.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);
@@ -79,7 +79,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   it('should delete the fravaersperiode for å given periode.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);
@@ -97,7 +97,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   it('should add a fravaersperiode for å given arbeidsforholdId.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);
@@ -113,7 +113,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   it('should add a new fravaersperiode for a unknown arbeidsforholdId.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);
@@ -132,7 +132,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   test('should add a new fravaersperiode for a unknown arbeidsforholdId when there is no fravaersperiode to begin with.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.leggTilFravaersperiode('arbeidsforhold3');
@@ -146,7 +146,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   it('should reset all fravaersperioder for å given arbeidsforholdId.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);
@@ -161,7 +161,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   it('should set all fravaersperioder equal to a given arbeidsforholdId.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);
@@ -179,7 +179,7 @@ describe('useFravaersperiodeStore', () => {
   });
 
   it('should reset the sammeFravaersperiode flag.', () => {
-    const { result } = renderHook(() => useFravaersperiodeStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initFravaersperiode(fravaersperiode);

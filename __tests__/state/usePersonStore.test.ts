@@ -1,16 +1,16 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { cleanup } from '@testing-library/react';
-import usePersonStore from '../../state/usePersonStore';
+import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
 import testFnr from '../../mockdata/testFnr';
 
 const inputPerson: [string, string, string] = ['Navn Navnesen', testFnr.GyldigeFraDolly.TestPerson1, '123456789'];
 
-const initialState = usePersonStore.getState();
+const initialState = useBoundStore.getState();
 
 describe('usePersonStore', () => {
   beforeEach(() => {
-    usePersonStore.setState(initialState, true);
+    useBoundStore.setState(initialState, true);
   });
 
   afterEach(() => {
@@ -20,7 +20,7 @@ describe('usePersonStore', () => {
   });
 
   it('should initialize the data.', () => {
-    const { result } = renderHook(() => usePersonStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initPerson(...inputPerson);
@@ -32,7 +32,7 @@ describe('usePersonStore', () => {
   });
 
   it('should set the navn', () => {
-    const { result } = renderHook(() => usePersonStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initPerson(...inputPerson);
@@ -46,7 +46,7 @@ describe('usePersonStore', () => {
   });
 
   it('should set the identitetsnummer.', () => {
-    const { result } = renderHook(() => usePersonStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initPerson(...inputPerson);
@@ -60,7 +60,7 @@ describe('usePersonStore', () => {
   });
 
   it('should set the virksomhetsnavn.', () => {
-    const { result } = renderHook(() => usePersonStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initPerson(...inputPerson);

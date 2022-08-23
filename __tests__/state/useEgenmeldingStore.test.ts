@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { cleanup } from '@testing-library/react';
-import useEgenmeldingStore from '../../state/useEgenmeldingStore';
+import useBoundStore from '../../state/useBoundStore';
 import { MottattArbeidsforhold, MottattPeriode } from '../../state/MottattData';
 import { vi } from 'vitest';
 
@@ -22,11 +22,11 @@ const egenmeldingsperioder: { [key: string]: Array<MottattPeriode> } = {
   arbeidsforhold22: []
 };
 
-const initialState = useEgenmeldingStore.getState();
+const initialState = useBoundStore.getState();
 
-describe('useEgenmeldingStore', () => {
+describe('useBoundStore', () => {
   beforeEach(() => {
-    useEgenmeldingStore.setState(initialState, true);
+    useBoundStore.setState(initialState, true);
   });
 
   afterEach(() => {
@@ -36,7 +36,7 @@ describe('useEgenmeldingStore', () => {
   });
 
   it('should initialize the data.', () => {
-    const { result } = renderHook(() => useEgenmeldingStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
@@ -48,7 +48,7 @@ describe('useEgenmeldingStore', () => {
   });
 
   it('should initialize the data even if we have more arbeidsforhold than egenmeldingsgreier.', () => {
-    const { result } = renderHook(() => useEgenmeldingStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
     const inputArbeidsforholdSpesial: Array<MottattArbeidsforhold> = [
       { arbeidsforholdId: 'arbeidsforhold1', arbeidsforhold: 'arbeidsforhold1', stillingsprosent: 60 },
       { arbeidsforholdId: 'arbeidsforhold2', arbeidsforhold: 'arbeidsforhold2', stillingsprosent: 30 },
@@ -65,7 +65,7 @@ describe('useEgenmeldingStore', () => {
   });
 
   it('should set the egenmelding fra dato for å given periode.', () => {
-    const { result } = renderHook(() => useEgenmeldingStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
@@ -81,7 +81,7 @@ describe('useEgenmeldingStore', () => {
   });
 
   it('should set the egenmelding til dato for å given periode.', () => {
-    const { result } = renderHook(() => useEgenmeldingStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
@@ -97,7 +97,7 @@ describe('useEgenmeldingStore', () => {
   });
 
   it('should delete the egenmelding for å given periode.', () => {
-    const { result } = renderHook(() => useEgenmeldingStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
@@ -115,7 +115,7 @@ describe('useEgenmeldingStore', () => {
   });
 
   it('should add a egenmelding for å given arbeidsforholdId.', () => {
-    const { result } = renderHook(() => useEgenmeldingStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
@@ -131,7 +131,7 @@ describe('useEgenmeldingStore', () => {
   });
 
   it('should add a egenmelding for å given arbeidsforholdId, even when it is unknown.', () => {
-    const { result } = renderHook(() => useEgenmeldingStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
@@ -147,7 +147,7 @@ describe('useEgenmeldingStore', () => {
   });
 
   it('should add a egenmelding for å given arbeidsforholdId, even when it is unknown and the store is uninitialized.', () => {
-    const { result } = renderHook(() => useEgenmeldingStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     expect(result.current.egenmeldingsperioder?.arbeidsforhold3).toBeUndefined();
 

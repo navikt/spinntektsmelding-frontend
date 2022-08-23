@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { cleanup } from '@testing-library/react';
-import useBruttoinntektStore from '../../state/useBruttoinntektStore';
+import useBoundStore from '../../state/useBoundStore';
 import { MottattHistoriskInntekt } from '../../state/MottattData';
 import { vi } from 'vitest';
 
@@ -11,7 +11,7 @@ const tidligereInntekt: Array<MottattHistoriskInntekt> = [
   { maanedsnavn: 'Mars', inntekt: 55000 }
 ];
 
-describe('useBruttoinntektStore', () => {
+describe('useBoundStore', () => {
   afterEach(() => {
     // You can chose to set the store's state to a default value here.
     vi.resetAllMocks();
@@ -19,7 +19,7 @@ describe('useBruttoinntektStore', () => {
   });
 
   it('should initialize the data.', () => {
-    const { result } = renderHook(() => useBruttoinntektStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
@@ -32,7 +32,7 @@ describe('useBruttoinntektStore', () => {
   });
 
   it('should set the bekreftet flag.', () => {
-    const { result } = renderHook(() => useBruttoinntektStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
@@ -52,7 +52,7 @@ describe('useBruttoinntektStore', () => {
   });
 
   it('should set ny maanedsinntekt.', () => {
-    const { result } = renderHook(() => useBruttoinntektStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
@@ -66,7 +66,7 @@ describe('useBruttoinntektStore', () => {
   });
 
   it('should set ny endringsaarsak.', () => {
-    const { result } = renderHook(() => useBruttoinntektStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
@@ -80,7 +80,7 @@ describe('useBruttoinntektStore', () => {
   });
 
   it('should tilbakestille endringsaarsak', () => {
-    const { result } = renderHook(() => useBruttoinntektStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);

@@ -1,16 +1,16 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { cleanup } from '@testing-library/react';
-import useRefusjonArbeidsgiverStore from '../../state/useRefusjonArbeidsgiverStore';
+import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
 import testFnr from '../../mockdata/testFnr';
 
 const inputPerson: [string, string, string] = ['Navn Navnesen', testFnr.GyldigeFraDolly.TestPerson1, '123456789'];
 
-const initialState = useRefusjonArbeidsgiverStore.getState();
+const initialState = useBoundStore.getState();
 
-describe('useRefusjonArbeidsgiverStore', () => {
+describe('useBoundStore', () => {
   beforeEach(() => {
-    useRefusjonArbeidsgiverStore.setState(initialState, true);
+    useBoundStore.setState(initialState, true);
   });
 
   afterEach(() => {
@@ -20,7 +20,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should set the status on fullLonnIArbeidsgiverPerioden', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('id1', 'Ja');
@@ -30,7 +30,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should change the status on fullLonnIArbeidsgiverPerioden', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('id1', 'Ja');
@@ -46,7 +46,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should set the status on lonnISykefravaeret', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret('id1', 'Ja');
@@ -56,7 +56,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should change the status on lonnISykefravaeret', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret('id1', 'Ja');
@@ -72,7 +72,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should set the begrunnelse on fullLonnIArbeidsgiverPerioden', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.begrunnelseRedusertUtbetaling('id1', 'Begrunnelse');
@@ -81,8 +81,19 @@ describe('useRefusjonArbeidsgiverStore', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden?.id1.begrunnelse).toBe('Begrunnelse');
   });
 
+  it('should set the empty begrunnelse on fullLonnIArbeidsgiverPerioden', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.begrunnelseRedusertUtbetaling('id1', '');
+    });
+
+    expect(result.current.fullLonnIArbeidsgiverPerioden?.id1.begrunnelse).toBe('');
+    expect(result.current.feilmeldinger[0].felt).toBe('lia-select-id1');
+  });
+
   it('should change the begrunnelse on fullLonnIArbeidsgiverPerioden', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.begrunnelseRedusertUtbetaling('id1', 'Begrunnelse');
@@ -98,7 +109,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should set the belop on lonnISykefravaeret', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.beloepArbeidsgiverBetalerISykefravaeret('id1', '567,89');
@@ -107,8 +118,19 @@ describe('useRefusjonArbeidsgiverStore', () => {
     expect(result.current.lonnISykefravaeret?.id1.belop).toBe(567.89);
   });
 
+  it('should set the empty belop on lonnISykefravaeret', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.beloepArbeidsgiverBetalerISykefravaeret('id1', '');
+    });
+
+    expect(result.current.lonnISykefravaeret?.id1.belop).toBeUndefined();
+    expect(result.current.feilmeldinger[0].felt).toBe('lus-input-id1');
+  });
+
   it('should change the belop on lonnISykefravaeret', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.beloepArbeidsgiverBetalerISykefravaeret('id1', '567,89');
@@ -124,7 +146,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should set the refusjonskravetOpphoerer Status.', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.refusjonskravetOpphoererStatus('id1', 'Ja');
@@ -134,7 +156,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should change the refusjonskravetOpphoerer Status.', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.refusjonskravetOpphoererStatus('id1', 'Ja');
@@ -150,7 +172,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should set the refusjonskravetOpphoerer date.', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.refusjonskravetOpphoererDato('id1', '2022-05-06');
@@ -160,7 +182,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should change the refusjonskravetOpphoerer date.', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.refusjonskravetOpphoererDato('id1', '2022-05-06');
@@ -176,7 +198,7 @@ describe('useRefusjonArbeidsgiverStore', () => {
   });
 
   it('should change the refusjonskravetOpphoerer date.', () => {
-    const { result } = renderHook(() => useRefusjonArbeidsgiverStore((state) => state));
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.refusjonskravetOpphoererDato('id1', '2022-05-06');
