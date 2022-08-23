@@ -117,6 +117,7 @@ export default function FravaerEnkeltAnsattforhold({
                       onChange={(event) =>
                         setSammeFravarePaaArbeidsforhold(arbeidsforhold.arbeidsforholdId, event.currentTarget.checked)
                       }
+                      checked={sammePeriodeForAlle}
                     >
                       Bruk samme for det andre arbeidsforholdet
                     </Checkbox>

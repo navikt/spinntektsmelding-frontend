@@ -14,10 +14,12 @@ import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 
 export interface EgenmeldingState {
   egenmeldingsperioder: { [key: string]: Array<Periode> };
+  sammeEgenmeldingsperiode: boolean;
   setEgenmeldingFraDato: (dateValue: string, periodeId: string) => void;
   setEgenmeldingTilDato: (dateValue: string, periodeId: string) => void;
   slettEgenmeldingsperiode: (periodeId: string) => void;
   leggTilEgenmeldingsperiode: (arbeidsforholdId: string) => void;
+  setSammeEgenmeldingsperiodeArbeidsforhold: (arbeidsforholdId: string, status: boolean) => void;
   initEgenmeldingsperiode: (
     arbeidsforhold: Array<MottattArbeidsforhold>,
     egenmeldingsperioder: { [key: string]: Array<MottattPeriode> }
@@ -38,6 +40,7 @@ const useEgenmeldingStore: StateCreator<
   EgenmeldingState
 > = (set) => ({
   egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
+  sammeEgenmeldingsperiode: false,
   setEgenmeldingFraDato: (dateValue: string, periodeId: string) =>
     set(
       produce((state) => {
@@ -52,6 +55,8 @@ const useEgenmeldingStore: StateCreator<
             return periode;
           });
         });
+
+        state.sammeEgenmeldingsperiode = false;
 
         return state;
       })
@@ -71,6 +76,8 @@ const useEgenmeldingStore: StateCreator<
           });
         });
 
+        state.sammeEgenmeldingsperiode = false;
+
         return state;
       })
     ),
@@ -86,6 +93,8 @@ const useEgenmeldingStore: StateCreator<
           state.egenmeldingsperioder[forholdKey] = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
         });
 
+        state.sammeEgenmeldingsperiode = false;
+
         return state;
       })
     ),
@@ -99,6 +108,40 @@ const useEgenmeldingStore: StateCreator<
         } else {
           state.egenmeldingsperioder[arbeidsforholdId] = [nyEgenmeldingsperiode];
         }
+
+        state.sammeEgenmeldingsperiode = false;
+
+        return state;
+      })
+    ),
+  setSammeEgenmeldingsperiodeArbeidsforhold: (arbeidsforholdId, status) =>
+    set(
+      produce((state) => {
+        if (status) {
+          const fravaersKeys = Object.keys(state.egenmeldingsperioder!);
+          if (state.egenmeldingsperioder && fravaersKeys.indexOf(arbeidsforholdId) > -1) {
+            state.sammeEgenmeldingsperiode = true;
+          }
+
+          if (state.egenmeldingsperioder?.[arbeidsforholdId]) {
+            const periodeMaster: Periode[] = state.egenmeldingsperioder[arbeidsforholdId];
+
+            const oppdaterbarePerioder = fravaersKeys.filter((key) => key !== arbeidsforholdId);
+
+            oppdaterbarePerioder.forEach((forholdId) => {
+              if (forholdId !== arbeidsforholdId) {
+                state.egenmeldingsperioder![forholdId] = periodeMaster.map((periode) => {
+                  return {
+                    ...periode,
+                    id: nanoid()
+                  };
+                });
+              }
+            });
+          }
+        }
+
+        state.sammeEgenmeldingsperiode = status;
 
         return state;
       })

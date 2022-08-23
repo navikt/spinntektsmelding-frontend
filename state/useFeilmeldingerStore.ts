@@ -53,6 +53,9 @@ const useFeilmeldingerStore: StateCreator<
   skalViseFeilmeldinger: false,
   feilmeldinger: [],
   visFeilmeldingsTekst: (feltnavn: string) => {
+    if (!get().skalViseFeilmeldinger) {
+      return '';
+    }
     const feilmeldinger = get().feilmeldinger;
 
     if (!feilmeldinger || feilmeldinger.length === 0 || !feltnavn) {
@@ -65,6 +68,9 @@ const useFeilmeldingerStore: StateCreator<
   },
 
   visFeilmelding: (feltnavn) => {
+    if (!get().skalViseFeilmeldinger) {
+      return false;
+    }
     const feilmeldinger = get().feilmeldinger;
 
     return get().skalViseFeilmeldinger && feilmeldinger.some((melding) => melding.felt === feltnavn);
