@@ -39,5 +39,27 @@
   margin-top: calc(var(--navds-font-line-height-large) + .5rem);
   height: 3rem;
   display: inline-block;
+}
 
+
+.arbeidsprosent {
+  margin: 2rem 0;
+}
+
+.prosentbody {
+  display: flex;
+  flex-direction: column;
+}
+
+.prosentbodytext {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.bruttoinntektendringsbelopenkel{
+  margin-top: .5rem;
+}
+
+.bruttoinntektendringsbelopenkel > input{
+  max-width: 10rem;
 }

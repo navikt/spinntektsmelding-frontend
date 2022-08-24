@@ -13,6 +13,7 @@ import validerLonnUnderSykefravaeret, {
 } from '../validators/validerLonnUnderSykefravaeret';
 import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
+import validerProsentInntekt from '../validators/validerProsentInntekt';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -57,6 +58,7 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
   let feilkoderLonnIArbeidsgiverperioden: Array<ValiderResultat> = [];
   let feilkoderLonnUnderSykefravaeret: Array<ValiderResultat> = [];
   let feilkoderBekreftOpplyninger: Array<ValiderResultat> = [];
+  let feilkoderSumInntektProsent: Array<ValiderResultat> = [];
 
   const aktuelleArbeidsforholdId = state.arbeidsforhold
     ?.filter((forhold) => forhold.aktiv === true)
@@ -116,6 +118,12 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
 
   feilkoderBekreftOpplyninger = validerBekreftOpplysninger(state.opplysningerBekreftet);
 
+  feilkoderSumInntektProsent = validerProsentInntekt(
+    aktuelleArbeidsforholdId,
+    state.bruttoinntekt?.bruttoInntekt,
+    state.inntektsprosent
+  );
+
   errorCodes = [
     ...errorCodes,
     ...feilkoderFravaersperioder,
@@ -124,7 +132,8 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
     ...feilkoderNaturalytelser,
     ...feilkoderLonnIArbeidsgiverperioden,
     ...feilkoderLonnUnderSykefravaeret,
-    ...feilkoderBekreftOpplyninger
+    ...feilkoderBekreftOpplyninger,
+    ...feilkoderSumInntektProsent
   ];
 
   if (errorCodes.length > 0) {

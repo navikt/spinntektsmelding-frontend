@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
 import produce from 'immer';
-import { HistoriskInntekt, Inntekt } from './state';
+import { HistoriskInntekt, IArbeidsforhold, Inntekt } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import { nanoid } from 'nanoid';
 import { MottattHistoriskInntekt } from './MottattData';
@@ -17,7 +17,10 @@ import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   tidligereInntekt?: Array<HistoriskInntekt>;
+  inntektsprosent?: { [key: string]: number };
+  inntektsprosentEndret: boolean;
   setNyMaanedsinntekt: (belop: string) => void;
+  setNyArbeidsforholdMaanedsinntekt: (arbeidsforholdId: string, belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean) => void;
@@ -51,6 +54,7 @@ const useBruttoinntektStore: StateCreator<
     endringsaarsak: undefined
   },
   tidligereInntekt: undefined,
+  inntektsprosentEndret: false,
   setNyMaanedsinntekt: (belop: string) =>
     set(
       produce((state) => {
@@ -65,6 +69,19 @@ const useBruttoinntektStore: StateCreator<
         return state;
       })
     ),
+  setNyArbeidsforholdMaanedsinntekt: (arbeidsforholdId, belop) => {
+    const inntektsprosent: { [key: string]: number } | {} = get().inntektsprosent || {};
+    const ikopi = { ...inntektsprosent };
+    ikopi[arbeidsforholdId] = stringishToNumber(belop) || 0;
+    set(
+      produce((state) => {
+        state.inntektsprosent = ikopi;
+        state.inntektsprosentEndret = true;
+        return state;
+      })
+    );
+  },
+
   setEndringsaarsak: (aarsak: string) =>
     set(
       produce((state) => {
@@ -100,7 +117,9 @@ const useBruttoinntektStore: StateCreator<
         return state;
       })
     ),
-  initBruttioinntekt: (bruttoInntekt: number, tidligereInntekt: Array<MottattHistoriskInntekt>) =>
+  initBruttioinntekt: (bruttoInntekt: number, tidligereInntekt: Array<MottattHistoriskInntekt>) => {
+    const inntektsprosent: { [key: string]: number } | [] = [];
+
     set(
       produce((state) => {
         state.bruttoinntekt = {
@@ -116,6 +135,8 @@ const useBruttoinntektStore: StateCreator<
           endringsaarsak: ''
         };
 
+        state.inntektsprosent = inntektsprosent;
+
         if (tidligereInntekt) {
           state.tidligereInntekt = tidligereInntekt.map((inntekt) => ({
             maanedsnavn: inntekt.maanedsnavn,
@@ -123,8 +144,11 @@ const useBruttoinntektStore: StateCreator<
             id: nanoid()
           }));
         }
+
+        return state;
       })
-    )
+    );
+  }
 });
 
 export default useBruttoinntektStore;

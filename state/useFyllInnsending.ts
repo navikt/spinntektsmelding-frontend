@@ -4,6 +4,7 @@ import useBoundStore from './useBoundStore';
 export default function useFyllInnsending() {
   const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
+  const inntektsprosent = useBoundStore((state) => state.inntektsprosent);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = useBoundStore((state) => [
@@ -45,7 +46,8 @@ export default function useFyllInnsending() {
       behandlingsdager: behandlingsdager,
       behandlingsperiode: behandlingsperiode,
       sammeFravaersperiode: false,
-      arbeidsforhold: arbeidsforhold
+      arbeidsforhold: arbeidsforhold,
+      inntektsprosent: inntektsprosent
     };
 
     return skjemaData;

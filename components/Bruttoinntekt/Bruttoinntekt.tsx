@@ -7,6 +7,7 @@ import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
+import lonnProsent from '../../utils/lonnProsent';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -18,12 +19,18 @@ export default function Bruttoinntekt() {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
   const bekreftKorrektInntekt = useBoundStore((state) => state.bekreftKorrektInntekt);
+  const inntektsprosent = useBoundStore((state) => state.inntektsprosent);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
+  const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
+  const setNyArbeidsforholdMaanedsinntekt = useBoundStore((state) => state.setNyArbeidsforholdMaanedsinntekt);
+  const alleArbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
 
+  const harFlereArbeidsforhold = alleArbeidsforhold && alleArbeidsforhold.length > 1;
+  const arbeidsforhold = aktiveArbeidsforhold();
   return (
     <>
       <Heading3>Bruttoinntekt siste 3 måneder</Heading3>
@@ -95,16 +102,41 @@ export default function Bruttoinntekt() {
           </Button>
         )}
       </div>
+      {arbeidsforhold && harFlereArbeidsforhold && (
+        <>
+          {arbeidsforhold.map((forhold) => (
+            <div key={forhold.arbeidsforholdId} className={lokalStyles.arbeidsprosent}>
+              <Heading3>Estimert bruttoinntekt - {forhold.arbeidsforhold}</Heading3>
+              <div className={lokalStyles.prosentbody}>
+                <BodyShort className={lokalStyles.prosentbodytext}>
+                  Basert på <b>{forhold.stillingsprosent}%</b> stilling er inntekten estimert til{' '}
+                  {formatCurrency(lonnProsent(bruttoinntekt.bruttoInntekt, forhold.stillingsprosent))} kr
+                </BodyShort>
+                <TextField
+                  label={`Inntekt - ${forhold.arbeidsforhold}`}
+                  onChange={(event) => setNyArbeidsforholdMaanedsinntekt(forhold.arbeidsforholdId, event.target.value)}
+                  id={`bruttoinntekt-endringsbelop-${forhold.arbeidsforholdId}`}
+                  error={visFeilmeldingsTekst(`bruttoinntekt-endringsbelop-${forhold.arbeidsforholdId}`)}
+                  className={lokalStyles.bruttoinntektendringsbelopenkel}
+                />
+              </div>
+            </div>
+          ))}
+        </>
+      )}
       <TextLabel className={styles.tbmargin}>Inntekten er basert på følgende måneder</TextLabel>
       <table>
-        {tidligereinntekt?.map((inntekt) => (
-          <tr key={inntekt.id}>
-            <td className={lokalStyles.maanedsnavn}>{inntekt.maanedsnavn}:</td>
-            <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
-          </tr>
-        ))}
+        <tbody>
+          {tidligereinntekt?.map((inntekt) => (
+            <tr key={inntekt.id}>
+              <td className={lokalStyles.maanedsnavn}>{inntekt.maanedsnavn}:</td>
+              <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
       {!tidligereinntekt && <BodyShort>Klarer ikke å finne inntekt for de 3 siste månedene.</BodyShort>}
+
       <BodyLong className={styles.tbmargin}>
         <strong>
           Beløpet er basert på en beregning av siste tre måneders lønn. Hvis beløpet ikke er korrekt må dere endre

@@ -6,7 +6,8 @@ export enum BruttoinntektFeilkode {
   BRUTTOINNTEKT_MANGLER = 'BRUTTOINNTEKT_MANGLER',
   INNTEKT_MANGLER = 'INNTEKT_MANGLER',
   ENDRINGSAARSAK_MANGLER = 'ENDRINGSAARSAK_MANGLER',
-  IKKE_BEKREFTET = 'IKKE_BEKREFTET'
+  IKKE_BEKREFTET = 'IKKE_BEKREFTET',
+  SUM_LAVERE_ENN_INNTEKT = 'SUM_LAVERE_ENN_INNTEKT'
 }
 
 export default function validerBruttoinntekt(bruttoinntekt?: Inntekt): Array<ValiderResultat> {

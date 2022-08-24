@@ -9,6 +9,8 @@ import useNaturalytelserStore, { NaturalytelserState } from './useNaturalytelser
 import usePersonStore, { PersonState } from './usePersonStore';
 import useRefusjonArbeidsgiverStore, { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 
+import { devtools } from 'zustand/middleware';
+
 const useBoundStore = create<
   RefusjonArbeidsgiverState &
     FravaersperiodeState &
@@ -19,16 +21,18 @@ const useBoundStore = create<
     BehandlingsdagerState &
     BruttoinntektState &
     EgenmeldingState
->()((...a) => ({
-  ...useArbeidsforholdStore(...a),
-  ...useBehandlingsdagerStore(...a),
-  ...useBruttoinntektStore(...a),
-  ...useEgenmeldingStore(...a),
-  ...useFeilmeldingerStore(...a),
-  ...useNaturalytelserStore(...a),
-  ...usePersonStore(...a),
-  ...useFravaersperiodeStore(...a),
-  ...useRefusjonArbeidsgiverStore(...a)
-}));
+>()(
+  devtools((...a) => ({
+    ...useArbeidsforholdStore(...a),
+    ...useBehandlingsdagerStore(...a),
+    ...useBruttoinntektStore(...a),
+    ...useEgenmeldingStore(...a),
+    ...useFeilmeldingerStore(...a),
+    ...useNaturalytelserStore(...a),
+    ...usePersonStore(...a),
+    ...useFravaersperiodeStore(...a),
+    ...useRefusjonArbeidsgiverStore(...a)
+  }))
+);
 
 export default useBoundStore;

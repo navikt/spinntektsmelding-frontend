@@ -24,7 +24,8 @@ const feiltekster = {
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG: 'Angi om arbeidsgiver betaler lønn under hele elle deler av sykefraværet.',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO: 'Angi siste dato det kreves refusjon for.',
   BEKREFT_OPPLYSNINGER: 'Bekreft at opplysningene gitt er riktig og fullstendige.',
-  ENDRINGSAARSAK_MANGLER: 'Vennligst anngi årsak for endringen.'
+  ENDRINGSAARSAK_MANGLER: 'Vennligst anngi årsak for endringen.',
+  SUM_LAVERE_ENN_INNTEKT: 'Summen av inntektene for de enkelte arbeidsforholdene er høyere enn bruttoinntekten.'
 };
 
 export default feiltekster;

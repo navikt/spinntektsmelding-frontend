@@ -70,6 +70,7 @@ interface InntektsmeldingSkjema {
   behandlingsperiode?: Periode;
   arbeidsforhold?: Array<IArbeidsforhold>;
   sammeFravaersperiode: boolean;
+  inntektsprosent?: { [key: string]: number };
 }
 
 export default InntektsmeldingSkjema;
