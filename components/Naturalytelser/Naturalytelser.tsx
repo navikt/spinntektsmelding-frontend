@@ -3,6 +3,7 @@ import { BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
+import lokalStyles from './Naturalytelser.module.css';
 
 import styles from '../../styles/Home.module.css';
 import useBoundStore from '../../state/useBoundStore';
@@ -34,13 +35,13 @@ export default function Naturalytelser() {
       </BodyLong>
       <Checkbox
         value='Naturalytelser'
-        // checked={state.naturalytelser && state.naturalytelser.length > 0}
+        checked={naturalytelser && naturalytelser.length > 0}
         onClick={visNaturalytelser}
       >
         Ansatt har naturalytelser som bortfaller ved sykemeldingen
       </Checkbox>
       {naturalytelser && naturalytelser.length > 0 && (
-        <table className={styles.tablenaturalytelse}>
+        <table className={lokalStyles.tablenaturalytelse}>
           <thead>
             <th>Naturalytelse</th>
             <th>Dato naturalytelse bortfaller</th>
@@ -81,7 +82,7 @@ export default function Naturalytelser() {
               );
             })}
           </tbody>
-          <div className={styles.naturalytelserknapp}>
+          <div className={lokalStyles.naturalytelserknapp}>
             <Button variant='secondary' className={styles.legtilbutton} onClick={() => leggTilNaturalytelse()}>
               Legg til naturalytelse
             </Button>

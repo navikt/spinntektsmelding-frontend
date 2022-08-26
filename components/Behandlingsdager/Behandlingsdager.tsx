@@ -35,6 +35,10 @@ export default function Behandlingsdager() {
       setFooter('');
     }
 
+    if (selectedDays && selectedDays?.length > 12) {
+      setFooter('Man kan ikke ha mer enn 12 behandlinger.');
+    }
+
     setBehandlingsdager(selectedDays);
   };
   if (!behandlingsperiode) return null;
