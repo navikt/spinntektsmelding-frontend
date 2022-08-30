@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v2
         with:
-          name: fritak-frontend-artifact
+          name: spinntektsmelding-frontend-artifact
           path: build
       - name: Login to GitHub Packages Docker Registry
         uses: docker/login-action@v1
