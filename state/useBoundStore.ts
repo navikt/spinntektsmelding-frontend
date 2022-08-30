@@ -9,8 +9,6 @@ import useNaturalytelserStore, { NaturalytelserState } from './useNaturalytelser
 import usePersonStore, { PersonState } from './usePersonStore';
 import useRefusjonArbeidsgiverStore, { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 
-import { devtools } from 'zustand/middleware';
-
 const useBoundStore = create<
   RefusjonArbeidsgiverState &
     FravaersperiodeState &
