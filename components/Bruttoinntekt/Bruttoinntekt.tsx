@@ -19,7 +19,6 @@ export default function Bruttoinntekt() {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
   const bekreftKorrektInntekt = useBoundStore((state) => state.bekreftKorrektInntekt);
-  const inntektsprosent = useBoundStore((state) => state.inntektsprosent);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);

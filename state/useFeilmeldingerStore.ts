@@ -10,13 +10,13 @@ import { PersonState } from './usePersonStore';
 import { FravaersperiodeState } from './useFravaersperiodeStore';
 import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 
-export function slettFeilmelding(state, felt) {
+export function slettFeilmelding(state: any, felt: string) {
   state.feilmeldinger = state.feilmeldinger.filter((element: ValiderTekster) => element.felt !== felt);
 
   return state;
 }
 
-export function leggTilFeilmelding(state, felt, melding) {
+export function leggTilFeilmelding(state: any, felt: string, melding: string) {
   state.feilmeldinger.push({
     felt: felt,
     text: melding
@@ -92,8 +92,7 @@ const useFeilmeldingerStore: StateCreator<
   slettFeilmelding: (felt) => {
     set(
       produce((state) => {
-        state.feilmeldinger = state.feilmeldinger.filter((element: ValiderTekster) => element.felt !== felt);
-
+        state = slettFeilmelding(state, felt);
         return state;
       })
     );

@@ -16,10 +16,7 @@ export default function RefusjonArbeidsgiver() {
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
 
-  const [visFeilmeldingsTekst, visFeilmelding] = useBoundStore((state) => [
-    state.visFeilmeldingsTekst,
-    state.visFeilmelding
-  ]);
+  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
 
   const arbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useBoundStore(
     (state) => state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden

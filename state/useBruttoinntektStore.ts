@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
 import produce from 'immer';
-import { HistoriskInntekt, IArbeidsforhold, Inntekt } from './state';
+import { HistoriskInntekt, Inntekt } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import { nanoid } from 'nanoid';
 import { MottattHistoriskInntekt } from './MottattData';
