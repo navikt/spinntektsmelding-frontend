@@ -21,18 +21,16 @@ const useBoundStore = create<
     BehandlingsdagerState &
     BruttoinntektState &
     EgenmeldingState
->()(
-  devtools((...a) => ({
-    ...useArbeidsforholdStore(...a),
-    ...useBehandlingsdagerStore(...a),
-    ...useBruttoinntektStore(...a),
-    ...useEgenmeldingStore(...a),
-    ...useFeilmeldingerStore(...a),
-    ...useNaturalytelserStore(...a),
-    ...usePersonStore(...a),
-    ...useFravaersperiodeStore(...a),
-    ...useRefusjonArbeidsgiverStore(...a)
-  }))
-);
+>()((...a) => ({
+  ...useArbeidsforholdStore(...a),
+  ...useBehandlingsdagerStore(...a),
+  ...useBruttoinntektStore(...a),
+  ...useEgenmeldingStore(...a),
+  ...useFeilmeldingerStore(...a),
+  ...useNaturalytelserStore(...a),
+  ...usePersonStore(...a),
+  ...useFravaersperiodeStore(...a),
+  ...useRefusjonArbeidsgiverStore(...a)
+}));
 
 export default useBoundStore;
