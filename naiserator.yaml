@@ -13,13 +13,13 @@ spec:
   ingresses:
     - '{{{ingress}}}'
   liveness:
-    path: /im-dialog/api/is-alive
+    path: /api/is-alive
     initialDelay: 15
     timeout: 1
     periodSeconds: 3
     failureThreshold: 10
   readiness:
-    path: /im-dialog/api/is-ready
+    path: /api/is-ready
     initialDelay: 15
     timeout: 1
     periodSeconds: 3
