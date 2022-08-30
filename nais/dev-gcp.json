@@ -1,0 +1,8 @@
+{
+  "ingress": "https://arbeidsgiver.dev.nav.no/im-dialog",
+  "namespace": "helsearbeidsgiver",
+  "vault-enabled": false,
+  "webproxy-enabled": false,
+  "api-url": "https://im-dialog.dev.nav.no",
+  "api-basepath": ""
+}

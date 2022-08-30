@@ -1,0 +1,45 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: spinntektsmelding-frontend
+  namespace: '{{{namespace}}}'
+  labels:
+    team: helsearbeidsgiver
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50M"
+spec:
+  image: {{ image }}
+  port: 8080
+  ingresses:
+    - '{{{ingress}}}'
+  liveness:
+    path: /api/is-alive
+    initialDelay: 15
+    timeout: 1
+    periodSeconds: 3
+    failureThreshold: 10
+  readiness:
+    path: /api/is-ready
+    initialDelay: 15
+    timeout: 1
+    periodSeconds: 3
+    failureThreshold: 10
+  replicas:
+    max: 1
+    min: 1
+  resources:
+    limits:
+      cpu: 800m
+      memory: 1024Mi
+    requests:
+      cpu: 400m
+      memory: 256Mi
+  idporten:
+    enabled: true
+    sidecar:
+      enabled: true
+  env:
+    - name: API_URL
+      value: '{{{api-url}}}'
+    - name: API_BASEPATH
+      value: '{{{api-basepath}}}'

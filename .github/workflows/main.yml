@@ -21,7 +21,7 @@ jobs:
       - run: yarn build
       - uses: actions/upload-artifact@v2
         with:
-          name: fritak-frontend-artifact
+          name: spinntektsmelding-frontend-artifact
           path: ${{ github.workspace }}/build/**/*
 
   Kodekvalitet:
