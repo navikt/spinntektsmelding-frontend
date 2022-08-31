@@ -35,7 +35,7 @@ import Feilsammendrag from '../components/Feilsammendrag';
 
 const fetcher = (url: string) => fetch(url).then((data) => data.json());
 
-const ARBEIDSGIVER_URL = '/api/arbeidsgivere';
+const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 
 const Home: NextPage = () => {
   const setRoute = useRoute();
@@ -85,7 +85,7 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    fetch('/api/inntektsmelding').then((mottattData) => {
+    fetch('/im-dialog/api/inntektsmelding').then((mottattData) => {
       mottattData.json().then((jsonData: MottattData) => {
         initState(jsonData);
 
