@@ -2,7 +2,8 @@
 
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone'
+  output: 'standalone',
+  basePath: '/im-dialog'
 };
 
 module.exports = nextConfig;
