@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import { Button, ConfirmationPanel } from '@navikt/ds-react';
 
@@ -32,14 +33,17 @@ import useStateInit from '../state/useStateInit';
 import useFyllInnsending from '../state/useFyllInnsending';
 import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
-
-const fetcher = (url: string) => fetch(url).then((data) => data.json());
+import environment from '../config/environment';
+import dataFetcher from '../utils/dataFetcher';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
+const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
 
 const Home: NextPage = () => {
   const setRoute = useRoute();
-  const { data: arbeidsgivere, error } = useSWR(ARBEIDSGIVER_URL, fetcher);
+  const router = useRouter();
+  const { data: arbeidsgivere, error } = useSWR(ARBEIDSGIVER_URL, dataFetcher);
+  const { data: skjemadata, error: skjemadatafeil } = useSWR(SKJEMADATA_URL, dataFetcher);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
@@ -85,14 +89,26 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    fetch('/im-dialog/api/inntektsmelding').then((mottattData) => {
-      mottattData.json().then((jsonData: MottattData) => {
-        initState(jsonData);
+    if (skjemadata) {
+      initState(skjemadata);
 
-        setRoute(jsonData.orgnrUnderenhet);
-      });
-    });
-  }, []);
+      setRoute(skjemadata.orgnrUnderenhet);
+    }
+  }, [skjemadata]);
+
+  useEffect(() => {
+    console.log('error', error); // eslint-disable-line
+    if (error?.status === 401) {
+      router.push(environment.loginServiceUrl);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    console.log('error', skjemadatafeil); // eslint-disable-line
+    if (skjemadatafeil?.status === 401) {
+      router.push(environment.loginServiceUrl);
+    }
+  }, [skjemadatafeil]);
 
   return (
     <div className={styles.container}>
