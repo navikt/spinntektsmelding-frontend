@@ -155,18 +155,22 @@ export default function RefusjonArbeidsgiver() {
                   Nei
                 </Radio>
               </RadioGroup>
-              {refusjonskravetOpphoerer?.[forhold.arbeidsforholdId]?.status && (
-                <div className={styles.datepickerescape}>
-                  <LabelLabel htmlFor={`lus-sluttdato-${forhold.arbeidsforholdId}`} className={styles.datepickerlabel}>
-                    Angi siste dag dere krever refusjon for
-                  </LabelLabel>
-                  <Datepicker
-                    onChange={(dateString) => refusjonskravetOpphoererDato(forhold.arbeidsforholdId, dateString)}
-                    inputLabel='Egenmelding fra dato'
-                    inputId={`lus-sluttdato-${forhold.arbeidsforholdId}`}
-                  />
-                </div>
-              )}
+              {refusjonskravetOpphoerer?.[forhold.arbeidsforholdId]?.status &&
+                refusjonskravetOpphoerer?.[forhold.arbeidsforholdId]?.status === 'Ja' && (
+                  <div className={styles.datepickerescape}>
+                    <LabelLabel
+                      htmlFor={`lus-sluttdato-${forhold.arbeidsforholdId}`}
+                      className={styles.datepickerlabel}
+                    >
+                      Angi siste dag dere krever refusjon for
+                    </LabelLabel>
+                    <Datepicker
+                      onChange={(dateString) => refusjonskravetOpphoererDato(forhold.arbeidsforholdId, dateString)}
+                      inputLabel='Egenmelding fra dato'
+                      inputId={`lus-sluttdato-${forhold.arbeidsforholdId}`}
+                    />
+                  </div>
+                )}
             </>
           )}
         </div>
