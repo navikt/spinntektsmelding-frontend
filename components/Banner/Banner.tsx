@@ -16,7 +16,7 @@ export interface Organisasjon {
 
 interface Props {
   tittelMedUnderTittel: string | JSX.Element;
-  altinnOrganisasjoner: AltinnOrganisasjon[];
+  altinnOrganisasjoner?: AltinnOrganisasjon[];
   onOrganisasjonChange?: any;
 }
 
