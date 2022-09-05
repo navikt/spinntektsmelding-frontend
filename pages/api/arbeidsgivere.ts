@@ -24,6 +24,10 @@ const handleProxyInit = (proxy: any) => {
   proxy.on('proxyRes', function (proxyRes: any, req: any, res: any) {
     console.log('RAW Response from the target', JSON.stringify(proxyRes.headers));
   });
+
+  proxy.on('proxyReq', function (proxyReq: any, _req: any, _res: any, _options: any) {
+    proxyReq.setHeader('cookie', '');
+  });
 };
 
 export const config = {
