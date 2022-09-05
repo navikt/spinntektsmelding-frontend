@@ -8,12 +8,12 @@ const basePath = 'https://arbeidsgiver.dev.nav.no/fritak-agp/api/v1/arbeidsgiver
 
 type Data = typeof org;
 
-const handleProxyInit = (proxy) => {
+const handleProxyInit = (proxy: any) => {
   /**
    * Check the list of bindable events in the `http-proxy` specification.
    * @see https://www.npmjs.com/package/http-proxy#listening-for-proxy-events
    */
-  proxy.on('error', function (err, req, res) {
+  proxy.on('error', function (_err: any, _req: any, res: any) {
     res.writeHead(500, {
       'Content-Type': 'text/plain'
     });
@@ -21,8 +21,8 @@ const handleProxyInit = (proxy) => {
     res.end('Something went wrong. And we are reporting a custom error message.');
   });
 
-  proxy.on('proxyRes', function (proxyRes, req, res) {
-    console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+  proxy.on('proxyRes', function (proxyRes: any, req: any, res: any) {
+    console.log('RAW Response from the target', JSON.stringify(proxyRes.headers));
   });
 };
 
