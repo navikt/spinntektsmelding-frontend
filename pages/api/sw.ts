@@ -8,12 +8,12 @@ const basePath = 'https://swapi.dev/api/people/1';
 
 type Data = typeof org;
 
-const handleProxyInit = (proxy) => {
+const handleProxyInit = (proxy: any) => {
   /**
    * Check the list of bindable events in the `http-proxy` specification.
    * @see https://www.npmjs.com/package/http-proxy#listening-for-proxy-events
    */
-  proxy.on('error', function (err, req, res) {
+  proxy.on('error', function (_err: any, _req: any, res: any) {
     res.writeHead(500, {
       'Content-Type': 'text/plain'
     });
