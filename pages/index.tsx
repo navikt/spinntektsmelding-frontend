@@ -75,6 +75,8 @@ const Home: NextPage = () => {
 
     if (errorStatus.errorTexts) {
       fyllFeilmeldinger(errorStatus.errorTexts);
+    } else {
+      // useSWR   Send inn!
     }
 
     console.log(skjemaData); // eslint-disable-line

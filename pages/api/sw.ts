@@ -4,7 +4,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 
 import org from '../../mockdata/testOrganisasjoner';
 
-const basePath = 'https://arbeidsgiver.dev.nav.no/fritak-agp/api/v1/arbeidsgivere';
+const basePath = 'https://swapi.dev/api/people/1';
 
 type Data = typeof org;
 
@@ -21,9 +21,9 @@ const handleProxyInit = (proxy) => {
     res.end('Something went wrong. And we are reporting a custom error message.');
   });
 
-  proxy.on('proxyRes', function (proxyRes, req, res) {
-    console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
-  });
+  // proxy.on('proxyRes', function (proxyRes, req, res) {
+  //   console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+  // });
 };
 
 export const config = {
@@ -44,7 +44,7 @@ const handler = (
     // In addition, you can use the `pathRewrite` option provided by `next-http-proxy-middleware`
     pathRewrite: [
       {
-        patternStr: '^/api/arbeidsgivere',
+        patternStr: '^/api/sw',
         replaceStr: ''
         // }, {
         //   patternStr: '^/api',
