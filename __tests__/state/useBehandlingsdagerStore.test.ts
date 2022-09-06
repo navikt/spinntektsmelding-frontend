@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react';
 import { cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../state/MottattData';
