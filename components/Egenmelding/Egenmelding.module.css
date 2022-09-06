@@ -6,3 +6,9 @@
   align-self: end;
   margin-left: 1.05rem;
 }
+
+@media screen and (max-width: 800px) {
+  .sammeperiode {
+    max-width: 134px;
+  }
+}

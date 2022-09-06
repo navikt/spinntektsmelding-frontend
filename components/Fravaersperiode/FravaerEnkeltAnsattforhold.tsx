@@ -100,7 +100,7 @@ export default function FravaerEnkeltAnsattforhold({
                 />
               </div>
             )}
-            {endreSykemelding && fravaersperiode[arbeidsforhold.arbeidsforholdId].length > 1 && (
+            {endreSykemelding && periodeIndex > 0 && (
               <div className={styles.endresykemelding}>
                 <ButtonSlette
                   onClick={() => slettFravaersperiode(arbeidsforhold.arbeidsforholdId, periode.id)}
@@ -108,32 +108,30 @@ export default function FravaerEnkeltAnsattforhold({
                 />
               </div>
             )}
-            {harFlereArbeidsforhold &&
-              forsteArbeidsforhold &&
-              periodeIndex === fravaersperiode[arbeidsforhold.arbeidsforholdId].length - 1 && (
-                <div>
-                  {!flereEnnToArbeidsforhold && (
-                    <Checkbox
-                      onChange={(event) =>
-                        setSammeFravarePaaArbeidsforhold(arbeidsforhold.arbeidsforholdId, event.currentTarget.checked)
-                      }
-                      checked={sammePeriodeForAlle}
-                    >
-                      Bruk samme for det andre arbeidsforholdet
-                    </Checkbox>
-                  )}
-                  {flereEnnToArbeidsforhold && (
-                    <Checkbox
-                      onChange={(event) =>
-                        setSammeFravarePaaArbeidsforhold(arbeidsforhold.arbeidsforholdId, event.currentTarget.checked)
-                      }
-                      checked={sammePeriodeForAlle}
-                    >
-                      Bruk samme for de andre arbeidsforholdene
-                    </Checkbox>
-                  )}
-                </div>
-              )}
+            {harFlereArbeidsforhold && forsteArbeidsforhold && periodeIndex === 0 && (
+              <div className={localStyles.sammeperiode}>
+                {!flereEnnToArbeidsforhold && (
+                  <Checkbox
+                    onChange={(event) =>
+                      setSammeFravarePaaArbeidsforhold(arbeidsforhold.arbeidsforholdId, event.currentTarget.checked)
+                    }
+                    checked={sammePeriodeForAlle}
+                  >
+                    Bruk samme for det andre arbeidsforholdet
+                  </Checkbox>
+                )}
+                {flereEnnToArbeidsforhold && (
+                  <Checkbox
+                    onChange={(event) =>
+                      setSammeFravarePaaArbeidsforhold(arbeidsforhold.arbeidsforholdId, event.currentTarget.checked)
+                    }
+                    checked={sammePeriodeForAlle}
+                  >
+                    Bruk samme for de andre arbeidsforholdene
+                  </Checkbox>
+                )}
+              </div>
+            )}
           </div>
         ))}
       {!endreSykemelding && (
