@@ -36,7 +36,11 @@ export default function FravaerEnkeltAnsattforhold({
   const endreFravaersperiode = useBoundStore((state) => state.endreFravaersperiode);
   const sammePeriodeForAlle = useBoundStore((state) => state.sammeFravaersperiode);
 
-  const clickTilbakestillFravaersperiodeHandler = (arbeidsforholdId: string) => {
+  const clickTilbakestillFravaersperiodeHandler = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    arbeidsforholdId: string
+  ) => {
+    event.preventDefault();
     tilbakestillFravaersperiode(arbeidsforholdId);
   };
 
@@ -155,7 +159,7 @@ export default function FravaerEnkeltAnsattforhold({
 
           <Button
             className={styles.kontrollerknapp}
-            onClick={() => clickTilbakestillFravaersperiodeHandler(arbeidsforhold.arbeidsforholdId)}
+            onClick={(event) => clickTilbakestillFravaersperiodeHandler(event, arbeidsforhold.arbeidsforholdId)}
           >
             Tilbakestill
           </Button>
