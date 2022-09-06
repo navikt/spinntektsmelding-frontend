@@ -1,7 +1,9 @@
 import NetworkError from './NetworkError';
 
 const dataFetcher = async (url: string) => {
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    credentials: 'include'
+  });
 
   if (!res.ok) {
     const error = new NetworkError('An error occurred while fetching the data.');
