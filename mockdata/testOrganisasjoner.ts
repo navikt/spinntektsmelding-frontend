@@ -1,6 +1,6 @@
-import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
+import { MottatArbeidsgiver } from '../state/MottattData';
 
-const testOrganisasjoner: Organisasjon[] = [
+const testOrganisasjoner: MottatArbeidsgiver[] = [
   {
     name: 'ANSTENDIG BJØRN KOMMUNE',
     type: 'Enterprise',

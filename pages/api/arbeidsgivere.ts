@@ -2,12 +2,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 
-// import org from '../../mockdata/testOrganisasjoner';
+import org from '../../mockdata/testOrganisasjoner';
 
 // const basePath = 'https://arbeidsgiver.dev.nav.no/fritak-agp/api/v1/arbeidsgivere';
 const basePath = 'https://fritakagp.dev.nav.no/api/v1/arbeidsgivere';
 
-// type Data = typeof org;
+type Data = typeof org;
 
 const handleProxyInit = (proxy: any) => {
   /**
@@ -41,21 +41,21 @@ export const config = {
 const handler = (
   req: NextApiRequest,
   res: NextApiResponse<Data> //res.status(200).json(org);
-) =>
-  httpProxyMiddleware(req, res, {
-    // You can use the `http-proxy` option
-    target: basePath,
-    onProxyInit: handleProxyInit,
-    // In addition, you can use the `pathRewrite` option provided by `next-http-proxy-middleware`
-    pathRewrite: [
-      {
-        patternStr: '^/api/arbeidsgivere',
-        replaceStr: ''
-        // }, {
-        //   patternStr: '^/api',
-        //   replaceStr: ''
-      }
-    ]
-  });
+) => res.status(401).json(org);
+// httpProxyMiddleware(req, res, {
+//   // You can use the `http-proxy` option
+//   target: basePath,
+//   onProxyInit: handleProxyInit,
+//   // In addition, you can use the `pathRewrite` option provided by `next-http-proxy-middleware`
+//   pathRewrite: [
+//     {
+//       patternStr: '^/api/arbeidsgivere',
+//       replaceStr: ''
+//       // }, {
+//       //   patternStr: '^/api',
+//       //   replaceStr: ''
+//     }
+//   ]
+// });
 
 export default handler;

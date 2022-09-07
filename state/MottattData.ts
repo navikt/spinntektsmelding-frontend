@@ -39,9 +39,9 @@ export default MottattData;
 export interface MottatArbeidsgiver {
   name: string;
   type: string;
-  parentOrganizationNumber?: string;
+  parentOrganizationNumber?: string | null;
   organizationForm: string;
   organizationNumber: string;
-  socialSecurityNumber?: string;
+  socialSecurityNumber?: string | null;
   status: string;
 }
