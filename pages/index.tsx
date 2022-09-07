@@ -36,6 +36,7 @@ import Feilsammendrag from '../components/Feilsammendrag';
 import environment from '../config/environment';
 import dataFetcher from '../utils/dataFetcher';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
+import dataFetcherArbeidsgivere from '../utils/dataFetcherArbeidsgivere';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
@@ -43,7 +44,7 @@ const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
 const Home: NextPage = () => {
   const setRoute = useRoute();
   const router = useRouter();
-  const { data: arbeidsgivere, error } = useSWR<Array<Organisasjon>>(ARBEIDSGIVER_URL, dataFetcher);
+  const { data: arbeidsgivere, error } = useSWR<Array<Organisasjon>>(ARBEIDSGIVER_URL, dataFetcherArbeidsgivere);
   const { data: skjemadata, error: skjemadatafeil } = useSWR<MottattData>(SKJEMADATA_URL, dataFetcher);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
