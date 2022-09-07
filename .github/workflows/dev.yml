@@ -21,13 +21,6 @@ jobs:
           node-version: '18.x'
       - run: yarn install --frozen-lockfile
       - run: yarn test
-
-  KodekvalitetSonar:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with: 
-          fetch-depth: 0
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
@@ -44,18 +37,8 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn lint
 
-
-  # Snyk:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - name: Run Snyk to check for vulnerabilities
-  #       uses: snyk/actions/node@master
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
   Docker:
-    needs: [Kodekvalitet,Eslint, KodekvalitetSonar]
+    needs: [Kodekvalitet,Eslint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
