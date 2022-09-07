@@ -1,11 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
+import environment from '../../config/environment';
 
 import org from '../../mockdata/testOrganisasjoner';
 
-// const basePath = 'https://arbeidsgiver.dev.nav.no/fritak-agp/api/v1/arbeidsgivere';
-const basePath = 'https://fritakagp.dev.nav.no/api/v1/arbeidsgivere';
+const basePath = environment.arbeidsgiverAPI;
 
 type Data = typeof org;
 
@@ -33,7 +33,6 @@ const handleProxyInit = (proxy: any) => {
 
 export const config = {
   api: {
-    // Enable `externalResolver` option in Next.js
     externalResolver: true
   }
 };
@@ -43,17 +42,12 @@ const handler = (
   res: NextApiResponse<Data> //res.status(200).json(org);
 ) =>
   httpProxyMiddleware(req, res, {
-    // You can use the `http-proxy` option
     target: basePath,
     onProxyInit: handleProxyInit,
-    // In addition, you can use the `pathRewrite` option provided by `next-http-proxy-middleware`
     pathRewrite: [
       {
         patternStr: '^/api/arbeidsgivere',
         replaceStr: ''
-        // }, {
-        //   patternStr: '^/api',
-        //   replaceStr: ''
       }
     ]
   });

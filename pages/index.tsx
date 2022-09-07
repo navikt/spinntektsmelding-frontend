@@ -107,12 +107,20 @@ const Home: NextPage = () => {
     if (error?.status === 401) {
       router.push(loginPath());
     }
+
+    if (error?.status === 500) {
+      leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_ARBEIDSGIVER);
+    }
   }, [error]);
 
   useEffect(() => {
     console.log('error', skjemadatafeil); // eslint-disable-line
     if (skjemadatafeil?.status === 401) {
       router.push(environment.loginServiceUrl);
+    }
+
+    if (error?.status === 500) {
+      leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
     }
   }, [skjemadatafeil]);
 

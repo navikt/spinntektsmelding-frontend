@@ -12,18 +12,6 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-
-  # Bygg:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - run: yarn install --frozen-lockfile
-  #     - run: yarn build
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: spinntektsmelding-frontend-artifact
-  #         path: ${{ github.workspace }}/build/**/*
-
   Kodekvalitet:
     runs-on: ubuntu-latest
     steps:
@@ -33,6 +21,13 @@ jobs:
           node-version: '18.x'
       - run: yarn install --frozen-lockfile
       - run: yarn test
+
+  KodekvalitetSonar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          fetch-depth: 0
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
@@ -60,14 +55,10 @@ jobs:
   #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   Docker:
-    needs: [Kodekvalitet,Eslint]
+    needs: [Kodekvalitet,Eslint, KodekvalitetSonar]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      # - uses: actions/download-artifact@v2
-      #   with:
-      #     name: spinntektsmelding-frontend-artifact
-      #     path: build
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
