@@ -27,7 +27,7 @@ const formData = {
   ...initialState,
   navn: 'Navn Navnesen',
   identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
-  orgnrUnderenhet: testOrg[5].OrganizationNumber,
+  orgnrUnderenhet: '810007982',
   bruttoinntekt: 44000,
   // behandlingsperiode: {
   //   fra: format(subDays(new Date(), 180), 'yyyy-MM-dd'),
