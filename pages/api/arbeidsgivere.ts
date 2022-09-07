@@ -41,21 +41,21 @@ export const config = {
 const handler = (
   req: NextApiRequest,
   res: NextApiResponse<Data> //res.status(200).json(org);
-) => res.status(401).json(org);
-// httpProxyMiddleware(req, res, {
-//   // You can use the `http-proxy` option
-//   target: basePath,
-//   onProxyInit: handleProxyInit,
-//   // In addition, you can use the `pathRewrite` option provided by `next-http-proxy-middleware`
-//   pathRewrite: [
-//     {
-//       patternStr: '^/api/arbeidsgivere',
-//       replaceStr: ''
-//       // }, {
-//       //   patternStr: '^/api',
-//       //   replaceStr: ''
-//     }
-//   ]
-// });
+) =>
+  httpProxyMiddleware(req, res, {
+    // You can use the `http-proxy` option
+    target: basePath,
+    onProxyInit: handleProxyInit,
+    // In addition, you can use the `pathRewrite` option provided by `next-http-proxy-middleware`
+    pathRewrite: [
+      {
+        patternStr: '^/api/arbeidsgivere',
+        replaceStr: ''
+        // }, {
+        //   patternStr: '^/api',
+        //   replaceStr: ''
+      }
+    ]
+  });
 
 export default handler;
