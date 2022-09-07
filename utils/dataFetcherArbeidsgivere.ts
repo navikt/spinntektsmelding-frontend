@@ -10,7 +10,11 @@ const dataFetcherArbeidsgivere = async (url: string) => {
   if (!res.ok) {
     const error = new NetworkError('An error occurred while fetching the data.');
     // Attach extra info to the error object.
-    error.info = await res.json();
+    try {
+      error.info = await res.json();
+    } catch (errorStatus) {
+      error.info = { errorStatus };
+    }
     error.status = res.status;
     throw error;
   }
