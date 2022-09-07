@@ -4,7 +4,8 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 
 import org from '../../mockdata/testOrganisasjoner';
 
-const basePath = 'https://arbeidsgiver.dev.nav.no/fritak-agp/api/v1/arbeidsgivere';
+// const basePath = 'https://arbeidsgiver.dev.nav.no/fritak-agp/api/v1/arbeidsgivere';
+const basePath = 'https://fritakagp.dev.nav.no/api/v1/arbeidsgivere';
 
 type Data = typeof org;
 
