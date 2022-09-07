@@ -15,7 +15,7 @@ class Environment {
       case EnvironmentType.TESTCAFE:
         return 'http://localhost:3000/local/cookie-please?subject=10107400090&redirect=XXX?loggedIn=true';
       default:
-        return 'http://localhost:3000/local/cookie-please?subject=10107400090&redirect=XXX?loggedIn=true';
+        return 'http://localhost:3000/local/cookie-please?subject=10107400090&redirect=XXX';
     }
   }
 

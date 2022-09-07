@@ -26,7 +26,6 @@ const dataFetcherArbeidsgivere = async (url: string) => {
       Status: data.status as string
     })
   );
-  return res.json();
 };
 
 export default dataFetcherArbeidsgivere;

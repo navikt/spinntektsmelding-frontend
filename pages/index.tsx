@@ -37,6 +37,7 @@ import environment from '../config/environment';
 import dataFetcher from '../utils/dataFetcher';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
 import dataFetcherArbeidsgivere from '../utils/dataFetcherArbeidsgivere';
+import useLoginRedirectPath from '../utils/useLoginRedirectPath';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
@@ -54,6 +55,7 @@ const Home: NextPage = () => {
   const behandlingsperiode = useBoundStore((state) => state.behandlingsperiode);
 
   const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
+  const loginPath = useLoginRedirectPath();
 
   const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.fyllFeilmeldinger,
@@ -103,7 +105,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     console.log('error', error); // eslint-disable-line
     if (error?.status === 401) {
-      router.push(environment.loginServiceUrl);
+      router.push(loginPath());
     }
   }, [error]);
 
