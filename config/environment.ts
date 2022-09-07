@@ -53,10 +53,10 @@ class Environment {
     if (this.isTestCafeRunning()) {
       return EnvironmentType.TESTCAFE;
     }
-    if (window.location.hostname === 'localhost') {
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
       return EnvironmentType.LOCAL;
     }
-    if (window.location.hostname.indexOf('.dev.nav.no') > -1) {
+    if (typeof window !== 'undefined' && window.location.hostname.indexOf('.dev.nav.no') > -1) {
       return EnvironmentType.PREPROD_DEV;
     }
     return EnvironmentType.PROD;
@@ -72,6 +72,9 @@ class Environment {
   }
 
   private isTestCafeRunning() {
+    if (typeof window === 'undefined') {
+      return false;
+    }
     const urlParams = new URLSearchParams(window.location.search);
     const testCafe = urlParams.get('TestCafe');
 
