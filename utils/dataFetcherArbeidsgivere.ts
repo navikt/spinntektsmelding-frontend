@@ -1,4 +1,5 @@
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
+import { MottatArbeidsgiver } from '../state/MottattData';
 import NetworkError from './NetworkError';
 
 const dataFetcherArbeidsgivere = async (url: string) => {
@@ -16,7 +17,7 @@ const dataFetcherArbeidsgivere = async (url: string) => {
   const jsonData = await res.json();
 
   return jsonData.map(
-    (data: any): Organisasjon => ({
+    (data: MottatArbeidsgiver): Organisasjon => ({
       Name: data.name as string,
       Type: data.type as string,
       ParentOrganizationNumber: (data.parentOrganizationNumber || '') as string,

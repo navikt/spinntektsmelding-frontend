@@ -1,4 +1,6 @@
-[
+import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
+
+const testOrganisasjoner: Organisasjon[] = [
   {
     name: 'ANSTENDIG BJØRN KOMMUNE',
     type: 'Enterprise',
@@ -63,3 +65,4 @@
     status: 'Active'
   }
 ];
+export default testOrganisasjoner;
