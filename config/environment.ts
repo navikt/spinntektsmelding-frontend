@@ -37,7 +37,7 @@ class Environment {
       case EnvironmentType.PROD:
         return 'https://fritakagp.dev.nav.no/api/v1/arbeidsgivere';
       case EnvironmentType.PREPROD_DEV:
-        return 'https://fritakagp.dev.nav.no/api/v1/arbeidsgivere';
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/arbeidsgivere';
       case EnvironmentType.TESTCAFE:
         return 'http://localhost:3000/not-in-use';
       default:
