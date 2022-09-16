@@ -153,15 +153,17 @@ const useEgenmeldingStore: StateCreator<
     set(
       produce((state) => {
         state.egenmeldingsperioder = {};
-        arbeidsforhold.forEach((forhold) => {
-          if (egenmeldingsperioder && egenmeldingsperioder[forhold.arbeidsforholdId]) {
-            state.egenmeldingsperioder[forhold.arbeidsforholdId] = egenmeldingsperioder[forhold.arbeidsforholdId].map(
-              (periode) => ({ fra: parseIsoDate(periode.fra), til: parseIsoDate(periode.til), id: nanoid() })
-            );
-          } else {
-            state.egenmeldingsperioder[forhold.arbeidsforholdId] = [{ id: nanoid() }];
-          }
-        });
+        if (arbeidsforhold && arbeidsforhold.length > 0) {
+          arbeidsforhold.forEach((forhold) => {
+            if (egenmeldingsperioder && egenmeldingsperioder[forhold.arbeidsforholdId]) {
+              state.egenmeldingsperioder[forhold.arbeidsforholdId] = egenmeldingsperioder[forhold.arbeidsforholdId].map(
+                (periode) => ({ fra: parseIsoDate(periode.fra), til: parseIsoDate(periode.til), id: nanoid() })
+              );
+            } else {
+              state.egenmeldingsperioder[forhold.arbeidsforholdId] = [{ id: nanoid() }];
+            }
+          });
+        }
 
         return state;
       })

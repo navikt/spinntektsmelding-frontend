@@ -42,7 +42,7 @@ export default function Bruttoinntekt() {
       <div className={lokalStyles.belopwrapper}>
         {!endreMaanedsinntekt && (
           <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
-            {(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
+            {(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
           </TextLabel>
         )}
         {endreMaanedsinntekt && (
@@ -51,7 +51,9 @@ export default function Bruttoinntekt() {
               <TextField
                 label='Inntekt per måned'
                 onChange={(event) => setNyMaanedsinntekt(event.target.value)}
-                defaultValue={formatCurrency(bruttoinntekt ? bruttoinntekt.bruttoInntekt : 0)}
+                defaultValue={formatCurrency(
+                  bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
+                )}
                 id='bruttoinntekt-endringsbelop'
                 error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
                 className={lokalStyles.bruttoinntektendringsbelop}
