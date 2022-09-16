@@ -79,7 +79,15 @@ const Home: NextPage = () => {
     if (errorStatus.errorTexts) {
       fyllFeilmeldinger(errorStatus.errorTexts);
     } else {
-      // useSWR   Send inn!
+      // useSWR   Send inn!>
+      const fetchData = async () => {
+        const data = await fetch(environment.innsendingInntektsmeldingAPI, {
+          method: 'POST',
+          body: JSON.stringify(skjemaData)
+        });
+
+        console.log(data); // eslint-disable-line
+      };
     }
 
     console.log(skjemaData); // eslint-disable-line

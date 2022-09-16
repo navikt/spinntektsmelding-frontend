@@ -45,6 +45,31 @@ class Environment {
     }
   }
 
+  get innsendingInntektsmeldingAPI() {
+    switch (this.environmentMode) {
+      case EnvironmentType.PROD:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+      case EnvironmentType.PREPROD_DEV:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+      case EnvironmentType.TESTCAFE:
+        return 'http://localhost:3000/not-in-use';
+      default:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+    }
+  }
+
+  get inntektsmeldingAPI() {
+    switch (this.environmentMode) {
+      case EnvironmentType.PROD:
+        return 'https://fritakagp.dev.nav.no/api/v1/arbeidsgivere';
+      case EnvironmentType.PREPROD_DEV:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+      case EnvironmentType.TESTCAFE:
+        return 'http://localhost:3000/not-in-use';
+      default:
+        return 'http://localhost:3000/not-in-use';
+    }
+  }
   get baseUrl() {
     return '/im-dialog';
   }
