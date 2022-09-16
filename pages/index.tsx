@@ -41,6 +41,7 @@ import useLoginRedirectPath from '../utils/useLoginRedirectPath';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
+const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 
 const Home: NextPage = () => {
   const setRoute = useRoute();
@@ -76,21 +77,27 @@ const Home: NextPage = () => {
 
     const errorStatus = submitInntektsmelding(skjemaData);
 
-    if (errorStatus.errorTexts) {
+    if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
       fyllFeilmeldinger(errorStatus.errorTexts);
     } else {
       // useSWR   Send inn!>
       const fetchData = async () => {
-        const data = await fetch(environment.innsendingInntektsmeldingAPI, {
+        const data = await fetch(INNSENDING_URL, {
           method: 'POST',
-          body: JSON.stringify(skjemaData)
+          body: JSON.stringify(skjemaData),
+          headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }
         });
-
         console.log(data); // eslint-disable-line
       };
+      fetchData();
+      console.log('Skjer, a?'); // eslint-disable-line
     }
 
     console.log(skjemaData); // eslint-disable-line
+    console.log(errorStatus.errorTexts); // eslint-disable-line
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {

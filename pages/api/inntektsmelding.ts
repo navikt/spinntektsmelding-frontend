@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../config/environment';
 
-import org from '../../mockdata/testOrganisasjoner';
+import org from '../../mockdata/formData';
 
 const basePath = environment.inntektsmeldingAPI;
 
@@ -43,16 +43,16 @@ export const config = {
 const handler = (
   req: NextApiRequest,
   res: NextApiResponse<Data> //res.status(200).json(org);
-) =>
-  httpProxyMiddleware(req, res, {
-    target: basePath,
-    onProxyInit: handleProxyInit,
-    pathRewrite: [
-      {
-        patternStr: '^/api/inntektsmelding',
-        replaceStr: ''
-      }
-    ]
-  });
+) => res.status(200).json(org);
+// httpProxyMiddleware(req, res, {
+//   target: basePath,
+//   onProxyInit: handleProxyInit,
+//   pathRewrite: [
+//     {
+//       patternStr: '^/api/inntektsmelding',
+//       replaceStr: ''
+//     }
+//   ]
+// });
 
 export default handler;
