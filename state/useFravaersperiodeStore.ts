@@ -175,7 +175,7 @@ const useFravaersperiodeStore: StateCreator<
   initFravaersperiode: (mottatFravaersperioder: { [key: string]: Array<MottattPeriode> }) =>
     set(
       produce((state) => {
-        const fravaersKeys = Object.keys(mottatFravaersperioder) || [];
+        const fravaersKeys = mottatFravaersperioder ? Object.keys(mottatFravaersperioder) : [];
 
         if (fravaersKeys.length > 0) {
           state.fravaersperiode = {};
@@ -187,7 +187,20 @@ const useFravaersperiodeStore: StateCreator<
             }));
             state.fravaersperiode![fKey] = tmpPeriode;
           });
+        } else {
+          const nyFravaersperiode: Periode = { id: nanoid() };
+          if (state.fravaersperiode) {
+            if (!state.fravaersperiode['arbeidsforholdId']) {
+              state.fravaersperiode['arbeidsforholdId'] = [];
+            }
+          } else {
+            state.fravaersperiode = {};
+            state.fravaersperiode['arbeidsforholdId'] = [];
+          }
+          state.fravaersperiode['arbeidsforholdId'].push(nyFravaersperiode);
         }
+
+        console.log('Fraværsperiode' + state.fravaersperiode); // eslint-disable-row
 
         state.opprinneligFravaersperiode = structuredClone({ ...state.fravaersperiode });
 

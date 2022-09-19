@@ -44,11 +44,25 @@ export default function FravaerEnkeltAnsattforhold({
     tilbakestillFravaersperiode(arbeidsforholdId);
   };
 
+  const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
+    event.preventDefault();
+    leggTilFravaersperiode(arbeidsforholdId);
+  };
+
   const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     endreFravaersperiode();
     setEndreSykemelding(!endreSykemelding);
   };
+  debugger; // eslint-disable-line
+  if (
+    !harFlereArbeidsforhold &&
+    fravaersperiode?.['arbeidsforholdId'] &&
+    !fravaersperiode['arbeidsforholdId'][0].fra &&
+    !endreSykemelding
+  ) {
+    setEndreSykemelding(true);
+  }
 
   return (
     <>
@@ -152,7 +166,7 @@ export default function FravaerEnkeltAnsattforhold({
           <Button
             variant='secondary'
             className={styles.kontrollerknapp}
-            onClick={() => leggTilFravaersperiode(arbeidsforhold.arbeidsforholdId)}
+            onClick={(event) => clickLeggTilFravaersperiodeHandler(event, arbeidsforhold.arbeidsforholdId)}
           >
             Legg til periode
           </Button>
