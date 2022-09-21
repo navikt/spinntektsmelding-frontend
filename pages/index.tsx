@@ -48,7 +48,6 @@ const Home: NextPage = () => {
   const setRoute = useRoute();
   const router = useRouter();
   const { data: arbeidsgivere, error } = useSWR<Array<Organisasjon>>(ARBEIDSGIVER_URL, dataFetcherArbeidsgivere);
-  const { data: skjemadata, error: skjemadatafeil } = useSWR<MottattData>(SKJEMADATA_URL, dataFetcher);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
