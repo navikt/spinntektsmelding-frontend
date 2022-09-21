@@ -61,9 +61,9 @@ class Environment {
   get inntektsmeldingAPI() {
     switch (this.environmentMode) {
       case EnvironmentType.PROD:
-        return 'https://fritakagp.dev.nav.no/api/v1/arbeidsgivere';
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/preutfyll';
       case EnvironmentType.PREPROD_DEV:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/preutfyll';
       case EnvironmentType.TESTCAFE:
         return 'http://localhost:3000/not-in-use';
       default:

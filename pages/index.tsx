@@ -38,6 +38,7 @@ import dataFetcher from '../utils/dataFetcher';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
 import dataFetcherArbeidsgivere from '../utils/dataFetcherArbeidsgivere';
 import useLoginRedirectPath from '../utils/useLoginRedirectPath';
+import useFetchInntektskjema from '../state/useFetchInntektskjema';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
@@ -56,6 +57,7 @@ const Home: NextPage = () => {
   const behandlingsperiode = useBoundStore((state) => state.behandlingsperiode);
 
   const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
+
   const loginPath = useLoginRedirectPath();
 
   const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
@@ -70,6 +72,8 @@ const Home: NextPage = () => {
   const initState = useStateInit();
   const fyllInnsending = useFyllInnsending();
 
+  const hentSkjemadata = useFetchInntektskjema('');
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -82,7 +86,7 @@ const Home: NextPage = () => {
     } else {
       fyllFeilmeldinger([]);
       // useSWR   Send inn!>
-      const fetchData = async () => {
+      const postData = async () => {
         const data = await fetch(INNSENDING_URL, {
           method: 'POST',
           body: JSON.stringify(skjemaData),
@@ -93,7 +97,7 @@ const Home: NextPage = () => {
         });
         console.log(data); // eslint-disable-line
       };
-      fetchData();
+      postData();
     }
 
     console.log(skjemaData); // eslint-disable-line
@@ -110,13 +114,22 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (skjemadata) {
-      initState(skjemadata);
+    const hentData = async () => {
+      try {
+        const skjemadata = await hentSkjemadata(SKJEMADATA_URL, '10107400090', '810007842');
 
-      setRoute(skjemadata.orgnrUnderenhet);
-    }
+        if (skjemadata) {
+          initState(skjemadata);
+
+          setRoute(skjemadata.orgnrUnderenhet);
+        }
+      } catch (error) {
+        leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
+      }
+    };
+    hentData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [skjemadata]);
+  }, []);
 
   useEffect(() => {
     console.log('error', error); // eslint-disable-line
