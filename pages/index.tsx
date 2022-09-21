@@ -142,18 +142,6 @@ const Home: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
-  useEffect(() => {
-    console.log('error', skjemadatafeil); // eslint-disable-line
-    if (skjemadatafeil?.status === 401) {
-      router.push(environment.loginServiceUrl);
-    }
-
-    if (error?.status === 500) {
-      leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [skjemadatafeil]);
-
   return (
     <div className={styles.container}>
       <Head>
