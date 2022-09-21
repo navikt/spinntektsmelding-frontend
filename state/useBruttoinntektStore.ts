@@ -69,6 +69,22 @@ const useBruttoinntektStore: StateCreator<
         return state;
       })
     ),
+  setNyMaanedsinntektBlanktSkjema: (belop: string) =>
+    set(
+      produce((state) => {
+        state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
+        state.bruttoinntekt.manueltKorrigert = false;
+        state.bruttoinntekt.bekreftet = true;
+        if (state.bruttoinntekt.bruttoInntekt && state.bruttoinntekt.bruttoInntekt > 0) {
+          state = slettFeilmelding(state, 'bruttoinntekt-endringsbelop');
+          state = slettFeilmelding(state, 'bruttoinntektbekreft');
+        } else {
+          state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
+        }
+
+        return state;
+      })
+    ),
   setNyArbeidsforholdMaanedsinntekt: (arbeidsforholdId, belop) => {
     const inntektsprosent: { [key: string]: number } | {} = get().inntektsprosent || {};
     const ikopi = { ...inntektsprosent };

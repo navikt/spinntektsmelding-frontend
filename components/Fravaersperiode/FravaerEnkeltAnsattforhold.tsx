@@ -54,7 +54,7 @@ export default function FravaerEnkeltAnsattforhold({
     endreFravaersperiode();
     setEndreSykemelding(!endreSykemelding);
   };
-  debugger; // eslint-disable-line
+
   if (
     !harFlereArbeidsforhold &&
     fravaersperiode?.['arbeidsforholdId'] &&

@@ -27,135 +27,175 @@ export default function Bruttoinntekt() {
   const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
   const setNyArbeidsforholdMaanedsinntekt = useBoundStore((state) => state.setNyArbeidsforholdMaanedsinntekt);
   const alleArbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
+  const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
 
   const harFlereArbeidsforhold = alleArbeidsforhold && alleArbeidsforhold.length > 1;
   const arbeidsforhold = aktiveArbeidsforhold();
-  return (
-    <>
-      <Heading3>Bruttoinntekt siste 3 måneder</Heading3>
-      <BodyLong>
-        Vi har brukt opplysninger fra skatteetaten (a-ordningen) for å anslå månedsinntekten her. Desom det ikke stemmer
-        må dere endre dette. Dersom inntekten har gått opp pga. varig lønnsforhøyelse, og ikke for eksempel
-        representerer uforutsett overtid må dette korrigeres.
-      </BodyLong>
-      <TextLabel className={styles.tbmargin}>Vi har registrert en inntekt på</TextLabel>
-      <div className={lokalStyles.belopwrapper}>
-        {!endreMaanedsinntekt && (
-          <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
-            {(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
-          </TextLabel>
-        )}
-        {endreMaanedsinntekt && (
-          <div className={lokalStyles.endremaaanedsinntekt}>
-            <div>
-              <TextField
-                label='Inntekt per måned'
-                onChange={(event) => setNyMaanedsinntekt(event.target.value)}
-                defaultValue={formatCurrency(
-                  bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
-                )}
-                id='bruttoinntekt-endringsbelop'
-                error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
-                className={lokalStyles.bruttoinntektendringsbelop}
-              />
-            </div>
-            <div>
-              <Select
-                label='Forklaring til endring'
-                onChange={(event) => setEndringsaarsak(event.target.value)}
-                id='bruttoinntekt-endringsaarsak'
-                error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
-              >
-                <option value=''>Velg endringsårsak</option>
-                <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
-                <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
-                <option value='Losji'>Losji</option>
-                <option value='KostDøgn'>Kost (døgn)</option>
-                <option value='Besøksreiser'>Besøksreiser i hjemmet annet</option>
-                <option value='Kostbesparelse'>Kostbesparelse i hjemmet</option>
-                <option value='Rentefordel'>Rentefordel lån</option>
-                <option value='Bil'>Bil</option>
-                <option value='KostDager'>Kost (dager)</option>
-                <option value='Bolig'>Bolig</option>
-                <option value='Forsikringer'>Skattepliktig del av visse forsikringer</option>
-                <option value='FriTransport'>Fri transport</option>
-                <option value='Opsjoner'>Opsjoner</option>
-                <option value='Barnehageplass'>Tilskudd barnehageplass</option>
-                <option value='YrkesbilKilometer'>Yrkesbil tjenestebehov kilometer</option>
-                <option value='YrkesbilListepris'>Yrkesbil tjenestebehov listepris</option>
-                <option value='UtenlandskPensjonsordning'>Innbetaling utenlandsk pensjonsordning</option>
-              </Select>
-            </div>
-            <div>
-              <Button
-                variant='tertiary'
-                className={lokalStyles.kontrollerknapp}
-                onClick={clickTilbakestillMaanedsinntektHandler}
-              >
-                Tilbakestill
-              </Button>
-            </div>
-          </div>
-        )}
-        {!endreMaanedsinntekt && (
-          <Button variant='secondary' className={lokalStyles.endrebutton} onClick={() => setEndreMaanedsinntekt(true)}>
-            Endre
-          </Button>
-        )}
-      </div>
-      {arbeidsforhold && harFlereArbeidsforhold && (
-        <>
-          {arbeidsforhold.map((forhold) => (
-            <div key={forhold.arbeidsforholdId} className={lokalStyles.arbeidsprosent}>
-              <Heading3>Estimert bruttoinntekt - {forhold.arbeidsforhold}</Heading3>
-              <div className={lokalStyles.prosentbody}>
-                <BodyShort className={lokalStyles.prosentbodytext}>
-                  Basert på <b>{forhold.stillingsprosent}%</b> stilling er inntekten estimert til{' '}
-                  {formatCurrency(lonnProsent(bruttoinntekt.bruttoInntekt, forhold.stillingsprosent))} kr
-                </BodyShort>
+
+  if (tidligereinntekt) {
+    return (
+      <>
+        <Heading3>Bruttoinntekt siste 3 måneder</Heading3>
+        <BodyLong>
+          Vi har brukt opplysninger fra skatteetaten (a-ordningen) for å anslå månedsinntekten her. Desom det ikke
+          stemmer må dere endre dette. Dersom inntekten har gått opp pga. varig lønnsforhøyelse, og ikke for eksempel
+          representerer uforutsett overtid må dette korrigeres.
+        </BodyLong>
+        <TextLabel className={styles.tbmargin}>Vi har registrert en inntekt på</TextLabel>
+        <div className={lokalStyles.belopwrapper}>
+          {!endreMaanedsinntekt && (
+            <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
+              {(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
+            </TextLabel>
+          )}
+          {endreMaanedsinntekt && (
+            <div className={lokalStyles.endremaaanedsinntekt}>
+              <div>
                 <TextField
-                  label={`Inntekt - ${forhold.arbeidsforhold}`}
-                  onChange={(event) => setNyArbeidsforholdMaanedsinntekt(forhold.arbeidsforholdId, event.target.value)}
-                  id={`bruttoinntekt-endringsbelop-${forhold.arbeidsforholdId}`}
-                  error={visFeilmeldingsTekst(`bruttoinntekt-endringsbelop-${forhold.arbeidsforholdId}`)}
-                  className={lokalStyles.bruttoinntektendringsbelopenkel}
+                  label='Inntekt per måned'
+                  onChange={(event) => setNyMaanedsinntekt(event.target.value)}
+                  defaultValue={formatCurrency(
+                    bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
+                  )}
+                  id='bruttoinntekt-endringsbelop'
+                  error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
+                  className={lokalStyles.bruttoinntektendringsbelop}
                 />
               </div>
+              <div>
+                <Select
+                  label='Forklaring til endring'
+                  onChange={(event) => setEndringsaarsak(event.target.value)}
+                  id='bruttoinntekt-endringsaarsak'
+                  error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
+                >
+                  <option value=''>Velg endringsårsak</option>
+                  <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
+                  <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
+                  <option value='Losji'>Losji</option>
+                  <option value='KostDøgn'>Kost (døgn)</option>
+                  <option value='Besøksreiser'>Besøksreiser i hjemmet annet</option>
+                  <option value='Kostbesparelse'>Kostbesparelse i hjemmet</option>
+                  <option value='Rentefordel'>Rentefordel lån</option>
+                  <option value='Bil'>Bil</option>
+                  <option value='KostDager'>Kost (dager)</option>
+                  <option value='Bolig'>Bolig</option>
+                  <option value='Forsikringer'>Skattepliktig del av visse forsikringer</option>
+                  <option value='FriTransport'>Fri transport</option>
+                  <option value='Opsjoner'>Opsjoner</option>
+                  <option value='Barnehageplass'>Tilskudd barnehageplass</option>
+                  <option value='YrkesbilKilometer'>Yrkesbil tjenestebehov kilometer</option>
+                  <option value='YrkesbilListepris'>Yrkesbil tjenestebehov listepris</option>
+                  <option value='UtenlandskPensjonsordning'>Innbetaling utenlandsk pensjonsordning</option>
+                </Select>
+              </div>
+              <div>
+                <Button
+                  variant='tertiary'
+                  className={lokalStyles.kontrollerknapp}
+                  onClick={clickTilbakestillMaanedsinntektHandler}
+                >
+                  Tilbakestill
+                </Button>
+              </div>
             </div>
-          ))}
-        </>
-      )}
-      <TextLabel className={styles.tbmargin}>Inntekten er basert på følgende måneder</TextLabel>
-      <table>
-        <tbody>
-          {tidligereinntekt?.map((inntekt) => (
-            <tr key={inntekt.id}>
-              <td className={lokalStyles.maanedsnavn}>{inntekt.maanedsnavn}:</td>
-              <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {!tidligereinntekt && <BodyShort>Klarer ikke å finne inntekt for de 3 siste månedene.</BodyShort>}
+          )}
+          {!endreMaanedsinntekt && (
+            <Button
+              variant='secondary'
+              className={lokalStyles.endrebutton}
+              onClick={() => setEndreMaanedsinntekt(true)}
+            >
+              Endre
+            </Button>
+          )}
+        </div>
+        {arbeidsforhold && harFlereArbeidsforhold && (
+          <>
+            {arbeidsforhold.map((forhold) => (
+              <div key={forhold.arbeidsforholdId} className={lokalStyles.arbeidsprosent}>
+                <Heading3>Estimert bruttoinntekt - {forhold.arbeidsforhold}</Heading3>
+                <div className={lokalStyles.prosentbody}>
+                  <BodyShort className={lokalStyles.prosentbodytext}>
+                    Basert på <b>{forhold.stillingsprosent}%</b> stilling er inntekten estimert til{' '}
+                    {formatCurrency(lonnProsent(bruttoinntekt.bruttoInntekt, forhold.stillingsprosent))} kr
+                  </BodyShort>
+                  <TextField
+                    label={`Inntekt - ${forhold.arbeidsforhold}`}
+                    onChange={(event) =>
+                      setNyArbeidsforholdMaanedsinntekt(forhold.arbeidsforholdId, event.target.value)
+                    }
+                    id={`bruttoinntekt-endringsbelop-${forhold.arbeidsforholdId}`}
+                    error={visFeilmeldingsTekst(`bruttoinntekt-endringsbelop-${forhold.arbeidsforholdId}`)}
+                    className={lokalStyles.bruttoinntektendringsbelopenkel}
+                  />
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+        {tidligereinntekt && (
+          <>
+            <TextLabel className={styles.tbmargin}>Inntekten er basert på følgende måneder</TextLabel>
+            <table>
+              <tbody>
+                {tidligereinntekt?.map((inntekt) => (
+                  <tr key={inntekt.id}>
+                    <td className={lokalStyles.maanedsnavn}>{inntekt.maanedsnavn}:</td>
+                    <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
 
-      <BodyLong className={styles.tbmargin}>
-        <strong>
-          Beløpet er basert på en beregning av siste tre måneders lønn. Hvis beløpet ikke er korrekt må dere endre
-          dette. Det kan være at den ansatte nylig har fått lønnsøkning, redusering i arbeidstid eller har andre
-          endringer i lønn som vi ikke registrert. Beregningen er gjort etter{' '}
-          <Link href='#'>folketrygdloven $8-28.</Link>
-        </strong>
-      </BodyLong>
-      <CheckboxGroup size='medium' error={visFeilmeldingsTekst('bruttoinntektbekreft')} legend=''>
-        <Checkbox
-          onClick={(event) => bekreftKorrektInntekt(event.currentTarget.checked)}
-          id='bruttoinntektbekreft'
-          error={visFeilmelding('bruttoinntektbekreft')}
-          value='Ja'
-        >
-          Jeg bekrefter at registrert inntekt er korrekt
-        </Checkbox>
-      </CheckboxGroup>
-    </>
-  );
+        <BodyLong className={styles.tbmargin}>
+          <strong>
+            Beløpet er basert på en beregning av siste tre måneders lønn. Hvis beløpet ikke er korrekt må dere endre
+            dette. Det kan være at den ansatte nylig har fått lønnsøkning, redusering i arbeidstid eller har andre
+            endringer i lønn som vi ikke registrert. Beregningen er gjort etter{' '}
+            <Link href='#'>folketrygdloven $8-28.</Link>
+          </strong>
+        </BodyLong>
+        <CheckboxGroup size='medium' error={visFeilmeldingsTekst('bruttoinntektbekreft')} legend=''>
+          <Checkbox
+            onClick={(event) => bekreftKorrektInntekt(event.currentTarget.checked)}
+            id='bruttoinntektbekreft'
+            error={visFeilmelding('bruttoinntektbekreft')}
+            value='Ja'
+          >
+            Jeg bekrefter at registrert inntekt er korrekt
+          </Checkbox>
+        </CheckboxGroup>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Heading3>Bruttoinntekt siste 3 måneder</Heading3>
+        <BodyLong>
+          Angi bruttoinntekt som snitt av siste tre måneders lønn. Dersom inntekten har gått opp pga. varig
+          lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes som
+          høyere enn snitt av siste tre måneder..
+        </BodyLong>
+        <div className={lokalStyles.prosentbody}>
+          <TextField
+            label='Gjennomsnittsinntekt per måned'
+            onChange={(event) => setNyMaanedsinntektBlanktSkjema(event.target.value)}
+            defaultValue={formatCurrency(
+              bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
+            )}
+            id='bruttoinntekt-endringsbelop'
+            error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
+            className={lokalStyles.bruttoinntektbelop}
+          />
+        </div>
+        <BodyLong className={lokalStyles.bruttoinntektbelopbeskrivelse}>
+          Vanligvis skal beløpet baseres på et gjennomsnitt av siste tre måneders lønn. Unntak kan være at den ansatte
+          nylig har fått lønnsøkning, redusering i arbeidstid eller har andre endringer i lønn.
+        </BodyLong>
+      </>
+    );
+  }
 }

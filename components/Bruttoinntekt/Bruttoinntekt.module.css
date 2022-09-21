@@ -27,12 +27,21 @@
   height: auto;
 }
 
+
 .bruttoinntektendringsbelop > label {
   max-height: var(--navds-font-line-height-large);
 }
 
 .bruttoinntektendringsbelop > input {
   margin-bottom: auto;
+}
+
+.bruttoinntektbelop {
+  margin: 1rem 0 .5rem;
+}
+
+.bruttoinntektbelop  > input {
+  max-width: 10rem;
 }
 
 .kontrollerknapp {
@@ -62,4 +71,10 @@
 
 .bruttoinntektendringsbelopenkel > input{
   max-width: 10rem;
+}
+
+.bruttoinntektbelopbeskrivelse {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  font-weight: var(--navds-font-weight-bold);
 }

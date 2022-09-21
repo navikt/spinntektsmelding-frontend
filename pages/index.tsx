@@ -80,6 +80,7 @@ const Home: NextPage = () => {
     if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
       fyllFeilmeldinger(errorStatus.errorTexts);
     } else {
+      fyllFeilmeldinger([]);
       // useSWR   Send inn!>
       const fetchData = async () => {
         const data = await fetch(INNSENDING_URL, {
@@ -93,11 +94,10 @@ const Home: NextPage = () => {
         console.log(data); // eslint-disable-line
       };
       fetchData();
-      console.log('Skjer, a?'); // eslint-disable-line
     }
 
     console.log(skjemaData); // eslint-disable-line
-    console.log(errorStatus.errorTexts); // eslint-disable-line
+    console.log('errorStatus', errorStatus.errorTexts); // eslint-disable-line
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {

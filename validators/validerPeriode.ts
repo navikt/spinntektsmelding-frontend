@@ -1,3 +1,5 @@
+import { format, isValid, parse } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import { Periode } from '../state/state';
 import { ValiderResultat } from '../utils/submitInntektsmelding';
 
@@ -18,14 +20,15 @@ export default function validerPeriode(perioder?: Array<Periode>): Array<Valider
     });
   } else {
     perioder.forEach((periode) => {
-      if (!periode.fra) {
+      if (!periode.fra || !isValid(periode.fra)) {
         feilkoder.push({
           felt: `fra-${periode.id}`,
           code: PeriodeFeilkode.MANGLER_FRA
         });
       }
 
-      if (!periode.til) {
+      if (!periode.til || !isValid(periode.til)) {
+        console.log('periode.til', periode.til); // eslint-disable-line
         feilkoder.push({
           felt: `til-${periode.id}`,
           code: PeriodeFeilkode.MANGLER_TIL
