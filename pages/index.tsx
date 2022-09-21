@@ -115,6 +115,7 @@ const Home: NextPage = () => {
 
       setRoute(skjemadata.orgnrUnderenhet);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skjemadata]);
 
   useEffect(() => {
@@ -126,6 +127,7 @@ const Home: NextPage = () => {
     if (error?.status === 500) {
       leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_ARBEIDSGIVER);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   useEffect(() => {
@@ -137,6 +139,7 @@ const Home: NextPage = () => {
     if (error?.status === 500) {
       leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skjemadatafeil]);
 
   return (

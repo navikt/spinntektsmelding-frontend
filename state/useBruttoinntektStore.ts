@@ -20,6 +20,7 @@ export interface BruttoinntektState {
   inntektsprosent?: { [key: string]: number };
   inntektsprosentEndret: boolean;
   setNyMaanedsinntekt: (belop: string) => void;
+  setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
   setNyArbeidsforholdMaanedsinntekt: (arbeidsforholdId: string, belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
   tilbakestillMaanedsinntekt: () => void;
