@@ -115,7 +115,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     const hentData = async () => {
       try {
-        const skjemadata = await hentSkjemadata(SKJEMADATA_URL, '10107400090', '810007842');
+        const skjemadata = await hentSkjemadata(SKJEMADATA_URL, '16120101181', '811307602');
 
         if (skjemadata) {
           initState(skjemadata);
