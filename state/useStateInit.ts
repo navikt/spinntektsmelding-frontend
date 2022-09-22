@@ -11,9 +11,7 @@ export default function useStateInit() {
 
   return (jsonData: MottattData) => {
     initArbeidsforhold(jsonData.arbeidsforhold);
-
     initFravaersperiode(jsonData.fravaersperiode);
-
     initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekt);
     initEgenmeldingsperiode(jsonData.arbeidsforhold, jsonData.egenmeldingsperioder);
     initPerson(jsonData.navn, jsonData.identitetsnummer, jsonData.orgnrUnderenhet);

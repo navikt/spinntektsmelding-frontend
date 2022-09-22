@@ -13,6 +13,8 @@ import { BehandlingsdagerState } from './useBehandlingsdagerStore';
 import { BruttoinntektState } from './useBruttoinntektStore';
 import { EgenmeldingState } from './useEgenmeldingStore';
 import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
+import { is } from 'immer/dist/internal';
+import { isArray } from 'util';
 
 export interface FravaersperiodeState {
   fravaersperiode?: { [key: string]: Array<Periode> };
@@ -176,16 +178,22 @@ const useFravaersperiodeStore: StateCreator<
     set(
       produce((state) => {
         const fravaersKeys = mottatFravaersperioder ? Object.keys(mottatFravaersperioder) : [];
-
+        console.log('fravaersKeys', fravaersKeys); // eslint-disable-line
         if (fravaersKeys.length > 0) {
           state.fravaersperiode = {};
           fravaersKeys.forEach((fKey: string) => {
-            const tmpPeriode: Array<Periode> = mottatFravaersperioder[fKey].map((periode: MottattPeriode) => ({
-              fra: parseISO(periode.fra),
-              til: parseISO(periode.til),
-              id: nanoid()
-            }));
-            state.fravaersperiode![fKey] = tmpPeriode;
+            console.log('fKey', fKey); // eslint-disable-line
+            console.log('mottatFravaersperioder[fKey]', mottatFravaersperioder[fKey]); // eslint-disable-line
+            if (Array.isArray(mottatFravaersperioder[fKey])) {
+              const tmpPeriode: Array<Periode> = mottatFravaersperioder[fKey].map((periode: MottattPeriode) => ({
+                fra: parseISO(periode.fra),
+                til: parseISO(periode.til),
+                id: nanoid()
+              }));
+              console.log('tmpPeriode', tmpPeriode); // eslint-disable-line
+
+              state.fravaersperiode![fKey] = tmpPeriode;
+            }
           });
         } else {
           const nyFravaersperiode: Periode = { id: nanoid() };
