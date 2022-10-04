@@ -9,6 +9,10 @@ export default function Fravaersperiode() {
   const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
   if (!arbeidsforhold || !fravaersperiode) return null;
 
+  console.log('aktiveArbeidsforhold', aktiveArbeidsforhold());
+
+  console.log('fravaersperiode liste', fravaersperiode);
+
   return (
     <>
       <Heading3>Fraværsperiode</Heading3>

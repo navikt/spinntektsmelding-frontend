@@ -7,10 +7,11 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { useState } from 'react';
 import nb from 'date-fns/locale/nb';
-import { eachMonthOfInterval, getWeek } from 'date-fns';
+import { eachMonthOfInterval } from 'date-fns';
 import { Alert } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import Skillelinje from '../Skillelinje/Skillelinje';
+import ukeNr from '../../utils/ukeNr';
 
 export default function Behandlingsdager() {
   const [behandlingsdager, behandlingsperiode, setBehandlingsdager] = useBoundStore((state) => [
@@ -26,7 +27,8 @@ export default function Behandlingsdager() {
   });
 
   const handleSelectDays = (selectedDays: Date[] | undefined) => {
-    const weeks: Array<number> | undefined = selectedDays?.map((day) => getWeek(day));
+    const weeks: Array<number> | undefined = selectedDays?.map((day) => ukeNr(day));
+
     const uniqueWeeks: Array<number> = Array.from(new Set(weeks));
 
     if (weeks && weeks.length !== uniqueWeeks.length) {

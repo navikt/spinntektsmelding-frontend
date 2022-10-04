@@ -53,8 +53,6 @@ const Home: NextPage = () => {
 
   const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
 
-  const behandlingsperiode = useBoundStore((state) => state.behandlingsperiode);
-
   const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
 
   const loginPath = useLoginRedirectPath();
@@ -175,12 +173,8 @@ const Home: NextPage = () => {
                 </>
               )}
 
-              {!behandlingsperiode && (
-                <>
-                  <Skillelinje />
-                  <Fravaersperiode />
-                </>
-              )}
+              <Skillelinje />
+              <Fravaersperiode />
 
               <Skillelinje />
 

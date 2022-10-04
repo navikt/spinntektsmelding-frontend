@@ -64,6 +64,8 @@ export default function FravaerEnkeltAnsattforhold({
     setEndreSykemelding(true);
   }
 
+  console.log('fravaersperiode', fravaersperiode);
+
   return (
     <>
       {harFlereArbeidsforhold && (

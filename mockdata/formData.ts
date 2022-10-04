@@ -23,17 +23,61 @@
 //   sammeFravaersperiode: false
 // };
 
+/***************************************** */
+
+// const formData = {
+//   navn: 'Ola Normann',
+//   identitetsnummer: '10107400090',
+//   virksomhetsnavn: 'Norge AS',
+//   orgnrUnderenhet: '810007842',
+//   fravaersperiode: {
+//     '1': [
+//       {
+//         fra: '2022-01-01',
+//         til: '2022-01-02'
+//       }
+//     ]
+//   },
+//   egenmeldingsperioder: [
+//     {
+//       fra: '2022-01-01',
+//       til: '2022-01-02'
+//     }
+//   ],
+//   bruttoinntekt: 1000,
+//   tidligereinntekt: [
+//     {
+//       maanedsnavn: 'Januar',
+//       inntekt: 1
+//     }
+//   ],
+//   // behandlingsdager: ['2022-01-01'],
+//   // behandlingsperiode: {
+//   //   fra: '2022-01-01',
+//   //   til: '2022-01-02'
+//   // },
+//   arbeidsforhold: [
+//     {
+//       arbeidsforholdId: '1',
+//       arbeidsforhold: 'test',
+//       stillingsprosent: 100
+//     }
+//   ]
+// };
+
+/*******************************/
+
 const formData = {
   navn: 'Ola Normann',
   identitetsnummer: '10107400090',
   virksomhetsnavn: 'Norge AS',
   orgnrUnderenhet: '810007842',
-  fravaersperiode: [
-    {
+  fravaersperiode: {
+    '1': {
       fra: '2022-01-01',
       til: '2022-01-02'
     }
-  ],
+  },
   egenmeldingsperioder: [
     {
       fra: '2022-01-01',

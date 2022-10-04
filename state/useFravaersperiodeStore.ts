@@ -193,6 +193,17 @@ const useFravaersperiodeStore: StateCreator<
               console.log('tmpPeriode', tmpPeriode); // eslint-disable-line
 
               state.fravaersperiode![fKey] = tmpPeriode;
+            } else {
+              const tmpPeriode: Array<Periode> = [
+                {
+                  fra: parseISO(mottatFravaersperioder[fKey].fra),
+                  til: parseISO(mottatFravaersperioder[fKey].til),
+                  id: nanoid()
+                }
+              ];
+              console.log('tmpPeriode', tmpPeriode); // eslint-disable-line
+
+              state.fravaersperiode![fKey] = tmpPeriode;
             }
           });
         } else {
