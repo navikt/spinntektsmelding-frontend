@@ -178,19 +178,16 @@ const useFravaersperiodeStore: StateCreator<
     set(
       produce((state) => {
         const fravaersKeys = mottatFravaersperioder ? Object.keys(mottatFravaersperioder) : [];
-        console.log('fravaersKeys', fravaersKeys); // eslint-disable-line
+
         if (fravaersKeys.length > 0) {
           state.fravaersperiode = {};
           fravaersKeys.forEach((fKey: string) => {
-            console.log('fKey', fKey); // eslint-disable-line
-            console.log('mottatFravaersperioder[fKey]', mottatFravaersperioder[fKey]); // eslint-disable-line
             if (Array.isArray(mottatFravaersperioder[fKey])) {
               const tmpPeriode: Array<Periode> = mottatFravaersperioder[fKey].map((periode: MottattPeriode) => ({
                 fra: parseISO(periode.fra),
                 til: parseISO(periode.til),
                 id: nanoid()
               }));
-              console.log('tmpPeriode', tmpPeriode); // eslint-disable-line
 
               state.fravaersperiode![fKey] = tmpPeriode;
             } else {
@@ -201,7 +198,6 @@ const useFravaersperiodeStore: StateCreator<
                   id: nanoid()
                 }
               ];
-              console.log('tmpPeriode', tmpPeriode); // eslint-disable-line
 
               state.fravaersperiode![fKey] = tmpPeriode;
             }
@@ -218,8 +214,6 @@ const useFravaersperiodeStore: StateCreator<
           }
           state.fravaersperiode['arbeidsforholdId'].push(nyFravaersperiode);
         }
-
-        console.log('Fraværsperiode' + state.fravaersperiode); // eslint-disable-row
 
         state.opprinneligFravaersperiode = structuredClone({ ...state.fravaersperiode });
 

@@ -1,4 +1,4 @@
-import { Datepicker } from '@navikt/ds-datepicker';
+// import { Datepicker } from '@navikt/ds-datepicker';
 import { useState } from 'react';
 import { IArbeidsforhold } from '../../state/state';
 import formatDate from '../../utils/formatDate';
@@ -9,8 +9,10 @@ import LabelLabel from '../LabelLabel';
 import TextLabel from '../TextLabel';
 import localStyles from './Fravaersperiode.module.css';
 import styles from '../../styles/Home.module.css';
-import { Button, Checkbox } from '@navikt/ds-react';
+import { Button, Checkbox, UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
+
+// import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from "@navikt/ds-react";
 
 interface FravaerEnkeltAnsattforholdProps {
   arbeidsforhold: IArbeidsforhold;
@@ -64,8 +66,6 @@ export default function FravaerEnkeltAnsattforhold({
     setEndreSykemelding(true);
   }
 
-  console.log('fravaersperiode', fravaersperiode);
-
   return (
     <>
       {harFlereArbeidsforhold && (
@@ -83,7 +83,7 @@ export default function FravaerEnkeltAnsattforhold({
             )}
             {endreSykemelding && (
               <div className={styles.datepickerescape}>
-                <LabelLabel htmlFor={`fra-${periode.id}`} className={styles.datepickerlabel}>
+                {/* <LabelLabel htmlFor={`fra-${periode.id}`} className={styles.datepickerlabel}>
                   Fra
                 </LabelLabel>
                 <Datepicker
@@ -94,7 +94,7 @@ export default function FravaerEnkeltAnsattforhold({
                   }
                   locale={'nb'}
                   value={formatIsoDate(periode.fra)}
-                />
+                /> */}
               </div>
             )}
 

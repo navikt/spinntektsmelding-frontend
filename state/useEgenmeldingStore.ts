@@ -15,8 +15,8 @@ import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 export interface EgenmeldingState {
   egenmeldingsperioder: { [key: string]: Array<Periode> };
   sammeEgenmeldingsperiode: boolean;
-  setEgenmeldingFraDato: (dateValue: string, periodeId: string) => void;
-  setEgenmeldingTilDato: (dateValue: string, periodeId: string) => void;
+  setEgenmeldingFraDato: (dateValue: Date | undefined, periodeId: string) => void;
+  setEgenmeldingTilDato: (dateValue: Date | undefined, periodeId: string) => void;
   slettEgenmeldingsperiode: (periodeId: string) => void;
   leggTilEgenmeldingsperiode: (arbeidsforholdId: string) => void;
   setSammeEgenmeldingsperiodeArbeidsforhold: (arbeidsforholdId: string, status: boolean) => void;
@@ -41,7 +41,7 @@ const useEgenmeldingStore: StateCreator<
 > = (set) => ({
   egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
   sammeEgenmeldingsperiode: false,
-  setEgenmeldingFraDato: (dateValue: string, periodeId: string) =>
+  setEgenmeldingFraDato: (dateValue: Date | undefined, periodeId: string) =>
     set(
       produce((state) => {
         const forholdKeys = Object.keys(state.egenmeldingsperioder);
@@ -49,7 +49,8 @@ const useEgenmeldingStore: StateCreator<
         forholdKeys.forEach((forholdKey) => {
           state.egenmeldingsperioder[forholdKey] = state.egenmeldingsperioder[forholdKey].map((periode: Periode) => {
             if (periode.id === periodeId) {
-              periode.fra = parseIsoDate(dateValue);
+              console.log('fradato', dateValue);
+              periode.fra = dateValue;
               return periode;
             }
             return periode;
@@ -61,7 +62,7 @@ const useEgenmeldingStore: StateCreator<
         return state;
       })
     ),
-  setEgenmeldingTilDato: (dateValue: string, periodeId: string) =>
+  setEgenmeldingTilDato: (dateValue?: Date, periodeId?: string) =>
     set(
       produce((state) => {
         const forholdKeys = Object.keys(state.egenmeldingsperioder);
@@ -69,7 +70,7 @@ const useEgenmeldingStore: StateCreator<
         forholdKeys.forEach((forholdKey) => {
           state.egenmeldingsperioder[forholdKey] = state.egenmeldingsperioder[forholdKey].map((periode: Periode) => {
             if (periode.id === periodeId) {
-              periode.til = parseIsoDate(dateValue);
+              periode.til = dateValue;
               return periode;
             }
             return periode;

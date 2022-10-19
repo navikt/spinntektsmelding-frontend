@@ -1,4 +1,4 @@
-import { Datepicker } from '@navikt/ds-datepicker';
+import { UNSAFE_DatePicker, UNSAFE_useRangeDatepicker } from '@navikt/ds-react';
 import { Button, Checkbox } from '@navikt/ds-react';
 import styles from '../../styles/Home.module.css';
 import localStyles from './Egenmelding.module.css';
@@ -23,6 +23,11 @@ export default function Egenmelding() {
   const sammeEgenmeldingsperiode = useBoundStore((state) => state.sammeEgenmeldingsperiode);
   const flereEnnToArbeidsforhold: boolean = !!arbeidsforhold && arbeidsforhold.length > 2;
 
+  const { datepickerProps, toInputProps, fromInputProps, selectedRange } = UNSAFE_useRangeDatepicker({
+    fromDate: new Date('Aug 23 2019')
+    // onRangeChange: console.log
+  });
+
   return (
     <div className={localStyles.egenmeldingswrapper}>
       {aktiveArbeidsforhold().map((forhold, forholdsindex) => (
@@ -39,28 +44,13 @@ export default function Egenmelding() {
               egenmeldingsperioder?.[forhold.arbeidsforholdId].map((egenmeldingsperiode, index) => {
                 return (
                   <div key={egenmeldingsperiode.id} className={styles.periodewrapper}>
-                    <div className={styles.datepickerescape}>
-                      <LabelLabel htmlFor={`fra-${egenmeldingsperiode.id}`} className={styles.datepickerlabel}>
-                        Egenmelding fra dato
-                      </LabelLabel>
-                      <Datepicker
-                        onChange={(dateString) => setEgenmeldingFraDato(dateString, egenmeldingsperiode.id)}
-                        inputLabel='Egenmelding fra dato'
-                        inputId={`fra-${egenmeldingsperiode.id}`}
-                        value={formatIsoDate(egenmeldingsperiode.fra)}
-                      />
-                    </div>
-                    <div className={styles.datepickerescape}>
-                      <LabelLabel htmlFor={`til-${egenmeldingsperiode.id}`} className={styles.datepickerlabel}>
-                        Egenmelding til dato
-                      </LabelLabel>
-                      <Datepicker
-                        inputLabel='Egenmelding til dato'
-                        inputId={`til-${egenmeldingsperiode.id}`}
-                        onChange={(dateString) => setEgenmeldingTilDato(dateString, egenmeldingsperiode.id)}
-                        locale={'nb'}
-                        value={formatIsoDate(egenmeldingsperiode.til)}
-                      />
+                    <div>
+                      <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-' + egenmeldingsperiode.id}>
+                        <div className={localStyles.datowrapper}>
+                          <UNSAFE_DatePicker.Input {...fromInputProps} label='Fra' onSelect={console.log} />
+                          <UNSAFE_DatePicker.Input {...toInputProps} label='Til' onSelect={console.log} />
+                        </div>
+                      </UNSAFE_DatePicker>
                     </div>
                     {index === 0 && forholdsindex === 0 && (
                       <div className={localStyles.sammeperiode}>

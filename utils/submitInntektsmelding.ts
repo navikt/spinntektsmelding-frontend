@@ -73,7 +73,7 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
 
   if (state.fravaersperiode) {
     const fravaersperiodeArbeidsforholdKeys = Object.keys(state.fravaersperiode);
-    console.log('fravaersperiodeArbeidsforholdKeys', fravaersperiodeArbeidsforholdKeys); // eslint-disable-line
+
     if (fravaersperiodeArbeidsforholdKeys.length < 1) {
       errorCodes.push({
         felt: '',
@@ -84,7 +84,6 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
     feilkoderFravaersperioder = fravaersperiodeArbeidsforholdKeys.flatMap((forhold) =>
       validerPeriode(state.fravaersperiode?.[forhold])
     );
-    console.log('feilkoderFravaersperioder', feilkoderFravaersperioder); // eslint-disable-line
   } else {
     errorCodes.push({
       felt: '',
@@ -146,8 +145,6 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
       text: error.code && feiltekster[[error.code]] ? (feiltekster[[error.code]] as string) : error.code
     }));
   }
-
-  console.log('errorTexts', errorTexts);
 
   return {
     valideringOK: errorCodes.length === 0,

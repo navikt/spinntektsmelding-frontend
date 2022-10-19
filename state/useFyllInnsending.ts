@@ -13,9 +13,10 @@ export default function useFyllInnsending() {
     state.virksomhetsnavn,
     state.orgnrUnderenhet
   ]);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret] = useBoundStore((state) => [
+  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, refusjonskravetOpphoerer] = useBoundStore((state) => [
     state.fullLonnIArbeidsgiverPerioden,
-    state.lonnISykefravaeret
+    state.lonnISykefravaeret,
+    state.refusjonskravetOpphoerer
   ]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
@@ -47,7 +48,8 @@ export default function useFyllInnsending() {
       behandlingsperiode: behandlingsperiode,
       sammeFravaersperiode: false,
       arbeidsforhold: arbeidsforhold,
-      inntektsprosent: inntektsprosent
+      inntektsprosent: inntektsprosent,
+      refusjonskravetOpphoerer: refusjonskravetOpphoerer
     };
 
     return skjemaData;

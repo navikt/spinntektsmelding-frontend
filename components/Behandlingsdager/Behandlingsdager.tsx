@@ -3,12 +3,13 @@ import Heading3 from '../Heading3/Heading3';
 import styles from '../../styles/Home.module.css';
 import localStyles from './Behandlingsdager.module.css';
 import TextLabel from '../TextLabel/TextLabel';
-import { DayPicker } from 'react-day-picker';
-import 'react-day-picker/dist/style.css';
+// import { DayPicker } from 'react-day-picker';
+import { UNSAFE_DatePicker as DatePicker, UNSAFE_useDatepicker as useDatepicker, Alert } from '@navikt/ds-react';
+// import 'react-day-picker/dist/style.css';
 import { useState } from 'react';
 import nb from 'date-fns/locale/nb';
 import { eachMonthOfInterval } from 'date-fns';
-import { Alert } from '@navikt/ds-react';
+// import { Alert } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import Skillelinje from '../Skillelinje/Skillelinje';
 import ukeNr from '../../utils/ukeNr';
@@ -43,6 +44,12 @@ export default function Behandlingsdager() {
 
     setBehandlingsdager(selectedDays);
   };
+
+  const { datepickerProps, inputProps, selectedDay } = useDatepicker({
+    fromDate: new Date('Aug 23 2019'),
+    defaultSelected: new Date()
+  });
+
   if (!behandlingsperiode) return null;
   return (
     <>
@@ -66,7 +73,10 @@ export default function Behandlingsdager() {
       <TextLabel>Velg behandlingsdager</TextLabel>
       <p>Kun en en behandlingsdag per uke. Det kan ikke være med enn 15 dager mellom to behandlingsdager.</p>
       <div className={localStyles.multicalwrapper}>
-        <DayPicker
+        <DatePicker {...datepickerProps}>
+          <DatePicker.Input {...inputProps} label='Velg dato' />
+        </DatePicker>
+        {/* <DayPicker
           mode='multiple'
           min={1}
           selected={behandlingsdager}
@@ -76,7 +86,7 @@ export default function Behandlingsdager() {
           month={maaneder[0]}
           fromDate={behandlingsperiode.fra}
           toDate={behandlingsperiode.til}
-        />
+        /> */}
       </div>
       {footer && footer.length > 0 && (
         <Alert fullWidth={false} inline={false} size='medium' variant='error'>

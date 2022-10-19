@@ -28,7 +28,6 @@ export default function validerPeriode(perioder?: Array<Periode>): Array<Valider
       }
 
       if (!periode.til || !isValid(periode.til)) {
-        console.log('periode.til', periode.til); // eslint-disable-line
         feilkoder.push({
           felt: `til-${periode.id}`,
           code: PeriodeFeilkode.MANGLER_TIL

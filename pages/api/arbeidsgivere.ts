@@ -40,16 +40,16 @@ export const config = {
 const handler = (
   req: NextApiRequest,
   res: NextApiResponse<Data> //res.status(200).json(org);
-) =>
-  httpProxyMiddleware(req, res, {
-    target: basePath,
-    onProxyInit: handleProxyInit,
-    pathRewrite: [
-      {
-        patternStr: '^/api/arbeidsgivere',
-        replaceStr: ''
-      }
-    ]
-  });
+) => res.status(200).json(org);
+// httpProxyMiddleware(req, res, {
+//   target: basePath,
+//   onProxyInit: handleProxyInit,
+//   pathRewrite: [
+//     {
+//       patternStr: '^/api/arbeidsgivere',
+//       replaceStr: ''
+//     }
+//   ]
+// });
 
 export default handler;

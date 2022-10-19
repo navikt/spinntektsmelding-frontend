@@ -20,59 +20,58 @@ import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgive
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import subDays from 'date-fns/subDays';
-import { YesNo } from '../../state/state';
+import useBoundStore from '../../state/useBoundStore';
+import { IArbeidsforhold } from '../../state/state';
 
 const Kvittering: NextPage = () => {
+  const orgnrUnderenhet = useBoundStore((state) => state.orgnrUnderenhet);
+  const virksomhetsnavn = useBoundStore((state) => state.virksomhetsnavn);
+  const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
+  const navn = useBoundStore((state) => state.navn);
+  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
+  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
+  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
+  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
+  const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
+
+  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
+
+  const aktiveArbeidsforholdListe = aktiveArbeidsforhold();
+  const naturalytelser = useBoundStore((state) => state.naturalytelser);
+
   const state = {
-    virksomhetsnavn: 'test',
-    orgnrUnderenhet: '123456789',
-    fnr: '12345678901',
-    navn: 'Ole Olsen',
-    egenmeldingsperioder: [
-      {
-        fra: subDays(new Date(), 14),
-        til: subDays(new Date(), 11)
-      }
-    ],
-    fravaersperiode: [
-      {
-        fra: subDays(new Date(), 11),
-        til: subDays(new Date(), 4)
-      },
-      {
-        fra: subDays(new Date(), 4),
-        til: subDays(new Date(), 1)
-      }
-    ],
+    virksomhetsnavn,
+    orgnrUnderenhet,
+    identitetsnummer,
+    navn,
+    egenmeldingsperioder,
+    fravaersperiode,
     arbeidsgiverperiode: [
       {
         fra: subDays(new Date(), 14),
         til: new Date()
       }
     ],
-    bruttoinntekt: 42000,
-    naturalytelser: [
-      {
-        bortfallsdato: subDays(new Date(), 14),
-        verdi: 1234.34,
-        type: 'Bil'
-      }
-    ],
-    fullLonnIArbeidsgiverPerioden: {
-      status: 'Nei' as YesNo,
-      begrunnelse: 'Har ikke lyst'
-    },
-    lonnISykefravaeret: {
-      status: 'Ja' as YesNo,
-      belop: 52000
-    }
+    bruttoinntekt,
+    naturalytelser,
+    fullLonnIArbeidsgiverPerioden,
+    lonnISykefravaeret
   };
+
+  const flerEnnEtArbeidsforhold = aktiveArbeidsforholdListe.length > 1;
 
   const router = useRouter();
 
   const clickEndre = () => {
     router.push('/');
   };
+
+  console.log('arbeidsforhold', arbeidsforhold);
+
+  const aktuelltArbeidsforhold = (arbeidsforholdId: string) =>
+    arbeidsforhold?.find((element) => element.arbeidsforholdId === arbeidsforholdId);
 
   return (
     <div className={styles.container}>
@@ -91,11 +90,11 @@ const Kvittering: NextPage = () => {
                 <div className={lokalStyles.ytreansattwrapper}>
                   <div className={lokalStyles.ansattwrapper}>
                     <TextLabel>Navn</TextLabel>
-                    <div className={styles.fnr}>{state.navn}</div>
+                    <div className={styles.fnr}>{navn}</div>
                   </div>
                   <div className={styles.ansattwrapper}>
                     <TextLabel>Fødselsnummer</TextLabel>
-                    <div className={styles.fnr}>{state.fnr}</div>
+                    <div className={styles.fnr}>{identitetsnummer}</div>
                   </div>
                 </div>
               </div>
@@ -104,11 +103,11 @@ const Kvittering: NextPage = () => {
                 <div className={styles.arbeidsgiverwrapper}>
                   <div className={styles.virksomhetsnavnwrapper}>
                     <TextLabel>Virksomhetsnavn</TextLabel>
-                    <div className={styles.virksomhetsnavn}>{state.virksomhetsnavn}</div>
+                    <div className={styles.virksomhetsnavn}>{virksomhetsnavn}</div>
                   </div>
                   <div className={styles.orgnrnavnwrapper}>
                     <TextLabel>Org.nr. for underenhet</TextLabel>
-                    {state.orgnrUnderenhet}
+                    {orgnrUnderenhet}
                   </div>
                 </div>
               </div>
@@ -120,13 +119,17 @@ const Kvittering: NextPage = () => {
                 <BodyShort as='h4' className={lokalStyles.fravaerstyper}>
                   Egenmelding
                 </BodyShort>
-                {state.egenmeldingsperioder.map((periode) => (
-                  <PeriodeFraTil
-                    fra={periode.fra}
-                    til={periode.til}
-                    key={`${periode.fra.getTime()}-${periode.til.getTime()}`}
-                  />
-                ))}
+                {egenmeldingsperioder &&
+                  aktiveArbeidsforholdListe &&
+                  aktiveArbeidsforholdListe.map((forhold) =>
+                    egenmeldingsperioder[forhold.arbeidsforholdId].map((periode, index) => (
+                      <PeriodeFraTil
+                        fra={periode.fra!}
+                        til={periode.til!}
+                        key={'egenmelding' + index + '-' + forhold.arbeidsforholdId}
+                      />
+                    ))
+                  )}
               </div>
               <div className={lokalStyles.ytrefravaerswrapper}>
                 <BodyShort as='h4' className={lokalStyles.fravaerstyper}>
@@ -143,9 +146,17 @@ const Kvittering: NextPage = () => {
                 <BodyShort as='h4' className={lokalStyles.fravaerstyper}>
                   Fravær knyttet til sykmelding
                 </BodyShort>
-                {state.fravaersperiode.map((periode, index) => (
-                  <PeriodeFraTil fra={periode.fra} til={periode.til} key={index} />
-                ))}
+                {aktiveArbeidsforholdListe &&
+                  fravaersperiode &&
+                  aktiveArbeidsforholdListe.map((forhold) =>
+                    fravaersperiode[forhold.arbeidsforholdId].map((periode, index) => (
+                      <PeriodeFraTil
+                        fra={periode.fra!}
+                        til={periode.til!}
+                        key={'fperiode' + index + '-' + forhold.arbeidsforholdId}
+                      />
+                    ))
+                  )}
               </div>
               <div className={lokalStyles.ytrefravaerswrapper}>
                 <BodyShort as='h4' className={lokalStyles.fravaerstyper}>
@@ -161,14 +172,31 @@ const Kvittering: NextPage = () => {
             <BodyShort className={lokalStyles.fravaertid}>Registrert inntekt</BodyShort>
             <BodyShort>{formatCurrency(state.bruttoinntekt)} kr/måned</BodyShort>
             <Skillelinje />
-            <Heading2>Refusjon til arbeidsgiver</Heading2>
-            <Heading3>Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?</Heading3>
-            <FullLonnIArbeidsgiverperioden lonnIPerioden={state.fullLonnIArbeidsgiverPerioden} />
-            <Heading3>Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?</Heading3>
-            <LonnUnderSykefravaeret lonn={state.lonnISykefravaeret} />
+            {!flerEnnEtArbeidsforhold && <Heading2>Refusjon</Heading2>}
+            {arbeidsforhold &&
+              aktiveArbeidsforholdListe.map((aktivtArbeidsforhold) => (
+                <>
+                  {flerEnnEtArbeidsforhold && (
+                    <Heading2>
+                      Refusjon - {aktuelltArbeidsforhold(aktivtArbeidsforhold as undefined as string).arbeidsforhold}
+                    </Heading2>
+                  )}
+                  <Heading3>Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?</Heading3>
+                  <FullLonnIArbeidsgiverperioden
+                    lonnIPerioden={fullLonnIArbeidsgiverPerioden!}
+                    arbeidsforhold={aktivtArbeidsforhold}
+                  />
+                  <Heading3>Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?</Heading3>
+                  <LonnUnderSykefravaeret
+                    lonn={state.lonnISykefravaeret!}
+                    arbeidsforhold={aktivtArbeidsforhold}
+                    refusjonskravetOpphoerer={refusjonskravetOpphoerer}
+                  />
+                </>
+              ))}
             <Skillelinje />
             <Heading2>Eventuelle naturalytelser</Heading2>
-            <BortfallNaturalytelser ytelser={state.naturalytelser} />
+            <BortfallNaturalytelser ytelser={naturalytelser!} />
             <Skillelinje />
             <BodyShort>Kvittering - innsendt inntektsmelding - 12.05.2021 kl. 12.23</BodyShort>
             <div className={lokalStyles.buttonwrapper}>

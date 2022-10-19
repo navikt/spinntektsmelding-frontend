@@ -93,12 +93,12 @@ const Home: NextPage = () => {
           }
         });
         console.log(data); // eslint-disable-line
+        if (data.status === 201) {
+          router.push('/kvittering');
+        }
       };
       postData();
     }
-
-    console.log(skjemaData); // eslint-disable-line
-    console.log('errorStatus', errorStatus.errorTexts); // eslint-disable-line
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
