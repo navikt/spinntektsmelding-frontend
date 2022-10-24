@@ -3,6 +3,7 @@ import localStyles from './Fravaersperiode.module.css';
 import useBoundStore from '../../state/useBoundStore';
 import { DateRange } from 'react-day-picker';
 import { Periode } from '../../state/state';
+import { useEffect } from 'react';
 
 interface EnkeltArbeidsforholdPeriodeInterface {
   periodeId: string;
@@ -23,16 +24,18 @@ export default function EnkeltArbeidsforholdPeriode({
     }
   };
 
-  const { datepickerProps, toInputProps, fromInputProps } = UNSAFE_useRangeDatepicker({
+  const { datepickerProps, toInputProps, fromInputProps, setSelected } = UNSAFE_useRangeDatepicker({
     onRangeChange: (dato) => rangeChangeHandler(dato),
     toDate: new Date()
   });
 
-  const selected: DateRange = { from: fravaersperiode?.fra, to: fravaersperiode?.til };
+  useEffect(() => {
+    setSelected({ from: fravaersperiode?.fra, to: fravaersperiode?.til });
+  }, [fravaersperiode]);
 
   return (
     <div>
-      <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-' + periodeId} selected={selected}>
+      <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-' + periodeId}>
         <div className={localStyles.datowrapper}>
           <UNSAFE_DatePicker.Input {...fromInputProps} label='Fra' id={`fra-${periodeId}`} />
           <UNSAFE_DatePicker.Input {...toInputProps} label='Til' id={`til-${periodeId}`} />

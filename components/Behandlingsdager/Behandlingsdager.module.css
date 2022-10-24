@@ -22,6 +22,7 @@
 }
 
 .multicalwrapper :global(.rdp-months) {
+    display: flex;
     flex-wrap: wrap;
     row-gap: 1rem;
 }
@@ -29,10 +30,6 @@
 .multicalwrapper :global(.rdp-month) {
     height: fit-content;
 }
-
-/* .multicalwrapper :global(.margin-left) {
-    margin-left: 1rem;
-} */
 
 .multicalwrapper :global(.rdp-month:first-child) {
     margin-left: 1rem;

@@ -17,8 +17,8 @@ import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 export interface NaturalytelserState {
   naturalytelser?: Array<Naturalytelse>;
   hasBortfallAvNaturalytelser?: YesNo;
-  setNaturalytelseType: (naturalytelseId: string, isoDato: string) => void;
-  setNaturalytelseBortfallsdato: (naturalytelseId: string, isoDato: string) => void;
+  setNaturalytelseType: (naturalytelseId: string, type: string) => void;
+  setNaturalytelseBortfallsdato: (naturalytelseId: string, dato?: Date) => void;
   setNaturalytelseVerdi: (naturalytelseId: string, verdi: string) => void;
   slettNaturalytelse: (naturalytelseId: string) => void;
   slettAlleNaturalytelser: () => void;
@@ -58,12 +58,12 @@ const useNaturalytelserStore: StateCreator<
       })
     );
   },
-  setNaturalytelseBortfallsdato: (naturalytelseId: string, isoDato: string) => {
+  setNaturalytelseBortfallsdato: (naturalytelseId: string, dato?: Date) => {
     set(
       produce((state) => {
         state.naturalytelser = state.naturalytelser?.map((ytelse: Naturalytelse) => {
           if (ytelse.id === naturalytelseId) {
-            ytelse.bortfallsdato = parseIsoDate(isoDato);
+            ytelse.bortfallsdato = dato;
           }
 
           return ytelse;
