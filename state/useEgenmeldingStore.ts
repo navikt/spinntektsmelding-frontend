@@ -11,12 +11,14 @@ import { FeilmeldingerState } from './useFeilmeldingerStore';
 import { PersonState } from './usePersonStore';
 import { FravaersperiodeState } from './useFravaersperiodeStore';
 import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
+import { DateRange } from 'react-day-picker';
 
 export interface EgenmeldingState {
   egenmeldingsperioder: { [key: string]: Array<Periode> };
   sammeEgenmeldingsperiode: boolean;
   setEgenmeldingFraDato: (dateValue: Date | undefined, periodeId: string) => void;
   setEgenmeldingTilDato: (dateValue: Date | undefined, periodeId: string) => void;
+  setEgenmeldingDato: (dateValue: DateRange | undefined, periodeId: string) => void;
   slettEgenmeldingsperiode: (periodeId: string) => void;
   leggTilEgenmeldingsperiode: (arbeidsforholdId: string) => void;
   setSammeEgenmeldingsperiodeArbeidsforhold: (arbeidsforholdId: string, status: boolean) => void;
@@ -49,7 +51,6 @@ const useEgenmeldingStore: StateCreator<
         forholdKeys.forEach((forholdKey) => {
           state.egenmeldingsperioder[forholdKey] = state.egenmeldingsperioder[forholdKey].map((periode: Periode) => {
             if (periode.id === periodeId) {
-              console.log('fradato', dateValue);
               periode.fra = dateValue;
               return periode;
             }
@@ -62,7 +63,7 @@ const useEgenmeldingStore: StateCreator<
         return state;
       })
     ),
-  setEgenmeldingTilDato: (dateValue?: Date, periodeId?: string) =>
+  setEgenmeldingTilDato: (dateValue: Date | undefined, periodeId: string) =>
     set(
       produce((state) => {
         const forholdKeys = Object.keys(state.egenmeldingsperioder);
@@ -71,6 +72,27 @@ const useEgenmeldingStore: StateCreator<
           state.egenmeldingsperioder[forholdKey] = state.egenmeldingsperioder[forholdKey].map((periode: Periode) => {
             if (periode.id === periodeId) {
               periode.til = dateValue;
+              return periode;
+            }
+            return periode;
+          });
+        });
+
+        state.sammeEgenmeldingsperiode = false;
+
+        return state;
+      })
+    ),
+  setEgenmeldingDato: (dateValue: DateRange | undefined, periodeId: string) =>
+    set(
+      produce((state) => {
+        const forholdKeys = Object.keys(state.egenmeldingsperioder);
+
+        forholdKeys.forEach((forholdKey) => {
+          state.egenmeldingsperioder[forholdKey] = state.egenmeldingsperioder[forholdKey].map((periode: Periode) => {
+            if (periode.id === periodeId) {
+              periode.til = dateValue?.to;
+              periode.fra = dateValue?.from;
               return periode;
             }
             return periode;

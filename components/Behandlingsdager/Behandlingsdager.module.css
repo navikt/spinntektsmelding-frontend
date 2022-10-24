@@ -9,6 +9,37 @@
     gap: 1.5rem;
 }
 
-.multicalwrapper > div > div > div {
-    margin: 0;
+.multicalwrapper thead > tr {
+    height: initial;
 }
+
+.multicalwrapper :global(.navds-date__caption__month-wrapper) {
+    display: none;
+}
+
+.multicalwrapper :global(.navds-date__caption) {
+    height: fit-content;
+}
+
+.multicalwrapper :global(.rdp-months) {
+    flex-wrap: wrap;
+    row-gap: 1rem;
+}
+
+.multicalwrapper :global(.rdp-month) {
+    height: fit-content;
+}
+
+/* .multicalwrapper :global(.margin-left) {
+    margin-left: 1rem;
+} */
+
+.multicalwrapper :global(.rdp-month:first-child) {
+    margin-left: 1rem;
+  }
+
+.multicalwrapper :global(.rdp-multiple_months) {
+    padding: 0;
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }

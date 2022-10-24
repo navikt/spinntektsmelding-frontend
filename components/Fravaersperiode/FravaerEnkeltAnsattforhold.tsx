@@ -1,18 +1,16 @@
-// import { Datepicker } from '@navikt/ds-datepicker';
 import { useState } from 'react';
 import { IArbeidsforhold } from '../../state/state';
 import formatDate from '../../utils/formatDate';
-import formatIsoDate from '../../utils/formatIsoDate';
+
 import ButtonSlette from '../ButtonSlette';
 import Heading4 from '../Heading4';
-import LabelLabel from '../LabelLabel';
+
 import TextLabel from '../TextLabel';
 import localStyles from './Fravaersperiode.module.css';
 import styles from '../../styles/Home.module.css';
-import { Button, Checkbox, UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
+import { Button, Checkbox } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
-
-// import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from "@navikt/ds-react";
+import EnkeltArbeidsforholdPeriode from './EnkeltArbeidsforholdPeriode';
 
 interface FravaerEnkeltAnsattforholdProps {
   arbeidsforhold: IArbeidsforhold;
@@ -29,8 +27,6 @@ export default function FravaerEnkeltAnsattforhold({
 }: FravaerEnkeltAnsattforholdProps) {
   const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
   const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
-  const setSykemeldingFraDato = useBoundStore((state) => state.setFravaersperiodeFraDato);
-  const setSykemeldingTilDato = useBoundStore((state) => state.setFravaersperiodeTilDato);
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
@@ -76,50 +72,27 @@ export default function FravaerEnkeltAnsattforhold({
         fravaersperiode[arbeidsforhold.arbeidsforholdId].map((periode, periodeIndex) => (
           <div className={styles.periodewrapper} key={periode.id}>
             {!endreSykemelding && (
-              <div className={styles.datepickerescape}>
-                <TextLabel>Fra</TextLabel>
-                <div>{formatDate(periode.fra)}</div>
-              </div>
+              <>
+                <div className={styles.datepickerescape}>
+                  <TextLabel>Fra</TextLabel>
+                  <div>{formatDate(periode.fra)}</div>
+                </div>
+                <div className={styles.datepickerescape}>
+                  <TextLabel>Til</TextLabel>
+                  <div>{formatDate(periode.til)}</div>
+                </div>
+              </>
             )}
             {endreSykemelding && (
               <div className={styles.datepickerescape}>
-                {/* <LabelLabel htmlFor={`fra-${periode.id}`} className={styles.datepickerlabel}>
-                  Fra
-                </LabelLabel>
-                <Datepicker
-                  inputLabel='Fra'
-                  inputId={`fra-${periode.id}`}
-                  onChange={(dateString) =>
-                    setSykemeldingFraDato(arbeidsforhold.arbeidsforholdId, periode.id, dateString)
-                  }
-                  locale={'nb'}
-                  value={formatIsoDate(periode.fra)}
-                /> */}
-              </div>
-            )}
-
-            {!endreSykemelding && (
-              <div className={styles.datepickerescape}>
-                <TextLabel>Til</TextLabel>
-                <div>{formatDate(periode.til)}</div>
-              </div>
-            )}
-            {endreSykemelding && (
-              <div className={styles.datepickerescape}>
-                <LabelLabel htmlFor={`til-${periode.id}`} className={styles.datepickerlabel}>
-                  Til
-                </LabelLabel>
-                <Datepicker
-                  inputLabel='Til'
-                  inputId={`til-${periode.id}`}
-                  onChange={(dateString) =>
-                    setSykemeldingTilDato(arbeidsforhold.arbeidsforholdId, periode.id, dateString)
-                  }
-                  locale={'nb'}
-                  value={formatIsoDate(periode.til)}
+                <EnkeltArbeidsforholdPeriode
+                  periodeId={periode.id}
+                  fravaersperiode={periode}
+                  arbeidsforholdId={arbeidsforhold.arbeidsforholdId}
                 />
               </div>
             )}
+
             {endreSykemelding && periodeIndex > 0 && (
               <div className={styles.endresykemelding}>
                 <ButtonSlette

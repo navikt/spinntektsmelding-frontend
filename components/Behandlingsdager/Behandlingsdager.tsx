@@ -4,7 +4,7 @@ import styles from '../../styles/Home.module.css';
 import localStyles from './Behandlingsdager.module.css';
 import TextLabel from '../TextLabel/TextLabel';
 // import { DayPicker } from 'react-day-picker';
-import { UNSAFE_DatePicker as DatePicker, UNSAFE_useDatepicker as useDatepicker, Alert } from '@navikt/ds-react';
+import { UNSAFE_DatePicker, UNSAFE_useDatepicker, Alert } from '@navikt/ds-react';
 // import 'react-day-picker/dist/style.css';
 import { useState } from 'react';
 import nb from 'date-fns/locale/nb';
@@ -45,8 +45,7 @@ export default function Behandlingsdager() {
     setBehandlingsdager(selectedDays);
   };
 
-  const { datepickerProps, inputProps, selectedDay } = useDatepicker({
-    fromDate: new Date('Aug 23 2019'),
+  const { datepickerProps, inputProps, selectedDay } = UNSAFE_useDatepicker({
     defaultSelected: new Date()
   });
 
@@ -73,9 +72,14 @@ export default function Behandlingsdager() {
       <TextLabel>Velg behandlingsdager</TextLabel>
       <p>Kun en en behandlingsdag per uke. Det kan ikke være med enn 15 dager mellom to behandlingsdager.</p>
       <div className={localStyles.multicalwrapper}>
-        <DatePicker {...datepickerProps}>
-          <DatePicker.Input {...inputProps} label='Velg dato' />
-        </DatePicker>
+        <UNSAFE_DatePicker {...datepickerProps}>
+          <UNSAFE_DatePicker.Standalone
+            {...inputProps}
+            mode='multiple'
+            onSelect={handleSelectDays}
+            numberOfMonths={maaneder.length}
+          />
+        </UNSAFE_DatePicker>
         {/* <DayPicker
           mode='multiple'
           min={1}
