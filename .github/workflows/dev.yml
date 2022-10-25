@@ -10,27 +10,29 @@ env:
   IMAGE: ghcr.io/${{ github.repository }}/spinntektsmelding-frontend:${{ github.sha }}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+  NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 jobs:
+
+  # Bygg:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - run: yarn install --frozen-lockfile
+  #     - run: yarn build
+  #     - uses: actions/upload-artifact@v2
+  #       with:
+  #         name: spinntektsmelding-frontend-artifact
+  #         path: ${{ github.workspace }}/build/**/*
+
   Kodekvalitet:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
-        with:
-  # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-  # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-  # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-
       - uses: actions/checkout@master
       - uses: actions/setup-node@v1
         with:
           node-version: '18.x'
+          registry-url: "https://npm.pkg.github.com"
       - run: yarn install --frozen-lockfile
       - run: yarn test
       - name: SonarCloud Scan
@@ -42,40 +44,33 @@ jobs:
   Eslint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
-        with:
-  # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-  # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-  # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - uses: actions/checkout@master
       - uses: actions/setup-node@v1
         with:
           node-version: '18.x'
+          registry-url: "https://npm.pkg.github.com"
       - run: yarn install --frozen-lockfile
       - run: yarn lint
+
+
+  # Snyk:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - name: Run Snyk to check for vulnerabilities
+  #       uses: snyk/actions/node@master
+  #       env:
+  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   Docker:
     needs: [Kodekvalitet,Eslint]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
-        with:
-  # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-  # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-  # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - uses: actions/checkout@master
+      # - uses: actions/download-artifact@v2
+      #   with:
+      #     name: fritak-frontend-artifact
+      #     path: build
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -91,17 +86,6 @@ jobs:
     needs: [Docker]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
-        with:
-  # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-  # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-  # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - uses: actions/checkout@v1
       - uses: nais/deploy/actions/deploy@v1
         env:
