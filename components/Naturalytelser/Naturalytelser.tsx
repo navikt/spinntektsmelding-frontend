@@ -26,6 +26,11 @@ export default function Naturalytelser() {
     }
   };
 
+  const leggTilNaturalytelseHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    leggTilNaturalytelse();
+  };
+
   // const rangeChangeHandler = (dato) => {
   //   if (dato) {
   //     setNaturalytelseBortfallsdato('dette-er-ikkeriktig-måte', dato);
@@ -95,7 +100,7 @@ export default function Naturalytelser() {
             })}
           </tbody>
           <div className={lokalStyles.naturalytelserknapp}>
-            <Button variant='secondary' className={styles.legtilbutton} onClick={() => leggTilNaturalytelse()}>
+            <Button variant='secondary' className={styles.legtilbutton} onClick={leggTilNaturalytelseHandler}>
               Legg til naturalytelse
             </Button>
           </div>

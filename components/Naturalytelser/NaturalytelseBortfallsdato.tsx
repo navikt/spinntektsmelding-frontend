@@ -23,6 +23,7 @@ export default function NaturalytelseBortfallsdato({ naturalytelseId }: Naturaly
         {...inputProps}
         label='Dato naturalytelse bortfaller'
         id={'naturalytele-input-fra-dato-' + naturalytelseId}
+        hideLabel={true}
       />
     </UNSAFE_DatePicker>
   );
