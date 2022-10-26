@@ -6,6 +6,7 @@ export default function Feilsammendrag() {
   const feilmeldinger = useBoundStore((state) => state.feilmeldinger);
 
   const harFeilmeldinger = feilmeldinger && feilmeldinger.length > 0;
+  if (!harFeilmeldinger) return null;
 
   return (
     <>

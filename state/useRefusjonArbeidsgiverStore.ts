@@ -22,7 +22,7 @@ export interface RefusjonArbeidsgiverState {
   begrunnelseRedusertUtbetaling: (arbeidsforholdId: string, begrunnelse: string) => void;
   beloepArbeidsgiverBetalerISykefravaeret: (arbeidsforholdId: string, beloep: string) => void;
   refusjonskravetOpphoererStatus: (arbeidsforholdId: string, status: YesNo) => void;
-  refusjonskravetOpphoererDato: (arbeidsforholdId: string, isoDato: string) => void;
+  refusjonskravetOpphoererDato: (arbeidsforholdId: string, opphoersdato?: Date) => void;
   initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: { [key: string]: LonnIArbeidsgiverperioden }) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: { [key: string]: LonnISykefravaeret }) => void;
 }
@@ -138,17 +138,17 @@ const useRefusjonArbeidsgiverStore: StateCreator<
         return state;
       })
     ),
-  refusjonskravetOpphoererDato: (arbeidsforholdId: string, isoDato: string) =>
+  refusjonskravetOpphoererDato: (arbeidsforholdId: string, opphoersdato?: Date) =>
     set(
       produce((state) => {
         if (state.refusjonskravetOpphoerer?.[arbeidsforholdId]) {
-          state.refusjonskravetOpphoerer[arbeidsforholdId].opphorsdato = parseIsoDate(isoDato);
+          state.refusjonskravetOpphoerer[arbeidsforholdId].opphorsdato = opphoersdato;
         } else {
           if (!state.refusjonskravetOpphoerer) {
             state.refusjonskravetOpphoerer = {};
           }
           state.refusjonskravetOpphoerer[arbeidsforholdId] = {
-            opphorsdato: parseIsoDate(isoDato)
+            opphorsdato: opphoersdato
           };
         }
 

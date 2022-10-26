@@ -1,4 +1,5 @@
-import { differenceInCalendarDays, getWeek } from 'date-fns';
+import { differenceInCalendarDays } from 'date-fns';
+import ukenNr from '../utils/ukeNr';
 
 export enum valideringBehandlingsdager {
   OK,
@@ -7,7 +8,7 @@ export enum valideringBehandlingsdager {
 }
 
 export default function validerBehandlingsdager(dager: Array<Date>): valideringBehandlingsdager {
-  const weeks: Array<number> | undefined = dager?.map((day) => getWeek(day));
+  const weeks: Array<number> | undefined = dager?.map((day) => ukenNr(day));
   const uniqueWeeks: Array<number> = Array.from(new Set(weeks));
 
   if (weeks.length !== uniqueWeeks.length) {

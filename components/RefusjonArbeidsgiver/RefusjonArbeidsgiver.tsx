@@ -1,4 +1,3 @@
-import { Datepicker } from '@navikt/ds-datepicker';
 import { BodyLong, Radio, RadioGroup, Select, TextField } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
 import LabelLabel from '../LabelLabel';
@@ -7,6 +6,7 @@ import { IArbeidsforhold, YesNo } from '../../state/state';
 import Heading4 from '../Heading4';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import useBoundStore from '../../state/useBoundStore';
+import RefsjonArbeidsgiverSluttdato from './RefsjonArbeidsgiverSluttdato';
 
 export default function RefusjonArbeidsgiver() {
   const arbeidsforhold: Array<IArbeidsforhold> | undefined = useBoundStore((state) => state.arbeidsforhold);
@@ -29,7 +29,7 @@ export default function RefusjonArbeidsgiver() {
     (state) => state.beloepArbeidsgiverBetalerISykefravaeret
   );
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
-  const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
+
   if (!arbeidsforhold) return null;
 
   const flereArbeidsforhold: boolean = arbeidsforhold.length > 1;
@@ -164,11 +164,12 @@ export default function RefusjonArbeidsgiver() {
                     >
                       Angi siste dag dere krever refusjon for
                     </LabelLabel>
-                    <Datepicker
+                    <RefsjonArbeidsgiverSluttdato arbeidsforholdId={forhold.arbeidsforholdId} />
+                    {/* <Datepicker
                       onChange={(dateString) => refusjonskravetOpphoererDato(forhold.arbeidsforholdId, dateString)}
                       inputLabel='Egenmelding fra dato'
                       inputId={`lus-sluttdato-${forhold.arbeidsforholdId}`}
-                    />
+                    /> */}
                   </div>
                 )}
             </>

@@ -1,4 +1,4 @@
-import { Datepicker } from '@navikt/ds-datepicker';
+import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
 import { BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
@@ -7,6 +7,7 @@ import lokalStyles from './Naturalytelser.module.css';
 
 import styles from '../../styles/Home.module.css';
 import useBoundStore from '../../state/useBoundStore';
+import NaturalytelseBortfallsdato from './NaturalytelseBortfallsdato';
 
 export default function Naturalytelser() {
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
@@ -25,6 +26,21 @@ export default function Naturalytelser() {
     }
   };
 
+  const leggTilNaturalytelseHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    leggTilNaturalytelse();
+  };
+
+  // const rangeChangeHandler = (dato) => {
+  //   if (dato) {
+  //     setNaturalytelseBortfallsdato('dette-er-ikkeriktig-måte', dato);
+  //   }
+  // };
+
+  const { datepickerProps, inputProps, selectedDay } = UNSAFE_useDatepicker({
+    toDate: new Date(),
+    onDateChange: console.log
+  });
   return (
     <>
       <Heading3>Eventuelle naturalytelser (valgfri)</Heading3>
@@ -60,13 +76,14 @@ export default function Naturalytelser() {
                   </td>
 
                   <td className={styles.tddatepickernatural}>
-                    <Datepicker
+                    <NaturalytelseBortfallsdato naturalytelseId={element.id} />
+                    {/* <Datepicker
                       inputId={'naturalytele-input-fra-dato-' + element.id}
                       inputLabel='Dato naturalytelse bortfaller'
                       onChange={(dateString) => setNaturalytelseBortfallsdato(element.id, dateString)}
                       // value={dato}
                       locale={'nb'}
-                    />
+                    /> */}
                   </td>
                   <td>
                     <TextField
@@ -83,7 +100,7 @@ export default function Naturalytelser() {
             })}
           </tbody>
           <div className={lokalStyles.naturalytelserknapp}>
-            <Button variant='secondary' className={styles.legtilbutton} onClick={() => leggTilNaturalytelse()}>
+            <Button variant='secondary' className={styles.legtilbutton} onClick={leggTilNaturalytelseHandler}>
               Legg til naturalytelse
             </Button>
           </div>

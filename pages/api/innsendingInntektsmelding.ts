@@ -5,7 +5,7 @@ import environment from '../../config/environment';
 
 import org from '../../mockdata/testOrganisasjoner';
 
-const basePath = environment.arbeidsgiverAPI;
+const basePath = environment.innsendingInntektsmeldingAPI;
 
 type Data = typeof org;
 
@@ -27,13 +27,15 @@ const handleProxyInit = (proxy: any) => {
   });
 
   proxy.on('proxyReq', function (proxyReq: any, _req: any, _res: any, _options: any) {
+    console.log('RAW Request from the client', JSON.stringify(proxyReq.body));
     proxyReq.setHeader('cookie', '');
   });
 };
 
 export const config = {
   api: {
-    externalResolver: true
+    externalResolver: true,
+    bodyParser: false
   }
 };
 
@@ -46,7 +48,7 @@ const handler = (
     onProxyInit: handleProxyInit,
     pathRewrite: [
       {
-        patternStr: '^/api/arbeidsgivere',
+        patternStr: '^/api/innsendingInntektsmelding',
         replaceStr: ''
       }
     ]

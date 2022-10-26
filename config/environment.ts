@@ -15,7 +15,7 @@ class Environment {
       case EnvironmentType.TESTCAFE:
         return 'http://localhost:3000/local/cookie-please?subject=10107400090&redirect=XXX?loggedIn=true';
       default:
-        return 'http://localhost:3000/local/cookie-please?subject=10107400090&redirect=XXX?loggedIn=true';
+        return 'http://localhost:3000/local/cookie-please?subject=10107400090&redirect=XXX';
     }
   }
 
@@ -32,6 +32,44 @@ class Environment {
     }
   }
 
+  get arbeidsgiverAPI() {
+    switch (this.environmentMode) {
+      case EnvironmentType.PROD:
+        return 'https://fritakagp.dev.nav.no/api/v1/arbeidsgivere';
+      case EnvironmentType.PREPROD_DEV:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/arbeidsgivere';
+      case EnvironmentType.TESTCAFE:
+        return 'http://localhost:3000/not-in-use';
+      default:
+        return 'http://localhost:3000/not-in-use';
+    }
+  }
+
+  get innsendingInntektsmeldingAPI() {
+    switch (this.environmentMode) {
+      case EnvironmentType.PROD:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+      case EnvironmentType.PREPROD_DEV:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+      case EnvironmentType.TESTCAFE:
+        return 'http://localhost:3000/not-in-use';
+      default:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+    }
+  }
+
+  get inntektsmeldingAPI() {
+    switch (this.environmentMode) {
+      case EnvironmentType.PROD:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/preutfyll';
+      case EnvironmentType.PREPROD_DEV:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/preutfyll';
+      case EnvironmentType.TESTCAFE:
+        return 'http://localhost:3000/not-in-use';
+      default:
+        return 'http://localhost:3000/not-in-use';
+    }
+  }
   get baseUrl() {
     return '/im-dialog';
   }
@@ -40,10 +78,10 @@ class Environment {
     if (this.isTestCafeRunning()) {
       return EnvironmentType.TESTCAFE;
     }
-    if (window.location.hostname === 'localhost') {
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
       return EnvironmentType.LOCAL;
     }
-    if (window.location.hostname.indexOf('.dev.nav.no') > -1) {
+    if (typeof window !== 'undefined' && window.location.hostname.indexOf('.dev.nav.no') > -1) {
       return EnvironmentType.PREPROD_DEV;
     }
     return EnvironmentType.PROD;
@@ -59,6 +97,9 @@ class Environment {
   }
 
   private isTestCafeRunning() {
+    if (typeof window === 'undefined') {
+      return false;
+    }
     const urlParams = new URLSearchParams(window.location.search);
     const testCafe = urlParams.get('TestCafe');
 

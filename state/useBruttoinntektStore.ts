@@ -20,6 +20,7 @@ export interface BruttoinntektState {
   inntektsprosent?: { [key: string]: number };
   inntektsprosentEndret: boolean;
   setNyMaanedsinntekt: (belop: string) => void;
+  setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
   setNyArbeidsforholdMaanedsinntekt: (arbeidsforholdId: string, belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
   tilbakestillMaanedsinntekt: () => void;
@@ -62,6 +63,22 @@ const useBruttoinntektStore: StateCreator<
         state.bruttoinntekt.manueltKorrigert = true;
         if (state.bruttoinntekt.bruttoInntekt && state.bruttoinntekt.bruttoInntekt > 0) {
           state = slettFeilmelding(state, 'bruttoinntekt-endringsbelop');
+        } else {
+          state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
+        }
+
+        return state;
+      })
+    ),
+  setNyMaanedsinntektBlanktSkjema: (belop: string) =>
+    set(
+      produce((state) => {
+        state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
+        state.bruttoinntekt.manueltKorrigert = false;
+        state.bruttoinntekt.bekreftet = true;
+        if (state.bruttoinntekt.bruttoInntekt && state.bruttoinntekt.bruttoInntekt > 0) {
+          state = slettFeilmelding(state, 'bruttoinntekt-endringsbelop');
+          state = slettFeilmelding(state, 'bruttoinntektbekreft');
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
         }

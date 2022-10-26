@@ -53,12 +53,23 @@ const useArbeidsforholdStore: StateCreator<
   initArbeidsforhold: (motattArbeidsforhold: Array<MottattArbeidsforhold>) => {
     set(
       produce((state) => {
-        state.arbeidsforhold = motattArbeidsforhold.map((forhold) => ({
-          arbeidsforholdId: forhold.arbeidsforholdId,
-          arbeidsforhold: forhold.arbeidsforhold,
-          stillingsprosent: forhold.stillingsprosent,
-          aktiv: true
-        }));
+        if (motattArbeidsforhold) {
+          state.arbeidsforhold = motattArbeidsforhold.map((forhold) => ({
+            arbeidsforholdId: forhold.arbeidsforholdId,
+            arbeidsforhold: forhold.arbeidsforhold,
+            stillingsprosent: forhold.stillingsprosent,
+            aktiv: true
+          }));
+        } else {
+          state.arbeidsforhold = [
+            {
+              arbeidsforholdId: 'arbeidsforholdId',
+              arbeidsforhold: 'arbeidsforhold',
+              stillingsprosent: 100,
+              aktiv: true
+            }
+          ];
+        }
         return state;
       })
     );

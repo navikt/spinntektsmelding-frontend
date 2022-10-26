@@ -73,6 +73,7 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
 
   if (state.fravaersperiode) {
     const fravaersperiodeArbeidsforholdKeys = Object.keys(state.fravaersperiode);
+
     if (fravaersperiodeArbeidsforholdKeys.length < 1) {
       errorCodes.push({
         felt: '',

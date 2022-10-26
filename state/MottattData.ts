@@ -35,3 +35,13 @@ interface MottattData {
 }
 
 export default MottattData;
+
+export interface MottatArbeidsgiver {
+  name: string;
+  type: string;
+  parentOrganizationNumber?: string | null;
+  organizationForm: string;
+  organizationNumber: string;
+  socialSecurityNumber?: string | null;
+  status: string;
+}

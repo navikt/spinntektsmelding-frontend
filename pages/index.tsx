@@ -36,23 +36,26 @@ import Feilsammendrag from '../components/Feilsammendrag';
 import environment from '../config/environment';
 import dataFetcher from '../utils/dataFetcher';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
+import dataFetcherArbeidsgivere from '../utils/dataFetcherArbeidsgivere';
+import useLoginRedirectPath from '../utils/useLoginRedirectPath';
+import useFetchInntektskjema from '../state/useFetchInntektskjema';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
+const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 
 const Home: NextPage = () => {
   const setRoute = useRoute();
   const router = useRouter();
-  const { data: arbeidsgivere, error } = useSWR<Array<Organisasjon>>(ARBEIDSGIVER_URL, dataFetcher);
-  const { data: skjemadata, error: skjemadatafeil } = useSWR<MottattData>(SKJEMADATA_URL, dataFetcher);
+  const { data: arbeidsgivere, error } = useSWR<Array<Organisasjon>>(ARBEIDSGIVER_URL, dataFetcherArbeidsgivere);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
   const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
 
-  const behandlingsperiode = useBoundStore((state) => state.behandlingsperiode);
-
   const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
+
+  const loginPath = useLoginRedirectPath();
 
   const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.fyllFeilmeldinger,
@@ -66,6 +69,8 @@ const Home: NextPage = () => {
   const initState = useStateInit();
   const fyllInnsending = useFyllInnsending();
 
+  const hentSkjemadata = useFetchInntektskjema('');
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -73,11 +78,27 @@ const Home: NextPage = () => {
 
     const errorStatus = submitInntektsmelding(skjemaData);
 
-    if (errorStatus.errorTexts) {
+    if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
       fyllFeilmeldinger(errorStatus.errorTexts);
+    } else {
+      fyllFeilmeldinger([]);
+      // useSWR   Send inn!>
+      const postData = async () => {
+        const data = await fetch(INNSENDING_URL, {
+          method: 'POST',
+          body: JSON.stringify(skjemaData),
+          headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        });
+        console.log(data); // eslint-disable-line
+        if (data.status === 201) {
+          router.push('/kvittering');
+        }
+      };
+      postData();
     }
-
-    console.log(skjemaData); // eslint-disable-line
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
@@ -90,26 +111,33 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (skjemadata) {
-      initState(skjemadata);
+    const hentData = async () => {
+      try {
+        const skjemadata = await hentSkjemadata(SKJEMADATA_URL, '16120101181', '811307602');
+        if (skjemadata) {
+          initState(skjemadata);
 
-      setRoute(skjemadata.orgnrUnderenhet);
-    }
-  }, [skjemadata]);
+          setRoute(skjemadata.orgnrUnderenhet);
+        }
+      } catch (error) {
+        leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
+      }
+    };
+    hentData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     console.log('error', error); // eslint-disable-line
     if (error?.status === 401) {
-      router.push(environment.loginServiceUrl);
+      router.push(loginPath());
     }
-  }, [error]);
 
-  useEffect(() => {
-    console.log('error', skjemadatafeil); // eslint-disable-line
-    if (skjemadatafeil?.status === 401) {
-      router.push(environment.loginServiceUrl);
+    if (error?.status === 500) {
+      leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_ARBEIDSGIVER);
     }
-  }, [skjemadatafeil]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
   return (
     <div className={styles.container}>
@@ -145,12 +173,8 @@ const Home: NextPage = () => {
                 </>
               )}
 
-              {!behandlingsperiode && (
-                <>
-                  <Skillelinje />
-                  <Fravaersperiode />
-                </>
-              )}
+              <Skillelinje />
+              <Fravaersperiode />
 
               <Skillelinje />
 

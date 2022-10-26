@@ -21,11 +21,13 @@ const feiltekster = {
   LONN_UNDER_SYKEFRAVAERET_MANGLER: 'Angi om arbeidsgiver betaler lønn under hele eller deler av sykefraværet.',
   LONN_UNDER_SYKEFRAVAERET_BELOP:
     'Angi refusjonsbeløpet arbeidsgiver har betalt under hele eller deler av sykefraværet.',
-  LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG: 'Angi om arbeidsgiver betaler lønn under hele elle deler av sykefraværet.',
+  LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG: 'Angi om arbeidsgiver betaler lønn under hele perioden.',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO: 'Angi siste dato det kreves refusjon for.',
   BEKREFT_OPPLYSNINGER: 'Bekreft at opplysningene gitt er riktig og fullstendige.',
   ENDRINGSAARSAK_MANGLER: 'Vennligst anngi årsak for endringen.',
-  SUM_LAVERE_ENN_INNTEKT: 'Summen av inntektene for de enkelte arbeidsforholdene er høyere enn bruttoinntekten.'
+  SUM_LAVERE_ENN_INNTEKT: 'Summen av inntektene for de enkelte arbeidsforholdene er høyere enn bruttoinntekten.',
+  SERVERFEIL_ARBEIDSGIVER: 'Kunne ikke hente ut arbeidsgiverdata',
+  SERVERFEIL_IM: 'Kunne ikke hente ut inntektsmeldingdata'
 };
 
 export default feiltekster;
