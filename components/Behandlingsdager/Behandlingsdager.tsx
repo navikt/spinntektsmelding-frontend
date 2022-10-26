@@ -70,9 +70,13 @@ export default function Behandlingsdager() {
         <UNSAFE_DatePicker {...datepickerProps}>
           <UNSAFE_DatePicker.Standalone
             {...inputProps}
-            mode='multiple'
+            fromDate={behandlingsperiode.fra}
+            toDate={behandlingsperiode.til}
+            mode='single'
             onSelect={handleSelectDays}
             numberOfMonths={maaneder.length}
+            disableNavigation
+            fromMonth={behandlingsperiode.fra}
           />
         </UNSAFE_DatePicker>
       </div>
