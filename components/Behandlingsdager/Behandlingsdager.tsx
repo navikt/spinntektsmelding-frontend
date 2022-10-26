@@ -3,20 +3,15 @@ import Heading3 from '../Heading3/Heading3';
 import styles from '../../styles/Home.module.css';
 import localStyles from './Behandlingsdager.module.css';
 import TextLabel from '../TextLabel/TextLabel';
-// import { DayPicker } from 'react-day-picker';
 import { UNSAFE_DatePicker, UNSAFE_useDatepicker, Alert } from '@navikt/ds-react';
-// import 'react-day-picker/dist/style.css';
 import { useState } from 'react';
-import nb from 'date-fns/locale/nb';
 import { eachMonthOfInterval } from 'date-fns';
-// import { Alert } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import Skillelinje from '../Skillelinje/Skillelinje';
 import ukeNr from '../../utils/ukeNr';
 
 export default function Behandlingsdager() {
-  const [behandlingsdager, behandlingsperiode, setBehandlingsdager] = useBoundStore((state) => [
-    state.behandlingsdager,
+  const [behandlingsperiode, setBehandlingsdager] = useBoundStore((state) => [
     state.behandlingsperiode,
     state.setBehandlingsdager
   ]);
@@ -45,7 +40,7 @@ export default function Behandlingsdager() {
     setBehandlingsdager(selectedDays);
   };
 
-  const { datepickerProps, inputProps, selectedDay } = UNSAFE_useDatepicker({
+  const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
     defaultSelected: new Date()
   });
 
@@ -80,17 +75,6 @@ export default function Behandlingsdager() {
             numberOfMonths={maaneder.length}
           />
         </UNSAFE_DatePicker>
-        {/* <DayPicker
-          mode='multiple'
-          min={1}
-          selected={behandlingsdager}
-          onSelect={handleSelectDays}
-          locale={nb}
-          numberOfMonths={maaneder.length}
-          month={maaneder[0]}
-          fromDate={behandlingsperiode.fra}
-          toDate={behandlingsperiode.til}
-        /> */}
       </div>
       {footer && footer.length > 0 && (
         <Alert fullWidth={false} inline={false} size='medium' variant='error'>
