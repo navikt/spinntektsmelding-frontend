@@ -34,6 +34,7 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: "https://npm.pkg.github.com"
+          cache: "yarn"
       - run: yarn install --frozen-lockfile
       - run: yarn test
       # - name: SonarCloud Scan
@@ -50,6 +51,7 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: "https://npm.pkg.github.com"
+          cache: "yarn"
       - run: yarn install --frozen-lockfile
       - run: yarn lint
 
