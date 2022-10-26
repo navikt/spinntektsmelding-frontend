@@ -4,7 +4,7 @@ ARG NODE_AUTH_TOKEN
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-RUN echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
+RUN echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \
@@ -30,6 +30,7 @@ RUN yarn build
 
 # If using npm comment out above and use below instead
 # RUN npm run build
+RUN rm -f .npmrc
 
 # Production image, copy all the files and run next
 FROM node:16-alpine AS runner
