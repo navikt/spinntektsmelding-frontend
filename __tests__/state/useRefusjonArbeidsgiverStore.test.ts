@@ -175,7 +175,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.refusjonskravetOpphoererDato('id1', '2022-05-06');
+      result.current.refusjonskravetOpphoererDato('id1', new Date(2022, 4, 6));
     });
 
     expect(result.current.refusjonskravetOpphoerer?.id1.opphorsdato).toEqual(new Date(2022, 4, 6));
@@ -185,13 +185,13 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.refusjonskravetOpphoererDato('id1', '2022-05-06');
+      result.current.refusjonskravetOpphoererDato('id1', new Date(2022, 4, 6));
     });
 
     expect(result.current.refusjonskravetOpphoerer?.id1.opphorsdato).toEqual(new Date(2022, 4, 6));
 
     act(() => {
-      result.current.refusjonskravetOpphoererDato('id1', '2022-02-09');
+      result.current.refusjonskravetOpphoererDato('id1', new Date(2022, 1, 9));
     });
 
     expect(result.current.refusjonskravetOpphoerer?.id1.opphorsdato).toEqual(new Date(2022, 1, 9));
@@ -201,13 +201,13 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.refusjonskravetOpphoererDato('id1', '2022-05-06');
+      result.current.refusjonskravetOpphoererDato('id1', new Date(2022, 4, 6));
     });
 
     expect(result.current.refusjonskravetOpphoerer?.id1.opphorsdato).toEqual(new Date(2022, 4, 6));
 
     act(() => {
-      result.current.refusjonskravetOpphoererDato('id1', '2022-03-07');
+      result.current.refusjonskravetOpphoererDato('id1', new Date(2022, 2, 7));
     });
 
     expect(result.current.refusjonskravetOpphoerer?.id1.opphorsdato).toEqual(new Date(2022, 2, 7));

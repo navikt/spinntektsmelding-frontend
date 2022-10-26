@@ -1,8 +1,8 @@
-import { act, renderHook } from '@testing-library/react';
-import { cleanup } from '@testing-library/react';
+import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattArbeidsforhold, MottattPeriode } from '../../state/MottattData';
 import { vi } from 'vitest';
+import { DateRange } from 'react-day-picker';
 
 const inputArbeidsforhold: Array<MottattArbeidsforhold> = [
   { arbeidsforholdId: 'arbeidsforhold1', arbeidsforhold: 'arbeidsforhold1', stillingsprosent: 60 },
@@ -74,7 +74,7 @@ describe('useBoundStore', () => {
     const periodeId = result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].id;
 
     act(() => {
-      result.current.setEgenmeldingFraDato('2022-06-15', periodeId);
+      result.current.setEgenmeldingFraDato(new Date(2022, 5, 15), periodeId);
     });
 
     expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].fra).toEqual(new Date(2022, 5, 15));
@@ -90,7 +90,7 @@ describe('useBoundStore', () => {
     const periodeId = result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].id;
 
     act(() => {
-      result.current.setEgenmeldingTilDato('2022-06-15', periodeId);
+      result.current.setEgenmeldingTilDato(new Date(2022, 5, 15), periodeId);
     });
 
     expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].til).toEqual(new Date(2022, 5, 15));
@@ -156,5 +156,27 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.egenmeldingsperioder?.arbeidsforhold3?.length).toBe(1);
+  });
+
+  it('should set the egenmelding datospenn for å given periode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const datoSpenn: DateRange = {
+      from: new Date(2022, 4, 14),
+      to: new Date(2022, 5, 15)
+    };
+
+    act(() => {
+      result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
+    });
+
+    const periodeId = result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].id;
+
+    act(() => {
+      result.current.setEgenmeldingDato(datoSpenn, periodeId);
+    });
+
+    expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].til).toEqual(new Date(2022, 5, 15));
+    expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].fra).toEqual(new Date(2022, 4, 14));
   });
 });

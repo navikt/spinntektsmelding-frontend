@@ -1,5 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
-import { cleanup } from '@testing-library/react';
+import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattArbeidsforhold, MottattNaturalytelse } from '../../state/MottattData';
 import { vi } from 'vitest';
@@ -66,7 +65,7 @@ describe('useBoundStore', () => {
     const ytelseId = result.current.naturalytelser?.[0].id || 'unknown';
 
     act(() => {
-      result.current.setNaturalytelseBortfallsdato(ytelseId, '2022-06-15');
+      result.current.setNaturalytelseBortfallsdato(ytelseId, new Date(2022, 5, 15));
     });
 
     expect(result.current.naturalytelser?.[0].bortfallsdato).toEqual(new Date(2022, 5, 15));

@@ -56,7 +56,7 @@ describe('useBoundStore', () => {
     const periodeId = result.current.fravaersperiode?.arbeidsforhold1?.[0].id || 'unknown';
 
     act(() => {
-      result.current.setFravaersperiodeFraDato('arbeidsforhold1', periodeId, '2022-06-15');
+      result.current.setFravaersperiodeFraDato('arbeidsforhold1', periodeId, new Date(2022, 5, 15));
     });
 
     expect(result.current.fravaersperiode?.arbeidsforhold1?.[0].fra).toEqual(new Date(2022, 5, 15));
@@ -72,7 +72,7 @@ describe('useBoundStore', () => {
     const periodeId = result.current.fravaersperiode?.arbeidsforhold1?.[0].id || 'unknown';
 
     act(() => {
-      result.current.setFravaersperiodeTilDato('arbeidsforhold1', periodeId, '2022-06-15');
+      result.current.setFravaersperiodeTilDato('arbeidsforhold1', periodeId, new Date(2022, 5, 15));
     });
 
     expect(result.current.fravaersperiode?.arbeidsforhold1?.[0].til).toEqual(new Date(2022, 5, 15));
