@@ -72,7 +72,7 @@ export default function Behandlingsdager() {
             {...inputProps}
             fromDate={behandlingsperiode.fra}
             toDate={behandlingsperiode.til}
-            mode='single'
+            mode='multiple'
             onSelect={handleSelectDays}
             numberOfMonths={maaneder.length}
             disableNavigation
