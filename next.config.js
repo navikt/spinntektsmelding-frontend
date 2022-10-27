@@ -3,7 +3,14 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
-  basePath: '/im-dialog'
+  basePath: '/im-dialog',
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true
+  }
 };
 
 module.exports = nextConfig;
