@@ -8,7 +8,7 @@ WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
-RUN yarn --frozen-lockfile
+# RUN yarn --frozen-lockfile
 RUN echo "https://npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > .npmrc && \
     yarn --frozen-lockfile && \
     rm -f .npmrc
