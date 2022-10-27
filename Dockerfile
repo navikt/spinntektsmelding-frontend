@@ -4,7 +4,7 @@ FROM node:16-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 ARG NODE_AUTH_TOKEN
-COPY .npmrc.docker .npmrc 
+# COPY .npmrc.docker .npmrc 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 

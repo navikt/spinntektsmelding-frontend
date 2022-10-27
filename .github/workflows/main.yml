@@ -70,6 +70,7 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: "https://npm.pkg.github.com"
+          always-auth: true
       - uses: actions/checkout@master
       # - uses: actions/download-artifact@v2
       #   with:
@@ -83,8 +84,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and publish Docker image
         run: |
-          docker build --tag ${IMAGE} --build-arg NODE_AUTH_TOKEN=${{secrets.READER_TOKEN}} .
+          docker build --tag ${IMAGE} .
           docker push ${IMAGE}
+        env: 
+         NODE_AUTH_TOKEN: ${{secrets.READER_TOKEN}}
 
   Deploy:
     needs: [Docker]
