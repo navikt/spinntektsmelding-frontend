@@ -9,7 +9,7 @@ COPY .npmrc.docker .npmrc
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
 RUN echo "https://npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > .npmrc && \
-    yarn --frozen-lockfile; && \
+    yarn --frozen-lockfile && \
     rm -f .npmrc
 
 
