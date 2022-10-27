@@ -83,7 +83,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and publish Docker image
         run: |
-          docker build --tag ${IMAGE} --build-arg NODE_AUTH_TOKEN=${ secrets.READER_TOKEN } .
+          docker build --tag ${IMAGE} --build-arg NODE_AUTH_TOKEN=${secrets.READER_TOKEN} .
           docker push ${IMAGE}
 
   Deploy:
