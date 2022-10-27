@@ -63,7 +63,7 @@ jobs:
   #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   Docker:
-    needs: [Kodekvalitet,Eslint]
+    # needs: [Kodekvalitet,Eslint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
