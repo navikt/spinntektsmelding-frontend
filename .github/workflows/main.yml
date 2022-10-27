@@ -87,7 +87,7 @@ jobs:
           docker build --tag ${IMAGE} .
           docker push ${IMAGE}
         env: 
-         NODE_AUTH_TOKEN: ${{secrets.READER_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.READER_TOKEN}}
 
   Deploy:
     needs: [Docker]
