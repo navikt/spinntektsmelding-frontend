@@ -124,13 +124,15 @@ const useFravaersperiodeStore: StateCreator<
         if (state.fravaersperiode && state.fravaersperiode[arbeidsforholdId]) {
           state.fravaersperiode[arbeidsforholdId] = state.fravaersperiode[arbeidsforholdId].map((periode: Periode) => {
             if (periode.id === periodeId) {
+              if (periode.til !== nyDato?.to || periode.fra !== nyDato?.from) {
+                state.sammeFravaersperiode = false;
+              }
               periode.til = nyDato?.to;
               periode.fra = nyDato?.from;
             }
             return periode;
           });
         }
-        state.sammeFravaersperiode = false;
         return state;
       })
     ),

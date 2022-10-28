@@ -91,6 +91,9 @@ const useEgenmeldingStore: StateCreator<
         forholdKeys.forEach((forholdKey) => {
           state.egenmeldingsperioder[forholdKey] = state.egenmeldingsperioder[forholdKey].map((periode: Periode) => {
             if (periode.id === periodeId) {
+              if (periode.til !== dateValue?.to || periode.fra !== dateValue?.from) {
+                state.sammeEgenmeldingsperiode = false;
+              }
               periode.til = dateValue?.to;
               periode.fra = dateValue?.from;
               return periode;
@@ -98,8 +101,6 @@ const useEgenmeldingStore: StateCreator<
             return periode;
           });
         });
-
-        state.sammeEgenmeldingsperiode = false;
 
         return state;
       })
@@ -163,7 +164,6 @@ const useEgenmeldingStore: StateCreator<
             });
           }
         }
-
         state.sammeEgenmeldingsperiode = status;
 
         return state;
