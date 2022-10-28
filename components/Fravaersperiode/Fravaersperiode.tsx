@@ -11,7 +11,7 @@ export default function Fravaersperiode() {
 
   return (
     <>
-      <Heading3>Fraværsperiode</Heading3>
+      <Heading3>Sykmeldingsperiode</Heading3>
       <p>
         I følge sykmeldingen var den ansatte sykmeldt i perioden som er ferdigutfylt her. Endre fraværsperiode dersom
         den ansatte vært på jobb noen av dagene eller om den på annen måte ikke er korrekt. Du skal ikke ta med

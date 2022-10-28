@@ -113,7 +113,7 @@ const Kvittering: NextPage = () => {
               </div>
             </div>
             <Skillelinje />
-            <Heading2>Fraværsperiode</Heading2>
+            <Heading2>Sykmeldingsperiode</Heading2>
             <div className={lokalStyles.ytterstefravaerwrapper}>
               <div className={lokalStyles.ytrefravaerswrapper}>
                 <BodyShort as='h4' className={lokalStyles.fravaerstyper}>

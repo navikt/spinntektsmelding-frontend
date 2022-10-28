@@ -1,14 +1,20 @@
 .heading4 {
-    margin-top: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .sammeperiode {
-    align-self: end;
-    margin-left: 1.05rem;
-  }
+  align-self: end;
+  margin-left: 1.05rem;
+}
 
-  .datowrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
+.datowrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+@media screen and (max-width: 800px) {
+  .sammeperiode {
+    margin-left: 0;
   }
+}
