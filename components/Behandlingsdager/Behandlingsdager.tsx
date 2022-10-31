@@ -11,9 +11,10 @@ import Skillelinje from '../Skillelinje/Skillelinje';
 import ukeNr from '../../utils/ukeNr';
 
 export default function Behandlingsdager() {
-  const [behandlingsperiode, setBehandlingsdager] = useBoundStore((state) => [
+  const [behandlingsperiode, setBehandlingsdager, behandlingsdager] = useBoundStore((state) => [
     state.behandlingsperiode,
-    state.setBehandlingsdager
+    state.setBehandlingsdager,
+    state.behandlingsdager
   ]);
 
   const [footer, setFooter] = useState<string>('');
@@ -77,6 +78,7 @@ export default function Behandlingsdager() {
             numberOfMonths={maaneder.length}
             disableNavigation
             fromMonth={behandlingsperiode.fra}
+            defaultSelected={behandlingsdager}
           />
         </UNSAFE_DatePicker>
       </div>

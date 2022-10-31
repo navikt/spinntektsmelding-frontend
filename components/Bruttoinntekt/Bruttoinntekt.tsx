@@ -8,6 +8,7 @@ import formatCurrency from '../../utils/formatCurrency';
 import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 import lonnProsent from '../../utils/lonnProsent';
+import TidligereInntekt from './TidligereInntekt';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -35,13 +36,10 @@ export default function Bruttoinntekt() {
   if (tidligereinntekt) {
     return (
       <>
-        <Heading3>Bruttoinntekt siste 3 måneder</Heading3>
-        <BodyLong>
-          Vi har brukt opplysninger fra skatteetaten (a-ordningen) for å anslå månedsinntekten her. Desom det ikke
-          stemmer må dere endre dette. Dersom inntekten har gått opp pga. varig lønnsforhøyelse, og ikke for eksempel
-          representerer uforutsett overtid må dette korrigeres.
-        </BodyLong>
-        <TextLabel className={styles.tbmargin}>Vi har registrert en inntekt på</TextLabel>
+        <Heading3>Brutto månedslønn</Heading3>
+        <BodyLong>For å beregne månedslønnen har vi brukt følgende lønnsopplysninger fra A-meldingen:</BodyLong>
+        {tidligereinntekt && <TidligereInntekt tidligereinntekt={tidligereinntekt} />}
+        <TextLabel className={styles.tbmargin}>Vi har derfor beregnet månedslønnen til</TextLabel>
         <div className={lokalStyles.belopwrapper}>
           {!endreMaanedsinntekt && (
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
@@ -134,29 +132,13 @@ export default function Bruttoinntekt() {
             ))}
           </>
         )}
-        {tidligereinntekt && (
-          <>
-            <TextLabel className={styles.tbmargin}>Inntekten er basert på følgende måneder</TextLabel>
-            <table>
-              <tbody>
-                {tidligereinntekt?.map((inntekt) => (
-                  <tr key={inntekt.id}>
-                    <td className={lokalStyles.maanedsnavn}>{inntekt.maanedsnavn}:</td>
-                    <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
-
-        <BodyLong className={styles.tbmargin}>
-          <strong>
-            Beløpet er basert på en beregning av siste tre måneders lønn. Hvis beløpet ikke er korrekt må dere endre
-            dette. Det kan være at den ansatte nylig har fått lønnsøkning, redusering i arbeidstid eller har andre
-            endringer i lønn som vi ikke registrert. Beregningen er gjort etter{' '}
-            <Link href='#'>folketrygdloven $8-28.</Link>
-          </strong>
+        <BodyShort>
+          <strong>Stemmer dette?</strong>
+        </BodyShort>
+        <BodyLong>
+          Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i
+          arbeidstid, hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke
+          inkluderes i beregnet månedslønn. Beregningen er gjort etter <Link href='#'>folketrygdloven $8-28.</Link>
         </BodyLong>
         <CheckboxGroup size='medium' error={visFeilmeldingsTekst('bruttoinntektbekreft')} legend=''>
           <Checkbox
@@ -165,7 +147,7 @@ export default function Bruttoinntekt() {
             error={visFeilmelding('bruttoinntektbekreft')}
             value='Ja'
           >
-            Jeg bekrefter at registrert inntekt er korrekt
+            Jeg bekrefter at jeg har kontrollert inntekten og at beregnet månedslønn er korrekt.
           </Checkbox>
         </CheckboxGroup>
       </>
@@ -173,7 +155,7 @@ export default function Bruttoinntekt() {
   } else {
     return (
       <>
-        <Heading3>Bruttoinntekt siste 3 måneder</Heading3>
+        <Heading3>Brutto månedslønn</Heading3>
         <BodyLong>
           Angi bruttoinntekt som snitt av siste tre måneders lønn. Dersom inntekten har gått opp pga. varig
           lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes som
