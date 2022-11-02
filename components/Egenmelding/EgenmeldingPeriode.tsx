@@ -30,10 +30,10 @@ export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: E
 
   return (
     <div>
-      <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-' + periodeId}>
+      <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-egenmelding-' + periodeId}>
         <div className={localStyles.datowrapper}>
-          <UNSAFE_DatePicker.Input {...fromInputProps} label='Fra' id={`fra-${periodeId}`} />
-          <UNSAFE_DatePicker.Input {...toInputProps} label='Til' id={`til-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...fromInputProps} label='Egenmelding fra' id={`fra-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...toInputProps} label='Egenmelding til' id={`til-${periodeId}`} />
         </div>
       </UNSAFE_DatePicker>
     </div>

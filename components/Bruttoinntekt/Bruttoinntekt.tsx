@@ -9,6 +9,7 @@ import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 import lonnProsent from '../../utils/lonnProsent';
 import TidligereInntekt from './TidligereInntekt';
+import Heading4 from '../Heading4';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -112,7 +113,7 @@ export default function Bruttoinntekt() {
           <>
             {arbeidsforhold.map((forhold) => (
               <div key={forhold.arbeidsforholdId} className={lokalStyles.arbeidsprosent}>
-                <Heading3>Estimert bruttoinntekt - {forhold.arbeidsforhold}</Heading3>
+                <Heading4>Estimert bruttoinntekt - {forhold.arbeidsforhold}</Heading4>
                 <div className={lokalStyles.prosentbody}>
                   <BodyShort className={lokalStyles.prosentbodytext}>
                     Basert på <b>{forhold.stillingsprosent}%</b> stilling er inntekten estimert til{' '}
@@ -140,7 +141,12 @@ export default function Bruttoinntekt() {
           arbeidstid, hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke
           inkluderes i beregnet månedslønn. Beregningen er gjort etter <Link href='#'>folketrygdloven $8-28.</Link>
         </BodyLong>
-        <CheckboxGroup size='medium' error={visFeilmeldingsTekst('bruttoinntektbekreft')} legend=''>
+        <CheckboxGroup
+          size='medium'
+          error={visFeilmeldingsTekst('bruttoinntektbekreft')}
+          hideLegend
+          legend='Bekreft at månedslønn er korrekt'
+        >
           <Checkbox
             onClick={(event) => bekreftKorrektInntekt(event.currentTarget.checked)}
             id='bruttoinntektbekreft'

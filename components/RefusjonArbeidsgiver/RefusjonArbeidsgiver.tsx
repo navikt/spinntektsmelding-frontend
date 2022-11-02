@@ -7,6 +7,7 @@ import Heading4 from '../Heading4';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import useBoundStore from '../../state/useBoundStore';
 import RefsjonArbeidsgiverSluttdato from './RefsjonArbeidsgiverSluttdato';
+import SelectBegrunnelse from './SelectBegrunnelse';
 
 export default function RefusjonArbeidsgiver() {
   const arbeidsforhold: Array<IArbeidsforhold> | undefined = useBoundStore((state) => state.arbeidsforhold);
@@ -77,16 +78,10 @@ export default function RefusjonArbeidsgiver() {
             </Radio>
           </RadioGroup>
           {fullLonnIArbeidsgiverPerioden?.[forhold.arbeidsforholdId]?.status === 'Nei' && (
-            <Select
-              label='Velg begrunnelse for ingen eller redusert utbetaling'
-              className={styles.halfsize}
-              onChange={(event) => begrunnelseRedusertUtbetaling(forhold.arbeidsforholdId, event.target.value)}
-              id={`lia-select-${forhold.arbeidsforholdId}`}
-              error={visFeilmeldingsTekst(`lia-select-${forhold.arbeidsforholdId}`)}
-            >
-              <option value=''>Velg</option>
-              <option value='annet'>Annet</option>
-            </Select>
+            <SelectBegrunnelse
+              onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
+              arbeidsforholdId={forhold.arbeidsforholdId}
+            />
           )}
 
           <RadioGroup

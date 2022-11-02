@@ -42,16 +42,34 @@ export const config = {
 const handler = (
   req: NextApiRequest,
   res: NextApiResponse<Data> //res.status(200).json(org);
-) =>
-  httpProxyMiddleware(req, res, {
-    target: basePath,
-    onProxyInit: handleProxyInit,
-    pathRewrite: [
-      {
-        patternStr: '^/api/innsendingInntektsmelding',
-        replaceStr: ''
-      }
-    ]
-  });
+) => {
+  const env = process.env.NODE_ENV;
+  if (env == 'development') {
+    const innsendteData = req.body;
+    return res.status(201).json(innsendteData);
+  } else if (env == 'production') {
+    return httpProxyMiddleware(req, res, {
+      target: basePath,
+      onProxyInit: handleProxyInit,
+      pathRewrite: [
+        {
+          patternStr: '^/api/innsendingInntektsmelding',
+          replaceStr: ''
+        }
+      ]
+    });
+  }
+};
+
+// httpProxyMiddleware(req, res, {
+//   target: basePath,
+//   onProxyInit: handleProxyInit,
+//   pathRewrite: [
+//     {
+//       patternStr: '^/api/innsendingInntektsmelding',
+//       replaceStr: ''
+//     }
+//   ]
+// });
 
 export default handler;

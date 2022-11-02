@@ -3,23 +3,25 @@ interface Naturalytelser {
 }
 
 const naturalytelser: Naturalytelser = {
-  ElektroniskKommunikasjon: 'Elektronisk kommunikasjon',
-  Aksjer: 'Aksjer / grunnfondsbevis til underkurs',
-  Losji: 'Losji',
-  KostDøgn: 'Kost (døgn)',
-  Besøksreiser: 'Besøksreiser i hjemmet annet',
-  Kostbesparelse: 'Kostbesparelse i hjemmet',
-  Rentefordel: 'Rentefordel lån',
-  Bil: 'Bil',
-  KostDager: 'Kost (dager)',
-  Bolig: 'Bolig',
-  Forsikringer: 'Skattepliktig del av visse forsikringer',
-  FriTransport: 'Fri transport',
-  Opsjoner: 'Opsjoner',
-  Barnehageplass: 'Tilskudd barnehageplass',
-  YrkesbilKilometer: 'Yrkesbil tjenestebehov kilometer',
-  YrkesbilListepris: 'Yrkesbil tjenestebehov listepris',
-  UtenlandskPensjonsordning: 'Innbetaling utenlandsk pensjonsordning'
+  elektroniskKommunikasjon: 'Elektronisk kommunikasjon',
+  aksjerGrunnfondsbevisTilUnderkurs: 'Aksjer / grunnfondsbevis til underkurs',
+  losji: 'Losji',
+  kostDoegn: 'Kost (døgn)',
+  besoeksreiserHjemmetAnnet: 'Besøksreiser i hjemmet annet',
+  kostbesparelseIHjemmet: 'Kostbesparelse i hjemmet',
+  rentefordelLaan: 'Rentefordel lån',
+  bil: 'Bil',
+  kostDager: 'Kost (dager)',
+  bolig: 'Bolig',
+  skattepliktigDelForsikringer: 'Skattepliktig del av visse forsikringer',
+  friTransport: 'Fri transport',
+  opsjoner: 'Opsjoner',
+  tilskuddBarnehageplass: 'Tilskudd barnehageplass',
+  bedriftsbarnehageplass: 'Bedriftsbarnehageplass',
+  yrkebilTjenestligbehovKilometer: 'Yrkesbil tjenestebehov kilometer',
+  yrkebilTjenestligbehovListepris: 'Yrkesbil tjenestebehov listepris',
+  innbetalingTilUtenlandskPensjonsordning: 'Innbetaling utenlandsk pensjonsordning',
+  annet: 'Annet'
 };
 
 export default naturalytelser;

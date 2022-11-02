@@ -8,16 +8,19 @@ interface PeriodeFraTilProps {
 }
 
 export default function PeriodeFraTil(props: PeriodeFraTilProps) {
-  return (
-    <>
-      <div className={lokalStyles.fravaerwrapper}>
-        <div className={lokalStyles.fravaertid}>Fra</div>
-        <div>{formatDate(props.fra)}</div>
-      </div>
-      <div className={lokalStyles.fravaerwrapper}>
-        <div className={lokalStyles.fravaertid}>Til</div>
-        <div>{formatDate(props.til)}</div>
-      </div>
-    </>
-  );
+  if (props.fra || props.til) {
+    return (
+      <>
+        <div className={lokalStyles.fravaerwrapper}>
+          <div className={lokalStyles.fravaertid}>Fra</div>
+          <div>{formatDate(props.fra)}</div>
+        </div>
+        <div className={lokalStyles.fravaerwrapper}>
+          <div className={lokalStyles.fravaertid}>Til</div>
+          <div>{formatDate(props.til)}</div>
+        </div>
+      </>
+    );
+  }
+  return null;
 }
