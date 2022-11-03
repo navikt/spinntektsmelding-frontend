@@ -59,6 +59,7 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
   let feilkoderLonnUnderSykefravaeret: Array<ValiderResultat> = [];
   let feilkoderBekreftOpplyninger: Array<ValiderResultat> = [];
   let feilkoderSumInntektProsent: Array<ValiderResultat> = [];
+  let feilkoderBruttoinntektArbeidsforhold: Array<ValiderResultat> = [];
 
   const aktuelleArbeidsforholdId = state.arbeidsforhold
     ?.filter((forhold) => forhold.aktiv === true)
@@ -101,6 +102,8 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
   }
 
   feilkoderBruttoinntekt = validerBruttoinntekt(state.bruttoinntekt);
+
+  feilkoderBruttoinntektArbeidsforhold = validerBruttoinntekt(state.bruttoinntekt);
 
   if (state.naturalytelser) {
     feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);

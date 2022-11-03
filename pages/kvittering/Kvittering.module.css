@@ -3,10 +3,10 @@
   flex-direction: column;
 }
 
-.ytreansattwrapper {
+/* .ytreansattwrapper {
   display: flex;
   gap    : 2rem;
-}
+} */
 
 .fravaerwrapper {
   width     : 50%;

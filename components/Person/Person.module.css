@@ -1,0 +1,43 @@
+.arbeidsgiverwrapper,
+.ytreansattwrapper,
+.personinfowrapper,
+.fravaerswrapperwrapper {
+  display              : grid;
+  grid-template-columns: [col1] 50% [col2] auto;
+}
+
+.ansattwrapper {
+  display       : flex;
+  flex-direction: column;
+}
+
+.virksomhetsnavn {
+  white-space  : nowrap;
+  overflow     : hidden;
+  text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 800px) {
+  .personinfowrapper {
+    display              : grid;
+    grid-template-columns: [col1] auto;
+  }
+
+  .denansatte {
+    margin-bottom: 1rem;
+  }
+}
+
+@media screen and (max-width: 450px) {
+
+  .arbeidsgiverwrapper,
+  .ytreansattwrapper {
+    display              : grid;
+    grid-template-columns: [col1] auto;
+  }
+
+  .virksomhetsnavnwrapper,
+  .ansattwrapper {
+    margin-bottom: .75rem;
+  }
+}
