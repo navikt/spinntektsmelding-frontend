@@ -27,7 +27,8 @@ const feiltekster = {
   ENDRINGSAARSAK_MANGLER: 'Vennligst anngi årsak for endringen.',
   SUM_LAVERE_ENN_INNTEKT: 'Summen av inntektene for de enkelte arbeidsforholdene er høyere enn bruttoinntekten.',
   SERVERFEIL_ARBEIDSGIVER: 'Kunne ikke hente ut arbeidsgiverdata',
-  SERVERFEIL_IM: 'Kunne ikke hente ut inntektsmeldingdata'
+  SERVERFEIL_IM: 'Kunne ikke hente ut inntektsmeldingdata',
+  BRUTTOINNTEKT_ARBEIDSFORHOLD_MANGLER: 'Angi bruttoinntekt for minst et arbeidsforhold'
 };
 
 export default feiltekster;

@@ -9,7 +9,8 @@ import styles from '../../styles/Home.module.css';
 import Heading2 from '../../components/Heading2/Heading2';
 import Heading3 from '../../components/Heading3/Heading3';
 import { BodyLong, BodyShort, Button } from '@navikt/ds-react';
-import TextLabel from '../../components/TextLabel/TextLabel';
+import Person from '../../components/Person/Person';
+
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
 import PeriodeFraTil from '../../components/PeriodeFraTil/PeriodeFraTil';
@@ -22,13 +23,11 @@ import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/Lonn
 import useBoundStore from '../../state/useBoundStore';
 import Heading4 from '../../components/Heading4';
 import { IArbeidsforhold } from '../../state/state';
+import KvitteringArbeidsforholdBruttolonn from '../../components/KvitteringArbeidsforholdBruttolonn';
 
 const Kvittering: NextPage = () => {
-  const orgnrUnderenhet = useBoundStore((state) => state.orgnrUnderenhet);
-  const virksomhetsnavn = useBoundStore((state) => state.virksomhetsnavn);
-  const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
-  const navn = useBoundStore((state) => state.navn);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
+  const inntektsprosent = useBoundStore((state) => state.inntektsprosent);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
@@ -49,17 +48,14 @@ const Kvittering: NextPage = () => {
     router.push('/');
   };
 
-  console.log('arbeidsforhold', arbeidsforhold);
-
   const aktuelltArbeidsforholdTittel = (arbeidsforholdId?: IArbeidsforhold) => {
-    console.log('arbeidsforholdId', arbeidsforholdId);
     if (!arbeidsforholdId) {
       return '';
     }
     const aktuelltArbeidsforhold = arbeidsforhold?.find(
       (element) => element.arbeidsforholdId === arbeidsforholdId.arbeidsforholdId
     );
-    console.log(aktuelltArbeidsforhold);
+
     return aktuelltArbeidsforhold ? aktuelltArbeidsforhold.arbeidsforhold : '';
   };
 
@@ -84,34 +80,8 @@ const Kvittering: NextPage = () => {
       <div>
         <PageContent title='Kvittering - innsendt inntektsmelding'>
           <main className={`main-content ${styles.padded}`}>
-            <div className={lokalStyles.personinfowrapper}>
-              <div className={lokalStyles.denansatte}>
-                <Heading2>Den ansatte</Heading2>
-                <div className={lokalStyles.ytreansattwrapper}>
-                  <div className={lokalStyles.ansattwrapper}>
-                    <TextLabel>Navn</TextLabel>
-                    <div className={styles.fnr}>{navn}</div>
-                  </div>
-                  <div className={styles.ansattwrapper}>
-                    <TextLabel>Fødselsnummer</TextLabel>
-                    <div className={styles.fnr}>{identitetsnummer}</div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Heading2>Arbeidsgiveren</Heading2>
-                <div className={lokalStyles.arbeidsgiverwrapper}>
-                  <div className={lokalStyles.virksomhetsnavnwrapper}>
-                    <TextLabel>Virksomhetsnavn</TextLabel>
-                    <div className={lokalStyles.virksomhetsnavn}>{virksomhetsnavn}</div>
-                  </div>
-                  <div className={styles.orgnrnavnwrapper}>
-                    <TextLabel>Org.nr. for underenhet</TextLabel>
-                    {orgnrUnderenhet}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Person />
+
             <Skillelinje />
             <div className={lokalStyles.fravaerswrapperwrapper}>
               <div className={lokalStyles.fravaersperiode}>
@@ -192,6 +162,10 @@ const Kvittering: NextPage = () => {
             <Heading2>Bruttoinntekt siste 3 måneder</Heading2>
             <BodyShort className={lokalStyles.fravaertid}>Registrert inntekt</BodyShort>
             <BodyShort>{formatCurrency(bruttoinntekt)} kr/måned</BodyShort>
+            <KvitteringArbeidsforholdBruttolonn
+              lonnPrArbeidsforhold={inntektsprosent}
+              arbeidsforhold={aktiveArbeidsforholdListe}
+            />
             <Skillelinje />
             {!flerEnnEtArbeidsforhold && <Heading2>Refusjon</Heading2>}
             {arbeidsforhold &&

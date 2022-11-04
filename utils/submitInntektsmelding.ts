@@ -14,6 +14,9 @@ import validerLonnUnderSykefravaeret, {
 import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import validerProsentInntekt from '../validators/validerProsentInntekt';
+import validerBruttoinntektArbeidsforhold, {
+  BruttoinntektArbeidsforholdFeilkode
+} from '../validators/validerBruttoinntektArbeidsforhold';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -41,6 +44,7 @@ type codeUnion =
   | NaturalytelserFeilkoder
   | LonnIArbeidsgiverperiodenFeilkode
   | LonnUnderSykefravaeretFeilkode
+  | BruttoinntektArbeidsforholdFeilkode
   | BekreftOpplysningerFeilkoder;
 
 export interface ValiderResultat {
@@ -103,7 +107,11 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
 
   feilkoderBruttoinntekt = validerBruttoinntekt(state.bruttoinntekt);
 
-  feilkoderBruttoinntektArbeidsforhold = validerBruttoinntekt(state.bruttoinntekt);
+  feilkoderBruttoinntektArbeidsforhold = validerBruttoinntektArbeidsforhold(
+    state.arbeidsforhold,
+    state.inntektsprosent,
+    state.bruttoinntekt?.bruttoInntekt
+  );
 
   if (state.naturalytelser) {
     feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);
@@ -137,7 +145,8 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
     ...feilkoderLonnIArbeidsgiverperioden,
     ...feilkoderLonnUnderSykefravaeret,
     ...feilkoderBekreftOpplyninger,
-    ...feilkoderSumInntektProsent
+    ...feilkoderSumInntektProsent,
+    ...feilkoderBruttoinntektArbeidsforhold
   ];
 
   if (errorCodes.length > 0) {
