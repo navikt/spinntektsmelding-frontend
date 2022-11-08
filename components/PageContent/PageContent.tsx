@@ -14,10 +14,10 @@ export default function PageContent(props: PageContentProps) {
         <Link>Breadkrumb</Link> / {props.title}
       </div>
       <div className='page-content-header'>
-        <Heading size='small' level='2'>
+        <Heading size='small' level='1'>
           Inntektsgrunnlag og fravær
         </Heading>
-        <Heading size='medium' level='1'>
+        <Heading size='medium' level='2'>
           {props.title}
         </Heading>
       </div>

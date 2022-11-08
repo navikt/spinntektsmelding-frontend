@@ -3,38 +3,32 @@
 }
 
 .padded {
-  padding: 1rem 1.5rem;
+  padding      : 1rem 2.5rem;
   margin-bottom: 2rem;
 }
 
 .tbmargin {
   margin-bottom: 1rem;
-  margin-top: 1rem;
+  margin-top   : 1rem;
 }
 
 .halfsize {
-  width: 50%;
-  display: inline-block;
-}
-
-.denansatte,
-.size40 {
-  width: 40%;
+  width  : 50%;
   display: inline-block;
 }
 
 .size-resten {
   display: inline-block;
-  width: 100%;
+  width  : 100%;
 }
 
 .virksomhetsnavnwrapper {
-  display: inline-block;
+  display  : inline-block;
   flex-grow: 1;
 }
 
 .orgnrnavnwrapper {
-  display: inline-block;
+  display  : inline-block;
   flex-grow: 2;
 }
 
@@ -48,44 +42,28 @@
 
 .endresykemelding,
 .endrebutton {
-  width: 33%;
+  width     : 33%;
   align-self: end;
 }
 
 .endresykemeldingknapper {
-  padding-top: 2rem;
-  display: flex;
+  padding-top    : 2rem;
+  display        : flex;
   justify-content: space-between;
 }
 
 .datepickerescape {
-  display: inline-block;
+  display     : inline-block;
   margin-right: 2rem;
 }
 
 .datepickerlabel {
-  display: inline-block;
+  display      : inline-block;
   margin-bottom: var(--navds-spacing-2);
 }
 
 .datepickerescape input {
   margin-top: 0 !important;
-}
-.oktekst,
-.noktekst {
-  font-size: var(--navds-font-size-xlarge);
-  margin: 0.5rem 0;
-  display: inline-block;
-}
-
-.oktekst {
-  color: green;
-  display: inline-block;
-}
-
-.noktekst {
-  color: red;
-  display: inline-block;
 }
 
 .fnr {
@@ -99,7 +77,7 @@
 }
 
 .endrebutton {
-  max-width: 10rem;
+  max-width : 10rem;
   align-self: initial;
 }
 
@@ -109,12 +87,12 @@
 
 .kontrollerknapp {
   margin-top: auto;
-  height: 3rem;
-  display: inline-block;
+  height    : 3rem;
+  display   : inline-block;
 }
 
 .sendbutton {
-  min-width: 10rem;
+  min-width : 10rem;
   margin-top: 1rem;
 }
 
@@ -123,38 +101,38 @@
 }
 
 .personinfowrapper {
-  display: flex;
-  gap: 4rem;
+  display       : flex;
+  gap           : 4rem;
   flex-direction: row;
 }
 
 
 .virksomhetsnavn {
-  white-space: nowrap;
-  overflow: hidden;
+  white-space  : nowrap;
+  overflow     : hidden;
   text-overflow: ellipsis;
-  margin-top: 1rem;
+  margin-top   : 1rem;
 }
 
 .arbeidsgiverwrapper {
   display: flex;
-  gap: 2rem;
+  gap    : 2rem;
 }
 
 .periodewrapper {
   display: flex;
-  gap: 2rem;
-  margin: 1rem 0;
+  gap    : 2rem;
+  margin : 1rem 0;
 }
 
-.radiobuttonwrapper > div {
+.radiobuttonwrapper>div {
   display: flex;
-  gap: 2rem;
+  gap    : 2rem;
 }
 
 .radiobuttonwrapper,
 .opphrefkravforklaring {
-  margin:   var(--navds-spacing-3) 0 ;
+  margin: var(--navds-spacing-3) 0;
 }
 
 .opphrefkravperiode {
@@ -162,8 +140,8 @@
 }
 
 .naturalytelser {
-  display: flex;
-  gap: 2rem;
+  display      : flex;
+  gap          : 2rem;
   margin-bottom: var(--navds-spacing-2);
 }
 
@@ -174,10 +152,6 @@
 @media screen and (max-width: 800px) {
   .personinfowrapper {
     flex-direction: column;
-  }
-
-  .denansatte {
-    width: initial;
   }
 }
 
@@ -193,13 +167,13 @@
 
 @media screen and (max-width: 500px) {
   .periodewrapper {
-    flex-direction: column;
-    border: 1px solid darkgray;
-    border-radius: 5px;
-    background-color: var( --navds-semantic-color-canvas-background );
-    padding: 0.5rem;
-    box-shadow: 0.25rem 0.25rem 0.25rem var( --navds-semantic-color-canvas-background );
-    margin: 0.25rem 0;
+    flex-direction  : column;
+    border          : 1px solid darkgray;
+    border-radius   : 5px;
+    background-color: var(--navds-semantic-color-canvas-background);
+    padding         : 0.5rem;
+    box-shadow      : 0.25rem 0.25rem 0.25rem var(--navds-semantic-color-canvas-background);
+    margin          : 0.25rem 0;
   }
 
   .datepickerescape {

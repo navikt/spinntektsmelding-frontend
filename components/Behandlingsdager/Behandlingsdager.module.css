@@ -1,42 +1,46 @@
-.multicalwrapper > div {
-    display: flex;
-    margin: 0;
+.multicalwrapper>div {
+  display: flex;
+  margin : 0;
 }
 
-.multicalwrapper > div > div {
-    margin: 0;
-    flex-wrap: wrap;
-    gap: 1.5rem;
+.multicalwrapper>div>div {
+  margin   : 0;
+  flex-wrap: wrap;
+  gap      : 1.5rem;
 }
 
-.multicalwrapper thead > tr {
-    height: initial;
+.multicalwrapper thead>tr {
+  height: initial;
 }
 
 .multicalwrapper :global(.navds-date__caption__month-wrapper) {
-    display: none;
+  display: none;
 }
 
 .multicalwrapper :global(.navds-date__caption) {
-    height: fit-content;
+  height: fit-content;
 }
 
 .multicalwrapper :global(.rdp-months) {
-    display: flex;
-    flex-wrap: wrap;
-    row-gap: 1rem;
+  display  : flex;
+  flex-wrap: wrap;
+  row-gap  : 1rem;
 }
 
 .multicalwrapper :global(.rdp-month) {
-    height: fit-content;
+  height: fit-content;
 }
 
 .multicalwrapper :global(.rdp-month:first-child) {
-    margin-left: 1rem;
-  }
+  margin-left: 1rem;
+}
 
 .multicalwrapper :global(.rdp-multiple_months) {
-    padding: 0;
-    margin-left: -1rem;
-    margin-right: -1rem;
-  }
+  padding     : 0;
+  margin-left : -1rem;
+  margin-right: -1rem;
+}
+
+:global(.navds-date) :glabal(.rdp-month) {
+  margin: 1rem 2rem;
+}

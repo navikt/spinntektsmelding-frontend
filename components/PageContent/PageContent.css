@@ -1,17 +1,18 @@
 .page-content-wrapper {
-    max-width: calc(960px + 2rem);
-    margin-left: auto;
-    margin-right: auto;
+  max-width   : calc(960px + 2rem);
+  margin-left : auto;
+  margin-right: auto;
 }
 
 .page-content-header {
-    background-color: #cce1ff;
-    padding: 2rem 1rem 1rem;
+  background-color: #cce1ff;
+  padding         : 2rem 2rem 1rem;
 }
 
 .page-content-body {
-    background-color: #FFF;
+  background-color: #FFF;
 }
+
 .page-content-breadcrumb {
-    margin: 2rem 1rem 1rem;
+  margin: 2rem 2.5rem 1rem;
 }

@@ -160,11 +160,6 @@ export default function RefusjonArbeidsgiver() {
                       Angi siste dag dere krever refusjon for
                     </LabelLabel>
                     <RefsjonArbeidsgiverSluttdato arbeidsforholdId={forhold.arbeidsforholdId} />
-                    {/* <Datepicker
-                      onChange={(dateString) => refusjonskravetOpphoererDato(forhold.arbeidsforholdId, dateString)}
-                      inputLabel='Egenmelding fra dato'
-                      inputId={`lus-sluttdato-${forhold.arbeidsforholdId}`}
-                    /> */}
                   </div>
                 )}
             </>
