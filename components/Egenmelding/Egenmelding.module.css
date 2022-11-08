@@ -1,16 +1,16 @@
-.egenmeldingswrapper > div:not(:first-child) {
-    margin-top: 3rem;
+.egenmeldingswrapper>div:not(:first-child) {
+  margin-top: 2rem;
 }
 
 .sammeperiode {
-  align-self: end;
+  align-self : end;
   margin-left: 1.05rem;
 }
 
 .datowrapper {
-  display: flex;
+  display  : flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap      : 2rem;
 }
 
 @media screen and (max-width: 800px) {

@@ -1,4 +1,4 @@
-import { Button, Checkbox } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox } from '@navikt/ds-react';
 import styles from '../../styles/Home.module.css';
 import localStyles from './Egenmelding.module.css';
 import ButtonSlette from '../ButtonSlette/ButtonSlette';
@@ -21,15 +21,17 @@ export default function Egenmelding() {
 
   return (
     <div className={localStyles.egenmeldingswrapper}>
+      <Heading3>Eventuell egenmelding</Heading3>
+      <BodyLong>
+        Dersom den ansatte var fraværende med egenmelding frem til sykmeldingen ble utstedt skal du oppgi første
+        fraværsdag med egenmelding i dette feltet.
+      </BodyLong>
       {aktiveArbeidsforhold().map((forhold, forholdsindex) => (
         <div key={forhold.arbeidsforholdId}>
-          <Heading3>
-            Eventuell egenmelding {flereArbeidsforhold ? ` - ${forhold.arbeidsforhold}` : '(valgfri)'}
-          </Heading3>
-          <p>
-            Dersom den ansatte var fraværende med egenmelding frem til sykmeldingen ble utstedt skal du oppgi første
-            fraværsdag med egenmelding i dette feltet.
-          </p>
+          {flereArbeidsforhold && (
+            <Heading3>Eventuell egenmelding {flereArbeidsforhold ? ` - ${forhold.arbeidsforhold}` : ''}</Heading3>
+          )}
+
           <div className={localStyles.egenmeldingswrapper}>
             {egenmeldingsperioder?.[forhold.arbeidsforholdId] &&
               egenmeldingsperioder?.[forhold.arbeidsforholdId].map((egenmeldingsperiode, index) => {
