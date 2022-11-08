@@ -29,18 +29,11 @@
 
 .multicalwrapper :global(.rdp-month) {
   height: fit-content;
-}
-
-.multicalwrapper :global(.rdp-month:first-child) {
-  margin-left: 1rem;
+  margin: 1rem 2rem;
 }
 
 .multicalwrapper :global(.rdp-multiple_months) {
   padding     : 0;
   margin-left : -1rem;
   margin-right: -1rem;
-}
-
-:global(.navds-date) :glabal(.rdp-month) {
-  margin: 1rem 2rem;
 }
