@@ -15,9 +15,9 @@ const egenmeldingsperioder: { [key: string]: Array<MottattPeriode> } = {
     { fra: '2022-10-06', til: '2022-11-06' }
   ],
   arbeidsforhold2: [
-    { fra: '2022-06-06', til: '2022-07-06' },
-    { fra: '2022-08-06', til: '2022-09-06' },
-    { fra: '2022-10-06', til: '2022-11-06' }
+    { fra: '2022-07-06', til: '2022-08-06' },
+    { fra: '2022-09-06', til: '2022-10-06' },
+    { fra: '2022-11-06', til: '2022-12-06' }
   ],
   arbeidsforhold22: []
 };
@@ -103,7 +103,7 @@ describe('useBoundStore', () => {
       result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
     });
 
-    const periodeId = result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].id;
+    let periodeId = result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].id;
 
     expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.length).toBe(3);
 
@@ -112,6 +112,21 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.length).toBe(2);
+
+    periodeId = result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].id;
+    act(() => {
+      result.current.slettEgenmeldingsperiode(periodeId);
+    });
+
+    expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.length).toBe(1);
+
+    periodeId = result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].id;
+    act(() => {
+      result.current.slettEgenmeldingsperiode(periodeId);
+    });
+
+    expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.length).toBe(1);
+    expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].fra).toBeUndefined();
   });
 
   it('should add a egenmelding for å given arbeidsforholdId.', () => {
@@ -178,5 +193,95 @@ describe('useBoundStore', () => {
 
     expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].til).toEqual(new Date(2022, 5, 15));
     expect(result.current.egenmeldingsperioder?.arbeidsforhold1?.[0].fra).toEqual(new Date(2022, 4, 14));
+  });
+
+  it('should add a backup of egenmelding opprinneligEgenmelding.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
+    });
+
+    expect(result.current.egenmeldingsperioder).toEqual(result.current.opprinneligEgenmeldingsperiode);
+  });
+
+  it('should copy arbeidsforhold1 to arbeidsforhold2, ignoring the ids.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
+    });
+
+    act(() => {
+      result.current.setSammeEgenmeldingsperiodeArbeidsforhold('arbeidsforhold1', true);
+    });
+
+    const af1 = result.current.egenmeldingsperioder['arbeidsforhold1'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+    const af2 = result.current.egenmeldingsperioder['arbeidsforhold2'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+
+    expect(af1).toEqual(af2);
+    expect(result.current.sammeEgenmeldingsperiode).toBeTruthy();
+  });
+
+  it('should set endre egenmeldingmelding.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
+    });
+
+    expect(result.current.endreEgenmeldingsperiode['arbeidsforhold1']).toBeFalsy();
+    expect(result.current.endreEgenmeldingsperiode['arbeidsforhold2']).toBeFalsy();
+
+    act(() => {
+      result.current.setEndreEgenmelding('arbeidsforhold1', true);
+    });
+
+    expect(result.current.endreEgenmeldingsperiode['arbeidsforhold1']).toBeTruthy();
+    expect(result.current.endreEgenmeldingsperiode['arbeidsforhold2']).toBeFalsy();
+  });
+
+  it('should tilbakestille egenmeldingmelding.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initEgenmeldingsperiode(inputArbeidsforhold, egenmeldingsperioder);
+    });
+
+    act(() => {
+      result.current.setSammeEgenmeldingsperiodeArbeidsforhold('arbeidsforhold1', true);
+    });
+
+    const af1 = result.current.egenmeldingsperioder['arbeidsforhold1'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+    const af2 = result.current.egenmeldingsperioder['arbeidsforhold2'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+
+    expect(af1).toEqual(af2);
+
+    act(() => {
+      result.current.tilbakestillEgenmelding('arbeidsforhold1');
+    });
+
+    const af3 = result.current.egenmeldingsperioder['arbeidsforhold1'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+    const af4 = result.current.egenmeldingsperioder['arbeidsforhold2'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+
+    expect(af3).toEqual(af4);
   });
 });

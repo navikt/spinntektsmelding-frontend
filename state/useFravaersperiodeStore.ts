@@ -1,7 +1,6 @@
 import { nanoid } from 'nanoid';
 import { StateCreator } from 'zustand';
 import { parseISO } from 'date-fns';
-import parseIsoDate from '../utils/parseIsoDate';
 import { MottattPeriode } from './MottattData';
 import { Periode } from './state';
 import produce from 'immer';
@@ -13,8 +12,6 @@ import { BehandlingsdagerState } from './useBehandlingsdagerStore';
 import { BruttoinntektState } from './useBruttoinntektStore';
 import { EgenmeldingState } from './useEgenmeldingStore';
 import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
-import { is } from 'immer/dist/internal';
-import { isArray } from 'util';
 import { DateRange } from 'react-day-picker';
 
 export interface FravaersperiodeState {

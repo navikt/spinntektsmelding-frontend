@@ -4,14 +4,23 @@ import useBoundStore from '../../state/useBoundStore';
 import { DateRange } from 'react-day-picker';
 import { Periode } from '../../state/state';
 import { useEffect } from 'react';
+import TextLabel from '../TextLabel';
+import styles from '../../styles/Home.module.css';
+import formatDate from '../../utils/formatDate';
 
 interface EgenmeldingPeriodeInterface {
   periodeId: string;
   egenmeldingsperiode: Periode;
+  arbeidsforholdId: string;
 }
 
-export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: EgenmeldingPeriodeInterface) {
+export default function EgenmeldingPeriode({
+  periodeId,
+  egenmeldingsperiode,
+  arbeidsforholdId
+}: EgenmeldingPeriodeInterface) {
   const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
+  const endreEgenmeldingsperiode = useBoundStore((state) => state.endreEgenmeldingsperiode);
 
   const rangeChangeHandler = (dateRange: DateRange | undefined) => {
     if (dateRange) {
@@ -27,6 +36,21 @@ export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: E
   useEffect(() => {
     setSelected({ from: egenmeldingsperiode?.fra, to: egenmeldingsperiode?.til });
   }, [egenmeldingsperiode]);
+
+  if (!endreEgenmeldingsperiode[arbeidsforholdId]) {
+    return (
+      <>
+        <div className={styles.datepickerescape}>
+          <TextLabel>Egenmelding fra</TextLabel>
+          <div>{formatDate(egenmeldingsperiode.fra)}</div>
+        </div>
+        <div className={styles.datepickerescape}>
+          <TextLabel>Egenmelding til</TextLabel>
+          <div>{formatDate(egenmeldingsperiode.til)}</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <div>

@@ -32,15 +32,12 @@ export default function validerBruttoinntektArbeidsforhold(
   }
 
   if (harFlereArbeidsforhold && !inntektsliste) {
-    console.log('heia', inntektsliste);
     valideringstatus.push({
       felt: `bruttoinntekt-endringsbelop-${arbeidsforhold[0].arbeidsforholdId}`,
       code: BruttoinntektArbeidsforholdFeilkode.BRUTTOINNTEKT_ARBEIDSFORHOLD_MANGLER
     });
   }
   if (harFlereArbeidsforhold && inntektsliste && inntektsliste.length < 1) {
-    console.log('neia', inntektsliste);
-
     valideringstatus.push({
       felt: `bruttoinntekt-endringsbelop-${arbeidsforhold[0].arbeidsforholdId}`,
       code: BruttoinntektArbeidsforholdFeilkode.BRUTTOINNTEKT_ARBEIDSFORHOLD_MANGLER

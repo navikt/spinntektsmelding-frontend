@@ -3,6 +3,7 @@ import { cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattArbeidsforhold, MottattPeriode } from '../../state/MottattData';
 import { vi } from 'vitest';
+import { DateRange } from 'react-day-picker';
 
 const inputArbeidsforhold: Array<MottattArbeidsforhold> = [
   { arbeidsforholdId: 'arbeidsforhold1', arbeidsforhold: 'arbeidsforhold1', stillingsprosent: 60 },
@@ -15,9 +16,9 @@ const fravaersperiode: { [key: string]: Array<MottattPeriode> } = {
     { fra: '2022-10-06', til: '2022-11-06' }
   ],
   arbeidsforhold2: [
-    { fra: '2022-06-07', til: '2022-07-07' },
-    { fra: '2022-08-07', til: '2022-09-07' },
-    { fra: '2022-10-07', til: '2022-11-07' }
+    { fra: '2022-07-06', til: '2022-08-06' },
+    { fra: '2022-09-06', til: '2022-10-06' },
+    { fra: '2022-11-06', til: '2022-12-06' }
   ]
 };
 
@@ -167,7 +168,7 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(fravaersperiode);
     });
 
-    expect(result.current.fravaersperiode?.arbeidsforhold2?.[0].fra).toEqual(new Date(2022, 5, 7));
+    expect(result.current.fravaersperiode?.arbeidsforhold2?.[0].fra).toEqual(new Date(2022, 6, 6));
     expect(result.current.sammeFravaersperiode).toBeFalsy();
 
     act(() => {
@@ -185,7 +186,7 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(fravaersperiode);
     });
 
-    expect(result.current.fravaersperiode?.arbeidsforhold2?.[0].fra).toEqual(new Date(2022, 5, 7));
+    expect(result.current.fravaersperiode?.arbeidsforhold2?.[0].fra).toEqual(new Date(2022, 6, 6));
     expect(result.current.sammeFravaersperiode).toBeFalsy();
 
     act(() => {
@@ -200,5 +201,65 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.sammeFravaersperiode).toBeFalsy();
+  });
+
+  it('should set the egenmelding datospenn for å given periode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const datoSpenn: DateRange = {
+      from: new Date(2022, 4, 14),
+      to: new Date(2022, 5, 15)
+    };
+
+    act(() => {
+      result.current.initFravaersperiode(fravaersperiode);
+    });
+
+    const periodeId = result.current.fravaersperiode?.arbeidsforhold1?.[0].id;
+
+    act(() => {
+      result.current.setFravaersperiodeDato('arbeidsforhold1', periodeId || '1', datoSpenn);
+    });
+
+    expect(result.current.fravaersperiode?.arbeidsforhold1?.[0].til).toEqual(new Date(2022, 5, 15));
+    expect(result.current.fravaersperiode?.arbeidsforhold1?.[0].fra).toEqual(new Date(2022, 4, 14));
+  });
+
+  it('should tilbakestille egenmeldingmelding.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initFravaersperiode(fravaersperiode);
+    });
+
+    act(() => {
+      result.current.setSammeFravarePaaArbeidsforhold('arbeidsforhold1', true);
+    });
+
+    const af1 = result.current.fravaersperiode?.['arbeidsforhold1'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+    const af2 = result.current.fravaersperiode?.['arbeidsforhold2'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+
+    expect(af1).toEqual(af2);
+
+    act(() => {
+      result.current.tilbakestillFravaersperiode('arbeidsforhold1');
+    });
+
+    const af3 = result.current.fravaersperiode?.['arbeidsforhold1'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+    const af4 = result.current.fravaersperiode?.['arbeidsforhold2'].map((forhold) => ({
+      fra: forhold.fra,
+      til: forhold.til
+    }));
+
+    expect(af3).toEqual(af4);
   });
 });

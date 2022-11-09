@@ -15,13 +15,17 @@ import { DateRange } from 'react-day-picker';
 
 export interface EgenmeldingState {
   egenmeldingsperioder: { [key: string]: Array<Periode> };
+  opprinneligEgenmeldingsperiode?: { [key: string]: Array<Periode> };
   sammeEgenmeldingsperiode: boolean;
+  endreEgenmeldingsperiode: { [key: string]: boolean };
   setEgenmeldingFraDato: (dateValue: Date | undefined, periodeId: string) => void;
   setEgenmeldingTilDato: (dateValue: Date | undefined, periodeId: string) => void;
   setEgenmeldingDato: (dateValue: DateRange | undefined, periodeId: string) => void;
   slettEgenmeldingsperiode: (periodeId: string) => void;
   leggTilEgenmeldingsperiode: (arbeidsforholdId: string) => void;
   setSammeEgenmeldingsperiodeArbeidsforhold: (arbeidsforholdId: string, status: boolean) => void;
+  setEndreEgenmelding: (arbeidsforholdId: string, status: boolean) => void;
+  tilbakestillEgenmelding: (arbeidsforholdId: string) => void;
   initEgenmeldingsperiode: (
     arbeidsforhold: Array<MottattArbeidsforhold>,
     egenmeldingsperioder: { [key: string]: Array<MottattPeriode> }
@@ -40,9 +44,10 @@ const useEgenmeldingStore: StateCreator<
   [],
   [],
   EgenmeldingState
-> = (set) => ({
+> = (set, get) => ({
   egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
   sammeEgenmeldingsperiode: false,
+  endreEgenmeldingsperiode: {},
   setEgenmeldingFraDato: (dateValue: Date | undefined, periodeId: string) =>
     set(
       produce((state) => {
@@ -169,6 +174,30 @@ const useEgenmeldingStore: StateCreator<
         return state;
       })
     ),
+  setEndreEgenmelding: (arbeidsforholdId: string, status: boolean) => {
+    set(
+      produce((state) => {
+        state.endreEgenmeldingsperiode[arbeidsforholdId] = status;
+
+        return state;
+      })
+    );
+  },
+  tilbakestillEgenmelding: (arbeidsforholdId) => {
+    const clonedEgenmelding = structuredClone(get().opprinneligEgenmeldingsperiode);
+
+    set(
+      produce((state) => {
+        if (clonedEgenmelding?.[arbeidsforholdId]) {
+          state.egenmeldingsperioder[arbeidsforholdId] = structuredClone(clonedEgenmelding[arbeidsforholdId]);
+        }
+
+        state.sammeEgenmeldingsperiode = false;
+
+        return state;
+      })
+    );
+  },
   initEgenmeldingsperiode: (
     arbeidsforhold: Array<MottattArbeidsforhold>,
     egenmeldingsperioder: { [key: string]: Array<MottattPeriode> }
@@ -178,16 +207,18 @@ const useEgenmeldingStore: StateCreator<
         state.egenmeldingsperioder = {};
         if (arbeidsforhold && arbeidsforhold.length > 0) {
           arbeidsforhold.forEach((forhold) => {
+            state.endreEgenmeldingsperiode[forhold.arbeidsforholdId] = false;
             if (egenmeldingsperioder && egenmeldingsperioder[forhold.arbeidsforholdId]) {
               state.egenmeldingsperioder[forhold.arbeidsforholdId] = egenmeldingsperioder[forhold.arbeidsforholdId].map(
                 (periode) => ({ fra: parseIsoDate(periode.fra), til: parseIsoDate(periode.til), id: nanoid() })
               );
             } else {
               state.egenmeldingsperioder[forhold.arbeidsforholdId] = [{ id: nanoid() }];
+              state.endreEgenmeldingsperiode[forhold.arbeidsforholdId] = true;
             }
           });
         }
-
+        state.opprinneligEgenmeldingsperiode = structuredClone({ ...state.egenmeldingsperioder });
         return state;
       })
     )

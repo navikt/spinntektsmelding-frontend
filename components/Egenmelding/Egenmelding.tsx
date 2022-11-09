@@ -16,8 +16,29 @@ export default function Egenmelding() {
   const setSammeEgenmeldingsperiodeArbeidsforhold = useBoundStore(
     (state) => state.setSammeEgenmeldingsperiodeArbeidsforhold
   );
+  const endreEgenmeldingsperiode = useBoundStore((state) => state.endreEgenmeldingsperiode);
+  const setEndreEgenmelding = useBoundStore((state) => state.setEndreEgenmelding);
   const sammeEgenmeldingsperiode = useBoundStore((state) => state.sammeEgenmeldingsperiode);
+  const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
   const flereEnnToArbeidsforhold: boolean = !!arbeidsforhold && arbeidsforhold.length > 2;
+
+  const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
+    event.preventDefault();
+    leggTilEgenmeldingsperiode(arbeidsforholdId);
+  };
+
+  const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
+    event.preventDefault();
+    setEndreEgenmelding(arbeidsforholdId, !endreEgenmeldingsperiode[arbeidsforholdId]);
+  };
+
+  const clickTilbakestillFravaersperiodeHandler = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    arbeidsforholdId: string
+  ) => {
+    event.preventDefault();
+    tilbakestillEgenmelding(arbeidsforholdId);
+  };
 
   return (
     <div className={localStyles.egenmeldingswrapper}>
@@ -37,7 +58,11 @@ export default function Egenmelding() {
               egenmeldingsperioder?.[forhold.arbeidsforholdId].map((egenmeldingsperiode, index) => {
                 return (
                   <div key={egenmeldingsperiode.id} className={styles.periodewrapper}>
-                    <EgenmeldingPeriode periodeId={egenmeldingsperiode.id} egenmeldingsperiode={egenmeldingsperiode} />
+                    <EgenmeldingPeriode
+                      periodeId={egenmeldingsperiode.id}
+                      egenmeldingsperiode={egenmeldingsperiode}
+                      arbeidsforholdId={forhold.arbeidsforholdId}
+                    />
                     {index === 0 && forholdsindex === 0 && (
                       <div className={localStyles.sammeperiode}>
                         <Checkbox
@@ -66,15 +91,35 @@ export default function Egenmelding() {
                 );
               })}
           </div>
-          <div>
-            <Button
-              variant='secondary'
-              className={styles.legtilbutton}
-              onClick={() => leggTilEgenmeldingsperiode(forhold.arbeidsforholdId)}
-            >
-              Legg til egenmeldingsperiode
-            </Button>
-          </div>
+          {!endreEgenmeldingsperiode[forhold.arbeidsforholdId] && (
+            <div>
+              <Button
+                variant='secondary'
+                className={styles.legtilbutton}
+                onClick={(e) => clickEndreFravaersperiodeHandler(e, forhold.arbeidsforholdId)}
+              >
+                Endre
+              </Button>
+            </div>
+          )}
+          {endreEgenmeldingsperiode[forhold.arbeidsforholdId] && (
+            <div className={styles.endresykemeldingknapper}>
+              <Button
+                variant='secondary'
+                className={styles.kontrollerknapp}
+                onClick={(event) => clickLeggTilFravaersperiodeHandler(event, forhold.arbeidsforholdId)}
+              >
+                Legg til egenmeldingsperiode
+              </Button>
+
+              <Button
+                className={styles.kontrollerknapp}
+                onClick={(event) => clickTilbakestillFravaersperiodeHandler(event, forhold.arbeidsforholdId)}
+              >
+                Tilbakestill
+              </Button>
+            </div>
+          )}
         </div>
       ))}
     </div>

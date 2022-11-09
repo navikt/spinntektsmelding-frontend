@@ -22,8 +22,7 @@ export default function KvitteringArbeidsforholdBruttolonn({
         arbeidsforhold.map((forhold: IArbeidsforhold) => (
           <>
             <Heading4 className={lokalStyles.arbeidsforhold}>{forhold.arbeidsforhold}</Heading4>
-
-            {formatCurrency(lonnPrArbeidsforhold[forhold.arbeidsforholdId] || 0)}
+            {formatCurrency(lonnPrArbeidsforhold[forhold.arbeidsforholdId] || 0)} kr/måned
           </>
         ))}
     </div>

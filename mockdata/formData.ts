@@ -172,6 +172,20 @@ const formData = {
       }
     ]
   },
+  egenmeldingsperioder: {
+    spillerid: [
+      {
+        fra: format(subDays(new Date(), 14), 'yyyy-MM-dd'),
+        til: format(subDays(new Date(), 11), 'yyyy-MM-dd')
+      }
+    ],
+    trenerid: [
+      {
+        fra: format(subDays(new Date(), 15), 'yyyy-MM-dd'),
+        til: format(subDays(new Date(), 12), 'yyyy-MM-dd')
+      }
+    ]
+  },
   tidligereinntekt: [
     {
       maanedsnavn: 'Februar', // yyyy-MM
