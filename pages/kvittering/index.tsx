@@ -24,6 +24,7 @@ import useBoundStore from '../../state/useBoundStore';
 import Heading4 from '../../components/Heading4';
 import { IArbeidsforhold } from '../../state/state';
 import KvitteringArbeidsforholdBruttolonn from '../../components/KvitteringArbeidsforholdBruttolonn';
+import PrintButton from '../../components/PrintButton';
 
 const Kvittering: NextPage = () => {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
@@ -194,7 +195,7 @@ const Kvittering: NextPage = () => {
             <BortfallNaturalytelser ytelser={naturalytelser!} />
             <Skillelinje />
             <BodyShort>Kvittering - innsendt inntektsmelding - 12.05.2021 kl. 12.23</BodyShort>
-            <div className={lokalStyles.buttonwrapper}>
+            <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
               <div className={lokalStyles.innerbuttonwrapper}>
                 <Button variant='secondary' onClick={clickEndre}>
                   Endre
@@ -203,9 +204,7 @@ const Kvittering: NextPage = () => {
                   <a className={lokalStyles.lukkelenke}>Lukk</a>
                 </Link>
               </div>
-              <Button className={lokalStyles.skrivutknapp} variant='tertiary'>
-                Skriv ut
-              </Button>
+              <PrintButton className={lokalStyles.skrivutknapp}>Skriv ut</PrintButton>
             </div>
           </main>
         </PageContent>
