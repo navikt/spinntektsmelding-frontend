@@ -1,3 +1,18 @@
 .flerforholdheader {
-    margin-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.belopswrapper {
+  display   : flex;
+  gap       : 2rem;
+  margin-top: .75rem;
+}
+
+.belop {
+  margin-top   : auto;
+  margin-bottom: auto;
+}
+
+.refusjonsbelop>input {
+  max-width: 10rem;
 }

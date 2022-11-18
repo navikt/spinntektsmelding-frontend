@@ -4,14 +4,8 @@ import produce from 'immer';
 import { Periode } from './state';
 import parseIsoDate from '../utils/parseIsoDate';
 import { MottattArbeidsforhold, MottattPeriode } from './MottattData';
-import { BruttoinntektState } from './useBruttoinntektStore';
-import { ArbeidsforholdState } from './useArbeidsforholdStore';
-import { BehandlingsdagerState } from './useBehandlingsdagerStore';
-import { FeilmeldingerState } from './useFeilmeldingerStore';
-import { PersonState } from './usePersonStore';
-import { FravaersperiodeState } from './useFravaersperiodeStore';
-import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 import { DateRange } from 'react-day-picker';
+import { CompleteState } from './useBoundStore';
 
 export interface EgenmeldingState {
   egenmeldingsperioder: { [key: string]: Array<Periode> };
@@ -32,19 +26,7 @@ export interface EgenmeldingState {
   ) => void;
 }
 
-const useEgenmeldingStore: StateCreator<
-  RefusjonArbeidsgiverState &
-    FravaersperiodeState &
-    PersonState &
-    FeilmeldingerState &
-    EgenmeldingState &
-    BruttoinntektState &
-    ArbeidsforholdState &
-    BehandlingsdagerState,
-  [],
-  [],
-  EgenmeldingState
-> = (set, get) => ({
+const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState> = (set, get) => ({
   egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
   sammeEgenmeldingsperiode: false,
   endreEgenmeldingsperiode: {},

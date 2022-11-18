@@ -1,3 +1,4 @@
+import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import MottattData from './MottattData';
 import useBoundStore from './useBoundStore';
 
@@ -8,6 +9,7 @@ export default function useStateInit() {
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
   const initBehandlingsdager = useBoundStore((state) => state.initBehandlingsdager);
+  const getGrunnbeloep = useBoundStore((state) => state.getGrunnbeloep);
 
   return (jsonData: MottattData) => {
     initArbeidsforhold(jsonData.arbeidsforhold);
@@ -18,5 +20,9 @@ export default function useStateInit() {
     if (jsonData.behandlingsperiode) {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }
+    setTimeout(() => {
+      const bestemmendeFravaersdag = finnBestemmendeFravaersdag(jsonData.fravaersperiode, jsonData.arbeidsforhold);
+      getGrunnbeloep(bestemmendeFravaersdag);
+    });
   };
 }

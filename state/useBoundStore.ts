@@ -8,18 +8,21 @@ import useFravaersperiodeStore, { FravaersperiodeState } from './useFravaersperi
 import useNaturalytelserStore, { NaturalytelserState } from './useNaturalytelserStore';
 import usePersonStore, { PersonState } from './usePersonStore';
 import useRefusjonArbeidsgiverStore, { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
+import useGrunnbeloepStore, { GrunnpeloepState } from './useGrunnbeloepStore';
 
-const useBoundStore = create<
-  RefusjonArbeidsgiverState &
-    FravaersperiodeState &
-    PersonState &
-    NaturalytelserState &
-    FeilmeldingerState &
-    ArbeidsforholdState &
-    BehandlingsdagerState &
-    BruttoinntektState &
-    EgenmeldingState
->()((...a) => ({
+export interface CompleteState
+  extends RefusjonArbeidsgiverState,
+    FravaersperiodeState,
+    PersonState,
+    NaturalytelserState,
+    FeilmeldingerState,
+    ArbeidsforholdState,
+    BehandlingsdagerState,
+    BruttoinntektState,
+    GrunnpeloepState,
+    EgenmeldingState {}
+
+const useBoundStore = create<CompleteState>()((...a) => ({
   ...useArbeidsforholdStore(...a),
   ...useBehandlingsdagerStore(...a),
   ...useBruttoinntektStore(...a),
@@ -28,7 +31,8 @@ const useBoundStore = create<
   ...useNaturalytelserStore(...a),
   ...usePersonStore(...a),
   ...useFravaersperiodeStore(...a),
-  ...useRefusjonArbeidsgiverStore(...a)
+  ...useRefusjonArbeidsgiverStore(...a),
+  ...useGrunnbeloepStore(...a)
 }));
 
 export default useBoundStore;

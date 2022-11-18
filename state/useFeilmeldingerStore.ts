@@ -1,14 +1,7 @@
 import { StateCreator } from 'zustand';
 import produce from 'immer';
 import { ValiderTekster } from '../utils/submitInntektsmelding';
-import { EgenmeldingState } from './useEgenmeldingStore';
-import { BruttoinntektState } from './useBruttoinntektStore';
-import { ArbeidsforholdState } from './useArbeidsforholdStore';
-import { BehandlingsdagerState } from './useBehandlingsdagerStore';
-import { NaturalytelserState } from './useNaturalytelserStore';
-import { PersonState } from './usePersonStore';
-import { FravaersperiodeState } from './useFravaersperiodeStore';
-import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
+import { CompleteState } from './useBoundStore';
 
 export function slettFeilmelding(state: any, felt: string) {
   state.feilmeldinger = state.feilmeldinger.filter((element: ValiderTekster) => element.felt !== felt);
@@ -36,20 +29,7 @@ export interface FeilmeldingerState {
   fyllFeilmeldinger: (feilmeldinger: Array<ValiderTekster>) => void;
 }
 
-const useFeilmeldingerStore: StateCreator<
-  RefusjonArbeidsgiverState &
-    FravaersperiodeState &
-    PersonState &
-    NaturalytelserState &
-    FeilmeldingerState &
-    EgenmeldingState &
-    BruttoinntektState &
-    ArbeidsforholdState &
-    BehandlingsdagerState,
-  [],
-  [],
-  FeilmeldingerState
-> = (set, get) => ({
+const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerState> = (set, get) => ({
   skalViseFeilmeldinger: false,
   feilmeldinger: [],
   visFeilmeldingsTekst: (feltnavn: string) => {

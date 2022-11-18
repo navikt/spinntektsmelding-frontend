@@ -1,4 +1,4 @@
-import { BodyLong, Radio, RadioGroup, Select, TextField } from '@navikt/ds-react';
+import { BodyLong, Radio, RadioGroup } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
 import LabelLabel from '../LabelLabel';
 import styles from '../../styles/Home.module.css';
@@ -8,6 +8,7 @@ import localStyles from './RefusjonArbeidsgiver.module.css';
 import useBoundStore from '../../state/useBoundStore';
 import RefsjonArbeidsgiverSluttdato from './RefsjonArbeidsgiverSluttdato';
 import SelectBegrunnelse from './SelectBegrunnelse';
+import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
 
 export default function RefusjonArbeidsgiver() {
   const arbeidsforhold: Array<IArbeidsforhold> | undefined = useBoundStore((state) => state.arbeidsforhold);
@@ -16,6 +17,9 @@ export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
+  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
+  const inntektsprosent = useBoundStore((state) => state.inntektsprosent);
+  const grunnbeloep = useBoundStore((state) => state.grunnbeloep);
 
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
 
@@ -34,6 +38,24 @@ export default function RefusjonArbeidsgiver() {
   if (!arbeidsforhold) return null;
 
   const flereArbeidsforhold: boolean = arbeidsforhold.length > 1;
+
+  const bruttoinntektArbeidsforhold = (inntekt: number, seksG?: number, inntektArbeidsforhold?: number): number => {
+    if (seksG && (inntektArbeidsforhold || 0 > seksG)) {
+      return seksG;
+    }
+    if (inntektArbeidsforhold) {
+      return inntektArbeidsforhold;
+    }
+
+    if (seksG && (inntekt || 0 > seksG)) {
+      return seksG;
+    } else {
+      return inntekt;
+    }
+  };
+
+  const seksG = grunnbeloep?.grunnbeloepPerMaaned ? grunnbeloep?.grunnbeloepPerMaaned * 6 : undefined;
+
   return (
     <>
       <Heading3>Refusjon til arbeidsgiver</Heading3>
@@ -115,17 +137,21 @@ export default function RefusjonArbeidsgiver() {
           </RadioGroup>
           {lonnISykefravaeret?.[forhold.arbeidsforholdId]?.status === 'Ja' && (
             <>
-              <TextField
-                label='Oppgi refusjonsbeløpet per måned'
-                className={styles.halfsize}
-                onChange={(event) =>
-                  beloepArbeidsgiverBetalerISykefravaeret(forhold.arbeidsforholdId, event.target.value)
-                }
-                id={`lus-input-${forhold.arbeidsforholdId}`}
-                error={visFeilmeldingsTekst(`lus-input-${forhold.arbeidsforholdId}`)}
+              <RefusjonArbeidsgiverBelop
+                bruttoinntekt={bruttoinntektArbeidsforhold(
+                  bruttoinntekt.bruttoInntekt,
+                  seksG,
+                  inntektsprosent[forhold.arbeidsforholdId]
+                )}
+                arbeidsforholdId={forhold.arbeidsforholdId}
+                onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
+                visFeilmeldingsTekst={visFeilmeldingsTekst}
               />
+
               <BodyLong className={styles.opphrefkravforklaring}>
-                Refusjonsbeløpet gjelder fra den første dagen arbeidstakeren har rett til utbetaling fra NAV
+                Refusjonsbeløpet som dere mottar fra NAV skal samsvare med lønnen dere betaler til arbeidstakeren under
+                sykmeldingen (opp til 6 G). Refusjonsbeløpet gjelder fra den første dagen arbeidstakeren har rett til
+                utbetaling fra NAV.
               </BodyLong>
               <RadioGroup
                 legend='Opphører refusjonkravet i perioden?'

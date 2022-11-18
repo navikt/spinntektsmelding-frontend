@@ -100,11 +100,7 @@ export default function Bruttoinntekt() {
             </div>
           )}
           {!endreMaanedsinntekt && (
-            <Button
-              variant='secondary'
-              className={lokalStyles.endrebutton}
-              onClick={() => setEndreMaanedsinntekt(true)}
-            >
+            <Button variant='secondary' className={styles.endrebutton} onClick={() => setEndreMaanedsinntekt(true)}>
               Endre
             </Button>
           )}

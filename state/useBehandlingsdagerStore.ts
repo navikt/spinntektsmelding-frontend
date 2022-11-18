@@ -4,13 +4,7 @@ import { Periode } from './state';
 import { MottattPeriode } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
 import { nanoid } from 'nanoid';
-import { ArbeidsforholdState } from './useArbeidsforholdStore';
-import { BruttoinntektState } from './useBruttoinntektStore';
-import { EgenmeldingState } from './useEgenmeldingStore';
-import { FeilmeldingerState } from './useFeilmeldingerStore';
-import { PersonState } from './usePersonStore';
-import { FravaersperiodeState } from './useFravaersperiodeStore';
-import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
+import { CompleteState } from './useBoundStore';
 
 export interface BehandlingsdagerState {
   behandlingsperiode?: Periode;
@@ -19,19 +13,7 @@ export interface BehandlingsdagerState {
   initBehandlingsdager: (behandlingsperiode: MottattPeriode, behandlingsdager?: Array<string>) => void;
 }
 
-const useBehandlingsdagerStore: StateCreator<
-  RefusjonArbeidsgiverState &
-    FravaersperiodeState &
-    PersonState &
-    FeilmeldingerState &
-    BehandlingsdagerState &
-    ArbeidsforholdState &
-    BruttoinntektState &
-    EgenmeldingState,
-  [],
-  [],
-  BehandlingsdagerState
-> = (set) => ({
+const useBehandlingsdagerStore: StateCreator<CompleteState, [], [], BehandlingsdagerState> = (set) => ({
   behandlingsperiode: undefined,
   behandlingsdager: undefined,
   setBehandlingsdager: (behandlingsdatoer) =>

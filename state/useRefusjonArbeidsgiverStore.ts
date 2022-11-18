@@ -2,16 +2,11 @@ import { StateCreator } from 'zustand';
 import produce from 'immer';
 import { LonnIArbeidsgiverperioden, LonnISykefravaeret, RefusjonskravetOpphoerer, YesNo } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
-import parseIsoDate from '../utils/parseIsoDate';
-import { FravaersperiodeState } from './useFravaersperiodeStore';
-import { PersonState } from './usePersonStore';
-import { NaturalytelserState } from './useNaturalytelserStore';
-import { FeilmeldingerState, leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
-import { BruttoinntektState } from './useBruttoinntektStore';
-import { ArbeidsforholdState } from './useArbeidsforholdStore';
-import { BehandlingsdagerState } from './useBehandlingsdagerStore';
-import { EgenmeldingState } from './useEgenmeldingStore';
+
+import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
+
 import feiltekster from '../utils/feiltekster';
+import { CompleteState } from './useBoundStore';
 
 export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: { [key: string]: LonnIArbeidsgiverperioden };
@@ -27,20 +22,7 @@ export interface RefusjonArbeidsgiverState {
   initLonnISykefravaeret: (lonnISykefravaeret: { [key: string]: LonnISykefravaeret }) => void;
 }
 
-const useRefusjonArbeidsgiverStore: StateCreator<
-  RefusjonArbeidsgiverState &
-    FravaersperiodeState &
-    PersonState &
-    NaturalytelserState &
-    FeilmeldingerState &
-    BruttoinntektState &
-    ArbeidsforholdState &
-    BehandlingsdagerState &
-    EgenmeldingState,
-  [],
-  [],
-  RefusjonArbeidsgiverState
-> = (set) => ({
+const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], RefusjonArbeidsgiverState> = (set, get) => ({
   fullLonnIArbeidsgiverPerioden: undefined,
   lonnISykefravaeret: undefined,
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (arbeidsforholdId: string, status: YesNo) =>
@@ -59,7 +41,8 @@ const useRefusjonArbeidsgiverStore: StateCreator<
         return state;
       })
     ),
-  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (arbeidsforholdId: string, status: YesNo) =>
+  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (arbeidsforholdId: string, status: YesNo) => {
+    const bruttoinntekt = get().bruttoinntekt;
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
@@ -69,12 +52,18 @@ const useRefusjonArbeidsgiverStore: StateCreator<
         if (!state.lonnISykefravaeret[arbeidsforholdId]) {
           state.lonnISykefravaeret[arbeidsforholdId] = { status: status };
         } else state.lonnISykefravaeret[arbeidsforholdId].status = status;
+        if (status === 'Ja') {
+          state.lonnISykefravaeret[arbeidsforholdId].belop = bruttoinntekt.bruttoInntekt;
+        } else {
+          delete state.lonnISykefravaeret[arbeidsforholdId].belop;
+        }
 
         state = slettFeilmelding(state, `lus-radio-${arbeidsforholdId}`);
 
         return state;
       })
-    ),
+    );
+  },
   begrunnelseRedusertUtbetaling: (arbeidsforholdId: string, begrunnelse: string) =>
     set(
       produce((state) => {

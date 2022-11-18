@@ -5,14 +5,8 @@ import stringishToNumber from '../utils/stringishToNumber';
 import { nanoid } from 'nanoid';
 import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
-import { ArbeidsforholdState } from './useArbeidsforholdStore';
-import { BehandlingsdagerState } from './useBehandlingsdagerStore';
-import { EgenmeldingState } from './useEgenmeldingStore';
-import { FeilmeldingerState, leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
-import { NaturalytelserState } from './useNaturalytelserStore';
-import { PersonState } from './usePersonStore';
-import { FravaersperiodeState } from './useFravaersperiodeStore';
-import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
+import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
+import { CompleteState } from './useBoundStore';
 
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
@@ -28,20 +22,7 @@ export interface BruttoinntektState {
   initBruttioinntekt: (bruttoInntekt: number, tidligereInntekt: Array<MottattHistoriskInntekt>) => void;
 }
 
-const useBruttoinntektStore: StateCreator<
-  RefusjonArbeidsgiverState &
-    FravaersperiodeState &
-    PersonState &
-    NaturalytelserState &
-    FeilmeldingerState &
-    BruttoinntektState &
-    ArbeidsforholdState &
-    BehandlingsdagerState &
-    EgenmeldingState,
-  [],
-  [],
-  BruttoinntektState
-> = (set, get) => ({
+const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
   bruttoinntekt: {
     bruttoInntekt: 0,
     bekreftet: false,

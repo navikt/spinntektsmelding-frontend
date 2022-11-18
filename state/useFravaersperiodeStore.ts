@@ -4,15 +4,8 @@ import { parseISO } from 'date-fns';
 import { MottattPeriode } from './MottattData';
 import { Periode } from './state';
 import produce from 'immer';
-import { PersonState } from './usePersonStore';
-import { NaturalytelserState } from './useNaturalytelserStore';
-import { FeilmeldingerState } from './useFeilmeldingerStore';
-import { ArbeidsforholdState } from './useArbeidsforholdStore';
-import { BehandlingsdagerState } from './useBehandlingsdagerStore';
-import { BruttoinntektState } from './useBruttoinntektStore';
-import { EgenmeldingState } from './useEgenmeldingStore';
-import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 import { DateRange } from 'react-day-picker';
+import { CompleteState } from './useBoundStore';
 
 export interface FravaersperiodeState {
   fravaersperiode?: { [key: string]: Array<Periode> };
@@ -29,20 +22,7 @@ export interface FravaersperiodeState {
   initFravaersperiode: (mottatFravaersperiode: { [key: string]: Array<MottattPeriode> }) => void;
 }
 
-const useFravaersperiodeStore: StateCreator<
-  RefusjonArbeidsgiverState &
-    FravaersperiodeState &
-    PersonState &
-    NaturalytelserState &
-    FeilmeldingerState &
-    ArbeidsforholdState &
-    BehandlingsdagerState &
-    BruttoinntektState &
-    EgenmeldingState,
-  [],
-  [],
-  FravaersperiodeState
-> = (set) => ({
+const useFravaersperiodeStore: StateCreator<CompleteState, [], [], FravaersperiodeState> = (set) => ({
   fravaersperiode: undefined,
   opprinneligFravaersperiode: undefined,
   sammeFravaersperiode: false,

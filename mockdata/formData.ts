@@ -135,7 +135,7 @@ const formData = {
   navn: 'Navn Navnesen',
   identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
   orgnrUnderenhet: '911206722',
-  bruttoinntekt: 44000,
+  bruttoinntekt: 77000,
   // behandlingsperiode: {
   //   fra: format(subDays(new Date(), 180), 'yyyy-MM-dd'),
   //   til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
@@ -144,30 +144,30 @@ const formData = {
     spillerid: [
       {
         fra: format(subDays(new Date(), 11), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
+        til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
       },
       {
-        fra: format(subDays(new Date(), 4), 'yyyy-MM-dd'),
+        fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
         til: format(subDays(new Date(), 1), 'yyyy-MM-dd')
       }
     ],
     trenerid: [
       {
         fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 5), 'yyyy-MM-dd')
+        til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
       },
       {
-        fra: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
+        fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
         til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
       }
     ],
     vaktmesterid: [
       {
         fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 5), 'yyyy-MM-dd')
+        til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
       },
       {
-        fra: format(subDays(new Date(), 5), 'yyyy-MM-dd'),
+        fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
         til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
       }
     ]
@@ -189,15 +189,15 @@ const formData = {
   tidligereinntekt: [
     {
       maanedsnavn: 'Februar', // yyyy-MM
-      inntekt: 55000
+      inntekt: 88000
     },
     {
       maanedsnavn: 'Mars',
-      inntekt: 9000
+      inntekt: 66000
     },
     {
       maanedsnavn: 'April',
-      inntekt: 55000
+      inntekt: 88000
     }
   ],
   behandlingsdager: ['2022-01-01'],
@@ -210,17 +210,17 @@ const formData = {
       arbeidsforholdId: 'spillerid',
       arbeidsforhold: 'Spiller',
       stillingsprosent: 50
-    },
-    {
-      arbeidsforholdId: 'trenerid',
-      arbeidsforhold: 'Trener',
-      stillingsprosent: 40
-    },
-    {
-      arbeidsforholdId: 'vaktmesterid',
-      arbeidsforhold: 'Vaktmester',
-      stillingsprosent: 10
     }
+    // {
+    //   arbeidsforholdId: 'trenerid',
+    //   arbeidsforhold: 'Trener',
+    //   stillingsprosent: 40
+    // },
+    // {
+    //   arbeidsforholdId: 'vaktmesterid',
+    //   arbeidsforhold: 'Vaktmester',
+    //   stillingsprosent: 10
+    // }
   ]
 };
 

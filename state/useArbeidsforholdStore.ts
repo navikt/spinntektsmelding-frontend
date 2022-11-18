@@ -2,14 +2,7 @@ import { StateCreator } from 'zustand';
 import produce from 'immer';
 import { IArbeidsforhold } from './state';
 import { MottattArbeidsforhold } from './MottattData';
-import { BehandlingsdagerState } from './useBehandlingsdagerStore';
-import { BruttoinntektState } from './useBruttoinntektStore';
-import { EgenmeldingState } from './useEgenmeldingStore';
-import { FeilmeldingerState } from './useFeilmeldingerStore';
-import { NaturalytelserState } from './useNaturalytelserStore';
-import { PersonState } from './usePersonStore';
-import { FravaersperiodeState } from './useFravaersperiodeStore';
-import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
+import { CompleteState } from './useBoundStore';
 
 export interface ArbeidsforholdState {
   arbeidsforhold?: Array<IArbeidsforhold>;
@@ -18,20 +11,7 @@ export interface ArbeidsforholdState {
   aktiveArbeidsforhold: () => Array<IArbeidsforhold>;
 }
 
-const useArbeidsforholdStore: StateCreator<
-  RefusjonArbeidsgiverState &
-    FravaersperiodeState &
-    PersonState &
-    NaturalytelserState &
-    FeilmeldingerState &
-    ArbeidsforholdState &
-    BehandlingsdagerState &
-    BruttoinntektState &
-    EgenmeldingState,
-  [],
-  [],
-  ArbeidsforholdState
-> = (set, get) => ({
+const useArbeidsforholdStore: StateCreator<CompleteState, [], [], ArbeidsforholdState> = (set, get) => ({
   arbeidsforhold: undefined,
   setAktiveArbeidsforhold: (aktiveArbeidsforhold: Array<string>) => {
     set(
