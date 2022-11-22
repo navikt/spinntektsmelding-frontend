@@ -8,19 +8,17 @@ import { useEffect } from 'react';
 interface EnkeltArbeidsforholdPeriodeInterface {
   periodeId: string;
   fravaersperiode: Periode;
-  arbeidsforholdId: string;
 }
 
 export default function EnkeltArbeidsforholdPeriode({
   periodeId,
-  fravaersperiode,
-  arbeidsforholdId
+  fravaersperiode
 }: EnkeltArbeidsforholdPeriodeInterface) {
   const setFravaersperiodeDato = useBoundStore((state) => state.setFravaersperiodeDato);
 
   const rangeChangeHandler = (dateRange: DateRange | undefined) => {
     if (dateRange) {
-      setFravaersperiodeDato(arbeidsforholdId, periodeId, dateRange);
+      setFravaersperiodeDato(periodeId, dateRange);
     }
   };
 

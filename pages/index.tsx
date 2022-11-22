@@ -21,7 +21,6 @@ import Behandlingsdager from '../components/Behandlingsdager';
 import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
 import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
-import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 import submitInntektsmelding from '../utils/submitInntektsmelding';
 import useBoundStore from '../state/useBoundStore';
@@ -49,8 +48,6 @@ const Home: NextPage = () => {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
   const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
-
-  const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
 
   const loginPath = useLoginRedirectPath();
 
@@ -154,19 +151,12 @@ const Home: NextPage = () => {
             <form className={styles.padded} onSubmit={submitForm}>
               <Person />
 
-              {arbeidsforhold && arbeidsforhold.length > 1 && (
-                <>
-                  <Skillelinje />
-                  <Arbeidsforhold />
-                </>
-              )}
-
               <Behandlingsdager />
 
               {egenmeldingsperioder && (
                 <>
                   <Skillelinje />
-                  {arbeidsforhold && <Egenmelding />}
+                  <Egenmelding />
                 </>
               )}
 

@@ -1,5 +1,6 @@
 import { differenceInBusinessDays, formatISO9075, parseISO } from 'date-fns';
-import { MottattPeriode, MottattArbeidsforhold } from '../state/MottattData';
+import { MottattPeriode } from '../state/MottattData';
+import { Periode } from '../state/state';
 
 export interface FravaersPeriode {
   fra: Date;
@@ -31,27 +32,24 @@ const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
       fra: ene.fra,
       til: andre.til
     };
+    console.log('stuff', {
+      fra: ene.fra,
+      til: andre.til
+    });
     return obj;
   }
 
   return null;
 };
 
-const finnBestemmendeFravaersdag = (
-  fravaersperiode: { [key: string]: Array<MottattPeriode> },
-  arbeidsforhold: Array<MottattArbeidsforhold>
-): string | undefined => {
-  if (!fravaersperiode) {
+const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Array<Periode>): string | undefined => {
+  if (!fravaersperioder) {
     return undefined;
   }
 
-  const aktiveArbeidsforholdId = arbeidsforhold.map((forhold) => forhold.arbeidsforholdId);
-
-  const aktivePerioder = aktiveArbeidsforholdId
-    .flatMap((arbeidsforholdId) =>
-      fravaersperiode[arbeidsforholdId].map((fravaer) => ({ fra: fravaer.fra, til: fravaer.til }))
-    )
-    .map((element: MottattPeriode) => JSON.stringify(element));
+  const aktivePerioder = fravaersperioder
+    .map((fravaer) => ({ fra: fravaer.fra, til: fravaer.til }))
+    .map((element) => JSON.stringify(element));
 
   const unikeSykmeldingsperioder: Array<FravaersPeriode> = [...new Set([...aktivePerioder])]
     .map((periode) => JSON.parse(periode))
@@ -90,10 +88,9 @@ const finnBestemmendeFravaersdag = (
     }
   });
 
-  console.log(sorterteSykemeldingsperioder);
-  console.log(tilstotendeSykemeldingsperioder);
+  console.log('tilstotendeSykemeldingsperioder', tilstotendeSykemeldingsperioder);
 
-  return formatISO9075(mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1].fra, {
+  return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fra, {
     representation: 'date'
   });
 };

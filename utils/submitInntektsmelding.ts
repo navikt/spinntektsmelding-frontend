@@ -13,10 +13,6 @@ import validerLonnUnderSykefravaeret, {
 } from '../validators/validerLonnUnderSykefravaeret';
 import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
-import validerProsentInntekt from '../validators/validerProsentInntekt';
-import validerBruttoinntektArbeidsforhold, {
-  BruttoinntektArbeidsforholdFeilkode
-} from '../validators/validerBruttoinntektArbeidsforhold';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -44,7 +40,6 @@ type codeUnion =
   | NaturalytelserFeilkoder
   | LonnIArbeidsgiverperiodenFeilkode
   | LonnUnderSykefravaeretFeilkode
-  | BruttoinntektArbeidsforholdFeilkode
   | BekreftOpplysningerFeilkoder;
 
 export interface ValiderResultat {
@@ -62,33 +57,16 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
   let feilkoderLonnIArbeidsgiverperioden: Array<ValiderResultat> = [];
   let feilkoderLonnUnderSykefravaeret: Array<ValiderResultat> = [];
   let feilkoderBekreftOpplyninger: Array<ValiderResultat> = [];
-  let feilkoderSumInntektProsent: Array<ValiderResultat> = [];
-  let feilkoderBruttoinntektArbeidsforhold: Array<ValiderResultat> = [];
 
-  const aktuelleArbeidsforholdId = state.arbeidsforhold
-    ?.filter((forhold) => forhold.aktiv === true)
-    .map((forhold) => forhold.arbeidsforholdId);
-
-  if (!aktuelleArbeidsforholdId || aktuelleArbeidsforholdId?.length < 1) {
-    errorCodes.push({
-      felt: '',
-      code: ErrorCodes.INGEN_ARBEIDSFORHOLD
-    });
-  }
-
-  if (state.fravaersperiode) {
-    const fravaersperiodeArbeidsforholdKeys = Object.keys(state.fravaersperiode);
-
-    if (fravaersperiodeArbeidsforholdKeys.length < 1) {
+  if (state.fravaersperioder) {
+    if (state.fravaersperioder.length < 1) {
       errorCodes.push({
         felt: '',
         code: ErrorCodes.INGEN_FRAVAERSPERIODER
       });
     }
 
-    feilkoderFravaersperioder = fravaersperiodeArbeidsforholdKeys.flatMap((forhold) =>
-      validerPeriode(state.fravaersperiode?.[forhold])
-    );
+    feilkoderFravaersperioder = validerPeriode(state.fravaersperioder);
   } else {
     errorCodes.push({
       felt: '',
@@ -97,44 +75,23 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
   }
 
   if (state.egenmeldingsperioder) {
-    const egenmeldingsperioderArbeidsforholdKeys = Object.keys(state.egenmeldingsperioder);
-    if (egenmeldingsperioderArbeidsforholdKeys.length > 0) {
-      feilkoderEgenmeldingsperioder = egenmeldingsperioderArbeidsforholdKeys.flatMap((forhold) =>
-        validerPeriodeEgenmelding(state.egenmeldingsperioder[forhold])
-      );
-    }
+    feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder);
   }
 
   feilkoderBruttoinntekt = validerBruttoinntekt(state.bruttoinntekt);
-
-  feilkoderBruttoinntektArbeidsforhold = validerBruttoinntektArbeidsforhold(
-    state.arbeidsforhold,
-    state.inntektsprosent,
-    state.bruttoinntekt?.bruttoInntekt
-  );
 
   if (state.naturalytelser) {
     feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);
   }
 
-  feilkoderLonnIArbeidsgiverperioden = validerLonnIArbeidsgiverPerioden(
-    state.fullLonnIArbeidsgiverPerioden,
-    aktuelleArbeidsforholdId
-  );
+  feilkoderLonnIArbeidsgiverperioden = validerLonnIArbeidsgiverPerioden(state.fullLonnIArbeidsgiverPerioden);
 
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
     state.lonnISykefravaeret,
-    aktuelleArbeidsforholdId,
     state.refusjonskravetOpphoerer
   );
 
   feilkoderBekreftOpplyninger = validerBekreftOpplysninger(state.opplysningerBekreftet);
-
-  feilkoderSumInntektProsent = validerProsentInntekt(
-    aktuelleArbeidsforholdId,
-    state.bruttoinntekt?.bruttoInntekt,
-    state.inntektsprosent
-  );
 
   errorCodes = [
     ...errorCodes,
@@ -144,9 +101,7 @@ export default function submitInntektsmelding(state: InntektsmeldingSkjema): Sub
     ...feilkoderNaturalytelser,
     ...feilkoderLonnIArbeidsgiverperioden,
     ...feilkoderLonnUnderSykefravaeret,
-    ...feilkoderBekreftOpplyninger,
-    ...feilkoderSumInntektProsent,
-    ...feilkoderBruttoinntektArbeidsforhold
+    ...feilkoderBekreftOpplyninger
   ];
 
   if (errorCodes.length > 0) {

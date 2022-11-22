@@ -2,7 +2,7 @@ import InntektsmeldingSkjema from './state';
 import useBoundStore from './useBoundStore';
 
 export default function useFyllInnsending() {
-  const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
+  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const inntektsprosent = useBoundStore((state) => state.inntektsprosent);
 
@@ -37,7 +37,7 @@ export default function useFyllInnsending() {
       identitetsnummer: identitetsnummer,
       virksomhetsnavn: virksomhetsnavn,
       orgnrUnderenhet: orgnrUnderenhet,
-      fravaersperiode: fravaersperiode,
+      fravaersperioder: fravaersperioder,
       egenmeldingsperioder: egenmeldingsperioder,
       bruttoinntekt: bruttoinntekt,
       fullLonnIArbeidsgiverPerioden: fullLonnIArbeidsgiverPerioden,

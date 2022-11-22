@@ -2,8 +2,7 @@ import { Select } from '@navikt/ds-react';
 import begrunnelseIngenEllerRedusertUtbetalingListe from './begrunnelseIngenEllerRedusertUtbetalingListe';
 
 interface SelectBegrunnelseProps {
-  onChangeBegrunnelse: (arbeidsforholdId: string, verdi: string) => void;
-  arbeidsforholdId: string;
+  onChangeBegrunnelse: (verdi: string) => void;
 }
 
 export default function SelectBegrunnelse(props: SelectBegrunnelseProps) {
@@ -11,8 +10,8 @@ export default function SelectBegrunnelse(props: SelectBegrunnelseProps) {
   return (
     <Select
       label={'Velg begrunnelse for ingen eller redusert utbetaling'}
-      onChange={(event) => props.onChangeBegrunnelse(props.arbeidsforholdId, event.target.value)}
-      id={`lia-select-${props.arbeidsforholdId}`}
+      onChange={(event) => props.onChangeBegrunnelse(event.target.value)}
+      id={'lia-select'}
     >
       <option value=''>Velg begrunnelse</option>
       {begrunnelseKeys.map((begrunnelseKey) => (

@@ -9,7 +9,7 @@ export enum PeriodeFeilkode {
   TIL_FOR_FRA = 'TIL_FOR_FRA'
 }
 
-export default function validerPeriodeEgenmelding(perioder?: Array<Periode>): Array<ValiderResultat> {
+export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Array<ValiderResultat> {
   let feilkoder: Array<ValiderResultat> = [];
   if (!perioder || perioder.length < 1) {
     feilkoder.push({

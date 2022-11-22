@@ -140,52 +140,22 @@ const formData = {
   //   fra: format(subDays(new Date(), 180), 'yyyy-MM-dd'),
   //   til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
   // },
-  fravaersperiode: {
-    spillerid: [
-      {
-        fra: format(subDays(new Date(), 11), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
-      },
-      {
-        fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 1), 'yyyy-MM-dd')
-      }
-    ],
-    trenerid: [
-      {
-        fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
-      },
-      {
-        fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
-      }
-    ],
-    vaktmesterid: [
-      {
-        fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
-      },
-      {
-        fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
-      }
-    ]
-  },
-  egenmeldingsperioder: {
-    spillerid: [
-      {
-        fra: format(subDays(new Date(), 14), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 11), 'yyyy-MM-dd')
-      }
-    ],
-    trenerid: [
-      {
-        fra: format(subDays(new Date(), 15), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 12), 'yyyy-MM-dd')
-      }
-    ]
-  },
+  fravaersperioder: [
+    {
+      fra: format(subDays(new Date(), 11), 'yyyy-MM-dd'),
+      til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
+    },
+    {
+      fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
+      til: format(subDays(new Date(), 1), 'yyyy-MM-dd')
+    }
+  ],
+  egenmeldingsperioder: [
+    {
+      fra: format(subDays(new Date(), 14), 'yyyy-MM-dd'),
+      til: format(subDays(new Date(), 11), 'yyyy-MM-dd')
+    }
+  ],
   tidligereinntekt: [
     {
       maanedsnavn: 'Februar', // yyyy-MM
@@ -204,24 +174,7 @@ const formData = {
   behandlingsperiode: {
     fra: '2022-01-01',
     til: '2022-06-02'
-  },
-  arbeidsforhold: [
-    {
-      arbeidsforholdId: 'spillerid',
-      arbeidsforhold: 'Spiller',
-      stillingsprosent: 50
-    }
-    // {
-    //   arbeidsforholdId: 'trenerid',
-    //   arbeidsforhold: 'Trener',
-    //   stillingsprosent: 40
-    // },
-    // {
-    //   arbeidsforholdId: 'vaktmesterid',
-    //   arbeidsforhold: 'Vaktmester',
-    //   stillingsprosent: 10
-    // }
-  ]
+  }
 };
 
 export default formData;

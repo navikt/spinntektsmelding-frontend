@@ -3,7 +3,6 @@ import MottattData from './MottattData';
 import useBoundStore from './useBoundStore';
 
 export default function useStateInit() {
-  const initArbeidsforhold = useBoundStore((state) => state.initArbeidsforhold);
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const initBruttoinntekt = useBoundStore((state) => state.initBruttioinntekt);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
@@ -12,17 +11,15 @@ export default function useStateInit() {
   const getGrunnbeloep = useBoundStore((state) => state.getGrunnbeloep);
 
   return (jsonData: MottattData) => {
-    initArbeidsforhold(jsonData.arbeidsforhold);
-    initFravaersperiode(jsonData.fravaersperiode);
+    initFravaersperiode(jsonData.fravaersperioder);
     initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekt);
-    initEgenmeldingsperiode(jsonData.arbeidsforhold, jsonData.egenmeldingsperioder);
+    initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
     initPerson(jsonData.navn, jsonData.identitetsnummer, jsonData.orgnrUnderenhet);
     if (jsonData.behandlingsperiode) {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }
-    setTimeout(() => {
-      const bestemmendeFravaersdag = finnBestemmendeFravaersdag(jsonData.fravaersperiode, jsonData.arbeidsforhold);
-      getGrunnbeloep(bestemmendeFravaersdag);
-    });
+
+    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(jsonData.fravaersperioder);
+    getGrunnbeloep(bestemmendeFravaersdag);
   };
 }

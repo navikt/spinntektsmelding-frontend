@@ -11,14 +11,9 @@ import formatDate from '../../utils/formatDate';
 interface EgenmeldingPeriodeInterface {
   periodeId: string;
   egenmeldingsperiode: Periode;
-  arbeidsforholdId: string;
 }
 
-export default function EgenmeldingPeriode({
-  periodeId,
-  egenmeldingsperiode,
-  arbeidsforholdId
-}: EgenmeldingPeriodeInterface) {
+export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: EgenmeldingPeriodeInterface) {
   const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
   const endreEgenmeldingsperiode = useBoundStore((state) => state.endreEgenmeldingsperiode);
 
@@ -37,7 +32,7 @@ export default function EgenmeldingPeriode({
     setSelected({ from: egenmeldingsperiode?.fra, to: egenmeldingsperiode?.til });
   }, [egenmeldingsperiode]);
 
-  if (!endreEgenmeldingsperiode[arbeidsforholdId]) {
+  if (!endreEgenmeldingsperiode) {
     return (
       <>
         <div className={styles.datepickerescape}>

@@ -3,6 +3,7 @@ import { cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattHistoriskInntekt } from '../../state/MottattData';
 import { vi } from 'vitest';
+import feiltekster from '../../utils/feiltekster';
 
 const inputInntekt: number = 40000;
 const tidligereInntekt: Array<MottattHistoriskInntekt> = [
@@ -63,6 +64,57 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(56000.23);
+  });
+
+  it('should return an error when ny maanedsinntekt = 0.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+    });
+
+    act(() => {
+      result.current.setNyMaanedsinntekt('0');
+    });
+
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(0);
+    expect(result.current.feilmeldinger[1]).toEqual({
+      felt: 'bruttoinntekt-endringsbelop',
+      text: feiltekster.BRUTTOINNTEKT_MANGLER
+    });
+  });
+
+  it('should return an error when ny maanedsinntekt = 0. Skjema er blankt, ikke preutfylt', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+    });
+
+    act(() => {
+      result.current.setNyMaanedsinntektBlanktSkjema('0');
+    });
+
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(0);
+    expect(result.current.feilmeldinger[1]).toEqual({
+      felt: 'bruttoinntekt-endringsbelop',
+      text: feiltekster.BRUTTOINNTEKT_MANGLER
+    });
+  });
+
+  it('should return an error when ny maanedsinntekt = 0. Skjema er blankt, ikke preutfylt', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+    });
+
+    act(() => {
+      result.current.setNyMaanedsinntektBlanktSkjema('1234,56');
+    });
+
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(1234.56);
+    expect(result.current.feilmeldinger.length).toBe(0);
   });
 
   it('should set ny endringsaarsak.', () => {

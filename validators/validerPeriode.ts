@@ -1,5 +1,6 @@
 import { format, isValid, parse } from 'date-fns';
 import { nb } from 'date-fns/locale';
+import { isArray } from 'util';
 import { Periode } from '../state/state';
 import { ValiderResultat } from '../utils/submitInntektsmelding';
 
@@ -19,28 +20,31 @@ export default function validerPeriode(perioder?: Array<Periode>): Array<Valider
       code: PeriodeFeilkode.MANGLER_PERIODE
     });
   } else {
-    perioder.forEach((periode) => {
-      if (!periode.fra || !isValid(periode.fra)) {
-        feilkoder.push({
-          felt: `fra-${periode.id}`,
-          code: PeriodeFeilkode.MANGLER_FRA
-        });
-      }
+    debugger;
+    if (Array.isArray(perioder)) {
+      perioder.forEach((periode) => {
+        if (!periode.fra || !isValid(periode.fra)) {
+          feilkoder.push({
+            felt: `fra-${periode.id}`,
+            code: PeriodeFeilkode.MANGLER_FRA
+          });
+        }
 
-      if (!periode.til || !isValid(periode.til)) {
-        feilkoder.push({
-          felt: `til-${periode.id}`,
-          code: PeriodeFeilkode.MANGLER_TIL
-        });
-      }
+        if (!periode.til || !isValid(periode.til)) {
+          feilkoder.push({
+            felt: `til-${periode.id}`,
+            code: PeriodeFeilkode.MANGLER_TIL
+          });
+        }
 
-      if (periode.fra && periode.til && periode.fra > periode.til) {
-        feilkoder.push({
-          felt: `fra-${periode.id}`,
-          code: PeriodeFeilkode.TIL_FOR_FRA
-        });
-      }
-    });
+        if (periode.fra && periode.til && periode.fra > periode.til) {
+          feilkoder.push({
+            felt: `fra-${periode.id}`,
+            code: PeriodeFeilkode.TIL_FOR_FRA
+          });
+        }
+      });
+    }
   }
 
   return feilkoder;

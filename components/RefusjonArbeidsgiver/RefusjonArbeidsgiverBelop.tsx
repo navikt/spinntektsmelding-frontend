@@ -7,14 +7,12 @@ import localStyles from './RefusjonArbeidsgiver.module.css';
 
 interface RefusjonArbeidsgiverBelopProps {
   bruttoinntekt: number;
-  arbeidsforholdId: string;
-  onOppdaterBelop: (arbeidsforholdId: string, beloep: string) => void;
+  onOppdaterBelop: (beloep: string) => void;
   visFeilmeldingsTekst: (feilmelding: string) => string;
 }
 
 export default function RefusjonArbeidsgiverBelop({
   bruttoinntekt,
-  arbeidsforholdId,
   onOppdaterBelop,
   visFeilmeldingsTekst
 }: RefusjonArbeidsgiverBelopProps) {
@@ -39,9 +37,9 @@ export default function RefusjonArbeidsgiverBelop({
       className={localStyles.refusjonsbelop}
       label='Oppgi refusjonsbeløpet per måned'
       // className={styles.halfsize}
-      onChange={(event) => onOppdaterBelop(arbeidsforholdId, event.target.value)}
-      id={`lus-input-${arbeidsforholdId}`}
-      error={visFeilmeldingsTekst(`lus-input-${arbeidsforholdId}`)}
+      onChange={(event) => onOppdaterBelop(event.target.value)}
+      id={'lus-input'}
+      error={visFeilmeldingsTekst('lus-input')}
     />
   );
 }

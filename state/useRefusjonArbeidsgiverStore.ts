@@ -9,39 +9,39 @@ import feiltekster from '../utils/feiltekster';
 import { CompleteState } from './useBoundStore';
 
 export interface RefusjonArbeidsgiverState {
-  fullLonnIArbeidsgiverPerioden?: { [key: string]: LonnIArbeidsgiverperioden };
-  lonnISykefravaeret?: { [key: string]: LonnISykefravaeret };
-  refusjonskravetOpphoerer?: { [key: string]: RefusjonskravetOpphoerer };
-  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (arbeidsforholdId: string, status: YesNo) => void;
-  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (arbeidsforholdId: string, status: YesNo) => void;
-  begrunnelseRedusertUtbetaling: (arbeidsforholdId: string, begrunnelse: string) => void;
-  beloepArbeidsgiverBetalerISykefravaeret: (arbeidsforholdId: string, beloep: string) => void;
-  refusjonskravetOpphoererStatus: (arbeidsforholdId: string, status: YesNo) => void;
-  refusjonskravetOpphoererDato: (arbeidsforholdId: string, opphoersdato?: Date) => void;
-  initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: { [key: string]: LonnIArbeidsgiverperioden }) => void;
-  initLonnISykefravaeret: (lonnISykefravaeret: { [key: string]: LonnISykefravaeret }) => void;
+  fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
+  lonnISykefravaeret?: LonnISykefravaeret;
+  refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
+  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) => void;
+  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
+  begrunnelseRedusertUtbetaling: (begrunnelse: string) => void;
+  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string) => void;
+  refusjonskravetOpphoererStatus: (status: YesNo) => void;
+  refusjonskravetOpphoererDato: (opphoersdato?: Date) => void;
+  initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) => void;
+  initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
 }
 
 const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], RefusjonArbeidsgiverState> = (set, get) => ({
   fullLonnIArbeidsgiverPerioden: undefined,
   lonnISykefravaeret: undefined,
-  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (arbeidsforholdId: string, status: YesNo) =>
+  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) =>
     set(
       produce((state) => {
         if (!state.fullLonnIArbeidsgiverPerioden) {
           state.fullLonnIArbeidsgiverPerioden = {};
         }
 
-        if (!state.fullLonnIArbeidsgiverPerioden[arbeidsforholdId]) {
-          state.fullLonnIArbeidsgiverPerioden[arbeidsforholdId] = { status: status };
-        } else state.fullLonnIArbeidsgiverPerioden[arbeidsforholdId].status = status;
+        if (!state.fullLonnIArbeidsgiverPerioden) {
+          state.fullLonnIArbeidsgiverPerioden = { status: status };
+        } else state.fullLonnIArbeidsgiverPerioden.status = status;
 
-        state = slettFeilmelding(state, `lia-radio-${arbeidsforholdId}`);
+        state = slettFeilmelding(state, 'lia-radio');
 
         return state;
       })
     ),
-  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (arbeidsforholdId: string, status: YesNo) => {
+  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => {
     const bruttoinntekt = get().bruttoinntekt;
     set(
       produce((state) => {
@@ -49,94 +49,86 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.lonnISykefravaeret = {};
         }
 
-        if (!state.lonnISykefravaeret[arbeidsforholdId]) {
-          state.lonnISykefravaeret[arbeidsforholdId] = { status: status };
-        } else state.lonnISykefravaeret[arbeidsforholdId].status = status;
+        if (!state.lonnISykefravaeret) {
+          state.lonnISykefravaeret = { status: status };
+        } else state.lonnISykefravaeret.status = status;
         if (status === 'Ja') {
-          state.lonnISykefravaeret[arbeidsforholdId].belop = bruttoinntekt.bruttoInntekt;
+          state.lonnISykefravaeret.belop = bruttoinntekt.bruttoInntekt;
         } else {
-          delete state.lonnISykefravaeret[arbeidsforholdId].belop;
+          delete state.lonnISykefravaeret.belop;
         }
 
-        state = slettFeilmelding(state, `lus-radio-${arbeidsforholdId}`);
+        state = slettFeilmelding(state, 'lus-radio');
 
         return state;
       })
     );
   },
-  begrunnelseRedusertUtbetaling: (arbeidsforholdId: string, begrunnelse: string) =>
+  begrunnelseRedusertUtbetaling: (begrunnelse: string) =>
     set(
       produce((state) => {
-        if (state.fullLonnIArbeidsgiverPerioden?.[arbeidsforholdId]) {
-          state.fullLonnIArbeidsgiverPerioden[arbeidsforholdId].begrunnelse = begrunnelse;
+        if (state.fullLonnIArbeidsgiverPerioden) {
+          state.fullLonnIArbeidsgiverPerioden.begrunnelse = begrunnelse;
         } else {
           if (!state.fullLonnIArbeidsgiverPerioden) {
             state.fullLonnIArbeidsgiverPerioden = {};
           }
-          state.fullLonnIArbeidsgiverPerioden[arbeidsforholdId] = { begrunnelse: begrunnelse };
+          state.fullLonnIArbeidsgiverPerioden = { begrunnelse: begrunnelse };
         }
         if (begrunnelse && begrunnelse.length > 0) {
-          state = slettFeilmelding(state, `lia-select-${arbeidsforholdId}`);
+          state = slettFeilmelding(state, 'lia-select');
         } else {
-          state = leggTilFeilmelding(
-            state,
-            `lia-select-${arbeidsforholdId}`,
-            feiltekster.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE
-          );
+          state = leggTilFeilmelding(state, 'lia-select', feiltekster.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE);
         }
         return state;
       })
     ),
-  beloepArbeidsgiverBetalerISykefravaeret: (arbeidsforholdId: string, beloep: string) =>
+  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string) =>
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
           state.lonnISykefravaeret = {};
         }
-        if (!state.lonnISykefravaeret[arbeidsforholdId]) {
-          state.lonnISykefravaeret[arbeidsforholdId] = { belop: stringishToNumber(beloep) };
+        if (!state.lonnISykefravaeret) {
+          state.lonnISykefravaeret = { belop: stringishToNumber(beloep) };
         } else {
-          state.lonnISykefravaeret[arbeidsforholdId].belop = stringishToNumber(beloep);
+          state.lonnISykefravaeret.belop = stringishToNumber(beloep);
         }
 
         if (beloep && stringishToNumber(beloep)! >= 0) {
-          state = slettFeilmelding(state, `lus-input-${arbeidsforholdId}`);
+          state = slettFeilmelding(state, 'lus-input');
         } else {
-          state = leggTilFeilmelding(
-            state,
-            `lus-input-${arbeidsforholdId}`,
-            feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP
-          );
+          state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
         return state;
       })
     ),
-  refusjonskravetOpphoererStatus: (arbeidsforholdId: string, status: YesNo) =>
+  refusjonskravetOpphoererStatus: (status: YesNo) =>
     set(
       produce((state) => {
-        if (state.refusjonskravetOpphoerer?.[arbeidsforholdId]) {
-          state.refusjonskravetOpphoerer[arbeidsforholdId].status = status;
+        if (state.refusjonskravetOpphoerer) {
+          state.refusjonskravetOpphoerer.status = status;
         } else {
           if (!state.refusjonskravetOpphoerer) {
             state.refusjonskravetOpphoerer = {};
           }
-          state.refusjonskravetOpphoerer[arbeidsforholdId] = {
+          state.refusjonskravetOpphoerer = {
             status: status
           };
         }
         return state;
       })
     ),
-  refusjonskravetOpphoererDato: (arbeidsforholdId: string, opphoersdato?: Date) =>
+  refusjonskravetOpphoererDato: (opphoersdato?: Date) =>
     set(
       produce((state) => {
-        if (state.refusjonskravetOpphoerer?.[arbeidsforholdId]) {
-          state.refusjonskravetOpphoerer[arbeidsforholdId].opphorsdato = opphoersdato;
+        if (state.refusjonskravetOpphoerer) {
+          state.refusjonskravetOpphoerer.opphorsdato = opphoersdato;
         } else {
           if (!state.refusjonskravetOpphoerer) {
             state.refusjonskravetOpphoerer = {};
           }
-          state.refusjonskravetOpphoerer[arbeidsforholdId] = {
+          state.refusjonskravetOpphoerer = {
             opphorsdato: opphoersdato
           };
         }
@@ -144,7 +136,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: { [key: string]: LonnIArbeidsgiverperioden }) =>
+  initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) =>
     set(
       produce((state) => {
         state.fullLonnIArbeidsgiverPerioden = lonnIArbeidsgiverperioden;

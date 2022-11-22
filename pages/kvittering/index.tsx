@@ -21,26 +21,23 @@ import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgive
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../state/useBoundStore';
-import Heading4 from '../../components/Heading4';
-import { IArbeidsforhold } from '../../state/state';
-import KvitteringArbeidsforholdBruttolonn from '../../components/KvitteringArbeidsforholdBruttolonn';
+
 import PrintButton from '../../components/PrintButton';
+import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
+import { format, parseISO } from 'date-fns';
 
 const Kvittering: NextPage = () => {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
-  const inntektsprosent = useBoundStore((state) => state.inntektsprosent);
+
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
-  const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
+  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
-  const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
+
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
 
-  const aktiveArbeidsforholdListe = aktiveArbeidsforhold();
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
-  const flerEnnEtArbeidsforhold = aktiveArbeidsforholdListe.length > 1;
   const arbeidsgiverperiode = [{ fra: new Date(1, 9, 2021), til: new Date(16, 10, 2021) }];
 
   const router = useRouter();
@@ -49,25 +46,17 @@ const Kvittering: NextPage = () => {
     router.push('/');
   };
 
-  const aktuelltArbeidsforholdTittel = (arbeidsforholdId?: IArbeidsforhold) => {
-    if (!arbeidsforholdId) {
-      return '';
-    }
-    const aktuelltArbeidsforhold = arbeidsforhold?.find(
-      (element) => element.arbeidsforholdId === arbeidsforholdId.arbeidsforholdId
-    );
+  let bestemmendeFravaersdag;
 
-    return aktuelltArbeidsforhold ? aktuelltArbeidsforhold.arbeidsforhold : '';
-  };
+  if (fravaersperioder) {
+    bestemmendeFravaersdag = format(
+      parseISO(finnBestemmendeFravaersdag(fravaersperioder) as unknown as string),
+      'dd.MM.yyyy'
+    );
+  }
 
   const harAktiveEgenmeldingsperioder = () => {
-    const periodeKeys = Object.keys(egenmeldingsperioder);
-    const egenmeldinger = periodeKeys.filter((arbeidstaker) => {
-      const perioder = egenmeldingsperioder[arbeidstaker];
-      return perioder.find((periode) => periode.fra || periode.til);
-    });
-
-    return egenmeldinger.length > 0;
+    return egenmeldingsperioder.find((periode) => periode.fra || periode.til) !== undefined;
   };
 
   return (
@@ -91,48 +80,26 @@ const Kvittering: NextPage = () => {
                   {harAktiveEgenmeldingsperioder() && (
                     <div className={lokalStyles.ytrefravaerswrapper}>
                       <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
-                      {egenmeldingsperioder &&
-                        aktiveArbeidsforholdListe &&
-                        aktiveArbeidsforholdListe.map((forhold) => (
-                          <>
-                            {flerEnnEtArbeidsforhold && (
-                              <Heading4 className={lokalStyles.arbeidsforhold}>
-                                {aktuelltArbeidsforholdTittel(forhold)}
-                              </Heading4>
-                            )}
-                            {egenmeldingsperioder[forhold.arbeidsforholdId].map((periode, index) => (
-                              <PeriodeFraTil
-                                fra={periode.fra!}
-                                til={periode.til!}
-                                key={'egenmelding' + index + '-' + forhold.arbeidsforholdId}
-                              />
-                            ))}
-                          </>
-                        ))}
+                      {egenmeldingsperioder && (
+                        <>
+                          {egenmeldingsperioder.map((periode, index) => (
+                            <PeriodeFraTil fra={periode.fra!} til={periode.til!} key={'egenmelding' + index} />
+                          ))}
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
                 <div className={lokalStyles.ytterstefravaerwrapper}>
                   <div className={lokalStyles.ytrefravaerswrapper}>
                     <Heading3 className={lokalStyles.sykfravaerstyper}>Sykmelding</Heading3>
-                    {aktiveArbeidsforholdListe &&
-                      fravaersperiode &&
-                      aktiveArbeidsforholdListe.map((forhold) => (
-                        <>
-                          {flerEnnEtArbeidsforhold && (
-                            <Heading4 className={lokalStyles.arbeidsforhold}>
-                              {aktuelltArbeidsforholdTittel(forhold)}
-                            </Heading4>
-                          )}
-                          {fravaersperiode[forhold.arbeidsforholdId].map((periode, index) => (
-                            <PeriodeFraTil
-                              fra={periode.fra!}
-                              til={periode.til!}
-                              key={'fperiode' + index + '-' + forhold.arbeidsforholdId}
-                            />
-                          ))}
-                        </>
-                      ))}
+                    {fravaersperioder && (
+                      <>
+                        {fravaersperioder.map((periode, index) => (
+                          <PeriodeFraTil fra={periode.fra!} til={periode.til!} key={'fperiode' + index} />
+                        ))}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -143,7 +110,7 @@ const Kvittering: NextPage = () => {
                     <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                     <div className={lokalStyles.fravaerwrapper}>
                       <div className={lokalStyles.fravaertid}>Dato</div>
-                      <div>22.22.2022</div>
+                      <div>{bestemmendeFravaersdag} </div>
                     </div>
                   </div>
                   <div className={lokalStyles.arbeidsgiverperiode}>
@@ -163,33 +130,14 @@ const Kvittering: NextPage = () => {
             <Heading2>Bruttoinntekt siste 3 måneder</Heading2>
             <BodyShort className={lokalStyles.fravaertid}>Registrert inntekt</BodyShort>
             <BodyShort>{formatCurrency(bruttoinntekt)} kr/måned</BodyShort>
-            <KvitteringArbeidsforholdBruttolonn
-              lonnPrArbeidsforhold={inntektsprosent}
-              arbeidsforhold={aktiveArbeidsforholdListe}
-            />
             <Skillelinje />
-            {!flerEnnEtArbeidsforhold && <Heading2>Refusjon</Heading2>}
-            {arbeidsforhold &&
-              aktiveArbeidsforholdListe.map((aktivtArbeidsforhold: IArbeidsforhold) => (
-                <>
-                  {flerEnnEtArbeidsforhold && (
-                    <Heading2 className={lokalStyles.refusjonsheader}>
-                      Refusjon - {aktuelltArbeidsforholdTittel(aktivtArbeidsforhold)}
-                    </Heading2>
-                  )}
-                  <Heading3>Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?</Heading3>
-                  <FullLonnIArbeidsgiverperioden
-                    lonnIPerioden={fullLonnIArbeidsgiverPerioden!}
-                    arbeidsforhold={aktivtArbeidsforhold}
-                  />
-                  <Heading3>Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?</Heading3>
-                  <LonnUnderSykefravaeret
-                    lonn={lonnISykefravaeret!}
-                    arbeidsforhold={aktivtArbeidsforhold}
-                    refusjonskravetOpphoerer={refusjonskravetOpphoerer}
-                  />
-                </>
-              ))}
+            <Heading2>Refusjon</Heading2>
+
+            <Heading3>Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?</Heading3>
+            <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
+            <Heading3>Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?</Heading3>
+            <LonnUnderSykefravaeret lonn={lonnISykefravaeret!} refusjonskravetOpphoerer={refusjonskravetOpphoerer} />
+
             <Skillelinje />
             <Heading2>Eventuelle naturalytelser</Heading2>
             <BortfallNaturalytelser ytelser={naturalytelser!} />

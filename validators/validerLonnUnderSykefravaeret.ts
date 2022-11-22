@@ -9,82 +9,51 @@ export enum LonnUnderSykefravaeretFeilkode {
 }
 
 export default function validerLonnUnderSykefravaeret(
-  lonnUS?: { [key: string]: LonnISykefravaeret },
-  aktiveArbeidsforholdId?: Array<string>,
-  refusjonskravetOpphoerer?: { [key: string]: RefusjonskravetOpphoerer }
+  lonnUS?: LonnISykefravaeret,
+  refusjonskravetOpphoerer?: RefusjonskravetOpphoerer
 ): Array<ValiderResultat> {
   let errorStatus: Array<ValiderResultat> = [];
 
-  if (!aktiveArbeidsforholdId) {
-    return [
-      {
-        code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_MANGLER,
-        felt: 'lus-radio-ukjent'
-      }
-    ];
-  }
-
   if (!lonnUS) {
-    errorStatus = aktiveArbeidsforholdId.map((forholdId) => ({
+    errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_MANGLER,
-      felt: 'lus-radio-' + forholdId
-    }));
-  } else {
-    aktiveArbeidsforholdId.forEach((forholdId) => {
-      if (!lonnUS[forholdId]) {
-        errorStatus.push({
-          code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_MANGLER,
-          felt: 'lus-radio-' + forholdId
-        });
-      } else {
-        if (lonnUS[forholdId].status === 'Ja') {
-          validerBelop(lonnUS, forholdId, errorStatus);
-
-          validerStatus(refusjonskravetOpphoerer, forholdId, errorStatus);
-        }
-      }
+      felt: 'lus-radio'
     });
+  } else {
+    if (lonnUS.status === 'Ja') {
+      validerBelop(lonnUS, errorStatus);
+
+      validerStatus(refusjonskravetOpphoerer, errorStatus);
+    }
   }
 
   return errorStatus;
 }
-function validerStatus(
-  refusjonskravetOpphoerer: { [key: string]: RefusjonskravetOpphoerer } | undefined,
-  forholdId: string,
-  errorStatus: ValiderResultat[]
-) {
-  if (!refusjonskravetOpphoerer?.[forholdId]?.status) {
+function validerStatus(refusjonskravetOpphoerer: RefusjonskravetOpphoerer | undefined, errorStatus: ValiderResultat[]) {
+  if (!refusjonskravetOpphoerer?.status) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG,
-      felt: 'lus-sluttdato-velg-' + forholdId
+      felt: 'lus-sluttdato-velg'
     });
   } else {
-    validerJaStatusMedDato(refusjonskravetOpphoerer, forholdId, errorStatus);
+    validerJaStatusMedDato(refusjonskravetOpphoerer, errorStatus);
   }
 }
 
-function validerJaStatusMedDato(
-  refusjonskravetOpphoerer: { [key: string]: RefusjonskravetOpphoerer },
-  forholdId: string,
-  errorStatus: ValiderResultat[]
-) {
-  if (refusjonskravetOpphoerer?.[forholdId].status === 'Ja' && !refusjonskravetOpphoerer?.[forholdId].opphorsdato) {
+function validerJaStatusMedDato(refusjonskravetOpphoerer: RefusjonskravetOpphoerer, errorStatus: ValiderResultat[]) {
+  if (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphorsdato) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_SLUTTDATO,
-      felt: 'lus-sluttdato-' + forholdId
+      felt: 'lus-sluttdato'
     });
   }
 }
 
-function validerBelop(
-  lonnUS: { [key: string]: LonnISykefravaeret },
-  forholdId: string,
-  errorStatus: ValiderResultat[]
-) {
-  if (!lonnUS[forholdId].belop) {
+function validerBelop(lonnUS: LonnISykefravaeret, errorStatus: ValiderResultat[]) {
+  if (!lonnUS.belop) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_BELOP,
-      felt: 'lus-input-' + forholdId
+      felt: 'lus-input'
     });
   }
 }

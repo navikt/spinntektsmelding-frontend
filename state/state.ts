@@ -53,24 +53,23 @@ interface InntektsmeldingSkjema {
   identitetsnummer?: string;
   virksomhetsnavn?: string;
   orgnrUnderenhet?: string;
-  fravaersperiode?: { [key: string]: Array<Periode> };
-  opprinneligfravaersperiode?: { [key: string]: Array<Periode> };
-  egenmeldingsperioder: { [key: string]: Array<Periode> };
+  fravaersperioder?: Array<Periode>;
+  opprinneligfravaersperioder?: Array<Periode>;
+  egenmeldingsperioder: Array<Periode>;
   bruttoinntekt?: Inntekt;
   opprinneligbruttoinntekt?: Inntekt;
   tidligereinntekt?: Array<HistoriskInntekt>;
-  fullLonnIArbeidsgiverPerioden?: { [key: string]: LonnIArbeidsgiverperioden };
-  lonnISykefravaeret?: { [key: string]: LonnISykefravaeret };
+  fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
+  lonnISykefravaeret?: LonnISykefravaeret;
   naturalytelser?: Array<Naturalytelse>;
   hasBortfallAvNaturalytelser?: YesNo;
   opplysningerBekreftet: boolean;
-  refusjonskravetOpphoerer?: { [key: string]: RefusjonskravetOpphoerer };
+  refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   refusjonskravOpphoersdato?: Date;
   behandlingsdager?: Array<Date>;
   behandlingsperiode?: Periode;
   arbeidsforhold?: Array<IArbeidsforhold>;
   sammeFravaersperiode: boolean;
-  inntektsprosent?: { [key: string]: number };
 }
 
 export default InntektsmeldingSkjema;
