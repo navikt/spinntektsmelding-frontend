@@ -9,7 +9,7 @@ import { CompleteState } from './useBoundStore';
 
 export interface EgenmeldingState {
   egenmeldingsperioder: Array<Periode>;
-  opprinneligEgenmeldingsperiode?: { [key: string]: Array<Periode> };
+  opprinneligEgenmeldingsperiode?: Array<Periode>;
   endreEgenmeldingsperiode: boolean;
   setEgenmeldingDato: (dateValue: DateRange | undefined, periodeId: string) => void;
   slettEgenmeldingsperiode: (periodeId: string) => void;

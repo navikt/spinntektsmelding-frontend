@@ -1,4 +1,4 @@
-import { ValiderResultat } from '../utils/submitInntektsmelding';
+import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum BekreftOpplysningerFeilkoder {
   OK = 'OK',

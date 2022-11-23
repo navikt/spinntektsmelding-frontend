@@ -1,5 +1,5 @@
 import { Periode } from '../state/state';
-import { ValiderResultat } from '../utils/submitInntektsmelding';
+import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum PeriodeFeilkode {
   OK = 'OK',

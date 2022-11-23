@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
 import produce from 'immer';
-import { ValiderTekster } from '../utils/submitInntektsmelding';
+import { ValiderTekster } from '../utils/useValiderInntektsmelding';
 import { CompleteState } from './useBoundStore';
 
 export function slettFeilmelding(state: any, felt: string) {

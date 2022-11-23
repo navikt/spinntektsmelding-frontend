@@ -22,19 +22,18 @@ import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
 import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
-import submitInntektsmelding from '../utils/submitInntektsmelding';
 import useBoundStore from '../state/useBoundStore';
 import Naturalytelser from '../components/Naturalytelser';
 import Person from '../components/Person/Person';
-import InntektsmeldingSkjema from '../state/state';
 import useStateInit from '../state/useStateInit';
-import useFyllInnsending from '../state/useFyllInnsending';
+import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
 import dataFetcherArbeidsgivere from '../utils/dataFetcherArbeidsgivere';
 import useLoginRedirectPath from '../utils/useLoginRedirectPath';
 import useFetchInntektskjema from '../state/useFetchInntektskjema';
+import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
@@ -67,16 +66,17 @@ const Home: NextPage = () => {
 
   const hentSkjemadata = useFetchInntektskjema('');
 
+  const validerInntektsmelding = useValiderInntektsmelding();
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const skjemaData: InntektsmeldingSkjema = fyllInnsending(opplysningerBekreftet);
-
-    const errorStatus = submitInntektsmelding(skjemaData);
+    const errorStatus = validerInntektsmelding(opplysningerBekreftet);
 
     if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
       fyllFeilmeldinger(errorStatus.errorTexts);
     } else {
+      const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
       fyllFeilmeldinger([]);
       // useSWR   Send inn!>
       const postData = async () => {
