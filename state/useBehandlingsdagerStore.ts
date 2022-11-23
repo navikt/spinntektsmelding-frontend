@@ -28,8 +28,8 @@ const useBehandlingsdagerStore: StateCreator<CompleteState, [], [], Behandlingsd
     set(
       produce((state) => {
         state.behandlingsperiode = {
-          fra: parseIsoDate(behandlingsperiode.fra),
-          til: parseIsoDate(behandlingsperiode.til),
+          fom: parseIsoDate(behandlingsperiode.fom),
+          tom: parseIsoDate(behandlingsperiode.tom),
           id: nanoid()
         };
         if (behandlingsdager) {

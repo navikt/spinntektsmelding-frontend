@@ -5,9 +5,9 @@ import { vi } from 'vitest';
 import { DateRange } from 'react-day-picker';
 
 const egenmeldingsperioder: Array<MottattPeriode> = [
-  { fra: '2022-06-06', til: '2022-07-06' },
-  { fra: '2022-08-06', til: '2022-09-06' },
-  { fra: '2022-10-06', til: '2022-11-06' }
+  { fom: '2022-06-06', tom: '2022-07-06' },
+  { fom: '2022-08-06', tom: '2022-09-06' },
+  { fom: '2022-10-06', tom: '2022-11-06' }
 ];
 
 const initialState = useBoundStore.getState();
@@ -30,8 +30,8 @@ describe('useBoundStore', () => {
       result.current.initEgenmeldingsperiode(egenmeldingsperioder);
     });
 
-    expect(result.current.egenmeldingsperioder?.[0].fra).toEqual(new Date(2022, 5, 6));
-    expect(result.current.egenmeldingsperioder?.[0].til).toEqual(new Date(2022, 6, 6));
+    expect(result.current.egenmeldingsperioder?.[0].fom).toEqual(new Date(2022, 5, 6));
+    expect(result.current.egenmeldingsperioder?.[0].tom).toEqual(new Date(2022, 6, 6));
     expect(result.current.egenmeldingsperioder?.length).toBe(3);
   });
 
@@ -65,7 +65,7 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.egenmeldingsperioder?.length).toBe(1);
-    expect(result.current.egenmeldingsperioder?.[0].fra).toBeUndefined();
+    expect(result.current.egenmeldingsperioder?.[0].fom).toBeUndefined();
   });
 
   it('should add a egenmelding for å given arbeidsforholdId.', () => {
@@ -102,8 +102,8 @@ describe('useBoundStore', () => {
       result.current.setEgenmeldingDato(datoSpenn, periodeId);
     });
 
-    expect(result.current.egenmeldingsperioder?.[0].til).toEqual(new Date(2022, 5, 15));
-    expect(result.current.egenmeldingsperioder?.[0].fra).toEqual(new Date(2022, 4, 14));
+    expect(result.current.egenmeldingsperioder?.[0].tom).toEqual(new Date(2022, 5, 15));
+    expect(result.current.egenmeldingsperioder?.[0].fom).toEqual(new Date(2022, 4, 14));
   });
 
   it('should add a backup of egenmelding opprinneligEgenmelding.', () => {

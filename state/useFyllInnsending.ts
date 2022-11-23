@@ -4,7 +4,6 @@ import useBoundStore from './useBoundStore';
 export default function useFyllInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-  const inntektsprosent = useBoundStore((state) => state.inntektsprosent);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = useBoundStore((state) => [
@@ -27,8 +26,6 @@ export default function useFyllInnsending() {
 
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
-  const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
-
   setSkalViseFeilmeldinger(true);
 
   return (opplysningerBekreftet: boolean): InntektsmeldingSkjema => {
@@ -47,8 +44,6 @@ export default function useFyllInnsending() {
       behandlingsdager: behandlingsdager,
       behandlingsperiode: behandlingsperiode,
       sammeFravaersperiode: false,
-      arbeidsforhold: arbeidsforhold,
-      inntektsprosent: inntektsprosent,
       refusjonskravetOpphoerer: refusjonskravetOpphoerer
     };
 

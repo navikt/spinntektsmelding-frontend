@@ -28,15 +28,15 @@ export default function EnkeltArbeidsforholdPeriode({
   });
 
   useEffect(() => {
-    setSelected({ from: fravaersperiode?.fra, to: fravaersperiode?.til });
+    setSelected({ from: fravaersperiode?.fom, to: fravaersperiode?.tom });
   }, [fravaersperiode]);
 
   return (
     <div>
       <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-' + periodeId}>
         <div className={localStyles.datowrapper}>
-          <UNSAFE_DatePicker.Input {...fromInputProps} label='Fra' id={`fra-${periodeId}`} />
-          <UNSAFE_DatePicker.Input {...toInputProps} label='Til' id={`til-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...fromInputProps} label='Fra' id={`fom-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...toInputProps} label='Til' id={`tom-${periodeId}`} />
         </div>
       </UNSAFE_DatePicker>
     </div>

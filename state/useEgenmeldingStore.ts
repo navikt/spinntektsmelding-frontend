@@ -27,8 +27,8 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
       produce((state) => {
         state.egenmeldingsperioder = state.egenmeldingsperioder.map((periode: Periode) => {
           if (periode.id === periodeId) {
-            periode.til = dateValue?.to;
-            periode.fra = dateValue?.from;
+            periode.tom = dateValue?.to;
+            periode.fom = dateValue?.from;
             return periode;
           }
           return periode;
@@ -92,8 +92,8 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
 
         if (egenmeldingsperioder) {
           state.egenmeldingsperioder = egenmeldingsperioder.map((periode) => ({
-            fra: parseIsoDate(periode.fra),
-            til: parseIsoDate(periode.til),
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom),
             id: nanoid()
           }));
         } else {

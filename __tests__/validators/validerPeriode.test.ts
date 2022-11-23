@@ -7,51 +7,51 @@ describe('validerPeriode', () => {
     const input: Array<Periode> = [
       {
         id: 'tilfeldig',
-        til: new Date(2002, 10, 1),
-        fra: new Date(2002, 9, 1)
+        tom: new Date(2002, 10, 1),
+        fom: new Date(2002, 9, 1)
       }
     ];
 
     expect(validerPerioder(input)).toEqual([]);
   });
 
-  it('should fail if til is missing', () => {
+  it('should fail if tom is missing', () => {
     const input: Array<Periode> = [
       {
         id: 'tilfeldig',
-        fra: new Date()
+        fom: new Date()
       }
     ];
 
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'til-tilfeldig'
+        felt: 'tom-tilfeldig'
       }
     ];
 
     expect(validerPerioder(input)).toEqual(expected);
   });
 
-  it('should fail if fra is missing', () => {
+  it('should fail if fom is missing', () => {
     const input: Array<Periode> = [
       {
         id: 'tilfeldig',
-        til: new Date()
+        tom: new Date()
       }
     ];
 
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'fra-tilfeldig'
+        felt: 'fom-tilfeldig'
       }
     ];
 
     expect(validerPerioder(input)).toEqual(expected);
   });
 
-  it('should fail if til and fra is missing', () => {
+  it('should fail if tom and fom is missing', () => {
     const input: Array<Periode> = [
       {
         id: 'tilfeldig'
@@ -61,30 +61,30 @@ describe('validerPeriode', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'fra-tilfeldig'
+        felt: 'fom-tilfeldig'
       },
       {
         code: 'MANGLER_TIL',
-        felt: 'til-tilfeldig'
+        felt: 'tom-tilfeldig'
       }
     ];
 
     expect(validerPerioder(input)).toEqual(expected);
   });
 
-  it('should fail if fra and til is in the wrong order', () => {
+  it('should fail if fom and tom is in the wrong order', () => {
     const input: Array<Periode> = [
       {
         id: 'tilfeldig',
-        fra: new Date(2002, 10, 1),
-        til: new Date(2002, 9, 1)
+        fom: new Date(2002, 10, 1),
+        tom: new Date(2002, 9, 1)
       }
     ];
 
     const expected = [
       {
         code: 'TIL_FOR_FRA',
-        felt: 'fra-tilfeldig'
+        felt: 'fom-tilfeldig'
       }
     ];
 

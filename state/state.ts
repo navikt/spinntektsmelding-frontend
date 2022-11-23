@@ -1,6 +1,6 @@
 export interface Periode {
-  fra?: Date;
-  til?: Date;
+  fom?: Date;
+  tom?: Date;
   id: string;
 }
 

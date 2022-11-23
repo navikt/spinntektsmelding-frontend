@@ -18,23 +18,23 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Arr
     });
   } else {
     perioder.forEach((periode) => {
-      if (!periode.fra && periode.til) {
+      if (!periode.fom && periode.tom) {
         feilkoder.push({
-          felt: `fra-${periode.id}`,
+          felt: `fom-${periode.id}`,
           code: PeriodeFeilkode.MANGLER_FRA
         });
       }
 
-      if (!periode.til && periode.fra) {
+      if (!periode.tom && periode.fom) {
         feilkoder.push({
-          felt: `til-${periode.id}`,
+          felt: `tom-${periode.id}`,
           code: PeriodeFeilkode.MANGLER_TIL
         });
       }
 
-      if (periode.fra && periode.til && periode.fra > periode.til) {
+      if (periode.fom && periode.tom && periode.fom > periode.tom) {
         feilkoder.push({
-          felt: `fra-${periode.id}`,
+          felt: `fom-${periode.id}`,
           code: PeriodeFeilkode.TIL_FOR_FRA
         });
       }

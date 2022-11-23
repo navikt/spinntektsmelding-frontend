@@ -6,9 +6,9 @@ import { vi } from 'vitest';
 import { DateRange } from 'react-day-picker';
 
 const fravaersperiode: Array<MottattPeriode> = [
-  { fra: '2022-06-06', til: '2022-07-06' },
-  { fra: '2022-08-06', til: '2022-09-06' },
-  { fra: '2022-10-06', til: '2022-11-06' }
+  { fom: '2022-06-06', tom: '2022-07-06' },
+  { fom: '2022-08-06', tom: '2022-09-06' },
+  { fom: '2022-10-06', tom: '2022-11-06' }
 ];
 
 const initialState = useBoundStore.getState();
@@ -31,8 +31,8 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(fravaersperiode);
     });
 
-    expect(result.current.fravaersperioder?.[0].fra).toEqual(new Date(2022, 5, 6));
-    expect(result.current.fravaersperioder?.[0].til).toEqual(new Date(2022, 6, 6));
+    expect(result.current.fravaersperioder?.[0].fom).toEqual(new Date(2022, 5, 6));
+    expect(result.current.fravaersperioder?.[0].tom).toEqual(new Date(2022, 6, 6));
     expect(result.current.fravaersperioder?.length).toBe(3);
   });
 
@@ -103,7 +103,7 @@ describe('useBoundStore', () => {
       result.current.setFravaersperiodeDato(periodeId || '1', datoSpenn);
     });
 
-    expect(result.current.fravaersperioder?.[0].til).toEqual(new Date(2022, 5, 15));
-    expect(result.current.fravaersperioder?.[0].fra).toEqual(new Date(2022, 4, 14));
+    expect(result.current.fravaersperioder?.[0].tom).toEqual(new Date(2022, 5, 15));
+    expect(result.current.fravaersperioder?.[0].fom).toEqual(new Date(2022, 4, 14));
   });
 });

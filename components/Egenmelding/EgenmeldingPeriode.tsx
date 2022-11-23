@@ -29,7 +29,7 @@ export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: E
   });
 
   useEffect(() => {
-    setSelected({ from: egenmeldingsperiode?.fra, to: egenmeldingsperiode?.til });
+    setSelected({ from: egenmeldingsperiode?.fom, to: egenmeldingsperiode?.tom });
   }, [egenmeldingsperiode]);
 
   if (!endreEgenmeldingsperiode) {
@@ -37,11 +37,11 @@ export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: E
       <>
         <div className={styles.datepickerescape}>
           <TextLabel>Egenmelding fra</TextLabel>
-          <div>{formatDate(egenmeldingsperiode.fra)}</div>
+          <div>{formatDate(egenmeldingsperiode.fom)}</div>
         </div>
         <div className={styles.datepickerescape}>
-          <TextLabel>Egenmelding til</TextLabel>
-          <div>{formatDate(egenmeldingsperiode.til)}</div>
+          <TextLabel>Egenmelding tom</TextLabel>
+          <div>{formatDate(egenmeldingsperiode.tom)}</div>
         </div>
       </>
     );
@@ -51,8 +51,8 @@ export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: E
     <div>
       <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-egenmelding-' + periodeId}>
         <div className={localStyles.datowrapper}>
-          <UNSAFE_DatePicker.Input {...fromInputProps} label='Egenmelding fra' id={`fra-${periodeId}`} />
-          <UNSAFE_DatePicker.Input {...toInputProps} label='Egenmelding til' id={`til-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...fromInputProps} label='Egenmelding fra' id={`fom-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...toInputProps} label='Egenmelding til' id={`tom-${periodeId}`} />
         </div>
       </UNSAFE_DatePicker>
     </div>

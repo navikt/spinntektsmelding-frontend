@@ -3,38 +3,38 @@ import { MottattPeriode } from '../state/MottattData';
 import { Periode } from '../state/state';
 
 export interface FravaersPeriode {
-  fra: Date;
-  til: Date;
+  fom: Date;
+  tom: Date;
 }
 
 const overlappendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
-  if (ene.til < andre.fra || ene.fra > andre.til) {
+  if (ene.tom < andre.fom || ene.fom > andre.tom) {
     return null;
   }
 
   const obj: FravaersPeriode = {
-    fra: ene.fra > andre.fra ? andre.fra : ene.fra,
-    til: ene.til > andre.til ? ene.til : andre.til
+    fom: ene.fom > andre.fom ? andre.fom : ene.fom,
+    tom: ene.tom > andre.tom ? ene.tom : andre.tom
   };
 
   return obj;
 };
 
 const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
-  if (ene.til === andre.til && ene.fra === andre.fra) {
+  if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
   }
 
-  console.log('diff i dager', differenceInBusinessDays(andre.fra, ene.til));
+  console.log('diff i dager', differenceInBusinessDays(andre.fom, ene.tom));
 
-  if (differenceInBusinessDays(andre.fra, ene.til) <= 1) {
+  if (differenceInBusinessDays(andre.fom, ene.tom) <= 1) {
     const obj: FravaersPeriode = {
-      fra: ene.fra,
-      til: andre.til
+      fom: ene.fom,
+      tom: andre.tom
     };
     console.log('stuff', {
-      fra: ene.fra,
-      til: andre.til
+      fom: ene.fom,
+      tom: andre.tom
     });
     return obj;
   }
@@ -48,18 +48,18 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Ar
   }
 
   const aktivePerioder = fravaersperioder
-    .map((fravaer) => ({ fra: fravaer.fra, til: fravaer.til }))
+    .map((fravaer) => ({ fom: fravaer.fom, tom: fravaer.tom }))
     .map((element) => JSON.stringify(element));
 
   const unikeSykmeldingsperioder: Array<FravaersPeriode> = [...new Set([...aktivePerioder])]
     .map((periode) => JSON.parse(periode))
     .map((periode) => ({
-      fra: parseISO(periode.fra),
-      til: parseISO(periode.til)
+      fom: parseISO(periode.fom),
+      tom: parseISO(periode.tom)
     }));
 
   const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
-    if (a.fra > b.fra) return 1;
+    if (a.fom > b.fom) return 1;
     return -1;
   });
 
@@ -90,7 +90,7 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Ar
 
   console.log('tilstotendeSykemeldingsperioder', tilstotendeSykemeldingsperioder);
 
-  return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fra, {
+  return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom, {
     representation: 'date'
   });
 };

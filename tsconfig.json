@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "state/mappe"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "state/mappe", "__mocks__/server.js", "__mocks__/handlers.js"],
   "exclude": ["node_modules"]
 }

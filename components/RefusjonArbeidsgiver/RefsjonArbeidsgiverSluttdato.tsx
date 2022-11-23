@@ -17,7 +17,7 @@ export default function RefsjonArbeidsgiverSluttdato({}: RefsjonArbeidsgiverSlut
 
   return (
     <UNSAFE_DatePicker {...datepickerProps}>
-      <UNSAFE_DatePicker.Input {...inputProps} label='Dato naturalytelse bortfaller' id={'lus-sluttdato'} />
+      <UNSAFE_DatePicker.Input {...inputProps} label='Angi siste dag dere krever refusjon for' id={'lus-sluttdato'} />
     </UNSAFE_DatePicker>
   );
 }

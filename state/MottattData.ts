@@ -1,6 +1,6 @@
 export interface MottattPeriode {
-  fra: string;
-  til: string;
+  fom: string;
+  tom: string;
 }
 
 export interface MottattNaturalytelse {
@@ -28,7 +28,7 @@ interface MottattData {
   fravaersperioder: Array<MottattPeriode>;
   egenmeldingsperioder: Array<MottattPeriode>;
   bruttoinntekt: number;
-  tidligereinntekt: Array<MottattHistoriskInntekt>;
+  tidligereinntekter: Array<MottattHistoriskInntekt>;
   behandlingsdager: Array<string>;
   behandlingsperiode: MottattPeriode;
 }

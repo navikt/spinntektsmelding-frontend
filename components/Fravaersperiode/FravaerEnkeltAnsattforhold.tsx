@@ -36,7 +36,7 @@ export default function FravaerEnkeltAnsattforhold({}: FravaerEnkeltAnsattforhol
     setEndreSykemelding(!endreSykemelding);
   };
 
-  if (fravaersperioder && !fravaersperioder[0].fra && !endreSykemelding) {
+  if (fravaersperioder && !fravaersperioder[0].fom && !endreSykemelding) {
     setEndreSykemelding(true);
   }
 
@@ -49,11 +49,11 @@ export default function FravaerEnkeltAnsattforhold({}: FravaerEnkeltAnsattforhol
               <>
                 <div className={styles.datepickerescape}>
                   <TextLabel>Fra</TextLabel>
-                  <div>{formatDate(periode.fra)}</div>
+                  <div>{formatDate(periode.fom)}</div>
                 </div>
                 <div className={styles.datepickerescape}>
                   <TextLabel>Til</TextLabel>
-                  <div>{formatDate(periode.til)}</div>
+                  <div>{formatDate(periode.tom)}</div>
                 </div>
               </>
             )}

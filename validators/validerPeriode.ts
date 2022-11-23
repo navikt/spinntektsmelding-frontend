@@ -23,23 +23,23 @@ export default function validerPeriode(perioder?: Array<Periode>): Array<Valider
     debugger;
     if (Array.isArray(perioder)) {
       perioder.forEach((periode) => {
-        if (!periode.fra || !isValid(periode.fra)) {
+        if (!periode.fom || !isValid(periode.fom)) {
           feilkoder.push({
-            felt: `fra-${periode.id}`,
+            felt: `fom-${periode.id}`,
             code: PeriodeFeilkode.MANGLER_FRA
           });
         }
 
-        if (!periode.til || !isValid(periode.til)) {
+        if (!periode.tom || !isValid(periode.tom)) {
           feilkoder.push({
-            felt: `til-${periode.id}`,
+            felt: `tom-${periode.id}`,
             code: PeriodeFeilkode.MANGLER_TIL
           });
         }
 
-        if (periode.fra && periode.til && periode.fra > periode.til) {
+        if (periode.fom && periode.tom && periode.fom > periode.tom) {
           feilkoder.push({
-            felt: `fra-${periode.id}`,
+            felt: `fom-${periode.id}`,
             code: PeriodeFeilkode.TIL_FOR_FRA
           });
         }

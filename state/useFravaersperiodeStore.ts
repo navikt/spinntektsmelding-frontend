@@ -60,11 +60,11 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
         if (state.fravaersperioder) {
           state.fravaersperioder = state.fravaersperioder.map((periode: Periode) => {
             if (periode.id === periodeId) {
-              if (periode.til !== nyDato?.to || periode.fra !== nyDato?.from) {
+              if (periode.tom !== nyDato?.to || periode.fom !== nyDato?.from) {
                 state.sammeFravaersperiode = false;
               }
-              periode.til = nyDato?.to;
-              periode.fra = nyDato?.from;
+              periode.tom = nyDato?.to;
+              periode.fom = nyDato?.from;
             }
             return periode;
           });
@@ -96,9 +96,9 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
     ),
 
   initFravaersperiode: (mottatFravaersperioder: Array<MottattPeriode>) => {
-    const fravaersperioder = mottatFravaersperioder.map((periode) => ({
-      fra: parseISO(periode.fra),
-      til: parseISO(periode.til),
+    const fravaersperioder: Array<Periode> = mottatFravaersperioder.map((periode) => ({
+      fom: parseISO(periode.fom),
+      tom: parseISO(periode.tom),
       id: nanoid()
     }));
 

@@ -78,7 +78,7 @@ export default function Naturalytelser() {
                   <td className={styles.tddatepickernatural}>
                     <NaturalytelseBortfallsdato naturalytelseId={element.id} />
                     {/* <Datepicker
-                      inputId={'naturalytele-input-fra-dato-' + element.id}
+                      inputId={'naturalytele-input-fom-dato-' + element.id}
                       inputLabel='Dato naturalytelse bortfaller'
                       onChange={(dateString) => setNaturalytelseBortfallsdato(element.id, dateString)}
                       // value={dato}

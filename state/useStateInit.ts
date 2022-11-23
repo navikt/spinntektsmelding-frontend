@@ -12,7 +12,7 @@ export default function useStateInit() {
 
   return (jsonData: MottattData) => {
     initFravaersperiode(jsonData.fravaersperioder);
-    initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekt);
+    initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekter);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
     initPerson(jsonData.navn, jsonData.identitetsnummer, jsonData.orgnrUnderenhet);
     if (jsonData.behandlingsperiode) {

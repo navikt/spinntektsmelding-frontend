@@ -49,6 +49,8 @@ const Home: NextPage = () => {
 
   const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
 
+  const orgnrUnderenhet = useBoundStore((state) => state.orgnrUnderenhet);
+
   const loginPath = useLoginRedirectPath();
 
   const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
@@ -107,19 +109,26 @@ const Home: NextPage = () => {
   useEffect(() => {
     const hentData = async () => {
       try {
-        const skjemadata = await hentSkjemadata(SKJEMADATA_URL, '16120101181', '811307602');
+        let skjemadata;
+        if (orgnrUnderenhet) {
+          skjemadata = await hentSkjemadata(SKJEMADATA_URL, '16120101181', orgnrUnderenhet);
+        }
         if (skjemadata) {
           initState(skjemadata);
 
           setRoute(skjemadata.orgnrUnderenhet);
         }
       } catch (error) {
+        console.log('error', error); // eslint-disable-line
+
         leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
       }
     };
-    hentData();
+    if (orgnrUnderenhet) {
+      hentData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [orgnrUnderenhet]);
 
   useEffect(() => {
     console.log('error', error); // eslint-disable-line
@@ -181,7 +190,7 @@ const Home: NextPage = () => {
                 id='bekreft-opplysninger'
                 error={visFeilmeldingsTekst('bekreft-opplysninger')}
               >
-                NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
+                NAV kan trekke tombake retten tom å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
                 er riktige eller fullstendige.
               </ConfirmationPanel>
               <Feilsammendrag />

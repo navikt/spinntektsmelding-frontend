@@ -38,7 +38,7 @@ const Kvittering: NextPage = () => {
 
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
-  const arbeidsgiverperiode = [{ fra: new Date(1, 9, 2021), til: new Date(16, 10, 2021) }];
+  const arbeidsgiverperiode = [{ fom: new Date(1, 9, 2021), tom: new Date(16, 10, 2021) }];
 
   const router = useRouter();
 
@@ -56,7 +56,7 @@ const Kvittering: NextPage = () => {
   }
 
   const harAktiveEgenmeldingsperioder = () => {
-    return egenmeldingsperioder.find((periode) => periode.fra || periode.til) !== undefined;
+    return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
   };
 
   return (
@@ -83,7 +83,7 @@ const Kvittering: NextPage = () => {
                       {egenmeldingsperioder && (
                         <>
                           {egenmeldingsperioder.map((periode, index) => (
-                            <PeriodeFraTil fra={periode.fra!} til={periode.til!} key={'egenmelding' + index} />
+                            <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + index} />
                           ))}
                         </>
                       )}
@@ -96,7 +96,7 @@ const Kvittering: NextPage = () => {
                     {fravaersperioder && (
                       <>
                         {fravaersperioder.map((periode, index) => (
-                          <PeriodeFraTil fra={periode.fra!} til={periode.til!} key={'fperiode' + index} />
+                          <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + index} />
                         ))}
                       </>
                     )}
@@ -120,7 +120,7 @@ const Kvittering: NextPage = () => {
                       betaler Nav lønn til den syke eller refunderer bedriften:
                     </BodyLong>
                     {arbeidsgiverperiode.map((periode, index) => (
-                      <PeriodeFraTil fra={periode.fra} til={periode.til} key={index} />
+                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={index} />
                     ))}
                   </div>
                 </div>

@@ -124,9 +124,6 @@ export default function RefusjonArbeidsgiver() {
             </RadioGroup>
             {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
               <div className={styles.datepickerescape}>
-                <LabelLabel htmlFor={'lus-sluttdato'} className={styles.datepickerlabel}>
-                  Angi siste dag dere krever refusjon for
-                </LabelLabel>
                 <RefsjonArbeidsgiverSluttdato />
               </div>
             )}
