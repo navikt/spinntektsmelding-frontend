@@ -1,4 +1,4 @@
-import { BodyLong, Button, Checkbox } from '@navikt/ds-react';
+import { BodyLong, Button } from '@navikt/ds-react';
 import styles from '../../styles/Home.module.css';
 import localStyles from './Egenmelding.module.css';
 import ButtonSlette from '../ButtonSlette/ButtonSlette';
@@ -35,8 +35,9 @@ export default function Egenmelding() {
     <div className={localStyles.egenmeldingswrapper}>
       <Heading3>Eventuell egenmelding</Heading3>
       <BodyLong>
-        Dersom den ansatte var fraværende med egenmelding frem til sykmeldingen ble utstedt skal du oppgi første
-        fraværsdag med egenmelding i dette feltet.
+        Oppgi egenmeldingsperiode hvis den ansatte var fraværende med egenmelding i forkant av sykmeldingen. Oppgi kun
+        hele fraværsdager. Hvis den ansatte har hatt flere egenmeldingsperioder med mindre enn 16 dagers mellomrom, skal
+        alle disse tas med.
       </BodyLong>
 
       <div>

@@ -135,7 +135,7 @@ const Kvittering: NextPage = () => {
 
             <Heading3>Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?</Heading3>
             <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
-            <Heading3>Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?</Heading3>
+            <Heading3>Betaler arbeidsgiver lønn etter arbeidsgiverperioden?</Heading3>
             <LonnUnderSykefravaeret lonn={lonnISykefravaeret!} refusjonskravetOpphoerer={refusjonskravetOpphoerer} />
 
             <Skillelinje />

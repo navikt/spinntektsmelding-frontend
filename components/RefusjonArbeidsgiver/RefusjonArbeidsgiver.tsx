@@ -75,7 +75,7 @@ export default function RefusjonArbeidsgiver() {
         )}
 
         <RadioGroup
-          legend='Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?'
+          legend='Betaler arbeidsgiver lønn etter arbeidsgiverperioden?'
           className={styles.radiobuttonwrapper}
           id={'lus-radio'}
           error={visFeilmeldingsTekst('lus-radio')}

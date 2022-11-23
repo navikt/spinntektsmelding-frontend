@@ -11,9 +11,8 @@ export default function Fravaersperiode() {
     <>
       <Heading3>Sykmeldingsperiode</Heading3>
       <p>
-        I følge sykmeldingen var den ansatte sykmeldt i perioden som er ferdigutfylt her. Endre fraværsperiode dersom
-        den ansatte vært på jobb noen av dagene eller om den på annen måte ikke er korrekt. Du skal ikke ta med
-        eventuelle egenmeldingsdager i dette steget.
+        I følge sykmeldingen var den ansatte syk i perioden som er ferdig utfylt. Endre kun perioden dersom den ansatte
+        ble helt friskmeldt. Hvis den ansatte er har jobbet gradert i perioden skal du ikke å endre noe.
       </p>
 
       <FravaerEnkeltAnsattforhold />

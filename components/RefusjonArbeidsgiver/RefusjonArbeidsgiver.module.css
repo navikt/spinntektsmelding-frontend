@@ -16,3 +16,7 @@
 .refusjonsbelop>input {
   max-width: 10rem;
 }
+
+.selectbegrunnelse {
+  width: max-content;
+}

@@ -1,8 +1,11 @@
 .maanedsnavn,
 .maanedsinntekt {
   font-size: var(--navds-font-size-xlarge);
-  margin: 0;
   min-width: 5rem;
+}
+
+.maanedsnavn {
+  padding-right: 1rem;
 }
 
 .maanedsinntekt {
@@ -10,29 +13,30 @@
 }
 
 .endremaaanedsinntekt {
-  display: flex;
-  gap: 2rem;
+  display   : flex;
+  gap       : 2rem;
   margin-top: auto;
-  height: 3rem;
+  height    : 3rem;
 }
 
 .belopwrapper {
-  display: flex;
-  gap: 2rem;
+  display      : flex;
+  gap          : 2rem;
+  margin-bottom: 1rem;
 }
 
-.belopwrapper > div {
-  margin-top: auto;
+.belopwrapper>div {
+  margin-top   : auto;
   margin-bottom: auto;
-  height: auto;
+  height       : auto;
 }
 
 
-.bruttoinntektendringsbelop > label {
+.bruttoinntektendringsbelop>label {
   max-height: var(--navds-font-line-height-large);
 }
 
-.bruttoinntektendringsbelop > input {
+.bruttoinntektendringsbelop>input {
   margin-bottom: auto;
 }
 
@@ -40,14 +44,14 @@
   margin: 1rem 0 .5rem;
 }
 
-.bruttoinntektbelop  > input {
+.bruttoinntektbelop>input {
   max-width: 10rem;
 }
 
 .kontrollerknapp {
   margin-top: calc(var(--navds-font-line-height-large) + .5rem);
-  height: 3rem;
-  display: inline-block;
+  height    : 3rem;
+  display   : inline-block;
 }
 
 
@@ -56,27 +60,27 @@
 }
 
 .prosentbody {
-  display: flex;
+  display       : flex;
   flex-direction: column;
 }
 
 .prosentbodytext {
-  margin-top: auto;
+  margin-top   : auto;
   margin-bottom: auto;
 }
 
-.bruttoinntektendringsbelopenkel{
+.bruttoinntektendringsbelopenkel {
   margin-top: .5rem;
 }
 
-.bruttoinntektendringsbelopenkel > input{
+.bruttoinntektendringsbelopenkel>input {
   max-width: 10rem;
 }
 
 .bruttoinntektbelopbeskrivelse {
   margin-bottom: 1rem;
-  margin-top: 1rem;
-  font-weight: var(--navds-font-weight-bold);
+  margin-top   : 1rem;
+  font-weight  : var(--navds-font-weight-bold);
 }
 
 .inntektsliste {

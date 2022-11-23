@@ -40,7 +40,7 @@ export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: E
           <div>{formatDate(egenmeldingsperiode.fom)}</div>
         </div>
         <div className={styles.datepickerescape}>
-          <TextLabel>Egenmelding tom</TextLabel>
+          <TextLabel>Egenmelding til</TextLabel>
           <div>{formatDate(egenmeldingsperiode.tom)}</div>
         </div>
       </>

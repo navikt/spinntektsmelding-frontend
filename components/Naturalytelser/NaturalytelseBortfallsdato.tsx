@@ -1,13 +1,14 @@
 import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
-import useBoundStore from '../../state/useBoundStore';
 
 interface NaturalytelseBortfallsdatoInterface {
   naturalytelseId: string;
+  setNaturalytelseBortfallsdato: (naturalytelseId: string, dato?: Date | undefined) => void;
 }
 
-export default function NaturalytelseBortfallsdato({ naturalytelseId }: NaturalytelseBortfallsdatoInterface) {
-  const setNaturalytelseBortfallsdato = useBoundStore((state) => state.setNaturalytelseBortfallsdato);
-
+export default function NaturalytelseBortfallsdato({
+  naturalytelseId,
+  setNaturalytelseBortfallsdato
+}: NaturalytelseBortfallsdatoInterface) {
   const setBortfallsdato = (bortfallsdato: Date | undefined) => {
     setNaturalytelseBortfallsdato(naturalytelseId, bortfallsdato);
   };

@@ -1,4 +1,3 @@
-import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
 import { BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
@@ -31,36 +30,25 @@ export default function Naturalytelser() {
     leggTilNaturalytelse();
   };
 
-  // const rangeChangeHandler = (dato) => {
-  //   if (dato) {
-  //     setNaturalytelseBortfallsdato('dette-er-ikkeriktig-måte', dato);
-  //   }
-  // };
-
-  const { datepickerProps, inputProps, selectedDay } = UNSAFE_useDatepicker({
-    toDate: new Date(),
-    onDateChange: console.log
-  });
   return (
     <>
       <Heading3>Eventuelle naturalytelser (valgfri)</Heading3>
       <BodyLong>
-        Har den ansatte noen naturalytelser som bortfaller ved sykemelding så må de angis, ellers vil den ansatte ikke
-        bli tilgoderegnet disse. Hvis den ansatte fotsatt beholder eventuelle naturalyteleser, så trenger dere ikke
-        gjøre noe.
+        Har den ansatte naturalytelser som faller bort ved sykmelding, skal disse oppgis her. Hvis den ansatte beholder
+        eventuelle naturalytelser, så trenger dere ikke oppgi noe.
       </BodyLong>
       <Checkbox
         value='Naturalytelser'
         checked={naturalytelser && naturalytelser.length > 0}
         onClick={visNaturalytelser}
       >
-        Ansatt har naturalytelser som bortfaller ved sykemeldingen
+        Den ansatte har naturalytelser som faller bort ved sykmeldingen.
       </Checkbox>
       {naturalytelser && naturalytelser.length > 0 && (
         <table className={lokalStyles.tablenaturalytelse}>
           <thead>
             <th>Naturalytelse</th>
-            <th>Dato naturalytelse bortfaller</th>
+            <th>Dato naturalytelse faller bort</th>
             <th>Verdi naturalytelse - kr/måned</th>
             <th></th>
           </thead>
@@ -76,14 +64,10 @@ export default function Naturalytelser() {
                   </td>
 
                   <td className={styles.tddatepickernatural}>
-                    <NaturalytelseBortfallsdato naturalytelseId={element.id} />
-                    {/* <Datepicker
-                      inputId={'naturalytele-input-fom-dato-' + element.id}
-                      inputLabel='Dato naturalytelse bortfaller'
-                      onChange={(dateString) => setNaturalytelseBortfallsdato(element.id, dateString)}
-                      // value={dato}
-                      locale={'nb'}
-                    /> */}
+                    <NaturalytelseBortfallsdato
+                      naturalytelseId={element.id}
+                      setNaturalytelseBortfallsdato={setNaturalytelseBortfallsdato}
+                    />
                   </td>
                   <td>
                     <TextField

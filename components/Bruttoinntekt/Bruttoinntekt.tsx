@@ -36,7 +36,7 @@ export default function Bruttoinntekt() {
         <div className={lokalStyles.belopwrapper}>
           {!endreMaanedsinntekt && (
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
-              {(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
+              {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr/måned
             </TextLabel>
           )}
           {endreMaanedsinntekt && (
