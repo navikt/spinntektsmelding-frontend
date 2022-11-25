@@ -20,7 +20,7 @@ export default function LonnUnderSykefravaeret({ lonn, refusjonskravetOpphoerer 
       {lonn.belop && (
         <>
           <Heading4>Refusjonsbeløp per måned</Heading4>
-          <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.belop!)} kr/måned</BodyShort>
+          <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.belop)} kr/måned</BodyShort>
           {refusjonskravetOpphoerer && (
             <>
               <Heading4>Opphører refusjonkravet i perioden</Heading4>
