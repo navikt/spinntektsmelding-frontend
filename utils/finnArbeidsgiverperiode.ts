@@ -1,45 +1,6 @@
-import { differenceInBusinessDays, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { Periode } from '../state/state';
-
-export interface FravaersPeriode {
-  fom: Date;
-  tom: Date;
-}
-
-const overlappendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
-  if (ene.tom < andre.fom || ene.fom > andre.tom) {
-    return null;
-  }
-
-  const obj: FravaersPeriode = {
-    fom: ene.fom > andre.fom ? andre.fom : ene.fom,
-    tom: ene.tom > andre.tom ? ene.tom : andre.tom
-  };
-
-  return obj;
-};
-
-const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
-  if (ene.tom === andre.tom && ene.fom === andre.fom) {
-    return ene;
-  }
-
-  console.log('diff i dager', differenceInBusinessDays(andre.fom, ene.tom));
-
-  if (differenceInBusinessDays(andre.fom, ene.tom) <= 0) {
-    const obj: FravaersPeriode = {
-      fom: ene.fom,
-      tom: andre.tom
-    };
-    console.log('stuff', {
-      fom: ene.fom,
-      tom: andre.tom
-    });
-    return obj;
-  }
-
-  return null;
-};
+import { FravaersPeriode, overlappendePeriode, tilstoetendePeriode } from './finnBestemmendeFravaersdag';
 
 const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<FravaersPeriode> => {
   const aktivePerioder = fravaersperioder
@@ -82,8 +43,6 @@ const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<Fravae
       tilstotendeSykemeldingsperioder.push(periode);
     }
   });
-
-  console.log('tilstotendeSykemeldingsperioder', tilstotendeSykemeldingsperioder);
 
   return tilstotendeSykemeldingsperioder;
 };

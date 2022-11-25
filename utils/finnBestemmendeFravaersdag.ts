@@ -7,7 +7,7 @@ export interface FravaersPeriode {
   tom: Date;
 }
 
-const overlappendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
+export const overlappendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
   if (ene.tom < andre.fom || ene.fom > andre.tom) {
     return null;
   }
@@ -20,22 +20,17 @@ const overlappendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
   return obj;
 };
 
-const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
+export const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
   if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
   }
-
-  console.log('diff i dager', differenceInBusinessDays(andre.fom, ene.tom));
 
   if (differenceInBusinessDays(andre.fom, ene.tom) <= 0) {
     const obj: FravaersPeriode = {
       fom: ene.fom,
       tom: andre.tom
     };
-    console.log('stuff', {
-      fom: ene.fom,
-      tom: andre.tom
-    });
+
     return obj;
   }
 
