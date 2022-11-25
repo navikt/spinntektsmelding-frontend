@@ -27,6 +27,7 @@ export interface LonnISykefravaeret {
 export interface LonnIArbeidsgiverperioden {
   status?: YesNo;
   begrunnelse?: string;
+  utbetalt?: number;
 }
 
 export interface Naturalytelse {

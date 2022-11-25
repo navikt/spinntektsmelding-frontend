@@ -16,6 +16,7 @@ export interface RefusjonArbeidsgiverState {
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
   begrunnelseRedusertUtbetaling: (begrunnelse: string) => void;
   beloepArbeidsgiverBetalerISykefravaeret: (beloep: string) => void;
+  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string) => void;
   refusjonskravetOpphoererStatus: (status: YesNo) => void;
   refusjonskravetOpphoererDato: (opphoersdato?: Date) => void;
   initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) => void;
@@ -99,6 +100,26 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state = slettFeilmelding(state, 'lus-input');
         } else {
           state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
+        }
+        return state;
+      })
+    ),
+  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string) =>
+    set(
+      produce((state) => {
+        if (!state.fullLonnIArbeidsgiverPerioden) {
+          state.fullLonnIArbeidsgiverPerioden = {};
+        }
+        if (!state.fullLonnIArbeidsgiverPerioden) {
+          state.fullLonnIArbeidsgiverPerioden = { utbetalt: stringishToNumber(beloep) };
+        } else {
+          state.fullLonnIArbeidsgiverPerioden.utbetalt = stringishToNumber(beloep);
+        }
+
+        if (beloep && stringishToNumber(beloep)! >= 0) {
+          state = slettFeilmelding(state, 'lus-uua-input');
+        } else {
+          state = leggTilFeilmelding(state, 'lus-uua-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
         return state;
       })

@@ -1,10 +1,12 @@
+import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
+import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import useBoundStore from './useBoundStore';
 
 interface Bruttoinntekt {
   bekreftet: boolean;
-  bruttoInntekt: number;
-  endringaarsak?: string;
+  beregnetInntekt: number;
+  endringÅrsak?: string;
   manueltKorrigert: boolean;
 }
 
@@ -16,12 +18,13 @@ interface SendtPeriode {
 interface FullLonnIArbeidsgiverPerioden {
   utbetalerFullLønn: boolean;
   begrunnelse?: string;
+  utbetalt?: number;
 }
 
-interface HeleEllerdeler {
+interface Refusjon {
   utbetalerHeleEllerDeler: boolean;
   refusjonPrMnd?: number;
-  opphørSisteDag?: string;
+  refusjonOpphører?: string;
 }
 
 interface SendtNaturalytelse {
@@ -33,14 +36,17 @@ interface SendtNaturalytelse {
 export interface InnsendingSkjema {
   identitetsnummer: string;
   orgnrUnderenhet: string;
-  fraværsperioder: Array<SendtPeriode>;
   egenmeldingsperioder?: Array<SendtPeriode>;
-  bruttoinntekt: Bruttoinntekt;
+  arbeidsgiverperioder: Array<SendtPeriode>;
+  bestemmendeFraværsdag: string;
+  fraværsperioder: Array<SendtPeriode>;
+  inntekt: Bruttoinntekt;
   fullLønnIArbeidsgiverPerioden: FullLonnIArbeidsgiverPerioden;
-  heleEllerdeler: HeleEllerdeler;
+  refusjon: Refusjon;
   naturalytelser?: Array<SendtNaturalytelse>;
   bekreftOpplysninger: boolean;
   behandlingsdager?: Array<string>;
+  årsakInnsending: string;
 }
 
 export default function useFyllInnsending() {
@@ -60,37 +66,52 @@ export default function useFyllInnsending() {
 
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
-  setSkalViseFeilmeldinger(true);
-
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
+    setSkalViseFeilmeldinger(true);
+    let perioder;
+    if (fravaersperioder) {
+      perioder = fravaersperioder.concat(egenmeldingsperioder);
+    } else {
+      perioder = egenmeldingsperioder;
+    }
+
+    const bestemmendeFraværsdag = finnBestemmendeFravaersdag(perioder);
+    const arbeidsgiverperioder = finnArbeidsgiverperiode(perioder);
+
     const skjemaData: InnsendingSkjema = {
-      identitetsnummer: identitetsnummer!,
       orgnrUnderenhet: orgnrUnderenhet!,
-      fraværsperioder: fravaersperioder!.map((periode) => ({
-        fom: formatIsoDate(periode.fom),
-        tom: formatIsoDate(periode.tom)
-      })),
+      identitetsnummer: identitetsnummer!,
       egenmeldingsperioder: egenmeldingsperioder.map((periode) => ({
         fom: formatIsoDate(periode.fom),
         tom: formatIsoDate(periode.tom)
       })),
-      bruttoinntekt: {
+      fraværsperioder: fravaersperioder!.map((periode) => ({
+        fom: formatIsoDate(periode.fom),
+        tom: formatIsoDate(periode.tom)
+      })),
+      arbeidsgiverperioder: arbeidsgiverperioder.map((periode) => ({
+        fom: formatIsoDate(periode.fom),
+        tom: formatIsoDate(periode.tom)
+      })),
+      inntekt: {
         bekreftet: bruttoinntekt.bekreftet || false,
-        bruttoInntekt: bruttoinntekt.bruttoInntekt,
+        beregnetInntekt: bruttoinntekt.bruttoInntekt,
         manueltKorrigert: bruttoinntekt.manueltKorrigert || false,
-        endringaarsak:
+        endringÅrsak:
           bruttoinntekt.endringsaarsak && bruttoinntekt.endringsaarsak.length > 0
             ? bruttoinntekt.endringsaarsak
             : undefined
       },
+      bestemmendeFraværsdag: bestemmendeFraværsdag!,
       fullLønnIArbeidsgiverPerioden: {
         utbetalerFullLønn: fullLonnIArbeidsgiverPerioden?.status === 'Ja',
-        begrunnelse: fullLonnIArbeidsgiverPerioden?.begrunnelse
+        begrunnelse: fullLonnIArbeidsgiverPerioden?.begrunnelse,
+        utbetalt: fullLonnIArbeidsgiverPerioden?.utbetalt
       },
-      heleEllerdeler: {
+      refusjon: {
         utbetalerHeleEllerDeler: lonnISykefravaeret?.status === 'Ja',
         refusjonPrMnd: lonnISykefravaeret?.belop,
-        opphørSisteDag: refusjonskravetOpphoerer?.opphorsdato
+        refusjonOpphører: refusjonskravetOpphoerer?.opphorsdato
           ? formatIsoDate(refusjonskravetOpphoerer?.opphorsdato)
           : undefined
       },
@@ -100,7 +121,8 @@ export default function useFyllInnsending() {
         verdi: ytelse.verdi || 0
       })),
       bekreftOpplysninger: opplysningerBekreftet,
-      behandlingsdager: behandlingsdager?.map((dag) => formatIsoDate(dag))
+      behandlingsdager: behandlingsdager?.map((dag) => formatIsoDate(dag)),
+      årsakInnsending: 'Ny'
     };
 
     return skjemaData;

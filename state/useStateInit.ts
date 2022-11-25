@@ -19,7 +19,13 @@ export default function useStateInit() {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }
 
-    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(jsonData.fravaersperioder);
+    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
+      jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder)
+    );
+    console.log(
+      '------------------------------------',
+      jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder)
+    );
     getGrunnbeloep(bestemmendeFravaersdag);
   };
 }

@@ -25,6 +25,7 @@ import useBoundStore from '../../state/useBoundStore';
 import PrintButton from '../../components/PrintButton';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import { format, parseISO } from 'date-fns';
+import finnArbeidsgiverperiode, { FravaersPeriode } from '../../utils/finnArbeidsgiverperiode';
 
 const Kvittering: NextPage = () => {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
@@ -38,8 +39,6 @@ const Kvittering: NextPage = () => {
 
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
-  const arbeidsgiverperiode = [{ fom: new Date(1, 9, 2021), tom: new Date(16, 10, 2021) }];
-
   const router = useRouter();
 
   const clickEndre = () => {
@@ -47,12 +46,12 @@ const Kvittering: NextPage = () => {
   };
 
   let bestemmendeFravaersdag;
+  let arbeidsgiverperioder: Array<FravaersPeriode>;
 
   if (fravaersperioder) {
-    bestemmendeFravaersdag = format(
-      parseISO(finnBestemmendeFravaersdag(fravaersperioder) as unknown as string),
-      'dd.MM.yyyy'
-    );
+    const perioder = fravaersperioder.concat(egenmeldingsperioder);
+    bestemmendeFravaersdag = format(parseISO(finnBestemmendeFravaersdag(perioder) as unknown as string), 'dd.MM.yyyy');
+    arbeidsgiverperioder = finnArbeidsgiverperiode(perioder);
   }
 
   const harAktiveEgenmeldingsperioder = () => {
@@ -119,7 +118,7 @@ const Kvittering: NextPage = () => {
                       Arbeidsgiver er ansvarlig å betale ut lønn til den sykmeldte under arbeidsgiverpeioden, etterpå
                       betaler Nav lønn til den syke eller refunderer bedriften:
                     </BodyLong>
-                    {arbeidsgiverperiode.map((periode, index) => (
+                    {arbeidsgiverperioder!.map((periode, index) => (
                       <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={index} />
                     ))}
                   </div>

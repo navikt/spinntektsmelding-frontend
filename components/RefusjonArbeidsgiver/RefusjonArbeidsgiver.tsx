@@ -1,6 +1,5 @@
-import { BodyLong, Radio, RadioGroup } from '@navikt/ds-react';
+import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
-import LabelLabel from '../LabelLabel';
 import styles from '../../styles/Home.module.css';
 import { YesNo } from '../../state/state';
 
@@ -8,6 +7,7 @@ import useBoundStore from '../../state/useBoundStore';
 import RefsjonArbeidsgiverSluttdato from './RefsjonArbeidsgiverSluttdato';
 import SelectBegrunnelse from './SelectBegrunnelse';
 import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
+import localStyles from './RefusjonArbeidsgiver.module.css';
 
 export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -29,6 +29,10 @@ export default function RefusjonArbeidsgiver() {
     (state) => state.beloepArbeidsgiverBetalerISykefravaeret
   );
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
+
+  const beloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
+    (state) => state.beloepUtbetaltUnderArbeidsgiverperioden
+  );
 
   const bruttoinntektArbeidsforhold = (inntekt: number, seksG?: number): number => {
     if (seksG && (inntekt || 0 > seksG)) {
@@ -71,7 +75,17 @@ export default function RefusjonArbeidsgiver() {
           </Radio>
         </RadioGroup>
         {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
-          <SelectBegrunnelse onChangeBegrunnelse={begrunnelseRedusertUtbetaling} />
+          <div className={localStyles.wraputbetaling}>
+            <TextField
+              className={localStyles.refusjonsbelop}
+              label='Utbetalt under arbeidsgiverperiode'
+              // className={styles.halfsize}
+              onChange={(event) => beloepUtbetaltUnderArbeidsgiverperioden(event.target.value)}
+              id={'lus-uua-input'}
+              error={visFeilmeldingsTekst('lus-uua-input')}
+            />
+            <SelectBegrunnelse onChangeBegrunnelse={begrunnelseRedusertUtbetaling} />
+          </div>
         )}
 
         <RadioGroup

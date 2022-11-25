@@ -1,5 +1,4 @@
-import { differenceInBusinessDays, formatISO9075, parseISO } from 'date-fns';
-import { MottattPeriode } from '../state/MottattData';
+import { differenceInBusinessDays, parseISO } from 'date-fns';
 import { Periode } from '../state/state';
 
 export interface FravaersPeriode {
@@ -42,30 +41,17 @@ const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
   return null;
 };
 
-const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Array<Periode>): string | undefined => {
-  if (!fravaersperioder) {
-    return undefined;
-  }
-
+const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<FravaersPeriode> => {
   const aktivePerioder = fravaersperioder
     .map((fravaer) => ({ fom: fravaer.fom, tom: fravaer.tom }))
     .map((element) => JSON.stringify(element));
 
   const unikeSykmeldingsperioder: Array<FravaersPeriode> = [...new Set([...aktivePerioder])]
     .map((periode) => JSON.parse(periode))
-    .map((periode) => {
-      if (typeof periode.fom === 'string') {
-        return {
-          fom: parseISO(periode.fom),
-          tom: parseISO(periode.tom)
-        };
-      } else {
-        return {
-          fom: periode.fom,
-          tom: periode.tom
-        };
-      }
-    });
+    .map((periode) => ({
+      fom: parseISO(periode.fom),
+      tom: parseISO(periode.tom)
+    }));
 
   const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
     if (a.fom > b.fom) return 1;
@@ -97,13 +83,9 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Ar
     }
   });
 
-  if (typeof tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom === 'string') {
-    return tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as unknown as string;
-  }
+  console.log('tilstotendeSykemeldingsperioder', tilstotendeSykemeldingsperioder);
 
-  return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom, {
-    representation: 'date'
-  });
+  return tilstotendeSykemeldingsperioder;
 };
 
-export default finnBestemmendeFravaersdag;
+export default finnArbeidsgiverperiode;
