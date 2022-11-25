@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import formatDate from '../../utils/formatDate';
 
 import ButtonSlette from '../ButtonSlette';
@@ -9,16 +9,12 @@ import { Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import EnkeltArbeidsforholdPeriode from './EnkeltArbeidsforholdPeriode';
 
-interface FravaerEnkeltAnsattforholdProps {}
-
-export default function FravaerEnkeltAnsattforhold({}: FravaerEnkeltAnsattforholdProps) {
+export default function FravaerEnkeltAnsattforhold() {
   const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
-  const endreFravaersperiode = useBoundStore((state) => state.endreFravaersperiode);
-  const sammePeriodeForAlle = useBoundStore((state) => state.sammeFravaersperiode);
 
   const clickTilbakestillFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -32,13 +28,14 @@ export default function FravaerEnkeltAnsattforhold({}: FravaerEnkeltAnsattforhol
 
   const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    endreFravaersperiode();
     setEndreSykemelding(!endreSykemelding);
   };
 
-  if (fravaersperioder && !fravaersperioder[0].fom && !endreSykemelding) {
-    setEndreSykemelding(true);
-  }
+  useEffect(() => {
+    if (fravaersperioder && !fravaersperioder[0].fom && !endreSykemelding) {
+      setEndreSykemelding(true);
+    }
+  }, [endreSykemelding, fravaersperioder]);
 
   return (
     <>

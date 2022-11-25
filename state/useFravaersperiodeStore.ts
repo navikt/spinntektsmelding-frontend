@@ -10,19 +10,16 @@ import { CompleteState } from './useBoundStore';
 export interface FravaersperiodeState {
   fravaersperioder?: Array<Periode>;
   opprinneligFravaersperiode?: Array<Periode>;
-  sammeFravaersperiode: boolean;
   leggTilFravaersperiode: () => void;
   slettFravaersperiode: (periodeId: string) => void;
   setFravaersperiodeDato: (periodeId: string, nyTilDato: DateRange | undefined) => void;
   tilbakestillFravaersperiode: () => void;
-  endreFravaersperiode: () => void;
   initFravaersperiode: (mottatFravaersperiode: Array<MottattPeriode>) => void;
 }
 
 const useFravaersperiodeStore: StateCreator<CompleteState, [], [], FravaersperiodeState> = (set, get) => ({
   fravaersperioder: undefined,
   opprinneligFravaersperiode: undefined,
-  sammeFravaersperiode: false,
 
   leggTilFravaersperiode: () =>
     set(
@@ -85,15 +82,6 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
       })
     );
   },
-
-  endreFravaersperiode: () =>
-    set(
-      produce((state) => {
-        state.sammeFravaersperiode = false;
-
-        return state;
-      })
-    ),
 
   initFravaersperiode: (mottatFravaersperioder: Array<MottattPeriode>) => {
     const fravaersperioder: Array<Periode> = mottatFravaersperioder.map((periode) => ({
