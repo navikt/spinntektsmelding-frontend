@@ -28,9 +28,9 @@ interface Refusjon {
 }
 
 interface SendtNaturalytelse {
-  type: string;
+  naturalytelse: string;
   bortfallsdato: string;
-  verdi: number;
+  beløp: number;
 }
 
 export interface InnsendingSkjema {
@@ -116,9 +116,9 @@ export default function useFyllInnsending() {
           : undefined
       },
       naturalytelser: naturalytelser?.map((ytelse) => ({
-        type: ytelse.type || '',
+        naturalytelse: ytelse.type || '',
         bortfallsdato: formatIsoDate(ytelse.bortfallsdato),
-        verdi: ytelse.verdi || 0
+        beløp: ytelse.verdi || 0
       })),
       bekreftOpplysninger: opplysningerBekreftet,
       behandlingsdager: behandlingsdager?.map((dag) => formatIsoDate(dag)),
