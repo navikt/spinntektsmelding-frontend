@@ -61,23 +61,8 @@ export default function Bruttoinntekt() {
                   error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
                 >
                   <option value=''>Velg endringsårsak</option>
-                  <option value='ElektroniskKommunikasjon'>Elektronisk kommunikasjon</option>
-                  <option value='Aksjeer'>Aksjer / grunnfondsbevis til underkurs</option>
-                  <option value='Losji'>Losji</option>
-                  <option value='KostDøgn'>Kost (døgn)</option>
-                  <option value='Besøksreiser'>Besøksreiser i hjemmet annet</option>
-                  <option value='Kostbesparelse'>Kostbesparelse i hjemmet</option>
-                  <option value='Rentefordel'>Rentefordel lån</option>
-                  <option value='Bil'>Bil</option>
-                  <option value='KostDager'>Kost (dager)</option>
-                  <option value='Bolig'>Bolig</option>
-                  <option value='Forsikringer'>Skattepliktig del av visse forsikringer</option>
-                  <option value='FriTransport'>Fri transport</option>
-                  <option value='Opsjoner'>Opsjoner</option>
-                  <option value='Barnehageplass'>Tilskudd barnehageplass</option>
-                  <option value='YrkesbilKilometer'>Yrkesbil tjenestebehov kilometer</option>
-                  <option value='YrkesbilListepris'>Yrkesbil tjenestebehov listepris</option>
-                  <option value='UtenlandskPensjonsordning'>Innbetaling utenlandsk pensjonsordning</option>
+                  <option value='FeilInntekt'>Feil inntekt</option>
+                  <option value='Tariffendring'>Tariffendring</option>
                 </Select>
               </div>
               <div>
