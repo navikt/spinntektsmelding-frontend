@@ -29,6 +29,7 @@ export default function EnkeltArbeidsforholdPeriode({
 
   useEffect(() => {
     setSelected({ from: fravaersperiode?.fom, to: fravaersperiode?.tom });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fravaersperiode]);
 
   return (

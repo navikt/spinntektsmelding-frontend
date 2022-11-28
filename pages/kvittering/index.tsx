@@ -23,9 +23,9 @@ import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/Lonn
 import useBoundStore from '../../state/useBoundStore';
 
 import PrintButton from '../../components/PrintButton';
-import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
+import finnBestemmendeFravaersdag, { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
 import { format, parseISO } from 'date-fns';
-import finnArbeidsgiverperiode, { FravaersPeriode } from '../../utils/finnArbeidsgiverperiode';
+import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
 
 const Kvittering: NextPage = () => {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
@@ -46,7 +46,7 @@ const Kvittering: NextPage = () => {
   };
 
   let bestemmendeFravaersdag;
-  let arbeidsgiverperioder: Array<FravaersPeriode>;
+  let arbeidsgiverperioder: Array<FravaersPeriode> | undefined = undefined;
 
   if (fravaersperioder) {
     const perioder = fravaersperioder.concat(egenmeldingsperioder);
@@ -79,26 +79,20 @@ const Kvittering: NextPage = () => {
                   {harAktiveEgenmeldingsperioder() && (
                     <div className={lokalStyles.ytrefravaerswrapper}>
                       <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
-                      {egenmeldingsperioder && (
-                        <>
-                          {egenmeldingsperioder.map((periode, index) => (
-                            <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + index} />
-                          ))}
-                        </>
-                      )}
+                      {egenmeldingsperioder &&
+                        egenmeldingsperioder.map((periode, index) => (
+                          <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + index} />
+                        ))}
                     </div>
                   )}
                 </div>
                 <div className={lokalStyles.ytterstefravaerwrapper}>
                   <div className={lokalStyles.ytrefravaerswrapper}>
                     <Heading3 className={lokalStyles.sykfravaerstyper}>Sykmelding</Heading3>
-                    {fravaersperioder && (
-                      <>
-                        {fravaersperioder.map((periode, index) => (
-                          <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + index} />
-                        ))}
-                      </>
-                    )}
+                    {fravaersperioder &&
+                      fravaersperioder.map((periode, index) => (
+                        <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + index} />
+                      ))}
                   </div>
                 </div>
               </div>
@@ -118,9 +112,10 @@ const Kvittering: NextPage = () => {
                       Arbeidsgiver er ansvarlig å betale ut lønn til den sykmeldte under arbeidsgiverpeioden, etterpå
                       betaler Nav lønn til den syke eller refunderer bedriften:
                     </BodyLong>
-                    {arbeidsgiverperioder!.map((periode, index) => (
-                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={index} />
-                    ))}
+                    {arbeidsgiverperioder &&
+                      arbeidsgiverperioder.map((periode, index) => (
+                        <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={index} />
+                      ))}
                   </div>
                 </div>
               </div>

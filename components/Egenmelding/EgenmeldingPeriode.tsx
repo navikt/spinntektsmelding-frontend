@@ -30,6 +30,7 @@ export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: E
 
   useEffect(() => {
     setSelected({ from: egenmeldingsperiode?.fom, to: egenmeldingsperiode?.tom });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [egenmeldingsperiode]);
 
   if (!endreEgenmeldingsperiode) {

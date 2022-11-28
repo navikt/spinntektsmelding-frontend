@@ -22,10 +22,7 @@ export default function useStateInit() {
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
       jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder)
     );
-    console.log(
-      '------------------------------------',
-      jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder)
-    );
+
     getGrunnbeloep(bestemmendeFravaersdag);
   };
 }
