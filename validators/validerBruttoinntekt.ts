@@ -1,5 +1,5 @@
 import { Inntekt } from '../state/state';
-import { ValiderResultat } from '../utils/submitInntektsmelding';
+import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum BruttoinntektFeilkode {
   OK = 'OK',

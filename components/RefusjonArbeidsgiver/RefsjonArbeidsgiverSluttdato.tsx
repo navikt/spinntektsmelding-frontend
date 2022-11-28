@@ -1,15 +1,11 @@
 import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 
-interface RefsjonArbeidsgiverSluttdatoInterface {
-  arbeidsforholdId: string;
-}
-
-export default function RefsjonArbeidsgiverSluttdato({ arbeidsforholdId }: RefsjonArbeidsgiverSluttdatoInterface) {
+export default function RefsjonArbeidsgiverSluttdato() {
   const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
 
   const setOpphoersdato = (opphoersdato?: Date | undefined) => {
-    refusjonskravetOpphoererDato(arbeidsforholdId, opphoersdato);
+    refusjonskravetOpphoererDato(opphoersdato);
   };
 
   const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
@@ -19,11 +15,7 @@ export default function RefsjonArbeidsgiverSluttdato({ arbeidsforholdId }: Refsj
 
   return (
     <UNSAFE_DatePicker {...datepickerProps}>
-      <UNSAFE_DatePicker.Input
-        {...inputProps}
-        label='Dato naturalytelse bortfaller'
-        id={`lus-sluttdato-${arbeidsforholdId}`}
-      />
+      <UNSAFE_DatePicker.Input {...inputProps} label='Angi siste dag dere krever refusjon for' id={'lus-sluttdato'} />
     </UNSAFE_DatePicker>
   );
 }

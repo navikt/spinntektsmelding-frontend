@@ -1,67 +1,69 @@
 import { differenceInBusinessDays, formatISO9075, parseISO } from 'date-fns';
-import { MottattPeriode, MottattArbeidsforhold } from '../state/MottattData';
+import { MottattPeriode } from '../state/MottattData';
+import { Periode } from '../state/state';
 
 export interface FravaersPeriode {
-  fra: Date;
-  til: Date;
+  fom: Date;
+  tom: Date;
 }
 
-const overlappendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
-  if (ene.til < andre.fra || ene.fra > andre.til) {
+export const overlappendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
+  if (ene.tom < andre.fom || ene.fom > andre.tom) {
     return null;
   }
 
   const obj: FravaersPeriode = {
-    fra: ene.fra > andre.fra ? andre.fra : ene.fra,
-    til: ene.til > andre.til ? ene.til : andre.til
+    fom: ene.fom > andre.fom ? andre.fom : ene.fom,
+    tom: ene.tom > andre.tom ? ene.tom : andre.tom
   };
 
   return obj;
 };
 
-const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
-  if (ene.til === andre.til && ene.fra === andre.fra) {
+export const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
+  if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
   }
 
-  console.log('diff i dager', differenceInBusinessDays(andre.fra, ene.til));
-
-  if (differenceInBusinessDays(andre.fra, ene.til) <= 1) {
+  if (differenceInBusinessDays(andre.fom, ene.tom) <= 0) {
     const obj: FravaersPeriode = {
-      fra: ene.fra,
-      til: andre.til
+      fom: ene.fom,
+      tom: andre.tom
     };
+
     return obj;
   }
 
   return null;
 };
 
-const finnBestemmendeFravaersdag = (
-  fravaersperiode: { [key: string]: Array<MottattPeriode> },
-  arbeidsforhold: Array<MottattArbeidsforhold>
-): string | undefined => {
-  if (!fravaersperiode) {
+const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Array<Periode>): string | undefined => {
+  if (!fravaersperioder) {
     return undefined;
   }
 
-  const aktiveArbeidsforholdId = arbeidsforhold.map((forhold) => forhold.arbeidsforholdId);
-
-  const aktivePerioder = aktiveArbeidsforholdId
-    .flatMap((arbeidsforholdId) =>
-      fravaersperiode[arbeidsforholdId].map((fravaer) => ({ fra: fravaer.fra, til: fravaer.til }))
-    )
-    .map((element: MottattPeriode) => JSON.stringify(element));
+  const aktivePerioder = fravaersperioder
+    .map((fravaer) => ({ fom: fravaer.fom, tom: fravaer.tom }))
+    .map((element) => JSON.stringify(element));
 
   const unikeSykmeldingsperioder: Array<FravaersPeriode> = [...new Set([...aktivePerioder])]
     .map((periode) => JSON.parse(periode))
-    .map((periode) => ({
-      fra: parseISO(periode.fra),
-      til: parseISO(periode.til)
-    }));
+    .map((periode) => {
+      if (typeof periode.fom === 'string') {
+        return {
+          fom: parseISO(periode.fom),
+          tom: parseISO(periode.tom)
+        };
+      } else {
+        return {
+          fom: periode.fom,
+          tom: periode.tom
+        };
+      }
+    });
 
   const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
-    if (a.fra > b.fra) return 1;
+    if (a.fom > b.fom) return 1;
     return -1;
   });
 
@@ -90,10 +92,11 @@ const finnBestemmendeFravaersdag = (
     }
   });
 
-  console.log(sorterteSykemeldingsperioder);
-  console.log(tilstotendeSykemeldingsperioder);
+  if (typeof tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom === 'string') {
+    return tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as unknown as string;
+  }
 
-  return formatISO9075(mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1].fra, {
+  return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom, {
     representation: 'date'
   });
 };

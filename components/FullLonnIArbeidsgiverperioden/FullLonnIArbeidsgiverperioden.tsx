@@ -1,23 +1,25 @@
 import { BodyLong, BodyShort } from '@navikt/ds-react';
-import { IArbeidsforhold, LonnIArbeidsgiverperioden } from '../../state/state';
+import { LonnIArbeidsgiverperioden } from '../../state/state';
+import begrunnelseIngenEllerRedusertUtbetalingListe from '../RefusjonArbeidsgiver/begrunnelseIngenEllerRedusertUtbetalingListe';
 import lokalStyle from './FullLonnIArbeidsgiverperioden.module.css';
 
 interface FullLonnIArbeidsgiverperiodenProps {
-  lonnIPerioden: { [key: string]: LonnIArbeidsgiverperioden };
-  arbeidsforhold: IArbeidsforhold;
+  lonnIPerioden: LonnIArbeidsgiverperioden;
 }
 
-export default function FullLonnIArbeidsgiverperioden({
-  lonnIPerioden,
-  arbeidsforhold
-}: FullLonnIArbeidsgiverperiodenProps) {
+const formaterBegrunnelse = (begrunnelseskode: string): string => {
+  return begrunnelseIngenEllerRedusertUtbetalingListe[begrunnelseskode];
+};
+
+export default function FullLonnIArbeidsgiverperioden({ lonnIPerioden }: FullLonnIArbeidsgiverperiodenProps) {
+  if (!lonnIPerioden) return null;
   return (
     <>
-      {lonnIPerioden[arbeidsforhold.arbeidsforholdId].status === 'Ja' && <div className={lokalStyle.wrapper}>Ja</div>}
-      {lonnIPerioden[arbeidsforhold.arbeidsforholdId].status === 'Nei' && (
+      {lonnIPerioden.status === 'Ja' && <div className={lokalStyle.wrapper}>Ja</div>}
+      {lonnIPerioden.status === 'Nei' && (
         <div className={lokalStyle.wrapper}>
           <BodyShort>Nei</BodyShort>
-          <BodyLong>{lonnIPerioden[arbeidsforhold.arbeidsforholdId].begrunnelse}</BodyLong>
+          <BodyLong>{formaterBegrunnelse(lonnIPerioden.begrunnelse)}</BodyLong>
         </div>
       )}
     </>

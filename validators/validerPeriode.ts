@@ -1,7 +1,6 @@
-import { format, isValid, parse } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { isValid } from 'date-fns';
 import { Periode } from '../state/state';
-import { ValiderResultat } from '../utils/submitInntektsmelding';
+import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum PeriodeFeilkode {
   OK = 'OK',
@@ -20,28 +19,37 @@ export default function validerPeriode(perioder?: Array<Periode>): Array<Valider
     });
   } else {
     perioder.forEach((periode) => {
-      if (!periode.fra || !isValid(periode.fra)) {
-        feilkoder.push({
-          felt: `fra-${periode.id}`,
-          code: PeriodeFeilkode.MANGLER_FRA
-        });
-      }
-
-      if (!periode.til || !isValid(periode.til)) {
-        feilkoder.push({
-          felt: `til-${periode.id}`,
-          code: PeriodeFeilkode.MANGLER_TIL
-        });
-      }
-
-      if (periode.fra && periode.til && periode.fra > periode.til) {
-        feilkoder.push({
-          felt: `fra-${periode.id}`,
-          code: PeriodeFeilkode.TIL_FOR_FRA
-        });
-      }
+      sjekkGyldigFom(periode, feilkoder);
+      sjekkGyldigTom(periode, feilkoder);
+      sjekkFomFoerTom(periode, feilkoder);
     });
   }
 
   return feilkoder;
+}
+function sjekkGyldigFom(periode: Periode, feilkoder: ValiderResultat[]) {
+  if (!periode.fom || !isValid(periode.fom)) {
+    feilkoder.push({
+      felt: `fom-${periode.id}`,
+      code: PeriodeFeilkode.MANGLER_FRA
+    });
+  }
+}
+
+function sjekkFomFoerTom(periode: Periode, feilkoder: ValiderResultat[]) {
+  if (periode.fom && periode.tom && periode.fom > periode.tom) {
+    feilkoder.push({
+      felt: `fom-${periode.id}`,
+      code: PeriodeFeilkode.TIL_FOR_FRA
+    });
+  }
+}
+
+function sjekkGyldigTom(periode: Periode, feilkoder: ValiderResultat[]) {
+  if (!periode.tom || !isValid(periode.tom)) {
+    feilkoder.push({
+      felt: `tom-${periode.id}`,
+      code: PeriodeFeilkode.MANGLER_TIL
+    });
+  }
 }

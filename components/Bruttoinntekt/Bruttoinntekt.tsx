@@ -7,9 +7,7 @@ import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
-import lonnProsent from '../../utils/lonnProsent';
 import TidligereInntekt from './TidligereInntekt';
-import Heading4 from '../Heading4';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -26,25 +24,19 @@ export default function Bruttoinntekt() {
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
-  const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
-  const setNyArbeidsforholdMaanedsinntekt = useBoundStore((state) => state.setNyArbeidsforholdMaanedsinntekt);
-  const alleArbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
   const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
-
-  const harFlereArbeidsforhold = alleArbeidsforhold && alleArbeidsforhold.length > 1;
-  const arbeidsforhold = aktiveArbeidsforhold();
 
   if (tidligereinntekt) {
     return (
       <>
         <Heading3>Brutto månedslønn</Heading3>
         <BodyLong>For å beregne månedslønnen har vi brukt følgende lønnsopplysninger fra A-meldingen:</BodyLong>
-        {tidligereinntekt && <TidligereInntekt tidligereinntekt={tidligereinntekt} />}
+        <TidligereInntekt tidligereinntekt={tidligereinntekt} />
         <TextLabel className={styles.tbmargin}>Vi har derfor beregnet månedslønnen til</TextLabel>
         <div className={lokalStyles.belopwrapper}>
           {!endreMaanedsinntekt && (
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
-              {(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0).toString()} kr/måned
+              {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr/måned
             </TextLabel>
           )}
           {endreMaanedsinntekt && (
@@ -105,30 +97,6 @@ export default function Bruttoinntekt() {
             </Button>
           )}
         </div>
-        {arbeidsforhold && harFlereArbeidsforhold && (
-          <>
-            {arbeidsforhold.map((forhold) => (
-              <div key={forhold.arbeidsforholdId} className={lokalStyles.arbeidsprosent}>
-                <Heading4>Estimert bruttoinntekt - {forhold.arbeidsforhold}</Heading4>
-                <div className={lokalStyles.prosentbody}>
-                  <BodyShort className={lokalStyles.prosentbodytext}>
-                    Basert på <b>{forhold.stillingsprosent}%</b> stilling er inntekten estimert til{' '}
-                    {formatCurrency(lonnProsent(bruttoinntekt.bruttoInntekt, forhold.stillingsprosent))} kr
-                  </BodyShort>
-                  <TextField
-                    label={`Inntekt - ${forhold.arbeidsforhold}`}
-                    onChange={(event) =>
-                      setNyArbeidsforholdMaanedsinntekt(forhold.arbeidsforholdId, event.target.value)
-                    }
-                    id={`bruttoinntekt-endringsbelop-${forhold.arbeidsforholdId}`}
-                    error={visFeilmeldingsTekst(`bruttoinntekt-endringsbelop-${forhold.arbeidsforholdId}`)}
-                    className={lokalStyles.bruttoinntektendringsbelopenkel}
-                  />
-                </div>
-              </div>
-            ))}
-          </>
-        )}
         <BodyShort>
           <strong>Stemmer dette?</strong>
         </BodyShort>

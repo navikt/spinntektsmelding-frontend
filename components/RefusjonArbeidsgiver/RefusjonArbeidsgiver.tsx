@@ -1,24 +1,19 @@
-import { BodyLong, Radio, RadioGroup } from '@navikt/ds-react';
+import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
-import LabelLabel from '../LabelLabel';
 import styles from '../../styles/Home.module.css';
-import { IArbeidsforhold, YesNo } from '../../state/state';
-import Heading4 from '../Heading4';
-import localStyles from './RefusjonArbeidsgiver.module.css';
+import { YesNo } from '../../state/state';
+
 import useBoundStore from '../../state/useBoundStore';
 import RefsjonArbeidsgiverSluttdato from './RefsjonArbeidsgiverSluttdato';
 import SelectBegrunnelse from './SelectBegrunnelse';
 import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
+import localStyles from './RefusjonArbeidsgiver.module.css';
 
 export default function RefusjonArbeidsgiver() {
-  const arbeidsforhold: Array<IArbeidsforhold> | undefined = useBoundStore((state) => state.arbeidsforhold);
-  const aktiveArbeidsforhold = useBoundStore((state) => state.aktiveArbeidsforhold);
-
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-  const inntektsprosent = useBoundStore((state) => state.inntektsprosent);
   const grunnbeloep = useBoundStore((state) => state.grunnbeloep);
 
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
@@ -35,18 +30,11 @@ export default function RefusjonArbeidsgiver() {
   );
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
 
-  if (!arbeidsforhold) return null;
+  const beloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
+    (state) => state.beloepUtbetaltUnderArbeidsgiverperioden
+  );
 
-  const flereArbeidsforhold: boolean = arbeidsforhold.length > 1;
-
-  const bruttoinntektArbeidsforhold = (inntekt: number, seksG?: number, inntektArbeidsforhold?: number): number => {
-    if (seksG && (inntektArbeidsforhold || 0 > seksG)) {
-      return seksG;
-    }
-    if (inntektArbeidsforhold) {
-      return inntektArbeidsforhold;
-    }
-
+  const bruttoinntektArbeidsforhold = (inntekt: number, seksG?: number): number => {
     if (seksG && (inntekt || 0 > seksG)) {
       return seksG;
     } else {
@@ -63,135 +51,99 @@ export default function RefusjonArbeidsgiver() {
         Vi må vite om arbeidsgiver betaler ut lønn under sykemeldingsperioden til arbeidstakeren, eller om NAV skal
         betale ut sykepenger til den sykemeldte etter arbeidsgiverperioden.
       </BodyLong>
-      {aktiveArbeidsforhold().map((forhold) => (
-        <div key={forhold.arbeidsforholdId}>
-          {flereArbeidsforhold && (
-            <Heading4 className={localStyles.flerforholdheader}>Refusjon - {forhold.arbeidsforhold}</Heading4>
-          )}
-          <RadioGroup
-            legend='Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?'
-            className={styles.radiobuttonwrapper}
-            id={`lia-radio-${forhold.arbeidsforholdId}`}
-            error={visFeilmeldingsTekst(`lia-radio-${forhold.arbeidsforholdId}`)}
+
+      <div>
+        <RadioGroup
+          legend='Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?'
+          className={styles.radiobuttonwrapper}
+          id={'lia-radio'}
+          error={visFeilmeldingsTekst('lia-radio')}
+        >
+          <Radio
+            value='Ja'
+            onClick={(event) => arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(event.currentTarget.value as YesNo)}
+            name='fullLonnIArbeidsgiverPerioden'
           >
-            <Radio
-              value='Ja'
-              onClick={(event) =>
-                arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(
-                  forhold.arbeidsforholdId,
-                  event.currentTarget.value as YesNo
-                )
-              }
-              name='fullLonnIArbeidsgiverPerioden'
-            >
-              Ja
-            </Radio>
-            <Radio
-              value='Nei'
-              onClick={(event) =>
-                arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(
-                  forhold.arbeidsforholdId,
-                  event.currentTarget.value as YesNo
-                )
-              }
-              name='fullLonnIArbeidsgiverPerioden'
-            >
-              Nei
-            </Radio>
-          </RadioGroup>
-          {fullLonnIArbeidsgiverPerioden?.[forhold.arbeidsforholdId]?.status === 'Nei' && (
-            <SelectBegrunnelse
-              onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
-              arbeidsforholdId={forhold.arbeidsforholdId}
+            Ja
+          </Radio>
+          <Radio
+            value='Nei'
+            onClick={(event) => arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(event.currentTarget.value as YesNo)}
+            name='fullLonnIArbeidsgiverPerioden'
+          >
+            Nei
+          </Radio>
+        </RadioGroup>
+        {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
+          <div className={localStyles.wraputbetaling}>
+            <TextField
+              className={localStyles.refusjonsbelop}
+              label='Utbetalt under arbeidsgiverperiode'
+              // className={styles.halfsize}
+              onChange={(event) => beloepUtbetaltUnderArbeidsgiverperioden(event.target.value)}
+              id={'lus-uua-input'}
+              error={visFeilmeldingsTekst('lus-uua-input')}
             />
-          )}
+            <SelectBegrunnelse onChangeBegrunnelse={begrunnelseRedusertUtbetaling} />
+          </div>
+        )}
 
-          <RadioGroup
-            legend='Betaler arbeidsgiver lønn under hele eller deler av sykefraværet?'
-            className={styles.radiobuttonwrapper}
-            id={`lus-radio-${forhold.arbeidsforholdId}`}
-            error={visFeilmeldingsTekst(`lus-radio-${forhold.arbeidsforholdId}`)}
+        <RadioGroup
+          legend='Betaler arbeidsgiver lønn etter arbeidsgiverperioden?'
+          className={styles.radiobuttonwrapper}
+          id={'lus-radio'}
+          error={visFeilmeldingsTekst('lus-radio')}
+        >
+          <Radio
+            value='Ja'
+            onClick={(event) => arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(event.currentTarget.value as YesNo)}
           >
-            <Radio
-              value='Ja'
-              onClick={(event) =>
-                arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(
-                  forhold.arbeidsforholdId,
-                  event.currentTarget.value as YesNo
-                )
-              }
-            >
-              Ja
-            </Radio>
-            <Radio
-              value='Nei'
-              onClick={(event) =>
-                arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(
-                  forhold.arbeidsforholdId,
-                  event.currentTarget.value as YesNo
-                )
-              }
-            >
-              Nei
-            </Radio>
-          </RadioGroup>
-          {lonnISykefravaeret?.[forhold.arbeidsforholdId]?.status === 'Ja' && (
-            <>
-              <RefusjonArbeidsgiverBelop
-                bruttoinntekt={bruttoinntektArbeidsforhold(
-                  bruttoinntekt.bruttoInntekt,
-                  seksG,
-                  inntektsprosent[forhold.arbeidsforholdId]
-                )}
-                arbeidsforholdId={forhold.arbeidsforholdId}
-                onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
-                visFeilmeldingsTekst={visFeilmeldingsTekst}
-              />
+            Ja
+          </Radio>
+          <Radio
+            value='Nei'
+            onClick={(event) => arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(event.currentTarget.value as YesNo)}
+          >
+            Nei
+          </Radio>
+        </RadioGroup>
+        {lonnISykefravaeret?.status === 'Ja' && (
+          <>
+            <RefusjonArbeidsgiverBelop
+              bruttoinntekt={bruttoinntektArbeidsforhold(bruttoinntekt.bruttoInntekt, seksG)}
+              onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
+              visFeilmeldingsTekst={visFeilmeldingsTekst}
+            />
 
-              <BodyLong className={styles.opphrefkravforklaring}>
-                Refusjonsbeløpet som dere mottar fra NAV skal samsvare med lønnen dere betaler til arbeidstakeren under
-                sykmeldingen (opp til 6 G). Refusjonsbeløpet gjelder fra den første dagen arbeidstakeren har rett til
-                utbetaling fra NAV.
-              </BodyLong>
-              <RadioGroup
-                legend='Opphører refusjonkravet i perioden?'
-                className={styles.radiobuttonwrapper}
-                id={`lus-sluttdato-velg-${forhold.arbeidsforholdId}`}
-                error={visFeilmeldingsTekst(`lus-sluttdato-velg-${forhold.arbeidsforholdId}`)}
+            <BodyLong className={styles.opphrefkravforklaring}>
+              Refusjonsbeløpet som dere mottar fra NAV skal samsvare med lønnen dere betaler til arbeidstakeren under
+              sykmeldingen (opp til 6 G). Refusjonsbeløpet gjelder fra den første dagen arbeidstakeren har rett til
+              utbetaling fra NAV.
+            </BodyLong>
+            <RadioGroup
+              legend='Opphører refusjonkravet i perioden?'
+              className={styles.radiobuttonwrapper}
+              id={'lus-sluttdato-velg'}
+              error={visFeilmeldingsTekst('lus-sluttdato-velg')}
+            >
+              <Radio value='Ja' onClick={(event) => refusjonskravetOpphoererStatus(event.currentTarget.value as YesNo)}>
+                Ja
+              </Radio>
+              <Radio
+                value='Nei'
+                onClick={(event) => refusjonskravetOpphoererStatus(event.currentTarget.value as YesNo)}
               >
-                <Radio
-                  value='Ja'
-                  onClick={(event) =>
-                    refusjonskravetOpphoererStatus(forhold.arbeidsforholdId, event.currentTarget.value as YesNo)
-                  }
-                >
-                  Ja
-                </Radio>
-                <Radio
-                  value='Nei'
-                  onClick={(event) =>
-                    refusjonskravetOpphoererStatus(forhold.arbeidsforholdId, event.currentTarget.value as YesNo)
-                  }
-                >
-                  Nei
-                </Radio>
-              </RadioGroup>
-              {refusjonskravetOpphoerer?.[forhold.arbeidsforholdId]?.status &&
-                refusjonskravetOpphoerer?.[forhold.arbeidsforholdId]?.status === 'Ja' && (
-                  <div className={styles.datepickerescape}>
-                    <LabelLabel
-                      htmlFor={`lus-sluttdato-${forhold.arbeidsforholdId}`}
-                      className={styles.datepickerlabel}
-                    >
-                      Angi siste dag dere krever refusjon for
-                    </LabelLabel>
-                    <RefsjonArbeidsgiverSluttdato arbeidsforholdId={forhold.arbeidsforholdId} />
-                  </div>
-                )}
-            </>
-          )}
-        </div>
-      ))}
+                Nei
+              </Radio>
+            </RadioGroup>
+            {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
+              <div className={styles.datepickerescape}>
+                <RefsjonArbeidsgiverSluttdato />
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </>
   );
 }

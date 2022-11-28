@@ -19,8 +19,8 @@ export default function Behandlingsdager() {
 
   const [footer, setFooter] = useState<string>('');
   const maaneder = eachMonthOfInterval({
-    start: behandlingsperiode?.fra || new Date(),
-    end: behandlingsperiode?.til || new Date()
+    start: behandlingsperiode?.fom || new Date(),
+    end: behandlingsperiode?.tom || new Date()
   });
 
   const handleSelectDays = (selectedDays: Date[] | undefined) => {
@@ -52,17 +52,17 @@ export default function Behandlingsdager() {
       <Heading3>Fraværsperiode - behandlingsdager</Heading3>
       <p>
         I følge sykmeldingen hadde den ansatte sykmelding for enkeltstående behandlingsdager, i perioden som er
-        ferdigutfylt her. Angi de 12 dager som den ansatte vært borte fra jobbet for behandling. Det kan kun være en
+        ferdigutfylt her. Angi de 12 dager som den ansatte vært borte fom jobbet for behandling. Det kan kun være en
         behandlingsdag per uke. I tillegg kan det ikke være mer enn 15 dager mellom to behandlinger.
       </p>
       <div className={styles.periodewrapper}>
         <div className={styles.datepickerescape}>
           <TextLabel>Behandlingsperiode start</TextLabel>
-          <div>{formatDate(behandlingsperiode.fra)}</div>
+          <div>{formatDate(behandlingsperiode.fom)}</div>
         </div>
         <div className={styles.datepickerescape}>
           <TextLabel>Behandlingsperiode slutt</TextLabel>
-          <div>{formatDate(behandlingsperiode.til)}</div>
+          <div>{formatDate(behandlingsperiode.tom)}</div>
         </div>
       </div>
       <TextLabel>Velg behandlingsdager</TextLabel>
@@ -71,13 +71,13 @@ export default function Behandlingsdager() {
         <UNSAFE_DatePicker {...datepickerProps}>
           <UNSAFE_DatePicker.Standalone
             {...inputProps}
-            fromDate={behandlingsperiode.fra}
-            toDate={behandlingsperiode.til}
+            fromDate={behandlingsperiode.fom}
+            toDate={behandlingsperiode.tom}
             mode='multiple'
             onSelect={handleSelectDays}
             numberOfMonths={maaneder.length}
             disableNavigation
-            fromMonth={behandlingsperiode.fra}
+            fromMonth={behandlingsperiode.fom}
             defaultSelected={behandlingsdager}
           />
         </UNSAFE_DatePicker>

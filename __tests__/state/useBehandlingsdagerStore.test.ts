@@ -4,7 +4,7 @@ import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../state/MottattData';
 import { vi } from 'vitest';
 
-const inputPeriode: MottattPeriode = { fra: '2022-05-01', til: '2022-11-01' };
+const inputPeriode: MottattPeriode = { fom: '2022-05-01', tom: '2022-11-01' };
 const inputDager: Array<string> = ['2022-05-10', '2022-06-10', '2022-07-10', '2022-08-10', '2022-09-10', '2022-10-10'];
 const initialState = useBoundStore.getState();
 
@@ -26,8 +26,8 @@ describe('useBoundStore', () => {
       result.current.initBehandlingsdager(inputPeriode, inputDager);
     });
 
-    expect(result.current.behandlingsperiode?.fra).toEqual(new Date(2022, 4, 1));
-    expect(result.current.behandlingsperiode?.til).toEqual(new Date(2022, 10, 1));
+    expect(result.current.behandlingsperiode?.fom).toEqual(new Date(2022, 4, 1));
+    expect(result.current.behandlingsperiode?.tom).toEqual(new Date(2022, 10, 1));
     expect(result.current.behandlingsdager?.length).toBe(6);
     expect(result.current.behandlingsdager).toEqual([
       new Date(2022, 4, 10),

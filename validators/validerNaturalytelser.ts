@@ -1,5 +1,5 @@
 import { Naturalytelse, YesNo } from '../state/state';
-import { ValiderResultat } from '../utils/submitInntektsmelding';
+import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum NaturalytelserFeilkoder {
   MANGLER_VALG_BORTFALL_AV_NATURALYTELSER = 'MANGLER_VALG_BORTFALL_AV_NATURALYTELSER',

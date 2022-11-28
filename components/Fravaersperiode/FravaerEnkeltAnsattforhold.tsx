@@ -1,128 +1,68 @@
-import { useState } from 'react';
-import { IArbeidsforhold } from '../../state/state';
+import { useEffect, useState } from 'react';
 import formatDate from '../../utils/formatDate';
 
 import ButtonSlette from '../ButtonSlette';
-import Heading4 from '../Heading4';
 
 import TextLabel from '../TextLabel';
-import localStyles from './Fravaersperiode.module.css';
 import styles from '../../styles/Home.module.css';
-import { Button, Checkbox } from '@navikt/ds-react';
+import { Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import EnkeltArbeidsforholdPeriode from './EnkeltArbeidsforholdPeriode';
 
-interface FravaerEnkeltAnsattforholdProps {
-  arbeidsforhold: IArbeidsforhold;
-  harFlereArbeidsforhold: boolean;
-  forsteArbeidsforhold: boolean;
-  flereEnnToArbeidsforhold: boolean;
-}
-
-export default function FravaerEnkeltAnsattforhold({
-  arbeidsforhold,
-  harFlereArbeidsforhold,
-  forsteArbeidsforhold,
-  flereEnnToArbeidsforhold
-}: FravaerEnkeltAnsattforholdProps) {
+export default function FravaerEnkeltAnsattforhold() {
   const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
-  const fravaersperiode = useBoundStore((state) => state.fravaersperiode);
+  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
-  const setSammeFravarePaaArbeidsforhold = useBoundStore((state) => state.setSammeFravarePaaArbeidsforhold);
-  const endreFravaersperiode = useBoundStore((state) => state.endreFravaersperiode);
-  const sammePeriodeForAlle = useBoundStore((state) => state.sammeFravaersperiode);
 
-  const clickTilbakestillFravaersperiodeHandler = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    arbeidsforholdId: string
-  ) => {
+  const clickTilbakestillFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    tilbakestillFravaersperiode(arbeidsforholdId);
+    tilbakestillFravaersperiode();
   };
 
-  const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>, arbeidsforholdId: string) => {
+  const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    leggTilFravaersperiode(arbeidsforholdId);
+    leggTilFravaersperiode();
   };
 
   const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    endreFravaersperiode();
     setEndreSykemelding(!endreSykemelding);
   };
 
-  if (
-    !harFlereArbeidsforhold &&
-    fravaersperiode?.['arbeidsforholdId'] &&
-    !fravaersperiode['arbeidsforholdId'][0].fra &&
-    !endreSykemelding
-  ) {
-    setEndreSykemelding(true);
-  }
+  useEffect(() => {
+    if (fravaersperioder && !fravaersperioder[0].fom && !endreSykemelding) {
+      setEndreSykemelding(true);
+    }
+  }, [endreSykemelding, fravaersperioder]);
 
   return (
     <>
-      {harFlereArbeidsforhold && (
-        <Heading4 className={localStyles.heading4}>Fravær - {arbeidsforhold.arbeidsforhold}</Heading4>
-      )}
-
-      {fravaersperiode?.[arbeidsforhold.arbeidsforholdId] &&
-        fravaersperiode[arbeidsforhold.arbeidsforholdId].map((periode, periodeIndex) => (
+      {fravaersperioder &&
+        fravaersperioder.map((periode, periodeIndex) => (
           <div className={styles.periodewrapper} key={periode.id}>
             {!endreSykemelding && (
               <>
                 <div className={styles.datepickerescape}>
                   <TextLabel>Fra</TextLabel>
-                  <div>{formatDate(periode.fra)}</div>
+                  <div>{formatDate(periode.fom)}</div>
                 </div>
                 <div className={styles.datepickerescape}>
                   <TextLabel>Til</TextLabel>
-                  <div>{formatDate(periode.til)}</div>
+                  <div>{formatDate(periode.tom)}</div>
                 </div>
               </>
             )}
             {endreSykemelding && (
               <div className={styles.datepickerescape}>
-                <EnkeltArbeidsforholdPeriode
-                  periodeId={periode.id}
-                  fravaersperiode={periode}
-                  arbeidsforholdId={arbeidsforhold.arbeidsforholdId}
-                />
+                <EnkeltArbeidsforholdPeriode periodeId={periode.id} fravaersperiode={periode} />
               </div>
             )}
 
             {endreSykemelding && periodeIndex > 0 && (
               <div className={styles.endresykemelding}>
-                <ButtonSlette
-                  onClick={() => slettFravaersperiode(arbeidsforhold.arbeidsforholdId, periode.id)}
-                  title='Slett fraværsperiode'
-                />
-              </div>
-            )}
-            {harFlereArbeidsforhold && forsteArbeidsforhold && periodeIndex === 0 && (
-              <div className={localStyles.sammeperiode}>
-                {!flereEnnToArbeidsforhold && (
-                  <Checkbox
-                    onChange={(event) =>
-                      setSammeFravarePaaArbeidsforhold(arbeidsforhold.arbeidsforholdId, event.currentTarget.checked)
-                    }
-                    checked={sammePeriodeForAlle}
-                  >
-                    Bruk samme for det andre arbeidsforholdet
-                  </Checkbox>
-                )}
-                {flereEnnToArbeidsforhold && (
-                  <Checkbox
-                    onChange={(event) =>
-                      setSammeFravarePaaArbeidsforhold(arbeidsforhold.arbeidsforholdId, event.currentTarget.checked)
-                    }
-                    checked={sammePeriodeForAlle}
-                  >
-                    Bruk samme for de andre arbeidsforholdene
-                  </Checkbox>
-                )}
+                <ButtonSlette onClick={() => slettFravaersperiode(periode.id)} title='Slett fraværsperiode' />
               </div>
             )}
           </div>
@@ -141,14 +81,14 @@ export default function FravaerEnkeltAnsattforhold({
           <Button
             variant='secondary'
             className={styles.kontrollerknapp}
-            onClick={(event) => clickLeggTilFravaersperiodeHandler(event, arbeidsforhold.arbeidsforholdId)}
+            onClick={(event) => clickLeggTilFravaersperiodeHandler(event)}
           >
             Legg til periode
           </Button>
 
           <Button
             className={styles.kontrollerknapp}
-            onClick={(event) => clickTilbakestillFravaersperiodeHandler(event, arbeidsforhold.arbeidsforholdId)}
+            onClick={(event) => clickTilbakestillFravaersperiodeHandler(event)}
           >
             Tilbakestill
           </Button>

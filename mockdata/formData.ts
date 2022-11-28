@@ -38,15 +38,15 @@ import testFnr from './testFnr';
 //   fravaersperiode: {
 //     '1': [
 //       {
-//         fra: '2022-01-01',
-//         til: '2022-01-02'
+//         fom: '2022-01-01',
+//         tom: '2022-01-02'
 //       }
 //     ]
 //   },
 //   egenmeldingsperioder: [
 //     {
-//       fra: '2022-01-01',
-//       til: '2022-01-02'
+//       fom: '2022-01-01',
+//       tom: '2022-01-02'
 //     }
 //   ],
 //   bruttoinntekt: 1000,
@@ -58,8 +58,8 @@ import testFnr from './testFnr';
 //   ],
 //   behandlingsdager: ['2022-01-01'],
 //   behandlingsperiode: {
-//     fra: '2022-01-01',
-//     til: '2022-06-02'
+//     fom: '2022-01-01',
+//     tom: '2022-06-02'
 //   },
 //   arbeidsforhold: [
 //     {
@@ -79,14 +79,14 @@ import testFnr from './testFnr';
 //   orgnrUnderenhet: '810007842',
 //   fravaersperiode: {
 //     '1': {
-//       fra: '2022-01-01',
-//       til: '2022-01-02'
+//       fom: '2022-01-01',
+//       tom: '2022-01-02'
 //     }
 //   },
 //   egenmeldingsperioder: [
 //     {
-//       fra: '2022-01-01',
-//       til: '2022-01-02'
+//       fom: '2022-01-01',
+//       tom: '2022-01-02'
 //     }
 //   ],
 //   bruttoinntekt: 1000,
@@ -98,8 +98,8 @@ import testFnr from './testFnr';
 //   ],
 //   behandlingsdager: ['2022-01-01'],
 //   behandlingsperiode: {
-//     fra: '2022-01-01',
-//     til: '2022-01-02'
+//     fom: '2022-01-01',
+//     tom: '2022-01-02'
 //   },
 //   arbeidsforhold: [
 //     {
@@ -114,7 +114,7 @@ import testFnr from './testFnr';
 
 const initialState: InntektsmeldingSkjema = {
   opplysningerBekreftet: false,
-  egenmeldingsperioder: { ukjent: [{ id: nanoid() }] },
+  egenmeldingsperioder: [{ id: nanoid() }],
   bruttoinntekt: {
     bruttoInntekt: 0,
     bekreftet: false,
@@ -136,92 +136,42 @@ const formData = {
   identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
   orgnrUnderenhet: '911206722',
   bruttoinntekt: 77000,
-  // behandlingsperiode: {
-  //   fra: format(subDays(new Date(), 180), 'yyyy-MM-dd'),
-  //   til: format(subDays(new Date(), 4), 'yyyy-MM-dd')
-  // },
-  fravaersperiode: {
-    spillerid: [
-      {
-        fra: format(subDays(new Date(), 11), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
-      },
-      {
-        fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 1), 'yyyy-MM-dd')
-      }
-    ],
-    trenerid: [
-      {
-        fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
-      },
-      {
-        fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
-      }
-    ],
-    vaktmesterid: [
-      {
-        fra: format(subDays(new Date(), 12), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 6), 'yyyy-MM-dd')
-      },
-      {
-        fra: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 2), 'yyyy-MM-dd')
-      }
-    ]
-  },
-  egenmeldingsperioder: {
-    spillerid: [
-      {
-        fra: format(subDays(new Date(), 14), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 11), 'yyyy-MM-dd')
-      }
-    ],
-    trenerid: [
-      {
-        fra: format(subDays(new Date(), 15), 'yyyy-MM-dd'),
-        til: format(subDays(new Date(), 12), 'yyyy-MM-dd')
-      }
-    ]
-  },
-  tidligereinntekt: [
+  fravaersperioder: [
     {
-      maanedsnavn: 'Februar', // yyyy-MM
+      fom: format(subDays(new Date(), 11), 'yyyy-MM-dd'),
+      tom: format(subDays(new Date(), 6), 'yyyy-MM-dd')
+    },
+    {
+      fom: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
+      tom: format(subDays(new Date(), 1), 'yyyy-MM-dd')
+    }
+  ],
+  egenmeldingsperioder: [
+    {
+      fom: format(subDays(new Date(), 14), 'yyyy-MM-dd'),
+      tom: format(subDays(new Date(), 11), 'yyyy-MM-dd')
+    }
+  ],
+  tidligereinntekter: [
+    // Hva skjer ved jobbskifte?
+    {
+      maanedsnavn: format(subDays(new Date(), 33), 'yyyy-MM'), // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: 'Mars',
+      maanedsnavn: format(subDays(new Date(), 66), 'yyyy-MM'), // yyyy-MM
       inntekt: 66000
     },
     {
-      maanedsnavn: 'April',
+      maanedsnavn: format(subDays(new Date(), 99), 'yyyy-MM'), // yyyy-MM
       inntekt: 88000
     }
-  ],
-  behandlingsdager: ['2022-01-01'],
-  behandlingsperiode: {
-    fra: '2022-01-01',
-    til: '2022-06-02'
-  },
-  arbeidsforhold: [
-    {
-      arbeidsforholdId: 'spillerid',
-      arbeidsforhold: 'Spiller',
-      stillingsprosent: 50
-    }
-    // {
-    //   arbeidsforholdId: 'trenerid',
-    //   arbeidsforhold: 'Trener',
-    //   stillingsprosent: 40
-    // },
-    // {
-    //   arbeidsforholdId: 'vaktmesterid',
-    //   arbeidsforhold: 'Vaktmester',
-    //   stillingsprosent: 10
-    // }
   ]
+  //  behandlingsdager: ['2022-01-01'],
+  // behandlingsperiode: {
+  //   fom: '2022-01-01',
+  //   tom: '2022-06-02'
+  // }
 };
 
 export default formData;

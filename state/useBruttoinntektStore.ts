@@ -15,7 +15,6 @@ export interface BruttoinntektState {
   inntektsprosentEndret: boolean;
   setNyMaanedsinntekt: (belop: string) => void;
   setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
-  setNyArbeidsforholdMaanedsinntekt: (arbeidsforholdId: string, belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean) => void;
@@ -67,18 +66,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setNyArbeidsforholdMaanedsinntekt: (arbeidsforholdId, belop) => {
-    const inntektsprosent: { [key: string]: number } | {} = get().inntektsprosent || {};
-    const ikopi = { ...inntektsprosent };
-    ikopi[arbeidsforholdId] = stringishToNumber(belop) || 0;
-    set(
-      produce((state) => {
-        state.inntektsprosent = ikopi;
-        state.inntektsprosentEndret = true;
-        return state;
-      })
-    );
-  },
 
   setEndringsaarsak: (aarsak: string) =>
     set(

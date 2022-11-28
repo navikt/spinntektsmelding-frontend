@@ -1,5 +1,4 @@
 import create from 'zustand';
-import useArbeidsforholdStore, { ArbeidsforholdState } from './useArbeidsforholdStore';
 import useBehandlingsdagerStore, { BehandlingsdagerState } from './useBehandlingsdagerStore';
 import useBruttoinntektStore, { BruttoinntektState } from './useBruttoinntektStore';
 import useEgenmeldingStore, { EgenmeldingState } from './useEgenmeldingStore';
@@ -16,14 +15,12 @@ export interface CompleteState
     PersonState,
     NaturalytelserState,
     FeilmeldingerState,
-    ArbeidsforholdState,
     BehandlingsdagerState,
     BruttoinntektState,
     GrunnpeloepState,
     EgenmeldingState {}
 
 const useBoundStore = create<CompleteState>()((...a) => ({
-  ...useArbeidsforholdStore(...a),
   ...useBehandlingsdagerStore(...a),
   ...useBruttoinntektStore(...a),
   ...useEgenmeldingStore(...a),

@@ -11,14 +11,9 @@ import formatDate from '../../utils/formatDate';
 interface EgenmeldingPeriodeInterface {
   periodeId: string;
   egenmeldingsperiode: Periode;
-  arbeidsforholdId: string;
 }
 
-export default function EgenmeldingPeriode({
-  periodeId,
-  egenmeldingsperiode,
-  arbeidsforholdId
-}: EgenmeldingPeriodeInterface) {
+export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: EgenmeldingPeriodeInterface) {
   const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
   const endreEgenmeldingsperiode = useBoundStore((state) => state.endreEgenmeldingsperiode);
 
@@ -34,19 +29,19 @@ export default function EgenmeldingPeriode({
   });
 
   useEffect(() => {
-    setSelected({ from: egenmeldingsperiode?.fra, to: egenmeldingsperiode?.til });
+    setSelected({ from: egenmeldingsperiode?.fom, to: egenmeldingsperiode?.tom });
   }, [egenmeldingsperiode]);
 
-  if (!endreEgenmeldingsperiode[arbeidsforholdId]) {
+  if (!endreEgenmeldingsperiode) {
     return (
       <>
         <div className={styles.datepickerescape}>
           <TextLabel>Egenmelding fra</TextLabel>
-          <div>{formatDate(egenmeldingsperiode.fra)}</div>
+          <div>{formatDate(egenmeldingsperiode.fom)}</div>
         </div>
         <div className={styles.datepickerescape}>
           <TextLabel>Egenmelding til</TextLabel>
-          <div>{formatDate(egenmeldingsperiode.til)}</div>
+          <div>{formatDate(egenmeldingsperiode.tom)}</div>
         </div>
       </>
     );
@@ -56,8 +51,8 @@ export default function EgenmeldingPeriode({
     <div>
       <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-egenmelding-' + periodeId}>
         <div className={localStyles.datowrapper}>
-          <UNSAFE_DatePicker.Input {...fromInputProps} label='Egenmelding fra' id={`fra-${periodeId}`} />
-          <UNSAFE_DatePicker.Input {...toInputProps} label='Egenmelding til' id={`til-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...fromInputProps} label='Egenmelding fra' id={`fom-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...toInputProps} label='Egenmelding til' id={`tom-${periodeId}`} />
         </div>
       </UNSAFE_DatePicker>
     </div>

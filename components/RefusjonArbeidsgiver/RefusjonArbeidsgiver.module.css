@@ -16,3 +16,14 @@
 .refusjonsbelop>input {
   max-width: 10rem;
 }
+
+.selectbegrunnelse>select,
+.selectbegrunnelse>div {
+  width: max-content;
+}
+
+.wraputbetaling {
+  display       : flex;
+  flex-direction: row;
+  gap           : 2rem;
+}

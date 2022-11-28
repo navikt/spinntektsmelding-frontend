@@ -14,7 +14,7 @@ const begrunnelseIngenEllerRedusertUtbetalingListe: Begrunnelser = {
   StreikEllerLockout: 'Streikk eller lockout',
   Permittering: 'Permitering',
   FiskerMedHyre: 'Fisker med hyre',
-  Saerregler: 'Sær regler',
+  Saerregler: 'Særregler',
   FerieEllerAvspasering: 'Ferie eller avspassering',
   IkkeFullStillingsandel: 'Ikke full stillingsandel',
   TidligereVirksomhet: 'Tidligere virksomhet'

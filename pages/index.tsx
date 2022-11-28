@@ -21,21 +21,19 @@ import Behandlingsdager from '../components/Behandlingsdager';
 import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
 import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
-import Arbeidsforhold from '../components/Arbeidsforhold/Arbeidsforhold';
 import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
-import submitInntektsmelding from '../utils/submitInntektsmelding';
 import useBoundStore from '../state/useBoundStore';
 import Naturalytelser from '../components/Naturalytelser';
 import Person from '../components/Person/Person';
-import InntektsmeldingSkjema from '../state/state';
 import useStateInit from '../state/useStateInit';
-import useFyllInnsending from '../state/useFyllInnsending';
+import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
 import dataFetcherArbeidsgivere from '../utils/dataFetcherArbeidsgivere';
 import useLoginRedirectPath from '../utils/useLoginRedirectPath';
 import useFetchInntektskjema from '../state/useFetchInntektskjema';
+import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
@@ -50,7 +48,7 @@ const Home: NextPage = () => {
 
   const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
 
-  const arbeidsforhold = useBoundStore((state) => state.arbeidsforhold);
+  const orgnrUnderenhet = useBoundStore((state) => state.orgnrUnderenhet);
 
   const loginPath = useLoginRedirectPath();
 
@@ -68,16 +66,17 @@ const Home: NextPage = () => {
 
   const hentSkjemadata = useFetchInntektskjema('');
 
+  const validerInntektsmelding = useValiderInntektsmelding();
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const skjemaData: InntektsmeldingSkjema = fyllInnsending(opplysningerBekreftet);
-
-    const errorStatus = submitInntektsmelding(skjemaData);
+    const errorStatus = validerInntektsmelding(opplysningerBekreftet);
 
     if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
       fyllFeilmeldinger(errorStatus.errorTexts);
     } else {
+      const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
       fyllFeilmeldinger([]);
       // useSWR   Send inn!>
       const postData = async () => {
@@ -110,19 +109,26 @@ const Home: NextPage = () => {
   useEffect(() => {
     const hentData = async () => {
       try {
-        const skjemadata = await hentSkjemadata(SKJEMADATA_URL, '16120101181', '811307602');
+        let skjemadata;
+        if (orgnrUnderenhet) {
+          skjemadata = await hentSkjemadata(SKJEMADATA_URL, '16120101181', orgnrUnderenhet);
+        }
         if (skjemadata) {
           initState(skjemadata);
 
           setRoute(skjemadata.orgnrUnderenhet);
         }
       } catch (error) {
+        console.log('error', error); // eslint-disable-line
+
         leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
       }
     };
-    hentData();
+    if (orgnrUnderenhet) {
+      hentData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [orgnrUnderenhet]);
 
   useEffect(() => {
     console.log('error', error); // eslint-disable-line
@@ -154,19 +160,12 @@ const Home: NextPage = () => {
             <form className={styles.padded} onSubmit={submitForm}>
               <Person />
 
-              {arbeidsforhold && arbeidsforhold.length > 1 && (
-                <>
-                  <Skillelinje />
-                  <Arbeidsforhold />
-                </>
-              )}
-
               <Behandlingsdager />
 
               {egenmeldingsperioder && (
                 <>
                   <Skillelinje />
-                  {arbeidsforhold && <Egenmelding />}
+                  <Egenmelding />
                 </>
               )}
 
@@ -191,7 +190,7 @@ const Home: NextPage = () => {
                 id='bekreft-opplysninger'
                 error={visFeilmeldingsTekst('bekreft-opplysninger')}
               >
-                NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
+                NAV kan trekke tombake retten tom å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
                 er riktige eller fullstendige.
               </ConfirmationPanel>
               <Feilsammendrag />

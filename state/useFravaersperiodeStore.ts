@@ -8,52 +8,40 @@ import { DateRange } from 'react-day-picker';
 import { CompleteState } from './useBoundStore';
 
 export interface FravaersperiodeState {
-  fravaersperiode?: { [key: string]: Array<Periode> };
-  opprinneligFravaersperiode?: { [key: string]: Array<Periode> };
-  sammeFravaersperiode: boolean;
-  leggTilFravaersperiode: (arbeidsforholdId: string) => void;
-  slettFravaersperiode: (arbeidsforholdId: string, periodeId: string) => void;
-  setFravaersperiodeFraDato: (arbeidsforholdId: string, periodeId: string, nyFraDato: Date | undefined) => void;
-  setFravaersperiodeTilDato: (arbeidsforholdId: string, periodeId: string, nyTilDato: Date | undefined) => void;
-  setFravaersperiodeDato: (arbeidsforholdId: string, periodeId: string, nyTilDato: DateRange | undefined) => void;
-  tilbakestillFravaersperiode: (arbeidsforholdId: string) => void;
-  setSammeFravarePaaArbeidsforhold: (arbeidsforholdId: string, status: boolean) => void;
-  endreFravaersperiode: () => void;
-  initFravaersperiode: (mottatFravaersperiode: { [key: string]: Array<MottattPeriode> }) => void;
+  fravaersperioder?: Array<Periode>;
+  opprinneligFravaersperiode?: Array<Periode>;
+  leggTilFravaersperiode: () => void;
+  slettFravaersperiode: (periodeId: string) => void;
+  setFravaersperiodeDato: (periodeId: string, nyTilDato: DateRange | undefined) => void;
+  tilbakestillFravaersperiode: () => void;
+  initFravaersperiode: (mottatFravaersperiode: Array<MottattPeriode>) => void;
 }
 
-const useFravaersperiodeStore: StateCreator<CompleteState, [], [], FravaersperiodeState> = (set) => ({
-  fravaersperiode: undefined,
+const useFravaersperiodeStore: StateCreator<CompleteState, [], [], FravaersperiodeState> = (set, get) => ({
+  fravaersperioder: undefined,
   opprinneligFravaersperiode: undefined,
-  sammeFravaersperiode: false,
 
-  leggTilFravaersperiode: (arbeidsforholdId) =>
+  leggTilFravaersperiode: () =>
     set(
       produce((state) => {
         const nyFravaersperiode: Periode = { id: nanoid() };
-        if (state.fravaersperiode) {
-          if (!state.fravaersperiode[arbeidsforholdId]) {
-            state.fravaersperiode[arbeidsforholdId] = [];
-          }
-        } else {
-          state.fravaersperiode = {};
-          state.fravaersperiode[arbeidsforholdId] = [];
+        if (!state.fravaersperioder) {
+          state.fravaersperioder = {};
+          state.fravaersperioder = [];
         }
-        state.fravaersperiode[arbeidsforholdId].push(nyFravaersperiode);
+        state.fravaersperioder.push(nyFravaersperiode);
 
         return state;
       })
     ),
 
-  slettFravaersperiode: (arbeidsforholdId: string, periodeId: string) =>
+  slettFravaersperiode: (periodeId: string) =>
     set(
       produce((state) => {
-        if (state.fravaersperiode) {
-          if (state.fravaersperiode && state.fravaersperiode[arbeidsforholdId]) {
-            const nyePerioder = state.fravaersperiode[arbeidsforholdId].filter(
-              (periode: Periode) => periode.id !== periodeId
-            );
-            state.fravaersperiode[arbeidsforholdId] = nyePerioder;
+        if (state.fravaersperioder) {
+          if (state.fravaersperioder) {
+            const nyePerioder = state.fravaersperioder.filter((periode: Periode) => periode.id !== periodeId);
+            state.fravaersperioder = nyePerioder;
           }
         }
 
@@ -63,49 +51,17 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
       })
     ),
 
-  setFravaersperiodeFraDato: (arbeidsforholdId: string, periodeId: string, nyFraDato: Date | undefined) =>
+  setFravaersperiodeDato: (periodeId: string, nyDato: DateRange | undefined) =>
     set(
       produce((state) => {
-        if (state.fravaersperiode && state.fravaersperiode[arbeidsforholdId]) {
-          state.fravaersperiode[arbeidsforholdId] = state.fravaersperiode[arbeidsforholdId].map((periode: Periode) => {
+        if (state.fravaersperioder) {
+          state.fravaersperioder = state.fravaersperioder.map((periode: Periode) => {
             if (periode.id === periodeId) {
-              periode.fra = nyFraDato;
-            }
-            return periode;
-          });
-        }
-        state.sammeFravaersperiode = false;
-        return state;
-      })
-    ),
-
-  setFravaersperiodeTilDato: (arbeidsforholdId: string, periodeId: string, nyTilDato: Date | undefined) =>
-    set(
-      produce((state) => {
-        if (state.fravaersperiode && state.fravaersperiode[arbeidsforholdId]) {
-          state.fravaersperiode[arbeidsforholdId] = state.fravaersperiode[arbeidsforholdId].map((periode: Periode) => {
-            if (periode.id === periodeId) {
-              periode.til = nyTilDato;
-            }
-            return periode;
-          });
-        }
-        state.sammeFravaersperiode = false;
-        return state;
-      })
-    ),
-
-  setFravaersperiodeDato: (arbeidsforholdId: string, periodeId: string, nyDato: DateRange | undefined) =>
-    set(
-      produce((state) => {
-        if (state.fravaersperiode && state.fravaersperiode[arbeidsforholdId]) {
-          state.fravaersperiode[arbeidsforholdId] = state.fravaersperiode[arbeidsforholdId].map((periode: Periode) => {
-            if (periode.id === periodeId) {
-              if (periode.til !== nyDato?.to || periode.fra !== nyDato?.from) {
+              if (periode.tom !== nyDato?.to || periode.fom !== nyDato?.from) {
                 state.sammeFravaersperiode = false;
               }
-              periode.til = nyDato?.to;
-              periode.fra = nyDato?.from;
+              periode.tom = nyDato?.to;
+              periode.fom = nyDato?.from;
             }
             return periode;
           });
@@ -114,110 +70,35 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
       })
     ),
 
-  tilbakestillFravaersperiode: (arbeidsforholdId: string) =>
-    set(
+  tilbakestillFravaersperiode: () => {
+    const tilbakestiltPeriode = get().opprinneligFravaersperiode;
+    const klonetFravaersperiode = structuredClone(tilbakestiltPeriode);
+    return set(
       produce((state) => {
-        if (state.fravaersperiode?.[arbeidsforholdId] && state.opprinneligFravaersperiode?.[arbeidsforholdId]) {
-          const clone = state.opprinneligFravaersperiode[arbeidsforholdId].map((periode: Periode) => ({
-            til: periode.til,
-            fra: periode.fra,
-            id: periode.id
-          }));
-          state.fravaersperiode[arbeidsforholdId] = clone;
-        }
+        state.fravaersperioder = klonetFravaersperiode;
+
         state.sammeFravaersperiode = false;
         return state;
       })
-    ),
+    );
+  },
 
-  setSammeFravarePaaArbeidsforhold: (arbeidsforholdId: string, status: boolean) =>
-    set(
+  initFravaersperiode: (mottatFravaersperioder: Array<MottattPeriode>) => {
+    const fravaersperioder: Array<Periode> = mottatFravaersperioder.map((periode) => ({
+      fom: parseISO(periode.fom),
+      tom: parseISO(periode.tom),
+      id: nanoid()
+    }));
+
+    return set(
       produce((state) => {
-        if (status) {
-          const fravaersKeys = Object.keys(state.fravaersperiode!);
-          if (state.fravaersperiode && fravaersKeys.indexOf(arbeidsforholdId) > -1) {
-            state.sammeFravaersperiode = true;
-          }
-
-          if (state.fravaersperiode?.[arbeidsforholdId]) {
-            const periodeMaster: Periode[] = state.fravaersperiode[arbeidsforholdId];
-
-            const oppdaterbarePerioder = fravaersKeys.filter((key) => key !== arbeidsforholdId);
-
-            oppdaterbarePerioder.forEach((forholdId) => {
-              if (forholdId !== arbeidsforholdId) {
-                state.fravaersperiode![forholdId] = periodeMaster.map((periode) => {
-                  return {
-                    ...periode,
-                    id: nanoid()
-                  };
-                });
-              }
-            });
-          }
-        }
-
-        state.sammeFravaersperiode = status;
+        state.fravaersperioder = structuredClone(fravaersperioder);
+        state.opprinneligFravaersperiode = structuredClone(fravaersperioder);
 
         return state;
       })
-    ),
-
-  endreFravaersperiode: () =>
-    set(
-      produce((state) => {
-        state.sammeFravaersperiode = false;
-
-        return state;
-      })
-    ),
-
-  initFravaersperiode: (mottatFravaersperioder: { [key: string]: Array<MottattPeriode> }) =>
-    set(
-      produce((state) => {
-        const fravaersKeys = mottatFravaersperioder ? Object.keys(mottatFravaersperioder) : [];
-
-        if (fravaersKeys.length > 0) {
-          state.fravaersperiode = {};
-          fravaersKeys.forEach((fKey: string) => {
-            if (Array.isArray(mottatFravaersperioder[fKey])) {
-              const tmpPeriode: Array<Periode> = mottatFravaersperioder[fKey].map((periode: MottattPeriode) => ({
-                fra: parseISO(periode.fra),
-                til: parseISO(periode.til),
-                id: nanoid()
-              }));
-
-              state.fravaersperiode![fKey] = tmpPeriode;
-            } else {
-              const tmpPeriode: Array<Periode> = [
-                {
-                  fra: parseISO(mottatFravaersperioder[fKey].fra),
-                  til: parseISO(mottatFravaersperioder[fKey].til),
-                  id: nanoid()
-                }
-              ];
-
-              state.fravaersperiode![fKey] = tmpPeriode;
-            }
-          });
-        } else {
-          const nyFravaersperiode: Periode = { id: nanoid() };
-          if (state.fravaersperiode) {
-            if (!state.fravaersperiode['arbeidsforholdId']) {
-              state.fravaersperiode['arbeidsforholdId'] = [];
-            }
-          } else {
-            state.fravaersperiode = {};
-            state.fravaersperiode['arbeidsforholdId'] = [];
-          }
-          state.fravaersperiode['arbeidsforholdId'].push(nyFravaersperiode);
-        }
-
-        state.opprinneligFravaersperiode = structuredClone({ ...state.fravaersperiode });
-
-        return state;
-      })
-    )
+    );
+  }
 });
 
 export default useFravaersperiodeStore;
