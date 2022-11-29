@@ -34,16 +34,6 @@ export default function RefusjonArbeidsgiver() {
     (state) => state.beloepUtbetaltUnderArbeidsgiverperioden
   );
 
-  const bruttoinntektArbeidsforhold = (inntekt: number, seksG?: number): number => {
-    if (seksG && (inntekt || 0 > seksG)) {
-      return seksG;
-    } else {
-      return inntekt;
-    }
-  };
-
-  const seksG = grunnbeloep?.grunnbeloepPerMaaned ? grunnbeloep?.grunnbeloepPerMaaned * 6 : undefined;
-
   return (
     <>
       <Heading3>Refusjon til arbeidsgiver</Heading3>
@@ -110,7 +100,7 @@ export default function RefusjonArbeidsgiver() {
         {lonnISykefravaeret?.status === 'Ja' && (
           <>
             <RefusjonArbeidsgiverBelop
-              bruttoinntekt={bruttoinntektArbeidsforhold(bruttoinntekt.bruttoInntekt, seksG)}
+              bruttoinntekt={bruttoinntekt.bruttoInntekt}
               onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
               visFeilmeldingsTekst={visFeilmeldingsTekst}
             />

@@ -8,6 +8,7 @@ import formatCurrency from '../../utils/formatCurrency';
 import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 import TidligereInntekt from './TidligereInntekt';
+import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -54,16 +55,11 @@ export default function Bruttoinntekt() {
                 />
               </div>
               <div>
-                <Select
-                  label='Forklaring til endring'
-                  onChange={(event) => setEndringsaarsak(event.target.value)}
-                  id='bruttoinntekt-endringsaarsak'
+                <SelectEndringBruttoinntekt
+                  onChangeBegrunnelse={setEndringsaarsak}
                   error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
-                >
-                  <option value=''>Velg endringsårsak</option>
-                  <option value='FeilInntekt'>Feil inntekt</option>
-                  <option value='Tariffendring'>Tariffendring</option>
-                </Select>
+                  id='bruttoinntekt-endringsaarsak'
+                />
               </div>
               <div>
                 <Button

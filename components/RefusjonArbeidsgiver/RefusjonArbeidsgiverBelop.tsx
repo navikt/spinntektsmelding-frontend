@@ -37,6 +37,7 @@ export default function RefusjonArbeidsgiverBelop({
       className={localStyles.refusjonsbelop}
       label='Oppgi refusjonsbeløpet per måned'
       // className={styles.halfsize}
+      defaultValue={formatCurrency(bruttoinntekt)}
       onChange={(event) => onOppdaterBelop(event.target.value)}
       id={'lus-input'}
       error={visFeilmeldingsTekst('lus-input')}
