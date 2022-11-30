@@ -79,6 +79,7 @@
 .endrebutton {
   max-width : 10rem;
   align-self: initial;
+  height    : min-content;
 }
 
 .legtilbutton {

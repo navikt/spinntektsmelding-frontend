@@ -1,7 +1,6 @@
 .arbeidsgiverwrapper,
 .ytreansattwrapper,
-.personinfowrapper,
-.fravaerswrapperwrapper {
+.personinfowrapper {
   display              : grid;
   grid-template-columns: [col1] 50% [col2] auto;
 }

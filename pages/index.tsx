@@ -76,24 +76,25 @@ const Home: NextPage = () => {
     if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
       fyllFeilmeldinger(errorStatus.errorTexts);
     } else {
-      const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
-      fyllFeilmeldinger([]);
-      // useSWR   Send inn!>
-      const postData = async () => {
-        const data = await fetch(INNSENDING_URL, {
-          method: 'POST',
-          body: JSON.stringify(skjemaData),
-          headers: {
-            'Content-Type': 'application/json'
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        });
-        console.log(data); // eslint-disable-line
-        if (data.status === 201) {
-          router.push('/kvittering');
-        }
-      };
-      postData();
+      router.push('/oppsummering');
+      // const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
+      // fyllFeilmeldinger([]);
+      // // useSWR   Send inn!>
+      // const postData = async () => {
+      //   const data = await fetch(INNSENDING_URL, {
+      //     method: 'POST',
+      //     body: JSON.stringify(skjemaData),
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //       // 'Content-Type': 'application/x-www-form-urlencoded',
+      //     }
+      //   });
+      //   console.log(data); // eslint-disable-line
+      //   if (data.status === 201) {
+      //     router.push('/oppsummering');
+      //   }
+      // };
+      // postData();
     }
   };
 
