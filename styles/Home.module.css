@@ -12,26 +12,6 @@
   margin-top   : 1rem;
 }
 
-.halfsize {
-  width  : 50%;
-  display: inline-block;
-}
-
-.size-resten {
-  display: inline-block;
-  width  : 100%;
-}
-
-.virksomhetsnavnwrapper {
-  display  : inline-block;
-  flex-grow: 1;
-}
-
-.orgnrnavnwrapper {
-  display  : inline-block;
-  flex-grow: 2;
-}
-
 .tddatepickernatural {
   padding-top: 0.5rem;
 }

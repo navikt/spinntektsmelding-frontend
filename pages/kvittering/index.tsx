@@ -26,6 +26,7 @@ import PrintButton from '../../components/PrintButton';
 import finnBestemmendeFravaersdag, { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
 import { format, parseISO } from 'date-fns';
 import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
+import ButtonEndre from '../../components/ButtonEndre';
 
 const Kvittering: NextPage = () => {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
@@ -139,9 +140,8 @@ const Kvittering: NextPage = () => {
             <BodyShort>Kvittering - innsendt inntektsmelding - 12.05.2021 kl. 12.23</BodyShort>
             <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
               <div className={lokalStyles.innerbuttonwrapper}>
-                <Button variant='secondary' onClick={clickEndre}>
-                  Endre
-                </Button>
+                <ButtonEndre onClick={clickEndre} />
+
                 <Link className={lokalStyles.lukkelenke} href='/'>
                   <a className={lokalStyles.lukkelenke}>Lukk</a>
                 </Link>

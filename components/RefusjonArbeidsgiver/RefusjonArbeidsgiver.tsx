@@ -14,7 +14,6 @@ export default function RefusjonArbeidsgiver() {
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-  const grunnbeloep = useBoundStore((state) => state.grunnbeloep);
 
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
 
@@ -69,7 +68,6 @@ export default function RefusjonArbeidsgiver() {
             <TextField
               className={localStyles.refusjonsbelop}
               label='Utbetalt under arbeidsgiverperiode'
-              // className={styles.halfsize}
               onChange={(event) => beloepUtbetaltUnderArbeidsgiverperioden(event.target.value)}
               id={'lus-uua-input'}
               error={visFeilmeldingsTekst('lus-uua-input')}

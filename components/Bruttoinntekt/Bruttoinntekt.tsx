@@ -9,6 +9,7 @@ import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 import TidligereInntekt from './TidligereInntekt';
 import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
+import ButtonEndre from '../ButtonEndre';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -72,11 +73,7 @@ export default function Bruttoinntekt() {
               </div>
             </div>
           )}
-          {!endreMaanedsinntekt && (
-            <Button variant='secondary' className={styles.endrebutton} onClick={() => setEndreMaanedsinntekt(true)}>
-              Endre
-            </Button>
-          )}
+          {!endreMaanedsinntekt && <ButtonEndre onClick={() => setEndreMaanedsinntekt(true)} />}
         </div>
         <BodyShort>
           <strong>Stemmer dette?</strong>

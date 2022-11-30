@@ -25,6 +25,7 @@ import useBoundStore from '../../state/useBoundStore';
 import finnBestemmendeFravaersdag, { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
 import { format, parseISO } from 'date-fns';
 import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
+import ButtonEndre from '../../components/ButtonEndre';
 
 const Kvittering: NextPage = () => {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
@@ -116,13 +117,7 @@ const Kvittering: NextPage = () => {
                         <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={index} />
                       ))}
                     <div className={lokalStyles.endrewrapper}>
-                      <Button
-                        variant='secondary'
-                        onClick={() => alert('Du har trykket endre!')}
-                        className={styles.endrebutton}
-                      >
-                        Endre
-                      </Button>
+                      <ButtonEndre onClick={() => alert('Du har trykket endre!')} />
                       <BodyLong>
                         *Hvis du mener at bestemmende fraværsdag eller arbeidsgiverperioden er feil er det mulig å
                         korrigere.

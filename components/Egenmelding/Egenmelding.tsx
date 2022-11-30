@@ -5,6 +5,7 @@ import ButtonSlette from '../ButtonSlette/ButtonSlette';
 import Heading3 from '../Heading3/Heading3';
 import useBoundStore from '../../state/useBoundStore';
 import EgenmeldingPeriode from './EgenmeldingPeriode';
+import ButtonEndre from '../ButtonEndre';
 
 export default function Egenmelding() {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -60,13 +61,7 @@ export default function Egenmelding() {
         </div>
         {!endreEgenmeldingsperiode && (
           <div>
-            <Button
-              variant='secondary'
-              className={styles.legtilbutton}
-              onClick={(e) => clickEndreFravaersperiodeHandler(e)}
-            >
-              Endre
-            </Button>
+            <ButtonEndre onClick={(e) => clickEndreFravaersperiodeHandler(e)} />
           </div>
         )}
         {endreEgenmeldingsperiode && (
