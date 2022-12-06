@@ -1,4 +1,4 @@
-import { BodyLong, Button, Heading, Modal, Textarea } from '@navikt/ds-react';
+import { Alert, BodyLong, Button, Heading, Modal, Textarea } from '@navikt/ds-react';
 import { useEffect, useState } from 'react';
 import Arbeidsgiverperiode from './Arbeidsgiverperiode';
 import BestemmendeFravaersdag from './BestemmendeFravaersdag';
@@ -31,6 +31,8 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
   const [begrunnelse, setBegrunnelse] = useState<string | undefined>();
   const [arbeidsgiverperioder, setArbeidsgiverperioder] = useState<Array<FravaersPeriode>>(props.arbeidsgiverperioder);
 
+  const [visAlertBestemmende, setVisAlertBestemmende] = useState<boolean>(false);
+
   const oppdatertBestemmendeFravaersdag = (dato: Date | undefined) => {
     setBestemmendeFravaersdag(dato!);
   };
@@ -47,6 +49,9 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
 
       const bestemmende = finnBestemmendeFravaersdag(aperioder as unknown as Array<MottattPeriode>);
       if (bestemmende !== formatIsoDate(bestemmendeFravaersdag)) {
+        setVisAlertBestemmende(true);
+      } else {
+        setVisAlertBestemmende(false);
       }
     }
   };
@@ -97,10 +102,12 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
             defaultDate={props.bestemmendeFravaersdag}
             onChangeDate={oppdatertBestemmendeFravaersdag}
           />
-          <Alert variant='warning'>
-            Det kan se ut som om bestemmende fraværsdag ikke stemmer med arbeidsgiverperioden. Vennligs se over før du
-            sender inn.
-          </Alert>
+          {visAlertBestemmende && (
+            <Alert variant='warning'>
+              Det kan se ut som om bestemmende fraværsdag ikke stemmer med arbeidsgiverperioden. Vennligs se over før du
+              sender inn.
+            </Alert>
+          )}
           {arbeidsgiverperioder.map((periode, index) => (
             <Arbeidsgiverperiode
               key={index}
