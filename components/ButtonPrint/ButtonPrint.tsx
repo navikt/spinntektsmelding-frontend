@@ -1,8 +1,8 @@
 import { Button } from '@navikt/ds-react';
 
-interface PrintButtonInterface extends React.HTMLProps<HTMLButtonElement> {}
+interface ButtonPrintProps extends React.HTMLProps<HTMLButtonElement> {}
 
-const PrintButton = ({ className }: PrintButtonInterface) => {
+const ButtonPrint = ({ className }: ButtonPrintProps) => {
   const skrivUt = () => window.print();
 
   return (
@@ -12,4 +12,4 @@ const PrintButton = ({ className }: PrintButtonInterface) => {
   );
 };
 
-export default PrintButton;
+export default ButtonPrint;

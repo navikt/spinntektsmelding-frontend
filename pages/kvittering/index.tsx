@@ -22,7 +22,7 @@ import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/Lonn
 
 import useBoundStore from '../../state/useBoundStore';
 
-import PrintButton from '../../components/PrintButton';
+import ButtonPrint from '../../components/ButtonPrint';
 import finnBestemmendeFravaersdag, { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
 import { format, parseISO } from 'date-fns';
 import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
@@ -146,7 +146,7 @@ const Kvittering: NextPage = () => {
                   <a className={lokalStyles.lukkelenke}>Lukk</a>
                 </Link>
               </div>
-              <PrintButton className={lokalStyles.skrivutknapp}>Skriv ut</PrintButton>
+              <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
             </div>
           </main>
         </PageContent>

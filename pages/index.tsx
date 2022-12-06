@@ -26,7 +26,7 @@ import useBoundStore from '../state/useBoundStore';
 import Naturalytelser from '../components/Naturalytelser';
 import Person from '../components/Person/Person';
 import useStateInit from '../state/useStateInit';
-import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
+// import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
@@ -37,7 +37,7 @@ import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
-const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
+// const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 
 const Home: NextPage = () => {
   const setRoute = useRoute();
@@ -62,7 +62,7 @@ const Home: NextPage = () => {
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
   const initState = useStateInit();
-  const fyllInnsending = useFyllInnsending();
+  // const fyllInnsending = useFyllInnsending();
 
   const hentSkjemadata = useFetchInntektskjema('');
 
@@ -77,24 +77,6 @@ const Home: NextPage = () => {
       fyllFeilmeldinger(errorStatus.errorTexts);
     } else {
       router.push('/oppsummering');
-      // const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
-      // fyllFeilmeldinger([]);
-      // // useSWR   Send inn!>
-      // const postData = async () => {
-      //   const data = await fetch(INNSENDING_URL, {
-      //     method: 'POST',
-      //     body: JSON.stringify(skjemaData),
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //       // 'Content-Type': 'application/x-www-form-urlencoded',
-      //     }
-      //   });
-      //   console.log(data); // eslint-disable-line
-      //   if (data.status === 201) {
-      //     router.push('/oppsummering');
-      //   }
-      // };
-      // postData();
     }
   };
 
@@ -112,7 +94,7 @@ const Home: NextPage = () => {
       try {
         let skjemadata;
         if (orgnrUnderenhet) {
-          skjemadata = await hentSkjemadata(SKJEMADATA_URL, '16120101181', orgnrUnderenhet);
+          skjemadata = await hentSkjemadata(SKJEMADATA_URL, '22506614191', orgnrUnderenhet);
         }
         if (skjemadata) {
           initState(skjemadata);
@@ -150,7 +132,7 @@ const Home: NextPage = () => {
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <div>
+      <main role='main' id='maincontent' tabIndex={-1}>
         <Banner
           tittelMedUnderTittel={'Sykepenger'}
           altinnOrganisasjoner={arbeidsgivere}
@@ -201,7 +183,7 @@ const Home: NextPage = () => {
         </PageContent>
         <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
         <Script type='text/javascript' src='https://www.nav.no/dekoratoren/client.js'></Script>
-      </div>
+      </main>
     </div>
   );
 };

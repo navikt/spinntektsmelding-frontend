@@ -1,0 +1,46 @@
+import { UNSAFE_DatePicker, UNSAFE_useRangeDatepicker } from '@navikt/ds-react';
+import { useEffect } from 'react';
+import { DateRange } from 'react-day-picker';
+import localStyles from './EndrePerioderModal.module.css';
+import { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
+import ButtonSlette from '../ButtonSlette';
+
+interface ArbeidsgiverperiodeProps {
+  arbeidsgiverperiode: FravaersPeriode;
+  rangeChangeHandler: (dato: DateRange | undefined, periodeIndex: number) => void;
+  periodeIndex: number;
+  onDelete: (event: React.MouseEvent<HTMLButtonElement>, periodeIndex: number) => void;
+}
+
+export default function Arbeidsgiverperiode({
+  arbeidsgiverperiode,
+  rangeChangeHandler,
+  periodeIndex,
+  onDelete
+}: ArbeidsgiverperiodeProps) {
+  const { datepickerProps, toInputProps, fromInputProps, setSelected } = UNSAFE_useRangeDatepicker({
+    onRangeChange: (periode) => rangeChangeHandler(periode, periodeIndex),
+    toDate: new Date()
+  });
+
+  useEffect(() => {
+    setSelected({ from: arbeidsgiverperiode?.fom, to: arbeidsgiverperiode?.tom });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arbeidsgiverperiode]);
+
+  return (
+    <UNSAFE_DatePicker {...datepickerProps} id={`epm-datovelger-${periodeIndex}`}>
+      <div className={localStyles.datowrapper}>
+        <UNSAFE_DatePicker.Input {...fromInputProps} label='Arbeidsgiverperiode fra' id={`epm-fom-${periodeIndex}`} />
+        <UNSAFE_DatePicker.Input {...toInputProps} label='Arbeidsgiverperiode til' id={`epm-tom-${periodeIndex}`} />
+        {periodeIndex > 0 && (
+          <ButtonSlette
+            className={localStyles.sletteknapp}
+            onClick={(event) => onDelete(event, periodeIndex)}
+            title='Slett periode'
+          />
+        )}
+      </div>
+    </UNSAFE_DatePicker>
+  );
+}

@@ -23,11 +23,19 @@ import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/Lonn
 import useBoundStore from '../../state/useBoundStore';
 
 import finnBestemmendeFravaersdag, { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
 import ButtonEndre from '../../components/ButtonEndre';
+import EndrePerioderModal, { EndrePeriodeRespons } from '../../components/EndrePerioderModal/EndrePerioderModal';
+import { useEffect, useState } from 'react';
+import formatDate from '../../utils/formatDate';
+import useValiderInntektsmelding from '../../utils/useValiderInntektsmelding';
+import useFyllInnsending, { InnsendingSkjema } from '../../state/useFyllInnsending';
+import formatIsoDate from '../../utils/formatIsoDate';
 
-const Kvittering: NextPage = () => {
+const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
+
+const Oppsummering: NextPage = () => {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -39,23 +47,71 @@ const Kvittering: NextPage = () => {
 
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
+  const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [arbeidsgiverperioder, setArbeidsgiverperioder] = useState<Array<FravaersPeriode> | undefined>(undefined);
+  const [bestemmendeFravaersdagDate, setbestemmendeFravaersdagDate] = useState<Date | undefined>(undefined);
+
+  const validerInntektsmelding = useValiderInntektsmelding();
+  const fyllInnsending = useFyllInnsending();
+
   const router = useRouter();
 
   const clickEndre = () => {
     router.push('/');
   };
 
-  let bestemmendeFravaersdag;
-  let arbeidsgiverperioder: Array<FravaersPeriode> | undefined = undefined;
+  const sendSkjema = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    const opplysningerBekreftet = true;
+    const errorStatus = validerInntektsmelding(opplysningerBekreftet);
 
-  if (fravaersperioder) {
-    const perioder = fravaersperioder.concat(egenmeldingsperioder);
-    bestemmendeFravaersdag = format(parseISO(finnBestemmendeFravaersdag(perioder) as unknown as string), 'dd.MM.yyyy');
-    arbeidsgiverperioder = finnArbeidsgiverperiode(perioder);
-  }
+    if (!(errorStatus.errorTexts && errorStatus.errorTexts.length > 0)) {
+      router.push('/oppsummering');
+      const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
+      skjemaData.bestemmendeFraværsdag = formatIsoDate(bestemmendeFravaersdagDate);
+      skjemaData.arbeidsgiverperioder = arbeidsgiverperioder!.map((periode) => ({
+        fom: formatIsoDate(periode.fom),
+        tom: formatIsoDate(periode.tom)
+      }));
+      fyllFeilmeldinger([]);
+      const postData = async () => {
+        const data = await fetch(INNSENDING_URL, {
+          method: 'POST',
+          body: JSON.stringify(skjemaData),
+          headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        });
+        console.log(data); // eslint-disable-line
+        if (data.status === 201) {
+          router.push('/kvittering');
+        }
+      };
+      postData();
+    } else {
+      fyllFeilmeldinger(errorStatus.errorTexts);
+    }
+  };
+
+  useEffect(() => {
+    if (fravaersperioder) {
+      const perioder = fravaersperioder.concat(egenmeldingsperioder);
+      setbestemmendeFravaersdagDate(parseISO(finnBestemmendeFravaersdag(perioder) as unknown as string));
+      setArbeidsgiverperioder(finnArbeidsgiverperiode(perioder));
+    }
+  }, [fravaersperioder, egenmeldingsperioder]);
 
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
+  };
+
+  const onUpdatePeriodeModal = (data: EndrePeriodeRespons) => {
+    setModalOpen(false);
+    setbestemmendeFravaersdagDate(data.bestemmendFraværsdag);
+    setArbeidsgiverperioder(data.arbeidsgiverperioder);
   };
 
   return (
@@ -67,7 +123,7 @@ const Kvittering: NextPage = () => {
       </Head>
       <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
       <div>
-        <PageContent title='Kvittering - innsendt inntektsmelding'>
+        <PageContent title='Oppsummering - innsendt inntektsmelding'>
           <main className={`main-content ${styles.padded}`}>
             <Person />
 
@@ -103,7 +159,7 @@ const Kvittering: NextPage = () => {
                     <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                     <div className={lokalStyles.fravaerwrapper}>
                       <div className={lokalStyles.fravaertid}>Dato</div>
-                      <div>{bestemmendeFravaersdag} </div>
+                      <div>{formatDate(bestemmendeFravaersdagDate)} </div>
                     </div>
                   </div>
                   <div className={lokalStyles.arbeidsgiverperiode}>
@@ -117,7 +173,7 @@ const Kvittering: NextPage = () => {
                         <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={index} />
                       ))}
                     <div className={lokalStyles.endrewrapper}>
-                      <ButtonEndre onClick={() => alert('Du har trykket endre!')} />
+                      <ButtonEndre onClick={() => setModalOpen(true)} />
                       <BodyLong>
                         *Hvis du mener at bestemmende fraværsdag eller arbeidsgiverperioden er feil er det mulig å
                         korrigere.
@@ -149,7 +205,7 @@ const Kvittering: NextPage = () => {
                 <Button variant='secondary' onClick={clickEndre}>
                   Tilbake
                 </Button>
-                <Button variant='primary' onClick={clickEndre}>
+                <Button variant='primary' onClick={sendSkjema}>
                   Send inn
                 </Button>
                 <Link className={lokalStyles.lukkelenke} href='/'>
@@ -160,8 +216,17 @@ const Kvittering: NextPage = () => {
           </main>
         </PageContent>
       </div>
+      {arbeidsgiverperioder && bestemmendeFravaersdagDate && (
+        <EndrePerioderModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          arbeidsgiverperioder={arbeidsgiverperioder}
+          bestemmendeFravaersdag={bestemmendeFravaersdagDate}
+          onUpdate={onUpdatePeriodeModal}
+        />
+      )}
     </div>
   );
 };
 
-export default Kvittering;
+export default Oppsummering;

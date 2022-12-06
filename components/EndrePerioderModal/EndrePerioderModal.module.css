@@ -1,0 +1,24 @@
+.datowrapper {
+  margin   : 1rem 0;
+  display  : flex;
+  flex-wrap: wrap;
+  gap      : 2rem;
+}
+
+.tekstomraade {
+  margin-bottom: 2rem;
+}
+
+.modalwrapper {
+  max-width: 65rem;
+  padding  : 4rem;
+}
+
+.sletteknapp {
+  margin-top: 2rem;
+}
+
+.legtilbutton {
+  min-width    : 12rem;
+  margin-bottom: 1rem;
+}
