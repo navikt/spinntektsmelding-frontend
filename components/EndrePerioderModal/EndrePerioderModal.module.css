@@ -16,9 +16,14 @@
 
 .sletteknapp {
   margin-top: 2rem;
+  align-self: baseline;
 }
 
 .legtilbutton {
   min-width    : 12rem;
   margin-bottom: 1rem;
+}
+
+.alertwrapper {
+  margin: .5rem 0;
 }

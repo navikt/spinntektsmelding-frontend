@@ -53,7 +53,7 @@ const handler = (
       onProxyInit: handleProxyInit,
       pathRewrite: [
         {
-          patternStr: '^/api/inntektsmelding',
+          patternStr: '^/api/preutfyll',
           replaceStr: ''
         }
       ]

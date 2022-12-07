@@ -8,7 +8,7 @@ import styles from '../../styles/Home.module.css';
 
 import Heading2 from '../../components/Heading2/Heading2';
 import Heading3 from '../../components/Heading3/Heading3';
-import { BodyLong, BodyShort, Button } from '@navikt/ds-react';
+import { BodyLong, BodyShort } from '@navikt/ds-react';
 import Person from '../../components/Person/Person';
 
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
@@ -23,10 +23,9 @@ import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/Lonn
 import useBoundStore from '../../state/useBoundStore';
 
 import ButtonPrint from '../../components/ButtonPrint';
-import finnBestemmendeFravaersdag, { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
-import { format, parseISO } from 'date-fns';
-import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
+
 import ButtonEndre from '../../components/ButtonEndre';
+import formatDate from '../../utils/formatDate';
 
 const Kvittering: NextPage = () => {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
@@ -40,20 +39,14 @@ const Kvittering: NextPage = () => {
 
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
+  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+
   const router = useRouter();
 
   const clickEndre = () => {
     router.push('/');
   };
-
-  let bestemmendeFravaersdag;
-  let arbeidsgiverperioder: Array<FravaersPeriode> | undefined = undefined;
-
-  if (fravaersperioder) {
-    const perioder = fravaersperioder.concat(egenmeldingsperioder);
-    bestemmendeFravaersdag = format(parseISO(finnBestemmendeFravaersdag(perioder) as unknown as string), 'dd.MM.yyyy');
-    arbeidsgiverperioder = finnArbeidsgiverperiode(perioder);
-  }
 
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
@@ -104,7 +97,7 @@ const Kvittering: NextPage = () => {
                     <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                     <div className={lokalStyles.fravaerwrapper}>
                       <div className={lokalStyles.fravaertid}>Dato</div>
-                      <div>{bestemmendeFravaersdag} </div>
+                      <div>{formatDate(bestemmendeFravaersdag)} </div>
                     </div>
                   </div>
                   <div className={lokalStyles.arbeidsgiverperiode}>

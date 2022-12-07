@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 interface BestemmendeFravaersdagProps {
   defaultDate: Date;
   onChangeDate: (newDate: Date | undefined) => void;
+  hasError: boolean;
 }
 
 export default function BestemmendeFravaersdag(props: BestemmendeFravaersdagProps) {
@@ -12,7 +13,7 @@ export default function BestemmendeFravaersdag(props: BestemmendeFravaersdagProp
   };
 
   const { datepickerProps, inputProps, setSelected } = UNSAFE_useDatepicker({
-    toDate: props.defaultDate,
+    toDate: new Date(),
     onDateChange: setOpphoersdato
   });
 
@@ -23,7 +24,12 @@ export default function BestemmendeFravaersdag(props: BestemmendeFravaersdagProp
 
   return (
     <UNSAFE_DatePicker {...datepickerProps}>
-      <UNSAFE_DatePicker.Input {...inputProps} label='Bestemmende fraværsdag' id={'epm-bestemmende-fravaersdag'} />
+      <UNSAFE_DatePicker.Input
+        {...inputProps}
+        label='Bestemmende fraværsdag'
+        id={'epm-bestemmende-fravaersdag'}
+        error={props.hasError && 'Feltet er obligatorisk.'}
+      />
     </UNSAFE_DatePicker>
   );
 }

@@ -1,5 +1,5 @@
 import { Alert, BodyLong, Button, Heading, Modal, Textarea } from '@navikt/ds-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Arbeidsgiverperiode from './Arbeidsgiverperiode';
 import BestemmendeFravaersdag from './BestemmendeFravaersdag';
 import { DateRange } from 'react-day-picker';
@@ -18,8 +18,13 @@ interface EndrePerioderModalProps {
 
 export interface EndrePeriodeRespons {
   bestemmendFraværsdag: Date;
-  arbeidsgiverperioder: Array<FravaersPeriode | undefined>;
+  arbeidsgiverperioder?: Array<FravaersPeriode>;
   begrunnelse: string;
+}
+
+export interface ValideringsfeilArbeidsgiverperiode {
+  fom: boolean;
+  tom: boolean;
 }
 
 export default function EndrePerioderModal(props: EndrePerioderModalProps) {
@@ -33,8 +38,27 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
 
   const [visAlertBestemmende, setVisAlertBestemmende] = useState<boolean>(false);
 
+  const [visValideringBegrunnelse, setValideringBegrunnelse] = useState<boolean>(false);
+  const [visValideringBestemmendeFravaersdag, setValideringBestemmendeFravaersdag] = useState<boolean>(false);
+  const [visValideringArbeidsgiverperiode, setValideringArbeidsgiverperiode] =
+    useState<Array<ValideringsfeilArbeidsgiverperiode>>();
+
+  const validerArbeidsgiverperiode = (
+    arbeidsgiverperioder: Array<FravaersPeriode>
+  ): Array<ValideringsfeilArbeidsgiverperiode> => {
+    const feil = arbeidsgiverperioder.map((periode) => ({
+      fom: !periode.fom,
+      tom: !periode.tom
+    }));
+
+    return feil;
+  };
+
   const oppdatertBestemmendeFravaersdag = (dato: Date | undefined) => {
     setBestemmendeFravaersdag(dato!);
+    if (bestemmendeFravaersdag) {
+      setValideringBestemmendeFravaersdag(false);
+    }
   };
 
   const rangeChangeHandler = (periode: DateRange | undefined, periodeIndex: number) => {
@@ -48,22 +72,49 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
       setArbeidsgiverperioder(aperioder);
 
       const bestemmende = finnBestemmendeFravaersdag(aperioder as unknown as Array<MottattPeriode>);
-      if (bestemmende !== formatIsoDate(bestemmendeFravaersdag)) {
+      if (bestemmendeFravaersdag && bestemmende !== formatIsoDate(bestemmendeFravaersdag)) {
         setVisAlertBestemmende(true);
       } else {
         setVisAlertBestemmende(false);
       }
     }
+
+    setValideringArbeidsgiverperiode(validerArbeidsgiverperiode(aperioder));
   };
 
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(bestemmendeFravaersdag);
-    props.onUpdate({
-      bestemmendFraværsdag: bestemmendeFravaersdag,
-      arbeidsgiverperioder: arbeidsgiverperioder,
-      begrunnelse: begrunnelse!
-    });
+    debugger;
+    let valideringsfeilBF = false;
+    if (!bestemmendeFravaersdag) {
+      setValideringBestemmendeFravaersdag(true);
+      valideringsfeilBF = true;
+    } else {
+      setValideringBestemmendeFravaersdag(false);
+    }
+
+    let valideringsfeilAP = validerArbeidsgiverperiode(arbeidsgiverperioder);
+    setValideringArbeidsgiverperiode(valideringsfeilAP);
+
+    let valideringsfeilBegrunnelse = false;
+    if (!begrunnelse || begrunnelse.length < 1) {
+      setValideringBegrunnelse(true);
+      valideringsfeilBegrunnelse = true;
+    } else {
+      setValideringBegrunnelse(false);
+    }
+
+    if (
+      !valideringsfeilBegrunnelse &&
+      !valideringsfeilBF &&
+      !valideringsfeilAP?.reduce((prev, current) => prev || current.fom || current.tom, false)
+    ) {
+      props.onUpdate({
+        bestemmendFraværsdag: bestemmendeFravaersdag,
+        arbeidsgiverperioder: arbeidsgiverperioder,
+        begrunnelse: begrunnelse!
+      });
+    }
   };
 
   const handleSlettArbeidsgiverperiode = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
@@ -78,6 +129,14 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
     const aperioder = structuredClone(arbeidsgiverperioder);
     aperioder.push(undefined);
     setArbeidsgiverperioder(aperioder);
+  };
+
+  const handleChangeBegrunnelse = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const nyVerdi = event.target.value;
+    setBegrunnelse(nyVerdi);
+    if (nyVerdi && nyVerdi.length > 0) {
+      setValideringBegrunnelse(false);
+    }
   };
 
   return (
@@ -99,14 +158,17 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
           </BodyLong>
 
           <BestemmendeFravaersdag
-            defaultDate={props.bestemmendeFravaersdag}
+            defaultDate={bestemmendeFravaersdag}
             onChangeDate={oppdatertBestemmendeFravaersdag}
+            hasError={visValideringBestemmendeFravaersdag}
           />
           {visAlertBestemmende && (
-            <Alert variant='warning'>
-              Det kan se ut som om bestemmende fraværsdag ikke stemmer med arbeidsgiverperioden. Vennligs se over før du
-              sender inn.
-            </Alert>
+            <div className={localStyles.alertwrapper}>
+              <Alert variant='warning'>
+                Det kan se ut som om bestemmende fraværsdag ikke stemmer overens med arbeidsgiverperioden. Dette trenger
+                ikke å bety at den ikke er korrekt. Vennligst kontoller før du sender inn.
+              </Alert>
+            </div>
           )}
           {arbeidsgiverperioder.map((periode, index) => (
             <Arbeidsgiverperiode
@@ -115,6 +177,7 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
               rangeChangeHandler={rangeChangeHandler}
               periodeIndex={index}
               onDelete={(event) => handleSlettArbeidsgiverperiode(event, index)}
+              hasError={visValideringArbeidsgiverperiode}
             />
           ))}
           <Button
@@ -127,7 +190,9 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
           <Textarea
             className={localStyles.tekstomraade}
             label='Forklaring til endring'
-            onChange={(event) => setBegrunnelse(event.target.value)}
+            onChange={handleChangeBegrunnelse}
+            error={visValideringBegrunnelse && 'Feltet er obligatorisk.'}
+            defaultValue={begrunnelse}
           />
           <Button>Bekreft</Button>
         </form>

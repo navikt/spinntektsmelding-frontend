@@ -22,7 +22,7 @@ import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/Lonn
 
 import useBoundStore from '../../state/useBoundStore';
 
-import finnBestemmendeFravaersdag, { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
+import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import { parseISO } from 'date-fns';
 import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
 import ButtonEndre from '../../components/ButtonEndre';
@@ -50,9 +50,15 @@ const Oppsummering: NextPage = () => {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [arbeidsgiverperioder, setArbeidsgiverperioder] = useState<Array<FravaersPeriode> | undefined>(undefined);
-  const [bestemmendeFravaersdagDate, setbestemmendeFravaersdagDate] = useState<Date | undefined>(undefined);
-
+  const [arbeidsgiverperioder, setArbeidsgiverperioder] = useBoundStore((state) => [
+    state.arbeidsgiverperioder,
+    state.setArbeidsgiverperioder
+  ]);
+  const [bestemmendeFravaersdag, setBestemmendeFravaersdag] = useBoundStore((state) => [
+    state.bestemmendeFravaersdag,
+    state.setBestemmendeFravaersdag
+  ]);
+  const setEndringsbegrunnelse = useBoundStore((state) => state.setEndringsbegrunnelse);
   const validerInntektsmelding = useValiderInntektsmelding();
   const fyllInnsending = useFyllInnsending();
 
@@ -70,7 +76,7 @@ const Oppsummering: NextPage = () => {
     if (!(errorStatus.errorTexts && errorStatus.errorTexts.length > 0)) {
       router.push('/oppsummering');
       const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
-      skjemaData.bestemmendeFraværsdag = formatIsoDate(bestemmendeFravaersdagDate);
+      skjemaData.bestemmendeFraværsdag = formatIsoDate(bestemmendeFravaersdag);
       skjemaData.arbeidsgiverperioder = arbeidsgiverperioder!.map((periode) => ({
         fom: formatIsoDate(periode.fom),
         tom: formatIsoDate(periode.tom)
@@ -99,9 +105,10 @@ const Oppsummering: NextPage = () => {
   useEffect(() => {
     if (fravaersperioder) {
       const perioder = fravaersperioder.concat(egenmeldingsperioder);
-      setbestemmendeFravaersdagDate(parseISO(finnBestemmendeFravaersdag(perioder) as unknown as string));
+      setBestemmendeFravaersdag(parseISO(finnBestemmendeFravaersdag(perioder) as unknown as string));
       setArbeidsgiverperioder(finnArbeidsgiverperiode(perioder));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fravaersperioder, egenmeldingsperioder]);
 
   const harAktiveEgenmeldingsperioder = () => {
@@ -109,9 +116,11 @@ const Oppsummering: NextPage = () => {
   };
 
   const onUpdatePeriodeModal = (data: EndrePeriodeRespons) => {
+    debugger;
     setModalOpen(false);
-    setbestemmendeFravaersdagDate(data.bestemmendFraværsdag);
+    setBestemmendeFravaersdag(data.bestemmendFraværsdag);
     setArbeidsgiverperioder(data.arbeidsgiverperioder);
+    setEndringsbegrunnelse(data.begrunnelse);
   };
 
   return (
@@ -159,7 +168,7 @@ const Oppsummering: NextPage = () => {
                     <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                     <div className={lokalStyles.fravaerwrapper}>
                       <div className={lokalStyles.fravaertid}>Dato</div>
-                      <div>{formatDate(bestemmendeFravaersdagDate)} </div>
+                      <div>{formatDate(bestemmendeFravaersdag)} </div>
                     </div>
                   </div>
                   <div className={lokalStyles.arbeidsgiverperiode}>
@@ -216,12 +225,12 @@ const Oppsummering: NextPage = () => {
           </main>
         </PageContent>
       </div>
-      {arbeidsgiverperioder && bestemmendeFravaersdagDate && (
+      {arbeidsgiverperioder && bestemmendeFravaersdag && (
         <EndrePerioderModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           arbeidsgiverperioder={arbeidsgiverperioder}
-          bestemmendeFravaersdag={bestemmendeFravaersdagDate}
+          bestemmendeFravaersdag={bestemmendeFravaersdag}
           onUpdate={onUpdatePeriodeModal}
         />
       )}

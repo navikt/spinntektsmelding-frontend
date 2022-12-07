@@ -36,7 +36,7 @@ import useFetchInntektskjema from '../state/useFetchInntektskjema';
 import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
-const SKJEMADATA_URL = '/im-dialog/api/inntektsmelding';
+const SKJEMADATA_URL = '/im-dialog/api/preutfyll';
 // const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 
 const Home: NextPage = () => {
