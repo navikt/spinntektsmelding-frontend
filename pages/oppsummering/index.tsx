@@ -116,7 +116,6 @@ const Oppsummering: NextPage = () => {
   };
 
   const onUpdatePeriodeModal = (data: EndrePeriodeRespons) => {
-    debugger;
     setModalOpen(false);
     setBestemmendeFravaersdag(data.bestemmendFraværsdag);
     setArbeidsgiverperioder(data.arbeidsgiverperioder);

@@ -84,7 +84,7 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
 
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    debugger;
+
     let valideringsfeilBF = false;
     if (!bestemmendeFravaersdag) {
       setValideringBestemmendeFravaersdag(true);
