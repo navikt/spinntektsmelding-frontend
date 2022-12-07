@@ -2,67 +2,67 @@ import { MottatArbeidsgiver } from '../state/MottattData';
 
 const testOrganisasjoner: MottatArbeidsgiver[] = [
   {
-    name: 'ANSTENDIG BJØRN KOMMUNE',
-    type: 'Enterprise',
-    parentOrganizationNumber: null,
-    organizationForm: 'KOMM',
-    organizationNumber: '810007672',
-    socialSecurityNumber: null,
-    status: 'Active'
+    Name: 'ANSTENDIG BJØRN KOMMUNE',
+    Type: 'Enterprise',
+    ParentOrganizationNumber: null,
+    OrganizationForm: 'KOMM',
+    OrganizationNumber: '810007672',
+    SocialSecurityNumber: null,
+    Status: 'Active'
   },
   {
-    name: 'ANSTENDIG PIGGSVIN BRANNVESEN',
-    type: 'Business',
-    parentOrganizationNumber: '810007702',
-    organizationForm: 'BEDR',
-    organizationNumber: '810008032',
-    socialSecurityNumber: null,
-    status: 'Active'
+    Name: 'ANSTENDIG PIGGSVIN BRANNVESEN',
+    Type: 'Business',
+    ParentOrganizationNumber: '810007702',
+    OrganizationForm: 'BEDR',
+    OrganizationNumber: '810008032',
+    SocialSecurityNumber: null,
+    Status: 'Active'
   },
   {
-    name: 'ANSTENDIG PIGGSVIN BARNEHAGE',
-    type: 'Business',
-    parentOrganizationNumber: '810007702',
-    organizationForm: 'BEDR',
-    organizationNumber: '810007842',
-    socialSecurityNumber: null,
-    status: 'Active'
+    Name: 'ANSTENDIG PIGGSVIN BARNEHAGE',
+    Type: 'Business',
+    ParentOrganizationNumber: '810007702',
+    OrganizationForm: 'BEDR',
+    OrganizationNumber: '810007842',
+    SocialSecurityNumber: null,
+    Status: 'Active'
   },
   {
-    name: 'ANSTENDIG PIGGSVIN BYDEL',
-    type: 'Enterprise',
-    parentOrganizationNumber: null,
-    organizationForm: 'ORGL',
-    organizationNumber: '810007702',
-    socialSecurityNumber: null,
-    status: 'Active'
+    Name: 'ANSTENDIG PIGGSVIN BYDEL',
+    Type: 'Enterprise',
+    ParentOrganizationNumber: null,
+    OrganizationForm: 'ORGL',
+    OrganizationNumber: '810007702',
+    SocialSecurityNumber: null,
+    Status: 'Active'
   },
   {
-    name: 'ANSTENDIG PIGGSVIN SYKEHJEM',
-    type: 'Business',
-    parentOrganizationNumber: '810007702',
-    organizationForm: 'BEDR',
-    organizationNumber: '810007982',
-    socialSecurityNumber: null,
-    status: 'Active'
+    Name: 'ANSTENDIG PIGGSVIN SYKEHJEM',
+    Type: 'Business',
+    ParentOrganizationNumber: '810007702',
+    OrganizationForm: 'BEDR',
+    OrganizationNumber: '810007982',
+    SocialSecurityNumber: null,
+    Status: 'Active'
   },
   {
-    name: 'SKOPPUM OG SANDØY',
-    type: 'Business',
-    parentOrganizationNumber: null,
-    organizationForm: 'BEDR',
-    organizationNumber: '911206722',
-    socialSecurityNumber: null,
-    status: 'Active'
+    Name: 'SKOPPUM OG SANDØY',
+    Type: 'Business',
+    ParentOrganizationNumber: null,
+    OrganizationForm: 'BEDR',
+    OrganizationNumber: '911206722',
+    SocialSecurityNumber: null,
+    Status: 'Active'
   },
   {
-    name: 'SKJERSTAD OG KJØRSVIKBUGEN',
-    type: 'Enterprise',
-    parentOrganizationNumber: null,
-    organizationForm: 'AS',
-    organizationNumber: '911212218',
-    socialSecurityNumber: null,
-    status: 'Active'
+    Name: 'SKJERSTAD OG KJØRSVIKBUGEN',
+    Type: 'Enterprise',
+    ParentOrganizationNumber: null,
+    OrganizationForm: 'AS',
+    OrganizationNumber: '911212218',
+    SocialSecurityNumber: null,
+    Status: 'Active'
   }
 ];
 export default testOrganisasjoner;
