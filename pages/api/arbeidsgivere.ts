@@ -37,10 +37,7 @@ export const config = {
   }
 };
 
-const handler = (
-  req: NextApiRequest,
-  res: NextApiResponse<Data> //res.status(200).json(org);
-) => {
+const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
     return res.status(200).json(org);

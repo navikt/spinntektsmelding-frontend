@@ -3,11 +3,6 @@
   flex-direction: column;
 }
 
-/* .ytreansattwrapper {
-  display: flex;
-  gap    : 2rem;
-} */
-
 .fravaerwrapper {
   width     : 50%;
   display   : inline-block;
@@ -35,12 +30,6 @@
   display       : flex;
   flex-direction: column;
 }
-
-/* .fravaerstyper {
-  font-weight: 400;
-  font-size  : 20px;
-  line-height: 25px;
-} */
 
 .buttonwrapper {
   margin-top     : 2rem;
@@ -102,7 +91,6 @@
   height : fit-content;
 }
 
-.personinfowrapper,
 .arbeidsgiverwrapper,
 .ytreansattwrapper,
 .personinfowrapper,

@@ -1,10 +1,3 @@
-// import { BruttoinntektFeilkode } from '../validators/validerBruttoinntekt';
-// import { FullLonnIArbeidsgiverPerioden } from '../validators/validerFullLonnIArbeidsgiverPerioden';
-// import { FullLonnISykefravaeret } from '../validators/validerLonnISykefravaeret';
-// import { NaturalytelserFeilkoder } from '../validators/validerNaturalytelser';
-// import { PeriodeFeilkode } from '../validators/validerPeriode';
-// import { ErrorCodes } from './submitInntektsmelding';
-
 const feiltekster = {
   INGEN_ARBEIDSFORHOLD: 'Mangler arbeidsforhold.',
   INGEN_FRAVAERSPERIODER: 'Mangler fraværsperiode.',

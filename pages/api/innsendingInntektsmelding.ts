@@ -39,10 +39,7 @@ export const config = {
   }
 };
 
-const handler = (
-  req: NextApiRequest,
-  res: NextApiResponse<Data> //res.status(200).json(org);
-) => {
+const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
     const innsendteData = req.body;
@@ -60,16 +57,5 @@ const handler = (
     });
   }
 };
-
-// httpProxyMiddleware(req, res, {
-//   target: basePath,
-//   onProxyInit: handleProxyInit,
-//   pathRewrite: [
-//     {
-//       patternStr: '^/api/innsendingInntektsmelding',
-//       replaceStr: ''
-//     }
-//   ]
-// });
 
 export default handler;

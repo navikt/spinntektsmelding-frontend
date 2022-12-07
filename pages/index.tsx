@@ -26,7 +26,6 @@ import useBoundStore from '../state/useBoundStore';
 import Naturalytelser from '../components/Naturalytelser';
 import Person from '../components/Person/Person';
 import useStateInit from '../state/useStateInit';
-// import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
@@ -37,7 +36,6 @@ import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/preutfyll';
-// const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 
 const Home: NextPage = () => {
   const setRoute = useRoute();
@@ -62,7 +60,6 @@ const Home: NextPage = () => {
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
   const initState = useStateInit();
-  // const fyllInnsending = useFyllInnsending();
 
   const hentSkjemadata = useFetchInntektskjema('');
 
