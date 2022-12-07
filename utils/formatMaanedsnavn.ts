@@ -17,6 +17,10 @@ const maanedsnavn = [
 const formatMaanedsnavn = (maaned: string): string => {
   const maanedParts = maaned.split('-');
 
+  const maaneden = maanedsnavn[Number(maanedParts[1])];
+
+  if (maaneden === undefined) return '';
+
   return maanedsnavn[Number(maanedParts[1])];
 };
 

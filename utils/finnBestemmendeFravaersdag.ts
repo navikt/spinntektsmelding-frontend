@@ -25,7 +25,7 @@ export const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode
     return ene;
   }
 
-  if (differenceInBusinessDays(andre.fom, ene.tom) <= 0) {
+  if (differenceInBusinessDays(andre.fom, ene.tom) <= 1) {
     const obj: FravaersPeriode = {
       fom: ene.fom,
       tom: andre.tom
