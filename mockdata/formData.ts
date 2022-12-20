@@ -138,18 +138,18 @@ const formData = {
   bruttoinntekt: 77000,
   fravaersperioder: [
     {
-      fom: format(subDays(new Date(), 11), 'yyyy-MM-dd'),
-      tom: format(subDays(new Date(), 6), 'yyyy-MM-dd')
+      fom: format(subDays(new Date(), 14), 'yyyy-MM-dd'),
+      tom: format(subDays(new Date(), 3), 'yyyy-MM-dd')
     },
     {
-      fom: format(subDays(new Date(), 3), 'yyyy-MM-dd'),
-      tom: format(subDays(new Date(), 1), 'yyyy-MM-dd')
+      fom: format(subDays(new Date(), 1), 'yyyy-MM-dd'),
+      tom: format(subDays(new Date(), 0), 'yyyy-MM-dd')
     }
   ],
   egenmeldingsperioder: [
     {
-      fom: format(subDays(new Date(), 14), 'yyyy-MM-dd'),
-      tom: format(subDays(new Date(), 11), 'yyyy-MM-dd')
+      fom: format(subDays(new Date(), 18), 'yyyy-MM-dd'),
+      tom: format(subDays(new Date(), 15), 'yyyy-MM-dd')
     }
   ],
   tidligereinntekter: [

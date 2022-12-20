@@ -1,6 +1,24 @@
-import { parseISO } from 'date-fns';
+import { addDays, compareAsc, differenceInCalendarDays, parseISO } from 'date-fns';
 import { Periode } from '../state/state';
 import { FravaersPeriode, overlappendePeriode, tilstoetendePeriode } from './finnBestemmendeFravaersdag';
+
+const finn16dager = (perioder: Array<FravaersPeriode>) => {
+  let dagerTotalt = 0;
+  const arbPeriode: Array<FravaersPeriode> = [];
+  perioder.forEach((periode) => {
+    if (dagerTotalt < 15) {
+      const dagerTilNaa = differenceInCalendarDays(periode.tom, periode.fom) + dagerTotalt;
+      if (dagerTilNaa < 15) {
+        arbPeriode.push(periode);
+      } else {
+        arbPeriode.push({ fom: periode.fom, tom: addDays(periode.fom, 15 - dagerTotalt) });
+      }
+      return;
+    }
+    return arbPeriode;
+  });
+  return arbPeriode;
+};
 
 const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<FravaersPeriode> => {
   const aktivePerioder = fravaersperioder
@@ -15,8 +33,7 @@ const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<Fravae
     }));
 
   const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
-    if (a.fom > b.fom) return 1;
-    return -1;
+    return compareAsc(a.fom, b.fom);
   });
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
@@ -44,7 +61,7 @@ const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<Fravae
     }
   });
 
-  return tilstotendeSykemeldingsperioder;
+  return finn16dager(tilstotendeSykemeldingsperioder);
 };
 
 export default finnArbeidsgiverperiode;

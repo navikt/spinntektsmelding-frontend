@@ -10,6 +10,7 @@ import TextLabel from '../TextLabel/TextLabel';
 import TidligereInntekt from './TidligereInntekt';
 import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonEndre from '../ButtonEndre';
+import formatDate from '../../utils/formatDate';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -27,6 +28,7 @@ export default function Bruttoinntekt() {
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
+  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
 
   if (tidligereinntekt) {
     return (
@@ -34,7 +36,9 @@ export default function Bruttoinntekt() {
         <Heading3>Brutto månedslønn</Heading3>
         <BodyLong>For å beregne månedslønnen har vi brukt følgende lønnsopplysninger fra A-meldingen:</BodyLong>
         <TidligereInntekt tidligereinntekt={tidligereinntekt} />
-        <TextLabel className={styles.tbmargin}>Vi har derfor beregnet månedslønnen til</TextLabel>
+        <TextLabel className={styles.tbmargin}>
+          Vi har derfor beregnet månedslønnen per {formatDate(bestemmendeFravaersdag)} til
+        </TextLabel>
         <div className={lokalStyles.belopwrapper}>
           {!endreMaanedsinntekt && (
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>

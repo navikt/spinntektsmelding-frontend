@@ -1,7 +1,7 @@
-import { differenceInBusinessDays, formatISO9075, parseISO } from 'date-fns';
+import { compareAsc, formatISO9075, parseISO } from 'date-fns';
 import { MottattPeriode } from '../state/MottattData';
 import { Periode } from '../state/state';
-
+import differenceInBusinessDays from './differenceInBusinessDays';
 export interface FravaersPeriode {
   fom: Date;
   tom: Date;
@@ -24,8 +24,11 @@ export const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode
   if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
   }
-
-  if (differenceInBusinessDays(andre.fom, ene.tom) <= 1) {
+  console.log('differenceInBusinessDays', differenceInBusinessDays(andre.fom, ene.tom), andre.fom, ene.tom, {
+    includeStartDate: false,
+    includeEndDate: false
+  });
+  if (differenceInBusinessDays(andre.fom, ene.tom, { includeStartDate: false, includeEndDate: false }) <= 0) {
     const obj: FravaersPeriode = {
       fom: ene.fom,
       tom: andre.tom
@@ -63,8 +66,7 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Ar
     });
 
   const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
-    if (a.fom > b.fom) return 1;
-    return -1;
+    return compareAsc(a.fom, b.fom);
   });
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];

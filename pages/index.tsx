@@ -33,9 +33,13 @@ import dataFetcherArbeidsgivere from '../utils/dataFetcherArbeidsgivere';
 import useLoginRedirectPath from '../utils/useLoginRedirectPath';
 import useFetchInntektskjema from '../state/useFetchInntektskjema';
 import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
+import EndrePerioderModal, { EndrePeriodeRespons } from '../components/EndrePerioderModal/EndrePerioderModal';
+import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
+import formatIsoDate from '../utils/formatIsoDate';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/preutfyll';
+const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 
 const Home: NextPage = () => {
   const setRoute = useRoute();
@@ -57,6 +61,18 @@ const Home: NextPage = () => {
     state.leggTilFeilmelding
   ]);
 
+  const [bestemmendeFravaersdag, setBestemmendeFravaersdag] = useBoundStore((state) => [
+    state.bestemmendeFravaersdag,
+    state.setBestemmendeFravaersdag
+  ]);
+
+  const [arbeidsgiverperioder, setArbeidsgiverperioder] = useBoundStore((state) => [
+    state.arbeidsgiverperioder,
+    state.setArbeidsgiverperioder
+  ]);
+
+  const setEndringsbegrunnelse = useBoundStore((state) => state.setEndringsbegrunnelse);
+
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
   const initState = useStateInit();
@@ -64,6 +80,8 @@ const Home: NextPage = () => {
   const hentSkjemadata = useFetchInntektskjema('');
 
   const validerInntektsmelding = useValiderInntektsmelding();
+
+  const fyllInnsending = useFyllInnsending();
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
@@ -73,7 +91,33 @@ const Home: NextPage = () => {
     if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
       fyllFeilmeldinger(errorStatus.errorTexts);
     } else {
-      router.push('/oppsummering');
+      // router.push('/oppsummering');
+      const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
+      skjemaData.bestemmendeFraværsdag = formatIsoDate(bestemmendeFravaersdag);
+      skjemaData.arbeidsgiverperioder = arbeidsgiverperioder!.map((periode) => ({
+        fom: formatIsoDate(periode.fom),
+        tom: formatIsoDate(periode.tom)
+      }));
+      fyllFeilmeldinger([]);
+      const postData = async () => {
+        const data = await fetch(INNSENDING_URL, {
+          method: 'POST',
+          body: JSON.stringify(skjemaData),
+          headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        });
+        console.log(data); // eslint-disable-line
+        if (data.status === 201) {
+          router.push('/kvittering');
+        }
+      };
+      postData();
+
+      // } else {
+      //   fyllFeilmeldinger(errorStatus.errorTexts);
+      // }
     }
   };
 
@@ -84,6 +128,13 @@ const Home: NextPage = () => {
     } else {
       leggTilFeilmelding('bekreft-opplysninger', feiltekster.BEKREFT_OPPLYSNINGER);
     }
+  };
+
+  const onUpdatePeriodeModal = (data: EndrePeriodeRespons) => {
+    setModalOpen(false);
+    setBestemmendeFravaersdag(data.bestemmendFraværsdag);
+    setArbeidsgiverperioder(data.arbeidsgiverperioder);
+    setEndringsbegrunnelse(data.begrunnelse);
   };
 
   useEffect(() => {
@@ -122,6 +173,12 @@ const Home: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -150,7 +207,7 @@ const Home: NextPage = () => {
               )}
 
               <Skillelinje />
-              <Fravaersperiode />
+              <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} setModalOpen={openModal} />
 
               <Skillelinje />
 
@@ -181,6 +238,15 @@ const Home: NextPage = () => {
         <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
         <Script type='text/javascript' src='https://www.nav.no/dekoratoren/client.js'></Script>
       </main>
+      {modalOpen && (
+        <EndrePerioderModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          arbeidsgiverperioder={arbeidsgiverperioder || []}
+          bestemmendeFravaersdag={bestemmendeFravaersdag || new Date()}
+          onUpdate={onUpdatePeriodeModal}
+        />
+      )}
     </div>
   );
 };

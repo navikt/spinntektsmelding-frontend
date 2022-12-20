@@ -30,7 +30,7 @@ export interface ValideringsfeilArbeidsgiverperiode {
 export default function EndrePerioderModal(props: EndrePerioderModalProps) {
   useEffect(() => {
     Modal.setAppElement('#__next');
-  }, []);
+  });
 
   const [bestemmendeFravaersdag, setBestemmendeFravaersdag] = useState<Date>(props.bestemmendeFravaersdag);
   const [begrunnelse, setBegrunnelse] = useState<string | undefined>();

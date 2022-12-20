@@ -9,10 +9,14 @@ import { Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import EnkeltArbeidsforholdPeriode from './EnkeltArbeidsforholdPeriode';
 import ButtonEndre from '../ButtonEndre';
+import { Periode } from '../../state/state';
 
-export default function FravaerEnkeltAnsattforhold() {
+interface FravaerEnkeltAnsattforholdProps {
+  fravaersperioder: Array<Periode>;
+}
+
+export default function FravaerEnkeltAnsattforhold({ fravaersperioder }: FravaerEnkeltAnsattforholdProps) {
   const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
@@ -68,7 +72,7 @@ export default function FravaerEnkeltAnsattforhold() {
             )}
           </div>
         ))}
-      {!endreSykemelding && <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />}
+      {endreSykemelding && <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />}
       {endreSykemelding && (
         <div className={styles.endresykemeldingknapper}>
           <Button
