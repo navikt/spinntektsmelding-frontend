@@ -31,19 +31,21 @@ import Feilsammendrag from '../components/Feilsammendrag';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
 import dataFetcherArbeidsgivere from '../utils/dataFetcherArbeidsgivere';
 import useLoginRedirectPath from '../utils/useLoginRedirectPath';
-import useFetchInntektskjema from '../state/useFetchInntektskjema';
+import useFetchInntektskjemaForNotifikasjon from '../state/useFetchInntektskjemaForNotifikasjon';
 import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 import EndrePerioderModal, { EndrePeriodeRespons } from '../components/EndrePerioderModal/EndrePerioderModal';
 import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import formatIsoDate from '../utils/formatIsoDate';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
-const SKJEMADATA_URL = '/im-dialog/api/preutfyll';
+const SKJEMADATA_URL = '/im-dialog/api/trenger';
 const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 
 const Home: NextPage = () => {
   const setRoute = useRoute();
   const router = useRouter();
+  const slug = (router.query.slug as string[]) || [];
+  console.log(slug);
   const { data: arbeidsgivere, error } = useSWR<Array<Organisasjon>>(ARBEIDSGIVER_URL, dataFetcherArbeidsgivere);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -53,6 +55,11 @@ const Home: NextPage = () => {
   const orgnrUnderenhet = useBoundStore((state) => state.orgnrUnderenhet);
 
   const loginPath = useLoginRedirectPath();
+  const [pathSlug, setPathSlug] = useState<string>('');
+
+  useEffect(() => {
+    setPathSlug(slug[0]);
+  }, [slug[0]]);
 
   const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.fyllFeilmeldinger,
@@ -77,7 +84,7 @@ const Home: NextPage = () => {
 
   const initState = useStateInit();
 
-  const hentSkjemadata = useFetchInntektskjema('');
+  const hentSkjemadata = useFetchInntektskjemaForNotifikasjon('');
 
   const validerInntektsmelding = useValiderInntektsmelding();
 
@@ -141,13 +148,13 @@ const Home: NextPage = () => {
     const hentData = async () => {
       try {
         let skjemadata;
-        if (orgnrUnderenhet) {
-          skjemadata = await hentSkjemadata(SKJEMADATA_URL, '22506614191', orgnrUnderenhet);
+        if (pathSlug) {
+          skjemadata = await hentSkjemadata(SKJEMADATA_URL, pathSlug);
         }
         if (skjemadata) {
           initState(skjemadata);
 
-          setRoute(skjemadata.orgnrUnderenhet);
+          setRoute(skjemadata.orgnrUnderenhet, pathSlug);
         }
       } catch (error) {
         console.log('error', error); // eslint-disable-line
@@ -159,7 +166,7 @@ const Home: NextPage = () => {
       hentData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orgnrUnderenhet]);
+  }, [slug[0]]);
 
   useEffect(() => {
     console.log('error', error); // eslint-disable-line
@@ -227,7 +234,7 @@ const Home: NextPage = () => {
                 id='bekreft-opplysninger'
                 error={visFeilmeldingsTekst('bekreft-opplysninger')}
               >
-                NAV kan trekke tombake retten tom å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
+                NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
                 er riktige eller fullstendige.
               </ConfirmationPanel>
               <Feilsammendrag />
