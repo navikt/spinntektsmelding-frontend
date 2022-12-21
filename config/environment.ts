@@ -70,6 +70,20 @@ class Environment {
         return 'http://localhost:3000/not-in-use';
     }
   }
+
+  get inntektsmeldingUuidAPI() {
+    switch (this.environmentMode) {
+      case EnvironmentType.PROD:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/trenger';
+      case EnvironmentType.PREPROD_DEV:
+        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/trenger';
+      case EnvironmentType.TESTCAFE:
+        return 'http://localhost:3000/not-in-use';
+      default:
+        return 'http://localhost:3000/not-in-use';
+    }
+  }
+
   get baseUrl() {
     return '/im-dialog';
   }
