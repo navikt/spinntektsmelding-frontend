@@ -41,6 +41,5 @@ export interface MottatArbeidsgiver {
   orgnrHovedenhet?: string | null;
   orgForm: string;
   orgnr: string;
-  SocialSecurityNumber?: string | null;
   status: string;
 }

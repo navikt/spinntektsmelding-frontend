@@ -7,7 +7,6 @@ const testOrganisasjoner: MottatArbeidsgiver[] = [
     orgnrHovedenhet: null,
     orgForm: 'KOMM',
     orgnr: '810007672',
-    SocialSecurityNumber: null,
     status: 'Active'
   },
   {
@@ -16,7 +15,6 @@ const testOrganisasjoner: MottatArbeidsgiver[] = [
     orgnrHovedenhet: '810007702',
     orgForm: 'BEDR',
     orgnr: '810008032',
-    SocialSecurityNumber: null,
     status: 'Active'
   },
   {
@@ -25,7 +23,6 @@ const testOrganisasjoner: MottatArbeidsgiver[] = [
     orgnrHovedenhet: '810007702',
     orgForm: 'BEDR',
     orgnr: '810007842',
-    SocialSecurityNumber: null,
     status: 'Active'
   },
   {
@@ -34,7 +31,6 @@ const testOrganisasjoner: MottatArbeidsgiver[] = [
     orgnrHovedenhet: null,
     orgForm: 'ORGL',
     orgnr: '810007702',
-    SocialSecurityNumber: null,
     status: 'Active'
   },
   {
@@ -43,7 +39,6 @@ const testOrganisasjoner: MottatArbeidsgiver[] = [
     orgnrHovedenhet: '810007702',
     orgForm: 'BEDR',
     orgnr: '810007982',
-    SocialSecurityNumber: null,
     status: 'Active'
   },
   {
@@ -52,7 +47,6 @@ const testOrganisasjoner: MottatArbeidsgiver[] = [
     orgnrHovedenhet: null,
     orgForm: 'BEDR',
     orgnr: '911206722',
-    SocialSecurityNumber: null,
     status: 'Active'
   },
   {
@@ -61,7 +55,6 @@ const testOrganisasjoner: MottatArbeidsgiver[] = [
     orgnrHovedenhet: null,
     orgForm: 'AS',
     orgnr: '911212218',
-    SocialSecurityNumber: null,
     status: 'Active'
   }
 ];
