@@ -44,25 +44,21 @@ const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 const Home: NextPage = () => {
   const setRoute = useRoute();
   const router = useRouter();
-  const slug = (router.query.slug as string[]) || [];
-  console.log(slug);
+  const slug = (router.query.slug as string) || '';
+  const firstSlug = slug;
+  const [pathSlug, setPathSlug] = useState<string>(firstSlug);
+
+  useEffect(() => {
+    setPathSlug(firstSlug);
+  }, [firstSlug]);
+
   const { data: arbeidsgivere, error } = useSWR<Array<Organisasjon>>(ARBEIDSGIVER_URL, dataFetcherArbeidsgivere);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
   const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
 
-  const orgnrUnderenhet = useBoundStore((state) => state.orgnrUnderenhet);
-
   const loginPath = useLoginRedirectPath();
-
-  const [pathSlug, setPathSlug] = useState<string>(slug[0]);
-
-  const firstSlug = slug[0];
-
-  useEffect(() => {
-    setPathSlug(firstSlug);
-  }, [firstSlug]);
 
   const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.fyllFeilmeldinger,
@@ -101,7 +97,6 @@ const Home: NextPage = () => {
     if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
       fyllFeilmeldinger(errorStatus.errorTexts);
     } else {
-      // router.push('/oppsummering');
       const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
       skjemaData.bestemmendeFraværsdag = formatIsoDate(bestemmendeFravaersdag);
       skjemaData.arbeidsgiverperioder = arbeidsgiverperioder!.map((periode) => ({
@@ -115,7 +110,6 @@ const Home: NextPage = () => {
           body: JSON.stringify(skjemaData),
           headers: {
             'Content-Type': 'application/json'
-            // 'Content-Type': 'application/x-www-form-urlencoded',
           }
         });
         console.log(data); // eslint-disable-line
@@ -166,9 +160,8 @@ const Home: NextPage = () => {
         leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
       }
     };
-    // if (pathSlug) {
+
     hentData();
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
