@@ -149,6 +149,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const hentData = async () => {
+      console.log('henter data', pathSlug);
       try {
         let skjemadata;
         if (pathSlug) {
@@ -165,11 +166,11 @@ const Home: NextPage = () => {
         leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
       }
     };
-    if (orgnrUnderenhet) {
-      hentData();
-    }
+    // if (pathSlug) {
+    hentData();
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug[0]]);
+  }, [pathSlug]);
 
   useEffect(() => {
     console.log('error', error); // eslint-disable-line
