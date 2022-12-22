@@ -39,6 +39,6 @@ export default function useStateInit() {
 
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
 
-    getGrunnbeloep(bestemmendeFravaersdag);
+    // getGrunnbeloep(bestemmendeFravaersdag);
   };
 }
