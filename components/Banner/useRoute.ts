@@ -5,6 +5,7 @@ export default function useRoute() {
 
   return (organisasjonsnummer?: string, slug?: string) => {
     const sluggen = slug ? slug : '';
+    if (!slug) return;
     if (organisasjonsnummer) {
       router.push(`${sluggen}?bedrift=${organisasjonsnummer}`);
     } else {

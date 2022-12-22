@@ -18,6 +18,7 @@ interface Props {
   tittelMedUnderTittel: string | JSX.Element;
   altinnOrganisasjoner?: AltinnOrganisasjon[];
   onOrganisasjonChange?: any;
+  slug?: string;
 }
 
 const Banner: React.FunctionComponent<Props> = (props) => {
@@ -41,16 +42,17 @@ const Banner: React.FunctionComponent<Props> = (props) => {
     return [
       currentOrgnr,
       (orgnr: string) => {
-        if (currentOrgnr !== orgnr) {
+        if (currentOrgnr !== orgnr && props.slug) {
+          console.log('slug', props.slug);
           if (orgnr === null) {
-            push('');
+            push(props.slug || '');
           } else {
-            push(`?bedrift=${orgnr}`);
+            push(`${props.slug || ''}?bedrift=${orgnr}`);
           }
         }
       }
     ];
-  }, [push, query.bedrift]);
+  }, [push, query.bedrift, props.slug]);
 
   return (
     <div>

@@ -55,11 +55,14 @@ const Home: NextPage = () => {
   const orgnrUnderenhet = useBoundStore((state) => state.orgnrUnderenhet);
 
   const loginPath = useLoginRedirectPath();
-  const [pathSlug, setPathSlug] = useState<string>('');
+
+  const [pathSlug, setPathSlug] = useState<string>(slug[0]);
+
+  const firstSlug = slug[0];
 
   useEffect(() => {
-    setPathSlug(slug[0]);
-  }, [slug[0]]);
+    setPathSlug(firstSlug);
+  }, [firstSlug]);
 
   const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.fyllFeilmeldinger,
@@ -198,6 +201,7 @@ const Home: NextPage = () => {
           tittelMedUnderTittel={'Sykepenger'}
           altinnOrganisasjoner={arbeidsgivere}
           onOrganisasjonChange={setOrgUnderenhet}
+          slug={pathSlug}
         />
         <PageContent title='Inntektsmelding'>
           <main className='main-content'>
