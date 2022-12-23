@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { Button, ConfirmationPanel } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
-import Banner from '../components/Banner/Banner';
+// import Banner from '../components/Banner/Banner';
 import Skillelinje from '../components/Skillelinje/Skillelinje';
 
 import useSWR from 'swr';
@@ -36,6 +36,7 @@ import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 import EndrePerioderModal, { EndrePeriodeRespons } from '../components/EndrePerioderModal/EndrePerioderModal';
 import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import formatIsoDate from '../utils/formatIsoDate';
+import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/trenger';
@@ -56,7 +57,7 @@ const Home: NextPage = () => {
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
-  const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
+  // const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
 
   const loginPath = useLoginRedirectPath();
 
@@ -152,7 +153,7 @@ const Home: NextPage = () => {
         if (skjemadata) {
           initState(skjemadata);
 
-          setRoute(skjemadata.orgnrUnderenhet, pathSlug);
+          // setRoute(skjemadata.orgnrUnderenhet, pathSlug);
         }
       } catch (error) {
         console.log('error', error); // eslint-disable-line
@@ -191,12 +192,7 @@ const Home: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main role='main' id='maincontent' tabIndex={-1}>
-        <Banner
-          tittelMedUnderTittel={'Sykepenger'}
-          altinnOrganisasjoner={arbeidsgivere}
-          onOrganisasjonChange={setOrgUnderenhet}
-          slug={pathSlug}
-        />
+        <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
         <PageContent title='Inntektsmelding'>
           <main className='main-content'>
             <form className={styles.padded} onSubmit={submitForm}>

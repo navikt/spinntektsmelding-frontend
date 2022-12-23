@@ -8,7 +8,7 @@ interface Props {
 const BannerUtenVelger: React.FunctionComponent<Props> = (props) => {
   return (
     <div className='bedriftsmeny'>
-      <div className='bedriftsmeny__inner'>
+      <div className='bedriftsmeny__content'>
         <h1 className='typo-innholdstittel bedriftsmeny__tittel'>{props.tittelMedUnderTittel}</h1>
       </div>
     </div>
