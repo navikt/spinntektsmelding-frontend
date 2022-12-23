@@ -41,21 +41,21 @@ const usePersonStore: StateCreator<
   virksomhetsnavn: undefined,
   setNavn: (navn: string) => {
     set(
-      produce((state) => {
+      produce((state: PersonState) => {
         state.navn = navn;
       })
     );
   },
   setIdentitetsnummer: (identitetsnummer: string) => {
     set(
-      produce((state) => {
+      produce((state: PersonState) => {
         state.identitetsnummer = identitetsnummer;
       })
     );
   },
   setOrgUnderenhet: (organisasjon: Organisasjon) => {
     set(
-      produce((state) => {
+      produce((state: PersonState) => {
         state.orgnrUnderenhet = organisasjon.OrganizationNumber;
         state.virksomhetsnavn = organisasjon.Name;
       })
@@ -63,7 +63,7 @@ const usePersonStore: StateCreator<
   },
   initPerson: (navn: string, identitetsnummer: string, orgnrUnderenhet: string) => {
     set(
-      produce((state) => {
+      produce((state: PersonState) => {
         state.navn = navn;
         state.identitetsnummer = identitetsnummer;
         state.orgnrUnderenhet = orgnrUnderenhet;

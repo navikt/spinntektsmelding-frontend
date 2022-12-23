@@ -6,16 +6,13 @@ import { useRouter } from 'next/router';
 import { Button, ConfirmationPanel } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
-// import Banner from '../components/Banner/Banner';
+
 import Skillelinje from '../components/Skillelinje/Skillelinje';
 
+import Script from 'next/script';
 import useSWR from 'swr';
 
 import styles from '../styles/Home.module.css';
-
-import Script from 'next/script';
-
-import useRoute from '../components/Banner/useRoute';
 
 import Behandlingsdager from '../components/Behandlingsdager';
 import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
@@ -43,7 +40,6 @@ const SKJEMADATA_URL = '/im-dialog/api/trenger';
 const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 
 const Home: NextPage = () => {
-  const setRoute = useRoute();
   const router = useRouter();
   const slug = (router.query.slug as string) || '';
   const firstSlug = slug;
@@ -56,8 +52,6 @@ const Home: NextPage = () => {
   const { data: arbeidsgivere, error } = useSWR<Array<Organisasjon>>(ARBEIDSGIVER_URL, dataFetcherArbeidsgivere);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-
-  // const setOrgUnderenhet = useBoundStore((state) => state.setOrgUnderenhet);
 
   const loginPath = useLoginRedirectPath();
 
@@ -196,7 +190,7 @@ const Home: NextPage = () => {
         <PageContent title='Inntektsmelding'>
           <main className='main-content'>
             <form className={styles.padded} onSubmit={submitForm}>
-              <Person />
+              <Person arbeidsgivere={arbeidsgivere} />
 
               <Behandlingsdager />
 

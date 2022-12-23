@@ -3,12 +3,24 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import shallow from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
+import { Organisasjon } from '../Banner/Banner';
 
-export default function Person() {
-  const [navn, identitetsnummer, virksomhetsnavn, orgnrUnderenhet] = useBoundStore(
-    (state) => [state.navn, state.identitetsnummer, state.virksomhetsnavn, state.orgnrUnderenhet],
+interface PersonProps {
+  arbeidsgivere: Array<Organisasjon>;
+}
+
+export default function Person({ arbeidsgivere }: PersonProps) {
+  const [navn, identitetsnummer, orgnrUnderenhet] = useBoundStore(
+    (state) => [state.navn, state.identitetsnummer, state.orgnrUnderenhet],
     shallow
   );
+
+  const virksomhet: Organisasjon | undefined = arbeidsgivere
+    ? arbeidsgivere.find((arbeidsgiver) => arbeidsgiver.OrganizationNumber === orgnrUnderenhet)
+    : undefined;
+
+  const virksomhetsnavn = virksomhet ? virksomhet.Name : '';
+
   return (
     <>
       <p>
