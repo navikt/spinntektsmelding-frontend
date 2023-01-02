@@ -43,7 +43,6 @@ const Banner: React.FunctionComponent<Props> = (props) => {
       currentOrgnr,
       (orgnr: string) => {
         if (currentOrgnr !== orgnr && props.slug) {
-          console.log('slug', props.slug);
           if (orgnr === null) {
             push(props.slug || '');
           } else {

@@ -1,8 +1,8 @@
 import { Periode } from '../../state/state';
-import validerPerioder from '../../validators/validerPeriode';
+import validerPeriodeEgenmelding from '../../validators/validerPeriodeEgenmelding';
 import { expect, it, describe } from 'vitest';
 
-describe('validerPeriode', () => {
+describe('validerPeriodeEgenmelding', () => {
   it('should validate that all is OK', () => {
     const input: Array<Periode> = [
       {
@@ -12,7 +12,7 @@ describe('validerPeriode', () => {
       }
     ];
 
-    expect(validerPerioder(input)).toEqual([]);
+    expect(validerPeriodeEgenmelding(input)).toEqual([]);
   });
 
   it('should fail if tom is missing', () => {
@@ -30,7 +30,7 @@ describe('validerPeriode', () => {
       }
     ];
 
-    expect(validerPerioder(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
   });
 
   it('should fail if fom is missing', () => {
@@ -48,7 +48,7 @@ describe('validerPeriode', () => {
       }
     ];
 
-    expect(validerPerioder(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
   });
 
   it('should fail if tom and fom is missing', () => {
@@ -69,7 +69,7 @@ describe('validerPeriode', () => {
       }
     ];
 
-    expect(validerPerioder(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
   });
 
   it('should fail if fom and tom is in the wrong order', () => {
@@ -88,7 +88,7 @@ describe('validerPeriode', () => {
       }
     ];
 
-    expect(validerPerioder(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
   });
 
   it('should fail periode is missing', () => {
@@ -101,6 +101,6 @@ describe('validerPeriode', () => {
       }
     ];
 
-    expect(validerPerioder(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
   });
 });

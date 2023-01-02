@@ -18,14 +18,14 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Arr
     });
   } else {
     perioder.forEach((periode) => {
-      if (!periode.fom && periode.tom) {
+      if (!periode.fom) {
         feilkoder.push({
           felt: `fom-${periode.id}`,
           code: PeriodeFeilkode.MANGLER_FRA
         });
       }
 
-      if (!periode.tom && periode.fom) {
+      if (!periode.tom) {
         feilkoder.push({
           felt: `tom-${periode.id}`,
           code: PeriodeFeilkode.MANGLER_TIL

@@ -10,7 +10,6 @@ export default function useStateInit() {
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
   const initBehandlingsdager = useBoundStore((state) => state.initBehandlingsdager);
-  const getGrunnbeloep = useBoundStore((state) => state.getGrunnbeloep);
   const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
@@ -38,7 +37,5 @@ export default function useStateInit() {
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
 
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
-
-    // getGrunnbeloep(bestemmendeFravaersdag);
   };
 }

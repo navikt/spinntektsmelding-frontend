@@ -24,10 +24,7 @@ export const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode
   if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
   }
-  console.log('differenceInBusinessDays', differenceInBusinessDays(andre.fom, ene.tom), andre.fom, ene.tom, {
-    includeStartDate: false,
-    includeEndDate: false
-  });
+
   if (differenceInBusinessDays(andre.fom, ene.tom, { includeStartDate: false, includeEndDate: false }) <= 0) {
     const obj: FravaersPeriode = {
       fom: ene.fom,

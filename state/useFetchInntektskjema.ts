@@ -10,26 +10,26 @@ const useFetchInntektskjema = (url: string) => {
       orgnrUnderenhet
     });
 
-    // if (!response.ok) {
-    //   const error = new NetworkError('An error occurred while fetching the data.');
-    //   // Attach extra info to the error object.
-    //   try {
-    //     error.info = res;
-    //   } catch (errorStatus) {
-    //     error.info = { errorStatus };
-    //   }
-    //   error.status = response.status;
-    //   throw error;
-    // }
-    // try {
-    //   return res;
-    // } catch (_error) {
-    //   const jsonError = new NetworkError('An error occurred while decoding the data.');
-    //   // Attach extra info to the error object.
-    //   jsonError.info = await res.json();
-    //   jsonError.status = res.status;
-    //   throw jsonError;
-    // }
+    if (!response.ok) {
+      const error = new NetworkError('An error occurred while fetching the data.');
+      // Attach extra info to the error object.
+      try {
+        error.info = res;
+      } catch (errorStatus) {
+        error.info = { errorStatus };
+      }
+      error.status = response.status;
+      throw error;
+    }
+    try {
+      return res;
+    } catch (_error) {
+      const jsonError = new NetworkError('An error occurred while decoding the data.');
+      // Attach extra info to the error object.
+      jsonError.info = await res.json();
+      jsonError.status = res.status;
+      throw jsonError;
+    }
 
     return res;
   };

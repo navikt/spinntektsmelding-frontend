@@ -8,6 +8,14 @@ export enum FullLonnISykefravaeret {
 
 export default function validerLonnISykefravaeret(lonn: LonnISykefravaeret): Array<ValiderResultat> {
   const feilkoder: Array<ValiderResultat> = [];
+  if (!lonn) {
+    feilkoder.push({
+      code: FullLonnISykefravaeret.MANGLER_VALG_AV_LONN_I_SYKEFRAVAERET,
+      felt: ''
+    });
+    return feilkoder;
+  }
+
   if (!lonn.status) {
     feilkoder.push({
       felt: '',

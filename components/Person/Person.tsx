@@ -6,7 +6,7 @@ import lokalStyles from './Person.module.css';
 import { Organisasjon } from '../Banner/Banner';
 
 interface PersonProps {
-  arbeidsgivere: Array<Organisasjon>;
+  arbeidsgivere?: Array<Organisasjon>;
 }
 
 export default function Person({ arbeidsgivere }: PersonProps) {
