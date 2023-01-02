@@ -1,0 +1,39 @@
+import { render, screen } from '@testing-library/react';
+import TidligereInntekt from '../../../components/Bruttoinntekt/TidligereInntekt';
+import { HistoriskInntekt } from '../../../state/state';
+
+describe('TidligereInntekt', () => {
+  it('renders 3 rows', () => {
+    const tidligereinntekt: Array<HistoriskInntekt> = [
+      {
+        maanedsnavn: '2020-11',
+        inntekt: 123,
+        id: '2020-11'
+      },
+      {
+        maanedsnavn: '2020-12',
+        inntekt: 234,
+        id: '2020-12'
+      },
+      {
+        maanedsnavn: '2021-01',
+        inntekt: 345,
+        id: '2021-01'
+      }
+    ];
+    render(<TidligereInntekt tidligereinntekt={tidligereinntekt} />);
+
+    const rader = screen.getAllByRole('row');
+
+    expect(rader).toHaveLength(3);
+
+    const seller = screen.getAllByRole('cell');
+    expect(seller).toHaveLength(6);
+    expect(seller[0]).toHaveTextContent('November');
+    expect(seller[1]).toHaveTextContent('123,00 kr');
+    expect(seller[2]).toHaveTextContent('Desember');
+    expect(seller[3]).toHaveTextContent('234,00 kr');
+    expect(seller[4]).toHaveTextContent('Januar');
+    expect(seller[5]).toHaveTextContent('345,00 kr');
+  });
+});
