@@ -30,8 +30,6 @@ const useFetchInntektskjema = (url: string) => {
       jsonError.status = res.status;
       throw jsonError;
     }
-
-    return res;
   };
 };
 

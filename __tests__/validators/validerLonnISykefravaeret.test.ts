@@ -36,4 +36,46 @@ describe('validerLonnISykefravaeret', () => {
 
     expect(validerLonnISykefravaeret()).toEqual(expected);
   });
+
+  it('should return an error when status is missing', () => {
+    const inputLUS: LonnISykefravaeret = {
+      belop: 123
+    };
+
+    const expected = [
+      {
+        code: 'MANGLER_VALG_AV_LONN_I_SYKEFRAVAERET',
+        felt: ''
+      }
+    ];
+
+    expect(validerLonnISykefravaeret(inputLUS)).toEqual(expected);
+  });
+
+  it('should return an error when belop is 0', () => {
+    const inputLUS: LonnISykefravaeret = {
+      status: 'Ja',
+      belop: 0
+    };
+
+    const expected = [
+      {
+        code: 'MANGLER_BELOP_LONN_I_SYKEFRAVAERET',
+        felt: ''
+      }
+    ];
+
+    expect(validerLonnISykefravaeret(inputLUS)).toEqual(expected);
+  });
+
+  it('should return an empty array when status is Nei', () => {
+    const inputLUS: LonnISykefravaeret = {
+      status: 'Nei',
+      belop: 0
+    };
+
+    const expected: unknown = [];
+
+    expect(validerLonnISykefravaeret(inputLUS)).toEqual(expected);
+  });
 });
