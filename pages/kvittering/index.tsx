@@ -74,8 +74,8 @@ const Kvittering: NextPage = () => {
                     <div className={lokalStyles.ytrefravaerswrapper}>
                       <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
                       {egenmeldingsperioder &&
-                        egenmeldingsperioder.map((periode, index) => (
-                          <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + index} />
+                        egenmeldingsperioder.map((periode) => (
+                          <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + periode.id} />
                         ))}
                     </div>
                   )}
@@ -84,8 +84,8 @@ const Kvittering: NextPage = () => {
                   <div className={lokalStyles.ytrefravaerswrapper}>
                     <Heading3 className={lokalStyles.sykfravaerstyper}>Sykmelding</Heading3>
                     {fravaersperioder &&
-                      fravaersperioder.map((periode, index) => (
-                        <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + index} />
+                      fravaersperioder.map((periode) => (
+                        <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + periode.id} />
                       ))}
                   </div>
                 </div>
@@ -108,7 +108,7 @@ const Kvittering: NextPage = () => {
                     </BodyLong>
                     {arbeidsgiverperioder &&
                       arbeidsgiverperioder.map((periode, index) => (
-                        <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={index} />
+                        <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.fom.valueOf()} />
                       ))}
                   </div>
                 </div>
