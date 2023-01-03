@@ -23,7 +23,7 @@ export default function Behandlingsdager() {
     end: behandlingsperiode?.tom || new Date()
   });
 
-  const handleSelectDays = (selectedDays: Date[] | undefined) => {
+  function handleSelectDays(selectedDays: Date[] | undefined) {
     const weeks: Array<number> | undefined = selectedDays?.map((day) => ukeNr(day));
 
     const uniqueWeeks: Array<number> = Array.from(new Set(weeks));
@@ -39,7 +39,7 @@ export default function Behandlingsdager() {
     }
 
     setBehandlingsdager(selectedDays);
-  };
+  }
 
   const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
     defaultSelected: new Date()
