@@ -44,9 +44,9 @@ const Kvittering: NextPage = () => {
 
   const router = useRouter();
 
-  const clickEndre = () => {
-    router.push('/');
-  };
+  function clickEndre() {
+    router.back();
+  }
 
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
