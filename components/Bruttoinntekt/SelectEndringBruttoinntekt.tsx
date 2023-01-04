@@ -1,5 +1,5 @@
 import { Select } from '@navikt/ds-react';
-import { ChangeEvent, ReactNode } from 'react';
+import { ChangeEvent, ReactNode, useCallback } from 'react';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 
 interface SelectEndringBruttoinntektProps {
@@ -11,9 +11,10 @@ interface SelectEndringBruttoinntektProps {
 export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinntektProps) {
   const begrunnelseKeys = Object.keys(begrunnelseEndringBruttoinntekt);
 
-  function changeHandler(event: ChangeEvent<HTMLSelectElement>) {
-    props.onChangeBegrunnelse(event.target.value);
-  }
+  const changeHandler = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => props.onChangeBegrunnelse(event.target.value),
+    [props]
+  );
 
   return (
     <Select label={'Velg endringsårsak'} onChange={changeHandler} id={props.id} error={props.error}>
