@@ -7,9 +7,15 @@ import feiltekster from '../../utils/feiltekster';
 
 const inputInntekt: number = 40000;
 const tidligereInntekt: Array<MottattHistoriskInntekt> = [
-  { maanedsnavn: 'Januar', inntekt: 33000 },
-  { maanedsnavn: 'Februar', inntekt: 44000 },
-  { maanedsnavn: 'Mars', inntekt: 55000 }
+  { maanedsnavn: '2002-02', inntekt: 33000 },
+  { maanedsnavn: '2002-03', inntekt: 44000 },
+  { maanedsnavn: '2002-04', inntekt: 55000 },
+  { maanedsnavn: '2002-05', inntekt: 55000 },
+  { maanedsnavn: '2002-06', inntekt: 55000 },
+  { maanedsnavn: '2002-07', inntekt: 55000 },
+  { maanedsnavn: '2002-08', inntekt: 50000 },
+  { maanedsnavn: '2002-09', inntekt: 45000 },
+  { maanedsnavn: '2002-10', inntekt: 55000 }
 ];
 
 describe('useBoundStore', () => {
@@ -23,10 +29,10 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(40000);
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(50000);
     expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.tidligereInntekt?.length).toBe(3);
@@ -36,7 +42,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -56,7 +62,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -70,7 +76,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -88,7 +94,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -106,7 +112,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -121,7 +127,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -135,7 +141,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt);
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -151,6 +157,6 @@ describe('useBoundStore', () => {
     expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(40000);
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(50000);
   });
 });
