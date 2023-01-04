@@ -2,23 +2,34 @@ import { StateCreator } from 'zustand';
 import produce from 'immer';
 import { HistoriskInntekt, Inntekt } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
-import { nanoid } from 'nanoid';
 import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
 
+const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
+  if (a.maanedsnavn < b.maanedsnavn) {
+    return 1;
+  } else {
+    return -1;
+  }
+};
+
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   tidligereInntekt?: Array<HistoriskInntekt>;
-  inntektsprosent?: { [key: string]: number };
-  inntektsprosentEndret: boolean;
+  opprinneligeInntekt?: Array<HistoriskInntekt>;
   setNyMaanedsinntekt: (belop: string) => void;
   setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean) => void;
-  initBruttioinntekt: (bruttoInntekt: number, tidligereInntekt: Array<MottattHistoriskInntekt>) => void;
+  initBruttioinntekt: (
+    bruttoInntekt: number,
+    tidligereInntekt: Array<MottattHistoriskInntekt>,
+    bestemmendeFravaersdag: Date
+  ) => void;
+  rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
@@ -35,7 +46,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     endringsaarsak: undefined
   },
   tidligereInntekt: undefined,
-  inntektsprosentEndret: false,
   setNyMaanedsinntekt: (belop: string) =>
     set(
       produce((state) => {
@@ -102,31 +112,95 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  initBruttioinntekt: (bruttoInntekt: number, tidligereInntekt: Array<MottattHistoriskInntekt>) => {
-    const inntektsprosent: { [key: string]: number } | [] = [];
+  initBruttioinntekt: (
+    bruttoInntekt: number,
+    tidligereInntekt: Array<MottattHistoriskInntekt>,
+    bestemmendeFravaersdag: Date
+  ) => {
+    const bestMnd = `00${bestemmendeFravaersdag.getMonth() + 1}`.slice(-2);
+    const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
+
+    const aktuelleInntekter = tidligereInntekt
+      .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
+      .sort(sorterInntekter)
+      .slice(0, 3);
+    console.log(aktuelleInntekter);
+
+    const sumInntekter = aktuelleInntekter.reduce(
+      (prev, cur) => {
+        prev.inntekt += cur.inntekt;
+        return prev;
+      },
+      { inntekt: 0, maanedsnavn: '' }
+    );
+
+    const snittInntekter = sumInntekter.inntekt / aktuelleInntekter.length;
 
     set(
       produce((state) => {
         state.bruttoinntekt = {
-          bruttoInntekt: bruttoInntekt,
+          bruttoInntekt: snittInntekter,
           bekreftet: false,
           manueltKorrigert: false,
           endringsaarsak: ''
         };
         state.opprinneligbruttoinntekt = {
-          bruttoInntekt: bruttoInntekt,
+          bruttoInntekt: snittInntekter,
           bekreftet: false,
           manueltKorrigert: false,
           endringsaarsak: ''
         };
 
-        state.inntektsprosent = inntektsprosent;
+        state.opprinneligeInntekt = tidligereInntekt;
 
-        if (tidligereInntekt) {
-          state.tidligereInntekt = tidligereInntekt.map((inntekt) => ({
+        if (aktuelleInntekter) {
+          state.tidligereInntekt = aktuelleInntekter.map((inntekt) => ({
             maanedsnavn: inntekt.maanedsnavn,
-            inntekt: inntekt.inntekt,
-            id: nanoid()
+            inntekt: inntekt.inntekt
+          }));
+        }
+
+        return state;
+      })
+    );
+  },
+  rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => {
+    const bestMnd = `00${bestemmendeFravaersdag.getMonth() + 1}`.slice(-2);
+    const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
+    const tidligereInntekt = get().opprinneligeInntekt;
+    const bruttoinntekt = get().bruttoinntekt;
+
+    const aktuelleInntekter = tidligereInntekt!
+      .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
+      .sort(sorterInntekter)
+      .slice(0, 3);
+    console.log(aktuelleInntekter);
+
+    const sumInntekter = aktuelleInntekter.reduce(
+      (prev, cur) => {
+        prev.inntekt += cur.inntekt;
+        return prev;
+      },
+      { inntekt: 0, maanedsnavn: '' }
+    );
+
+    const snittInntekter = sumInntekter.inntekt / aktuelleInntekter.length;
+
+    set(
+      produce((state) => {
+        if (!bruttoinntekt.bekreftet && !bruttoinntekt.manueltKorrigert) {
+          state.bruttoinntekt = {
+            bruttoInntekt: snittInntekter,
+            bekreftet: false,
+            manueltKorrigert: false,
+            endringsaarsak: ''
+          };
+        }
+
+        if (aktuelleInntekter) {
+          state.tidligereInntekt = aktuelleInntekter.map((inntekt) => ({
+            maanedsnavn: inntekt.maanedsnavn,
+            inntekt: inntekt.inntekt
           }));
         }
 

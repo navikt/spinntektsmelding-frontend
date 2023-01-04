@@ -72,6 +72,8 @@ const Home: NextPage = () => {
     state.setArbeidsgiverperioder
   ]);
 
+  const rekalkulerBruttioinntekt = useBoundStore((state) => state.rekalkulerBruttioinntekt);
+
   const setEndringsbegrunnelse = useBoundStore((state) => state.setEndringsbegrunnelse);
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
@@ -134,6 +136,7 @@ const Home: NextPage = () => {
     setBestemmendeFravaersdag(data.bestemmendFraværsdag);
     setArbeidsgiverperioder(data.arbeidsgiverperioder);
     setEndringsbegrunnelse(data.begrunnelse);
+    rekalkulerBruttioinntekt(data.bestemmendFraværsdag);
   };
 
   useEffect(() => {

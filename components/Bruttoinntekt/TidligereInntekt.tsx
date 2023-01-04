@@ -29,7 +29,7 @@ export default function TidligereInntekt({ tidligereinntekt }: TidligereInntektP
     <table className={lokalStyles.inntektsliste}>
       <tbody>
         {sortertInntekt.map((inntekt) => (
-          <tr key={inntekt.id}>
+          <tr key={inntekt.maanedsnavn}>
             <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt.maanedsnavn)}:</td>
             <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
           </tr>

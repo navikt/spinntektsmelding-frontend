@@ -2,7 +2,7 @@
 // import { nanoid } from 'nanoid';
 // import InntektsmeldingSkjema from '../state/state';
 
-import { format, subDays } from 'date-fns';
+import { format, subDays, subMonths } from 'date-fns';
 import { nanoid } from 'nanoid';
 import InntektsmeldingSkjema from '../state/state';
 import testFnr from './testFnr';
@@ -155,15 +155,39 @@ const formData = {
   tidligereinntekter: [
     // Hva skjer ved jobbskifte?
     {
-      maanedsnavn: format(subDays(new Date(), 33), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: format(subMonths(new Date(), 0), 'yyyy-MM'), // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: format(subDays(new Date(), 66), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: format(subMonths(new Date(), 1), 'yyyy-MM'), // yyyy-MM
+      inntekt: 88000
+    },
+    {
+      maanedsnavn: format(subMonths(new Date(), 2), 'yyyy-MM'), // yyyy-MM
       inntekt: 66000
     },
     {
-      maanedsnavn: format(subDays(new Date(), 99), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: format(subMonths(new Date(), 3), 'yyyy-MM'), // yyyy-MM
+      inntekt: 88000
+    },
+    {
+      maanedsnavn: format(subMonths(new Date(), 4), 'yyyy-MM'), // yyyy-MM
+      inntekt: 88000
+    },
+    {
+      maanedsnavn: format(subMonths(new Date(), 5), 'yyyy-MM'), // yyyy-MM
+      inntekt: 88000
+    },
+    {
+      maanedsnavn: format(subMonths(new Date(), 6), 'yyyy-MM'), // yyyy-MM
+      inntekt: 88000
+    },
+    {
+      maanedsnavn: format(subMonths(new Date(), 7), 'yyyy-MM'), // yyyy-MM
+      inntekt: 88000
+    },
+    {
+      maanedsnavn: format(subMonths(new Date(), 8), 'yyyy-MM'), // yyyy-MM
       inntekt: 88000
     }
   ]

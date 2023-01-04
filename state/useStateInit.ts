@@ -16,7 +16,6 @@ export default function useStateInit() {
 
   return (jsonData: MottattData) => {
     initFravaersperiode(jsonData.fravaersperioder);
-    initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekter);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
     initPerson(jsonData.navn, jsonData.identitetsnummer, jsonData.orgnrUnderenhet);
     if (jsonData.behandlingsperiode) {
@@ -37,5 +36,9 @@ export default function useStateInit() {
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
 
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
+
+    if (bestemmendeFravaersdag) {
+      initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekter, parseIsoDate(bestemmendeFravaersdag));
+    }
   };
 }

@@ -16,7 +16,6 @@ export interface Inntekt {
 export interface HistoriskInntekt {
   maanedsnavn: string;
   inntekt: number;
-  id: string;
 }
 
 export interface LonnISykefravaeret {
