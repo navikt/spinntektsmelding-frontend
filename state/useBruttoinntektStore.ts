@@ -124,7 +124,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
       .sort(sorterInntekter)
       .slice(0, 3);
-    console.log(aktuelleInntekter);
 
     const sumInntekter = aktuelleInntekter.reduce(
       (prev, cur) => {
@@ -174,7 +173,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
       .sort(sorterInntekter)
       .slice(0, 3);
-    console.log(aktuelleInntekter);
 
     const sumInntekter = aktuelleInntekter.reduce(
       (prev, cur) => {

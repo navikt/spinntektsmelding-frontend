@@ -26,6 +26,7 @@ import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
+import { useCallback } from 'react';
 
 const Kvittering: NextPage = () => {
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
@@ -44,9 +45,7 @@ const Kvittering: NextPage = () => {
 
   const router = useRouter();
 
-  function clickEndre() {
-    router.back();
-  }
+  const clickEndre = useCallback(() => router.back(), [router]);
 
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;

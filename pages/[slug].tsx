@@ -236,15 +236,14 @@ const Home: NextPage = () => {
         <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
         <Script type='text/javascript' src='https://www.nav.no/dekoratoren/client.js'></Script>
       </main>
-      {modalOpen && (
-        <EndrePerioderModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          arbeidsgiverperioder={arbeidsgiverperioder || []}
-          bestemmendeFravaersdag={bestemmendeFravaersdag || new Date()}
-          onUpdate={onUpdatePeriodeModal}
-        />
-      )}
+
+      <EndrePerioderModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        arbeidsgiverperioder={arbeidsgiverperioder || []}
+        bestemmendeFravaersdag={bestemmendeFravaersdag || new Date()}
+        onUpdate={onUpdatePeriodeModal}
+      />
     </div>
   );
 };
