@@ -121,7 +121,7 @@ export default function useFyllInnsending() {
         beløp: ytelse.verdi || 0
       })),
       bekreftOpplysninger: opplysningerBekreftet,
-      behandlingsdager: behandlingsdager?.map((dag) => formatIsoDate(dag)),
+      behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
       årsakInnsending: 'Ny'
     };
 
