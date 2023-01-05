@@ -2,66 +2,59 @@ import { MottatArbeidsgiver } from '../state/MottattData';
 
 const testOrganisasjoner: MottatArbeidsgiver[] = [
   {
-    name: 'ANSTENDIG BJØRN KOMMUNE',
+    navn: 'ANSTENDIG BJØRN KOMMUNE',
     type: 'Enterprise',
-    parentOrganizationNumber: null,
-    organizationForm: 'KOMM',
-    organizationNumber: '810007672',
-    socialSecurityNumber: null,
+    orgnrHovedenhet: null,
+    orgForm: 'KOMM',
+    orgnr: '810007672',
     status: 'Active'
   },
   {
-    name: 'ANSTENDIG PIGGSVIN BRANNVESEN',
+    navn: 'ANSTENDIG PIGGSVIN BRANNVESEN',
     type: 'Business',
-    parentOrganizationNumber: '810007702',
-    organizationForm: 'BEDR',
-    organizationNumber: '810008032',
-    socialSecurityNumber: null,
+    orgnrHovedenhet: '810007702',
+    orgForm: 'BEDR',
+    orgnr: '810008032',
     status: 'Active'
   },
   {
-    name: 'ANSTENDIG PIGGSVIN BARNEHAGE',
+    navn: 'ANSTENDIG PIGGSVIN BARNEHAGE',
     type: 'Business',
-    parentOrganizationNumber: '810007702',
-    organizationForm: 'BEDR',
-    organizationNumber: '810007842',
-    socialSecurityNumber: null,
+    orgnrHovedenhet: '810007702',
+    orgForm: 'BEDR',
+    orgnr: '810007842',
     status: 'Active'
   },
   {
-    name: 'ANSTENDIG PIGGSVIN BYDEL',
+    navn: 'ANSTENDIG PIGGSVIN BYDEL',
     type: 'Enterprise',
-    parentOrganizationNumber: null,
-    organizationForm: 'ORGL',
-    organizationNumber: '810007702',
-    socialSecurityNumber: null,
+    orgnrHovedenhet: null,
+    orgForm: 'ORGL',
+    orgnr: '810007702',
     status: 'Active'
   },
   {
-    name: 'ANSTENDIG PIGGSVIN SYKEHJEM',
+    navn: 'ANSTENDIG PIGGSVIN SYKEHJEM',
     type: 'Business',
-    parentOrganizationNumber: '810007702',
-    organizationForm: 'BEDR',
-    organizationNumber: '810007982',
-    socialSecurityNumber: null,
+    orgnrHovedenhet: '810007702',
+    orgForm: 'BEDR',
+    orgnr: '810007982',
     status: 'Active'
   },
   {
-    name: 'SKOPPUM OG SANDØY',
+    navn: 'SKOPPUM OG SANDØY',
     type: 'Business',
-    parentOrganizationNumber: null,
-    organizationForm: 'BEDR',
-    organizationNumber: '911206722',
-    socialSecurityNumber: null,
+    orgnrHovedenhet: null,
+    orgForm: 'BEDR',
+    orgnr: '911206722',
     status: 'Active'
   },
   {
-    name: 'SKJERSTAD OG KJØRSVIKBUGEN',
+    navn: 'SKJERSTAD OG KJØRSVIKBUGEN',
     type: 'Enterprise',
-    parentOrganizationNumber: null,
-    organizationForm: 'AS',
-    organizationNumber: '911212218',
-    socialSecurityNumber: null,
+    orgnrHovedenhet: null,
+    orgForm: 'AS',
+    orgnr: '911212218',
     status: 'Active'
   }
 ];

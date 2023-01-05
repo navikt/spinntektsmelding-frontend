@@ -23,11 +23,11 @@ const dataFetcherArbeidsgivere = async (url: string) => {
 
     return jsonData.map(
       (data: MottatArbeidsgiver): Organisasjon => ({
-        Name: data.name,
+        Name: data.navn,
         Type: data.type,
-        ParentOrganizationNumber: data.parentOrganizationNumber || '',
-        OrganizationForm: data.organizationForm,
-        OrganizationNumber: data.organizationNumber,
+        ParentOrganizationNumber: data.orgnrHovedenhet || '',
+        OrganizationForm: data.orgForm,
+        OrganizationNumber: data.orgnr,
         Status: data.status
       })
     );
