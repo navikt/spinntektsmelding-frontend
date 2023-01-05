@@ -66,6 +66,10 @@ export default function useFyllInnsending() {
 
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
+  const harEgenmeldingsdager =
+    egenmeldingsperioder &&
+    (egenmeldingsperioder.length > 1 || (egenmeldingsperioder[0].fom && egenmeldingsperioder[0].tom));
+
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
     setSkalViseFeilmeldinger(true);
     let perioder;
@@ -81,10 +85,12 @@ export default function useFyllInnsending() {
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
       identitetsnummer: identitetsnummer!,
-      egenmeldingsperioder: egenmeldingsperioder.map((periode) => ({
-        fom: formatIsoDate(periode.fom),
-        tom: formatIsoDate(periode.tom)
-      })),
+      egenmeldingsperioder: harEgenmeldingsdager
+        ? egenmeldingsperioder.map((periode) => ({
+            fom: formatIsoDate(periode.fom),
+            tom: formatIsoDate(periode.tom)
+          }))
+        : [],
       fraværsperioder: fravaersperioder!.map((periode) => ({
         fom: formatIsoDate(periode.fom),
         tom: formatIsoDate(periode.tom)
