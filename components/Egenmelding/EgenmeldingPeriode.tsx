@@ -37,11 +37,11 @@ export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: E
     return (
       <>
         <div className={styles.datepickerescape}>
-          <TextLabel>Egenmelding fra</TextLabel>
+          <TextLabel>Fra</TextLabel>
           <div>{formatDate(egenmeldingsperiode.fom)}</div>
         </div>
         <div className={styles.datepickerescape}>
-          <TextLabel>Egenmelding til</TextLabel>
+          <TextLabel>Til</TextLabel>
           <div>{formatDate(egenmeldingsperiode.tom)}</div>
         </div>
       </>
@@ -52,8 +52,8 @@ export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: E
     <div>
       <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-egenmelding-' + periodeId}>
         <div className={localStyles.datowrapper}>
-          <UNSAFE_DatePicker.Input {...fromInputProps} label='Egenmelding fra' id={`fom-${periodeId}`} />
-          <UNSAFE_DatePicker.Input {...toInputProps} label='Egenmelding til' id={`tom-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...fromInputProps} label='Fra' id={`fom-${periodeId}`} />
+          <UNSAFE_DatePicker.Input {...toInputProps} label='Til' id={`tom-${periodeId}`} />
         </div>
       </UNSAFE_DatePicker>
     </div>

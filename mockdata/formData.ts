@@ -147,10 +147,10 @@ const formData = {
     }
   ],
   egenmeldingsperioder: [
-    {
-      fom: format(subDays(new Date(), 18), 'yyyy-MM-dd'),
-      tom: format(subDays(new Date(), 15), 'yyyy-MM-dd')
-    }
+    //   {
+    //     fom: format(subDays(new Date(), 18), 'yyyy-MM-dd'),
+    //     tom: format(subDays(new Date(), 15), 'yyyy-MM-dd')
+    //   }
   ],
   tidligereinntekter: [
     // Hva skjer ved jobbskifte?

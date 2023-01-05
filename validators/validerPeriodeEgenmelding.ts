@@ -17,18 +17,34 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Arr
       code: PeriodeFeilkode.MANGLER_PERIODE
     });
   } else {
+    const tomPeriode = perioder.length === 1;
+
     perioder.forEach((periode) => {
-      if (!periode.fom) {
+      if (!periode.fom && !tomPeriode) {
         feilkoder.push({
           felt: `fom-${periode.id}`,
           code: PeriodeFeilkode.MANGLER_FRA
         });
       }
 
-      if (!periode.tom) {
+      if (!periode.tom && !tomPeriode) {
         feilkoder.push({
           felt: `tom-${periode.id}`,
           code: PeriodeFeilkode.MANGLER_TIL
+        });
+      }
+
+      if (tomPeriode && !!periode.tom !== !!periode.fom && !periode.tom) {
+        feilkoder.push({
+          felt: `tom-${periode.id}`,
+          code: PeriodeFeilkode.MANGLER_TIL
+        });
+      }
+
+      if (tomPeriode && !!periode.tom !== !!periode.fom && !periode.fom) {
+        feilkoder.push({
+          felt: `fom-${periode.id}`,
+          code: PeriodeFeilkode.MANGLER_FRA
         });
       }
 
