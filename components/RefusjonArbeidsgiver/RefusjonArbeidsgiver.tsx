@@ -8,6 +8,7 @@ import RefsjonArbeidsgiverSluttdato from './RefsjonArbeidsgiverSluttdato';
 import SelectBegrunnelse from './SelectBegrunnelse';
 import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
 import localStyles from './RefusjonArbeidsgiver.module.css';
+import formatCurrency from '../../utils/formatCurrency';
 
 export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -33,6 +34,8 @@ export default function RefusjonArbeidsgiver() {
     (state) => state.beloepUtbetaltUnderArbeidsgiverperioden
   );
 
+  const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
+
   return (
     <>
       <Heading3>Refusjon til arbeidsgiver</Heading3>
@@ -47,19 +50,13 @@ export default function RefusjonArbeidsgiver() {
           className={styles.radiobuttonwrapper}
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}
+          onChange={arbeidsgiverBetalerFullLonnIArbeidsgiverperioden}
+          defaultValue={fullLonnIArbeidsgiverPerioden?.status}
         >
-          <Radio
-            value='Ja'
-            onClick={(event) => arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(event.currentTarget.value as YesNo)}
-            name='fullLonnIArbeidsgiverPerioden'
-          >
+          <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
             Ja
           </Radio>
-          <Radio
-            value='Nei'
-            onClick={(event) => arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(event.currentTarget.value as YesNo)}
-            name='fullLonnIArbeidsgiverPerioden'
-          >
+          <Radio value='Nei' name='fullLonnIArbeidsgiverPerioden'>
             Nei
           </Radio>
         </RadioGroup>
@@ -71,8 +68,14 @@ export default function RefusjonArbeidsgiver() {
               onChange={(event) => beloepUtbetaltUnderArbeidsgiverperioden(event.target.value)}
               id={'lus-uua-input'}
               error={visFeilmeldingsTekst('lus-uua-input')}
+              defaultValue={
+                fullLonnIArbeidsgiverPerioden.utbetalt ? formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt) : ''
+              }
             />
-            <SelectBegrunnelse onChangeBegrunnelse={begrunnelseRedusertUtbetaling} />
+            <SelectBegrunnelse
+              onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
+              defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
+            />
           </div>
         )}
 
@@ -81,19 +84,11 @@ export default function RefusjonArbeidsgiver() {
           className={styles.radiobuttonwrapper}
           id={'lus-radio'}
           error={visFeilmeldingsTekst('lus-radio')}
+          onChange={arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret}
+          defaultValue={lonnISykefravaeret?.status}
         >
-          <Radio
-            value='Ja'
-            onClick={(event) => arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(event.currentTarget.value as YesNo)}
-          >
-            Ja
-          </Radio>
-          <Radio
-            value='Nei'
-            onClick={(event) => arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(event.currentTarget.value as YesNo)}
-          >
-            Nei
-          </Radio>
+          <Radio value='Ja'>Ja</Radio>
+          <Radio value='Nei'>Nei</Radio>
         </RadioGroup>
         {lonnISykefravaeret?.status === 'Ja' && (
           <>
@@ -113,20 +108,18 @@ export default function RefusjonArbeidsgiver() {
               className={styles.radiobuttonwrapper}
               id={'lus-sluttdato-velg'}
               error={visFeilmeldingsTekst('lus-sluttdato-velg')}
+              onChange={refusjonskravetOpphoererStatus}
+              defaultValue={refusjonskravetOpphoerer?.status}
             >
-              <Radio value='Ja' onClick={(event) => refusjonskravetOpphoererStatus(event.currentTarget.value as YesNo)}>
-                Ja
-              </Radio>
-              <Radio
-                value='Nei'
-                onClick={(event) => refusjonskravetOpphoererStatus(event.currentTarget.value as YesNo)}
-              >
-                Nei
-              </Radio>
+              <Radio value='Ja'>Ja</Radio>
+              <Radio value='Nei'>Nei</Radio>
             </RadioGroup>
             {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
               <div className={styles.datepickerescape}>
-                <RefsjonArbeidsgiverSluttdato />
+                <RefsjonArbeidsgiverSluttdato
+                  defaultValue={refusjonskravetOpphoerer.opphorsdato}
+                  onDateChange={refusjonskravetOpphoererDato}
+                />
               </div>
             )}
           </>

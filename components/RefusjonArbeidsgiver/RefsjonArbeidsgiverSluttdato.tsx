@@ -1,16 +1,19 @@
 import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
-import useBoundStore from '../../state/useBoundStore';
 
-export default function RefsjonArbeidsgiverSluttdato() {
-  const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
+interface RefsjonArbeidsgiverSluttdatoProps {
+  defaultValue?: Date;
+  onDateChange: (opphoersdato?: Date | undefined) => void;
+}
 
+export default function RefsjonArbeidsgiverSluttdato(props: RefsjonArbeidsgiverSluttdatoProps) {
   const setOpphoersdato = (opphoersdato?: Date | undefined) => {
-    refusjonskravetOpphoererDato(opphoersdato);
+    props.onDateChange(opphoersdato);
   };
 
   const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
     toDate: new Date(),
-    onDateChange: setOpphoersdato
+    onDateChange: setOpphoersdato,
+    defaultSelected: props.defaultValue
   });
 
   return (

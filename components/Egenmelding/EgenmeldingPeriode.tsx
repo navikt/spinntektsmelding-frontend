@@ -1,9 +1,7 @@
 import { UNSAFE_DatePicker, UNSAFE_useRangeDatepicker } from '@navikt/ds-react';
 import localStyles from './Egenmelding.module.css';
-import useBoundStore from '../../state/useBoundStore';
 import { DateRange } from 'react-day-picker';
 import { Periode } from '../../state/state';
-import { useEffect } from 'react';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
@@ -11,27 +9,27 @@ import formatDate from '../../utils/formatDate';
 interface EgenmeldingPeriodeInterface {
   periodeId: string;
   egenmeldingsperiode: Periode;
+  endreEgenmeldingsperiode: boolean;
+  setEgenmeldingDato: (dateValue: DateRange | undefined, periodeId: string) => void;
 }
 
-export default function EgenmeldingPeriode({ periodeId, egenmeldingsperiode }: EgenmeldingPeriodeInterface) {
-  const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
-  const endreEgenmeldingsperiode = useBoundStore((state) => state.endreEgenmeldingsperiode);
-
+export default function EgenmeldingPeriode({
+  periodeId,
+  egenmeldingsperiode,
+  endreEgenmeldingsperiode,
+  setEgenmeldingDato
+}: EgenmeldingPeriodeInterface) {
   const rangeChangeHandler = (dateRange: DateRange | undefined) => {
     if (dateRange) {
       setEgenmeldingDato(dateRange, periodeId);
     }
   };
 
-  const { datepickerProps, toInputProps, fromInputProps, setSelected } = UNSAFE_useRangeDatepicker({
+  const { datepickerProps, toInputProps, fromInputProps } = UNSAFE_useRangeDatepicker({
     onRangeChange: (dato) => rangeChangeHandler(dato),
-    toDate: new Date()
+    toDate: new Date(),
+    defaultSelected: { from: egenmeldingsperiode?.fom, to: egenmeldingsperiode?.tom }
   });
-
-  useEffect(() => {
-    setSelected({ from: egenmeldingsperiode?.fom, to: egenmeldingsperiode?.tom });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [egenmeldingsperiode]);
 
   if (!endreEgenmeldingsperiode) {
     return (

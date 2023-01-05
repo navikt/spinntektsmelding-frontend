@@ -77,6 +77,7 @@ const Home: NextPage = () => {
   const setEndringsbegrunnelse = useBoundStore((state) => state.setEndringsbegrunnelse);
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
+  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const initState = useStateInit();
 
@@ -109,7 +110,6 @@ const Home: NextPage = () => {
             'Content-Type': 'application/json'
           }
         });
-        console.log(data); // eslint-disable-line
         if (data.status === 201) {
           router.push('/kvittering');
         }
@@ -141,7 +141,6 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const hentData = async () => {
-      console.log('henter data', pathSlug);
       try {
         let skjemadata;
         if (pathSlug) {
@@ -149,22 +148,16 @@ const Home: NextPage = () => {
         }
         if (skjemadata) {
           initState(skjemadata);
-
-          // setRoute(skjemadata.orgnrUnderenhet, pathSlug);
         }
       } catch (error) {
-        console.log('error', error); // eslint-disable-line
-
         leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
       }
     };
-
-    hentData();
+    if (!bruttoinntekt.bekreftet) hentData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
   useEffect(() => {
-    console.log('error', error); // eslint-disable-line
     if (error?.status === 401) {
       router.push(loginPath());
     }

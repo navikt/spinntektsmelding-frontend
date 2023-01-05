@@ -7,6 +7,7 @@ import lokalStyles from './Naturalytelser.module.css';
 import styles from '../../styles/Home.module.css';
 import useBoundStore from '../../state/useBoundStore';
 import NaturalytelseBortfallsdato from './NaturalytelseBortfallsdato';
+import formatCurrency from '../../utils/formatCurrency';
 
 export default function Naturalytelser() {
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
@@ -60,6 +61,7 @@ export default function Naturalytelser() {
                     <SelectNaturalytelser
                       onChangeYtelse={(event) => setNaturalytelseType(element.id, event.target.value)}
                       elementId={element.id}
+                      defaultValue={element.type}
                     />
                   </td>
 
@@ -67,6 +69,7 @@ export default function Naturalytelser() {
                     <NaturalytelseBortfallsdato
                       naturalytelseId={element.id}
                       setNaturalytelseBortfallsdato={setNaturalytelseBortfallsdato}
+                      defaultValue={element.bortfallsdato}
                     />
                   </td>
                   <td>
@@ -74,6 +77,7 @@ export default function Naturalytelser() {
                       label={''}
                       className={styles.fnr}
                       onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
+                      defaultValue={formatCurrency(element.verdi || 0)}
                     ></TextField>
                   </td>
                   <td>

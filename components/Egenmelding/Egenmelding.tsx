@@ -9,11 +9,13 @@ import ButtonEndre from '../ButtonEndre';
 
 export default function Egenmelding() {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+
   const slettEgenmeldingsperiode = useBoundStore((state) => state.slettEgenmeldingsperiode);
   const leggTilEgenmeldingsperiode = useBoundStore((state) => state.leggTilEgenmeldingsperiode);
 
   const endreEgenmeldingsperiode = useBoundStore((state) => state.endreEgenmeldingsperiode);
   const setEndreEgenmelding = useBoundStore((state) => state.setEndreEgenmelding);
+  const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
 
   const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
 
@@ -46,7 +48,12 @@ export default function Egenmelding() {
           {egenmeldingsperioder &&
             egenmeldingsperioder.map((egenmeldingsperiode, index) => (
               <div key={egenmeldingsperiode.id} className={styles.periodewrapper}>
-                <EgenmeldingPeriode periodeId={egenmeldingsperiode.id} egenmeldingsperiode={egenmeldingsperiode} />
+                <EgenmeldingPeriode
+                  periodeId={egenmeldingsperiode.id}
+                  egenmeldingsperiode={egenmeldingsperiode}
+                  endreEgenmeldingsperiode={endreEgenmeldingsperiode}
+                  setEgenmeldingDato={setEgenmeldingDato}
+                />
 
                 {index > 0 && (
                   <div className={styles.endresykemelding}>

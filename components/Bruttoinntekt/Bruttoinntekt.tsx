@@ -1,6 +1,6 @@
 import { BodyLong, BodyShort, Button, Checkbox, CheckboxGroup, Link, TextField } from '@navikt/ds-react';
 import { useState } from 'react';
-import { HistoriskInntekt } from '../../state/state';
+import { HistoriskInntekt, YesNo } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import styles from '../../styles/Home.module.css';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -92,6 +92,7 @@ export default function Bruttoinntekt() {
           error={visFeilmeldingsTekst('bruttoinntektbekreft')}
           hideLegend
           legend='Bekreft at månedslønn er korrekt'
+          defaultValue={[bruttoinntekt?.bekreftet ? 'Ja' : 'Nei']}
         >
           <Checkbox
             onClick={(event) => bekreftKorrektInntekt(event.currentTarget.checked)}

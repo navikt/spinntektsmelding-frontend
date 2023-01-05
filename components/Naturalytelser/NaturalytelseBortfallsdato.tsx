@@ -3,11 +3,13 @@ import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
 interface NaturalytelseBortfallsdatoInterface {
   naturalytelseId: string;
   setNaturalytelseBortfallsdato: (naturalytelseId: string, dato?: Date | undefined) => void;
+  defaultValue?: Date;
 }
 
 export default function NaturalytelseBortfallsdato({
   naturalytelseId,
-  setNaturalytelseBortfallsdato
+  setNaturalytelseBortfallsdato,
+  defaultValue
 }: NaturalytelseBortfallsdatoInterface) {
   const setBortfallsdato = (bortfallsdato: Date | undefined) => {
     setNaturalytelseBortfallsdato(naturalytelseId, bortfallsdato);
@@ -15,7 +17,8 @@ export default function NaturalytelseBortfallsdato({
 
   const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
     toDate: new Date(),
-    onDateChange: setBortfallsdato
+    onDateChange: setBortfallsdato,
+    defaultSelected: defaultValue
   });
 
   return (

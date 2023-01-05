@@ -4,6 +4,7 @@ import localStyles from './RefusjonArbeidsgiver.module.css';
 
 interface SelectBegrunnelseProps {
   onChangeBegrunnelse: (verdi: string) => void;
+  defaultValue?: string;
 }
 
 export default function SelectBegrunnelse(props: SelectBegrunnelseProps) {
@@ -14,6 +15,7 @@ export default function SelectBegrunnelse(props: SelectBegrunnelseProps) {
       onChange={(event) => props.onChangeBegrunnelse(event.target.value)}
       id={'lia-select'}
       className={localStyles.selectbegrunnelse}
+      defaultValue={props.defaultValue}
     >
       <option value=''>Velg begrunnelse</option>
       {begrunnelseKeys.map((begrunnelseKey) => (

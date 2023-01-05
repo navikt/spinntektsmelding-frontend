@@ -54,7 +54,38 @@ describe('validerPeriodeEgenmelding', () => {
   it('should fail if tom and fom is missing', () => {
     const input: Array<Periode> = [
       {
+        id: 'tilfeldig',
+        tom: new Date(2002, 10, 1),
+        fom: new Date(2002, 9, 1)
+      },
+      {
         id: 'tilfeldig'
+      }
+    ];
+
+    const expected = [
+      {
+        code: 'MANGLER_FRA',
+        felt: 'fom-tilfeldig'
+      },
+      {
+        code: 'MANGLER_TIL',
+        felt: 'tom-tilfeldig'
+      }
+    ];
+
+    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+  });
+
+  it('should fail if tom and fom is missing on the first item', () => {
+    const input: Array<Periode> = [
+      {
+        id: 'tilfeldig'
+      },
+      {
+        id: 'tilfeldig',
+        tom: new Date(2002, 10, 1),
+        fom: new Date(2002, 9, 1)
       }
     ];
 
