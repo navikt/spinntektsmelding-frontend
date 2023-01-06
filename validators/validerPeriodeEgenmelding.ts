@@ -20,42 +20,72 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Arr
     const tomPeriode = perioder.length === 1;
 
     perioder.forEach((periode) => {
-      if (!periode.fom && !tomPeriode) {
-        feilkoder.push({
-          felt: `fom-${periode.id}`,
-          code: PeriodeFeilkode.MANGLER_FRA
-        });
-      }
+      const manglerFomEllerTomMenIkkeBegge = !!periode.tom !== !!periode.fom;
+      manglerFomOgIkkeBareEnRad(periode, tomPeriode, feilkoder);
 
-      if (!periode.tom && !tomPeriode) {
-        feilkoder.push({
-          felt: `tom-${periode.id}`,
-          code: PeriodeFeilkode.MANGLER_TIL
-        });
-      }
+      manglerTomOgIkkeBareEnRad(periode, tomPeriode, feilkoder);
 
-      if (tomPeriode && !!periode.tom !== !!periode.fom && !periode.tom) {
-        feilkoder.push({
-          felt: `tom-${periode.id}`,
-          code: PeriodeFeilkode.MANGLER_TIL
-        });
-      }
+      manglerTomMenIkkeFomMedEnRad(tomPeriode, manglerFomEllerTomMenIkkeBegge, periode, feilkoder);
 
-      if (tomPeriode && !!periode.tom !== !!periode.fom && !periode.fom) {
-        feilkoder.push({
-          felt: `fom-${periode.id}`,
-          code: PeriodeFeilkode.MANGLER_FRA
-        });
-      }
+      manglerFomMenIkkeTomMedEnRad(tomPeriode, manglerFomEllerTomMenIkkeBegge, periode, feilkoder);
 
-      if (periode.fom && periode.tom && periode.fom > periode.tom) {
-        feilkoder.push({
-          felt: `fom-${periode.id}`,
-          code: PeriodeFeilkode.TIL_FOR_FRA
-        });
-      }
+      feilRekkefoelgeFomTom(periode, feilkoder);
     });
   }
 
   return feilkoder;
+}
+function feilRekkefoelgeFomTom(periode: Periode, feilkoder: ValiderResultat[]) {
+  if (periode.fom && periode.tom && periode.fom > periode.tom) {
+    feilkoder.push({
+      felt: `fom-${periode.id}`,
+      code: PeriodeFeilkode.TIL_FOR_FRA
+    });
+  }
+}
+
+function manglerFomMenIkkeTomMedEnRad(
+  tomPeriode: boolean,
+  manglerFomEllerTomMenIkkeBegge: boolean,
+  periode: Periode,
+  feilkoder: ValiderResultat[]
+) {
+  if (tomPeriode && manglerFomEllerTomMenIkkeBegge && !periode.fom) {
+    feilkoder.push({
+      felt: `fom-${periode.id}`,
+      code: PeriodeFeilkode.MANGLER_FRA
+    });
+  }
+}
+
+function manglerTomMenIkkeFomMedEnRad(
+  tomPeriode: boolean,
+  manglerFomEllerTomMenIkkeBegge: boolean,
+  periode: Periode,
+  feilkoder: ValiderResultat[]
+) {
+  if (tomPeriode && manglerFomEllerTomMenIkkeBegge && !periode.tom) {
+    feilkoder.push({
+      felt: `tom-${periode.id}`,
+      code: PeriodeFeilkode.MANGLER_TIL
+    });
+  }
+}
+
+function manglerTomOgIkkeBareEnRad(periode: Periode, tomPeriode: boolean, feilkoder: ValiderResultat[]) {
+  if (!periode.tom && !tomPeriode) {
+    feilkoder.push({
+      felt: `tom-${periode.id}`,
+      code: PeriodeFeilkode.MANGLER_TIL
+    });
+  }
+}
+
+function manglerFomOgIkkeBareEnRad(periode: Periode, tomPeriode: boolean, feilkoder: ValiderResultat[]) {
+  if (!periode.fom && !tomPeriode) {
+    feilkoder.push({
+      felt: `fom-${periode.id}`,
+      code: PeriodeFeilkode.MANGLER_FRA
+    });
+  }
 }

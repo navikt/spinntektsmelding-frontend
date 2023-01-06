@@ -57,9 +57,6 @@ export default function Bruttoinntekt() {
   }, [setEndreMaanedsinntekt, bekreftKorrektInntekt]);
 
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
-
-  console.log(bruttoinntekt?.bekreftet);
-
   const bekreftetBruttoinntekt = bruttoinntekt?.bekreftet ? ['Ja'] : [];
 
   if (tidligereinntekt) {
