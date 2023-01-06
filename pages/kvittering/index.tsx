@@ -27,9 +27,10 @@ import ButtonPrint from '../../components/ButtonPrint';
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
 import { useCallback } from 'react';
+import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 
 const Kvittering: NextPage = () => {
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt.bruttoInntekt);
+  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
@@ -116,7 +117,10 @@ const Kvittering: NextPage = () => {
             <Skillelinje />
             <Heading2>Bruttoinntekt siste 3 måneder</Heading2>
             <BodyShort className={lokalStyles.fravaertid}>Registrert inntekt</BodyShort>
-            <BodyShort>{formatCurrency(bruttoinntekt)} kr/måned</BodyShort>
+            <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
+            {bruttoinntekt.endringsaarsak && (
+              <>Endret med årsak: {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak)}</>
+            )}
             <Skillelinje />
             <Heading2>Refusjon</Heading2>
 

@@ -1,6 +1,6 @@
 import { BodyLong, BodyShort, Button, Checkbox, CheckboxGroup, Link, TextField } from '@navikt/ds-react';
-import { useState } from 'react';
-import { HistoriskInntekt, YesNo } from '../../state/state';
+import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import styles from '../../styles/Home.module.css';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -14,11 +14,6 @@ import formatDate from '../../utils/formatDate';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
-  const clickTilbakestillMaanedsinntektHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setEndreMaanedsinntekt(false);
-    tilbakestillMaanedsinntekt();
-  };
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
   const bekreftKorrektInntekt = useBoundStore((state) => state.bekreftKorrektInntekt);
@@ -30,6 +25,43 @@ export default function Bruttoinntekt() {
   const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
 
+  const clickTilbakestillMaanedsinntekt = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      setEndreMaanedsinntekt(false);
+      tilbakestillMaanedsinntekt();
+    },
+    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt]
+  );
+
+  const changeMaanedsintektHandler = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => setNyMaanedsinntekt(event.target.value),
+    [setNyMaanedsinntekt]
+  );
+
+  const changeBegrunnelseHandler = useCallback((aarsak: string) => setEndringsaarsak(aarsak), [setEndringsaarsak]);
+
+  const changeKorrektInntektHandler = useCallback(
+    (event: FormEvent<HTMLInputElement>) => bekreftKorrektInntekt(event.currentTarget.checked),
+    [bekreftKorrektInntekt]
+  );
+
+  const setNyMaanedsinntektBlanktSkjemaHandler = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => setNyMaanedsinntektBlanktSkjema(event.target.value),
+    [setNyMaanedsinntektBlanktSkjema]
+  );
+
+  const setEndreMaanedsinntektHandler = useCallback(() => {
+    setEndreMaanedsinntekt(true);
+    bekreftKorrektInntekt(false);
+  }, [setEndreMaanedsinntekt, bekreftKorrektInntekt]);
+
+  const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
+
+  console.log(bruttoinntekt?.bekreftet);
+
+  const bekreftetBruttoinntekt = bruttoinntekt?.bekreftet ? ['Ja'] : [];
+
   if (tidligereinntekt) {
     return (
       <>
@@ -40,17 +72,17 @@ export default function Bruttoinntekt() {
           Vi har derfor beregnet månedslønnen per {formatDate(bestemmendeFravaersdag)} til
         </TextLabel>
         <div className={lokalStyles.belopwrapper}>
-          {!endreMaanedsinntekt && (
+          {!endringAvBelop && (
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
               {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr/måned
             </TextLabel>
           )}
-          {endreMaanedsinntekt && (
+          {endringAvBelop && (
             <div className={lokalStyles.endremaaanedsinntekt}>
               <div>
                 <TextField
                   label='Inntekt per måned'
-                  onChange={(event) => setNyMaanedsinntekt(event.target.value)}
+                  onChange={changeMaanedsintektHandler}
                   defaultValue={formatCurrency(
                     bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
                   )}
@@ -61,7 +93,7 @@ export default function Bruttoinntekt() {
               </div>
               <div>
                 <SelectEndringBruttoinntekt
-                  onChangeBegrunnelse={setEndringsaarsak}
+                  onChangeBegrunnelse={changeBegrunnelseHandler}
                   error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
                   id='bruttoinntekt-endringsaarsak'
                 />
@@ -70,14 +102,14 @@ export default function Bruttoinntekt() {
                 <Button
                   variant='tertiary'
                   className={lokalStyles.kontrollerknapp}
-                  onClick={clickTilbakestillMaanedsinntektHandler}
+                  onClick={clickTilbakestillMaanedsinntekt}
                 >
                   Tilbakestill
                 </Button>
               </div>
             </div>
           )}
-          {!endreMaanedsinntekt && <ButtonEndre onClick={() => setEndreMaanedsinntekt(true)} />}
+          {!endringAvBelop && <ButtonEndre onClick={setEndreMaanedsinntektHandler} />}
         </div>
         <BodyShort>
           <strong>Stemmer dette?</strong>
@@ -92,10 +124,11 @@ export default function Bruttoinntekt() {
           error={visFeilmeldingsTekst('bruttoinntektbekreft')}
           hideLegend
           legend='Bekreft at månedslønn er korrekt'
-          defaultValue={[bruttoinntekt?.bekreftet ? 'Ja' : 'Nei']}
+          defaultValue={bekreftetBruttoinntekt}
+          value={bekreftetBruttoinntekt}
         >
           <Checkbox
-            onClick={(event) => bekreftKorrektInntekt(event.currentTarget.checked)}
+            onClick={changeKorrektInntektHandler}
             id='bruttoinntektbekreft'
             error={visFeilmelding('bruttoinntektbekreft')}
             value='Ja'
@@ -117,7 +150,7 @@ export default function Bruttoinntekt() {
         <div className={lokalStyles.prosentbody}>
           <TextField
             label='Gjennomsnittsinntekt per måned'
-            onChange={(event) => setNyMaanedsinntektBlanktSkjema(event.target.value)}
+            onChange={setNyMaanedsinntektBlanktSkjemaHandler}
             defaultValue={formatCurrency(
               bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
             )}
