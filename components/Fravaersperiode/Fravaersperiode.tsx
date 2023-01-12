@@ -1,10 +1,11 @@
 import { BodyLong, Link } from '@navikt/ds-react';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Periode } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
-import formatDate from '../../utils/formatDate';
+import { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
 import Heading3 from '../Heading3/Heading3';
+import Arbeidsgiverperiode from './Arbeidsgiverperiode';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
 
 interface FravaersperiodeProps {
@@ -19,15 +20,19 @@ export default function Fravaersperiode({ egenmeldingsperioder, setModalOpen }: 
     state.setArbeidsgiverperioder
   ]);
 
+  const ucSetArbeidsgiverperiode = useCallback(
+    (agp: FravaersPeriode[] | undefined) => setArbeidsgiverperioder(agp),
+    [setArbeidsgiverperioder]
+  );
+
   useEffect(() => {
     const perioder =
       fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
     if (perioder) {
       const agp = finnArbeidsgiverperiode(perioder);
-      setArbeidsgiverperioder(agp);
+      ucSetArbeidsgiverperiode(agp);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fravaersperioder, egenmeldingsperioder]);
+  }, [fravaersperioder, egenmeldingsperioder, ucSetArbeidsgiverperiode]);
 
   if (!fravaersperioder) return null;
 
@@ -43,8 +48,7 @@ export default function Fravaersperiode({ egenmeldingsperioder, setModalOpen }: 
       {arbeidsgiverperioder?.[0] && (
         <BodyLong>
           Basert på eventuell egenmelding og sykmeldingsperiode beregner NAV arbeidsgiverperioden til{' '}
-          <strong>{formatDate(arbeidsgiverperioder[0].fom)}</strong> til{' '}
-          <strong>{formatDate(arbeidsgiverperioder[0].tom)}</strong>. Hvis du mener dette er feil er det mulig å{' '}
+          <Arbeidsgiverperiode perioder={arbeidsgiverperioder} />. Hvis du mener dette er feil er det mulig å{' '}
           <Link onClick={setModalOpen}>korrigere her.</Link>
         </BodyLong>
       )}

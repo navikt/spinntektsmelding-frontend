@@ -190,12 +190,12 @@ const formData = {
       maanedsnavn: format(subMonths(new Date(), 8), 'yyyy-MM'), // yyyy-MM
       inntekt: 88000
     }
-  ],
-  behandlingsdager: ['2022-01-10'],
-  behandlingsperiode: {
-    fom: '2022-01-05',
-    tom: '2022-06-02'
-  }
+  ]
+  // behandlingsdager: ['2022-01-10'],
+  // behandlingsperiode: {
+  //   fom: '2022-01-05',
+  //   tom: '2022-06-02'
+  // }
 };
 
 export default formData;

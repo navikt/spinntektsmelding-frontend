@@ -139,6 +139,10 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
     }
   };
 
+  useEffect(() => {
+    setArbeidsgiverperioder(props.arbeidsgiverperioder);
+  }, [props.arbeidsgiverperioder]);
+
   return (
     <Modal
       open={props.open}
