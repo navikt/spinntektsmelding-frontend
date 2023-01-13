@@ -6,9 +6,24 @@ import Heading3 from '../Heading3/Heading3';
 import useBoundStore from '../../state/useBoundStore';
 import EgenmeldingPeriode from './EgenmeldingPeriode';
 import ButtonEndre from '../ButtonEndre';
+import { useMemo } from 'react';
 
 export default function Egenmelding() {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+
+  const forsteFravaersdag = useMemo(
+    () =>
+      !fravaersperioder
+        ? new Date()
+        : fravaersperioder
+            .map((periode) => periode.fom)
+            .reduce(
+              (prevDate, curDate) => ((curDate || new Date()) <= (prevDate || new Date()) ? curDate : prevDate),
+              new Date()
+            ),
+    [fravaersperioder]
+  );
 
   const slettEgenmeldingsperiode = useBoundStore((state) => state.slettEgenmeldingsperiode);
   const leggTilEgenmeldingsperiode = useBoundStore((state) => state.leggTilEgenmeldingsperiode);
@@ -53,6 +68,7 @@ export default function Egenmelding() {
                   egenmeldingsperiode={egenmeldingsperiode}
                   endreEgenmeldingsperiode={endreEgenmeldingsperiode}
                   setEgenmeldingDato={setEgenmeldingDato}
+                  toDate={forsteFravaersdag || new Date()}
                 />
 
                 {index > 0 && (
@@ -68,23 +84,16 @@ export default function Egenmelding() {
         </div>
         {!endreEgenmeldingsperiode && (
           <div>
-            <ButtonEndre onClick={(e) => clickEndreFravaersperiodeHandler(e)} />
+            <ButtonEndre onClick={clickEndreFravaersperiodeHandler} />
           </div>
         )}
         {endreEgenmeldingsperiode && (
           <div className={styles.endresykemeldingknapper}>
-            <Button
-              variant='secondary'
-              className={styles.kontrollerknapp}
-              onClick={(event) => clickLeggTilFravaersperiodeHandler(event)}
-            >
+            <Button variant='secondary' className={styles.kontrollerknapp} onClick={clickLeggTilFravaersperiodeHandler}>
               Legg til egenmeldingsperiode
             </Button>
 
-            <Button
-              className={styles.kontrollerknapp}
-              onClick={(event) => clickTilbakestillFravaersperiodeHandler(event)}
-            >
+            <Button className={styles.kontrollerknapp} onClick={clickTilbakestillFravaersperiodeHandler}>
               Tilbakestill
             </Button>
           </div>

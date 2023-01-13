@@ -11,13 +11,15 @@ interface EgenmeldingPeriodeInterface {
   egenmeldingsperiode: Periode;
   endreEgenmeldingsperiode: boolean;
   setEgenmeldingDato: (dateValue: DateRange | undefined, periodeId: string) => void;
+  toDate: Date;
 }
 
 export default function EgenmeldingPeriode({
   periodeId,
   egenmeldingsperiode,
   endreEgenmeldingsperiode,
-  setEgenmeldingDato
+  setEgenmeldingDato,
+  toDate
 }: EgenmeldingPeriodeInterface) {
   const rangeChangeHandler = (dateRange: DateRange | undefined) => {
     if (dateRange) {
@@ -27,7 +29,7 @@ export default function EgenmeldingPeriode({
 
   const { datepickerProps, toInputProps, fromInputProps } = UNSAFE_useRangeDatepicker({
     onRangeChange: (dato) => rangeChangeHandler(dato),
-    toDate: new Date(),
+    toDate: toDate,
     defaultSelected: { from: egenmeldingsperiode?.fom, to: egenmeldingsperiode?.tom }
   });
 
