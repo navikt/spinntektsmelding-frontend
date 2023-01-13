@@ -34,6 +34,7 @@ import EndrePerioderModal, { EndrePeriodeRespons } from '../components/EndrePeri
 import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import formatIsoDate from '../utils/formatIsoDate';
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
+import useErrorRespons, { ErrorResponse } from '../utils/useErrorResponse';
 
 const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/trenger';
@@ -87,6 +88,8 @@ const Home: NextPage = () => {
 
   const fyllInnsending = useFyllInnsending();
 
+  const errorResponse = useErrorRespons();
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -112,13 +115,16 @@ const Home: NextPage = () => {
         });
         if (data.status === 201) {
           router.push('/kvittering');
+        } else {
+          const resultat = await data.json();
+
+          if (resultat.errors) {
+            const errors: Array<ErrorResponse> = resultat.errors;
+            errorResponse(errors);
+          }
         }
       };
       postData();
-
-      // } else {
-      //   fyllFeilmeldinger(errorStatus.errorTexts);
-      // }
     }
   };
 

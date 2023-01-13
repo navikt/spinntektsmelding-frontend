@@ -42,8 +42,16 @@ export const config = {
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
-    const innsendteData = req.body;
-    return res.status(201).json(innsendteData);
+    const innsendteData = {
+      errors: [
+        {
+          property: 'inntekt.beregnetInntekt',
+          error: 'Må være mindre enn 1 000 000',
+          value: '1.0003333333E10'
+        }
+      ]
+    };
+    return res.status(400).json(innsendteData);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {
       target: basePath,
