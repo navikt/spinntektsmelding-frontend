@@ -2,7 +2,6 @@ import { BodyLong, BodyShort, Button, Checkbox, CheckboxGroup, Link, TextField }
 import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
-import styles from '../../styles/Home.module.css';
 import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import Heading3 from '../Heading3/Heading3';
@@ -11,6 +10,9 @@ import TidligereInntekt from './TidligereInntekt';
 import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonEndre from '../ButtonEndre';
 import formatDate from '../../utils/formatDate';
+import TariffendringDato from './TariffendringDato';
+import FerieULonnDato from './FerieULonnDato';
+import LonnsendringDato from './LonnsendringDato';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -18,12 +20,23 @@ export default function Bruttoinntekt() {
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
   const bekreftKorrektInntekt = useBoundStore((state) => state.bekreftKorrektInntekt);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
-  const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
+  const [setEndringsaarsak, endringsaarsak] = useBoundStore((state) => [
+    state.setEndringsaarsak,
+    state.bruttoinntekt.endringsaarsak
+  ]);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const setFerieUtenLonnPeriode = useBoundStore((state) => state.setFerieUtenLonnPeriode);
+  const ferieULonn = useBoundStore((state) => state.ferieULonn);
+  const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
+  const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
+  const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
+  const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
+  const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
+  const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
 
   const clickTilbakestillMaanedsinntekt = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -51,10 +64,14 @@ export default function Bruttoinntekt() {
     [setNyMaanedsinntektBlanktSkjema]
   );
 
-  const setEndreMaanedsinntektHandler = useCallback(() => {
-    setEndreMaanedsinntekt(true);
-    bekreftKorrektInntekt(false);
-  }, [setEndreMaanedsinntekt, bekreftKorrektInntekt]);
+  const setEndreMaanedsinntektHandler = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      setEndreMaanedsinntekt(true);
+      bekreftKorrektInntekt(false);
+    },
+    [setEndreMaanedsinntekt, bekreftKorrektInntekt]
+  );
 
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
   const bekreftetBruttoinntekt = bruttoinntekt?.bekreftet ? ['Ja'] : [];
@@ -63,11 +80,13 @@ export default function Bruttoinntekt() {
     return (
       <>
         <Heading3>Brutto månedslønn</Heading3>
-        <BodyLong>For å beregne månedslønnen har vi brukt følgende lønnsopplysninger fra A-meldingen:</BodyLong>
+        <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
         <TidligereInntekt tidligereinntekt={tidligereinntekt} />
-        <TextLabel className={styles.tbmargin}>
-          Vi har derfor beregnet månedslønnen per {formatDate(bestemmendeFravaersdag)} til
-        </TextLabel>
+        {!endringAvBelop && (
+          <TextLabel className={lokalStyles.tbmargin}>
+            Vi har derfor beregnet månedslønnen per {formatDate(bestemmendeFravaersdag)} til
+          </TextLabel>
+        )}
         <div className={lokalStyles.belopwrapper}>
           {!endringAvBelop && (
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
@@ -75,8 +94,8 @@ export default function Bruttoinntekt() {
             </TextLabel>
           )}
           {endringAvBelop && (
-            <div className={lokalStyles.endremaaanedsinntekt}>
-              <div>
+            <div className={lokalStyles.endremaaanedsinntektwrapper}>
+              <div className={lokalStyles.endremaaanedsinntekt}>
                 <TextField
                   label='Inntekt per måned'
                   onChange={changeMaanedsintektHandler}
@@ -87,23 +106,43 @@ export default function Bruttoinntekt() {
                   error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
                   className={lokalStyles.bruttoinntektendringsbelop}
                 />
+                <div>
+                  <SelectEndringBruttoinntekt
+                    onChangeBegrunnelse={changeBegrunnelseHandler}
+                    error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
+                    id='bruttoinntekt-endringsaarsak'
+                  />
+                </div>
+                <div>
+                  <Button
+                    variant='tertiary'
+                    className={lokalStyles.kontrollerknapp}
+                    onClick={clickTilbakestillMaanedsinntekt}
+                  >
+                    Tilbakestill
+                  </Button>
+                </div>
               </div>
-              <div>
-                <SelectEndringBruttoinntekt
-                  onChangeBegrunnelse={changeBegrunnelseHandler}
-                  error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
-                  id='bruttoinntekt-endringsaarsak'
-                />
-              </div>
-              <div>
-                <Button
-                  variant='tertiary'
-                  className={lokalStyles.kontrollerknapp}
-                  onClick={clickTilbakestillMaanedsinntekt}
-                >
-                  Tilbakestill
-                </Button>
-              </div>
+              {endringsaarsak === 'Tariffendring' && (
+                <div className={lokalStyles.endremaaanedsinntekt}>
+                  <TariffendringDato
+                    changeTariffEndretDato={setTariffEndringsdato}
+                    changeTariffKjentDato={setTariffKjentdato}
+                    defaultEndringsdato={tariffendringsdato}
+                    defaultKjentDato={tariffkjentdato}
+                  />
+                </div>
+              )}
+              {endringsaarsak === 'FerieUtenLonn' && (
+                <div className={lokalStyles.endremaaanedsinntekt}>
+                  <FerieULonnDato onFerieRangeChange={setFerieUtenLonnPeriode} defaultRange={ferieULonn} />
+                </div>
+              )}
+              {endringsaarsak === 'Lonnsokning' && (
+                <div className={lokalStyles.endremaaanedsinntekt}>
+                  <LonnsendringDato onChangeLonnsendringsdato={setLonnsendringDato} defaultDate={lonnsendringsdato} />
+                </div>
+              )}
             </div>
           )}
           {!endringAvBelop && <ButtonEndre onClick={setEndreMaanedsinntektHandler} />}

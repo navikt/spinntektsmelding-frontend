@@ -6,6 +6,7 @@ import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
+import { DateRange } from 'react-day-picker';
 
 const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maanedsnavn < b.maanedsnavn) {
@@ -19,9 +20,17 @@ export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   tidligereInntekt?: Array<HistoriskInntekt>;
   opprinneligeInntekt?: Array<HistoriskInntekt>;
+  ferieULonn?: { fom?: Date; tom?: Date };
+  lonnsendringsdato?: Date;
+  tariffendringsdato?: Date;
+  tariffkjentdato?: Date;
   setNyMaanedsinntekt: (belop: string) => void;
   setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
+  setFerieUtenLonnPeriode: (periode: DateRange | undefined) => void;
+  setLonnsendringDato: (endringsdato?: Date) => void;
+  setTariffEndringsdato: (endringsdato?: Date) => void;
+  setTariffKjentdato: (kjentFraDato?: Date) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean) => void;
   initBruttioinntekt: (
@@ -88,6 +97,45 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsaarsak', feiltekster.ENDRINGSAARSAK_MANGLER);
         }
+
+        return state;
+      })
+    ),
+  setFerieUtenLonnPeriode: (periode) =>
+    set(
+      produce((state) => {
+        if (!state.ferieULonn) {
+          state.ferieULonn = {
+            fom: periode?.from,
+            tom: periode?.to
+          };
+        } else {
+          state.ferieULonn.fom = periode?.from;
+          state.ferieULonn.tom = periode?.to;
+        }
+        return state;
+      })
+    ),
+  setLonnsendringDato: (endringsdato) =>
+    set(
+      produce((state) => {
+        state.lonnsendringsdato = endringsdato;
+
+        return state;
+      })
+    ),
+  setTariffEndringsdato: (endringsdato?: Date) =>
+    set(
+      produce((state) => {
+        state.tariffendringsdato = endringsdato;
+
+        return state;
+      })
+    ),
+  setTariffKjentdato: (kjentFraDato?: Date) =>
+    set(
+      produce((state) => {
+        state.tariffkjentdato = kjentFraDato;
 
         return state;
       })

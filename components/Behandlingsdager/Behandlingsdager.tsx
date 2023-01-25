@@ -44,7 +44,6 @@ export default function Behandlingsdager() {
   const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
     defaultSelected: new Date()
   });
-  console.log(behandlingsperiode);
   if (!behandlingsperiode) return null;
   return (
     <>

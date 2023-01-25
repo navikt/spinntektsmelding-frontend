@@ -4,7 +4,9 @@ interface Begrunnelser {
 
 const begrunnelseEndringBruttoinntekt: Begrunnelser = {
   FeilInntekt: 'Feil inntekt',
-  Tariffendring: 'Tariffendring'
+  Tariffendring: 'Tariffendring',
+  FerieUtenLonn: 'Ferie uten lønn',
+  Lonnsokning: 'Lønnsøkning'
 };
 
 export default begrunnelseEndringBruttoinntekt;

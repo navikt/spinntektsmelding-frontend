@@ -9,28 +9,28 @@
 }
 
 .maanedsinntekt {
-  text-align: right;
+  margin-bottom: auto;
+  margin-top   : auto;
+  text-align   : right;
 }
 
-.endremaaanedsinntekt {
-  display   : flex;
-  gap       : 2rem;
-  margin-top: auto;
-  height    : 3rem;
+.endremaaanedsinntekt,
+.endremaaanedsinntektwrapper {
+  display: flex;
+  gap    : 2rem;
+}
+
+.endremaaanedsinntektwrapper {
+  flex-direction: column;
+  margin-top    : .5rem;
 }
 
 .belopwrapper {
   display      : flex;
   gap          : 2rem;
   margin-bottom: 1rem;
+  margin-top   : 1rem;
 }
-
-.belopwrapper>div {
-  margin-top   : auto;
-  margin-bottom: auto;
-  height       : auto;
-}
-
 
 .bruttoinntektendringsbelop>label {
   max-height: var(--navds-font-line-height-large);
@@ -85,4 +85,9 @@
 
 .inntektsliste {
   padding-top: 1rem;
+}
+
+.tbmargin {
+  margin-bottom: 1.5rem;
+  margin-top   : 1.5rem;
 }
