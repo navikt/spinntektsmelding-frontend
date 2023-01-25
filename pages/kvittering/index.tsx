@@ -55,7 +55,7 @@ const Kvittering: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Inntektsmelding</title>
+        <title>Kvittering for innsendt inntektsmelding</title>
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
