@@ -1,6 +1,6 @@
 .maanedsnavn,
 .maanedsinntekt {
-  font-size: var(--navds-font-size-xlarge);
+  font-size: var(--a-font-size-xlarge);
   min-width: 5rem;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .bruttoinntektendringsbelop>label {
-  max-height: var(--navds-font-line-height-large);
+  max-height: var(--a-font-line-height-large);
 }
 
 .bruttoinntektendringsbelop>input {
@@ -49,7 +49,7 @@
 }
 
 .kontrollerknapp {
-  margin-top: calc(var(--navds-font-line-height-large) + .5rem);
+  margin-top: calc(var(--a-font-line-height-large) + .5rem);
   height    : 3rem;
   display   : inline-block;
 }
@@ -80,7 +80,7 @@
 .bruttoinntektbelopbeskrivelse {
   margin-bottom: 1rem;
   margin-top   : 1rem;
-  font-weight  : var(--navds-font-weight-bold);
+  font-weight  : var(--a-font-weight-bold);
 }
 
 .inntektsliste {

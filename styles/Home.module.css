@@ -34,7 +34,7 @@
 
 .datepickerlabel {
   display      : inline-block;
-  margin-bottom: var(--navds-spacing-2);
+  margin-bottom: var(--a-spacing-2);
 }
 
 .datepickerescape input {
@@ -104,7 +104,7 @@
 
 .radiobuttonwrapper,
 .opphrefkravforklaring {
-  margin: var(--navds-spacing-3) 0;
+  margin: var(--a-spacing-3) 0;
 }
 
 .opphrefkravperiode {
@@ -114,7 +114,7 @@
 .naturalytelser {
   display      : flex;
   gap          : 2rem;
-  margin-bottom: var(--navds-spacing-2);
+  margin-bottom: var(--a-spacing-2);
 }
 
 .confirmationpanel {
@@ -142,9 +142,9 @@
     flex-direction  : column;
     border          : 1px solid darkgray;
     border-radius   : 5px;
-    background-color: var(--navds-semantic-color-canvas-background);
+    background-color: var(--a-bg-subtle);
     padding         : 0.5rem;
-    box-shadow      : 0.25rem 0.25rem 0.25rem var(--navds-semantic-color-canvas-background);
+    box-shadow      : 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
     margin          : 0.25rem 0;
   }
 
