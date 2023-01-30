@@ -32,7 +32,7 @@ export interface BruttoinntektState {
   setTariffEndringsdato: (endringsdato?: Date) => void;
   setTariffKjentdato: (kjentFraDato?: Date) => void;
   tilbakestillMaanedsinntekt: () => void;
-  bekreftKorrektInntekt: (bekreftet: boolean) => void;
+  bekreftKorrektInntekt: (bekreftet: boolean, reset?: boolean) => void;
   initBruttioinntekt: (
     bruttoInntekt: number,
     tidligereInntekt: Array<MottattHistoriskInntekt>,
@@ -147,14 +147,16 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  bekreftKorrektInntekt: (bekreftet: boolean) =>
+  bekreftKorrektInntekt: (bekreftet, reset) =>
     set(
       produce((state) => {
         state.bruttoinntekt!.bekreftet = bekreftet;
         if (bekreftet === true) {
           state = slettFeilmelding(state, 'bruttoinntektbekreft');
         } else {
-          state = leggTilFeilmelding(state, 'bruttoinntektbekreft', feiltekster.IKKE_BEKREFTET);
+          if (!reset) {
+            state = leggTilFeilmelding(state, 'bruttoinntektbekreft', feiltekster.IKKE_BEKREFTET);
+          }
         }
 
         return state;

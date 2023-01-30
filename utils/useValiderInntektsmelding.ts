@@ -13,6 +13,7 @@ import validerLonnUnderSykefravaeret, {
 import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import useBoundStore from '../state/useBoundStore';
+import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -40,7 +41,8 @@ type codeUnion =
   | NaturalytelserFeilkoder
   | LonnIArbeidsgiverperiodenFeilkode
   | LonnUnderSykefravaeretFeilkode
-  | BekreftOpplysningerFeilkoder;
+  | BekreftOpplysningerFeilkoder
+  | EndringAvMaanedslonnFeilkode;
 
 export interface ValiderResultat {
   felt: string;
@@ -49,6 +51,8 @@ export interface ValiderResultat {
 
 export default function useValiderInntektsmelding() {
   const state = useBoundStore((state) => state);
+
+  state.setSkalViseFeilmeldinger(true);
 
   return (opplysningerBekreftet: boolean): SubmitInntektsmeldingReturnvalues => {
     let errorTexts: Array<ValiderTekster> = [];
@@ -60,6 +64,8 @@ export default function useValiderInntektsmelding() {
     let feilkoderLonnIArbeidsgiverperioden: Array<ValiderResultat> = [];
     let feilkoderLonnUnderSykefravaeret: Array<ValiderResultat> = [];
     let feilkoderBekreftOpplyninger: Array<ValiderResultat> = [];
+    let feilkoderEndringAvMaanedslonn: Array<ValiderResultat> = [];
+
     if (state.fravaersperioder) {
       if (state.fravaersperioder.length < 1) {
         errorCodes.push({
@@ -93,6 +99,8 @@ export default function useValiderInntektsmelding() {
       state.refusjonskravetOpphoerer
     );
 
+    feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(state.harRefusjonEndringer, state.refusjonEndringer);
+
     feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);
 
     errorCodes = [
@@ -103,7 +111,8 @@ export default function useValiderInntektsmelding() {
       ...feilkoderNaturalytelser,
       ...feilkoderLonnIArbeidsgiverperioden,
       ...feilkoderLonnUnderSykefravaeret,
-      ...feilkoderBekreftOpplyninger
+      ...feilkoderBekreftOpplyninger,
+      ...feilkoderEndringAvMaanedslonn
     ];
 
     if (errorCodes.length > 0) {

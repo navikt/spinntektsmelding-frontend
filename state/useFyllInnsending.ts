@@ -21,10 +21,16 @@ interface FullLonnIArbeidsgiverPerioden {
   utbetalt?: number;
 }
 
+export interface RefusjonEndring {
+  dato: string;
+  beløp: number;
+}
+
 interface Refusjon {
   utbetalerHeleEllerDeler: boolean;
   refusjonPrMnd?: number;
   refusjonOpphører?: string;
+  refusjonEndringer?: Array<RefusjonEndring>;
 }
 
 interface SendtNaturalytelse {
@@ -64,11 +70,22 @@ export default function useFyllInnsending() {
 
   const behandlingsdager = useBoundStore((state) => state.behandlingsdager);
 
+  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
   const harEgenmeldingsdager =
     egenmeldingsperioder &&
     (egenmeldingsperioder.length > 1 || (egenmeldingsperioder[0].fom && egenmeldingsperioder[0].tom));
+
+  const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined =
+    harRefusjonEndringer && refusjonEndringer
+      ? refusjonEndringer.map((endring) => ({
+          beløp: endring.belop!,
+          dato: formatIsoDate(endring.dato)!
+        }))
+      : undefined;
 
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
     setSkalViseFeilmeldinger(true);
@@ -119,7 +136,8 @@ export default function useFyllInnsending() {
         refusjonPrMnd: lonnISykefravaeret?.belop,
         refusjonOpphører: refusjonskravetOpphoerer?.opphorsdato
           ? formatIsoDate(refusjonskravetOpphoerer?.opphorsdato)
-          : undefined
+          : undefined,
+        refusjonEndringer: innsendingRefusjonEndringer
       },
       naturalytelser: naturalytelser?.map((ytelse) => ({
         naturalytelse: ytelse.type || '',
@@ -128,7 +146,7 @@ export default function useFyllInnsending() {
       })),
       bekreftOpplysninger: opplysningerBekreftet,
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
-      årsakInnsending: 'Ny'
+      årsakInnsending: 'Ny' // Kan også være Endring
     };
 
     return skjemaData;

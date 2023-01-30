@@ -17,7 +17,7 @@ export default function useStateInit() {
   return (jsonData: MottattData) => {
     initFravaersperiode(jsonData.fravaersperioder);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
-    initPerson(jsonData.navn, jsonData.identitetsnummer, jsonData.orgnrUnderenhet);
+    initPerson(jsonData.navn, jsonData.identitetsnummer, jsonData.orgnrUnderenhet, jsonData.orgNavn);
     if (jsonData.behandlingsperiode) {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }

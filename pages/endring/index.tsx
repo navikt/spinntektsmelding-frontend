@@ -1,13 +1,13 @@
 import { BodyLong, Button, ConfirmationPanel, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import SelectEndringBruttoinntekt from '../../components/Bruttoinntekt/SelectEndringBruttoinntekt';
 import PageContent from '../../components/PageContent/PageContent';
 import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
-import lokalStyles from '../../components/Bruttoinntekt/Bruttoinntekt.module.css';
+import biStyles from '../../components/Bruttoinntekt/Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import TariffendringDato from '../../components/Bruttoinntekt/TariffendringDato';
 import FerieULonnDato from '../../components/Bruttoinntekt/FerieULonnDato';
@@ -15,15 +15,14 @@ import LonnsendringDato from '../../components/Bruttoinntekt/LonnsendringDato';
 import useBoundStore from '../../state/useBoundStore';
 import Feilsammendrag from '../../components/Feilsammendrag';
 import feiltekster from '../../utils/feiltekster';
+import lokalStyles from './Endring.module.css';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<boolean | undefined>(undefined);
-  const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
   const [endringsaarsak, setEndringsaarsak] = useState<string>('');
 
-  const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const setFerieUtenLonnPeriode = useBoundStore((state) => state.setFerieUtenLonnPeriode);
   const ferieULonn = useBoundStore((state) => state.ferieULonn);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
@@ -46,7 +45,6 @@ const Endring: NextPage = () => {
 
   const handleChangeEndringLonn = (value: string) => {
     setEndringBruttolonn(value === 'Ja');
-    // event.preventDefault();
   };
 
   const changeMaanedsintektHandler = () => {};
@@ -83,8 +81,12 @@ const Endring: NextPage = () => {
             endringer i lønn for den ansatte mellom dd.mm.åååå og dd.mm.åååå?'
               onChange={handleChangeEndringLonn}
             >
-              <Radio value='Ja'>Ja</Radio>
-              <Radio value='Nei'>Nei</Radio>
+              <Radio value='Ja' className={lokalStyles.fancyRadio}>
+                Ja
+              </Radio>
+              <Radio value='Nei' className={lokalStyles.fancyRadio}>
+                Nei
+              </Radio>
             </RadioGroup>
             {endringBruttolonn && (
               <>
@@ -94,8 +96,8 @@ const Endring: NextPage = () => {
                   {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr
                 </BodyLong>
                 <BodyLong>Angi ny månedslønn per dd.mm.ååååå</BodyLong>
-                <div className={lokalStyles.endremaaanedsinntektwrapper}>
-                  <div className={lokalStyles.endremaaanedsinntekt}>
+                <div className={biStyles.endremaaanedsinntektwrapper}>
+                  <div className={biStyles.endremaaanedsinntekt}>
                     <TextField
                       label='Inntekt per måned'
                       onChange={changeMaanedsintektHandler}
@@ -104,7 +106,7 @@ const Endring: NextPage = () => {
                       )}
                       id='bruttoinntekt-endringsbelop'
                       error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
-                      className={lokalStyles.bruttoinntektendringsbelop}
+                      className={biStyles.bruttoinntektendringsbelop}
                     />
                     <div>
                       <SelectEndringBruttoinntekt
@@ -115,7 +117,7 @@ const Endring: NextPage = () => {
                     </div>
                   </div>
                   {endringsaarsak === 'Tariffendring' && (
-                    <div className={lokalStyles.endremaaanedsinntekt}>
+                    <div className={biStyles.endremaaanedsinntekt}>
                       <TariffendringDato
                         changeTariffEndretDato={setTariffEndringsdato}
                         changeTariffKjentDato={setTariffKjentdato}
@@ -125,12 +127,12 @@ const Endring: NextPage = () => {
                     </div>
                   )}
                   {endringsaarsak === 'FerieUtenLonn' && (
-                    <div className={lokalStyles.endremaaanedsinntekt}>
+                    <div className={biStyles.endremaaanedsinntekt}>
                       <FerieULonnDato onFerieRangeChange={setFerieUtenLonnPeriode} defaultRange={ferieULonn} />
                     </div>
                   )}
                   {endringsaarsak === 'Lonnsokning' && (
-                    <div className={lokalStyles.endremaaanedsinntekt}>
+                    <div className={biStyles.endremaaanedsinntekt}>
                       <LonnsendringDato
                         onChangeLonnsendringsdato={setLonnsendringDato}
                         defaultDate={lonnsendringsdato}

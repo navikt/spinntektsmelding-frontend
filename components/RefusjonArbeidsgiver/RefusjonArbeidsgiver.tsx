@@ -1,7 +1,6 @@
 import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
 import styles from '../../styles/Home.module.css';
-import { YesNo } from '../../state/state';
 
 import useBoundStore from '../../state/useBoundStore';
 import RefsjonArbeidsgiverSluttdato from './RefsjonArbeidsgiverSluttdato';
@@ -9,6 +8,7 @@ import SelectBegrunnelse from './SelectBegrunnelse';
 import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import formatCurrency from '../../utils/formatCurrency';
+import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 
 export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -35,6 +35,9 @@ export default function RefusjonArbeidsgiver() {
   );
 
   const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
+  const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
+  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+  const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
 
   return (
     <>
@@ -98,11 +101,13 @@ export default function RefusjonArbeidsgiver() {
               visFeilmeldingsTekst={visFeilmeldingsTekst}
             />
 
-            <BodyLong className={styles.opphrefkravforklaring}>
-              Refusjonsbeløpet som dere mottar fra NAV skal samsvare med lønnen dere betaler til arbeidstakeren under
-              sykmeldingen (opp til 6 G). Refusjonsbeløpet gjelder fra den første dagen arbeidstakeren har rett til
-              utbetaling fra NAV.
-            </BodyLong>
+            <RefusjonUtbetalingEndring
+              endringer={refusjonEndringer || []}
+              maxDate={refusjonskravetOpphoerer?.opphorsdato}
+              onHarEndringer={setHarRefusjonEndringer}
+              onOppdaterEndringer={oppdaterRefusjonEndringer}
+            />
+
             <RadioGroup
               legend='Opphører refusjonkravet i perioden?'
               className={styles.radiobuttonwrapper}

@@ -23,7 +23,7 @@ export interface MottattArbeidsforhold {
 interface MottattData {
   navn: string;
   identitetsnummer: string;
-  virksomhetsnavn: string;
+  orgNavn: string;
   orgnrUnderenhet: string;
   fravaersperioder: Array<MottattPeriode>;
   egenmeldingsperioder: Array<MottattPeriode>;

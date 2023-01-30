@@ -68,7 +68,7 @@ export default function Bruttoinntekt() {
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       setEndreMaanedsinntekt(true);
-      bekreftKorrektInntekt(false);
+      bekreftKorrektInntekt(false, true);
     },
     [setEndreMaanedsinntekt, bekreftKorrektInntekt]
   );
@@ -97,7 +97,7 @@ export default function Bruttoinntekt() {
             <div className={lokalStyles.endremaaanedsinntektwrapper}>
               <div className={lokalStyles.endremaaanedsinntekt}>
                 <TextField
-                  label='Inntekt per måned'
+                  label={`Månedsinntekt per ${formatDate(bestemmendeFravaersdag)}`}
                   onChange={changeMaanedsintektHandler}
                   defaultValue={formatCurrency(
                     bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0

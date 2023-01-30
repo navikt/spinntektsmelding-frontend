@@ -22,8 +22,13 @@
   width: max-content;
 }
 
+.belopperiode,
 .wraputbetaling {
   display       : flex;
   flex-direction: row;
   gap           : 2rem;
+}
+
+.legtilbutton {
+  margin-top: .75rem;
 }

@@ -135,6 +135,7 @@ const formData = {
   navn: 'Navn Navnesen',
   identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
   orgnrUnderenhet: '911206722',
+  orgNavn: 'Ampert piggsvin barnehage',
   bruttoinntekt: 77000,
   fravaersperioder: [
     {
