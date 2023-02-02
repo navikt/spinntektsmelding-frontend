@@ -21,7 +21,7 @@ export default function NyStillingsprosentDato({
       <UNSAFE_DatePicker {...datepickerProps}>
         <UNSAFE_DatePicker.Input
           {...inputPropsTariff}
-          label='Ny stilling fra'
+          label='Ny stillingsprosent fra'
           id={'bruttoinntekt-lonnsendring-fom'}
           // error={props.hasError && 'Feltet er obligatorisk.'}
         />
