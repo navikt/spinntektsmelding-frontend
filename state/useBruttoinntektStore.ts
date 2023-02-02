@@ -26,6 +26,8 @@ export interface BruttoinntektState {
   tariffkjentdato?: Date;
   nystillingdato?: Date;
   nystillingsprosentdato?: Date;
+  permisjon?: Array<Periode>;
+  permitering?: Array<Periode>;
   setNyMaanedsinntekt: (belop: string) => void;
   setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
@@ -35,6 +37,8 @@ export interface BruttoinntektState {
   setTariffKjentdato: (kjentFraDato?: Date) => void;
   setNyStillingDato: (dato?: Date) => void;
   setNyStillingsprosentDato: (dato?: Date) => void;
+  setPermisjonPeriode: (periode: Array<Periode> | undefined) => void;
+  setPermiteringPeriode: (periode: Array<Periode> | undefined) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean, reset?: boolean) => void;
   initBruttioinntekt: (
@@ -109,15 +113,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.ferie = periode;
-        // if (!state.ferie) {
-        //   state.ferie = {
-        //     fom: periode?.fom,
-        //     tom: periode?.tom
-        //   };
-        // } else {
-        //   state.ferie.fom = periode?.fom;
-        //   state.ferie.tom = periode?.tom;
-        // }
         return state;
       })
     ),
@@ -158,6 +153,20 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       produce((state) => {
         state.nystillingdato = dato;
 
+        return state;
+      })
+    ),
+  setPermisjonPeriode: (periode) =>
+    set(
+      produce((state) => {
+        state.permisjon = periode;
+        return state;
+      })
+    ),
+  setPermiteringPeriode: (periode) =>
+    set(
+      produce((state) => {
+        state.permitering = periode;
         return state;
       })
     ),

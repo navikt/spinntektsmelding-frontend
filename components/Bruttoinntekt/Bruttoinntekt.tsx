@@ -11,12 +11,11 @@ import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonEndre from '../ButtonEndre';
 import formatDate from '../../utils/formatDate';
 import TariffendringDato from './TariffendringDato';
-import FerieULonnDato from './FerieULonnDato';
 import LonnsendringDato from './LonnsendringDato';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
-import PermisjonDato from './PermisjonDato';
 import NyStillingDato from './NyStillingDato';
 import NyStillingsprosentDato from './NyStillingsprosentDato';
+import PeriodeListevelger from './PeriodeListevelger';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -45,6 +44,10 @@ export default function Bruttoinntekt() {
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
+  const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
+  const permisjon = useBoundStore((state) => state.permisjon);
+  const setPermiteringPeriode = useBoundStore((state) => state.setPermiteringPeriode);
+  const permitering = useBoundStore((state) => state.permitering);
 
   const clickTilbakestillMaanedsinntekt = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -142,8 +145,15 @@ export default function Bruttoinntekt() {
                 </div>
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
-                <div className={lokalStyles.endreferie}>
-                  <FerieULonnDato onFerieRangeListChange={setFeriePeriode} defaultRange={ferie} />
+                <div className={lokalStyles.endreperiodeliste}>
+                  <PeriodeListevelger
+                    onRangeListChange={setFeriePeriode}
+                    defaultRange={ferie}
+                    fomTekst='Fra dato ferie'
+                    tomTekst='Til dato ferie'
+                    fomIdBase='bruttoinntekt-ful-fom'
+                    tomIdBase='bruttoinntekt-ful-tom'
+                  />
                 </div>
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
@@ -152,8 +162,27 @@ export default function Bruttoinntekt() {
                 </div>
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
-                <div className={lokalStyles.endremaaanedsinntekt}>
-                  <PermisjonDato onPermisjonRangeChange={setFeriePeriode} defaultRange={ferie} />
+                <div className={lokalStyles.endreperiodeliste}>
+                  <PeriodeListevelger
+                    onRangeListChange={setPermisjonPeriode}
+                    defaultRange={permisjon}
+                    fomTekst='Fra dato permisjon'
+                    tomTekst='Til dato permisjon'
+                    fomIdBase='bruttoinntekt-permisjon-fom'
+                    tomIdBase='bruttoinntekt-permisjon-tom'
+                  />
+                </div>
+              )}
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.Permitering && (
+                <div className={lokalStyles.endreperiodeliste}>
+                  <PeriodeListevelger
+                    onRangeListChange={setPermiteringPeriode}
+                    defaultRange={permitering}
+                    fomTekst='Fra dato permitering'
+                    tomTekst='Til dato permitering'
+                    fomIdBase='bruttoinntekt-permitering-fom'
+                    tomIdBase='bruttoinntekt-permitering-tom'
+                  />
                 </div>
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
