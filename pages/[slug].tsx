@@ -31,6 +31,7 @@ import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending'
 import formatIsoDate from '../utils/formatIsoDate';
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import useErrorRespons, { ErrorResponse } from '../utils/useErrorResponse';
+import environment from '../config/environment';
 
 const SKJEMADATA_URL = '/im-dialog/api/trenger';
 const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
@@ -147,6 +148,13 @@ const Home: NextPage = () => {
           initState(skjemadata);
         }
       } catch (error) {
+        if (error.status === 401) {
+          const ingress = window.location.hostname + environment.baseUrl;
+          const currentPath = window.location.href;
+
+          window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
+        }
+
         leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
       }
     };

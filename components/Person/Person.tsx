@@ -1,7 +1,7 @@
 import Heading3 from '../Heading3';
 import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
 import { Organisasjon } from '../Banner/Banner';
 
