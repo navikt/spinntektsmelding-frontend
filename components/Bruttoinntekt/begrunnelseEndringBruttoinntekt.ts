@@ -2,7 +2,7 @@ interface Begrunnelser {
   [key: string]: string;
 }
 const begrunnelseEndringBruttoinntekt: Begrunnelser = {
-  FeilInntekt: 'FeilInntekt',
+  // FeilInntekt: 'FeilInntekt',
   Tariffendring: 'Tariffendring',
   Ferie: 'Ferie',
   VarigLonnsendring: 'VarigLonnsendring',

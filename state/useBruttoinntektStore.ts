@@ -6,7 +6,6 @@ import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
-import { DateRange } from 'react-day-picker';
 
 const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maanedsnavn < b.maanedsnavn) {
