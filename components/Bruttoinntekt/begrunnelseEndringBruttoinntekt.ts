@@ -1,12 +1,16 @@
 interface Begrunnelser {
   [key: string]: string;
 }
-
 const begrunnelseEndringBruttoinntekt: Begrunnelser = {
-  FeilInntekt: 'Feil inntekt',
+  FeilInntekt: 'FeilInntekt',
   Tariffendring: 'Tariffendring',
-  FerieUtenLonn: 'Ferie uten lønn',
-  Lonnsokning: 'Lønnsøkning'
+  Ferie: 'Ferie',
+  VarigLonnsendring: 'VarigLonnsendring',
+  Permisjon: 'Permisjon',
+  Permitering: 'Permitering',
+  NyStilling: 'NyStilling',
+  NyStillingsprosent: 'NyStillingsprosent',
+  Bonus: 'Bonus'
 };
 
 export default begrunnelseEndringBruttoinntekt;

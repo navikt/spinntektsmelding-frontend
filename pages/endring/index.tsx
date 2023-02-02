@@ -23,7 +23,7 @@ const Endring: NextPage = () => {
 
   const [endringsaarsak, setEndringsaarsak] = useState<string>('');
 
-  const setFerieUtenLonnPeriode = useBoundStore((state) => state.setFerieUtenLonnPeriode);
+  const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
   const ferieULonn = useBoundStore((state) => state.ferieULonn);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
@@ -128,7 +128,7 @@ const Endring: NextPage = () => {
                   )}
                   {endringsaarsak === 'FerieUtenLonn' && (
                     <div className={biStyles.endremaaanedsinntekt}>
-                      <FerieULonnDato onFerieRangeChange={setFerieUtenLonnPeriode} defaultRange={ferieULonn} />
+                      <FerieULonnDato onFerieRangeChange={setFeriePeriode} defaultRange={ferieULonn} />
                     </div>
                   )}
                   {endringsaarsak === 'Lonnsokning' && (

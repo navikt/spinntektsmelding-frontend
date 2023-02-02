@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
 import produce from 'immer';
-import { HistoriskInntekt, Inntekt } from './state';
+import { HistoriskInntekt, Inntekt, Periode } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
@@ -20,17 +20,21 @@ export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   tidligereInntekt?: Array<HistoriskInntekt>;
   opprinneligeInntekt?: Array<HistoriskInntekt>;
-  ferieULonn?: { fom?: Date; tom?: Date };
+  ferie?: Array<Periode>;
   lonnsendringsdato?: Date;
   tariffendringsdato?: Date;
   tariffkjentdato?: Date;
+  nystillingdato?: Date;
+  nystillingsprosentdato?: Date;
   setNyMaanedsinntekt: (belop: string) => void;
   setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
-  setFerieUtenLonnPeriode: (periode: DateRange | undefined) => void;
+  setFeriePeriode: (periode: Array<Periode> | undefined) => void;
   setLonnsendringDato: (endringsdato?: Date) => void;
   setTariffEndringsdato: (endringsdato?: Date) => void;
   setTariffKjentdato: (kjentFraDato?: Date) => void;
+  setNyStillingDato: (dato?: Date) => void;
+  setNyStillingsprosentDato: (dato?: Date) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean, reset?: boolean) => void;
   initBruttioinntekt: (
@@ -101,18 +105,19 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setFerieUtenLonnPeriode: (periode) =>
+  setFeriePeriode: (periode) =>
     set(
       produce((state) => {
-        if (!state.ferieULonn) {
-          state.ferieULonn = {
-            fom: periode?.from,
-            tom: periode?.to
-          };
-        } else {
-          state.ferieULonn.fom = periode?.from;
-          state.ferieULonn.tom = periode?.to;
-        }
+        state.ferie = periode;
+        // if (!state.ferie) {
+        //   state.ferie = {
+        //     fom: periode?.fom,
+        //     tom: periode?.tom
+        //   };
+        // } else {
+        //   state.ferie.fom = periode?.fom;
+        //   state.ferie.tom = periode?.tom;
+        // }
         return state;
       })
     ),
@@ -136,6 +141,22 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.tariffkjentdato = kjentFraDato;
+
+        return state;
+      })
+    ),
+  setNyStillingsprosentDato: (dato) =>
+    set(
+      produce((state) => {
+        state.nystillingsprosentdato = dato;
+
+        return state;
+      })
+    ),
+  setNyStillingDato: (dato) =>
+    set(
+      produce((state) => {
+        state.nystillingdato = dato;
 
         return state;
       })

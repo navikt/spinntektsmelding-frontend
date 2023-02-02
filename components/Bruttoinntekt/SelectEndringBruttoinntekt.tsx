@@ -1,7 +1,8 @@
 import { Select } from '@navikt/ds-react';
-import { ChangeEvent, ReactNode, useCallback, useState } from 'react';
+import { ChangeEvent, ReactNode, useCallback } from 'react';
 
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
+import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoinntektTekster';
 
 interface SelectEndringBruttoinntektProps {
   onChangeBegrunnelse: (verdi: string) => void;
@@ -11,12 +12,12 @@ interface SelectEndringBruttoinntektProps {
 
 export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinntektProps) {
   const begrunnelseKeys = Object.keys(begrunnelseEndringBruttoinntekt);
-  const [begrunnelse, setBegrunnelse] = useState<string>('');
+  // const [begrunnelse, setBegrunnelse] = useState<string>('');
 
   const changeHandler = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       props.onChangeBegrunnelse(event.target.value);
-      setBegrunnelse(event.target.value);
+      // setBegrunnelse(event.target.value);
     },
     [props]
   );
@@ -27,7 +28,7 @@ export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinn
         <option value=''>Velg begrunnelse</option>
         {begrunnelseKeys.map((begrunnelseKey) => (
           <option value={begrunnelseKey} key={begrunnelseKey}>
-            {begrunnelseEndringBruttoinntekt[begrunnelseKey]}
+            {begrunnelseEndringBruttoinntektTekster[begrunnelseKey]}
           </option>
         ))}
       </Select>

@@ -29,6 +29,14 @@
   gap           : 2rem;
 }
 
+.belopperiode {
+  margin-bottom: 1rem;
+}
+
 .legtilbutton {
   margin-top: .75rem;
+}
+
+.sletteknapp {
+  margin-top: 1.5rem;
 }

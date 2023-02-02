@@ -4,6 +4,7 @@ import lokalStyles from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
 import stringishToNumber from '../../utils/stringishToNumber';
 import RefusjonDatovelger from './RefusjonDatovelger';
+import ButtonSlette from '../ButtonSlette';
 
 export interface EndringsBelop {
   belop?: number;
@@ -55,7 +56,7 @@ export default function RefusjonUtbetalingEndring({
     oppdaterEndringer(tmpEndringer);
   };
 
-  const changeDatoHandler = (dato: Date, index: number) => {
+  const changeDatoHandler = (dato: Date | undefined, index: number) => {
     const tmpEndringer = structuredClone(endringer);
 
     if (!tmpEndringer[index].dato && !tmpEndringer[index].dato === undefined) {
@@ -73,6 +74,14 @@ export default function RefusjonUtbetalingEndring({
     if (onHarEndringer) {
       onHarEndringer(status === 'Ja');
     }
+  };
+
+  const onSlettClick = (index: number) => {
+    const tmpEndringer = structuredClone(endringer);
+
+    const nyeEndringer = tmpEndringer.slice(index, 1);
+
+    oppdaterEndringer(nyeEndringer);
   };
 
   return (
@@ -105,6 +114,13 @@ export default function RefusjonUtbetalingEndring({
               onDateChange={(val) => changeDatoHandler(val, key)}
               key={key}
             />
+            {key !== 0 && (
+              <ButtonSlette
+                title='Slett periode'
+                onClick={() => onSlettClick(key)}
+                className={lokalStyles.sletteknapp}
+              />
+            )}
           </div>
         ))}
 

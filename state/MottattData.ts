@@ -14,12 +14,6 @@ export interface MottattHistoriskInntekt {
   inntekt: number;
 }
 
-export interface MottattArbeidsforhold {
-  arbeidsforholdId: string;
-  arbeidsforhold: string;
-  stillingsprosent: number;
-}
-
 interface MottattData {
   navn: string;
   identitetsnummer: string;

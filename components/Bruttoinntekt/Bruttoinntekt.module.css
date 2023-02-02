@@ -15,9 +15,14 @@
 }
 
 .endremaaanedsinntekt,
+.endreferie,
 .endremaaanedsinntektwrapper {
   display: flex;
   gap    : 2rem;
+}
+
+.endreferie {
+  flex-direction: column;
 }
 
 .endremaaanedsinntektwrapper {
@@ -90,4 +95,13 @@
 .tbmargin {
   margin-bottom: 1.5rem;
   margin-top   : 1.5rem;
+}
+
+.leggtilperiodeknapp {
+  margin-top: 1rem;
+  max-width : 10rem;
+}
+
+.sletteknapp {
+  margin-top: 1.5rem;
 }

@@ -1,6 +1,6 @@
 export interface Periode {
-  fom?: Date;
-  tom?: Date;
+  fom?: Date | undefined;
+  tom?: Date | undefined;
   id: string;
 }
 
@@ -36,13 +36,6 @@ export interface Naturalytelse {
   verdi?: number;
 }
 
-export interface IArbeidsforhold {
-  arbeidsforholdId: string;
-  arbeidsforhold: string;
-  stillingsprosent: number;
-  aktiv: boolean;
-}
-
 export interface RefusjonskravetOpphoerer {
   status?: YesNo;
   opphorsdato?: Date;
@@ -68,8 +61,8 @@ interface InntektsmeldingSkjema {
   refusjonskravOpphoersdato?: Date;
   behandlingsdager?: Array<Date>;
   behandlingsperiode?: Periode;
-  arbeidsforhold?: Array<IArbeidsforhold>;
   sammeFravaersperiode: boolean;
+  aarsakInnsending: boolean;
 }
 
 export default InntektsmeldingSkjema;
