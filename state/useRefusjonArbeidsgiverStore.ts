@@ -7,11 +7,14 @@ import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 
 import feiltekster from '../utils/feiltekster';
 import { CompleteState } from './useBoundStore';
+import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 
 export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
   lonnISykefravaeret?: LonnISykefravaeret;
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
+  harRefusjonEndringer?: boolean;
+  refusjonEndringer?: Array<EndringsBelop>;
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) => void;
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
   begrunnelseRedusertUtbetaling: (begrunnelse: string) => void;
@@ -20,6 +23,8 @@ export interface RefusjonArbeidsgiverState {
   refusjonskravetOpphoererStatus: (status: YesNo) => void;
   refusjonskravetOpphoererDato: (opphoersdato?: Date) => void;
   initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) => void;
+  oppdaterRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
+  setHarRefusjonEndringer: (harEndringer: boolean) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
 }
 
@@ -152,6 +157,25 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.refusjonskravetOpphoerer = {
             opphorsdato: opphoersdato
           };
+        }
+
+        return state;
+      })
+    ),
+  oppdaterRefusjonEndringer: (endringer: Array<EndringsBelop>) =>
+    set(
+      produce((state) => {
+        state.refusjonEndringer = endringer;
+
+        return state;
+      })
+    ),
+  setHarRefusjonEndringer: (harEndringer: boolean) =>
+    set(
+      produce((state) => {
+        state.harRefusjonEndringer = harEndringer;
+        if (!state.refusjonEndringer) {
+          state.refusjonEndringer = [{}];
         }
 
         return state;

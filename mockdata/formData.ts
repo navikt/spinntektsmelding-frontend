@@ -135,6 +135,7 @@ const formData = {
   navn: 'Navn Navnesen',
   identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
   orgnrUnderenhet: '911206722',
+  orgNavn: 'Ampert piggsvin barnehage',
   bruttoinntekt: 77000,
   fravaersperioder: [
     {
@@ -193,8 +194,8 @@ const formData = {
   ]
   // behandlingsdager: ['2022-01-10'],
   // behandlingsperiode: {
-  //   fom: '2022-01-05',
-  //   tom: '2022-06-02'
+  //   fom: new Date(), 4),
+  //   tom: subMonths(new Date(), 10)
   // }
 };
 

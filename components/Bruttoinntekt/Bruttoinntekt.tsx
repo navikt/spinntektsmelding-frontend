@@ -11,8 +11,11 @@ import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonEndre from '../ButtonEndre';
 import formatDate from '../../utils/formatDate';
 import TariffendringDato from './TariffendringDato';
-import FerieULonnDato from './FerieULonnDato';
 import LonnsendringDato from './LonnsendringDato';
+import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
+import NyStillingDato from './NyStillingDato';
+import NyStillingsprosentDato from './NyStillingsprosentDato';
+import PeriodeListevelger from './PeriodeListevelger';
 
 export default function Bruttoinntekt() {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -29,14 +32,22 @@ export default function Bruttoinntekt() {
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
-  const setFerieUtenLonnPeriode = useBoundStore((state) => state.setFerieUtenLonnPeriode);
-  const ferieULonn = useBoundStore((state) => state.ferieULonn);
+  const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
+  const ferie = useBoundStore((state) => state.ferie);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
   const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
   const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
+  const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
+  const nystillingdato = useBoundStore((state) => state.nystillingdato);
+  const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
+  const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
+  const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
+  const permisjon = useBoundStore((state) => state.permisjon);
+  const setPermiteringPeriode = useBoundStore((state) => state.setPermiteringPeriode);
+  const permitering = useBoundStore((state) => state.permitering);
 
   const clickTilbakestillMaanedsinntekt = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -68,7 +79,7 @@ export default function Bruttoinntekt() {
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       setEndreMaanedsinntekt(true);
-      bekreftKorrektInntekt(false);
+      bekreftKorrektInntekt(false, true);
     },
     [setEndreMaanedsinntekt, bekreftKorrektInntekt]
   );
@@ -97,7 +108,7 @@ export default function Bruttoinntekt() {
             <div className={lokalStyles.endremaaanedsinntektwrapper}>
               <div className={lokalStyles.endremaaanedsinntekt}>
                 <TextField
-                  label='Inntekt per måned'
+                  label={`Månedsinntekt per ${formatDate(bestemmendeFravaersdag)}`}
                   onChange={changeMaanedsintektHandler}
                   defaultValue={formatCurrency(
                     bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
@@ -123,7 +134,7 @@ export default function Bruttoinntekt() {
                   </Button>
                 </div>
               </div>
-              {endringsaarsak === 'Tariffendring' && (
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
                 <div className={lokalStyles.endremaaanedsinntekt}>
                   <TariffendringDato
                     changeTariffEndretDato={setTariffEndringsdato}
@@ -133,14 +144,58 @@ export default function Bruttoinntekt() {
                   />
                 </div>
               )}
-              {endringsaarsak === 'FerieUtenLonn' && (
-                <div className={lokalStyles.endremaaanedsinntekt}>
-                  <FerieULonnDato onFerieRangeChange={setFerieUtenLonnPeriode} defaultRange={ferieULonn} />
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
+                <div className={lokalStyles.endreperiodeliste}>
+                  <PeriodeListevelger
+                    onRangeListChange={setFeriePeriode}
+                    defaultRange={ferie}
+                    fomTekst='Fra dato ferie'
+                    tomTekst='Til dato ferie'
+                    fomIdBase='bruttoinntekt-ful-fom'
+                    tomIdBase='bruttoinntekt-ful-tom'
+                  />
                 </div>
               )}
-              {endringsaarsak === 'Lonnsokning' && (
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
                 <div className={lokalStyles.endremaaanedsinntekt}>
                   <LonnsendringDato onChangeLonnsendringsdato={setLonnsendringDato} defaultDate={lonnsendringsdato} />
+                </div>
+              )}
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
+                <div className={lokalStyles.endreperiodeliste}>
+                  <PeriodeListevelger
+                    onRangeListChange={setPermisjonPeriode}
+                    defaultRange={permisjon}
+                    fomTekst='Fra dato permisjon'
+                    tomTekst='Til dato permisjon'
+                    fomIdBase='bruttoinntekt-permisjon-fom'
+                    tomIdBase='bruttoinntekt-permisjon-tom'
+                  />
+                </div>
+              )}
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.Permitering && (
+                <div className={lokalStyles.endreperiodeliste}>
+                  <PeriodeListevelger
+                    onRangeListChange={setPermiteringPeriode}
+                    defaultRange={permitering}
+                    fomTekst='Fra dato permitering'
+                    tomTekst='Til dato permitering'
+                    fomIdBase='bruttoinntekt-permitering-fom'
+                    tomIdBase='bruttoinntekt-permitering-tom'
+                  />
+                </div>
+              )}
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
+                <div className={lokalStyles.endremaaanedsinntekt}>
+                  <NyStillingDato onChangeNyStillingEndringsdato={setNyStillingDato} defaultDate={nystillingdato} />
+                </div>
+              )}
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
+                <div className={lokalStyles.endremaaanedsinntekt}>
+                  <NyStillingsprosentDato
+                    onChangeNyStillingsprosentdato={setNyStillingsprosentDato}
+                    defaultDate={nystillingsprosentdato}
+                  />
                 </div>
               )}
             </div>

@@ -1,12 +1,11 @@
 import { StateCreator } from 'zustand';
 import produce from 'immer';
-import { HistoriskInntekt, Inntekt } from './state';
+import { HistoriskInntekt, Inntekt, Periode } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
-import { DateRange } from 'react-day-picker';
 
 const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maanedsnavn < b.maanedsnavn) {
@@ -20,19 +19,27 @@ export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   tidligereInntekt?: Array<HistoriskInntekt>;
   opprinneligeInntekt?: Array<HistoriskInntekt>;
-  ferieULonn?: { fom?: Date; tom?: Date };
+  ferie?: Array<Periode>;
   lonnsendringsdato?: Date;
   tariffendringsdato?: Date;
   tariffkjentdato?: Date;
+  nystillingdato?: Date;
+  nystillingsprosentdato?: Date;
+  permisjon?: Array<Periode>;
+  permitering?: Array<Periode>;
   setNyMaanedsinntekt: (belop: string) => void;
   setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
-  setFerieUtenLonnPeriode: (periode: DateRange | undefined) => void;
+  setFeriePeriode: (periode: Array<Periode> | undefined) => void;
   setLonnsendringDato: (endringsdato?: Date) => void;
   setTariffEndringsdato: (endringsdato?: Date) => void;
   setTariffKjentdato: (kjentFraDato?: Date) => void;
+  setNyStillingDato: (dato?: Date) => void;
+  setNyStillingsprosentDato: (dato?: Date) => void;
+  setPermisjonPeriode: (periode: Array<Periode> | undefined) => void;
+  setPermiteringPeriode: (periode: Array<Periode> | undefined) => void;
   tilbakestillMaanedsinntekt: () => void;
-  bekreftKorrektInntekt: (bekreftet: boolean) => void;
+  bekreftKorrektInntekt: (bekreftet: boolean, reset?: boolean) => void;
   initBruttioinntekt: (
     bruttoInntekt: number,
     tidligereInntekt: Array<MottattHistoriskInntekt>,
@@ -101,18 +108,10 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setFerieUtenLonnPeriode: (periode) =>
+  setFeriePeriode: (periode) =>
     set(
       produce((state) => {
-        if (!state.ferieULonn) {
-          state.ferieULonn = {
-            fom: periode?.from,
-            tom: periode?.to
-          };
-        } else {
-          state.ferieULonn.fom = periode?.from;
-          state.ferieULonn.tom = periode?.to;
-        }
+        state.ferie = periode;
         return state;
       })
     ),
@@ -140,6 +139,36 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
+  setNyStillingsprosentDato: (dato) =>
+    set(
+      produce((state) => {
+        state.nystillingsprosentdato = dato;
+
+        return state;
+      })
+    ),
+  setNyStillingDato: (dato) =>
+    set(
+      produce((state) => {
+        state.nystillingdato = dato;
+
+        return state;
+      })
+    ),
+  setPermisjonPeriode: (periode) =>
+    set(
+      produce((state) => {
+        state.permisjon = periode;
+        return state;
+      })
+    ),
+  setPermiteringPeriode: (periode) =>
+    set(
+      produce((state) => {
+        state.permitering = periode;
+        return state;
+      })
+    ),
   tilbakestillMaanedsinntekt: () =>
     set(
       produce((state) => {
@@ -147,14 +176,16 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  bekreftKorrektInntekt: (bekreftet: boolean) =>
+  bekreftKorrektInntekt: (bekreftet, reset) =>
     set(
       produce((state) => {
         state.bruttoinntekt!.bekreftet = bekreftet;
         if (bekreftet === true) {
           state = slettFeilmelding(state, 'bruttoinntektbekreft');
         } else {
-          state = leggTilFeilmelding(state, 'bruttoinntektbekreft', feiltekster.IKKE_BEKREFTET);
+          if (!reset) {
+            state = leggTilFeilmelding(state, 'bruttoinntektbekreft', feiltekster.IKKE_BEKREFTET);
+          }
         }
 
         return state;

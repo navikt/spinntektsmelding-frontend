@@ -21,10 +21,14 @@ export default function RefusjonArbeidsgiverBelop({
   if (!erEditerbar) {
     return (
       <>
-        <TextLabel>Refusjonsbeløpet per måned</TextLabel>
+        <TextLabel>Månedslønn til arbeidstaker etter arbeidsgiverperiode</TextLabel>
         <div className={localStyles.belopswrapper}>
-          <div className={localStyles.belop}>{formatCurrency(bruttoinntekt)} kr</div>
+          <div className={localStyles.belop}>{formatCurrency(bruttoinntekt)}&nbsp;kr</div>
           <ButtonEndre onClick={() => setEditerbar(true)} />
+          <span>
+            Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør NAV. NAV vil
+            refundere opp til 6G av årslønn.
+          </span>
         </div>
       </>
     );

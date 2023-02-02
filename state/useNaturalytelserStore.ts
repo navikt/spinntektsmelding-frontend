@@ -8,7 +8,6 @@ import { MottattNaturalytelse } from './MottattData';
 import { FeilmeldingerState } from './useFeilmeldingerStore';
 import { EgenmeldingState } from './useEgenmeldingStore';
 import { BruttoinntektState } from './useBruttoinntektStore';
-import { ArbeidsforholdState } from './useArbeidsforholdStore';
 import { BehandlingsdagerState } from './useBehandlingsdagerStore';
 import { PersonState } from './usePersonStore';
 import { FravaersperiodeState } from './useFravaersperiodeStore';
@@ -34,7 +33,6 @@ const useNaturalytelserStore: StateCreator<
     FeilmeldingerState &
     EgenmeldingState &
     BruttoinntektState &
-    ArbeidsforholdState &
     BehandlingsdagerState,
   [],
   [],

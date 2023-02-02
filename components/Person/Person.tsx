@@ -10,16 +10,16 @@ interface PersonProps {
 }
 
 export default function Person({ arbeidsgivere }: PersonProps) {
-  const [navn, identitetsnummer, orgnrUnderenhet] = useBoundStore(
-    (state) => [state.navn, state.identitetsnummer, state.orgnrUnderenhet],
+  const [navn, identitetsnummer, orgnrUnderenhet, virksomhetsnavn] = useBoundStore(
+    (state) => [state.navn, state.identitetsnummer, state.orgnrUnderenhet, state.virksomhetsnavn],
     shallow
   );
 
-  const virksomhet: Organisasjon | undefined = arbeidsgivere
-    ? arbeidsgivere.find((arbeidsgiver) => arbeidsgiver.OrganizationNumber === orgnrUnderenhet)
-    : undefined;
+  // const virksomhet: Organisasjon | undefined = arbeidsgivere
+  //   ? arbeidsgivere.find((arbeidsgiver) => arbeidsgiver.OrganizationNumber === orgnrUnderenhet)
+  //   : undefined;
 
-  const virksomhetsnavn = virksomhet ? virksomhet.Name : '';
+  // const virksomhetsnavn = virksomhet ? virksomhet.Name : '';
 
   return (
     <>

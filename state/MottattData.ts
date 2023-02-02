@@ -14,16 +14,10 @@ export interface MottattHistoriskInntekt {
   inntekt: number;
 }
 
-export interface MottattArbeidsforhold {
-  arbeidsforholdId: string;
-  arbeidsforhold: string;
-  stillingsprosent: number;
-}
-
 interface MottattData {
   navn: string;
   identitetsnummer: string;
-  virksomhetsnavn: string;
+  orgNavn: string;
   orgnrUnderenhet: string;
   fravaersperioder: Array<MottattPeriode>;
   egenmeldingsperioder: Array<MottattPeriode>;
