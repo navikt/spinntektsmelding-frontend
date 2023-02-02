@@ -10,7 +10,6 @@ import PageContent from '../components/PageContent/PageContent';
 import Skillelinje from '../components/Skillelinje/Skillelinje';
 
 import Script from 'next/script';
-import useSWR from 'swr';
 
 import styles from '../styles/Home.module.css';
 
@@ -25,9 +24,6 @@ import Person from '../components/Person/Person';
 import useStateInit from '../state/useStateInit';
 import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
-// import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
-// import dataFetcherArbeidsgivere from '../utils/dataFetcherArbeidsgivere';
-import useLoginRedirectPath from '../utils/useLoginRedirectPath';
 import useFetchInntektskjemaForNotifikasjon from '../state/useFetchInntektskjemaForNotifikasjon';
 import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 import EndrePerioderModal, { EndrePeriodeRespons } from '../components/EndrePerioderModal/EndrePerioderModal';
@@ -36,7 +32,6 @@ import formatIsoDate from '../utils/formatIsoDate';
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import useErrorRespons, { ErrorResponse } from '../utils/useErrorResponse';
 
-// const ARBEIDSGIVER_URL = '/im-dialog/api/arbeidsgivere';
 const SKJEMADATA_URL = '/im-dialog/api/trenger';
 const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
 
@@ -50,11 +45,7 @@ const Home: NextPage = () => {
     setPathSlug(firstSlug);
   }, [firstSlug]);
 
-  // const { data: arbeidsgivere, error } = useSWR<Array<Organisasjon>>(ARBEIDSGIVER_URL, dataFetcherArbeidsgivere);
-
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-
-  const loginPath = useLoginRedirectPath();
 
   const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.fyllFeilmeldinger,
@@ -162,17 +153,6 @@ const Home: NextPage = () => {
     if (!bruttoinntekt.bekreftet) hentData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
-
-  // useEffect(() => {
-  //   if (error?.status === 401) {
-  //     router.push(loginPath());
-  //   }
-
-  //   if (error?.status === 500) {
-  //     leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_ARBEIDSGIVER);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [error]);
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
