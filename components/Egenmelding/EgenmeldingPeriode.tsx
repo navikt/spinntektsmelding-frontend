@@ -22,9 +22,7 @@ export default function EgenmeldingPeriode({
   toDate
 }: EgenmeldingPeriodeInterface) {
   const rangeChangeHandler = (dateRange: DateRange | undefined) => {
-    if (dateRange) {
-      setEgenmeldingDato(dateRange, periodeId);
-    }
+    setEgenmeldingDato(dateRange, periodeId);
   };
 
   const { datepickerProps, toInputProps, fromInputProps } = UNSAFE_useRangeDatepicker({

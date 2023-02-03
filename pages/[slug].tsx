@@ -32,6 +32,9 @@ import formatIsoDate from '../utils/formatIsoDate';
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import useErrorRespons, { ErrorResponse } from '../utils/useErrorResponse';
 import environment from '../config/environment';
+import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
+import { Periode } from '../state/state';
+import parseIsoDate from '../utils/parseIsoDate';
 
 const SKJEMADATA_URL = '/im-dialog/api/trenger';
 const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
@@ -131,10 +134,19 @@ const Home: NextPage = () => {
 
   const onUpdatePeriodeModal = (data: EndrePeriodeRespons) => {
     setModalOpen(false);
-    setBestemmendeFravaersdag(data.bestemmendFraværsdag);
     setArbeidsgiverperioder(data.arbeidsgiverperioder);
+
     setEndringsbegrunnelse(data.begrunnelse);
-    rekalkulerBruttioinntekt(data.bestemmendFraværsdag);
+    const tmpPeriode: Array<Periode> = data.arbeidsgiverperioder!.map((periode, index) => ({
+      fom: periode.fom,
+      tom: periode.tom,
+      id: index.toString()
+    }));
+    const bestemmende = finnBestemmendeFravaersdag(tmpPeriode);
+    if (bestemmende) {
+      rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+      setBestemmendeFravaersdag(parseIsoDate(bestemmende));
+    }
   };
 
   useEffect(() => {
@@ -228,7 +240,6 @@ const Home: NextPage = () => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         arbeidsgiverperioder={arbeidsgiverperioder || []}
-        bestemmendeFravaersdag={bestemmendeFravaersdag || new Date()}
         onUpdate={onUpdatePeriodeModal}
       />
     </div>

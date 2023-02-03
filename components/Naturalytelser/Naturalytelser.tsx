@@ -40,18 +40,20 @@ export default function Naturalytelser() {
       </BodyLong>
       <Checkbox
         value='Naturalytelser'
-        checked={naturalytelser && naturalytelser.length > 0}
         onClick={visNaturalytelser}
+        defaultChecked={naturalytelser && naturalytelser.length > 0}
       >
         Den ansatte har naturalytelser som faller bort ved sykmeldingen.
       </Checkbox>
       {naturalytelser && naturalytelser.length > 0 && (
         <table className={lokalStyles.tablenaturalytelse}>
           <thead>
-            <th>Naturalytelse</th>
-            <th>Dato naturalytelse faller bort</th>
-            <th>Verdi naturalytelse - kr/måned</th>
-            <th></th>
+            <tr>
+              <th>Naturalytelse</th>
+              <th>Dato naturalytelse faller bort</th>
+              <th>Verdi naturalytelse - kr/måned</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             {naturalytelser.map((element) => {
@@ -77,7 +79,7 @@ export default function Naturalytelser() {
                       label={''}
                       className={styles.fnr}
                       onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
-                      defaultValue={formatCurrency(element.verdi || 0)}
+                      defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
                     ></TextField>
                   </td>
                   <td>

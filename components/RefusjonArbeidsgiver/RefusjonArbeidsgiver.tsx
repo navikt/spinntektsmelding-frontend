@@ -16,6 +16,8 @@ export default function RefusjonArbeidsgiver() {
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
+  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
 
   const arbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useBoundStore(
@@ -38,6 +40,11 @@ export default function RefusjonArbeidsgiver() {
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
+
+  const muteableArbeidsgiverperioder = structuredClone(arbeidsgiverperioder);
+  const sisteArbeidsgiverperiode = muteableArbeidsgiverperioder?.sort((a, b) => (a.fom > b.fom ? -1 : 1));
+
+  const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode[0].tom : new Date();
 
   return (
     <>
@@ -124,6 +131,7 @@ export default function RefusjonArbeidsgiver() {
                 <RefsjonArbeidsgiverSluttdato
                   defaultValue={refusjonskravetOpphoerer.opphorsdato}
                   onDateChange={refusjonskravetOpphoererDato}
+                  minDate={sisteDagIArbeidsgiverperioden}
                 />
               </div>
             )}

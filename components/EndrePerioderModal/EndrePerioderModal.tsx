@@ -1,23 +1,18 @@
-import { Alert, BodyLong, Button, Heading, Modal, Textarea } from '@navikt/ds-react';
+import { BodyLong, Button, Heading, Modal, Select } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
 import Arbeidsgiverperiode from './Arbeidsgiverperiode';
-import BestemmendeFravaersdag from './BestemmendeFravaersdag';
 import { DateRange } from 'react-day-picker';
 import localStyles from './EndrePerioderModal.module.css';
-import finnBestemmendeFravaersdag, { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
-import { MottattPeriode } from '../../state/MottattData';
-import formatIsoDate from '../../utils/formatIsoDate';
+import { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
 
 interface EndrePerioderModalProps {
   open: boolean;
   onClose: () => void;
   arbeidsgiverperioder: Array<FravaersPeriode>;
-  bestemmendeFravaersdag: Date;
   onUpdate: (data: EndrePeriodeRespons) => void;
 }
 
 export interface EndrePeriodeRespons {
-  bestemmendFraværsdag: Date;
   arbeidsgiverperioder?: Array<FravaersPeriode>;
   begrunnelse: string;
 }
@@ -26,20 +21,24 @@ export interface ValideringsfeilArbeidsgiverperiode {
   fom: boolean;
   tom: boolean;
 }
+interface Begrunnelser {
+  [key: string]: string;
+}
+
+const begrunnelser: Begrunnelser = {
+  FiskerMedHyre: 'Fisker med hyre',
+  Saerregler: 'Særregler',
+  FerieEllerAvspasering: 'Ferie eller avspassering'
+};
 
 export default function EndrePerioderModal(props: EndrePerioderModalProps) {
   useEffect(() => {
     Modal.setAppElement('#__next');
   });
 
-  const [bestemmendeFravaersdag, setBestemmendeFravaersdag] = useState<Date>(props.bestemmendeFravaersdag);
   const [begrunnelse, setBegrunnelse] = useState<string | undefined>();
   const [arbeidsgiverperioder, setArbeidsgiverperioder] = useState<Array<FravaersPeriode>>(props.arbeidsgiverperioder);
-
-  const [visAlertBestemmende, setVisAlertBestemmende] = useState<boolean>(false);
-
   const [visValideringBegrunnelse, setValideringBegrunnelse] = useState<boolean>(false);
-  const [visValideringBestemmendeFravaersdag, setValideringBestemmendeFravaersdag] = useState<boolean>(false);
   const [visValideringArbeidsgiverperiode, setValideringArbeidsgiverperiode] =
     useState<Array<ValideringsfeilArbeidsgiverperiode>>();
 
@@ -54,12 +53,7 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
     return feil;
   };
 
-  const oppdatertBestemmendeFravaersdag = (dato: Date | undefined) => {
-    setBestemmendeFravaersdag(dato!);
-    if (bestemmendeFravaersdag) {
-      setValideringBestemmendeFravaersdag(false);
-    }
-  };
+  const begrunnelseKeys = Object.keys(begrunnelser);
 
   const rangeChangeHandler = (periode: DateRange | undefined, periodeIndex: number) => {
     const aperioder = structuredClone(arbeidsgiverperioder);
@@ -70,13 +64,6 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
       };
 
       setArbeidsgiverperioder(aperioder);
-
-      const bestemmende = finnBestemmendeFravaersdag(aperioder as unknown as Array<MottattPeriode>);
-      if (bestemmendeFravaersdag && bestemmende !== formatIsoDate(bestemmendeFravaersdag)) {
-        setVisAlertBestemmende(true);
-      } else {
-        setVisAlertBestemmende(false);
-      }
     }
 
     setValideringArbeidsgiverperiode(validerArbeidsgiverperiode(aperioder));
@@ -86,12 +73,6 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
     event.preventDefault();
 
     let valideringsfeilBF = false;
-    if (!bestemmendeFravaersdag) {
-      setValideringBestemmendeFravaersdag(true);
-      valideringsfeilBF = true;
-    } else {
-      setValideringBestemmendeFravaersdag(false);
-    }
 
     let valideringsfeilAP = validerArbeidsgiverperiode(arbeidsgiverperioder);
     setValideringArbeidsgiverperiode(valideringsfeilAP);
@@ -110,7 +91,6 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
       !valideringsfeilAP?.reduce((prev, current) => prev || current.fom || current.tom, false)
     ) {
       props.onUpdate({
-        bestemmendFraværsdag: bestemmendeFravaersdag,
         arbeidsgiverperioder: arbeidsgiverperioder,
         begrunnelse: begrunnelse!
       });
@@ -131,8 +111,8 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
     setArbeidsgiverperioder(aperioder);
   };
 
-  const handleChangeBegrunnelse = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const nyVerdi = event.target.value;
+  const handleChangeBegrunnelse = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const nyVerdi = event.currentTarget.value;
     setBegrunnelse(nyVerdi);
     if (nyVerdi && nyVerdi.length > 0) {
       setValideringBegrunnelse(false);
@@ -153,7 +133,7 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
       <Modal.Content className={localStyles.modalwrapper}>
         <form onSubmit={handleOnSubmit}>
           <Heading spacing level='1' size='large' id='modal-heading'>
-            Endring av bestemmende fraværsdag / arbeidsgiverperiode
+            Endring av arbeidsgiverperiode
           </Heading>
 
           <BodyLong spacing>
@@ -161,19 +141,6 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
             anser at det er feil kan du endre disse datoene. Les mer om hvordan du beregner disse her.
           </BodyLong>
 
-          <BestemmendeFravaersdag
-            defaultDate={bestemmendeFravaersdag}
-            onChangeDate={oppdatertBestemmendeFravaersdag}
-            hasError={visValideringBestemmendeFravaersdag}
-          />
-          {visAlertBestemmende && (
-            <div className={localStyles.alertwrapper}>
-              <Alert variant='warning'>
-                Det kan se ut som om bestemmende fraværsdag ikke stemmer overens med arbeidsgiverperioden. Dette trenger
-                ikke å bety at den ikke er korrekt. Vennligst kontoller før du sender inn.
-              </Alert>
-            </div>
-          )}
           {arbeidsgiverperioder.map((periode, index) => (
             <Arbeidsgiverperiode
               key={index}
@@ -191,13 +158,21 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
           >
             Legg til periode
           </Button>
-          <Textarea
-            className={localStyles.tekstomraade}
-            label='Forklaring til endring'
+          <Select
+            label={'Forklaring til endring'}
             onChange={handleChangeBegrunnelse}
-            error={visValideringBegrunnelse && 'Feltet er obligatorisk.'}
+            id={'lia-select'}
+            className={localStyles.selectbegrunnelse}
             defaultValue={begrunnelse}
-          />
+            error={visValideringBegrunnelse ? 'Velg begrunnelse' : null}
+          >
+            <option value=''>Velg begrunnelse</option>
+            {begrunnelseKeys.map((begrunnelseKey) => (
+              <option value={begrunnelseKey} key={begrunnelseKey}>
+                {begrunnelser[begrunnelseKey]}
+              </option>
+            ))}
+          </Select>
           <Button>Bekreft</Button>
         </form>
       </Modal.Content>

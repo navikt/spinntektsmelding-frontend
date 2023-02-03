@@ -3,6 +3,7 @@ import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
 interface RefsjonArbeidsgiverSluttdatoProps {
   defaultValue?: Date;
   onDateChange: (opphoersdato?: Date | undefined) => void;
+  minDate?: Date;
 }
 
 export default function RefsjonArbeidsgiverSluttdato(props: RefsjonArbeidsgiverSluttdatoProps) {
@@ -11,7 +12,7 @@ export default function RefsjonArbeidsgiverSluttdato(props: RefsjonArbeidsgiverS
   };
 
   const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
-    toDate: new Date(),
+    fromDate: props.minDate,
     onDateChange: setOpphoersdato,
     defaultSelected: props.defaultValue
   });

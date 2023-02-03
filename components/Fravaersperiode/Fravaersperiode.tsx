@@ -28,8 +28,11 @@ export default function Fravaersperiode({ egenmeldingsperioder, setModalOpen }: 
   useEffect(() => {
     const perioder =
       fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
-    if (perioder) {
-      const agp = finnArbeidsgiverperiode(perioder);
+
+    const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom);
+
+    if (fPerioder) {
+      const agp = finnArbeidsgiverperiode(fPerioder);
       ucSetArbeidsgiverperiode(agp);
     }
   }, [fravaersperioder, egenmeldingsperioder, ucSetArbeidsgiverperiode]);
