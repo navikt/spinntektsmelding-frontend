@@ -3,29 +3,18 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
-import { Organisasjon } from '../Banner/Banner';
 
-interface PersonProps {
-  arbeidsgivere?: Array<Organisasjon>;
-}
-
-export default function Person({ arbeidsgivere }: PersonProps) {
+export default function Person() {
   const [navn, identitetsnummer, orgnrUnderenhet, virksomhetsnavn] = useBoundStore(
     (state) => [state.navn, state.identitetsnummer, state.orgnrUnderenhet, state.virksomhetsnavn],
     shallow
   );
 
-  // const virksomhet: Organisasjon | undefined = arbeidsgivere
-  //   ? arbeidsgivere.find((arbeidsgiver) => arbeidsgiver.OrganizationNumber === orgnrUnderenhet)
-  //   : undefined;
-
-  // const virksomhetsnavn = virksomhet ? virksomhet.Name : '';
-
   return (
     <>
       <p>
-        For at vi skal utbetale riktig beløp i forbindelse med langvarig sykemelding må dere bekrefte, eller oppdatere
-        opplysningene vi har i forbindelse med den ansatte, og sykefraværet.
+        For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
+        opplysningene vi har om den ansatte og sykefraværet.
       </p>
       <div className={lokalStyles.personinfowrapper}>
         <div className={lokalStyles.denansatte}>

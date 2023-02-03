@@ -53,9 +53,9 @@ export default function Egenmelding() {
     <div className={localStyles.egenmeldingswrapper}>
       <Heading3>Eventuell egenmelding</Heading3>
       <BodyLong>
-        Oppgi egenmeldingsperiode hvis den ansatte var fraværende med egenmelding i forkant av sykmeldingen. Oppgi kun
-        hele fraværsdager. Hvis den ansatte har hatt flere egenmeldingsperioder med mindre enn 16 dagers mellomrom, skal
-        alle disse tas med.
+        Hvis den ansatte har oppgitt at egenmeldingsdager ble benyttet i forkant av sykmeldingen, er disse
+        forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder med mindre enn 16 dagers mellomrom før
+        sykmeldingen skal inkluderes. Dere kan endre og legge til egenmeldingsperioder.
       </BodyLong>
 
       <div>

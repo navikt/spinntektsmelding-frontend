@@ -41,15 +41,15 @@ export default function RefusjonArbeidsgiver() {
 
   return (
     <>
-      <Heading3>Refusjon til arbeidsgiver</Heading3>
+      <Heading3>Utbetaling og refusjon</Heading3>
       <BodyLong>
-        Vi må vite om arbeidsgiver betaler ut lønn under sykemeldingsperioden til arbeidstakeren, eller om NAV skal
-        betale ut sykepenger til den sykemeldte etter arbeidsgiverperioden.
+        Vi må vite om arbeidsgiver betaler lønn til den ansatte under sykmeldingsperioden og om NAV skal betale ut
+        sykepenger til den ansatte eller bedriften etter arbeidsgiverperioden.
       </BodyLong>
 
       <div>
         <RadioGroup
-          legend='Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?'
+          legend='Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?'
           className={styles.radiobuttonwrapper}
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}

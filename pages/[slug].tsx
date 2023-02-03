@@ -147,7 +147,7 @@ const Home: NextPage = () => {
         if (skjemadata) {
           initState(skjemadata);
         }
-      } catch (error) {
+      } catch (error: any) {
         if (error.status === 401) {
           const ingress = window.location.hostname + environment.baseUrl;
           const currentPath = window.location.href;

@@ -208,7 +208,8 @@ export default function Bruttoinntekt() {
         <BodyLong>
           Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i
           arbeidstid, hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke
-          inkluderes i beregnet månedslønn. Beregningen er gjort etter <Link href='#'>folketrygdloven $8-28.</Link>
+          inkluderes i beregnet månedslønn. Beregningen er gjort etter{' '}
+          <Link href='https://lovdata.no/nav/folketrygdloven/kap8/§8-28'>folketrygdloven $8-28</Link>.
         </BodyLong>
         <CheckboxGroup
           size='medium'
