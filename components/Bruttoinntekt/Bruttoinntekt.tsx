@@ -149,8 +149,8 @@ export default function Bruttoinntekt() {
                   <PeriodeListevelger
                     onRangeListChange={setFeriePeriode}
                     defaultRange={ferie}
-                    fomTekst='Fra dato ferie'
-                    tomTekst='Til dato ferie'
+                    fomTekst='Fra'
+                    tomTekst='Til'
                     fomIdBase='bruttoinntekt-ful-fom'
                     tomIdBase='bruttoinntekt-ful-tom'
                   />
@@ -166,8 +166,8 @@ export default function Bruttoinntekt() {
                   <PeriodeListevelger
                     onRangeListChange={setPermisjonPeriode}
                     defaultRange={permisjon}
-                    fomTekst='Fra dato permisjon'
-                    tomTekst='Til dato permisjon'
+                    fomTekst='Fra'
+                    tomTekst='Til'
                     fomIdBase='bruttoinntekt-permisjon-fom'
                     tomIdBase='bruttoinntekt-permisjon-tom'
                   />
@@ -178,8 +178,8 @@ export default function Bruttoinntekt() {
                   <PeriodeListevelger
                     onRangeListChange={setPermiteringPeriode}
                     defaultRange={permitering}
-                    fomTekst='Fra dato permitering'
-                    tomTekst='Til dato permitering'
+                    fomTekst='Fra'
+                    tomTekst='Til'
                     fomIdBase='bruttoinntekt-permitering-fom'
                     tomIdBase='bruttoinntekt-permitering-tom'
                   />
