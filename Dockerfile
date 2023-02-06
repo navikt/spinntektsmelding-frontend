@@ -11,13 +11,13 @@ COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc ./
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc
 
-RUN npm config set always-auth true
+# RUN npm config set always-auth true   # Er ikke støttet lengre, men kan den bare slettes?
 
 RUN yarn --frozen-lockfile
 
 
 # Rebuild the source code only when needed
-FROM node:16-alpine AS builder
+FROM node:18-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
