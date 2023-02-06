@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import useBehandlingsdagerStore, { BehandlingsdagerState } from './useBehandlingsdagerStore';
 import useBruttoinntektStore, { BruttoinntektState } from './useBruttoinntektStore';
 import useEgenmeldingStore, { EgenmeldingState } from './useEgenmeldingStore';
