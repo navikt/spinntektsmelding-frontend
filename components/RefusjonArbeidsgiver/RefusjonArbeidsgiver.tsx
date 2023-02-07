@@ -90,7 +90,7 @@ export default function RefusjonArbeidsgiver() {
         )}
 
         <RadioGroup
-          legend='Betaler arbeidsgiver lønn etter arbeidsgiverperioden?'
+          legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
           className={styles.radiobuttonwrapper}
           id={'lus-radio'}
           error={visFeilmeldingsTekst('lus-radio')}

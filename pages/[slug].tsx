@@ -63,10 +63,8 @@ const Home: NextPage = () => {
     state.setBestemmendeFravaersdag
   ]);
 
-  const [arbeidsgiverperioder, setArbeidsgiverperioder] = useBoundStore((state) => [
-    state.arbeidsgiverperioder,
-    state.setArbeidsgiverperioder
-  ]);
+  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
 
   const rekalkulerBruttioinntekt = useBoundStore((state) => state.rekalkulerBruttioinntekt);
 

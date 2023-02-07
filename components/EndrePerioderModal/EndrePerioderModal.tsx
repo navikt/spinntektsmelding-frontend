@@ -4,6 +4,7 @@ import Arbeidsgiverperiode from './Arbeidsgiverperiode';
 import { DateRange } from 'react-day-picker';
 import localStyles from './EndrePerioderModal.module.css';
 import { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
+import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 
 interface EndrePerioderModalProps {
   open: boolean;
@@ -41,14 +42,24 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
   const [visValideringBegrunnelse, setValideringBegrunnelse] = useState<boolean>(false);
   const [visValideringArbeidsgiverperiode, setValideringArbeidsgiverperiode] =
     useState<Array<ValideringsfeilArbeidsgiverperiode>>();
+  const [visValideringPeriodelengde, setValideringPeriodelengde] = useState<boolean>(false);
+  const [dagerIPeriode, setDagerIPeriode] = useState<number>(0);
 
   const validerArbeidsgiverperiode = (
     arbeidsgiverperioder: Array<FravaersPeriode>
   ): Array<ValideringsfeilArbeidsgiverperiode> => {
-    const feil = arbeidsgiverperioder.map((periode) => ({
-      fom: !periode.fom,
-      tom: !periode.tom
-    }));
+    const feil = arbeidsgiverperioder.map((periode) => {
+      if (periode)
+        return {
+          fom: !periode.fom,
+          tom: !periode.tom
+        };
+      else
+        return {
+          fom: false,
+          tom: false
+        };
+    });
 
     return feil;
   };
@@ -62,17 +73,13 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
         fom: periode!.from!,
         tom: periode!.to!
       };
-
       setArbeidsgiverperioder(aperioder);
     }
-
     setValideringArbeidsgiverperiode(validerArbeidsgiverperiode(aperioder));
   };
 
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    let valideringsfeilBF = false;
 
     let valideringsfeilAP = validerArbeidsgiverperiode(arbeidsgiverperioder);
     setValideringArbeidsgiverperiode(valideringsfeilAP);
@@ -85,11 +92,20 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
       setValideringBegrunnelse(false);
     }
 
+    let valideringsfeilPeriodelengde = false;
+    const antallDager = numberOfDaysInRanges(arbeidsgiverperioder);
+    setDagerIPeriode(antallDager);
+    if (antallDager > 16) {
+      setValideringPeriodelengde(true);
+      valideringsfeilPeriodelengde = true;
+    }
+
     if (
+      !valideringsfeilPeriodelengde &&
       !valideringsfeilBegrunnelse &&
-      !valideringsfeilBF &&
       !valideringsfeilAP?.reduce((prev, current) => prev || current.fom || current.tom, false)
     ) {
+      setValideringPeriodelengde(false);
       props.onUpdate({
         arbeidsgiverperioder: arbeidsgiverperioder,
         begrunnelse: begrunnelse!
@@ -120,7 +136,9 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
   };
 
   useEffect(() => {
-    setArbeidsgiverperioder(props.arbeidsgiverperioder);
+    if (!arbeidsgiverperioder || arbeidsgiverperioder.length !== props.arbeidsgiverperioder.length) {
+      setArbeidsgiverperioder(props.arbeidsgiverperioder);
+    }
   }, [props.arbeidsgiverperioder]);
 
   return (
@@ -145,12 +163,17 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
             <Arbeidsgiverperiode
               key={index}
               arbeidsgiverperiode={periode}
-              rangeChangeHandler={rangeChangeHandler}
+              rangeChangeHandler={(input) => rangeChangeHandler(input, index)}
               periodeIndex={index}
               onDelete={(event) => handleSlettArbeidsgiverperiode(event, index)}
               hasError={visValideringArbeidsgiverperiode}
             />
           ))}
+          {visValideringPeriodelengde && (
+            <p className='navds-error-message navds-label'>
+              Perioden er {dagerIPeriode} dager, men kan ikke være lengre enn 16 dager
+            </p>
+          )}
           <Button
             variant='secondary'
             className={localStyles.legtilbutton}

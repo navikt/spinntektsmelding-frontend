@@ -102,7 +102,7 @@ export default function RefusjonUtbetalingEndring({
         endringer.map((endring, key) => (
           <div key={key} className={lokalStyles.belopperiode}>
             <TextField
-              label='Endret lønn'
+              label='Endret lønn/måned'
               // onChange={(event) => changeBelopHandler(event, key)}
               defaultValue={endring.belop}
               id={`lus-utbetaling-endring-belop-${key}`}
@@ -113,6 +113,7 @@ export default function RefusjonUtbetalingEndring({
               maxDate={maxDate}
               onDateChange={(val) => changeDatoHandler(val, key)}
               key={key}
+              index={key}
             />
             {key !== 0 && (
               <ButtonSlette

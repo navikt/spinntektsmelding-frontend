@@ -1,5 +1,4 @@
 import { UNSAFE_DatePicker, UNSAFE_useRangeDatepicker } from '@navikt/ds-react';
-import { useEffect } from 'react';
 import { DateRange } from 'react-day-picker';
 import localStyles from './EndrePerioderModal.module.css';
 import { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
@@ -21,18 +20,17 @@ export default function Arbeidsgiverperiode({
   onDelete,
   hasError
 }: ArbeidsgiverperiodeProps) {
-  const { datepickerProps, toInputProps, fromInputProps, setSelected } = UNSAFE_useRangeDatepicker({
+  const { datepickerProps, toInputProps, fromInputProps } = UNSAFE_useRangeDatepicker({
     onRangeChange: (periode) => rangeChangeHandler(periode, periodeIndex),
-    toDate: new Date()
+    toDate: new Date(),
+    defaultSelected: {
+      from: arbeidsgiverperiode?.fom,
+      to: arbeidsgiverperiode?.tom
+    }
   });
 
-  useEffect(() => {
-    setSelected({ from: arbeidsgiverperiode?.fom, to: arbeidsgiverperiode?.tom });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [arbeidsgiverperiode]);
-
   return (
-    <UNSAFE_DatePicker {...datepickerProps} id={`epm-datovelger-${periodeIndex}`}>
+    <UNSAFE_DatePicker {...datepickerProps} id={`epm-datovelger-${periodeIndex}`} strategy='fixed'>
       <div className={localStyles.datowrapper}>
         <UNSAFE_DatePicker.Input
           {...fromInputProps}

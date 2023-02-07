@@ -52,7 +52,10 @@ export default function Fravaersperiode({ egenmeldingsperioder, setModalOpen }: 
         <BodyLong>
           Basert på eventuell egenmelding og sykmeldingsperiode beregner NAV arbeidsgiverperioden til{' '}
           <Arbeidsgiverperiode perioder={arbeidsgiverperioder} />. Hvis du mener dette er feil er det mulig å{' '}
-          <Link onClick={setModalOpen}>korrigere her.</Link>
+          <Link onClick={setModalOpen} href='#'>
+            korrigere her
+          </Link>
+          .
         </BodyLong>
       )}
     </>

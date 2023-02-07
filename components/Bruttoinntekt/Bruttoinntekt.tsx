@@ -90,7 +90,7 @@ export default function Bruttoinntekt() {
   if (tidligereinntekt) {
     return (
       <>
-        <Heading3>Brutto månedslønn</Heading3>
+        <Heading3>Beregnet månedslønn</Heading3>
         <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
         <TidligereInntekt tidligereinntekt={tidligereinntekt} />
         {!endringAvBelop && (
@@ -217,7 +217,6 @@ export default function Bruttoinntekt() {
           hideLegend
           legend='Bekreft at månedslønn er korrekt'
           defaultValue={bekreftetBruttoinntekt}
-          value={bekreftetBruttoinntekt}
         >
           <Checkbox
             onClick={changeKorrektInntektHandler}
@@ -233,7 +232,7 @@ export default function Bruttoinntekt() {
   } else {
     return (
       <>
-        <Heading3>Brutto månedslønn</Heading3>
+        <Heading3>Beregnet månedslønn</Heading3>
         <BodyLong>
           Angi bruttoinntekt som snitt av siste tre måneders lønn. Dersom inntekten har gått opp pga. varig
           lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes som
