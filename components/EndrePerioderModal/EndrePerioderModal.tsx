@@ -38,7 +38,9 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
   });
 
   const [begrunnelse, setBegrunnelse] = useState<string | undefined>();
-  const [arbeidsgiverperioder, setArbeidsgiverperioder] = useState<Array<FravaersPeriode>>(props.arbeidsgiverperioder);
+  const [arbeidsgiverperioder, setArbeidsgiverperioder] = useState<Array<FravaersPeriode | undefined>>(
+    props.arbeidsgiverperioder
+  );
   const [visValideringBegrunnelse, setValideringBegrunnelse] = useState<boolean>(false);
   const [visValideringArbeidsgiverperiode, setValideringArbeidsgiverperiode] =
     useState<Array<ValideringsfeilArbeidsgiverperiode>>();
@@ -46,7 +48,7 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
   const [dagerIPeriode, setDagerIPeriode] = useState<number>(0);
 
   const validerArbeidsgiverperiode = (
-    arbeidsgiverperioder: Array<FravaersPeriode>
+    arbeidsgiverperioder: Array<FravaersPeriode | undefined>
   ): Array<ValideringsfeilArbeidsgiverperiode> => {
     const feil = arbeidsgiverperioder.map((periode) => {
       if (periode)
@@ -106,8 +108,13 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
       !valideringsfeilAP?.reduce((prev, current) => prev || current.fom || current.tom, false)
     ) {
       setValideringPeriodelengde(false);
+
+      const aperioder: Array<FravaersPeriode> = arbeidsgiverperioder.filter(
+        (periode) => periode !== undefined
+      ) as Array<FravaersPeriode>;
+
       props.onUpdate({
-        arbeidsgiverperioder: arbeidsgiverperioder,
+        arbeidsgiverperioder: aperioder,
         begrunnelse: begrunnelse!
       });
     }
@@ -122,7 +129,8 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
 
   const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const aperioder = structuredClone(arbeidsgiverperioder);
+
+    const aperioder: Array<FravaersPeriode | undefined> = structuredClone(arbeidsgiverperioder);
     aperioder.push(undefined);
     setArbeidsgiverperioder(aperioder);
   };
@@ -139,7 +147,7 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
     if (!arbeidsgiverperioder || arbeidsgiverperioder.length !== props.arbeidsgiverperioder.length) {
       setArbeidsgiverperioder(props.arbeidsgiverperioder);
     }
-  }, [props.arbeidsgiverperioder]);
+  }, [props.arbeidsgiverperioder]); // eslint-disable-line
 
   return (
     <Modal
