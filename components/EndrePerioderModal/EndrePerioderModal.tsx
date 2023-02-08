@@ -170,7 +170,7 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
           {arbeidsgiverperioder.map((periode, index) => (
             <Arbeidsgiverperiode
               key={index}
-              arbeidsgiverperiode={periode}
+              arbeidsgiverperiode={periode!}
               rangeChangeHandler={(input) => rangeChangeHandler(input, index)}
               periodeIndex={index}
               onDelete={(event) => handleSlettArbeidsgiverperiode(event, index)}
