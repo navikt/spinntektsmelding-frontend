@@ -1,11 +1,11 @@
-import { UNSAFE_DatePicker, UNSAFE_useRangeDatepicker } from '@navikt/ds-react';
 import lokalStyles from './Bruttoinntekt.module.css';
-import { DateRange } from 'react-day-picker';
 import { Periode } from '../../state/state';
 import ButtonSlette from '../ButtonSlette';
+import Datovelger from '../Datovelger';
+import { useState } from 'react';
 
 interface PeriodevelgerProps {
-  onRangeChange: (dateValue: DateRange | undefined) => void;
+  onRangeChange: (dateValue: PeriodeParam | undefined) => void;
   defaultRange?: Periode;
   fomTekst: string;
   tomTekst: string;
@@ -14,6 +14,11 @@ interface PeriodevelgerProps {
   kanSlettes: boolean;
   onSlettRad: (index: string) => void;
   periodeId: string;
+}
+
+export interface PeriodeParam {
+  fom?: Date;
+  tom?: Date;
 }
 
 export default function Periodevelger({
@@ -27,28 +32,50 @@ export default function Periodevelger({
   onSlettRad,
   periodeId
 }: PeriodevelgerProps) {
-  const { datepickerProps, toInputProps, fromInputProps } = UNSAFE_useRangeDatepicker({
-    toDate: new Date(),
-    onRangeChange: onRangeChange,
-    defaultSelected: {
-      from: defaultRange?.fom,
-      to: defaultRange?.tom
-    }
-  });
+  const [fomDate, setFomDate] = useState<Date | undefined>(defaultRange?.fom);
+  const [tomDate, setTomDate] = useState<Date | undefined>(defaultRange?.tom);
 
   const onSlettClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     onSlettRad(periodeId);
   };
 
+  const onFomChange = (dato: Date | undefined) => {
+    setFomDate(dato);
+    onRangeChange({
+      fom: dato,
+      tom: tomDate
+    });
+  };
+
+  const onTomChange = (dato: Date | undefined) => {
+    setTomDate(dato);
+    onRangeChange({
+      fom: fomDate,
+      tom: dato
+    });
+  };
+
   return (
     <div className={lokalStyles.endremaaanedsinntekt}>
-      <UNSAFE_DatePicker {...datepickerProps}>
-        <div className={lokalStyles.endremaaanedsinntekt}>
-          <UNSAFE_DatePicker.Input {...fromInputProps} label={fomTekst} id={fomID} />
-          <UNSAFE_DatePicker.Input {...toInputProps} label={tomTekst} id={tomID} />
-        </div>
-      </UNSAFE_DatePicker>
+      <div className={lokalStyles.endremaaanedsinntekt}>
+        <Datovelger
+          // fromDate={defaultRange?.fom}
+          // toDate={defaultRange?.fom ? addDays(defaultRange?.fom, 1) : undefined}
+          label={fomTekst}
+          id={fomID}
+          onDateChange={onFomChange}
+          defaultSelected={defaultRange?.fom}
+        />
+        <Datovelger
+          // fromDate={defaultRange?.fom}
+          // toDate={defaultRange?.tom ? addDays(defaultRange?.tom, 1) : undefined}
+          label={tomTekst}
+          id={tomID}
+          onDateChange={onTomChange}
+          defaultSelected={defaultRange?.tom}
+        />
+      </div>
       {kanSlettes && <ButtonSlette title='Slett periode' onClick={onSlettClick} className={lokalStyles.sletteknapp} />}
     </div>
   );

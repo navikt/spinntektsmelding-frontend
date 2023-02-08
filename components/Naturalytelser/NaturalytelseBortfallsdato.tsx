@@ -1,4 +1,5 @@
-import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
+import Datovelger from '../Datovelger';
+import { addDays } from 'date-fns';
 
 interface NaturalytelseBortfallsdatoInterface {
   naturalytelseId: string;
@@ -15,20 +16,13 @@ export default function NaturalytelseBortfallsdato({
     setNaturalytelseBortfallsdato(naturalytelseId, bortfallsdato);
   };
 
-  const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
-    toDate: new Date(),
-    onDateChange: setBortfallsdato,
-    defaultSelected: defaultValue
-  });
-
   return (
-    <UNSAFE_DatePicker {...datepickerProps}>
-      <UNSAFE_DatePicker.Input
-        {...inputProps}
-        label='Dato naturalytelse bortfaller'
-        id={'naturalytele-input-fom-dato-' + naturalytelseId}
-        hideLabel={true}
-      />
-    </UNSAFE_DatePicker>
+    <Datovelger
+      onDateChange={setBortfallsdato}
+      label='Dato naturalytelse bortfaller'
+      id={'naturalytele-input-fom-dato-' + naturalytelseId}
+      hideLabel={true}
+      defaultSelected={defaultValue}
+    />
   );
 }

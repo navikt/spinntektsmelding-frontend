@@ -1,8 +1,7 @@
 import { Button } from '@navikt/ds-react';
 import lokalStyles from './PeriodeListevelger.module.css';
 import { Periode } from '../../state/state';
-import Periodevelger from './Periodevelger';
-import { DateRange } from 'react-day-picker';
+import Periodevelger, { PeriodeParam } from './Periodevelger';
 import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
 
@@ -23,12 +22,12 @@ export default function PeriodeListevelger({
   fomIdBase,
   tomIdBase
 }: PeriodeListevelgerProps) {
-  const onRangeChange = (datoer: DateRange | undefined, index: string) => {
+  const onRangeChange = (datoer: PeriodeParam | undefined, index: string) => {
     const uppdatedRange = defaultRange?.map((periode) => {
       if (periode.id === index) {
         return {
-          fom: datoer ? datoer.from : undefined,
-          tom: datoer ? datoer.to : undefined,
+          fom: datoer ? datoer.fom : undefined,
+          tom: datoer ? datoer.tom : undefined,
           id: periode.id
         };
       }
