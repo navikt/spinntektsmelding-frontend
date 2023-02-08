@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: spinntektsmelding-frontend-artifact
           path: build
