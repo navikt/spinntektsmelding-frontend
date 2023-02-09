@@ -1,17 +1,18 @@
-import { UNSAFE_DatePicker, UNSAFE_useRangeDatepicker } from '@navikt/ds-react';
 import localStyles from './Egenmelding.module.css';
-import { DateRange } from 'react-day-picker';
 import { Periode } from '../../state/state';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
+import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 
 interface EgenmeldingPeriodeInterface {
   periodeId: string;
   egenmeldingsperiode: Periode;
   endreEgenmeldingsperiode: boolean;
-  setEgenmeldingDato: (dateValue: DateRange | undefined, periodeId: string) => void;
+  setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
   toDate: Date;
+  kanSlettes: boolean;
+  onSlettRad: () => void;
 }
 
 export default function EgenmeldingPeriode({
@@ -19,17 +20,13 @@ export default function EgenmeldingPeriode({
   egenmeldingsperiode,
   endreEgenmeldingsperiode,
   setEgenmeldingDato,
-  toDate
+  toDate,
+  kanSlettes,
+  onSlettRad
 }: EgenmeldingPeriodeInterface) {
-  const rangeChangeHandler = (dateRange: DateRange | undefined) => {
+  const rangeChangeHandler = (dateRange: PeriodeParam | undefined) => {
     setEgenmeldingDato(dateRange, periodeId);
   };
-
-  const { datepickerProps, toInputProps, fromInputProps } = UNSAFE_useRangeDatepicker({
-    onRangeChange: (dato) => rangeChangeHandler(dato),
-    toDate: toDate,
-    defaultSelected: { from: egenmeldingsperiode?.fom, to: egenmeldingsperiode?.tom }
-  });
 
   if (!endreEgenmeldingsperiode) {
     return (
@@ -48,12 +45,20 @@ export default function EgenmeldingPeriode({
 
   return (
     <div>
-      <UNSAFE_DatePicker {...datepickerProps} id={'datovelger-egenmelding-' + periodeId}>
-        <div className={localStyles.datowrapper}>
-          <UNSAFE_DatePicker.Input {...fromInputProps} label='Fra' id={`fom-${periodeId}`} />
-          <UNSAFE_DatePicker.Input {...toInputProps} label='Til' id={`tom-${periodeId}`} />
-        </div>
-      </UNSAFE_DatePicker>
+      <div className={localStyles.datowrapper}>
+        <Periodevelger
+          fomTekst='Fra'
+          fomID={`fom-${periodeId}`}
+          tomTekst='Til'
+          tomID={`tom-${periodeId}`}
+          onRangeChange={rangeChangeHandler}
+          defaultRange={{ fom: egenmeldingsperiode?.fom, tom: egenmeldingsperiode?.tom, id: '1' }}
+          kanSlettes={kanSlettes}
+          periodeId={periodeId}
+          onSlettRad={onSlettRad}
+          toDate={toDate}
+        />
+      </div>
     </div>
   );
 }

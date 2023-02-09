@@ -4,15 +4,15 @@ import { parseISO } from 'date-fns';
 import { MottattPeriode } from './MottattData';
 import { Periode } from './state';
 import produce from 'immer';
-import { DateRange } from 'react-day-picker';
 import { CompleteState } from './useBoundStore';
+import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 
 export interface FravaersperiodeState {
   fravaersperioder?: Array<Periode>;
   opprinneligFravaersperiode?: Array<Periode>;
   leggTilFravaersperiode: () => void;
   slettFravaersperiode: (periodeId: string) => void;
-  setFravaersperiodeDato: (periodeId: string, nyTilDato: DateRange | undefined) => void;
+  setFravaersperiodeDato: (periodeId: string, oppdatertPeriode: PeriodeParam | undefined) => void;
   tilbakestillFravaersperiode: () => void;
   initFravaersperiode: (mottatFravaersperiode: Array<MottattPeriode>) => void;
 }
@@ -51,17 +51,17 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
       })
     ),
 
-  setFravaersperiodeDato: (periodeId: string, nyDato: DateRange | undefined) =>
+  setFravaersperiodeDato: (periodeId: string, oppdatertPeriode: PeriodeParam | undefined) =>
     set(
       produce((state) => {
         if (state.fravaersperioder) {
           state.fravaersperioder = state.fravaersperioder.map((periode: Periode) => {
             if (periode.id === periodeId) {
-              if (periode.tom !== nyDato?.to || periode.fom !== nyDato?.from) {
+              if (periode.tom !== oppdatertPeriode?.tom || periode.fom !== oppdatertPeriode?.fom) {
                 state.sammeFravaersperiode = false;
               }
-              periode.tom = nyDato?.to;
-              periode.fom = nyDato?.from;
+              periode.tom = oppdatertPeriode?.tom;
+              periode.fom = oppdatertPeriode?.fom;
             }
             return periode;
           });

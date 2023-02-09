@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
 import formatDate from '../../utils/formatDate';
 
-import ButtonSlette from '../ButtonSlette';
-
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
 import { Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
-import EnkeltArbeidsforholdPeriode from './EnkeltArbeidsforholdPeriode';
 import ButtonEndre from '../ButtonEndre';
 import { Periode } from '../../state/state';
+import Periodevelger from '../Bruttoinntekt/Periodevelger';
 
 interface FravaerEnkeltAnsattforholdProps {
   fravaersperioder: Array<Periode>;
@@ -20,6 +18,7 @@ export default function FravaerEnkeltAnsattforhold({ fravaersperioder }: Fravaer
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
+  const setFravaersperiodeDato = useBoundStore((state) => state.setFravaersperiodeDato);
 
   const clickTilbakestillFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -60,15 +59,18 @@ export default function FravaerEnkeltAnsattforhold({ fravaersperioder }: Fravaer
               </>
             )}
             {endreSykemelding && (
-              <div className={styles.datepickerescape}>
-                <EnkeltArbeidsforholdPeriode periodeId={periode.id} fravaersperiode={periode} />
-              </div>
-            )}
-
-            {endreSykemelding && periodeIndex > 0 && (
-              <div className={styles.endresykemelding}>
-                <ButtonSlette onClick={() => slettFravaersperiode(periode.id)} title='Slett fraværsperiode' />
-              </div>
+              <Periodevelger
+                fomTekst='Fra'
+                fomID={`fom-${periode.id}`}
+                tomTekst='Til'
+                tomID={`tom-${periode.id}`}
+                onRangeChange={(oppdatertPeriode) => setFravaersperiodeDato(periode.id, oppdatertPeriode)}
+                defaultRange={periode}
+                kanSlettes={periodeIndex > 0}
+                periodeId={periode.id}
+                onSlettRad={() => slettFravaersperiode(periode.id)}
+                toDate={new Date()}
+              />
             )}
           </div>
         ))}

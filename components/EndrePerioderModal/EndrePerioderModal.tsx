@@ -1,10 +1,10 @@
 import { BodyLong, Button, Heading, Modal, Select } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
 import Arbeidsgiverperiode from './Arbeidsgiverperiode';
-import { DateRange } from 'react-day-picker';
 import localStyles from './EndrePerioderModal.module.css';
 import { FravaersPeriode } from '../../utils/finnBestemmendeFravaersdag';
 import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
+import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 
 interface EndrePerioderModalProps {
   open: boolean;
@@ -68,12 +68,12 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
 
   const begrunnelseKeys = Object.keys(begrunnelser);
 
-  const rangeChangeHandler = (periode: DateRange | undefined, periodeIndex: number) => {
+  const rangeChangeHandler = (periode: PeriodeParam | undefined, periodeIndex: number) => {
     const aperioder = structuredClone(arbeidsgiverperioder);
     if (aperioder) {
       aperioder[periodeIndex] = {
-        fom: periode!.from!,
-        tom: periode!.to!
+        fom: periode!.fom!,
+        tom: periode!.tom!
       };
       setArbeidsgiverperioder(aperioder);
     }
@@ -120,8 +120,7 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
     }
   };
 
-  const handleSlettArbeidsgiverperiode = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
-    event.preventDefault();
+  const handleSlettArbeidsgiverperiode = (index: number) => {
     const aperioder = structuredClone(arbeidsgiverperioder);
     aperioder.splice(index, 1);
     setArbeidsgiverperioder(aperioder);
@@ -173,7 +172,7 @@ export default function EndrePerioderModal(props: EndrePerioderModalProps) {
               arbeidsgiverperiode={periode!}
               rangeChangeHandler={(input) => rangeChangeHandler(input, index)}
               periodeIndex={index}
-              onDelete={(event) => handleSlettArbeidsgiverperiode(event, index)}
+              onDelete={handleSlettArbeidsgiverperiode}
               hasError={visValideringArbeidsgiverperiode}
             />
           ))}

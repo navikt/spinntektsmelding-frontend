@@ -4,14 +4,14 @@ import produce from 'immer';
 import { Periode } from './state';
 import parseIsoDate from '../utils/parseIsoDate';
 import { MottattPeriode } from './MottattData';
-import { DateRange } from 'react-day-picker';
 import { CompleteState } from './useBoundStore';
+import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 
 export interface EgenmeldingState {
   egenmeldingsperioder: Array<Periode>;
   opprinneligEgenmeldingsperiode?: Array<Periode>;
   endreEgenmeldingsperiode: boolean;
-  setEgenmeldingDato: (dateValue: DateRange | undefined, periodeId: string) => void;
+  setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
   slettEgenmeldingsperiode: (periodeId: string) => void;
   leggTilEgenmeldingsperiode: () => void;
   setEndreEgenmelding: (status: boolean) => void;
@@ -22,13 +22,13 @@ export interface EgenmeldingState {
 const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState> = (set, get) => ({
   egenmeldingsperioder: [{ id: nanoid() }],
   endreEgenmeldingsperiode: false,
-  setEgenmeldingDato: (dateValue: DateRange | undefined, periodeId: string) =>
+  setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) =>
     set(
       produce((state) => {
         state.egenmeldingsperioder = state.egenmeldingsperioder.map((periode: Periode) => {
           if (periode.id === periodeId) {
-            periode.tom = dateValue?.to;
-            periode.fom = dateValue?.from;
+            periode.tom = dateValue?.tom;
+            periode.fom = dateValue?.fom;
             return periode;
           }
           return periode;
