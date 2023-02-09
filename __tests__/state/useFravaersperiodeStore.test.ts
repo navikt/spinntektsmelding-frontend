@@ -3,7 +3,7 @@ import { cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../state/MottattData';
 import { vi } from 'vitest';
-import { DateRange } from 'react-day-picker';
+import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
 
 const fravaersperiode: Array<MottattPeriode> = [
   { fom: '2022-06-06', tom: '2022-07-06' },
@@ -88,9 +88,9 @@ describe('useBoundStore', () => {
   it('should set the egenmelding datospenn for å given periode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    const datoSpenn: DateRange = {
-      from: new Date(2022, 4, 14),
-      to: new Date(2022, 5, 15)
+    const datoSpenn: PeriodeParam = {
+      fom: new Date(2022, 4, 14),
+      tom: new Date(2022, 5, 15)
     };
 
     act(() => {
