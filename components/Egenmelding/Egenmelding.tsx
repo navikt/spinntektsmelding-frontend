@@ -50,7 +50,7 @@ export default function Egenmelding() {
 
   return (
     <div className={localStyles.egenmeldingswrapper}>
-      <Heading3>Eventuell egenmelding</Heading3>
+      <Heading3>Egenmelding</Heading3>
       <BodyLong>
         Hvis den ansatte har oppgitt at egenmeldingsdager ble benyttet i forkant av sykmeldingen, er disse
         forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder med mindre enn 16 dagers mellomrom før

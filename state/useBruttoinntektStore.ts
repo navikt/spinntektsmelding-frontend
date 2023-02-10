@@ -248,6 +248,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     const tidligereInntekt = get().opprinneligeInntekt;
     const bruttoinntekt = get().bruttoinntekt;
 
+    if (!tidligereInntekt) return false;
+
     const aktuelleInntekter = tidligereInntekt!
       .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
       .sort(sorterInntekter)

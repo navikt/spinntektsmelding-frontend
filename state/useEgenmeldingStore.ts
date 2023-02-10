@@ -6,6 +6,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { MottattPeriode } from './MottattData';
 import { CompleteState } from './useBoundStore';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
+import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 
 export interface EgenmeldingState {
   egenmeldingsperioder: Array<Periode>;
@@ -34,6 +35,18 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           return periode;
         });
 
+        const fravaersperioder = get().fravaersperioder;
+
+        const perioder =
+          fravaersperioder && state.egenmeldingsperioder
+            ? fravaersperioder.concat(state.egenmeldingsperioder)
+            : fravaersperioder;
+
+        const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom);
+        if (fPerioder) {
+          const agp = finnArbeidsgiverperiode(fPerioder);
+          get().setArbeidsgiverperioder(agp);
+        }
         return state;
       })
     ),

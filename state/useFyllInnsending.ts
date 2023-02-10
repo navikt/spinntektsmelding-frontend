@@ -100,6 +100,9 @@ export default function useFyllInnsending() {
 
   const behandlingsdager = useBoundStore((state) => state.behandlingsdager);
 
+  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
@@ -183,8 +186,16 @@ export default function useFyllInnsending() {
       perioder = egenmeldingsperioder;
     }
 
-    const bestemmendeFraværsdag = finnBestemmendeFravaersdag(perioder);
-    const arbeidsgiverperioder = finnArbeidsgiverperiode(perioder);
+    const beregningsperioder = endretArbeidsgiverperiode ? arbeidsgiverperioder : perioder;
+
+    const bestemmendeFraværsdag = bestemmendeFravaersdag
+      ? formatIsoDate(bestemmendeFravaersdag)
+      : finnBestemmendeFravaersdag(perioder);
+
+    const aktiveArbeidsgiverperioder =
+      arbeidsgiverperioder?.find((periode) => !periode.fom || !periode.tom) !== undefined
+        ? arbeidsgiverperioder
+        : finnArbeidsgiverperiode(beregningsperioder as Array<Periode>);
 
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
@@ -199,7 +210,7 @@ export default function useFyllInnsending() {
         fom: formatIsoDate(periode.fom),
         tom: formatIsoDate(periode.tom)
       })),
-      arbeidsgiverperioder: arbeidsgiverperioder.map((periode) => ({
+      arbeidsgiverperioder: aktiveArbeidsgiverperioder.map((periode) => ({
         fom: formatIsoDate(periode.fom),
         tom: formatIsoDate(periode.tom)
       })),

@@ -7,28 +7,33 @@ export interface FravaersPeriode {
   tom: Date;
 }
 
-export const overlappendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
+export const overlappendePeriode = (ene: Periode, andre: Periode) => {
+  if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
   if (ene.tom < andre.fom || ene.fom > andre.tom) {
     return null;
   }
 
-  const obj: FravaersPeriode = {
+  const obj: Periode = {
     fom: ene.fom > andre.fom ? andre.fom : ene.fom,
-    tom: ene.tom > andre.tom ? ene.tom : andre.tom
+    tom: ene.tom > andre.tom ? ene.tom : andre.tom,
+    id: ene.id
   };
 
   return obj;
 };
 
-export const tilstoetendePeriode = (ene: FravaersPeriode, andre: FravaersPeriode) => {
+export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
   if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
   }
 
+  if (!ene.fom || !ene.tom || !andre.fom || !andre.tom) return null;
+
   if (differenceInBusinessDays(andre.fom, ene.tom, { includeStartDate: false, includeEndDate: false }) <= 0) {
-    const obj: FravaersPeriode = {
+    const obj: Periode = {
       fom: ene.fom,
-      tom: andre.tom
+      tom: andre.tom,
+      id: ene.id
     };
 
     return obj;
@@ -43,27 +48,29 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Ar
   }
 
   const aktivePerioder = fravaersperioder
-    .map((fravaer) => ({ fom: fravaer.fom, tom: fravaer.tom }))
+    // .map((fravaer) => ({ fom: fravaer.fom, tom: fravaer.tom }))
     .map((element) => JSON.stringify(element));
 
-  const unikeSykmeldingsperioder: Array<FravaersPeriode> = [...new Set([...aktivePerioder])]
+  const unikeSykmeldingsperioder: Array<Periode> = [...new Set([...aktivePerioder])]
     .map((periode) => JSON.parse(periode))
     .map((periode) => {
       if (typeof periode.fom === 'string') {
         return {
           fom: parseISO(periode.fom),
-          tom: parseISO(periode.tom)
+          tom: parseISO(periode.tom),
+          id: periode.id
         };
       } else {
         return {
           fom: periode.fom,
-          tom: periode.tom
+          tom: periode.tom,
+          id: periode.id
         };
       }
     });
 
   const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
-    return compareAsc(a.fom, b.fom);
+    return compareAsc(a.fom || new Date(), b.fom || new Date());
   });
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
@@ -95,9 +102,12 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Ar
     return tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as unknown as string;
   }
 
-  return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom, {
-    representation: 'date'
-  });
+  if (tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined) {
+    return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as Date, {
+      representation: 'date'
+    });
+  }
+  console.log('Her går det galt');
 };
 
 export default finnBestemmendeFravaersdag;

@@ -26,15 +26,14 @@ import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
 import useFetchInntektskjemaForNotifikasjon from '../state/useFetchInntektskjemaForNotifikasjon';
 import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
-import EndrePerioderModal, { EndrePeriodeRespons } from '../components/EndrePerioderModal/EndrePerioderModal';
+
 import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import formatIsoDate from '../utils/formatIsoDate';
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import useErrorRespons, { ErrorResponse } from '../utils/useErrorResponse';
 import environment from '../config/environment';
-import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
-import { Periode } from '../state/state';
-import parseIsoDate from '../utils/parseIsoDate';
+
+import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
 
 const SKJEMADATA_URL = '/im-dialog/api/trenger';
 const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
@@ -58,17 +57,9 @@ const Home: NextPage = () => {
     state.leggTilFeilmelding
   ]);
 
-  const [bestemmendeFravaersdag, setBestemmendeFravaersdag] = useBoundStore((state) => [
-    state.bestemmendeFravaersdag,
-    state.setBestemmendeFravaersdag
-  ]);
+  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
-
-  const rekalkulerBruttioinntekt = useBoundStore((state) => state.rekalkulerBruttioinntekt);
-
-  const setEndringsbegrunnelse = useBoundStore((state) => state.setEndringsbegrunnelse);
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
@@ -130,23 +121,6 @@ const Home: NextPage = () => {
     }
   };
 
-  const onUpdatePeriodeModal = (data: EndrePeriodeRespons) => {
-    setModalOpen(false);
-    setArbeidsgiverperioder(data.arbeidsgiverperioder);
-
-    setEndringsbegrunnelse(data.begrunnelse);
-    const tmpPeriode: Array<Periode> = data.arbeidsgiverperioder!.map((periode, index) => ({
-      fom: periode.fom,
-      tom: periode.tom,
-      id: index.toString()
-    }));
-    const bestemmende = finnBestemmendeFravaersdag(tmpPeriode);
-    if (bestemmende) {
-      rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-      setBestemmendeFravaersdag(parseIsoDate(bestemmende));
-    }
-  };
-
   useEffect(() => {
     const hentData = async () => {
       try {
@@ -172,12 +146,6 @@ const Home: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-
-  const openModal = () => {
-    setModalOpen(true);
-  };
-
   return (
     <div className={styles.container}>
       <Head>
@@ -202,11 +170,15 @@ const Home: NextPage = () => {
               )}
 
               <Skillelinje />
-              <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} setModalOpen={openModal} />
+              <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} />
 
               <Skillelinje />
 
-              <Bruttoinntekt />
+              <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} />
+
+              <Skillelinje />
+
+              <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} />
 
               <Skillelinje />
 
@@ -233,13 +205,6 @@ const Home: NextPage = () => {
         <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
         <Script type='text/javascript' src='https://www.nav.no/dekoratoren/client.js'></Script>
       </main>
-
-      <EndrePerioderModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        arbeidsgiverperioder={arbeidsgiverperioder || []}
-        onUpdate={onUpdatePeriodeModal}
-      />
     </div>
   );
 };

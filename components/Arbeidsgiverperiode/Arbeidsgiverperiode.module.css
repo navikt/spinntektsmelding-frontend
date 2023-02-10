@@ -1,0 +1,9 @@
+.datowrapper {
+  display       : flex;
+  flex-direction: row;
+  gap           : 2rem
+}
+
+.endreknapp {
+  margin-top: auto;
+}

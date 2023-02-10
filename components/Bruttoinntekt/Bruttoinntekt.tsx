@@ -17,7 +17,11 @@ import NyStillingDato from './NyStillingDato';
 import NyStillingsprosentDato from './NyStillingsprosentDato';
 import PeriodeListevelger from './PeriodeListevelger';
 
-export default function Bruttoinntekt() {
+interface BruttoinntektProps {
+  bestemmendeFravaersdag?: Date;
+}
+
+export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektProps) {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
@@ -31,7 +35,6 @@ export default function Bruttoinntekt() {
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
-  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
   const ferie = useBoundStore((state) => state.ferie);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
@@ -95,7 +98,7 @@ export default function Bruttoinntekt() {
         <TidligereInntekt tidligereinntekt={tidligereinntekt} />
         {!endringAvBelop && (
           <TextLabel className={lokalStyles.tbmargin}>
-            Vi har derfor beregnet månedslønnen per {formatDate(bestemmendeFravaersdag)} til
+            Vi har derfor beregnet månedslønnen {formatDate(bestemmendeFravaersdag)} til
           </TextLabel>
         )}
         <div className={lokalStyles.belopwrapper}>
@@ -108,7 +111,7 @@ export default function Bruttoinntekt() {
             <div className={lokalStyles.endremaaanedsinntektwrapper}>
               <div className={lokalStyles.endremaaanedsinntekt}>
                 <TextField
-                  label={`Månedsinntekt per ${formatDate(bestemmendeFravaersdag)}`}
+                  label={`Månedsinntekt ${formatDate(bestemmendeFravaersdag)}`}
                   onChange={changeMaanedsintektHandler}
                   defaultValue={formatCurrency(
                     bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
