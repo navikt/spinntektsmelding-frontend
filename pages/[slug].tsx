@@ -105,8 +105,8 @@ const Home: NextPage = () => {
           case 500:
             const errors: Array<ErrorResponse> = [
               {
-                value: 'Mottak av skjema feilet',
-                error: 'Mottak av skjema feilet',
+                value: 'Innsending av skjema feilet',
+                error: 'Innsending av skjema feilet',
                 property: 'server'
               }
             ];

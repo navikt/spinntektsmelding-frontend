@@ -73,12 +73,12 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         if (bestemmende) {
           console.log('Bestemmende', bestemmende, state.arbeidsgiverperioder);
           get().rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-          state.setBestemmendeFravaersdag(parseIsoDate(bestemmende));
+          state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
         }
         return state;
       })
     ),
-  setArbeidsgiverperiodeDato: async (dateValue: PeriodeParam | undefined, periodeId: string) =>
+  setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) =>
     set(
       produce((state) => {
         state.arbeidsgiverperioder = state.arbeidsgiverperioder.map((periode: Periode) => {
@@ -94,7 +94,8 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         if (bestemmende) {
           console.log('Bestemmende', bestemmende);
           get().rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-          state.setBestemmendeFravaersdag(parseIsoDate(bestemmende));
+          state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+          // state.setBestemmendeFravaersdag(parseIsoDate(bestemmende));
         }
         state.endretArbeidsgiverperiode = true;
         return state;
