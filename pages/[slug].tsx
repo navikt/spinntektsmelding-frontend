@@ -97,15 +97,29 @@ const Home: NextPage = () => {
             'Content-Type': 'application/json'
           }
         });
-        if (data.status === 201) {
-          router.push('/kvittering');
-        } else {
-          const resultat = await data.json();
+        switch (data.status) {
+          case 201:
+            router.push('/kvittering');
+            break;
 
-          if (resultat.errors) {
-            const errors: Array<ErrorResponse> = resultat.errors;
+          case 500:
+            const errors: Array<ErrorResponse> = [
+              {
+                value: 'Mottak av skjema feilet',
+                error: 'Mottak av skjema feilet',
+                property: 'server'
+              }
+            ];
             errorResponse(errors);
-          }
+            break;
+
+          default:
+            const resultat = await data.json();
+
+            if (resultat.errors) {
+              const errors: Array<ErrorResponse> = resultat.errors;
+              errorResponse(errors);
+            }
         }
       };
       postData();
