@@ -72,7 +72,25 @@ describe('useBoundStore', () => {
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(56000.23);
   });
 
-  it('should return an error when ny maanedsinntekt = 0.', () => {
+  it('should return an error when ny maanedsinntekt = -1.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setNyMaanedsinntekt('-1');
+    });
+
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(-1);
+    expect(result.current.feilmeldinger[1]).toEqual({
+      felt: 'bruttoinntekt-endringsbelop',
+      text: feiltekster.BRUTTOINNTEKT_MANGLER
+    });
+  });
+
+  it('should return undefined when ny maanedsinntekt = 0.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -84,10 +102,7 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(0);
-    expect(result.current.feilmeldinger[1]).toEqual({
-      felt: 'bruttoinntekt-endringsbelop',
-      text: feiltekster.BRUTTOINNTEKT_MANGLER
-    });
+    expect(result.current.feilmeldinger[1]).toBeUndefined();
   });
 
   it('should return an error when ny maanedsinntekt = 0. Skjema er blankt, ikke preutfylt', () => {
@@ -98,10 +113,10 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyMaanedsinntektBlanktSkjema('0');
+      result.current.setNyMaanedsinntektBlanktSkjema('-1');
     });
 
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(0);
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(-1);
     expect(result.current.feilmeldinger[1]).toEqual({
       felt: 'bruttoinntekt-endringsbelop',
       text: feiltekster.BRUTTOINNTEKT_MANGLER

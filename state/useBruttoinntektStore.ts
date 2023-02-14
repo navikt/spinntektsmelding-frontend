@@ -6,8 +6,9 @@ import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
+import parseIsoDate from '../utils/parseIsoDate';
 
-const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
+export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maanedsnavn < b.maanedsnavn) {
     return 1;
   } else {
@@ -243,17 +244,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     );
   },
   rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => {
-    const bestMnd = `00${bestemmendeFravaersdag.getMonth() + 1}`.slice(-2);
-    const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
     const tidligereInntekt = get().opprinneligeInntekt;
     const bruttoinntekt = get().bruttoinntekt;
 
     if (!tidligereInntekt) return false;
 
-    const aktuelleInntekter = tidligereInntekt!
-      .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
-      .sort(sorterInntekter)
-      .slice(0, 3);
+    const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
 
     const sumInntekter = aktuelleInntekter.reduce(
       (prev, cur) => {
@@ -290,3 +286,14 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 });
 
 export default useBruttoinntektStore;
+
+export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[], bestemmendeFravaersdag: Date) {
+  const bestMnd = `00${bestemmendeFravaersdag.getMonth() + 1}`.slice(-2);
+
+  const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
+
+  return tidligereInntekt!
+    .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
+    .sort(sorterInntekter)
+    .slice(0, 3);
+}

@@ -7,7 +7,7 @@ describe('validerPeriodeEgenmelding', () => {
     const input: Array<Periode> = [
       {
         id: 'tilfeldig',
-        tom: new Date(2002, 10, 1),
+        tom: new Date(2002, 9, 10),
         fom: new Date(2002, 9, 1)
       }
     ];
@@ -55,7 +55,7 @@ describe('validerPeriodeEgenmelding', () => {
     const input: Array<Periode> = [
       {
         id: 'tilfeldig',
-        tom: new Date(2002, 10, 1),
+        tom: new Date(2002, 9, 10),
         fom: new Date(2002, 9, 1)
       },
       {
@@ -84,7 +84,7 @@ describe('validerPeriodeEgenmelding', () => {
       },
       {
         id: 'tilfeldig',
-        tom: new Date(2002, 10, 1),
+        tom: new Date(2002, 9, 10),
         fom: new Date(2002, 9, 1)
       }
     ];
@@ -107,7 +107,7 @@ describe('validerPeriodeEgenmelding', () => {
     const input: Array<Periode> = [
       {
         id: 'tilfeldig',
-        fom: new Date(2002, 10, 1),
+        fom: new Date(2002, 9, 10),
         tom: new Date(2002, 9, 1)
       }
     ];
@@ -129,6 +129,49 @@ describe('validerPeriodeEgenmelding', () => {
       {
         code: 'MANGLER_PERIODE',
         felt: 'backend'
+      }
+    ];
+
+    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+  });
+
+  it('should fail if periode is more than 16 days', () => {
+    const input: Array<Periode> = [
+      {
+        id: 'tilfeldig',
+        fom: new Date(2002, 9, 1),
+        tom: new Date(2002, 9, 17)
+      }
+    ];
+
+    const expected = [
+      {
+        code: 'FOR_MANGE_DAGER_I_PERIODE',
+        felt: 'fom-tilfeldig'
+      }
+    ];
+
+    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+  });
+
+  it('should fail if more than 16 days between periodes', () => {
+    const input: Array<Periode> = [
+      {
+        id: 'tilfeldig',
+        fom: new Date(2002, 9, 1),
+        tom: new Date(2002, 9, 10)
+      },
+      {
+        id: 'tilfeldig2',
+        fom: new Date(2002, 10, 1),
+        tom: new Date(2002, 10, 10)
+      }
+    ];
+
+    const expected = [
+      {
+        code: 'FOR_MANGE_DAGER_MELLOM',
+        felt: 'fom-tilfeldig2'
       }
     ];
 

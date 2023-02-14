@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
+import { finnAktuelleInntekter, sorterInntekter } from './useBruttoinntektStore';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
@@ -42,7 +43,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
         if (bestemmende) {
           console.log('Bestemmende', bestemmende);
-          get().rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+          state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
           state.setBestemmendeFravaersdag(parseIsoDate(bestemmende));
         }
 
@@ -73,7 +74,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
         if (bestemmende) {
           console.log('Bestemmende', bestemmende, state.arbeidsgiverperioder);
-          get().rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+          state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
           state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
         }
         return state;
@@ -94,11 +95,13 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
         if (bestemmende) {
           console.log('Bestemmende', bestemmende);
-          get().rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+          state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
           state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-          // state.setBestemmendeFravaersdag(parseIsoDate(bestemmende));
+
+          state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
         }
         state.endretArbeidsgiverperiode = true;
+
         return state;
       })
     ),

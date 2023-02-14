@@ -86,7 +86,7 @@ function manglerTomMenIkkeFomMedEnRad(
 ) {
   if (tomPeriode && manglerFomEllerTomMenIkkeBegge && !periode.tom) {
     feilkoder.push({
-      felt: `tom-${periode.id}`,
+      felt: `arbeidsgiverperiode-tom-${periode.id}`,
       code: PeriodeFeilkode.MANGLER_TIL
     });
   }
@@ -95,7 +95,7 @@ function manglerTomMenIkkeFomMedEnRad(
 function manglerTomOgIkkeBareEnRad(periode: Periode, tomPeriode: boolean, feilkoder: ValiderResultat[]) {
   if (!periode.tom && !tomPeriode) {
     feilkoder.push({
-      felt: `tom-${periode.id}`,
+      felt: `arbeidsgiverperiode-tom-${periode.id}`,
       code: PeriodeFeilkode.MANGLER_TIL
     });
   }
