@@ -1,6 +1,6 @@
 import { addDays, compareAsc, differenceInCalendarDays, parseISO } from 'date-fns';
 import { Periode } from '../state/state';
-import { overlappendePeriode, tilstoetendePeriode } from './finnBestemmendeFravaersdag';
+import { finnSorterteUnikePerioder, overlappendePeriode, tilstoetendePeriode } from './finnBestemmendeFravaersdag';
 
 const finn16dager = (perioder: Array<Periode>) => {
   let dagerTotalt = 0;
@@ -25,17 +25,15 @@ const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<Period
     .map((fravaer) => ({ fom: fravaer.fom, tom: fravaer.tom }))
     .map((element) => JSON.stringify(element));
 
-  const unikeSykmeldingsperioder: Array<Periode> = [...new Set([...aktivePerioder])]
-    .map((periode) => JSON.parse(periode))
-    .map((periode) => ({
-      fom: parseISO(periode.fom),
-      tom: parseISO(periode.tom),
-      id: periode.id
-    }));
+  // const unikeSykmeldingsperioder: Array<Periode> = [...new Set([...aktivePerioder])]
+  //   .map((periode) => JSON.parse(periode))
+  //   .map((periode) => ({
+  //     fom: parseISO(periode.fom),
+  //     tom: parseISO(periode.tom),
+  //     id: periode.id
+  //   }));
 
-  const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
-    return compareAsc(a.fom || new Date(), b.fom || new Date());
-  });
+  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(aktivePerioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
 

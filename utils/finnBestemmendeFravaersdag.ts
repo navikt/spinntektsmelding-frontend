@@ -51,27 +51,7 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Ar
     // .map((fravaer) => ({ fom: fravaer.fom, tom: fravaer.tom }))
     .map((element) => JSON.stringify(element));
 
-  const unikeSykmeldingsperioder: Array<Periode> = [...new Set([...aktivePerioder])]
-    .map((periode) => JSON.parse(periode))
-    .map((periode) => {
-      if (typeof periode.fom === 'string') {
-        return {
-          fom: parseISO(periode.fom),
-          tom: parseISO(periode.tom),
-          id: periode.id
-        };
-      } else {
-        return {
-          fom: periode.fom,
-          tom: periode.tom,
-          id: periode.id
-        };
-      }
-    });
-
-  const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
-    return compareAsc(a.fom || new Date(), b.fom || new Date());
-  });
+  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(aktivePerioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
 
@@ -107,7 +87,35 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Ar
       representation: 'date'
     });
   }
-  console.log('Her går det galt');
 };
 
 export default finnBestemmendeFravaersdag;
+
+export function finnSorterteUnikePerioder(aktivePerioder: string[]) {
+  const unikeSykmeldingsperioder: Array<Periode> = finnUnikePerioder(aktivePerioder);
+
+  const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
+    return compareAsc(a.fom || new Date(), b.fom || new Date());
+  });
+  return sorterteSykemeldingsperioder;
+}
+
+function finnUnikePerioder(aktivePerioder: string[]): Periode[] {
+  return [...new Set([...aktivePerioder])]
+    .map((periode) => JSON.parse(periode))
+    .map((periode) => {
+      if (typeof periode.fom === 'string') {
+        return {
+          fom: parseISO(periode.fom),
+          tom: parseISO(periode.tom),
+          id: periode.id
+        };
+      } else {
+        return {
+          fom: periode.fom,
+          tom: periode.tom,
+          id: periode.id
+        };
+      }
+    });
+}
