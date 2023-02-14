@@ -11,10 +11,7 @@ interface FravaersperiodeProps {
 export default function Fravaersperiode({ egenmeldingsperioder }: FravaersperiodeProps) {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
 
-  const [arbeidsgiverperioder, setArbeidsgiverperioder] = useBoundStore((state) => [
-    state.arbeidsgiverperioder,
-    state.setArbeidsgiverperioder
-  ]);
+  const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
 
   const ucSetArbeidsgiverperiode = useCallback(
     (agp: Periode[] | undefined) => setArbeidsgiverperioder(agp),

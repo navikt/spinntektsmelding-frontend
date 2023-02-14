@@ -1,5 +1,4 @@
 import Datovelger from '../Datovelger';
-import { addDays } from 'date-fns';
 
 interface NaturalytelseBortfallsdatoInterface {
   naturalytelseId: string;

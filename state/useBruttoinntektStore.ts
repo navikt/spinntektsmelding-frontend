@@ -6,7 +6,6 @@ import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
-import parseIsoDate from '../utils/parseIsoDate';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maanedsnavn < b.maanedsnavn) {
@@ -292,7 +291,7 @@ export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[], best
 
   const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
 
-  return tidligereInntekt!
+  return tidligereInntekt
     .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
     .sort(sorterInntekter)
     .slice(0, 3);

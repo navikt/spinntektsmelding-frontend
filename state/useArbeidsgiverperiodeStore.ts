@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
-import { finnAktuelleInntekter, sorterInntekter } from './useBruttoinntektStore';
+import { finnAktuelleInntekter } from './useBruttoinntektStore';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
@@ -39,7 +39,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     set(
       produce((state) => {
         state.arbeidsgiverperioder = arbeidsgiverperioder;
-        // state.endretArbeidsgiverperiode = true;
         const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
         if (bestemmende) {
           console.log('Bestemmende', bestemmende);

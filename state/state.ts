@@ -1,6 +1,6 @@
 export interface Periode {
-  fom?: Date | undefined;
-  tom?: Date | undefined;
+  fom?: Date;
+  tom?: Date;
   id: string;
 }
 

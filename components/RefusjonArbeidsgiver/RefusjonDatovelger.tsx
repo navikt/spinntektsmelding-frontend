@@ -8,7 +8,7 @@ interface RefusjonDatovelgerProps {
 }
 
 export default function RefusjonDatovelger({ minDate, maxDate, onDateChange, index }: RefusjonDatovelgerProps) {
-  const { datepickerProps, inputProps, selectedDay } = UNSAFE_useDatepicker({
+  const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
     onDateChange: onDateChange,
     fromDate: minDate,
     toDate: maxDate
@@ -19,7 +19,6 @@ export default function RefusjonDatovelger({ minDate, maxDate, onDateChange, ind
         {...inputProps}
         label='Dato for lønnsendring'
         id={`lus-utbetaling-endring-dato-${index}`}
-        // onChange={(event) => changeDatoHandler(event, key)}
       />
     </UNSAFE_DatePicker>
   );

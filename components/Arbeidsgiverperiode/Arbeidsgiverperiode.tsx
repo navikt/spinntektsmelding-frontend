@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
@@ -6,7 +5,7 @@ import styles from '../../styles/Home.module.css';
 import { BodyLong, Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
-import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
+import Periodevelger from '../Bruttoinntekt/Periodevelger';
 import { Periode } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
@@ -45,7 +44,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
         <div>
           {arbeidsgiverperioder &&
             arbeidsgiverperioder.map((periode, periodeIndex) => (
-              <div className={styles.periodewrapper} key={periodeIndex}>
+              <div className={styles.periodewrapper} key={periode.id}>
                 {!endretArbeidsgiverperiode && (
                   <>
                     <div className={styles.datepickerescape}>

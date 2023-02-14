@@ -12,12 +12,10 @@ interface SelectEndringBruttoinntektProps {
 
 export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinntektProps) {
   const begrunnelseKeys = Object.keys(begrunnelseEndringBruttoinntekt);
-  // const [begrunnelse, setBegrunnelse] = useState<string>('');
 
   const changeHandler = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       props.onChangeBegrunnelse(event.target.value);
-      // setBegrunnelse(event.target.value);
     },
     [props]
   );
