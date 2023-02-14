@@ -1123,15 +1123,15 @@
     magic-string "^0.27.0"
     react-refresh "^0.14.0"
 
-"@vitest/coverage-c8@0.28.4":
-  version "0.28.4"
-  resolved "https://registry.yarnpkg.com/@vitest/coverage-c8/-/coverage-c8-0.28.4.tgz#5c7dc2b88135051a4a503068f7677535e68965b4"
-  integrity sha512-btelLBxaWhHnywXRQxDlrvPhGdnuIaD3XulsxcZRIcnpLPbFu39dNTT0IYu2QWP2ZZrV0AmNtdLIfD4c77zMAg==
+"@vitest/coverage-c8@0.28.5":
+  version "0.28.5"
+  resolved "https://registry.yarnpkg.com/@vitest/coverage-c8/-/coverage-c8-0.28.5.tgz#762555eaf7789650026b2f2de5b5131cdf2c0ffa"
+  integrity sha512-zCNyurjudoG0BAqAgknvlBhkV2V9ZwyYLWOAGtHSDhL/St49MJT+V2p1G0yPaoqBbKOTATVnP5H2p1XL15H75g==
   dependencies:
     c8 "^7.12.0"
     picocolors "^1.0.0"
     std-env "^3.3.1"
-    vitest "0.28.4"
+    vitest "0.28.5"
 
 "@vitest/expect@0.28.4":
   version "0.28.4"
