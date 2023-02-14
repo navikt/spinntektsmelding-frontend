@@ -61,10 +61,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt]
   );
 
-  const changeMaanedsintektHandler = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => setNyMaanedsinntekt(event.target.value),
-    [setNyMaanedsinntekt]
-  );
+  const changeMaanedsintektHandler = (event: ChangeEvent<HTMLInputElement>) => setNyMaanedsinntekt(event.target.value);
 
   const changeBegrunnelseHandler = useCallback((aarsak: string) => setEndringsaarsak(aarsak), [setEndringsaarsak]);
 
@@ -73,10 +70,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     [bekreftKorrektInntekt]
   );
 
-  const setNyMaanedsinntektBlanktSkjemaHandler = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => setNyMaanedsinntektBlanktSkjema(event.target.value),
-    [setNyMaanedsinntektBlanktSkjema]
-  );
+  const setNyMaanedsinntektBlanktSkjemaHandler = (event: ChangeEvent<HTMLInputElement>) =>
+    setNyMaanedsinntektBlanktSkjema(event.target.value);
 
   const setEndreMaanedsinntektHandler = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {

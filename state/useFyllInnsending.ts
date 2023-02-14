@@ -216,7 +216,7 @@ export default function useFyllInnsending() {
       })),
       inntekt: {
         bekreftet: bruttoinntekt.bekreftet || false,
-        beregnetInntekt: bruttoinntekt.bruttoInntekt,
+        beregnetInntekt: bruttoinntekt.bruttoInntekt!,
         manueltKorrigert: bruttoinntekt.manueltKorrigert || false,
         endringÅrsak: endringAarsak()
       },

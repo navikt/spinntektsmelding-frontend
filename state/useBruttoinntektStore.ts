@@ -50,13 +50,13 @@ export interface BruttoinntektState {
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
   bruttoinntekt: {
-    bruttoInntekt: 0,
+    bruttoInntekt: undefined,
     bekreftet: false,
     manueltKorrigert: false,
     endringsaarsak: undefined
   },
   opprinneligbruttoinntekt: {
-    bruttoInntekt: 0,
+    bruttoInntekt: undefined,
     bekreftet: false,
     manueltKorrigert: false,
     endringsaarsak: undefined
@@ -67,7 +67,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       produce((state) => {
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
         state.bruttoinntekt.manueltKorrigert = true;
-        if (state.bruttoinntekt.bruttoInntekt && state.bruttoinntekt.bruttoInntekt > 0) {
+        if (state.bruttoinntekt.bruttoInntekt != undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
           state = slettFeilmelding(state, 'bruttoinntekt-endringsbelop');
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
@@ -82,7 +82,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
         state.bruttoinntekt.manueltKorrigert = false;
         state.bruttoinntekt.bekreftet = true;
-        if (state.bruttoinntekt.bruttoInntekt && state.bruttoinntekt.bruttoInntekt > 0) {
+        if (state.bruttoinntekt.bruttoInntekt !== undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
           state = slettFeilmelding(state, 'bruttoinntekt-endringsbelop');
           state = slettFeilmelding(state, 'bruttoinntektbekreft');
         } else {

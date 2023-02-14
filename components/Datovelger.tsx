@@ -8,6 +8,8 @@ interface DatovelgerProps {
   id?: string;
   label?: string;
   hideLabel?: boolean;
+  disabled?: boolean;
+  defaultMonth?: Date;
 }
 
 export default function Datovelger({
@@ -17,18 +19,21 @@ export default function Datovelger({
   fromDate,
   id,
   label,
-  hideLabel
+  hideLabel,
+  disabled,
+  defaultMonth
 }: DatovelgerProps) {
   const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
     toDate: toDate,
     fromDate: fromDate,
     onDateChange: onDateChange,
-    defaultSelected: defaultSelected
+    defaultSelected: defaultSelected,
+    defaultMonth: defaultMonth
   });
 
   return (
     <UNSAFE_DatePicker {...datepickerProps}>
-      <UNSAFE_DatePicker.Input {...inputProps} label={label} id={id} hideLabel={hideLabel} />
+      <UNSAFE_DatePicker.Input {...inputProps} label={label} id={id} hideLabel={hideLabel} disabled={disabled} />
     </UNSAFE_DatePicker>
   );
 }

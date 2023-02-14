@@ -4,6 +4,7 @@ import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
+import { subDays } from 'date-fns';
 
 interface EgenmeldingPeriodeInterface {
   periodeId: string;
@@ -13,6 +14,7 @@ interface EgenmeldingPeriodeInterface {
   toDate: Date;
   kanSlettes: boolean;
   onSlettRad: () => void;
+  disabled?: boolean;
 }
 
 export default function EgenmeldingPeriode({
@@ -22,7 +24,8 @@ export default function EgenmeldingPeriode({
   setEgenmeldingDato,
   toDate,
   kanSlettes,
-  onSlettRad
+  onSlettRad,
+  disabled
 }: EgenmeldingPeriodeInterface) {
   const rangeChangeHandler = (dateRange: PeriodeParam | undefined) => {
     setEgenmeldingDato(dateRange, periodeId);
@@ -57,6 +60,8 @@ export default function EgenmeldingPeriode({
           periodeId={periodeId}
           onSlettRad={onSlettRad}
           toDate={toDate}
+          disabled={disabled}
+          defaultMonth={egenmeldingsperiode?.fom ? subDays(egenmeldingsperiode?.fom, 1) : egenmeldingsperiode?.fom}
         />
       </div>
     </div>

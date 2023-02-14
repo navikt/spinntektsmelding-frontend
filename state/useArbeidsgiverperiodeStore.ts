@@ -18,6 +18,7 @@ export interface ArbeidsgiverperiodeState {
   leggTilArbeidsgiverperiode: () => void;
   slettArbeidsgiverperiode: (periodeId: string) => void;
   setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
+  setEndreArbeidsgiverperiode: (endre: boolean) => void;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => ({
@@ -37,7 +38,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     set(
       produce((state) => {
         state.arbeidsgiverperioder = arbeidsgiverperioder;
-        state.endretArbeidsgiverperiode = true;
+        // state.endretArbeidsgiverperiode = true;
         const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
         if (bestemmende) {
           console.log('Bestemmende', bestemmende);
@@ -101,6 +102,15 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         return state;
       })
     ),
+  setEndreArbeidsgiverperiode: (endre: boolean) => {
+    set(
+      produce((state) => {
+        state.endretArbeidsgiverperiode = endre;
+
+        return state;
+      })
+    );
+  },
   setEndringsbegrunnelse: (begrunnelse) =>
     set(
       produce((state) => {

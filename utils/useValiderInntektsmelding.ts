@@ -14,6 +14,7 @@ import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import useBoundStore from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
+import validerPeriodeArbeidsgiverperiode from '../validators/validerPeriodeArbeidsgiverperiode';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -65,6 +66,7 @@ export default function useValiderInntektsmelding() {
     let feilkoderLonnUnderSykefravaeret: Array<ValiderResultat> = [];
     let feilkoderBekreftOpplyninger: Array<ValiderResultat> = [];
     let feilkoderEndringAvMaanedslonn: Array<ValiderResultat> = [];
+    let feilkoderArbeidsgiverperioder: Array<ValiderResultat> = [];
 
     if (state.fravaersperioder) {
       if (state.fravaersperioder.length < 1) {
@@ -103,6 +105,10 @@ export default function useValiderInntektsmelding() {
 
     feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);
 
+    if (state.arbeidsgiverperioder) {
+      feilkoderArbeidsgiverperioder = validerPeriodeArbeidsgiverperiode(state.arbeidsgiverperioder);
+    }
+
     errorCodes = [
       ...errorCodes,
       ...feilkoderFravaersperioder,
@@ -112,7 +118,8 @@ export default function useValiderInntektsmelding() {
       ...feilkoderLonnIArbeidsgiverperioden,
       ...feilkoderLonnUnderSykefravaeret,
       ...feilkoderBekreftOpplyninger,
-      ...feilkoderEndringAvMaanedslonn
+      ...feilkoderEndringAvMaanedslonn,
+      ...feilkoderArbeidsgiverperioder
     ];
 
     if (errorCodes.length > 0) {

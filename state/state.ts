@@ -7,7 +7,7 @@ export interface Periode {
 export type YesNo = 'Ja' | 'Nei';
 
 export interface Inntekt {
-  bruttoInntekt: number;
+  bruttoInntekt?: number;
   bekreftet?: boolean;
   manueltKorrigert: boolean;
   endringsaarsak?: string;

@@ -26,7 +26,7 @@ export default function validerBruttoinntekt(bruttoinntekt?: Inntekt): Array<Val
       });
     }
 
-    if (!bruttoinntekt.bruttoInntekt || bruttoinntekt.bruttoInntekt < 0) {
+    if (bruttoinntekt.bruttoInntekt === undefined || bruttoinntekt.bruttoInntekt < 0) {
       valideringstatus.push({
         felt: 'bruttoinntekt-endringsbelop',
         code: BruttoinntektFeilkode.BRUTTOINNTEKT_MANGLER

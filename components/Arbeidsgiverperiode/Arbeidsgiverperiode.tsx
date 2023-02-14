@@ -16,10 +16,11 @@ interface ArbeidsgiverperiodeProps {
 }
 
 export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: ArbeidsgiverperiodeProps) {
-  const [endreArbeidsgiverperiode, setEndreArbeidsgiverperiode] = useState<boolean>(false);
   const leggTilArbeidsgiverperiode = useBoundStore((state) => state.leggTilArbeidsgiverperiode);
   const slettArbeidsgiverperiode = useBoundStore((state) => state.slettArbeidsgiverperiode);
   const setArbeidsgiverperiodeDato = useBoundStore((state) => state.setArbeidsgiverperiodeDato);
+  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
+  const setEndreArbeidsgiverperiode = useBoundStore((state) => state.setEndreArbeidsgiverperiode);
 
   const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -29,7 +30,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
 
   const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    setEndreArbeidsgiverperiode(!endreArbeidsgiverperiode);
+    setEndreArbeidsgiverperiode(!endretArbeidsgiverperiode);
   };
 
   return (
@@ -45,7 +46,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
           {arbeidsgiverperioder &&
             arbeidsgiverperioder.map((periode, periodeIndex) => (
               <div className={styles.periodewrapper} key={periodeIndex}>
-                {!endreArbeidsgiverperiode && (
+                {!endretArbeidsgiverperiode && (
                   <>
                     <div className={styles.datepickerescape}>
                       <TextLabel>Fra</TextLabel>
@@ -57,7 +58,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
                     </div>
                   </>
                 )}
-                {endreArbeidsgiverperiode && (
+                {endretArbeidsgiverperiode && (
                   <Periodevelger
                     fomTekst='Fra'
                     fomID={`arbeidsgiverperiode-fom-${periode.id}`}
@@ -74,13 +75,13 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
               </div>
             ))}
         </div>
-        {!endreArbeidsgiverperiode && (
+        {!endretArbeidsgiverperiode && (
           <div className={lokalStyles.endreknapp}>
             <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />
           </div>
         )}
       </div>
-      {endreArbeidsgiverperiode && (
+      {endretArbeidsgiverperiode && (
         <Button
           variant='secondary'
           className={styles.kontrollerknapp}

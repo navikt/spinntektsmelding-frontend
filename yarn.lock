@@ -533,23 +533,23 @@
     fuzzysort "^1.1.4"
     history "^4.10.1"
 
-"@navikt/ds-css@2.1.5":
-  version "2.1.5"
-  resolved "https://npm.pkg.github.com/download/@navikt/ds-css/2.1.5/f8240fe3a34f5696c4cd79227abe7a63b3cc13db#f8240fe3a34f5696c4cd79227abe7a63b3cc13db"
-  integrity sha512-Lek7H2jQeqGEFqDMYrJ1gMD8MTSYrrUQW4V76WWKOEC8bhhgfBDXhVrw3Bn8TxmvV1Xzq+xQAKZIfYdC2TmR4A==
+"@navikt/ds-css@2.1.7":
+  version "2.1.7"
+  resolved "https://npm.pkg.github.com/download/@navikt/ds-css/2.1.7/80f2a8fe2680ad118ccf9e1bdaba75ff3004df05#80f2a8fe2680ad118ccf9e1bdaba75ff3004df05"
+  integrity sha512-Dq/vFsGqnmVQCRWGLIzOB7XaFWgJRYVnbA2n4lfcnovp+zCwql1NNXKscvVWqaQEbq+2bGR71A5bgrr4NCR14w==
 
-"@navikt/ds-icons@2.1.5", "@navikt/ds-icons@^2.1.5":
-  version "2.1.5"
-  resolved "https://npm.pkg.github.com/download/@navikt/ds-icons/2.1.5/7ed06e53d93dfa514ffaa324df96c0650eba701b#7ed06e53d93dfa514ffaa324df96c0650eba701b"
-  integrity sha512-klzs6ub3a8Y4iQ6PqenQzTApWwtBwZwQNc3TNPryvIiSfkHx1emDv9PUPNyxBXySAknI4jHVKOUosgf11giOhg==
+"@navikt/ds-icons@2.1.7", "@navikt/ds-icons@^2.1.7":
+  version "2.1.7"
+  resolved "https://npm.pkg.github.com/download/@navikt/ds-icons/2.1.7/4c38de9400fff6502ce7ba0509e05f770af66921#4c38de9400fff6502ce7ba0509e05f770af66921"
+  integrity sha512-1QGVRkkjPeqPRJg3kbO5WcWLIkronMNmz4m1MFC+HPZ4+Dp4WXIHeBUi6b13rrJAXBxb2Dun+gpbXxSzPxx79A==
 
-"@navikt/ds-react@2.1.5":
-  version "2.1.5"
-  resolved "https://npm.pkg.github.com/download/@navikt/ds-react/2.1.5/53bcd690ed032ef7845c4651426dd79689e07ad3#53bcd690ed032ef7845c4651426dd79689e07ad3"
-  integrity sha512-bQaQ/AWQELexCoD6s86nF/FqHzTIsqIOq63MYfDmESoCEzA61kb+KdgWi4NKwnuOiyV+rfu1GNSOu9hjfi2aOg==
+"@navikt/ds-react@2.1.7":
+  version "2.1.7"
+  resolved "https://npm.pkg.github.com/download/@navikt/ds-react/2.1.7/71ac60f7d929a34697b89874d03bd53d6b382691#71ac60f7d929a34697b89874d03bd53d6b382691"
+  integrity sha512-3IX4YfCbxS+ZsU/F2e9icIpacGDuZI8GEVFXZexOgWA7LfpK7a4Maif2Xi+pFo6mgmQUV6PJW4XCP417MjVrmQ==
   dependencies:
     "@floating-ui/react" "0.17.0"
-    "@navikt/ds-icons" "^2.1.5"
+    "@navikt/ds-icons" "^2.1.7"
     "@radix-ui/react-tabs" "1.0.0"
     "@radix-ui/react-toggle-group" "1.0.0"
     clsx "^1.2.1"

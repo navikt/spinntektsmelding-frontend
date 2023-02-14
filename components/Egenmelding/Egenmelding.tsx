@@ -27,6 +27,8 @@ export default function Egenmelding() {
   const slettEgenmeldingsperiode = useBoundStore((state) => state.slettEgenmeldingsperiode);
   const leggTilEgenmeldingsperiode = useBoundStore((state) => state.leggTilEgenmeldingsperiode);
 
+  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
+
   const endreEgenmeldingsperiode = useBoundStore((state) => state.endreEgenmeldingsperiode);
   const setEndreEgenmelding = useBoundStore((state) => state.setEndreEgenmelding);
   const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
@@ -70,22 +72,32 @@ export default function Egenmelding() {
                   toDate={forsteFravaersdag || new Date()}
                   kanSlettes={index !== 0}
                   onSlettRad={() => slettEgenmeldingsperiode(egenmeldingsperiode.id)}
+                  disabled={endretArbeidsgiverperiode}
                 />
               </div>
             ))}
         </div>
         {!endreEgenmeldingsperiode && (
           <div>
-            <ButtonEndre onClick={clickEndreFravaersperiodeHandler} />
+            <ButtonEndre onClick={clickEndreFravaersperiodeHandler} disabled={endretArbeidsgiverperiode} />
           </div>
         )}
         {endreEgenmeldingsperiode && (
           <div className={styles.endresykemeldingknapper}>
-            <Button variant='secondary' className={styles.kontrollerknapp} onClick={clickLeggTilFravaersperiodeHandler}>
+            <Button
+              variant='secondary'
+              className={styles.kontrollerknapp}
+              onClick={clickLeggTilFravaersperiodeHandler}
+              disabled={endretArbeidsgiverperiode}
+            >
               Legg til egenmeldingsperiode
             </Button>
 
-            <Button className={styles.kontrollerknapp} onClick={clickTilbakestillFravaersperiodeHandler}>
+            <Button
+              className={styles.kontrollerknapp}
+              onClick={clickTilbakestillFravaersperiodeHandler}
+              disabled={endretArbeidsgiverperiode}
+            >
               Tilbakestill
             </Button>
           </div>

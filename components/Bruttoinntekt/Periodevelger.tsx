@@ -16,6 +16,8 @@ interface PeriodevelgerProps {
   periodeId: string;
   toDate?: Date;
   fromDate?: Date;
+  disabled?: boolean;
+  defaultMonth?: Date;
 }
 
 export interface PeriodeParam {
@@ -34,7 +36,9 @@ export default function Periodevelger({
   onSlettRad,
   periodeId,
   toDate,
-  fromDate
+  fromDate,
+  disabled,
+  defaultMonth
 }: PeriodevelgerProps) {
   const [fomDate, setFomDate] = useState<Date | undefined>(defaultRange?.fom);
   const [tomDate, setTomDate] = useState<Date | undefined>(defaultRange?.tom);
@@ -70,6 +74,8 @@ export default function Periodevelger({
           id={fomID}
           onDateChange={onFomChange}
           defaultSelected={defaultRange?.fom}
+          disabled={disabled}
+          defaultMonth={defaultMonth}
         />
         <Datovelger
           fromDate={fromDate}
@@ -78,6 +84,8 @@ export default function Periodevelger({
           onDateChange={onTomChange}
           defaultSelected={defaultRange?.tom}
           toDate={toDate}
+          disabled={disabled}
+          defaultMonth={defaultMonth || fomDate}
         />
       </div>
       {kanSlettes && <ButtonSlette title='Slett periode' onClick={onSlettClick} className={lokalStyles.sletteknapp} />}
