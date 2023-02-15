@@ -1,4 +1,4 @@
-import { addDays, compareAsc, differenceInCalendarDays, parseISO } from 'date-fns';
+import { addDays, differenceInCalendarDays } from 'date-fns';
 import { Periode } from '../state/state';
 import { finnSorterteUnikePerioder, overlappendePeriode, tilstoetendePeriode } from './finnBestemmendeFravaersdag';
 
