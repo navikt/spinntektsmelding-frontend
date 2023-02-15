@@ -18,6 +18,7 @@ describe('finnArbeidsgiverperiode', () => {
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
+        id: '1',
         fom: parseISO('2022-11-12'),
         tom: parseISO('2022-11-22')
       }
@@ -39,10 +40,12 @@ describe('finnArbeidsgiverperiode', () => {
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
+        id: '1',
         fom: parseISO('2022-11-12'),
         tom: parseISO('2022-11-15')
       },
       {
+        id: '2',
         fom: parseISO('2022-11-17'),
         tom: parseISO('2022-11-22')
       }
@@ -64,6 +67,7 @@ describe('finnArbeidsgiverperiode', () => {
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
+        id: '1',
         fom: parseISO('2022-12-12'),
         tom: parseISO('2022-12-22')
       }
@@ -85,6 +89,7 @@ describe('finnArbeidsgiverperiode', () => {
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
+        id: '1',
         fom: parseISO('2022-12-12'),
         tom: parseISO('2022-12-22')
       }
@@ -106,6 +111,7 @@ describe('finnArbeidsgiverperiode', () => {
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
+        id: '1',
         fom: parseISO('2022-12-12'),
         tom: parseISO('2022-12-25')
       }

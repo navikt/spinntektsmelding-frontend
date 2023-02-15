@@ -4,6 +4,7 @@ import useBoundStore from '../../state/useBoundStore';
 import { MottattHistoriskInntekt } from '../../state/MottattData';
 import { vi } from 'vitest';
 import feiltekster from '../../utils/feiltekster';
+import { finnAktuelleInntekter } from '../../state/useBruttoinntektStore';
 
 const inputInntekt: number = 40000;
 const tidligereInntekt: Array<MottattHistoriskInntekt> = [
@@ -173,5 +174,26 @@ describe('useBoundStore', () => {
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(50000);
+  });
+
+  it('should find a liste of 3 current inntekter', () => {
+    const inntekter = finnAktuelleInntekter(tidligereInntekt, new Date(2002, 9, 9));
+
+    const expected = [
+      {
+        inntekt: 45000,
+        maanedsnavn: '2002-09'
+      },
+      {
+        inntekt: 50000,
+        maanedsnavn: '2002-08'
+      },
+      {
+        inntekt: 55000,
+        maanedsnavn: '2002-07'
+      }
+    ];
+
+    expect(inntekter).toEqual(expected);
   });
 });

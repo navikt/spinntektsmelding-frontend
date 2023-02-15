@@ -34,7 +34,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
     event.preventDefault();
     setEndreArbeidsgiverperiode(!endretArbeidsgiverperiode);
   };
-  console.log('arbeidsgiverperioder', arbeidsgiverperioder);
+
   return (
     <>
       <Heading3>Arbeidsgiverperiode</Heading3>

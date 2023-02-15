@@ -147,7 +147,7 @@ describe('validerPeriodeArbeidsgiverperiode', () => {
     const expected = [
       {
         code: 'FOR_MANGE_DAGER_I_PERIODE',
-        felt: 'arbeidsgiverperiode-fom-tilfeldig'
+        felt: 'arbeidsgiverperiode-feil'
       }
     ];
 
@@ -171,7 +171,7 @@ describe('validerPeriodeArbeidsgiverperiode', () => {
     const expected = [
       {
         code: 'FOR_MANGE_DAGER_MELLOM',
-        felt: 'arbeidsgiverperiode-fom-tilfeldig2'
+        felt: 'arbeidsgiverperiode-feil'
       }
     ];
 

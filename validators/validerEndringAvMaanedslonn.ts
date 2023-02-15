@@ -12,11 +12,8 @@ export default function valdiderEndringAvMaanedslonn(
   refusjonEndringer?: Array<RefusjonEndring>
 ): Array<ValiderResultat> {
   if (!harRefusjonEndringer) {
-    console.log('Ingen endringer');
     return [];
   }
-
-  console.log('Har endringer', refusjonEndringer?.length);
 
   let feilmeldinger: Array<ValiderResultat> = [];
 

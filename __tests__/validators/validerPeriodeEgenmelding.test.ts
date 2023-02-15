@@ -147,7 +147,7 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'FOR_MANGE_DAGER_I_PERIODE',
-        felt: 'fom-tilfeldig'
+        felt: 'egenmeldingsperiode-feil'
       }
     ];
 
@@ -171,7 +171,7 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'FOR_MANGE_DAGER_MELLOM',
-        felt: 'fom-tilfeldig2'
+        felt: 'egenmeldingsperiode-feil'
       }
     ];
 

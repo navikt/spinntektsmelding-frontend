@@ -29,7 +29,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
   setBestemmendeFravaersdag: (bestemmendeFravaersdag) =>
     set(
       produce((state) => {
-        console.log('setter bestemmende', bestemmendeFravaersdag);
         state.bestemmendeFravaersdag = bestemmendeFravaersdag;
 
         return state;
@@ -41,7 +40,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         state.arbeidsgiverperioder = arbeidsgiverperioder;
         const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
         if (bestemmende) {
-          console.log('Bestemmende', bestemmende);
           state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
           state.setBestemmendeFravaersdag(parseIsoDate(bestemmende));
         }
@@ -72,7 +70,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
         const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
         if (bestemmende) {
-          console.log('Bestemmende', bestemmende, state.arbeidsgiverperioder);
           state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
           state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
         }
@@ -93,7 +90,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
         const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
         if (bestemmende) {
-          console.log('Bestemmende', bestemmende);
           state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
           state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
 
