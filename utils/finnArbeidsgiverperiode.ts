@@ -5,13 +5,14 @@ import { finnSorterteUnikePerioder, overlappendePeriode, tilstoetendePeriode } f
 const finn16dager = (perioder: Array<Periode>) => {
   let dagerTotalt = 0;
   const arbPeriode: Array<Periode> = [];
+
   perioder.forEach((periode) => {
     if (dagerTotalt < 15) {
-      const dagerTilNaa = differenceInCalendarDays(periode.tom as Date, periode.fom as Date) + dagerTotalt;
+      const dagerTilNaa = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt;
       if (dagerTilNaa < 15) {
         arbPeriode.push(periode);
       } else {
-        arbPeriode.push({ fom: periode.fom, tom: addDays(periode.fom as Date, 15 - dagerTotalt), id: periode.id });
+        arbPeriode.push({ fom: periode.fom, tom: addDays(periode.fom!, 15 - dagerTotalt), id: periode.id });
       }
       return;
     }
@@ -21,19 +22,7 @@ const finn16dager = (perioder: Array<Periode>) => {
 };
 
 const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<Periode> => {
-  const aktivePerioder = fravaersperioder
-    .map((fravaer) => ({ fom: fravaer.fom, tom: fravaer.tom }))
-    .map((element) => JSON.stringify(element));
-
-  // const unikeSykmeldingsperioder: Array<Periode> = [...new Set([...aktivePerioder])]
-  //   .map((periode) => JSON.parse(periode))
-  //   .map((periode) => ({
-  //     fom: parseISO(periode.fom),
-  //     tom: parseISO(periode.tom),
-  //     id: periode.id
-  //   }));
-
-  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(aktivePerioder);
+  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
 

@@ -36,7 +36,7 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Arr
 
       if (Math.abs(differenceInCalendarDays(periode.tom as Date, periode.fom as Date)) >= 16) {
         feilkoder.push({
-          felt: `fom-${periode.id}`,
+          felt: `egenmeldingsperiode-feil`,
           code: PeriodeFeilkode.FOR_MANGE_DAGER_I_PERIODE
         });
       }
@@ -44,7 +44,7 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Arr
       if (index > 0) {
         if (Math.abs(differenceInCalendarDays(periode.fom as Date, perioder[index - 1].tom as Date)) >= 16) {
           feilkoder.push({
-            felt: `fom-${periode.id}`,
+            felt: `egenmeldingsperiode-feil`,
             code: PeriodeFeilkode.FOR_MANGE_DAGER_MELLOM
           });
         }

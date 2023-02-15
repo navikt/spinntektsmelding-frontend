@@ -1,4 +1,4 @@
-import { BodyLong, Button } from '@navikt/ds-react';
+import { Alert, BodyLong, Button } from '@navikt/ds-react';
 import styles from '../../styles/Home.module.css';
 import localStyles from './Egenmelding.module.css';
 import Heading3 from '../Heading3/Heading3';
@@ -6,6 +6,7 @@ import useBoundStore from '../../state/useBoundStore';
 import EgenmeldingPeriode from './EgenmeldingPeriode';
 import ButtonEndre from '../ButtonEndre';
 import { useMemo } from 'react';
+import Feilmelding from '../Feilmelding';
 
 export default function Egenmelding() {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -26,14 +27,13 @@ export default function Egenmelding() {
 
   const slettEgenmeldingsperiode = useBoundStore((state) => state.slettEgenmeldingsperiode);
   const leggTilEgenmeldingsperiode = useBoundStore((state) => state.leggTilEgenmeldingsperiode);
-
   const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
-
   const endreEgenmeldingsperiode = useBoundStore((state) => state.endreEgenmeldingsperiode);
   const setEndreEgenmelding = useBoundStore((state) => state.setEndreEgenmelding);
   const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
-
   const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
+  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
 
   const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -58,6 +58,11 @@ export default function Egenmelding() {
         forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder med mindre enn 16 dagers mellomrom før
         sykmeldingen skal inkluderes. Dere kan endre og legge til egenmeldingsperioder.
       </BodyLong>
+      {endretArbeidsgiverperiode && (
+        <Alert variant='info'>
+          Hvis du overstyrer arbeidsgiverperioden er det ikke mulig å også endre eller legge til egenmeldingsperioder.
+        </Alert>
+      )}
 
       <div>
         <div className={localStyles.egenmeldingswrapper}>
@@ -77,6 +82,9 @@ export default function Egenmelding() {
               </div>
             ))}
         </div>
+        {visFeilmelding('egenmeldingsperiode-feil') && (
+          <Feilmelding id='egenmeldingsperiode-feil'>{visFeilmeldingsTekst('egenmeldingsperiode-feil')}</Feilmelding>
+        )}
         {!endreEgenmeldingsperiode && (
           <div>
             <ButtonEndre onClick={clickEndreFravaersperiodeHandler} disabled={endretArbeidsgiverperiode} />

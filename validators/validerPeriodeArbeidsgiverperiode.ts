@@ -37,7 +37,7 @@ export default function validerPeriodeArbeidsgiverperiode(perioder: Array<Period
 
       if (Math.abs(differenceInCalendarDays(periode.tom as Date, periode.fom as Date)) >= 16) {
         feilkoder.push({
-          felt: `arbeidsgiverperiode-fom-${periode.id}`,
+          felt: `arbeidsgiverperiode-feil`,
           code: PeriodeFeilkode.FOR_MANGE_DAGER_I_PERIODE
         });
       }
@@ -45,7 +45,7 @@ export default function validerPeriodeArbeidsgiverperiode(perioder: Array<Period
       if (index > 0) {
         if (Math.abs(differenceInCalendarDays(periode.fom as Date, perioder[index - 1].tom as Date)) >= 16) {
           feilkoder.push({
-            felt: `arbeidsgiverperiode-fom-${periode.id}`,
+            felt: `arbeidsgiverperiode-feil`,
             code: PeriodeFeilkode.FOR_MANGE_DAGER_MELLOM
           });
         }

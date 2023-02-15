@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
@@ -22,16 +23,14 @@ export default function useStateInit() {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }
 
-    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
-      jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder)
-    );
-    if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
-
     const perioder = jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
-      id: 'dummy'
+      id: nanoid()
     }));
+
+    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder);
+    if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
 

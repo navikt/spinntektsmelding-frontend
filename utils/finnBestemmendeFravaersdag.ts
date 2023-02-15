@@ -1,5 +1,4 @@
-import { compareAsc, formatISO9075, parseISO } from 'date-fns';
-import { MottattPeriode } from '../state/MottattData';
+import { compareAsc, formatISO9075 } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 export interface FravaersPeriode {
@@ -42,27 +41,25 @@ export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
   return null;
 };
 
-const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Array<Periode>): string | undefined => {
+const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | undefined => {
   if (!fravaersperioder) {
     return undefined;
   }
 
-  const aktivePerioder = fravaersperioder
-    // .map((fravaer) => ({ fom: fravaer.fom, tom: fravaer.tom }))
-    .map((element) => JSON.stringify(element));
-
-  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(aktivePerioder);
+  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
 
-  sorterteSykemeldingsperioder.forEach((periode) => {
-    const aktivPeriode = mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1];
-    const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
+  sorterteSykemeldingsperioder.forEach((periode, index) => {
+    if (index > 0) {
+      const aktivPeriode = mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1];
+      const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
 
-    if (oppdatertPeriode) {
-      mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1] = oppdatertPeriode;
-    } else {
-      mergedSykemeldingsperioder.push(periode);
+      if (oppdatertPeriode) {
+        mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1] = oppdatertPeriode;
+      } else {
+        mergedSykemeldingsperioder.push(periode);
+      }
     }
   });
 
@@ -91,31 +88,24 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<MottattPeriode> | Ar
 
 export default finnBestemmendeFravaersdag;
 
-export function finnSorterteUnikePerioder(aktivePerioder: string[]) {
-  const unikeSykmeldingsperioder: Array<Periode> = finnUnikePerioder(aktivePerioder);
-
-  const sorterteSykemeldingsperioder = [...unikeSykmeldingsperioder].sort((a, b) => {
+export function finnSorterteUnikePerioder(fravaersperioder: Periode[]) {
+  const sorterteSykemeldingsperioder = [...fravaersperioder].sort((a, b) => {
     return compareAsc(a.fom || new Date(), b.fom || new Date());
   });
-  return sorterteSykemeldingsperioder;
+
+  const unikeSykmeldingsperioder: Array<Periode> = finnUnikePerioder(sorterteSykemeldingsperioder);
+  return unikeSykmeldingsperioder;
 }
 
-function finnUnikePerioder(aktivePerioder: string[]): Periode[] {
-  return [...new Set([...aktivePerioder])]
-    .map((periode) => JSON.parse(periode))
-    .map((periode) => {
-      if (typeof periode.fom === 'string') {
-        return {
-          fom: parseISO(periode.fom),
-          tom: parseISO(periode.tom),
-          id: periode.id
-        };
-      } else {
-        return {
-          fom: periode.fom,
-          tom: periode.tom,
-          id: periode.id
-        };
+function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
+  const perioder: Array<Periode> = [aktivePerioder[0]];
+
+  aktivePerioder.forEach((periode, index) => {
+    if (index > 0) {
+      if (periode.fom !== perioder[index - 1].fom && periode.tom !== perioder[index - 1].tom) {
+        perioder.push(periode);
       }
-    });
+    }
+  });
+  return perioder;
 }

@@ -9,6 +9,7 @@ import Periodevelger from '../Bruttoinntekt/Periodevelger';
 import { Periode } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
+import Feilmelding from '../Feilmelding';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -20,6 +21,8 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const setArbeidsgiverperiodeDato = useBoundStore((state) => state.setArbeidsgiverperiodeDato);
   const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
   const setEndreArbeidsgiverperiode = useBoundStore((state) => state.setEndreArbeidsgiverperiode);
+  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
 
   const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -31,7 +34,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
     event.preventDefault();
     setEndreArbeidsgiverperiode(!endretArbeidsgiverperiode);
   };
-
+  console.log('arbeidsgiverperioder', arbeidsgiverperioder);
   return (
     <>
       <Heading3>Arbeidsgiverperiode</Heading3>
@@ -80,10 +83,13 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
           </div>
         )}
       </div>
+      {visFeilmelding('arbeidsgiverperiode-feil') && (
+        <Feilmelding id='arbeidsgiverperiode-feil'>{visFeilmeldingsTekst('arbeidsgiverperiode-feil')}</Feilmelding>
+      )}
       {endretArbeidsgiverperiode && (
         <Button
           variant='secondary'
-          className={styles.kontrollerknapp}
+          className={lokalStyles.leggtilknapp}
           onClick={(event) => clickLeggTilFravaersperiodeHandler(event)}
         >
           Legg til periode

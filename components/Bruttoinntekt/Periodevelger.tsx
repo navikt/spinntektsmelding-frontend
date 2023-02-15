@@ -2,7 +2,6 @@ import lokalStyles from './Bruttoinntekt.module.css';
 import { Periode } from '../../state/state';
 import ButtonSlette from '../ButtonSlette';
 import Datovelger from '../Datovelger';
-import { useState } from 'react';
 
 interface PeriodevelgerProps {
   onRangeChange: (dateValue: PeriodeParam | undefined) => void;
@@ -40,26 +39,21 @@ export default function Periodevelger({
   disabled,
   defaultMonth
 }: PeriodevelgerProps) {
-  const [fomDate, setFomDate] = useState<Date | undefined>(defaultRange?.fom);
-  const [tomDate, setTomDate] = useState<Date | undefined>(defaultRange?.tom);
-
   const onSlettClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     onSlettRad(periodeId);
   };
 
   const onFomChange = (dato: Date | undefined) => {
-    setFomDate(dato);
     onRangeChange({
       fom: dato,
-      tom: tomDate
+      tom: defaultRange?.tom
     });
   };
 
   const onTomChange = (dato: Date | undefined) => {
-    setTomDate(dato);
     onRangeChange({
-      fom: fomDate,
+      fom: defaultRange?.fom,
       tom: dato
     });
   };
@@ -85,7 +79,7 @@ export default function Periodevelger({
           defaultSelected={defaultRange?.tom}
           toDate={toDate}
           disabled={disabled}
-          defaultMonth={defaultMonth || fomDate}
+          defaultMonth={defaultMonth || defaultRange?.fom}
         />
       </div>
       {kanSlettes && <ButtonSlette title='Slett periode' onClick={onSlettClick} className={lokalStyles.sletteknapp} />}

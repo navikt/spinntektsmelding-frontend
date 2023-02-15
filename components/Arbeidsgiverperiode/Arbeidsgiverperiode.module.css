@@ -7,3 +7,10 @@
 .endreknapp {
   margin-top: auto;
 }
+
+.leggtilknapp {
+  margin-top: 1rem;
+  height    : 3rem;
+  display   : inline-block;
+  min-width : 10rem;
+}
