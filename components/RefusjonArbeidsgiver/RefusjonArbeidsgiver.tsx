@@ -103,7 +103,7 @@ export default function RefusjonArbeidsgiver() {
         {lonnISykefravaeret?.status === 'Ja' && (
           <>
             <RefusjonArbeidsgiverBelop
-              bruttoinntekt={bruttoinntekt.bruttoInntekt}
+              bruttoinntekt={bruttoinntekt.bruttoInntekt!}
               onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
               visFeilmeldingsTekst={visFeilmeldingsTekst}
             />
@@ -111,6 +111,7 @@ export default function RefusjonArbeidsgiver() {
             <RefusjonUtbetalingEndring
               endringer={refusjonEndringer || []}
               maxDate={refusjonskravetOpphoerer?.opphorsdato}
+              minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
               onHarEndringer={setHarRefusjonEndringer}
               onOppdaterEndringer={oppdaterRefusjonEndringer}
             />

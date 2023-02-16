@@ -3,8 +3,8 @@ import { FocusEvent, useState } from 'react';
 import lokalStyles from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
 import stringishToNumber from '../../utils/stringishToNumber';
-import RefusjonDatovelger from './RefusjonDatovelger';
 import ButtonSlette from '../ButtonSlette';
+import Datovelger from '../Datovelger';
 
 export interface EndringsBelop {
   belop?: number;
@@ -108,12 +108,12 @@ export default function RefusjonUtbetalingEndring({
               id={`lus-utbetaling-endring-belop-${key}`}
               onBlur={(event) => changeBelopHandler(event, key)}
             />
-            <RefusjonDatovelger
-              minDate={minDate}
-              maxDate={maxDate}
-              onDateChange={(val) => changeDatoHandler(val, key)}
-              key={key}
-              index={key}
+            <Datovelger
+              fromDate={minDate}
+              toDate={maxDate}
+              onDateChange={(val: Date | undefined) => changeDatoHandler(val, key)}
+              id={`lus-utbetaling-endring-dato-${key}`}
+              label='Dato for lønnsendring'
             />
             {key !== 0 && (
               <ButtonSlette
