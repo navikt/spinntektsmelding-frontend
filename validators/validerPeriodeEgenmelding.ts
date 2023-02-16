@@ -12,7 +12,7 @@ export enum PeriodeFeilkode {
   FOR_MANGE_DAGER_I_PERIODE = 'FOR_MANGE_DAGER_I_PERIODE'
 }
 
-export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Array<ValiderResultat> {
+export default function validerPeriodeEgenmelding(perioder: Array<Periode>, prefix: string): Array<ValiderResultat> {
   let feilkoder: Array<ValiderResultat> = [];
   if (!perioder || perioder.length < 1) {
     feilkoder.push({
@@ -24,27 +24,22 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Arr
 
     perioder.forEach((periode, index) => {
       const manglerFomEllerTomMenIkkeBegge = !!periode.tom !== !!periode.fom;
-      manglerFomOgIkkeBareEnRad(periode, tomPeriode, feilkoder);
+      manglerFomOgIkkeBareEnRad(periode, tomPeriode, feilkoder, prefix);
 
-      manglerTomOgIkkeBareEnRad(periode, tomPeriode, feilkoder);
+      manglerTomOgIkkeBareEnRad(periode, tomPeriode, feilkoder, prefix);
 
-      manglerTomMenIkkeFomMedEnRad(tomPeriode, manglerFomEllerTomMenIkkeBegge, periode, feilkoder);
+      manglerTomMenIkkeFomMedEnRad(tomPeriode, manglerFomEllerTomMenIkkeBegge, periode, feilkoder, prefix);
 
-      manglerFomMenIkkeTomMedEnRad(tomPeriode, manglerFomEllerTomMenIkkeBegge, periode, feilkoder);
+      manglerFomMenIkkeTomMedEnRad(tomPeriode, manglerFomEllerTomMenIkkeBegge, periode, feilkoder, prefix);
 
-      feilRekkefoelgeFomTom(periode, feilkoder);
+      feilRekkefoelgeFomTom(periode, feilkoder, prefix);
 
-      if (Math.abs(differenceInCalendarDays(periode.tom as Date, periode.fom as Date)) >= 16) {
-        feilkoder.push({
-          felt: `egenmeldingsperiode-feil`,
-          code: PeriodeFeilkode.FOR_MANGE_DAGER_I_PERIODE
-        });
-      }
+      forMangeDagerIPerioden(periode, feilkoder, prefix);
 
       if (index > 0) {
         if (Math.abs(differenceInCalendarDays(periode.fom as Date, perioder[index - 1].tom as Date)) >= 16) {
           feilkoder.push({
-            felt: `egenmeldingsperiode-feil`,
+            felt: `${prefix}-feil`,
             code: PeriodeFeilkode.FOR_MANGE_DAGER_MELLOM
           });
         }
@@ -54,10 +49,19 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>): Arr
 
   return feilkoder;
 }
-function feilRekkefoelgeFomTom(periode: Periode, feilkoder: ValiderResultat[]) {
+function forMangeDagerIPerioden(periode: Periode, feilkoder: ValiderResultat[], prefix: string) {
+  if (Math.abs(differenceInCalendarDays(periode.tom as Date, periode.fom as Date)) >= 16) {
+    feilkoder.push({
+      felt: `${prefix}-feil`,
+      code: PeriodeFeilkode.FOR_MANGE_DAGER_I_PERIODE
+    });
+  }
+}
+
+function feilRekkefoelgeFomTom(periode: Periode, feilkoder: ValiderResultat[], prefix: string) {
   if (periode.fom && periode.tom && periode.fom > periode.tom) {
     feilkoder.push({
-      felt: `fom-${periode.id}`,
+      felt: `${prefix}-fom-${periode.id}`,
       code: PeriodeFeilkode.TIL_FOR_FRA
     });
   }
@@ -67,11 +71,12 @@ function manglerFomMenIkkeTomMedEnRad(
   tomPeriode: boolean,
   manglerFomEllerTomMenIkkeBegge: boolean,
   periode: Periode,
-  feilkoder: ValiderResultat[]
+  feilkoder: ValiderResultat[],
+  prefix: string
 ) {
   if (tomPeriode && manglerFomEllerTomMenIkkeBegge && !periode.fom) {
     feilkoder.push({
-      felt: `fom-${periode.id}`,
+      felt: `${prefix}-fom-${periode.id}`,
       code: PeriodeFeilkode.MANGLER_FRA
     });
   }
@@ -81,29 +86,40 @@ function manglerTomMenIkkeFomMedEnRad(
   tomPeriode: boolean,
   manglerFomEllerTomMenIkkeBegge: boolean,
   periode: Periode,
-  feilkoder: ValiderResultat[]
+  feilkoder: ValiderResultat[],
+  prefix: string
 ) {
   if (tomPeriode && manglerFomEllerTomMenIkkeBegge && !periode.tom) {
     feilkoder.push({
-      felt: `tom-${periode.id}`,
+      felt: `${prefix}-tom-${periode.id}`,
       code: PeriodeFeilkode.MANGLER_TIL
     });
   }
 }
 
-function manglerTomOgIkkeBareEnRad(periode: Periode, tomPeriode: boolean, feilkoder: ValiderResultat[]) {
+function manglerTomOgIkkeBareEnRad(
+  periode: Periode,
+  tomPeriode: boolean,
+  feilkoder: ValiderResultat[],
+  prefix: string
+) {
   if (!periode.tom && !tomPeriode) {
     feilkoder.push({
-      felt: `tom-${periode.id}`,
+      felt: `${prefix}-tom-${periode.id}`,
       code: PeriodeFeilkode.MANGLER_TIL
     });
   }
 }
 
-function manglerFomOgIkkeBareEnRad(periode: Periode, tomPeriode: boolean, feilkoder: ValiderResultat[]) {
+function manglerFomOgIkkeBareEnRad(
+  periode: Periode,
+  tomPeriode: boolean,
+  feilkoder: ValiderResultat[],
+  prefix: string
+) {
   if (!periode.fom && !tomPeriode) {
     feilkoder.push({
-      felt: `fom-${periode.id}`,
+      felt: `${prefix}-fom-${periode.id}`,
       code: PeriodeFeilkode.MANGLER_FRA
     });
   }

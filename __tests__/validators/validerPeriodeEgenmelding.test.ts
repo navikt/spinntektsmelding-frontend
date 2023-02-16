@@ -12,7 +12,7 @@ describe('validerPeriodeEgenmelding', () => {
       }
     ];
 
-    expect(validerPeriodeEgenmelding(input)).toEqual([]);
+    expect(validerPeriodeEgenmelding(input, 'pre')).toEqual([]);
   });
 
   it('should fail if tom is missing', () => {
@@ -26,11 +26,11 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'tom-tilfeldig'
+        felt: 'pre-tom-tilfeldig'
       }
     ];
 
-    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input, 'pre')).toEqual(expected);
   });
 
   it('should fail if fom is missing', () => {
@@ -44,11 +44,11 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'fom-tilfeldig'
+        felt: 'pre-fom-tilfeldig'
       }
     ];
 
-    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input, 'pre')).toEqual(expected);
   });
 
   it('should fail if tom and fom is missing', () => {
@@ -66,15 +66,15 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'fom-tilfeldig'
+        felt: 'pre-fom-tilfeldig'
       },
       {
         code: 'MANGLER_TIL',
-        felt: 'tom-tilfeldig'
+        felt: 'pre-tom-tilfeldig'
       }
     ];
 
-    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input, 'pre')).toEqual(expected);
   });
 
   it('should fail if tom and fom is missing on the first item', () => {
@@ -92,15 +92,15 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'fom-tilfeldig'
+        felt: 'pre-fom-tilfeldig'
       },
       {
         code: 'MANGLER_TIL',
-        felt: 'tom-tilfeldig'
+        felt: 'pre-tom-tilfeldig'
       }
     ];
 
-    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input, 'pre')).toEqual(expected);
   });
 
   it('should fail if fom and tom is in the wrong order', () => {
@@ -115,11 +115,11 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'TIL_FOR_FRA',
-        felt: 'fom-tilfeldig'
+        felt: 'pre-fom-tilfeldig'
       }
     ];
 
-    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input, 'pre')).toEqual(expected);
   });
 
   it('should fail periode is missing', () => {
@@ -132,7 +132,7 @@ describe('validerPeriodeEgenmelding', () => {
       }
     ];
 
-    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input, 'pre')).toEqual(expected);
   });
 
   it('should fail if periode is more than 16 days', () => {
@@ -151,7 +151,7 @@ describe('validerPeriodeEgenmelding', () => {
       }
     ];
 
-    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input, 'egenmeldingsperiode')).toEqual(expected);
   });
 
   it('should fail if more than 16 days between periodes', () => {
@@ -175,6 +175,6 @@ describe('validerPeriodeEgenmelding', () => {
       }
     ];
 
-    expect(validerPeriodeEgenmelding(input)).toEqual(expected);
+    expect(validerPeriodeEgenmelding(input, 'egenmeldingsperiode')).toEqual(expected);
   });
 });

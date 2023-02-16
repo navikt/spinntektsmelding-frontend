@@ -14,7 +14,6 @@ import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import useBoundStore from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
-import validerPeriodeArbeidsgiverperiode from '../validators/validerPeriodeArbeidsgiverperiode';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -85,7 +84,7 @@ export default function useValiderInntektsmelding() {
     }
 
     if (state.egenmeldingsperioder) {
-      feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder);
+      feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperiode');
     }
 
     feilkoderBruttoinntekt = validerBruttoinntekt(state.bruttoinntekt);
@@ -106,7 +105,7 @@ export default function useValiderInntektsmelding() {
     feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);
 
     if (state.arbeidsgiverperioder) {
-      feilkoderArbeidsgiverperioder = validerPeriodeArbeidsgiverperiode(state.arbeidsgiverperioder);
+      feilkoderArbeidsgiverperioder = validerPeriodeEgenmelding(state.arbeidsgiverperioder, 'arbeidsgiverperiode');
     }
 
     errorCodes = [

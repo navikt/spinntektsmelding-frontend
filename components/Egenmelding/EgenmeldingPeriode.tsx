@@ -51,9 +51,9 @@ export default function EgenmeldingPeriode({
       <div className={localStyles.datowrapper}>
         <Periodevelger
           fomTekst='Fra'
-          fomID={`fom-${periodeId}`}
+          fomID={`egenmeldingsperiode-fom-${periodeId}`}
           tomTekst='Til'
-          tomID={`tom-${periodeId}`}
+          tomID={`egenmeldingsperiode-tom-${periodeId}`}
           onRangeChange={rangeChangeHandler}
           defaultRange={{ fom: egenmeldingsperiode?.fom, tom: egenmeldingsperiode?.tom, id: '1' }}
           kanSlettes={kanSlettes}
