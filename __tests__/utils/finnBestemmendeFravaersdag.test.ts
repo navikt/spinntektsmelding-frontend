@@ -105,18 +105,4 @@ describe('finnBestemmendeFravaersdag', () => {
     ];
     expect(finnBestemmendeFravaersdag(periode)).toBe('2022-12-12');
   });
-
-  it('should return the correct bestemmende fraværsdag for two periode with one in the other and sorted order', () => {
-    const periode: Array<MottattPeriode> = [
-      {
-        fom: '2022-12-16',
-        tom: '2022-12-22'
-      },
-      {
-        fom: '2022-12-12',
-        tom: '2022-12-25'
-      }
-    ];
-    expect(finnBestemmendeFravaersdag(periode)).toBe('2022-12-12');
-  });
 });

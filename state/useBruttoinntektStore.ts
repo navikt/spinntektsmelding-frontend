@@ -6,6 +6,7 @@ import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
+import { subMonths } from 'date-fns';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maanedsnavn < b.maanedsnavn) {
@@ -196,14 +197,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     tidligereInntekt: Array<MottattHistoriskInntekt>,
     bestemmendeFravaersdag: Date
   ) => {
-    const bestMnd = `00${bestemmendeFravaersdag.getMonth() + 1}`.slice(-2);
-    const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
-
-    const aktuelleInntekter = tidligereInntekt
-      .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
-      .sort(sorterInntekter)
-      .slice(0, 3);
-
+    const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
     const sumInntekter = aktuelleInntekter.reduce(
       (prev, cur) => {
         prev.inntekt += cur.inntekt;
@@ -288,13 +282,15 @@ export default useBruttoinntektStore;
 
 export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[], bestemmendeFravaersdag: Date) {
   const bestMnd = `00${bestemmendeFravaersdag.getMonth() + 1}`.slice(-2);
-
   const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
+  const sisteMnd = `00${subMonths(bestemmendeFravaersdag, 3).getMonth() + 1}`.slice(-2);
+  const sisteMaaned = `${subMonths(bestemmendeFravaersdag, 3).getFullYear()}-${sisteMnd}`;
 
-  return tidligereInntekt
-    ? tidligereInntekt
-        .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned)
-        .sort(sorterInntekter)
-        .slice(0, 3)
-    : [];
+  if (!tidligereInntekt) return [];
+  const aktuelleInntekter = tidligereInntekt
+    .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned && inntekt.maanedsnavn >= sisteMaaned)
+    .sort(sorterInntekter)
+    .slice(0, 3);
+
+  return aktuelleInntekter || [];
 }

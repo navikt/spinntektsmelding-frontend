@@ -196,4 +196,166 @@ describe('useBoundStore', () => {
 
     expect(inntekter).toEqual(expected);
   });
+
+  it('should find a liste of no current inntekter as they are too old', () => {
+    const inntekter = finnAktuelleInntekter(tidligereInntekt, new Date(2003, 9, 9));
+
+    expect(inntekter).toEqual([]);
+  });
+
+  it('should find a liste of 2 current inntekter', () => {
+    const inntekter = finnAktuelleInntekter(tidligereInntekt, new Date(2002, 3, 9));
+
+    const expected = [
+      {
+        inntekt: 44000,
+        maanedsnavn: '2002-03'
+      },
+      {
+        inntekt: 33000,
+        maanedsnavn: '2002-02'
+      }
+    ];
+
+    expect(inntekter).toEqual(expected);
+  });
+
+  it('should rekalkulerBruttioinntekt', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.rekalkulerBruttioinntekt(new Date(2002, 11, 11));
+    });
+
+    expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
+    expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
+    expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(50000);
+    expect(result.current.tidligereInntekt).toEqual([
+      {
+        inntekt: 55000,
+        maanedsnavn: '2002-10'
+      },
+      {
+        inntekt: 45000,
+        maanedsnavn: '2002-09'
+      }
+    ]);
+  });
+
+  it('should setPermiteringPeriode', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setPermiteringPeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+    });
+
+    expect(result.current.permitering).toEqual([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+  });
+
+  it('should setPermisjonPeriode', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setPermisjonPeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+    });
+
+    expect(result.current.permisjon).toEqual([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+  });
+
+  it('should setNyStillingDato', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setNyStillingDato(new Date(2002, 10, 11));
+    });
+
+    expect(result.current.nystillingdato).toEqual(new Date(2002, 10, 11));
+  });
+
+  it('should setNyStillingsprosentDato', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setNyStillingsprosentDato(new Date(2002, 10, 11));
+    });
+
+    expect(result.current.nystillingsprosentdato).toEqual(new Date(2002, 10, 11));
+  });
+
+  it('should setTariffKjentdato', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setTariffKjentdato(new Date(2002, 10, 11));
+    });
+
+    expect(result.current.tariffkjentdato).toEqual(new Date(2002, 10, 11));
+  });
+
+  it('should setTariffEndringsdato', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setTariffEndringsdato(new Date(2002, 10, 11));
+    });
+
+    expect(result.current.tariffendringsdato).toEqual(new Date(2002, 10, 11));
+  });
+
+  it('should setLonnsendringDato', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setLonnsendringDato(new Date(2002, 10, 11));
+    });
+
+    expect(result.current.lonnsendringsdato).toEqual(new Date(2002, 10, 11));
+  });
+
+  it('should setFeriePeriode', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setFeriePeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+    });
+
+    expect(result.current.permisjon).toEqual([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+  });
 });

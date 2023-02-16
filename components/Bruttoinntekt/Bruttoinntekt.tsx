@@ -85,7 +85,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
   const bekreftetBruttoinntekt = bruttoinntekt?.bekreftet ? ['Ja'] : [];
 
-  if (tidligereinntekt) {
+  if (tidligereinntekt && tidligereinntekt.length > 0) {
     return (
       <>
         <Heading3>Beregnet månedslønn</Heading3>
