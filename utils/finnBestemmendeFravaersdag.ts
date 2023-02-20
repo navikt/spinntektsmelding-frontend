@@ -45,7 +45,7 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | 
   if (!fravaersperioder) {
     return undefined;
   }
-  console.log('fravaersperioder', fravaersperioder);
+
   const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
@@ -73,10 +73,7 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | 
     } else {
       tilstotendeSykemeldingsperioder.push(periode);
     }
-    console.log('oppdatertPeriode', oppdatertPeriode);
   });
-
-  console.log('tilstotendeSykemeldingsperioder', tilstotendeSykemeldingsperioder);
 
   if (tilstotendeSykemeldingsperioder.length > 1) {
     if (tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined) {
@@ -91,7 +88,6 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | 
       });
     }
   }
-  console.log('Ingen retur');
 };
 
 export default finnBestemmendeFravaersdag;

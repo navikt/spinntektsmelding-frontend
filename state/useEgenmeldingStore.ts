@@ -53,9 +53,6 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           if (bestemmende) {
             state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-
-            console.log('Egenmelding state.bestemmendeFravaersdag', state.bestemmendeFravaersdag);
-
             state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
           }
         }
