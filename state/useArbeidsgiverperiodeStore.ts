@@ -7,6 +7,8 @@ import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
+import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
+import { isValid } from 'date-fns';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
@@ -20,6 +22,7 @@ export interface ArbeidsgiverperiodeState {
   slettArbeidsgiverperiode: (periodeId: string) => void;
   setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
   setEndreArbeidsgiverperiode: (endre: boolean) => void;
+  tilbakestillArbeidsgiverperiode: () => void;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => ({
@@ -116,7 +119,33 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
         return state;
       })
-    )
+    ),
+  tilbakestillArbeidsgiverperiode: () => {
+    set(
+      produce((state) => {
+        const periode = state.fravaersperioder.concat(state.egenmeldingsperioder);
+
+        const aperioder = finnArbeidsgiverperiode(periode);
+
+        state.arbeidsgiverperioder = aperioder.filter(
+          (periode) => periode.fom && periode.tom && isValid(periode.fom) && isValid(periode.tom)
+        );
+
+        const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
+        if (bestemmende) {
+          state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+          state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+
+          console.log('state.bestemmendeFravaersdag', state.bestemmendeFravaersdag);
+
+          state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+        }
+
+        state.endretArbeidsgiverperiode = false;
+        return state;
+      })
+    );
+  }
 });
 
 export default useArbeidsgiverperioderStore;

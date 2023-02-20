@@ -1,31 +1,25 @@
-import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
-import lokalStyles from './Bruttoinntekt.module.css';
+import Datovelger from '../Datovelger';
 
 interface NyStillingsprosentDatoProps {
   onChangeNyStillingsprosentdato: (newDate: Date | undefined) => void;
   defaultDate?: Date;
+  toDate?: Date;
 }
 
 export default function NyStillingsprosentDato({
   onChangeNyStillingsprosentdato,
-  defaultDate
+  defaultDate,
+  toDate
 }: NyStillingsprosentDatoProps) {
-  const { datepickerProps, inputProps: inputPropsTariff } = UNSAFE_useDatepicker({
-    toDate: new Date(),
-    onDateChange: onChangeNyStillingsprosentdato,
-    defaultSelected: defaultDate
-  });
+  const tilDato = toDate ? toDate : new Date();
 
   return (
-    <div className={lokalStyles.endremaaanedsinntekt}>
-      <UNSAFE_DatePicker {...datepickerProps}>
-        <UNSAFE_DatePicker.Input
-          {...inputPropsTariff}
-          label='Ny stillingsprosent fra'
-          id={'bruttoinntekt-lonnsendring-fom'}
-          // error={props.hasError && 'Feltet er obligatorisk.'}
-        />
-      </UNSAFE_DatePicker>
-    </div>
+    <Datovelger
+      onDateChange={onChangeNyStillingsprosentdato}
+      label='Ny stillingsprosent fra'
+      id='bruttoinntekt-nystillingsprosent-fom'
+      defaultSelected={defaultDate}
+      toDate={tilDato}
+    />
   );
 }

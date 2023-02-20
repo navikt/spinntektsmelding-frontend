@@ -10,7 +10,7 @@ import validerLonnIArbeidsgiverPerioden, {
 import validerLonnUnderSykefravaeret, {
   LonnUnderSykefravaeretFeilkode
 } from '../validators/validerLonnUnderSykefravaeret';
-import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
+import validerPeriodeEgenmelding, { PeriodeEgenmeldingFeilkode } from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import useBoundStore from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
@@ -42,7 +42,8 @@ type codeUnion =
   | LonnIArbeidsgiverperiodenFeilkode
   | LonnUnderSykefravaeretFeilkode
   | BekreftOpplysningerFeilkoder
-  | EndringAvMaanedslonnFeilkode;
+  | EndringAvMaanedslonnFeilkode
+  | PeriodeEgenmeldingFeilkode;
 
 export interface ValiderResultat {
   felt: string;

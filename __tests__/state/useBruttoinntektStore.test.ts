@@ -1,5 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
-import { cleanup } from '@testing-library/react';
+import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattHistoriskInntekt } from '../../state/MottattData';
 import { vi } from 'vitest';

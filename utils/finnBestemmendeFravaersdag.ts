@@ -45,7 +45,7 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | 
   if (!fravaersperioder) {
     return undefined;
   }
-
+  console.log('fravaersperioder', fravaersperioder);
   const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
@@ -73,17 +73,25 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | 
     } else {
       tilstotendeSykemeldingsperioder.push(periode);
     }
+    console.log('oppdatertPeriode', oppdatertPeriode);
   });
 
-  if (typeof tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom === 'string') {
-    return tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as unknown as string;
-  }
+  console.log('tilstotendeSykemeldingsperioder', tilstotendeSykemeldingsperioder);
 
-  if (tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined) {
-    return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as Date, {
-      representation: 'date'
-    });
+  if (tilstotendeSykemeldingsperioder.length > 1) {
+    if (tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined) {
+      return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as Date, {
+        representation: 'date'
+      });
+    }
+  } else {
+    if (tilstotendeSykemeldingsperioder[0].fom !== undefined) {
+      return formatISO9075(tilstotendeSykemeldingsperioder[0].fom as Date, {
+        representation: 'date'
+      });
+    }
   }
+  console.log('Ingen retur');
 };
 
 export default finnBestemmendeFravaersdag;

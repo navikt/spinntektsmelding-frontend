@@ -9,8 +9,13 @@
 }
 
 .leggtilknapp {
-  margin-top: 1rem;
-  height    : 3rem;
-  display   : inline-block;
-  min-width : 10rem;
+  height   : 3rem;
+  display  : inline-block;
+  min-width: 10rem;
+}
+
+.endreknapper {
+  display        : flex;
+  padding-top    : 1rem;
+  justify-content: space-between;
 }

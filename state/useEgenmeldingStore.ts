@@ -7,6 +7,8 @@ import { MottattPeriode } from './MottattData';
 import { CompleteState } from './useBoundStore';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
+import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
+import { finnAktuelleInntekter } from './useBruttoinntektStore';
 
 export interface EgenmeldingState {
   egenmeldingsperioder: Array<Periode>;
@@ -35,7 +37,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           return periode;
         });
 
-        const fravaersperioder = get().fravaersperioder;
+        const fravaersperioder: Array<Periode> = state.fravaersperioder;
 
         const perioder =
           fravaersperioder && state.egenmeldingsperioder
@@ -45,7 +47,17 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
         const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom);
         if (fPerioder) {
           const agp = finnArbeidsgiverperiode(fPerioder);
-          get().setArbeidsgiverperioder(agp);
+          state.setArbeidsgiverperioder(agp);
+
+          const bestemmende = finnBestemmendeFravaersdag(agp);
+          if (bestemmende) {
+            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+
+            console.log('Egenmelding state.bestemmendeFravaersdag', state.bestemmendeFravaersdag);
+
+            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+          }
         }
         return state;
       })

@@ -1,4 +1,4 @@
-import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
+import Datovelger from '../Datovelger';
 import lokalStyles from './Bruttoinntekt.module.css';
 
 interface TariffendringDatoProps {
@@ -14,36 +14,24 @@ export default function TariffendringDato({
   defaultEndringsdato,
   defaultKjentDato
 }: TariffendringDatoProps) {
-  const { datepickerProps: datepickerPropsTariff, inputProps: inputPropsTariff } = UNSAFE_useDatepicker({
-    toDate: new Date(),
-    onDateChange: changeTariffEndretDato,
-    defaultSelected: defaultEndringsdato
-  });
-
-  const { datepickerProps: datepickerPropsTariffKjent, inputProps: inputPropsTariffKjent } = UNSAFE_useDatepicker({
-    toDate: new Date(),
-    onDateChange: changeTariffKjentDato,
-    defaultSelected: defaultKjentDato
-  });
-
+  const tilDato = new Date();
   return (
     <div className={lokalStyles.endremaaanedsinntekt}>
-      <UNSAFE_DatePicker {...datepickerPropsTariff}>
-        <UNSAFE_DatePicker.Input
-          {...inputPropsTariff}
-          label='Tariffendring gjelder fra'
-          id={'bruttoinntekt-tariffendring-fom'}
-          // error={props.hasError && 'Feltet er obligatorisk.'}
-        />
-      </UNSAFE_DatePicker>
-      <UNSAFE_DatePicker {...datepickerPropsTariffKjent}>
-        <UNSAFE_DatePicker.Input
-          {...inputPropsTariffKjent}
-          label='Dato tariffendring ble kjent'
-          id={'bruttoinntekt-tariffendring-tom'}
-          // error={props.hasError && 'Feltet er obligatorisk.'}
-        />
-      </UNSAFE_DatePicker>
+      <Datovelger
+        onDateChange={changeTariffEndretDato}
+        label='Tariffendring gjelder fra'
+        id='bruttoinntekt-tariffendring-fom'
+        defaultSelected={defaultEndringsdato}
+        toDate={tilDato}
+      />
+
+      <Datovelger
+        onDateChange={changeTariffKjentDato}
+        label='Dato tariffendring ble kjent'
+        id='bruttoinntekt-tariffendring-kjelt'
+        defaultSelected={defaultKjentDato}
+        toDate={tilDato}
+      />
     </div>
   );
 }

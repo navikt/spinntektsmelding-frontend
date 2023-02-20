@@ -1,7 +1,8 @@
+import { isValid } from 'date-fns';
 import format from 'date-fns/format';
 
 export default function formatDate(date?: Date): string {
-  if (!date) {
+  if (!date || !isValid(date)) {
     return '';
   }
 

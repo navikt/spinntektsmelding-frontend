@@ -16,6 +16,7 @@ import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 import NyStillingDato from './NyStillingDato';
 import NyStillingsprosentDato from './NyStillingsprosentDato';
 import PeriodeListevelger from './PeriodeListevelger';
+import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -65,10 +66,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
 
   const changeBegrunnelseHandler = useCallback((aarsak: string) => setEndringsaarsak(aarsak), [setEndringsaarsak]);
 
-  const changeKorrektInntektHandler = useCallback(
-    (event: FormEvent<HTMLInputElement>) => bekreftKorrektInntekt(event.currentTarget.checked),
-    [bekreftKorrektInntekt]
-  );
+  const changeKorrektInntektHandler = (event: FormEvent<HTMLInputElement>) =>
+    bekreftKorrektInntekt(event.currentTarget.checked);
 
   const setNyMaanedsinntektBlanktSkjemaHandler = (event: ChangeEvent<HTMLInputElement>) =>
     setNyMaanedsinntektBlanktSkjema(event.target.value);
@@ -123,13 +122,10 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                   />
                 </div>
                 <div>
-                  <Button
-                    variant='tertiary'
+                  <ButtonTilbakestill
                     className={lokalStyles.kontrollerknapp}
                     onClick={clickTilbakestillMaanedsinntekt}
-                  >
-                    Tilbakestill
-                  </Button>
+                  />
                 </div>
               </div>
               {endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
@@ -156,7 +152,11 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
                 <div className={lokalStyles.endremaaanedsinntekt}>
-                  <LonnsendringDato onChangeLonnsendringsdato={setLonnsendringDato} defaultDate={lonnsendringsdato} />
+                  <LonnsendringDato
+                    onChangeLonnsendringsdato={setLonnsendringDato}
+                    defaultDate={lonnsendringsdato}
+                    toDate={bestemmendeFravaersdag}
+                  />
                 </div>
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
@@ -185,7 +185,11 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
                 <div className={lokalStyles.endremaaanedsinntekt}>
-                  <NyStillingDato onChangeNyStillingEndringsdato={setNyStillingDato} defaultDate={nystillingdato} />
+                  <NyStillingDato
+                    onChangeNyStillingEndringsdato={setNyStillingDato}
+                    defaultDate={nystillingdato}
+                    toDate={bestemmendeFravaersdag}
+                  />
                 </div>
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
@@ -193,6 +197,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                   <NyStillingsprosentDato
                     onChangeNyStillingsprosentdato={setNyStillingsprosentDato}
                     defaultDate={nystillingsprosentdato}
+                    toDate={bestemmendeFravaersdag}
                   />
                 </div>
               )}

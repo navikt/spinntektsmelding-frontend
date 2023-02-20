@@ -46,6 +46,15 @@ export default function EgenmeldingPeriode({
     );
   }
 
+  const forigeMndAaar = egenmeldingsperiode?.fom
+    ? subDays(egenmeldingsperiode?.fom, 1).getFullYear()
+    : new Date().getFullYear();
+  const forigeMndMnd = egenmeldingsperiode?.fom
+    ? subDays(egenmeldingsperiode?.fom, 1).getMonth()
+    : new Date().getMonth();
+
+  const defaultMnd = new Date(forigeMndAaar, forigeMndMnd);
+
   return (
     <div>
       <div className={localStyles.datowrapper}>
@@ -55,13 +64,13 @@ export default function EgenmeldingPeriode({
           tomTekst='Til'
           tomID={`egenmeldingsperiode-tom-${periodeId}`}
           onRangeChange={rangeChangeHandler}
-          defaultRange={{ fom: egenmeldingsperiode?.fom, tom: egenmeldingsperiode?.tom, id: '1' }}
+          defaultRange={egenmeldingsperiode}
           kanSlettes={kanSlettes}
           periodeId={periodeId}
           onSlettRad={onSlettRad}
           toDate={toDate}
           disabled={disabled}
-          defaultMonth={egenmeldingsperiode?.fom ? subDays(egenmeldingsperiode?.fom, 1) : egenmeldingsperiode?.fom}
+          defaultMonth={defaultMnd}
         />
       </div>
     </div>

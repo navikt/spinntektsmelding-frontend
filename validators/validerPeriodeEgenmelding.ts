@@ -2,7 +2,7 @@ import { Periode } from '../state/state';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
 
-export enum PeriodeFeilkode {
+export enum PeriodeEgenmeldingFeilkode {
   OK = 'OK',
   MANGLER_PERIODE = 'MANGLER_PERIODE',
   MANGLER_TIL = 'MANGLER_TIL',
@@ -17,7 +17,7 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>, pref
   if (!perioder || perioder.length < 1) {
     feilkoder.push({
       felt: 'backend',
-      code: PeriodeFeilkode.MANGLER_PERIODE
+      code: PeriodeEgenmeldingFeilkode.MANGLER_PERIODE
     });
   } else {
     const tomPeriode = perioder.length === 1;
@@ -40,7 +40,7 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>, pref
         if (Math.abs(differenceInCalendarDays(periode.fom as Date, perioder[index - 1].tom as Date)) >= 16) {
           feilkoder.push({
             felt: `${prefix}-feil`,
-            code: PeriodeFeilkode.FOR_MANGE_DAGER_MELLOM
+            code: PeriodeEgenmeldingFeilkode.FOR_MANGE_DAGER_MELLOM
           });
         }
       }
@@ -53,7 +53,7 @@ function forMangeDagerIPerioden(periode: Periode, feilkoder: ValiderResultat[], 
   if (Math.abs(differenceInCalendarDays(periode.tom as Date, periode.fom as Date)) >= 16) {
     feilkoder.push({
       felt: `${prefix}-feil`,
-      code: PeriodeFeilkode.FOR_MANGE_DAGER_I_PERIODE
+      code: PeriodeEgenmeldingFeilkode.FOR_MANGE_DAGER_I_PERIODE
     });
   }
 }
@@ -62,7 +62,7 @@ function feilRekkefoelgeFomTom(periode: Periode, feilkoder: ValiderResultat[], p
   if (periode.fom && periode.tom && periode.fom > periode.tom) {
     feilkoder.push({
       felt: `${prefix}-fom-${periode.id}`,
-      code: PeriodeFeilkode.TIL_FOR_FRA
+      code: PeriodeEgenmeldingFeilkode.TIL_FOR_FRA
     });
   }
 }
@@ -77,7 +77,7 @@ function manglerFomMenIkkeTomMedEnRad(
   if (tomPeriode && manglerFomEllerTomMenIkkeBegge && !periode.fom) {
     feilkoder.push({
       felt: `${prefix}-fom-${periode.id}`,
-      code: PeriodeFeilkode.MANGLER_FRA
+      code: PeriodeEgenmeldingFeilkode.MANGLER_FRA
     });
   }
 }
@@ -92,7 +92,7 @@ function manglerTomMenIkkeFomMedEnRad(
   if (tomPeriode && manglerFomEllerTomMenIkkeBegge && !periode.tom) {
     feilkoder.push({
       felt: `${prefix}-tom-${periode.id}`,
-      code: PeriodeFeilkode.MANGLER_TIL
+      code: PeriodeEgenmeldingFeilkode.MANGLER_TIL
     });
   }
 }
@@ -106,7 +106,7 @@ function manglerTomOgIkkeBareEnRad(
   if (!periode.tom && !tomPeriode) {
     feilkoder.push({
       felt: `${prefix}-tom-${periode.id}`,
-      code: PeriodeFeilkode.MANGLER_TIL
+      code: PeriodeEgenmeldingFeilkode.MANGLER_TIL
     });
   }
 }
@@ -120,7 +120,7 @@ function manglerFomOgIkkeBareEnRad(
   if (!periode.fom && !tomPeriode) {
     feilkoder.push({
       felt: `${prefix}-fom-${periode.id}`,
-      code: PeriodeFeilkode.MANGLER_FRA
+      code: PeriodeEgenmeldingFeilkode.MANGLER_FRA
     });
   }
 }

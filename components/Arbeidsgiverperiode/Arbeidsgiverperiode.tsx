@@ -10,6 +10,7 @@ import { Periode } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
+import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -23,6 +24,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const setEndreArbeidsgiverperiode = useBoundStore((state) => state.setEndreArbeidsgiverperiode);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
+  const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
 
   const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -33,6 +35,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setEndreArbeidsgiverperiode(!endretArbeidsgiverperiode);
+  };
+
+  const clickAngreEndreHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    tilbakestillArbeidsgiverperiode();
   };
 
   return (
@@ -87,13 +94,16 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
         <Feilmelding id='arbeidsgiverperiode-feil'>{visFeilmeldingsTekst('arbeidsgiverperiode-feil')}</Feilmelding>
       )}
       {endretArbeidsgiverperiode && (
-        <Button
-          variant='secondary'
-          className={lokalStyles.leggtilknapp}
-          onClick={(event) => clickLeggTilFravaersperiodeHandler(event)}
-        >
-          Legg til periode
-        </Button>
+        <div className={lokalStyles.endreknapper}>
+          <Button
+            variant='secondary'
+            className={lokalStyles.leggtilknapp}
+            onClick={(event) => clickLeggTilFravaersperiodeHandler(event)}
+          >
+            Legg til periode
+          </Button>
+          <ButtonTilbakestill onClick={clickAngreEndreHandler} />
+        </div>
       )}
     </>
   );

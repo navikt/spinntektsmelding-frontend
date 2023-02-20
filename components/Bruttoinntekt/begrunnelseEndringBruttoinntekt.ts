@@ -10,7 +10,8 @@ const begrunnelseEndringBruttoinntekt: Begrunnelser = {
   Permitering: 'Permitering',
   NyStilling: 'NyStilling',
   NyStillingsprosent: 'NyStillingsprosent',
-  Bonus: 'Bonus'
+  Bonus: 'Bonus',
+  Nyansatt: 'Nyansatt'
 };
 
 export default begrunnelseEndringBruttoinntekt;
