@@ -142,7 +142,6 @@ const Home: NextPage = () => {
         if (pathSlug) {
           skjemadata = await hentSkjemadata(SKJEMADATA_URL, pathSlug);
         }
-        debugger;
         if (skjemadata) {
           initState(skjemadata);
         }
