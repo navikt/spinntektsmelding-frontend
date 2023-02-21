@@ -59,6 +59,11 @@ interface Bruttoinntekt {
   manueltKorrigert: boolean;
 }
 
+interface Innsender {
+  navn: string;
+  telefon: string;
+}
+
 export interface InnsendingSkjema {
   identitetsnummer: string;
   orgnrUnderenhet: string;
@@ -73,6 +78,7 @@ export interface InnsendingSkjema {
   bekreftOpplysninger: boolean;
   behandlingsdager?: Array<string>;
   årsakInnsending: string;
+  innsender: Innsender;
 }
 
 export default function useFyllInnsending() {
@@ -105,8 +111,16 @@ export default function useFyllInnsending() {
   const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+  // const aarsakInnsending = useBoundStore((state) => state.aarsakInnsending);
+  const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
+  const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
 
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+
+  const innsender: Innsender = {
+    navn: innsenderNavn || '',
+    telefon: innsenderTelefonNr || ''
+  };
 
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
     const endringAarsak = (): AArsakType | Tariffendring | PeriodeListe | StillingsEndring | undefined => {
@@ -197,6 +211,8 @@ export default function useFyllInnsending() {
         ? arbeidsgiverperioder
         : finnArbeidsgiverperiode(beregningsperioder as Array<Periode>);
 
+    const aarsakInnsending = 'Ny'; // Kan være Ny eller Endring
+
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
       identitetsnummer: identitetsnummer!,
@@ -241,7 +257,8 @@ export default function useFyllInnsending() {
       })),
       bekreftOpplysninger: opplysningerBekreftet,
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
-      årsakInnsending: 'Ny' // Kan også være Endring
+      årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
+      innsender
     };
 
     return skjemaData;

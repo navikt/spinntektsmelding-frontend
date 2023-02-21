@@ -8,10 +8,21 @@ export interface PersonState {
   identitetsnummer?: string;
   orgnrUnderenhet?: string;
   virksomhetsnavn?: string;
+  innsenderNavn?: string;
+  innsenderTelefonNr?: string;
   setNavn: (navn: string) => void;
   setIdentitetsnummer: (identitetsnummer: string) => void;
+  setInnsenderNavn: (navn: string) => void;
+  setInnsenderTelefon: (identitetsnummer: string) => void;
   setOrgUnderenhet: (organisasjon: Organisasjon) => void;
-  initPerson: (navn: string, identitetsnummer: string, orgnrUnderenhet: string, orgNavn: string) => void;
+  initPerson: (
+    navn: string,
+    identitetsnummer: string,
+    orgnrUnderenhet: string,
+    orgNavn: string,
+    innsenderNavn?: string,
+    innsenderTelefonNr?: string
+  ) => void;
 }
 
 const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set) => ({
@@ -19,6 +30,8 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set) =
   identitetsnummer: undefined,
   orgnrUnderenhet: undefined,
   virksomhetsnavn: undefined,
+  innsenderNavn: undefined,
+  innsenderTelefonNr: undefined,
   setNavn: (navn: string) => {
     set(
       produce((state: PersonState) => {
@@ -41,13 +54,36 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set) =
       })
     );
   },
-  initPerson: (navn: string, identitetsnummer: string, orgnrUnderenhet: string, orgNavn: string) => {
+  setInnsenderNavn: (innsenderNavn: string) => {
+    set(
+      produce((state: PersonState) => {
+        state.innsenderNavn = innsenderNavn;
+      })
+    );
+  },
+  setInnsenderTelefon: (innsenderTelefonNr: string) => {
+    set(
+      produce((state: PersonState) => {
+        state.innsenderTelefonNr = innsenderTelefonNr;
+      })
+    );
+  },
+  initPerson: (
+    navn: string,
+    identitetsnummer: string,
+    orgnrUnderenhet: string,
+    orgNavn: string,
+    innsenderNavn?: string,
+    innsenderTelefonNr?: string
+  ) => {
     set(
       produce((state: PersonState) => ({
         navn,
         identitetsnummer,
         orgnrUnderenhet,
-        virksomhetsnavn: orgNavn
+        virksomhetsnavn: orgNavn,
+        innsenderNavn,
+        innsenderTelefonNr
       }))
     );
   }

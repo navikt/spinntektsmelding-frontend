@@ -41,7 +41,7 @@ export interface BruttoinntektState {
   setPermiteringPeriode: (periode: Array<Periode> | undefined) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean, reset?: boolean) => void;
-  initBruttioinntekt: (
+  initBruttoinntekt: (
     bruttoInntekt: number,
     tidligereInntekt: Array<MottattHistoriskInntekt>,
     bestemmendeFravaersdag: Date
@@ -52,13 +52,13 @@ export interface BruttoinntektState {
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
   bruttoinntekt: {
     bruttoInntekt: undefined,
-    bekreftet: false,
+    bekreftet: true,
     manueltKorrigert: false,
     endringsaarsak: undefined
   },
   opprinneligbruttoinntekt: {
     bruttoInntekt: undefined,
-    bekreftet: false,
+    bekreftet: true,
     manueltKorrigert: false,
     endringsaarsak: undefined
   },
@@ -85,7 +85,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt.bekreftet = true;
         if (state.bruttoinntekt.bruttoInntekt !== undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
           state = slettFeilmelding(state, 'bruttoinntekt-endringsbelop');
-          state = slettFeilmelding(state, 'bruttoinntektbekreft');
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
@@ -192,7 +191,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  initBruttioinntekt: (
+  initBruttoinntekt: (
     bruttoInntekt: number,
     tidligereInntekt: Array<MottattHistoriskInntekt>,
     bestemmendeFravaersdag: Date
@@ -212,13 +211,13 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       produce((state) => {
         state.bruttoinntekt = {
           bruttoInntekt: snittInntekter,
-          bekreftet: false,
+          bekreftet: true,
           manueltKorrigert: false,
           endringsaarsak: ''
         };
         state.opprinneligbruttoinntekt = {
           bruttoInntekt: snittInntekter,
-          bekreftet: false,
+          bekreftet: true,
           manueltKorrigert: false,
           endringsaarsak: ''
         };

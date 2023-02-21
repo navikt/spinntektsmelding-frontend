@@ -75,18 +75,10 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | 
     }
   });
 
-  if (tilstotendeSykemeldingsperioder.length > 1) {
-    if (tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined) {
-      return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as Date, {
-        representation: 'date'
-      });
-    }
-  } else {
-    if (tilstotendeSykemeldingsperioder[0].fom !== undefined) {
-      return formatISO9075(tilstotendeSykemeldingsperioder[0].fom as Date, {
-        representation: 'date'
-      });
-    }
+  if (tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined) {
+    return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as Date, {
+      representation: 'date'
+    });
   }
 };
 

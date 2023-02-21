@@ -3,12 +3,33 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
+import { TextField } from '@navikt/ds-react';
 
 export default function Person() {
-  const [navn, identitetsnummer, orgnrUnderenhet, virksomhetsnavn] = useBoundStore(
-    (state) => [state.navn, state.identitetsnummer, state.orgnrUnderenhet, state.virksomhetsnavn],
+  const [
+    navn,
+    identitetsnummer,
+    orgnrUnderenhet,
+    virksomhetsnavn,
+    innsenderTelefonNr,
+    innsenderNavn,
+    setInnsenderTelefon
+  ] = useBoundStore(
+    (state) => [
+      state.navn,
+      state.identitetsnummer,
+      state.orgnrUnderenhet,
+      state.virksomhetsnavn,
+      state.innsenderTelefonNr,
+      state.innsenderNavn,
+      state.setInnsenderTelefon
+    ],
     shallow
   );
+
+  const changeTlfNr = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInnsenderTelefon(event.target.value);
+  };
 
   return (
     <>
@@ -33,14 +54,33 @@ export default function Person() {
         <div>
           <Heading3>Arbeidsgiveren</Heading3>
           <div className={lokalStyles.arbeidsgiverwrapper}>
-            <div className={lokalStyles.virksomhetsnavnwrapper}>
-              <TextLabel>Virksomhetsnavn</TextLabel>
-              <div className={lokalStyles.virksomhetsnavn}>{virksomhetsnavn}</div>
-            </div>
+            {virksomhetsnavn && (
+              <div className={lokalStyles.virksomhetsnavnwrapper}>
+                <TextLabel>Virksomhetsnavn</TextLabel>
+                <div className={lokalStyles.virksomhetsnavn}>{virksomhetsnavn}</div>
+              </div>
+            )}
             <div className={lokalStyles.orgnrnavnwrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
               {orgnrUnderenhet}
             </div>
+            {!virksomhetsnavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
+            {innsenderNavn && (
+              <>
+                <div className={lokalStyles.innsendernavnwrapper}>
+                  <TextLabel>Innsender</TextLabel>
+                  <div className={lokalStyles.virksomhetsnavn}>{innsenderNavn}</div>
+                </div>
+                <div className={lokalStyles.telefonnrwrapper}>
+                  <TextField
+                    label='Telefon innsender'
+                    type='tel'
+                    defaultValue={innsenderTelefonNr}
+                    onChange={changeTlfNr}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

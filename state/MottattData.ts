@@ -25,6 +25,8 @@ interface MottattData {
   tidligereinntekter: Array<MottattHistoriskInntekt>;
   behandlingsdager: Array<string>;
   behandlingsperiode: MottattPeriode;
+  innsenderNavn: string;
+  innsenderTelefonNr: string;
 }
 
 export default MottattData;

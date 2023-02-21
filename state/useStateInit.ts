@@ -7,7 +7,7 @@ import useBoundStore from './useBoundStore';
 
 export default function useStateInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
-  const initBruttoinntekt = useBoundStore((state) => state.initBruttioinntekt);
+  const initBruttoinntekt = useBoundStore((state) => state.initBruttoinntekt);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
   const initBehandlingsdager = useBoundStore((state) => state.initBehandlingsdager);
@@ -18,7 +18,14 @@ export default function useStateInit() {
   return (jsonData: MottattData) => {
     initFravaersperiode(jsonData.fravaersperioder);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
-    initPerson(jsonData.navn, jsonData.identitetsnummer, jsonData.orgnrUnderenhet, jsonData.orgNavn);
+    initPerson(
+      jsonData.navn,
+      jsonData.identitetsnummer,
+      jsonData.orgnrUnderenhet,
+      jsonData.orgNavn,
+      jsonData.innsenderNavn,
+      jsonData.innsenderTelefonNr
+    );
     if (jsonData.behandlingsperiode) {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }

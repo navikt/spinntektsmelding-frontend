@@ -16,6 +16,11 @@
   text-overflow: ellipsis;
 }
 
+.telefonnrwrapper,
+.innsendernavnwrapper {
+  margin-top: 1rem;
+}
+
 @media screen and (max-width: 800px) {
   .personinfowrapper {
     display              : grid;
@@ -35,6 +40,7 @@
     grid-template-columns: [col1] auto;
   }
 
+  .innsendernavnwrapper,
   .virksomhetsnavnwrapper,
   .ansattwrapper {
     margin-bottom: .75rem;

@@ -29,7 +29,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(50000);
@@ -42,7 +42,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -62,7 +62,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -76,7 +76,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -94,7 +94,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -109,7 +109,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -127,7 +127,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -142,7 +142,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -156,7 +156,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -223,7 +223,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -250,7 +250,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -264,7 +264,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -278,7 +278,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -292,7 +292,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -306,7 +306,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -320,7 +320,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -334,7 +334,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {
@@ -348,7 +348,7 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initBruttioinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
     act(() => {

@@ -62,7 +62,9 @@ interface InntektsmeldingSkjema {
   behandlingsdager?: Array<Date>;
   behandlingsperiode?: Periode;
   sammeFravaersperiode: boolean;
-  aarsakInnsending: boolean;
+  aarsakInnsending: string;
+  innsenderNavn?: string;
+  innsenderTelefonNr?: string;
 }
 
 export default InntektsmeldingSkjema;

@@ -127,7 +127,10 @@ const initialState: InntektsmeldingSkjema = {
     manueltKorrigert: false,
     endringsaarsak: ''
   },
-  sammeFravaersperiode: false
+  sammeFravaersperiode: false,
+  innsenderNavn: undefined,
+  innsenderTelefonNr: undefined,
+  aarsakInnsending: 'Ny'
 };
 
 const formData = {
@@ -191,7 +194,9 @@ const formData = {
       maanedsnavn: format(subMonths(new Date(), 8), 'yyyy-MM'), // yyyy-MM
       inntekt: 88000
     }
-  ]
+  ],
+  innsenderNavn: 'Test Testesen',
+  innsenderTelefonNr: '12345678'
   // behandlingsdager: ['2022-01-10'],
   // behandlingsperiode: {
   //   fom: new Date(), 4),

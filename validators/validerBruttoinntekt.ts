@@ -19,12 +19,12 @@ export default function validerBruttoinntekt(bruttoinntekt?: Inntekt): Array<Val
       code: BruttoinntektFeilkode.INNTEKT_MANGLER
     });
   } else {
-    if (!bruttoinntekt.bekreftet) {
-      valideringstatus.push({
-        felt: 'bruttoinntektbekreft',
-        code: BruttoinntektFeilkode.IKKE_BEKREFTET
-      });
-    }
+    // if (!bruttoinntekt.bekreftet) {
+    //   valideringstatus.push({
+    //     felt: 'bruttoinntektbekreft',
+    //     code: BruttoinntektFeilkode.IKKE_BEKREFTET
+    //   });
+    // }
 
     if (bruttoinntekt.bruttoInntekt === undefined || bruttoinntekt.bruttoInntekt < 0) {
       valideringstatus.push({

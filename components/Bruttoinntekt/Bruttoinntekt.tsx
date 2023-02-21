@@ -1,5 +1,5 @@
-import { BodyLong, BodyShort, Button, Checkbox, CheckboxGroup, Link, TextField } from '@navikt/ds-react';
-import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { BodyLong, BodyShort, Link, TextField } from '@navikt/ds-react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -66,9 +66,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
 
   const changeBegrunnelseHandler = useCallback((aarsak: string) => setEndringsaarsak(aarsak), [setEndringsaarsak]);
 
-  const changeKorrektInntektHandler = (event: FormEvent<HTMLInputElement>) =>
-    bekreftKorrektInntekt(event.currentTarget.checked);
-
   const setNyMaanedsinntektBlanktSkjemaHandler = (event: ChangeEvent<HTMLInputElement>) =>
     setNyMaanedsinntektBlanktSkjema(event.target.value);
 
@@ -82,7 +79,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   );
 
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
-  const bekreftetBruttoinntekt = bruttoinntekt?.bekreftet ? ['Ja'] : [];
 
   if (tidligereinntekt && tidligereinntekt.length > 0) {
     return (
@@ -214,22 +210,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
           inkluderes i beregnet månedslønn. Beregningen er gjort etter{' '}
           <Link href='https://lovdata.no/nav/folketrygdloven/kap8/§8-28'>folketrygdloven $8-28</Link>.
         </BodyLong>
-        <CheckboxGroup
-          size='medium'
-          error={visFeilmeldingsTekst('bruttoinntektbekreft')}
-          hideLegend
-          legend='Bekreft at månedslønn er korrekt'
-          defaultValue={bekreftetBruttoinntekt}
-        >
-          <Checkbox
-            onClick={changeKorrektInntektHandler}
-            id='bruttoinntektbekreft'
-            error={visFeilmelding('bruttoinntektbekreft')}
-            value='Ja'
-          >
-            Jeg bekrefter at jeg har kontrollert inntekten og at beregnet månedslønn er korrekt.
-          </Checkbox>
-        </CheckboxGroup>
       </>
     );
   } else {

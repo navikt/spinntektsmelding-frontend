@@ -31,23 +31,6 @@ describe('validerBruttoinntekt', () => {
 
   it('should return an error when not confirmed', () => {
     const input: Inntekt = {
-      bekreftet: false,
-      bruttoInntekt: 123,
-      manueltKorrigert: false
-    };
-
-    const expected = [
-      {
-        code: 'IKKE_BEKREFTET',
-        felt: 'bruttoinntektbekreft'
-      }
-    ];
-
-    expect(validerBruttoinntekt(input)).toEqual(expected);
-  });
-
-  it('should return an error when not confirmed', () => {
-    const input: Inntekt = {
       bekreftet: true,
       bruttoInntekt: 123,
       manueltKorrigert: true

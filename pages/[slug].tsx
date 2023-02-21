@@ -142,6 +142,7 @@ const Home: NextPage = () => {
         if (pathSlug) {
           skjemadata = await hentSkjemadata(SKJEMADATA_URL, pathSlug);
         }
+        debugger;
         if (skjemadata) {
           initState(skjemadata);
         }
@@ -156,7 +157,7 @@ const Home: NextPage = () => {
         leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
       }
     };
-    if (!bruttoinntekt.bekreftet) hentData();
+    hentData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
