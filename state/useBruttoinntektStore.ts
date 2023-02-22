@@ -179,13 +179,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   bekreftKorrektInntekt: (bekreftet, reset) =>
     set(
       produce((state) => {
-        state.bruttoinntekt!.bekreftet = bekreftet;
+        state.bruttoinntekt!.bekreftet = true;
         if (bekreftet === true) {
           state = slettFeilmelding(state, 'bruttoinntektbekreft');
-        } else {
-          if (!reset) {
-            state = leggTilFeilmelding(state, 'bruttoinntektbekreft', feiltekster.IKKE_BEKREFTET);
-          }
         }
 
         return state;

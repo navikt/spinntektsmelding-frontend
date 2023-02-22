@@ -33,12 +33,11 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(50000);
-    expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.tidligereInntekt?.length).toBe(3);
   });
 
-  it('should set the bekreftet flag.', () => {
+  it('should set the bekreftet flag to true, and let it stay there. To be removed!', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -55,7 +54,7 @@ describe('useBoundStore', () => {
       result.current.bekreftKorrektInntekt(false);
     });
 
-    expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
+    expect(result.current.bruttoinntekt?.bekreftet).toBeTruthy();
   });
 
   it('should set ny maanedsinntekt.', () => {
@@ -84,7 +83,7 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(-1);
-    expect(result.current.feilmeldinger[1]).toEqual({
+    expect(result.current.feilmeldinger).toContainEqual({
       felt: 'bruttoinntekt-endringsbelop',
       text: feiltekster.BRUTTOINNTEKT_MANGLER
     });
@@ -117,7 +116,7 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(-1);
-    expect(result.current.feilmeldinger[1]).toEqual({
+    expect(result.current.feilmeldinger).toContainEqual({
       felt: 'bruttoinntekt-endringsbelop',
       text: feiltekster.BRUTTOINNTEKT_MANGLER
     });
@@ -171,7 +170,6 @@ describe('useBoundStore', () => {
 
     expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
-    expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(50000);
   });
 
@@ -232,7 +230,6 @@ describe('useBoundStore', () => {
 
     expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
-    expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(50000);
     expect(result.current.tidligereInntekt).toEqual([
       {
