@@ -3,7 +3,6 @@ import Heading3 from '../Heading3';
 import styles from '../../styles/Home.module.css';
 
 import useBoundStore from '../../state/useBoundStore';
-import RefsjonArbeidsgiverSluttdato from './RefsjonArbeidsgiverSluttdato';
 import SelectBegrunnelse from './SelectBegrunnelse';
 import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
 import localStyles from './RefusjonArbeidsgiver.module.css';

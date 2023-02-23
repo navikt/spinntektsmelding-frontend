@@ -62,7 +62,6 @@ const Home: NextPage = () => {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const initState = useStateInit();
 

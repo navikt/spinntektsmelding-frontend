@@ -1,4 +1,5 @@
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
@@ -110,7 +111,6 @@ export default function useFyllInnsending() {
   const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  // const aarsakInnsending = useBoundStore((state) => state.aarsakInnsending);
   const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
 

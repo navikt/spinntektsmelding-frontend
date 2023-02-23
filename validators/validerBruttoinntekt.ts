@@ -1,5 +1,4 @@
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
-import { Inntekt } from '../state/state';
 import { CompleteState } from '../state/useBoundStore';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 

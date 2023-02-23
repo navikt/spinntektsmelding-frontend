@@ -24,13 +24,6 @@ export default function valdiderEndringAvMaanedslonn(
 
   if (refusjonEndringer) {
     refusjonEndringer.forEach((endring, index) => {
-      // if (!endring.belop && !endring.dato) {
-      //   feilmeldinger.push({
-      //     felt: `lus-utbetaling-endring-belop-${index}`,
-      //     code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP_OG_DATO
-      //   });
-      // }
-
       if (!endring.belop) {
         feilmeldinger.push({
           felt: `lus-utbetaling-endring-belop-${index}`,
