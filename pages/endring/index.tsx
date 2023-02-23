@@ -10,15 +10,13 @@ import formatDate from '../../utils/formatDate';
 import biStyles from '../../components/Bruttoinntekt/Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import TariffendringDato from '../../components/Bruttoinntekt/TariffendringDato';
-import LonnsendringDato from '../../components/Bruttoinntekt/LonnsendringDato';
 import useBoundStore from '../../state/useBoundStore';
 import Feilsammendrag from '../../components/Feilsammendrag';
 import feiltekster from '../../utils/feiltekster';
 import lokalStyles from './Endring.module.css';
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import PeriodeListevelger from '../../components/Bruttoinntekt/PeriodeListevelger';
-import NyStillingDato from '../../components/Bruttoinntekt/NyStillingDato';
-import NyStillingsprosentDato from '../../components/Bruttoinntekt/NyStillingsprosentDato';
+import Datovelger from '../../components/Datovelger';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<boolean | undefined>(undefined);
@@ -43,6 +41,7 @@ const Endring: NextPage = () => {
   const permisjon = useBoundStore((state) => state.permisjon);
   const setPermiteringPeriode = useBoundStore((state) => state.setPermiteringPeriode);
   const permitering = useBoundStore((state) => state.permitering);
+  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
 
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
@@ -151,19 +150,15 @@ const Endring: NextPage = () => {
                         </div>
                       </div>
                     )}
-                    {endringsaarsak === 'Lonnsokning' && (
-                      <div className={biStyles.endremaaanedsinntekt}>
-                        <LonnsendringDato
-                          onChangeLonnsendringsdato={setLonnsendringDato}
-                          defaultDate={lonnsendringsdato}
-                        />
-                      </div>
-                    )}
                     {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
                       <div className={lokalStyles.endremaaanedsinntekt}>
-                        <LonnsendringDato
-                          onChangeLonnsendringsdato={setLonnsendringDato}
-                          defaultDate={lonnsendringsdato}
+                        <Datovelger
+                          onDateChange={setLonnsendringDato}
+                          label='Lønnsendring gjelder fra'
+                          id='bruttoinntekt-lonnsendring-fom'
+                          defaultSelected={lonnsendringsdato}
+                          toDate={bestemmendeFravaersdag}
+                          error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
                         />
                       </div>
                     )}
@@ -193,17 +188,23 @@ const Endring: NextPage = () => {
                     )}
                     {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
                       <div className={lokalStyles.endremaaanedsinntekt}>
-                        <NyStillingDato
-                          onChangeNyStillingEndringsdato={setNyStillingDato}
-                          defaultDate={nystillingdato}
+                        <Datovelger
+                          onDateChange={setNyStillingDato}
+                          label='Ny stilling fra'
+                          id='bruttoinntekt-nystilling-fom'
+                          defaultSelected={nystillingdato}
+                          toDate={bestemmendeFravaersdag}
                         />
                       </div>
                     )}
                     {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
                       <div className={lokalStyles.endremaaanedsinntekt}>
-                        <NyStillingsprosentDato
-                          onChangeNyStillingsprosentdato={setNyStillingsprosentDato}
-                          defaultDate={nystillingsprosentdato}
+                        <Datovelger
+                          onDateChange={setNyStillingsprosentDato}
+                          label='Ny stillingsprosent fra'
+                          id='bruttoinntekt-nystillingsprosent-fom'
+                          defaultSelected={nystillingsprosentdato}
+                          toDate={bestemmendeFravaersdag}
                         />
                       </div>
                     )}
