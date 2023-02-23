@@ -22,13 +22,13 @@ export default function validerLonnUnderSykefravaeret(
   } else {
     if (lonnUS.status === 'Ja') {
       validerBelop(lonnUS, errorStatus);
-
       validerStatus(refusjonskravetOpphoerer, errorStatus);
     }
   }
 
   return errorStatus;
 }
+
 function validerStatus(refusjonskravetOpphoerer: RefusjonskravetOpphoerer | undefined, errorStatus: ValiderResultat[]) {
   if (!refusjonskravetOpphoerer?.status) {
     errorStatus.push({

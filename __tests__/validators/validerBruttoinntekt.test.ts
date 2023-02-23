@@ -1,22 +1,28 @@
+import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { Inntekt } from '../../state/state';
+import { CompleteState } from '../../state/useBoundStore';
 import validerBruttoinntekt from '../../validators/validerBruttoinntekt';
 
 describe('validerBruttoinntekt', () => {
   it('should return an empty array when everything is OK', () => {
-    const input: Inntekt = {
-      bekreftet: true,
-      bruttoInntekt: 123,
-      manueltKorrigert: false
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: false
+      }
     };
 
     expect(validerBruttoinntekt(input)).toEqual([]);
   });
 
   it('should return an error when bruttoinntekt < 0 ', () => {
-    const input: Inntekt = {
-      bekreftet: true,
-      bruttoInntekt: -1,
-      manueltKorrigert: false
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: -1,
+        manueltKorrigert: false
+      }
     };
 
     const expected = [
@@ -30,10 +36,12 @@ describe('validerBruttoinntekt', () => {
   });
 
   it('should return an error when not confirmed', () => {
-    const input: Inntekt = {
-      bekreftet: true,
-      bruttoInntekt: 123,
-      manueltKorrigert: true
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true
+      }
     };
 
     const expected = [
@@ -47,11 +55,13 @@ describe('validerBruttoinntekt', () => {
   });
 
   it('should return an error when no reason given', () => {
-    const input: Inntekt = {
-      bekreftet: true,
-      bruttoInntekt: 123,
-      manueltKorrigert: true,
-      endringsaarsak: ''
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: ''
+      }
     };
 
     const expected = [
@@ -65,6 +75,7 @@ describe('validerBruttoinntekt', () => {
   });
 
   it('should return false when stuff is no reason for change given', () => {
+    const input: CompleteState = {};
     const expected = [
       {
         code: 'INNTEKT_MANGLER',
@@ -72,6 +83,473 @@ describe('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt()).toEqual(expected);
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when tariffendring', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Tariffendring
+      }
+    };
+
+    const expected = [
+      {
+        code: 'TARIFFENDRING_FOM',
+        felt: 'bruttoinntekt-tariffendring-fom'
+      },
+      {
+        code: 'TARIFFENDRING_KJENT',
+        felt: 'bruttoinntekt-tariffendring-kjelt'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when ferie property is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Ferie
+      }
+    };
+
+    const expected = [
+      {
+        code: 'FERIE_MANGLER',
+        felt: 'bruttoinntekt-endringsaarsak'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when ferie fom & tom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Ferie
+      },
+      ferie: [{}]
+    };
+
+    const expected = [
+      {
+        code: 'FERIE_FOM',
+        felt: 'bruttoinntekt-ful-fom-undefined'
+      },
+      {
+        code: 'FERIE_TOM',
+        felt: 'bruttoinntekt-ful-tom-undefined'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+  it('should return an error when ferie fom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Ferie
+      },
+      ferie: [{ id: '1', fom: new Date() }]
+    };
+
+    const expected = [
+      {
+        code: 'FERIE_TOM',
+        felt: 'bruttoinntekt-ful-tom-1'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when ferie tom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Ferie
+      },
+      ferie: [{ id: '1', tom: new Date() }]
+    };
+
+    const expected = [
+      {
+        code: 'FERIE_FOM',
+        felt: 'bruttoinntekt-ful-fom-1'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+  /********************************************/
+  it('should return an error when varig lønnsendring date is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLonnsendring
+      }
+    };
+
+    const expected = [
+      {
+        code: 'LONNSENDRING_FOM_MANGLER',
+        felt: 'bruttoinntekt-lonnsendring-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when varig lønnsendring date is afte bestemmend fraværsdag', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLonnsendring
+      },
+      lonnsendringsdato: new Date(2002, 1, 2),
+      bestemmendeFravaersdag: new Date(2002, 1, 1)
+    };
+
+    const expected = [
+      {
+        code: 'LONNSENDRING_FOM_ETTER_BFD',
+        felt: 'bruttoinntekt-lonnsendring-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should no return an error when lønnsendring date is ok', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLonnsendring
+      },
+      lonnsendringsdato: new Date(2002, 1, 2),
+      bestemmendeFravaersdag: new Date(2002, 1, 3)
+    };
+
+    const expected = [];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+  /********** */
+  it('should return an error when permisjon property is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permisjon
+      }
+    };
+
+    const expected = [
+      {
+        code: 'PERMISJON_MANGLER',
+        felt: 'bruttoinntekt-permisjon-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when permisjon fom & tom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permisjon
+      },
+      permisjon: [{}]
+    };
+
+    const expected = [
+      {
+        code: 'PERMISJON_FOM',
+        felt: 'bruttoinntekt-permisjon-fom-undefined'
+      },
+      {
+        code: 'PERMISJON_TOM',
+        felt: 'bruttoinntekt-permisjon-tom-undefined'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+  it('should return an error when permisjon fom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permisjon
+      },
+      permisjon: [{ id: '1', fom: new Date() }]
+    };
+
+    const expected = [
+      {
+        code: 'PERMISJON_TOM',
+        felt: 'bruttoinntekt-permisjon-tom-1'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when permisjon tom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permisjon
+      },
+      permisjon: [{ id: '1', tom: new Date() }]
+    };
+
+    const expected = [
+      {
+        code: 'PERMISJON_FOM',
+        felt: 'bruttoinntekt-permisjon-fom-1'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+  /********** */
+  it('should return an error when permitering property is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permitering
+      }
+    };
+
+    const expected = [
+      {
+        code: 'PERMITERING_MANGLER',
+        felt: 'bruttoinntekt-permitering-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when permitering fom & tom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permitering
+      },
+      permitering: [{}]
+    };
+
+    const expected = [
+      {
+        code: 'PERMITERING_FOM',
+        felt: 'bruttoinntekt-permitering-fom-undefined'
+      },
+      {
+        code: 'PERMITERING_TOM',
+        felt: 'bruttoinntekt-permitering-tom-undefined'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+  it('should return an error when permitering fom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permitering
+      },
+      permitering: [{ id: '1', fom: new Date() }]
+    };
+
+    const expected = [
+      {
+        code: 'PERMITERING_TOM',
+        felt: 'bruttoinntekt-permitering-tom-1'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when permitering tom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permitering
+      },
+      permitering: [{ id: '1', tom: new Date() }]
+    };
+
+    const expected = [
+      {
+        code: 'PERMITERING_FOM',
+        felt: 'bruttoinntekt-permitering-fom-1'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  /********** */
+  it('should return an error when nystilling property is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.NyStilling
+      }
+    };
+
+    const expected = [
+      {
+        code: 'NYSTILLING_FOM_MANGLER',
+        felt: 'bruttoinntekt-nystilling-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when nystilling is undefined', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.NyStilling
+      },
+      nystillingdato: undefined
+    };
+
+    const expected = [
+      {
+        code: 'NYSTILLING_FOM_MANGLER',
+        felt: 'bruttoinntekt-nystilling-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+  it('should return an error when nystilling fom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.NyStilling
+      },
+      nystillingdato: new Date(2002, 1, 3),
+      bestemmendeFravaersdag: new Date(2002, 1, 2)
+    };
+
+    const expected = [
+      {
+        code: 'NYSTILLING_FOM_ETTER_BFD',
+        felt: 'bruttoinntekt-nystilling-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  /********** */
+  it('should return an error when nystillingsprosent property is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent
+      }
+    };
+
+    const expected = [
+      {
+        code: 'NYSTILLINGSPROSENT_FOM_MANGLER',
+        felt: 'bruttoinntekt-nystillingsprosent-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when nystillingsprosent is undefined', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent
+      },
+      nystillingsprosentdato: undefined
+    };
+
+    const expected = [
+      {
+        code: 'NYSTILLINGSPROSENT_FOM_MANGLER',
+        felt: 'bruttoinntekt-nystillingsprosent-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+  it('should return an error when nystillingsprosent fom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent
+      },
+      nystillingsprosentdato: new Date(2002, 1, 3),
+      bestemmendeFravaersdag: new Date(2002, 1, 2)
+    };
+
+    const expected = [
+      {
+        code: 'NYSTILLINGSPROSENT_FOM_ETTER_BFD',
+        felt: 'bruttoinntekt-nystillingsprosent-fom'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
   });
 });

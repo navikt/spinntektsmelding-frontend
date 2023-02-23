@@ -92,4 +92,19 @@ describe('validerLonnUnderSykefravaeret', () => {
 
     expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer)).toEqual([]);
   });
+
+  it('should return an error when beløp is missing and and lus status = Ja', () => {
+    const inputLUS: LonnISykefravaeret = {
+      status: 'Ja'
+    };
+
+    const expected = [
+      {
+        code: 'LONN_UNDER_SYKEFRAVAERET_BELOP',
+        felt: 'lus-input'
+      }
+    ];
+
+    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer)).toEqual(expected);
+  });
 });

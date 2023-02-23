@@ -88,7 +88,7 @@ export default function useValiderInntektsmelding() {
       feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperiode');
     }
 
-    feilkoderBruttoinntekt = validerBruttoinntekt(state.bruttoinntekt);
+    feilkoderBruttoinntekt = validerBruttoinntekt(state);
 
     if (state.naturalytelser) {
       feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);

@@ -5,6 +5,7 @@ interface SelectNaturalytelserProps {
   onChangeYtelse: (event: React.ChangeEvent<HTMLSelectElement>, ytelseId: string) => void;
   elementId: string;
   defaultValue?: string;
+  error?: string;
 }
 
 export default function SelectNaturalytelser(props: SelectNaturalytelserProps) {
@@ -14,6 +15,7 @@ export default function SelectNaturalytelser(props: SelectNaturalytelserProps) {
       label={''}
       onChange={(event) => props.onChangeYtelse(event, props.elementId)}
       defaultValue={props.defaultValue}
+      error={props.error}
     >
       <option value=''>Velg naturalytelse</option>
       {ytelsesKeys.map((ytelseKey) => (

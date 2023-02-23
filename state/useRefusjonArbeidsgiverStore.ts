@@ -43,6 +43,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         } else state.fullLonnIArbeidsgiverPerioden.status = status;
 
         state = slettFeilmelding(state, 'lia-radio');
+        state = slettFeilmelding(state, 'lus-uua-input');
 
         return state;
       })
@@ -121,7 +122,8 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.fullLonnIArbeidsgiverPerioden.utbetalt = stringishToNumber(beloep);
         }
 
-        if (beloep && stringishToNumber(beloep)! >= 0) {
+        const nBelop = stringishToNumber(beloep);
+        if (nBelop && nBelop >= 0) {
           state = slettFeilmelding(state, 'lus-uua-input');
         } else {
           state = leggTilFeilmelding(state, 'lus-uua-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);

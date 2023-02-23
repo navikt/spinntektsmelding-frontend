@@ -32,6 +32,10 @@ describe('validerLonnIArbeidsgiverperioden', () => {
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
         felt: 'lia-select'
+      },
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
+        felt: 'lus-uua-input'
       }
     ];
 
@@ -48,6 +52,10 @@ describe('validerLonnIArbeidsgiverperioden', () => {
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
         felt: 'lia-select'
+      },
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
+        felt: 'lus-uua-input'
       }
     ];
 

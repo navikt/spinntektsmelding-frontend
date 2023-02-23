@@ -9,6 +9,7 @@ import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
+import Datovelger from '../Datovelger';
 
 export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -85,6 +86,7 @@ export default function RefusjonArbeidsgiver() {
             <SelectBegrunnelse
               onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
               defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
+              error={visFeilmeldingsTekst('lia-select')}
             />
           </div>
         )}
@@ -129,10 +131,17 @@ export default function RefusjonArbeidsgiver() {
             </RadioGroup>
             {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
               <div className={styles.datepickerescape}>
-                <RefsjonArbeidsgiverSluttdato
+                {/* <RefsjonArbeidsgiverSluttdato
                   defaultValue={refusjonskravetOpphoerer.opphorsdato}
                   onDateChange={refusjonskravetOpphoererDato}
                   minDate={sisteDagIArbeidsgiverperioden}
+                /> */}
+                <Datovelger
+                  fromDate={sisteDagIArbeidsgiverperioden}
+                  onDateChange={refusjonskravetOpphoererDato}
+                  id={'lus-sluttdato'}
+                  label='Angi siste dag dere krever refusjon for'
+                  error={visFeilmeldingsTekst('lus-sluttdato')}
                 />
               </div>
             )}

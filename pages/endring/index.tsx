@@ -85,146 +85,150 @@ const Endring: NextPage = () => {
       <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
       <div>
         <PageContent title='Oppdatert informasjon - innsendt inntektsmelding'>
-          <main className={`main-content`}></main>
-          <form className={styles.padded} onSubmit={submitForm}>
-            <RadioGroup
-              legend='I følge den siste inntektsmeldingen hadde den ansatte en lønn på 50000 kr dd.mm.åååå. Har det vært noen
-            endringer i lønn for den ansatte mellom dd.mm.åååå og dd.mm.åååå?'
-              onChange={handleChangeEndringLonn}
-            >
-              <Radio value='Ja' className={lokalStyles.fancyRadio}>
-                Ja
-              </Radio>
-              <Radio value='Nei' className={lokalStyles.fancyRadio}>
-                Nei
-              </Radio>
-            </RadioGroup>
-            {endringBruttolonn && (
-              <>
-                <BodyLong>Siste inntektsmelding ({formatDate(sisteInnsending)}) hadde den ansatte:</BodyLong>
-                <BodyLong>
-                  Beregnet månedsinntekt:&nbsp;
-                  {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr
-                </BodyLong>
-                <BodyLong>Angi ny månedslønn per dd.mm.ååååå</BodyLong>
-                <div className={biStyles.endremaaanedsinntektwrapper}>
-                  <div className={biStyles.endremaaanedsinntekt}>
-                    <TextField
-                      label='Inntekt per måned'
-                      onChange={changeMaanedsintektHandler}
-                      defaultValue={formatCurrency(
-                        bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
-                      )}
-                      id='bruttoinntekt-endringsbelop'
-                      error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
-                      className={biStyles.bruttoinntektendringsbelop}
-                    />
-                    <div>
-                      <SelectEndringBruttoinntekt
-                        onChangeBegrunnelse={changeBegrunnelseHandler}
-                        error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
-                        id='bruttoinntekt-endringsaarsak'
-                      />
-                    </div>
-                  </div>
-                  {endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
+          <main className={`main-content`}>
+            <form className={styles.padded} onSubmit={submitForm}>
+              <RadioGroup
+                legend='I følge den siste inntektsmeldingen hadde den ansatte en lønn på 50000 kr dd.mm.åååå. Har det vært noen
+              endringer i lønn for den ansatte mellom dd.mm.åååå og dd.mm.åååå?'
+                onChange={handleChangeEndringLonn}
+              >
+                <Radio value='Ja' className={lokalStyles.fancyRadio}>
+                  Ja
+                </Radio>
+                <Radio value='Nei' className={lokalStyles.fancyRadio}>
+                  Nei
+                </Radio>
+              </RadioGroup>
+              {endringBruttolonn && (
+                <>
+                  <BodyLong>Siste inntektsmelding ({formatDate(sisteInnsending)}) hadde den ansatte:</BodyLong>
+                  <BodyLong>
+                    Beregnet månedsinntekt:&nbsp;
+                    {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr
+                  </BodyLong>
+                  <BodyLong>Angi ny månedslønn per dd.mm.ååååå</BodyLong>
+                  <div className={biStyles.endremaaanedsinntektwrapper}>
                     <div className={biStyles.endremaaanedsinntekt}>
-                      <TariffendringDato
-                        changeTariffEndretDato={setTariffEndringsdato}
-                        changeTariffKjentDato={setTariffKjentdato}
-                        defaultEndringsdato={tariffendringsdato}
-                        defaultKjentDato={tariffkjentdato}
+                      <TextField
+                        label='Inntekt per måned'
+                        onChange={changeMaanedsintektHandler}
+                        defaultValue={formatCurrency(
+                          bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
+                        )}
+                        id='bruttoinntekt-endringsbelop'
+                        error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
+                        className={biStyles.bruttoinntektendringsbelop}
                       />
-                    </div>
-                  )}
-                  {endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
-                    <div className={biStyles.endremaaanedsinntekt}>
-                      <div className={lokalStyles.endreperiodeliste}>
-                        <PeriodeListevelger
-                          onRangeListChange={setFeriePeriode}
-                          defaultRange={ferie}
-                          fomTekst='Fra'
-                          tomTekst='Til'
-                          fomIdBase='bruttoinntekt-ful-fom'
-                          tomIdBase='bruttoinntekt-ful-tom'
+                      <div>
+                        <SelectEndringBruttoinntekt
+                          onChangeBegrunnelse={changeBegrunnelseHandler}
+                          error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
+                          id='bruttoinntekt-endringsaarsak'
                         />
                       </div>
                     </div>
-                  )}
-                  {endringsaarsak === 'Lonnsokning' && (
-                    <div className={biStyles.endremaaanedsinntekt}>
-                      <LonnsendringDato
-                        onChangeLonnsendringsdato={setLonnsendringDato}
-                        defaultDate={lonnsendringsdato}
-                      />
-                    </div>
-                  )}
-                  {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
-                    <div className={lokalStyles.endremaaanedsinntekt}>
-                      <LonnsendringDato
-                        onChangeLonnsendringsdato={setLonnsendringDato}
-                        defaultDate={lonnsendringsdato}
-                      />
-                    </div>
-                  )}
-                  {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
-                    <div className={lokalStyles.endreperiodeliste}>
-                      <PeriodeListevelger
-                        onRangeListChange={setPermisjonPeriode}
-                        defaultRange={permisjon}
-                        fomTekst='Fra'
-                        tomTekst='Til'
-                        fomIdBase='bruttoinntekt-permisjon-fom'
-                        tomIdBase='bruttoinntekt-permisjon-tom'
-                      />
-                    </div>
-                  )}
-                  {endringsaarsak === begrunnelseEndringBruttoinntekt.Permitering && (
-                    <div className={lokalStyles.endreperiodeliste}>
-                      <PeriodeListevelger
-                        onRangeListChange={setPermiteringPeriode}
-                        defaultRange={permitering}
-                        fomTekst='Fra'
-                        tomTekst='Til'
-                        fomIdBase='bruttoinntekt-permitering-fom'
-                        tomIdBase='bruttoinntekt-permitering-tom'
-                      />
-                    </div>
-                  )}
-                  {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
-                    <div className={lokalStyles.endremaaanedsinntekt}>
-                      <NyStillingDato onChangeNyStillingEndringsdato={setNyStillingDato} defaultDate={nystillingdato} />
-                    </div>
-                  )}
-                  {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
-                    <div className={lokalStyles.endremaaanedsinntekt}>
-                      <NyStillingsprosentDato
-                        onChangeNyStillingsprosentdato={setNyStillingsprosentDato}
-                        defaultDate={nystillingsprosentdato}
-                      />
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-            {endringBruttolonn !== undefined && (
-              <>
-                <ConfirmationPanel
-                  className={styles.confirmationpanel}
-                  checked={opplysningerBekreftet}
-                  onClick={clickOpplysningerBekreftet}
-                  label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
-                  id='bekreft-opplysninger'
-                  error={visFeilmeldingsTekst('bekreft-opplysninger')}
-                >
-                  NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene
-                  ikke er riktige eller fullstendige.
-                </ConfirmationPanel>
-                <Feilsammendrag />
-                <Button className={styles.sendbutton}>Send</Button>
-              </>
-            )}
-          </form>
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
+                      <div className={biStyles.endremaaanedsinntekt}>
+                        <TariffendringDato
+                          changeTariffEndretDato={setTariffEndringsdato}
+                          changeTariffKjentDato={setTariffKjentdato}
+                          defaultEndringsdato={tariffendringsdato}
+                          defaultKjentDato={tariffkjentdato}
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
+                      <div className={biStyles.endremaaanedsinntekt}>
+                        <div className={lokalStyles.endreperiodeliste}>
+                          <PeriodeListevelger
+                            onRangeListChange={setFeriePeriode}
+                            defaultRange={ferie}
+                            fomTekst='Fra'
+                            tomTekst='Til'
+                            fomIdBase='bruttoinntekt-ful-fom'
+                            tomIdBase='bruttoinntekt-ful-tom'
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {endringsaarsak === 'Lonnsokning' && (
+                      <div className={biStyles.endremaaanedsinntekt}>
+                        <LonnsendringDato
+                          onChangeLonnsendringsdato={setLonnsendringDato}
+                          defaultDate={lonnsendringsdato}
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
+                      <div className={lokalStyles.endremaaanedsinntekt}>
+                        <LonnsendringDato
+                          onChangeLonnsendringsdato={setLonnsendringDato}
+                          defaultDate={lonnsendringsdato}
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
+                      <div className={lokalStyles.endreperiodeliste}>
+                        <PeriodeListevelger
+                          onRangeListChange={setPermisjonPeriode}
+                          defaultRange={permisjon}
+                          fomTekst='Fra'
+                          tomTekst='Til'
+                          fomIdBase='bruttoinntekt-permisjon-fom'
+                          tomIdBase='bruttoinntekt-permisjon-tom'
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Permitering && (
+                      <div className={lokalStyles.endreperiodeliste}>
+                        <PeriodeListevelger
+                          onRangeListChange={setPermiteringPeriode}
+                          defaultRange={permitering}
+                          fomTekst='Fra'
+                          tomTekst='Til'
+                          fomIdBase='bruttoinntekt-permitering-fom'
+                          tomIdBase='bruttoinntekt-permitering-tom'
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
+                      <div className={lokalStyles.endremaaanedsinntekt}>
+                        <NyStillingDato
+                          onChangeNyStillingEndringsdato={setNyStillingDato}
+                          defaultDate={nystillingdato}
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
+                      <div className={lokalStyles.endremaaanedsinntekt}>
+                        <NyStillingsprosentDato
+                          onChangeNyStillingsprosentdato={setNyStillingsprosentDato}
+                          defaultDate={nystillingsprosentdato}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+              {endringBruttolonn !== undefined && (
+                <>
+                  <ConfirmationPanel
+                    className={styles.confirmationpanel}
+                    checked={opplysningerBekreftet}
+                    onClick={clickOpplysningerBekreftet}
+                    label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+                    id='bekreft-opplysninger'
+                    error={visFeilmeldingsTekst('bekreft-opplysninger')}
+                  >
+                    NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene
+                    ikke er riktige eller fullstendige.
+                  </ConfirmationPanel>
+                  <Feilsammendrag />
+                  <Button className={styles.sendbutton}>Send</Button>
+                </>
+              )}
+            </form>
+          </main>
         </PageContent>
       </div>
     </div>

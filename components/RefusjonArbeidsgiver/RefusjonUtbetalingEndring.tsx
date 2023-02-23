@@ -5,6 +5,7 @@ import styles from '../../styles/Home.module.css';
 import stringishToNumber from '../../utils/stringishToNumber';
 import ButtonSlette from '../ButtonSlette';
 import Datovelger from '../Datovelger';
+import useBoundStore from '../../state/useBoundStore';
 
 export interface EndringsBelop {
   belop?: number;
@@ -25,6 +26,7 @@ export default function RefusjonUtbetalingEndring({
   onOppdaterEndringer,
   onHarEndringer
 }: RefusjonUtbetalingEndringProps) {
+  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const [harEndringer, setHarEndringer] = useState<boolean>(false);
   const oppdaterEndringer = (endringer?: Array<EndringsBelop>): void => {
     if (onOppdaterEndringer) {
@@ -88,9 +90,9 @@ export default function RefusjonUtbetalingEndring({
     <>
       <RadioGroup
         legend='Er det endringer i månedslønn i perioden?'
-        id={'lus-utbetaling-endring'}
+        id={'lus-utbetaling-endring-radio'}
         className={styles.radiobuttonwrapper}
-        // error={visFeilmeldingsTekst('lus-sluttdato-velg')}
+        error={visFeilmeldingsTekst('lus-utbetaling-endring-radio')}
         onChange={changeHarEndringerHandler}
         // defaultValue={refusjonskravetOpphoerer?.status}
       >
@@ -107,6 +109,7 @@ export default function RefusjonUtbetalingEndring({
               defaultValue={endring.belop}
               id={`lus-utbetaling-endring-belop-${key}`}
               onBlur={(event) => changeBelopHandler(event, key)}
+              error={visFeilmeldingsTekst(`lus-utbetaling-endring-belop-${key}`)}
             />
             <Datovelger
               fromDate={minDate}
@@ -114,6 +117,7 @@ export default function RefusjonUtbetalingEndring({
               onDateChange={(val: Date | undefined) => changeDatoHandler(val, key)}
               id={`lus-utbetaling-endring-dato-${key}`}
               label='Dato for lønnsendring'
+              error={visFeilmeldingsTekst(`lus-utbetaling-endring-dato-${key}`)}
             />
             {key !== 0 && (
               <ButtonSlette

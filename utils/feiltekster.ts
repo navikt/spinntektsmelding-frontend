@@ -23,7 +23,27 @@ const feiltekster = {
   SERVERFEIL_IM: 'Kunne ikke hente ut inntektsmeldingdata.',
   BRUTTOINNTEKT_ARBEIDSFORHOLD_MANGLER: 'Angi bruttoinntekt for minst et arbeidsforhold.',
   FOR_MANGE_DAGER_MELLOM: 'Det kan ikke være mer enn 16 dager mellom periodene.',
-  FOR_MANGE_DAGER_I_PERIODE: 'Det kan ikke være mer enn 16 dager i perioden'
+  FOR_MANGE_DAGER_I_PERIODE: 'Det kan ikke være mer enn 16 dager i perioden.',
+  MANGLER_TYPE: 'Angi naturalytelse.',
+  MANGLER_BORTFALLSDATO: 'Angi dato naturalytelsen bortfaller.',
+  MANGLER_VERDI: 'Angi verdien på naturalytelsen.',
+  LONN_I_ARBEIDSGIVERPERIODEN_BELOP: 'Angi beløp. Må være over 0.',
+  MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN: 'Angi om det har vært endring i månedslønn i perioden',
+  MANGLER_BELOP: 'Angi ny lønn',
+  MANGLER_DATO: 'Angi dato for lønnsendring',
+  FERIE_FOM: 'Angi fra dato',
+  FERIE_TOM: 'Angi til dato',
+  LONNSENDRING_FOM_MANGLER: 'Angi fra dato',
+  LONNSENDRING_FOM_ETTER_BFD: 'Lønnsendring må ha skjedd før sykefrværet startet',
+  TARIFFENDRING_FOM: 'Angi dato for tariffendring',
+  TARIFFENDRING_KJENT: 'Angi dato tariffendring ble kjent',
+  PERMISJON_FOM: 'Angi fra dato',
+  PERMISJON_TOM: 'Angi til dato',
+  PERMISJON_MANGLER: 'Angi tid for permisjon',
+  NYSTILLING_FOM_MANGLER: 'Angi fra dato',
+  NYSTILLING_FOM_ETTER_BFD: 'Endring av stilling må ha skjedd før sykefrværet startet',
+  NYSTILLINGSPROSENT_FOM_ETTER_BFD: 'Endring av stillingsprosent må ha skjedd før sykefrværet startet',
+  NYSTILLINGSPROSENT_FOM_MANGLER: 'Angi fra dato'
 };
 
 export default feiltekster;

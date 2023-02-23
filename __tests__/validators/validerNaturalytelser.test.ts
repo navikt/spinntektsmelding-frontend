@@ -27,7 +27,7 @@ describe('validerNaturalytelser', () => {
     const expected = [
       {
         code: 'MANGLER_BORTFALLSDATO',
-        felt: 'tilfeldig'
+        felt: 'naturalytelse-dato-tilfeldig'
       }
     ];
 
@@ -46,7 +46,7 @@ describe('validerNaturalytelser', () => {
     const expected = [
       {
         code: 'MANGLER_TYPE',
-        felt: 'tilfeldig'
+        felt: 'naturalytelse-type-tilfeldig'
       }
     ];
 
@@ -65,7 +65,7 @@ describe('validerNaturalytelser', () => {
     const expected = [
       {
         code: 'MANGLER_VERDI',
-        felt: 'tilfeldig'
+        felt: 'naturalytelse-belop-tilfeldig'
       }
     ];
 
@@ -88,7 +88,7 @@ describe('validerNaturalytelser', () => {
       },
       {
         code: 'MANGLER_VERDI',
-        felt: 'tilfeldig'
+        felt: 'naturalytelse-belop-tilfeldig'
       }
     ];
 

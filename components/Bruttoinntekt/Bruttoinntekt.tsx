@@ -11,12 +11,10 @@ import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonEndre from '../ButtonEndre';
 import formatDate from '../../utils/formatDate';
 import TariffendringDato from './TariffendringDato';
-import LonnsendringDato from './LonnsendringDato';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
-import NyStillingDato from './NyStillingDato';
-import NyStillingsprosentDato from './NyStillingsprosentDato';
 import PeriodeListevelger from './PeriodeListevelger';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
+import Datovelger from '../Datovelger';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -34,7 +32,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   ]);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
-  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
   const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
   const ferie = useBoundStore((state) => state.ferie);
@@ -131,6 +128,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     changeTariffKjentDato={setTariffKjentdato}
                     defaultEndringsdato={tariffendringsdato}
                     defaultKjentDato={tariffkjentdato}
+                    visFeilmeldingsTekst={visFeilmeldingsTekst}
                   />
                 </div>
               )}
@@ -143,15 +141,19 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     tomTekst='Til'
                     fomIdBase='bruttoinntekt-ful-fom'
                     tomIdBase='bruttoinntekt-ful-tom'
+                    visFeilmeldingsTekst={visFeilmeldingsTekst}
                   />
                 </div>
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
                 <div className={lokalStyles.endremaaanedsinntekt}>
-                  <LonnsendringDato
-                    onChangeLonnsendringsdato={setLonnsendringDato}
-                    defaultDate={lonnsendringsdato}
+                  <Datovelger
+                    onDateChange={setLonnsendringDato}
+                    label='Lønnsendring gjelder fra'
+                    id='bruttoinntekt-lonnsendring-fom'
+                    defaultSelected={lonnsendringsdato}
                     toDate={bestemmendeFravaersdag}
+                    error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
                   />
                 </div>
               )}
@@ -181,18 +183,22 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
                 <div className={lokalStyles.endremaaanedsinntekt}>
-                  <NyStillingDato
-                    onChangeNyStillingEndringsdato={setNyStillingDato}
-                    defaultDate={nystillingdato}
+                  <Datovelger
+                    onDateChange={setNyStillingDato}
+                    label='Ny stilling fra'
+                    id='bruttoinntekt-nystilling-fom'
+                    defaultSelected={nystillingdato}
                     toDate={bestemmendeFravaersdag}
                   />
                 </div>
               )}
               {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
                 <div className={lokalStyles.endremaaanedsinntekt}>
-                  <NyStillingsprosentDato
-                    onChangeNyStillingsprosentdato={setNyStillingsprosentDato}
-                    defaultDate={nystillingsprosentdato}
+                  <Datovelger
+                    onDateChange={setNyStillingsprosentDato}
+                    label='Ny stillingsprosent fra'
+                    id='bruttoinntekt-nystillingsprosent-fom'
+                    defaultSelected={nystillingsprosentdato}
                     toDate={bestemmendeFravaersdag}
                   />
                 </div>

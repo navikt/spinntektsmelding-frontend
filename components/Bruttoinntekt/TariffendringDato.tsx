@@ -6,13 +6,15 @@ interface TariffendringDatoProps {
   changeTariffKjentDato: (newDate: Date | undefined) => void;
   defaultEndringsdato?: Date;
   defaultKjentDato?: Date;
+  visFeilmeldingsTekst?: (feilmelding: string) => string;
 }
 
 export default function TariffendringDato({
   changeTariffEndretDato,
   changeTariffKjentDato,
   defaultEndringsdato,
-  defaultKjentDato
+  defaultKjentDato,
+  visFeilmeldingsTekst
 }: TariffendringDatoProps) {
   const tilDato = new Date();
   return (
@@ -23,6 +25,7 @@ export default function TariffendringDato({
         id='bruttoinntekt-tariffendring-fom'
         defaultSelected={defaultEndringsdato}
         toDate={tilDato}
+        error={visFeilmeldingsTekst ? visFeilmeldingsTekst('bruttoinntekt-tariffendring-fom') : undefined}
       />
 
       <Datovelger
@@ -31,6 +34,7 @@ export default function TariffendringDato({
         id='bruttoinntekt-tariffendring-kjelt'
         defaultSelected={defaultKjentDato}
         toDate={tilDato}
+        error={visFeilmeldingsTekst ? visFeilmeldingsTekst('bruttoinntekt-tariffendring-kjelt') : undefined}
       />
     </div>
   );

@@ -1,11 +1,25 @@
 .tablenaturalytelse {
-    border-spacing: .5rem;
-    margin: 0 -.5rem;
-  }
-  .tablenaturalytelse th {
-    text-align: left;
-  }
-  
-  .naturalytelserknapp {
-    margin-bottom: 2rem;
-  }
+  border-spacing: .5rem;
+  margin        : 0 -.5rem;
+}
+
+.tablenaturalytelse th {
+  text-align: left;
+}
+
+.naturalytelserknapp {
+  margin-bottom: 2rem;
+}
+
+.tableRow,
+.tableHeader {
+  display       : flex;
+  flex-direction: row;
+  gap           : 1rem
+}
+
+.tableItem,
+.tableHeaderItem {
+  width    : 25%;
+  max-width: 25%;
+}

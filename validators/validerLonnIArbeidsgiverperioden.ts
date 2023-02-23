@@ -3,7 +3,8 @@ import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum LonnIArbeidsgiverperiodenFeilkode {
   LONN_I_ARBEIDSGIVERPERIODEN_MANGLER = 'LONN_I_ARBEIDSGIVERPERIODEN_MANGLER',
-  LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE = 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE'
+  LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE = 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
+  LONN_I_ARBEIDSGIVERPERIODEN_BELOP = 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP'
 }
 
 export default function validerLonnIArbeidsgiverperioden(lonnIAP?: LonnIArbeidsgiverperioden): Array<ValiderResultat> {
@@ -19,6 +20,13 @@ export default function validerLonnIArbeidsgiverperioden(lonnIAP?: LonnIArbeidsg
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE,
         felt: 'lia-select'
+      });
+    }
+
+    if (lonnIAP.status === 'Nei' && (!lonnIAP.utbetalt || lonnIAP.utbetalt >= 0)) {
+      errorStatus.push({
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
+        felt: 'lus-uua-input'
       });
     }
   }

@@ -4,12 +4,14 @@ interface NaturalytelseBortfallsdatoInterface {
   naturalytelseId: string;
   setNaturalytelseBortfallsdato: (naturalytelseId: string, dato?: Date | undefined) => void;
   defaultValue?: Date;
+  error?: React.ReactNode;
 }
 
 export default function NaturalytelseBortfallsdato({
   naturalytelseId,
   setNaturalytelseBortfallsdato,
-  defaultValue
+  defaultValue,
+  error
 }: NaturalytelseBortfallsdatoInterface) {
   const setBortfallsdato = (bortfallsdato: Date | undefined) => {
     setNaturalytelseBortfallsdato(naturalytelseId, bortfallsdato);
@@ -19,9 +21,10 @@ export default function NaturalytelseBortfallsdato({
     <Datovelger
       onDateChange={setBortfallsdato}
       label='Dato naturalytelse bortfaller'
-      id={'naturalytele-input-fom-dato-' + naturalytelseId}
+      id={'naturalytele-dato-' + naturalytelseId}
       hideLabel={true}
       defaultSelected={defaultValue}
+      error={error}
     />
   );
 }

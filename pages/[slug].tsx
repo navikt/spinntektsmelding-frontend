@@ -167,10 +167,10 @@ const Home: NextPage = () => {
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main role='main' id='maincontent' tabIndex={-1}>
+      <div>
         <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
         <PageContent title='Inntektsmelding'>
-          <main className='main-content'>
+          <main className='main-content' role='main' id='maincontent' tabIndex={-1}>
             <form className={styles.padded} onSubmit={submitForm}>
               <Person />
 
@@ -218,7 +218,7 @@ const Home: NextPage = () => {
         </PageContent>
         <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
         <Script type='text/javascript' src='https://www.nav.no/dekoratoren/client.js'></Script>
-      </main>
+      </div>
     </div>
   );
 };

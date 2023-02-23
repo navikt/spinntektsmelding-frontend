@@ -25,21 +25,21 @@ export default function validerNaturalytelser(
     naturalytelser.forEach((ytelse) => {
       if (!ytelse.bortfallsdato) {
         feilkoder.push({
-          felt: ytelse.id,
+          felt: 'naturalytelse-dato-' + ytelse.id,
           code: NaturalytelserFeilkoder.MANGLER_BORTFALLSDATO
         });
       }
 
       if (!ytelse.verdi) {
         feilkoder.push({
-          felt: ytelse.id,
+          felt: 'naturalytelse-belop-' + ytelse.id,
           code: NaturalytelserFeilkoder.MANGLER_VERDI
         });
       }
 
       if (!ytelse.type) {
         feilkoder.push({
-          felt: ytelse.id,
+          felt: 'naturalytelse-type-' + ytelse.id,
           code: NaturalytelserFeilkoder.MANGLER_TYPE
         });
       }

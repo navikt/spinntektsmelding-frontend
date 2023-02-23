@@ -5,6 +5,7 @@ import localStyles from './RefusjonArbeidsgiver.module.css';
 interface SelectBegrunnelseProps {
   onChangeBegrunnelse: (verdi: string) => void;
   defaultValue?: string;
+  error?: React.ReactNode;
 }
 
 export default function SelectBegrunnelse(props: SelectBegrunnelseProps) {
@@ -16,6 +17,7 @@ export default function SelectBegrunnelse(props: SelectBegrunnelseProps) {
       id={'lia-select'}
       className={localStyles.selectbegrunnelse}
       defaultValue={props.defaultValue}
+      error={props.error}
     >
       <option value=''>Velg begrunnelse</option>
       {begrunnelseKeys.map((begrunnelseKey) => (

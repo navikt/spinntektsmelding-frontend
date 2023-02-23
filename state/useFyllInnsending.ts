@@ -4,7 +4,6 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode } from './state';
 import useBoundStore from './useBoundStore';
-import { EndringsBelop } from '/Users/kent/git/spinntektsmelding-frontend/components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 
 interface SendtPeriode {
   fom: string;

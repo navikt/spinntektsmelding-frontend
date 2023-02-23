@@ -17,6 +17,7 @@ export default function Naturalytelser() {
   const setNaturalytelseVerdi = useBoundStore((state) => state.setNaturalytelseVerdi);
   const slettNaturalytelse = useBoundStore((state) => state.slettNaturalytelse);
   const slettAlleNaturalytelser = useBoundStore((state) => state.slettAlleNaturalytelser);
+  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
 
   const visNaturalytelser = (event: React.MouseEvent<HTMLInputElement>) => {
     if (event.currentTarget.checked === true) {
@@ -64,6 +65,7 @@ export default function Naturalytelser() {
                       onChangeYtelse={(event) => setNaturalytelseType(element.id, event.target.value)}
                       elementId={element.id}
                       defaultValue={element.type}
+                      error={visFeilmeldingsTekst('naturalytelse-type-' + element.id)}
                     />
                   </td>
 
@@ -72,6 +74,7 @@ export default function Naturalytelser() {
                       naturalytelseId={element.id}
                       setNaturalytelseBortfallsdato={setNaturalytelseBortfallsdato}
                       defaultValue={element.bortfallsdato}
+                      error={visFeilmeldingsTekst('naturalytelse-dato-' + element.id)}
                     />
                   </td>
                   <td>
@@ -80,6 +83,7 @@ export default function Naturalytelser() {
                       className={styles.fnr}
                       onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
                       defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
+                      error={visFeilmeldingsTekst('naturalytelse-belop-' + element.id)}
                     ></TextField>
                   </td>
                   <td>

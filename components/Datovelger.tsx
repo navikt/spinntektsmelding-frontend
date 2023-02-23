@@ -10,6 +10,7 @@ interface DatovelgerProps {
   hideLabel?: boolean;
   disabled?: boolean;
   defaultMonth?: Date;
+  error?: React.ReactNode;
 }
 
 export default function Datovelger({
@@ -21,7 +22,8 @@ export default function Datovelger({
   label,
   hideLabel,
   disabled,
-  defaultMonth
+  defaultMonth,
+  error
 }: DatovelgerProps) {
   const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
     toDate: toDate,
@@ -33,7 +35,14 @@ export default function Datovelger({
 
   return (
     <UNSAFE_DatePicker {...datepickerProps}>
-      <UNSAFE_DatePicker.Input {...inputProps} label={label} id={id} hideLabel={hideLabel} disabled={disabled} />
+      <UNSAFE_DatePicker.Input
+        {...inputProps}
+        label={label}
+        id={id}
+        hideLabel={hideLabel}
+        disabled={disabled}
+        error={error}
+      />
     </UNSAFE_DatePicker>
   );
 }
