@@ -38,11 +38,11 @@ export default function valdiderEndringAvMaanedslonn(
         });
       }
     });
-  } else {
-    feilmeldinger.push({
-      felt: `lus-utbetaling-endring-belop-1`,
-      code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP_OG_DATO
-    });
+    // } else {
+    //   feilmeldinger.push({
+    //     felt: `lus-utbetaling-endring-belop-1`,
+    //     code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP_OG_DATO
+    //   });
   }
   return feilmeldinger;
 }
