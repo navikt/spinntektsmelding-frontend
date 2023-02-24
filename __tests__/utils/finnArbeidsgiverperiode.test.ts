@@ -117,4 +117,26 @@ describe('finnArbeidsgiverperiode', () => {
       }
     ]);
   });
+
+  it('should return the correct arbeidsgiverperiode for two long periode with some time between', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2022-05-01'),
+        tom: parseISO('2022-05-25')
+      },
+      {
+        id: '2',
+        fom: parseISO('2022-06-01'),
+        tom: parseISO('2022-06-23')
+      }
+    ];
+    expect(finnArbeidsgiverperiode(periode)).toEqual([
+      {
+        id: '1',
+        fom: parseISO('2022-05-01'),
+        tom: parseISO('2022-05-16')
+      }
+    ]);
+  });
 });

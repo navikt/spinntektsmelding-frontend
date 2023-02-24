@@ -9,10 +9,15 @@ const finn16dager = (perioder: Array<Periode>) => {
   perioder.forEach((periode) => {
     if (dagerTotalt < 15) {
       const dagerTilNaa = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt;
+      dagerTotalt = dagerTilNaa;
       if (dagerTilNaa < 15) {
         arbPeriode.push(periode);
       } else {
-        arbPeriode.push({ fom: periode.fom, tom: addDays(periode.fom!, 15 - dagerTotalt), id: periode.id });
+        arbPeriode.push({
+          fom: periode.fom,
+          tom: addDays(periode.fom!, 15 - (dagerTotalt - dagerTilNaa)),
+          id: periode.id
+        });
       }
       return;
     }
