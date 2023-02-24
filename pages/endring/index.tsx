@@ -17,6 +17,8 @@ import lokalStyles from './Endring.module.css';
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import PeriodeListevelger from '../../components/Bruttoinntekt/PeriodeListevelger';
 import Datovelger from '../../components/Datovelger';
+import classNames from 'classnames/bind';
+import Heading1 from '../../components/Heading1/Heading1';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<boolean | undefined>(undefined);
@@ -74,6 +76,9 @@ const Endring: NextPage = () => {
 
   const sisteInnsending = new Date();
 
+  let cx = classNames.bind(lokalStyles);
+  const classNameJa = cx({ fancyRadio: true, selectedRadio: endringBruttolonn });
+  const classNameNei = cx({ fancyRadio: true, selectedRadio: endringBruttolonn !== undefined && !endringBruttolonn });
   return (
     <div className={styles.container}>
       <Head>
@@ -90,16 +95,18 @@ const Endring: NextPage = () => {
                 legend='I følge den siste inntektsmeldingen hadde den ansatte en lønn på 50000 kr dd.mm.åååå. Har det vært noen
               endringer i lønn for den ansatte mellom dd.mm.åååå og dd.mm.åååå?'
                 onChange={handleChangeEndringLonn}
+                className={lokalStyles.fancyRadioGruppe}
               >
-                <Radio value='Ja' className={lokalStyles.fancyRadio}>
+                <Radio value='Ja' className={classNameJa}>
                   Ja
                 </Radio>
-                <Radio value='Nei' className={lokalStyles.fancyRadio}>
+                <Radio value='Nei' className={classNameNei}>
                   Nei
                 </Radio>
               </RadioGroup>
               {endringBruttolonn && (
                 <>
+                  <Heading1>Brutto månedslønn</Heading1>
                   <BodyLong>Siste inntektsmelding ({formatDate(sisteInnsending)}) hadde den ansatte:</BodyLong>
                   <BodyLong>
                     Beregnet månedsinntekt:&nbsp;
