@@ -14,13 +14,13 @@ export default function valdiderEndringAvMaanedslonn(
 ): Array<ValiderResultat> {
   let feilmeldinger: Array<ValiderResultat> = [];
 
-  if (!harRefusjonEndringer) {
-    feilmeldinger.push({
-      felt: 'lus-utbetaling-endring-radio',
-      code: EndringAvMaanedslonnFeilkode.MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN
-    });
-    return feilmeldinger;
-  }
+  // if (!harRefusjonEndringer) {
+  //   feilmeldinger.push({
+  //     felt: 'lus-utbetaling-endring-radio',
+  //     code: EndringAvMaanedslonnFeilkode.MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN
+  //   });
+  //   return feilmeldinger;
+  // }
 
   if (refusjonEndringer) {
     refusjonEndringer.forEach((endring, index) => {
