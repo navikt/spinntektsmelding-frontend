@@ -11,6 +11,7 @@ import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
+import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -48,7 +49,10 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       <BodyLong>
         Vi har brukt eventuell egenmelding og sykmeldingsperiode til å estimere et forslag til arbeidsgiverperiode. Hvis
         du mener dette er feil må dere korrigere perioden. Informasjonen brukes til å avgjøre når Nav skal overta
-        betaling av sykepenger etter arbeidsgiverperiodens utløp.
+        betaling av sykepenger etter arbeidsgiverperiodens utløp.{' '}
+        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
+          Les mer om hvordan arbeidsgiverperioden beregnes.
+        </LenkeEksternt>
       </BodyLong>
       <div className={lokalStyles.datowrapper}>
         <div>

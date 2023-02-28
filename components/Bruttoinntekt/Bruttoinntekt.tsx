@@ -15,6 +15,7 @@ import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 import PeriodeListevelger from './PeriodeListevelger';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import Datovelger from '../Datovelger';
+import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -81,6 +82,14 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     return (
       <>
         <Heading3>Beregnet månedslønn</Heading3>
+        <BodyLong>
+          Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
+          til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
+          <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
+            Les mer om beregning av månedslønn.
+          </LenkeEksternt>
+        </BodyLong>
+        <br />
         <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
         <TidligereInntekt tidligereinntekt={tidligereinntekt} />
         {!endringAvBelop && (
@@ -223,10 +232,13 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
       <>
         <Heading3>Beregnet månedslønn</Heading3>
         <BodyLong>
-          Angi bruttoinntekt som snitt av siste tre måneders lønn. Dersom inntekten har gått opp pga. varig
-          lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes som
-          høyere enn snitt av siste tre måneder..
+          Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
+          til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
+          <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
+            Les mer om beregning av månedslønn.
+          </LenkeEksternt>
         </BodyLong>
+        <br />
         <div className={lokalStyles.prosentbody}>
           <TextField
             label='Gjennomsnittsinntekt per måned'

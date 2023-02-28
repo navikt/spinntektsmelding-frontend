@@ -1,4 +1,5 @@
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { LonnISykefravaeret, YesNo } from '../state/state';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum EndringAvMaanedslonnFeilkode {
@@ -10,17 +11,18 @@ export enum EndringAvMaanedslonnFeilkode {
 
 export default function valdiderEndringAvMaanedslonn(
   harRefusjonEndringer?: boolean,
-  refusjonEndringer?: Array<EndringsBelop>
+  refusjonEndringer?: Array<EndringsBelop>,
+  lonnISykefravaeret?: LonnISykefravaeret
 ): Array<ValiderResultat> {
   let feilmeldinger: Array<ValiderResultat> = [];
-
-  // if (!harRefusjonEndringer) {
-  //   feilmeldinger.push({
-  //     felt: 'lus-utbetaling-endring-radio',
-  //     code: EndringAvMaanedslonnFeilkode.MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN
-  //   });
-  //   return feilmeldinger;
-  // }
+  const harLonnISykefravaeret = lonnISykefravaeret && lonnISykefravaeret.status === 'Ja';
+  if (harLonnISykefravaeret && harRefusjonEndringer === undefined) {
+    feilmeldinger.push({
+      felt: 'lus-utbetaling-endring-radio',
+      code: EndringAvMaanedslonnFeilkode.MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN
+    });
+    return feilmeldinger;
+  }
 
   if (refusjonEndringer) {
     refusjonEndringer.forEach((endring, index) => {
@@ -38,11 +40,6 @@ export default function valdiderEndringAvMaanedslonn(
         });
       }
     });
-    // } else {
-    //   feilmeldinger.push({
-    //     felt: `lus-utbetaling-endring-belop-1`,
-    //     code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP_OG_DATO
-    //   });
   }
   return feilmeldinger;
 }

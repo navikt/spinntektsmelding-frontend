@@ -9,6 +9,7 @@ import localStyles from './RefusjonArbeidsgiver.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import Datovelger from '../Datovelger';
+import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 
 export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -40,7 +41,7 @@ export default function RefusjonArbeidsgiver() {
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
-
+  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const muteableArbeidsgiverperioder = structuredClone(arbeidsgiverperioder);
   const sisteArbeidsgiverperiode = muteableArbeidsgiverperioder?.sort((a, b) => (a.fom > b.fom ? -1 : 1));
 
@@ -51,7 +52,10 @@ export default function RefusjonArbeidsgiver() {
       <Heading3>Utbetaling og refusjon</Heading3>
       <BodyLong>
         Vi må vite om arbeidsgiver betaler lønn til den ansatte under sykmeldingsperioden og om NAV skal betale ut
-        sykepenger til den ansatte eller bedriften etter arbeidsgiverperioden.
+        sykepenger til den ansatte eller bedriften etter arbeidsgiverperioden.{' '}
+        <LenkeEksternt href='https://www.nav.no/no/bedrift/oppfolging/sykmeldt-arbeidstaker/sykepenger/na%CC%8Ar-du-forskutterer-sykepenger-etter-arbeidsgiverperioden_kap1'>
+          Les om de ulike refusjonsreglene.
+        </LenkeEksternt>
       </BodyLong>
 
       <div>
@@ -115,6 +119,7 @@ export default function RefusjonArbeidsgiver() {
               minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
               onHarEndringer={setHarRefusjonEndringer}
               onOppdaterEndringer={oppdaterRefusjonEndringer}
+              harRefusjonEndring={harRefusjonEndringer}
             />
 
             <RadioGroup

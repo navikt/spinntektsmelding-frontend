@@ -15,6 +15,7 @@ interface RefusjonUtbetalingEndringProps {
   endringer: Array<EndringsBelop>;
   minDate?: Date;
   maxDate?: Date;
+  harRefusjonEndring?: boolean;
   onOppdaterEndringer?: (endringer: Array<EndringsBelop>) => void;
   onHarEndringer?: (harEndring: boolean) => void;
 }
@@ -24,10 +25,10 @@ export default function RefusjonUtbetalingEndring({
   minDate,
   maxDate,
   onOppdaterEndringer,
-  onHarEndringer
+  onHarEndringer,
+  harRefusjonEndring
 }: RefusjonUtbetalingEndringProps) {
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
-  const [harEndringer, setHarEndringer] = useState<boolean>(false);
   const oppdaterEndringer = (endringer?: Array<EndringsBelop>): void => {
     if (onOppdaterEndringer) {
       onOppdaterEndringer(endringer || []);
@@ -61,7 +62,7 @@ export default function RefusjonUtbetalingEndring({
   const changeDatoHandler = (dato: Date | undefined, index: number) => {
     const tmpEndringer = structuredClone(endringer);
 
-    if (!tmpEndringer[index].dato && !tmpEndringer[index].dato === undefined) {
+    if (!tmpEndringer[index].dato && tmpEndringer[index].dato !== undefined) {
       tmpEndringer[index] = {
         belop: undefined,
         dato: dato
@@ -72,7 +73,6 @@ export default function RefusjonUtbetalingEndring({
   };
 
   const changeHarEndringerHandler = (status: string) => {
-    setHarEndringer(status === 'Ja');
     if (onHarEndringer) {
       onHarEndringer(status === 'Ja');
     }
@@ -100,7 +100,7 @@ export default function RefusjonUtbetalingEndring({
         <Radio value='Nei'>Nei</Radio>
       </RadioGroup>
 
-      {harEndringer &&
+      {harRefusjonEndring &&
         endringer.map((endring, key) => (
           <div key={key} className={lokalStyles.belopperiode}>
             <TextField
@@ -129,7 +129,7 @@ export default function RefusjonUtbetalingEndring({
           </div>
         ))}
 
-      {harEndringer && (
+      {harRefusjonEndring && (
         <Button
           variant='secondary'
           className={lokalStyles.legtilbutton}

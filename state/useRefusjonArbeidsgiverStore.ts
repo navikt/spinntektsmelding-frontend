@@ -144,6 +144,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
             status: status
           };
         }
+        slettFeilmelding(state, 'lus-sluttdato-velg');
         return state;
       })
     ),
@@ -168,7 +169,14 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         state.refusjonEndringer = endringer;
-
+        endringer.forEach((endring, index) => {
+          if (endring.belop && endring.belop >= 0) {
+            slettFeilmelding(state, 'lus-utbetaling-endring-belop-' + index);
+          }
+          if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
+            slettFeilmelding(state, 'lus-utbetaling-endring-dato-' + index);
+          }
+        });
         return state;
       })
     ),

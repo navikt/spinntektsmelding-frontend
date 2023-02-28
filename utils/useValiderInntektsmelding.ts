@@ -101,7 +101,11 @@ export default function useValiderInntektsmelding() {
       state.refusjonskravetOpphoerer
     );
 
-    feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(state.harRefusjonEndringer, state.refusjonEndringer);
+    feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
+      state.harRefusjonEndringer,
+      state.refusjonEndringer,
+      state.lonnISykefravaeret
+    );
 
     feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);
 
