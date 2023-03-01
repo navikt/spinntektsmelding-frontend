@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import TidligereInntekt from '../../../components/Bruttoinntekt/TidligereInntekt';
 import { HistoriskInntekt } from '../../../state/state';
 
@@ -6,14 +7,14 @@ describe('TidligereInntekt', () => {
   it('renders 3 rows', () => {
     const tidligereinntekt: Array<HistoriskInntekt> = [
       {
-        maanedsnavn: '2020-11',
-        inntekt: 123,
-        id: '2020-11'
-      },
-      {
         maanedsnavn: '2020-12',
         inntekt: 234,
         id: '2020-12'
+      },
+      {
+        maanedsnavn: '2020-11',
+        inntekt: 123,
+        id: '2020-11'
       },
       {
         maanedsnavn: '2021-01',
@@ -35,5 +36,30 @@ describe('TidligereInntekt', () => {
     expect(seller[3]).toHaveTextContent('234,00 kr');
     expect(seller[4]).toHaveTextContent('Januar');
     expect(seller[5]).toHaveTextContent('345,00 kr');
+  });
+
+  it('should have no violations', async () => {
+    const tidligereinntekt: Array<HistoriskInntekt> = [
+      {
+        maanedsnavn: '2020-11',
+        inntekt: 123,
+        id: '2020-11'
+      },
+      {
+        maanedsnavn: '2021-01',
+        inntekt: 345,
+        id: '2021-01'
+      },
+      {
+        maanedsnavn: '2020-12',
+        inntekt: 234,
+        id: '2020-12'
+      }
+    ];
+    const { container } = render(<TidligereInntekt tidligereinntekt={tidligereinntekt} />);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
   });
 });

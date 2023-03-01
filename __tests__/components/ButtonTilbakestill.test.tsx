@@ -15,6 +15,7 @@ describe('ButtonTilbakestill', () => {
 
   it('should have no violations', async () => {
     const { container } = render(<ButtonTilbakestill />);
+
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
