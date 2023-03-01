@@ -1,5 +1,5 @@
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import { LonnISykefravaeret, YesNo } from '../state/state';
+import { LonnISykefravaeret } from '../state/state';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum EndringAvMaanedslonnFeilkode {

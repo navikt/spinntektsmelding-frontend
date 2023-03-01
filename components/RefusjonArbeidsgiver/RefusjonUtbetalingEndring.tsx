@@ -1,5 +1,5 @@
 import { Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
-import { FocusEvent, useState } from 'react';
+import { FocusEvent } from 'react';
 import lokalStyles from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
 import stringishToNumber from '../../utils/stringishToNumber';

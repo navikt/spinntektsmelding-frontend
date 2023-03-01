@@ -16,7 +16,6 @@ import PeriodeListevelger from './PeriodeListevelger';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import Datovelger from '../Datovelger';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
-import Hjelpetekst from '../Hjelpetekst/Hjelpetekst';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
