@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import ButtonSlette from '../../components/ButtonSlette/ButtonSlette';
 
 describe('ButtonSlette', () => {
@@ -10,5 +11,12 @@ describe('ButtonSlette', () => {
     });
 
     expect(buttonTitle).toBeInTheDocument();
+  });
+
+  it('should have no violations', async () => {
+    const { container } = render(<ButtonSlette title='Slette' />);
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
   });
 });

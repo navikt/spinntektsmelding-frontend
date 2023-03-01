@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import { vi } from 'vitest';
 import ButtonPrint from '../../components/ButtonPrint';
 
@@ -17,5 +18,12 @@ describe('ButtonPrint', () => {
     expect(spy).toHaveBeenCalled();
 
     expect(buttonTitle).toBeInTheDocument();
+  });
+
+  it('should have no violations', async () => {
+    const { container } = render(<ButtonPrint />);
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
   });
 });
