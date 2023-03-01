@@ -34,7 +34,7 @@ export default function Naturalytelser() {
 
   return (
     <>
-      <Heading3>Eventuelle naturalytelser (valgfri)</Heading3>
+      <Heading3>Eventuelle naturalytelser</Heading3>
       <BodyLong>
         Har den ansatte naturalytelser som faller bort ved sykmelding, skal disse oppgis her. Hvis den ansatte beholder
         eventuelle naturalytelser, så trenger dere ikke oppgi noe.
