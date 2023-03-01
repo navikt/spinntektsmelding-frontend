@@ -17,6 +17,10 @@ a {
   box-sizing: border-box;
 }
 
+.navds-read-more__content.navds-body-long {
+  margin-bottom: var(--a-spacing-4);
+}
+
 @media print {
 
   #decorator-header,

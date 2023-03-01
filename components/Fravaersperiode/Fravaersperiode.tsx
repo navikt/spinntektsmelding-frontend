@@ -34,7 +34,7 @@ export default function Fravaersperiode({ egenmeldingsperioder }: Fravaersperiod
 
   return (
     <>
-      <Heading3>Sykmeldingsperiode</Heading3>
+      <Heading3>Sykmelding</Heading3>
       <p>
         I følge sykmeldingen var den ansatte syk i perioden som er ferdig utfylt. Sykmeldingsperioden brukes sammen med
         eventuelle egenmeldinger til å beregne arbeidsgiverperioden.

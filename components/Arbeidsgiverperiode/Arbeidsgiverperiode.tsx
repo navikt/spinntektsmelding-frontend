@@ -2,7 +2,7 @@ import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
-import { BodyLong, Button } from '@navikt/ds-react';
+import { BodyLong, Button, ReadMore } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger from '../Bruttoinntekt/Periodevelger';
@@ -12,6 +12,7 @@ import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
+import Hjelpetekst from '../Hjelpetekst/Hjelpetekst';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -46,13 +47,17 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   return (
     <>
       <Heading3>Arbeidsgiverperiode</Heading3>
+      <ReadMore header='Mer informasjon om arbeidsgiverperioden'>
+        Arbeidsgiveren skal vanligvis betale sykepenger i en periode på opptil 16 kalenderdager, også kalt
+        arbeidsgiverperioden.{' '}
+        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
+          Les mer om hvordan arbeidsgiverperioden beregnes.
+        </LenkeEksternt>
+      </ReadMore>
       <BodyLong>
         Vi har brukt eventuell egenmelding og sykmeldingsperiode til å estimere et forslag til arbeidsgiverperiode. Hvis
         du mener dette er feil må dere korrigere perioden. Informasjonen brukes til å avgjøre når Nav skal overta
         betaling av sykepenger etter arbeidsgiverperiodens utløp.{' '}
-        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
-          Les mer om hvordan arbeidsgiverperioden beregnes.
-        </LenkeEksternt>
       </BodyLong>
       <div className={lokalStyles.datowrapper}>
         <div>
