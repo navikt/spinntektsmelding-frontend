@@ -12,7 +12,6 @@ import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
-import Hjelpetekst from '../Hjelpetekst/Hjelpetekst';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
