@@ -151,7 +151,7 @@ const Kvittering: NextPage = () => {
                 <ButtonEndre onClick={clickEndre} />
 
                 <Link className={lokalStyles.lukkelenke} href='/'>
-                  <a className={lokalStyles.lukkelenke}>Lukk</a>
+                  Lukk
                 </Link>
               </div>
               <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
