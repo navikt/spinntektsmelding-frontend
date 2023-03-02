@@ -92,7 +92,7 @@ const Home: NextPage = () => {
         });
         switch (data.status) {
           case 201:
-            router.push('/kvittering');
+            router.push('/kvittering', undefined, { shallow: true });
             break;
 
           case 500:

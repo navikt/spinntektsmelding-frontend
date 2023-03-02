@@ -48,11 +48,8 @@ const Kvittering: NextPage = () => {
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
-
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
-
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
 

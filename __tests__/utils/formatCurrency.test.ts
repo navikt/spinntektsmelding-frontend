@@ -16,4 +16,8 @@ describe('formatCurrency', () => {
   it('should return a correctly rounded number for 123.4567', () => {
     expect(formatCurrency(123.4567)).toBe('123,46');
   });
+
+  it('should return a correctly rounded number for undefined', () => {
+    expect(formatCurrency(undefined)).toBe('');
+  });
 });
