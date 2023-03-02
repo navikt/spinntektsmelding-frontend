@@ -32,7 +32,7 @@ import useHentSkjemadata from '../../utils/useHentSkjemadata';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
-  const slug = (router.query.slug as string) || '';
+  const slug = (router.query.kvittid as string) || '';
   const firstSlug = slug;
   const [pathSlug, setPathSlug] = useState<string>(firstSlug);
 
