@@ -21,10 +21,8 @@ import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 import useBoundStore from '../state/useBoundStore';
 import Naturalytelser from '../components/Naturalytelser';
 import Person from '../components/Person/Person';
-import useStateInit from '../state/useStateInit';
 import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
-import useFetchInntektskjemaForNotifikasjon from '../state/useFetchInntektskjemaForNotifikasjon';
 import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 
 import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
@@ -34,9 +32,7 @@ import useErrorRespons, { ErrorResponse } from '../utils/useErrorResponse';
 import environment from '../config/environment';
 
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
-
-const SKJEMADATA_URL = '/im-dialog/api/trenger';
-const INNSENDING_URL = '/im-dialog/api/innsendingInntektsmelding';
+import useHentSkjemadata from '../utils/useHentSkjemadata';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -63,15 +59,13 @@ const Home: NextPage = () => {
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
-  const initState = useStateInit();
-
-  const hentSkjemadata = useFetchInntektskjemaForNotifikasjon('');
-
   const validerInntektsmelding = useValiderInntektsmelding();
 
   const fyllInnsending = useFyllInnsending();
 
   const errorResponse = useErrorRespons();
+
+  const hentSkjemadata = useHentSkjemadata();
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
@@ -89,7 +83,7 @@ const Home: NextPage = () => {
       }));
       fyllFeilmeldinger([]);
       const postData = async () => {
-        const data = await fetch(INNSENDING_URL, {
+        const data = await fetch(environment.innsendingUrl, {
           method: 'POST',
           body: JSON.stringify(skjemaData),
           headers: {
@@ -135,27 +129,7 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    const hentData = async () => {
-      try {
-        let skjemadata;
-        if (pathSlug) {
-          skjemadata = await hentSkjemadata(SKJEMADATA_URL, pathSlug);
-        }
-        if (skjemadata) {
-          initState(skjemadata);
-        }
-      } catch (error: any) {
-        if (error.status === 401) {
-          const ingress = window.location.hostname + environment.baseUrl;
-          const currentPath = window.location.href;
-
-          window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
-        }
-
-        leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
-      }
-    };
-    hentData();
+    hentSkjemadata(pathSlug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 

@@ -26,10 +26,22 @@ import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
+import useHentSkjemadata from '../../utils/useHentSkjemadata';
 
 const Kvittering: NextPage = () => {
+  const router = useRouter();
+  const slug = (router.query.slug as string) || '';
+  const firstSlug = slug;
+  const [pathSlug, setPathSlug] = useState<string>(firstSlug);
+
+  useEffect(() => {
+    setPathSlug(firstSlug);
+  }, [firstSlug]);
+
+  const hentSkjemadata = useHentSkjemadata();
+
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -44,13 +56,16 @@ const Kvittering: NextPage = () => {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
 
-  const router = useRouter();
-
   const clickEndre = useCallback(() => router.back(), [router]);
 
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
   };
+
+  useEffect(() => {
+    hentSkjemadata(pathSlug);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathSlug]);
 
   return (
     <div className={styles.container}>

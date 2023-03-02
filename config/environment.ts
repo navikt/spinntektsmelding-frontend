@@ -110,6 +110,14 @@ class Environment {
     // https://g.nav.no/api/v1/grunnbeloep?dato=2020-02-12 hvis man trenger å spørre på dato
   }
 
+  get skjemadataUrl() {
+    return '/im-dialog/api/trenger';
+  }
+
+  get innsendingUrl() {
+    return '/im-dialog/api/innsendingInntektsmelding';
+  }
+
   private isTestCafeRunning() {
     if (typeof window === 'undefined') {
       return false;
