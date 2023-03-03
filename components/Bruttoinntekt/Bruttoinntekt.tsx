@@ -50,6 +50,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const permisjon = useBoundStore((state) => state.permisjon);
   const setPermiteringPeriode = useBoundStore((state) => state.setPermiteringPeriode);
   const permitering = useBoundStore((state) => state.permitering);
+  const nyInnsending = useBoundStore((state) => state.nyInnsending);
 
   const clickTilbakestillMaanedsinntekt = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -121,6 +122,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     onChangeBegrunnelse={changeBegrunnelseHandler}
                     error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
                     id='bruttoinntekt-endringsaarsak'
+                    nyInnsending={nyInnsending}
                   />
                 </div>
                 <div>

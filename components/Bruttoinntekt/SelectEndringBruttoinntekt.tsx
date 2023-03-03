@@ -8,10 +8,13 @@ interface SelectEndringBruttoinntektProps {
   onChangeBegrunnelse: (verdi: string) => void;
   error: ReactNode;
   id: string;
+  nyInnsending: boolean;
 }
 
 export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinntektProps) {
-  const begrunnelseKeys = Object.keys(begrunnelseEndringBruttoinntekt);
+  const begrunnelseKeys = Object.keys(begrunnelseEndringBruttoinntekt).filter(
+    (endring) => (endring !== 'Tariffendring' && props.nyInnsending === true) || props.nyInnsending === false
+  );
 
   const changeHandler = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
