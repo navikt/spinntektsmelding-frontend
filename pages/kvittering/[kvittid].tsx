@@ -29,12 +29,15 @@ import formatDate from '../../utils/formatDate';
 import { useCallback, useEffect, useState } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import useHentSkjemadata from '../../utils/useHentSkjemadata';
+import formatTime from '../../utils/formatTime';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
   const slug = (router.query.kvittid as string) || '';
   const firstSlug = slug;
   const [pathSlug, setPathSlug] = useState<string>(firstSlug);
+
+  const [now, setNow] = useState<Date>(new Date());
 
   useEffect(() => {
     setPathSlug(firstSlug);
@@ -52,6 +55,7 @@ const Kvittering: NextPage = () => {
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
 
   const clickEndre = useCallback(() => router.back(), [router]);
 
@@ -61,6 +65,7 @@ const Kvittering: NextPage = () => {
 
   useEffect(() => {
     hentSkjemadata(pathSlug);
+    setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
@@ -145,7 +150,9 @@ const Kvittering: NextPage = () => {
             <Heading2>Eventuelle naturalytelser</Heading2>
             <BortfallNaturalytelser ytelser={naturalytelser!} />
             <Skillelinje />
-            <BodyShort>Kvittering - innsendt inntektsmelding - 12.05.2021 kl. 12.23</BodyShort>
+            <BodyShort>
+              Kvittering - innsendt inntektsmelding - {formatDate(now)} kl. {formatTime(now)}
+            </BodyShort>
             <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
               <div className={lokalStyles.innerbuttonwrapper}>
                 <ButtonEndre onClick={clickEndre} />

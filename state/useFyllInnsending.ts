@@ -113,6 +113,7 @@ export default function useFyllInnsending() {
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
+  const nyInnsending = useBoundStore((state) => state.nyInnsending);
 
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
@@ -210,7 +211,7 @@ export default function useFyllInnsending() {
         ? arbeidsgiverperioder
         : finnArbeidsgiverperiode(beregningsperioder as Array<Periode>);
 
-    const aarsakInnsending = 'Ny'; // Kan være Ny eller Endring
+    const aarsakInnsending = nyInnsending ? 'Ny' : 'Endring'; // Kan være Ny eller Endring
 
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
