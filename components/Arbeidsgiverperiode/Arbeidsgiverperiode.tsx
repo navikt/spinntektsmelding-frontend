@@ -45,7 +45,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
 
   return (
     <>
-      <Heading3>Arbeidsgiverperiode</Heading3>
+      <Heading3 unPadded>Arbeidsgiverperiode</Heading3>
       <ReadMore header='Mer informasjon om arbeidsgiverperioden'>
         Arbeidsgiveren skal vanligvis betale sykepenger i en periode på opptil 16 kalenderdager, også kalt
         arbeidsgiverperioden.{' '}

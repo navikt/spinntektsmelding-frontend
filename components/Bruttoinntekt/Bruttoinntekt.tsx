@@ -81,7 +81,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   if (tidligereinntekt && tidligereinntekt.length > 0) {
     return (
       <>
-        <Heading3>Beregnet månedslønn</Heading3>
+        <Heading3 unPadded>Beregnet månedslønn</Heading3>
         <ReadMore header='Mer informasjon om beregnet månedslønn'>
           Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
           til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}

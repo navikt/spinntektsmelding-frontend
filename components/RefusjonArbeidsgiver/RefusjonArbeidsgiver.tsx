@@ -49,7 +49,7 @@ export default function RefusjonArbeidsgiver() {
 
   return (
     <>
-      <Heading3>Utbetaling og refusjon</Heading3>
+      <Heading3 unPadded>Utbetaling og refusjon</Heading3>
       <ReadMore header='Mer informasjon om refusjon'>
         Arbeidsgiveren kan forskottere sykepenger til den sykmeldte eller velge at NAV skal betale sykepenger direkte
         til den sykmeldte etter arbeidsgiverperioden.{' '}
