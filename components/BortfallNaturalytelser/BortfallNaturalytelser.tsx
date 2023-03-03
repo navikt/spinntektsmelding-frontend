@@ -25,7 +25,7 @@ export default function BortfallNaturalytelser({ ytelser }: BortfallNaturalytels
           <tr key={ytelse.type}>
             <td>{naturalytelser[ytelse.type!]}</td>
             <td className={lokalStyles.datokolonne}>{formatDate(ytelse.bortfallsdato)}</td>
-            <td>{formatCurrency(ytelse.verdi!)} kr</td>
+            <td>{formatCurrency(ytelse.verdi)} kr</td>
           </tr>
         ))}
       </tbody>
