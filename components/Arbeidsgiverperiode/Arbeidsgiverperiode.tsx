@@ -66,12 +66,12 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
                 {!endretArbeidsgiverperiode && (
                   <>
                     <div className={styles.datepickerescape}>
-                      <TextLabel>Fra</TextLabel>
-                      <div>{formatDate(periode.fom)}</div>
+                      <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-fra`}>Fra</TextLabel>
+                      <div data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}>{formatDate(periode.fom)}</div>
                     </div>
                     <div className={styles.datepickerescape}>
-                      <TextLabel>Til</TextLabel>
-                      <div>{formatDate(periode.tom)}</div>
+                      <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-til`}>Til</TextLabel>
+                      <div data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}>{formatDate(periode.tom)}</div>
                     </div>
                   </>
                 )}

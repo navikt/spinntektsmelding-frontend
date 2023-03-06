@@ -68,7 +68,7 @@ export default function Egenmelding() {
         <div className={localStyles.egenmeldingswrapper}>
           {egenmeldingsperioder &&
             egenmeldingsperioder.map((egenmeldingsperiode, index) => (
-              <div key={egenmeldingsperiode.id} className={styles.periodewrapper}>
+              <div key={egenmeldingsperiode.id} className={styles.periodewrapper} data-cy='egenmelding'>
                 <EgenmeldingPeriode
                   periodeId={egenmeldingsperiode.id}
                   egenmeldingsperiode={egenmeldingsperiode}

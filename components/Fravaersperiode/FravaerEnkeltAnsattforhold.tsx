@@ -49,12 +49,12 @@ export default function FravaerEnkeltAnsattforhold({ fravaersperioder }: Fravaer
             {!endreSykemelding && (
               <>
                 <div className={styles.datepickerescape}>
-                  <TextLabel>Fra</TextLabel>
-                  <div>{formatDate(periode.fom)}</div>
+                  <TextLabel data-cy={`sykmelding-${periodeIndex}-fra`}>Fra</TextLabel>
+                  <div data-cy={`sykmelding-${periodeIndex}-fra-dato`}>{formatDate(periode.fom)}</div>
                 </div>
                 <div className={styles.datepickerescape}>
-                  <TextLabel>Til</TextLabel>
-                  <div>{formatDate(periode.tom)}</div>
+                  <TextLabel data-cy={`sykmelding-${periodeIndex}-til`}>Til</TextLabel>
+                  <div data-cy={`sykmelding-${periodeIndex}-til-dato`}>{formatDate(periode.tom)}</div>
                 </div>
               </>
             )}

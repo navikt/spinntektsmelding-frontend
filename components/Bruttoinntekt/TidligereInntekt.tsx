@@ -26,7 +26,7 @@ export default function TidligereInntekt({ tidligereinntekt }: TidligereInntektP
     }
   }, [tidligereinntekt]);
   return (
-    <table className={lokalStyles.inntektsliste}>
+    <table className={lokalStyles.inntektsliste} data-cy='tidligereinntekt'>
       <tbody>
         {sortertInntekt.map((inntekt) => (
           <tr key={inntekt.maanedsnavn}>

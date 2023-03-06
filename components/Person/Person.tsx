@@ -43,11 +43,11 @@ export default function Person() {
           <div className={lokalStyles.ytreansattwrapper}>
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Navn</TextLabel>
-              {navn}
+              <span data-cy='navn'>{navn}</span>
             </div>
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Personnummer</TextLabel>
-              {identitetsnummer}
+              <span data-cy='identitetsnummer'>{identitetsnummer}</span>
             </div>
           </div>
         </div>
@@ -57,19 +57,23 @@ export default function Person() {
             {virksomhetsnavn && (
               <div className={lokalStyles.virksomhetsnavnwrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
-                <div className={lokalStyles.virksomhetsnavn}>{virksomhetsnavn}</div>
+                <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
+                  {virksomhetsnavn}
+                </div>
               </div>
             )}
             <div className={lokalStyles.orgnrnavnwrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
-              {orgnrUnderenhet}
+              <span data-cy='orgnummer'>{orgnrUnderenhet}</span>
             </div>
             {!virksomhetsnavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
             {innsenderNavn && (
               <>
                 <div className={lokalStyles.innsendernavnwrapper}>
                   <TextLabel>Innsender</TextLabel>
-                  <div className={lokalStyles.virksomhetsnavn}>{innsenderNavn}</div>
+                  <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
+                    {innsenderNavn}
+                  </div>
                 </div>
                 <div className={lokalStyles.telefonnrwrapper}>
                   <TextField
@@ -77,6 +81,7 @@ export default function Person() {
                     type='tel'
                     defaultValue={innsenderTelefonNr}
                     onChange={changeTlfNr}
+                    data-cy='innsendertlf'
                   />
                 </div>
               </>

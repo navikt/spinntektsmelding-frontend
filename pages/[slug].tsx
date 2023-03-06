@@ -9,8 +9,6 @@ import PageContent from '../components/PageContent/PageContent';
 
 import Skillelinje from '../components/Skillelinje/Skillelinje';
 
-import Script from 'next/script';
-
 import styles from '../styles/Home.module.css';
 
 import Behandlingsdager from '../components/Behandlingsdager';
@@ -144,7 +142,7 @@ const Home: NextPage = () => {
       <div>
         <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
         <PageContent title='Inntektsmelding'>
-          <main className='main-content' role='main' id='maincontent' tabIndex={-1}>
+          <div>
             <form className={styles.padded} onSubmit={submitForm}>
               <Person />
 
@@ -188,10 +186,8 @@ const Home: NextPage = () => {
               <Feilsammendrag />
               <Button className={styles.sendbutton}>Send</Button>
             </form>
-          </main>
+          </div>
         </PageContent>
-        <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
-        <Script type='text/javascript' src='https://www.nav.no/dekoratoren/client.js'></Script>
       </div>
     </div>
   );

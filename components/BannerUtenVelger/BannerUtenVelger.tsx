@@ -7,7 +7,7 @@ interface Props {
 
 const BannerUtenVelger: React.FunctionComponent<Props> = (props) => {
   return (
-    <div className='navbm-bedriftsmeny'>
+    <header className='navbm-bedriftsmeny'>
       <div className='navbm-container'>
         <div className='navbm-piktogram'>
           <svg
@@ -47,7 +47,7 @@ const BannerUtenVelger: React.FunctionComponent<Props> = (props) => {
           <div className='navbm-widgets'></div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
