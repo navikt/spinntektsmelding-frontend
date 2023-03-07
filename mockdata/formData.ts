@@ -164,7 +164,7 @@ const formData = {
     },
     {
       maanedsnavn: '2023-01', // yyyy-MM
-      inntekt: 88000
+      inntekt: 66000
     },
     {
       maanedsnavn: '2022-12', // yyyy-MM
@@ -172,7 +172,7 @@ const formData = {
     },
     {
       maanedsnavn: '2022-11', // yyyy-MM
-      inntekt: 66000
+      inntekt: 88000
     },
     {
       maanedsnavn: '2022-10', // yyyy-MM
