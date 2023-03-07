@@ -142,12 +142,12 @@ const formData = {
   bruttoinntekt: 77000,
   fravaersperioder: [
     {
-      fom: format(subDays(new Date(), 14), 'yyyy-MM-dd'),
-      tom: format(subDays(new Date(), 3), 'yyyy-MM-dd')
+      fom: '2023-02-20',
+      tom: '2023-03-03'
     },
     {
-      fom: format(subDays(new Date(), 1), 'yyyy-MM-dd'),
-      tom: format(subDays(new Date(), 0), 'yyyy-MM-dd')
+      fom: '2023-03-05',
+      tom: '2023-03-06'
     }
   ],
   egenmeldingsperioder: [
@@ -159,39 +159,39 @@ const formData = {
   tidligereinntekter: [
     // Hva skjer ved jobbskifte?
     {
-      maanedsnavn: format(subMonths(new Date(), 0), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: '2023-02', // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: format(subMonths(new Date(), 1), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: '2023-01', // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: format(subMonths(new Date(), 2), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: '2022-12', // yyyy-MM
       inntekt: 66000
     },
     {
-      maanedsnavn: format(subMonths(new Date(), 3), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: '2022-11', // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: format(subMonths(new Date(), 4), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: '2022-10', // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: format(subMonths(new Date(), 5), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: '2022-09', // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: format(subMonths(new Date(), 6), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: '2022-08', // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: format(subMonths(new Date(), 7), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: '2022-07', // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: format(subMonths(new Date(), 8), 'yyyy-MM'), // yyyy-MM
+      maanedsnavn: '2022-06', // yyyy-MM
       inntekt: 88000
     }
   ],
