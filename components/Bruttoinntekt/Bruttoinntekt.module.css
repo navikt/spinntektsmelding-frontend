@@ -11,7 +11,6 @@
 .maanedsinntekt {
   margin-bottom: auto;
   margin-top   : auto;
-  text-align   : right;
 }
 
 .endremaaanedsinntekt,
@@ -99,4 +98,20 @@
 
 .sletteknapp {
   margin-top: 1.5rem;
+}
+
+.inntektsliste thead {
+  display: none;
+}
+
+@media screen and (max-width: 500px) {
+  .endremaaanedsinntekt {
+    flex-direction  : column;
+    border          : 1px solid darkgray;
+    border-radius   : 5px;
+    background-color: var(--a-bg-subtle);
+    padding         : 0.5rem;
+    box-shadow      : 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
+    margin          : 0.25rem 0;
+  }
 }

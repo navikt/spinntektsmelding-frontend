@@ -5,7 +5,8 @@
 }
 
 .endreknapp {
-  margin-top: auto;
+  margin-top : auto;
+  padding-top: 1rem;
 }
 
 .leggtilknapp {
@@ -18,4 +19,21 @@
   display        : flex;
   padding-top    : 1rem;
   justify-content: space-between;
+  margin-top     : 1rem;
+}
+
+.datepickerescape {
+  display: inline-block;
+  margin : .5rem 2rem 0 0;
+}
+
+.datewrapper {
+  margin: .5rem 0 .5rem;
+}
+
+@media screen and (max-width: 500px) {
+  .endreknapper {
+    flex-direction: column;
+    gap           : 2rem;
+  }
 }

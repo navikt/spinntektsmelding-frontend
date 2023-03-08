@@ -26,7 +26,7 @@ describe('TidligereInntekt', () => {
 
     const rader = screen.getAllByRole('row');
 
-    expect(rader).toHaveLength(3);
+    expect(rader).toHaveLength(4); // Inkluderer header raden
 
     const seller = screen.getAllByRole('cell');
     expect(seller).toHaveLength(6);

@@ -21,12 +21,12 @@ describe('Utfylling og innsending av skjema', () => {
     // cy.clock(now);
 
     cy.visit('http://localhost:3000/im-dialog/1234-3456-5678-2457');
-    // cy.injectAxe();
+    cy.injectAxe();
   });
 
   it('Has no detectable a11y violations on load', () => {
     // Test the page at initial load
-    // cy.checkA11y();
+    cy.checkA11y();
   });
 
   it('should display information on the person and the submitter', () => {
@@ -59,16 +59,16 @@ describe('Utfylling og innsending av skjema', () => {
   });
 
   it('should display information on the beregnet månedslønn', () => {
-    cy.get('[data-cy="tidligereinntekt"] tr').its('length').should('be.eq', 3);
-    cy.get('[data-cy="tidligereinntekt"] tr').first().find('td').first().should('have.text', 'November:');
-    cy.get('[data-cy="tidligereinntekt"] tr')
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').its('length').should('be.eq', 3);
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').first().find('td').first().should('have.text', 'November:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr')
       .first()
       .find('td')
       .last()
       .invoke('text')
       .should('match', /88\s000,00\skr/);
-    cy.get('[data-cy="tidligereinntekt"] tr').last().find('td').first().should('have.text', 'Januar:');
-    cy.get('[data-cy="tidligereinntekt"] tr')
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').last().find('td').first().should('have.text', 'Januar:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr')
       .last()
       .find('td')
       .last()
@@ -84,7 +84,9 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.contains('Send').click();
 
-    cy.get('main h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
+    cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
+
+    cy.checkA11y();
 
     // We'll store our item text in a variable so we can reuse it
     // const newItem = 'Feed the cat';

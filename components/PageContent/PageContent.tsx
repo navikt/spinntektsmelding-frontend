@@ -13,7 +13,8 @@ export default function PageContent(props: PageContentProps) {
   return (
     <main role='main' id='maincontent' tabIndex={-1} className='page-content-wrapper main-content'>
       <div className='page-content-breadcrumb skjul-fra-print'>
-        <Link>Brødsmulesti</Link> / {props.title}
+        <Link href='https://arbeidsgiver.nav.no/min-side-arbeidsgiver/sak-restore-session'>Min side arbeidsgiver</Link>{' '}
+        / {props.title}
       </div>
       <div className='page-content-header'>
         <Heading1>Inntektsgrunnlag og fravær</Heading1>

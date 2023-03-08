@@ -68,18 +68,17 @@ export default function Egenmelding() {
         <div className={localStyles.egenmeldingswrapper}>
           {egenmeldingsperioder &&
             egenmeldingsperioder.map((egenmeldingsperiode, index) => (
-              <div key={egenmeldingsperiode.id} className={styles.periodewrapper} data-cy='egenmelding'>
-                <EgenmeldingPeriode
-                  periodeId={egenmeldingsperiode.id}
-                  egenmeldingsperiode={egenmeldingsperiode}
-                  endreEgenmeldingsperiode={endreEgenmeldingsperiode}
-                  setEgenmeldingDato={setEgenmeldingDato}
-                  toDate={forsteFravaersdag || new Date()}
-                  kanSlettes={index !== 0}
-                  onSlettRad={() => slettEgenmeldingsperiode(egenmeldingsperiode.id)}
-                  disabled={endretArbeidsgiverperiode}
-                />
-              </div>
+              <EgenmeldingPeriode
+                key={egenmeldingsperiode.id}
+                periodeId={egenmeldingsperiode.id}
+                egenmeldingsperiode={egenmeldingsperiode}
+                endreEgenmeldingsperiode={endreEgenmeldingsperiode}
+                setEgenmeldingDato={setEgenmeldingDato}
+                toDate={forsteFravaersdag || new Date()}
+                kanSlettes={index !== 0}
+                onSlettRad={() => slettEgenmeldingsperiode(egenmeldingsperiode.id)}
+                disabled={endretArbeidsgiverperiode}
+              />
             ))}
         </div>
         {visFeilmelding('egenmeldingsperiode-feil') && (
@@ -91,14 +90,14 @@ export default function Egenmelding() {
           </div>
         )}
         {endreEgenmeldingsperiode && (
-          <div className={styles.endresykemeldingknapper}>
+          <div className={localStyles.endresykemeldingknapper}>
             <Button
               variant='secondary'
               className={styles.kontrollerknapp}
               onClick={clickLeggTilFravaersperiodeHandler}
               disabled={endretArbeidsgiverperiode}
             >
-              Legg til egenmeldingsperiode
+              Legg til periode
             </Button>
 
             <Button

@@ -79,6 +79,7 @@ export default function Person() {
                   <TextField
                     label='Telefon innsender'
                     type='tel'
+                    autoComplete='tel'
                     defaultValue={innsenderTelefonNr}
                     onChange={changeTlfNr}
                     data-cy='innsendertlf'

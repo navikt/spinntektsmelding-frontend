@@ -42,9 +42,8 @@ const BannerUtenVelger: React.FunctionComponent<Props> = (props) => {
         </div>
         <div className='navbm-innhold'>
           <div className='navbm-innhold-header'>
-            <h1 className='navds-heading navds-heading--xlarge'>{props.tittelMedUnderTittel}</h1>
+            <div className='navds-heading navds-heading--xlarge'>{props.tittelMedUnderTittel}</div>
           </div>
-          <div className='navbm-widgets'></div>
         </div>
       </div>
     </header>

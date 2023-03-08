@@ -26,7 +26,17 @@ export default function TidligereInntekt({ tidligereinntekt }: TidligereInntektP
     }
   }, [tidligereinntekt]);
   return (
-    <table className={lokalStyles.inntektsliste} data-cy='tidligereinntekt'>
+    <table
+      className={lokalStyles.inntektsliste}
+      data-cy='tidligereinntekt'
+      summary='Oversikt over inntekter oppgitt i A-meldingen, for de siste tre måneder.'
+    >
+      <thead>
+        <tr>
+          <th>Måned</th>
+          <th>Inntekt</th>
+        </tr>
+      </thead>
       <tbody>
         {sortertInntekt.map((inntekt) => (
           <tr key={inntekt.maanedsnavn}>
