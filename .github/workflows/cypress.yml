@@ -1,0 +1,54 @@
+name: Cypress e2e tester
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  APP: spinntektsmelding-frontend
+  IMAGE: ghcr.io/${{ github.repository }}/spinntektsmelding-frontend:${{ github.sha }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: "https://npm.pkg.github.com"
+      - run: yarn install --frozen-lockfile
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v3
+        with:
+          project: .
+          browser: chrome
+          build: yarn build
+          start: yarn dev
+          wait-on: "http://localhost:3000/im-dialog/cypress-test"
+        
+
+  
+  # Kodekvalitet:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18.x'
+  #         registry-url: "https://npm.pkg.github.com"
+  #     - run: yarn install --frozen-lockfile
+  #     - run: yarn test
+  #     - name: SonarCloud Scan
+  #       uses: sonarsource/sonarcloud-github-action@master
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  

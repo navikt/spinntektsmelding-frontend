@@ -13,8 +13,21 @@
   gap      : 2rem;
 }
 
+.endresykemeldingknapper {
+  padding-top    : 2rem;
+  display        : flex;
+  justify-content: space-between;
+}
+
 @media screen and (max-width: 800px) {
   .sammeperiode {
     margin-left: 0;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .endresykemeldingknapper {
+    flex-direction: column;
+    gap           : 2rem;
   }
 }

@@ -63,7 +63,7 @@ export default function Periodevelger({
   };
 
   return (
-    <div className={lokalStyles.endremaaanedsinntekt}>
+    <>
       <div className={lokalStyles.endremaaanedsinntekt}>
         <Datovelger
           fromDate={fromDate}
@@ -89,6 +89,6 @@ export default function Periodevelger({
         />
       </div>
       {kanSlettes && <ButtonSlette title='Slett periode' onClick={onSlettClick} className={lokalStyles.sletteknapp} />}
-    </div>
+    </>
   );
 }

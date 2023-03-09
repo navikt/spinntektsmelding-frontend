@@ -9,8 +9,6 @@ import PageContent from '../components/PageContent/PageContent';
 
 import Skillelinje from '../components/Skillelinje/Skillelinje';
 
-import Script from 'next/script';
-
 import styles from '../styles/Home.module.css';
 
 import Behandlingsdager from '../components/Behandlingsdager';
@@ -144,54 +142,50 @@ const Home: NextPage = () => {
       <div>
         <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
         <PageContent title='Inntektsmelding'>
-          <main className='main-content' role='main' id='maincontent' tabIndex={-1}>
-            <form className={styles.padded} onSubmit={submitForm}>
-              <Person />
+          <form className={styles.padded} onSubmit={submitForm}>
+            <Person />
 
-              <Behandlingsdager />
+            <Behandlingsdager />
 
-              {egenmeldingsperioder && (
-                <>
-                  <Skillelinje />
-                  <Egenmelding />
-                </>
-              )}
+            {egenmeldingsperioder && (
+              <>
+                <Skillelinje />
+                <Egenmelding />
+              </>
+            )}
 
-              <Skillelinje />
-              <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} />
+            <Skillelinje />
+            <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} />
 
-              <Skillelinje />
+            <Skillelinje />
 
-              <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} />
+            <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} />
 
-              <Skillelinje />
+            <Skillelinje />
 
-              <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} />
+            <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} />
 
-              <Skillelinje />
+            <Skillelinje />
 
-              <RefusjonArbeidsgiver />
+            <RefusjonArbeidsgiver />
 
-              <Skillelinje />
-              <Naturalytelser />
-              <ConfirmationPanel
-                className={styles.confirmationpanel}
-                checked={opplysningerBekreftet}
-                onClick={clickOpplysningerBekreftet}
-                label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
-                id='bekreft-opplysninger'
-                error={visFeilmeldingsTekst('bekreft-opplysninger')}
-              >
-                NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
-                er riktige eller fullstendige.
-              </ConfirmationPanel>
-              <Feilsammendrag />
-              <Button className={styles.sendbutton}>Send</Button>
-            </form>
-          </main>
+            <Skillelinje />
+            <Naturalytelser />
+            <ConfirmationPanel
+              className={styles.confirmationpanel}
+              checked={opplysningerBekreftet}
+              onClick={clickOpplysningerBekreftet}
+              label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+              id='bekreft-opplysninger'
+              error={visFeilmeldingsTekst('bekreft-opplysninger')}
+            >
+              NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
+              er riktige eller fullstendige.
+            </ConfirmationPanel>
+            <Feilsammendrag />
+            <Button className={styles.sendbutton}>Send</Button>
+          </form>
         </PageContent>
-        <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
-        <Script type='text/javascript' src='https://www.nav.no/dekoratoren/client.js'></Script>
       </div>
     </div>
   );

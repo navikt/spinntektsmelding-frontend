@@ -1,6 +1,8 @@
 import '@navikt/ds-css';
-import { Link, Heading } from '@navikt/ds-react';
+import { Link } from '@navikt/ds-react';
 import { ReactNode } from 'react';
+import Heading1 from '../Heading1/Heading1';
+import Heading2 from '../Heading2/Heading2';
 
 interface PageContentProps {
   children: ReactNode;
@@ -9,19 +11,16 @@ interface PageContentProps {
 
 export default function PageContent(props: PageContentProps) {
   return (
-    <div className='page-content-wrapper'>
+    <main role='main' id='maincontent' tabIndex={-1} className='page-content-wrapper main-content'>
       <div className='page-content-breadcrumb skjul-fra-print'>
-        <Link>Brødsmulesti</Link> / {props.title}
+        <Link href='https://arbeidsgiver.nav.no/min-side-arbeidsgiver/sak-restore-session'>Min side arbeidsgiver</Link>{' '}
+        / {props.title}
       </div>
       <div className='page-content-header'>
-        <Heading size='small' level='1'>
-          Inntektsgrunnlag og fravær
-        </Heading>
-        <Heading size='medium' level='2'>
-          {props.title}
-        </Heading>
+        <Heading1>Inntektsgrunnlag og fravær</Heading1>
+        <Heading2>{props.title}</Heading2>
       </div>
       <div className='page-content-body'>{props.children}</div>
-    </div>
+    </main>
   );
 }

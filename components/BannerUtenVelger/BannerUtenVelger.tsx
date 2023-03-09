@@ -1,5 +1,6 @@
 import React from 'react';
 import '@navikt/bedriftsmeny/lib/bedriftsmeny.css';
+import Heading1 from '../Heading1/Heading1';
 
 interface Props {
   tittelMedUnderTittel: string | JSX.Element;
@@ -7,7 +8,7 @@ interface Props {
 
 const BannerUtenVelger: React.FunctionComponent<Props> = (props) => {
   return (
-    <div className='navbm-bedriftsmeny'>
+    <header className='navbm-bedriftsmeny'>
       <div className='navbm-container'>
         <div className='navbm-piktogram'>
           <svg
@@ -42,12 +43,11 @@ const BannerUtenVelger: React.FunctionComponent<Props> = (props) => {
         </div>
         <div className='navbm-innhold'>
           <div className='navbm-innhold-header'>
-            <h1 className='navds-heading navds-heading--xlarge'>{props.tittelMedUnderTittel}</h1>
+            <Heading1 className='navds-heading navds-heading--xlarge'>{props.tittelMedUnderTittel}</Heading1>
           </div>
-          <div className='navbm-widgets'></div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

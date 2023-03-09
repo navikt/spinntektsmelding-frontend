@@ -12,8 +12,8 @@ export default function Document() {
         <Main />
         <NextScript />
         <div id='decorator-footer'></div>
-        <div id='decorator-env' data-src='{MILJO_URL}/env?{DINE_PARAMETERE}'></div>
-        <Script async={true} src='https://www.nav.no/dekoratoren/client.js'></Script>
+        <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
+        <Script type='text/javascript' async src='https://www.nav.no/dekoratoren/client.js'></Script>
       </body>
     </Html>
   );

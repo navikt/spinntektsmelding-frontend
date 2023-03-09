@@ -77,95 +77,94 @@ const Kvittering: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
-      <div>
-        <PageContent title='Kvittering - innsendt inntektsmelding'>
-          <main className={`main-content ${styles.padded}`}>
-            <Person />
 
-            <Skillelinje />
-            <div className={lokalStyles.fravaerswrapperwrapper}>
-              <div className={lokalStyles.fravaersperiode}>
-                <Heading2>Fraværsperiode</Heading2>
-                <div className={lokalStyles.ytterstefravaerwrapper}>
-                  {harAktiveEgenmeldingsperioder() && (
-                    <div className={lokalStyles.ytrefravaerswrapper}>
-                      <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
-                      {egenmeldingsperioder &&
-                        egenmeldingsperioder.map((periode) => (
-                          <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + periode.id} />
-                        ))}
-                    </div>
-                  )}
-                </div>
-                <div className={lokalStyles.ytterstefravaerwrapper}>
+      <PageContent title='Kvittering - innsendt inntektsmelding'>
+        <div className={`main-content ${styles.padded}`}>
+          <Person />
+
+          <Skillelinje />
+          <div className={lokalStyles.fravaerswrapperwrapper}>
+            <div className={lokalStyles.fravaersperiode}>
+              <Heading2>Fraværsperiode</Heading2>
+              <div className={lokalStyles.ytterstefravaerwrapper}>
+                {harAktiveEgenmeldingsperioder() && (
                   <div className={lokalStyles.ytrefravaerswrapper}>
-                    <Heading3 className={lokalStyles.sykfravaerstyper}>Sykmelding</Heading3>
-                    {fravaersperioder &&
-                      fravaersperioder.map((periode) => (
-                        <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + periode.id} />
+                    <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
+                    {egenmeldingsperioder &&
+                      egenmeldingsperioder.map((periode) => (
+                        <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + periode.id} />
                       ))}
                   </div>
-                </div>
+                )}
               </div>
-              <div className={lokalStyles.infoboks}>
-                <div className={lokalStyles.ytterstefravaerwrapper}>
-                  <div className={lokalStyles.ytrefravaerswrapper}>
-                    <Heading2 className={lokalStyles.fravaerstyper}>Bestemmende fraværsdag</Heading2>
-                    <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
-                    <div className={lokalStyles.fravaerwrapper}>
-                      <div className={lokalStyles.fravaertid}>Dato</div>
-                      <div>{formatDate(bestemmendeFravaersdag)} </div>
-                    </div>
-                  </div>
-                  <div className={lokalStyles.arbeidsgiverperiode}>
-                    <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
-                    <BodyLong>
-                      Arbeidsgiver er ansvarlig å betale ut lønn til den sykmeldte under arbeidsgiverpeioden, etterpå
-                      betaler Nav lønn til den syke eller refunderer bedriften:
-                    </BodyLong>
-                    {arbeidsgiverperioder &&
-                      arbeidsgiverperioder.map((periode, index) => (
-                        <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.fom.valueOf()} />
-                      ))}
-                  </div>
+              <div className={lokalStyles.ytterstefravaerwrapper}>
+                <div className={lokalStyles.ytrefravaerswrapper}>
+                  <Heading3 className={lokalStyles.sykfravaerstyper}>Sykmelding</Heading3>
+                  {fravaersperioder &&
+                    fravaersperioder.map((periode) => (
+                      <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + periode.id} />
+                    ))}
                 </div>
               </div>
             </div>
-            <Skillelinje />
-            <Heading2>Bruttoinntekt siste 3 måneder</Heading2>
-            <BodyShort className={lokalStyles.fravaertid}>Registrert inntekt</BodyShort>
-            <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
-            {bruttoinntekt.endringsaarsak && (
-              <>Endret med årsak: {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak)}</>
-            )}
-            <Skillelinje />
-            <Heading2>Refusjon</Heading2>
-
-            <Heading3>Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?</Heading3>
-            <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
-            <Heading3>Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?</Heading3>
-            <LonnUnderSykefravaeret lonn={lonnISykefravaeret!} refusjonskravetOpphoerer={refusjonskravetOpphoerer} />
-
-            <Skillelinje />
-            <Heading2>Eventuelle naturalytelser</Heading2>
-            <BortfallNaturalytelser ytelser={naturalytelser!} />
-            <Skillelinje />
-            <BodyShort>
-              Kvittering - innsendt inntektsmelding - {formatDate(now)} kl. {formatTime(now)}
-            </BodyShort>
-            <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
-              <div className={lokalStyles.innerbuttonwrapper}>
-                <ButtonEndre onClick={clickEndre} />
-
-                <Link className={lokalStyles.lukkelenke} href='/'>
-                  Lukk
-                </Link>
+            <div className={lokalStyles.infoboks}>
+              <div className={lokalStyles.ytterstefravaerwrapper}>
+                <div className={lokalStyles.ytrefravaerswrapper}>
+                  <Heading2 className={lokalStyles.fravaerstyper}>Bestemmende fraværsdag</Heading2>
+                  <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
+                  <div className={lokalStyles.fravaerwrapper}>
+                    <div className={lokalStyles.fravaertid}>Dato</div>
+                    <div>{formatDate(bestemmendeFravaersdag)} </div>
+                  </div>
+                </div>
+                <div className={lokalStyles.arbeidsgiverperiode}>
+                  <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
+                  <BodyLong>
+                    Arbeidsgiver er ansvarlig å betale ut lønn til den sykmeldte under arbeidsgiverpeioden, etterpå
+                    betaler Nav lønn til den syke eller refunderer bedriften:
+                  </BodyLong>
+                  {arbeidsgiverperioder &&
+                    arbeidsgiverperioder.map((periode, index) => (
+                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.fom.valueOf()} />
+                    ))}
+                </div>
               </div>
-              <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
             </div>
-          </main>
-        </PageContent>
-      </div>
+          </div>
+          <Skillelinje />
+          <Heading2>Bruttoinntekt siste 3 måneder</Heading2>
+          <BodyShort className={lokalStyles.fravaertid}>Registrert inntekt</BodyShort>
+          <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
+          {bruttoinntekt.endringsaarsak && (
+            <>Endret med årsak: {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak)}</>
+          )}
+          <Skillelinje />
+          <Heading2>Refusjon</Heading2>
+
+          <Heading3>Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?</Heading3>
+          <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
+          <Heading3>Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?</Heading3>
+          <LonnUnderSykefravaeret lonn={lonnISykefravaeret!} refusjonskravetOpphoerer={refusjonskravetOpphoerer} />
+
+          <Skillelinje />
+          <Heading2>Eventuelle naturalytelser</Heading2>
+          <BortfallNaturalytelser ytelser={naturalytelser!} />
+          <Skillelinje />
+          <BodyShort>
+            Kvittering - innsendt inntektsmelding - {formatDate(now)} kl. {formatTime(now)}
+          </BodyShort>
+          <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
+            <div className={lokalStyles.innerbuttonwrapper}>
+              <ButtonEndre onClick={clickEndre} />
+
+              <Link className={lokalStyles.lukkelenke} href='/'>
+                Lukk
+              </Link>
+            </div>
+            <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
+          </div>
+        </div>
+      </PageContent>
     </div>
   );
 };

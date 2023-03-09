@@ -1,4 +1,3 @@
-import localStyles from './Egenmelding.module.css';
 import { Periode } from '../../state/state';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
@@ -56,23 +55,21 @@ export default function EgenmeldingPeriode({
   const defaultMnd = new Date(forigeMndAaar, forigeMndMnd);
 
   return (
-    <div>
-      <div className={localStyles.datowrapper}>
-        <Periodevelger
-          fomTekst='Fra'
-          fomID={`egenmeldingsperiode-fom-${periodeId}`}
-          tomTekst='Til'
-          tomID={`egenmeldingsperiode-tom-${periodeId}`}
-          onRangeChange={rangeChangeHandler}
-          defaultRange={egenmeldingsperiode}
-          kanSlettes={kanSlettes}
-          periodeId={periodeId}
-          onSlettRad={onSlettRad}
-          toDate={toDate}
-          disabled={disabled}
-          defaultMonth={defaultMnd}
-        />
-      </div>
+    <div data-cy='egenmelding'>
+      <Periodevelger
+        fomTekst='Fra'
+        fomID={`egenmeldingsperiode-fom-${periodeId}`}
+        tomTekst='Til'
+        tomID={`egenmeldingsperiode-tom-${periodeId}`}
+        onRangeChange={rangeChangeHandler}
+        defaultRange={egenmeldingsperiode}
+        kanSlettes={kanSlettes}
+        periodeId={periodeId}
+        onSlettRad={onSlettRad}
+        toDate={toDate}
+        disabled={disabled}
+        defaultMonth={defaultMnd}
+      />
     </div>
   );
 }

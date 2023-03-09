@@ -24,7 +24,7 @@ describe('TidligereInntekt', () => {
 
     userEvent.click(screen.getByText('Endre'));
 
-    const leggTilKnapp = await screen.findByText('Legg til egenmeldingsperiode');
+    const leggTilKnapp = await screen.findByText('Legg til periode');
     expect(leggTilKnapp).toBeInTheDocument();
 
     const results = await axe(container);

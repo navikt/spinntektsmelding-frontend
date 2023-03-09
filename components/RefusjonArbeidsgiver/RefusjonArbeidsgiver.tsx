@@ -139,11 +139,6 @@ export default function RefusjonArbeidsgiver() {
             </RadioGroup>
             {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
               <div className={styles.datepickerescape}>
-                {/* <RefsjonArbeidsgiverSluttdato
-                  defaultValue={refusjonskravetOpphoerer.opphorsdato}
-                  onDateChange={refusjonskravetOpphoererDato}
-                  minDate={sisteDagIArbeidsgiverperioden}
-                /> */}
                 <Datovelger
                   fromDate={sisteDagIArbeidsgiverperioden}
                   onDateChange={refusjonskravetOpphoererDato}
