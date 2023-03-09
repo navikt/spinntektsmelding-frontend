@@ -40,8 +40,6 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
     }
     const feilmeldinger = get().feilmeldinger;
 
-    console.log('skal vise feilmeldingstekst', get().skalViseFeilmeldinger);
-
     if (!feilmeldinger || feilmeldinger.length === 0 || !feltnavn) {
       return '';
     }
@@ -56,8 +54,6 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
       return false;
     }
     const feilmeldinger = get().feilmeldinger;
-
-    console.log('skal vise feilmeldinger', get().skalViseFeilmeldinger);
 
     return get().skalViseFeilmeldinger && feilmeldinger.some((melding) => melding.felt === feltnavn);
   },
@@ -85,7 +81,6 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
   },
 
   setSkalViseFeilmeldinger: (status) => {
-    console.log('setSkalViseFeilmeldinger', status);
     set(
       produce((state) => {
         state.skalViseFeilmeldinger = status;
