@@ -1,9 +1,10 @@
 import { StateCreator } from 'zustand';
 import produce from 'immer';
-import { ValiderTekster } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat, ValiderTekster } from '../utils/useValiderInntektsmelding';
 import { CompleteState } from './useBoundStore';
+import feiltekster from '../utils/feiltekster';
 
-export function slettFeilmelding(state: any, felt: string) {
+export function slettFeilmeldingFraState(state: any, felt: string) {
   state.feilmeldinger = state.feilmeldinger.filter((element: ValiderTekster) => element.felt !== felt);
 
   return state;
@@ -27,6 +28,7 @@ export interface FeilmeldingerState {
   slettFeilmelding: (felt: string) => void;
   setSkalViseFeilmeldinger: (status: boolean) => void;
   fyllFeilmeldinger: (feilmeldinger: Array<ValiderTekster>) => void;
+  oppdaterFeilmeldinger: (feilmeldinger: Array<ValiderResultat>, prefix: string) => Array<ValiderTekster>;
 }
 
 const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerState> = (set, get) => ({
@@ -72,7 +74,7 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
   slettFeilmelding: (felt) => {
     set(
       produce((state) => {
-        state = slettFeilmelding(state, felt);
+        state = slettFeilmeldingFraState(state, felt);
         return state;
       })
     );
@@ -95,6 +97,21 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
         return state;
       })
     );
+  },
+  oppdaterFeilmeldinger: (feilmeldinger: Array<ValiderResultat>, prefix: string): Array<ValiderTekster> => {
+    const gamleFeilmeldinger = get().feilmeldinger;
+    const rensedeFeilmeldinger = gamleFeilmeldinger.filter(
+      (melding: ValiderTekster) => !melding.felt.startsWith(prefix)
+    );
+
+    const feilmeldingtekster = feilmeldinger.map((error: any) => ({
+      felt: error.felt,
+      // eslint-disable-next-line
+      // @ts-ignore
+      text: error.code && feiltekster[[error.code]] ? (feiltekster[[error.code]] as string) : error.code
+    }));
+
+    return rensedeFeilmeldinger.concat(feilmeldingtekster);
   }
 });
 

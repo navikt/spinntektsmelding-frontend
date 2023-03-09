@@ -4,7 +4,7 @@ import { HistoriskInntekt, Inntekt, Periode } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
-import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
+import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
 import { subMonths } from 'date-fns';
 
@@ -69,7 +69,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
         state.bruttoinntekt.manueltKorrigert = true;
         if (state.bruttoinntekt.bruttoInntekt != undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
-          state = slettFeilmelding(state, 'bruttoinntekt-endringsbelop');
+          state = slettFeilmeldingFraState(state, 'bruttoinntekt-endringsbelop');
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
@@ -84,7 +84,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt.manueltKorrigert = false;
         state.bruttoinntekt.bekreftet = true;
         if (state.bruttoinntekt.bruttoInntekt !== undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
-          state = slettFeilmelding(state, 'bruttoinntekt-endringsbelop');
+          state = slettFeilmeldingFraState(state, 'bruttoinntekt-endringsbelop');
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
@@ -100,7 +100,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt.manueltKorrigert = true;
 
         if (aarsak && aarsak !== '') {
-          state = slettFeilmelding(state, 'bruttoinntekt-endringsaarsak');
+          state = slettFeilmeldingFraState(state, 'bruttoinntekt-endringsaarsak');
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsaarsak', feiltekster.ENDRINGSAARSAK_MANGLER);
         }
@@ -181,7 +181,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       produce((state) => {
         state.bruttoinntekt!.bekreftet = true;
         if (bekreftet === true) {
-          state = slettFeilmelding(state, 'bruttoinntektbekreft');
+          state = slettFeilmeldingFraState(state, 'bruttoinntektbekreft');
         }
 
         return state;

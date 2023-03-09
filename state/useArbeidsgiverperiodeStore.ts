@@ -9,6 +9,9 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import { isValid } from 'date-fns';
+import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
+import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
@@ -76,10 +79,16 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
           state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
         }
+        const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
+          state.arbeidsgiverperioder,
+          'arbeidsgiverperiode'
+        );
+
+        state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder);
         return state;
       })
     ),
-  setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) =>
+  setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
     set(
       produce((state) => {
         state.arbeidsgiverperioder = state.arbeidsgiverperioder.map((periode: Periode) => {
@@ -100,9 +109,17 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         }
         state.endretArbeidsgiverperiode = true;
 
+        const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
+          state.arbeidsgiverperioder,
+          'arbeidsgiverperiode'
+        );
+
+        state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperiode');
+
         return state;
       })
-    ),
+    );
+  },
   setEndreArbeidsgiverperiode: (endre: boolean) => {
     set(
       produce((state) => {
@@ -137,6 +154,8 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
           state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
         }
+
+        slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
 
         state.endretArbeidsgiverperiode = false;
         return state;

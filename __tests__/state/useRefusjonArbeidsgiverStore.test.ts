@@ -211,4 +211,45 @@ describe('useBoundStore', () => {
 
     expect(result.current.refusjonskravetOpphoerer?.opphorsdato).toEqual(new Date(2022, 2, 7));
   });
+
+  it('should change the beloepUtbetaltUnderArbeidsgiverperioden beløp.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.beloepUtbetaltUnderArbeidsgiverperioden('12345');
+    });
+
+    expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(12345);
+
+    act(() => {
+      result.current.beloepUtbetaltUnderArbeidsgiverperioden('56478');
+    });
+
+    expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(56478);
+
+    act(() => {
+      result.current.beloepUtbetaltUnderArbeidsgiverperioden('-56478');
+    });
+
+    expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(-56478);
+
+    expect(result.current.feilmeldinger?.[0].felt).toEqual('lus-uua-input');
+  });
+
+  it('should change the setHarRefusjonEndringer beløp.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.setHarRefusjonEndringer(true);
+    });
+
+    expect(result.current.harRefusjonEndringer).toBeTruthy();
+    expect(result.current.refusjonEndringer).toEqual([{}]);
+
+    act(() => {
+      result.current.setHarRefusjonEndringer(false);
+    });
+
+    expect(result.current.harRefusjonEndringer).toBeFalsy();
+  });
 });
