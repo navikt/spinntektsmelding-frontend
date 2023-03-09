@@ -9,10 +9,9 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import { isValid } from 'date-fns';
-import { slettFeilmelding } from './useFeilmeldingerStore';
 import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
-import { ValiderResultat, ValiderTekster } from '../utils/useValiderInntektsmelding';
-import feiltekster from '../utils/feiltekster';
+import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
