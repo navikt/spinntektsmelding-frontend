@@ -1,4 +1,3 @@
-import localStyles from './Egenmelding.module.css';
 import { Periode } from '../../state/state';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
