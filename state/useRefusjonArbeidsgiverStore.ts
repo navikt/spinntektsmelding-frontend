@@ -3,7 +3,7 @@ import produce from 'immer';
 import { LonnIArbeidsgiverperioden, LonnISykefravaeret, RefusjonskravetOpphoerer, YesNo } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 
-import { leggTilFeilmelding, slettFeilmelding } from './useFeilmeldingerStore';
+import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldingerStore';
 
 import feiltekster from '../utils/feiltekster';
 import { CompleteState } from './useBoundStore';
@@ -42,8 +42,8 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.fullLonnIArbeidsgiverPerioden = { status: status };
         } else state.fullLonnIArbeidsgiverPerioden.status = status;
 
-        state = slettFeilmelding(state, 'lia-radio');
-        state = slettFeilmelding(state, 'lus-uua-input');
+        state = slettFeilmeldingFraState(state, 'lia-radio');
+        state = slettFeilmeldingFraState(state, 'lus-uua-input');
 
         return state;
       })
@@ -65,7 +65,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           delete state.lonnISykefravaeret.belop;
         }
 
-        state = slettFeilmelding(state, 'lus-radio');
+        state = slettFeilmeldingFraState(state, 'lus-radio');
 
         return state;
       })
@@ -83,7 +83,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.fullLonnIArbeidsgiverPerioden = { begrunnelse: begrunnelse };
         }
         if (begrunnelse && begrunnelse.length > 0) {
-          state = slettFeilmelding(state, 'lia-select');
+          state = slettFeilmeldingFraState(state, 'lia-select');
         } else {
           state = leggTilFeilmelding(state, 'lia-select', feiltekster.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE);
         }
@@ -103,7 +103,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         }
 
         if (beloep && stringishToNumber(beloep)! >= 0) {
-          state = slettFeilmelding(state, 'lus-input');
+          state = slettFeilmeldingFraState(state, 'lus-input');
         } else {
           state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
@@ -124,7 +124,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
 
         const nBelop = stringishToNumber(beloep);
         if (nBelop && nBelop >= 0) {
-          state = slettFeilmelding(state, 'lus-uua-input');
+          state = slettFeilmeldingFraState(state, 'lus-uua-input');
         } else {
           state = leggTilFeilmelding(state, 'lus-uua-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
@@ -144,7 +144,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
             status: status
           };
         }
-        slettFeilmelding(state, 'lus-sluttdato-velg');
+        slettFeilmeldingFraState(state, 'lus-sluttdato-velg');
         return state;
       })
     ),
@@ -171,10 +171,10 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         state.refusjonEndringer = endringer;
         endringer.forEach((endring, index) => {
           if (endring.belop && endring.belop >= 0) {
-            slettFeilmelding(state, 'lus-utbetaling-endring-belop-' + index);
+            slettFeilmeldingFraState(state, 'lus-utbetaling-endring-belop-' + index);
           }
           if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
-            slettFeilmelding(state, 'lus-utbetaling-endring-dato-' + index);
+            slettFeilmeldingFraState(state, 'lus-utbetaling-endring-dato-' + index);
           }
         });
         return state;

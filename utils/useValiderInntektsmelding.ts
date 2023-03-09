@@ -53,8 +53,6 @@ export interface ValiderResultat {
 export default function useValiderInntektsmelding() {
   const state = useBoundStore((state) => state);
 
-  state.setSkalViseFeilmeldinger(true);
-
   return (opplysningerBekreftet: boolean): SubmitInntektsmeldingReturnvalues => {
     let errorTexts: Array<ValiderTekster> = [];
     let errorCodes: Array<ValiderResultat> = [];
@@ -67,6 +65,8 @@ export default function useValiderInntektsmelding() {
     let feilkoderBekreftOpplyninger: Array<ValiderResultat> = [];
     let feilkoderEndringAvMaanedslonn: Array<ValiderResultat> = [];
     let feilkoderArbeidsgiverperioder: Array<ValiderResultat> = [];
+
+    state.setSkalViseFeilmeldinger(true);
 
     if (state.fravaersperioder) {
       if (state.fravaersperioder.length < 1) {

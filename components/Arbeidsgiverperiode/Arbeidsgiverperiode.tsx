@@ -79,8 +79,10 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
                   <Periodevelger
                     fomTekst='Fra'
                     fomID={`arbeidsgiverperiode-fom-${periode.id}`}
+                    fomError={visFeilmeldingsTekst(`arbeidsgiverperiode-fom-${periode.id}`)}
                     tomTekst='Til'
                     tomID={`arbeidsgiverperiode-tom-${periode.id}`}
+                    tomError={visFeilmeldingsTekst(`arbeidsgiverperiode-tom-${periode.id}`)}
                     onRangeChange={(oppdatertPeriode) => setArbeidsgiverperiodeDato(oppdatertPeriode, periode.id)}
                     defaultRange={periode}
                     kanSlettes={periodeIndex > 0}

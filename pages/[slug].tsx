@@ -90,7 +90,7 @@ const Home: NextPage = () => {
             'Content-Type': 'application/json'
           }
         });
-        debugger;
+
         switch (data.status) {
           case 201:
             router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
