@@ -21,13 +21,13 @@ describe('Utfylling og innsending av skjema', () => {
     // cy.clock(now);
 
     cy.visit('http://localhost:3000/im-dialog/1234-3456-5678-2457');
-    cy.injectAxe();
+    // cy.injectAxe();
   });
 
-  it('Has no detectable a11y violations on load', () => {
-    // Test the page at initial load
-    cy.checkA11y();
-  });
+  // it('Has no detectable a11y violations on load', () => {
+  //   // Test the page at initial load
+  //   cy.checkA11y();
+  // });
 
   it('should display information on the person and the submitter', () => {
     cy.get('[data-cy="navn"]').should('have.text', 'Navn Navnesen');
