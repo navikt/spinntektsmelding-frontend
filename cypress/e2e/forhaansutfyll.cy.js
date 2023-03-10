@@ -21,7 +21,7 @@ describe('Utfylling og innsending av skjema', () => {
     // cy.clock(now);
 
     cy.visit('http://localhost:3000/im-dialog/1234-3456-5678-2457');
-    // cy.injectAxe();
+    cy.injectAxe();
   });
 
   // it('Has no detectable a11y violations on load', () => {
@@ -82,6 +82,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('#lus-radio [type="radio"]').first().check();
     cy.get('#lus-radio [type="radio"]').last().check();
 
+    cy.get('#bekreft-opplysninger').check();
     cy.get('#bekreft-opplysninger').check();
 
     cy.contains('Send').click();
