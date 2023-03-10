@@ -94,7 +94,10 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
 
       {!endretArbeidsgiverperiode && (
         <div className={lokalStyles.endreknapp}>
-          <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />
+          <ButtonEndre
+            onClick={(event) => clickEndreFravaersperiodeHandler(event)}
+            data-cy='endre-arbeidsgiverperiode'
+          />
         </div>
       )}
 
