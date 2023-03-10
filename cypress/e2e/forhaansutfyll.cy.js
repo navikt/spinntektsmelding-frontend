@@ -77,7 +77,9 @@ describe('Utfylling og innsending av skjema', () => {
   });
 
   it('can check some radioboxes and submit the form', () => {
+    cy.get('#lia-radio [type="radio"]').last().check();
     cy.get('#lia-radio [type="radio"]').first().check();
+    cy.get('#lus-radio [type="radio"]').first().check();
     cy.get('#lus-radio [type="radio"]').last().check();
 
     cy.get('#bekreft-opplysninger').check();
