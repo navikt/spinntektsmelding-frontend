@@ -4,6 +4,7 @@ import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 import { subDays } from 'date-fns';
+import localStyles from './Egenmelding.module.css';
 
 interface EgenmeldingPeriodeInterface {
   periodeId: string;
@@ -55,7 +56,7 @@ export default function EgenmeldingPeriode({
   const defaultMnd = new Date(forigeMndAaar, forigeMndMnd);
 
   return (
-    <div data-cy='egenmelding'>
+    <div data-cy='egenmelding' className={localStyles.velgerWrapper}>
       <Periodevelger
         fomTekst='Fra'
         fomID={`egenmeldingsperiode-fom-${periodeId}`}

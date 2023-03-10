@@ -87,8 +87,15 @@ export default function Periodevelger({
           defaultMonth={defaultMonth || defaultRange?.fom}
           error={tomError}
         />
+        {kanSlettes && (
+          <ButtonSlette
+            title='Slett periode'
+            onClick={onSlettClick}
+            className={lokalStyles.sletteknapp}
+            disabled={disabled}
+          />
+        )}
       </div>
-      {kanSlettes && <ButtonSlette title='Slett periode' onClick={onSlettClick} className={lokalStyles.sletteknapp} />}
     </>
   );
 }

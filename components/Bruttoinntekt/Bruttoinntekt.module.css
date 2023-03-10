@@ -14,10 +14,14 @@
 }
 
 .endremaaanedsinntekt,
-.endreperiodeliste,
 .endremaaanedsinntektwrapper {
   display: flex;
   gap    : 2rem;
+}
+
+.endreperiodeliste {
+  display: flex;
+  gap    : 1rem;
 }
 
 .endreperiodeliste {
