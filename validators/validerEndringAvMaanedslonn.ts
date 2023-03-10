@@ -15,7 +15,7 @@ export default function valdiderEndringAvMaanedslonn(
   lonnISykefravaeret?: LonnISykefravaeret
 ): Array<ValiderResultat> {
   let feilmeldinger: Array<ValiderResultat> = [];
-  const harLonnISykefravaeret = lonnISykefravaeret && lonnISykefravaeret.status === 'Ja';
+  const harLonnISykefravaeret = !!lonnISykefravaeret && lonnISykefravaeret.status === 'Ja';
   if (harLonnISykefravaeret && harRefusjonEndringer === undefined) {
     feilmeldinger.push({
       felt: 'lus-utbetaling-endring-radio',
