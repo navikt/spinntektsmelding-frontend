@@ -140,6 +140,7 @@ const formData = {
   orgnrUnderenhet: '911206722',
   orgNavn: 'Ampert piggsvin barnehage',
   bruttoinntekt: 77000,
+
   fravaersperioder: [
     {
       fom: '2023-02-20',
@@ -151,10 +152,10 @@ const formData = {
     }
   ],
   egenmeldingsperioder: [
-    //   {
-    //     fom: format(subDays(new Date(), 18), 'yyyy-MM-dd'),
-    //     tom: format(subDays(new Date(), 15), 'yyyy-MM-dd')
-    //   }
+    {
+      fom: '2023-02-17',
+      tom: '2023-02-19'
+    }
   ],
   tidligereinntekter: [
     // Hva skjer ved jobbskifte?

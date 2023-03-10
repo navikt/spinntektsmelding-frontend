@@ -32,16 +32,16 @@ export default function EgenmeldingPeriode({
 
   if (!endreEgenmeldingsperiode) {
     return (
-      <>
+      <div data-cy='egenmelding'>
         <div className={styles.datepickerescape}>
           <TextLabel>Fra</TextLabel>
-          <div>{formatDate(egenmeldingsperiode.fom)}</div>
+          <div data-cy='egenmelding-fra'>{formatDate(egenmeldingsperiode.fom)}</div>
         </div>
         <div className={styles.datepickerescape}>
           <TextLabel>Til</TextLabel>
-          <div>{formatDate(egenmeldingsperiode.tom)}</div>
+          <div data-cy='egenmelding-til'>{formatDate(egenmeldingsperiode.tom)}</div>
         </div>
-      </>
+      </div>
     );
   }
 

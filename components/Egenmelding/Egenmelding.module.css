@@ -1,5 +1,6 @@
 .egenmeldingswrapper>div:not(:first-child) {
-  margin-top: 2rem;
+  margin-top   : .5rem;
+  margin-bottom: 1rem;
 }
 
 .sammeperiode {
