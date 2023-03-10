@@ -10,6 +10,7 @@ import formatCurrency from '../../utils/formatCurrency';
 import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import Datovelger from '../Datovelger';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
+import { useState } from 'react';
 
 export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -46,14 +47,24 @@ export default function RefusjonArbeidsgiver() {
   const sisteArbeidsgiverperiode = muteableArbeidsgiverperioder?.sort((a, b) => (a.fom > b.fom ? -1 : 1));
 
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode[0].tom : new Date();
+  const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
   return (
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
-      <ReadMore header='Mer informasjon om refusjon'>
+      <ReadMore
+        header='Mer informasjon om refusjon'
+        open={readMoreOpen}
+        onClick={() => {
+          setReadMoreOpen(!readMoreOpen);
+        }}
+      >
         Arbeidsgiveren kan forskottere sykepenger til den sykmeldte eller velge at NAV skal betale sykepenger direkte
         til den sykmeldte etter arbeidsgiverperioden.{' '}
-        <LenkeEksternt href='https://www.nav.no/no/bedrift/oppfolging/sykmeldt-arbeidstaker/sykepenger/na%CC%8Ar-du-forskutterer-sykepenger-etter-arbeidsgiverperioden_kap1'>
+        <LenkeEksternt
+          href='https://www.nav.no/no/bedrift/oppfolging/sykmeldt-arbeidstaker/sykepenger/na%CC%8Ar-du-forskutterer-sykepenger-etter-arbeidsgiverperioden_kap1'
+          isHidden={!readMoreOpen}
+        >
           Les om de ulike refusjonsreglene.
         </LenkeEksternt>
       </ReadMore>

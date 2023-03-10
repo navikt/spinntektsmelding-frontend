@@ -11,6 +11,7 @@ import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
+import { useState } from 'react';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -42,13 +43,24 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
     tilbakestillArbeidsgiverperiode();
   };
 
+  const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
+
   return (
     <>
       <Heading3 unPadded>Arbeidsgiverperiode</Heading3>
-      <ReadMore header='Mer informasjon om arbeidsgiverperioden'>
+      <ReadMore
+        header='Mer informasjon om arbeidsgiverperioden'
+        open={readMoreOpen}
+        onClick={() => {
+          setReadMoreOpen(!readMoreOpen);
+        }}
+      >
         Arbeidsgiveren skal vanligvis betale sykepenger i en periode på opptil 16 kalenderdager, også kalt
         arbeidsgiverperioden.{' '}
-        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
+        <LenkeEksternt
+          href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'
+          isHidden={!readMoreOpen}
+        >
           Les mer om hvordan arbeidsgiverperioden beregnes.
         </LenkeEksternt>
       </ReadMore>
