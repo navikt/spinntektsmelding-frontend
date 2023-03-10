@@ -6,6 +6,7 @@ import stringishToNumber from '../../utils/stringishToNumber';
 import ButtonSlette from '../ButtonSlette';
 import Datovelger from '../Datovelger';
 import useBoundStore from '../../state/useBoundStore';
+import { YesNo } from '../../state/state';
 
 export interface EndringsBelop {
   belop?: number;
@@ -15,9 +16,9 @@ interface RefusjonUtbetalingEndringProps {
   endringer: Array<EndringsBelop>;
   minDate?: Date;
   maxDate?: Date;
-  harRefusjonEndring?: boolean;
+  harRefusjonEndring?: YesNo;
   onOppdaterEndringer?: (endringer: Array<EndringsBelop>) => void;
-  onHarEndringer?: (harEndring: boolean) => void;
+  onHarEndringer?: (harEndring: YesNo) => void;
 }
 
 export default function RefusjonUtbetalingEndring({
@@ -74,7 +75,7 @@ export default function RefusjonUtbetalingEndring({
 
   const changeHarEndringerHandler = (status: string) => {
     if (onHarEndringer) {
-      onHarEndringer(status === 'Ja');
+      onHarEndringer(status as YesNo);
     }
   };
 
@@ -100,7 +101,7 @@ export default function RefusjonUtbetalingEndring({
         <Radio value='Nei'>Nei</Radio>
       </RadioGroup>
 
-      {harRefusjonEndring &&
+      {harRefusjonEndring === 'Ja' &&
         endringer.map((endring, key) => (
           <div key={key} className={lokalStyles.belopperiode}>
             <TextField
@@ -129,7 +130,7 @@ export default function RefusjonUtbetalingEndring({
           </div>
         ))}
 
-      {harRefusjonEndring && (
+      {harRefusjonEndring === 'Ja' && (
         <Button
           variant='secondary'
           className={lokalStyles.legtilbutton}
