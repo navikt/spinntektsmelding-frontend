@@ -188,7 +188,7 @@ export default function useFyllInnsending() {
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
 
     const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonsendringer(
-      harRefusjonEndringer,
+      harRefusjonEndringer === 'Ja',
       refusjonEndringer
     );
 

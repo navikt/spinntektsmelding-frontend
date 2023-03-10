@@ -1,5 +1,5 @@
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import { LonnISykefravaeret } from '../state/state';
+import { LonnISykefravaeret, YesNo } from '../state/state';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum EndringAvMaanedslonnFeilkode {
@@ -10,7 +10,7 @@ export enum EndringAvMaanedslonnFeilkode {
 }
 
 export default function valdiderEndringAvMaanedslonn(
-  harRefusjonEndringer?: boolean,
+  harRefusjonEndringer?: YesNo,
   refusjonEndringer?: Array<EndringsBelop>,
   lonnISykefravaeret?: LonnISykefravaeret
 ): Array<ValiderResultat> {
@@ -24,7 +24,7 @@ export default function valdiderEndringAvMaanedslonn(
     return feilmeldinger;
   }
 
-  if (refusjonEndringer) {
+  if (harRefusjonEndringer === 'Ja' && refusjonEndringer) {
     refusjonEndringer.forEach((endring, index) => {
       if (!endring.belop) {
         feilmeldinger.push({

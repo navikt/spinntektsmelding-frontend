@@ -13,7 +13,7 @@ export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
   lonnISykefravaeret?: LonnISykefravaeret;
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
-  harRefusjonEndringer?: boolean;
+  harRefusjonEndringer?: YesNo;
   refusjonEndringer?: Array<EndringsBelop>;
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) => void;
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
@@ -24,7 +24,7 @@ export interface RefusjonArbeidsgiverState {
   refusjonskravetOpphoererDato: (opphoersdato?: Date) => void;
   initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) => void;
   oppdaterRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
-  setHarRefusjonEndringer: (harEndringer: boolean) => void;
+  setHarRefusjonEndringer: (harEndringer: YesNo) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
 }
 
@@ -180,7 +180,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  setHarRefusjonEndringer: (harEndringer: boolean) =>
+  setHarRefusjonEndringer: (harEndringer: YesNo) =>
     set(
       produce((state) => {
         state.harRefusjonEndringer = harEndringer;

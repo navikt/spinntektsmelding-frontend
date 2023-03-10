@@ -76,7 +76,16 @@ describe('Utfylling og innsending av skjema', () => {
       .should('match', /66\s000,00\skr/);
   });
 
-  it('can check some radioboxes', () => {
+  it('can click the Endre arbeidsgiverperiode button so that egenmelding gets disabled', () => {
+    cy.contains('Endre').first().click();
+
+    cy.get('.navds-alert--info .navds-alert__wrapper').should(
+      'have.text',
+      'Hvis du overstyrer arbeidsgiverperioden er det ikke mulig å også endre eller legge til egenmeldingsperioder.'
+    );
+  });
+
+  it('can check some radioboxes and submit the form', () => {
     cy.get('#lia-radio [type="radio"]').first().check();
     cy.get('#lus-radio [type="radio"]').last().check();
 
