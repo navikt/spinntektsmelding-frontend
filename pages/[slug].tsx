@@ -139,54 +139,53 @@ const Home: NextPage = () => {
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <div>
-        <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
-        <PageContent title='Inntektsmelding'>
-          <form className={styles.padded} onSubmit={submitForm}>
-            <Person />
 
-            <Behandlingsdager />
+      <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
+      <PageContent title='Inntektsmelding'>
+        <form className={styles.padded} onSubmit={submitForm}>
+          <Person />
 
-            {egenmeldingsperioder && (
-              <>
-                <Skillelinje />
-                <Egenmelding />
-              </>
-            )}
+          <Behandlingsdager />
 
-            <Skillelinje />
-            <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} />
+          {egenmeldingsperioder && (
+            <>
+              <Skillelinje />
+              <Egenmelding />
+            </>
+          )}
 
-            <Skillelinje />
+          <Skillelinje />
+          <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} />
 
-            <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} />
+          <Skillelinje />
 
-            <Skillelinje />
+          <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} />
 
-            <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} />
+          <Skillelinje />
 
-            <Skillelinje />
+          <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} />
 
-            <RefusjonArbeidsgiver />
+          <Skillelinje />
 
-            <Skillelinje />
-            <Naturalytelser />
-            <ConfirmationPanel
-              className={styles.confirmationpanel}
-              checked={opplysningerBekreftet}
-              onClick={clickOpplysningerBekreftet}
-              label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
-              id='bekreft-opplysninger'
-              error={visFeilmeldingsTekst('bekreft-opplysninger')}
-            >
-              NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
-              er riktige eller fullstendige.
-            </ConfirmationPanel>
-            <Feilsammendrag />
-            <Button className={styles.sendbutton}>Send</Button>
-          </form>
-        </PageContent>
-      </div>
+          <RefusjonArbeidsgiver />
+
+          <Skillelinje />
+          <Naturalytelser />
+          <ConfirmationPanel
+            className={styles.confirmationpanel}
+            checked={opplysningerBekreftet}
+            onClick={clickOpplysningerBekreftet}
+            label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+            id='bekreft-opplysninger'
+            error={visFeilmeldingsTekst('bekreft-opplysninger')}
+          >
+            NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke er
+            riktige eller fullstendige.
+          </ConfirmationPanel>
+          <Feilsammendrag />
+          <Button className={styles.sendbutton}>Send</Button>
+        </form>
+      </PageContent>
     </div>
   );
 };
