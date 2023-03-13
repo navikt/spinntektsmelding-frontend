@@ -4268,11 +4268,6 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-pathe@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/pathe/-/pathe-0.2.0.tgz#30fd7bbe0a0d91f0e60bae621f5d19e9e225c339"
-  integrity sha512-sTitTPYnn23esFR3RlqYBWn4c45WGeLcsKzQiUpXJAyfcWkolvlYpV8FLo7JishK946oQwMFUCHXQ9AjGPKExw==
-
 pathe@^1.0.0, pathe@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pathe/-/pathe-1.1.0.tgz#e2e13f6c62b31a3289af4ba19886c230f295ec03"
@@ -5355,12 +5350,10 @@ vite-node@0.29.2:
   optionalDependencies:
     fsevents "~2.3.2"
 
-vitest-sonar-reporter@0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/vitest-sonar-reporter/-/vitest-sonar-reporter-0.3.1.tgz#63bfa9ee082389833460017985fa1ca0243131a5"
-  integrity sha512-lfRz+YgiChlxL0KOmTDbPL+PxwxPpEJ24RP6qG5h2bkT5XWOZoLQXOnDBwbGkB3AZtVWyvIzHmkX6b58kG2FYg==
-  dependencies:
-    pathe "^0.2.0"
+vitest-sonar-reporter@0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/vitest-sonar-reporter/-/vitest-sonar-reporter-0.3.5.tgz#621eb035f1e09773a5dfda758ebaa507ace10c42"
+  integrity sha512-p23l3fQSyBRWL14l64db5C71rGBmS9q5Lq99su+aEn6EeS848HrTG6ya0Mz5j7e3wWH69p152KNvMmUfYoB+kg==
 
 vitest@0.28.5:
   version "0.28.5"
