@@ -37,6 +37,7 @@ const Home: NextPage = () => {
   const slug = (router.query.slug as string) || '';
   const firstSlug = slug;
   const [pathSlug, setPathSlug] = useState<string>(firstSlug);
+  const [senderInn, setSenderInn] = useState<boolean>(false);
 
   useEffect(() => {
     setPathSlug(firstSlug);
@@ -80,6 +81,7 @@ const Home: NextPage = () => {
         tom: formatIsoDate(periode.tom)
       }));
       fyllFeilmeldinger([]);
+      setSenderInn(true);
       const postData = async () => {
         const data = await fetch(environment.innsendingUrl, {
           method: 'POST',
@@ -88,6 +90,7 @@ const Home: NextPage = () => {
             'Content-Type': 'application/json'
           }
         });
+        setSenderInn(false);
 
         switch (data.status) {
           case 201:
@@ -183,7 +186,9 @@ const Home: NextPage = () => {
             riktige eller fullstendige.
           </ConfirmationPanel>
           <Feilsammendrag />
-          <Button className={styles.sendbutton}>Send</Button>
+          <Button className={styles.sendbutton} loading={senderInn}>
+            Send
+          </Button>
         </form>
       </PageContent>
     </div>
