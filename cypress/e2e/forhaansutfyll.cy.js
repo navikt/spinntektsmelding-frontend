@@ -77,8 +77,6 @@ describe('Utfylling og innsending av skjema', () => {
       .invoke('text')
       .should('match', /66\s000,00\skr/);
 
-    cy.checkA11y();
-
     cy.get('#lia-radio [type="radio"]').last().check();
     cy.get('#lia-radio [type="radio"]').first().check();
     cy.get('#lus-radio [type="radio"]').first().check();
@@ -86,6 +84,8 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.get('#bekreft-opplysninger').check();
     cy.get('#bekreft-opplysninger').check();
+
+    cy.checkA11y();
 
     cy.contains('Send').click();
 
