@@ -8,18 +8,15 @@ describe('TidligereInntekt', () => {
     const tidligereinntekt: Array<HistoriskInntekt> = [
       {
         maanedsnavn: '2020-12',
-        inntekt: 234,
-        id: '2020-12'
+        inntekt: 234
       },
       {
         maanedsnavn: '2020-11',
-        inntekt: 123,
-        id: '2020-11'
+        inntekt: 123
       },
       {
         maanedsnavn: '2021-01',
-        inntekt: 345,
-        id: '2021-01'
+        inntekt: 345
       }
     ];
     render(<TidligereInntekt tidligereinntekt={tidligereinntekt} />);
@@ -42,18 +39,15 @@ describe('TidligereInntekt', () => {
     const tidligereinntekt: Array<HistoriskInntekt> = [
       {
         maanedsnavn: '2020-11',
-        inntekt: 123,
-        id: '2020-11'
+        inntekt: 123
       },
       {
         maanedsnavn: '2021-01',
-        inntekt: 345,
-        id: '2021-01'
+        inntekt: 345
       },
       {
         maanedsnavn: '2020-12',
-        inntekt: 234,
-        id: '2020-12'
+        inntekt: 234
       }
     ];
     const { container } = render(<TidligereInntekt tidligereinntekt={tidligereinntekt} />);
