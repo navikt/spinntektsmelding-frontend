@@ -13,6 +13,7 @@ export default function ButtonSlette(props: ButtonSletteProps) {
       onClick={props.onClick}
       variant='tertiary'
       icon={<Delete title={props.title} />}
+      disabled={props.disabled}
     />
   );
 }

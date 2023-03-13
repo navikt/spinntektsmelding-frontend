@@ -4,6 +4,7 @@ import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 import { subDays } from 'date-fns';
+import localStyles from './Egenmelding.module.css';
 
 interface EgenmeldingPeriodeInterface {
   periodeId: string;
@@ -32,16 +33,16 @@ export default function EgenmeldingPeriode({
 
   if (!endreEgenmeldingsperiode) {
     return (
-      <>
+      <div data-cy='egenmelding'>
         <div className={styles.datepickerescape}>
           <TextLabel>Fra</TextLabel>
-          <div>{formatDate(egenmeldingsperiode.fom)}</div>
+          <div data-cy='egenmelding-fra'>{formatDate(egenmeldingsperiode.fom)}</div>
         </div>
         <div className={styles.datepickerescape}>
           <TextLabel>Til</TextLabel>
-          <div>{formatDate(egenmeldingsperiode.tom)}</div>
+          <div data-cy='egenmelding-til'>{formatDate(egenmeldingsperiode.tom)}</div>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -55,7 +56,7 @@ export default function EgenmeldingPeriode({
   const defaultMnd = new Date(forigeMndAaar, forigeMndMnd);
 
   return (
-    <div data-cy='egenmelding'>
+    <div data-cy='egenmelding' className={localStyles.velgerWrapper}>
       <Periodevelger
         fomTekst='Fra'
         fomID={`egenmeldingsperiode-fom-${periodeId}`}

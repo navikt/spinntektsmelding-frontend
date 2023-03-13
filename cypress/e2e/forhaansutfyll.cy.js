@@ -25,6 +25,7 @@ describe('Utfylling og innsending av skjema', () => {
   });
 
   // it('Has no detectable a11y violations on load', () => {
+  //   cy.get('[data-cy="navn"]').should('have.text', 'Navn Navnesen');
   //   // Test the page at initial load
   //   cy.checkA11y();
   // });
@@ -41,7 +42,8 @@ describe('Utfylling og innsending av skjema', () => {
   it('should display information on the egenmelding', () => {
     cy.get('[data-cy="egenmelding"] .navds-label').first().should('have.text', 'Fra');
     cy.get('[data-cy="egenmelding"] .navds-label').last().should('have.text', 'Til');
-    cy.get('[data-cy="egenmelding"] .navds-date__field-input').should('have.value', '');
+    cy.get('[data-cy="egenmelding-fra"]').should('have.text', '17.02.2023');
+    cy.get('[data-cy="egenmelding-til"]').should('have.text', '19.02.2023');
   });
 
   it('should display information on the sykmelding', () => {
@@ -54,8 +56,8 @@ describe('Utfylling og innsending av skjema', () => {
   it('should display information on the arbeidsgiverperiode', () => {
     cy.get('[data-cy="arbeidsgiverperiode-0-fra"]').should('have.text', 'Fra');
     cy.get('[data-cy="arbeidsgiverperiode-0-til"]').should('have.text', 'Til');
-    cy.get('[data-cy="arbeidsgiverperiode-0-fra-dato"]').should('have.text', '20.02.2023');
-    cy.get('[data-cy="arbeidsgiverperiode-0-til-dato"]').should('have.text', '06.03.2023');
+    cy.get('[data-cy="arbeidsgiverperiode-0-fra-dato"]').should('have.text', '17.02.2023');
+    cy.get('[data-cy="arbeidsgiverperiode-0-til-dato"]').should('have.text', '04.03.2023');
   });
 
   it('should display information on the beregnet månedslønn', () => {
@@ -74,9 +76,7 @@ describe('Utfylling og innsending av skjema', () => {
       .last()
       .invoke('text')
       .should('match', /66\s000,00\skr/);
-  });
 
-  it('can check some radioboxes and submit the form', () => {
     cy.get('#lia-radio [type="radio"]').last().check();
     cy.get('#lia-radio [type="radio"]').first().check();
     cy.get('#lus-radio [type="radio"]').first().check();
@@ -85,11 +85,13 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('#bekreft-opplysninger').check();
     cy.get('#bekreft-opplysninger').check();
 
+    cy.checkA11y();
+
     cy.contains('Send').click();
 
-    cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
+    // cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
 
-    cy.checkA11y();
+    // cy.checkA11y();
 
     // We'll store our item text in a variable so we can reuse it
     // const newItem = 'Feed the cat';

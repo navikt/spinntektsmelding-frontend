@@ -78,15 +78,26 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   );
 
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
+  const [readMoreOpenML, setReadMoreOpenML] = useState<boolean>(false);
+  const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
   if (tidligereinntekt && tidligereinntekt.length > 0) {
     return (
       <>
         <Heading3 unPadded>Beregnet månedslønn</Heading3>
-        <ReadMore header='Mer informasjon om beregnet månedslønn'>
+        <ReadMore
+          header='Mer informasjon om beregnet månedslønn'
+          open={readMoreOpenML}
+          onClick={() => {
+            setReadMoreOpenML(!readMoreOpenML);
+          }}
+        >
           Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
           til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
-          <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
+          <LenkeEksternt
+            href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'
+            isHidden={!readMoreOpenML}
+          >
             Les mer om beregning av månedslønn.
           </LenkeEksternt>
         </ReadMore>
@@ -233,10 +244,19 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     return (
       <>
         <Heading3>Beregnet månedslønn</Heading3>
-        <ReadMore header='Mer informasjon om beregnet månedslønn'>
+        <ReadMore
+          header='Mer informasjon om beregnet månedslønn'
+          open={readMoreOpen}
+          onClick={() => {
+            setReadMoreOpen(!readMoreOpen);
+          }}
+        >
           Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
           til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
-          <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
+          <LenkeEksternt
+            href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'
+            isHidden={!readMoreOpen}
+          >
             Les mer om beregning av månedslønn.
           </LenkeEksternt>
         </ReadMore>
