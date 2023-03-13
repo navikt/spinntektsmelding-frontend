@@ -4,9 +4,10 @@ interface LenkeEksterntProps extends React.AnchorHTMLAttributes<HTMLAnchorElemen
 
 export default function LenkeEksternt(props: LenkeEksterntProps) {
   const tabIndex = props.isHidden ? -1 : 0;
+  const { isHidden, ...restProps } = props;
 
   return (
-    <a target='_blank' rel='noopener noreferrer' {...props} tabIndex={tabIndex}>
+    <a target='_blank' rel='noopener noreferrer' {...restProps} tabIndex={tabIndex}>
       {props.children}
     </a>
   );
