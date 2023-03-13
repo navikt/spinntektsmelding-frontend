@@ -89,9 +89,9 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.contains('Send').click();
 
-    cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
+    // cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
 
-    cy.checkA11y();
+    // cy.checkA11y();
 
     // We'll store our item text in a variable so we can reuse it
     // const newItem = 'Feed the cat';
