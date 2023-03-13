@@ -131,4 +131,48 @@ describe('useBoundStore', () => {
 
     expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
   });
+
+  it('should set ting tilbake.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initEgenmeldingsperiode(egenmeldingsperioder);
+    });
+
+    expect(result.current.endreEgenmeldingsperiode).toBeFalsy();
+
+    act(() => {
+      result.current.setEndreEgenmelding(true);
+    });
+
+    expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
+
+    act(() => {
+      result.current.tilbakestillEgenmelding();
+    });
+
+    expect(result.current.endreEgenmeldingsperiode).toBeFalsy();
+  });
+
+  it('should set ting tilbake.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initEgenmeldingsperiode([]);
+    });
+
+    expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
+
+    act(() => {
+      result.current.setEndreEgenmelding(true);
+    });
+
+    expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
+
+    act(() => {
+      result.current.tilbakestillEgenmelding();
+    });
+
+    expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
+  });
 });
