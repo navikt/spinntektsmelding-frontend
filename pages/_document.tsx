@@ -1,20 +1,45 @@
-import { Html, Head, Main, NextScript } from 'next/document';
-import Script from 'next/script';
+import NextDocument, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
+import { Components, fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr';
+import getConfig from 'next/config';
 
-export default function Document() {
+const { serverRuntimeConfig } = getConfig();
+
+interface DocumentProps {
+  Decorator: Components;
+}
+
+const Document = ({ Decorator }: DocumentProps) => {
   return (
     <Html>
       <Head>
-        <link href='https://www.nav.no/dekoratoren/css/client.css' rel='stylesheet' />
+        <Decorator.Styles />
       </Head>
       <body>
-        <div id='decorator-header'></div>
+        <Decorator.Header />
         <Main />
+        <Decorator.Footer />
+        <Decorator.Scripts />
         <NextScript />
-        <div id='decorator-footer'></div>
-        <div id='decorator-env' data-src='https://www.nav.no/dekoratoren/env?context=arbeidsgiver'></div>
-        <Script type='text/javascript' async src='https://www.nav.no/dekoratoren/client.js'></Script>
       </body>
     </Html>
   );
-}
+};
+
+Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> => {
+  const initialProps = await NextDocument.getInitialProps(ctx);
+  const Decorator = await fetchDecoratorReact({
+    env: serverRuntimeConfig.decoratorEnv,
+    context: 'arbeidsgiver',
+    simple: true,
+    chatbot: false,
+    feedback: false,
+    urlLookupTable: false
+  });
+
+  return {
+    ...initialProps,
+    Decorator
+  };
+};
+
+export default Document;

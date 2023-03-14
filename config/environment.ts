@@ -118,6 +118,10 @@ class Environment {
     return '/im-dialog/api/innsendingInntektsmelding';
   }
 
+  get amplitudeEnabled() {
+    return true;
+  }
+
   private isTestCafeRunning() {
     if (typeof window === 'undefined') {
       return false;
