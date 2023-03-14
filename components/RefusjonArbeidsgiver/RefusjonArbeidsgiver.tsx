@@ -11,6 +11,7 @@ import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import Datovelger from '../Datovelger';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useState } from 'react';
+import LesMer from '../LesMer';
 
 export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -52,7 +53,7 @@ export default function RefusjonArbeidsgiver() {
   return (
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
-      <ReadMore
+      <LesMer
         header='Mer informasjon om refusjon'
         open={readMoreOpen}
         onClick={() => {
@@ -67,7 +68,7 @@ export default function RefusjonArbeidsgiver() {
         >
           Les om de ulike refusjonsreglene.
         </LenkeEksternt>
-      </ReadMore>
+      </LesMer>
       <BodyLong>
         Vi må vite om arbeidsgiver betaler lønn til den ansatte under sykmeldingsperioden og om NAV skal betale ut
         sykepenger til den ansatte eller bedriften etter arbeidsgiverperioden.{' '}

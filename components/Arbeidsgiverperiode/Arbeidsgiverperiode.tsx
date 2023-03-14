@@ -12,6 +12,7 @@ import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useState } from 'react';
+import LesMer from '../LesMer';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -48,7 +49,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   return (
     <>
       <Heading3 unPadded>Arbeidsgiverperiode</Heading3>
-      <ReadMore
+      <LesMer
         header='Mer informasjon om arbeidsgiverperioden'
         open={readMoreOpen}
         onClick={() => {
@@ -63,7 +64,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
         >
           Les mer om hvordan arbeidsgiverperioden beregnes.
         </LenkeEksternt>
-      </ReadMore>
+      </LesMer>
       <BodyLong>
         Vi har brukt eventuell egenmelding og sykmeldingsperiode til å estimere et forslag til arbeidsgiverperiode. Hvis
         du mener dette er feil må dere korrigere perioden. Informasjonen brukes til å avgjøre når Nav skal overta

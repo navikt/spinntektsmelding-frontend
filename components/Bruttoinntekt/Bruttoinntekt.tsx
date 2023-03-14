@@ -16,6 +16,7 @@ import PeriodeListevelger from './PeriodeListevelger';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import Datovelger from '../Datovelger';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
+import LesMer from '../LesMer';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -85,7 +86,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     return (
       <>
         <Heading3 unPadded>Beregnet månedslønn</Heading3>
-        <ReadMore
+        <LesMer
           header='Mer informasjon om beregnet månedslønn'
           open={readMoreOpenML}
           onClick={() => {
@@ -100,7 +101,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
           >
             Les mer om beregning av månedslønn.
           </LenkeEksternt>
-        </ReadMore>
+        </LesMer>
 
         <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
         <TidligereInntekt tidligereinntekt={tidligereinntekt} />
@@ -244,7 +245,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     return (
       <>
         <Heading3>Beregnet månedslønn</Heading3>
-        <ReadMore
+        <LesMer
           header='Mer informasjon om beregnet månedslønn'
           open={readMoreOpen}
           onClick={() => {
@@ -259,7 +260,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
           >
             Les mer om beregning av månedslønn.
           </LenkeEksternt>
-        </ReadMore>
+        </LesMer>
         <BodyLong>
           Angi bruttoinntekt som snitt av siste tre måneders lønn. Dersom inntekten har gått opp pga. varig -
           lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes som

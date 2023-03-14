@@ -1,0 +1,4 @@
+.ReadMore>button {
+  flex-direction: row-reverse;
+  margin-left   : -.2rem;
+}
