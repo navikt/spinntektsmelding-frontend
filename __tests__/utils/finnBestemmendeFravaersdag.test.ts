@@ -1,5 +1,4 @@
 import { parseISO } from 'date-fns';
-import { MottattPeriode } from '../../state/MottattData';
 import { Periode } from '../../state/state';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 

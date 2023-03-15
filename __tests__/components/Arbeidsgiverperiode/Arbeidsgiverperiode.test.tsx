@@ -7,6 +7,10 @@ import { Periode } from '../../../state/state';
 import { vi } from 'vitest';
 
 describe('TidligereInntekt', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should have no violations', async () => {
     const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
 

@@ -1,9 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import { vi } from 'vitest';
 import Periodevelger from '../../../components/Bruttoinntekt/Periodevelger';
-import { HistoriskInntekt, Periode } from '../../../state/state';
+import { Periode } from '../../../state/state';
 
 describe('Periodevelger', () => {
   // Problemer med ekstern datovelgerkomponent
@@ -89,12 +88,5 @@ describe('Periodevelger', () => {
     });
 
     expect(sletteknapp).toHaveLength(1);
-
-    // const sletteknapp = screen.getByRole('button', {
-    //   name: /Slett periode/i
-    // });
-
-    // userEvent.click(sletteknapp);
-    // expect(mockSlett).toHaveBeenCalledWith('1');
   });
 });
