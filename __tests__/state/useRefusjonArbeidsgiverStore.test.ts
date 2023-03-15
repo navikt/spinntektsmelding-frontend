@@ -1,9 +1,6 @@
 import { act, cleanup, renderHook } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
-import testFnr from '../../mockdata/testFnr';
-
-const inputPerson: [string, string, string] = ['Navn Navnesen', testFnr.GyldigeFraDolly.TestPerson1, '123456789'];
 
 const initialState = useBoundStore.getState();
 

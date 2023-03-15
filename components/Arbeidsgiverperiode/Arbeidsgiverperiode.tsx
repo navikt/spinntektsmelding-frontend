@@ -1,7 +1,7 @@
 import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
-import { BodyLong, Button, ReadMore } from '@navikt/ds-react';
+import { BodyLong, Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger from '../Bruttoinntekt/Periodevelger';
@@ -13,6 +13,7 @@ import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useState } from 'react';
 import LesMer from '../LesMer';
+import useAmplitude from '../../utils/useAmplitude';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -27,6 +28,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const logEvent = useAmplitude();
 
   const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -46,16 +48,19 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
 
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
+  const clickLesMerOpenHandler = () => {
+    logEvent(readMoreOpen ? 'readmore lukket' : 'readmore åpnet', {
+      tittel: 'Informasjon om arbeidsgiverperioden',
+      component: 'Arbeidsgiverperiode'
+    });
+
+    setReadMoreOpen(!readMoreOpen);
+  };
+
   return (
     <>
       <Heading3 unPadded>Arbeidsgiverperiode</Heading3>
-      <LesMer
-        header='Mer informasjon om arbeidsgiverperioden'
-        open={readMoreOpen}
-        onClick={() => {
-          setReadMoreOpen(!readMoreOpen);
-        }}
-      >
+      <LesMer header='Informasjon om arbeidsgiverperioden' open={readMoreOpen} onClick={clickLesMerOpenHandler}>
         Arbeidsgiveren skal vanligvis betale sykepenger i en periode på opptil 16 kalenderdager, også kalt
         arbeidsgiverperioden.{' '}
         <LenkeEksternt

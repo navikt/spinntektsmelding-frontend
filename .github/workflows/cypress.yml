@@ -30,7 +30,7 @@ jobs:
           project: .
           browser: chrome
           build: yarn build
-          start: yarn dev
+          start: yarn dev:decoratorless
           wait-on: "http://localhost:3000/im-dialog/cypress-test"
         
 

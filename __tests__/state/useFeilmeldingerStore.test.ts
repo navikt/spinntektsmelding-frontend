@@ -2,7 +2,6 @@ import { act, renderHook } from '@testing-library/react';
 import { cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
-import testFnr from '../../mockdata/testFnr';
 import { ValiderTekster } from '../../utils/useValiderInntektsmelding';
 
 const inputFeil: Array<ValiderTekster> = [
