@@ -1,7 +1,7 @@
 import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
-import { BodyLong, Button, ReadMore } from '@navikt/ds-react';
+import { BodyLong, Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger from '../Bruttoinntekt/Periodevelger';
@@ -13,7 +13,6 @@ import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useState } from 'react';
 import LesMer from '../LesMer';
-import logEvent from '../../utils/useAmplitude';
 import useAmplitude from '../../utils/useAmplitude';
 
 interface ArbeidsgiverperiodeProps {
