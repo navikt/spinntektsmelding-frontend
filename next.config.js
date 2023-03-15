@@ -14,6 +14,10 @@ const nextConfig = {
   i18n: {
     locales: ['no'],
     defaultLocale: 'no'
+  },
+  serverRuntimeConfig: {
+    decoratorEnv: 'dev',
+    decoratorEnabled: true
   }
 };
 

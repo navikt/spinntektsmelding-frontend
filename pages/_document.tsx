@@ -9,16 +9,16 @@ interface DocumentProps {
 }
 
 const Document = ({ Decorator }: DocumentProps) => {
+  const viseDekoratoren = serverRuntimeConfig.decoratorEnabled;
+
   return (
     <Html>
-      <Head>
-        <Decorator.Styles />
-      </Head>
+      <Head>{viseDekoratoren ? <Decorator.Styles /> : null}</Head>
       <body>
-        <Decorator.Header />
+        {viseDekoratoren ? <Decorator.Header /> : null}
         <Main />
-        <Decorator.Footer />
-        <Decorator.Scripts />
+        {viseDekoratoren ? <Decorator.Footer /> : null}
+        {viseDekoratoren ? <Decorator.Scripts /> : null}
         <NextScript />
       </body>
     </Html>
