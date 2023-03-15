@@ -17,7 +17,7 @@ const nextConfig = {
   },
   serverRuntimeConfig: {
     decoratorEnv: 'dev',
-    decoratorEnabled: true
+    decoratorDisabled: process.env.DISABLE_DECORATOR
   }
 };
 

@@ -9,7 +9,7 @@ interface DocumentProps {
 }
 
 const Document = ({ Decorator }: DocumentProps) => {
-  const viseDekoratoren = serverRuntimeConfig.decoratorEnabled;
+  const viseDekoratoren = !serverRuntimeConfig.decoratorDisabled;
 
   return (
     <Html>
