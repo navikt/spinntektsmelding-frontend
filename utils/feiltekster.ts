@@ -21,6 +21,7 @@ const feiltekster = {
   SUM_LAVERE_ENN_INNTEKT: 'Summen av inntektene for de enkelte arbeidsforholdene er høyere enn bruttoinntekten.',
   SERVERFEIL_ARBEIDSGIVER: 'Kunne ikke hente ut arbeidsgiverdata.',
   SERVERFEIL_IM: 'Kunne ikke hente ut inntektsmeldingdata.',
+  SERVERFEIL_INNTEKT: 'Kunne ikke hente ut inntektsdata.',
   BRUTTOINNTEKT_ARBEIDSFORHOLD_MANGLER: 'Angi bruttoinntekt for minst et arbeidsforhold.',
   FOR_MANGE_DAGER_MELLOM: 'Det kan ikke være mer enn 16 dager mellom periodene.',
   FOR_MANGE_DAGER_I_PERIODE: 'Det kan ikke være mer enn 16 dager i perioden.',

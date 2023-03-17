@@ -84,6 +84,10 @@ class Environment {
     }
   }
 
+  get inntektsdataAPI() {
+    return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntekt';
+  }
+
   get baseUrl() {
     return '/im-dialog';
   }
@@ -112,6 +116,10 @@ class Environment {
 
   get skjemadataUrl() {
     return '/im-dialog/api/trenger';
+  }
+
+  get inntektsdataUrl() {
+    return '/im-dialog/api/inntektsdata';
   }
 
   get innsendingUrl() {

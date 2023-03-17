@@ -7,6 +7,8 @@ import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
 import { subMonths } from 'date-fns';
+import fetchInntektsdata from '../utils/fetchInntektsdata';
+import environment from '../config/environment';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maanedsnavn < b.maanedsnavn) {
@@ -47,6 +49,7 @@ export interface BruttoinntektState {
     bestemmendeFravaersdag: Date
   ) => void;
   rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
+  oppdaterBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
@@ -231,11 +234,23 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     );
   },
-  rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => {
-    const tidligereInntekt = get().opprinneligeInntekt;
+  rekalkulerBruttioinntekt: async (bestemmendeFravaersdag: Date) => {
+    const opprinneligeInntekt = get().opprinneligeInntekt || [];
+    let tidligereInntekt = structuredClone(opprinneligeInntekt);
     const bruttoinntekt = get().bruttoinntekt;
+    const slug = get().slug;
 
-    if (!tidligereInntekt) return false;
+    const oppdaterteInntekter = await fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag);
+    if (oppdaterteInntekter.tidligereInntekter && tidligereInntekt) {
+      oppdaterteInntekter.tidligereInntekter.forEach((inntekt: HistoriskInntekt) => {
+        if (!tidligereInntekt?.find((tidliger) => tidliger.maanedsnavn === inntekt.maanedsnavn)) {
+          tidligereInntekt?.push(inntekt);
+        }
+      });
+      console.log(tidligereInntekt);
+    } else {
+      tidligereInntekt = oppdaterteInntekter.tidligereInntekter;
+    }
 
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
 
@@ -267,6 +282,18 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           }));
         }
 
+        return state;
+      })
+    );
+  },
+  oppdaterBruttoinntekt: (bestemmendeFravaersdag: Date) => {
+    // Sjekk om vi har perioden allerede.
+    // Hent data om vi ikke har det.
+    //
+
+    set(
+      produce((state) => {
+        // Lagre data
         return state;
       })
     );
