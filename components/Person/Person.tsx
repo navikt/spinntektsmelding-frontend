@@ -5,7 +5,11 @@ import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
 import { TextField } from '@navikt/ds-react';
 
-export default function Person() {
+interface PersonProps {
+  erKvittering?: boolean;
+}
+
+export default function Person({ erKvittering }: PersonProps) {
   const [
     navn,
     identitetsnummer,
@@ -76,14 +80,24 @@ export default function Person() {
                   </div>
                 </div>
                 <div className={lokalStyles.telefonnrwrapper}>
-                  <TextField
-                    label='Telefon innsender'
-                    type='tel'
-                    autoComplete='tel'
-                    defaultValue={innsenderTelefonNr}
-                    onChange={changeTlfNr}
-                    data-cy='innsendertlf'
-                  />
+                  {erKvittering && (
+                    <>
+                      <TextLabel>Telefon innsender</TextLabel>
+                      <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
+                        {innsenderTelefonNr}
+                      </div>
+                    </>
+                  )}
+                  {!erKvittering && (
+                    <TextField
+                      label='Telefon innsender'
+                      type='tel'
+                      autoComplete='tel'
+                      defaultValue={innsenderTelefonNr}
+                      onChange={changeTlfNr}
+                      data-cy='innsendertlf'
+                    />
+                  )}
                 </div>
               </>
             )}

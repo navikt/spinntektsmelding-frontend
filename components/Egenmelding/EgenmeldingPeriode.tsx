@@ -46,17 +46,8 @@ export default function EgenmeldingPeriode({
     );
   }
 
-  // const forigeMndAaar = egenmeldingsperiode?.fom
-  //   ? subDays(egenmeldingsperiode?.fom, 1).getFullYear()
-  //   : new Date().getFullYear();
-  // const forigeMndMnd = egenmeldingsperiode?.fom
-  //   ? subDays(egenmeldingsperiode?.fom, 1).getMonth()
-  //   : new Date().getMonth();
-
-  // const defaultMnd = new Date(forigeMndAaar, forigeMndMnd);
-
   const defaultMnd = toDate;
-  console.log(defaultMnd);
+
   return (
     <div data-cy='egenmelding' className={localStyles.velgerWrapper}>
       <Periodevelger

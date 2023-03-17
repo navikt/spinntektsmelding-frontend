@@ -80,7 +80,7 @@ const Kvittering: NextPage = () => {
 
       <PageContent title='Kvittering - innsendt inntektsmelding'>
         <div className={`main-content ${styles.padded}`}>
-          <Person />
+          <Person erKvittering={true} />
 
           <Skillelinje />
           <div className={lokalStyles.fravaerswrapperwrapper}>
