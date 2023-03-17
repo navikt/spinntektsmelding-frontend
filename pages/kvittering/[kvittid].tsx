@@ -56,7 +56,8 @@ const Kvittering: NextPage = () => {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
-
+  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const clickEndre = useCallback(() => router.back(), [router]);
 
   const harAktiveEgenmeldingsperioder = () => {
@@ -144,7 +145,12 @@ const Kvittering: NextPage = () => {
           <Heading3>Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?</Heading3>
           <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
           <Heading3>Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?</Heading3>
-          <LonnUnderSykefravaeret lonn={lonnISykefravaeret!} refusjonskravetOpphoerer={refusjonskravetOpphoerer} />
+          <LonnUnderSykefravaeret
+            lonn={lonnISykefravaeret!}
+            refusjonskravetOpphoerer={refusjonskravetOpphoerer}
+            harRefusjonEndringer={harRefusjonEndringer}
+            refusjonEndringer={refusjonEndringer}
+          />
 
           <Skillelinje />
           <Heading2>Eventuelle naturalytelser</Heading2>
