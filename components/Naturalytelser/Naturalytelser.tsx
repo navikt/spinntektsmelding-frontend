@@ -32,6 +32,8 @@ export default function Naturalytelser() {
     leggTilNaturalytelse();
   };
 
+  const checkedNaturalytelser = naturalytelser && naturalytelser.length > 0 ? true : false;
+
   return (
     <>
       <Heading3>Eventuelle naturalytelser</Heading3>
@@ -39,11 +41,7 @@ export default function Naturalytelser() {
         Har den ansatte naturalytelser som faller bort ved sykmelding, skal disse oppgis her. Hvis den ansatte beholder
         eventuelle naturalytelser, så trenger dere ikke oppgi noe.
       </BodyLong>
-      <Checkbox
-        value='Naturalytelser'
-        onClick={visNaturalytelser}
-        defaultChecked={naturalytelser && naturalytelser.length > 0}
-      >
+      <Checkbox value='Naturalytelser' onClick={visNaturalytelser} checked={checkedNaturalytelser}>
         Den ansatte har naturalytelser som faller bort ved sykmeldingen.
       </Checkbox>
       {naturalytelser && naturalytelser.length > 0 && (
