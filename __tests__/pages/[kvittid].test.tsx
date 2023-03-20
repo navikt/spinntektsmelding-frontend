@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 import Kvittering from '../../pages/kvittering/[kvittid]';
 
 vi.mock('next/router', () => require('next-router-mock'));
