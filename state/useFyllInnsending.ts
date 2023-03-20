@@ -3,7 +3,7 @@ import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbeta
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Periode } from './state';
+import { Inntekt, Naturalytelse, Periode } from './state';
 import useBoundStore from './useBoundStore';
 
 interface SendtPeriode {
@@ -231,9 +231,9 @@ export default function useFyllInnsending() {
         tom: formatIsoDate(periode.tom)
       })),
       inntekt: {
-        bekreftet: bruttoinntekt.bekreftet || false,
+        bekreftet: verdiEllerFalse(bruttoinntekt.bekreftet),
         beregnetInntekt: bruttoinntekt.bruttoInntekt!,
-        manueltKorrigert: bruttoinntekt.manueltKorrigert || false,
+        manueltKorrigert: verdiEllerFalse(bruttoinntekt.manueltKorrigert),
         endringÅrsak: endringAarsak()
       },
       bestemmendeFraværsdag: bestemmendeFraværsdag!,
@@ -251,9 +251,9 @@ export default function useFyllInnsending() {
         refusjonEndringer: innsendingRefusjonEndringer
       },
       naturalytelser: naturalytelser?.map((ytelse) => ({
-        naturalytelse: ytelse.type || '',
+        naturalytelse: verdiEllerBlank(ytelse.type),
         bortfallsdato: formatIsoDate(ytelse.bortfallsdato),
-        beløp: ytelse.verdi || 0
+        beløp: verdiEllerNull(ytelse.verdi)
       })),
       bekreftOpplysninger: opplysningerBekreftet,
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
@@ -264,6 +264,18 @@ export default function useFyllInnsending() {
     return skjemaData;
   };
 }
+function verdiEllerFalse(verdi: boolean | undefined): boolean {
+  return verdi || false;
+}
+
+function verdiEllerBlank(verdi: string | undefined): string {
+  return verdi || '';
+}
+
+function verdiEllerNull(verdi: number | undefined): number {
+  return verdi || 0;
+}
+
 function konverterRefusjonsendringer(
   harRefusjonEndringer: boolean | undefined,
   refusjonEndringer: Array<EndringsBelop> | undefined

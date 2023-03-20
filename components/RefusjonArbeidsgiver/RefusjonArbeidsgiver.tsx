@@ -1,4 +1,4 @@
-import { BodyLong, Radio, RadioGroup, ReadMore, TextField } from '@navikt/ds-react';
+import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
 import styles from '../../styles/Home.module.css';
 
