@@ -45,7 +45,7 @@ export default function LonnUnderSykefravaeret({
                       </thead>
                       <tbody>
                         {refusjonEndringer?.map((endring) => (
-                          <tr key={endring!.dato?.toString()}>
+                          <tr key={endring.dato?.toString()}>
                             <td>{formatDate(endring.dato)}</td>
                             <td>{formatCurrency(endring.belop)}</td>
                           </tr>

@@ -3,7 +3,6 @@ import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
-import { subDays, subMonths } from 'date-fns';
 import localStyles from './Egenmelding.module.css';
 
 interface EgenmeldingPeriodeInterface {
