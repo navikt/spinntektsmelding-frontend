@@ -11,7 +11,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './__tests__/setup.ts',
     coverage: {
-      reporter: ['text', 'json', 'html', 'lcov']
+      reporter: ['text', 'json', 'html', 'lcov'],
+      provider: 'c8'
     },
     reporters: ['vitest-sonar-reporter', 'default'],
     outputFile: 'sonar-report.xml'
