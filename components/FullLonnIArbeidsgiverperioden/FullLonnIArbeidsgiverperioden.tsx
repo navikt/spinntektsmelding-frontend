@@ -1,5 +1,6 @@
 import { BodyLong, BodyShort } from '@navikt/ds-react';
 import { LonnIArbeidsgiverperioden } from '../../state/state';
+import formatCurrency from '../../utils/formatCurrency';
 import begrunnelseIngenEllerRedusertUtbetalingListe from '../RefusjonArbeidsgiver/begrunnelseIngenEllerRedusertUtbetalingListe';
 import lokalStyle from './FullLonnIArbeidsgiverperioden.module.css';
 
@@ -19,7 +20,10 @@ export default function FullLonnIArbeidsgiverperioden({ lonnIPerioden }: FullLon
       {lonnIPerioden.status === 'Nei' && (
         <div className={lokalStyle.wrapper}>
           <BodyShort>Nei</BodyShort>
-          <BodyLong>{formaterBegrunnelse(lonnIPerioden.begrunnelse)}</BodyLong>
+          <BodyLong>Utbetalt under arbeidsgiverperiode: {formatCurrency(lonnIPerioden.utbetalt)} kr</BodyLong>
+          <BodyLong>
+            Begrunnelse for ingen eller redusert utbetaling: {formaterBegrunnelse(lonnIPerioden.begrunnelse)}
+          </BodyLong>
         </div>
       )}
     </>

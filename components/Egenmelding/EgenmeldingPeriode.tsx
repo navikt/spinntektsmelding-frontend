@@ -3,7 +3,6 @@ import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
-import { subDays } from 'date-fns';
 import localStyles from './Egenmelding.module.css';
 
 interface EgenmeldingPeriodeInterface {
@@ -46,14 +45,7 @@ export default function EgenmeldingPeriode({
     );
   }
 
-  const forigeMndAaar = egenmeldingsperiode?.fom
-    ? subDays(egenmeldingsperiode?.fom, 1).getFullYear()
-    : new Date().getFullYear();
-  const forigeMndMnd = egenmeldingsperiode?.fom
-    ? subDays(egenmeldingsperiode?.fom, 1).getMonth()
-    : new Date().getMonth();
-
-  const defaultMnd = new Date(forigeMndAaar, forigeMndMnd);
+  const defaultMnd = toDate;
 
   return (
     <div data-cy='egenmelding' className={localStyles.velgerWrapper}>

@@ -12,6 +12,8 @@ interface PeriodeListevelgerProps {
   tomTekst: string;
   fomIdBase: string;
   tomIdBase: string;
+  defaultMonth?: Date;
+  toDate?: Date;
   visFeilmeldingsTekst?: (feilmelding: string) => string;
 }
 
@@ -22,6 +24,8 @@ export default function PeriodeListevelger({
   tomTekst,
   fomIdBase,
   tomIdBase,
+  defaultMonth,
+  toDate,
   visFeilmeldingsTekst
 }: PeriodeListevelgerProps) {
   const onRangeChange = (datoer: PeriodeParam | undefined, index: string) => {
@@ -74,6 +78,8 @@ export default function PeriodeListevelger({
             onSlettRad={slettRad}
             fomError={visFeilmeldingsTekst ? visFeilmeldingsTekst(`${fomIdBase}-${range.id}`) : undefined}
             tomError={visFeilmeldingsTekst ? visFeilmeldingsTekst(`${tomIdBase}-${range.id}`) : undefined}
+            defaultMonth={defaultMonth}
+            toDate={toDate}
           />
         ))}
       <Button variant='secondary' onClick={handleLeggTilPeriode} className={lokalStyles.leggtilperiodeknapp}>

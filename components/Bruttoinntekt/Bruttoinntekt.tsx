@@ -87,7 +87,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
       <>
         <Heading3 unPadded>Beregnet månedslønn</Heading3>
         <LesMer
-          header='Mer informasjon om beregnet månedslønn'
+          header='Informasjon om beregnet månedslønn'
           open={readMoreOpenML}
           onClick={() => {
             setReadMoreOpenML(!readMoreOpenML);
@@ -152,6 +152,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     defaultEndringsdato={tariffendringsdato}
                     defaultKjentDato={tariffkjentdato}
                     visFeilmeldingsTekst={visFeilmeldingsTekst}
+                    defaultMonth={bestemmendeFravaersdag}
                   />
                 </div>
               )}
@@ -165,6 +166,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     fomIdBase='bruttoinntekt-ful-fom'
                     tomIdBase='bruttoinntekt-ful-tom'
                     visFeilmeldingsTekst={visFeilmeldingsTekst}
+                    defaultMonth={bestemmendeFravaersdag}
+                    toDate={bestemmendeFravaersdag}
                   />
                 </div>
               )}
@@ -177,6 +180,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     defaultSelected={lonnsendringsdato}
                     toDate={bestemmendeFravaersdag}
                     error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
+                    defaultMonth={bestemmendeFravaersdag}
                   />
                 </div>
               )}
@@ -189,6 +193,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     tomTekst='Til'
                     fomIdBase='bruttoinntekt-permisjon-fom'
                     tomIdBase='bruttoinntekt-permisjon-tom'
+                    defaultMonth={bestemmendeFravaersdag}
+                    toDate={bestemmendeFravaersdag}
                   />
                 </div>
               )}
@@ -201,6 +207,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     tomTekst='Til'
                     fomIdBase='bruttoinntekt-permitering-fom'
                     tomIdBase='bruttoinntekt-permitering-tom'
+                    defaultMonth={bestemmendeFravaersdag}
+                    toDate={bestemmendeFravaersdag}
                   />
                 </div>
               )}
@@ -212,6 +220,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     id='bruttoinntekt-nystilling-fom'
                     defaultSelected={nystillingdato}
                     toDate={bestemmendeFravaersdag}
+                    defaultMonth={bestemmendeFravaersdag}
                   />
                 </div>
               )}
@@ -223,6 +232,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     id='bruttoinntekt-nystillingsprosent-fom'
                     defaultSelected={nystillingsprosentdato}
                     toDate={bestemmendeFravaersdag}
+                    defaultMonth={bestemmendeFravaersdag}
                   />
                 </div>
               )}
@@ -246,7 +256,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
       <>
         <Heading3>Beregnet månedslønn</Heading3>
         <LesMer
-          header='Mer informasjon om beregnet månedslønn'
+          header='Informasjon om beregnet månedslønn'
           open={readMoreOpen}
           onClick={() => {
             setReadMoreOpen(!readMoreOpen);

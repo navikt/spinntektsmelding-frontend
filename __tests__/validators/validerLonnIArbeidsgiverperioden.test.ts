@@ -61,4 +61,52 @@ describe('validerLonnIArbeidsgiverperioden', () => {
 
     expect(validerLonnIArbeidsgiverperioden(input)).toEqual(expected);
   });
+
+  it('should return an error when status is Nei and utbetalt is negative', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      utbetalt: -1
+    };
+
+    const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
+        felt: 'lia-select'
+      },
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
+        felt: 'lus-uua-input'
+      }
+    ];
+
+    expect(validerLonnIArbeidsgiverperioden(input)).toEqual(expected);
+  });
+
+  it('should return an error when status is Nei and utbetalt is positive, not regarding belop', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      utbetalt: 1234
+    };
+
+    const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
+        felt: 'lia-select'
+      }
+    ];
+
+    expect(validerLonnIArbeidsgiverperioden(input)).toEqual(expected);
+  });
+
+  it('should not return an error when status is Nei and utbetalt is positive and begrunnelse is set', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      utbetalt: 1234,
+      begrunnelse: 'test'
+    };
+
+    const expected = [];
+
+    expect(validerLonnIArbeidsgiverperioden(input)).toEqual(expected);
+  });
 });
