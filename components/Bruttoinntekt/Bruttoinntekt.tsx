@@ -1,4 +1,4 @@
-import { BodyLong, BodyShort, Link, ReadMore, TextField } from '@navikt/ds-react';
+import { BodyLong, BodyShort, Link, TextField } from '@navikt/ds-react';
 import { ChangeEvent, useCallback, useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
