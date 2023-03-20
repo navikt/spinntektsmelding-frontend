@@ -5,7 +5,11 @@ import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
 import { TextField } from '@navikt/ds-react';
 
-export default function Person() {
+interface PersonProps {
+  erKvittering?: boolean;
+}
+
+export default function Person({ erKvittering }: PersonProps) {
   const [
     navn,
     identitetsnummer,
@@ -43,11 +47,11 @@ export default function Person() {
           <div className={lokalStyles.ytreansattwrapper}>
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Navn</TextLabel>
-              <span data-cy='navn'>{navn}</span>
+              <div data-cy='navn'>{navn}</div>
             </div>
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Personnummer</TextLabel>
-              <span data-cy='identitetsnummer'>{identitetsnummer}</span>
+              <div data-cy='identitetsnummer'>{identitetsnummer}</div>
             </div>
           </div>
         </div>
@@ -64,7 +68,7 @@ export default function Person() {
             )}
             <div className={lokalStyles.orgnrnavnwrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
-              <span data-cy='orgnummer'>{orgnrUnderenhet}</span>
+              <div data-cy='orgnummer'>{orgnrUnderenhet}</div>
             </div>
             {!virksomhetsnavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
             {innsenderNavn && (
@@ -76,14 +80,24 @@ export default function Person() {
                   </div>
                 </div>
                 <div className={lokalStyles.telefonnrwrapper}>
-                  <TextField
-                    label='Telefon innsender'
-                    type='tel'
-                    autoComplete='tel'
-                    defaultValue={innsenderTelefonNr}
-                    onChange={changeTlfNr}
-                    data-cy='innsendertlf'
-                  />
+                  {erKvittering && (
+                    <>
+                      <TextLabel>Telefon innsender</TextLabel>
+                      <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
+                        {innsenderTelefonNr}
+                      </div>
+                    </>
+                  )}
+                  {!erKvittering && (
+                    <TextField
+                      label='Telefon innsender'
+                      type='tel'
+                      autoComplete='tel'
+                      defaultValue={innsenderTelefonNr}
+                      onChange={changeTlfNr}
+                      data-cy='innsendertlf'
+                    />
+                  )}
                 </div>
               </>
             )}

@@ -10,12 +10,6 @@
   flex-direction: column;
 }
 
-.virksomhetsnavn {
-  white-space  : nowrap;
-  overflow     : hidden;
-  text-overflow: ellipsis;
-}
-
 .telefonnrwrapper,
 .innsendernavnwrapper {
   margin-top: 1rem;

@@ -119,6 +119,7 @@ export default function RefusjonUtbetalingEndring({
               id={`lus-utbetaling-endring-dato-${key}`}
               label='Dato for lønnsendring'
               error={visFeilmeldingsTekst(`lus-utbetaling-endring-dato-${key}`)}
+              defaultSelected={endring.dato}
             />
             {key !== 0 && (
               <ButtonSlette

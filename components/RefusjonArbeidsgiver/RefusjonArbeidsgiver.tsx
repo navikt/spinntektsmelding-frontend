@@ -54,7 +54,7 @@ export default function RefusjonArbeidsgiver() {
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
       <LesMer
-        header='Mer informasjon om refusjon'
+        header='Informasjon om refusjon'
         open={readMoreOpen}
         onClick={() => {
           setReadMoreOpen(!readMoreOpen);

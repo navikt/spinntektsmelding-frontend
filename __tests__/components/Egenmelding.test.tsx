@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import Egenmelding from '../../components/Egenmelding';
 import { vi } from 'vitest';
 
-describe('TidligereInntekt', () => {
+describe('Egenmelding', () => {
   it('should have no violations', async () => {
     const { container } = render(<Egenmelding />);
 

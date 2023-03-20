@@ -23,7 +23,7 @@ export default function validerLonnIArbeidsgiverperioden(lonnIAP?: LonnIArbeidsg
       });
     }
 
-    if (lonnIAP.status === 'Nei' && (!lonnIAP.utbetalt || lonnIAP.utbetalt >= 0)) {
+    if (lonnIAP.status === 'Nei' && (!lonnIAP.utbetalt || lonnIAP.utbetalt <= 0)) {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
         felt: 'lus-uua-input'
