@@ -31,9 +31,9 @@ describe('Utfylling og innsending av skjema', () => {
   // });
 
   it('should display information on the person and the submitter', () => {
-    cy.get('[data-cy="navn"]').should('have.text', 'Navn Navnesen');
+    cy.get('[data-cy="navn"]').should('have.text', 'Test Navn Testesen-Navnesen Jr.');
     cy.get('[data-cy="identitetsnummer"]').should('have.text', '25087327879');
-    cy.get('[data-cy="virksomhetsnavn"]').should('have.text', 'Ampert piggsvin barnehage');
+    cy.get('[data-cy="virksomhetsnavn"]').should('have.text', 'Veldig ampert piggsvin barnehage');
     cy.get('[data-cy="orgnummer"]').should('have.text', '911206722');
     cy.get('[data-cy="innsendernavn"]').should('have.text', 'Test Testesen');
     cy.get('[data-cy="innsendertlf"]').should('have.value', '12345678');
