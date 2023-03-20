@@ -135,10 +135,10 @@ const initialState: InntektsmeldingSkjema = {
 
 const formData = {
   ...initialState,
-  navn: 'Navn Navnesen',
+  navn: 'Test Navn Testesen-Navnesen Jr.',
   identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
   orgnrUnderenhet: '911206722',
-  orgNavn: 'Ampert piggsvin barnehage',
+  orgNavn: 'Veldig ampert piggsvin barnehage',
   bruttoinntekt: 77000,
 
   fravaersperioder: [

@@ -47,11 +47,11 @@ export default function Person({ erKvittering }: PersonProps) {
           <div className={lokalStyles.ytreansattwrapper}>
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Navn</TextLabel>
-              <span data-cy='navn'>{navn}</span>
+              <div data-cy='navn'>{navn}</div>
             </div>
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Personnummer</TextLabel>
-              <span data-cy='identitetsnummer'>{identitetsnummer}</span>
+              <div data-cy='identitetsnummer'>{identitetsnummer}</div>
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@ export default function Person({ erKvittering }: PersonProps) {
             )}
             <div className={lokalStyles.orgnrnavnwrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
-              <span data-cy='orgnummer'>{orgnrUnderenhet}</span>
+              <div data-cy='orgnummer'>{orgnrUnderenhet}</div>
             </div>
             {!virksomhetsnavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
             {innsenderNavn && (
