@@ -6,6 +6,11 @@ import Kvittering from '../../pages/kvittering/[kvittid]';
 vi.mock('next/router', () => require('next-router-mock'));
 
 describe('kvittering', () => {
+  beforeEach(() => {
+    const spy = vi.spyOn(window, 'print');
+
+    spy.mockImplementation(vi.fn());
+  });
   it('renders a title text', () => {
     const spy = vi.spyOn(window, 'print');
 

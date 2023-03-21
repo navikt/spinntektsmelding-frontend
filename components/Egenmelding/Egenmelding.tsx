@@ -7,6 +7,7 @@ import EgenmeldingPeriode from './EgenmeldingPeriode';
 import ButtonEndre from '../ButtonEndre';
 import { useMemo } from 'react';
 import Feilmelding from '../Feilmelding';
+import useAmplitude from '../../utils/useAmplitude';
 
 export default function Egenmelding() {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -34,19 +35,47 @@ export default function Egenmelding() {
   const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
+  const logEvent = useAmplitude();
+
+  const clickSlettEgenmeldingsperiode = (periode: string) => {
+    logEvent('knapp klikket', {
+      tittel: 'Slett egenmeldingsperioder',
+      component: 'Egenmelding'
+    });
+
+    slettEgenmeldingsperiode(periode);
+  };
 
   const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    logEvent('knapp klikket', {
+      tittel: 'Legg til egenmeldingsperioder',
+      component: 'Egenmelding'
+    });
+
     leggTilEgenmeldingsperiode();
   };
 
   const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    logEvent('knapp klikket', {
+      tittel: 'Endre egenmeldingsperioder',
+      component: 'Egenmelding'
+    });
+
     setEndreEgenmelding(!endreEgenmeldingsperiode);
   };
 
   const clickTilbakestillFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    logEvent('knapp klikket', {
+      tittel: 'Tilbakestill egenmeldingsperioder',
+      component: 'Egenmelding'
+    });
+
     tilbakestillEgenmelding();
   };
 
@@ -76,7 +105,7 @@ export default function Egenmelding() {
                 setEgenmeldingDato={setEgenmeldingDato}
                 toDate={forsteFravaersdag || new Date()}
                 kanSlettes={index !== 0}
-                onSlettRad={() => slettEgenmeldingsperiode(egenmeldingsperiode.id)}
+                onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingsperiode.id)}
                 disabled={endretArbeidsgiverperiode}
               />
             ))}

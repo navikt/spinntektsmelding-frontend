@@ -1,11 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 import ButtonPrint from '../../components/ButtonPrint';
 
 describe('ButtonPrint', () => {
   it('renders a title text', () => {
     const spy = vi.spyOn(window, 'print');
+
+    spy.mockImplementation(vi.fn());
 
     render(<ButtonPrint />);
 
