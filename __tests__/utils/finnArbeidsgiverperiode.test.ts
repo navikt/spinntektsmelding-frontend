@@ -2,7 +2,7 @@ import { parseISO } from 'date-fns';
 import { Periode } from '../../state/state';
 import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
 
-describe('finnArbeidsgiverperiode', () => {
+describe.concurrent('finnArbeidsgiverperiode', () => {
   it('should return the correct arbeidsgiverperiode for two periode directly following each other', () => {
     const periode: Array<Periode> = [
       {

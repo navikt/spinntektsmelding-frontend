@@ -1,7 +1,7 @@
 import { expect, it, describe } from 'vitest';
 import valdiderEndringAvMaanedslonn from '../../validators/validerEndringAvMaanedslonn';
 
-describe('valdiderEndringAvMaanedslonn', () => {
+describe.concurrent('valdiderEndringAvMaanedslonn', () => {
   it('should return [] when there is no changes', () => {
     expect(valdiderEndringAvMaanedslonn('Nei')).toEqual([]);
   });

@@ -1,7 +1,7 @@
 import validerBekreftelse from '../../validators/validerBekreftelse';
 import { expect, it, describe } from 'vitest';
 
-describe('validerBekreftelse', () => {
+describe.concurrent('validerBekreftelse', () => {
   it('should return true when stuff is confirmed', () => {
     expect(validerBekreftelse(true)).toBe(true);
   });

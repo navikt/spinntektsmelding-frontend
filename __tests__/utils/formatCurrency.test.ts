@@ -1,6 +1,6 @@
 import formatCurrency from '../../utils/formatCurrency';
 
-describe('formatCurrency', () => {
+describe.concurrent('formatCurrency', () => {
   it('should return a correctly rounded number for 123', () => {
     expect(formatCurrency(123)).toBe('123,00');
   });

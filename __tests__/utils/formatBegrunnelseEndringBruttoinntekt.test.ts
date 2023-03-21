@@ -1,6 +1,6 @@
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 
-describe('formatBegrunnelseEndringBruttoinntekt', () => {
+describe.concurrent('formatBegrunnelseEndringBruttoinntekt', () => {
   it('shold return Tariffendring', () => {
     expect(formatBegrunnelseEndringBruttoinntekt('Tariffendring')).toBe('Tariffendring');
   });

@@ -1,7 +1,7 @@
 import validerBehandlingsdager, { valideringBehandlingsdager } from '../../validators/validerBehandlingsdager';
 import { expect, it, describe } from 'vitest';
 
-describe('validerBehandlingsdager', () => {
+describe.concurrent('validerBehandlingsdager', () => {
   it('should return OK when the days are once a week and no more than fifteen days apart', () => {
     const dager = [new Date(2022, 5, 10), new Date(2022, 5, 18), new Date(2022, 4, 30), new Date(2022, 5, 26)];
 

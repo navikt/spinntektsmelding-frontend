@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import Arbeidsgiverperiode from '../../../components/Arbeidsgiverperiode';
 import { Periode } from '../../../state/state';
-import { vi } from 'vitest';
+import { vi, expect, describe } from 'vitest';
 
 describe('TidligereInntekt', () => {
   afterEach(() => {

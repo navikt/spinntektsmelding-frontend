@@ -2,7 +2,7 @@ import { parseISO } from 'date-fns';
 import { Periode } from '../../state/state';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 
-describe('finnBestemmendeFravaersdag', () => {
+describe.concurrent('finnBestemmendeFravaersdag', () => {
   it('should return the correct bestemmende fraværsdag for two periode directly following each other', () => {
     const periode: Array<Periode> = [
       {
