@@ -17,6 +17,7 @@ import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import Datovelger from '../Datovelger';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import LesMer from '../LesMer';
+import useAmplitude from '../../utils/useAmplitude';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -53,13 +54,22 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const permitering = useBoundStore((state) => state.permitering);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
 
+  const logEvent = useAmplitude();
+  const amplitudeComponent = 'BeregnetMånedslønn';
+
   const clickTilbakestillMaanedsinntekt = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
+
+      logEvent('knapp klikket', {
+        tittel: 'Tilbakestill brutto månedsinntekt',
+        component: amplitudeComponent
+      });
+
       setEndreMaanedsinntekt(false);
       tilbakestillMaanedsinntekt();
     },
-    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt]
+    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt, logEvent]
   );
 
   const changeMaanedsintektHandler = (event: ChangeEvent<HTMLInputElement>) => setNyMaanedsinntekt(event.target.value);
@@ -72,14 +82,30 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const setEndreMaanedsinntektHandler = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
+
+      logEvent('knapp klikket', {
+        tittel: 'Endre brutto månedsinntekt',
+        component: amplitudeComponent
+      });
+
       setEndreMaanedsinntekt(true);
       bekreftKorrektInntekt(false, true);
     },
-    [setEndreMaanedsinntekt, bekreftKorrektInntekt]
+    [setEndreMaanedsinntekt, bekreftKorrektInntekt, logEvent]
   );
 
+  const clickLesMerBeregnetMaanedslonn = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    logEvent(readMoreOpen ? 'readmore lukket' : 'readmore åpnet', {
+      tittel: 'Les mer brutto månedsinntekt',
+      component: amplitudeComponent
+    });
+
+    setReadMoreOpen(!readMoreOpen);
+  };
+
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
-  const [readMoreOpenML, setReadMoreOpenML] = useState<boolean>(false);
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
   if (tidligereinntekt && tidligereinntekt.length > 0) {
@@ -88,16 +114,14 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
         <Heading3 unPadded>Beregnet månedslønn</Heading3>
         <LesMer
           header='Informasjon om beregnet månedslønn'
-          open={readMoreOpenML}
-          onClick={() => {
-            setReadMoreOpenML(!readMoreOpenML);
-          }}
+          open={readMoreOpen}
+          onClick={clickLesMerBeregnetMaanedslonn}
         >
           Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
           til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
           <LenkeEksternt
             href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'
-            isHidden={!readMoreOpenML}
+            isHidden={!readMoreOpen}
           >
             Les mer om beregning av månedslønn.
           </LenkeEksternt>
@@ -258,9 +282,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
         <LesMer
           header='Informasjon om beregnet månedslønn'
           open={readMoreOpen}
-          onClick={() => {
-            setReadMoreOpen(!readMoreOpen);
-          }}
+          onClick={clickLesMerBeregnetMaanedslonn}
         >
           Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
           til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}

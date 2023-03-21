@@ -29,20 +29,47 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const logEvent = useAmplitude();
+  const amplitudeComponent = 'Arbeidsgiverperiode';
 
-  const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const clickSlettArbeidsgiverperiode = (periode: string) => {
+    logEvent('knapp klikket', {
+      tittel: 'Slett arbeidsgiverperiode',
+      component: amplitudeComponent
+    });
+
+    slettArbeidsgiverperiode(periode);
+  };
+
+  const clickLeggTilArbeidsgiverperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    logEvent('knapp klikket', {
+      tittel: 'Legg til arbeidsgiverperiode',
+      component: amplitudeComponent
+    });
 
     leggTilArbeidsgiverperiode();
   };
 
-  const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const clickEndreArbeidsgiverperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    logEvent('knapp klikket', {
+      tittel: 'Endre arbeidsgiverperiode',
+      component: amplitudeComponent
+    });
+
     setEndreArbeidsgiverperiode(!endretArbeidsgiverperiode);
   };
 
-  const clickAngreEndreHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const clickTilbakestillArbeidsgiverperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    logEvent('knapp klikket', {
+      tittel: 'Tilbakestill arbeidsgiverperiode',
+      component: amplitudeComponent
+    });
+
     tilbakestillArbeidsgiverperiode();
   };
 
@@ -51,7 +78,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const clickLesMerOpenHandler = () => {
     logEvent(readMoreOpen ? 'readmore lukket' : 'readmore åpnet', {
       tittel: 'Informasjon om arbeidsgiverperioden',
-      component: 'Arbeidsgiverperiode'
+      component: amplitudeComponent
     });
 
     setReadMoreOpen(!readMoreOpen);
@@ -103,7 +130,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
                 defaultRange={periode}
                 kanSlettes={periodeIndex > 0}
                 periodeId={periodeIndex.toString()}
-                onSlettRad={() => slettArbeidsgiverperiode(periode.id)}
+                onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
                 toDate={new Date()}
               />
             )}
@@ -113,7 +140,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       {!endretArbeidsgiverperiode && (
         <div className={lokalStyles.endreknapp}>
           <ButtonEndre
-            onClick={(event) => clickEndreFravaersperiodeHandler(event)}
+            onClick={(event) => clickEndreArbeidsgiverperiodeHandler(event)}
             data-cy='endre-arbeidsgiverperiode'
           />
         </div>
@@ -127,11 +154,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
           <Button
             variant='secondary'
             className={lokalStyles.leggtilknapp}
-            onClick={(event) => clickLeggTilFravaersperiodeHandler(event)}
+            onClick={(event) => clickLeggTilArbeidsgiverperiodeHandler(event)}
           >
             Legg til periode
           </Button>
-          <ButtonTilbakestill onClick={clickAngreEndreHandler} />
+          <ButtonTilbakestill onClick={clickTilbakestillArbeidsgiverperiodeHandler} />
         </div>
       )}
     </>
