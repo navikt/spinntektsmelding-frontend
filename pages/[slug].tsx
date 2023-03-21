@@ -31,6 +31,7 @@ import environment from '../config/environment';
 
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
+import useAmplitude from '../utils/useAmplitude';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -57,6 +58,7 @@ const Home: NextPage = () => {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setSlug = useBoundStore((state) => state.setSlug);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
+  const logEvent = useAmplitude();
 
   const validerInntektsmelding = useValiderInntektsmelding();
 
@@ -68,6 +70,11 @@ const Home: NextPage = () => {
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
+
+    logEvent('skjema fullført', {
+      tittel: 'Har trykket send',
+      component: 'Hovedskjema'
+    });
 
     const errorStatus = validerInntektsmelding(opplysningerBekreftet);
 
