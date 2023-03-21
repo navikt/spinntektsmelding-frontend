@@ -18,7 +18,8 @@ type validEventNames =
   | 'skjema fullført'
   | 'skjema spørsmål besvart'
   | 'modal åpnet'
-  | 'modal lukket'; //Bruk kun navn fra taksonomien
+  | 'modal lukket'
+  | 'filtervalg'; //Bruk kun navn fra taksonomien
 
 export default function useAmplitude() {
   const tracker = useBoundStore((state) => state.tracker);

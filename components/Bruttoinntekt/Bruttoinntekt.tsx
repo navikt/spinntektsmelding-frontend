@@ -62,7 +62,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
       event.preventDefault();
 
       logEvent('knapp klikket', {
-        tittel: 'Tilbakestill brutto månedsinntekt',
+        tittel: 'Tilbakestill beregnet månedsinntekt',
         component: amplitudeComponent
       });
 
@@ -74,7 +74,19 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
 
   const changeMaanedsintektHandler = (event: ChangeEvent<HTMLInputElement>) => setNyMaanedsinntekt(event.target.value);
 
-  const changeBegrunnelseHandler = useCallback((aarsak: string) => setEndringsaarsak(aarsak), [setEndringsaarsak]);
+  const changeBegrunnelseHandler = useCallback(
+    (aarsak: string) => {
+      logEvent('filtervalg', {
+        tittel: 'Endringsårsak beregnet månedsinntekt',
+        component: amplitudeComponent,
+        kategori: aarsak,
+        filternavn: 'Endringsårsak beregnet månedsinntekt'
+      });
+
+      setEndringsaarsak(aarsak);
+    },
+    [setEndringsaarsak, logEvent]
+  );
 
   const setNyMaanedsinntektBlanktSkjemaHandler = (event: ChangeEvent<HTMLInputElement>) =>
     setNyMaanedsinntektBlanktSkjema(event.target.value);
@@ -84,7 +96,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
       event.preventDefault();
 
       logEvent('knapp klikket', {
-        tittel: 'Endre brutto månedsinntekt',
+        tittel: 'Endre beregnet månedsinntekt',
         component: amplitudeComponent
       });
 
@@ -98,7 +110,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     event.preventDefault();
 
     logEvent(readMoreOpen ? 'readmore lukket' : 'readmore åpnet', {
-      tittel: 'Les mer brutto månedsinntekt',
+      tittel: 'Les mer beregnet månedsinntekt',
       component: amplitudeComponent
     });
 
