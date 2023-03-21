@@ -1,6 +1,6 @@
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';
 
-describe('formatMaanedsnavn', () => {
+describe.concurrent('formatMaanedsnavn', () => {
   it('should return Januar for 2002-01', () => {
     expect(formatMaanedsnavn('2002-01')).toBe('Januar');
   });

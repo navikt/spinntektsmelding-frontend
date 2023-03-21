@@ -1,6 +1,6 @@
 import numberOfDaysInRange from '../../utils/numberOfDaysInRange';
 
-describe('numberOfDaysInRange', () => {
+describe.concurrent('numberOfDaysInRange', () => {
   it('should return two when start and end is adjacent', () => {
     expect(numberOfDaysInRange(new Date(2023, 1, 1), new Date(2023, 1, 2))).toBe(2);
   });

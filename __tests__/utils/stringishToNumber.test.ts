@@ -1,6 +1,6 @@
 import stringishToNumber from '../../utils/stringishToNumber';
 
-describe('stringishToNumber', () => {
+describe.concurrent('stringishToNumber', () => {
   it('should return a number when input is string', () => {
     expect(stringishToNumber('123')).toBe(123);
   });

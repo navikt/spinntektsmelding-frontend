@@ -1,6 +1,6 @@
 import ukeNr from '../../utils/ukeNr';
 
-describe('ukeNr', () => {
+describe.concurrent('ukeNr', () => {
   it('shold return return the correct weeknumber for a sunday', () => {
     expect(ukeNr(new Date(2022, 9, 2))).toBe(40);
   });

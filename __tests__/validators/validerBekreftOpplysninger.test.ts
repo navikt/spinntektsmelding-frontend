@@ -1,6 +1,6 @@
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../../validators/validerBekreftOpplysninger';
 
-describe('validerBekreftOpplysninger', () => {
+describe.concurrent('validerBekreftOpplysninger', () => {
   it('should return true when stuff is confirmed', () => {
     expect(validerBekreftOpplysninger(true)).toEqual([]);
   });
