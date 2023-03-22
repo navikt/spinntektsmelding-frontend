@@ -80,6 +80,11 @@ const Home: NextPage = () => {
 
     if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
       fyllFeilmeldinger(errorStatus.errorTexts);
+
+      logEvent('skjema validering feilet', {
+        tittel: 'Validering feilet',
+        component: 'Hovedskjema'
+      });
     } else {
       const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
       skjemaData.bestemmendeFraværsdag = formatIsoDate(bestemmendeFravaersdag);
@@ -117,6 +122,11 @@ const Home: NextPage = () => {
 
           default:
             const resultat = await data.json();
+
+            logEvent('skjema innsending feilet', {
+              tittel: 'Innsending feilet',
+              component: 'Hovedskjema'
+            });
 
             if (resultat.errors) {
               const errors: Array<ErrorResponse> = resultat.errors;
