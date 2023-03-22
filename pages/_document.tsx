@@ -30,7 +30,6 @@ Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> 
   const Decorator = await fetchDecoratorReact({
     env: serverRuntimeConfig.decoratorEnv,
     context: 'arbeidsgiver',
-    simple: true,
     chatbot: false,
     feedback: false,
     urlLookupTable: false

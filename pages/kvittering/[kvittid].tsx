@@ -163,7 +163,10 @@ const Kvittering: NextPage = () => {
             <div className={lokalStyles.innerbuttonwrapper}>
               <ButtonEndre onClick={clickEndre} />
 
-              <Link className={lokalStyles.lukkelenke} href='/'>
+              <Link
+                className={lokalStyles.lukkelenke}
+                href='https://arbeidsgiver.nav.no/min-side-arbeidsgiver/sak-restore-session'
+              >
                 Lukk
               </Link>
             </div>
