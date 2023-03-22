@@ -13,10 +13,6 @@
   margin-top   : auto;
 }
 
-.egenmeldingswrapper:not(:first-child) {
-  margin-top: 1rem;
-}
-
 .endremaaanedsinntekt,
 .endremaaanedsinntektwrapper {
   display: flex;
