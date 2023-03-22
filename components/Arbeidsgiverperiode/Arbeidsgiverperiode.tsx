@@ -107,7 +107,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
         arbeidsgiverperioder.map((periode, periodeIndex) => (
           <div key={periode.id} className={lokalStyles.datewrapper}>
             {!endretArbeidsgiverperiode && (
-              <>
+              <div className={lokalStyles.endrearbeidsgiverperiode}>
                 <div className={lokalStyles.datepickerescape}>
                   <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-fra`}>Fra</TextLabel>
                   <div data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}>{formatDate(periode.fom)}</div>
@@ -116,7 +116,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
                   <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-til`}>Til</TextLabel>
                   <div data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}>{formatDate(periode.tom)}</div>
                 </div>
-              </>
+              </div>
             )}
             {endretArbeidsgiverperiode && (
               <Periodevelger

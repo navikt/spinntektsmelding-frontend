@@ -102,9 +102,8 @@
   gap    : 2rem;
 }
 
-.radiobuttonwrapper,
-.opphrefkravforklaring {
-  margin: var(--a-spacing-3) 0;
+.radiobuttonwrapper {
+  margin: var(--a-spacing-5) 0;
 }
 
 .opphrefkravperiode {

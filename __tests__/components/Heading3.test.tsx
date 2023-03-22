@@ -12,4 +12,16 @@ describe('Heading3', () => {
 
     expect(HeadingTitle).toBeInTheDocument();
   });
+
+  it('still renders a title text', () => {
+    render(<Heading3 className='Test'>Innholdstekst</Heading3>);
+
+    const HeadingTitle = screen.getByRole('heading', {
+      level: 3,
+      name: /Innholdstekst/i
+    });
+
+    expect(HeadingTitle).toBeInTheDocument();
+    expect(HeadingTitle).toHaveClass('Test');
+  });
 });

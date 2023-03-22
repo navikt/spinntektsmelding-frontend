@@ -14,14 +14,14 @@
   gap      : 2rem;
 }
 
+.kanSlettes {
+  margin-top: 1rem;
+}
+
 .endresykemeldingknapper {
   padding-top    : 2rem;
   display        : flex;
   justify-content: space-between;
-}
-
-.velgerWrapper {
-  margin: 1rem 0;
 }
 
 @media screen and (max-width: 800px) {
