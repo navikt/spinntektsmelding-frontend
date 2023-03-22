@@ -29,6 +29,7 @@ describe('kvittering', () => {
 
   it('should have no violations', async () => {
     const { container } = render(<Kvittering />);
+
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();

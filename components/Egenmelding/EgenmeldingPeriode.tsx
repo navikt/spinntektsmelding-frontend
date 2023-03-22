@@ -46,9 +46,9 @@ export default function EgenmeldingPeriode({
   }
 
   const defaultMnd = toDate;
-
+  const sletteklasse = kanSlettes ? localStyles.kanSlettes : '';
   return (
-    <div data-cy='egenmelding' className={localStyles.velgerWrapper}>
+    <div data-cy='egenmelding' className={sletteklasse}>
       <Periodevelger
         fomTekst='Fra'
         fomID={`egenmeldingsperiode-fom-${periodeId}`}
