@@ -17,7 +17,6 @@ export default function PageContent(props: PageContentProps) {
         / {props.title}
       </div>
       <div className='page-content-header'>
-        <Heading1>Inntektsgrunnlag og fravær</Heading1>
         <Heading2>{props.title}</Heading2>
       </div>
       <div className='page-content-body'>{props.children}</div>
