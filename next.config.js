@@ -1,6 +1,31 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  async headers() {
+    const csp = await buildCspHeader(appDirectives, { env: process.env.ENVIRONMENT });
+
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: csp
+          }
+        ]
+      },
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'private, no-cache, no-store, max-age=0, must-revalidate'
+          }
+        ]
+      }
+    ];
+  },
+  poweredByHeader: false,
   reactStrictMode: true,
   output: 'standalone',
   basePath: '/im-dialog',
@@ -17,7 +42,8 @@ const nextConfig = {
   },
   serverRuntimeConfig: {
     decoratorEnv: 'dev',
-    decoratorDisabled: process.env.DISABLE_DECORATOR
+    decoratorDisabled: process.env.DISABLE_DECORATOR,
+    testStuff: process.env.TEST_STUFF
   }
 };
 

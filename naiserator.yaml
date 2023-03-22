@@ -43,3 +43,7 @@ spec:
       value: '{{{api-url}}}'
     - name: API_BASEPATH
       value: '{{{api-basepath}}}'
+    - name: AMPLITUDE_ENABLED
+      value: '{{{dev.amplitude-enabled}}}'
+    - name: TEST_STUFF
+      value: '{{{dev.test-stuff}}}'

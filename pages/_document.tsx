@@ -1,6 +1,7 @@
 import NextDocument, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
 import { Components, fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr';
 import getConfig from 'next/config';
+import env from '../config/environment';
 
 const { serverRuntimeConfig } = getConfig();
 
@@ -13,7 +14,10 @@ const Document = ({ Decorator }: DocumentProps) => {
 
   return (
     <Html>
-      <Head>{viseDekoratoren ? <Decorator.Styles /> : null}</Head>
+      <Head>
+        {viseDekoratoren ? <Decorator.Styles /> : null}
+        <meta property='og:test' content={env.testStuff} key='test' />
+      </Head>
       <body>
         {viseDekoratoren ? <Decorator.Header /> : null}
         <Main />

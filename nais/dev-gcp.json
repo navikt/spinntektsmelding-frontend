@@ -4,5 +4,9 @@
   "vault-enabled": false,
   "webproxy-enabled": false,
   "api-url": "https://im-dialog.dev.nav.no",
-  "api-basepath": ""
+  "api-basepath": "",
+  "env": {
+    "amplitude-enabled": true,
+    "test-stuff": "test-setting"
+  }
 }
