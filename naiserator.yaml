@@ -46,6 +46,6 @@ spec:
     - name: AMPLITUDE_ENABLED
       value: '{{{amplitude-enabled}}}'
     - name: TEST_STUFF
-      value: '{{{test-stuff}}}'
+      value: '{{test-stuff}}'
     - name: ENVIRONMENT
       value: '{{{environment}}}'
