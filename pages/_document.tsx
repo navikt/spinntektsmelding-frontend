@@ -16,7 +16,11 @@ const Document = ({ Decorator }: DocumentProps) => {
     <Html>
       <Head>
         {viseDekoratoren ? <Decorator.Styles /> : null}
-        <meta property='og:test' content={env.testStuff + '-' + env.otherTestStuff} key='test' />
+        <meta
+          property='og:test'
+          content={env.testStuff + '-' + env.otherTestStuff + '-' + env.environment}
+          key='test'
+        />
       </Head>
       <body>
         {viseDekoratoren ? <Decorator.Header /> : null}
