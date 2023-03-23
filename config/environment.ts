@@ -120,6 +120,10 @@ class Environment {
   get otherTestStuff() {
     return this.publicRuntimeConfig.otherTestStuff;
   }
+
+  get environment() {
+    return this.publicRuntimeConfig.environment;
+  }
 }
 
 const env = new Environment();

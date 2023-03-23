@@ -1,7 +1,14 @@
 /** @type {import('next').NextConfig} */
 const { buildCspHeader } = require('@navikt/nav-dekoratoren-moduler/ssr');
 
-const appDirectives = {};
+const appDirectives = {
+  'connect-src': ["'self'", 'https://*.uxsignals.com'],
+  'font-src': ['https://fonts.gstatic.com'],
+  'script-src': ['https://uxsignals-frontend.uxsignals.app.iterate.no', 'navtest.boost.ai'],
+  'script-src-elem': ["'self'", 'navtest.boost.ai', 'https://uxsignals-frontend.uxsignals.app.iterate.no'],
+  'style-src-elem': ["'self'"],
+  'img-src': ["'self'", 'data:', 'blob:']
+};
 
 const nextConfig = {
   async headers() {
@@ -49,7 +56,8 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     testStuff: process.env.TEST_STUFF,
-    otherTestStuff: 'otherTestSuff'
+    otherTestStuff: 'otherTestSuff',
+    environment: process.env.ENVIRONMENT
   }
 };
 
