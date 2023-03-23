@@ -5,8 +5,6 @@
   "webproxy-enabled": false,
   "api-url": "https://im-dialog.dev.nav.no",
   "api-basepath": "",
-  "env": {
-    "amplitude-enabled": true,
-    "test-stuff": "test-setting"
-  }
+  "amplitude-enabled": true,
+  "TEST_STUFF": "test-setting"
 }
