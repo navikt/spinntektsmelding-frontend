@@ -6,5 +6,6 @@
   "api-url": "https://im-dialog.dev.nav.no",
   "api-basepath": "",
   "amplitude-enabled": true,
-  "test-stuff": "test-setting"
+  "test-stuff": "test-setting",
+  "environment": "dev"
 }
