@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+const { buildCspHeader } = require('@navikt/nav-dekoratoren-moduler/ssr');
+
+const appDirectives = {};
 
 const nextConfig = {
   async headers() {
@@ -42,7 +45,9 @@ const nextConfig = {
   },
   serverRuntimeConfig: {
     decoratorEnv: 'dev',
-    decoratorDisabled: process.env.DISABLE_DECORATOR,
+    decoratorDisabled: process.env.DISABLE_DECORATOR
+  },
+  publicRuntimeConfig: {
     testStuff: process.env.TEST_STUFF
   }
 };

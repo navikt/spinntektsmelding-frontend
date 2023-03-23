@@ -1,7 +1,5 @@
 import getConfig from 'next/config';
 
-const { publicRuntimeConfig } = getConfig();
-
 export enum EnvironmentType {
   PROD,
   PREPROD_DEV, // Angir at man aksesserer preprod via naisdevice på *.dev.nav.no, kun tilgjengelig via naisdevice
@@ -10,6 +8,14 @@ export enum EnvironmentType {
 }
 
 class Environment {
+  publicRuntimeConfig: any;
+
+  constructor() {
+    const { publicRuntimeConfig } = getConfig();
+
+    this.publicRuntimeConfig = publicRuntimeConfig;
+  }
+
   get loginServiceUrl() {
     switch (this.environmentMode) {
       case EnvironmentType.PROD:
@@ -116,7 +122,7 @@ class Environment {
   }
 
   get testStuff() {
-    return publicRuntimeConfig.testStuff;
+    return this.publicRuntimeConfig.testStuff;
   }
 }
 
