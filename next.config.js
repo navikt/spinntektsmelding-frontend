@@ -55,7 +55,7 @@ const nextConfig = {
     decoratorDisabled: process.env.DISABLE_DECORATOR
   },
   publicRuntimeConfig: {
-    testStuff: process.env.TEST_STUFF,
+    testStuff: process.env.NEXT_PUBLIC_TEST_STUFF,
     otherTestStuff: 'otherTestSuff',
     environment: process.env.ENVIRONMENT
   }
