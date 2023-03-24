@@ -56,7 +56,7 @@ const Home: NextPage = () => {
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-
+  const setSlug = useBoundStore((state) => state.setSlug);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const logEvent = useAmplitude();
 
@@ -149,6 +149,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     hentSkjemadata(pathSlug);
+    setSlug(pathSlug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 

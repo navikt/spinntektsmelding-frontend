@@ -28,140 +28,143 @@ export interface ArbeidsgiverperiodeState {
   tilbakestillArbeidsgiverperiode: () => void;
 }
 
-const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => ({
-  bestemmendeFravaersdag: undefined,
-  arbeidsgiverperioder: undefined,
-  endretArbeidsgiverperiode: false,
-  setBestemmendeFravaersdag: (bestemmendeFravaersdag) =>
-    set(
-      produce((state) => {
-        state.bestemmendeFravaersdag = bestemmendeFravaersdag;
+const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => {
+  return {
+    bestemmendeFravaersdag: undefined,
+    arbeidsgiverperioder: undefined,
+    endretArbeidsgiverperiode: false,
+    setBestemmendeFravaersdag: (bestemmendeFravaersdag) => {
+      set(
+        produce((state) => {
+          state.bestemmendeFravaersdag = bestemmendeFravaersdag;
 
-        return state;
-      })
-    ),
-  setArbeidsgiverperioder: (arbeidsgiverperioder) =>
-    set(
-      produce((state) => {
-        state.arbeidsgiverperioder = arbeidsgiverperioder;
-        const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
-        if (bestemmende) {
-          state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-          state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-        }
-
-        return state;
-      })
-    ),
-  leggTilArbeidsgiverperiode: () =>
-    set(
-      produce((state) => {
-        const nyArbeidsgiverperiode: Periode = { id: nanoid() };
-        state.endretArbeidsgiverperiode = true;
-        if (state.arbeidsgiverperioder) {
-          state.arbeidsgiverperioder.push(nyArbeidsgiverperiode);
-        } else {
-          state.arbeidsgiverperioder = [nyArbeidsgiverperiode];
-        }
-
-        return state;
-      })
-    ),
-  slettArbeidsgiverperiode: (periodeId: string) =>
-    set(
-      produce((state) => {
-        const nyePerioder = state.arbeidsgiverperioder.filter((periode: Periode) => periode.id !== periodeId);
-        state.arbeidsgiverperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
-        state.endretArbeidsgiverperiode = true;
-
-        const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
-        if (bestemmende) {
-          state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-          state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-        }
-        const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
-          state.arbeidsgiverperioder,
-          'arbeidsgiverperiode'
-        );
-
-        state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder);
-        return state;
-      })
-    ),
-  setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
-    set(
-      produce((state) => {
-        state.arbeidsgiverperioder = state.arbeidsgiverperioder.map((periode: Periode) => {
-          if (periode.id === periodeId) {
-            periode.tom = dateValue?.tom;
-            periode.fom = dateValue?.fom;
-            return periode;
+          return state;
+        })
+      );
+    },
+    setArbeidsgiverperioder: (arbeidsgiverperioder) =>
+      set(
+        produce((state) => {
+          state.arbeidsgiverperioder = arbeidsgiverperioder;
+          const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
+          if (bestemmende) {
+            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
           }
-          return periode;
-        });
 
-        const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
-        if (bestemmende) {
-          state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-          state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+          return state;
+        })
+      ),
+    leggTilArbeidsgiverperiode: () =>
+      set(
+        produce((state) => {
+          const nyArbeidsgiverperiode: Periode = { id: nanoid() };
+          state.endretArbeidsgiverperiode = true;
+          if (state.arbeidsgiverperioder) {
+            state.arbeidsgiverperioder.push(nyArbeidsgiverperiode);
+          } else {
+            state.arbeidsgiverperioder = [nyArbeidsgiverperiode];
+          }
 
-          state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
-        }
-        state.endretArbeidsgiverperiode = true;
+          return state;
+        })
+      ),
+    slettArbeidsgiverperiode: (periodeId: string) =>
+      set(
+        produce((state) => {
+          const nyePerioder = state.arbeidsgiverperioder.filter((periode: Periode) => periode.id !== periodeId);
+          state.arbeidsgiverperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
+          state.endretArbeidsgiverperiode = true;
 
-        const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
-          state.arbeidsgiverperioder,
-          'arbeidsgiverperiode'
-        );
+          const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
+          if (bestemmende) {
+            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+          }
+          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
+            state.arbeidsgiverperioder,
+            'arbeidsgiverperiode'
+          );
 
-        state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperiode');
+          state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder);
+          return state;
+        })
+      ),
+    setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
+      set(
+        produce((state) => {
+          state.arbeidsgiverperioder = state.arbeidsgiverperioder.map((periode: Periode) => {
+            if (periode.id === periodeId) {
+              periode.tom = dateValue?.tom;
+              periode.fom = dateValue?.fom;
+              return periode;
+            }
+            return periode;
+          });
 
-        return state;
-      })
-    );
-  },
-  setEndreArbeidsgiverperiode: (endre: boolean) => {
-    set(
-      produce((state) => {
-        state.endretArbeidsgiverperiode = endre;
+          const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
+          if (bestemmende) {
+            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
 
-        return state;
-      })
-    );
-  },
-  setEndringsbegrunnelse: (begrunnelse) =>
-    set(
-      produce((state) => {
-        state.endringsbegrunnelse = begrunnelse;
+            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+          }
+          state.endretArbeidsgiverperiode = true;
 
-        return state;
-      })
-    ),
-  tilbakestillArbeidsgiverperiode: () => {
-    set(
-      produce((state) => {
-        const periode = state.fravaersperioder.concat(state.egenmeldingsperioder);
+          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
+            state.arbeidsgiverperioder,
+            'arbeidsgiverperiode'
+          );
 
-        const aperioder = finnArbeidsgiverperiode(periode);
+          state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperiode');
 
-        state.arbeidsgiverperioder = aperioder.filter(
-          (periode) => periode.fom && periode.tom && isValid(periode.fom) && isValid(periode.tom)
-        );
+          return state;
+        })
+      );
+    },
+    setEndreArbeidsgiverperiode: (endre: boolean) => {
+      set(
+        produce((state) => {
+          state.endretArbeidsgiverperiode = endre;
 
-        const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
-        if (bestemmende) {
-          state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-          state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-          state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
-        }
+          return state;
+        })
+      );
+    },
+    setEndringsbegrunnelse: (begrunnelse) =>
+      set(
+        produce((state) => {
+          state.endringsbegrunnelse = begrunnelse;
 
-        slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
+          return state;
+        })
+      ),
+    tilbakestillArbeidsgiverperiode: () => {
+      set(
+        produce((state) => {
+          const periode = state.fravaersperioder.concat(state.egenmeldingsperioder);
 
-        state.endretArbeidsgiverperiode = false;
-        return state;
-      })
-    );
-  }
-});
+          const aperioder = finnArbeidsgiverperiode(periode);
+
+          state.arbeidsgiverperioder = aperioder.filter(
+            (periode) => periode.fom && periode.tom && isValid(periode.fom) && isValid(periode.tom)
+          );
+
+          const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
+          if (bestemmende) {
+            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+          }
+
+          slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
+
+          state.endretArbeidsgiverperiode = false;
+          return state;
+        })
+      );
+    }
+  };
+};
 
 export default useArbeidsgiverperioderStore;
