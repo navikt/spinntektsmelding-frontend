@@ -24,7 +24,7 @@ const fetchInntektsdata = async (url: string, forespoerselId: string, skjaerings
   }
 
   try {
-    return res.json();
+    return await res.json();
   } catch (_error) {
     const jsonError = new NetworkError('An error occurred while decoding the data.');
     // Attach extra info to the error object.
