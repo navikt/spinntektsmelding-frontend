@@ -118,7 +118,7 @@ class Environment {
   }
 
   get testStuff() {
-    return this.publicRuntimeConfig.testStuff;
+    return process.env.NEXT_PUBLIC_TEST_STUFF;
   }
 
   get otherTestStuff() {
