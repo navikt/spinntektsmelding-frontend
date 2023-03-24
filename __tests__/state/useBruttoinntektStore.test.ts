@@ -5,6 +5,8 @@ import { vi } from 'vitest';
 import feiltekster from '../../utils/feiltekster';
 import { finnAktuelleInntekter } from '../../state/useBruttoinntektStore';
 
+import mockInntekt from '../../mockdata/inntektData';
+
 const inputInntekt: number = 40000;
 const tidligereInntekt: Array<MottattHistoriskInntekt> = [
   { maanedsnavn: '2002-02', inntekt: 33000 },
@@ -17,6 +19,13 @@ const tidligereInntekt: Array<MottattHistoriskInntekt> = [
   { maanedsnavn: '2002-09', inntekt: 45000 },
   { maanedsnavn: '2002-10', inntekt: 55000 }
 ];
+
+global.fetch = vi.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve(mockInntekt)
+  })
+);
 
 describe('useBoundStore', () => {
   afterEach(() => {
@@ -239,6 +248,10 @@ describe('useBoundStore', () => {
       {
         inntekt: 45000,
         maanedsnavn: '2002-09'
+      },
+      {
+        inntekt: 50000,
+        maanedsnavn: '2002-08'
       }
     ]);
   });

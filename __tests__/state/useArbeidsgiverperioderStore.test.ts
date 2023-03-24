@@ -1,9 +1,12 @@
+import { vi } from 'vitest';
 import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../state/MottattData';
-import { vi } from 'vitest';
 import { Periode } from '../../state/state';
 import { nanoid } from 'nanoid';
+import FetchMock, { MatcherUtils, SpyMiddleware } from 'yet-another-fetch-mock';
+import env from '../../config/environment';
+import mockInntekt from '../../mockdata/inntektData';
 
 vi.mock('nanoid');
 
@@ -16,13 +19,21 @@ const arbeidsgiverperioder: Array<MottattPeriode> = [
 const initialState = useBoundStore.getState();
 
 describe('useBoundStore', () => {
+  let mock: FetchMock;
+  let spy: SpyMiddleware;
+
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
+    spy = new SpyMiddleware();
+    mock = FetchMock.configure({
+      middleware: spy.middleware
+    });
   });
 
   afterEach(() => {
     // You can chose to set the store's state to a default value here.
     vi.resetAllMocks();
+    mock.restore();
     cleanup();
   });
 
@@ -72,6 +83,8 @@ describe('useBoundStore', () => {
   // });
 
   it('should set bestemmende fraværsdag.', () => {
+    mock.get(env.inntektsdataUrl, (req, res, ctx) => res(ctx.json(mockInntekt)));
+
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -82,6 +95,8 @@ describe('useBoundStore', () => {
   });
 
   it('should set the arbeidsgiver periode.', () => {
+    mock.get(env.inntektsdataUrl, (req, res, ctx) => res(ctx.json(mockInntekt)));
+
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     const datoSpenn: Periode[] = [
@@ -100,6 +115,8 @@ describe('useBoundStore', () => {
   });
 
   it('should add empty arbeidsgiver periode.', () => {
+    mock.get(env.inntektsdataUrl, (req, res, ctx) => res(ctx.json(mockInntekt)));
+
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     nanoid.mockReturnValue('2');
@@ -135,6 +152,8 @@ describe('useBoundStore', () => {
   });
 
   it('should delete a arbeidsgiver periode.', () => {
+    mock.get(env.inntektsdataUrl, (req, res, ctx) => res(ctx.json(mockInntekt)));
+
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     // nanoid.mockReturnValue('2');
@@ -174,6 +193,8 @@ describe('useBoundStore', () => {
   });
 
   it('should update a arbeidsgiver periode.', () => {
+    mock.get(env.inntektsdataUrl, (req, res, ctx) => res(ctx.json(mockInntekt)));
+
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     // nanoid.mockReturnValue('2');
