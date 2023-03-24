@@ -53,7 +53,6 @@ export interface BruttoinntektState {
     bestemmendeFravaersdag: Date
   ) => void;
   rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
-  oppdaterBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
@@ -301,18 +300,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           }));
         }
 
-        return state;
-      })
-    );
-  },
-  oppdaterBruttoinntekt: (bestemmendeFravaersdag: Date) => {
-    // Sjekk om vi har perioden allerede.
-    // Hent data om vi ikke har det.
-    //
-
-    set(
-      produce((state) => {
-        // Lagre data
         return state;
       })
     );

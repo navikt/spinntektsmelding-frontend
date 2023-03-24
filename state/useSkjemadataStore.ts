@@ -7,6 +7,7 @@ export interface SkjemadataState {
   nyInnsending: boolean;
   setNyInnsending: (endring: boolean) => void;
   setHenterInnsending: (henter: boolean) => void;
+  setSlug: (slug: string) => void;
   tracker: string;
   henterInntektsdata: boolean;
   slug: string;
