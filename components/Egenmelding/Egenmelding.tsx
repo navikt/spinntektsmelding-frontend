@@ -65,7 +65,7 @@ export default function Egenmelding() {
       component: 'Egenmelding'
     });
 
-    setEndreEgenmelding(!endreEgenmeldingsperiode);
+    setEndreEgenmelding(true);
   };
 
   const clickTilbakestillFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {

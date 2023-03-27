@@ -1,4 +1,5 @@
 import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
+import { isValid } from 'date-fns';
 
 interface DatovelgerProps {
   onDateChange?: (val?: Date | undefined) => void;
@@ -25,6 +26,10 @@ export default function Datovelger({
   defaultMonth,
   error
 }: DatovelgerProps) {
+  if (!defaultSelected || !isValid(defaultSelected)) {
+    defaultSelected = undefined;
+  }
+
   const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
     toDate: toDate,
     fromDate: fromDate,
