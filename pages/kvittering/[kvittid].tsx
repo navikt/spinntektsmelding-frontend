@@ -58,7 +58,8 @@ const Kvittering: NextPage = () => {
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const clickEndre = useCallback(() => router.back(), [router]);
+
+  const clickEndre = useCallback(() => router.push(`/${pathSlug}`, undefined, { shallow: true }), [router, pathSlug]);
 
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
