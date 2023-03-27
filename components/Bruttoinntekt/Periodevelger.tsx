@@ -62,6 +62,10 @@ export default function Periodevelger({
     });
   };
 
+  if (!defaultMonth) {
+    defaultMonth = new Date();
+  }
+
   return (
     <>
       <div className={lokalStyles.endremaaanedsinntekt}>

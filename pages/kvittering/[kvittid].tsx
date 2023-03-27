@@ -58,7 +58,12 @@ const Kvittering: NextPage = () => {
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const clickEndre = useCallback(() => router.back(), [router]);
+  const kvitteringSlug = useBoundStore((state) => state.slug);
+
+  const clickEndre = useCallback(
+    () => router.push(`/${kvitteringSlug}`, undefined, { shallow: true }),
+    [router, kvitteringSlug]
+  );
 
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
@@ -126,7 +131,7 @@ const Kvittering: NextPage = () => {
                   </BodyLong>
                   {arbeidsgiverperioder &&
                     arbeidsgiverperioder.map((periode, index) => (
-                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.fom.valueOf()} />
+                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
                     ))}
                 </div>
               </div>

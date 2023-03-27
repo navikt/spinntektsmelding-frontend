@@ -112,9 +112,8 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
       produce((state) => {
         state.egenmeldingsperioder = [];
 
-        state.endreEgenmeldingsperiode = false;
-
         if (egenmeldingsperioder && egenmeldingsperioder.length > 0) {
+          state.endreEgenmeldingsperiode = false;
           state.egenmeldingsperioder = egenmeldingsperioder.map((periode) => ({
             fom: parseIsoDate(periode.fom),
             tom: parseIsoDate(periode.tom),

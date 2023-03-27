@@ -7,18 +7,18 @@ const finn16dager = (perioder: Array<Periode>) => {
   const arbPeriode: Array<Periode> = [];
 
   perioder.forEach((periode) => {
-    if (dagerTotalt < 15) {
-      const dagerTilNaa = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt;
-      dagerTotalt = dagerTilNaa;
-      if (dagerTilNaa < 15) {
+    if (dagerTotalt < 16) {
+      const dagerTilNaa = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt + 1;
+      if (dagerTilNaa < 16) {
         arbPeriode.push(periode);
       } else {
         arbPeriode.push({
           fom: periode.fom,
-          tom: addDays(periode.fom!, 15 - (dagerTotalt - dagerTilNaa)),
+          tom: addDays(periode.fom!, 15 - dagerTotalt),
           id: periode.id
         });
       }
+      dagerTotalt = dagerTilNaa;
       return;
     }
     return arbPeriode;

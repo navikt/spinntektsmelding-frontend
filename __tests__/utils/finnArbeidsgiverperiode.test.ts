@@ -139,4 +139,151 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
       }
     ]);
   });
+
+  it('should return the correct arbeidsgiverperiode for not so long periode with some time between', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2023-02-06'),
+        tom: parseISO('2023-02-17')
+      },
+      {
+        id: '2',
+        fom: parseISO('2023-02-22'),
+        tom: parseISO('2023-03-03')
+      }
+    ];
+    expect(finnArbeidsgiverperiode(periode)).toEqual([
+      {
+        id: '1',
+        fom: parseISO('2023-02-06'),
+        tom: parseISO('2023-02-17')
+      },
+      {
+        id: '2',
+        fom: parseISO('2023-02-22'),
+        tom: parseISO('2023-02-25')
+      }
+    ]);
+  });
+
+  it('should return the correct arbeidsgiverperiode for one long periode', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2022-05-01'),
+        tom: parseISO('2022-05-25')
+      }
+    ];
+    expect(finnArbeidsgiverperiode(periode)).toEqual([
+      {
+        id: '1',
+        fom: parseISO('2022-05-01'),
+        tom: parseISO('2022-05-16')
+      }
+    ]);
+  });
+
+  it('should return the correct arbeidsgiverperiode for one supershort periode', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2022-05-01'),
+        tom: parseISO('2022-05-01')
+      }
+    ];
+    expect(finnArbeidsgiverperiode(periode)).toEqual([
+      {
+        id: '1',
+        fom: parseISO('2022-05-01'),
+        tom: parseISO('2022-05-01')
+      }
+    ]);
+  });
+
+  it('should return the correct arbeidsgiverperiode for three not so long periode with some time between', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2023-02-06'),
+        tom: parseISO('2023-02-09')
+      },
+      {
+        id: '2',
+        fom: parseISO('2023-02-12'),
+        tom: parseISO('2023-02-15')
+      },
+      {
+        id: '3',
+        fom: parseISO('2023-02-22'),
+        tom: parseISO('2023-02-25')
+      }
+    ];
+    expect(finnArbeidsgiverperiode(periode)).toEqual([
+      {
+        id: '1',
+        fom: parseISO('2023-02-06'),
+        tom: parseISO('2023-02-09')
+      },
+      {
+        id: '2',
+        fom: parseISO('2023-02-12'),
+        tom: parseISO('2023-02-15')
+      },
+      {
+        id: '3',
+        fom: parseISO('2023-02-22'),
+        tom: parseISO('2023-02-25')
+      }
+    ]);
+  });
+
+  it('should return the correct arbeidsgiverperiode for three longer periode with some time between', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2023-02-06'),
+        tom: parseISO('2023-02-10')
+      },
+      {
+        id: '2',
+        fom: parseISO('2023-02-12'),
+        tom: parseISO('2023-02-20')
+      },
+      {
+        id: '3',
+        fom: parseISO('2023-02-22'),
+        tom: parseISO('2023-02-25')
+      }
+    ];
+    expect(finnArbeidsgiverperiode(periode)).toEqual([
+      {
+        id: '1',
+        fom: parseISO('2023-02-06'),
+        tom: parseISO('2023-02-20')
+      },
+      {
+        id: '3',
+        fom: parseISO('2023-02-22'),
+        tom: parseISO('2023-02-22')
+      }
+    ]);
+  });
+
+  it('should return the correct arbeidsgiverperiode periode of 16 days', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2023-02-01'),
+        tom: parseISO('2023-02-16')
+      }
+    ];
+    expect(finnArbeidsgiverperiode(periode)).toEqual([
+      {
+        id: '1',
+        fom: parseISO('2023-02-01'),
+        tom: parseISO('2023-02-16')
+      }
+    ]);
+  });
 });
