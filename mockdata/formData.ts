@@ -4,7 +4,7 @@ import testFnr from './testFnr';
 
 const initialState: InntektsmeldingSkjema = {
   opplysningerBekreftet: false,
-  egenmeldingsperioder: [],
+  egenmeldingsperioder: [{ id: nanoid() }],
   bruttoinntekt: {
     bruttoInntekt: 0,
     bekreftet: false,
@@ -33,19 +33,19 @@ const formData = {
 
   fravaersperioder: [
     {
-      fom: '2023-02-06',
-      tom: '2023-02-17'
+      fom: '2023-02-20',
+      tom: '2023-03-03'
     },
     {
-      fom: '2023-02-22',
-      tom: '2023-03-03'
+      fom: '2023-03-05',
+      tom: '2023-03-06'
     }
   ],
   egenmeldingsperioder: [
-    // {
-    //   fom: '2023-02-17',
-    //   tom: '2023-02-19'
-    // }
+    {
+      fom: '2023-02-17',
+      tom: '2023-02-19'
+    }
   ],
   tidligereinntekter: [
     // Hva skjer ved jobbskifte?
