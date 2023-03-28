@@ -4,6 +4,8 @@ import '@navikt/ds-css';
 import type { AppProps } from 'next/app';
 
 import '../components/PageContent/PageContent.css';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 import { configureLogger } from '@navikt/next-logger';
 
 configureLogger({

@@ -18,6 +18,7 @@ import Datovelger from '../Datovelger';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import LesMer from '../LesMer';
 import useAmplitude from '../../utils/useAmplitude';
+import Skeleton from 'react-loading-skeleton';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -53,6 +54,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const setPermiteringPeriode = useBoundStore((state) => state.setPermiteringPeriode);
   const permitering = useBoundStore((state) => state.permitering);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
+  const henterData = useBoundStore((state) => state.henterData);
 
   const logEvent = useAmplitude();
   const amplitudeComponent = 'BeregnetMånedslønn';
@@ -140,7 +142,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
         </LesMer>
 
         <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
-        <TidligereInntekt tidligereinntekt={tidligereinntekt} />
+        {!henterData && <TidligereInntekt tidligereinntekt={tidligereinntekt} />}
+        {henterData && <Skeleton count={3} />}
         {!endringAvBelop && (
           <TextLabel className={lokalStyles.tbmargin}>
             Vi har derfor beregnet månedslønnen {formatDate(bestemmendeFravaersdag)} til

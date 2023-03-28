@@ -243,17 +243,18 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     let tidligereInntekt = structuredClone(opprinneligeInntekt);
     const bruttoinntekt = get().bruttoinntekt;
     const slug = get().slug;
-    const henterData = get().henterData;
+    let henterData = get().henterData;
     const sisteLonnshentedato = get().sisteLonnshentedato;
 
     if (
       !(henterData || !sisteLonnshentedato || !bestemmendeFravaersdag) &&
-      startOfMonth(sisteLonnshentedato) !== startOfMonth(bestemmendeFravaersdag)
+      startOfMonth(sisteLonnshentedato).getMonth() !== startOfMonth(bestemmendeFravaersdag).getMonth()
     ) {
+      henterData = true;
       set(
         produce((state) => {
           state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
-          state.henterData = true;
+          state.henterData = henterData;
         })
       );
       const oppdaterteInntekter = await fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag);
@@ -266,6 +267,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       } else {
         tidligereInntekt = oppdaterteInntekter.tidligereInntekter;
       }
+      henterData = false;
     }
 
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
@@ -282,7 +284,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
     set(
       produce((state) => {
-        state.henterData = false;
+        state.henterData = henterData;
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         if (!bruttoinntekt.bekreftet && !bruttoinntekt.manueltKorrigert) {
           state.bruttoinntekt = {
