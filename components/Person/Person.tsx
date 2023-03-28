@@ -4,6 +4,7 @@ import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
 import { TextField } from '@navikt/ds-react';
+import Skeleton from 'react-loading-skeleton';
 
 interface PersonProps {
   erKvittering?: boolean;
@@ -47,11 +48,11 @@ export default function Person({ erKvittering }: PersonProps) {
           <div className={lokalStyles.ytreansattwrapper}>
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Navn</TextLabel>
-              <div data-cy='navn'>{navn}</div>
+              <div data-cy='navn'>{navn || <Skeleton />}</div>
             </div>
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Personnummer</TextLabel>
-              <div data-cy='identitetsnummer'>{identitetsnummer}</div>
+              <div data-cy='identitetsnummer'>{identitetsnummer || <Skeleton />}</div>
             </div>
           </div>
         </div>
@@ -62,13 +63,13 @@ export default function Person({ erKvittering }: PersonProps) {
               <div className={lokalStyles.virksomhetsnavnwrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn}
+                  {virksomhetsnavn || <Skeleton />}
                 </div>
               </div>
             )}
             <div className={lokalStyles.orgnrnavnwrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
-              <div data-cy='orgnummer'>{orgnrUnderenhet}</div>
+              <div data-cy='orgnummer'>{orgnrUnderenhet || <Skeleton />}</div>
             </div>
             {!virksomhetsnavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
             {innsenderNavn && (

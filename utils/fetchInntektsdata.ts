@@ -5,6 +5,9 @@ const fetchInntektsdata = async (url: string, forespoerselId: string, skjaerings
   const tidspunkt = formatIsoDate(skjaeringstidspunkt);
   const res = await fetch(url, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({
       forespoerselId: forespoerselId,
       skjaeringstidspunkt: tidspunkt

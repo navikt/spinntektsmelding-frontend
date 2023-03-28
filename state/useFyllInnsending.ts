@@ -36,7 +36,7 @@ interface SendtNaturalytelse {
 }
 
 interface AArsakType {
-  type: string;
+  typpe: string;
 }
 
 interface Tariffendring extends AArsakType {
@@ -128,14 +128,14 @@ export default function useFyllInnsending() {
       switch (bruttoinntekt.endringsaarsak) {
         case begrunnelseEndringBruttoinntekt.Tariffendring:
           return {
-            type: begrunnelseEndringBruttoinntekt.Tariffendring,
+            typpe: begrunnelseEndringBruttoinntekt.Tariffendring,
             gjelderFra: formatIsoDate(tariffendringsdato),
             bleKjent: formatIsoDate(tariffkjentdato)
           };
 
         case begrunnelseEndringBruttoinntekt.Ferie:
           return {
-            type: begrunnelseEndringBruttoinntekt.Ferie,
+            typpe: begrunnelseEndringBruttoinntekt.Ferie,
             liste: ferie!.map((periode) => ({
               fom: formatIsoDate(periode.fom),
               tom: formatIsoDate(periode.tom)
@@ -144,13 +144,13 @@ export default function useFyllInnsending() {
 
         case begrunnelseEndringBruttoinntekt.VarigLonnsendring:
           return {
-            type: begrunnelseEndringBruttoinntekt.VarigLonnsendring,
+            typpe: begrunnelseEndringBruttoinntekt.VarigLonnsendring,
             gjelderFra: formatIsoDate(lonnsendringsdato)
           };
 
         case begrunnelseEndringBruttoinntekt.Permisjon:
           return {
-            type: begrunnelseEndringBruttoinntekt.Permisjon,
+            typpe: begrunnelseEndringBruttoinntekt.Permisjon,
             liste: permisjon!.map((periode) => ({
               fom: formatIsoDate(periode.fom),
               tom: formatIsoDate(periode.tom)
@@ -159,7 +159,7 @@ export default function useFyllInnsending() {
 
         case begrunnelseEndringBruttoinntekt.Permitering:
           return {
-            type: begrunnelseEndringBruttoinntekt.Permitering,
+            typpe: begrunnelseEndringBruttoinntekt.Permitering,
             liste: permitering!.map((periode) => ({
               fom: formatIsoDate(periode.fom),
               tom: formatIsoDate(periode.tom)
@@ -168,19 +168,19 @@ export default function useFyllInnsending() {
 
         case begrunnelseEndringBruttoinntekt.NyStilling:
           return {
-            type: begrunnelseEndringBruttoinntekt.NyStilling,
+            typpe: begrunnelseEndringBruttoinntekt.NyStilling,
             gjelderFra: formatIsoDate(nystillingdato)
           };
 
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent:
           return {
-            type: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
+            typpe: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
             gjelderFra: formatIsoDate(nystillingsprosentdato)
           };
 
         default:
           return {
-            type: bruttoinntekt.endringsaarsak
+            typpe: bruttoinntekt.endringsaarsak
           };
       }
     };
