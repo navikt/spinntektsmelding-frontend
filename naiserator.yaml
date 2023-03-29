@@ -38,6 +38,10 @@ spec:
     enabled: true
     sidecar:
       enabled: true
+  accessPolicy:
+    outbound:
+      rules:
+        - application: im-api
   env:
     - name: API_URL
       value: '{{{api-url}}}'
