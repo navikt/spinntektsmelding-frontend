@@ -41,9 +41,9 @@ class Environment {
   get arbeidsgiverAPI() {
     switch (this.environmentMode) {
       case EnvironmentType.PROD:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/arbeidsgivere';
+        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/arbeidsgivere';
       case EnvironmentType.PREPROD_DEV:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/arbeidsgivere';
+        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/arbeidsgivere';
       default:
         return 'http://localhost:3000/not-in-use';
     }
@@ -52,20 +52,20 @@ class Environment {
   get innsendingInntektsmeldingAPI() {
     switch (this.environmentMode) {
       case EnvironmentType.PROD:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/inntektsmelding';
       case EnvironmentType.PREPROD_DEV:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/inntektsmelding';
       default:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntektsmelding';
+        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/inntektsmelding';
     }
   }
 
   get inntektsmeldingAPI() {
     switch (this.environmentMode) {
       case EnvironmentType.PROD:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/preutfyll';
+        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/preutfyll';
       case EnvironmentType.PREPROD_DEV:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/preutfyll';
+        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/preutfyll';
       default:
         return 'http://localhost:3000/not-in-use';
     }
@@ -74,15 +74,15 @@ class Environment {
   get inntektsmeldingUuidAPI() {
     switch (this.environmentMode) {
       case EnvironmentType.PROD:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/trenger';
+        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/trenger';
       case EnvironmentType.PREPROD_DEV:
-        return 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/trenger';
+        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/trenger';
       default:
         return 'http://localhost:3000/not-in-use';
     }
   }
 
-  public inntektsdataAPI = 'https://helsearbeidsgiver-im-api.dev.nav.no/api/v1/inntekt';
+  public inntektsdataAPI = 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/inntekt';
 
   get baseUrl() {
     return '/im-dialog';
