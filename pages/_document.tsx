@@ -18,7 +18,7 @@ const Document = ({ Decorator }: DocumentProps) => {
         {viseDekoratoren ? <Decorator.Styles /> : null}
         <meta
           property='og:test'
-          content={env.testStuff + '-' + env.otherTestStuff + '-' + env.environment}
+          content={process.env.NEXT_PUBLIC_TEST_STUFF + '-' + env.otherTestStuff + '-' + env.environment}
           key='test'
         />
       </Head>
