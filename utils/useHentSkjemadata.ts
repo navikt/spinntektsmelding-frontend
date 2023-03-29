@@ -1,19 +1,19 @@
 import environment from '../config/environment';
 import useBoundStore from '../state/useBoundStore';
-import useFetchInntektskjemaForNotifikasjon from '../state/useFetchInntektskjemaForNotifikasjon';
+import fetchInntektskjemaForNotifikasjon from '../state/fetchInntektskjemaForNotifikasjon';
 import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
 
 export default function useHentSkjemadata() {
-  const hentSkjemadata = useFetchInntektskjemaForNotifikasjon('');
   const initState = useStateInit();
   const leggTilFeilmelding = useBoundStore((state) => state.leggTilFeilmelding);
+  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
   return async (pathSlug: string) => {
     try {
       let skjemadata;
       if (pathSlug) {
-        skjemadata = await hentSkjemadata(environment.skjemadataUrl, pathSlug);
+        skjemadata = await fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, pathSlug);
       }
       if (skjemadata) {
         initState(skjemadata);
@@ -27,6 +27,7 @@ export default function useHentSkjemadata() {
       }
 
       leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
+      setSkalViseFeilmeldinger(true);
     }
   };
 }

@@ -142,7 +142,9 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     tilbakestillArbeidsgiverperiode: () => {
       set(
         produce((state) => {
-          const periode = state.fravaersperioder.concat(state.egenmeldingsperioder);
+          const periode = state.fravaersperioder
+            ? state.fravaersperioder.concat(state.egenmeldingsperioder)
+            : [].concat(state.egenmeldingsperioder);
 
           const aperioder = finnArbeidsgiverperiode(periode);
 

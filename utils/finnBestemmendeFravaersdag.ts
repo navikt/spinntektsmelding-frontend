@@ -42,7 +42,7 @@ export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
 };
 
 const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | undefined => {
-  if (!fravaersperioder) {
+  if (!fravaersperioder || !fravaersperioder?.[0]?.fom) {
     return undefined;
   }
 

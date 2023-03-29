@@ -246,6 +246,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     let henterData = get().henterData;
     const sisteLonnshentedato = get().sisteLonnshentedato;
 
+    let snittInntekter = 0;
+
     if (
       !(henterData || !sisteLonnshentedato || !bestemmendeFravaersdag) &&
       startOfMonth(sisteLonnshentedato).getMonth() !== startOfMonth(bestemmendeFravaersdag).getMonth()
@@ -258,29 +260,28 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         })
       );
       const oppdaterteInntekter = await fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag);
-      if (oppdaterteInntekter.tidligereInntekter && tidligereInntekt) {
-        oppdaterteInntekter.tidligereInntekter.forEach((inntekt: HistoriskInntekt) => {
-          if (!tidligereInntekt?.find((tidliger) => tidliger.maanedsnavn === inntekt.maanedsnavn)) {
-            tidligereInntekt?.push(inntekt);
-          }
-        });
-      } else {
-        tidligereInntekt = oppdaterteInntekter.tidligereInntekter;
-      }
+
+      oppdaterteInntekter.tidligereInntekter.forEach((inntekt: HistoriskInntekt) => {
+        if (!tidligereInntekt.find((element) => element.maanedsnavn === inntekt.maanedsnavn)) {
+          tidligereInntekt.push(inntekt);
+        }
+      });
       henterData = false;
+
+      snittInntekter = oppdaterteInntekter.bruttoinntekt;
+    } else {
+      const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
+
+      const sumInntekter = aktuelleInntekter.reduce(
+        (prev, cur) => {
+          prev.inntekt += cur.inntekt;
+          return prev;
+        },
+        { inntekt: 0, maanedsnavn: '' }
+      );
+
+      snittInntekter = sumInntekter.inntekt / aktuelleInntekter.length;
     }
-
-    const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
-
-    const sumInntekter = aktuelleInntekter.reduce(
-      (prev, cur) => {
-        prev.inntekt += cur.inntekt;
-        return prev;
-      },
-      { inntekt: 0, maanedsnavn: '' }
-    );
-
-    const snittInntekter = sumInntekter.inntekt / aktuelleInntekter.length;
 
     set(
       produce((state) => {
@@ -295,11 +296,10 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           };
         }
 
-        if (aktuelleInntekter) {
-          state.tidligereInntekt = aktuelleInntekter.map((inntekt) => ({
-            maanedsnavn: inntekt.maanedsnavn,
-            inntekt: inntekt.inntekt
-          }));
+        state.opprinneligeInntekt = tidligereInntekt;
+
+        if (tidligereInntekt) {
+          state.tidligereInntekt = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
         }
 
         return state;

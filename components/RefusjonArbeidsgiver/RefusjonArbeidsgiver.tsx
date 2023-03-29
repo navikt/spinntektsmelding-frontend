@@ -47,7 +47,7 @@ export default function RefusjonArbeidsgiver() {
   const muteableArbeidsgiverperioder = structuredClone(arbeidsgiverperioder);
   const sisteArbeidsgiverperiode = muteableArbeidsgiverperioder?.sort((a, b) => (a.fom > b.fom ? -1 : 1));
 
-  const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode[0].tom : new Date();
+  const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
   return (
