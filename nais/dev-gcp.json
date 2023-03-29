@@ -1,9 +1,9 @@
 {
-  "ingress": "https://arbeidsgiver.dev.nav.no/im-dialog",
+  "ingress": "https://arbeidsgiver.intern.dev.nav.no/im-dialog",
   "namespace": "helsearbeidsgiver",
   "vault-enabled": false,
   "webproxy-enabled": false,
-  "api-url": "https://im-dialog.dev.nav.no",
+  "api-url": "https://helsearbeidsgiver-im-api.intern.dev.nav.no/api",
   "api-basepath": "",
   "amplitude-enabled": true,
   "test-stuff": "test-setting",
