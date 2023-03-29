@@ -554,6 +554,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@navikt/aksel-icons@2.8.5", "@navikt/aksel-icons@^2.8.5":
+  version "2.8.5"
+  resolved "https://npm.pkg.github.com/download/@navikt/aksel-icons/2.8.5/3fbb43c911bb1d1862a34e77c95c60f639496422#3fbb43c911bb1d1862a34e77c95c60f639496422"
+  integrity sha512-784oWO+GzO7Qm6QiHRJA5KQfv2hW1CfFUvkjWRHC02u+wHTwN/1i+RMqS48rlsq2ZpXFLGZyWZSiMhDAgtnmjQ==
+
 "@navikt/bedriftsmeny@6.3.0":
   version "6.3.0"
   resolved "https://npm.pkg.github.com/download/@navikt/bedriftsmeny/6.3.0/1e959e418d097188e0ae93e9ff4eafa59d07d047#1e959e418d097188e0ae93e9ff4eafa59d07d047"
@@ -563,23 +568,24 @@
     fuzzysort "^1.1.4"
     history "^4.10.1"
 
-"@navikt/ds-css@2.7.4":
-  version "2.7.4"
-  resolved "https://npm.pkg.github.com/download/@navikt/ds-css/2.7.4/f8603203b6831a6fa0c3ca52534c9052d7418bf0#f8603203b6831a6fa0c3ca52534c9052d7418bf0"
-  integrity sha512-vxPB/1xtySai7Ua/NPWBDToMLmPIHO+iG9jCelfPgav0IuzxmYMP2fGWDQdox3I/nLqtshM+RzOayygoJTeGoQ==
+"@navikt/ds-css@2.8.5":
+  version "2.8.5"
+  resolved "https://npm.pkg.github.com/download/@navikt/ds-css/2.8.5/06acbc237aca91aac8fb17d0b5758d45bc38fa50#06acbc237aca91aac8fb17d0b5758d45bc38fa50"
+  integrity sha512-Un59KGywhBAcKR1S9f5pLqM3eFDt+eZnzVnrY8HSbLu7WV8GY059UU38TLDgCSWft5VZWqZentSNdT/cbnWj1w==
 
-"@navikt/ds-icons@2.7.4", "@navikt/ds-icons@^2.7.4":
-  version "2.7.4"
-  resolved "https://npm.pkg.github.com/download/@navikt/ds-icons/2.7.4/4741240b28b766e795f7270a495ae6ef39d43759#4741240b28b766e795f7270a495ae6ef39d43759"
-  integrity sha512-mhhWIG+wNxQ/Y5p/kNZK+2lYL4CopAtzNbPzU1bRYaT7wKYawXlhLi1iFNcSS1m/861hUD1gB+9yLFHrtCLFcQ==
+"@navikt/ds-icons@2.8.5", "@navikt/ds-icons@^2.8.5":
+  version "2.8.5"
+  resolved "https://npm.pkg.github.com/download/@navikt/ds-icons/2.8.5/de25b945e02a3212c03105c763b357482fea6356#de25b945e02a3212c03105c763b357482fea6356"
+  integrity sha512-bFkZeBE+JiOgxPoRKr+1Hg8I1ky7PegxNX8rKv6CdaMQ9CPaJdfDAY19I20I+61SzJ74Tcdvfw0spq74Sil5+g==
 
-"@navikt/ds-react@2.7.4":
-  version "2.7.4"
-  resolved "https://npm.pkg.github.com/download/@navikt/ds-react/2.7.4/943b3a256e4705358a50e8a5b3088c7aeb25e28b#943b3a256e4705358a50e8a5b3088c7aeb25e28b"
-  integrity sha512-8sHBLrGwUqmDFZVtnH4yWbe3El4PminiTVLlT2rDezfEAHuKe2ijE8zUXDcImLVS/3GLigGUSr3Bs7Gwhg31Kg==
+"@navikt/ds-react@2.8.5":
+  version "2.8.5"
+  resolved "https://npm.pkg.github.com/download/@navikt/ds-react/2.8.5/38675259642853fa4b7b878418d3b578aaa0826e#38675259642853fa4b7b878418d3b578aaa0826e"
+  integrity sha512-uiJXMcHIvPuiI4yGkHMjNOjc0Dyj0kjV8wuc87PPG30TstCjW0hi9oaJvtPhxHxUqWqT4ypAkIzEkqDXhyi3wg==
   dependencies:
     "@floating-ui/react" "0.17.0"
-    "@navikt/ds-icons" "^2.7.4"
+    "@navikt/aksel-icons" "^2.8.5"
+    "@navikt/ds-icons" "^2.8.5"
     "@radix-ui/react-tabs" "1.0.0"
     "@radix-ui/react-toggle-group" "1.0.0"
     clsx "^1.2.1"
@@ -5474,25 +5480,6 @@ url-parse@^1.5.3:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
 
-urs@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/urs/-/urs-0.0.8.tgz#8a0e0b792073cdb7eec926d08ab1e017ffab3f66"
-  integrity sha512-LaSSPpr91XrVA3vW2zPupw4K6DSQEDKdL4yQZX1mO2fpljIMpB5zctrjRvxLurelWSgKsHsCmfHNCImscryirQ==
-
-use-http@1.0.27:
-  version "1.0.27"
-  resolved "https://registry.yarnpkg.com/use-http/-/use-http-1.0.27.tgz#f0acdecebf7dd7f9f3218dc83a68239658b5d452"
-  integrity sha512-R2V3dzkx+YfIi3Sm35njGFRBzPEyM1AODMx6VSyHiyYzVVq2iYbA3HEjGK5fyw66D8stK5iaP4zU3X7LDmuiyg==
-  dependencies:
-    urs "^0.0.8"
-    use-ssr "^1.0.24"
-    utility-types "^3.10.0"
-
-use-ssr@^1.0.24:
-  version "1.0.24"
-  resolved "https://registry.yarnpkg.com/use-ssr/-/use-ssr-1.0.24.tgz#213a3df58f5ab9268e6fe1a57ad0a9de91e514d1"
-  integrity sha512-0MFps7ezL57/3o0yl4CvrHLlp9z20n1rQZV/lSRz7if+TUoM6POU1XdOvEjIgjgKeIhTEye1U0khrIYWCTWw4g==
-
 use-sync-external-store@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
@@ -5502,11 +5489,6 @@ util-deprecate@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
-
-utility-types@^3.10.0:
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/utility-types/-/utility-types-3.10.0.tgz#ea4148f9a741015f05ed74fd615e1d20e6bed82b"
-  integrity sha512-O11mqxmi7wMKCo6HKFt5AhO4BwY3VV68YU07tgxfz8zJTIxr4BpsezN49Ffwy9j3ZpwwJp4fkRwjRzq3uWE6Rg==
 
 uuid@^8.3.2:
   version "8.3.2"
