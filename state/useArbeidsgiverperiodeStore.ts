@@ -83,10 +83,10 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           }
           const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
             state.arbeidsgiverperioder,
-            'arbeidsgiverperiode'
+            'arbeidsgiverperioder'
           );
 
-          state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder);
+          state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperioder');
           return state;
         })
       ),
@@ -113,10 +113,10 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
           const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
             state.arbeidsgiverperioder,
-            'arbeidsgiverperiode'
+            'arbeidsgiverperioder'
           );
 
-          state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperiode');
+          state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperioder');
 
           return state;
         })

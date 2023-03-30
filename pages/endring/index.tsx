@@ -121,8 +121,8 @@ const Endring: NextPage = () => {
                         defaultValue={formatCurrency(
                           bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
                         )}
-                        id='bruttoinntekt-endringsbelop'
-                        error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
+                        id='inntekt.beregnetInntekt'
+                        error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
                         className={biStyles.bruttoinntektendringsbelop}
                       />
                       <div>

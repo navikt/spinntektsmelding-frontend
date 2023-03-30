@@ -26,7 +26,7 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'pre-tom-tilfeldig'
+        felt: 'pre[0].tom'
       }
     ];
 
@@ -44,7 +44,7 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'pre-fom-tilfeldig'
+        felt: 'pre[0].fom'
       }
     ];
 
@@ -66,11 +66,11 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'pre-fom-tilfeldig'
+        felt: 'pre[1].fom'
       },
       {
         code: 'MANGLER_TIL',
-        felt: 'pre-tom-tilfeldig'
+        felt: 'pre[1].tom'
       }
     ];
 
@@ -92,11 +92,11 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'pre-fom-tilfeldig'
+        felt: 'pre[0].fom'
       },
       {
         code: 'MANGLER_TIL',
-        felt: 'pre-tom-tilfeldig'
+        felt: 'pre[0].tom'
       }
     ];
 
@@ -115,7 +115,7 @@ describe('validerPeriodeEgenmelding', () => {
     const expected = [
       {
         code: 'TIL_FOR_FRA',
-        felt: 'pre-fom-tilfeldig'
+        felt: 'pre[0].fom'
       }
     ];
 

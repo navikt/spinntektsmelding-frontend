@@ -85,7 +85,7 @@ export default function useValiderInntektsmelding() {
     }
 
     if (state.egenmeldingsperioder) {
-      feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperiode');
+      feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
     }
 
     feilkoderBruttoinntekt = validerBruttoinntekt(state);
@@ -110,7 +110,7 @@ export default function useValiderInntektsmelding() {
     feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);
 
     if (state.arbeidsgiverperioder) {
-      feilkoderArbeidsgiverperioder = validerPeriodeEgenmelding(state.arbeidsgiverperioder, 'arbeidsgiverperiode');
+      feilkoderArbeidsgiverperioder = validerPeriodeEgenmelding(state.arbeidsgiverperioder, 'arbeidsgiverperioder');
     }
 
     errorCodes = [

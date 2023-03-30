@@ -164,8 +164,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                   defaultValue={formatCurrency(
                     bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
                   )}
-                  id='bruttoinntekt-endringsbelop'
-                  error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
+                  id='inntekt.beregnetInntekt'
+                  error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
                   className={lokalStyles.bruttoinntektendringsbelop}
                 />
                 <div>
@@ -320,8 +320,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
             defaultValue={formatCurrency(
               bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
             )}
-            id='bruttoinntekt-endringsbelop'
-            error={visFeilmeldingsTekst('bruttoinntekt-endringsbelop')}
+            id='inntekt.beregnetInntekt'
+            error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
             className={lokalStyles.bruttoinntektbelop}
           />
         </div>

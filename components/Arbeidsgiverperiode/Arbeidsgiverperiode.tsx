@@ -110,22 +110,32 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
               <div className={lokalStyles.endrearbeidsgiverperiode}>
                 <div className={lokalStyles.datepickerescape}>
                   <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-fra`}>Fra</TextLabel>
-                  <div data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}>{formatDate(periode.fom)}</div>
+                  <div
+                    data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}
+                    id={`arbeidsgiverperioder[${periodeIndex}].fom`}
+                  >
+                    {formatDate(periode.fom)}
+                  </div>
                 </div>
                 <div className={lokalStyles.datepickerescape}>
                   <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-til`}>Til</TextLabel>
-                  <div data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}>{formatDate(periode.tom)}</div>
+                  <div
+                    data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}
+                    id={`arbeidsgiverperioder[${periodeIndex}].tom`}
+                  >
+                    {formatDate(periode.tom)}
+                  </div>
                 </div>
               </div>
             )}
             {endretArbeidsgiverperiode && (
               <Periodevelger
                 fomTekst='Fra'
-                fomID={`arbeidsgiverperiode-fom-${periode.id}`}
-                fomError={visFeilmeldingsTekst(`arbeidsgiverperiode-fom-${periode.id}`)}
+                fomID={`arbeidsgiverperioder[${periodeIndex}].fom`}
+                fomError={visFeilmeldingsTekst(`arbeidsgiverperioder[${periodeIndex}].fom`)}
                 tomTekst='Til'
-                tomID={`arbeidsgiverperiode-tom-${periode.id}`}
-                tomError={visFeilmeldingsTekst(`arbeidsgiverperiode-tom-${periode.id}`)}
+                tomID={`arbeidsgiverperioder[${periodeIndex}].tom`}
+                tomError={visFeilmeldingsTekst(`arbeidsgiverperioder[${periodeIndex}].tom`)}
                 onRangeChange={(oppdatertPeriode) => setArbeidsgiverperiodeDato(oppdatertPeriode, periode.id)}
                 defaultRange={periode}
                 kanSlettes={periodeIndex > 0}

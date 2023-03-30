@@ -112,8 +112,8 @@ export default function Egenmelding() {
               />
             ))}
         </div>
-        {visFeilmelding('egenmeldingsperiode-feil') && (
-          <Feilmelding id='egenmeldingsperiode-feil'>{visFeilmeldingsTekst('egenmeldingsperiode-feil')}</Feilmelding>
+        {visFeilmelding('egenmeldingsperioder-feil') && (
+          <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingsTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}
         {!endreEgenmeldingsperiode && (
           <div>

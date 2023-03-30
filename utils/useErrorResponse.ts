@@ -11,16 +11,7 @@ export default function useErrorRespons() {
 
   return (errors: Array<ErrorResponse>) => {
     errors.forEach((error) => {
-      switch (error.property) {
-        case 'inntekt.beregnetInntekt': {
-          leggTilFeilmelding('bruttoinntekt-endringsbelop', error.error);
-          break;
-        }
-
-        default:
-          leggTilFeilmelding(error.property, error.error);
-          break;
-      }
+      leggTilFeilmelding(error.property, error.error);
     });
   };
 }

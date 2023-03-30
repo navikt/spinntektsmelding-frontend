@@ -76,9 +76,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
         state.bruttoinntekt.manueltKorrigert = true;
         if (state.bruttoinntekt.bruttoInntekt != undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
-          state = slettFeilmeldingFraState(state, 'bruttoinntekt-endringsbelop');
+          state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
         } else {
-          state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
+          state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
 
         return state;
@@ -91,9 +91,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt.manueltKorrigert = false;
         state.bruttoinntekt.bekreftet = true;
         if (state.bruttoinntekt.bruttoInntekt !== undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
-          state = slettFeilmeldingFraState(state, 'bruttoinntekt-endringsbelop');
+          state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
         } else {
-          state = leggTilFeilmelding(state, 'bruttoinntekt-endringsbelop', feiltekster.BRUTTOINNTEKT_MANGLER);
+          state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
 
         return state;

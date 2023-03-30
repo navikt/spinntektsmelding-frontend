@@ -84,7 +84,7 @@ describe('useBoundStore', () => {
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(-1);
     expect(result.current.feilmeldinger).toContainEqual({
-      felt: 'bruttoinntekt-endringsbelop',
+      felt: 'inntekt.beregnetInntekt',
       text: feiltekster.BRUTTOINNTEKT_MANGLER
     });
   });
@@ -117,7 +117,7 @@ describe('useBoundStore', () => {
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(-1);
     expect(result.current.feilmeldinger).toContainEqual({
-      felt: 'bruttoinntekt-endringsbelop',
+      felt: 'inntekt.beregnetInntekt',
       text: feiltekster.BRUTTOINNTEKT_MANGLER
     });
   });

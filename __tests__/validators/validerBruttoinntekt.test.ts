@@ -28,7 +28,7 @@ describe('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'BRUTTOINNTEKT_MANGLER',
-        felt: 'bruttoinntekt-endringsbelop'
+        felt: 'inntekt.beregnetInntekt'
       }
     ];
 

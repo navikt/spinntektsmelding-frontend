@@ -40,7 +40,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
     const bruttoinntekt = state.bruttoinntekt;
     if (bruttoinntekt.bruttoInntekt === undefined || bruttoinntekt.bruttoInntekt < 0) {
       valideringstatus.push({
-        felt: 'bruttoinntekt-endringsbelop',
+        felt: 'inntekt.beregnetInntekt',
         code: BruttoinntektFeilkode.BRUTTOINNTEKT_MANGLER
       });
     }
