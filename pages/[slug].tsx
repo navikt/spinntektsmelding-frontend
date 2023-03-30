@@ -32,6 +32,7 @@ import environment from '../config/environment';
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
 import useAmplitude from '../utils/useAmplitude';
+import isValidUUID from '../utils/isValidUUID';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -95,43 +96,75 @@ const Home: NextPage = () => {
       fyllFeilmeldinger([]);
       setSenderInn(true);
       const postData = async () => {
-        const data = await fetch(environment.innsendingUrl, {
-          method: 'POST',
-          body: JSON.stringify(skjemaData),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        setSenderInn(false);
-
-        switch (data.status) {
-          case 201:
-            router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
-            break;
-
-          case 500:
-            const errors: Array<ErrorResponse> = [
-              {
-                value: 'Innsending av skjema feilet',
-                error: 'Innsending av skjema feilet',
-                property: 'server'
-              }
-            ];
-            errorResponse(errors);
-            break;
-
-          default:
-            const resultat = await data.json();
-
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet',
-              component: 'Hovedskjema'
-            });
-
-            if (resultat.errors) {
-              const errors: Array<ErrorResponse> = resultat.errors;
-              errorResponse(errors);
+        if (isValidUUID(pathSlug)) {
+          const data = await fetch(`${environment.innsendingUrl}/${pathSlug}`, {
+            method: 'POST',
+            body: JSON.stringify(skjemaData),
+            headers: {
+              'Content-Type': 'application/json'
             }
+          });
+          setSenderInn(false);
+
+          switch (data.status) {
+            case 201:
+              router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
+              break;
+
+            case 500: {
+              const errors: Array<ErrorResponse> = [
+                {
+                  value: 'Innsending av skjema feilet',
+                  error: 'Innsending av skjema feilet',
+                  property: 'server'
+                }
+              ];
+              errorResponse(errors);
+              break;
+            }
+
+            case 404: {
+              const errors: Array<ErrorResponse> = [
+                {
+                  value: 'Innsending av skjema feilet',
+                  error: 'Fant ikke endepunktet for innsneding',
+                  property: 'server'
+                }
+              ];
+              errorResponse(errors);
+              break;
+            }
+
+            default:
+              const resultat = await data.json();
+
+              logEvent('skjema innsending feilet', {
+                tittel: 'Innsending feilet',
+                component: 'Hovedskjema'
+              });
+
+              if (resultat.errors) {
+                const errors: Array<ErrorResponse> = resultat.errors;
+                errorResponse(errors);
+              }
+          }
+        } else {
+          const errors: Array<ErrorResponse> = [
+            {
+              value: 'Innsending av skjema feilet',
+              error: 'Innsending av skjema feilet. Ugyldig identifikator',
+              property: 'server'
+            }
+          ];
+
+          logEvent('skjema validering feilet', {
+            tittel: 'Ugyldig UUID ved innsending',
+            component: 'Hovedskjema'
+          });
+          errorResponse(errors);
+          setSenderInn(false);
+
+          return false;
         }
       };
       postData();
