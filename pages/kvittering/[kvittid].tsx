@@ -70,7 +70,9 @@ const Kvittering: NextPage = () => {
   };
 
   useEffect(() => {
-    hentSkjemadata(pathSlug);
+    if (!fravaersperioder) {
+      hentSkjemadata(pathSlug);
+    }
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);

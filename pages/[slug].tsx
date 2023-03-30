@@ -148,7 +148,9 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    hentSkjemadata(pathSlug);
+    if (!bestemmendeFravaersdag) {
+      hentSkjemadata(pathSlug);
+    }
     setSlug(pathSlug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
