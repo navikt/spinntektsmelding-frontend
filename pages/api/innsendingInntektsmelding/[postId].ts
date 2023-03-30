@@ -1,9 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
-import environment from '../../config/environment';
+import environment from '../../../config/environment';
 
-import org from '../../mockdata/testOrganisasjoner';
+import org from '../../../mockdata/testOrganisasjoner';
 
 const basePath = environment.innsendingInntektsmeldingAPI;
 
