@@ -14,6 +14,8 @@ interface EgenmeldingPeriodeInterface {
   kanSlettes: boolean;
   onSlettRad: () => void;
   disabled?: boolean;
+  rad: number;
+  visFeilmeldingsTekst: (feilmelding: string) => string;
 }
 
 export default function EgenmeldingPeriode({
@@ -24,7 +26,9 @@ export default function EgenmeldingPeriode({
   toDate,
   kanSlettes,
   onSlettRad,
-  disabled
+  disabled,
+  rad,
+  visFeilmeldingsTekst
 }: EgenmeldingPeriodeInterface) {
   const rangeChangeHandler = (dateRange: PeriodeParam | undefined) => {
     setEgenmeldingDato(dateRange, periodeId);
@@ -35,11 +39,15 @@ export default function EgenmeldingPeriode({
       <div data-cy='egenmelding'>
         <div className={styles.datepickerescape}>
           <TextLabel>Fra</TextLabel>
-          <div data-cy='egenmelding-fra'>{formatDate(egenmeldingsperiode.fom)}</div>
+          <div id={`egenmeldingsperioder[${rad}].fom`} data-cy='egenmelding-fra'>
+            {formatDate(egenmeldingsperiode.fom)}
+          </div>
         </div>
         <div className={styles.datepickerescape}>
           <TextLabel>Til</TextLabel>
-          <div data-cy='egenmelding-til'>{formatDate(egenmeldingsperiode.tom)}</div>
+          <div id={`egenmeldingsperioder[${rad}].tom`} data-cy='egenmelding-til'>
+            {formatDate(egenmeldingsperiode.tom)}
+          </div>
         </div>
       </div>
     );
@@ -51,9 +59,9 @@ export default function EgenmeldingPeriode({
     <div data-cy='egenmelding' className={sletteklasse}>
       <Periodevelger
         fomTekst='Fra'
-        fomID={`egenmeldingsperiode-fom-${periodeId}`}
+        fomID={`egenmeldingsperioder[${rad}].fom`}
         tomTekst='Til'
-        tomID={`egenmeldingsperiode-tom-${periodeId}`}
+        tomID={`egenmeldingsperioder[${rad}].tom`}
         onRangeChange={rangeChangeHandler}
         defaultRange={egenmeldingsperiode}
         kanSlettes={kanSlettes}
@@ -62,6 +70,8 @@ export default function EgenmeldingPeriode({
         toDate={toDate}
         disabled={disabled}
         defaultMonth={defaultMnd}
+        fomError={visFeilmeldingsTekst(`egenmeldingsperioder[${rad}].fom`)}
+        tomError={visFeilmeldingsTekst(`egenmeldingsperioder[${rad}].tom`)}
       />
     </div>
   );

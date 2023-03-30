@@ -18,7 +18,7 @@ export default function useErrorRespons() {
         }
 
         default:
-          leggTilFeilmelding('ukjent', error.error);
+          leggTilFeilmelding(error.property, error.error);
           break;
       }
     });

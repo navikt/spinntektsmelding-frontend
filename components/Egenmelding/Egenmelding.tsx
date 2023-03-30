@@ -107,6 +107,8 @@ export default function Egenmelding() {
                 kanSlettes={index !== 0}
                 onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingsperiode.id)}
                 disabled={endretArbeidsgiverperiode}
+                rad={index}
+                visFeilmeldingsTekst={visFeilmeldingsTekst}
               />
             ))}
         </div>

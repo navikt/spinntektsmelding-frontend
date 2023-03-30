@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 
 describe('EgenmeldingPeriode', () => {
   it('should have no violations', async () => {
+    const mockFn = vi.fn();
     const { container } = render(
       <EgenmeldingPeriode
         periodeId='1'
@@ -17,6 +18,8 @@ describe('EgenmeldingPeriode', () => {
         kanSlettes={false}
         onSlettRad={vi.fn()}
         disabled={false}
+        rad={1}
+        visFeilmeldingsTekst={mockFn}
       />
     );
 
@@ -31,6 +34,8 @@ describe('EgenmeldingPeriode', () => {
       default: () => <div>Datovelger</div>
     }));
 
+    const mockFn = vi.fn();
+
     const { container } = render(
       <EgenmeldingPeriode
         periodeId='1'
@@ -41,6 +46,8 @@ describe('EgenmeldingPeriode', () => {
         kanSlettes={false}
         onSlettRad={vi.fn()}
         disabled={false}
+        rad={1}
+        visFeilmeldingsTekst={mockFn}
       />
     );
 
