@@ -9,7 +9,7 @@
 
 describe('Utfylling og innsending av skjema', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3000/im-dialog/1234-3456-5678-2457');
+    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
   });
 
   it('can click the Endre arbeidsgiverperiode button so that egenmelding gets disabled', () => {
