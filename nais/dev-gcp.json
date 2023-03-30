@@ -7,5 +7,6 @@
   "api-basepath": "",
   "amplitude-enabled": true,
   "test-stuff": "test-setting",
-  "environment": "dev"
+  "environment": "dev",
+  "server-var": "server-data"
 }

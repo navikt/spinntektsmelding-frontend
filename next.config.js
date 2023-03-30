@@ -52,7 +52,8 @@ const nextConfig = {
   },
   serverRuntimeConfig: {
     decoratorEnv: 'dev',
-    decoratorDisabled: process.env.DISABLE_DECORATOR
+    decoratorDisabled: process.env.DISABLE_DECORATOR,
+    serverVar: process.env.SERVER_VAR
   },
   publicRuntimeConfig: {
     testStuff: process.env.NEXT_PUBLIC_TEST_STUFF,

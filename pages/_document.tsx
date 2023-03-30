@@ -11,6 +11,7 @@ interface DocumentProps {
 
 const Document = ({ Decorator }: DocumentProps) => {
   const viseDekoratoren = !serverRuntimeConfig.decoratorDisabled;
+  const serverVar = serverRuntimeConfig.serverVar;
 
   return (
     <Html>
@@ -18,7 +19,9 @@ const Document = ({ Decorator }: DocumentProps) => {
         {viseDekoratoren ? <Decorator.Styles /> : null}
         <meta
           property='og:test'
-          content={process.env.NEXT_PUBLIC_TEST_STUFF + '-' + env.otherTestStuff + '-' + env.environment}
+          content={
+            process.env.NEXT_PUBLIC_TEST_STUFF + '-' + env.otherTestStuff + '-' + env.environment + '-' + serverVar
+          }
           key='test'
         />
       </Head>

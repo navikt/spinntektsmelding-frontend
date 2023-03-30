@@ -53,3 +53,5 @@ spec:
       value: '{{{test-stuff}}}'
     - name: ENVIRONMENT
       value: '{{{environment}}}'
+    - name: SERVER_VAR
+      value: '{{{server-var}}}'
