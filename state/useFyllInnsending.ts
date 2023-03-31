@@ -257,8 +257,8 @@ export default function useFyllInnsending() {
       })),
       bekreftOpplysninger: opplysningerBekreftet,
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
-      årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
-      innsender
+      årsakInnsending: aarsakInnsending // Kan også være Ny eller Endring
+      // innsender  // Kommer snart
     };
 
     return skjemaData;

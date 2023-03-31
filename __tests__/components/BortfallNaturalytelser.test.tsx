@@ -22,8 +22,8 @@ describe('BortfallNaturalytelser', () => {
 
   it('renders a text', () => {
     const ytelser: Array<Naturalytelse> = [
-      { id: '1', type: 'friTransport', bortfallsdato: new Date(2022, 2, 2), verdi: 1234.5 },
-      { id: '2', type: 'kostbesparelseIHjemmet', bortfallsdato: new Date(2022, 2, 2), verdi: 1234.5 }
+      { id: '1', type: 'FriTransport', bortfallsdato: new Date(2022, 2, 2), verdi: 1234.5 },
+      { id: '2', type: 'KostbesparelseIHjemmet', bortfallsdato: new Date(2022, 2, 2), verdi: 1234.5 }
     ];
     render(<BortfallNaturalytelser ytelser={ytelser} />);
 
@@ -36,7 +36,7 @@ describe('BortfallNaturalytelser', () => {
 
   it('should have no violations', async () => {
     const ytelser: Array<Naturalytelse> = [
-      { id: '1', type: 'friTransport', bortfallsdato: new Date(2022, 2, 2), verdi: 1234.5 }
+      { id: '1', type: 'FriTransport', bortfallsdato: new Date(2022, 2, 2), verdi: 1234.5 }
     ];
 
     const { container } = render(<BortfallNaturalytelser ytelser={ytelser} />);
