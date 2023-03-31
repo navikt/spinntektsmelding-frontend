@@ -14,13 +14,17 @@
 }
 
 .refusjonsbelop>input {
-  max-width: 10rem;
+  max-width: 18rem;
 }
 
-.selectbegrunnelse>select,
 .selectbegrunnelse>div {
-  width: max-content;
+  height: 48px;
 }
+
+.selectbegrunnelse>label {
+  height: 48px;
+}
+
 
 .belopperiode,
 .wraputbetaling {
@@ -49,4 +53,7 @@
     flex-direction: column;
   }
 
+  .selectbegrunnelse>label {
+    height: inherit;
+  }
 }

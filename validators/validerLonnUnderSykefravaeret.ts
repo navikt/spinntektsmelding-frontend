@@ -50,7 +50,7 @@ function validerJaStatusMedDato(refusjonskravetOpphoerer: RefusjonskravetOpphoer
 }
 
 function validerBelop(lonnUS: LonnISykefravaeret, errorStatus: ValiderResultat[]) {
-  if (!lonnUS.belop) {
+  if (typeof lonnUS.belop === 'undefined') {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_BELOP,
       felt: 'lus-input'

@@ -22,8 +22,8 @@ export default function validerLonnIArbeidsgiverperioden(lonnIAP?: LonnIArbeidsg
         felt: 'lia-select'
       });
     }
-
-    if (lonnIAP.status === 'Nei' && (!lonnIAP.utbetalt || lonnIAP.utbetalt <= 0)) {
+    debugger;
+    if (lonnIAP.status === 'Nei' && (typeof lonnIAP.utbetalt === 'undefined' || lonnIAP.utbetalt < 0)) {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
         felt: 'lus-uua-input'

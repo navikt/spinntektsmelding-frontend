@@ -123,7 +123,8 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         }
 
         const nBelop = stringishToNumber(beloep);
-        if (nBelop && nBelop >= 0) {
+
+        if (typeof nBelop !== 'undefined' && nBelop >= 0) {
           state = slettFeilmeldingFraState(state, 'lus-uua-input');
         } else {
           state = leggTilFeilmelding(state, 'lus-uua-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
