@@ -3,7 +3,7 @@ import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbeta
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Inntekt, Naturalytelse, Periode } from './state';
+import { Periode } from './state';
 import useBoundStore from './useBoundStore';
 
 interface SendtPeriode {
@@ -31,7 +31,7 @@ interface Refusjon {
 
 interface SendtNaturalytelse {
   naturalytelse: string;
-  bortfallsdato: string;
+  dato: string;
   beløp: number;
 }
 
@@ -252,7 +252,7 @@ export default function useFyllInnsending() {
       },
       naturalytelser: naturalytelser?.map((ytelse) => ({
         naturalytelse: verdiEllerBlank(ytelse.type),
-        bortfallsdato: formatIsoDate(ytelse.bortfallsdato),
+        dato: formatIsoDate(ytelse.bortfallsdato),
         beløp: verdiEllerNull(ytelse.verdi)
       })),
       bekreftOpplysninger: opplysningerBekreftet,
