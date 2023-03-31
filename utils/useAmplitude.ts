@@ -8,7 +8,6 @@ type validEventNames =
   | 'readmore lukket'
   | 'readmore åpnet'
   | 'navigere'
-  | 'skjema validering feilet'
   | 'alert vist'
   | 'guidepanel vist'
   | 'accordion åpnet'

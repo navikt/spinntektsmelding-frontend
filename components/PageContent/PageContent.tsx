@@ -1,7 +1,6 @@
 import '@navikt/ds-css';
 import { Link } from '@navikt/ds-react';
 import { ReactNode } from 'react';
-import Heading1 from '../Heading1/Heading1';
 import Heading2 from '../Heading2/Heading2';
 
 interface PageContentProps {
