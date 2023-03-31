@@ -157,6 +157,7 @@ export default function RefusjonArbeidsgiver() {
                   id={'lus-sluttdato'}
                   label='Angi siste dag dere krever refusjon for'
                   error={visFeilmeldingsTekst('lus-sluttdato')}
+                  defaultSelected={refusjonskravetOpphoerer?.opphorsdato}
                 />
               </div>
             )}
