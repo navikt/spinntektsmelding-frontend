@@ -8,6 +8,7 @@ import ButtonEndre from '../ButtonEndre';
 import { useMemo } from 'react';
 import Feilmelding from '../Feilmelding';
 import useAmplitude from '../../utils/useAmplitude';
+import { subDays } from 'date-fns';
 
 export default function Egenmelding() {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -103,7 +104,7 @@ export default function Egenmelding() {
                 egenmeldingsperiode={egenmeldingsperiode}
                 endreEgenmeldingsperiode={endreEgenmeldingsperiode}
                 setEgenmeldingDato={setEgenmeldingDato}
-                toDate={forsteFravaersdag || new Date()}
+                toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
                 kanSlettes={index !== 0}
                 onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingsperiode.id)}
                 disabled={endretArbeidsgiverperiode}
