@@ -30,6 +30,7 @@ export default function RefusjonUtbetalingEndring({
   harRefusjonEndring
 }: RefusjonUtbetalingEndringProps) {
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const oppdaterEndringer = (endringer?: Array<EndringsBelop>): void => {
     if (onOppdaterEndringer) {
       onOppdaterEndringer(endringer || []);
@@ -95,7 +96,7 @@ export default function RefusjonUtbetalingEndring({
         className={styles.radiobuttonwrapper}
         error={visFeilmeldingsTekst('lus-utbetaling-endring-radio')}
         onChange={changeHarEndringerHandler}
-        // defaultValue={refusjonskravetOpphoerer?.status}
+        defaultValue={refusjonskravetOpphoerer?.status}
       >
         <Radio value='Ja'>Ja</Radio>
         <Radio value='Nei'>Nei</Radio>

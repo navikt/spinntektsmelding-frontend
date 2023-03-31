@@ -78,7 +78,7 @@ export interface InnsendingSkjema {
   bekreftOpplysninger: boolean;
   behandlingsdager?: Array<string>;
   årsakInnsending: string;
-  innsender: Innsender;
+  // innsender: Innsender;
 }
 
 export default function useFyllInnsending() {
@@ -111,16 +111,16 @@ export default function useFyllInnsending() {
   const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
-  const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
+  // const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
+  // const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
 
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
-  const innsender: Innsender = {
-    navn: innsenderNavn || '',
-    telefon: innsenderTelefonNr || ''
-  };
+  // const innsender: Innsender = {
+  //   navn: innsenderNavn || '',
+  //   telefon: innsenderTelefonNr || ''
+  // };
 
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
     const endringAarsak = (): AArsakType | Tariffendring | PeriodeListe | StillingsEndring | undefined => {
@@ -257,8 +257,8 @@ export default function useFyllInnsending() {
       })),
       bekreftOpplysninger: opplysningerBekreftet,
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
-      årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
-      innsender
+      årsakInnsending: aarsakInnsending // Kan også være Ny eller Endring
+      // innsender  // Kommer snart
     };
 
     return skjemaData;

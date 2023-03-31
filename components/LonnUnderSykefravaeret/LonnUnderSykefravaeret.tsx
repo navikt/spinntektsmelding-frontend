@@ -36,7 +36,7 @@ export default function LonnUnderSykefravaeret({
                   <Heading4>Er det endringer i månedslønn i perioden?</Heading4>
                   <BodyShort>{harRefusjonEndringer}</BodyShort>
                   {harRefusjonEndringer === 'Ja' && (
-                    <table>
+                    <table className={lokalStyle.lonnTabell}>
                       <thead>
                         <tr>
                           <td>Dato</td>
