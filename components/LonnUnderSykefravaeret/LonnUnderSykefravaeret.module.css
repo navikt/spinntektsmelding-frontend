@@ -9,3 +9,13 @@
 .lonnTabell td {
   padding-right: 1rem;
 }
+
+.uthevet {
+  margin-top : .5rem;
+  font-weight: 600;
+}
+
+.lonnTabell {
+  margin-left: -.25rem;
+  margin-top : .5rem
+}

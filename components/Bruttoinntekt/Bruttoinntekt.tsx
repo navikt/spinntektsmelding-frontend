@@ -174,6 +174,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
                     id='bruttoinntekt-endringsaarsak'
                     nyInnsending={nyInnsending}
+                    defaultValue={endringsaarsak}
                   />
                 </div>
                 <div>

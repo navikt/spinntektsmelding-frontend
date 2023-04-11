@@ -16,7 +16,7 @@ export default function FullLonnIArbeidsgiverperioden({ lonnIPerioden }: FullLon
   if (!lonnIPerioden) return null;
   return (
     <>
-      {lonnIPerioden.status === 'Ja' && <div className={lokalStyle.wrapper}>Ja</div>}
+      {lonnIPerioden.status === 'Ja' && <div>Ja</div>}
       {lonnIPerioden.status === 'Nei' && (
         <div className={lokalStyle.wrapper}>
           <BodyShort>Nei</BodyShort>

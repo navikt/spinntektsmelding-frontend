@@ -9,6 +9,7 @@ interface SelectEndringBruttoinntektProps {
   error: ReactNode;
   id: string;
   nyInnsending: boolean;
+  defaultValue?: string;
 }
 
 export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinntektProps) {
@@ -25,7 +26,13 @@ export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinn
 
   return (
     <>
-      <Select label={'Velg endringsårsak'} onChange={changeHandler} id={props.id} error={props.error}>
+      <Select
+        label={'Velg endringsårsak'}
+        onChange={changeHandler}
+        id={props.id}
+        error={props.error}
+        defaultValue={props.defaultValue}
+      >
         <option value=''>Velg begrunnelse</option>
         {begrunnelseKeys.map((begrunnelseKey) => (
           <option value={begrunnelseKey} key={begrunnelseKey}>

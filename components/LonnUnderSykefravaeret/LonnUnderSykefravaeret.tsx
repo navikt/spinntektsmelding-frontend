@@ -2,7 +2,6 @@ import { BodyShort } from '@navikt/ds-react';
 import { LonnISykefravaeret, RefusjonskravetOpphoerer, YesNo } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
-import Heading4 from '../Heading4';
 import { EndringsBelop } from '../RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import lokalStyle from './LonnUnderSykefravaeret.module.css';
 
@@ -23,24 +22,24 @@ export default function LonnUnderSykefravaeret({
   if (lonn.status === 'Nei') return <div className={lokalStyle.wrapper}>Nei</div>;
 
   return (
-    <div className={lokalStyle.wrapper}>
-      <BodyShort className={lokalStyle.svartekster}>Ja</BodyShort>
+    <div>
+      <BodyShort>Ja</BodyShort>
       {lonn.belop && (
         <>
-          <Heading4>Refusjonsbeløp per måned</Heading4>
+          <div className={lokalStyle.uthevet}>Refusjonsbeløp per måned</div>
           <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.belop)} kr/måned</BodyShort>
           {refusjonskravetOpphoerer && (
             <>
               {harRefusjonEndringer && (
                 <>
-                  <Heading4>Er det endringer i månedslønn i perioden?</Heading4>
+                  <div className={lokalStyle.uthevet}>Er det endringer i refusjonsbeløpet i perioden?</div>
                   <BodyShort>{harRefusjonEndringer}</BodyShort>
                   {harRefusjonEndringer === 'Ja' && (
                     <table className={lokalStyle.lonnTabell}>
                       <thead>
                         <tr>
-                          <td>Dato</td>
-                          <td>Beløp</td>
+                          <td className={lokalStyle.uthevet}>Dato for endring</td>
+                          <td className={lokalStyle.uthevet}>Endret refusjonsbeløp</td>
                         </tr>
                       </thead>
                       <tbody>
@@ -55,12 +54,13 @@ export default function LonnUnderSykefravaeret({
                   )}
                 </>
               )}
-              <Heading4>Opphører refusjonkravet i perioden</Heading4>
+              <div className={lokalStyle.uthevet}>Opphører refusjonkravet i perioden</div>
               <BodyShort className={lokalStyle.svartekster}>{refusjonskravetOpphoerer.status}</BodyShort>
               {refusjonskravetOpphoerer.status === 'Ja' && (
                 <>
                   <BodyShort className={lokalStyle.svartekster}>
-                    Opphørsdato: {formatDate(refusjonskravetOpphoerer.opphorsdato)}
+                    <div className={lokalStyle.uthevet}>Opphørsdato</div>{' '}
+                    {formatDate(refusjonskravetOpphoerer.opphorsdato)}
                   </BodyShort>
                 </>
               )}

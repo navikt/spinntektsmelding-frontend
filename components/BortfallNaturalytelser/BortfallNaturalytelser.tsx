@@ -17,14 +17,14 @@ export default function BortfallNaturalytelser({ ytelser }: BortfallNaturalytels
         <tr>
           <th>Type ytelse</th>
           <th>Bortfallsdato</th>
-          <th>Verdi</th>
+          <th className={lokalStyles.verdi}>Verdi</th>
         </tr>
       </thead>
       <tbody>
         {ytelser.map((ytelse) => (
           <tr key={ytelse.type}>
-            <td>{naturalytelser[ytelse.type!]}</td>
-            <td className={lokalStyles.datokolonne}>{formatDate(ytelse.bortfallsdato)}</td>
+            <td className={lokalStyles.type}>{naturalytelser[ytelse.type!]}</td>
+            <td>{formatDate(ytelse.bortfallsdato)}</td>
             <td>{formatCurrency(ytelse.verdi)} kr</td>
           </tr>
         ))}

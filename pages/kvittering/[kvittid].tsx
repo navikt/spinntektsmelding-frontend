@@ -30,6 +30,7 @@ import { useCallback, useEffect, useState } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import useHentSkjemadata from '../../utils/useHentSkjemadata';
 import formatTime from '../../utils/formatTime';
+import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -58,7 +59,13 @@ const Kvittering: NextPage = () => {
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+  const ferie = useBoundStore((state) => state.ferie);
   const kvitteringSlug = useBoundStore((state) => state.slug);
+  const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
+  const permisjon = useBoundStore((state) => state.permisjon);
+  const permitering = useBoundStore((state) => state.permitering);
+  const nystillingdato = useBoundStore((state) => state.nystillingdato);
+  const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
 
   const clickEndre = useCallback(
     () => router.push(`/${kvitteringSlug}`, undefined, { shallow: true }),
@@ -141,17 +148,34 @@ const Kvittering: NextPage = () => {
           </div>
           <Skillelinje />
           <Heading2>Bruttoinntekt siste 3 måneder</Heading2>
-          <BodyShort className={lokalStyles.fravaertid}>Registrert inntekt</BodyShort>
+          <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
           <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
           {bruttoinntekt.endringsaarsak && (
-            <>Endret med årsak: {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak)}</>
+            <>
+              <div className={lokalStyles.uthevet}>Endret med årsak</div>
+
+              {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak)}
+              <EndringAarsakVisning
+                endringsaarsak={bruttoinntekt.endringsaarsak}
+                ferie={ferie}
+                lonnsendringsdato={lonnsendringsdato}
+                permisjon={permisjon}
+                permitering={permitering}
+                nystillingdato={nystillingdato}
+                nystillingsprosentdato={nystillingsprosentdato}
+              />
+            </>
           )}
           <Skillelinje />
           <Heading2>Refusjon</Heading2>
 
-          <Heading3>Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?</Heading3>
+          <div className={lokalStyles.uthevet}>
+            Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
+          </div>
           <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
-          <Heading3>Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?</Heading3>
+          <div className={lokalStyles.uthevet}>
+            Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?
+          </div>
           <LonnUnderSykefravaeret
             lonn={lonnISykefravaeret!}
             refusjonskravetOpphoerer={refusjonskravetOpphoerer}

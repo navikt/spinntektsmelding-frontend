@@ -117,3 +117,8 @@
   overflow     : hidden;
   text-overflow: ellipsis;
 }
+
+.uthevet {
+  margin-top : .5rem;
+  font-weight: 600;
+}

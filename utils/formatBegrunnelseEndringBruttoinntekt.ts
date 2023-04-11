@@ -1,7 +1,7 @@
-import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import begrunnelseEndringBruttoinntektTekster from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntektTekster';
 
 const formatBegrunnelseEndringBruttoinntekt = (endringsaarsak: string) => {
-  return begrunnelseEndringBruttoinntekt[endringsaarsak];
+  return begrunnelseEndringBruttoinntektTekster[endringsaarsak];
 };
 
 export default formatBegrunnelseEndringBruttoinntekt;
