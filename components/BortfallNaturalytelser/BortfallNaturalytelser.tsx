@@ -15,7 +15,7 @@ export default function BortfallNaturalytelser({ ytelser }: BortfallNaturalytels
     <table className={lokalStyles.naturalytelser}>
       <thead>
         <tr>
-          <th>Type ytelse</th>
+          <th className={lokalStyles.verdi}>Type ytelse</th>
           <th>Bortfallsdato</th>
           <th className={lokalStyles.verdi}>Verdi</th>
         </tr>

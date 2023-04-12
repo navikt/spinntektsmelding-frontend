@@ -8,8 +8,8 @@ interface FullLonnIArbeidsgiverperiodenProps {
   lonnIPerioden: LonnIArbeidsgiverperioden;
 }
 
-const formaterBegrunnelse = (begrunnelseskode: string): string => {
-  return begrunnelseIngenEllerRedusertUtbetalingListe[begrunnelseskode];
+const formaterBegrunnelse = (begrunnelseskode: string | undefined): string => {
+  return begrunnelseskode ? begrunnelseIngenEllerRedusertUtbetalingListe[begrunnelseskode] : '';
 };
 
 export default function FullLonnIArbeidsgiverperioden({ lonnIPerioden }: FullLonnIArbeidsgiverperiodenProps) {
@@ -20,10 +20,10 @@ export default function FullLonnIArbeidsgiverperioden({ lonnIPerioden }: FullLon
       {lonnIPerioden.status === 'Nei' && (
         <div className={lokalStyle.wrapper}>
           <BodyShort>Nei</BodyShort>
-          <BodyLong>Utbetalt under arbeidsgiverperiode: {formatCurrency(lonnIPerioden.utbetalt)} kr</BodyLong>
-          <BodyLong>
-            Begrunnelse for ingen eller redusert utbetaling: {formaterBegrunnelse(lonnIPerioden.begrunnelse)}
-          </BodyLong>
+          <div className={lokalStyle.uthevet}>Utbetalt under arbeidsgiverperiode</div>
+          <div>{formatCurrency(lonnIPerioden.utbetalt)} kr</div>
+          <div className={lokalStyle.uthevet}>Begrunnelse for ingen eller redusert utbetaling</div>
+          <div>{formaterBegrunnelse(lonnIPerioden.begrunnelse)}</div>
         </div>
       )}
     </>
