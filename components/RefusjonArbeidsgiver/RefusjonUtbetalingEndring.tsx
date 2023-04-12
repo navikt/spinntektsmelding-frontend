@@ -1,5 +1,5 @@
 import { Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
-import { FocusEvent } from 'react';
+import { ChangeEvent } from 'react';
 import lokalStyles from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
 import stringishToNumber from '../../utils/stringishToNumber';
@@ -47,11 +47,11 @@ export default function RefusjonUtbetalingEndring({
     endringer = [{}];
   }
 
-  const changeBelopHandler = (event: FocusEvent<HTMLInputElement>, index: number) => {
+  const changeBelopHandler = (event: ChangeEvent<HTMLInputElement>, index: number) => {
     const strBelop = event.currentTarget.value;
     const tmpEndringer = structuredClone(endringer);
 
-    if (!tmpEndringer[index].belop && !tmpEndringer[index].belop === undefined) {
+    if (!tmpEndringer[index].belop && typeof tmpEndringer[index].belop !== 'undefined') {
       tmpEndringer[index] = {
         belop: stringishToNumber(strBelop),
         dato: undefined
@@ -82,10 +82,8 @@ export default function RefusjonUtbetalingEndring({
 
   const onSlettClick = (index: number) => {
     const tmpEndringer = structuredClone(endringer);
-
-    const nyeEndringer = tmpEndringer.slice(index, 1);
-
-    oppdaterEndringer(nyeEndringer);
+    tmpEndringer.splice(index, 1);
+    oppdaterEndringer(tmpEndringer);
   };
 
   return (
@@ -107,10 +105,9 @@ export default function RefusjonUtbetalingEndring({
           <div key={key} className={lokalStyles.belopperiode}>
             <TextField
               label='Endret lønn/måned'
-              // onChange={(event) => changeBelopHandler(event, key)}
+              onChange={(event) => changeBelopHandler(event, key)}
               defaultValue={endring.belop}
               id={`lus-utbetaling-endring-belop-${key}`}
-              onBlur={(event) => changeBelopHandler(event, key)}
               error={visFeilmeldingsTekst(`lus-utbetaling-endring-belop-${key}`)}
             />
             <Datovelger
