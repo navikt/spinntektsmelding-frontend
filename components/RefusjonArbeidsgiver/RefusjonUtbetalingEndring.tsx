@@ -85,6 +85,7 @@ export default function RefusjonUtbetalingEndring({
     tmpEndringer.splice(index, 1);
     oppdaterEndringer(tmpEndringer);
   };
+  console.log('harRefusjonEndringer', harRefusjonEndring);
 
   return (
     <>

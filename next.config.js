@@ -64,7 +64,8 @@ const nextConfig = {
     tidligereInntekterApi: process.env.INNTEKTSDATA_API,
     logoutServiceUrl: process.env.LOGOUT_SERVICE_URL,
     loginServiceUrl: process.env.LOGIN_SERVICE_URL,
-    arbeidsgiverListe: process.env.ARBEIDSGIVERLISTE_API
+    arbeidsgiverListe: process.env.ARBEIDSGIVERLISTE_API,
+    kvitteringDataApi: process.env.KVITTERINGSDATA_API
   }
 };
 

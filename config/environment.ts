@@ -29,10 +29,12 @@ class Environment {
     return this.publicRuntimeConfig.inntektsmeldingKjenteDataApi;
   }
 
-  public hentKvitteringAPI = 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/hentKvittering';
-
   get inntektsdataAPI() {
     return this.publicRuntimeConfig.tidligereInntekterApi;
+  }
+
+  get hentKvitteringAPI() {
+    return this.publicRuntimeConfig.kvitteringDataApi;
   }
 
   public baseUrl = '/im-dialog';
@@ -46,7 +48,6 @@ class Environment {
   public hentKvitteringUrl = '/im-dialog/api/hentKvittering';
 
   public amplitudeEnabled = true;
-
 
   get testStuff() {
     return process.env.NEXT_PUBLIC_TEST_STUFF;
