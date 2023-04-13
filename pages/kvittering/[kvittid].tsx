@@ -21,6 +21,7 @@ import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgive
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../state/useBoundStore';
+import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 
 import ButtonPrint from '../../components/ButtonPrint';
 
@@ -44,7 +45,7 @@ const Kvittering: NextPage = () => {
     setPathSlug(firstSlug);
   }, [firstSlug]);
 
-  const hentSkjemadata = useHentSkjemadata();
+  const hentKvitteringsdata = useHentKvitteringsdata();
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
@@ -78,7 +79,7 @@ const Kvittering: NextPage = () => {
 
   useEffect(() => {
     if (!fravaersperioder) {
-      hentSkjemadata(pathSlug);
+      hentKvitteringsdata(pathSlug);
     }
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps

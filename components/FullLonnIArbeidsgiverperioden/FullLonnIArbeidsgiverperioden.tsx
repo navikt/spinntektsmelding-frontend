@@ -1,4 +1,4 @@
-import { BodyLong, BodyShort } from '@navikt/ds-react';
+import { BodyShort } from '@navikt/ds-react';
 import { LonnIArbeidsgiverperioden } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import begrunnelseIngenEllerRedusertUtbetalingListe from '../RefusjonArbeidsgiver/begrunnelseIngenEllerRedusertUtbetalingListe';

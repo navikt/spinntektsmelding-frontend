@@ -84,6 +84,8 @@ class Environment {
 
   public inntektsdataAPI = 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/inntekt';
 
+  public hentKvitteringAPI = 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/hentKvittering';
+
   get baseUrl() {
     return '/im-dialog';
   }
@@ -112,6 +114,8 @@ class Environment {
   get innsendingUrl() {
     return '/im-dialog/api/innsendingInntektsmelding';
   }
+
+  public hentKvitteringUrl = '/im-dialog/api/hentKvittering';
 
   get amplitudeEnabled() {
     return true;

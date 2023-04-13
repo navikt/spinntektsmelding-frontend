@@ -30,7 +30,7 @@ import useErrorRespons, { ErrorResponse } from '../utils/useErrorResponse';
 import environment from '../config/environment';
 
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
-import useHentSkjemadata from '../utils/useHentSkjemadata';
+import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import useAmplitude from '../utils/useAmplitude';
 import isValidUUID from '../utils/isValidUUID';
 
@@ -67,7 +67,7 @@ const Home: NextPage = () => {
 
   const errorResponse = useErrorRespons();
 
-  const hentSkjemadata = useHentSkjemadata();
+  const hentKvitteringsdata = useHentKvitteringsdata();
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
@@ -79,8 +79,10 @@ const Home: NextPage = () => {
 
     const errorStatus = validerInntektsmelding(opplysningerBekreftet);
 
-    if (errorStatus.errorTexts && errorStatus.errorTexts.length > 0) {
-      fyllFeilmeldinger(errorStatus.errorTexts);
+    const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
+
+    if (hasErrors) {
+      fyllFeilmeldinger(errorStatus.errorTexts!);
 
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',
@@ -182,7 +184,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (!bestemmendeFravaersdag) {
-      hentSkjemadata(pathSlug);
+      hentKvitteringsdata(pathSlug);
     }
     setSlug(pathSlug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
