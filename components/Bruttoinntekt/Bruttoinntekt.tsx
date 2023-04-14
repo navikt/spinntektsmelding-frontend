@@ -146,7 +146,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
         {henterData && <Skeleton count={3} />}
         {!endringAvBelop && (
           <TextLabel className={lokalStyles.tbmargin}>
-            Vi har derfor beregnet månedslønnen {formatDate(bestemmendeFravaersdag)} til
+            Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
+            månedslønn på
           </TextLabel>
         )}
         <div className={lokalStyles.belopwrapper}>
