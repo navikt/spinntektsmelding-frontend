@@ -33,6 +33,8 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 ENV NODE_ENV ${BUILDMODE}
 
+RUN echo "BUILDMODE" ${NODE_ENV}
+
 RUN yarn build
 
 # If using npm comment out above and use below instead
