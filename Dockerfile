@@ -13,7 +13,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
 
 # RUN npm config set always-auth true   # Er ikke støttet lengre, men kan den bare slettes?
 
-RUN yarn --frozen-lockfile
+RUN yarn --frozen-lockfile --ignore-scripts
 
 
 # Rebuild the source code only when needed
@@ -33,7 +33,9 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 ENV NODE_ENV ${BUILDMODE}
 
-RUN echo "BUILDMODE" ${NODE_ENV}
+RUN echo "BUILDMODE" ${BUILDMODE}
+
+COPY ${BUILDMODE}.env .env
 
 RUN yarn build
 
