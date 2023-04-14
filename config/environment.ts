@@ -33,9 +33,7 @@ class Environment {
     return this.publicRuntimeConfig.tidligereInntekterApi;
   }
 
-  get baseUrl() {
-    return '/im-dialog';
-  }
+  public baseUrl = '/im-dialog';
 
   public skjemadataUrl = '/im-dialog/api/trenger';
 
