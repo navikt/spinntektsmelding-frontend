@@ -51,14 +51,20 @@ const nextConfig = {
     defaultLocale: 'no'
   },
   serverRuntimeConfig: {
-    decoratorEnv: 'dev',
+    decoratorEnv: process.env.DECORATOR_ENV,
     decoratorDisabled: process.env.DISABLE_DECORATOR,
     serverVar: process.env.SERVER_VAR
   },
   publicRuntimeConfig: {
     testStuff: process.env.NEXT_PUBLIC_TEST_STUFF,
     otherTestStuff: 'otherTestSuff',
-    environment: process.env.ENVIRONMENT
+    environment: process.env.ENVIRONMENT,
+    innsendingInntektsmeldingApi: process.env.INNSENDING_INNTEKTSMELDING_API,
+    inntektsmeldingKjenteDataApi: process.env.PREUTFYLT_INNTEKTSMELDING_API,
+    tidligereInntekterApi: process.env.INNTEKTSDATA_API,
+    logoutServiceUrl: process.env.LOGOUT_SERVICE_URL,
+    loginServiceUrl: process.env.LOGIN_SERVICE_URL,
+    arbeidsgiverListe: process.env.ARBEIDSGIVERLISTE_API
   }
 };
 

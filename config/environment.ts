@@ -1,12 +1,5 @@
 import getConfig from 'next/config';
 
-export enum EnvironmentType {
-  PROD,
-  PREPROD_DEV, // Angir at man aksesserer preprod via naisdevice på *.dev.nav.no, kun tilgjengelig via naisdevice
-  LOCAL,
-  TESTCAFE
-}
-
 class Environment {
   publicRuntimeConfig: any;
 
@@ -17,109 +10,43 @@ class Environment {
   }
 
   get loginServiceUrl() {
-    switch (this.environmentMode) {
-      case EnvironmentType.PROD:
-        return 'https://arbeidsgiver.nav.no/im-dialog/oauth2/login?redirect=XXX';
-      case EnvironmentType.PREPROD_DEV:
-        return 'https://arbeidsgiver.dev.nav.no/im-dialog/oauth2/login?redirect=XXX';
-      default:
-        return 'http://localhost:3000/local/cookie-please?subject=10107400090&redirect=XXX';
-    }
+    return this.publicRuntimeConfig.loginServiceUrl + '?redirect=XXX';
   }
 
   get logoutServiceUrl() {
-    switch (this.environmentMode) {
-      case EnvironmentType.PROD:
-        return 'https://arbeidsgiver.nav.no/im-dialog/oauth2/logout';
-      case EnvironmentType.PREPROD_DEV:
-        return 'https://arbeidsgiver.dev.nav.no/im-dialog/oauth2/logout';
-      default:
-        return 'http://localhost:3000/not-in-use';
-    }
+    return this.publicRuntimeConfig.logoutServiceUrl;
   }
 
   get arbeidsgiverAPI() {
-    switch (this.environmentMode) {
-      case EnvironmentType.PROD:
-        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/arbeidsgivere';
-      case EnvironmentType.PREPROD_DEV:
-        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/arbeidsgivere';
-      default:
-        return 'http://localhost:3000/not-in-use';
-    }
+    return this.publicRuntimeConfig.arbeidsgiverListe;
   }
 
   get innsendingInntektsmeldingAPI() {
-    switch (this.environmentMode) {
-      case EnvironmentType.PROD:
-        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/inntektsmelding';
-      case EnvironmentType.PREPROD_DEV:
-        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/inntektsmelding';
-      default:
-        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/inntektsmelding';
-    }
-  }
-
-  get inntektsmeldingAPI() {
-    switch (this.environmentMode) {
-      case EnvironmentType.PROD:
-        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/preutfyll';
-      case EnvironmentType.PREPROD_DEV:
-        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/preutfyll';
-      default:
-        return 'http://localhost:3000/not-in-use';
-    }
+    return this.publicRuntimeConfig.innsendingInntektsmeldingApi;
   }
 
   get inntektsmeldingUuidAPI() {
-    switch (this.environmentMode) {
-      case EnvironmentType.PROD:
-        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/trenger';
-      case EnvironmentType.PREPROD_DEV:
-        return 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/trenger';
-      default:
-        return 'http://localhost:3000/not-in-use';
-    }
+    return this.publicRuntimeConfig.inntektsmeldingKjenteDataApi;
   }
-
-  public inntektsdataAPI = 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/inntekt';
 
   public hentKvitteringAPI = 'https://helsearbeidsgiver-im-api.intern.dev.nav.no/api/v1/hentKvittering';
 
-  get baseUrl() {
-    return '/im-dialog';
+  get inntektsdataAPI() {
+    return this.publicRuntimeConfig.tidligereInntekterApi;
   }
 
-  get environmentMode() {
-    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-      return EnvironmentType.LOCAL;
-    }
-    if (typeof window !== 'undefined' && window.location.hostname.indexOf('.dev.nav.no') > -1) {
-      return EnvironmentType.PREPROD_DEV;
-    }
-    return EnvironmentType.PROD;
-  }
+  public baseUrl = '/im-dialog';
 
-  get grunnbeloepUrl() {
-    return 'https://g.nav.no/api/v1/grunnbeloep';
-    // https://g.nav.no/api/v1/grunnbeloep?dato=2020-02-12 hvis man trenger å spørre på dato
-  }
-
-  get skjemadataUrl() {
-    return '/im-dialog/api/trenger';
-  }
+  public skjemadataUrl = '/im-dialog/api/trenger';
 
   public inntektsdataUrl = '/im-dialog/api/inntektsdata';
 
-  get innsendingUrl() {
-    return '/im-dialog/api/innsendingInntektsmelding';
-  }
+  public innsendingUrl = '/im-dialog/api/innsendingInntektsmelding';
 
   public hentKvitteringUrl = '/im-dialog/api/hentKvittering';
 
-  get amplitudeEnabled() {
-    return true;
-  }
+  public amplitudeEnabled = true;
+
 
   get testStuff() {
     return process.env.NEXT_PUBLIC_TEST_STUFF;
