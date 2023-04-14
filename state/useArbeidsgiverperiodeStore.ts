@@ -46,11 +46,11 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       set(
         produce((state) => {
           state.arbeidsgiverperioder = arbeidsgiverperioder;
-          const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
-          if (bestemmende) {
-            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-          }
+          // const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
+          // if (bestemmende) {
+          //   state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+          //   state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+          // }
 
           return state;
         })
