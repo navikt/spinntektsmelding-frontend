@@ -9,39 +9,62 @@ env:
   IMAGE: ghcr.io/${{ github.repository }}/spinntektsmelding-frontend:${{ github.sha }}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 
 jobs:
-
-  Bygg:
+  Kodekvalitet:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
-      - uses: actions/upload-artifact@v3
+      - uses: actions/setup-node@v3
         with:
-          name: fritak-frontend-artifact
-          path: ${{ github.workspace }}/build/**/*
+          node-version: '18.x'
+          registry-url: "https://npm.pkg.github.com"
+      - run: yarn install --frozen-lockfile
+      - run: yarn test
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  Eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: "https://npm.pkg.github.com"
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint
 
   Docker:
-    needs: [Bygg]
+    needs: [Kodekvalitet,Eslint]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/download-artifact@v3
-        with:
-          name: spinntektsmelding-frontend-artifact
-          path: build
-      - name: Login to GitHub Packages Docker Registry
+      - uses: actions/checkout@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+     
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and publish Docker image
-        run: |
-          docker build --pull --tag ${{ env.IMAGE }}  .
-          docker push ${{ env.IMAGE }}
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE }}
+          secrets: |
+            "NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}"
+          build-args: |
+            "BUILDMODE=production"
 
   Deploy:
     needs: [Docker]

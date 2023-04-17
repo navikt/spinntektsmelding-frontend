@@ -3,6 +3,7 @@
   "namespace": "helsearbeidsgiver",
   "vault-enabled": false,
   "webproxy-enabled": false,
-  "api-url": "https://im-dialog-api.intern.nav.no",
-  "api-basepath": "/im-dialog-api"
+  "api-url": "https://helsearbeidsgiver-im-api.nav.no",
+  "api-basepath": "/im-dialog-api",
+  "amplitude-enabled": true
 }
