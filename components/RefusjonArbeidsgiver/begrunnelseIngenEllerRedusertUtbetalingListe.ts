@@ -11,7 +11,7 @@ const begrunnelseIngenEllerRedusertUtbetalingListe: Begrunnelser = {
   IkkeLoenn: 'Det er ikke avtale om videre arbeid',
   BetvilerArbeidsufoerhet: 'Vi betviler at ansatt er ute av stand til å jobbe',
   IkkeFravaer: 'Ansatt har ikke hatt fravær fra jobb',
-  StreikEllerLockout: 'Streikk eller lockout',
+  StreikEllerLockout: 'Streik eller lockout',
   Permittering: 'Ansatt er helt eller delvis permittert',
   FiskerMedHyre: 'Ansatt er fisker med hyre på blad B',
   Saerregler: 'Ansatt skal være donor eller skal til kontrollundersøkelse som varer i mer enn 24 timer',

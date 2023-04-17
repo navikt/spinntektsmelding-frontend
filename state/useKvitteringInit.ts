@@ -6,8 +6,8 @@ import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 
 interface KvitteringSkjema extends InnsendingSkjema {
-  navn: string;
-  orgNavn: string;
+  fulltNavn: string;
+  virksomhetNavn: string;
   innsenderNavn: string;
   innsenderTelefonNr: string;
 }
@@ -31,19 +31,22 @@ export default function useKvitteringInit() {
   const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
+  const setSlug = useBoundStore((state) => state.setSlug);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
     if (jsonData.egenmeldingsperioder) initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
 
     initPerson(
-      jsonData.navn,
+      jsonData.fulltNavn,
       jsonData.identitetsnummer,
       jsonData.orgnrUnderenhet,
-      jsonData.orgNavn,
+      jsonData.virksomhetNavn,
       jsonData.innsenderNavn,
       jsonData.innsenderTelefonNr
     );
+
+    setSlug(slug);
 
     const bestemmendeFravaersdag = jsonData.bestemmendeFraværsdag;
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));

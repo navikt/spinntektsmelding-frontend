@@ -68,10 +68,9 @@ const Kvittering: NextPage = () => {
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
 
-  const clickEndre = useCallback(
-    () => router.push(`/${kvitteringSlug}`, undefined, { shallow: true }),
-    [router, kvitteringSlug]
-  );
+  const clickEndre = () => {
+    router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+  };
 
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
