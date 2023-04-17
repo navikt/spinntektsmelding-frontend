@@ -41,7 +41,7 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: helsearbeidsgiver-im-api.intern.dev.nav.no
+        - host: '{{{outbound-external-host}}}'
   env:
     - name: API_URL
       value: '{{{api-url}}}'

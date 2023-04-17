@@ -4,6 +4,7 @@
   "vault-enabled": false,
   "webproxy-enabled": false,
   "api-url": "https://helsearbeidsgiver-im-api.intern.dev.nav.no/api",
+  "outbound-external-host": "helsearbeidsgiver-im-api.intern.dev.nav.no",
   "api-basepath": "",
   "amplitude-enabled": true,
   "test-stuff": "test-setting",
