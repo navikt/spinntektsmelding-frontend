@@ -21,6 +21,7 @@ import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgive
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../state/useBoundStore';
+import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 
 import ButtonPrint from '../../components/ButtonPrint';
 
@@ -44,7 +45,7 @@ const Kvittering: NextPage = () => {
     setPathSlug(firstSlug);
   }, [firstSlug]);
 
-  const hentSkjemadata = useHentSkjemadata();
+  const hentKvitteringsdata = useHentKvitteringsdata();
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
@@ -67,10 +68,9 @@ const Kvittering: NextPage = () => {
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
 
-  const clickEndre = useCallback(
-    () => router.push(`/${kvitteringSlug}`, undefined, { shallow: true }),
-    [router, kvitteringSlug]
-  );
+  const clickEndre = () => {
+    router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+  };
 
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
@@ -78,7 +78,7 @@ const Kvittering: NextPage = () => {
 
   useEffect(() => {
     if (!fravaersperioder) {
-      hentSkjemadata(pathSlug);
+      hentKvitteringsdata(pathSlug);
     }
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps

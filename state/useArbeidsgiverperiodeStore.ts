@@ -12,6 +12,7 @@ import { isValid } from 'date-fns';
 import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
+import { MottattPeriode } from './MottattData';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
@@ -20,6 +21,7 @@ export interface ArbeidsgiverperiodeState {
   endretArbeidsgiverperiode: boolean;
   setBestemmendeFravaersdag: (bestemmendeFravaersdag: Date | undefined) => void;
   setArbeidsgiverperioder: (arbeidsgiverperioder: Array<Periode> | undefined) => void;
+  initArbeidsgiverperioder: (arbeidsgiverperioder: Array<MottattPeriode> | undefined) => void;
   setEndringsbegrunnelse: (begrunnelse: string) => void;
   leggTilArbeidsgiverperiode: () => void;
   slettArbeidsgiverperiode: (periodeId: string) => void;
@@ -51,6 +53,18 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           //   state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
           //   state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
           // }
+
+          return state;
+        })
+      ),
+    initArbeidsgiverperioder: (arbeidsgiverperioder) =>
+      set(
+        produce((state) => {
+          state.arbeidsgiverperioder = arbeidsgiverperioder.map((periode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom),
+            id: nanoid()
+          }));
 
           return state;
         })

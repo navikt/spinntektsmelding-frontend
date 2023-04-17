@@ -33,6 +33,10 @@ class Environment {
     return this.publicRuntimeConfig.tidligereInntekterApi;
   }
 
+  get hentKvitteringAPI() {
+    return this.publicRuntimeConfig.kvitteringDataApi;
+  }
+
   public baseUrl = '/im-dialog';
 
   public skjemadataUrl = '/im-dialog/api/trenger';
@@ -40,6 +44,8 @@ class Environment {
   public inntektsdataUrl = '/im-dialog/api/inntektsdata';
 
   public innsendingUrl = '/im-dialog/api/innsendingInntektsmelding';
+
+  public hentKvitteringUrl = '/im-dialog/api/hentKvittering';
 
   public amplitudeEnabled = true;
 
