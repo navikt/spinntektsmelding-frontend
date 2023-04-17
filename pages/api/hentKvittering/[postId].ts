@@ -58,7 +58,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
       onProxyInit: handleProxyInit,
       pathRewrite: [
         {
-          patternStr: '^/api/hentKvittering/',
+          patternStr: '^/api/hentKvittering//',
           replaceStr: ''
         }
       ]
