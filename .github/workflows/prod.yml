@@ -6,7 +6,7 @@ on:
 
 env:
   APP: spinntektsmelding-frontend
-  IMAGE: ghcr.io/${{ github.repository }}/spinntektsmelding-frontend:${{ github.sha }}
+  IMAGE: ghcr.io/${{ github.repository }}/spinntektsmelding-frontend-prod:${{ github.sha }}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
