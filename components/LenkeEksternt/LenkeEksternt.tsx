@@ -1,3 +1,5 @@
+import { Link } from '@navikt/ds-react';
+
 interface LenkeEksterntProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   isHidden?: boolean;
 }
@@ -7,8 +9,8 @@ export default function LenkeEksternt(props: LenkeEksterntProps) {
   const { isHidden, ...restProps } = props;
 
   return (
-    <a target='_blank' rel='noopener noreferrer' {...restProps} tabIndex={tabIndex} className='navds-link'>
+    <Link target='_blank' rel='noopener noreferrer' {...restProps} tabIndex={tabIndex}>
       {props.children}
-    </a>
+    </Link>
   );
 }
