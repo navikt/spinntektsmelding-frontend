@@ -23,11 +23,11 @@ const handleProxyInit = (proxy: any) => {
   });
 
   proxy.on('proxyRes', function (proxyRes: any, req: any, res: any) {
-    console.log('RAW Response from the target', JSON.stringify(proxyRes.headers), JSON.stringify(proxyRes.body));
+    console.log('RAW Response from the target', JSON.stringify(proxyRes.headers), JSON.stringify(req));
   });
 
-  proxy.on('proxyReq', function (proxyReq: any, _req: any, _res: any, _options: any) {
-    console.log('RAW Request from the client', JSON.stringify(proxyReq.body));
+  proxy.on('proxyReq', function (proxyReq: any, req: any, _res: any, _options: any) {
+    console.log('RAW Request from the client', JSON.stringify(proxyReq.body), JSON.stringify(req));
     proxyReq.setHeader('cookie', '');
   });
 };
