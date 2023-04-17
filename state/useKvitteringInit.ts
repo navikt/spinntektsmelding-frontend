@@ -10,6 +10,7 @@ interface KvitteringSkjema extends InnsendingSkjema {
   virksomhetNavn: string;
   innsenderNavn: string;
   innsenderTelefonNr: string;
+  beregnetInntekt?: number;
 }
 
 export default function useKvitteringInit() {
@@ -61,12 +62,12 @@ export default function useKvitteringInit() {
     if (arbeidsgiverperiode) initArbeidsgiverperioder(jsonData.arbeidsgiverperioder);
 
     if (bestemmendeFravaersdag) {
-      initBruttoinntekt(
-        jsonData.inntekt.beregnetInntekt,
-        inntektSisteTreMnd.tidligereInntekter,
-        parseIsoDate(bestemmendeFravaersdag)
-      );
-      setNyMaanedsinntektBlanktSkjema(jsonData.inntekt.beregnetInntekt.toString());
+      const beregnetInntekt =
+        jsonData.inntekt && jsonData.inntekt.beregnetInntekt
+          ? jsonData.inntekt.beregnetInntekt
+          : jsonData.beregnetInntekt || 0;
+      initBruttoinntekt(beregnetInntekt, inntektSisteTreMnd.tidligereInntekter, parseIsoDate(bestemmendeFravaersdag));
+      setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
     }
 
     initLonnISykefravaeret({
@@ -76,8 +77,12 @@ export default function useKvitteringInit() {
 
     initFullLonnIArbeidsgiverPerioden({
       status: jsonData.fullLønnIArbeidsgiverPerioden.utbetalerFullLønn ? 'Ja' : 'Nei',
-      begrunnelse: jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse,
+      begrunnelse: jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
+        ? jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
+        : undefined,
       utbetalt: jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
+        ? jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
+        : undefined
     });
 
     setHarRefusjonEndringer(
