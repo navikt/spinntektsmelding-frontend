@@ -69,8 +69,10 @@ const Kvittering: NextPage = () => {
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
+  const slettKvitteringInnsendt = useBoundStore((state) => state.slettKvitteringInnsendt);
 
   const clickEndre = () => {
+    slettKvitteringInnsendt();
     router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
   };
 

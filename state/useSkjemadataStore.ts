@@ -9,6 +9,7 @@ export interface SkjemadataState {
   setHenterInnsending: (henter: boolean) => void;
   setSlug: (slug: string) => void;
   setKvitteringInnsendt: (tidspunkt: string) => void;
+  slettKvitteringInnsendt: () => void;
   tracker: string;
   henterInntektsdata: boolean;
   slug: string;
@@ -45,6 +46,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.kvitteringInnsendt = new Date(tidspunkt);
+      })
+    );
+  },
+  slettKvitteringInnsendt: () => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.kvitteringInnsendt = undefined;
       })
     );
   }
