@@ -42,6 +42,9 @@ spec:
     outbound:
       external:
         - host: '{{{outbound-external-host}}}'
+      rules:
+        - application: nav-dekoratoren
+          namespace: personbruker
   env:
     - name: API_URL
       value: '{{{api-url}}}'
@@ -49,9 +52,3 @@ spec:
       value: '{{{api-basepath}}}'
     - name: AMPLITUDE_ENABLED
       value: '{{{amplitude-enabled}}}'
-    - name: NEXT_PUBLIC_TEST_STUFF
-      value: '{{{test-stuff}}}'
-    - name: ENVIRONMENT
-      value: '{{{environment}}}'
-    - name: SERVER_VAR
-      value: '{{{server-var}}}'
