@@ -23,7 +23,7 @@ const handleProxyInit = (proxy: any) => {
   });
 
   proxy.on('proxyRes', function (proxyRes: any, req: any, res: any) {
-    console.log('RAW Response from the target', JSON.stringify(proxyRes.headers));
+    console.log('RAW Response from the target', JSON.stringify(proxyRes.headers), JSON.stringify(proxyRes.body));
   });
 
   proxy.on('proxyReq', function (proxyReq: any, _req: any, _res: any, _options: any) {
