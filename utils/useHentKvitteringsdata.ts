@@ -27,7 +27,7 @@ export default function useHentKvitteringsdata() {
         window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
       }
 
-      if (error.status === 404) {
+      if (error.status !== 200) {
         hentSkjemadata(pathSlug);
       }
     }
