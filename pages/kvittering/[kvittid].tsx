@@ -32,6 +32,7 @@ import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelse
 import useHentSkjemadata from '../../utils/useHentSkjemadata';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
+import { isValid } from 'date-fns';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -67,6 +68,7 @@ const Kvittering: NextPage = () => {
   const permitering = useBoundStore((state) => state.permitering);
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
+  const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
 
   const clickEndre = () => {
     router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
@@ -75,6 +77,8 @@ const Kvittering: NextPage = () => {
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
   };
+
+  const innsendingstidspunkt = kvitteringInnsendt && isValid(kvitteringInnsendt) ? kvitteringInnsendt : now;
 
   useEffect(() => {
     if (!fravaersperioder) {
@@ -188,7 +192,8 @@ const Kvittering: NextPage = () => {
           <BortfallNaturalytelser ytelser={naturalytelser!} />
           <Skillelinje />
           <BodyShort>
-            Kvittering - innsendt inntektsmelding - {formatDate(now)} kl. {formatTime(now)}
+            Kvittering - innsendt inntektsmelding - {formatDate(innsendingstidspunkt)} kl.{' '}
+            {formatTime(innsendingstidspunkt)}
           </BodyShort>
           <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>

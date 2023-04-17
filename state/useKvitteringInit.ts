@@ -11,6 +11,7 @@ interface KvitteringSkjema extends InnsendingSkjema {
   innsenderNavn: string;
   innsenderTelefonNr: string;
   beregnetInntekt?: number;
+  tidspunkt?: string;
 }
 
 export default function useKvitteringInit() {
@@ -33,6 +34,7 @@ export default function useKvitteringInit() {
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
   const setSlug = useBoundStore((state) => state.setSlug);
+  const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
@@ -112,6 +114,10 @@ export default function useKvitteringInit() {
       }));
 
       initNaturalytelser(ytelser);
+    }
+
+    if (jsonData.tidspunkt) {
+      setKvitteringInnsendt(jsonData.tidspunkt);
     }
   };
 }
