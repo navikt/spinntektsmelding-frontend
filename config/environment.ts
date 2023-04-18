@@ -49,14 +49,6 @@ class Environment {
 
   public amplitudeEnabled = true;
 
-  get testStuff() {
-    return process.env.NEXT_PUBLIC_TEST_STUFF;
-  }
-
-  get otherTestStuff() {
-    return this.publicRuntimeConfig.otherTestStuff;
-  }
-
   get environment() {
     return this.publicRuntimeConfig.environment;
   }

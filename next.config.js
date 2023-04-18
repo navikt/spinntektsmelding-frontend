@@ -2,10 +2,10 @@
 const { buildCspHeader } = require('@navikt/nav-dekoratoren-moduler/ssr');
 
 const appDirectives = {
-  'connect-src': ["'self'", 'https://*.uxsignals.com'],
-  'font-src': ['https://fonts.gstatic.com'],
-  'script-src': ['https://uxsignals-frontend.uxsignals.app.iterate.no', 'navtest.boost.ai'],
-  'script-src-elem': ["'self'", 'navtest.boost.ai', 'https://uxsignals-frontend.uxsignals.app.iterate.no'],
+  'connect-src': ["'self'"],
+  'font-src': [],
+  'script-src': [],
+  'script-src-elem': ["'self'"],
   'style-src-elem': ["'self'"],
   'img-src': ["'self'", 'data:', 'blob:']
 };
@@ -52,12 +52,9 @@ const nextConfig = {
   },
   serverRuntimeConfig: {
     decoratorEnv: process.env.DECORATOR_ENV,
-    decoratorDisabled: process.env.DISABLE_DECORATOR,
-    serverVar: process.env.SERVER_VAR
+    decoratorDisabled: process.env.DISABLE_DECORATOR
   },
   publicRuntimeConfig: {
-    testStuff: process.env.NEXT_PUBLIC_TEST_STUFF,
-    otherTestStuff: 'otherTestSuff',
     environment: process.env.ENVIRONMENT,
     innsendingInntektsmeldingApi: process.env.INNSENDING_INNTEKTSMELDING_API,
     inntektsmeldingKjenteDataApi: process.env.PREUTFYLT_INNTEKTSMELDING_API,
