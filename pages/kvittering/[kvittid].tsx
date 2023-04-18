@@ -93,7 +93,7 @@ const Kvittering: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Kvittering for innsendt inntektsmelding</title>
+        <title>Kvittering for innsendt inntektsmelding - nav.no</title>
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
