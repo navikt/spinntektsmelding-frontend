@@ -16,8 +16,7 @@ setConfig({
   // ...config,
   publicRuntimeConfig: {
     BASE_PATH: '/',
-    SOME_KEY: 'your_value',
-    testStuff: 'testStuff'
+    SOME_KEY: 'your_value'
   },
   serverRuntimeConfig: {
     YOUR_KEY: 'your_value'
