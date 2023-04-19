@@ -105,7 +105,7 @@ export default function Egenmelding() {
                 endreEgenmeldingsperiode={endreEgenmeldingsperiode}
                 setEgenmeldingDato={setEgenmeldingDato}
                 toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
-                kanSlettes={index !== 0}
+                kanSlettes={!!(egenmeldingsperiode.fom || egenmeldingsperiode.tom || index !== 0)}
                 onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingsperiode.id)}
                 disabled={endretArbeidsgiverperiode}
                 rad={index}
