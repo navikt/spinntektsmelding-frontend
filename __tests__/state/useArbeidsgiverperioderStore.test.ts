@@ -27,51 +27,6 @@ describe('useBoundStore', () => {
     cleanup();
   });
 
-  // it('should initialize the data.', () => {
-  //   const { result } = renderHook(() => useBoundStore((state) => state));
-
-  //   act(() => {
-  //     result.current.initEgenmeldingsperiode(arbeidsgiverperioder);
-  //   });
-
-  //   expect(result.current.arbeidsgiverperioder?.[0].fom).toEqual(new Date(2022, 5, 6));
-  //   expect(result.current.arbeidsgiverperioder?.[0].tom).toEqual(new Date(2022, 6, 6));
-  //   expect(result.current.arbeidsgiverperioder?.length).toBe(3);
-  // });
-
-  // it('should delete the egenmelding for å given periode.', () => {
-  //   const { result } = renderHook(() => useBoundStore((state) => state));
-
-  //   act(() => {
-  //     result.current.initEgenmeldingsperiode(arbeidsgiverperioder);
-  //   });
-
-  //   let periodeId = result.current.arbeidsgiverperioder?.[0].id;
-
-  //   expect(result.current.arbeidsgiverperioder?.length).toBe(3);
-
-  //   act(() => {
-  //     result.current.slettEgenmeldingsperiode(periodeId);
-  //   });
-
-  //   expect(result.current.arbeidsgiverperioder?.length).toBe(2);
-
-  //   periodeId = result.current.arbeidsgiverperioder?.[0].id;
-  //   act(() => {
-  //     result.current.slettEgenmeldingsperiode(periodeId);
-  //   });
-
-  //   expect(result.current.arbeidsgiverperioder?.length).toBe(1);
-
-  //   periodeId = result.current.arbeidsgiverperioder?.[0].id;
-  //   act(() => {
-  //     result.current.slettEgenmeldingsperiode(periodeId);
-  //   });
-
-  //   expect(result.current.arbeidsgiverperioder?.length).toBe(1);
-  //   expect(result.current.arbeidsgiverperioder?.[0].fom).toBeUndefined();
-  // });
-
   it('should set bestemmende fraværsdag.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -266,14 +221,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date('2022-09-30 22:00:00 UTC'),
+        fom: new Date(2022, 9, 1),
         id: '1',
-        tom: new Date('2022-10-04 22:00:00 UTC')
+        tom: new Date(2022, 9, 5)
       },
       {
-        fom: new Date('2022-10-09 22:00:00 UTC'),
+        fom: new Date(2022, 9, 10),
         id: '2',
-        tom: new Date('2022-10-14 22:00:00 UTC')
+        tom: new Date(2022, 9, 15)
       }
     ]);
   });
@@ -300,14 +255,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date('2022-09-30 22:00:00 UTC'),
+        fom: new Date(2022, 9, 1),
         id: '1',
-        tom: new Date('2022-10-04 22:00:00 UTC')
+        tom: new Date(2022, 9, 5)
       },
       {
-        fom: new Date('2022-10-09 22:00:00 UTC'),
+        fom: new Date(2022, 9, 10),
         id: '2',
-        tom: new Date('2022-10-14 22:00:00 UTC')
+        tom: new Date(2022, 9, 15)
       }
     ]);
 
@@ -333,14 +288,14 @@ describe('useBoundStore', () => {
 
       expect(result.current.arbeidsgiverperioder).toEqual([
         {
-          fom: new Date('2022-09-30 22:00:00 UTC'),
+          fom: new Date(2022, 9, 1),
           id: '1',
-          tom: new Date('2022-10-04 22:00:00 UTC')
+          tom: new Date(2022, 9, 5)
         },
         {
-          fom: new Date('2022-10-09 22:00:00 UTC'),
+          fom: new Date(2022, 9, 10),
           id: '2',
-          tom: new Date('2022-10-14 22:00:00 UTC')
+          tom: new Date(2022, 9, 15)
         }
       ]);
 
@@ -350,9 +305,9 @@ describe('useBoundStore', () => {
 
       expect(result.current.arbeidsgiverperioder).toEqual([
         {
-          fom: new Date('2022-09-30 22:00:00 UTC'),
+          fom: new Date(2022, 9, 1),
           id: '1',
-          tom: new Date('2022-10-04 22:00:00 UTC')
+          tom: new Date(2022, 9, 5)
         }
       ]);
     });
@@ -379,14 +334,14 @@ describe('useBoundStore', () => {
 
       expect(result.current.arbeidsgiverperioder).toEqual([
         {
-          fom: new Date('2022-09-30 22:00:00 UTC'),
+          fom: new Date(2022, 9, 1),
           id: '1',
-          tom: new Date('2022-10-04 22:00:00 UTC')
+          tom: new Date(2022, 9, 5)
         },
         {
-          fom: new Date('2022-10-09 22:00:00 UTC'),
+          fom: new Date(2022, 9, 10),
           id: '2',
-          tom: new Date('2022-10-14 22:00:00 UTC')
+          tom: new Date(2022, 9, 15)
         }
       ]);
 
@@ -396,9 +351,9 @@ describe('useBoundStore', () => {
 
       expect(result.current.arbeidsgiverperioder).toEqual([
         {
-          fom: new Date('2022-09-30 22:00:00 UTC'),
+          fom: new Date(2022, 9, 1),
           id: '1',
-          tom: new Date('2022-10-04 22:00:00 UTC')
+          tom: new Date(2022, 9, 5)
         }
       ]);
 
@@ -408,14 +363,14 @@ describe('useBoundStore', () => {
 
       expect(result.current.arbeidsgiverperioder).toEqual([
         {
-          fom: new Date('2022-09-30 22:00:00 UTC'),
+          fom: new Date(2022, 9, 1),
           id: '1',
-          tom: new Date('2022-10-04 22:00:00 UTC')
+          tom: new Date(2022, 9, 5)
         },
         {
-          fom: new Date('2022-10-09 22:00:00 UTC'),
+          fom: new Date(2022, 9, 10),
           id: '2',
-          tom: new Date('2022-10-14 22:00:00 UTC')
+          tom: new Date(2022, 9, 15)
         }
       ]);
     });
@@ -442,14 +397,14 @@ describe('useBoundStore', () => {
 
       expect(result.current.arbeidsgiverperioder).toEqual([
         {
-          fom: new Date('2022-09-30 22:00:00 UTC'),
+          fom: new Date(2022, 9, 1),
           id: '1',
-          tom: new Date('2022-10-04 22:00:00 UTC')
+          tom: new Date(2022, 9, 5)
         },
         {
-          fom: new Date('2022-10-09 22:00:00 UTC'),
+          fom: new Date(2022, 9, 10),
           id: '2',
-          tom: new Date('2022-10-14 22:00:00 UTC')
+          tom: new Date(2022, 9, 15)
         }
       ]);
 
@@ -464,42 +419,16 @@ describe('useBoundStore', () => {
 
       expect(result.current.arbeidsgiverperioder).toEqual([
         {
-          fom: new Date('2022-09-30 22:00:00 UTC'),
+          fom: new Date(2022, 9, 1),
           id: '1',
-          tom: new Date('2022-10-04 22:00:00 UTC')
+          tom: new Date(2022, 9, 5)
         },
         {
-          fom: new Date('2022-11-01 22:00:00 UTC'),
+          fom: new Date(2022, 10, 1),
           id: '2',
-          tom: new Date('2022-11-04 22:00:00 UTC')
+          tom: new Date(2022, 10, 4)
         }
       ]);
     });
   });
-
-  // it('should add a backup of egenmelding opprinneligEgenmelding.', () => {
-  //   const { result } = renderHook(() => useBoundStore((state) => state));
-
-  //   act(() => {
-  //     result.current.initEgenmeldingsperiode(arbeidsgiverperioder);
-  //   });
-
-  //   expect(result.current.arbeidsgiverperioder).toEqual(result.current.opprinneligEgenmeldingsperiode);
-  // });
-
-  // it('should set endre egenmeldingmelding.', () => {
-  //   const { result } = renderHook(() => useBoundStore((state) => state));
-
-  //   act(() => {
-  //     result.current.initEgenmeldingsperiode(arbeidsgiverperioder);
-  //   });
-
-  //   expect(result.current.endreEgenmeldingsperiode).toBeFalsy();
-
-  //   act(() => {
-  //     result.current.setEndreEgenmelding(true);
-  //   });
-
-  //   expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
-  // });
 });
