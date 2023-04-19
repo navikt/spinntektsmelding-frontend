@@ -117,7 +117,7 @@ export default function Egenmelding() {
           <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingsTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}
         {!endreEgenmeldingsperiode && (
-          <div>
+          <div className={localStyles.endresykemeldingknapper}>
             <ButtonEndre onClick={clickEndreFravaersperiodeHandler} disabled={endretArbeidsgiverperiode} />
           </div>
         )}

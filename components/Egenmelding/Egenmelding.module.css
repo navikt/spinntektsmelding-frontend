@@ -1,5 +1,5 @@
 .egenmeldingswrapper {
-  margin-top   : .5rem;
+  margin-top   : 1rem;
   margin-bottom: 1rem;
 }
 
@@ -19,7 +19,7 @@
 }
 
 .endresykemeldingknapper {
-  padding-top    : 2rem;
+  padding-top    : 1rem;
   display        : flex;
   justify-content: space-between;
 }
