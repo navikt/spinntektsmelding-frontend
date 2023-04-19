@@ -85,8 +85,8 @@ export default function Egenmelding() {
       <Heading3>Egenmelding</Heading3>
       <BodyLong>
         Hvis den ansatte har oppgitt at egenmeldingsdager ble benyttet i forkant av sykmeldingen, er disse
-        forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder med mindre enn 16 dagers mellomrom før
-        sykmeldingen skal inkluderes. Dere kan endre og legge til egenmeldingsperioder.
+        forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder som har mindre enn 16 dagers mellomrom
+        før sykmeldingen skal inkluderes. Dere kan endre og legge til egenmeldingsperioder.
       </BodyLong>
       {endretArbeidsgiverperiode && (
         <Alert variant='info'>

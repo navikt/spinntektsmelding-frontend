@@ -341,86 +341,86 @@ describe('validerBruttoinntekt', () => {
     expect(validerBruttoinntekt(input)).toEqual(expected);
   });
   /********** */
-  it('should return an error when permitering property is missing', () => {
+  it('should return an error when permittering property is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
         bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringsaarsak: begrunnelseEndringBruttoinntekt.Permitering
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permittering
       }
     };
 
     const expected = [
       {
-        code: 'PERMITERING_MANGLER',
-        felt: 'bruttoinntekt-permitering-fom'
-      }
-    ];
-
-    expect(validerBruttoinntekt(input)).toEqual(expected);
-  });
-
-  it('should return an error when permitering fom & tom is missing', () => {
-    const input: CompleteState = {
-      bruttoinntekt: {
-        bekreftet: true,
-        bruttoInntekt: 123,
-        manueltKorrigert: true,
-        endringsaarsak: begrunnelseEndringBruttoinntekt.Permitering
-      },
-      permitering: [{}]
-    };
-
-    const expected = [
-      {
-        code: 'PERMITERING_FOM',
-        felt: 'bruttoinntekt-permitering-fom-undefined'
-      },
-      {
-        code: 'PERMITERING_TOM',
-        felt: 'bruttoinntekt-permitering-tom-undefined'
-      }
-    ];
-
-    expect(validerBruttoinntekt(input)).toEqual(expected);
-  });
-  it('should return an error when permitering fom is missing', () => {
-    const input: CompleteState = {
-      bruttoinntekt: {
-        bekreftet: true,
-        bruttoInntekt: 123,
-        manueltKorrigert: true,
-        endringsaarsak: begrunnelseEndringBruttoinntekt.Permitering
-      },
-      permitering: [{ id: '1', fom: new Date() }]
-    };
-
-    const expected = [
-      {
-        code: 'PERMITERING_TOM',
-        felt: 'bruttoinntekt-permitering-tom-1'
+        code: 'PERMITTERING_MANGLER',
+        felt: 'bruttoinntekt-permittering-fom'
       }
     ];
 
     expect(validerBruttoinntekt(input)).toEqual(expected);
   });
 
-  it('should return an error when permitering tom is missing', () => {
+  it('should return an error when permittering fom & tom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
         bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringsaarsak: begrunnelseEndringBruttoinntekt.Permitering
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permittering
       },
-      permitering: [{ id: '1', tom: new Date() }]
+      permittering: [{}]
     };
 
     const expected = [
       {
-        code: 'PERMITERING_FOM',
-        felt: 'bruttoinntekt-permitering-fom-1'
+        code: 'PERMITTERING_FOM',
+        felt: 'bruttoinntekt-permittering-fom-undefined'
+      },
+      {
+        code: 'PERMITTERING_TOM',
+        felt: 'bruttoinntekt-permittering-tom-undefined'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+  it('should return an error when permittering fom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permittering
+      },
+      permittering: [{ id: '1', fom: new Date() }]
+    };
+
+    const expected = [
+      {
+        code: 'PERMITTERING_TOM',
+        felt: 'bruttoinntekt-permittering-tom-1'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
+  it('should return an error when permittering tom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bekreftet: true,
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringsaarsak: begrunnelseEndringBruttoinntekt.Permittering
+      },
+      permittering: [{ id: '1', tom: new Date() }]
+    };
+
+    const expected = [
+      {
+        code: 'PERMITTERING_FOM',
+        felt: 'bruttoinntekt-permittering-fom-1'
       }
     ];
 

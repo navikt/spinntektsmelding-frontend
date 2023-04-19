@@ -51,8 +51,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
   const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
   const permisjon = useBoundStore((state) => state.permisjon);
-  const setPermiteringPeriode = useBoundStore((state) => state.setPermiteringPeriode);
-  const permitering = useBoundStore((state) => state.permitering);
+  const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
+  const permittering = useBoundStore((state) => state.permittering);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const henterData = useBoundStore((state) => state.henterData);
 
@@ -239,15 +239,15 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                   />
                 </div>
               )}
-              {endringsaarsak === begrunnelseEndringBruttoinntekt.Permitering && (
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.Permittering && (
                 <div className={lokalStyles.endreperiodeliste}>
                   <PeriodeListevelger
-                    onRangeListChange={setPermiteringPeriode}
-                    defaultRange={permitering}
+                    onRangeListChange={setPermitteringPeriode}
+                    defaultRange={permittering}
                     fomTekst='Fra'
                     tomTekst='Til'
-                    fomIdBase='bruttoinntekt-permitering-fom'
-                    tomIdBase='bruttoinntekt-permitering-tom'
+                    fomIdBase='bruttoinntekt-permittering-fom'
+                    tomIdBase='bruttoinntekt-permittering-tom'
                     defaultMonth={bestemmendeFravaersdag}
                     toDate={bestemmendeFravaersdag}
                   />

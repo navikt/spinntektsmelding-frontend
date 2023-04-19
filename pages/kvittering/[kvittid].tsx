@@ -64,7 +64,7 @@ const Kvittering: NextPage = () => {
   const kvitteringSlug = useBoundStore((state) => state.slug);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const permisjon = useBoundStore((state) => state.permisjon);
-  const permitering = useBoundStore((state) => state.permitering);
+  const permittering = useBoundStore((state) => state.permittering);
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
@@ -165,7 +165,7 @@ const Kvittering: NextPage = () => {
                 ferie={ferie}
                 lonnsendringsdato={lonnsendringsdato}
                 permisjon={permisjon}
-                permitering={permitering}
+                permittering={permittering}
                 nystillingdato={nystillingdato}
                 nystillingsprosentdato={nystillingsprosentdato}
               />

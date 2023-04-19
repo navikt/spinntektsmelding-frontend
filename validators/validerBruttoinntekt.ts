@@ -19,9 +19,9 @@ export enum BruttoinntektFeilkode {
   PERMISJON_FOM = 'PERMISJON_FOM',
   PERMISJON_TOM = 'PERMISJON_TOM',
   PERMISJON_MANGLER = 'PERMISJON_MANGLER',
-  PERMITERING_FOM = 'PERMITERING_FOM',
-  PERMITERING_TOM = 'PERMITERING_TOM',
-  PERMITERING_MANGLER = 'PERMITERING_MANGLER',
+  PERMITTERING_FOM = 'PERMITTERING_FOM',
+  PERMITTERING_TOM = 'PERMITTERING_TOM',
+  PERMITTERING_MANGLER = 'PERMITTERING_MANGLER',
   NYSTILLING_FOM_MANGLER = 'NYSTILLING_FOM_MANGLER',
   NYSTILLING_FOM_ETTER_BFD = 'NYSTILLING_FOM_ETTER_BFD',
   NYSTILLINGSPROSENT_FOM_ETTER_BFD = 'NYSTILLINGSPROSENT_FOM_ETTER_BFD',
@@ -138,25 +138,25 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
             break;
           }
 
-          case begrunnelseEndringBruttoinntekt.Permitering: {
-            if (!state.permitering) {
+          case begrunnelseEndringBruttoinntekt.Permittering: {
+            if (!state.permittering) {
               valideringstatus.push({
-                felt: 'bruttoinntekt-permitering-fom',
-                code: BruttoinntektFeilkode.PERMITERING_MANGLER
+                felt: 'bruttoinntekt-permittering-fom',
+                code: BruttoinntektFeilkode.PERMITTERING_MANGLER
               });
             } else {
-              state.permitering.forEach((permiteringperiode) => {
-                if (!permiteringperiode.fom) {
+              state.permittering.forEach((permitteringperiode) => {
+                if (!permitteringperiode.fom) {
                   valideringstatus.push({
-                    felt: `bruttoinntekt-permitering-fom-${permiteringperiode.id}`,
-                    code: BruttoinntektFeilkode.PERMITERING_FOM
+                    felt: `bruttoinntekt-permittering-fom-${permitteringperiode.id}`,
+                    code: BruttoinntektFeilkode.PERMITTERING_FOM
                   });
                 }
 
-                if (!permiteringperiode.tom) {
+                if (!permitteringperiode.tom) {
                   valideringstatus.push({
-                    felt: `bruttoinntekt-permitering-tom-${permiteringperiode.id}`,
-                    code: BruttoinntektFeilkode.PERMITERING_TOM
+                    felt: `bruttoinntekt-permittering-tom-${permitteringperiode.id}`,
+                    code: BruttoinntektFeilkode.PERMITTERING_TOM
                   });
                 }
               });

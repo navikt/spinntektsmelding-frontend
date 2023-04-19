@@ -89,7 +89,7 @@ export default function RefusjonUtbetalingEndring({
   return (
     <>
       <RadioGroup
-        legend='Er det endringer i månedslønn i perioden?'
+        legend='Er det endringer i refusjonsbeløpet i perioden?'
         id={'lus-utbetaling-endring-radio'}
         className={styles.radiobuttonwrapper}
         error={visFeilmeldingsTekst('lus-utbetaling-endring-radio')}
@@ -104,7 +104,7 @@ export default function RefusjonUtbetalingEndring({
         endringer.map((endring, key) => (
           <div key={key} className={lokalStyles.belopperiode}>
             <TextField
-              label='Endret lønn/måned'
+              label='Endret refusjon/måned'
               onChange={(event) => changeBelopHandler(event, key)}
               defaultValue={endring.belop}
               id={`lus-utbetaling-endring-belop-${key}`}
@@ -115,7 +115,7 @@ export default function RefusjonUtbetalingEndring({
               toDate={maxDate}
               onDateChange={(val: Date | undefined) => changeDatoHandler(val, key)}
               id={`lus-utbetaling-endring-dato-${key}`}
-              label='Dato for lønnsendring'
+              label='Dato for endring'
               error={visFeilmeldingsTekst(`lus-utbetaling-endring-dato-${key}`)}
               defaultSelected={endring.dato}
             />

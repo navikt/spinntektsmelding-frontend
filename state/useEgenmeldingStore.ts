@@ -37,6 +37,8 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           return periode;
         });
 
+        console.log('setEgenmeldingDato state.egenmeldingsperioder', state.egenmeldingsperioder);
+
         const fravaersperioder: Array<Periode> = state.fravaersperioder;
 
         const perioder =
@@ -97,8 +99,9 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
 
     set(
       produce((state) => {
-        state.egenmeldingsperioder = structuredClone(clonedEgenmelding);
-
+        console.log('state.egenmeldingsperioder', state.egenmeldingsperioder);
+        state.egenmeldingsperioder = clonedEgenmelding;
+        console.log('clonedEgenmelding', clonedEgenmelding);
         if (clonedEgenmelding && clonedEgenmelding[0].fom) {
           state.endreEgenmeldingsperiode = false;
         }

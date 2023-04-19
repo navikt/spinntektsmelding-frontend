@@ -11,7 +11,7 @@ interface EndringAarsakVisningProps {
   ferie?: Array<Periode>;
   lonnsendringsdato?: Date;
   permisjon?: Array<Periode>;
-  permitering?: Array<Periode>;
+  permittering?: Array<Periode>;
   nystillingdato?: Date;
   nystillingsprosentdato?: Date;
 }
@@ -52,11 +52,11 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
         </div>
       ) : null;
     }
-    case begrunnelseEndringBruttoinntekt.Permitering: {
-      return props.permitering ? (
+    case begrunnelseEndringBruttoinntekt.Permittering: {
+      return props.permittering ? (
         <div>
-          {props.permitering.map((periode) => (
-            <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'permiteringperiode' + periode.id} />
+          {props.permittering.map((periode) => (
+            <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'permitteringperiode' + periode.id} />
           ))}{' '}
         </div>
       ) : null;

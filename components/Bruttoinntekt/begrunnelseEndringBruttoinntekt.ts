@@ -7,7 +7,7 @@ const begrunnelseEndringBruttoinntekt: Begrunnelser = {
   Ferie: 'Ferie',
   VarigLonnsendring: 'VarigLonnsendring',
   Permisjon: 'Permisjon',
-  Permitering: 'Permitering',
+  Permittering: 'Permittering',
   NyStilling: 'NyStilling',
   NyStillingsprosent: 'NyStillingsprosent',
   Bonus: 'Bonus',
