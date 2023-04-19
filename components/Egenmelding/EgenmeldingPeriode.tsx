@@ -54,7 +54,7 @@ export default function EgenmeldingPeriode({
   }
 
   const defaultMnd = toDate || new Date();
-  const sletteklasse = kanSlettes ? localStyles.kanSlettes : '';
+
   return (
     <div data-cy='egenmelding' className={localStyles.datepickerytrewrapper}>
       <Periodevelger
