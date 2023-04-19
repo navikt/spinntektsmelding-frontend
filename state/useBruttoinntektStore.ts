@@ -31,7 +31,7 @@ export interface BruttoinntektState {
   nystillingdato?: Date;
   nystillingsprosentdato?: Date;
   permisjon?: Array<Periode>;
-  permitering?: Array<Periode>;
+  permittering?: Array<Periode>;
   sisteLonnshentedato?: Date;
   henterData: boolean;
   setNyMaanedsinntekt: (belop: string) => void;
@@ -44,7 +44,7 @@ export interface BruttoinntektState {
   setNyStillingDato: (dato?: Date) => void;
   setNyStillingsprosentDato: (dato?: Date) => void;
   setPermisjonPeriode: (periode: Array<Periode> | undefined) => void;
-  setPermiteringPeriode: (periode: Array<Periode> | undefined) => void;
+  setPermitteringPeriode: (periode: Array<Periode> | undefined) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean, reset?: boolean) => void;
   initBruttoinntekt: (
@@ -169,10 +169,10 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setPermiteringPeriode: (periode) =>
+  setPermitteringPeriode: (periode) =>
     set(
       produce((state) => {
-        state.permitering = periode;
+        state.permittering = periode;
         return state;
       })
     ),

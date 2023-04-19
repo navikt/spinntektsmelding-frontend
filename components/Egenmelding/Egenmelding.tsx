@@ -85,8 +85,8 @@ export default function Egenmelding() {
       <Heading3>Egenmelding</Heading3>
       <BodyLong>
         Hvis den ansatte har oppgitt at egenmeldingsdager ble benyttet i forkant av sykmeldingen, er disse
-        forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder med mindre enn 16 dagers mellomrom før
-        sykmeldingen skal inkluderes. Dere kan endre og legge til egenmeldingsperioder.
+        forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder som har mindre enn 16 dagers mellomrom
+        før sykmeldingen skal inkluderes. Dere kan endre og legge til egenmeldingsperioder.
       </BodyLong>
       {endretArbeidsgiverperiode && (
         <Alert variant='info'>
@@ -105,7 +105,7 @@ export default function Egenmelding() {
                 endreEgenmeldingsperiode={endreEgenmeldingsperiode}
                 setEgenmeldingDato={setEgenmeldingDato}
                 toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
-                kanSlettes={index !== 0}
+                kanSlettes={!!(egenmeldingsperiode.fom || egenmeldingsperiode.tom || index !== 0)}
                 onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingsperiode.id)}
                 disabled={endretArbeidsgiverperiode}
                 rad={index}
@@ -117,7 +117,7 @@ export default function Egenmelding() {
           <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingsTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}
         {!endreEgenmeldingsperiode && (
-          <div>
+          <div className={localStyles.endresykemeldingknapper}>
             <ButtonEndre onClick={clickEndreFravaersperiodeHandler} disabled={endretArbeidsgiverperiode} />
           </div>
         )}

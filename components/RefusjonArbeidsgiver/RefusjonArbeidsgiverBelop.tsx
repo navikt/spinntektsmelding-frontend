@@ -21,7 +21,7 @@ export default function RefusjonArbeidsgiverBelop({
   if (!erEditerbar) {
     return (
       <>
-        <TextLabel>Månedslønn til arbeidstaker etter arbeidsgiverperiode</TextLabel>
+        <TextLabel>Refusjon til arbeidsgiver etter arbeidsgiverperiode</TextLabel>
         <div className={localStyles.belopswrapper}>
           <div className={localStyles.belop}>{formatCurrency(bruttoinntekt)}&nbsp;kr</div>
           <ButtonEndre onClick={() => setEditerbar(true)} />

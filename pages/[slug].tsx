@@ -193,7 +193,7 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Inntektsmelding</title>
+        <title>Innsending av inntektsmelding - nav.no</title>
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>

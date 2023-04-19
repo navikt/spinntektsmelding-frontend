@@ -247,7 +247,7 @@ describe('useBoundStore', () => {
     ]);
   });
 
-  it('should setPermiteringPeriode', () => {
+  it('should setPermitteringPeriode', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -255,10 +255,12 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setPermiteringPeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+      result.current.setPermitteringPeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.permitering).toEqual([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+    expect(result.current.permittering).toEqual([
+      { fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }
+    ]);
   });
 
   it('should setPermisjonPeriode', () => {

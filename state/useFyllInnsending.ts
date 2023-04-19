@@ -100,7 +100,7 @@ export default function useFyllInnsending() {
   const ferie = useBoundStore((state) => state.ferie);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const permisjon = useBoundStore((state) => state.permisjon);
-  const permitering = useBoundStore((state) => state.permitering);
+  const permittering = useBoundStore((state) => state.permittering);
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
 
@@ -157,10 +157,10 @@ export default function useFyllInnsending() {
             }))
           };
 
-        case begrunnelseEndringBruttoinntekt.Permitering:
+        case begrunnelseEndringBruttoinntekt.Permittering:
           return {
-            typpe: begrunnelseEndringBruttoinntekt.Permitering,
-            liste: permitering!.map((periode) => ({
+            typpe: begrunnelseEndringBruttoinntekt.Permittering,
+            liste: permittering!.map((periode) => ({
               fom: formatIsoDate(periode.fom),
               tom: formatIsoDate(periode.tom)
             }))

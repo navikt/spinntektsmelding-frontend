@@ -11,7 +11,7 @@ describe('RefusjonUtbetalingEndring', () => {
     const endringer = [{}];
     const { container } = render(<RefusjonUtbetalingEndring endringer={endringer}></RefusjonUtbetalingEndring>);
 
-    const HeadingTitle = screen.getByText(/Er det endringer i månedslønn i perioden?/i);
+    const HeadingTitle = screen.getByText(/Er det endringer i refusjonsbeløpet i perioden?/i);
 
     expect(HeadingTitle).toBeInTheDocument();
 
@@ -93,7 +93,7 @@ describe('RefusjonUtbetalingEndring', () => {
       ></RefusjonUtbetalingEndring>
     );
 
-    const Input = screen.getByLabelText(/Endret lønn/i);
+    const Input = screen.getByLabelText(/Endret refusjon/i);
 
     fireEvent.change(Input, {
       target: { value: '1234' }
@@ -116,7 +116,7 @@ describe('RefusjonUtbetalingEndring', () => {
       ></RefusjonUtbetalingEndring>
     );
 
-    const Input = screen.getByLabelText(/Dato for lønnsendring/i);
+    const Input = screen.getByLabelText(/Dato for endring/i);
 
     fireEvent.change(Input, {
       target: { value: '11.11.2022' }

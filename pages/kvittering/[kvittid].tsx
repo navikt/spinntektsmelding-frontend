@@ -27,9 +27,8 @@ import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
-import useHentSkjemadata from '../../utils/useHentSkjemadata';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isValid } from 'date-fns';
@@ -65,7 +64,7 @@ const Kvittering: NextPage = () => {
   const kvitteringSlug = useBoundStore((state) => state.slug);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const permisjon = useBoundStore((state) => state.permisjon);
-  const permitering = useBoundStore((state) => state.permitering);
+  const permittering = useBoundStore((state) => state.permittering);
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
@@ -93,7 +92,7 @@ const Kvittering: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Kvittering for innsendt inntektsmelding</title>
+        <title>Kvittering for innsendt inntektsmelding - nav.no</title>
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
@@ -166,7 +165,7 @@ const Kvittering: NextPage = () => {
                 ferie={ferie}
                 lonnsendringsdato={lonnsendringsdato}
                 permisjon={permisjon}
-                permitering={permitering}
+                permittering={permittering}
                 nystillingdato={nystillingdato}
                 nystillingsprosentdato={nystillingsprosentdato}
               />

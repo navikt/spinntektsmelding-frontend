@@ -60,11 +60,13 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     initArbeidsgiverperioder: (arbeidsgiverperioder) =>
       set(
         produce((state) => {
-          state.arbeidsgiverperioder = arbeidsgiverperioder.map((periode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom),
-            id: nanoid()
-          }));
+          state.arbeidsgiverperioder = arbeidsgiverperioder
+            ? arbeidsgiverperioder.map((periode) => ({
+                fom: parseIsoDate(periode.fom),
+                tom: parseIsoDate(periode.tom),
+                id: nanoid()
+              }))
+            : undefined;
 
           return state;
         })

@@ -97,7 +97,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
 
     set(
       produce((state) => {
-        state.egenmeldingsperioder = structuredClone(clonedEgenmelding);
+        state.egenmeldingsperioder = clonedEgenmelding;
 
         if (clonedEgenmelding && clonedEgenmelding[0].fom) {
           state.endreEgenmeldingsperiode = false;
