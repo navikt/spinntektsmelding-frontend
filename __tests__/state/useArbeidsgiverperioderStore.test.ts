@@ -4,6 +4,7 @@ import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../state/MottattData';
 import { Periode } from '../../state/state';
 import { nanoid } from 'nanoid';
+import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
 
 vi.mock('nanoid');
 
@@ -241,6 +242,239 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.endringsbegrunnelse).toBe('Begrunnelse!');
+  });
+
+  it('should init Arbeidsgiverperiode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
+
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        fom: new Date('2022-09-30 22:00:00 UTC'),
+        id: '1',
+        tom: new Date('2022-10-04 22:00:00 UTC')
+      },
+      {
+        fom: new Date('2022-10-09 22:00:00 UTC'),
+        id: '2',
+        tom: new Date('2022-10-14 22:00:00 UTC')
+      }
+    ]);
+  });
+
+  it('should init Arbeidsgiverperiode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
+
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        fom: new Date('2022-09-30 22:00:00 UTC'),
+        id: '1',
+        tom: new Date('2022-10-04 22:00:00 UTC')
+      },
+      {
+        fom: new Date('2022-10-09 22:00:00 UTC'),
+        id: '2',
+        tom: new Date('2022-10-14 22:00:00 UTC')
+      }
+    ]);
+
+    it('should delete an arbeidsgiverperiode for a given ID.', () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
+
+      const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+        {
+          fom: '2022-10-01',
+          tom: '2022-10-05'
+        },
+        {
+          fom: '2022-10-10',
+          tom: '2022-10-15'
+        }
+      ];
+
+      act(() => {
+        result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      });
+
+      expect(result.current.arbeidsgiverperioder).toEqual([
+        {
+          fom: new Date('2022-09-30 22:00:00 UTC'),
+          id: '1',
+          tom: new Date('2022-10-04 22:00:00 UTC')
+        },
+        {
+          fom: new Date('2022-10-09 22:00:00 UTC'),
+          id: '2',
+          tom: new Date('2022-10-14 22:00:00 UTC')
+        }
+      ]);
+
+      act(() => {
+        result.current.slettArbeidsgiverperiode('2');
+      });
+
+      expect(result.current.arbeidsgiverperioder).toEqual([
+        {
+          fom: new Date('2022-09-30 22:00:00 UTC'),
+          id: '1',
+          tom: new Date('2022-10-04 22:00:00 UTC')
+        }
+      ]);
+    });
+
+    it('should reset Arbeidsgiverperiode to its initial value.', () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
+
+      const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+        {
+          fom: '2022-10-01',
+          tom: '2022-10-05'
+        },
+        {
+          fom: '2022-10-10',
+          tom: '2022-10-15'
+        }
+      ];
+
+      act(() => {
+        result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      });
+
+      expect(result.current.arbeidsgiverperioder).toEqual([
+        {
+          fom: new Date('2022-09-30 22:00:00 UTC'),
+          id: '1',
+          tom: new Date('2022-10-04 22:00:00 UTC')
+        },
+        {
+          fom: new Date('2022-10-09 22:00:00 UTC'),
+          id: '2',
+          tom: new Date('2022-10-14 22:00:00 UTC')
+        }
+      ]);
+
+      act(() => {
+        result.current.slettArbeidsgiverperiode('2');
+      });
+
+      expect(result.current.arbeidsgiverperioder).toEqual([
+        {
+          fom: new Date('2022-09-30 22:00:00 UTC'),
+          id: '1',
+          tom: new Date('2022-10-04 22:00:00 UTC')
+        }
+      ]);
+
+      act(() => {
+        result.current.tilbakestillArbeidsgiverperiode();
+      });
+
+      expect(result.current.arbeidsgiverperioder).toEqual([
+        {
+          fom: new Date('2022-09-30 22:00:00 UTC'),
+          id: '1',
+          tom: new Date('2022-10-04 22:00:00 UTC')
+        },
+        {
+          fom: new Date('2022-10-09 22:00:00 UTC'),
+          id: '2',
+          tom: new Date('2022-10-14 22:00:00 UTC')
+        }
+      ]);
+    });
+
+    it('should set the date for a arbeidsgiverperiode.', () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
+
+      const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+        {
+          fom: '2022-10-01',
+          tom: '2022-10-05'
+        },
+        {
+          fom: '2022-10-10',
+          tom: '2022-10-15'
+        }
+      ];
+
+      act(() => {
+        result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      });
+
+      expect(result.current.arbeidsgiverperioder).toEqual([
+        {
+          fom: new Date('2022-09-30 22:00:00 UTC'),
+          id: '1',
+          tom: new Date('2022-10-04 22:00:00 UTC')
+        },
+        {
+          fom: new Date('2022-10-09 22:00:00 UTC'),
+          id: '2',
+          tom: new Date('2022-10-14 22:00:00 UTC')
+        }
+      ]);
+
+      const PeriodeParam: PeriodeParam = {
+        fom: new Date(2022, 10, 1),
+        tom: new Date(2022, 10, 4)
+      };
+
+      act(() => {
+        result.current.setArbeidsgiverperiodeDato(PeriodeParam, '2');
+      });
+
+      expect(result.current.arbeidsgiverperioder).toEqual([
+        {
+          fom: new Date('2022-09-30 22:00:00 UTC'),
+          id: '1',
+          tom: new Date('2022-10-04 22:00:00 UTC')
+        },
+        {
+          fom: new Date('2022-11-01 22:00:00 UTC'),
+          id: '2',
+          tom: new Date('2022-11-04 22:00:00 UTC')
+        }
+      ]);
+    });
   });
 
   // it('should add a backup of egenmelding opprinneligEgenmelding.', () => {
