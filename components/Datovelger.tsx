@@ -1,6 +1,6 @@
 import { UNSAFE_DatePicker, UNSAFE_useDatepicker } from '@navikt/ds-react';
 import { isValid } from 'date-fns';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 interface DatovelgerProps {
   onDateChange?: (val?: Date | undefined) => void;
