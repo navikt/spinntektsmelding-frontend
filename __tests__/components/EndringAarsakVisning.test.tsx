@@ -16,21 +16,10 @@ describe('EndringAarsakVisning', () => {
 
     expect(results).toHaveNoViolations();
 
-    const tekst = await screen.findByText(/Tariffendring gjelder fra:/);
-
-    expect(tekst).toBeInTheDocument();
-
-    const tekst2 = await screen.findByText(/10.11.2022/);
-
-    expect(tekst2).toBeInTheDocument();
-
-    const tekst3 = await screen.findByText(/Dato tariffendring ble kjent:/);
-
-    expect(tekst3).toBeInTheDocument();
-
-    const tekst4 = await screen.findByText(/15.11.2022/);
-
-    expect(tekst4).toBeInTheDocument();
+    expect(await screen.findByText(/Tariffendring gjelder fra:/)).toBeInTheDocument();
+    expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
+    expect(await screen.findByText(/Dato tariffendring ble kjent:/)).toBeInTheDocument();
+    expect(await screen.findByText(/15.11.2022/)).toBeInTheDocument();
   });
 
   it('should show ferie data.', async () => {
@@ -43,14 +32,9 @@ describe('EndringAarsakVisning', () => {
 
     expect(results).toHaveNoViolations();
 
-    const tekst = await screen.findAllByText('Fra');
-
-    expect(tekst).toHaveLength(2);
-
+    expect(await screen.findAllByText(/Fra/)).toHaveLength(2);
     expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
-
     expect(await screen.findAllByText(/Til/)).toHaveLength(2);
-
     expect(await screen.findByText(/15.11.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/10.12.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/15.12.2022/)).toBeInTheDocument();
@@ -78,21 +62,10 @@ describe('EndringAarsakVisning', () => {
 
     expect(results).toHaveNoViolations();
 
-    const tekst = await screen.findAllByText('Fra');
-
-    expect(tekst).toHaveLength(2);
-
-    const tekst2 = await screen.findByText(/10.11.2022/);
-
-    expect(tekst2).toBeInTheDocument();
-
-    const tekst3 = await screen.findAllByText(/Til/);
-
-    expect(tekst3).toHaveLength(2);
-
-    const tekst4 = await screen.findByText(/15.11.2022/);
-
-    expect(tekst4).toBeInTheDocument();
+    expect(await screen.findAllByText(/Fra/)).toHaveLength(2);
+    expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
+    expect(await screen.findAllByText(/Til/)).toHaveLength(2);
+    expect(await screen.findByText(/15.11.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/10.12.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/15.12.2022/)).toBeInTheDocument();
   });
@@ -107,21 +80,10 @@ describe('EndringAarsakVisning', () => {
 
     expect(results).toHaveNoViolations();
 
-    const tekst = await screen.findAllByText('Fra');
-
-    expect(tekst).toHaveLength(2);
-
-    const tekst2 = await screen.findByText(/10.11.2022/);
-
-    expect(tekst2).toBeInTheDocument();
-
-    const tekst3 = await screen.findAllByText(/Til/);
-
-    expect(tekst3).toHaveLength(2);
-
-    const tekst4 = await screen.findByText(/15.11.2022/);
-
-    expect(tekst4).toBeInTheDocument();
+    expect(await screen.findAllByText(/Fra/)).toHaveLength(2);
+    expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
+    expect(await screen.findAllByText(/Til/)).toHaveLength(2);
+    expect(await screen.findByText(/15.11.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/10.12.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/15.12.2022/)).toBeInTheDocument();
   });
@@ -135,7 +97,6 @@ describe('EndringAarsakVisning', () => {
     expect(results).toHaveNoViolations();
 
     expect(await screen.findByText(/Ny stilling fra/)).toBeInTheDocument();
-
     expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
   });
 
@@ -148,7 +109,6 @@ describe('EndringAarsakVisning', () => {
     expect(results).toHaveNoViolations();
 
     expect(await screen.findByText(/Ny stillingsprosent fra/)).toBeInTheDocument();
-
     expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
   });
 });
