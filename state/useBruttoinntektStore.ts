@@ -2,7 +2,6 @@ import { StateCreator } from 'zustand';
 import produce from 'immer';
 import { HistoriskInntekt, Inntekt, Periode } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
-import { MottattHistoriskInntekt } from './MottattData';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
@@ -49,7 +48,7 @@ export interface BruttoinntektState {
   bekreftKorrektInntekt: (bekreftet: boolean, reset?: boolean) => void;
   initBruttoinntekt: (
     bruttoInntekt: number,
-    tidligereInntekt: Array<MottattHistoriskInntekt>,
+    tidligereInntekt: Array<HistoriskInntekt>,
     bestemmendeFravaersdag: Date
   ) => void;
   rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
@@ -196,7 +195,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     ),
   initBruttoinntekt: (
     bruttoInntekt: number,
-    tidligereInntekt: Array<MottattHistoriskInntekt>,
+    tidligereInntekt: Array<HistoriskInntekt>,
     bestemmendeFravaersdag: Date
   ) => {
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);

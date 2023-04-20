@@ -1,12 +1,12 @@
 import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
-import { MottattHistoriskInntekt } from '../../state/MottattData';
 import { vi } from 'vitest';
 import feiltekster from '../../utils/feiltekster';
 import { finnAktuelleInntekter, sorterInntekter } from '../../state/useBruttoinntektStore';
+import { HistoriskInntekt } from '../../state/state';
 
 const inputInntekt: number = 40000;
-const tidligereInntekt: Array<MottattHistoriskInntekt> = [
+const tidligereInntekt: Array<HistoriskInntekt> = [
   { maaned: '2002-02', inntekt: 33000 },
   { maaned: '2002-03', inntekt: 44000 },
   { maaned: '2002-04', inntekt: 55000 },

@@ -1,3 +1,5 @@
+import { HistoriskInntekt } from './state';
+
 export interface MottattPeriode {
   fom: string;
   tom: string;
@@ -9,11 +11,6 @@ export interface MottattNaturalytelse {
   verdi: number;
 }
 
-export interface MottattHistoriskInntekt {
-  maaned: string;
-  inntekt: number;
-}
-
 interface MottattData {
   navn: string;
   identitetsnummer: string;
@@ -22,7 +19,7 @@ interface MottattData {
   fravaersperioder: Array<MottattPeriode>;
   egenmeldingsperioder: Array<MottattPeriode>;
   bruttoinntekt: number;
-  tidligereinntekter: Array<MottattHistoriskInntekt>;
+  tidligereinntekter: Array<HistoriskInntekt>;
   behandlingsdager: Array<string>;
   behandlingsperiode: MottattPeriode;
   innsenderNavn: string;
