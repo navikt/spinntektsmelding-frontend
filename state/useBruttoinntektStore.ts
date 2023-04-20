@@ -11,9 +11,9 @@ import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
-  if (a.maanedsnavn < b.maanedsnavn) {
+  if (a.maaned < b.maaned) {
     return 1;
-  } else if (a.maanedsnavn > b.maanedsnavn) {
+  } else if (a.maaned > b.maaned) {
     return -1;
   }
 
@@ -205,7 +205,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         prev.inntekt += cur.inntekt;
         return prev;
       },
-      { inntekt: 0, maanedsnavn: '' }
+      { inntekt: 0, maaned: '' }
     );
 
     const snittInntekter = sumInntekter.inntekt / aktuelleInntekter.length;
@@ -229,7 +229,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
         if (aktuelleInntekter) {
           state.tidligereInntekt = aktuelleInntekter.map((inntekt) => ({
-            maanedsnavn: inntekt.maanedsnavn,
+            maaned: inntekt.maaned,
             inntekt: inntekt.inntekt
           }));
         }
@@ -262,7 +262,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       const oppdaterteInntekter = await fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag);
 
       oppdaterteInntekter.tidligereInntekter.forEach((inntekt: HistoriskInntekt) => {
-        if (!tidligereInntekt.find((element) => element.maanedsnavn === inntekt.maanedsnavn)) {
+        if (!tidligereInntekt.find((element) => element.maaned === inntekt.maaned)) {
           tidligereInntekt.push(inntekt);
         }
       });
@@ -277,7 +277,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           prev.inntekt += cur.inntekt;
           return prev;
         },
-        { inntekt: 0, maanedsnavn: '' }
+        { inntekt: 0, maaned: '' }
       );
 
       snittInntekter = sumInntekter.inntekt / aktuelleInntekter.length;
@@ -318,7 +318,7 @@ export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[], best
 
   if (!tidligereInntekt) return [];
   const aktuelleInntekter = tidligereInntekt
-    .filter((inntekt) => inntekt.maanedsnavn < bestemmendeMaaned && inntekt.maanedsnavn >= sisteMaaned)
+    .filter((inntekt) => inntekt.maaned < bestemmendeMaaned && inntekt.maaned >= sisteMaaned)
     .sort(sorterInntekter)
     .slice(0, 3);
 

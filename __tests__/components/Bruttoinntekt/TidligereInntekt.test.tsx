@@ -7,15 +7,15 @@ describe('TidligereInntekt', () => {
   it('renders 3 rows', () => {
     const tidligereinntekt: Array<HistoriskInntekt> = [
       {
-        maanedsnavn: '2020-12',
+        maaned: '2020-12',
         inntekt: 234
       },
       {
-        maanedsnavn: '2020-11',
+        maaned: '2020-11',
         inntekt: 123
       },
       {
-        maanedsnavn: '2021-01',
+        maaned: '2021-01',
         inntekt: 345
       }
     ];
@@ -38,15 +38,15 @@ describe('TidligereInntekt', () => {
   it('should have no violations', async () => {
     const tidligereinntekt: Array<HistoriskInntekt> = [
       {
-        maanedsnavn: '2020-11',
+        maaned: '2020-11',
         inntekt: 123
       },
       {
-        maanedsnavn: '2021-01',
+        maaned: '2021-01',
         inntekt: 345
       },
       {
-        maanedsnavn: '2020-12',
+        maaned: '2020-12',
         inntekt: 234
       }
     ];

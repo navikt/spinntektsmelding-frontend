@@ -10,7 +10,7 @@ export interface MottattNaturalytelse {
 }
 
 export interface MottattHistoriskInntekt {
-  maanedsnavn: string;
+  maaned: string;
   inntekt: number;
 }
 

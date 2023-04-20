@@ -9,7 +9,11 @@ interface TidligereInntektProps {
 }
 
 const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
-  if (a.maanedsnavn < b.maanedsnavn) {
+  if (a.maaned === b.maaned) {
+    return 0;
+  }
+
+  if (a.maaned < b.maaned) {
     return -1;
   } else {
     return 1;
@@ -39,8 +43,8 @@ export default function TidligereInntekt({ tidligereinntekt }: TidligereInntektP
       </thead>
       <tbody>
         {sortertInntekt.map((inntekt) => (
-          <tr key={inntekt.maanedsnavn}>
-            <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt.maanedsnavn)}:</td>
+          <tr key={inntekt.maaned}>
+            <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt.maaned)}:</td>
             <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
           </tr>
         ))}

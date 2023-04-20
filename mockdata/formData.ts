@@ -50,15 +50,15 @@ const formData = {
   tidligereinntekter: [
     // Hva skjer ved jobbskifte?
     {
-      maanedsnavn: '2023-01', // yyyy-MM
+      maaned: '2023-01', // yyyy-MM
       inntekt: 66000
     },
     {
-      maanedsnavn: '2022-12', // yyyy-MM
+      maaned: '2022-12', // yyyy-MM
       inntekt: 88000
     },
     {
-      maanedsnavn: '2022-11', // yyyy-MM
+      maaned: '2022-11', // yyyy-MM
       inntekt: 88000
     }
   ],
