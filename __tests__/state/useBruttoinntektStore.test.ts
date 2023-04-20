@@ -1,21 +1,21 @@
 import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
-import { MottattHistoriskInntekt } from '../../state/MottattData';
 import { vi } from 'vitest';
 import feiltekster from '../../utils/feiltekster';
 import { finnAktuelleInntekter, sorterInntekter } from '../../state/useBruttoinntektStore';
+import { HistoriskInntekt } from '../../state/state';
 
 const inputInntekt: number = 40000;
-const tidligereInntekt: Array<MottattHistoriskInntekt> = [
-  { maanedsnavn: '2002-02', inntekt: 33000 },
-  { maanedsnavn: '2002-03', inntekt: 44000 },
-  { maanedsnavn: '2002-04', inntekt: 55000 },
-  { maanedsnavn: '2002-05', inntekt: 55000 },
-  { maanedsnavn: '2002-06', inntekt: 55000 },
-  { maanedsnavn: '2002-07', inntekt: 55000 },
-  { maanedsnavn: '2002-08', inntekt: 50000 },
-  { maanedsnavn: '2002-09', inntekt: 45000 },
-  { maanedsnavn: '2002-10', inntekt: 55000 }
+const tidligereInntekt: Array<HistoriskInntekt> = [
+  { maaned: '2002-02', inntekt: 33000 },
+  { maaned: '2002-03', inntekt: 44000 },
+  { maaned: '2002-04', inntekt: 55000 },
+  { maaned: '2002-05', inntekt: 55000 },
+  { maaned: '2002-06', inntekt: 55000 },
+  { maaned: '2002-07', inntekt: 55000 },
+  { maaned: '2002-08', inntekt: 50000 },
+  { maaned: '2002-09', inntekt: 45000 },
+  { maaned: '2002-10', inntekt: 55000 }
 ];
 
 describe('useBoundStore', () => {
@@ -151,6 +151,26 @@ describe('useBoundStore', () => {
     expect(result.current.bruttoinntekt?.endringsaarsak).toBe('AARSAK');
   });
 
+  it('should set empty endringsaarsak and give an error.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setEndringsaarsak('');
+    });
+
+    expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
+    expect(result.current.feilmeldinger).toEqual([
+      {
+        felt: 'bruttoinntekt-endringsaarsak',
+        text: 'Vennligst anngi årsak for endringen.'
+      }
+    ]);
+  });
+
   it('should tilbakestille endringsaarsak', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -179,15 +199,15 @@ describe('useBoundStore', () => {
     const expected = [
       {
         inntekt: 45000,
-        maanedsnavn: '2002-09'
+        maaned: '2002-09'
       },
       {
         inntekt: 50000,
-        maanedsnavn: '2002-08'
+        maaned: '2002-08'
       },
       {
         inntekt: 55000,
-        maanedsnavn: '2002-07'
+        maaned: '2002-07'
       }
     ];
 
@@ -206,11 +226,11 @@ describe('useBoundStore', () => {
     const expected = [
       {
         inntekt: 44000,
-        maanedsnavn: '2002-03'
+        maaned: '2002-03'
       },
       {
         inntekt: 33000,
-        maanedsnavn: '2002-02'
+        maaned: '2002-02'
       }
     ];
 
@@ -234,15 +254,15 @@ describe('useBoundStore', () => {
     expect(result.current.tidligereInntekt).toEqual([
       {
         inntekt: 55000,
-        maanedsnavn: '2002-10'
+        maaned: '2002-10'
       },
       {
         inntekt: 45000,
-        maanedsnavn: '2002-09'
+        maaned: '2002-09'
       },
       {
         inntekt: 50000,
-        maanedsnavn: '2002-08'
+        maaned: '2002-08'
       }
     ]);
   });
@@ -361,20 +381,20 @@ describe('useBoundStore', () => {
     expect(result.current.permisjon).toEqual([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
   });
 
-  it('should return 0 when maanedsnavn are equal', () => {
-    const retval = sorterInntekter({ maanedsnavn: '2002-01', inntekt: 0 }, { maanedsnavn: '2002-01', inntekt: 0 });
+  it('should return 0 when maaned are equal', () => {
+    const retval = sorterInntekter({ maaned: '2002-01', inntekt: 0 }, { maaned: '2002-01', inntekt: 0 });
 
     expect(retval).toBe(0);
   });
 
-  it('should return -1 when first maanedsnavn is bigger than last', () => {
-    const retval = sorterInntekter({ maanedsnavn: '2002-02', inntekt: 0 }, { maanedsnavn: '2002-01', inntekt: 0 });
+  it('should return -1 when first maaned is bigger than last', () => {
+    const retval = sorterInntekter({ maaned: '2002-02', inntekt: 0 }, { maaned: '2002-01', inntekt: 0 });
 
     expect(retval).toBe(-1);
   });
 
-  it('should return 1 when first maanedsnavn is smaller than last', () => {
-    const retval = sorterInntekter({ maanedsnavn: '2002-02', inntekt: 0 }, { maanedsnavn: '2002-03', inntekt: 0 });
+  it('should return 1 when first maaned is smaller than last', () => {
+    const retval = sorterInntekter({ maaned: '2002-02', inntekt: 0 }, { maaned: '2002-03', inntekt: 0 });
 
     expect(retval).toBe(1);
   });
