@@ -151,6 +151,26 @@ describe('useBoundStore', () => {
     expect(result.current.bruttoinntekt?.endringsaarsak).toBe('AARSAK');
   });
 
+  it('should set empty endringsaarsak and give an error.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setEndringsaarsak('');
+    });
+
+    expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
+    expect(result.current.feilmeldinger).toEqual([
+      {
+        felt: 'bruttoinntekt-endringsaarsak',
+        text: 'Vennligst anngi årsak for endringen.'
+      }
+    ]);
+  });
+
   it('should tilbakestille endringsaarsak', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
