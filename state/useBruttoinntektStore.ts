@@ -83,9 +83,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         }
 
         if (!state.lonnISykefravaeret) {
-          state.lonnISykefravaeret = {};
-        }
-        if (!state.lonnISykefravaeret) {
           state.lonnISykefravaeret = { belop: stringishToNumber(belop) };
         } else {
           state.lonnISykefravaeret.belop = stringishToNumber(belop);

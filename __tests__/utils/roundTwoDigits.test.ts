@@ -1,4 +1,3 @@
-import { round } from 'cypress/types/lodash';
 import { describe, expect } from 'vitest';
 import roundTwoDigits from '../../utils/roundTwoDigits';
 
