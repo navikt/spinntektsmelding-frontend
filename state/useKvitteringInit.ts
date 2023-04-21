@@ -5,7 +5,7 @@ import { InnsendingSkjema } from './useFyllInnsending';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 
-interface KvitteringSkjema extends InnsendingSkjema {
+export interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
   virksomhetNavn: string;
   innsenderNavn: string;
