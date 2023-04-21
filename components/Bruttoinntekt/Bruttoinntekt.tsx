@@ -168,6 +168,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                   id='inntekt.beregnetInntekt'
                   error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
                   className={lokalStyles.bruttoinntektendringsbelop}
+                  data-cy='inntekt-belop-input'
                 />
                 <div>
                   <SelectEndringBruttoinntekt
@@ -279,7 +280,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
               )}
             </div>
           )}
-          {!endringAvBelop && <ButtonEndre onClick={setEndreMaanedsinntektHandler} />}
+          {!endringAvBelop && <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />}
         </div>
         <BodyShort>
           <strong>Stemmer dette?</strong>

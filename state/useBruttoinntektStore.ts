@@ -8,6 +8,7 @@ import { CompleteState } from './useBoundStore';
 import { subMonths, startOfMonth } from 'date-fns';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
+import roundTwoDecimals from '../utils/roundTwoDecimals';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
@@ -69,20 +70,34 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   },
   tidligereInntekt: undefined,
   henterData: false,
-  setNyMaanedsinntekt: (belop: string) =>
+  setNyMaanedsinntekt: (belop: string) => {
     set(
       produce((state) => {
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
         state.bruttoinntekt.manueltKorrigert = true;
+
         if (state.bruttoinntekt.bruttoInntekt != undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
           state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
         } else {
           state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
 
+        if (!state.lonnISykefravaeret) {
+          state.lonnISykefravaeret = { belop: stringishToNumber(belop) };
+        } else {
+          state.lonnISykefravaeret.belop = stringishToNumber(belop);
+        }
+
+        if (belop && stringishToNumber(belop)! >= 0) {
+          state = slettFeilmeldingFraState(state, 'lus-input');
+        } else {
+          state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
+        }
+
         return state;
       })
-    ),
+    );
+  },
   setNyMaanedsinntektBlanktSkjema: (belop: string) =>
     set(
       produce((state) => {
@@ -207,7 +222,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       { inntekt: 0, maaned: '' }
     );
 
-    const snittInntekter = sumInntekter.inntekt / aktuelleInntekter.length;
+    const snittInntekter = roundTwoDecimals(sumInntekter.inntekt / aktuelleInntekter.length);
 
     set(
       produce((state) => {

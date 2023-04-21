@@ -17,8 +17,6 @@ export default function RefusjonArbeidsgiver() {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
 
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
@@ -124,7 +122,7 @@ export default function RefusjonArbeidsgiver() {
         {lonnISykefravaeret?.status === 'Ja' && (
           <>
             <RefusjonArbeidsgiverBelop
-              bruttoinntekt={bruttoinntekt.bruttoInntekt!}
+              bruttoinntekt={lonnISykefravaeret.belop!}
               onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
               visFeilmeldingsTekst={visFeilmeldingsTekst}
             />

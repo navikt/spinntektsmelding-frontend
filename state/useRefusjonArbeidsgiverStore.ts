@@ -53,10 +53,6 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
-          state.lonnISykefravaeret = {};
-        }
-
-        if (!state.lonnISykefravaeret) {
           state.lonnISykefravaeret = { status: status };
         } else state.lonnISykefravaeret.status = status;
         if (status === 'Ja') {
@@ -93,9 +89,6 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
   beloepArbeidsgiverBetalerISykefravaeret: (beloep: string) =>
     set(
       produce((state) => {
-        if (!state.lonnISykefravaeret) {
-          state.lonnISykefravaeret = {};
-        }
         if (!state.lonnISykefravaeret) {
           state.lonnISykefravaeret = { belop: stringishToNumber(beloep) };
         } else {
