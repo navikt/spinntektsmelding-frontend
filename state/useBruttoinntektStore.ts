@@ -8,6 +8,7 @@ import { CompleteState } from './useBoundStore';
 import { subMonths, startOfMonth } from 'date-fns';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
+import roundTwoDigits from '../utils/roundTwoDigits';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
@@ -224,7 +225,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       { inntekt: 0, maaned: '' }
     );
 
-    const snittInntekter = sumInntekter.inntekt / aktuelleInntekter.length;
+    const snittInntekter = roundTwoDigits(sumInntekter.inntekt / aktuelleInntekter.length);
 
     set(
       produce((state) => {

@@ -23,8 +23,10 @@ export default function RefusjonArbeidsgiverBelop({
       <>
         <TextLabel>Refusjon til arbeidsgiver etter arbeidsgiverperiode</TextLabel>
         <div className={localStyles.belopswrapper}>
-          <div className={localStyles.belop}>{formatCurrency(bruttoinntekt)}&nbsp;kr</div>
-          <ButtonEndre onClick={() => setEditerbar(true)} />
+          <div className={localStyles.belop} data-cy='refusjon-arbeidsgiver-belop'>
+            {formatCurrency(bruttoinntekt)}&nbsp;kr
+          </div>
+          <ButtonEndre onClick={() => setEditerbar(true)} data-cy='endre-refusjon-arbeidsgiver-belop' />
           <span>
             Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør NAV. NAV vil
             refundere opp til 6G av årslønn.
@@ -42,6 +44,7 @@ export default function RefusjonArbeidsgiverBelop({
       onChange={(event) => onOppdaterBelop(event.target.value)}
       id={'lus-input'}
       error={visFeilmeldingsTekst('lus-input')}
+      data-cy='refusjon-arbeidsgiver-belop-input'
     />
   );
 }
