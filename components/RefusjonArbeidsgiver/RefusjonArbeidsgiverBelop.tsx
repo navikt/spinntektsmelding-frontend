@@ -38,7 +38,7 @@ export default function RefusjonArbeidsgiverBelop({
     <TextField
       className={localStyles.refusjonsbelop}
       label='Oppgi refusjonsbeløpet per måned'
-      defaultValue={formatCurrency(bruttoinntekt)}
+      value={bruttoinntekt}
       onChange={(event) => onOppdaterBelop(event.target.value)}
       id={'lus-input'}
       error={visFeilmeldingsTekst('lus-input')}

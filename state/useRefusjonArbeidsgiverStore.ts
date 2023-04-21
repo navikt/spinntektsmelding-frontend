@@ -93,6 +93,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
   beloepArbeidsgiverBetalerISykefravaeret: (beloep: string) =>
     set(
       produce((state) => {
+        console.log('beloepArbeidsgiverBetalerISykefravaeret', beloep);
         if (!state.lonnISykefravaeret) {
           state.lonnISykefravaeret = {};
         }
