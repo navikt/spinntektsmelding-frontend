@@ -51,7 +51,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
         }
       ]
     };
-    return res.status(200).json(org);
+    return res.status(404).json(org);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {
       target: basePath,
