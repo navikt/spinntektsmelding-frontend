@@ -40,4 +40,25 @@ describe('TidligereInntekt', () => {
 
     expect(results).toHaveNoViolations();
   });
+
+  it('should give a warning when arbeidsgiverperiode is more than 16 days', async () => {
+    // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
+    vi.mock('../../../components/Datovelger', () => ({
+      default: () => <div>Datovelger</div>
+    }));
+
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 24), id: '123' }];
+
+    const { container } = render(<Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperiode} />);
+
+    const tekst = screen.getByText(
+      'Arbeidsgiverperioden er oppgitt til 19 dager, men kan ikke være mer enn 16 dager totalt.'
+    );
+
+    expect(tekst).toBeInTheDocument();
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
 });

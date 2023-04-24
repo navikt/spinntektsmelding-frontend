@@ -11,9 +11,10 @@ import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LesMer from '../LesMer';
 import useAmplitude from '../../utils/useAmplitude';
+import { differenceInCalendarDays } from 'date-fns';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -30,6 +31,21 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const logEvent = useAmplitude();
   const amplitudeComponent = 'Arbeidsgiverperiode';
+
+  const antallDagerIArbeidsgiverperioder = (perioder: Array<Periode> | undefined) => {
+    if (typeof perioder === 'undefined') {
+      return 0;
+    }
+
+    let dagerTotalt = 0;
+
+    perioder.forEach((periode) => {
+      if (dagerTotalt < 16) {
+        dagerTotalt = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt + 1;
+      }
+    });
+    return dagerTotalt;
+  };
 
   const clickSlettArbeidsgiverperiode = (periode: string) => {
     logEvent('knapp klikket', {
@@ -83,6 +99,19 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
 
     setReadMoreOpen(!readMoreOpen);
   };
+
+  const [valideringsfeil, setValideringsfeil] = useState<string>('');
+
+  useEffect(() => {
+    const antallDager = antallDagerIArbeidsgiverperioder(arbeidsgiverperioder);
+    if (antallDager > 16) {
+      setValideringsfeil(
+        `Arbeidsgiverperioden er oppgitt til ${antallDager} dager, men kan ikke være mer enn 16 dager totalt.`
+      );
+    } else {
+      setValideringsfeil('');
+    }
+  }, [arbeidsgiverperioder]);
 
   return (
     <>
@@ -159,6 +188,8 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       {visFeilmelding('arbeidsgiverperiode-feil') && (
         <Feilmelding id='arbeidsgiverperiode-feil'>{visFeilmeldingsTekst('arbeidsgiverperiode-feil')}</Feilmelding>
       )}
+
+      {valideringsfeil.length > 0 && <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{valideringsfeil}</Feilmelding>}
       {endretArbeidsgiverperiode && (
         <div className={lokalStyles.endreknapper}>
           <Button
