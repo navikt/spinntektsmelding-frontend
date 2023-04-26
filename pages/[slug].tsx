@@ -34,7 +34,6 @@ import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import useAmplitude from '../utils/useAmplitude';
 import isValidUUID from '../utils/isValidUUID';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
-import env from '../config/environment';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -266,7 +265,7 @@ const Home: NextPage = () => {
                 Send
               </Button>
 
-              <Link className={styles.lukkelenke} href={env.minSideArbeidsgiver}>
+              <Link className={styles.lukkelenke} href={environment.minSideArbeidsgiver}>
                 Lukk
               </Link>
             </div>

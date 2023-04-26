@@ -1,5 +1,5 @@
-import { Alert, BodyLong, Button, Heading, Link, Modal } from '@navikt/ds-react';
-import { useEffect, useState } from 'react';
+import { Alert, Heading, Link, Modal } from '@navikt/ds-react';
+import { useEffect } from 'react';
 import env from '../../config/environment';
 
 interface IngenTilgangProps {
