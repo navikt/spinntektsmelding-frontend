@@ -222,7 +222,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       { inntekt: 0, maaned: '' }
     );
 
-    const snittInntekter = roundTwoDecimals(sumInntekter.inntekt / aktuelleInntekter.length);
+    const snittInntekter = bruttoInntekt
+      ? roundTwoDecimals(bruttoInntekt)
+      : roundTwoDecimals(sumInntekter.inntekt / aktuelleInntekter.length);
 
     set(
       produce((state) => {
