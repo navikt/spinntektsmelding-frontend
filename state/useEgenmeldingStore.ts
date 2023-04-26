@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { StateCreator } from 'zustand';
-import produce from 'immer';
+import { produce } from 'immer';
 import { Periode } from './state';
 import parseIsoDate from '../utils/parseIsoDate';
 import { MottattPeriode } from './MottattData';

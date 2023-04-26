@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import produce from 'immer';
+import { produce } from 'immer';
 import { HistoriskInntekt, Inntekt, Periode } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import feiltekster from '../utils/feiltekster';

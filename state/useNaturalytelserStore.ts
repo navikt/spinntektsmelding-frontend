@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import produce from 'immer';
+import { produce } from 'immer';
 import { Naturalytelse, YesNo } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import parseIsoDate from '../utils/parseIsoDate';

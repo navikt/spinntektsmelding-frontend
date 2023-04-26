@@ -3,7 +3,7 @@ import { StateCreator } from 'zustand';
 import { parseISO } from 'date-fns';
 import { MottattPeriode } from './MottattData';
 import { Periode } from './state';
-import produce from 'immer';
+import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 

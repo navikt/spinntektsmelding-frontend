@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import produce from 'immer';
+import { produce } from 'immer';
 import { Periode } from './state';
 import { MottattPeriode } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';

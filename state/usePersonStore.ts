@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import produce from 'immer';
+import { produce } from 'immer';
 import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
 import { CompleteState } from './useBoundStore';
 
