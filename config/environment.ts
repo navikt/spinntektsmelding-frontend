@@ -13,6 +13,10 @@ class Environment {
     return this.publicRuntimeConfig.loginServiceUrl + '?redirect=XXX';
   }
 
+  get loginServiceUrlUtenRedirect() {
+    return this.publicRuntimeConfig.loginServiceUrl;
+  }
+
   get logoutServiceUrl() {
     return this.publicRuntimeConfig.logoutServiceUrl;
   }
@@ -35,6 +39,10 @@ class Environment {
 
   get hentKvitteringAPI() {
     return this.publicRuntimeConfig.kvitteringDataApi;
+  }
+
+  get minSideArbeidsgiver() {
+    return this.publicRuntimeConfig.minSideArbeidsgiver;
   }
 
   public baseUrl = '/im-dialog';

@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { Button, ConfirmationPanel } from '@navikt/ds-react';
+import { Button, ConfirmationPanel, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 
@@ -33,6 +33,8 @@ import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverp
 import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import useAmplitude from '../utils/useAmplitude';
 import isValidUUID from '../utils/isValidUUID';
+import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
+import env from '../config/environment';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -40,6 +42,7 @@ const Home: NextPage = () => {
   const firstSlug = slug;
   const [pathSlug, setPathSlug] = useState<string>(firstSlug);
   const [senderInn, setSenderInn] = useState<boolean>(false);
+  const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setPathSlug(firstSlug);
@@ -122,6 +125,12 @@ const Home: NextPage = () => {
                 }
               ];
               errorResponse(errors);
+
+              logEvent('skjema innsending feilet', {
+                tittel: 'Innsending feilet - serverfeil',
+                component: 'Hovedskjema'
+              });
+
               break;
             }
 
@@ -129,11 +138,21 @@ const Home: NextPage = () => {
               const errors: Array<ErrorResponse> = [
                 {
                   value: 'Innsending av skjema feilet',
-                  error: 'Fant ikke endepunktet for innsneding',
+                  error: 'Fant ikke endepunktet for innsending',
                   property: 'server'
                 }
               ];
               errorResponse(errors);
+              break;
+            }
+
+            case 401: {
+              logEvent('skjema innsending feilet', {
+                tittel: 'Innsending feilet - ingen tilgang',
+                component: 'Hovedskjema'
+              });
+
+              setIngenTilgangOpen(true);
               break;
             }
 
@@ -241,10 +260,19 @@ const Home: NextPage = () => {
             riktige eller fullstendige.
           </ConfirmationPanel>
           <Feilsammendrag />
-          <Button className={styles.sendbutton} loading={senderInn}>
-            Send
-          </Button>
+          <div className={styles.outerbuttonwrapper}>
+            <div className={styles.buttonwrapper}>
+              <Button className={styles.sendbutton} loading={senderInn}>
+                Send
+              </Button>
+
+              <Link className={styles.lukkelenke} href={env.minSideArbeidsgiver}>
+                Lukk
+              </Link>
+            </div>
+          </div>
         </form>
+        <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
       </PageContent>
     </div>
   );

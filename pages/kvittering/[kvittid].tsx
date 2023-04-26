@@ -32,6 +32,7 @@ import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelse
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isValid } from 'date-fns';
+import env from '../../config/environment';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -199,11 +200,7 @@ const Kvittering: NextPage = () => {
           <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               <ButtonEndre onClick={clickEndre} />
-
-              <Link
-                className={lokalStyles.lukkelenke}
-                href='https://arbeidsgiver.nav.no/min-side-arbeidsgiver/sak-restore-session'
-              >
+              <Link className={lokalStyles.lukkelenke} href={env.minSideArbeidsgiver}>
                 Lukk
               </Link>
             </div>

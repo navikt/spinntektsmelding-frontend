@@ -68,8 +68,7 @@
 }
 
 .sendbutton {
-  min-width : 10rem;
-  margin-top: 1rem;
+  min-width: 10rem;
 }
 
 .personinfowrapper {
@@ -118,6 +117,20 @@
 
 .confirmationpanel {
   margin-top: 1.5rem;
+}
+
+.lukkelenke {
+  margin-top   : auto;
+  margin-bottom: auto;
+}
+
+.outerbuttonwrapper {
+  margin-top: 2rem;
+}
+
+.buttonwrapper {
+  display: flex;
+  gap    : 4rem;
 }
 
 @media screen and (max-width: 800px) {
