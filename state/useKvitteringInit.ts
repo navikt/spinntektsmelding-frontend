@@ -67,17 +67,13 @@ export default function useKvitteringInit() {
       setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
     }
 
-    try {
-      const inntektSisteTreMnd = await fetchInntektsdata(
-        environment.inntektsdataUrl,
-        slug,
-        parseIsoDate(bestemmendeFravaersdag)
-      );
-
-      initBruttoinntekt(beregnetInntekt, inntektSisteTreMnd.tidligereInntekter, parseIsoDate(bestemmendeFravaersdag));
-    } catch (error) {
-      logger.warn('Feil ved henting av tidliger inntektsdata', error);
-    }
+    fetchInntektsdata(environment.inntektsdataUrl, slug, parseIsoDate(bestemmendeFravaersdag))
+      .then((inntektSisteTreMnd) => {
+        initBruttoinntekt(beregnetInntekt, inntektSisteTreMnd.tidligereInntekter, parseIsoDate(bestemmendeFravaersdag));
+      })
+      .catch((error) => {
+        logger.warn('Feil ved henting av tidliger inntektsdata', error);
+      });
 
     initLonnISykefravaeret({
       status: jsonData.refusjon.utbetalerHeleEllerDeler ? 'Ja' : 'Nei',
