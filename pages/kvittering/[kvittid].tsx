@@ -140,8 +140,8 @@ const Kvittering: NextPage = () => {
                 <div className={lokalStyles.arbeidsgiverperiode}>
                   <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
                   <BodyLong>
-                    Arbeidsgiver er ansvarlig å betale ut lønn til den sykmeldte under arbeidsgiverpeioden, etterpå
-                    betaler Nav lønn til den syke eller refunderer bedriften:
+                    Arbeidsgiver er ansvarlig å betale ut lønn til den sykmeldte under arbeidsgiverpeioden. Deretter
+                    betaler Nav lønn til den syke eller refunderer bedriften.
                   </BodyLong>
                   {arbeidsgiverperioder &&
                     arbeidsgiverperioder.map((periode, index) => (
@@ -152,7 +152,7 @@ const Kvittering: NextPage = () => {
             </div>
           </div>
           <Skillelinje />
-          <Heading2>Bruttoinntekt siste 3 måneder</Heading2>
+          <Heading2>Beregnet månedslønn</Heading2>
           <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
           <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
           {bruttoinntekt.endringsaarsak && (
