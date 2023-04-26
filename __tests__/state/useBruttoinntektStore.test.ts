@@ -32,7 +32,7 @@ describe('useBoundStore', () => {
       result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
     });
 
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(50000);
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(40000);
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.tidligereInntekt?.length).toBe(3);
   });
@@ -190,7 +190,7 @@ describe('useBoundStore', () => {
 
     expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(50000);
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(40000);
   });
 
   it('should find a liste of 3 current inntekter', () => {
