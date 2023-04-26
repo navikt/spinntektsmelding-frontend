@@ -4,6 +4,7 @@ import useBoundStore from './useBoundStore';
 import { InnsendingSkjema } from './useFyllInnsending';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
+import { logger } from '@navikt/next-logger';
 
 export interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
@@ -54,22 +55,28 @@ export default function useKvitteringInit() {
     const bestemmendeFravaersdag = jsonData.bestemmendeFraværsdag;
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
-    const inntektSisteTreMnd = await fetchInntektsdata(
-      environment.inntektsdataUrl,
-      slug,
-      parseIsoDate(bestemmendeFravaersdag)
-    );
-
     const arbeidsgiverperiode = jsonData.arbeidsgiverperioder;
     if (arbeidsgiverperiode) initArbeidsgiverperioder(jsonData.arbeidsgiverperioder);
 
+    const beregnetInntekt =
+      jsonData.inntekt && jsonData.inntekt.beregnetInntekt
+        ? jsonData.inntekt.beregnetInntekt
+        : jsonData.beregnetInntekt || 0;
+
     if (bestemmendeFravaersdag) {
-      const beregnetInntekt =
-        jsonData.inntekt && jsonData.inntekt.beregnetInntekt
-          ? jsonData.inntekt.beregnetInntekt
-          : jsonData.beregnetInntekt || 0;
-      initBruttoinntekt(beregnetInntekt, inntektSisteTreMnd.tidligereInntekter, parseIsoDate(bestemmendeFravaersdag));
       setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
+    }
+
+    try {
+      const inntektSisteTreMnd = await fetchInntektsdata(
+        environment.inntektsdataUrl,
+        slug,
+        parseIsoDate(bestemmendeFravaersdag)
+      );
+
+      initBruttoinntekt(beregnetInntekt, inntektSisteTreMnd.tidligereInntekter, parseIsoDate(bestemmendeFravaersdag));
+    } catch (error) {
+      logger.warn('Feil ved henting av tidliger inntektsdata', error);
     }
 
     initLonnISykefravaeret({
