@@ -7,7 +7,11 @@ import { vi } from 'vitest';
 describe('IngenTilgang', () => {
   it('should have no violations and show some text', async () => {
     const handleCloseModal = vi.fn();
-    const { container } = render(<IngenTilgang handleCloseModal={handleCloseModal} open={true} />);
+    const { container } = render(
+      <div id='body'>
+        <IngenTilgang handleCloseModal={handleCloseModal} open={true} />
+      </div>
+    );
 
     const HeadingTitle = screen.getByText(/Åpne ID-Porten/i);
 
