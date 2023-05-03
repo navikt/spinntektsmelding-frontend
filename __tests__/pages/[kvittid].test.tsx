@@ -3,7 +3,10 @@ import { axe } from 'jest-axe';
 import { vi, expect } from 'vitest';
 import Kvittering from '../../pages/kvittering/[kvittid]';
 
+import env from '../../config/environment';
+
 vi.mock('next/router', () => require('next-router-mock'));
+vi.spyOn(env, 'minSideArbeidsgiver', 'get').mockReturnValue('https://mocked.nav.no');
 
 describe('kvittering', () => {
   beforeEach(() => {
