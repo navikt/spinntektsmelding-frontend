@@ -228,18 +228,31 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
     set(
       produce((state) => {
+        if (!state.bruttoInntekt) {
+          state.bruttoInntekt = {};
+        }
+        if (!state.opprinneligbruttoinntekt) {
+          state.opprinneligbruttoinntekt = {};
+        }
         state.bruttoinntekt = {
+          ...state.bruttoInntekt,
           bruttoInntekt: snittInntekter,
           bekreftet: true,
-          manueltKorrigert: false,
-          endringsaarsak: ''
+          manueltKorrigert: false
         };
         state.opprinneligbruttoinntekt = {
+          ...state.opprinneligbruttoinntekt,
           bruttoInntekt: snittInntekter,
           bekreftet: true,
-          manueltKorrigert: false,
-          endringsaarsak: ''
+          manueltKorrigert: false
         };
+
+        if (!state.bruttoinntekt.endringsaarsak) {
+          state.bruttoinntekt.endringsaarsak = '';
+        }
+        if (!state.opprinneligbruttoinntekt.endringsaarsak) {
+          state.opprinneligbruttoinntekt.endringsaarsak = '';
+        }
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         state.opprinneligeInntekt = tidligereInntekt;
 

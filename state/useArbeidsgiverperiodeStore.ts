@@ -4,9 +4,7 @@ import { CompleteState } from './useBoundStore';
 import { Periode } from './state';
 import { nanoid } from 'nanoid';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
-import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
-import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import { isValid } from 'date-fns';
 import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
@@ -87,11 +85,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           state.arbeidsgiverperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
           state.endretArbeidsgiverperiode = true;
 
-          const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
-          if (bestemmende) {
-            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-          }
           const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
             state.arbeidsgiverperioder,
             'arbeidsgiverperioder'
@@ -113,13 +106,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             return periode;
           });
 
-          const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
-          if (bestemmende) {
-            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-
-            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
-          }
           state.endretArbeidsgiverperiode = true;
 
           const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
@@ -162,13 +148,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           state.arbeidsgiverperioder = aperioder.filter(
             (periode) => periode.fom && periode.tom && isValid(periode.fom) && isValid(periode.tom)
           );
-
-          const bestemmende = finnBestemmendeFravaersdag(state.arbeidsgiverperioder);
-          if (bestemmende) {
-            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
-          }
 
           slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
 

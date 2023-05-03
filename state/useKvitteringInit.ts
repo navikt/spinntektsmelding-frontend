@@ -5,6 +5,8 @@ import { InnsendingSkjema } from './useFyllInnsending';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 import { logger } from '@navikt/next-logger';
+import { Periode } from './state';
+import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 
 export interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
@@ -36,6 +38,14 @@ export default function useKvitteringInit() {
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
   const setSlug = useBoundStore((state) => state.setSlug);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
+  const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
+  const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
+  const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
+  const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
+  const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
+  const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
+  const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
@@ -70,6 +80,50 @@ export default function useKvitteringInit() {
     fetchInntektsdata(environment.inntektsdataUrl, slug, parseIsoDate(bestemmendeFravaersdag))
       .then((inntektSisteTreMnd) => {
         initBruttoinntekt(beregnetInntekt, inntektSisteTreMnd.tidligereInntekter, parseIsoDate(bestemmendeFravaersdag));
+        if (jsonData.inntekt.endringÅrsak) {
+          const aarsak = jsonData.inntekt.endringÅrsak;
+          setEndringsaarsak(aarsak.typpe);
+
+          switch (aarsak.typpe) {
+            case begrunnelseEndringBruttoinntekt.Tariffendring: {
+              setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
+              setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
+            }
+
+            case begrunnelseEndringBruttoinntekt.Ferie: {
+              const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
+                fom: parseIsoDate(periode.fom),
+                tom: parseIsoDate(periode.tom)
+              }));
+              setFeriePeriode(perioder);
+            }
+            case begrunnelseEndringBruttoinntekt.VarigLonnsendring:
+
+            case begrunnelseEndringBruttoinntekt.Permisjon: {
+              const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
+                fom: parseIsoDate(periode.fom),
+                tom: parseIsoDate(periode.tom)
+              }));
+              setPermisjonPeriode(perioder);
+            }
+
+            case begrunnelseEndringBruttoinntekt.Permittering: {
+              const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
+                fom: parseIsoDate(periode.fom),
+                tom: parseIsoDate(periode.tom)
+              }));
+              setPermitteringPeriode(perioder);
+            }
+
+            case begrunnelseEndringBruttoinntekt.NyStilling: {
+              setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
+            }
+
+            case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
+              setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
+            }
+          }
+        }
       })
       .catch((error) => {
         logger.warn('Feil ved henting av tidliger inntektsdata', error);
