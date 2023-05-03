@@ -46,6 +46,7 @@ export default function useKvitteringInit() {
   const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
   const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
+  const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
@@ -88,6 +89,7 @@ export default function useKvitteringInit() {
             case begrunnelseEndringBruttoinntekt.Tariffendring: {
               setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
               setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
+              break;
             }
 
             case begrunnelseEndringBruttoinntekt.Ferie: {
@@ -96,8 +98,12 @@ export default function useKvitteringInit() {
                 tom: parseIsoDate(periode.tom)
               }));
               setFeriePeriode(perioder);
+              break;
             }
-            case begrunnelseEndringBruttoinntekt.VarigLonnsendring:
+            case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
+              setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
+              break;
+            }
 
             case begrunnelseEndringBruttoinntekt.Permisjon: {
               const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
@@ -105,6 +111,7 @@ export default function useKvitteringInit() {
                 tom: parseIsoDate(periode.tom)
               }));
               setPermisjonPeriode(perioder);
+              break;
             }
 
             case begrunnelseEndringBruttoinntekt.Permittering: {
@@ -113,14 +120,17 @@ export default function useKvitteringInit() {
                 tom: parseIsoDate(periode.tom)
               }));
               setPermitteringPeriode(perioder);
+              break;
             }
 
             case begrunnelseEndringBruttoinntekt.NyStilling: {
               setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
+              break;
             }
 
             case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
               setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
+              break;
             }
           }
         }
