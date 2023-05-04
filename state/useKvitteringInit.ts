@@ -19,7 +19,7 @@ export interface KvitteringSkjema extends InnsendingSkjema {
 
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
-  const initBruttoinntekt = useBoundStore((state) => state.initBruttoinntekt);
+  const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
 
@@ -74,66 +74,65 @@ export default function useKvitteringInit() {
         ? jsonData.inntekt.beregnetInntekt
         : jsonData.beregnetInntekt || 0;
 
-    if (bestemmendeFravaersdag) {
-      setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
+    setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
+
+    if (jsonData.inntekt.endringÅrsak) {
+      const aarsak = jsonData.inntekt.endringÅrsak;
+      setEndringsaarsak(aarsak.typpe);
+
+      switch (aarsak.typpe) {
+        case begrunnelseEndringBruttoinntekt.Tariffendring: {
+          setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
+          setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
+          break;
+        }
+
+        case begrunnelseEndringBruttoinntekt.Ferie: {
+          const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom)
+          }));
+          setFeriePeriode(perioder);
+          break;
+        }
+        case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
+          setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
+          break;
+        }
+
+        case begrunnelseEndringBruttoinntekt.Permisjon: {
+          const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom)
+          }));
+          setPermisjonPeriode(perioder);
+          break;
+        }
+
+        case begrunnelseEndringBruttoinntekt.Permittering: {
+          const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom)
+          }));
+          setPermitteringPeriode(perioder);
+          break;
+        }
+
+        case begrunnelseEndringBruttoinntekt.NyStilling: {
+          setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
+          break;
+        }
+
+        case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
+          setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
+          break;
+        }
+      }
     }
 
     fetchInntektsdata(environment.inntektsdataUrl, slug, parseIsoDate(bestemmendeFravaersdag))
       .then((inntektSisteTreMnd) => {
-        initBruttoinntekt(beregnetInntekt, inntektSisteTreMnd.tidligereInntekter, parseIsoDate(bestemmendeFravaersdag));
-        if (jsonData.inntekt.endringÅrsak) {
-          const aarsak = jsonData.inntekt.endringÅrsak;
-          setEndringsaarsak(aarsak.typpe);
-
-          switch (aarsak.typpe) {
-            case begrunnelseEndringBruttoinntekt.Tariffendring: {
-              setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
-              setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
-              break;
-            }
-
-            case begrunnelseEndringBruttoinntekt.Ferie: {
-              const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
-                fom: parseIsoDate(periode.fom),
-                tom: parseIsoDate(periode.tom)
-              }));
-              setFeriePeriode(perioder);
-              break;
-            }
-            case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
-              setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
-              break;
-            }
-
-            case begrunnelseEndringBruttoinntekt.Permisjon: {
-              const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
-                fom: parseIsoDate(periode.fom),
-                tom: parseIsoDate(periode.tom)
-              }));
-              setPermisjonPeriode(perioder);
-              break;
-            }
-
-            case begrunnelseEndringBruttoinntekt.Permittering: {
-              const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
-                fom: parseIsoDate(periode.fom),
-                tom: parseIsoDate(periode.tom)
-              }));
-              setPermitteringPeriode(perioder);
-              break;
-            }
-
-            case begrunnelseEndringBruttoinntekt.NyStilling: {
-              setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
-              break;
-            }
-
-            case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
-              setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
-              break;
-            }
-          }
-        }
+        setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
       })
       .catch((error) => {
         logger.warn('Feil ved henting av tidliger inntektsdata', error);

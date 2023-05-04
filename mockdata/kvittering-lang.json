@@ -29,7 +29,11 @@
   "inntekt": {
     "bekreftet": true,
     "beregnetInntekt": 46000,
-    "endringÅrsak": null,
+    "endringÅrsak": {
+      "typpe": "Tariffendring",
+      "gjelderFra": "2023-02-24",
+      "bleKjent": "2023-03-31"
+    },
     "manueltKorrigert": false
   },
   "fullLønnIArbeidsgiverPerioden": {

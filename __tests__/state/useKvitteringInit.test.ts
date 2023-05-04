@@ -7,7 +7,6 @@ import mottattKvittering from '../../mockdata/kvittering.json';
 import annenMottattKvittering from '../../mockdata/kvittering-lang.json';
 import inntektData from '../../mockdata/inntektData';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { YesNo } from '../../state/state';
 
 vi.mock('nanoid');
 
@@ -86,8 +85,12 @@ describe('useKvitteringInit', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('LovligFravaer');
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toBe(30000);
 
-    expect(result.current.harRefusjonEndringer).toBe('Ja');
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Tariffendring');
+    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.egenmeldingsperioder).toEqual([{ id: 'uuid' }]);
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+    expect(result.current.tariffendringsdato).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.tariffkjentdato).toEqual(parseIsoDate('2023-03-31'));
     expect(result.current.slug).toBe('sluggish');
   });
 });
