@@ -1,0 +1,58 @@
+{
+  "orgnrUnderenhet": "810007842",
+  "identitetsnummer": "10486535275",
+  "fulltNavn": "Ultrafiolett Damesykkel",
+  "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "behandlingsdager": [],
+  "egenmeldingsperioder": [],
+  "arbeidsgiverperioder": [
+    {
+      "fom": "2023-02-06",
+      "tom": "2023-02-10"
+    },
+    {
+      "fom": "2023-02-24",
+      "tom": "2023-03-06"
+    }
+  ],
+  "bestemmendeFraværsdag": "2023-02-24",
+  "fraværsperioder": [
+    {
+      "fom": "2023-02-06",
+      "tom": "2023-02-10"
+    },
+    {
+      "fom": "2023-02-24",
+      "tom": "2023-03-31"
+    }
+  ],
+  "inntekt": {
+    "bekreftet": true,
+    "beregnetInntekt": 46000,
+    "endringÅrsak": {
+      "typpe": "NyStilling",
+      "gjelderFra": "2023-02-24"
+    },
+    "manueltKorrigert": false
+  },
+  "fullLønnIArbeidsgiverPerioden": {
+    "utbetalerFullLønn": false,
+    "begrunnelse": "LovligFravaer",
+    "utbetalt": 30000
+  },
+  "refusjon": {
+    "utbetalerHeleEllerDeler": true,
+    "refusjonPrMnd": 43000,
+    "refusjonOpphører": "2023-08-31",
+    "refusjonEndringer": [
+      {
+        "beløp": 40000,
+        "dato": "2023-06-22"
+      }
+    ]
+  },
+  "naturalytelser": null,
+  "årsakInnsending": "Ny",
+  "bekreftOpplysninger": true,
+  "tidspunkt": "2023-04-26T08:01:31.170336157+02:00"
+}
