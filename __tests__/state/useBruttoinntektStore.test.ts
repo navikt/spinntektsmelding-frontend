@@ -122,7 +122,7 @@ describe('useBoundStore', () => {
     });
   });
 
-  it('should return an error when ny maanedsinntekt = 0. Skjema er blankt, ikke preutfylt', () => {
+  it('should setNyMaanedsinntektBlanktSkjema string', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -131,6 +131,21 @@ describe('useBoundStore', () => {
 
     act(() => {
       result.current.setNyMaanedsinntektBlanktSkjema('1234,56');
+    });
+
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(1234.56);
+    expect(result.current.feilmeldinger.length).toBe(0);
+  });
+
+  it('should setNyMaanedsinntektBlanktSkjema number', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setNyMaanedsinntektBlanktSkjema(1234.56);
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(1234.56);
@@ -212,6 +227,18 @@ describe('useBoundStore', () => {
     ];
 
     expect(inntekter).toEqual(expected);
+  });
+
+  it('should find an empty liste when there are no current inntekter', () => {
+    const inntekter = finnAktuelleInntekter(undefined, new Date(2002, 9, 9));
+
+    expect(inntekter).toEqual([]);
+  });
+
+  it('should find an empty liste when there are no current inntekter', () => {
+    const inntekter = finnAktuelleInntekter([], new Date(2002, 9, 9));
+
+    expect(inntekter).toEqual([]);
   });
 
   it('should find a liste of no current inntekter as they are too old', () => {
@@ -379,6 +406,34 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.permisjon).toEqual([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+  });
+
+  it('should setTidligereInntekter', () => {
+    const tidligereInntekt: Array<HistoriskInntekt> = [
+      { maaned: '2002-02', inntekt: 33000 },
+      { maaned: '2002-03', inntekt: 44000 },
+      { maaned: '2002-04', inntekt: 55000 }
+    ];
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.setTidligereInntekter(tidligereInntekt);
+    });
+
+    expect(result.current.tidligereInntekt).toEqual([
+      {
+        inntekt: 33000,
+        maaned: '2002-02'
+      },
+      {
+        inntekt: 44000,
+        maaned: '2002-03'
+      },
+      {
+        inntekt: 55000,
+        maaned: '2002-04'
+      }
+    ]);
   });
 
   it('should return 0 when maaned are equal', () => {
