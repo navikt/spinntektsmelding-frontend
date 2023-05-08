@@ -666,4 +666,94 @@ describe('useBoundStore', () => {
       expect(result.current.endretArbeidsgiverperiode).toBeFalsy();
     });
   });
+
+  it('should delete a periode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
+
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        fom: new Date(2022, 9, 1),
+        id: '1',
+        tom: new Date(2022, 9, 5)
+      },
+      {
+        fom: new Date(2022, 9, 10),
+        id: '2',
+        tom: new Date(2022, 9, 15)
+      }
+    ]);
+
+    act(() => {
+      result.current.slettArbeidsgiverperiode('1');
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        fom: new Date(2022, 9, 10),
+        id: '2',
+        tom: new Date(2022, 9, 15)
+      }
+    ]);
+  });
+
+  it('should update a periode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
+
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
+
+    act(() => {
+      result.current.setArbeidsgiverperiodeDato(
+        {
+          fom: new Date(2022, 9, 4),
+          tom: new Date(2022, 9, 6)
+        },
+        '1'
+      );
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        fom: new Date(2022, 9, 4),
+        id: '1',
+        tom: new Date(2022, 9, 6)
+      },
+      {
+        fom: new Date(2022, 9, 10),
+        id: '2',
+        tom: new Date(2022, 9, 15)
+      }
+    ]);
+  });
 });
