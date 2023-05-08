@@ -6,7 +6,7 @@ import formatIsoDate from '../utils/formatIsoDate';
 import { Periode } from './state';
 import useBoundStore from './useBoundStore';
 
-interface SendtPeriode {
+export interface SendtPeriode {
   fom: string;
   tom: string;
 }
@@ -35,20 +35,20 @@ interface SendtNaturalytelse {
   beløp: number;
 }
 
-interface AArsakType {
+export interface AArsakType {
   typpe: string;
 }
 
-interface Tariffendring extends AArsakType {
+export interface Tariffendring extends AArsakType {
   gjelderFra: string;
   bleKjent: string;
 }
 
-interface PeriodeListe extends AArsakType {
+export interface PeriodeListe extends AArsakType {
   liste: Array<SendtPeriode>;
 }
 
-interface StillingsEndring extends AArsakType {
+export interface StillingsEndring extends AArsakType {
   gjelderFra: string;
 }
 

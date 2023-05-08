@@ -1,7 +1,14 @@
 import parseIsoDate from '../utils/parseIsoDate';
 import { MottattNaturalytelse } from './MottattData';
 import useBoundStore from './useBoundStore';
-import { InnsendingSkjema } from './useFyllInnsending';
+import {
+  AArsakType,
+  InnsendingSkjema,
+  PeriodeListe,
+  SendtPeriode,
+  StillingsEndring,
+  Tariffendring
+} from './useFyllInnsending';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 import { logger } from '@navikt/next-logger';
@@ -47,6 +54,7 @@ export default function useKvitteringInit() {
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
   const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
+  const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
@@ -67,6 +75,7 @@ export default function useKvitteringInit() {
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     const arbeidsgiverperiode = jsonData.arbeidsgiverperioder;
+
     if (arbeidsgiverperiode) initArbeidsgiverperioder(jsonData.arbeidsgiverperioder);
 
     const beregnetInntekt =
@@ -77,7 +86,8 @@ export default function useKvitteringInit() {
     setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
 
     if (jsonData.inntekt.endringÅrsak) {
-      const aarsak = jsonData.inntekt.endringÅrsak;
+      const aarsak: Tariffendring | PeriodeListe | StillingsEndring | AArsakType | undefined =
+        jsonData.inntekt.endringÅrsak;
       setEndringsaarsak(aarsak.typpe);
 
       switch (aarsak.typpe) {
@@ -88,7 +98,7 @@ export default function useKvitteringInit() {
         }
 
         case begrunnelseEndringBruttoinntekt.Ferie: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
+          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
             fom: parseIsoDate(periode.fom),
             tom: parseIsoDate(periode.tom)
           }));
@@ -101,7 +111,7 @@ export default function useKvitteringInit() {
         }
 
         case begrunnelseEndringBruttoinntekt.Permisjon: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
+          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
             fom: parseIsoDate(periode.fom),
             tom: parseIsoDate(periode.tom)
           }));
@@ -110,7 +120,7 @@ export default function useKvitteringInit() {
         }
 
         case begrunnelseEndringBruttoinntekt.Permittering: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode) => ({
+          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
             fom: parseIsoDate(periode.fom),
             tom: parseIsoDate(periode.tom)
           }));
@@ -181,6 +191,8 @@ export default function useKvitteringInit() {
 
       initNaturalytelser(ytelser);
     }
+
+    harArbeidsgiverperiodenBlittEndret();
 
     if (jsonData.tidspunkt) {
       setKvitteringInnsendt(jsonData.tidspunkt);

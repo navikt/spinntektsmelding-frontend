@@ -58,8 +58,8 @@ export default function LonnUnderSykefravaeret({
               <BodyShort className={lokalStyle.svartekster}>{refusjonskravetOpphoerer.status}</BodyShort>
               {refusjonskravetOpphoerer.status === 'Ja' && (
                 <>
+                  <div className={lokalStyle.uthevet}>Opphørsdato</div>
                   <BodyShort className={lokalStyle.svartekster}>
-                    <div className={lokalStyle.uthevet}>Opphørsdato</div>{' '}
                     {formatDate(refusjonskravetOpphoerer.opphorsdato)}
                   </BodyShort>
                 </>

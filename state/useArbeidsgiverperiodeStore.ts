@@ -11,12 +11,14 @@ import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
 import { MottattPeriode } from './MottattData';
+import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
   arbeidsgiverperioder?: Array<Periode>;
   endringsbegrunnelse?: string;
   endretArbeidsgiverperiode: boolean;
+  opprinneligArbeidsgiverperioder?: Array<Periode>;
   setBestemmendeFravaersdag: (bestemmendeFravaersdag: Date | undefined) => void;
   setArbeidsgiverperioder: (arbeidsgiverperioder: Array<Periode> | undefined) => void;
   initArbeidsgiverperioder: (arbeidsgiverperioder: Array<MottattPeriode> | undefined) => void;
@@ -26,6 +28,7 @@ export interface ArbeidsgiverperiodeState {
   setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
   setEndreArbeidsgiverperiode: (endre: boolean) => void;
   tilbakestillArbeidsgiverperiode: () => void;
+  harArbeidsgiverperiodenBlittEndret: () => void;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => {
@@ -53,7 +56,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     initArbeidsgiverperioder: (arbeidsgiverperioder) =>
       set(
         produce((state) => {
-          state.arbeidsgiverperioder = arbeidsgiverperioder
+          const perioder = arbeidsgiverperioder
             ? arbeidsgiverperioder.map((periode) => ({
                 fom: parseIsoDate(periode.fom),
                 tom: parseIsoDate(periode.tom),
@@ -61,6 +64,8 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
               }))
             : undefined;
 
+          state.arbeidsgiverperioder = structuredClone(perioder);
+          state.opprinneligArbeidsgiverperioder = structuredClone(perioder);
           return state;
         })
       ),
@@ -137,21 +142,69 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         })
       ),
     tilbakestillArbeidsgiverperiode: () => {
+      const opprinnelig = get().opprinneligArbeidsgiverperioder;
+      const egenmeldingsperioder = get().egenmeldingsperioder;
+      const sykmeldingsperioder = get().fravaersperioder;
       set(
         produce((state) => {
-          const periode = state.fravaersperioder
-            ? state.fravaersperioder.concat(state.egenmeldingsperioder)
-            : [].concat(state.egenmeldingsperioder);
+          const perioder = sykmeldingsperioder
+            ? sykmeldingsperioder.concat(egenmeldingsperioder)
+            : egenmeldingsperioder;
 
-          const aperioder = finnArbeidsgiverperiode(periode);
+          const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder);
+          if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
 
-          state.arbeidsgiverperioder = aperioder.filter(
-            (periode) => periode.fom && periode.tom && isValid(periode.fom) && isValid(periode.tom)
-          );
+          const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
 
+          if (arbeidsgiverperiode) {
+            state.arbeidsgiverperioder = arbeidsgiverperiode;
+            console.log('utregnet arbeidsgiverperiode', arbeidsgiverperiode);
+          } else {
+            state.arbeidsgiverperioder = structuredClone(opprinnelig);
+            console.log('opprinnelig arbeidsgiverperiode', opprinnelig);
+          }
+
+          // if (opprinnelig) {
+          //   state.arbeidsgiverperioder = opprinnelig;
+          // } else {
+          //   const periode = state.fravaersperioder
+          //     ? state.fravaersperioder.concat(state.egenmeldingsperioder)
+          //     : [].concat(state.egenmeldingsperioder);
+
+          //   const aperioder = finnArbeidsgiverperiode(periode);
+
+          //   state.arbeidsgiverperioder = aperioder.filter(
+          //     (periode) => periode.fom && periode.tom && isValid(periode.fom) && isValid(periode.tom)
+          //   );
+          // }
           slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
 
           state.endretArbeidsgiverperiode = false;
+          return state;
+        })
+      );
+    },
+    harArbeidsgiverperiodenBlittEndret: () => {
+      const opprinnelig = get().opprinneligArbeidsgiverperioder;
+      const egenmeldingsperioder = get().egenmeldingsperioder;
+      const sykmeldingsperioder = get().fravaersperioder;
+      set(
+        produce((state) => {
+          const perioder = sykmeldingsperioder
+            ? sykmeldingsperioder.concat(egenmeldingsperioder)
+            : egenmeldingsperioder;
+
+          if (!opprinnelig) {
+            return state;
+          }
+          const uendret = perioder.find((periode) =>
+            opprinnelig?.find((opprinneligPeriode) => opprinneligPeriode.fom === periode.fom)
+          );
+
+          if (!uendret) {
+            state.endretArbeidsgiverperiode = true;
+          }
+
           return state;
         })
       );

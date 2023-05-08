@@ -37,19 +37,12 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           return periode;
         });
 
-        const fravaersperioder: Array<Periode> = state.fravaersperioder;
+        const fPerioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
 
-        const perioder =
-          fravaersperioder && state.egenmeldingsperioder
-            ? fravaersperioder.concat(state.egenmeldingsperioder)
-            : fravaersperioder;
-
-        const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom);
         if (fPerioder) {
           const agp = finnArbeidsgiverperiode(fPerioder);
-          state.setArbeidsgiverperioder(agp);
-
-          const bestemmende = finnBestemmendeFravaersdag(agp);
+          state.arbeidsgiverperioder = agp;
+          const bestemmende = finnBestemmendeFravaersdag(fPerioder);
           if (bestemmende) {
             state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
@@ -132,3 +125,11 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
 });
 
 export default useEgenmeldingStore;
+
+function finnFravaersperioder(fravaersperioder: Array<Periode>, egenmeldingsperioder: Array<Periode>) {
+  const perioder =
+    fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
+
+  const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom);
+  return fPerioder;
+}

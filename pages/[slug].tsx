@@ -193,7 +193,7 @@ const Home: NextPage = () => {
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
     setOpplysningerBekreftet(!!event.currentTarget.checked);
-    if (!!event.currentTarget.checked) {
+    if (event.currentTarget.checked) {
       slettFeilmelding('bekreft-opplysninger');
     } else {
       leggTilFeilmelding('bekreft-opplysninger', feiltekster.BEKREFT_OPPLYSNINGER);

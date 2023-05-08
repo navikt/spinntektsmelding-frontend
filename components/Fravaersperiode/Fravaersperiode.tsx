@@ -11,24 +11,25 @@ interface FravaersperiodeProps {
 export default function Fravaersperiode({ egenmeldingsperioder }: FravaersperiodeProps) {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
 
-  const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
+  // const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
 
-  const ucSetArbeidsgiverperiode = useCallback(
-    (agp: Periode[] | undefined) => setArbeidsgiverperioder(agp),
-    [setArbeidsgiverperioder]
-  );
+  // const ucSetArbeidsgiverperiode = useCallback(
+  //   (agp: Periode[] | undefined) => setArbeidsgiverperioder(agp),
+  //   [setArbeidsgiverperioder]
+  // );
 
-  useEffect(() => {
-    const perioder =
-      fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
+  // useEffect(() => {
+  //   const perioder =
+  //     fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
 
-    const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom);
+  //   const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom);
 
-    if (fPerioder) {
-      const agp = finnArbeidsgiverperiode(fPerioder);
-      ucSetArbeidsgiverperiode(agp);
-    }
-  }, [fravaersperioder, egenmeldingsperioder, ucSetArbeidsgiverperiode]);
+  //   if (fPerioder) {
+  //     const agp = finnArbeidsgiverperiode(fPerioder);
+  //     console.log('ucSetArbeidsgiverperiode');
+  //     ucSetArbeidsgiverperiode(agp);
+  //   }
+  // }, [fravaersperioder, egenmeldingsperioder, ucSetArbeidsgiverperiode]);
 
   if (!fravaersperioder) return null;
 
