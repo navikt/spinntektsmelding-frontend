@@ -6,7 +6,6 @@ import { nanoid } from 'nanoid';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import parseIsoDate from '../utils/parseIsoDate';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
-import { isValid } from 'date-fns';
 import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
@@ -177,13 +176,14 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       const sykmeldingsperioder = get().fravaersperioder;
       set(
         produce((state) => {
+          if (!opprinnelig) {
+            return state;
+          }
+
           const perioder = sykmeldingsperioder
             ? sykmeldingsperioder.concat(egenmeldingsperioder)
             : egenmeldingsperioder;
 
-          if (!opprinnelig) {
-            return state;
-          }
           const uendret = perioder.find((periode) =>
             opprinnelig?.find((opprinneligPeriode) => opprinneligPeriode.fom === periode.fom)
           );
