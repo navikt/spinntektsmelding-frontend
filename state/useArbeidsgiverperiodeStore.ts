@@ -164,19 +164,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             console.log('opprinnelig arbeidsgiverperiode', opprinnelig);
           }
 
-          // if (opprinnelig) {
-          //   state.arbeidsgiverperioder = opprinnelig;
-          // } else {
-          //   const periode = state.fravaersperioder
-          //     ? state.fravaersperioder.concat(state.egenmeldingsperioder)
-          //     : [].concat(state.egenmeldingsperioder);
-
-          //   const aperioder = finnArbeidsgiverperiode(periode);
-
-          //   state.arbeidsgiverperioder = aperioder.filter(
-          //     (periode) => periode.fom && periode.tom && isValid(periode.fom) && isValid(periode.tom)
-          //   );
-          // }
           slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
 
           state.endretArbeidsgiverperiode = false;
