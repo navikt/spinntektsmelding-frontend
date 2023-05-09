@@ -24,7 +24,6 @@ import Feilsammendrag from '../components/Feilsammendrag';
 import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 
 import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
-import formatIsoDate from '../utils/formatIsoDate';
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import useErrorRespons, { ErrorResponse } from '../utils/useErrorResponse';
 import environment from '../config/environment';
@@ -92,11 +91,7 @@ const Home: NextPage = () => {
       });
     } else {
       const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
-      skjemaData.bestemmendeFraværsdag = formatIsoDate(bestemmendeFravaersdag);
-      skjemaData.arbeidsgiverperioder = arbeidsgiverperioder!.map((periode) => ({
-        fom: formatIsoDate(periode.fom),
-        tom: formatIsoDate(periode.tom)
-      }));
+
       fyllFeilmeldinger([]);
       setSenderInn(true);
       const postData = async () => {
@@ -193,7 +188,7 @@ const Home: NextPage = () => {
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
     setOpplysningerBekreftet(!!event.currentTarget.checked);
-    if (!!event.currentTarget.checked) {
+    if (event.currentTarget.checked) {
       slettFeilmelding('bekreft-opplysninger');
     } else {
       leggTilFeilmelding('bekreft-opplysninger', feiltekster.BEKREFT_OPPLYSNINGER);

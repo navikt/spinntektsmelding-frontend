@@ -30,9 +30,13 @@
     "bekreftet": true,
     "beregnetInntekt": 46000,
     "endringÅrsak": {
-      "typpe": "Tariffendring",
-      "gjelderFra": "2023-02-24",
-      "bleKjent": "2023-03-31"
+      "typpe": "Permisjon",
+      "liste": [
+        {
+          "fom": "2023-02-24",
+          "tom": "2023-03-31"
+        }
+      ]
     },
     "manueltKorrigert": false
   },

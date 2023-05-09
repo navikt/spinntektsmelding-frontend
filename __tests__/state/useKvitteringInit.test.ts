@@ -5,9 +5,14 @@ import useKvitteringInit, { KvitteringSkjema } from '../../state/useKvitteringIn
 import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 import annenMottattKvittering from '../../mockdata/kvittering-lang.json';
+import ferieKvittering from '../../mockdata/kvittering-ferie.json';
+import varigLonnsendringKvittering from '../../mockdata/kvittering-VarigLonnsendring.json';
+import permisjonKvittering from '../../mockdata/kvittering-Permisjon.json';
+import permitteringKvittering from '../../mockdata/kvittering-Permittering.json';
+import nyStillingKvittering from '../../mockdata/kvittering-NyStilling.json';
+import nyStillingsprosentKvittering from '../../mockdata/kvittering-NyStillingsprosent.json';
 import inntektData from '../../mockdata/inntektData';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { YesNo } from '../../state/state';
 
 vi.mock('nanoid');
 
@@ -86,8 +91,135 @@ describe('useKvitteringInit', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('LovligFravaer');
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toBe(30000);
 
-    expect(result.current.harRefusjonEndringer).toBe('Ja');
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Tariffendring');
+    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.egenmeldingsperioder).toEqual([{ id: 'uuid' }]);
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+    expect(result.current.tariffendringsdato).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.tariffkjentdato).toEqual(parseIsoDate('2023-03-31'));
     expect(result.current.slug).toBe('sluggish');
+  });
+
+  it('should fill the state with ferie stuff', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(ferieKvittering as unknown as KvitteringSkjema, 'sluggish');
+    });
+
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Ferie');
+    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+
+    expect(result.current.ferie).toEqual([
+      {
+        fom: parseIsoDate('2023-02-24'),
+        tom: parseIsoDate('2023-03-31')
+      }
+    ]);
+  });
+
+  it('should fill the state with VarigLonnsendring stuff', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(varigLonnsendringKvittering as unknown as KvitteringSkjema, 'sluggish');
+    });
+
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('VarigLonnsendring');
+    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+
+    expect(result.current.lonnsendringsdato).toEqual(parseIsoDate('2023-02-24'));
+  });
+
+  it('should fill the state with permisjon stuff', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(permisjonKvittering as unknown as KvitteringSkjema, 'sluggish');
+    });
+
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Permisjon');
+    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+
+    expect(result.current.permisjon).toEqual([
+      {
+        fom: parseIsoDate('2023-02-24'),
+        tom: parseIsoDate('2023-03-31')
+      }
+    ]);
+  });
+
+  it('should fill the state with permittering stuff', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(permitteringKvittering as unknown as KvitteringSkjema, 'sluggish');
+    });
+
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Permittering');
+    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+
+    expect(result.current.permittering).toEqual([
+      {
+        fom: parseIsoDate('2023-02-24'),
+        tom: parseIsoDate('2023-03-31')
+      }
+    ]);
+  });
+
+  it('should fill the state with NyStilling stuff', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(nyStillingKvittering as unknown as KvitteringSkjema, 'sluggish');
+    });
+
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('NyStilling');
+    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+
+    expect(result.current.nystillingdato).toEqual(parseIsoDate('2023-02-24'));
+  });
+
+  it('should fill the state with NyStillingsprosent stuff', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(nyStillingsprosentKvittering as unknown as KvitteringSkjema, 'sluggish');
+    });
+
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('NyStillingsprosent');
+    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+
+    expect(result.current.nystillingsprosentdato).toEqual(parseIsoDate('2023-02-24'));
   });
 });

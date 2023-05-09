@@ -47,6 +47,7 @@ export interface BruttoinntektState {
   setPermitteringPeriode: (periode: Array<Periode> | undefined) => void;
   tilbakestillMaanedsinntekt: () => void;
   bekreftKorrektInntekt: (bekreftet: boolean, reset?: boolean) => void;
+  setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
     bruttoInntekt: number,
     tidligereInntekt: Array<HistoriskInntekt>,
@@ -98,10 +99,10 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     );
   },
-  setNyMaanedsinntektBlanktSkjema: (belop: string) =>
+  setNyMaanedsinntektBlanktSkjema: (belop: string | number) =>
     set(
       produce((state) => {
-        state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
+        state.bruttoinntekt.bruttoInntekt = typeof belop === 'string' ? stringishToNumber(belop) : belop;
         state.bruttoinntekt.manueltKorrigert = false;
         state.bruttoinntekt.bekreftet = true;
         if (state.bruttoinntekt.bruttoInntekt !== undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
@@ -208,6 +209,16 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
+  setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) =>
+    set(
+      produce((state) => {
+        state.tidligereInntekt = tidligereInntekt.map((inntekt) => ({
+          maaned: inntekt.maaned,
+          inntekt: inntekt.inntekt
+        }));
+        return state;
+      })
+    ),
   initBruttoinntekt: (
     bruttoInntekt: number,
     tidligereInntekt: Array<HistoriskInntekt>,
@@ -228,18 +239,31 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
     set(
       produce((state) => {
+        if (!state.bruttoInntekt) {
+          state.bruttoInntekt = {};
+        }
+        if (!state.opprinneligbruttoinntekt) {
+          state.opprinneligbruttoinntekt = {};
+        }
         state.bruttoinntekt = {
+          ...state.bruttoInntekt,
           bruttoInntekt: snittInntekter,
           bekreftet: true,
-          manueltKorrigert: false,
-          endringsaarsak: ''
+          manueltKorrigert: false
         };
         state.opprinneligbruttoinntekt = {
+          ...state.opprinneligbruttoinntekt,
           bruttoInntekt: snittInntekter,
           bekreftet: true,
-          manueltKorrigert: false,
-          endringsaarsak: ''
+          manueltKorrigert: false
         };
+
+        if (!state.bruttoinntekt.endringsaarsak) {
+          state.bruttoinntekt.endringsaarsak = '';
+        }
+        if (!state.opprinneligbruttoinntekt.endringsaarsak) {
+          state.opprinneligbruttoinntekt.endringsaarsak = '';
+        }
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         state.opprinneligeInntekt = tidligereInntekt;
 

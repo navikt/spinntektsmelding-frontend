@@ -69,6 +69,8 @@ const Kvittering: NextPage = () => {
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
+  const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
+  const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
   const slettKvitteringInnsendt = useBoundStore((state) => state.slettKvitteringInnsendt);
 
   const clickEndre = () => {
@@ -102,7 +104,6 @@ const Kvittering: NextPage = () => {
       <PageContent title='Kvittering - innsendt inntektsmelding'>
         <div className={`main-content ${styles.padded}`}>
           <Person erKvittering={true} />
-
           <Skillelinje />
           <div className={lokalStyles.fravaerswrapperwrapper}>
             <div className={lokalStyles.fravaersperiode}>
@@ -169,12 +170,13 @@ const Kvittering: NextPage = () => {
                 permittering={permittering}
                 nystillingdato={nystillingdato}
                 nystillingsprosentdato={nystillingsprosentdato}
+                tariffendringDato={tariffendringsdato}
+                tariffkjentdato={tariffkjentdato}
               />
             </>
           )}
           <Skillelinje />
           <Heading2>Refusjon</Heading2>
-
           <div className={lokalStyles.uthevet}>
             Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
           </div>
@@ -188,7 +190,6 @@ const Kvittering: NextPage = () => {
             harRefusjonEndringer={harRefusjonEndringer}
             refusjonEndringer={refusjonEndringer}
           />
-
           <Skillelinje />
           <Heading2>Eventuelle naturalytelser</Heading2>
           <BortfallNaturalytelser ytelser={naturalytelser!} />

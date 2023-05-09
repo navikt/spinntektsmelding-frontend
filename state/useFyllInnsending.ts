@@ -1,12 +1,12 @@
+import { isValid } from 'date-fns';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode } from './state';
 import useBoundStore from './useBoundStore';
 
-interface SendtPeriode {
+export interface SendtPeriode {
   fom: string;
   tom: string;
 }
@@ -35,20 +35,20 @@ interface SendtNaturalytelse {
   beløp: number;
 }
 
-interface AArsakType {
+export interface AArsakType {
   typpe: string;
 }
 
-interface Tariffendring extends AArsakType {
+export interface Tariffendring extends AArsakType {
   gjelderFra: string;
   bleKjent: string;
 }
 
-interface PeriodeListe extends AArsakType {
+export interface PeriodeListe extends AArsakType {
   liste: Array<SendtPeriode>;
 }
 
-interface StillingsEndring extends AArsakType {
+export interface StillingsEndring extends AArsakType {
   gjelderFra: string;
 }
 
@@ -68,7 +68,7 @@ export interface InnsendingSkjema {
   identitetsnummer: string;
   orgnrUnderenhet: string;
   egenmeldingsperioder?: Array<SendtPeriode>;
-  arbeidsgiverperioder: Array<SendtPeriode>;
+  arbeidsgiverperioder: Array<SendtPeriode> | [];
   bestemmendeFraværsdag: string;
   fraværsperioder: Array<SendtPeriode>;
   inntekt: Bruttoinntekt;
@@ -108,7 +108,6 @@ export default function useFyllInnsending() {
 
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   // const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
@@ -200,16 +199,12 @@ export default function useFyllInnsending() {
       perioder = egenmeldingsperioder;
     }
 
-    const beregningsperioder = endretArbeidsgiverperiode ? arbeidsgiverperioder : perioder;
-
     const bestemmendeFraværsdag = bestemmendeFravaersdag
       ? formatIsoDate(bestemmendeFravaersdag)
       : finnBestemmendeFravaersdag(perioder);
 
-    const aktiveArbeidsgiverperioder =
-      arbeidsgiverperioder?.find((periode) => !periode.fom || !periode.tom) !== undefined
-        ? arbeidsgiverperioder
-        : finnArbeidsgiverperiode(beregningsperioder as Array<Periode>);
+    const innsendbarArbeidsgiverperioder: Array<SendtPeriode> =
+      finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder);
 
     const aarsakInnsending = nyInnsending ? 'Ny' : 'Endring'; // Kan være Ny eller Endring
 
@@ -226,10 +221,8 @@ export default function useFyllInnsending() {
         fom: formatIsoDate(periode.fom),
         tom: formatIsoDate(periode.tom)
       })),
-      arbeidsgiverperioder: aktiveArbeidsgiverperioder.map((periode) => ({
-        fom: formatIsoDate(periode.fom),
-        tom: formatIsoDate(periode.tom)
-      })),
+      arbeidsgiverperioder: innsendbarArbeidsgiverperioder,
+
       inntekt: {
         bekreftet: verdiEllerFalse(bruttoinntekt.bekreftet),
         beregnetInntekt: bruttoinntekt.bruttoInntekt!,
@@ -264,6 +257,15 @@ export default function useFyllInnsending() {
     return skjemaData;
   };
 }
+
+function finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): SendtPeriode[] {
+  return arbeidsgiverperioder
+    ? arbeidsgiverperioder
+        ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
+        .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
+    : [];
+}
+
 function verdiEllerFalse(verdi: boolean | undefined): boolean {
   return verdi || false;
 }

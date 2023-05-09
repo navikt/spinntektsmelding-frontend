@@ -95,6 +95,8 @@ jobs:
             ${{ env.IMAGE }}
           secrets: |
             "NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}"
+          build-args: |
+            "BUILDMODE=development"
 
   Deploy:
     needs: [Docker]
