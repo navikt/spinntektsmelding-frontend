@@ -1,3 +1,4 @@
+import { isValid } from 'date-fns';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
@@ -68,7 +69,7 @@ export interface InnsendingSkjema {
   identitetsnummer: string;
   orgnrUnderenhet: string;
   egenmeldingsperioder?: Array<SendtPeriode>;
-  arbeidsgiverperioder: Array<SendtPeriode>;
+  arbeidsgiverperioder: Array<SendtPeriode> | [];
   bestemmendeFraværsdag: string;
   fraværsperioder: Array<SendtPeriode>;
   inntekt: Bruttoinntekt;
@@ -200,16 +201,15 @@ export default function useFyllInnsending() {
       perioder = egenmeldingsperioder;
     }
 
-    const beregningsperioder = endretArbeidsgiverperiode ? arbeidsgiverperioder : perioder;
-
     const bestemmendeFraværsdag = bestemmendeFravaersdag
       ? formatIsoDate(bestemmendeFravaersdag)
       : finnBestemmendeFravaersdag(perioder);
 
-    const aktiveArbeidsgiverperioder =
-      arbeidsgiverperioder?.find((periode) => !periode.fom || !periode.tom) !== undefined
-        ? arbeidsgiverperioder
-        : finnArbeidsgiverperiode(beregningsperioder as Array<Periode>);
+    const innsendbarArbeidsgiverperiode: Array<SendtPeriode> = arbeidsgiverperioder
+      ? arbeidsgiverperioder
+          ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
+          .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
+      : [];
 
     const aarsakInnsending = nyInnsending ? 'Ny' : 'Endring'; // Kan være Ny eller Endring
 
@@ -226,10 +226,8 @@ export default function useFyllInnsending() {
         fom: formatIsoDate(periode.fom),
         tom: formatIsoDate(periode.tom)
       })),
-      arbeidsgiverperioder: aktiveArbeidsgiverperioder.map((periode) => ({
-        fom: formatIsoDate(periode.fom),
-        tom: formatIsoDate(periode.tom)
-      })),
+      arbeidsgiverperioder: innsendbarArbeidsgiverperiode,
+
       inntekt: {
         bekreftet: verdiEllerFalse(bruttoinntekt.bekreftet),
         beregnetInntekt: bruttoinntekt.bruttoInntekt!,

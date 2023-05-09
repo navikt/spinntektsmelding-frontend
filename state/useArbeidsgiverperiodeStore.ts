@@ -157,10 +157,8 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
           if (arbeidsgiverperiode) {
             state.arbeidsgiverperioder = arbeidsgiverperiode;
-            console.log('utregnet arbeidsgiverperiode', arbeidsgiverperiode);
           } else {
             state.arbeidsgiverperioder = structuredClone(opprinnelig);
-            console.log('opprinnelig arbeidsgiverperiode', opprinnelig);
           }
 
           slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
