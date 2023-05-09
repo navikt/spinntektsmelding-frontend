@@ -1,7 +1,6 @@
 import { isValid } from 'date-fns';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode } from './state';
@@ -109,7 +108,6 @@ export default function useFyllInnsending() {
 
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   // const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
@@ -205,11 +203,8 @@ export default function useFyllInnsending() {
       ? formatIsoDate(bestemmendeFravaersdag)
       : finnBestemmendeFravaersdag(perioder);
 
-    const innsendbarArbeidsgiverperiode: Array<SendtPeriode> = arbeidsgiverperioder
-      ? arbeidsgiverperioder
-          ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
-          .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
-      : [];
+    const innsendbarArbeidsgiverperioder: Array<SendtPeriode> =
+      finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder);
 
     const aarsakInnsending = nyInnsending ? 'Ny' : 'Endring'; // Kan være Ny eller Endring
 
@@ -226,7 +221,7 @@ export default function useFyllInnsending() {
         fom: formatIsoDate(periode.fom),
         tom: formatIsoDate(periode.tom)
       })),
-      arbeidsgiverperioder: innsendbarArbeidsgiverperiode,
+      arbeidsgiverperioder: innsendbarArbeidsgiverperioder,
 
       inntekt: {
         bekreftet: verdiEllerFalse(bruttoinntekt.bekreftet),
@@ -262,6 +257,15 @@ export default function useFyllInnsending() {
     return skjemaData;
   };
 }
+
+function finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): SendtPeriode[] {
+  return arbeidsgiverperioder
+    ? arbeidsgiverperioder
+        ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
+        .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
+    : [];
+}
+
 function verdiEllerFalse(verdi: boolean | undefined): boolean {
   return verdi || false;
 }
