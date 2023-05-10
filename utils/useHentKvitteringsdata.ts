@@ -16,8 +16,8 @@ export default function useHentKvitteringsdata() {
         skjemadata = await fetchKvitteringsdata(environment.hentKvitteringUrl, pathSlug);
       }
       if (skjemadata) {
-        router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
         initState(skjemadata, pathSlug);
+        router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
       }
     } catch (error: any) {
       if (error.status === 401) {

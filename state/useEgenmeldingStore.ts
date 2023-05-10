@@ -118,7 +118,6 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
             id: nanoid()
           }));
         } else {
-          // state.egenmeldingsperioder = [{ id: nanoid() }];
           state.endreEgenmeldingsperiode = true;
         }
 

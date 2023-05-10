@@ -76,8 +76,6 @@ export default function useKvitteringInit() {
 
     const arbeidsgiverperioder = jsonData.arbeidsgiverperioder;
 
-    // if (arbeidsgiverperioder) initArbeidsgiverperioder(jsonData.arbeidsgiverperioder);
-
     const beregnetInntekt =
       jsonData.inntekt && jsonData.inntekt.beregnetInntekt
         ? jsonData.inntekt.beregnetInntekt

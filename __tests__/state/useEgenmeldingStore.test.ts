@@ -12,7 +12,7 @@ const egenmeldingsperioder: Array<MottattPeriode> = [
 
 const initialState = useBoundStore.getState();
 
-describe('useBoundStore', () => {
+describe('useEgenmeldingStore', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
   });
