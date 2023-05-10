@@ -5,7 +5,11 @@ interface ButtonTilbakestillProps extends React.HTMLProps<HTMLButtonElement> {}
 
 export default function ButtonTilbakestill(props: ButtonTilbakestillProps) {
   return (
-    <Button className={props.className + ' ' + lokalStyles.buttontilbakestill} onClick={props.onClick}>
+    <Button
+      variant='tertiary'
+      className={props.className + ' ' + lokalStyles.buttontilbakestill}
+      onClick={props.onClick}
+    >
       Tilbakestill
     </Button>
   );

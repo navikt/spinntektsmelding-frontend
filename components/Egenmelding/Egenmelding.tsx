@@ -9,6 +9,7 @@ import { useMemo } from 'react';
 import Feilmelding from '../Feilmelding';
 import useAmplitude from '../../utils/useAmplitude';
 import { subDays } from 'date-fns';
+import ButtonTilbakestill from '../ButtonTilbakestill';
 
 export default function Egenmelding() {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -152,13 +153,11 @@ export default function Egenmelding() {
               Legg til periode
             </Button>
 
-            <Button
+            <ButtonTilbakestill
               className={styles.kontrollerknapp}
               onClick={clickTilbakestillFravaersperiodeHandler}
               disabled={endretArbeidsgiverperiode}
-            >
-              Tilbakestill
-            </Button>
+            />
           </div>
         )}
       </div>
