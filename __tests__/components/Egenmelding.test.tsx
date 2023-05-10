@@ -76,4 +76,24 @@ describe('Egenmelding', () => {
 
     expect(results).toHaveNoViolations();
   });
+
+  it('should show empty datepickers when there are no perioder', async () => {
+    // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
+    vi.mock('../../components/Datovelger', () => ({
+      default: () => <div>Datovelger</div>
+    }));
+
+    const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initEgenmeldingsperiode(undefined);
+    });
+
+    const { container } = render(<Egenmelding />);
+
+    expect(await screen.findAllByText('Datovelger')).toHaveLength(2);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
 });
