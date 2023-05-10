@@ -29,7 +29,9 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
     set(
       produce((state) => {
         if (periodeId === 'nyperiode') {
-          if (dateValue && (dateValue.fom || dateValue?.tom)) {
+          const hasSetDateValue = dateValue && (dateValue.fom || dateValue?.tom);
+
+          if (hasSetDateValue) {
             state.egenmeldingsperioder = [{ ...dateValue, id: nanoid() }];
           }
         } else {
@@ -60,7 +62,6 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
   slettEgenmeldingsperiode: (periodeId: string) =>
     set(
       produce((state) => {
-        console.log(periodeId);
         const nyePerioder = state.egenmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId);
         state.egenmeldingsperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
 
@@ -68,7 +69,6 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
       })
     ),
   leggTilEgenmeldingsperiode: () => {
-    const egenmeldingsperioder = get().egenmeldingsperioder;
     set(
       produce((state) => {
         const nyEgenmeldingsperiode: Periode = { id: nanoid() };
