@@ -35,14 +35,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
             state.egenmeldingsperioder = [{ ...dateValue, id: nanoid() }];
           }
         } else {
-          state.egenmeldingsperioder = state.egenmeldingsperioder.map((periode: Periode) => {
-            if (periode.id === periodeId) {
-              periode.tom = dateValue?.tom;
-              periode.fom = dateValue?.fom;
-              return periode;
-            }
-            return periode;
-          });
+          updateDateValue(state, periodeId, dateValue);
 
           const fPerioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
           if (fPerioder) {
@@ -130,6 +123,17 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
 });
 
 export default useEgenmeldingStore;
+
+function updateDateValue(state: any, periodeId: string, dateValue: PeriodeParam | undefined) {
+  state.egenmeldingsperioder = state.egenmeldingsperioder.map((periode: Periode) => {
+    if (periode.id === periodeId) {
+      periode.tom = dateValue?.tom;
+      periode.fom = dateValue?.fom;
+      return periode;
+    }
+    return periode;
+  });
+}
 
 function finnFravaersperioder(fravaersperioder: Array<Periode>, egenmeldingsperioder: Array<Periode>) {
   const perioder =
