@@ -12,7 +12,7 @@ const egenmeldingsperioder: Array<MottattPeriode> = [
 
 const initialState = useBoundStore.getState();
 
-describe('useBoundStore', () => {
+describe('useEgenmeldingStore', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
   });
@@ -47,21 +47,21 @@ describe('useBoundStore', () => {
     expect(result.current.egenmeldingsperioder?.length).toBe(3);
 
     act(() => {
-      result.current.slettEgenmeldingsperiode(periodeId);
+      result.current.slettEgenmeldingsperiode(periodeId!);
     });
 
     expect(result.current.egenmeldingsperioder?.length).toBe(2);
 
     periodeId = result.current.egenmeldingsperioder?.[0].id;
     act(() => {
-      result.current.slettEgenmeldingsperiode(periodeId);
+      result.current.slettEgenmeldingsperiode(periodeId!);
     });
 
     expect(result.current.egenmeldingsperioder?.length).toBe(1);
 
     periodeId = result.current.egenmeldingsperioder?.[0].id;
     act(() => {
-      result.current.slettEgenmeldingsperiode(periodeId);
+      result.current.slettEgenmeldingsperiode(periodeId!);
     });
 
     expect(result.current.egenmeldingsperioder?.length).toBe(1);
@@ -99,11 +99,34 @@ describe('useBoundStore', () => {
     const periodeId = result.current.egenmeldingsperioder?.[0].id;
 
     act(() => {
-      result.current.setEgenmeldingDato(datoSpenn, periodeId);
+      result.current.setEgenmeldingDato(datoSpenn, periodeId!);
     });
 
     expect(result.current.egenmeldingsperioder?.[0].tom).toEqual(new Date(2022, 5, 15));
     expect(result.current.egenmeldingsperioder?.[0].fom).toEqual(new Date(2022, 4, 14));
+  });
+
+  it('should set the egenmelding datospenn for a ny periode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const datoSpenn: PeriodeParam = {
+      fom: new Date(2022, 4, 14),
+      tom: new Date(2022, 5, 15)
+    };
+
+    act(() => {
+      result.current.initEgenmeldingsperiode(egenmeldingsperioder);
+    });
+
+    const periodeId = result.current.egenmeldingsperioder?.[0].id;
+
+    act(() => {
+      result.current.setEgenmeldingDato(datoSpenn, 'nyperiode');
+    });
+
+    expect(result.current.egenmeldingsperioder?.[0].tom).toEqual(new Date(2022, 5, 15));
+    expect(result.current.egenmeldingsperioder?.[0].fom).toEqual(new Date(2022, 4, 14));
+    expect(result.current.egenmeldingsperioder?.[0].id).not.toEqual('nyperiode');
   });
 
   it('should add a backup of egenmelding opprinneligEgenmelding.', () => {

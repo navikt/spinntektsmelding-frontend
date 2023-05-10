@@ -97,6 +97,7 @@ export default function Egenmelding() {
       <div>
         <div className={localStyles.egenmeldingswrapper}>
           {egenmeldingsperioder &&
+            egenmeldingsperioder.length > 0 &&
             egenmeldingsperioder.map((egenmeldingsperiode, index) => (
               <EgenmeldingPeriode
                 key={egenmeldingsperiode.id}
@@ -112,7 +113,26 @@ export default function Egenmelding() {
                 visFeilmeldingsTekst={visFeilmeldingsTekst}
               />
             ))}
+          {!egenmeldingsperioder ||
+            (egenmeldingsperioder.length === 0 && (
+              <>
+                <EgenmeldingPeriode
+                  key='nyperiode'
+                  periodeId='nyperiode'
+                  egenmeldingsperiode={{ id: 'nyperiode' }}
+                  endreEgenmeldingsperiode={endreEgenmeldingsperiode}
+                  setEgenmeldingDato={setEgenmeldingDato}
+                  toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
+                  kanSlettes={false}
+                  onSlettRad={() => {}}
+                  disabled={endretArbeidsgiverperiode}
+                  rad={0}
+                  visFeilmeldingsTekst={visFeilmeldingsTekst}
+                />
+              </>
+            ))}
         </div>
+
         {visFeilmelding('egenmeldingsperioder-feil') && (
           <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingsTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}
