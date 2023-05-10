@@ -39,7 +39,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
               periode.fom = dateValue?.fom;
               return periode;
             }
-            return state;
+            return periode;
           });
 
           const fPerioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
@@ -60,26 +60,27 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
   slettEgenmeldingsperiode: (periodeId: string) =>
     set(
       produce((state) => {
+        console.log(periodeId);
         const nyePerioder = state.egenmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId);
         state.egenmeldingsperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
 
         return state;
       })
     ),
-  leggTilEgenmeldingsperiode: () =>
+  leggTilEgenmeldingsperiode: () => {
+    const egenmeldingsperioder = get().egenmeldingsperioder;
     set(
       produce((state) => {
         const nyEgenmeldingsperiode: Periode = { id: nanoid() };
-
-        if (state.egenmeldingsperioder) {
+        if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0) {
           state.egenmeldingsperioder.push(nyEgenmeldingsperiode);
         } else {
-          state.egenmeldingsperioder = [nyEgenmeldingsperiode];
+          state.egenmeldingsperioder = [nyEgenmeldingsperiode, { id: nanoid() }];
         }
-
         return state;
       })
-    ),
+    );
+  },
 
   setEndreEgenmelding: (status: boolean) => {
     set(
