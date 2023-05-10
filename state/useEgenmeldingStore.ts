@@ -11,7 +11,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 
 export interface EgenmeldingState {
-  egenmeldingsperioder: Array<Periode>;
+  egenmeldingsperioder?: Array<Periode>;
   opprinneligEgenmeldingsperiode?: Array<Periode>;
   endreEgenmeldingsperiode: boolean;
   setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
@@ -23,30 +23,35 @@ export interface EgenmeldingState {
 }
 
 const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState> = (set, get) => ({
-  egenmeldingsperioder: [{ id: nanoid() }],
+  egenmeldingsperioder: undefined,
   endreEgenmeldingsperiode: false,
   setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) =>
     set(
       produce((state) => {
-        state.egenmeldingsperioder = state.egenmeldingsperioder.map((periode: Periode) => {
-          if (periode.id === periodeId) {
-            periode.tom = dateValue?.tom;
-            periode.fom = dateValue?.fom;
-            return periode;
+        if (periodeId === 'nyperiode') {
+          if (dateValue && (dateValue.fom || dateValue?.tom)) {
+            state.egenmeldingsperioder = [{ ...dateValue, id: nanoid() }];
           }
-          return periode;
-        });
+        } else {
+          state.egenmeldingsperioder = state.egenmeldingsperioder.map((periode: Periode) => {
+            if (periode.id === periodeId) {
+              periode.tom = dateValue?.tom;
+              periode.fom = dateValue?.fom;
+              return periode;
+            }
+            return state;
+          });
 
-        const fPerioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
-
-        if (fPerioder) {
-          const agp = finnArbeidsgiverperiode(fPerioder);
-          state.arbeidsgiverperioder = agp;
-          const bestemmende = finnBestemmendeFravaersdag(fPerioder);
-          if (bestemmende) {
-            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
-            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+          const fPerioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
+          if (fPerioder) {
+            const agp = finnArbeidsgiverperiode(fPerioder);
+            state.arbeidsgiverperioder = agp;
+            const bestemmende = finnBestemmendeFravaersdag(fPerioder);
+            if (bestemmende) {
+              state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+              state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+              state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+            }
           }
         }
         return state;
@@ -92,7 +97,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
       produce((state) => {
         state.egenmeldingsperioder = clonedEgenmelding;
 
-        if (clonedEgenmelding && clonedEgenmelding[0].fom) {
+        if (clonedEgenmelding && clonedEgenmelding.length > 0 && clonedEgenmelding[0].fom) {
           state.endreEgenmeldingsperiode = false;
         }
 
@@ -113,7 +118,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
             id: nanoid()
           }));
         } else {
-          state.egenmeldingsperioder = [{ id: nanoid() }];
+          // state.egenmeldingsperioder = [{ id: nanoid() }];
           state.endreEgenmeldingsperiode = true;
         }
 

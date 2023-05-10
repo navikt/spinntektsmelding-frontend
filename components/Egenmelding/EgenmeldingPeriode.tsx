@@ -62,7 +62,7 @@ export default function EgenmeldingPeriode({
         fomID={`egenmeldingsperioder[${rad}].fom`}
         tomTekst='Til'
         tomID={`egenmeldingsperioder[${rad}].tom`}
-        onRangeChange={rangeChangeHandler}
+        onRangeChange={(dateRange) => rangeChangeHandler(dateRange)}
         defaultRange={egenmeldingsperiode}
         kanSlettes={kanSlettes}
         periodeId={periodeId}

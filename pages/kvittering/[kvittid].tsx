@@ -79,7 +79,9 @@ const Kvittering: NextPage = () => {
   };
 
   const harAktiveEgenmeldingsperioder = () => {
-    return egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined;
+    return egenmeldingsperioder
+      ? egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined
+      : undefined;
   };
 
   const innsendingstidspunkt = kvitteringInnsendt && isValid(kvitteringInnsendt) ? kvitteringInnsendt : now;
@@ -146,7 +148,7 @@ const Kvittering: NextPage = () => {
                     betaler Nav lønn til den syke eller refunderer bedriften.
                   </BodyLong>
                   {arbeidsgiverperioder &&
-                    arbeidsgiverperioder.map((periode, index) => (
+                    arbeidsgiverperioder.map((periode) => (
                       <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
                     ))}
                 </div>

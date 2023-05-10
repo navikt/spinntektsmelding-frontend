@@ -56,6 +56,7 @@ const Home: NextPage = () => {
   ]);
 
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setSlug = useBoundStore((state) => state.setSlug);
@@ -196,7 +197,7 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!bestemmendeFravaersdag) {
+    if (!fravaersperioder) {
       hentKvitteringsdata(pathSlug);
     }
     setSlug(pathSlug);

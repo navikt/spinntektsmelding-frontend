@@ -74,9 +74,9 @@ export default function useKvitteringInit() {
     const bestemmendeFravaersdag = jsonData.bestemmendeFraværsdag;
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
-    const arbeidsgiverperiode = jsonData.arbeidsgiverperioder;
+    const arbeidsgiverperioder = jsonData.arbeidsgiverperioder;
 
-    if (arbeidsgiverperiode) initArbeidsgiverperioder(jsonData.arbeidsgiverperioder);
+    // if (arbeidsgiverperioder) initArbeidsgiverperioder(jsonData.arbeidsgiverperioder);
 
     const beregnetInntekt =
       jsonData.inntekt && jsonData.inntekt.beregnetInntekt
@@ -191,6 +191,8 @@ export default function useKvitteringInit() {
 
       initNaturalytelser(ytelser);
     }
+
+    if (arbeidsgiverperioder) initArbeidsgiverperioder(jsonData.arbeidsgiverperioder);
 
     harArbeidsgiverperiodenBlittEndret();
 
