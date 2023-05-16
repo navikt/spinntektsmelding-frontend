@@ -94,7 +94,7 @@ export default function RefusjonUtbetalingEndring({
         className={styles.radiobuttonwrapper}
         error={visFeilmeldingsTekst('lus-utbetaling-endring-radio')}
         onChange={changeHarEndringerHandler}
-        defaultValue={refusjonskravetOpphoerer?.status}
+        defaultValue={harRefusjonEndring}
       >
         <Radio value='Ja'>Ja</Radio>
         <Radio value='Nei'>Nei</Radio>
