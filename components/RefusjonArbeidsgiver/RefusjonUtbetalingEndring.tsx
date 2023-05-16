@@ -30,7 +30,6 @@ export default function RefusjonUtbetalingEndring({
   harRefusjonEndring
 }: RefusjonUtbetalingEndringProps) {
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
-  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const oppdaterEndringer = (endringer?: Array<EndringsBelop>): void => {
     if (onOppdaterEndringer) {
       onOppdaterEndringer(endringer || []);
