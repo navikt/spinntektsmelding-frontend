@@ -1,4 +1,5 @@
 import { Periode } from '../../state/state';
+import parseIsoDate from '../../utils/parseIsoDate';
 import validerPeriodeEgenmelding from '../../validators/validerPeriodeEgenmelding';
 import { expect, it, describe } from 'vitest';
 
@@ -176,5 +177,27 @@ describe('validerPeriodeEgenmelding', () => {
     ];
 
     expect(validerPeriodeEgenmelding(input, 'egenmeldingsperiode')).toEqual(expected);
+  });
+
+  it('should not fail if 16 days between periodes', () => {
+    const input: Array<Periode> = [
+      {
+        id: 'tilfeldig',
+        fom: parseIsoDate('2023-03-10'),
+        tom: parseIsoDate('2023-03-11')
+      },
+      {
+        id: 'tilfeldig2',
+        fom: parseIsoDate('2023-03-27'),
+        tom: parseIsoDate('2023-03-29')
+      },
+      {
+        id: 'tilfeldig3',
+        fom: parseIsoDate('2023-04-14'),
+        tom: parseIsoDate('2023-04-24')
+      }
+    ];
+
+    expect(validerPeriodeEgenmelding(input, 'egenmeldingsperiode')).toEqual([]);
   });
 });
