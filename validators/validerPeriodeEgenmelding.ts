@@ -37,7 +37,7 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>, pref
       forMangeDagerIPerioden(periode, feilkoder, prefix);
 
       if (index > 0) {
-        if (Math.abs(differenceInCalendarDays(periode.fom as Date, perioder[index - 1].tom as Date)) >= 16) {
+        if (Math.abs(differenceInCalendarDays(periode.fom as Date, perioder[index - 1].tom as Date)) > 16) {
           feilkoder.push({
             felt: `${prefix}-feil`,
             code: PeriodeEgenmeldingFeilkode.FOR_MANGE_DAGER_MELLOM
