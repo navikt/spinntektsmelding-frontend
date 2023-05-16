@@ -293,6 +293,7 @@ function konverterRefusjonsendringer(
 function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode>) {
   return (
     egenmeldingsperioder &&
-    (egenmeldingsperioder.length > 1 || (egenmeldingsperioder[0].fom && egenmeldingsperioder[0].tom))
+    (egenmeldingsperioder.length > 1 ||
+      (egenmeldingsperioder[0] && egenmeldingsperioder[0].fom && egenmeldingsperioder[0].tom))
   );
 }
