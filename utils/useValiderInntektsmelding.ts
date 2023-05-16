@@ -84,7 +84,7 @@ export default function useValiderInntektsmelding() {
       });
     }
 
-    if (state.egenmeldingsperioder) {
+    if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0) {
       feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
     }
 
