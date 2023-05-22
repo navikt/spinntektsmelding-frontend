@@ -237,7 +237,7 @@ export default function useFyllInnsending() {
       },
       refusjon: {
         utbetalerHeleEllerDeler: lonnISykefravaeret?.status === 'Ja',
-        refusjonPrMnd: lonnISykefravaeret?.belop,
+        refusjonPrMnd: lonnISykefravaeret?.status === 'Ja' ? lonnISykefravaeret?.belop : undefined,
         refusjonOpphører: refusjonskravetOpphoerer?.opphorsdato
           ? formatIsoDate(refusjonskravetOpphoerer?.opphorsdato)
           : undefined,
