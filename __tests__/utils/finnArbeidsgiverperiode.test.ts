@@ -318,7 +318,7 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
         id: '1',
-        fom: parseISO('2023-01-02'),
+        fom: parseISO('2023-01-12'),
         tom: parseISO('2023-01-27')
       }
     ]);
