@@ -3,7 +3,7 @@ import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunn
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Periode } from './state';
+import { Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 
 export interface SendtPeriode {
@@ -237,11 +237,12 @@ export default function useFyllInnsending() {
       },
       refusjon: {
         utbetalerHeleEllerDeler: lonnISykefravaeret?.status === 'Ja',
-        refusjonPrMnd: lonnISykefravaeret?.belop,
-        refusjonOpphører: refusjonskravetOpphoerer?.opphorsdato
-          ? formatIsoDate(refusjonskravetOpphoerer?.opphorsdato)
-          : undefined,
-        refusjonEndringer: innsendingRefusjonEndringer
+        refusjonPrMnd: jaEllerNei(lonnISykefravaeret?.status, lonnISykefravaeret?.belop),
+        refusjonOpphører: jaEllerNei(
+          lonnISykefravaeret?.status,
+          refusjonskravetOpphoerer?.opphorsdato ? formatIsoDate(refusjonskravetOpphoerer?.opphorsdato) : undefined
+        ),
+        refusjonEndringer: jaEllerNei(lonnISykefravaeret?.status, innsendingRefusjonEndringer)
       },
       naturalytelser: naturalytelser?.map((ytelse) => ({
         naturalytelse: verdiEllerBlank(ytelse.type),
@@ -256,6 +257,10 @@ export default function useFyllInnsending() {
 
     return skjemaData;
   };
+}
+
+function jaEllerNei(velger: YesNo | undefined, returverdi: any): any | undefined {
+  return velger === 'Ja' ? returverdi : undefined;
 }
 
 function finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): SendtPeriode[] {
