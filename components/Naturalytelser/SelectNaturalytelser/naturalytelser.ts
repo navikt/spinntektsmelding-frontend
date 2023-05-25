@@ -3,25 +3,25 @@ interface Naturalytelser {
 }
 
 const naturalytelser: Naturalytelser = {
-  ElektroniskKommunikasjon: 'Elektronisk kommunikasjon',
-  AksjerGrunnfondsbevisTilUnderkurs: 'Aksjer / grunnfondsbevis til underkurs',
-  Losji: 'Losji',
-  KostDoegn: 'Kost (døgn)',
-  BesoeksreiserHjemmetAnnet: 'Besøksreiser i hjemmet annet',
-  KostbesparelseIHjemmet: 'Kostbesparelse i hjemmet',
-  RentefordelLaan: 'Rentefordel lån',
-  Bil: 'Bil',
-  KostDager: 'Kost (dager)',
-  Bolig: 'Bolig',
-  SkattepliktigDelForsikringer: 'Skattepliktig del av visse forsikringer',
-  FriTransport: 'Fri transport',
-  Opsjoner: 'Opsjoner',
-  TilskuddBarnehageplass: 'Tilskudd barnehageplass',
-  Bedriftsbarnehageplass: 'Bedriftsbarnehageplass',
-  YrkebilTjenestligbehovKilometer: 'Yrkesbil tjenestebehov kilometer',
-  YrkebilTjenestligbehovListepris: 'Yrkesbil tjenestebehov listepris',
-  InnbetalingTilUtenlandskPensjonsordning: 'Innbetaling utenlandsk pensjonsordning',
-  Annet: 'Annet'
+  ELEKTRONISKKOMMUNIKASJON: 'Elektronisk kommunikasjon',
+  AKSJERGRUNNFONDSBEVISTILUNDERKURS: 'Aksjer / grunnfondsbevis til underkurs',
+  LOSJI: 'Losji',
+  KOSTDOEGN: 'Kost (døgn)',
+  BESOEKSREISERHJEMMETANNET: 'Besøksreiser i hjemmet annet',
+  KOSTBESPARELSEIHJEMMET: 'Kostbesparelse i hjemmet',
+  RENTEFORDELLAAN: 'Rentefordel lån',
+  BIL: 'Bil',
+  KOSTDAGER: 'Kost (dager)',
+  BOLIG: 'Bolig',
+  SKATTEPLIKTIGDELFORSIKRINGER: 'Skattepliktig del av visse forsikringer',
+  FRITRANSPORT: 'Fri transport',
+  OPSJONER: 'Opsjoner',
+  TILSKUDDBARNEHAGEPLASS: 'Tilskudd barnehageplass',
+  BEDRIFTSBARNEHAGEPLASS: 'Bedriftsbarnehageplass',
+  YRKEBILTJENESTLIGBEHOVKILOMETER: 'Yrkesbil tjenestebehov kilometer',
+  YRKEBILTJENESTLIGBEHOVLISTEPRIS: 'Yrkesbil tjenestebehov listepris',
+  INNBETALINGTILUTENLANDSKPENSJONSORDNING: 'Innbetaling utenlandsk pensjonsordning',
+  ANNET: 'Annet'
 };
 
 export default naturalytelser;
