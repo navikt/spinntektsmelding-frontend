@@ -9,6 +9,7 @@ export default function ButtonTilbakestill(props: ButtonTilbakestillProps) {
       variant='tertiary'
       className={props.className + ' ' + lokalStyles.buttontilbakestill}
       onClick={props.onClick}
+      disabled={props.disabled}
     >
       Tilbakestill
     </Button>
