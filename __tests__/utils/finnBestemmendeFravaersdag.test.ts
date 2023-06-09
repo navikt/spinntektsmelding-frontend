@@ -135,4 +135,42 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     ];
     expect(finnBestemmendeFravaersdag(periode)).toBe('2023-05-02');
   });
+
+  it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the future', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '2',
+        fom: parseISO('2022-12-16'),
+        tom: parseISO('2022-12-25')
+      }
+    ];
+
+    const arbeidsgiverPeriode: Array<Periode> = [
+      {
+        id: 'a1',
+        fom: parseISO('2022-12-20'),
+        tom: parseISO('2022-12-22')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-20');
+  });
+
+  it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the past', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '2',
+        fom: parseISO('2022-12-16'),
+        tom: parseISO('2022-12-25')
+      }
+    ];
+
+    const arbeidsgiverPeriode: Array<Periode> = [
+      {
+        id: 'a1',
+        fom: parseISO('2022-12-02'),
+        tom: parseISO('2022-12-18')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-16');
+  });
 });
