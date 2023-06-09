@@ -54,7 +54,7 @@ describe('useBoundStore', () => {
       result.current.bekreftKorrektInntekt(false);
     });
 
-    expect(result.current.bruttoinntekt?.bekreftet).toBeTruthy();
+    expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
   });
 
   it('should set ny maanedsinntekt.', () => {

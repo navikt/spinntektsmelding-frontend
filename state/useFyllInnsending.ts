@@ -1,4 +1,4 @@
-import { isValid } from 'date-fns';
+import { isValid, parseISO } from 'date-fns';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
@@ -199,12 +199,21 @@ export default function useFyllInnsending() {
       perioder = egenmeldingsperioder;
     }
 
-    const bestemmendeFraværsdag = bestemmendeFravaersdag
-      ? formatIsoDate(bestemmendeFravaersdag)
-      : finnBestemmendeFravaersdag(perioder);
-
     const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | undefined =
       finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder);
+
+    const bestemmendeFraværsdag = bestemmendeFravaersdag
+      ? formatIsoDate(bestemmendeFravaersdag)
+      : finnBestemmendeFravaersdag(
+          perioder,
+          innsendbarArbeidsgiverperioder
+            ? innsendbarArbeidsgiverperioder?.map((periode) => ({
+                fom: parseISO(periode.fom),
+                tom: parseISO(periode.tom),
+                id: 'id'
+              }))
+            : undefined
+        );
 
     const aarsakInnsending = nyInnsending ? 'Ny' : 'Endring'; // Kan være Ny eller Endring
 

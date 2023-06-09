@@ -41,7 +41,10 @@ export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
   return null;
 };
 
-const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | undefined => {
+const finnBestemmendeFravaersdag = (
+  fravaersperioder?: Array<Periode>,
+  arbeidsgiverperiode?: Array<Periode>
+): string | undefined => {
   if (!fravaersperioder || !fravaersperioder?.[0]?.fom) {
     return undefined;
   }
@@ -75,8 +78,20 @@ const finnBestemmendeFravaersdag = (fravaersperioder: Array<Periode>): string | 
     }
   });
 
-  if (tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined) {
-    return formatISO9075(tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom as Date, {
+  const bestemmendeFravaersdagFraFravaer =
+    tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined
+      ? tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom
+      : undefined;
+
+  const bestemmendeFravaersdag = hvemDatoErStorst(
+    bestemmendeFravaersdagFraFravaer,
+    arbeidsgiverperiode ? arbeidsgiverperiode[0]?.fom : undefined
+  )
+    ? bestemmendeFravaersdagFraFravaer
+    : arbeidsgiverperiode[0]?.fom || undefined;
+
+  if (bestemmendeFravaersdag !== undefined) {
+    return formatISO9075(bestemmendeFravaersdag, {
       representation: 'date'
     });
   }
@@ -104,4 +119,15 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
     }
   });
   return perioder;
+}
+
+function hvemDatoErStorst(bestemmende?: Date, arbeidsgiverperiode?: Date): boolean {
+  if (!bestemmende) {
+    return true;
+  }
+
+  if (!arbeidsgiverperiode) {
+    return true;
+  }
+  return bestemmende > arbeidsgiverperiode;
 }
