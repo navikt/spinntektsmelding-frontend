@@ -68,7 +68,7 @@ export interface InnsendingSkjema {
   identitetsnummer: string;
   orgnrUnderenhet: string;
   egenmeldingsperioder?: Array<SendtPeriode>;
-  arbeidsgiverperioder: Array<SendtPeriode> | undefined;
+  arbeidsgiverperioder: Array<SendtPeriode> | [];
   bestemmendeFraværsdag: string;
   fraværsperioder: Array<SendtPeriode>;
   inntekt: Bruttoinntekt;
@@ -221,7 +221,7 @@ export default function useFyllInnsending() {
       orgnrUnderenhet: orgnrUnderenhet!,
       identitetsnummer: identitetsnummer!,
       egenmeldingsperioder: harEgenmeldingsdager
-        ? egenmeldingsperioder!.map((periode) => ({
+        ? egenmeldingsperioder.map((periode) => ({
             fom: formatIsoDate(periode.fom),
             tom: formatIsoDate(periode.tom)
           }))
@@ -230,10 +230,7 @@ export default function useFyllInnsending() {
         fom: formatIsoDate(periode.fom),
         tom: formatIsoDate(periode.tom)
       })),
-      arbeidsgiverperioder:
-        innsendbarArbeidsgiverperioder && innsendbarArbeidsgiverperioder.length > 0
-          ? innsendbarArbeidsgiverperioder
-          : undefined,
+      arbeidsgiverperioder: innsendbarArbeidsgiverperioder,
 
       inntekt: {
         bekreftet: verdiEllerFalse(bruttoinntekt.bekreftet),
@@ -275,24 +272,24 @@ function jaEllerNei(velger: YesNo | undefined, returverdi: any): any | undefined
   return velger === 'Ja' ? returverdi : undefined;
 }
 
-function finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): SendtPeriode[] | undefined {
-  return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
+function finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): SendtPeriode[] {
+  return arbeidsgiverperioder
     ? arbeidsgiverperioder
         ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
         .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
-    : undefined;
+    : [];
 }
 
 function verdiEllerFalse(verdi: boolean | undefined): boolean {
-  return verdi ?? false;
+  return verdi || false;
 }
 
 function verdiEllerBlank(verdi: string | undefined): string {
-  return verdi ?? '';
+  return verdi || '';
 }
 
 function verdiEllerNull(verdi: number | undefined): number {
-  return verdi ?? 0;
+  return verdi || 0;
 }
 
 function konverterRefusjonsendringer(
@@ -310,6 +307,7 @@ function konverterRefusjonsendringer(
 function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode>) {
   return (
     egenmeldingsperioder &&
-    (egenmeldingsperioder.length > 1 || (egenmeldingsperioder[0]?.fom && egenmeldingsperioder[0]?.tom))
+    (egenmeldingsperioder.length > 1 ||
+      (egenmeldingsperioder[0] && egenmeldingsperioder[0].fom && egenmeldingsperioder[0].tom))
   );
 }
