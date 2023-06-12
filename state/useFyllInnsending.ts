@@ -1,4 +1,4 @@
-import { isValid } from 'date-fns';
+import { isValid, parseISO } from 'date-fns';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
@@ -194,17 +194,25 @@ export default function useFyllInnsending() {
     setSkalViseFeilmeldinger(true);
     let perioder;
     if (fravaersperioder) {
-      perioder = fravaersperioder.concat(egenmeldingsperioder);
+      perioder = fravaersperioder.concat(egenmeldingsperioder ?? []);
     } else {
       perioder = egenmeldingsperioder;
     }
 
-    const bestemmendeFraværsdag = bestemmendeFravaersdag
-      ? formatIsoDate(bestemmendeFravaersdag)
-      : finnBestemmendeFravaersdag(perioder);
-
     const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | undefined =
       finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder);
+
+    const formatertePerioder = innsendbarArbeidsgiverperioder
+      ? innsendbarArbeidsgiverperioder?.map((periode) => ({
+          fom: parseISO(periode.fom),
+          tom: parseISO(periode.tom),
+          id: 'id'
+        }))
+      : undefined;
+
+    const bestemmendeFraværsdag = bestemmendeFravaersdag
+      ? formatIsoDate(bestemmendeFravaersdag)
+      : finnBestemmendeFravaersdag(perioder, formatertePerioder);
 
     const aarsakInnsending = nyInnsending ? 'Ny' : 'Endring'; // Kan være Ny eller Endring
 
@@ -298,7 +306,7 @@ function konverterRefusjonsendringer(
     : undefined;
 }
 
-function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode>) {
+function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode> | undefined) {
   return (
     egenmeldingsperioder &&
     (egenmeldingsperioder.length > 1 || (egenmeldingsperioder[0]?.fom && egenmeldingsperioder[0]?.tom))

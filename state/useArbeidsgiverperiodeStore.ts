@@ -99,6 +99,9 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         })
       ),
     setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
+      const egenmeldingsperioder = get().egenmeldingsperioder;
+      const sykmeldingsperioder = get().fravaersperioder;
+
       set(
         produce((state) => {
           state.arbeidsgiverperioder = state.arbeidsgiverperioder.map((periode: Periode) => {
@@ -116,6 +119,12 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             state.arbeidsgiverperioder,
             'arbeidsgiverperioder'
           );
+          const perioder = sykmeldingsperioder
+            ? sykmeldingsperioder.concat(egenmeldingsperioder ?? [])
+            : egenmeldingsperioder;
+
+          const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, state.arbeidsgiverperioder);
+          if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
 
           state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperioder');
 
@@ -150,16 +159,13 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             ? sykmeldingsperioder.concat(egenmeldingsperioder)
             : egenmeldingsperioder;
 
-          const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder);
-          if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
-
           const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
+          const nyArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode : structuredClone(opprinnelig);
 
-          if (arbeidsgiverperiode) {
-            state.arbeidsgiverperioder = arbeidsgiverperiode;
-          } else {
-            state.arbeidsgiverperioder = structuredClone(opprinnelig);
-          }
+          state.arbeidsgiverperioder = nyArbeidsgiverperiode;
+
+          const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, nyArbeidsgiverperiode);
+          if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
 
           slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
 

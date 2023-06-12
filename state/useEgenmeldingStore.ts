@@ -41,7 +41,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           if (fPerioder) {
             const agp = finnArbeidsgiverperiode(fPerioder);
             state.arbeidsgiverperioder = agp;
-            const bestemmende = finnBestemmendeFravaersdag(fPerioder);
+            const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp);
             if (bestemmende) {
               state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
               state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
@@ -135,7 +135,7 @@ function updateDateValue(state: any, periodeId: string, dateValue: PeriodeParam 
   });
 }
 
-function finnFravaersperioder(fravaersperioder: Array<Periode>, egenmeldingsperioder: Array<Periode>) {
+export function finnFravaersperioder(fravaersperioder: Array<Periode>, egenmeldingsperioder: Array<Periode>) {
   const perioder =
     fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
 
