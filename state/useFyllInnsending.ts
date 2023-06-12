@@ -194,7 +194,7 @@ export default function useFyllInnsending() {
     setSkalViseFeilmeldinger(true);
     let perioder;
     if (fravaersperioder) {
-      perioder = fravaersperioder.concat(egenmeldingsperioder);
+      perioder = fravaersperioder.concat(egenmeldingsperioder ?? []);
     } else {
       perioder = egenmeldingsperioder;
     }
@@ -202,18 +202,17 @@ export default function useFyllInnsending() {
     const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | undefined =
       finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder);
 
+    const formatertePerioder = innsendbarArbeidsgiverperioder
+      ? innsendbarArbeidsgiverperioder?.map((periode) => ({
+          fom: parseISO(periode.fom),
+          tom: parseISO(periode.tom),
+          id: 'id'
+        }))
+      : undefined;
+
     const bestemmendeFraværsdag = bestemmendeFravaersdag
       ? formatIsoDate(bestemmendeFravaersdag)
-      : finnBestemmendeFravaersdag(
-          perioder,
-          innsendbarArbeidsgiverperioder
-            ? innsendbarArbeidsgiverperioder?.map((periode) => ({
-                fom: parseISO(periode.fom),
-                tom: parseISO(periode.tom),
-                id: 'id'
-              }))
-            : undefined
-        );
+      : finnBestemmendeFravaersdag(perioder, formatertePerioder);
 
     const aarsakInnsending = nyInnsending ? 'Ny' : 'Endring'; // Kan være Ny eller Endring
 
@@ -221,7 +220,7 @@ export default function useFyllInnsending() {
       orgnrUnderenhet: orgnrUnderenhet!,
       identitetsnummer: identitetsnummer!,
       egenmeldingsperioder: harEgenmeldingsdager
-        ? egenmeldingsperioder.map((periode) => ({
+        ? egenmeldingsperioder!.map((periode) => ({
             fom: formatIsoDate(periode.fom),
             tom: formatIsoDate(periode.tom)
           }))
@@ -304,7 +303,7 @@ function konverterRefusjonsendringer(
     : undefined;
 }
 
-function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode>) {
+function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode> | undefined) {
   return (
     egenmeldingsperioder &&
     (egenmeldingsperioder.length > 1 ||
