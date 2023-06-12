@@ -83,12 +83,11 @@ const finnBestemmendeFravaersdag = (
       ? tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom
       : undefined;
 
-  const bestemmendeFravaersdag = hvemDatoErStorst(
-    bestemmendeFravaersdagFraFravaer,
-    arbeidsgiverperiode ? arbeidsgiverperiode[0]?.fom : undefined
-  )
+  const forsteDagArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode[0]?.fom : undefined;
+
+  const bestemmendeFravaersdag = hvemDatoErStorst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
     ? bestemmendeFravaersdagFraFravaer
-    : arbeidsgiverperiode[0]?.fom || undefined;
+    : forsteDagArbeidsgiverperiode;
 
   if (bestemmendeFravaersdag !== undefined) {
     return formatISO9075(bestemmendeFravaersdag, {
