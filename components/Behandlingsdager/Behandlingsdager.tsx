@@ -3,7 +3,7 @@ import Heading3 from '../Heading3/Heading3';
 import styles from '../../styles/Home.module.css';
 import localStyles from './Behandlingsdager.module.css';
 import TextLabel from '../TextLabel/TextLabel';
-import { UNSAFE_DatePicker, UNSAFE_useDatepicker, Alert } from '@navikt/ds-react';
+import { DatePicker, useDatepicker, Alert } from '@navikt/ds-react';
 import { useState } from 'react';
 import { eachMonthOfInterval } from 'date-fns';
 import useBoundStore from '../../state/useBoundStore';
@@ -41,7 +41,7 @@ export default function Behandlingsdager() {
     setBehandlingsdager(selectedDays);
   }
 
-  const { datepickerProps, inputProps } = UNSAFE_useDatepicker({
+  const { datepickerProps, inputProps } = useDatepicker({
     defaultSelected: new Date()
   });
   if (!behandlingsperiode) return null;
@@ -67,18 +67,18 @@ export default function Behandlingsdager() {
       <TextLabel>Velg behandlingsdager</TextLabel>
       <p>Kun en en behandlingsdag per uke. Det kan ikke være med enn 15 dager mellom to behandlingsdager.</p>
       <div className={localStyles.multicalwrapper}>
-        <UNSAFE_DatePicker {...datepickerProps}>
-          <UNSAFE_DatePicker.Standalone
+        <DatePicker {...datepickerProps}>
+          <DatePicker.Standalone
             {...inputProps}
             fromDate={behandlingsperiode.fom}
             toDate={behandlingsperiode.tom}
             mode='multiple'
             onSelect={handleSelectDays}
-            numberOfMonths={maaneder.length}
+            numberOfMonths={maaneder.length} // eslint-disable-line
             disableNavigation
             defaultSelected={behandlingsdager}
           />
-        </UNSAFE_DatePicker>
+        </DatePicker>
       </div>
       {footer && footer.length > 0 && (
         <Alert fullWidth={false} inline={false} size='medium' variant='error'>
