@@ -95,6 +95,18 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           state.endreEgenmeldingsperiode = false;
         }
 
+        const fPerioder = finnFravaersperioder(state.fravaersperioder, clonedEgenmelding);
+        if (fPerioder) {
+          const agp = finnArbeidsgiverperiode(fPerioder);
+          state.arbeidsgiverperioder = agp;
+          const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp);
+          if (bestemmende) {
+            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+          }
+        }
+
         return state;
       })
     );
@@ -135,7 +147,7 @@ function updateDateValue(state: any, periodeId: string, dateValue: PeriodeParam 
   });
 }
 
-export function finnFravaersperioder(fravaersperioder: Array<Periode>, egenmeldingsperioder: Array<Periode>) {
+export function finnFravaersperioder(fravaersperioder: Array<Periode>, egenmeldingsperioder?: Array<Periode>) {
   const perioder =
     fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
 

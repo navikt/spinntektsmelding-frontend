@@ -177,25 +177,41 @@ describe('useEgenmeldingStore', () => {
     expect(result.current.endreEgenmeldingsperiode).toBeFalsy();
   });
 
-  it('should set ting tilbake.', () => {
+  it('should set ting tilbake. And fix bestemmende fraværsdag', () => {
+    const egenmeldingsperioder: Array<MottattPeriode> = [{ fom: '2023-04-06', tom: '2023-05-06' }];
+
+    const fravaersperioder: Array<MottattPeriode> = [
+      { fom: '2022-12-06', tom: '2023-01-06' },
+      { fom: '2023-02-06', tom: '2023-03-06' }
+    ];
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initEgenmeldingsperiode([]);
+      result.current.initEgenmeldingsperiode(egenmeldingsperioder);
     });
-
-    expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
 
     act(() => {
-      result.current.setEndreEgenmelding(true);
+      result.current.initFravaersperiode(fravaersperioder);
     });
 
-    expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
+    const id = result.current.egenmeldingsperioder![0].id;
+
+    act(() => {
+      result.current.setBestemmendeFravaersdag(new Date(2023, 3, 6));
+    });
+
+    expect(result.current.bestemmendeFravaersdag).toEqual(new Date(2023, 3, 6));
+
+    act(() => {
+      result.current.setEgenmeldingDato({ fom: new Date(2023, 3, 7), tom: new Date(2023, 4, 7) }, id);
+    });
+
+    expect(result.current.bestemmendeFravaersdag).toEqual(new Date(2023, 3, 7));
 
     act(() => {
       result.current.tilbakestillEgenmelding();
     });
 
-    expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
+    expect(result.current.bestemmendeFravaersdag).toEqual(new Date(2023, 3, 6));
   });
 });
