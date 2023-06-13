@@ -235,7 +235,7 @@ export default function useFyllInnsending() {
           : undefined,
 
       inntekt: {
-        bekreftet: verdiEllerFalse(bruttoinntekt.bekreftet),
+        bekreftet: true,
         beregnetInntekt: bruttoinntekt.bruttoInntekt!,
         manueltKorrigert: verdiEllerFalse(bruttoinntekt.manueltKorrigert),
         endringÅrsak: endringAarsak()
