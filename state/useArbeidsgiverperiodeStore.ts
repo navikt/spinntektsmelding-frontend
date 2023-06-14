@@ -174,7 +174,15 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           state.arbeidsgiverperioder = nyArbeidsgiverperiode;
 
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, nyArbeidsgiverperiode);
-          if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
+
+          if (bestemmendeFravaersdag) {
+            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmendeFravaersdag));
+            state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
+            state.tidligereInntekt = finnAktuelleInntekter(
+              state.opprinneligeInntekt,
+              parseIsoDate(bestemmendeFravaersdag)
+            );
+          }
 
           slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
 
