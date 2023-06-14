@@ -11,6 +11,7 @@ import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
 import { MottattPeriode } from './MottattData';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
+import { finnAktuelleInntekter } from './useBruttoinntektStore';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
@@ -125,6 +126,14 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, state.arbeidsgiverperioder);
           if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
+          if (bestemmendeFravaersdag) {
+            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmendeFravaersdag));
+            state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
+            state.tidligereInntekt = finnAktuelleInntekter(
+              state.opprinneligeInntekt,
+              parseIsoDate(bestemmendeFravaersdag)
+            );
+          }
 
           state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperioder');
 
@@ -156,10 +165,10 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       set(
         produce((state) => {
           const perioder = sykmeldingsperioder
-            ? sykmeldingsperioder.concat(egenmeldingsperioder)
+            ? sykmeldingsperioder.concat(egenmeldingsperioder || [])
             : egenmeldingsperioder;
 
-          const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
+          const arbeidsgiverperiode = perioder ? finnArbeidsgiverperiode(perioder) : undefined;
           const nyArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode : structuredClone(opprinnelig);
 
           state.arbeidsgiverperioder = nyArbeidsgiverperiode;
@@ -185,10 +194,10 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           }
 
           const perioder = sykmeldingsperioder
-            ? sykmeldingsperioder.concat(egenmeldingsperioder)
+            ? sykmeldingsperioder.concat(egenmeldingsperioder || [])
             : egenmeldingsperioder;
 
-          const uendret = perioder.find((periode) =>
+          const uendret = perioder?.find((periode) =>
             opprinnelig?.find((opprinneligPeriode) => opprinneligPeriode.fom === periode.fom)
           );
 
