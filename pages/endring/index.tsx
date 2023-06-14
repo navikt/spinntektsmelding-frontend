@@ -19,6 +19,9 @@ import PeriodeListevelger from '../../components/Bruttoinntekt/PeriodeListevelge
 import Datovelger from '../../components/Datovelger';
 import classNames from 'classnames/bind';
 import Heading1 from '../../components/Heading1/Heading1';
+import Person from '../../components/Person/Person';
+import Skillelinje from '../../components/Skillelinje/Skillelinje';
+import Heading2 from '../../components/Heading2/Heading2';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<boolean | undefined>(undefined);
@@ -91,6 +94,8 @@ const Endring: NextPage = () => {
         <PageContent title='Oppdatert informasjon - innsendt inntektsmelding'>
           <main className={`main-content`}>
             <form className={styles.padded} onSubmit={submitForm}>
+              <Person />
+              <Skillelinje />
               <RadioGroup
                 legend='I følge den siste inntektsmeldingen hadde den ansatte en lønn på 50000 kr dd.mm.åååå. Har det vært noen
               endringer i lønn for den ansatte mellom dd.mm.åååå og dd.mm.åååå?'
@@ -106,7 +111,7 @@ const Endring: NextPage = () => {
               </RadioGroup>
               {endringBruttolonn && (
                 <>
-                  <Heading1>Brutto månedslønn</Heading1>
+                  <Heading2>Brutto månedslønn</Heading2>
                   <BodyLong>Siste inntektsmelding ({formatDate(sisteInnsending)}) hadde den ansatte:</BodyLong>
                   <BodyLong>
                     Beregnet månedsinntekt:&nbsp;
@@ -130,6 +135,7 @@ const Endring: NextPage = () => {
                           onChangeBegrunnelse={changeBegrunnelseHandler}
                           error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
                           id='bruttoinntekt-endringsaarsak'
+                          nyInnsending={false}
                         />
                       </div>
                     </div>
@@ -218,6 +224,9 @@ const Endring: NextPage = () => {
                   </div>
                 </>
               )}
+              <Skillelinje />
+              <Heading2>Brutto månedslønn</Heading2>
+
               {endringBruttolonn !== undefined && (
                 <>
                   <ConfirmationPanel
