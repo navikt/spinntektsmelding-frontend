@@ -38,10 +38,12 @@ export default function Person({ erKvittering }: PersonProps) {
 
   return (
     <>
-      <p>
-        For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
-        opplysningene vi har om den ansatte og sykefraværet.
-      </p>
+      {!erKvittering && (
+        <p>
+          For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
+          opplysningene vi har om den ansatte og sykefraværet.
+        </p>
+      )}
       <div className={lokalStyles.personinfowrapper}>
         <div className={lokalStyles.denansatte}>
           <Heading3>Den ansatte</Heading3>
