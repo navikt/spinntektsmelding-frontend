@@ -232,7 +232,7 @@ export default function useFyllInnsending() {
       arbeidsgiverperioder:
         innsendbarArbeidsgiverperioder && innsendbarArbeidsgiverperioder.length > 0
           ? innsendbarArbeidsgiverperioder
-          : undefined,
+          : [],
 
       inntekt: {
         bekreftet: true,
