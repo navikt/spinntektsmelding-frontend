@@ -18,10 +18,13 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import PeriodeListevelger from '../../components/Bruttoinntekt/PeriodeListevelger';
 import Datovelger from '../../components/Datovelger';
 import classNames from 'classnames/bind';
-import Heading1 from '../../components/Heading1/Heading1';
 import Person from '../../components/Person/Person';
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Heading2 from '../../components/Heading2/Heading2';
+import Heading3 from '../../components/Heading3';
+import Heading4 from '../../components/Heading4';
+
+import localStyles from './Endring.module.css';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<boolean | undefined>(undefined);
@@ -225,8 +228,34 @@ const Endring: NextPage = () => {
                 </>
               )}
               <Skillelinje />
-              <Heading2>Brutto månedslønn</Heading2>
-
+              <Heading2>Refusjon</Heading2>
+              <BodyLong>I siste inntektsmelding (dd.mm.åååå) hadde dere følgende refusjonskrav:</BodyLong>
+              <Heading3 unPadded topPadded>
+                Refusjon til arbeidsgiver etter arbeidsgiverperiode
+              </Heading3>
+              37 000 kr
+              <Heading3 unPadded topPadded>
+                Er det endringer i refusjonskrav i perioden?
+              </Heading3>
+              Ja
+              <div className={localStyles.refusjonswrapper}>
+                <div className={localStyles.refusjonswrapper_child}>
+                  <Heading4>Endret refusjon</Heading4>
+                  35 000
+                </div>
+                <div className={localStyles.refusjonswrapper_child}>
+                  <Heading4 topPadded>Dato for endret refusjon</Heading4>
+                  11.07.2023
+                </div>
+              </div>
+              <Heading3 unPadded topPadded>
+                Opphører refusjonkravet under sykefraværet?
+              </Heading3>
+              Ja
+              <Heading3 unPadded topPadded>
+                Angi siste dag dere krever refusjon for
+              </Heading3>
+              11.07.2023
               {endringBruttolonn !== undefined && (
                 <>
                   <ConfirmationPanel
