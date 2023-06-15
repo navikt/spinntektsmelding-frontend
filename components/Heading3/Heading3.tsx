@@ -1,10 +1,7 @@
-import { Heading } from '@navikt/ds-react';
-import { ReactNode } from 'react';
+import { Heading, HeadingProps } from '@navikt/ds-react';
 import styles from './Heading3.module.css';
 
-interface Heading3Props {
-  children: ReactNode;
-  className?: any;
+interface Heading3Props extends Partial<HeadingProps> {
   unPadded?: boolean;
 }
 
