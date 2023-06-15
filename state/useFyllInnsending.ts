@@ -53,7 +53,6 @@ export interface StillingsEndring extends AArsakType {
 }
 
 interface Bruttoinntekt {
-  bekreftet: boolean;
   beregnetInntekt: number;
   endringÅrsak?: AArsakType | Tariffendring | PeriodeListe | StillingsEndring;
   manueltKorrigert: boolean;
@@ -235,7 +234,6 @@ export default function useFyllInnsending() {
           : undefined,
 
       inntekt: {
-        bekreftet: true,
         beregnetInntekt: bruttoinntekt.bruttoInntekt!,
         manueltKorrigert: verdiEllerFalse(bruttoinntekt.manueltKorrigert),
         endringÅrsak: endringAarsak()

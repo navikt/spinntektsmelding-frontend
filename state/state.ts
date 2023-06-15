@@ -8,7 +8,6 @@ export type YesNo = 'Ja' | 'Nei';
 
 export interface Inntekt {
   bruttoInntekt?: number;
-  bekreftet?: boolean;
   manueltKorrigert: boolean;
   endringsaarsak?: string;
 }

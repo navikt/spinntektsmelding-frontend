@@ -37,26 +37,6 @@ describe('useBoundStore', () => {
     expect(result.current.tidligereInntekt?.length).toBe(3);
   });
 
-  it('should set the bekreftet flag to true, and let it stay there. To be removed!', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    act(() => {
-      result.current.bekreftKorrektInntekt(true);
-    });
-
-    expect(result.current.bruttoinntekt?.bekreftet).toBeTruthy();
-
-    act(() => {
-      result.current.bekreftKorrektInntekt(false);
-    });
-
-    expect(result.current.bruttoinntekt?.bekreftet).toBeFalsy();
-  });
-
   it('should set ny maanedsinntekt.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -196,7 +176,6 @@ describe('useBoundStore', () => {
     act(() => {
       result.current.setEndringsaarsak('AARSAK');
       result.current.setNyMaanedsinntekt('56000,23');
-      result.current.bekreftKorrektInntekt(true);
     });
 
     act(() => {
