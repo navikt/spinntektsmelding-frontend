@@ -28,7 +28,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
-  const bekreftKorrektInntekt = useBoundStore((state) => state.bekreftKorrektInntekt);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
   const [setEndringsaarsak, endringsaarsak] = useBoundStore((state) => [
     state.setEndringsaarsak,
@@ -103,9 +102,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
       });
 
       setEndreMaanedsinntekt(true);
-      bekreftKorrektInntekt(false, true);
     },
-    [setEndreMaanedsinntekt, bekreftKorrektInntekt, logEvent]
+    [setEndreMaanedsinntekt, logEvent]
   );
 
   const clickLesMerBeregnetMaanedslonn = (event: React.MouseEvent<HTMLButtonElement>) => {

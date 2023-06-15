@@ -7,7 +7,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an empty array when everything is OK', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: false
       }
@@ -19,7 +18,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when bruttoinntekt < 0 ', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: -1,
         manueltKorrigert: false
       }
@@ -38,7 +36,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when not confirmed', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true
       }
@@ -57,7 +54,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when no reason given', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: ''
@@ -89,7 +85,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when tariffendring', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Tariffendring
@@ -113,7 +108,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when ferie property is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Ferie
@@ -133,7 +127,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when ferie fom & tom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Ferie
@@ -157,7 +150,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when ferie fom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Ferie
@@ -178,7 +170,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when ferie tom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Ferie
@@ -199,7 +190,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when varig lønnsendring date is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLonnsendring
@@ -219,7 +209,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when varig lønnsendring date is afte bestemmend fraværsdag', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLonnsendring
@@ -241,7 +230,6 @@ describe('validerBruttoinntekt', () => {
   it('should no return an error when lønnsendring date is ok', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLonnsendring
@@ -258,7 +246,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when permisjon property is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Permisjon
@@ -278,7 +265,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when permisjon fom & tom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Permisjon
@@ -302,7 +288,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when permisjon fom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Permisjon
@@ -323,7 +308,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when permisjon tom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Permisjon
@@ -344,7 +328,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when permittering property is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Permittering
@@ -364,7 +347,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when permittering fom & tom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Permittering
@@ -388,7 +370,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when permittering fom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Permittering
@@ -409,7 +390,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when permittering tom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.Permittering
@@ -431,7 +411,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when nystilling property is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.NyStilling
@@ -451,7 +430,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when nystilling is undefined', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.NyStilling
@@ -471,7 +449,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when nystilling fom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.NyStilling
@@ -494,7 +471,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when nystillingsprosent property is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent
@@ -514,7 +490,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when nystillingsprosent is undefined', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent
@@ -534,7 +509,6 @@ describe('validerBruttoinntekt', () => {
   it('should return an error when nystillingsprosent fom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
-        bekreftet: true,
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringsaarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent

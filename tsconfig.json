@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": "."
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "state/mappe", "__mocks__/server.js", "__mocks__/handlers.js", "./__tests__/setup.ts"],
   "exclude": ["node_modules", "cypress.config.ts"],
