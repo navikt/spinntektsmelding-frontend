@@ -46,7 +46,6 @@ export interface BruttoinntektState {
   setPermisjonPeriode: (periode: Array<Periode> | undefined) => void;
   setPermitteringPeriode: (periode: Array<Periode> | undefined) => void;
   tilbakestillMaanedsinntekt: () => void;
-  bekreftKorrektInntekt: (bekreftet: boolean, reset?: boolean) => void;
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
     bruttoInntekt: number,
@@ -59,13 +58,11 @@ export interface BruttoinntektState {
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
   bruttoinntekt: {
     bruttoInntekt: undefined,
-    bekreftet: true,
     manueltKorrigert: false,
     endringsaarsak: undefined
   },
   opprinneligbruttoinntekt: {
     bruttoInntekt: undefined,
-    bekreftet: true,
     manueltKorrigert: false,
     endringsaarsak: undefined
   },
@@ -104,7 +101,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       produce((state) => {
         state.bruttoinntekt.bruttoInntekt = typeof belop === 'string' ? stringishToNumber(belop) : belop;
         state.bruttoinntekt.manueltKorrigert = false;
-        state.bruttoinntekt.bekreftet = true;
         if (state.bruttoinntekt.bruttoInntekt !== undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
           state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
         } else {
@@ -198,17 +194,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  bekreftKorrektInntekt: (bekreftet, reset) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt!.bekreftet = bekreftet;
-        if (bekreftet === true) {
-          state = slettFeilmeldingFraState(state, 'bruttoinntektbekreft');
-        }
-
-        return state;
-      })
-    ),
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) =>
     set(
       produce((state) => {
@@ -248,13 +233,11 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt = {
           ...state.bruttoInntekt,
           bruttoInntekt: snittInntekter,
-          bekreftet: true,
           manueltKorrigert: false
         };
         state.opprinneligbruttoinntekt = {
           ...state.opprinneligbruttoinntekt,
           bruttoInntekt: snittInntekter,
-          bekreftet: true,
           manueltKorrigert: false
         };
 
@@ -312,25 +295,21 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     } else {
       const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
 
-      const sumInntekter = aktuelleInntekter.reduce(
-        (prev, cur) => {
-          prev.inntekt += cur.inntekt;
-          return prev;
-        },
-        { inntekt: 0, maaned: '' }
-      );
+      const sumInntekter = aktuelleInntekter.reduce((prev, cur) => {
+        prev += cur.inntekt;
+        return prev;
+      }, 0);
 
-      snittInntekter = sumInntekter.inntekt / aktuelleInntekter.length;
+      snittInntekter = sumInntekter / aktuelleInntekter.length;
     }
 
     set(
       produce((state) => {
         state.henterData = henterData;
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
-        if (!bruttoinntekt.bekreftet && !bruttoinntekt.manueltKorrigert) {
+        if (!bruttoinntekt.manueltKorrigert) {
           state.bruttoinntekt = {
             bruttoInntekt: snittInntekter,
-            bekreftet: false,
             manueltKorrigert: false,
             endringsaarsak: ''
           };

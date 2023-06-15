@@ -72,6 +72,7 @@ describe('useFyllInnsending', () => {
       expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
       expect(innsending.refusjon.refusjonPrMnd).toBe(80666.66666666667);
       expect(innsending.inntekt.beregnetInntekt).toBe(80666.66666666667);
+      expect(innsending.inntekt.bekreftet).toBeTruthy();
     }
   });
 
@@ -111,6 +112,7 @@ describe('useFyllInnsending', () => {
       expect(innsending.refusjon.refusjonOpphører).toBeUndefined();
       expect(innsending.refusjon.refusjonEndringer).toBeUndefined();
       expect(innsending.inntekt.beregnetInntekt).toBe(80666.66666666667);
+      expect(innsending.inntekt.bekreftet).toBeTruthy();
     } else {
       expect(innsending).toBeTruthy();
     }
