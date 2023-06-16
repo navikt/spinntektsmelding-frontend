@@ -1,4 +1,4 @@
-import { BodyLong, Button, ConfirmationPanel, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { BodyLong, BodyShort, Button, ConfirmationPanel, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
@@ -23,8 +23,7 @@ import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Heading2 from '../../components/Heading2/Heading2';
 import Heading3 from '../../components/Heading3';
 import Heading4 from '../../components/Heading4';
-
-import localStyles from './Endring.module.css';
+import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<boolean | undefined>(undefined);
@@ -50,6 +49,8 @@ const Endring: NextPage = () => {
   const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
   const permittering = useBoundStore((state) => state.permittering);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
@@ -238,12 +239,12 @@ const Endring: NextPage = () => {
                 Er det endringer i refusjonskrav i perioden?
               </Heading3>
               Ja
-              <div className={localStyles.refusjonswrapper}>
-                <div className={localStyles.refusjonswrapper_child}>
+              <div className={lokalStyles.refusjonswrapper}>
+                <div className={lokalStyles.refusjonswrapper_child}>
                   <Heading4>Endret refusjon</Heading4>
                   35 000
                 </div>
-                <div className={localStyles.refusjonswrapper_child}>
+                <div className={lokalStyles.refusjonswrapper_child}>
                   <Heading4 topPadded>Dato for endret refusjon</Heading4>
                   11.07.2023
                 </div>
@@ -256,6 +257,45 @@ const Endring: NextPage = () => {
                 Angi siste dag dere krever refusjon for
               </Heading3>
               11.07.2023
+              <RadioGroup
+                legend='Har det vært noen endringer i refusjonskrav mellom dd.mm.åååå og dd.mm.åååå (start av nytt sykefravær)?'
+                onChange={handleChangeEndringLonn}
+                className={lokalStyles.fancyRadioGruppe}
+              >
+                <Radio value='Ja' className={classNameJa}>
+                  Ja
+                </Radio>
+                <Radio value='Nei' className={classNameNei}>
+                  Nei
+                </Radio>
+              </RadioGroup>
+              <Heading2>Angi de refusjonskravene som blitt endret.</Heading2>
+              <Heading3>Refusjon til arbeidsgiver etter arbeidsgiverperiode</Heading3>
+              <RefusjonArbeidsgiverBelop
+                visFeilmeldingsTekst={visFeilmeldingsTekst}
+                bruttoinntekt={10000}
+                onOppdaterBelop={() => {}}
+              />
+              <div className={lokalStyles.uthevet}>Er det endringer i refusjonsbeløpet i perioden?</div>
+              <BodyShort>{harRefusjonEndringer}</BodyShort>
+              {harRefusjonEndringer === 'Ja' && (
+                <table className={lokalStyles.lonnTabell}>
+                  <thead>
+                    <tr>
+                      <td className={lokalStyles.uthevet}>Dato for endring</td>
+                      <td className={lokalStyles.uthevet}>Endret refusjonsbeløp</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {refusjonEndringer?.map((endring) => (
+                      <tr key={endring.dato?.toString()}>
+                        <td>{formatDate(endring.dato)}</td>
+                        <td>{formatCurrency(endring.belop)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
               {endringBruttolonn !== undefined && (
                 <>
                   <ConfirmationPanel
