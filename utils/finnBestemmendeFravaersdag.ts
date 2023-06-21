@@ -49,7 +49,9 @@ const finnBestemmendeFravaersdag = (
     return undefined;
   }
 
-  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
+  const filtrertePerioder = fravaersperioder.filter((periode) => periode.fom && periode.tom);
+
+  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(filtrertePerioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
 
