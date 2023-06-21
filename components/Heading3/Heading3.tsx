@@ -10,7 +10,7 @@ interface Heading3Props extends Partial<HeadingProps> {
 const cx = classNames.bind(styles);
 
 export default function Heading3(props: Heading3Props) {
-  const className = cx({ heading: !props.unPadded, heading_top: props.topPadded });
+  const className = cx({ heading: !props.unPadded, heading_top: props.topPadded }, props.className);
 
   return (
     <Heading size='medium' level='3' className={className}>

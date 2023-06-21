@@ -1,15 +1,12 @@
-import { Select } from '@navikt/ds-react';
-import { ChangeEvent, ReactNode, useCallback } from 'react';
+import { Select, SelectProps } from '@navikt/ds-react';
+import { ChangeEvent, useCallback } from 'react';
 
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoinntektTekster';
 
-interface SelectEndringBruttoinntektProps {
+interface SelectEndringBruttoinntektProps extends Partial<SelectProps> {
   onChangeBegrunnelse: (verdi: string) => void;
-  error: ReactNode;
-  id: string;
   nyInnsending: boolean;
-  defaultValue?: string;
 }
 
 export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinntektProps) {
@@ -27,7 +24,7 @@ export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinn
   return (
     <>
       <Select
-        label={'Velg endringsårsak'}
+        label={props.label || 'Velg endringsårsak'}
         onChange={changeHandler}
         id={props.id}
         error={props.error}

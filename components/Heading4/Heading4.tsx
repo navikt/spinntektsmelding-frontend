@@ -1,5 +1,4 @@
 import { Heading, HeadingProps } from '@navikt/ds-react';
-import { ReactNode } from 'react';
 import styles from './Heading4.module.css';
 import classNames from 'classnames/bind';
 

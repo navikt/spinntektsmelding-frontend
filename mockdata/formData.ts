@@ -59,7 +59,14 @@ const formData: Partial<MottattData> = {
     },
     refusjon: {
       paakrevd: true,
-      forslag: { perioder: [], opphoersdato: null }
+      forslag: {
+        perioder: [
+          { fom: '2023-02-01', tom: '2023-03-01', beløp: 66000 },
+          { fom: '2023-03-02', tom: '2023-04-01', beløp: 55000 },
+          { fom: '2023-05-02', tom: '2023-05-02', beløp: 44000 }
+        ],
+        opphoersdato: null
+      }
     }
   }
   // feilReport: {

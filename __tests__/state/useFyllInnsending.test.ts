@@ -5,7 +5,7 @@ import useFyllInnsending, { InnsendingSkjema } from '../../state/useFyllInnsendi
 import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 
-import inntektData from '../../mockdata/inntektData';
+import inntektData from '../../mockdata/inntektData.json';
 import delvisRefusjon from '../../mockdata/kvittering-delvis-refusjon.json';
 import useKvitteringInit, { KvitteringSkjema } from '../../state/useKvitteringInit';
 

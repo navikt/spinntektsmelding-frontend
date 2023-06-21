@@ -12,7 +12,7 @@ import permisjonKvittering from '../../mockdata/kvittering-Permisjon.json';
 import permitteringKvittering from '../../mockdata/kvittering-Permittering.json';
 import nyStillingKvittering from '../../mockdata/kvittering-NyStilling.json';
 import nyStillingsprosentKvittering from '../../mockdata/kvittering-NyStillingsprosent.json';
-import inntektData from '../../mockdata/inntektData';
+import inntektData from '../../mockdata/inntektData.json';
 import parseIsoDate from '../../utils/parseIsoDate';
 
 vi.mock('nanoid');

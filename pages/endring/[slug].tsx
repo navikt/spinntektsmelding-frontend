@@ -24,9 +24,11 @@ import Heading2 from '../../components/Heading2/Heading2';
 import Heading3 from '../../components/Heading3';
 import Heading4 from '../../components/Heading4';
 import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
+import ButtonSlette from '../../components/ButtonSlette';
+import { YesNo } from '../../state/state';
 
 const Endring: NextPage = () => {
-  const [endringBruttolonn, setEndringBruttolonn] = useState<boolean | undefined>(undefined);
+  const [endringBruttolonn, setEndringBruttolonn] = useState<YesNo>('Nei');
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
   const [endringsaarsak, setEndringsaarsak] = useState<string>('');
@@ -51,6 +53,11 @@ const Endring: NextPage = () => {
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+  const hentRefusjoner = useBoundStore((state) => state.hentRefusjoner);
+
+  const [endringerAvRefusjon, setEndringerAvRefusjon] = useState<YesNo>('Nei');
+
+  const endringer = [{ dato: new Date(), belop: 123 }];
 
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
@@ -63,7 +70,7 @@ const Endring: NextPage = () => {
   };
 
   const handleChangeEndringLonn = (value: string) => {
-    setEndringBruttolonn(value === 'Ja');
+    setEndringerAvRefusjon(value as YesNo);
   };
 
   const changeMaanedsintektHandler = () => {};
@@ -84,8 +91,16 @@ const Endring: NextPage = () => {
   const sisteInnsending = new Date();
 
   let cx = classNames.bind(lokalStyles);
-  const classNameJa = cx({ fancyRadio: true, selectedRadio: endringBruttolonn });
-  const classNameNei = cx({ fancyRadio: true, selectedRadio: endringBruttolonn !== undefined && !endringBruttolonn });
+  const classNameJa = cx({ fancyRadio: true, selectedRadio: endringBruttolonn === 'Ja' });
+  const classNameNei = cx({ fancyRadio: true, selectedRadio: endringBruttolonn === 'Nei' });
+
+  const classNameJaEndringAvRefusjon = cx({ fancyRadio: true, selectedRadio: endringerAvRefusjon === 'Ja' });
+  const classNameNeiEndringAvRefusjon = cx({ fancyRadio: true, selectedRadio: endringerAvRefusjon === 'Nei' });
+
+  const refusjoner = hentRefusjoner();
+
+  console.log(refusjoner);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -100,11 +115,20 @@ const Endring: NextPage = () => {
             <form className={styles.padded} onSubmit={submitForm}>
               <Person />
               <Skillelinje />
+              <Heading2>Brutto månedslønn</Heading2>
+              <BodyLong>I siste inntektsmelding (dd.mm.åååå) hadde den ansatte:</BodyLong>
+              <BodyLong>
+                Beregnet månedslønn{' '}
+                <strong>
+                  {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)}
+                </strong>
+                kr
+              </BodyLong>
               <RadioGroup
-                legend='I følge den siste inntektsmeldingen hadde den ansatte en lønn på 50000 kr dd.mm.åååå. Har det vært noen
-              endringer i lønn for den ansatte mellom dd.mm.åååå og dd.mm.åååå?'
+                legend='Har det vært noen endringer i lønn for den ansatte mellom dd.mm.åååå og dd.mm.åååå?'
                 onChange={handleChangeEndringLonn}
                 className={lokalStyles.fancyRadioGruppe}
+                defaultValue={endringBruttolonn}
               >
                 <Radio value='Ja' className={classNameJa}>
                   Ja
@@ -113,19 +137,14 @@ const Endring: NextPage = () => {
                   Nei
                 </Radio>
               </RadioGroup>
-              {endringBruttolonn && (
+              {endringBruttolonn === 'Ja' && (
                 <>
-                  <Heading2>Brutto månedslønn</Heading2>
-                  <BodyLong>Siste inntektsmelding ({formatDate(sisteInnsending)}) hadde den ansatte:</BodyLong>
-                  <BodyLong>
-                    Beregnet månedsinntekt:&nbsp;
-                    {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr
-                  </BodyLong>
-                  <BodyLong>Angi ny månedslønn per dd.mm.ååååå</BodyLong>
+                  <BodyLong>Angi ny beregnet månedslønn per {formatDate(sisteInnsending)}</BodyLong>
+
                   <div className={biStyles.endremaaanedsinntektwrapper}>
                     <div className={biStyles.endremaaanedsinntekt}>
                       <TextField
-                        label='Inntekt per måned'
+                        label='Ny månedsinntekt'
                         onChange={changeMaanedsintektHandler}
                         defaultValue={formatCurrency(
                           bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
@@ -140,6 +159,7 @@ const Endring: NextPage = () => {
                           error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
                           id='bruttoinntekt-endringsaarsak'
                           nyInnsending={false}
+                          label='Forklaring til endring'
                         />
                       </div>
                     </div>
@@ -238,63 +258,140 @@ const Endring: NextPage = () => {
               <Heading3 unPadded topPadded>
                 Er det endringer i refusjonskrav i perioden?
               </Heading3>
-              Ja
+              {refusjoner.harEndringer ? 'Ja' : 'Nei'}
               <div className={lokalStyles.refusjonswrapper}>
-                <div className={lokalStyles.refusjonswrapper_child}>
-                  <Heading4>Endret refusjon</Heading4>
-                  35 000
-                </div>
-                <div className={lokalStyles.refusjonswrapper_child}>
-                  <Heading4 topPadded>Dato for endret refusjon</Heading4>
-                  11.07.2023
-                </div>
-              </div>
-              <Heading3 unPadded topPadded>
-                Opphører refusjonkravet under sykefraværet?
-              </Heading3>
-              Ja
-              <Heading3 unPadded topPadded>
-                Angi siste dag dere krever refusjon for
-              </Heading3>
-              11.07.2023
-              <RadioGroup
-                legend='Har det vært noen endringer i refusjonskrav mellom dd.mm.åååå og dd.mm.åååå (start av nytt sykefravær)?'
-                onChange={handleChangeEndringLonn}
-                className={lokalStyles.fancyRadioGruppe}
-              >
-                <Radio value='Ja' className={classNameJa}>
-                  Ja
-                </Radio>
-                <Radio value='Nei' className={classNameNei}>
-                  Nei
-                </Radio>
-              </RadioGroup>
-              <Heading2>Angi de refusjonskravene som blitt endret.</Heading2>
-              <Heading3>Refusjon til arbeidsgiver etter arbeidsgiverperiode</Heading3>
-              <RefusjonArbeidsgiverBelop
-                visFeilmeldingsTekst={visFeilmeldingsTekst}
-                bruttoinntekt={10000}
-                onOppdaterBelop={() => {}}
-              />
-              <div className={lokalStyles.uthevet}>Er det endringer i refusjonsbeløpet i perioden?</div>
-              <BodyShort>{harRefusjonEndringer}</BodyShort>
-              {harRefusjonEndringer === 'Ja' && (
-                <table className={lokalStyles.lonnTabell}>
+                <table>
                   <thead>
                     <tr>
-                      <td className={lokalStyles.uthevet}>Dato for endring</td>
-                      <td className={lokalStyles.uthevet}>Endret refusjonsbeløp</td>
+                      <th className={lokalStyles.table_header}>
+                        <strong>Endret refusjon</strong>
+                      </th>
+                      <th>
+                        <strong>Dato for endret refusjon</strong>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {refusjonEndringer?.map((endring) => (
-                      <tr key={endring.dato?.toString()}>
-                        <td>{formatDate(endring.dato)}</td>
+                    {refusjoner.endringer.map((endring) => (
+                      <tr key={endring.fom.toString()}>
                         <td>{formatCurrency(endring.belop)}</td>
+                        <td>{formatDate(endring.fom)}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+              </div>
+              <Heading3 unPadded topPadded>
+                Opphører refusjonkravet under sykefraværet?
+              </Heading3>
+              {refusjoner.kravOpphorer}
+              {refusjoner.kravOpphorer === 'Ja' && (
+                <>
+                  <Heading3 unPadded topPadded>
+                    Angi siste dag dere krever refusjon for
+                  </Heading3>
+                  {formatDate(refusjoner.kravOpphorerDato)}
+                </>
+              )}
+              <RadioGroup
+                legend='Har det vært noen endringer i refusjonskrav mellom dd.mm.åååå og dd.mm.åååå (start av nytt sykefravær)?'
+                onChange={handleChangeEndringLonn}
+                className={lokalStyles.fancyRadioGruppe}
+                defaultValue={endringerAvRefusjon}
+              >
+                <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
+                  Ja
+                </Radio>
+                <Radio value='Nei' className={classNameNeiEndringAvRefusjon}>
+                  Nei
+                </Radio>
+              </RadioGroup>
+              {endringerAvRefusjon === 'Ja' && (
+                <>
+                  <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>
+                  <Heading3>Refusjon til arbeidsgiver etter arbeidsgiverperiode</Heading3>
+                  <RefusjonArbeidsgiverBelop
+                    visFeilmeldingsTekst={visFeilmeldingsTekst}
+                    bruttoinntekt={10000}
+                    onOppdaterBelop={() => {}}
+                  />
+                  <RadioGroup
+                    legend='Er det endringer i refusjonsbeløpet i perioden?'
+                    className={styles.radiobuttonwrapper}
+                    id={'lia-radio'}
+                    error={visFeilmeldingsTekst('lia-radio')}
+                    onChange={(nyVerdi) => {
+                      // setEndringerAvRefusjon(nyVerdi);
+                    }}
+                    // defaultValue={endringerAvRefusjon}
+                  >
+                    <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
+                      Ja
+                    </Radio>
+                    <Radio value='Nei' name='fullLonnIArbeidsgiverPerioden'>
+                      Nei
+                    </Radio>
+                  </RadioGroup>
+                  {endringer.map((endring, key) => (
+                    <div key={key} className={lokalStyles.belopperiode}>
+                      <TextField
+                        label='Endret refusjon/måned'
+                        onChange={(event) => {}}
+                        defaultValue={endring.belop}
+                        id={`lus-utbetaling-endring-belop-${key}`}
+                        error={visFeilmeldingsTekst(`lus-utbetaling-endring-belop-${key}`)}
+                      />
+                      <Datovelger
+                        // fromDate={minDate}
+                        // toDate={maxDate}
+                        onDateChange={(val: Date | undefined) => {}}
+                        id={`lus-utbetaling-endring-dato-${key}`}
+                        label='Dato for endring'
+                        error={visFeilmeldingsTekst(`lus-utbetaling-endring-dato-${key}`)}
+                        defaultSelected={endring.dato}
+                      />
+                      {key !== 0 && (
+                        <ButtonSlette title='Slett periode' onClick={() => {}} className={lokalStyles.sletteknapp} />
+                      )}
+                    </div>
+                  ))}
+                  <Button variant='secondary' className={lokalStyles.leggtilbutton} onClick={(event) => event}>
+                    Legg til periode
+                  </Button>
+                  <RadioGroup
+                    legend='Opphører refusjonkravet under sykefraværet?'
+                    className={styles.radiobuttonwrapper}
+                    id={'lia-radio'}
+                    error={visFeilmeldingsTekst('lia-radio')}
+                    onChange={() => {}}
+                    defaultValue={'Ja'}
+                  >
+                    <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
+                      Ja
+                    </Radio>
+                    <Radio value='Nei' name='fullLonnIArbeidsgiverPerioden'>
+                      Nei
+                    </Radio>
+                  </RadioGroup>
+                  <div className={lokalStyles.belopperiode}>
+                    <TextField
+                      label='Endret refusjon/måned'
+                      onChange={(event) => {}}
+                      defaultValue={2222}
+                      id={`lus-utbetaling-enwwwdring-belop`}
+                      error={visFeilmeldingsTekst(`lus-utbetaling-endring-belop`)}
+                    />
+                    <Datovelger
+                      // fromDate={minDate}
+                      // toDate={maxDate}
+                      onDateChange={(val: Date | undefined) => {}}
+                      id={`lus-utbetaling-endring-dato`}
+                      label='Dato for endring'
+                      error={visFeilmeldingsTekst(`lus-utbetaling-endring-dato`)}
+                      // defaultSelected={}
+                    />
+                  </div>
+                </>
               )}
               {endringBruttolonn !== undefined && (
                 <>

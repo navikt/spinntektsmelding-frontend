@@ -3,12 +3,15 @@ import useBoundStore from '../state/useBoundStore';
 import fetchInntektskjemaForNotifikasjon from '../state/fetchInntektskjemaForNotifikasjon';
 import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
+import { useRouter } from 'next/router';
 
 export default function useHentSkjemadata() {
   const initState = useStateInit();
   const leggTilFeilmelding = useBoundStore((state) => state.leggTilFeilmelding);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
+  const hentOpplysningstyper = useBoundStore((state) => state.hentOpplysningstyper);
+  const router = useRouter();
 
   return async (pathSlug: string) => {
     try {
@@ -18,6 +21,11 @@ export default function useHentSkjemadata() {
       }
       if (skjemadata) {
         initState(skjemadata);
+        const opplysningstyper = hentOpplysningstyper();
+
+        if (!opplysningstyper.includes('Arbeidsgiverperiode')) {
+          router.push(`/endring/${pathSlug}`, undefined, { shallow: true });
+        }
       }
     } catch (error: any) {
       if (error.status === 401) {

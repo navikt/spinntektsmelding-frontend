@@ -33,3 +33,17 @@
 .refusjonswrapper_child {
   flex: 1
 }
+
+.belopperiode {
+  display       : flex;
+  flex-direction: row;
+  gap           : 2rem;
+}
+
+.leggtilbutton {
+  margin-top: 1rem;
+}
+
+.table_header {
+  padding-right: 1rem;
+}
