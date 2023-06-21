@@ -58,6 +58,18 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
         const nyePerioder = state.egenmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId);
         state.egenmeldingsperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
 
+        const fPerioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
+        if (fPerioder) {
+          const agp = finnArbeidsgiverperiode(fPerioder);
+          state.arbeidsgiverperioder = agp;
+          const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp);
+          if (bestemmende) {
+            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
+            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+          }
+        }
+
         return state;
       })
     ),

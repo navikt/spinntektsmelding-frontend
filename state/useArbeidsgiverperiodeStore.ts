@@ -123,7 +123,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           const perioder = sykmeldingsperioder
             ? sykmeldingsperioder.concat(egenmeldingsperioder ?? [])
             : egenmeldingsperioder;
-
+          debugger;
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, state.arbeidsgiverperioder);
           if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
           if (bestemmendeFravaersdag) {
