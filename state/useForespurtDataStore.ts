@@ -13,9 +13,9 @@ type ForslagInntekt = {
 };
 
 type PeriodeRefusjon = {
-  fom?: Date;
+  fom: Date;
   tom?: Date;
-  belop?: number;
+  belop: number;
 };
 
 type MottattPeriodeRefusjon = {
@@ -26,15 +26,28 @@ type MottattPeriodeRefusjon = {
 
 type ForslagRefusjon = Array<PeriodeRefusjon>;
 
-type ForespurteData = {
+type MottattForslagRefusjon = Array<MottattPeriodeRefusjon>;
+
+type ForespurtData = {
   opplysningstype: Opplysningstype;
-  forslag: ForslagInntekt | ForslagRefusjon;
+  forslag: ForslagInntekt & ForslagRefusjon;
+};
+
+type MottattForespurtData = {
+  opplysningstype: Opplysningstype;
+  forslag: ForslagInntekt & MottattForslagRefusjon;
 };
 
 export interface ForespurtDataState {
-  forespurtData?: Array<ForespurteData>;
+  forespurtData?: Array<ForespurtData>;
   initForespurtData: (forespurtData: any) => void;
   hentOpplysningstyper: () => Array<string>;
+  hentRefusjoner: () => {
+    harEndringer: boolean;
+    endringer: Array<PeriodeRefusjon>;
+    kravOpphorer: YesNo;
+    kravOpphorerDato: Date;
+  };
 }
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
@@ -42,7 +55,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
   initForespurtData: (forespurtData) => {
     set(
       produce((state: ForespurtDataState) => {
-        const maserteData = forespurtData.map((data) => {
+        const maserteData: Array<ForespurtData> = forespurtData.map((data: MottattForespurtData) => {
           if (data.opplysningstype === 'Refusjon') {
             const forslagsdata = data.forslag.map((periode: MottattPeriodeRefusjon) => ({
               fom: periode.fom ? parseISO(periode.fom) : undefined,
@@ -72,7 +85,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
     if (forespurtData) {
       const refusjonsdata = forespurtData.find((data) => data.opplysningstype === 'Refusjon');
-      const harEndringer =
+      let harEndringer =
         refusjonsdata?.forslag && !('beregningsmåneder' in refusjonsdata.forslag) && refusjonsdata.forslag.length > 0;
       const endringer = refusjonsdata!.forslag as ForslagRefusjon;
 
@@ -110,9 +123,13 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       //     : sisteEndring.tom!
       //   : sisteEndring.tom!;
 
+      if (harEndringer === undefined) {
+        harEndringer = false;
+      }
+
       return {
-        harEndringer,
-        endringer: sorterteEndringer,
+        harEndringer: harEndringer ?? false,
+        endringer: sorterteEndringer ?? [],
         kravOpphorer,
         kravOpphorerDato
       };

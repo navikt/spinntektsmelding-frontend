@@ -1,7 +1,7 @@
-import { BodyLong, BodyShort, Button, ConfirmationPanel, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { BodyLong, Button, ConfirmationPanel, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import SelectEndringBruttoinntekt from '../../components/Bruttoinntekt/SelectEndringBruttoinntekt';
 import PageContent from '../../components/PageContent/PageContent';
@@ -22,10 +22,11 @@ import Person from '../../components/Person/Person';
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Heading2 from '../../components/Heading2/Heading2';
 import Heading3 from '../../components/Heading3';
-import Heading4 from '../../components/Heading4';
 import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
 import ButtonSlette from '../../components/ButtonSlette';
 import { YesNo } from '../../state/state';
+import { useRouter } from 'next/router';
+import useHentKvitteringsdata from 'utils/useHentKvitteringsdata';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<YesNo>('Nei');
@@ -51,13 +52,12 @@ const Endring: NextPage = () => {
   const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
   const permittering = useBoundStore((state) => state.permittering);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const hentRefusjoner = useBoundStore((state) => state.hentRefusjoner);
+  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const setSlug = useBoundStore((state) => state.setSlug);
+  const router = useRouter();
 
   const [endringerAvRefusjon, setEndringerAvRefusjon] = useState<YesNo>('Nei');
-
-  const endringer = [{ dato: new Date(), belop: 123 }];
 
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
@@ -65,11 +65,33 @@ const Endring: NextPage = () => {
     state.leggTilFeilmelding
   ]);
 
+  const hentKvitteringsdata = useHentKvitteringsdata();
+
+  const slug = (router.query.slug as string) || '';
+  const firstSlug = slug;
+  const [pathSlug, setPathSlug] = useState<string>(firstSlug);
+
+  useEffect(() => {
+    setPathSlug(firstSlug);
+  }, [firstSlug]);
+
+  useEffect(() => {
+    if (!fravaersperioder) {
+      hentKvitteringsdata(pathSlug);
+    }
+    setSlug(pathSlug);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathSlug]);
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
   };
 
   const handleChangeEndringLonn = (value: string) => {
+    setEndringBruttolonn(value as YesNo);
+  };
+
+  const handleChangeEndringRefusjon = (value: string) => {
     setEndringerAvRefusjon(value as YesNo);
   };
 
@@ -99,7 +121,7 @@ const Endring: NextPage = () => {
 
   const refusjoner = hentRefusjoner();
 
-  console.log(refusjoner);
+  const refusjonTilArbeidsgiver = bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0;
 
   return (
     <div className={styles.container}>
@@ -118,10 +140,7 @@ const Endring: NextPage = () => {
               <Heading2>Brutto månedslønn</Heading2>
               <BodyLong>I siste inntektsmelding (dd.mm.åååå) hadde den ansatte:</BodyLong>
               <BodyLong>
-                Beregnet månedslønn{' '}
-                <strong>
-                  {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)}
-                </strong>
+                Beregnet månedslønn <strong>{formatCurrency(refusjonTilArbeidsgiver)}</strong>
                 kr
               </BodyLong>
               <RadioGroup
@@ -272,12 +291,13 @@ const Endring: NextPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {refusjoner.endringer.map((endring) => (
-                      <tr key={endring.fom.toString()}>
-                        <td>{formatCurrency(endring.belop)}</td>
-                        <td>{formatDate(endring.fom)}</td>
-                      </tr>
-                    ))}
+                    {refusjoner.endringer &&
+                      refusjoner.endringer.map((endring) => (
+                        <tr key={endring.fom.toString()}>
+                          <td>{formatCurrency(endring.belop)}</td>
+                          <td>{formatDate(endring.fom)}</td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
@@ -295,7 +315,7 @@ const Endring: NextPage = () => {
               )}
               <RadioGroup
                 legend='Har det vært noen endringer i refusjonskrav mellom dd.mm.åååå og dd.mm.åååå (start av nytt sykefravær)?'
-                onChange={handleChangeEndringLonn}
+                onChange={handleChangeEndringRefusjon}
                 className={lokalStyles.fancyRadioGruppe}
                 defaultValue={endringerAvRefusjon}
               >
@@ -323,7 +343,7 @@ const Endring: NextPage = () => {
                     onChange={(nyVerdi) => {
                       // setEndringerAvRefusjon(nyVerdi);
                     }}
-                    // defaultValue={endringerAvRefusjon}
+                    defaultValue={refusjoner.harEndringer}
                   >
                     <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
                       Ja
@@ -332,8 +352,8 @@ const Endring: NextPage = () => {
                       Nei
                     </Radio>
                   </RadioGroup>
-                  {endringer.map((endring, key) => (
-                    <div key={key} className={lokalStyles.belopperiode}>
+                  {refusjoner.endringer.map((endring, key) => (
+                    <div key={endring.fom.toString()} className={lokalStyles.belopperiode}>
                       <TextField
                         label='Endret refusjon/måned'
                         onChange={(event) => {}}
@@ -348,7 +368,7 @@ const Endring: NextPage = () => {
                         id={`lus-utbetaling-endring-dato-${key}`}
                         label='Dato for endring'
                         error={visFeilmeldingsTekst(`lus-utbetaling-endring-dato-${key}`)}
-                        defaultSelected={endring.dato}
+                        defaultSelected={endring.fom}
                       />
                       {key !== 0 && (
                         <ButtonSlette title='Slett periode' onClick={() => {}} className={lokalStyles.sletteknapp} />
@@ -364,7 +384,7 @@ const Endring: NextPage = () => {
                     id={'lia-radio'}
                     error={visFeilmeldingsTekst('lia-radio')}
                     onChange={() => {}}
-                    defaultValue={'Ja'}
+                    defaultValue={refusjoner.kravOpphorer}
                   >
                     <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
                       Ja
