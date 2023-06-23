@@ -204,7 +204,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
           case begrunnelseEndringBruttoinntekt.Sykefravaer: {
             if (!state.sykefravaerperioder) {
               valideringstatus.push({
-                felt: 'bruttoinntekt-endringsaarsak',
+                felt: 'bruttoinntekt-sykefravaerperioder',
                 code: BruttoinntektFeilkode.SYKEFRAVAER_MANGLER
               });
             } else {
