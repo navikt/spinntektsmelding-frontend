@@ -527,3 +527,82 @@ describe('validerBruttoinntekt', () => {
     expect(validerBruttoinntekt(input)).toEqual(expected);
   });
 });
+
+/********** */
+it('should return an error when sykefravær property is missing', () => {
+  const input: CompleteState = {
+    bruttoinntekt: {
+      bruttoInntekt: 123,
+      manueltKorrigert: true,
+      endringsaarsak: begrunnelseEndringBruttoinntekt.Sykefravaer
+    }
+  };
+
+  const expected = [
+    {
+      code: 'SYKEFRAVAER_MANGLER',
+      felt: 'bruttoinntekt-sykefravaerperioder'
+    }
+  ];
+
+  expect(validerBruttoinntekt(input)).toEqual(expected);
+});
+
+it('should return an error when sykefravær fom & tom is missing', () => {
+  const input: CompleteState = {
+    bruttoinntekt: {
+      bruttoInntekt: 123,
+      manueltKorrigert: true,
+      endringsaarsak: begrunnelseEndringBruttoinntekt.Sykefravaer
+    },
+    permittering: [{}]
+  };
+
+  const expected = [
+    {
+      code: 'SYKEFRAVAER_MANGLER',
+      felt: 'bruttoinntekt-sykefravaerperioder'
+    }
+  ];
+
+  expect(validerBruttoinntekt(input)).toEqual(expected);
+});
+it('should return an error when Sykefravaer fom is missing', () => {
+  const input: CompleteState = {
+    bruttoinntekt: {
+      bruttoInntekt: 123,
+      manueltKorrigert: true,
+      endringsaarsak: begrunnelseEndringBruttoinntekt.Sykefravaer
+    },
+    sykefravaerperioder: [{ id: '1', fom: new Date() }]
+  };
+
+  const expected = [
+    {
+      code: 'SYKEFRAVAER_TOM',
+      felt: 'bruttoinntekt-sykefravaerperioder-tom-1'
+    }
+  ];
+
+  expect(validerBruttoinntekt(input)).toEqual(expected);
+});
+
+it('should return an error when permittering tom is missing', () => {
+  const input: CompleteState = {
+    bruttoinntekt: {
+      bruttoInntekt: 123,
+      manueltKorrigert: true,
+      endringsaarsak: begrunnelseEndringBruttoinntekt.Sykefravaer
+    },
+    sykefravaerperioder: [{ id: '1', tom: new Date() }]
+  };
+
+  const expected = [
+    {
+      code: 'SYKEFRAVAER_FOM',
+      felt: 'bruttoinntekt-sykefravaerperioder-fom-1'
+    }
+  ];
+
+  expect(validerBruttoinntekt(input)).toEqual(expected);
+});

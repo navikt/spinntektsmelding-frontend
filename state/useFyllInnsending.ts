@@ -103,7 +103,7 @@ export default function useFyllInnsending() {
   const permittering = useBoundStore((state) => state.permittering);
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
-
+  const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const behandlingsdager = useBoundStore((state) => state.behandlingsdager);
 
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
@@ -175,6 +175,15 @@ export default function useFyllInnsending() {
           return {
             typpe: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
             gjelderFra: formatIsoDate(nystillingsprosentdato)
+          };
+
+        case begrunnelseEndringBruttoinntekt.Sykefravaer:
+          return {
+            typpe: begrunnelseEndringBruttoinntekt.Sykefravaer,
+            liste: sykefravaerperioder!.map((periode) => ({
+              fom: formatIsoDate(periode.fom),
+              tom: formatIsoDate(periode.tom)
+            }))
           };
 
         default:
