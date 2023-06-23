@@ -237,6 +237,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     tomIdBase='bruttoinntekt-permisjon-tom'
                     defaultMonth={bestemmendeFravaersdag}
                     toDate={bestemmendeFravaersdag}
+                    visFeilmeldingsTekst={visFeilmeldingsTekst}
                   />
                 </div>
               )}
@@ -251,6 +252,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     tomIdBase='bruttoinntekt-permittering-tom'
                     defaultMonth={bestemmendeFravaersdag}
                     toDate={bestemmendeFravaersdag}
+                    visFeilmeldingsTekst={visFeilmeldingsTekst}
                   />
                 </div>
               )}
@@ -289,6 +291,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     tomIdBase='bruttoinntekt-sykefravaerperioder-tom'
                     defaultMonth={bestemmendeFravaersdag}
                     toDate={bestemmendeFravaersdag}
+                    visFeilmeldingsTekst={visFeilmeldingsTekst}
                   />
                 </div>
               )}

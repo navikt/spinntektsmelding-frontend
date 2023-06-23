@@ -25,7 +25,10 @@ export enum BruttoinntektFeilkode {
   NYSTILLING_FOM_MANGLER = 'NYSTILLING_FOM_MANGLER',
   NYSTILLING_FOM_ETTER_BFD = 'NYSTILLING_FOM_ETTER_BFD',
   NYSTILLINGSPROSENT_FOM_ETTER_BFD = 'NYSTILLINGSPROSENT_FOM_ETTER_BFD',
-  NYSTILLINGSPROSENT_FOM_MANGLER = 'NYSTILLINGSPROSENT_FOM_MANGLER'
+  NYSTILLINGSPROSENT_FOM_MANGLER = 'NYSTILLINGSPROSENT_FOM_MANGLER',
+  SYKEFRAVAER_MANGLER = 'SYKEFRAVAER_MANGLER',
+  SYKEFRAVAER_FOM = 'SYKEFRAVAER_FOM',
+  SYKEFRAVAER_TOM = 'SYKEFRAVAER_TOM'
 }
 
 export default function validerBruttoinntekt(state: CompleteState): Array<ValiderResultat> {
@@ -194,6 +197,32 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                   code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_ETTER_BFD
                 });
               }
+            }
+            break;
+          }
+
+          case begrunnelseEndringBruttoinntekt.Sykefravaer: {
+            if (!state.sykefravaerperioder) {
+              valideringstatus.push({
+                felt: 'bruttoinntekt-endringsaarsak',
+                code: BruttoinntektFeilkode.SYKEFRAVAER_MANGLER
+              });
+            } else {
+              state.sykefravaerperioder.forEach((periode) => {
+                if (!periode.fom) {
+                  valideringstatus.push({
+                    felt: `bruttoinntekt-sykefravaerperioder-fom-${periode.id}`,
+                    code: BruttoinntektFeilkode.SYKEFRAVAER_FOM
+                  });
+                }
+
+                if (!periode.tom) {
+                  valideringstatus.push({
+                    felt: `bruttoinntekt-sykefravaerperioder-tom-${periode.id}`,
+                    code: BruttoinntektFeilkode.SYKEFRAVAER_TOM
+                  });
+                }
+              });
             }
             break;
           }

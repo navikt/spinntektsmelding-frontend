@@ -111,4 +111,22 @@ describe('EndringAarsakVisning', () => {
     expect(await screen.findByText(/Ny stillingsprosent fra/)).toBeInTheDocument();
     expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
   });
+
+  it('should show sykefravær data.', async () => {
+    const perioder = [
+      { fom: new Date(2022, 10, 10), tom: new Date(2022, 10, 15), id: '1' },
+      { fom: new Date(2022, 11, 10), tom: new Date(2022, 11, 15), id: '2' }
+    ];
+    const { container } = render(<EndringAarsakVisning endringsaarsak={'Sykefravaer'} sykefravaer={perioder} />);
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+
+    expect(await screen.findAllByText(/Fra/)).toHaveLength(2);
+    expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
+    expect(await screen.findAllByText(/Til/)).toHaveLength(2);
+    expect(await screen.findByText(/15.11.2022/)).toBeInTheDocument();
+    expect(await screen.findByText(/10.12.2022/)).toBeInTheDocument();
+    expect(await screen.findByText(/15.12.2022/)).toBeInTheDocument();
+  });
 });

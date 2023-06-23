@@ -45,7 +45,10 @@ const feiltekster = {
   NYSTILLING_FOM_ETTER_BFD: 'Endring av stilling må ha skjedd før sykefrværet startet',
   NYSTILLINGSPROSENT_FOM_ETTER_BFD: 'Endring av stillingsprosent må ha skjedd før sykefrværet startet',
   NYSTILLINGSPROSENT_FOM_MANGLER: 'Angi fra dato',
-  TIL_FOR_FRA: 'Til dato er før fra dato'
+  TIL_FOR_FRA: 'Til dato er før fra dato',
+  SYKEFRAVAER_MANGLER: 'Angi sykefravær',
+  SYKEFRAVAER_FOM: 'Angi fra dato',
+  SYKEFRAVAER_TOM: 'Angi til dato'
 };
 
 export default feiltekster;

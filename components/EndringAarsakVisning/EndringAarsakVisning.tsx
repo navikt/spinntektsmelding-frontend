@@ -5,7 +5,7 @@ import PeriodeFraTil from '../PeriodeFraTil/PeriodeFraTil';
 import lokalStyle from './EndringAarsakVisning.module.css';
 
 interface EndringAarsakVisningProps {
-  endringsaarsak: string;
+  endringsaarsak: keyof typeof begrunnelseEndringBruttoinntekt;
   tariffendringDato?: Date;
   tariffkjentdato?: Date;
   ferie?: Array<Periode>;
@@ -18,7 +18,7 @@ interface EndringAarsakVisningProps {
 }
 
 export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
-  switch (props.endringsaarsak) {
+  switch (String(props.endringsaarsak)) {
     case begrunnelseEndringBruttoinntekt.Tariffendring: {
       return (
         <>
