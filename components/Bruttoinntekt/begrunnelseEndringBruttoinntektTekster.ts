@@ -12,7 +12,9 @@ const begrunnelseEndringBruttoinntektTekster: BegrunnelserTekster = {
   NyStilling: 'Ny stilling',
   NyStillingsprosent: 'Ny stillingsprosent',
   Bonus: 'Bonus',
-  Nyansatt: 'Nyansatt'
+  Nyansatt: 'Nyansatt',
+  Sykefravaer: 'Sykefravær',
+  Feilregistrert: 'Mangelfull eller uriktig rapportering til a-ordningen'
 };
 
 export default begrunnelseEndringBruttoinntektTekster;

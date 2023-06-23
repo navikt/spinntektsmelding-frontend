@@ -51,7 +51,9 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
   const permisjon = useBoundStore((state) => state.permisjon);
   const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
+  const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
   const permittering = useBoundStore((state) => state.permittering);
+  const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const henterData = useBoundStore((state) => state.henterData);
 
@@ -273,6 +275,20 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
                     defaultSelected={nystillingsprosentdato}
                     toDate={bestemmendeFravaersdag}
                     defaultMonth={bestemmendeFravaersdag}
+                  />
+                </div>
+              )}
+              {endringsaarsak === begrunnelseEndringBruttoinntekt.Sykefravaer && (
+                <div className={lokalStyles.endreperiodeliste}>
+                  <PeriodeListevelger
+                    onRangeListChange={setSykefravaerPeriode}
+                    defaultRange={sykefravaerperioder}
+                    fomTekst='Fra'
+                    tomTekst='Til'
+                    fomIdBase='bruttoinntekt-sykefravaerperioder-fom'
+                    tomIdBase='bruttoinntekt-sykefravaerperioder-tom'
+                    defaultMonth={bestemmendeFravaersdag}
+                    toDate={bestemmendeFravaersdag}
                   />
                 </div>
               )}

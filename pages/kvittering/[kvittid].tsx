@@ -71,6 +71,7 @@ const Kvittering: NextPage = () => {
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
   const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
+  const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const slettKvitteringInnsendt = useBoundStore((state) => state.slettKvitteringInnsendt);
 
   const clickEndre = () => {
@@ -174,6 +175,7 @@ const Kvittering: NextPage = () => {
                 nystillingsprosentdato={nystillingsprosentdato}
                 tariffendringDato={tariffendringsdato}
                 tariffkjentdato={tariffkjentdato}
+                sykefravaer={sykefravaerperioder}
               />
             </>
           )}

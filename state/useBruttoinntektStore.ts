@@ -31,6 +31,7 @@ export interface BruttoinntektState {
   nystillingdato?: Date;
   nystillingsprosentdato?: Date;
   permisjon?: Array<Periode>;
+  sykefravaerperioder?: Array<Periode>;
   permittering?: Array<Periode>;
   sisteLonnshentedato?: Date;
   henterData: boolean;
@@ -45,6 +46,7 @@ export interface BruttoinntektState {
   setNyStillingsprosentDato: (dato?: Date) => void;
   setPermisjonPeriode: (periode: Array<Periode> | undefined) => void;
   setPermitteringPeriode: (periode: Array<Periode> | undefined) => void;
+  setSykefravaerPeriode: (periode: Array<Periode> | undefined) => void;
   tilbakestillMaanedsinntekt: () => void;
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
@@ -184,6 +186,13 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.permittering = periode;
+        return state;
+      })
+    ),
+  setSykefravaerPeriode: (periode) =>
+    set(
+      produce((state) => {
+        state.sykefravaerperioder = periode;
         return state;
       })
     ),

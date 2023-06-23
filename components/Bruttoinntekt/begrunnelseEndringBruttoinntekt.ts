@@ -11,7 +11,9 @@ const begrunnelseEndringBruttoinntekt: Begrunnelser = {
   NyStilling: 'NyStilling',
   NyStillingsprosent: 'NyStillingsprosent',
   Bonus: 'Bonus',
-  Nyansatt: 'Nyansatt'
+  Nyansatt: 'Nyansatt',
+  Sykefravaer: 'Sykefravaer',
+  Feilregistrert: 'Feilregistrert'
 };
 
 export default begrunnelseEndringBruttoinntekt;
