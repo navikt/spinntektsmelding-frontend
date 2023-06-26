@@ -3,7 +3,7 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
-import { TextField } from '@navikt/ds-react';
+import { Alert, TextField } from '@navikt/ds-react';
 import Skeleton from 'react-loading-skeleton';
 
 interface PersonProps {
@@ -18,7 +18,9 @@ export default function Person({ erKvittering }: PersonProps) {
     virksomhetsnavn,
     innsenderTelefonNr,
     innsenderNavn,
-    setInnsenderTelefon
+    setInnsenderTelefon,
+    feilHentingAvPersondata,
+    feilHentingAvArbeidsgiverdata
   ] = useBoundStore(
     (state) => [
       state.navn,
@@ -27,7 +29,9 @@ export default function Person({ erKvittering }: PersonProps) {
       state.virksomhetsnavn,
       state.innsenderTelefonNr,
       state.innsenderNavn,
-      state.setInnsenderTelefon
+      state.setInnsenderTelefon,
+      state.feilHentingAvPersondata,
+      state.feilHentingAvArbeidsgiverdata
     ],
     shallow
   );
@@ -47,11 +51,16 @@ export default function Person({ erKvittering }: PersonProps) {
       <div className={lokalStyles.personinfowrapper}>
         <div className={lokalStyles.denansatte}>
           <Heading3>Den ansatte</Heading3>
+          {feilHentingAvPersondata && feilHentingAvPersondata.length > 0 && (
+            <Alert variant='error'>{feilHentingAvPersondata.map((melding) => melding.melding)}</Alert>
+          )}
           <div className={lokalStyles.ytreansattwrapper}>
-            <div className={lokalStyles.ansattwrapper}>
-              <TextLabel>Navn</TextLabel>
-              <div data-cy='navn'>{navn || <Skeleton />}</div>
-            </div>
+            {(!feilHentingAvPersondata || feilHentingAvPersondata.length === 0) && (
+              <div className={lokalStyles.ansattwrapper}>
+                <TextLabel>Navn</TextLabel>
+                <div data-cy='navn'>{navn || <Skeleton />}</div>
+              </div>
+            )}
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Personnummer</TextLabel>
               <div data-cy='identitetsnummer'>{identitetsnummer || <Skeleton />}</div>
@@ -60,8 +69,11 @@ export default function Person({ erKvittering }: PersonProps) {
         </div>
         <div>
           <Heading3>Arbeidsgiveren</Heading3>
+          {feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0 && (
+            <Alert variant='error'>{feilHentingAvArbeidsgiverdata.map((melding) => melding.melding)}</Alert>
+          )}
           <div className={lokalStyles.arbeidsgiverwrapper}>
-            {virksomhetsnavn && (
+            {virksomhetsnavn && (!feilHentingAvArbeidsgiverdata || feilHentingAvArbeidsgiverdata.length === 0) && (
               <div className={lokalStyles.virksomhetsnavnwrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>

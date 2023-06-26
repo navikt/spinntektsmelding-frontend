@@ -1,4 +1,5 @@
 import { HistoriskInntekt } from './state';
+import { FeilReportElement } from './useStateInit';
 
 export interface MottattPeriode {
   fom: string;
@@ -24,6 +25,7 @@ interface MottattData {
   behandlingsperiode: MottattPeriode;
   innsenderNavn: string;
   innsenderTelefonNr: string;
+  feilReport: Array<FeilReportElement>;
 }
 
 export default MottattData;

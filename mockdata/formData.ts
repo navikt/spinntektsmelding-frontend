@@ -63,12 +63,24 @@ const formData = {
     }
   ],
   innsenderNavn: 'Test Testesen',
-  innsenderTelefonNr: '12345678'
+  innsenderTelefonNr: '12345678',
   // behandlingsdager: ['2022-01-10'],
   // behandlingsperiode: {
   //   fom: new Date(), 4),
   //   tom: subMonths(new Date(), 10)
   // }
+  feilReport: [
+    {
+      melding: 'Klarer ikke hente informasjon om virksomheten',
+      status: 0,
+      datafelt: 'virksomhet'
+    },
+    {
+      melding: 'Klarer ikke hente informasjon om den ansatte',
+      status: 0,
+      datafelt: 'arbeidstaker-informasjon'
+    }
+  ]
 };
 
 export default formData;
