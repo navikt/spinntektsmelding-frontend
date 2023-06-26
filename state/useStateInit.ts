@@ -44,7 +44,8 @@ export default function useStateInit() {
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
     const feilVedLasting = {
       persondata: feilRapporter.arbeidstakerFeil,
-      arbeidsgiverdata: feilRapporter.virksomhetFeil
+      arbeidsgiverdata: feilRapporter.virksomhetFeil,
+      inntekt: feilRapporter.inntektFeil
     };
     initPerson(
       jsonData.navn,
@@ -73,7 +74,12 @@ export default function useStateInit() {
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
 
     if (bestemmendeFravaersdag) {
-      initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekter, parseIsoDate(bestemmendeFravaersdag));
+      initBruttoinntekt(
+        jsonData.bruttoinntekt,
+        jsonData.tidligereinntekter,
+        parseIsoDate(bestemmendeFravaersdag),
+        feilVedLasting.inntekt
+      );
     }
   };
 }

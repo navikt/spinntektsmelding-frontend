@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import InntektsmeldingSkjema from '../state/state';
 import testFnr from './testFnr';
 
@@ -7,13 +6,11 @@ const initialState: InntektsmeldingSkjema = {
   egenmeldingsperioder: [],
   bruttoinntekt: {
     bruttoInntekt: 0,
-    bekreftet: false,
     manueltKorrigert: false,
     endringsaarsak: ''
   },
   opprinneligbruttoinntekt: {
     bruttoInntekt: 0,
-    bekreftet: false,
     manueltKorrigert: false,
     endringsaarsak: ''
   },
@@ -79,6 +76,11 @@ const formData = {
       melding: 'Klarer ikke hente informasjon om den ansatte',
       status: 0,
       datafelt: 'arbeidstaker-informasjon'
+    },
+    {
+      melding: 'Klarer ikke hente informasjon om virksomheten',
+      status: 0,
+      datafelt: 'inntekt'
     }
   ]
 };

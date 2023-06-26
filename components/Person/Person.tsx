@@ -40,22 +40,35 @@ export default function Person({ erKvittering }: PersonProps) {
     setInnsenderTelefon(event.target.value);
   };
 
+  const hentingAvPersondataFeilet = feilHentingAvPersondata && feilHentingAvPersondata.length > 0;
+  const hentingAvArbeidsgiverdataFeilet = feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0;
+
+  const hvilkenFeil = `${hentingAvPersondataFeilet ? 'den ansatte' : ''} ${
+    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
+  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'bedriften' : ''}`;
+
+  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'personnummer' : ''} ${
+    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
+  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`;
+
+  const feilmeldingstekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
+
   return (
     <>
       {!erKvittering && (
         <p>
           For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
           opplysningene vi har om den ansatte og sykefraværet.
+          {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
+            <Alert variant='info'>{feilmeldingstekst}</Alert>
+          )}
         </p>
       )}
       <div className={lokalStyles.personinfowrapper}>
         <div className={lokalStyles.denansatte}>
           <Heading3>Den ansatte</Heading3>
-          {feilHentingAvPersondata && feilHentingAvPersondata.length > 0 && (
-            <Alert variant='error'>{feilHentingAvPersondata.map((melding) => melding.melding)}</Alert>
-          )}
           <div className={lokalStyles.ytreansattwrapper}>
-            {(!feilHentingAvPersondata || feilHentingAvPersondata.length === 0) && (
+            {!hentingAvPersondataFeilet && (
               <div className={lokalStyles.ansattwrapper}>
                 <TextLabel>Navn</TextLabel>
                 <div data-cy='navn'>{navn || <Skeleton />}</div>
@@ -69,11 +82,9 @@ export default function Person({ erKvittering }: PersonProps) {
         </div>
         <div>
           <Heading3>Arbeidsgiveren</Heading3>
-          {feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0 && (
-            <Alert variant='error'>{feilHentingAvArbeidsgiverdata.map((melding) => melding.melding)}</Alert>
-          )}
+
           <div className={lokalStyles.arbeidsgiverwrapper}>
-            {virksomhetsnavn && (!feilHentingAvArbeidsgiverdata || feilHentingAvArbeidsgiverdata.length === 0) && (
+            {virksomhetsnavn && !hentingAvArbeidsgiverdataFeilet && (
               <div className={lokalStyles.virksomhetsnavnwrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
