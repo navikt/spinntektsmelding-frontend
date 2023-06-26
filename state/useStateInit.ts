@@ -14,6 +14,8 @@ export type FeilReportElement = {
 };
 
 function feilRapportMapper(feilReport: Array<FeilReportElement>) {
+  if (!feilReport) return {};
+
   const virksomhetFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'virksomhet');
   const arbeidstakerFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'arbeidstaker-informasjon');
   const forespoerselFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'forespoersel-svar');
