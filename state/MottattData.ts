@@ -12,6 +12,10 @@ export interface MottattNaturalytelse {
   verdi: number;
 }
 
+type FeilReportFeilListe = {
+  feil: Array<FeilReportElement>;
+};
+
 interface MottattData {
   navn: string;
   identitetsnummer: string;
@@ -25,7 +29,7 @@ interface MottattData {
   behandlingsperiode: MottattPeriode;
   innsenderNavn: string;
   innsenderTelefonNr: string;
-  feilReport: Array<FeilReportElement>;
+  feilReport?: FeilReportFeilListe;
 }
 
 export default MottattData;

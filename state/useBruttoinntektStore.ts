@@ -55,7 +55,7 @@ export interface BruttoinntektState {
     bruttoInntekt: number,
     tidligereInntekt: Array<HistoriskInntekt>,
     bestemmendeFravaersdag: Date,
-    feilHentingAvInntektsdata: Array<FeilReportElement>
+    feilHentingAvInntektsdata?: Array<FeilReportElement>
   ) => void;
   rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
 }
@@ -220,7 +220,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     bruttoInntekt: number,
     tidligereInntekt: Array<HistoriskInntekt>,
     bestemmendeFravaersdag: Date,
-    feilHentingAvInntektsdata
+    feilHentingAvInntektsdata?
   ) => {
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
     const sumInntekter = aktuelleInntekter.reduce(

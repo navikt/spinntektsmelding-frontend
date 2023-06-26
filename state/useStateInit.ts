@@ -13,7 +13,7 @@ export type FeilReportElement = {
   datafelt: Datafelt;
 };
 
-function feilRapportMapper(feilReport: Array<FeilReportElement>) {
+function feilRapportMapper(feilReport?: Array<FeilReportElement>) {
   if (!feilReport) return {};
 
   const virksomhetFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'virksomhet');
@@ -40,7 +40,7 @@ export default function useStateInit() {
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
 
   return (jsonData: MottattData) => {
-    const feilRapporter = feilRapportMapper(jsonData.feilReport);
+    const feilRapporter = feilRapportMapper(jsonData.feilReport?.feil);
 
     initFravaersperiode(jsonData.fravaersperioder);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
