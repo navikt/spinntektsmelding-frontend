@@ -73,7 +73,7 @@ const Home: NextPage = () => {
   const hentKvitteringsdata = useHentKvitteringsdata();
 
   const lukkHentingFeiletModal = () => {
-    router.push(environment.minSideArbeidsgiver);
+    window.location.href = environment.minSideArbeidsgiver;
   };
 
   const submitForm = (event: React.FormEvent) => {

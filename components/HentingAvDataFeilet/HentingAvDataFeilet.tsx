@@ -1,4 +1,6 @@
-import { Alert, BodyShort, Heading, Modal } from '@navikt/ds-react';
+import { Alert, BodyLong, Button, Heading, Modal } from '@navikt/ds-react';
+import lokalStyles from './HentingAvDataFeilet.module.css';
+
 import { useEffect } from 'react';
 
 interface HentingAvDataFeiletProps {
@@ -17,16 +19,19 @@ export default function HentingAvDataFeilet({ handleCloseModal, open }: HentingA
       aria-label='Henting av skjemadata feilet'
       onClose={handleCloseModal}
       aria-labelledby='modal-heading'
+      closeButton={false}
     >
       <Modal.Content>
-        <Alert variant='error' className='logget-ut-advarsel__innhold'>
-          <Heading size='large' level='2' id='modal-heading'>
-            Henting av data til inntektsmeldingen feilet.
-          </Heading>
-
-          <BodyShort>Noe gikk galt under hending av data.</BodyShort>
-          <BodyShort>Vennligst prøv igjen ved en senere anledning.</BodyShort>
+        <Heading size='medium' level='2' id='modal-heading'>
+          Henting av data til inntektsmeldingen feilet.
+        </Heading>
+        <Alert variant='error' className={lokalStyles.alert_innhold}>
+          <BodyLong>Noe gikk galt under hending av data.</BodyLong>
+          <BodyLong>Vennligst prøv igjen ved en senere anledning.</BodyLong>
         </Alert>
+        <Button variant='primary' onClick={handleCloseModal} className={lokalStyles.button_close}>
+          Lukk
+        </Button>
       </Modal.Content>
     </Modal>
   );
