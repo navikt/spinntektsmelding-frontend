@@ -225,7 +225,7 @@ const Kvittering: NextPage = () => {
 
 export default Kvittering;
 
-function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): Boolean {
+function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): boolean {
   return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
     ? arbeidsgiverperioder?.filter(
         (periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom))
