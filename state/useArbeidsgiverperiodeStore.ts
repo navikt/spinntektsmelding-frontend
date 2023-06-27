@@ -29,6 +29,7 @@ export interface ArbeidsgiverperiodeState {
   setEndreArbeidsgiverperiode: (endre: boolean) => void;
   tilbakestillArbeidsgiverperiode: () => void;
   harArbeidsgiverperiodenBlittEndret: () => void;
+  slettAlleArbeidsgiverperioder: () => void;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => {
@@ -99,6 +100,21 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           return state;
         })
       ),
+    slettAlleArbeidsgiverperioder: () =>
+      set(
+        produce((state) => {
+          state.arbeidsgiverperioder = [{ id: nanoid() }];
+          state.endretArbeidsgiverperiode = true;
+
+          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
+            state.arbeidsgiverperioder,
+            'arbeidsgiverperioder'
+          );
+
+          state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperioder');
+          return state;
+        })
+      ),
     setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
@@ -123,7 +139,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           const perioder = sykmeldingsperioder
             ? sykmeldingsperioder.concat(egenmeldingsperioder ?? [])
             : egenmeldingsperioder;
-          debugger;
+
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, state.arbeidsgiverperioder);
           if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
           if (bestemmendeFravaersdag) {

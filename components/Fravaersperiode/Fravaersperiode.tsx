@@ -4,7 +4,7 @@ import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
 
 interface FravaersperiodeProps {
-  egenmeldingsperioder: Array<Periode>;
+  egenmeldingsperioder: Array<Periode> | undefined;
 }
 export default function Fravaersperiode({ egenmeldingsperioder }: FravaersperiodeProps) {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);

@@ -33,6 +33,7 @@ import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isValid } from 'date-fns';
 import env from '../../config/environment';
+import { Periode } from 'state/state';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -86,6 +87,8 @@ const Kvittering: NextPage = () => {
   };
 
   const innsendingstidspunkt = kvitteringInnsendt && isValid(kvitteringInnsendt) ? kvitteringInnsendt : now;
+
+  const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
 
   useEffect(() => {
     if (!fravaersperioder) {
@@ -144,10 +147,13 @@ const Kvittering: NextPage = () => {
                 </div>
                 <div className={lokalStyles.arbeidsgiverperiode}>
                   <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
-                  <BodyLong>
-                    Arbeidsgiver er ansvarlig å betale ut lønn til den sykmeldte under arbeidsgiverpeioden. Deretter
-                    betaler Nav lønn til den syke eller refunderer bedriften.
-                  </BodyLong>
+                  {!ingenArbeidsgiverperioder && (
+                    <BodyLong>
+                      Arbeidsgiver er ansvarlig å betale ut lønn til den sykmeldte under arbeidsgiverpeioden. Deretter
+                      betaler Nav lønn til den syke eller refunderer bedriften.
+                    </BodyLong>
+                  )}
+                  {ingenArbeidsgiverperioder && <BodyLong>Det er ikke angitt arbeidsgiverperiode.</BodyLong>}
                   {arbeidsgiverperioder &&
                     arbeidsgiverperioder.map((periode) => (
                       <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
@@ -218,3 +224,11 @@ const Kvittering: NextPage = () => {
 };
 
 export default Kvittering;
+
+function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): Boolean {
+  return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
+    ? arbeidsgiverperioder?.filter(
+        (periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom))
+      ).length > 0
+    : false;
+}
