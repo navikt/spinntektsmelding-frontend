@@ -29,7 +29,7 @@ export default function HentingAvDataFeilet({ handleCloseModal, open }: HentingA
           <BodyLong>Noe gikk galt under hending av data.</BodyLong>
           <BodyLong>Vennligst prøv igjen ved en senere anledning.</BodyLong>
         </Alert>
-        <Button variant='primary' onClick={handleCloseModal} className={lokalStyles.button_close}>
+        <Button variant='primary' onClick={handleCloseModal}>
           Lukk
         </Button>
       </Modal.Content>
