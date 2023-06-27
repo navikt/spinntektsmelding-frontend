@@ -756,4 +756,34 @@ describe('useBoundStore', () => {
       }
     ]);
   });
+
+  it('should delete all periode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
+
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
+
+    act(() => {
+      result.current.slettAlleArbeidsgiverperioder();
+    });
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        id: '3'
+      }
+    ]);
+  });
 });
