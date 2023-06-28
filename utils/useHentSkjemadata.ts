@@ -27,7 +27,7 @@ export default function useHentSkjemadata() {
         window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
       }
 
-      if (error.status === 503) {
+      if (error.status === 503 || error.status === 500) {
         setSkjemaFeilet();
       }
 
