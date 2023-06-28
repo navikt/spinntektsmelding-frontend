@@ -34,6 +34,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
   const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled] = useState<boolean>(false);
+  const [manuellEndring, setManuellEndring] = useState<boolean>(false);
 
   const antallDagerIArbeidsgiverperioder = (perioder: Array<Periode> | undefined) => {
     if (typeof perioder === 'undefined') {
@@ -107,6 +108,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
 
   const handleIngenArbeidsgiverperiodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArbeidsgiverperiodeDisabled(event.target.checked);
+    setManuellEndring(true);
     if (event.target.checked === true) {
       slettAlleArbeidsgiverperioder();
     }
@@ -122,6 +124,17 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       setValideringsfeil('');
     }
   }, [arbeidsgiverperioder]);
+
+  useEffect(() => {
+    if (
+      arbeidsgiverperioder?.length === 1 &&
+      !arbeidsgiverperioder[0].fom &&
+      !arbeidsgiverperioder[0].tom &&
+      !manuellEndring
+    ) {
+      setArbeidsgiverperiodeDisabled(true);
+    }
+  }, [arbeidsgiverperioder, manuellEndring]);
 
   return (
     <>
@@ -189,7 +202,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
           </div>
         ))}
       {endretArbeidsgiverperiode && (
-        <Checkbox value='IngenPeriode' onChange={handleIngenArbeidsgiverperiodeChange}>
+        <Checkbox
+          value='IngenPeriode'
+          onChange={handleIngenArbeidsgiverperiodeChange}
+          checked={arbeidsgiverperiodeDisabled}
+        >
           Det er ikke arbeidsgiverperiode
         </Checkbox>
       )}
