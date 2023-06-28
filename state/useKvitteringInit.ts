@@ -54,6 +54,7 @@ export default function useKvitteringInit() {
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
   const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
+  const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
@@ -133,6 +134,15 @@ export default function useKvitteringInit() {
 
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
           setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
+          break;
+        }
+
+        case begrunnelseEndringBruttoinntekt.Sykefravaer: {
+          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom)
+          }));
+          setSykefravaerPeriode(perioder);
           break;
         }
       }
