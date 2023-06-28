@@ -4,8 +4,8 @@ import { vi, expect } from 'vitest';
 import Kvittering from '../../pages/kvittering/[kvittid]';
 
 import env from '../../config/environment';
-import useBoundStore from 'state/useBoundStore';
-import { Periode } from 'state/state';
+import { Periode } from '../../state/state';
+import useBoundStore from '../../state/useBoundStore';
 
 vi.mock('next/router', () => require('next-router-mock'));
 vi.spyOn(env, 'minSideArbeidsgiver', 'get').mockReturnValue('https://mocked.nav.no');
