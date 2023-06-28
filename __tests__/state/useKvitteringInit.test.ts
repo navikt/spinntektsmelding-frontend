@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 import annenMottattKvittering from '../../mockdata/kvittering-lang.json';
 import ferieKvittering from '../../mockdata/kvittering-ferie.json';
+import sykKvittering from '../../mockdata/kvittering-syk.json';
 import varigLonnsendringKvittering from '../../mockdata/kvittering-VarigLonnsendring.json';
 import permisjonKvittering from '../../mockdata/kvittering-Permisjon.json';
 import permitteringKvittering from '../../mockdata/kvittering-Permittering.json';
@@ -221,5 +222,32 @@ describe('useKvitteringInit', () => {
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
     expect(result.current.nystillingsprosentdato).toEqual(parseIsoDate('2023-02-24'));
+  });
+
+  it('should fill the state with syk stuff', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(sykKvittering as unknown as KvitteringSkjema, 'sluggish');
+    });
+
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Sykefravaer');
+    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+
+    expect(result.current.sykefravaerperioder).toEqual([
+      {
+        fom: parseIsoDate('2023-02-06'),
+        tom: parseIsoDate('2023-02-10')
+      },
+      {
+        fom: parseIsoDate('2023-02-24'),
+        tom: parseIsoDate('2023-03-06')
+      }
+    ]);
   });
 });

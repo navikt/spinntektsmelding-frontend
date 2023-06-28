@@ -60,7 +60,7 @@ const formData = {
     }
   ],
   innsenderNavn: 'Test Testesen',
-  innsenderTelefonNr: '12345678',
+  innsenderTelefonNr: '12345678'
   // behandlingsdager: ['2022-01-10'],
   // behandlingsperiode: {
   //   fom: new Date(), 4),
@@ -83,14 +83,14 @@ const formData = {
   //     datafelt: 'inntekt'
   //   }
   // ]
-  feilReport: {
-    feil: [
-      {
-        melding: 'Vi klarte ikke å hente arbeidstaker informasjon.',
-        datafelt: 'arbeidstaker-informasjon'
-      }
-    ]
-  }
+  // feilReport: {
+  //   feil: [
+  //     {
+  //       melding: 'Vi klarte ikke å hente arbeidstaker informasjon.',
+  //       datafelt: 'arbeidstaker-informasjon'
+  //     }
+  //   ]
+  // }
 };
 
 export default formData;
