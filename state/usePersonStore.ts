@@ -1,7 +1,8 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
-import { Organisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
 import { CompleteState } from './useBoundStore';
+import { FeilReportElement } from './useStateInit';
+import { Organisasjon } from '@navikt/bedriftsmeny';
 
 export interface PersonState {
   navn?: string;
@@ -10,6 +11,8 @@ export interface PersonState {
   virksomhetsnavn?: string;
   innsenderNavn?: string;
   innsenderTelefonNr?: string;
+  feilHentingAvPersondata?: Array<FeilReportElement>;
+  feilHentingAvArbeidsgiverdata?: Array<FeilReportElement>;
   setNavn: (navn: string) => void;
   setIdentitetsnummer: (identitetsnummer: string) => void;
   setInnsenderNavn: (navn: string) => void;
@@ -21,7 +24,11 @@ export interface PersonState {
     orgnrUnderenhet: string,
     orgNavn: string,
     innsenderNavn?: string,
-    innsenderTelefonNr?: string
+    innsenderTelefonNr?: string,
+    feilVedLasting?: {
+      persondata?: Array<FeilReportElement>;
+      arbeidsgiverdata?: Array<FeilReportElement>;
+    }
   ) => void;
 }
 
@@ -68,14 +75,7 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set) =
       })
     );
   },
-  initPerson: (
-    navn: string,
-    identitetsnummer: string,
-    orgnrUnderenhet: string,
-    orgNavn: string,
-    innsenderNavn?: string,
-    innsenderTelefonNr?: string
-  ) => {
+  initPerson: (navn, identitetsnummer, orgnrUnderenhet, orgNavn, innsenderNavn, innsenderTelefonNr, feilVedLasting) => {
     set(
       produce((state: PersonState) => ({
         navn,
@@ -83,7 +83,9 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set) =
         orgnrUnderenhet,
         virksomhetsnavn: orgNavn,
         innsenderNavn,
-        innsenderTelefonNr
+        innsenderTelefonNr,
+        feilHentingAvPersondata: feilVedLasting?.persondata,
+        feilHentingAvArbeidsgiverdata: feilVedLasting?.arbeidsgiverdata
       }))
     );
   }

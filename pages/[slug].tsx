@@ -33,6 +33,7 @@ import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import useAmplitude from '../utils/useAmplitude';
 import isValidUUID from '../utils/isValidUUID';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
+import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -57,7 +58,7 @@ const Home: NextPage = () => {
 
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-
+  const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setSlug = useBoundStore((state) => state.setSlug);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
@@ -70,6 +71,10 @@ const Home: NextPage = () => {
   const errorResponse = useErrorRespons();
 
   const hentKvitteringsdata = useHentKvitteringsdata();
+
+  const lukkHentingFeiletModal = () => {
+    window.location.href = environment.minSideArbeidsgiver;
+  };
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
@@ -268,6 +273,7 @@ const Home: NextPage = () => {
           </div>
         </form>
         <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
+        <HentingAvDataFeilet open={skjemaFeilet} handleCloseModal={lukkHentingFeiletModal} />
       </PageContent>
     </div>
   );

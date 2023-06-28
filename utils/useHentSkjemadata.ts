@@ -8,6 +8,7 @@ export default function useHentSkjemadata() {
   const initState = useStateInit();
   const leggTilFeilmelding = useBoundStore((state) => state.leggTilFeilmelding);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
 
   return async (pathSlug: string) => {
     try {
@@ -24,6 +25,10 @@ export default function useHentSkjemadata() {
         const currentPath = window.location.href;
 
         window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
+      }
+
+      if (error.status === 503) {
+        setSkjemaFeilet();
       }
 
       leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);

@@ -3,7 +3,7 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
-import { TextField } from '@navikt/ds-react';
+import { Alert, TextField } from '@navikt/ds-react';
 import Skeleton from 'react-loading-skeleton';
 
 interface PersonProps {
@@ -18,7 +18,9 @@ export default function Person({ erKvittering }: PersonProps) {
     virksomhetsnavn,
     innsenderTelefonNr,
     innsenderNavn,
-    setInnsenderTelefon
+    setInnsenderTelefon,
+    feilHentingAvPersondata,
+    feilHentingAvArbeidsgiverdata
   ] = useBoundStore(
     (state) => [
       state.navn,
@@ -27,7 +29,9 @@ export default function Person({ erKvittering }: PersonProps) {
       state.virksomhetsnavn,
       state.innsenderTelefonNr,
       state.innsenderNavn,
-      state.setInnsenderTelefon
+      state.setInnsenderTelefon,
+      state.feilHentingAvPersondata,
+      state.feilHentingAvArbeidsgiverdata
     ],
     shallow
   );
@@ -36,22 +40,40 @@ export default function Person({ erKvittering }: PersonProps) {
     setInnsenderTelefon(event.target.value);
   };
 
+  const hentingAvPersondataFeilet = feilHentingAvPersondata && feilHentingAvPersondata.length > 0;
+  const hentingAvArbeidsgiverdataFeilet = feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0;
+
+  const hvilkenFeil = `${hentingAvPersondataFeilet ? 'den ansatte' : ''} ${
+    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
+  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'bedriften' : ''}`;
+
+  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'personnummer' : ''} ${
+    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
+  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`;
+
+  const feilmeldingstekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
+
   return (
     <>
       {!erKvittering && (
         <p>
           For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
           opplysningene vi har om den ansatte og sykefraværet.
+          {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
+            <Alert variant='info'>{feilmeldingstekst}</Alert>
+          )}
         </p>
       )}
       <div className={lokalStyles.personinfowrapper}>
         <div className={lokalStyles.denansatte}>
           <Heading3>Den ansatte</Heading3>
           <div className={lokalStyles.ytreansattwrapper}>
-            <div className={lokalStyles.ansattwrapper}>
-              <TextLabel>Navn</TextLabel>
-              <div data-cy='navn'>{navn || <Skeleton />}</div>
-            </div>
+            {!hentingAvPersondataFeilet && (
+              <div className={lokalStyles.ansattwrapper}>
+                <TextLabel>Navn</TextLabel>
+                <div data-cy='navn'>{navn || <Skeleton />}</div>
+              </div>
+            )}
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Personnummer</TextLabel>
               <div data-cy='identitetsnummer'>{identitetsnummer || <Skeleton />}</div>
@@ -60,8 +82,9 @@ export default function Person({ erKvittering }: PersonProps) {
         </div>
         <div>
           <Heading3>Arbeidsgiveren</Heading3>
+
           <div className={lokalStyles.arbeidsgiverwrapper}>
-            {virksomhetsnavn && (
+            {virksomhetsnavn && !hentingAvArbeidsgiverdataFeilet && (
               <div className={lokalStyles.virksomhetsnavnwrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>

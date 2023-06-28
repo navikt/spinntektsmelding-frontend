@@ -10,10 +10,12 @@ export interface SkjemadataState {
   setSlug: (slug: string) => void;
   setKvitteringInnsendt: (tidspunkt: string) => void;
   slettKvitteringInnsendt: () => void;
+  setSkjemaFeilet: () => void;
   tracker: string;
   henterInntektsdata: boolean;
   slug: string;
   kvitteringInnsendt?: Date;
+  skjemaFeilet: boolean;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -21,6 +23,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   nyInnsending: true,
   henterInntektsdata: false,
   slug: '',
+  skjemaFeilet: false,
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
@@ -53,6 +56,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.kvitteringInnsendt = undefined;
+      })
+    );
+  },
+  setSkjemaFeilet: () => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.skjemaFeilet = true;
       })
     );
   }

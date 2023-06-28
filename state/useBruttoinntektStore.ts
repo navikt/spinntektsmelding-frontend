@@ -9,6 +9,7 @@ import { subMonths, startOfMonth } from 'date-fns';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 import roundTwoDecimals from '../utils/roundTwoDecimals';
+import { FeilReportElement } from './useStateInit';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
@@ -35,6 +36,7 @@ export interface BruttoinntektState {
   permittering?: Array<Periode>;
   sisteLonnshentedato?: Date;
   henterData: boolean;
+  feilHentingAvInntektsdata?: Array<FeilReportElement>;
   setNyMaanedsinntekt: (belop: string) => void;
   setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
   setEndringsaarsak: (aarsak: string) => void;
@@ -52,7 +54,8 @@ export interface BruttoinntektState {
   initBruttoinntekt: (
     bruttoInntekt: number,
     tidligereInntekt: Array<HistoriskInntekt>,
-    bestemmendeFravaersdag: Date
+    bestemmendeFravaersdag: Date,
+    feilHentingAvInntektsdata?: Array<FeilReportElement>
   ) => void;
   rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
 }
@@ -216,7 +219,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   initBruttoinntekt: (
     bruttoInntekt: number,
     tidligereInntekt: Array<HistoriskInntekt>,
-    bestemmendeFravaersdag: Date
+    bestemmendeFravaersdag: Date,
+    feilHentingAvInntektsdata?
   ) => {
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
     const sumInntekter = aktuelleInntekter.reduce(
@@ -265,6 +269,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
             inntekt: inntekt.inntekt
           }));
         }
+
+        state.feilHentingAvInntektsdata = feilHentingAvInntektsdata;
 
         return state;
       })

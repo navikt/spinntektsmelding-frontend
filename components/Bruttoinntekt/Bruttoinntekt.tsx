@@ -1,4 +1,4 @@
-import { BodyLong, BodyShort, TextField } from '@navikt/ds-react';
+import { Alert, BodyLong, BodyShort, TextField } from '@navikt/ds-react';
 import { ChangeEvent, useCallback, useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
@@ -56,6 +56,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const henterData = useBoundStore((state) => state.henterData);
+  const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
 
   const logEvent = useAmplitude();
   const amplitudeComponent = 'BeregnetMånedslønn';
@@ -140,8 +141,15 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
             Les mer om beregning av månedslønn.
           </LenkeEksternt>
         </LesMer>
+        {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
+          <Alert variant='info'>
+            Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedsinntekt selv
+            eller forsøke igjen senere.
+          </Alert>
+        )}
 
         <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
+
         {!henterData && <TidligereInntekt tidligereinntekt={tidligereinntekt} />}
         {henterData && <Skeleton count={3} />}
         {!endringAvBelop && (

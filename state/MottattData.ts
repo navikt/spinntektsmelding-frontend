@@ -1,4 +1,5 @@
 import { HistoriskInntekt } from './state';
+import { FeilReportElement } from './useStateInit';
 
 export interface MottattPeriode {
   fom: string;
@@ -10,6 +11,10 @@ export interface MottattNaturalytelse {
   bortfallsdato: string;
   verdi: number;
 }
+
+type FeilReportFeilListe = {
+  feil: Array<FeilReportElement>;
+};
 
 interface MottattData {
   navn: string;
@@ -24,6 +29,7 @@ interface MottattData {
   behandlingsperiode: MottattPeriode;
   innsenderNavn: string;
   innsenderTelefonNr: string;
+  feilReport?: FeilReportFeilListe;
 }
 
 export default MottattData;
