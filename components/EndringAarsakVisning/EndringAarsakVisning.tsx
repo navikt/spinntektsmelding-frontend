@@ -30,8 +30,12 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
     case begrunnelseEndringBruttoinntekt.Ferie: {
       return props.ferie ? (
         <div>
-          {props.ferie.map((periode) => (
-            <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'ferieperiode' + periode.id} />
+          {props.ferie.map((periode, index) => (
+            <PeriodeFraTil
+              fom={periode.fom!}
+              tom={periode.tom!}
+              key={`ferieperiode-${periode.id ? periode.id : index}`}
+            />
           ))}{' '}
         </div>
       ) : null;
@@ -47,8 +51,12 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
     case begrunnelseEndringBruttoinntekt.Permisjon: {
       return props.permisjon ? (
         <div>
-          {props.permisjon.map((periode) => (
-            <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'permisjonperiode' + periode.id} />
+          {props.permisjon.map((periode, index) => (
+            <PeriodeFraTil
+              fom={periode.fom!}
+              tom={periode.tom!}
+              key={`permisjonperiode-${periode.id ? periode.id : index}`}
+            />
           ))}{' '}
         </div>
       ) : null;
@@ -56,8 +64,12 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
     case begrunnelseEndringBruttoinntekt.Permittering: {
       return props.permittering ? (
         <div>
-          {props.permittering.map((periode) => (
-            <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'permitteringperiode' + periode.id} />
+          {props.permittering.map((periode, index) => (
+            <PeriodeFraTil
+              fom={periode.fom!}
+              tom={periode.tom!}
+              key={`permitteringperiode-${periode.id ? periode.id : index}`}
+            />
           ))}{' '}
         </div>
       ) : null;
@@ -81,8 +93,12 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
     case begrunnelseEndringBruttoinntekt.Sykefravaer: {
       return props.sykefravaer ? (
         <div>
-          {props.sykefravaer.map((periode) => (
-            <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'sykefravaer' + periode.id} />
+          {props.sykefravaer.map((periode, index) => (
+            <PeriodeFraTil
+              fom={periode.fom!}
+              tom={periode.tom!}
+              key={`sykefravaer-periode-${periode.id ? periode.id : index}`}
+            />
           ))}{' '}
         </div>
       ) : null;
