@@ -8,13 +8,13 @@ import { Periode } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 
 vi.mock('next/router', () => require('next-router-mock'));
-vi.spyOn(env, 'minSideArbeidsgiver', 'get').mockReturnValue('https://mocked.nav.no');
 
 const initialState = useBoundStore.getState();
 
 describe('kvittering', () => {
   beforeEach(() => {
     const spy = vi.spyOn(window, 'print');
+    vi.spyOn(env, 'minSideArbeidsgiver', 'get').mockReturnValue('https://mocked.nav.no');
 
     spy.mockImplementation(vi.fn());
 
@@ -61,9 +61,7 @@ describe('kvittering', () => {
 
     render(<Kvittering />);
 
-    const textBlock = screen.getByRole('p', {
-      name: /Arbeidsgiver er ansvarlig å betale ut/i
-    });
+    const textBlock = screen.getByText(/Arbeidsgiver er ansvarlig for/i);
 
     expect(textBlock).toBeInTheDocument();
   });

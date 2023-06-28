@@ -149,8 +149,8 @@ const Kvittering: NextPage = () => {
                   <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
                   {!ingenArbeidsgiverperioder && (
                     <BodyLong>
-                      Arbeidsgiver er ansvarlig å betale ut lønn til den sykmeldte under arbeidsgiverpeioden. Deretter
-                      betaler Nav lønn til den syke eller refunderer bedriften.
+                      Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
+                      Deretter betaler Nav lønn til den syke eller refunderer bedriften.
                     </BodyLong>
                   )}
                   {ingenArbeidsgiverperioder && <BodyLong>Det er ikke angitt arbeidsgiverperiode.</BodyLong>}
