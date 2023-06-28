@@ -1,7 +1,7 @@
 import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
-import { BodyLong, Button } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger from '../Bruttoinntekt/Periodevelger';
@@ -29,8 +29,12 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const slettAlleArbeidsgiverperioder = useBoundStore((state) => state.slettAlleArbeidsgiverperioder);
   const logEvent = useAmplitude();
   const amplitudeComponent = 'Arbeidsgiverperiode';
+
+  const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled] = useState<boolean>(false);
+  const [manuellEndring, setManuellEndring] = useState<boolean>(false);
 
   const antallDagerIArbeidsgiverperioder = (perioder: Array<Periode> | undefined) => {
     if (typeof perioder === 'undefined') {
@@ -85,7 +89,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       tittel: 'Tilbakestill arbeidsgiverperiode',
       component: amplitudeComponent
     });
-
+    setArbeidsgiverperiodeDisabled(false);
     tilbakestillArbeidsgiverperiode();
   };
 
@@ -102,6 +106,14 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
 
   const [valideringsfeil, setValideringsfeil] = useState<string>('');
 
+  const handleIngenArbeidsgiverperiodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setArbeidsgiverperiodeDisabled(event.target.checked);
+    setManuellEndring(true);
+    if (event.target.checked === true) {
+      slettAlleArbeidsgiverperioder();
+    }
+  };
+
   useEffect(() => {
     const antallDager = antallDagerIArbeidsgiverperioder(arbeidsgiverperioder);
     if (antallDager > 16) {
@@ -112,6 +124,17 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       setValideringsfeil('');
     }
   }, [arbeidsgiverperioder]);
+
+  useEffect(() => {
+    if (
+      arbeidsgiverperioder?.length === 1 &&
+      !arbeidsgiverperioder[0].fom &&
+      !arbeidsgiverperioder[0].tom &&
+      !manuellEndring
+    ) {
+      setArbeidsgiverperiodeDisabled(true);
+    }
+  }, [arbeidsgiverperioder, manuellEndring]);
 
   return (
     <>
@@ -173,11 +196,20 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
                 periodeId={periodeIndex.toString()}
                 onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
                 toDate={new Date()}
+                disabled={arbeidsgiverperiodeDisabled}
               />
             )}
           </div>
         ))}
-
+      {endretArbeidsgiverperiode && (
+        <Checkbox
+          value='IngenPeriode'
+          onChange={handleIngenArbeidsgiverperiodeChange}
+          checked={arbeidsgiverperiodeDisabled}
+        >
+          Det er ikke arbeidsgiverperiode
+        </Checkbox>
+      )}
       {!endretArbeidsgiverperiode && (
         <div className={lokalStyles.endreknapp}>
           <ButtonEndre
@@ -198,6 +230,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
             variant='secondary'
             className={lokalStyles.leggtilknapp}
             onClick={(event) => clickLeggTilArbeidsgiverperiodeHandler(event)}
+            disabled={arbeidsgiverperiodeDisabled}
           >
             Legg til periode
           </Button>
