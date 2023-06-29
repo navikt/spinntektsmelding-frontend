@@ -29,7 +29,7 @@ import { useRouter } from 'next/router';
 import useHentKvitteringsdata from 'utils/useHentKvitteringsdata';
 
 const Endring: NextPage = () => {
-  const [endringBruttolonn, setEndringBruttolonn] = useState<YesNo>('Nei');
+  const [endringBruttolonn, setEndringBruttolonn] = useState<YesNo | undefined>();
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
   const [endringsaarsak, setEndringsaarsak] = useState<string>('');
@@ -57,7 +57,7 @@ const Endring: NextPage = () => {
   const setSlug = useBoundStore((state) => state.setSlug);
   const router = useRouter();
 
-  const [endringerAvRefusjon, setEndringerAvRefusjon] = useState<YesNo>('Nei');
+  const [endringerAvRefusjon, setEndringerAvRefusjon] = useState<YesNo | undefined>();
 
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
