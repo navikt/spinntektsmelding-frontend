@@ -63,7 +63,8 @@ const nextConfig = {
     loginServiceUrl: process.env.LOGIN_SERVICE_URL,
     arbeidsgiverListe: process.env.ARBEIDSGIVERLISTE_API,
     kvitteringDataApi: process.env.KVITTERINGSDATA_API,
-    minSideArbeidsgiver: process.env.MIN_SIDE_ARBEIDSGIVER
+    minSideArbeidsgiver: process.env.MIN_SIDE_ARBEIDSGIVER,
+    telemetryUrl: process.env.TELEMETRY_URL
   }
 };
 
