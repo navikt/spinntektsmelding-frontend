@@ -60,6 +60,14 @@ class Environment {
   get environment() {
     return this.publicRuntimeConfig.environment;
   }
+
+  get telemetryUrl() {
+    return this.publicRuntimeConfig.telemetryUrl;
+  }
+
+  get version() {
+    return this.publicRuntimeConfig.version;
+  }
 }
 
 const env = new Environment();
