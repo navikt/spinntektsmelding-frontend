@@ -3,7 +3,7 @@ const { buildCspHeader } = require('@navikt/nav-dekoratoren-moduler/ssr');
 const { version } = require('./package.json');
 
 const appDirectives = {
-  'connect-src': ["'self'"],
+  'connect-src': ["'self'", process.env.TELEMETRY_URL],
   'font-src': [],
   'script-src': [],
   'script-src-elem': ["'self'"],
