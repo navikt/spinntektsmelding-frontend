@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const { buildCspHeader } = require('@navikt/nav-dekoratoren-moduler/ssr');
+const { version } = require('./package.json');
 
 const appDirectives = {
   'connect-src': ["'self'"],
@@ -64,7 +65,8 @@ const nextConfig = {
     arbeidsgiverListe: process.env.ARBEIDSGIVERLISTE_API,
     kvitteringDataApi: process.env.KVITTERINGSDATA_API,
     minSideArbeidsgiver: process.env.MIN_SIDE_ARBEIDSGIVER,
-    telemetryUrl: process.env.TELEMETRY_URL
+    telemetryUrl: process.env.TELEMETRY_URL,
+    version
   }
 };
 

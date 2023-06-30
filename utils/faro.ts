@@ -15,8 +15,8 @@ export function getFaro(): Faro {
   faro = initializeFaro({
     url: env.telemetryUrl,
     app: {
-      name: 'spinntektsmelding-frontend'
-      // TODO: få commit hash fra serveren
+      name: 'spinntektsmelding-frontend',
+      version: env.version
     },
     instrumentations: [
       ...getWebInstrumentations({

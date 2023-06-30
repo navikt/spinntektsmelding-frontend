@@ -7,10 +7,11 @@ import '../components/PageContent/PageContent.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 import { configureLogger } from '@navikt/next-logger';
+import env from 'config/environment';
 
 initInstrumentation();
 configureLogger({
-  basePath: '/im-dialog',
+  basePath: env.baseUrl,
   onLog: (log) =>
     getFaro().api.pushLog(log.messages, {
       level: pinoLevelToFaroLevel(log.level.label)
