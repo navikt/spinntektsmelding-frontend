@@ -43,7 +43,7 @@ export default function Datovelger({
     if (typeof defaultSelected === 'undefined') {
       reset();
     }
-  }, [defaultSelected]);
+  }, [defaultSelected]); // eslint-disable-line
 
   return (
     <DatePicker {...datepickerProps}>
