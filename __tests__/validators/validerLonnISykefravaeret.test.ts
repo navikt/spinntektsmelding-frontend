@@ -78,4 +78,15 @@ describe('validerLonnISykefravaeret', () => {
 
     expect(validerLonnISykefravaeret(inputLUS)).toEqual(expected);
   });
+
+  it('should return an empty array when status is Ja and belop is not 0', () => {
+    const inputLUS: LonnISykefravaeret = {
+      status: 'Ja',
+      belop: 123
+    };
+
+    const expected: unknown = [];
+
+    expect(validerLonnISykefravaeret(inputLUS)).toEqual(expected);
+  });
 });

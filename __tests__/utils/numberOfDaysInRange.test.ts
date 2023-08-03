@@ -9,11 +9,15 @@ describe.concurrent('numberOfDaysInRange', () => {
     expect(numberOfDaysInRange(new Date(2023, 1, 1), new Date(2023, 1, 5))).toBe(5);
   });
 
-  it('should return 1 when start and end is the same', () => {
+  it('should return 5 when start and end is 5 days apart', () => {
     expect(numberOfDaysInRange(new Date(2023, 1, 1), new Date(2023, 1, 5))).toBe(5);
   });
 
   it('should return 33 when start and end is 31 days apart', () => {
     expect(numberOfDaysInRange(new Date(2023, 1, 1), new Date(2023, 2, 5))).toBe(33);
+  });
+
+  it('should return 1 when start and end is the same', () => {
+    expect(numberOfDaysInRange(new Date(2023, 1, 1), new Date(2023, 1, 1))).toBe(1);
   });
 });

@@ -16,4 +16,12 @@ describe.concurrent('ukeNr', () => {
   it('shold return return the correct weeknumber for another sunday', () => {
     expect(ukeNr(new Date(2022, 9, 9))).toBe(41);
   });
+
+  it('shold return return the correct weeknumber for another monday', () => {
+    expect(ukeNr(new Date(2022, 9, 10))).toBe(42);
+  });
+
+  it('shold return return the correct weeknumber for another saturday', () => {
+    expect(ukeNr(new Date(2022, 9, 15))).toBe(42);
+  });
 });
