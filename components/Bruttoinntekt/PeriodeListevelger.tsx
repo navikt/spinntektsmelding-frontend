@@ -66,7 +66,7 @@ export default function PeriodeListevelger({
       {defaultRange &&
         defaultRange.map((range, index) => (
           <Periodevelger
-            key={range.id}
+            key={`${fomIdBase}-${range.id || index}`}
             onRangeChange={(oppdatertRange) => onRangeChange(oppdatertRange, range.id)}
             defaultRange={range}
             fomTekst={fomTekst}
