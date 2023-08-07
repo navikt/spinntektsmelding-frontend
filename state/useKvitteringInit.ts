@@ -9,9 +9,7 @@ import {
   StillingsEndring,
   Tariffendring
 } from './useFyllInnsending';
-import fetchInntektsdata from '../utils/fetchInntektsdata';
-import environment from '../config/environment';
-import { logger } from '@navikt/next-logger';
+
 import { Periode } from './state';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 
@@ -26,7 +24,6 @@ export interface KvitteringSkjema extends InnsendingSkjema {
 
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
-  const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
 
@@ -147,14 +144,6 @@ export default function useKvitteringInit() {
         }
       }
     }
-
-    fetchInntektsdata(environment.inntektsdataUrl, slug, parseIsoDate(bestemmendeFravaersdag))
-      .then((inntektSisteTreMnd) => {
-        setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
-      })
-      .catch((error) => {
-        logger.warn('Feil ved henting av tidliger inntektsdata', error);
-      });
 
     initLonnISykefravaeret({
       status: jsonData.refusjon.utbetalerHeleEllerDeler ? 'Ja' : 'Nei',

@@ -34,6 +34,8 @@ import useAmplitude from '../utils/useAmplitude';
 import isValidUUID from '../utils/isValidUUID';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
+import fetchInntektsdata from 'utils/fetchInntektsdata';
+import { logger } from '@navikt/next-logger';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -60,6 +62,7 @@ const Home: NextPage = () => {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setSlug = useBoundStore((state) => state.setSlug);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const logEvent = useAmplitude();
@@ -204,6 +207,16 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (!fravaersperioder) {
       hentKvitteringsdata(pathSlug);
+    } else {
+      if (bestemmendeFravaersdag) {
+        fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag)
+          .then((inntektSisteTreMnd) => {
+            setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
+          })
+          .catch((error) => {
+            logger.warn('Feil ved henting av tidliger inntektsdata', error);
+          });
+      }
     }
     setSlug(pathSlug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
