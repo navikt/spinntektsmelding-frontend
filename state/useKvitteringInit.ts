@@ -24,7 +24,6 @@ export interface KvitteringSkjema extends InnsendingSkjema {
 
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
-  const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
 
