@@ -27,7 +27,7 @@ jobs:
       - run: yarn install --frozen-lockfile
 
       - name: Cypress run
-        uses: cypress-io/github-action@v3
+        uses: cypress-io/github-action@v5
         with:
           project: .
           browser: chrome
