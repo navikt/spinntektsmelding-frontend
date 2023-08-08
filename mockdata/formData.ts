@@ -1,27 +1,12 @@
-import InntektsmeldingSkjema from '../state/state';
+import MottattData from 'state/MottattData';
 import testFnr from './testFnr';
 
-const initialState: InntektsmeldingSkjema = {
-  opplysningerBekreftet: false,
-  egenmeldingsperioder: [],
-  bruttoinntekt: {
-    bruttoInntekt: 0,
-    manueltKorrigert: false,
-    endringsaarsak: ''
-  },
-  opprinneligbruttoinntekt: {
-    bruttoInntekt: 0,
-    manueltKorrigert: false,
-    endringsaarsak: ''
-  },
-  sammeFravaersperiode: false,
-  innsenderNavn: undefined,
-  innsenderTelefonNr: undefined,
-  aarsakInnsending: 'Ny'
-};
-
-const formData = {
-  ...initialState,
+const formData: Partial<MottattData> = {
+  // behandlingsdager: [],
+  // behandlingsperiode: {
+  //   fom: '2022-02-20',
+  //   tom: '2022-08-03'
+  // },
   navn: 'Test Navn Testesen-Navnesen Jr.',
   identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
   orgnrUnderenhet: '911206722',
@@ -61,33 +46,22 @@ const formData = {
   ],
   innsenderNavn: 'Test Testesen',
   innsenderTelefonNr: '12345678'
-  // behandlingsdager: ['2022-01-10'],
-  // behandlingsperiode: {
-  //   fom: new Date(), 4),
-  //   tom: subMonths(new Date(), 10)
-  // }
-  // feilReport: [
-  //   {
-  //     melding: 'Klarer ikke hente informasjon om virksomheten',
-  //     status: 0,
-  //     datafelt: 'virksomhet'
-  //   },
-  //   {
-  //     melding: 'Klarer ikke hente informasjon om den ansatte',
-  //     status: 0,
-  //     datafelt: 'arbeidstaker-informasjon'
-  //   },
-  //   {
-  //     melding: 'Klarer ikke hente informasjon om virksomheten',
-  //     status: 0,
-  //     datafelt: 'inntekt'
-  //   }
-  // ]
   // feilReport: {
   //   feil: [
   //     {
   //       melding: 'Vi klarte ikke å hente arbeidstaker informasjon.',
+  //       status: 0,
   //       datafelt: 'arbeidstaker-informasjon'
+  //     },
+  //     {
+  //       melding: 'Klarer ikke hente informasjon om virksomheten',
+  //       status: 0,
+  //       datafelt: 'virksomhet'
+  //     },
+  //     {
+  //       melding: 'Klarer ikke hente informasjon om virksomheten',
+  //       status: 0,
+  //       datafelt: 'inntekt'
   //     }
   //   ]
   // }
