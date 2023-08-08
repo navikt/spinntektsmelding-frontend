@@ -1,15 +1,13 @@
 .naturalytelser td,
 .naturalytelser th {
-  padding-left : 0;
+  padding-left: 0;
   padding-right: 2rem;
 }
-
-
 
 .naturalytelser .verdi {
   float: left;
 }
 
 .naturalytelser .type {
-  padding-left: .25rem;
+  padding-left: 0.25rem;
 }

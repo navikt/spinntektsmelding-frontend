@@ -1,17 +1,17 @@
 .egenmeldingswrapper {
-  margin-top   : 1rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
 .sammeperiode {
-  align-self : end;
+  align-self: end;
   margin-left: 1.05rem;
 }
 
 .datowrapper {
-  display  : flex;
+  display: flex;
   flex-wrap: wrap;
-  gap      : 2rem;
+  gap: 2rem;
 }
 
 .datepickerytrewrapper {
@@ -19,8 +19,8 @@
 }
 
 .endresykemeldingknapper {
-  padding-top    : 1rem;
-  display        : flex;
+  padding-top: 1rem;
+  display: flex;
   justify-content: space-between;
 }
 
@@ -33,6 +33,6 @@
 @media screen and (max-width: 500px) {
   .endresykemeldingknapper {
     flex-direction: column;
-    gap           : 2rem;
+    gap: 2rem;
   }
 }

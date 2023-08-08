@@ -10,82 +10,81 @@
 
 .maanedsinntekt {
   margin-bottom: auto;
-  margin-top   : auto;
+  margin-top: auto;
 }
 
 .endremaaanedsinntekt,
 .endremaaanedsinntektwrapper {
   display: flex;
-  gap    : 2rem;
+  gap: 2rem;
 }
 
 .endreperiodeliste {
-  display       : flex;
-  gap           : 1rem;
+  display: flex;
+  gap: 1rem;
   flex-direction: column;
 }
 
 .endremaaanedsinntektwrapper {
   flex-direction: column;
-  margin-top    : .5rem;
+  margin-top: 0.5rem;
 }
 
 .belopwrapper {
-  display      : flex;
-  gap          : 2rem;
+  display: flex;
+  gap: 2rem;
   margin-bottom: 1rem;
-  margin-top   : 1rem;
+  margin-top: 1rem;
 }
 
-.bruttoinntektendringsbelop>label {
+.bruttoinntektendringsbelop > label {
   max-height: var(--a-font-line-height-large);
 }
 
-.bruttoinntektendringsbelop>input {
+.bruttoinntektendringsbelop > input {
   margin-bottom: auto;
 }
 
 .bruttoinntektbelop {
-  margin: 1rem 0 .5rem;
+  margin: 1rem 0 0.5rem;
 }
 
-.bruttoinntektbelop>input {
+.bruttoinntektbelop > input {
   max-width: 10rem;
 }
 
 .kontrollerknapp {
-  margin-top: calc(var(--a-font-line-height-large) + .5rem);
-  height    : 3rem;
-  display   : inline-block;
+  margin-top: calc(var(--a-font-line-height-large) + 0.5rem);
+  height: 3rem;
+  display: inline-block;
 }
-
 
 .arbeidsprosent {
   margin: 2rem 0;
 }
 
 .prosentbody {
-  display       : flex;
+  display: flex;
   flex-direction: column;
 }
 
 .prosentbodytext {
-  margin-top   : auto;
+  margin-top: auto;
   margin-bottom: auto;
 }
 
 .bruttoinntektendringsbelopenkel {
-  margin-top: .5rem;
+  margin-top: 0.5rem;
 }
 
-.bruttoinntektendringsbelopenkel>input {
+.bruttoinntektendringsbelopenkel > input {
   max-width: 10rem;
 }
 
 .bruttoinntektbelopbeskrivelse {
   margin-bottom: 1rem;
-  margin-top   : 1rem;
-  font-weight  : var(--a-font-weight-bold);
+  margin-top: 1rem;
+  font-weight: var(--a-font-weight-bold);
 }
 
 .inntektsliste {
@@ -94,7 +93,7 @@
 
 .tbmargin {
   margin-bottom: 1.5rem;
-  margin-top   : 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .sletteknapp {
@@ -107,12 +106,12 @@
 
 @media screen and (max-width: 500px) {
   .endremaaanedsinntekt {
-    flex-direction  : column;
-    border          : 1px solid darkgray;
-    border-radius   : 5px;
+    flex-direction: column;
+    border: 1px solid darkgray;
+    border-radius: 5px;
     background-color: var(--a-bg-subtle);
-    padding         : 0.5rem;
-    box-shadow      : 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
-    margin          : 0.25rem 0;
+    padding: 0.5rem;
+    box-shadow: 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
+    margin: 0.25rem 0;
   }
 }

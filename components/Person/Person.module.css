@@ -1,12 +1,12 @@
 .arbeidsgiverwrapper,
 .ytreansattwrapper,
 .personinfowrapper {
-  display              : grid;
+  display: grid;
   grid-template-columns: [col1] 50% [col2] auto;
 }
 
 .ansattwrapper {
-  display       : flex;
+  display: flex;
   flex-direction: column;
 }
 
@@ -17,7 +17,7 @@
 
 @media screen and (max-width: 800px) {
   .personinfowrapper {
-    display              : grid;
+    display: grid;
     grid-template-columns: [col1] auto;
   }
 
@@ -27,16 +27,15 @@
 }
 
 @media screen and (max-width: 450px) {
-
   .arbeidsgiverwrapper,
   .ytreansattwrapper {
-    display              : grid;
+    display: grid;
     grid-template-columns: [col1] auto;
   }
 
   .innsendernavnwrapper,
   .virksomhetsnavnwrapper,
   .ansattwrapper {
-    margin-bottom: .75rem;
+    margin-bottom: 0.75rem;
   }
 }

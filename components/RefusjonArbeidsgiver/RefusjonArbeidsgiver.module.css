@@ -3,34 +3,33 @@
 }
 
 .belopswrapper {
-  display   : flex;
-  gap       : 2rem;
-  margin-top: .75rem;
+  display: flex;
+  gap: 2rem;
+  margin-top: 0.75rem;
 }
 
 .belop {
-  margin-top   : auto;
+  margin-top: auto;
   margin-bottom: auto;
 }
 
-.refusjonsbelop>input {
+.refusjonsbelop > input {
   max-width: 18rem;
 }
 
-.selectbegrunnelse>div {
+.selectbegrunnelse > div {
   height: 48px;
 }
 
-.selectbegrunnelse>label {
+.selectbegrunnelse > label {
   height: 48px;
 }
-
 
 .belopperiode,
 .wraputbetaling {
-  display       : flex;
+  display: flex;
   flex-direction: row;
-  gap           : 2rem;
+  gap: 2rem;
 }
 
 .belopperiode {
@@ -46,14 +45,13 @@
 }
 
 @media screen and (max-width: 500px) {
-
   .belopswrapper,
   .belopperiode,
   .wraputbetaling {
     flex-direction: column;
   }
 
-  .selectbegrunnelse>label {
+  .selectbegrunnelse > label {
     height: inherit;
   }
 }

@@ -1,6 +1,6 @@
 .tablenaturalytelse {
-  border-spacing: .5rem;
-  margin        : 0 -.5rem;
+  border-spacing: 0.5rem;
+  margin: 0 -0.5rem;
 }
 
 .tablenaturalytelse th {
@@ -13,13 +13,13 @@
 
 .tableRow,
 .tableHeader {
-  display       : flex;
+  display: flex;
   flex-direction: row;
-  gap           : 1rem
+  gap: 1rem;
 }
 
 .tableItem,
 .tableHeaderItem {
-  width    : 25%;
+  width: 25%;
   max-width: 25%;
 }
