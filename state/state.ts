@@ -1,3 +1,5 @@
+import begrunnelseEndringBruttoinntekt from 'components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+
 export interface Periode {
   fom?: Date;
   tom?: Date;
@@ -9,7 +11,7 @@ export type YesNo = 'Ja' | 'Nei';
 export interface Inntekt {
   bruttoInntekt?: number;
   manueltKorrigert: boolean;
-  endringsaarsak?: string;
+  endringsaarsak?: keyof typeof begrunnelseEndringBruttoinntekt;
 }
 
 export interface HistoriskInntekt {
