@@ -218,14 +218,17 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           }
 
           const perioder = sykmeldingsperioder
-            ? sykmeldingsperioder.concat(egenmeldingsperioder || [])
+            ? sykmeldingsperioder.concat(egenmeldingsperioder ?? [])
             : egenmeldingsperioder;
 
-          const uendret = perioder?.find((periode) =>
-            opprinnelig?.find((opprinneligPeriode) => opprinneligPeriode.fom === periode.fom)
-          );
+          const agp = finnArbeidsgiverperiode(perioder!);
 
-          if (!uendret) {
+          const opprinneligString = JSON.stringify(
+            opprinnelig.map((periode) => ({ fom: periode.fom, tom: periode.tom }))
+          );
+          const agpString = JSON.stringify(agp.map((periode) => ({ fom: periode.fom, tom: periode.tom })));
+
+          if (opprinneligString !== agpString) {
             state.endretArbeidsgiverperiode = true;
           }
 
