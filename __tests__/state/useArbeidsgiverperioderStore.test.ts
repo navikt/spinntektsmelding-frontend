@@ -786,4 +786,69 @@ describe('useBoundStore', () => {
       }
     ]);
   });
+
+  it('should check if arbeidsgiverperiode has not been changed', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
+
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      result.current.initFravaersperiode(mottattArbeidsgiverperiode);
+    });
+
+    act(() => {
+      result.current.harArbeidsgiverperiodenBlittEndret();
+    });
+    expect(result.current.endretArbeidsgiverperiode).toBeFalsy();
+  });
+
+  it('should check if arbeidsgiverperiode has been changed', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
+
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-02',
+        tom: '2022-10-06'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
+
+    const mottattFravaersperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      result.current.initFravaersperiode(mottattFravaersperiode);
+    });
+
+    act(() => {
+      result.current.harArbeidsgiverperiodenBlittEndret();
+    });
+    expect(result.current.endretArbeidsgiverperiode).toBeTruthy();
+  });
 });
