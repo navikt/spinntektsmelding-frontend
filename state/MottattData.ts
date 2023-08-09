@@ -16,6 +16,21 @@ type FeilReportFeilListe = {
   feil: Array<FeilReportElement>;
 };
 
+type ForespurteData = {
+  arbeidsgiverperiode: { paakrevd: boolean };
+  inntekt: {
+    paakrevd: boolean;
+    forslag: {
+      type: string;
+      beregningsmaaneder: Array<string>;
+    };
+  };
+  refusjon: {
+    paakrevd: boolean;
+    forslag: { perioder: []; opphoersdato: string | null };
+  };
+};
+
 interface MottattData {
   navn: string;
   identitetsnummer: string;
@@ -26,10 +41,11 @@ interface MottattData {
   bruttoinntekt: number;
   tidligereinntekter: Array<HistoriskInntekt>;
   behandlingsdager: Array<string>;
-  behandlingsperiode: MottattPeriode;
+  behandlingsperiode: MottattPeriode | null;
   innsenderNavn: string;
   innsenderTelefonNr: string;
   feilReport?: FeilReportFeilListe;
+  forespurtData?: ForespurteData;
 }
 
 export default MottattData;

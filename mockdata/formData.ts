@@ -45,7 +45,23 @@ const formData: Partial<MottattData> = {
     }
   ],
   innsenderNavn: 'Test Testesen',
-  innsenderTelefonNr: '12345678'
+  innsenderTelefonNr: '12345678',
+  behandlingsperiode: null,
+  behandlingsdager: [],
+  forespurtData: {
+    arbeidsgiverperiode: { paakrevd: false },
+    inntekt: {
+      paakrevd: true,
+      forslag: {
+        type: 'ForslagInntektGrunnlag',
+        beregningsmaaneder: ['2023-03', '2023-04', '2023-05']
+      }
+    },
+    refusjon: {
+      paakrevd: true,
+      forslag: { perioder: [], opphoersdato: null }
+    }
+  }
   // feilReport: {
   //   feil: [
   //     {
