@@ -4,26 +4,31 @@ import fetchInntektskjemaForNotifikasjon from '../state/fetchInntektskjemaForNot
 import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
 import { useRouter } from 'next/router';
+import { Opplysningstype } from 'state/useForespurtDataStore';
 
 export default function useHentSkjemadata() {
   const initState = useStateInit();
   const leggTilFeilmelding = useBoundStore((state) => state.leggTilFeilmelding);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
-  const hentOpplysningstyper = useBoundStore((state) => state.hentOpplysningstyper);
+  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const router = useRouter();
 
-  return async (pathSlug: string) => {
+  return async (pathSlug: string | Array<string>) => {
     try {
       let skjemadata;
+      if (Array.isArray(pathSlug)) {
+        return {};
+      }
+
       if (pathSlug) {
         skjemadata = await fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, pathSlug);
       }
       if (skjemadata) {
         initState(skjemadata);
-        const opplysningstyper = hentOpplysningstyper();
+        const opplysningstyper = hentPaakrevdOpplysningstyper();
 
-        if (!opplysningstyper.includes('Arbeidsgiverperiode')) {
+        if (!isOpplysningstype('Arbeidsgiverperiode', opplysningstyper)) {
           router.push(`/endring/${pathSlug}`, undefined, { shallow: true });
         }
       }
@@ -32,7 +37,7 @@ export default function useHentSkjemadata() {
         const ingress = window.location.hostname + environment.baseUrl;
         const currentPath = window.location.href;
 
-        window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
+        window.location.replace(`https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`);
       }
 
       if (error.status === 503 || error.status === 500) {
@@ -43,4 +48,8 @@ export default function useHentSkjemadata() {
       setSkalViseFeilmeldinger(true);
     }
   };
+
+  function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | never)[]): value is Opplysningstype {
+    return opplysningstyper.includes(value as Opplysningstype);
+  }
 }

@@ -2,8 +2,12 @@ import { HistoriskInntekt } from './state';
 import { FeilReportElement } from './useStateInit';
 
 export interface MottattPeriode {
-  fom: string;
-  tom: string;
+  fom: TDateISODate;
+  tom: TDateISODate;
+}
+
+interface MottattPeriodeRefusjon extends MottattPeriode {
+  beløp: number;
 }
 
 export interface MottattNaturalytelse {
@@ -11,6 +15,10 @@ export interface MottattNaturalytelse {
   bortfallsdato: string;
   verdi: number;
 }
+
+type TDateISODate =
+  | `${number}-${number}-${number}`
+  | `${number}-${number}-${number}T${number}:${number}:${number}.${number}Z`;
 
 type FeilReportFeilListe = {
   feil: Array<FeilReportElement>;
@@ -27,7 +35,10 @@ type ForespurteData = {
   };
   refusjon: {
     paakrevd: boolean;
-    forslag: { perioder: []; opphoersdato: string | null };
+    forslag: {
+      perioder: Array<MottattPeriodeRefusjon>;
+      opphoersdato: TDateISODate | null;
+    };
   };
 };
 

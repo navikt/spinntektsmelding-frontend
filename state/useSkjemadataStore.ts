@@ -7,13 +7,13 @@ export interface SkjemadataState {
   nyInnsending: boolean;
   setNyInnsending: (endring: boolean) => void;
   setHenterInnsending: (henter: boolean) => void;
-  setSlug: (slug: string) => void;
+  setSlug: (slug: string | Array<string>) => void;
   setKvitteringInnsendt: (tidspunkt: string) => void;
   slettKvitteringInnsendt: () => void;
   setSkjemaFeilet: () => void;
   tracker: string;
   henterInntektsdata: boolean;
-  slug: string;
+  slug?: string | Array<string>;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
 }
@@ -38,7 +38,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setSlug: (slug: string) => {
+  setSlug: (slug?: string | Array<string>) => {
     set(
       produce((state: SkjemadataState) => {
         state.slug = slug;

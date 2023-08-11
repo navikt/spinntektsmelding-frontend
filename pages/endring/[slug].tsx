@@ -54,6 +54,7 @@ const Endring: NextPage = () => {
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const hentRefusjoner = useBoundStore((state) => state.hentRefusjoner);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const setSlug = useBoundStore((state) => state.setSlug);
   const router = useRouter();
 
@@ -67,21 +68,27 @@ const Endring: NextPage = () => {
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
-  const slug = (router.query.slug as string) || '';
-  const firstSlug = slug;
-  const [pathSlug, setPathSlug] = useState<string>(firstSlug);
-
   useEffect(() => {
-    setPathSlug(firstSlug);
-  }, [firstSlug]);
-
-  useEffect(() => {
-    if (!fravaersperioder) {
-      hentKvitteringsdata(pathSlug);
+    if (!fravaersperioder && router.query.slug) {
+      const slug = Array.isArray(router.query.slug) ? router.query.slug[0] : router.query.slug;
+      hentKvitteringsdata(slug);
     }
-    setSlug(pathSlug);
+    if (router.query.slug) {
+      setSlug(router.query.slug);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug]);
+  }, [router.query.slug]);
+  const [forsteFravaersdag, setForsteFravaersdag] = useState<Date | undefined>(undefined);
+
+  useEffect(() => {
+    const fravaer = fravaersperioder?.concat(egenmeldingsperioder ?? []);
+    if (!fravaer) return;
+
+    fravaer?.sort((a, b) => a.fom - b.fom);
+    if (fravaer?.length) {
+      setForsteFravaersdag(fravaer[0].fom);
+    }
+  }, [fravaersperioder, egenmeldingsperioder]);
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
@@ -95,7 +102,9 @@ const Endring: NextPage = () => {
     setEndringerAvRefusjon(value as YesNo);
   };
 
-  const changeMaanedsintektHandler = () => {};
+  const changeMaanedsintektHandler = () => {
+    /* TODO document why this arrow function is empty */
+  };
 
   const changeBegrunnelseHandler = (verdi: string) => {
     setEndringsaarsak(verdi);
@@ -103,14 +112,12 @@ const Endring: NextPage = () => {
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
     setOpplysningerBekreftet(!!event.currentTarget.checked);
-    if (!!event.currentTarget.checked) {
+    if (event.currentTarget.checked) {
       slettFeilmelding('bekreft-opplysninger');
     } else {
       leggTilFeilmelding('bekreft-opplysninger', feiltekster.BEKREFT_OPPLYSNINGER);
     }
   };
-
-  const sisteInnsending = new Date();
 
   let cx = classNames.bind(lokalStyles);
   const classNameJa = cx({ fancyRadio: true, selectedRadio: endringBruttolonn === 'Ja' });
@@ -121,7 +128,7 @@ const Endring: NextPage = () => {
 
   const refusjoner = hentRefusjoner();
 
-  const refusjonTilArbeidsgiver = bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0;
+  const refusjonTilArbeidsgiver = bruttoinntekt?.bruttoInntekt ?? 0;
 
   return (
     <div className={styles.container}>
@@ -144,7 +151,9 @@ const Endring: NextPage = () => {
                 kr
               </BodyLong>
               <RadioGroup
-                legend='Har det vært noen endringer i lønn for den ansatte mellom dd.mm.åååå og dd.mm.åååå?'
+                legend={`Har det vært noen endringer i lønn for den ansatte mellom dd.mm.åååå og ${formatDate(
+                  forsteFravaersdag
+                )}?`}
                 onChange={handleChangeEndringLonn}
                 className={lokalStyles.fancyRadioGruppe}
                 defaultValue={endringBruttolonn}
@@ -158,16 +167,14 @@ const Endring: NextPage = () => {
               </RadioGroup>
               {endringBruttolonn === 'Ja' && (
                 <>
-                  <BodyLong>Angi ny beregnet månedslønn per {formatDate(sisteInnsending)}</BodyLong>
+                  <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
 
                   <div className={biStyles.endremaaanedsinntektwrapper}>
                     <div className={biStyles.endremaaanedsinntekt}>
                       <TextField
                         label='Ny månedsinntekt'
                         onChange={changeMaanedsintektHandler}
-                        defaultValue={formatCurrency(
-                          bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
-                        )}
+                        defaultValue={formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)}
                         id='inntekt.beregnetInntekt'
                         error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
                         className={biStyles.bruttoinntektendringsbelop}
@@ -314,7 +321,9 @@ const Endring: NextPage = () => {
                 </>
               )}
               <RadioGroup
-                legend='Har det vært noen endringer i refusjonskrav mellom dd.mm.åååå og dd.mm.åååå (start av nytt sykefravær)?'
+                legend={`Har det vært noen endringer i refusjonskrav mellom dd.mm.åååå og ${formatDate(
+                  forsteFravaersdag
+                )} (start av nytt sykefravær)?`}
                 onChange={handleChangeEndringRefusjon}
                 className={lokalStyles.fancyRadioGruppe}
                 defaultValue={endringerAvRefusjon}

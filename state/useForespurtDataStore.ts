@@ -1,10 +1,10 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { addDays, isValid, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { YesNo } from './state';
 
-type Opplysningstype = 'Inntekt' | 'Refusjon' | 'Arbeidsgiverperiode';
+export type Opplysningstype = 'inntekt' | 'refusjon' | 'arbeidsgiverperiode';
 
 type Beregningsmåneder = string;
 
@@ -29,19 +29,24 @@ type ForslagRefusjon = Array<PeriodeRefusjon>;
 type MottattForslagRefusjon = Array<MottattPeriodeRefusjon>;
 
 type ForespurtData = {
-  opplysningstype: Opplysningstype;
+  paakrevd: boolean;
   forslag: ForslagInntekt & ForslagRefusjon;
 };
 
+// type MottattForespurtData = {
+//   opplysningstype: Opplysningstype;
+//   forslag: ForslagInntekt & MottattForslagRefusjon;
+// };
+
 type MottattForespurtData = {
-  opplysningstype: Opplysningstype;
-  forslag: ForslagInntekt & MottattForslagRefusjon;
+  [key in Opplysningstype]: ForespurtData;
 };
 
 export interface ForespurtDataState {
-  forespurtData?: Array<ForespurtData>;
-  initForespurtData: (forespurtData: any) => void;
-  hentOpplysningstyper: () => Array<string>;
+  forespurtData?: MottattForespurtData;
+  initForespurtData: (forespurtData: MottattForespurtData) => void;
+  hentOpplysningstyper: () => Array<Opplysningstype>;
+  hentPaakrevdOpplysningstyper: () => Array<Opplysningstype> | Array<undefined>;
   hentRefusjoner: () => {
     harEndringer: boolean;
     endringer: Array<PeriodeRefusjon>;
@@ -55,77 +60,53 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
   initForespurtData: (forespurtData) => {
     set(
       produce((state: ForespurtDataState) => {
-        const maserteData: Array<ForespurtData> = forespurtData.map((data: MottattForespurtData) => {
-          if (data.opplysningstype === 'Refusjon') {
-            const forslagsdata = data.forslag.map((periode: MottattPeriodeRefusjon) => ({
-              fom: periode.fom ? parseISO(periode.fom) : undefined,
-              tom: periode.tom ? parseISO(periode.tom) : undefined,
-              belop: periode.beløp ?? undefined
-            }));
-            return { ...data, forslag: forslagsdata };
-          } else {
-            return data;
-          }
-        });
+        state.forespurtData = forespurtData;
 
-        state.forespurtData = maserteData;
+        return state;
       })
     );
   },
   hentOpplysningstyper: () => {
     const forespurtData = get().forespurtData;
     if (forespurtData) {
-      return forespurtData.map((data) => data.opplysningstype);
+      return Object.keys(forespurtData) as Array<Opplysningstype>;
     }
 
     return [];
   },
+  hentPaakrevdOpplysningstyper: () => {
+    const forespurtData = get().forespurtData;
+    if (forespurtData) {
+      return Object.keys(forespurtData).filter(
+        (key) => forespurtData[key as keyof typeof forespurtData].paakrevd
+      ) as Array<Opplysningstype>;
+    }
+
+    return [];
+  },
+
   hentRefusjoner: () => {
     const forespurtData = get().forespurtData;
-
     if (forespurtData) {
-      const refusjonsdata = forespurtData.find((data) => data.opplysningstype === 'Refusjon');
-      let harEndringer =
-        refusjonsdata?.forslag && !('beregningsmåneder' in refusjonsdata.forslag) && refusjonsdata.forslag.length > 0;
-      const endringer = refusjonsdata!.forslag as ForslagRefusjon;
+      const refusjonsdata = forespurtData['refusjon' as keyof typeof forespurtData];
 
-      const sorterbareEndringer = structuredClone(endringer);
+      let harEndringer = refusjonsdata?.forslag.perioder && refusjonsdata.forslag.perioder.length > 0;
+      const endringer = refusjonsdata.forslag.perioder;
 
-      const sorterteEndringer = sorterbareEndringer.sort((a, b) => {
+      const sorterbareEndringer = endringer.map((periode: MottattPeriodeRefusjon) => ({
+        fom: periode.fom ? parseISO(periode.fom) : undefined,
+        tom: periode.tom ? parseISO(periode.tom) : undefined,
+        belop: periode.beløp || undefined
+      }));
+
+      const sorterteEndringer = sorterbareEndringer?.sort((a, b) => {
         if (a.fom! === b.fom!) return 0;
         return a.fom! > b.fom! ? 1 : -1;
       });
 
-      const sisteEndring = sorterteEndringer[sorterteEndringer.length - 1];
-
-      let kravOpphorer: YesNo = 'Nei';
-      let kravOpphorerDato = new Date();
-
-      if (sisteEndring.belop === 0) {
-        kravOpphorer = 'Ja' as YesNo;
-        kravOpphorerDato = sisteEndring.fom!;
-        sorterteEndringer.pop();
-      } else {
-        if (isValid(sisteEndring.tom)) {
-          kravOpphorer = 'Ja' as YesNo;
-          kravOpphorerDato = addDays(sisteEndring.tom!, 1);
-        } else {
-          kravOpphorer = 'Nei' as YesNo;
-        }
-      }
-
-      // kravOpphorer =
-      //   kravOpphorer === 'Nei' ? (sisteEndring.belop !== 0 && isValid(sisteEndring.tom) ? 'Ja' : 'Nei') : 'Nei';
-
-      // kravOpphorer === 'Ja'
-      //   ? sisteEndring.belop !== 0 && isValid(sisteEndring.tom)
-      //     ? addDays(sisteEndring.tom!, 1)
-      //     : sisteEndring.tom!
-      //   : sisteEndring.tom!;
-
-      if (harEndringer === undefined) {
-        harEndringer = false;
-      }
+      let kravOpphorer: YesNo = !!refusjonsdata?.forslag?.opphoersdato ? 'Ja' : 'Nei';
+      let kravOpphorerDato =
+        sorterbareEndringer?.forslag?.opphoersdato || sorterteEndringer[sorterteEndringer.length - 1].tom; //new Date();
 
       return {
         harEndringer: harEndringer ?? false,
@@ -134,7 +115,12 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         kravOpphorerDato
       };
     }
-    return {};
+    return {
+      harEndringer: 'Nei',
+      endringer: [],
+      kravOpphorer: 'Nei',
+      kravOpphorerDato: null
+    };
   }
 });
 

@@ -9,13 +9,17 @@ export default function useHentKvitteringsdata() {
   const hentSkjemadata = useHentSkjemadata();
   const router = useRouter();
 
-  return async (pathSlug: string) => {
+  return async (pathSlug?: string | Array<string>) => {
+    if (Array.isArray(pathSlug)) {
+      return {};
+    }
+
     try {
       let skjemadata;
       if (pathSlug) {
         skjemadata = await fetchKvitteringsdata(environment.hentKvitteringUrl, pathSlug);
       }
-      if (skjemadata) {
+      if (skjemadata && pathSlug) {
         initState(skjemadata, pathSlug);
         router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
       }
@@ -27,7 +31,7 @@ export default function useHentKvitteringsdata() {
         window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
       }
 
-      if (error.status !== 200) {
+      if (error.status !== 200 && pathSlug) {
         hentSkjemadata(pathSlug);
       }
     }
