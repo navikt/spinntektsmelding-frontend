@@ -17,4 +17,8 @@ describe.concurrent('isValidUUID', () => {
   it('shold return false for a valid UUID with wrong number of digits', () => {
     expect(isValidUUID('8d50ef20-37b5-4829-ad83-56219e70b37')).toBeFalsy();
   });
+
+  it('shold return false for an undefined UUID', () => {
+    expect(isValidUUID(undefined)).toBeFalsy();
+  });
 });

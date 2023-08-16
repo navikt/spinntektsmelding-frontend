@@ -18,8 +18,10 @@ export default function useHentSkjemadata() {
     try {
       let skjemadata;
       if (Array.isArray(pathSlug)) {
+        console.log('Array.isArray(pathSlug)', pathSlug);
         return {};
       }
+      console.log('pathSlug', pathSlug);
 
       if (pathSlug) {
         skjemadata = await fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, pathSlug);

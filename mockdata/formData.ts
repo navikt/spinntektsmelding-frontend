@@ -54,7 +54,12 @@ const formData: Partial<MottattData> = {
       paakrevd: true,
       forslag: {
         type: 'ForslagInntektGrunnlag',
-        beregningsmaaneder: ['2023-03', '2023-04', '2023-05']
+        beregningsmaaneder: ['2023-03', '2023-04', '2023-05'],
+        forrigeInntekt: {
+          skjæringstidspunkt: '2022-12-24',
+          kilde: 'INNTEKTSMELDING',
+          beløp: 77500.0
+        }
       }
     },
     refusjon: {
@@ -65,7 +70,8 @@ const formData: Partial<MottattData> = {
           { fom: '2023-03-02', tom: '2023-04-01', beløp: 55000 },
           { fom: '2023-05-02', tom: '2023-05-02', beløp: 44000 }
         ],
-        opphoersdato: null
+        opphoersdato: '2023-06-01',
+        refundert: 76000
       }
     }
   }

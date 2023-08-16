@@ -16,7 +16,7 @@ export interface MottattNaturalytelse {
   verdi: number;
 }
 
-type TDateISODate =
+export type TDateISODate =
   | `${number}-${number}-${number}`
   | `${number}-${number}-${number}T${number}:${number}:${number}.${number}Z`;
 
@@ -30,7 +30,12 @@ type ForespurteData = {
     paakrevd: boolean;
     forslag: {
       type: string;
-      beregningsmaaneder: Array<string>;
+      beregningsmaaneder?: Array<string>;
+      forrigeInntekt: {
+        skjæringstidspunkt: TDateISODate;
+        kilde: string;
+        beløp: number;
+      };
     };
   };
   refusjon: {
@@ -38,6 +43,7 @@ type ForespurteData = {
     forslag: {
       perioder: Array<MottattPeriodeRefusjon>;
       opphoersdato: TDateISODate | null;
+      refundert?: number;
     };
   };
 };

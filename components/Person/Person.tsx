@@ -8,9 +8,10 @@ import Skeleton from 'react-loading-skeleton';
 
 interface PersonProps {
   erKvittering?: boolean;
+  erDelvisInnsending?: boolean;
 }
 
-export default function Person({ erKvittering }: PersonProps) {
+export default function Person({ erKvittering, erDelvisInnsending }: PersonProps) {
   const [
     navn,
     identitetsnummer,
@@ -62,6 +63,12 @@ export default function Person({ erKvittering }: PersonProps) {
           {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
             <Alert variant='info'>{feilmeldingstekst}</Alert>
           )}
+        </p>
+      )}
+      {erDelvisInnsending && (
+        <p>
+          Da dette sykefraværet er innenfor samme arbeidsgiverperiode som forrige sykefravær trenger vi bare informasjon
+          om inntekt og refusjon.
         </p>
       )}
       <div className={lokalStyles.personinfowrapper}>

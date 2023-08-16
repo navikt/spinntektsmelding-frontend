@@ -18,8 +18,8 @@ export interface RefusjonArbeidsgiverState {
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) => void;
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
   begrunnelseRedusertUtbetaling: (begrunnelse: string) => void;
-  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string) => void;
-  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string) => void;
+  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | undefined) => void;
+  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string | undefined) => void;
   refusjonskravetOpphoererStatus: (status: YesNo) => void;
   refusjonskravetOpphoererDato: (opphoersdato?: Date) => void;
   initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) => void;
@@ -30,7 +30,7 @@ export interface RefusjonArbeidsgiverState {
 
 const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], RefusjonArbeidsgiverState> = (set, get) => ({
   fullLonnIArbeidsgiverPerioden: undefined,
-  lonnISykefravaeret: undefined,
+  lonnISykefravaeret: { status: 'Nei', belop: 1234 },
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) =>
     set(
       produce((state) => {
@@ -50,6 +50,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     ),
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => {
     const bruttoinntekt = get().bruttoinntekt;
+
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
@@ -86,7 +87,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string) =>
+  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | undefined) =>
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
@@ -103,7 +104,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string) =>
+  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string | undefined) =>
     set(
       produce((state) => {
         if (!state.fullLonnIArbeidsgiverPerioden) {

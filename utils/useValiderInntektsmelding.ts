@@ -53,7 +53,7 @@ export interface ValiderResultat {
 export default function useValiderInntektsmelding() {
   const state = useBoundStore((state) => state);
 
-  return (opplysningerBekreftet: boolean): SubmitInntektsmeldingReturnvalues => {
+  return (opplysningerBekreftet: boolean, kunInntektOgRefusjon?: boolean): SubmitInntektsmeldingReturnvalues => {
     let errorTexts: Array<ValiderTekster> = [];
     let errorCodes: Array<ValiderResultat> = [];
     let feilkoderFravaersperioder: Array<ValiderResultat> = [];
@@ -94,7 +94,9 @@ export default function useValiderInntektsmelding() {
       feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);
     }
 
-    feilkoderLonnIArbeidsgiverperioden = validerLonnIArbeidsgiverPerioden(state.fullLonnIArbeidsgiverPerioden);
+    if (!kunInntektOgRefusjon) {
+      feilkoderLonnIArbeidsgiverperioden = validerLonnIArbeidsgiverPerioden(state.fullLonnIArbeidsgiverPerioden);
+    }
 
     feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
       state.lonnISykefravaeret,

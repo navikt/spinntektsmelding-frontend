@@ -43,7 +43,17 @@ export default function RefusjonArbeidsgiver() {
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const muteableArbeidsgiverperioder = structuredClone(arbeidsgiverperioder);
-  const sisteArbeidsgiverperiode = muteableArbeidsgiverperioder?.sort((a, b) => (a.fom > b.fom ? -1 : 1));
+  const sisteArbeidsgiverperiode = muteableArbeidsgiverperioder?.sort((a, b) => {
+    if (!a.fom || !b.fom) {
+      return 0;
+    }
+    if (a.fom > b.fom) {
+      return -1;
+    } else if (a.fom < b.fom) {
+      return 1;
+    }
+    return 0;
+  });
 
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
