@@ -100,6 +100,9 @@ const Kvittering: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
+  const visNaturalytelser = skjemaType === skjemaVariant.komplett;
+  const visArbeidsgiverperiode = skjemaType === skjemaVariant.komplett;
+
   return (
     <div className={styles.container}>
       <Head>
@@ -116,16 +119,16 @@ const Kvittering: NextPage = () => {
           <div className={lokalStyles.fravaerswrapperwrapper}>
             <div className={lokalStyles.fravaersperiode}>
               <Heading2>Fraværsperiode</Heading2>
-              <div className={lokalStyles.ytterstefravaerwrapper}>
-                {harAktiveEgenmeldingsperioder() && (
+              {harAktiveEgenmeldingsperioder() && (
+                <div className={lokalStyles.ytterstefravaerwrapper}>
                   <div className={lokalStyles.ytrefravaerswrapper}>
                     <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
                     {egenmeldingsperioder?.map((periode) => (
                       <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + periode.id} />
                     ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
               <div className={lokalStyles.ytterstefravaerwrapper}>
                 <div className={lokalStyles.ytrefravaerswrapper}>
                   <Heading3 className={lokalStyles.sykfravaerstyper}>Sykmelding</Heading3>
@@ -145,19 +148,21 @@ const Kvittering: NextPage = () => {
                     <div>{formatDate(bestemmendeFravaersdag)} </div>
                   </div>
                 </div>
-                <div className={lokalStyles.arbeidsgiverperiode}>
-                  <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
-                  {!ingenArbeidsgiverperioder && (
-                    <BodyLong>
-                      Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
-                      Deretter betaler Nav lønn til den syke eller refunderer bedriften.
-                    </BodyLong>
-                  )}
-                  {ingenArbeidsgiverperioder && <BodyLong>Det er ikke angitt arbeidsgiverperiode.</BodyLong>}
-                  {arbeidsgiverperioder?.map((periode) => (
-                    <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
-                  ))}
-                </div>
+                {visArbeidsgiverperiode && (
+                  <div className={lokalStyles.arbeidsgiverperiode}>
+                    <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
+                    {!ingenArbeidsgiverperioder && (
+                      <BodyLong>
+                        Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
+                        Deretter betaler Nav lønn til den syke eller refunderer bedriften.
+                      </BodyLong>
+                    )}
+                    {ingenArbeidsgiverperioder && <BodyLong>Det er ikke angitt arbeidsgiverperiode.</BodyLong>}
+                    {arbeidsgiverperioder?.map((periode) => (
+                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -199,9 +204,13 @@ const Kvittering: NextPage = () => {
             harRefusjonEndringer={harRefusjonEndringer}
             refusjonEndringer={refusjonEndringer}
           />
-          <Skillelinje />
-          <Heading2>Eventuelle naturalytelser</Heading2>
-          {skjemaType === skjemaVariant.komplett && <BortfallNaturalytelser ytelser={naturalytelser!} />}
+          {visNaturalytelser && (
+            <>
+              <Skillelinje />
+              <Heading2>Eventuelle naturalytelser</Heading2>
+              <BortfallNaturalytelser ytelser={naturalytelser!} />
+            </>
+          )}
           <Skillelinje />
           <BodyShort>
             Kvittering - innsendt inntektsmelding - {formatDate(innsendingstidspunkt)} kl.{' '}
