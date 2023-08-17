@@ -85,47 +85,52 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
     const refusjon = forespurtData?.refusjon?.forslag;
     const inntekt = forespurtData?.inntekt?.forslag;
+    const arbeidsgiverperiodePaakrevd = forespurtData?.arbeidsgiverperiode?.paakrevd;
 
-    let kravOpphorer: YesNo = refusjon?.opphoersdato ? 'Ja' : 'Nei';
-    let kravOpphorerDato = refusjon?.opphoersdato;
+    if (!arbeidsgiverperiodePaakrevd) {
+      let kravOpphorer: YesNo = refusjon?.opphoersdato ? 'Ja' : 'Nei';
+      let kravOpphorerDato = refusjon?.opphoersdato;
 
-    refusjonskravetOpphoererDato(parseISO(kravOpphorerDato as string));
+      refusjonskravetOpphoererDato(parseISO(kravOpphorerDato as string));
 
-    refusjonskravetOpphoererStatus(kravOpphorer);
+      refusjonskravetOpphoererStatus(kravOpphorer);
 
-    const harEndringer = refusjon?.perioder && refusjon?.perioder.length > 0;
-    setHarRefusjonEndringer(harEndringer ? 'Ja' : 'Nei');
+      const harEndringer = refusjon?.perioder && refusjon?.perioder.length > 0;
+      setHarRefusjonEndringer(harEndringer ? 'Ja' : 'Nei');
 
-    const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjon);
+      const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjon);
 
-    const harRefundert = refusjon?.refundert ? 'Ja' : 'Nei';
+      const harRefundert = refusjon?.refundert ? 'Ja' : 'Nei';
 
-    initLonnISykefravaeret({
-      status: harRefundert,
-      belop: refusjon?.refundert
-    });
+      initLonnISykefravaeret({
+        status: harRefundert,
+        belop: refusjon?.refundert
+      });
 
-    oppdaterRefusjonEndringer(refusjonEndringer);
-    if (inntekt.forrigeInntekt?.beløp) {
-      setNyMaanedsinntektBlanktSkjema(inntekt.forrigeInntekt.beløp);
+      oppdaterRefusjonEndringer(refusjonEndringer);
+      if (inntekt.forrigeInntekt?.beløp) {
+        setNyMaanedsinntektBlanktSkjema(inntekt.forrigeInntekt.beløp);
+      }
+
+      slettAlleArbeidsgiverperioder();
     }
 
-    slettAlleArbeidsgiverperioder();
     set(
       produce((state: ForespurtDataState) => {
         state.forespurtData = forespurtData;
-        if (inntekt.forrigeInntekt) {
-          const fastsattInntekt = inntekt.forrigeInntekt.beløp;
+        if (!arbeidsgiverperiodePaakrevd) {
+          if (inntekt.forrigeInntekt) {
+            const fastsattInntekt = inntekt.forrigeInntekt.beløp;
 
-          if (fastsattInntekt) {
-            state.fastsattInntekt = fastsattInntekt;
-            state.skjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
+            if (fastsattInntekt) {
+              state.fastsattInntekt = fastsattInntekt;
+              state.skjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
+            }
+          } else {
+            state.fastsattInntekt = bruttoinntekt.bruttoInntekt;
+            state.skjaeringstidspunkt = undefined;
           }
-        } else {
-          state.fastsattInntekt = bruttoinntekt.bruttoInntekt;
-          state.skjaeringstidspunkt = undefined;
         }
-
         return state;
       })
     );

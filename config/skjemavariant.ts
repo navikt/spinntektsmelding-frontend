@@ -1,6 +1,6 @@
-const skjemaType = {
+const skjemaVariant = {
   komplett: 'komplett',
   delvis: 'delvis'
 } as const;
 
-export default skjemaType;
+export default skjemaVariant;

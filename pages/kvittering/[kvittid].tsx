@@ -34,6 +34,7 @@ import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringA
 import { isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from 'state/state';
+import skjemaVariant from '../../config/skjemavariant';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -74,6 +75,7 @@ const Kvittering: NextPage = () => {
   const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const slettKvitteringInnsendt = useBoundStore((state) => state.slettKvitteringInnsendt);
+  const skjemaType = useBoundStore((state) => state.skjemaType);
 
   const clickEndre = () => {
     slettKvitteringInnsendt();
@@ -118,20 +120,18 @@ const Kvittering: NextPage = () => {
                 {harAktiveEgenmeldingsperioder() && (
                   <div className={lokalStyles.ytrefravaerswrapper}>
                     <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
-                    {egenmeldingsperioder &&
-                      egenmeldingsperioder.map((periode) => (
-                        <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + periode.id} />
-                      ))}
+                    {egenmeldingsperioder?.map((periode) => (
+                      <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + periode.id} />
+                    ))}
                   </div>
                 )}
               </div>
               <div className={lokalStyles.ytterstefravaerwrapper}>
                 <div className={lokalStyles.ytrefravaerswrapper}>
                   <Heading3 className={lokalStyles.sykfravaerstyper}>Sykmelding</Heading3>
-                  {fravaersperioder &&
-                    fravaersperioder.map((periode) => (
-                      <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + periode.id} />
-                    ))}
+                  {fravaersperioder?.map((periode) => (
+                    <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + periode.id} />
+                  ))}
                 </div>
               </div>
             </div>
@@ -154,10 +154,9 @@ const Kvittering: NextPage = () => {
                     </BodyLong>
                   )}
                   {ingenArbeidsgiverperioder && <BodyLong>Det er ikke angitt arbeidsgiverperiode.</BodyLong>}
-                  {arbeidsgiverperioder &&
-                    arbeidsgiverperioder.map((periode) => (
-                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
-                    ))}
+                  {arbeidsgiverperioder?.map((periode) => (
+                    <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
+                  ))}
                 </div>
               </div>
             </div>
@@ -202,7 +201,7 @@ const Kvittering: NextPage = () => {
           />
           <Skillelinje />
           <Heading2>Eventuelle naturalytelser</Heading2>
-          <BortfallNaturalytelser ytelser={naturalytelser!} />
+          {skjemaType === skjemaVariant.komplett && <BortfallNaturalytelser ytelser={naturalytelser!} />}
           <Skillelinje />
           <BodyShort>
             Kvittering - innsendt inntektsmelding - {formatDate(innsendingstidspunkt)} kl.{' '}

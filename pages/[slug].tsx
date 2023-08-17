@@ -36,7 +36,7 @@ import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
 import fetchInntektsdata from 'utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
-import skjemaType from 'config/skjematype';
+import skjemaVariant from 'config/skjemavariant';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -221,7 +221,7 @@ const Home: NextPage = () => {
       }
     }
     setSlug(pathSlug);
-    setSkjematype(skjemaType.delvis);
+    setSkjematype(skjemaVariant.delvis);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 

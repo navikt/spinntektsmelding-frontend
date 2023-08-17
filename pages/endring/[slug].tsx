@@ -35,7 +35,7 @@ import useFyllInnsending, { InnsendingSkjema } from 'state/useFyllInnsending';
 import isValidUUID from 'utils/isValidUUID';
 import IngenTilgang from 'components/IngenTilgang';
 import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
-import skjemaType from 'config/skjematype';
+import skjemaVariant from '../../config/skjemavariant';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<YesNo | undefined>();
@@ -108,11 +108,11 @@ const Endring: NextPage = () => {
     if (!fravaersperioder && router.query.slug) {
       const slug = Array.isArray(router.query.slug) ? router.query.slug[0] : router.query.slug;
       hentKvitteringsdata(slug);
-      setSkjematype(skjemaType.delvis);
+      setSkjematype(skjemaVariant.delvis);
     }
     if (router.query.slug) {
       setSlug(router.query.slug);
-      setSkjematype(skjemaType.delvis);
+      setSkjematype(skjemaVariant.delvis);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.slug]);
@@ -451,13 +451,12 @@ const Endring: NextPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {refusjonEndringer &&
-                      refusjonEndringer.map((endring) => (
-                        <tr key={endring.dato?.toString()}>
-                          <td>{formatCurrency(endring.belop)} kr</td>
-                          <td>{formatDate(endring.dato)}</td>
-                        </tr>
-                      ))}
+                    {refusjonEndringer?.map((endring) => (
+                      <tr key={endring.dato?.toString()}>
+                        <td>{formatCurrency(endring.belop)} kr</td>
+                        <td>{formatDate(endring.dato)}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
