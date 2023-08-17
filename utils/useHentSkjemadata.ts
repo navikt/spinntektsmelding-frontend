@@ -5,7 +5,7 @@ import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
 import { useRouter } from 'next/router';
 import { Opplysningstype } from 'state/useForespurtDataStore';
-import foresporselType from 'config/foresporseltype';
+import foresporselType from '../config/foresporseltype';
 
 export default function useHentSkjemadata() {
   const initState = useStateInit();
