@@ -38,7 +38,7 @@ export interface BruttoinntektState {
   henterData: boolean;
   feilHentingAvInntektsdata?: Array<FeilReportElement>;
   setNyMaanedsinntekt: (belop: string) => void;
-  setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
+  setNyMaanedsinntektBlanktSkjema: (belop: string | number) => void;
   setEndringsaarsak: (aarsak: string) => void;
   setFeriePeriode: (periode: Array<Periode> | undefined) => void;
   setLonnsendringDato: (endringsdato?: Date) => void;

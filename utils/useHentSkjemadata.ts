@@ -5,6 +5,7 @@ import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
 import { useRouter } from 'next/router';
 import { Opplysningstype } from 'state/useForespurtDataStore';
+import foresporselType from 'config/foresporseltype';
 
 export default function useHentSkjemadata() {
   const initState = useStateInit();
@@ -18,10 +19,8 @@ export default function useHentSkjemadata() {
     try {
       let skjemadata;
       if (Array.isArray(pathSlug)) {
-        console.log('Array.isArray(pathSlug)', pathSlug);
         return {};
       }
-      console.log('pathSlug', pathSlug);
 
       if (pathSlug) {
         skjemadata = await fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, pathSlug);
@@ -30,7 +29,7 @@ export default function useHentSkjemadata() {
         initState(skjemadata);
         const opplysningstyper = hentPaakrevdOpplysningstyper();
 
-        if (!isOpplysningstype('Arbeidsgiverperiode', opplysningstyper)) {
+        if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
           router.push(`/endring/${pathSlug}`, undefined, { shallow: true });
         }
       }
@@ -51,7 +50,10 @@ export default function useHentSkjemadata() {
     }
   };
 
-  function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | never)[]): value is Opplysningstype {
+  function isOpplysningstype(
+    value: string,
+    opplysningstyper: (Opplysningstype | undefined)[]
+  ): value is Opplysningstype {
     return opplysningstyper.includes(value as Opplysningstype);
   }
 }

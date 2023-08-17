@@ -35,6 +35,7 @@ import useFyllInnsending, { InnsendingSkjema } from 'state/useFyllInnsending';
 import isValidUUID from 'utils/isValidUUID';
 import IngenTilgang from 'components/IngenTilgang';
 import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
+import skjemaType from 'config/skjematype';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<YesNo | undefined>();
@@ -82,6 +83,7 @@ const Endring: NextPage = () => {
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const fastsattInntekt = useBoundStore((state) => state.fastsattInntekt);
   const forespurtData = useBoundStore((state) => state.forespurtData);
+  const setSkjematype = useBoundStore((state) => state.setSkjematype);
   const fyllInnsending = useFyllInnsending();
   const errorResponse = useErrorRespons();
 
@@ -106,9 +108,11 @@ const Endring: NextPage = () => {
     if (!fravaersperioder && router.query.slug) {
       const slug = Array.isArray(router.query.slug) ? router.query.slug[0] : router.query.slug;
       hentKvitteringsdata(slug);
+      setSkjematype(skjemaType.delvis);
     }
     if (router.query.slug) {
       setSlug(router.query.slug);
+      setSkjematype(skjemaType.delvis);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.slug]);
@@ -298,7 +302,7 @@ const Endring: NextPage = () => {
                 <strong>{formatCurrency(fastsattInntekt)}</strong> kr
               </BodyLong>
               <RadioGroup
-                legend={`Har det vært noen endringer i beregnet månedslønn for den ansatte mellom ${formatDate(
+                legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${formatDate(
                   skjaeringstidspunkt
                 )} og ${formatDate(forsteFravaersdag)} (start av nytt sykefravær)?`}
                 onChange={handleChangeEndringLonn}
@@ -470,7 +474,7 @@ const Endring: NextPage = () => {
                 </>
               )}
               <RadioGroup
-                legend={`Har det vært noen endringer i refusjonskrav mellom ${formatDate(
+                legend={`Har det vært endringer i refusjonskrav mellom ${formatDate(
                   skjaeringstidspunkt
                 )} og ${formatDate(forsteFravaersdag)} (start av nytt sykefravær)?`}
                 onChange={handleChangeEndringRefusjon}

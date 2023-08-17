@@ -80,6 +80,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const setHarRefusjonEndringer = get().setHarRefusjonEndringer;
     const initLonnISykefravaeret = get().initLonnISykefravaeret;
     const setNyMaanedsinntektBlanktSkjema = get().setNyMaanedsinntektBlanktSkjema;
+    const slettAlleArbeidsgiverperioder = get().slettAlleArbeidsgiverperioder;
     const bruttoinntekt = get().bruttoinntekt;
 
     const refusjon = forespurtData?.refusjon?.forslag;
@@ -108,6 +109,8 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     if (inntekt.forrigeInntekt?.beløp) {
       setNyMaanedsinntektBlanktSkjema(inntekt.forrigeInntekt.beløp);
     }
+
+    slettAlleArbeidsgiverperioder();
     set(
       produce((state: ForespurtDataState) => {
         state.forespurtData = forespurtData;
@@ -139,7 +142,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const forespurtData = get().forespurtData;
     if (forespurtData) {
       return Object.keys(forespurtData).filter(
-        (key) => forespurtData[key as keyof typeof forespurtData].paakrevd
+        (key) => forespurtData[key as keyof typeof forespurtData].paakrevd === true
       ) as Array<Opplysningstype>;
     }
 

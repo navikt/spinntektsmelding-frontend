@@ -36,6 +36,7 @@ import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
 import fetchInntektsdata from 'utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
+import skjemaType from 'config/skjematype';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -64,6 +65,7 @@ const Home: NextPage = () => {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setSlug = useBoundStore((state) => state.setSlug);
+  const setSkjematype = useBoundStore((state) => state.setSkjematype);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const logEvent = useAmplitude();
 
@@ -219,6 +221,7 @@ const Home: NextPage = () => {
       }
     }
     setSlug(pathSlug);
+    setSkjematype(skjemaType.delvis);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
