@@ -36,7 +36,7 @@ import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
 import fetchInntektsdata from 'utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
-import skjemaVariant from 'config/skjemavariant';
+import skjemaVariant from '../config/skjemavariant';
 
 const Home: NextPage = () => {
   const router = useRouter();
