@@ -35,6 +35,7 @@ import { isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from 'state/state';
 import skjemaVariant from '../../config/skjemavariant';
+import classNames from 'classnames/bind';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -82,7 +83,7 @@ const Kvittering: NextPage = () => {
     if (skjemaType === skjemaVariant.komplett) {
       router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
     } else {
-      router.push(`/endre/${kvitteringSlug}`, undefined, { shallow: true });
+      router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });
     }
   };
 
@@ -107,6 +108,9 @@ const Kvittering: NextPage = () => {
   const visNaturalytelser = skjemaType === skjemaVariant.komplett;
   const visArbeidsgiverperiode = skjemaType === skjemaVariant.komplett;
   const visFullLonnIArbeidsgiverperioden = skjemaType === skjemaVariant.komplett;
+
+  const cx = classNames.bind(lokalStyles);
+  const classNameHeadingSykmelding = cx({ sykfravaerstyper: skjemaType === skjemaVariant.komplett });
 
   return (
     <div className={styles.container}>
@@ -136,7 +140,7 @@ const Kvittering: NextPage = () => {
               )}
               <div className={lokalStyles.ytterstefravaerwrapper}>
                 <div className={lokalStyles.ytrefravaerswrapper}>
-                  <Heading3 className={lokalStyles.sykfravaerstyper}>Sykmelding</Heading3>
+                  <Heading3 className={classNameHeadingSykmelding}>Sykmelding</Heading3>
                   {fravaersperioder?.map((periode) => (
                     <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + periode.id} />
                   ))}

@@ -221,7 +221,7 @@ const Home: NextPage = () => {
       }
     }
     setSlug(pathSlug);
-    setSkjematype(skjemaVariant.delvis);
+    setSkjematype(skjemaVariant.komplett);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
