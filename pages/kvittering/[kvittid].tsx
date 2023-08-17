@@ -79,7 +79,11 @@ const Kvittering: NextPage = () => {
 
   const clickEndre = () => {
     slettKvitteringInnsendt();
-    router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+    if (skjemaType === skjemaVariant.komplett) {
+      router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+    } else {
+      router.push(`/endre/${kvitteringSlug}`, undefined, { shallow: true });
+    }
   };
 
   const harAktiveEgenmeldingsperioder = () => {
@@ -102,6 +106,7 @@ const Kvittering: NextPage = () => {
 
   const visNaturalytelser = skjemaType === skjemaVariant.komplett;
   const visArbeidsgiverperiode = skjemaType === skjemaVariant.komplett;
+  const visFullLonnIArbeidsgiverperioden = skjemaType === skjemaVariant.komplett;
 
   return (
     <div className={styles.container}>
@@ -191,10 +196,14 @@ const Kvittering: NextPage = () => {
           )}
           <Skillelinje />
           <Heading2>Refusjon</Heading2>
-          <div className={lokalStyles.uthevet}>
-            Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
-          </div>
-          <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
+          {visFullLonnIArbeidsgiverperioden && (
+            <>
+              <div className={lokalStyles.uthevet}>
+                Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
+              </div>
+              <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
+            </>
+          )}
           <div className={lokalStyles.uthevet}>
             Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?
           </div>
