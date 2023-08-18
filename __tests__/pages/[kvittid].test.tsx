@@ -6,6 +6,7 @@ import Kvittering from '../../pages/kvittering/[kvittid]';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
+import skjemaVariant from 'config/skjemavariant';
 
 vi.mock('next/router', () => require('next-router-mock'));
 
@@ -56,6 +57,7 @@ describe('kvittering', () => {
     ];
 
     act(() => {
+      result.current.setSkjematype(skjemaVariant.komplett);
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
@@ -64,6 +66,30 @@ describe('kvittering', () => {
     const textBlock = screen.getByText(/Arbeidsgiver er ansvarlig for/i);
 
     expect(textBlock).toBeInTheDocument();
+  });
+
+  it('renders without arbeidsgiverperiode text', () => {
+    const spy = vi.spyOn(window, 'print');
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const datoSpenn: Periode[] = [
+      {
+        fom: new Date(2022, 4, 14),
+        tom: new Date(2022, 5, 15),
+        id: '1'
+      }
+    ];
+
+    act(() => {
+      result.current.setSkjematype(skjemaVariant.delvis);
+      result.current.setArbeidsgiverperioder(datoSpenn);
+    });
+
+    render(<Kvittering />);
+
+    const textBlock = screen.queryByText(/Arbeidsgiver er ansvarlig for/i);
+
+    expect(textBlock).not.toBeInTheDocument();
   });
 
   it('should have no violations', async () => {
