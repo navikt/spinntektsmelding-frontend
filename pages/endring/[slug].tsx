@@ -520,17 +520,19 @@ const Endring: NextPage = () => {
                       Nei
                     </Radio>
                   </RadioGroup>
-                  <div className={lokalStyles.belopperiode}>
-                    <Datovelger
-                      label='Angi siste dag dere krever refusjon for'
-                      // fromDate={minDate}
-                      // toDate={maxDate}
-                      onDateChange={refusjonskravetOpphoererDato}
-                      id={`lus-sluttdato`}
-                      error={visFeilmeldingsTekst(`lus-sluttdato`)}
-                      defaultSelected={refusjonskravetOpphoerer?.opphorsdato}
-                    />
-                  </div>
+                  {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
+                    <div className={lokalStyles.belopperiode}>
+                      <Datovelger
+                        label='Angi siste dag dere krever refusjon for'
+                        // fromDate={minDate}
+                        // toDate={maxDate}
+                        onDateChange={refusjonskravetOpphoererDato}
+                        id={`lus-sluttdato`}
+                        error={visFeilmeldingsTekst(`lus-sluttdato`)}
+                        defaultSelected={refusjonskravetOpphoerer?.opphorsdato}
+                      />
+                    </div>
+                  )}
                 </>
               )}
               {endringBruttolonn !== undefined && (
