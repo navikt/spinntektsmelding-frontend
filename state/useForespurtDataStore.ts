@@ -3,7 +3,7 @@ import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { parseISO } from 'date-fns';
 import { YesNo } from './state';
-import { TDateISODate } from './MottattData';
+import { MottattPeriodeRefusjon, TDateISODate } from './MottattData';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 
 export type Opplysningstype = 'inntekt' | 'refusjon' | 'arbeidsgiverperiode';
@@ -38,11 +38,6 @@ type ForslagInntekt = {
   type: OpplysningstypeInntekt;
   beregningsmåneder?: Beregningsmåneder;
   forrigeInntekt?: ForrigeInntekt;
-};
-
-type MottattPeriodeRefusjon = {
-  fom: TDateISODate;
-  beloep: number;
 };
 
 type ForslagRefusjon = {
@@ -94,15 +89,13 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       refusjonskravetOpphoererStatus(kravOpphorer);
 
-      const harEndringer = refusjon?.perioder && refusjon?.perioder.length > 0;
+      const harEndringer = sjekkForEndringer(refusjon);
 
-      console.log('harEndringer', harEndringer);
-
-      setHarRefusjonEndringer(harEndringer ? 'Ja' : 'Nei');
+      setHarRefusjonEndringer(harEndringer);
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjon);
 
-      const harRefundert = refusjon?.refundert ? 'Ja' : 'Nei';
+      const harRefundert = sjekkOmRefundert(refusjon);
 
       initLonnISykefravaeret({
         status: harRefundert,
@@ -158,6 +151,15 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 });
 
 export default useForespurtDataStore;
+
+function sjekkOmRefundert(refusjon: ForslagInntekt & ForslagRefusjon): YesNo {
+  return refusjon?.refundert ? 'Ja' : 'Nei';
+}
+
+function sjekkForEndringer(refusjon: ForslagInntekt & ForslagRefusjon): YesNo {
+  return refusjon?.perioder && refusjon?.perioder.length > 0 ? 'Ja' : 'Nei';
+}
+
 function refusjonPerioderTilRefusjonEndringer(refusjon: ForslagInntekt & ForslagRefusjon): EndringsBelop[] {
   return refusjon?.perioder.map((periode: MottattPeriodeRefusjon) => {
     return {

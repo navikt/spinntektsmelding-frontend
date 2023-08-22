@@ -265,7 +265,7 @@ const Endring: NextPage = () => {
 
   const changeMaanedsintektHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    setNyMaanedsinntekt(event.target.value as string);
+    setNyMaanedsinntekt(event.target.value);
   };
 
   const changeBegrunnelseHandler = (verdi: string) => {
