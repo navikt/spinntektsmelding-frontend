@@ -164,14 +164,16 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         state.refusjonEndringer = endringer;
-        endringer.forEach((endring, index) => {
-          if (endring.belop && endring.belop >= 0) {
-            slettFeilmeldingFraState(state, 'lus-utbetaling-endring-belop-' + index);
-          }
-          if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
-            slettFeilmeldingFraState(state, 'lus-utbetaling-endring-dato-' + index);
-          }
-        });
+        if (endringer?.length > 0) {
+          endringer.forEach((endring, index) => {
+            if (endring.belop && endring.belop >= 0) {
+              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-belop-' + index);
+            }
+            if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
+              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-dato-' + index);
+            }
+          });
+        }
         return state;
       })
     ),

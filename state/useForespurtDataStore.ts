@@ -65,7 +65,7 @@ export interface ForespurtDataState {
   forespurtData?: MottattForespurtData;
   refusjonTilArbeidsgiver?: number;
   fastsattInntekt?: number;
-  skjaeringstidspunkt?: Date;
+  gammeltSkjaeringstidspunkt?: Date;
   initForespurtData: (forespurtData: MottattForespurtData) => void;
   hentOpplysningstyper: () => Array<Opplysningstype>;
   hentPaakrevdOpplysningstyper: () => Array<Opplysningstype> | Array<undefined>;
@@ -124,11 +124,11 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
             if (fastsattInntekt) {
               state.fastsattInntekt = fastsattInntekt;
-              state.skjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
+              state.gammeltSkjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
             }
           } else {
             state.fastsattInntekt = bruttoinntekt.bruttoInntekt;
-            state.skjaeringstidspunkt = undefined;
+            state.gammeltSkjaeringstidspunkt = undefined;
           }
         }
         return state;
