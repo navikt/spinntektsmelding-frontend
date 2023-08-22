@@ -25,19 +25,19 @@ import Heading3 from '../../components/Heading3';
 import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
 import { YesNo } from '../../state/state';
 import { useRouter } from 'next/router';
-import useHentKvitteringsdata from 'utils/useHentKvitteringsdata';
-import useAmplitude from 'utils/useAmplitude';
-import environment from 'config/environment';
-import useValiderInntektsmelding from 'utils/useValiderInntektsmelding';
-import RefusjonUtbetalingEndring from 'components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import useErrorRespons, { ErrorResponse } from 'utils/useErrorResponse';
-import useFyllInnsending, { InnsendingSkjema } from 'state/useFyllInnsending';
-import isValidUUID from 'utils/isValidUUID';
-import IngenTilgang from 'components/IngenTilgang';
-import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
+import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
+import useAmplitude from '../../utils/useAmplitude';
+import environment from '../../config/environment';
+import useValiderInntektsmelding from '../../utils/useValiderInntektsmelding';
+import RefusjonUtbetalingEndring from '../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import useErrorRespons, { ErrorResponse } from '../../utils/useErrorResponse';
+import useFyllInnsending, { InnsendingSkjema } from '../../state/useFyllInnsending';
+import isValidUUID from '../../utils/isValidUUID';
+import IngenTilgang from '../../components/IngenTilgang';
+import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import skjemaVariant from '../../config/skjemavariant';
-import finnBestemmendeFravaersdag from 'utils/finnBestemmendeFravaersdag';
-import parseIsoDate from 'utils/parseIsoDate';
+import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useState<YesNo | undefined>();
@@ -445,16 +445,16 @@ const Endring: NextPage = () => {
               <Heading3 unPadded topPadded>
                 Refusjon til arbeidsgiver etter arbeidsgiverperiode
               </Heading3>
-              {(!sisteRefusjon || sisteRefusjon === 0) && (
+              {harRefusjonEndringer === 'Nei' && (
                 <BodyShort>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyShort>
               )}
-              {sisteRefusjon && sisteRefusjon > 0 && (
+              {harRefusjonEndringer === 'Ja' && (
                 <>
                   {formatCurrency(sisteRefusjon || 0)} kr
                   <Heading3 unPadded topPadded>
                     Er det endringer i refusjonskrav i perioden?
                   </Heading3>
-                  {harRefusjonEndringer ? 'Ja' : 'Nei'}
+                  {harRefusjonEndringer}
                   <div className={lokalStyles.refusjonswrapper}>
                     <table>
                       <thead>

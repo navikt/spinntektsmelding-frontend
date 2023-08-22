@@ -41,9 +41,8 @@ type ForslagInntekt = {
 };
 
 type MottattPeriodeRefusjon = {
-  fom: string;
-  tom: string;
-  beløp: number;
+  fom: TDateISODate;
+  beloep: number;
 };
 
 type ForslagRefusjon = {
@@ -96,6 +95,9 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       refusjonskravetOpphoererStatus(kravOpphorer);
 
       const harEndringer = refusjon?.perioder && refusjon?.perioder.length > 0;
+
+      console.log('harEndringer', harEndringer);
+
       setHarRefusjonEndringer(harEndringer ? 'Ja' : 'Nei');
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjon);
@@ -160,7 +162,7 @@ function refusjonPerioderTilRefusjonEndringer(refusjon: ForslagInntekt & Forslag
   return refusjon?.perioder.map((periode: MottattPeriodeRefusjon) => {
     return {
       dato: periode.fom ? parseISO(periode.fom) : undefined,
-      belop: periode.beløp || undefined
+      belop: periode.beloep || undefined
     };
   });
 }
