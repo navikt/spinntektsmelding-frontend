@@ -60,9 +60,11 @@ export interface ForespurtDataState {
   refusjonTilArbeidsgiver?: number;
   fastsattInntekt?: number;
   gammeltSkjaeringstidspunkt?: Date;
+  paakrevdeOpplysninger?: Array<Opplysningstype>;
   initForespurtData: (forespurtData: MottattForespurtData) => void;
   hentOpplysningstyper: () => Array<Opplysningstype>;
   hentPaakrevdOpplysningstyper: () => Array<Opplysningstype> | Array<undefined>;
+  setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
 }
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
@@ -75,7 +77,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const initLonnISykefravaeret = get().initLonnISykefravaeret;
     const setNyMaanedsinntektBlanktSkjema = get().setNyMaanedsinntektBlanktSkjema;
     const slettAlleArbeidsgiverperioder = get().slettAlleArbeidsgiverperioder;
-    const initFullLonnIArbeidsgiverPerioden = get().initFullLonnIArbeidsgiverPerioden;
     const bruttoinntekt = get().bruttoinntekt;
 
     const refusjon = forespurtData?.refusjon?.forslag;
@@ -89,8 +90,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       refusjonskravetOpphoererDato(parseISO(kravOpphorerDato as string));
 
       refusjonskravetOpphoererStatus(kravOpphorer);
-
-      const harRefundert = refusjon?.perioder && refusjon.perioder.length > 0 ? 'Ja' : 'Nei';
 
       const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
 
@@ -170,13 +169,26 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
   },
   hentPaakrevdOpplysningstyper: () => {
     const forespurtData = get().forespurtData;
+
     if (forespurtData) {
       return Object.keys(forespurtData).filter(
         (key) => forespurtData[key as keyof typeof forespurtData].paakrevd === true
       ) as Array<Opplysningstype>;
+    } else {
+      return get().paakrevdeOpplysninger;
     }
 
     return [];
+  },
+
+  setPaakrevdeOpplysninger: (paakrevdeOpplysninger) => {
+    set(
+      produce((state: ForespurtDataState) => {
+        state.paakrevdeOpplysninger = paakrevdeOpplysninger;
+
+        return state;
+      })
+    );
   }
 });
 

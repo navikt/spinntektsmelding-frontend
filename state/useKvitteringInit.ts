@@ -12,6 +12,8 @@ import {
 
 import { Periode } from './state';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import skjemaVariant from '../config/skjemavariant';
+import { Opplysningstype } from './useForespurtDataStore';
 
 export interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
@@ -53,10 +55,18 @@ export default function useKvitteringInit() {
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
   const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
+  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
+  const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
     if (jsonData.egenmeldingsperioder) initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
+
+    const paakrevdeOpplysninger = jsonData.forespurtData as Array<Opplysningstype>;
+
+    if (paakrevdeOpplysninger) {
+      setPaakrevdeOpplysninger(paakrevdeOpplysninger);
+    }
 
     initPerson(
       jsonData.fulltNavn,
@@ -149,16 +159,18 @@ export default function useKvitteringInit() {
       status: jsonData.refusjon.utbetalerHeleEllerDeler ? 'Ja' : 'Nei',
       belop: jsonData.refusjon.refusjonPrMnd
     });
-
-    initFullLonnIArbeidsgiverPerioden({
-      status: jsonData.fullLønnIArbeidsgiverPerioden.utbetalerFullLønn ? 'Ja' : 'Nei',
-      begrunnelse: jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
-        ? jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
-        : undefined,
-      utbetalt: jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
-        ? jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
-        : undefined
-    });
+    const paakrevdeData = hentPaakrevdOpplysningstyper();
+    if (paakrevdeData.includes(skjemaVariant.arbeidsgiverperiode)) {
+      initFullLonnIArbeidsgiverPerioden({
+        status: jsonData.fullLønnIArbeidsgiverPerioden.utbetalerFullLønn ? 'Ja' : 'Nei',
+        begrunnelse: jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
+          ? jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
+          : undefined,
+        utbetalt: jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
+          ? jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
+          : undefined
+      });
+    }
 
     setHarRefusjonEndringer(
       jsonData.refusjon.refusjonEndringer && jsonData.refusjon.refusjonEndringer.length > 0 ? 'Ja' : 'Nei'

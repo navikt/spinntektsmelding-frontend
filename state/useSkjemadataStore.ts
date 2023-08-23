@@ -2,7 +2,7 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { nanoid } from 'nanoid';
-import skjemaVariant from '../config/skjemavariant';
+import { Opplysningstype } from './useForespurtDataStore';
 
 export interface SkjemadataState {
   nyInnsending: boolean;
@@ -12,13 +12,13 @@ export interface SkjemadataState {
   setKvitteringInnsendt: (tidspunkt: string) => void;
   slettKvitteringInnsendt: () => void;
   setSkjemaFeilet: () => void;
-  setSkjematype: (type: Array<(typeof skjemaVariant)[keyof typeof skjemaVariant]>) => void;
+  setSkjematype: (type: Array<Opplysningstype>) => void;
   tracker: string;
   henterInntektsdata: boolean;
   slug?: string | Array<string>;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
-  skjemaType?: Array<(typeof skjemaVariant)[keyof typeof skjemaVariant]>;
+  skjemaType?: Array<Opplysningstype>;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({

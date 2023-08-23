@@ -77,6 +77,7 @@ const Kvittering: NextPage = () => {
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const slettKvitteringInnsendt = useBoundStore((state) => state.slettKvitteringInnsendt);
   const skjemaType = useBoundStore((state) => state.skjemaType);
+  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
   const clickEndre = () => {
     slettKvitteringInnsendt();
@@ -93,6 +94,8 @@ const Kvittering: NextPage = () => {
       : undefined;
   };
 
+  const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
+
   const innsendingstidspunkt = kvitteringInnsendt && isValid(kvitteringInnsendt) ? kvitteringInnsendt : now;
 
   const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
@@ -105,12 +108,14 @@ const Kvittering: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
-  const visNaturalytelser = skjemaType === skjemaVariant.komplett;
-  const visArbeidsgiverperiode = skjemaType === skjemaVariant.komplett;
-  const visFullLonnIArbeidsgiverperioden = skjemaType === skjemaVariant.komplett;
+  const visNaturalytelser = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
   const cx = classNames.bind(lokalStyles);
-  const classNameHeadingSykmelding = cx({ sykfravaerstyper: skjemaType === skjemaVariant.komplett });
+  const classNameHeadingSykmelding = cx({
+    sykfravaerstyper: paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode)
+  });
 
   return (
     <div className={styles.container}>

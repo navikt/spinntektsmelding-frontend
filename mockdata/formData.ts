@@ -1,4 +1,4 @@
-import MottattData from 'state/MottattData';
+import MottattData from '../state/MottattData';
 import testFnr from './testFnr';
 
 const formData: Partial<MottattData> = {
@@ -49,7 +49,7 @@ const formData: Partial<MottattData> = {
   behandlingsperiode: null,
   behandlingsdager: [],
   forespurtData: {
-    arbeidsgiverperiode: { paakrevd: false },
+    arbeidsgiverperiode: { paakrevd: true },
     inntekt: {
       paakrevd: true,
       forslag: {
