@@ -48,7 +48,9 @@ const feiltekster = {
   TIL_FOR_FRA: 'Til dato er før fra dato',
   SYKEFRAVAER_MANGLER: 'Angi sykefravær',
   SYKEFRAVAER_FOM: 'Angi fra dato',
-  SYKEFRAVAER_TOM: 'Angi til dato'
+  SYKEFRAVAER_TOM: 'Angi til dato',
+  ENDRING_BRUTTOLOENN: 'Du må velge om det har vært endringer i beregnet månedslønn',
+  ENDRINGER_AV_REFUSJON: 'Du må velge om det har vært endringer i refusjon'
 };
 
 export default feiltekster;

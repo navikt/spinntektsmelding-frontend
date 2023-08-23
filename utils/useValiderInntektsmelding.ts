@@ -84,7 +84,7 @@ export default function useValiderInntektsmelding() {
       });
     }
 
-    if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0) {
+    if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && kunInntektOgRefusjon) {
       feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
     }
 
@@ -111,7 +111,7 @@ export default function useValiderInntektsmelding() {
 
     feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);
 
-    if (state.arbeidsgiverperioder) {
+    if (state.arbeidsgiverperioder && !kunInntektOgRefusjon) {
       feilkoderArbeidsgiverperioder = validerPeriodeEgenmelding(state.arbeidsgiverperioder, 'arbeidsgiverperioder');
     }
 

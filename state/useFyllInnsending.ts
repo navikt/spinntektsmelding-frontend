@@ -5,6 +5,8 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
+import skjemaVariant from '../config/skjemavariant';
+import { Opplysningstype } from './useForespurtDataStore';
 
 export interface SendtPeriode {
   fom: string;
@@ -78,7 +80,7 @@ export interface InnsendingSkjema {
   bekreftOpplysninger: boolean;
   behandlingsdager?: Array<string>;
   årsakInnsending: string;
-  forespurtData: Array<string>;
+  forespurtData: Array<Opplysningstype>;
   // innsender: Innsender;
 }
 
@@ -280,7 +282,7 @@ export default function useFyllInnsending() {
 
     const paakrevdeData = hentPaakrevdOpplysningstyper();
 
-    if (!paakrevdeData.includes('arbeidsgiverperioder')) {
+    if (!paakrevdeData.includes(skjemaVariant.arbeidsgiverperiode)) {
       delete skjemaData.fullLønnIArbeidsgiverPerioden;
     }
 

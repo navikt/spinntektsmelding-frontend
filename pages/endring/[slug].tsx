@@ -144,6 +144,26 @@ const Endring: NextPage = () => {
 
     const errorStatus = validerInntektsmelding(opplysningerBekreftet, true);
 
+    if (!endringBruttolonn) {
+      if (errorStatus.errorTexts === undefined) {
+        errorStatus.errorTexts = [];
+      }
+      errorStatus.errorTexts.push({
+        felt: 'endringBruttolonn',
+        text: feiltekster.ENDRING_BRUTTOLOENN
+      });
+    }
+
+    if (!endringerAvRefusjon) {
+      if (errorStatus.errorTexts === undefined) {
+        errorStatus.errorTexts = [];
+      }
+      errorStatus.errorTexts.push({
+        felt: 'endringerAvRefusjon',
+        text: feiltekster.ENDRINGER_AV_REFUSJON
+      });
+    }
+
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
     if (hasErrors) {
@@ -252,10 +272,12 @@ const Endring: NextPage = () => {
 
   const handleChangeEndringLonn = (value: string) => {
     setEndringBruttolonn(value as YesNo);
+    slettFeilmelding('endringBruttolonn');
   };
 
   const handleChangeEndringRefusjon = (value: string) => {
     setEndringerAvRefusjon(value as YesNo);
+    slettFeilmelding('endringerAvRefusjon');
   };
 
   const changeMaanedsintektHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -282,8 +304,6 @@ const Endring: NextPage = () => {
 
   const classNameJaEndringAvRefusjon = cx({ fancyRadio: true, selectedRadio: endringerAvRefusjon === 'Ja' });
   const classNameNeiEndringAvRefusjon = cx({ fancyRadio: true, selectedRadio: endringerAvRefusjon === 'Nei' });
-
-  const sisteRefusjon = forespurtData?.refusjon?.forslag?.refundert;
 
   const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrrige innsending';
 
@@ -551,33 +571,30 @@ const Endring: NextPage = () => {
                   )}
                 </>
               )}
-              {endringBruttolonn !== undefined && endringerAvRefusjon !== undefined && (
-                <>
-                  <ConfirmationPanel
-                    className={styles.confirmationpanel}
-                    checked={opplysningerBekreftet}
-                    onClick={clickOpplysningerBekreftet}
-                    label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
-                    id='bekreft-opplysninger'
-                    error={visFeilmeldingsTekst('bekreft-opplysninger')}
-                  >
-                    NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene
-                    ikke er riktige eller fullstendige.
-                  </ConfirmationPanel>
-                  <Feilsammendrag />
-                  <div className={styles.outerbuttonwrapper}>
-                    <div className={styles.buttonwrapper}>
-                      <Button className={styles.sendbutton} loading={senderInn}>
-                        Send
-                      </Button>
 
-                      <Link className={styles.lukkelenke} href={environment.minSideArbeidsgiver}>
-                        Lukk
-                      </Link>
-                    </div>
-                  </div>
-                </>
-              )}
+              <ConfirmationPanel
+                className={styles.confirmationpanel}
+                checked={opplysningerBekreftet}
+                onClick={clickOpplysningerBekreftet}
+                label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+                id='bekreft-opplysninger'
+                error={visFeilmeldingsTekst('bekreft-opplysninger')}
+              >
+                NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
+                er riktige eller fullstendige.
+              </ConfirmationPanel>
+              <Feilsammendrag />
+              <div className={styles.outerbuttonwrapper}>
+                <div className={styles.buttonwrapper}>
+                  <Button className={styles.sendbutton} loading={senderInn}>
+                    Send
+                  </Button>
+
+                  <Link className={styles.lukkelenke} href={environment.minSideArbeidsgiver}>
+                    Lukk
+                  </Link>
+                </div>
+              </div>
             </form>
           </main>
           <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
