@@ -21,7 +21,7 @@ import classNames from 'classnames/bind';
 import Person from '../../components/Person/Person';
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Heading2 from '../../components/Heading2/Heading2';
-import Heading3 from '../../components/Heading3';
+import H3Label from '../../components/H3Label';
 import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
 import { YesNo } from '../../state/state';
 import { useRouter } from 'next/router';
@@ -440,21 +440,21 @@ const Endring: NextPage = () => {
               <Heading2>Refusjon</Heading2>
               <BodyLong>
                 I siste inntektsmelding
-                {gammeltSkjaeringstidspunkt && <>({formatDate(gammeltSkjaeringstidspunkt)})</>} hadde dere følgende
+                {gammeltSkjaeringstidspunkt && <> ({formatDate(gammeltSkjaeringstidspunkt)})</>} hadde dere følgende
                 refusjonskrav:
               </BodyLong>
-              <Heading3 unPadded topPadded>
+              <H3Label unPadded topPadded>
                 Refusjon til arbeidsgiver etter arbeidsgiverperiode
-              </Heading3>
+              </H3Label>
               {lonnISykefravaeret?.status === 'Nei' && (
                 <BodyShort>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyShort>
               )}
               {lonnISykefravaeret?.status === 'Ja' && (
                 <>
                   {formatCurrency(lonnISykefravaeret?.belop || 0)} kr
-                  <Heading3 unPadded topPadded>
+                  <H3Label unPadded topPadded>
                     Er det endringer i refusjonskrav i perioden?
-                  </Heading3>
+                  </H3Label>
                   {harRefusjonEndringer}
                   {harRefusjonEndringer === 'Ja' && (
                     <div className={lokalStyles.refusjonswrapper}>
@@ -480,15 +480,15 @@ const Endring: NextPage = () => {
                       </table>
                     </div>
                   )}
-                  <Heading3 unPadded topPadded>
+                  <H3Label unPadded topPadded>
                     Opphører refusjonkravet under sykefraværet?
-                  </Heading3>
+                  </H3Label>
                   {refusjonskravetOpphoerer?.status}
                   {refusjonskravetOpphoerer?.status === 'Ja' && (
                     <>
-                      <Heading3 unPadded topPadded>
+                      <H3Label unPadded topPadded>
                         Siste dag dere krever refusjon for
-                      </Heading3>
+                      </H3Label>
                       {formatDate(refusjonskravetOpphoerer.opphorsdato)}
                     </>
                   )}
