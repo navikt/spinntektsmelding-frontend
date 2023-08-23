@@ -81,7 +81,7 @@ describe('kvittering', () => {
     ];
 
     act(() => {
-      result.current.setSkjematype(skjemaVariant.delvis);
+      result.current.setSkjematype([skjemaVariant.inntekt, skjemaVariant.refusjon]);
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
