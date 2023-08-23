@@ -80,7 +80,7 @@ const Kvittering: NextPage = () => {
 
   const clickEndre = () => {
     slettKvitteringInnsendt();
-    if (skjemaType === skjemaVariant.komplett) {
+    if (skjemaType?.length === 3) {
       router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
     } else {
       router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });

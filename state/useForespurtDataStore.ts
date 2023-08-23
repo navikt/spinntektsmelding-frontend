@@ -103,6 +103,13 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         refusjon.perioder = refusjon.perioder.filter((periode) => {
           return periode.fom !== inntekt?.forrigeInntekt?.skjæringstidspunkt;
         });
+      } else {
+        initLonnISykefravaeret({
+          status: 'Nei',
+          belop: 0
+        });
+
+        setHarRefusjonEndringer('Nei');
       }
 
       const opphoersdatoRefusjon = finnOpphoersdatoRefusjon(refusjon);
@@ -204,9 +211,13 @@ function finnRefusjonIArbeidsgiverperioden(
 }
 
 function finnOpphoersdatoRefusjon(refusjon: ForslagInntekt & ForslagRefusjon): TDateISODate | null {
+  if (!refusjon || !refusjon.perioder) {
+    return null;
+  }
+
   const maxDato = refusjon?.perioder.reduce((prev, current) => {
     return prev.fom > current.fom ? prev : current;
-  });
+  }, {} as MottattPeriodeRefusjon);
 
   return !maxDato.beloep ? maxDato.fom : null;
 }

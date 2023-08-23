@@ -1,4 +1,4 @@
-import { BodyLong, BodyShort, Button, ConfirmationPanel, Link, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { BodyLong, Button, ConfirmationPanel, Link, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
@@ -447,7 +447,7 @@ const Endring: NextPage = () => {
                 Refusjon til arbeidsgiver etter arbeidsgiverperiode
               </H3Label>
               {lonnISykefravaeret?.status === 'Nei' && (
-                <BodyShort>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyShort>
+                <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
               )}
               {lonnISykefravaeret?.status === 'Ja' && (
                 <>
@@ -557,7 +557,7 @@ const Endring: NextPage = () => {
                   )}
                 </>
               )}
-              {endringBruttolonn !== undefined && (
+              {endringBruttolonn !== undefined && endringerAvRefusjon !== undefined && (
                 <>
                   <ConfirmationPanel
                     className={styles.confirmationpanel}

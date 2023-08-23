@@ -6,6 +6,7 @@ import feiltekster from './feiltekster';
 import { useRouter } from 'next/router';
 import { Opplysningstype } from 'state/useForespurtDataStore';
 import foresporselType from '../config/foresporseltype';
+import { logger } from '@navikt/next-logger';
 
 export default function useHentSkjemadata() {
   const initState = useStateInit();
@@ -44,6 +45,8 @@ export default function useHentSkjemadata() {
       if (error.status === 503 || error.status === 500) {
         setSkjemaFeilet();
       }
+
+      logger.warn('Feil ved henting av tidliger inntektsdata', error);
 
       leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
       setSkalViseFeilmeldinger(true);

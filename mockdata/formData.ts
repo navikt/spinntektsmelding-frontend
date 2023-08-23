@@ -31,10 +31,7 @@ const formData: Partial<MottattData> = {
     refusjon: {
       paakrevd: true,
       forslag: {
-        perioder: [
-          { fom: '2023-05-01', beloep: 33750.0 },
-          { fom: '2023-08-08', beloep: 0 }
-        ],
+        perioder: [],
         opphoersdato: null
       }
     }
