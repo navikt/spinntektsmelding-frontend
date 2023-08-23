@@ -35,7 +35,6 @@ import useFyllInnsending, { InnsendingSkjema } from '../../state/useFyllInnsendi
 import isValidUUID from '../../utils/isValidUUID';
 import IngenTilgang from '../../components/IngenTilgang';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
-import skjemaVariant from '../../config/skjemavariant';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../../utils/parseIsoDate';
 
@@ -86,6 +85,8 @@ const Endring: NextPage = () => {
   const fastsattInntekt = useBoundStore((state) => state.fastsattInntekt);
   const forespurtData = useBoundStore((state) => state.forespurtData);
   const setSkjematype = useBoundStore((state) => state.setSkjematype);
+  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const fyllInnsending = useFyllInnsending();
   const errorResponse = useErrorRespons();
 
@@ -110,11 +111,11 @@ const Endring: NextPage = () => {
     if (!fravaersperioder && router.query.slug) {
       const slug = Array.isArray(router.query.slug) ? router.query.slug[0] : router.query.slug;
       hentKvitteringsdata(slug);
-      setSkjematype(skjemaVariant.delvis);
+      setSkjematype(hentPaakrevdOpplysningstyper());
     }
     if (router.query.slug) {
       setSlug(router.query.slug);
-      setSkjematype(skjemaVariant.delvis);
+      setSkjematype(hentPaakrevdOpplysningstyper());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.slug]);
@@ -445,38 +446,40 @@ const Endring: NextPage = () => {
               <Heading3 unPadded topPadded>
                 Refusjon til arbeidsgiver etter arbeidsgiverperiode
               </Heading3>
-              {harRefusjonEndringer === 'Nei' && (
+              {lonnISykefravaeret?.status === 'Nei' && (
                 <BodyShort>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyShort>
               )}
-              {harRefusjonEndringer === 'Ja' && (
+              {lonnISykefravaeret?.status === 'Ja' && (
                 <>
-                  {formatCurrency(sisteRefusjon || 0)} kr
+                  {formatCurrency(lonnISykefravaeret?.belop || 0)} kr
                   <Heading3 unPadded topPadded>
                     Er det endringer i refusjonskrav i perioden?
                   </Heading3>
                   {harRefusjonEndringer}
-                  <div className={lokalStyles.refusjonswrapper}>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th className={lokalStyles.table_header}>
-                            <strong>Endret refusjon</strong>
-                          </th>
-                          <th>
-                            <strong>Dato for endret refusjon</strong>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {refusjonEndringer?.map((endring) => (
-                          <tr key={endring.dato?.toString()}>
-                            <td>{formatCurrency(endring.belop)} kr</td>
-                            <td>{formatDate(endring.dato)}</td>
+                  {harRefusjonEndringer === 'Ja' && (
+                    <div className={lokalStyles.refusjonswrapper}>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th className={lokalStyles.table_header}>
+                              <strong>Endret refusjon</strong>
+                            </th>
+                            <th>
+                              <strong>Dato for endret refusjon</strong>
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody>
+                          {refusjonEndringer?.map((endring) => (
+                            <tr key={endring.dato?.toString()}>
+                              <td>{formatCurrency(endring.belop)} kr</td>
+                              <td>{formatDate(endring.dato)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                   <Heading3 unPadded topPadded>
                     Opphører refusjonkravet under sykefraværet?
                   </Heading3>

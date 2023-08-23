@@ -113,6 +113,7 @@ export default function useFyllInnsending() {
   // const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
   // const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
+  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
@@ -271,8 +272,9 @@ export default function useFyllInnsending() {
       })),
       bekreftOpplysninger: opplysningerBekreftet,
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
-      årsakInnsending: aarsakInnsending // Kan også være Ny eller Endring
+      årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
       // innsender  // Kommer snart
+      forespurtData: hentPaakrevdOpplysningstyper()
     };
 
     return skjemaData;

@@ -12,13 +12,13 @@ export interface SkjemadataState {
   setKvitteringInnsendt: (tidspunkt: string) => void;
   slettKvitteringInnsendt: () => void;
   setSkjemaFeilet: () => void;
-  setSkjematype: (type: (typeof skjemaVariant)[keyof typeof skjemaVariant]) => void;
+  setSkjematype: (type: Array<(typeof skjemaVariant)[keyof typeof skjemaVariant]>) => void;
   tracker: string;
   henterInntektsdata: boolean;
   slug?: string | Array<string>;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
-  skjemaType?: (typeof skjemaVariant)[keyof typeof skjemaVariant];
+  skjemaType?: Array<(typeof skjemaVariant)[keyof typeof skjemaVariant]>;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({

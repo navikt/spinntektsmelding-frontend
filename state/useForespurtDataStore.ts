@@ -75,6 +75,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const initLonnISykefravaeret = get().initLonnISykefravaeret;
     const setNyMaanedsinntektBlanktSkjema = get().setNyMaanedsinntektBlanktSkjema;
     const slettAlleArbeidsgiverperioder = get().slettAlleArbeidsgiverperioder;
+    const initFullLonnIArbeidsgiverPerioden = get().initFullLonnIArbeidsgiverPerioden;
     const bruttoinntekt = get().bruttoinntekt;
 
     const refusjon = forespurtData?.refusjon?.forslag;
@@ -89,18 +90,40 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       refusjonskravetOpphoererStatus(kravOpphorer);
 
-      const harEndringer = sjekkForEndringer(refusjon);
+      const harRefundert = refusjon?.perioder && refusjon.perioder.length > 0 ? 'Ja' : 'Nei';
+
+      const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
+
+      if (refusjonsbelop) {
+        initLonnISykefravaeret({
+          status: 'Ja',
+          belop: refusjonsbelop
+        });
+
+        refusjon.perioder = refusjon.perioder.filter((periode) => {
+          return periode.fom !== inntekt?.forrigeInntekt?.skjæringstidspunkt;
+        });
+      }
+
+      const opphoersdatoRefusjon = finnOpphoersdatoRefusjon(refusjon);
+
+      if (opphoersdatoRefusjon) {
+        refusjonskravetOpphoererDato(parseISO(opphoersdatoRefusjon));
+        refusjonskravetOpphoererStatus('Ja');
+
+        refusjon.perioder = refusjon.perioder.filter((periode) => {
+          return periode.fom !== opphoersdatoRefusjon;
+        });
+      } else {
+        refusjonskravetOpphoererDato(undefined);
+        refusjonskravetOpphoererStatus('Nei');
+      }
+
+      const harEndringer = sjekkHarEndring(refusjon);
 
       setHarRefusjonEndringer(harEndringer);
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjon);
-
-      const harRefundert = sjekkOmRefundert(refusjon);
-
-      initLonnISykefravaeret({
-        status: harRefundert,
-        belop: refusjon?.refundert
-      });
 
       oppdaterRefusjonEndringer(refusjonEndringer);
       if (inntekt.forrigeInntekt?.beløp) {
@@ -152,11 +175,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
 export default useForespurtDataStore;
 
-function sjekkOmRefundert(refusjon: ForslagInntekt & ForslagRefusjon): YesNo {
-  return refusjon?.refundert ? 'Ja' : 'Nei';
-}
-
-function sjekkForEndringer(refusjon: ForslagInntekt & ForslagRefusjon): YesNo {
+function sjekkHarEndring(refusjon: ForslagInntekt & ForslagRefusjon): YesNo {
   return refusjon?.perioder && refusjon?.perioder.length > 0 ? 'Ja' : 'Nei';
 }
 
@@ -167,4 +186,27 @@ function refusjonPerioderTilRefusjonEndringer(refusjon: ForslagInntekt & Forslag
       belop: periode.beloep || undefined
     };
   });
+}
+
+function finnRefusjonIArbeidsgiverperioden(
+  refusjon: ForslagInntekt & ForslagRefusjon,
+  skjaeringstidspunkt: TDateISODate | undefined
+): number {
+  if (!skjaeringstidspunkt) {
+    return 0;
+  }
+
+  const refusjonIAGP = refusjon.perioder.find((periode) => {
+    return periode.fom === skjaeringstidspunkt;
+  });
+
+  return refusjonIAGP?.beloep || 0;
+}
+
+function finnOpphoersdatoRefusjon(refusjon: ForslagInntekt & ForslagRefusjon): TDateISODate | null {
+  const maxDato = refusjon?.perioder.reduce((prev, current) => {
+    return prev.fom > current.fom ? prev : current;
+  });
+
+  return !maxDato.beloep ? maxDato.fom : null;
 }

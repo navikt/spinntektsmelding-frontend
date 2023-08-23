@@ -1,6 +1,7 @@
 const skjemaVariant = {
-  komplett: 'komplett',
-  delvis: 'delvis'
+  arbeidsgiverperiode: 'arbeidsgiverperiode',
+  inntekt: 'inntekt',
+  refusjon: 'refusjon'
 } as const;
 
 export default skjemaVariant;
