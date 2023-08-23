@@ -1,21 +1,51 @@
-import MottattData from '../state/MottattData';
+import MottattData from 'state/MottattData';
 import testFnr from './testFnr';
 
 const formData: Partial<MottattData> = {
-  navn: 'ULTRAFIOLETT DAMESYKKEL',
-  orgNavn: 'ANSTENDIG PIGGSVIN BARNEHAGE',
-  identitetsnummer: '10486535275',
-  orgnrUnderenhet: '810007842',
+  // behandlingsdager: [],
+  // behandlingsperiode: {
+  //   fom: '2022-02-20',
+  //   tom: '2022-08-03'
+  // },
+  navn: 'Test Navn Testesen-Navnesen Jr.',
+  identitetsnummer: testFnr.GyldigeFraDolly.TestPerson1,
+  orgnrUnderenhet: '911206722',
+  orgNavn: 'Veldig ampert piggsvin barnehage',
+  bruttoinntekt: 77000,
+
   fravaersperioder: [
-    { fom: '2023-05-01', tom: '2023-05-31' },
-    { fom: '2023-06-10', tom: '2023-06-30' }
+    {
+      fom: '2023-02-20',
+      tom: '2023-03-03'
+    },
+    {
+      fom: '2023-03-15',
+      tom: '2023-03-16'
+    }
   ],
-  egenmeldingsperioder: [],
-  bruttoinntekt: 45000.0,
+  egenmeldingsperioder: [
+    // {
+    //   fom: '2023-02-17',
+    //   tom: '2023-02-19'
+    // }
+  ],
   tidligereinntekter: [
-    { maaned: '2023-04', inntekt: 45000.0 },
-    { maaned: '2023-03', inntekt: 45000.0 }
+    // Hva skjer ved jobbskifte?
+    {
+      maaned: '2023-01', // yyyy-MM
+      inntekt: 66000
+    },
+    {
+      maaned: '2022-12', // yyyy-MM
+      inntekt: 88000
+    },
+    {
+      maaned: '2022-11', // yyyy-MM
+      inntekt: 88000
+    }
   ],
+  innsenderNavn: 'Test Testesen',
+  innsenderTelefonNr: '12345678',
   behandlingsperiode: null,
   behandlingsdager: [],
   forespurtData: {
@@ -24,18 +54,46 @@ const formData: Partial<MottattData> = {
       paakrevd: true,
       forslag: {
         type: 'ForslagInntektGrunnlag',
-        beregningsmaaneder: ['2023-03', '2023-04', '2023-05'],
-        forrigeInntekt: { skjæringstidspunkt: '2023-05-01', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
+        beregningsmaaneder: ['2023-03', '2023-04', '2023-05']
+        // forrigeInntekt: {
+        //   skjæringstidspunkt: '2022-12-24',
+        //   kilde: 'INNTEKTSMELDING',
+        //   beløp: 77500.0
+        // }
       }
     },
     refusjon: {
-      paakrevd: true,
-      forslag: {
-        perioder: [],
-        opphoersdato: null
-      }
+      paakrevd: true
+      // forslag: {
+      //   perioder: [
+      //     { fom: '2023-02-01', tom: '2023-03-01', beløp: 66000 },
+      //     { fom: '2023-03-02', tom: '2023-04-01', beløp: 55000 },
+      //     { fom: '2023-05-02', tom: '2023-05-02', beløp: 44000 }
+      //   ],
+      //   opphoersdato: '2023-06-01',
+      //   refundert: 76000
+      // }
     }
   }
+  // feilReport: {
+  //   feil: [
+  //     {
+  //       melding: 'Vi klarte ikke å hente arbeidstaker informasjon.',
+  //       status: 0,
+  //       datafelt: 'arbeidstaker-informasjon'
+  //     },
+  //     {
+  //       melding: 'Klarer ikke hente informasjon om virksomheten',
+  //       status: 0,
+  //       datafelt: 'virksomhet'
+  //     },
+  //     {
+  //       melding: 'Klarer ikke hente informasjon om virksomheten',
+  //       status: 0,
+  //       datafelt: 'inntekt'
+  //     }
+  //   ]
+  // }
 };
 
 export default formData;
