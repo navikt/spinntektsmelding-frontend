@@ -72,12 +72,13 @@ export interface InnsendingSkjema {
   bestemmendeFraværsdag: string;
   fraværsperioder: Array<SendtPeriode>;
   inntekt: Bruttoinntekt;
-  fullLønnIArbeidsgiverPerioden: FullLonnIArbeidsgiverPerioden;
+  fullLønnIArbeidsgiverPerioden?: FullLonnIArbeidsgiverPerioden;
   refusjon: Refusjon;
   naturalytelser?: Array<SendtNaturalytelse>;
   bekreftOpplysninger: boolean;
   behandlingsdager?: Array<string>;
   årsakInnsending: string;
+  forespurtData: Array<string>;
   // innsender: Innsender;
 }
 
@@ -189,7 +190,7 @@ export default function useFyllInnsending() {
 
         default:
           return {
-            typpe: bruttoinntekt.endringsaarsak
+            typpe: bruttoinntekt.endringsaarsak.toString()
           };
       }
     };
@@ -276,6 +277,12 @@ export default function useFyllInnsending() {
       // innsender  // Kommer snart
       forespurtData: hentPaakrevdOpplysningstyper()
     };
+
+    const paakrevdeData = hentPaakrevdOpplysningstyper();
+
+    if (!paakrevdeData.includes('arbeidsgiverperioder')) {
+      delete skjemaData.fullLønnIArbeidsgiverPerioden;
+    }
 
     return skjemaData;
   };

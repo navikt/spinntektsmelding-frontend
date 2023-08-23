@@ -85,7 +85,6 @@ const Endring: NextPage = () => {
   const fastsattInntekt = useBoundStore((state) => state.fastsattInntekt);
   const forespurtData = useBoundStore((state) => state.forespurtData);
   const setSkjematype = useBoundStore((state) => state.setSkjematype);
-  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const fyllInnsending = useFyllInnsending();
   const errorResponse = useErrorRespons();
@@ -128,13 +127,8 @@ const Endring: NextPage = () => {
     const fravaer = fravaersperioder?.concat(egenmeldingsperioder ?? []);
     if (!fravaer) return;
 
-    // fravaer?.sort((a, b) => ((a.fom ?? 0) as number) - ((b.fom ?? 0) as number));
-    // if (fravaer?.length) {
-    //   setForsteFravaersdag(fravaer[0].fom as Date);
-    // }
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(fravaer);
 
-    console.log('bestemmendeFravaersdag', bestemmendeFravaersdag);
     if (bestemmendeFravaersdag) {
       setForsteFravaersdag(parseIsoDate(bestemmendeFravaersdag));
     }

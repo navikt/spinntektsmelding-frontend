@@ -4,7 +4,7 @@ import fetchInntektskjemaForNotifikasjon from '../state/fetchInntektskjemaForNot
 import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
 import { useRouter } from 'next/router';
-import { Opplysningstype } from 'state/useForespurtDataStore';
+import { Opplysningstype } from '../state/useForespurtDataStore';
 import foresporselType from '../config/foresporseltype';
 import { logger } from '@navikt/next-logger';
 
