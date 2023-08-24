@@ -66,6 +66,7 @@ const Home: NextPage = () => {
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setSlug = useBoundStore((state) => state.setSlug);
   const setSkjematype = useBoundStore((state) => state.setSkjematype);
+  const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const logEvent = useAmplitude();
 
@@ -118,6 +119,7 @@ const Home: NextPage = () => {
 
           switch (data.status) {
             case 201:
+              setKvitteringInnsendt(new Date());
               router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
               break;
 
