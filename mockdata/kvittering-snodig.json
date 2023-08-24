@@ -1,0 +1,50 @@
+{
+  "orgnrUnderenhet": "810007842",
+  "identitetsnummer": "10486535275",
+  "fulltNavn": "ULTRAFIOLETT DAMESYKKEL",
+  "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "behandlingsdager": [],
+  "egenmeldingsperioder": [],
+  "arbeidsgiverperioder": [
+    {
+      "fom": "2023-01-02",
+      "tom": "2023-01-17"
+    }
+  ],
+  "bestemmendeFraværsdag": "2023-01-24",
+  "fraværsperioder": [
+    {
+      "fom": "2023-01-02 ",
+      "tom": "2023-01-20"
+    },
+    {
+      "fom": "2023-01-24 ",
+      "tom": "2023-02-16"
+    }
+  ],
+  "inntekt": {
+    "bekreftet": true,
+    "beregnetInntekt": 47000,
+    "endringÅrsak": {
+      "aarligBonus": null,
+      "datoForBonus": null,
+      "typpe": "Bonus"
+    },
+    "manueltKorrigert": true
+  },
+  "fullLønnIArbeidsgiverPerioden": {
+    "utbetalerFullLønn": true,
+    "begrunnelse": null,
+    "utbetalt": null
+  },
+  "refusjon": {
+    "utbetalerHeleEllerDeler": false,
+    "refusjonPrMnd": null,
+    "refusjonOpphører": null,
+    "refusjonEndringer": null
+  },
+  "naturalytelser": null,
+  "årsakInnsending": "Endring",
+  "bekreftOpplysninger": true,
+  "tidspunkt": "2023-08-23T12:23:24.944548804+02:00"
+}

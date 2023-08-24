@@ -83,7 +83,7 @@ const Endring: NextPage = () => {
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const fastsattInntekt = useBoundStore((state) => state.fastsattInntekt);
-  const forespurtData = useBoundStore((state) => state.forespurtData);
+  const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setSkjematype = useBoundStore((state) => state.setSkjematype);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const fyllInnsending = useFyllInnsending();
@@ -191,6 +191,7 @@ const Endring: NextPage = () => {
 
           switch (data.status) {
             case 201:
+              setKvitteringInnsendt(new Date());
               router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
               break;
 

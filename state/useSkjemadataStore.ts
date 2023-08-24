@@ -55,10 +55,11 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setKvitteringInnsendt: (tidspunkt: string) => {
+  setKvitteringInnsendt: (tidspunkt: string | Date) => {
     set(
       produce((state: SkjemadataState) => {
-        state.kvitteringInnsendt = new Date(tidspunkt);
+        if (typeof tidspunkt === 'string') state.kvitteringInnsendt = new Date(tidspunkt);
+        else state.kvitteringInnsendt = tidspunkt;
       })
     );
   },

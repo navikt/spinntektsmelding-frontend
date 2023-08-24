@@ -5,8 +5,9 @@ import { parseISO } from 'date-fns';
 import { YesNo } from './state';
 import { MottattPeriodeRefusjon, TDateISODate } from './MottattData';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import skjemaVariant from '../config/skjemavariant';
 
-export type Opplysningstype = 'inntekt' | 'refusjon' | 'arbeidsgiverperiode';
+export type Opplysningstype = (typeof skjemaVariant)[keyof typeof skjemaVariant];
 
 // type Beregningsmåneder = `${number}-${number}`;
 
@@ -63,7 +64,7 @@ export interface ForespurtDataState {
   paakrevdeOpplysninger?: Array<Opplysningstype>;
   initForespurtData: (forespurtData: MottattForespurtData) => void;
   hentOpplysningstyper: () => Array<Opplysningstype>;
-  hentPaakrevdOpplysningstyper: () => Array<Opplysningstype> | Array<undefined>;
+  hentPaakrevdOpplysningstyper: () => Array<Opplysningstype>;
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
 }
 
@@ -169,16 +170,17 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
   },
   hentPaakrevdOpplysningstyper: () => {
     const forespurtData = get().forespurtData;
+    const paakrevdeOpplysninger = get().paakrevdeOpplysninger;
 
     if (forespurtData) {
       return Object.keys(forespurtData).filter(
         (key) => forespurtData[key as keyof typeof forespurtData].paakrevd === true
       ) as Array<Opplysningstype>;
-    } else {
-      return get().paakrevdeOpplysninger;
+    } else if (paakrevdeOpplysninger) {
+      return paakrevdeOpplysninger;
     }
 
-    return [];
+    return Object.keys(skjemaVariant) as Array<Opplysningstype>;
   },
 
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger) => {
