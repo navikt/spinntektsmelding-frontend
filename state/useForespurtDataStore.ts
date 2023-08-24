@@ -143,19 +143,19 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     set(
       produce((state: ForespurtDataState) => {
         state.forespurtData = forespurtData;
-        if (!arbeidsgiverperiodePaakrevd) {
-          if (inntekt.forrigeInntekt) {
-            const fastsattInntekt = inntekt.forrigeInntekt.beløp;
 
-            if (fastsattInntekt) {
-              state.fastsattInntekt = fastsattInntekt;
-              state.gammeltSkjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
-            }
-          } else {
-            state.fastsattInntekt = bruttoinntekt.bruttoInntekt;
-            state.gammeltSkjaeringstidspunkt = undefined;
+        if (inntekt.forrigeInntekt) {
+          const fastsattInntekt = inntekt.forrigeInntekt.beløp;
+
+          if (fastsattInntekt) {
+            state.fastsattInntekt = fastsattInntekt;
+            state.gammeltSkjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
           }
+        } else {
+          state.fastsattInntekt = bruttoinntekt.bruttoInntekt;
+          state.gammeltSkjaeringstidspunkt = undefined;
         }
+
         return state;
       })
     );
