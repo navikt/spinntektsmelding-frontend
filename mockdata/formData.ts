@@ -16,7 +16,7 @@ const formData: Partial<MottattData> = {
   fravaersperioder: [
     {
       fom: '2023-02-20',
-      tom: '2023-03-03'
+      tom: '2023-03-04'
     },
     {
       fom: '2023-03-15',
@@ -24,10 +24,10 @@ const formData: Partial<MottattData> = {
     }
   ],
   egenmeldingsperioder: [
-    // {
-    //   fom: '2023-02-17',
-    //   tom: '2023-02-19'
-    // }
+    {
+      fom: '2023-02-17',
+      tom: '2023-02-19'
+    }
   ],
   tidligereinntekter: [
     // Hva skjer ved jobbskifte?
@@ -40,7 +40,7 @@ const formData: Partial<MottattData> = {
       inntekt: 88000
     },
     {
-      maaned: '2022-11', // yyyy-MM
+      maaned: '2023-02', // yyyy-MM
       inntekt: 88000
     }
   ],

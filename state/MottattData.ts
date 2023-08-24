@@ -3,6 +3,7 @@ import { FeilReportElement } from './useStateInit';
 
 export interface MottattPeriode {
   fom: TDateISODate;
+  tom: TDateISODate;
 }
 
 export interface MottattPeriodeRefusjon extends MottattPeriode {

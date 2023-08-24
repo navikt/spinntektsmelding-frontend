@@ -50,7 +50,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('[data-cy="sykmelding-0-fra"]').should('have.text', 'Fra');
     cy.get('[data-cy="sykmelding-0-til"]').should('have.text', 'Til');
     cy.get('[data-cy="sykmelding-0-fra-dato"]').should('have.text', '20.02.2023');
-    cy.get('[data-cy="sykmelding-0-til-dato"]').should('have.text', '03.03.2023');
+    cy.get('[data-cy="sykmelding-0-til-dato"]').should('have.text', '04.03.2023');
   });
 
   it('should display information on the arbeidsgiverperiode', () => {
@@ -62,20 +62,20 @@ describe('Utfylling og innsending av skjema', () => {
 
   it('should display information on the beregnet månedslønn', () => {
     cy.get('[data-cy="tidligereinntekt"] tbody tr').its('length').should('be.eq', 3);
-    cy.get('[data-cy="tidligereinntekt"] tbody tr').first().find('td').first().should('have.text', 'November:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').first().find('td').first().should('have.text', 'Desember:');
     cy.get('[data-cy="tidligereinntekt"] tbody tr')
       .first()
       .find('td')
       .last()
       .invoke('text')
       .should('match', /88\s000,00\skr/);
-    cy.get('[data-cy="tidligereinntekt"] tbody tr').last().find('td').first().should('have.text', 'Januar:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').last().find('td').first().should('have.text', 'Februar:');
     cy.get('[data-cy="tidligereinntekt"] tbody tr')
       .last()
       .find('td')
       .last()
       .invoke('text')
-      .should('match', /66\s000,00\skr/);
+      .should('match', /88\s000,00\skr/);
 
     cy.get('#lia-radio [type="radio"]').first().check();
     cy.get('#lus-radio [type="radio"]').last().check();
