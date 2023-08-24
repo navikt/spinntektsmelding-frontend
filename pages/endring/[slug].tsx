@@ -461,9 +461,10 @@ const Endring: NextPage = () => {
               <H3Label unPadded topPadded>
                 Refusjon til arbeidsgiver etter arbeidsgiverperiode
               </H3Label>
-              {lonnISykefravaeret?.status === 'Nei' && (
-                <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
-              )}
+              {!lonnISykefravaeret?.status ||
+                (lonnISykefravaeret?.status === 'Nei' && (
+                  <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
+                ))}
               {lonnISykefravaeret?.status === 'Ja' && (
                 <>
                   {formatCurrency(lonnISykefravaeret?.belop || 0)} kr
