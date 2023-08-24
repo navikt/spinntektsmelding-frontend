@@ -84,7 +84,7 @@ const Endring: NextPage = () => {
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const fastsattInntekt = useBoundStore((state) => state.fastsattInntekt);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
-  const setSkjematype = useBoundStore((state) => state.setSkjematype);
+  const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const fyllInnsending = useFyllInnsending();
   const errorResponse = useErrorRespons();
@@ -110,11 +110,11 @@ const Endring: NextPage = () => {
     if (!fravaersperioder && router.query.slug) {
       const slug = Array.isArray(router.query.slug) ? router.query.slug[0] : router.query.slug;
       hentKvitteringsdata(slug);
-      setSkjematype(hentPaakrevdOpplysningstyper());
+      setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
     if (router.query.slug) {
       setSlug(router.query.slug);
-      setSkjematype(hentPaakrevdOpplysningstyper());
+      setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.slug]);

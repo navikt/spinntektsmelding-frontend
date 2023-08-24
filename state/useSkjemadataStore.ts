@@ -12,7 +12,6 @@ export interface SkjemadataState {
   setKvitteringInnsendt: (tidspunkt: string) => void;
   slettKvitteringInnsendt: () => void;
   setSkjemaFeilet: () => void;
-  setSkjematype: (type: Array<Opplysningstype>) => void;
   tracker: string;
   henterInntektsdata: boolean;
   slug?: string | Array<string>;
@@ -27,13 +26,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   henterInntektsdata: false,
   slug: '',
   skjemaFeilet: false,
-  setSkjematype(type) {
-    set(
-      produce((state: SkjemadataState) => {
-        state.skjemaType = type;
-      })
-    );
-  },
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {

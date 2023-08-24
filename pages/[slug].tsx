@@ -64,7 +64,7 @@ const Home: NextPage = () => {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setSlug = useBoundStore((state) => state.setSlug);
-  const setSkjematype = useBoundStore((state) => state.setSkjematype);
+  const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
@@ -223,7 +223,7 @@ const Home: NextPage = () => {
       }
     }
     setSlug(pathSlug);
-    setSkjematype(hentPaakrevdOpplysningstyper());
+    setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
