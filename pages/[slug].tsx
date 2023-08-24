@@ -36,7 +36,6 @@ import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
 import fetchInntektsdata from 'utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
-import skjemaVariant from '../config/skjemavariant';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -67,6 +66,7 @@ const Home: NextPage = () => {
   const setSlug = useBoundStore((state) => state.setSlug);
   const setSkjematype = useBoundStore((state) => state.setSkjematype);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const logEvent = useAmplitude();
 
@@ -223,7 +223,7 @@ const Home: NextPage = () => {
       }
     }
     setSlug(pathSlug);
-    setSkjematype(skjemaVariant.komplett);
+    setSkjematype(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
