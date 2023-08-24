@@ -1,7 +1,7 @@
 {
   "orgnrUnderenhet": "810007842",
-  "identitetsnummer": "10486535275",
-  "fulltNavn": "ULTRAFIOLETT DAMESYKKEL",
+  "identitetsnummer": "16507927681",
+  "fulltNavn": "LEKKER SKOGFIOL",
   "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
   "behandlingsdager": [],
   "egenmeldingsperioder": [],
@@ -11,32 +11,22 @@
       "tom": "2023-01-17"
     }
   ],
-  "bestemmendeFraværsdag": "2023-01-24",
+  "bestemmendeFraværsdag": "2023-01-02",
   "fraværsperioder": [
     {
-      "fom": "2023-01-02 ",
+      "fom": "2023-01-02",
       "tom": "2023-01-20"
-    },
-    {
-      "fom": "2023-01-24 ",
-      "tom": "2023-02-16"
     }
   ],
   "inntekt": {
     "bekreftet": true,
-    "beregnetInntekt": 47000,
+    "beregnetInntekt": 46000,
     "endringÅrsak": {
-      "aarligBonus": null,
-      "datoForBonus": null,
-      "typpe": "Bonus"
+      "typpe": "Feilregistrert"
     },
     "manueltKorrigert": true
   },
-  "fullLønnIArbeidsgiverPerioden": {
-    "utbetalerFullLønn": true,
-    "begrunnelse": null,
-    "utbetalt": null
-  },
+  "fullLønnIArbeidsgiverPerioden": null,
   "refusjon": {
     "utbetalerHeleEllerDeler": false,
     "refusjonPrMnd": null,
@@ -44,7 +34,8 @@
     "refusjonEndringer": null
   },
   "naturalytelser": null,
-  "årsakInnsending": "Endring",
+  "årsakInnsending": "Ny",
   "bekreftOpplysninger": true,
-  "tidspunkt": "2023-08-23T12:23:24.944548804+02:00"
+  "tidspunkt": "2023-08-24T09:19:00.750414534+02:00",
+  "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
 }
