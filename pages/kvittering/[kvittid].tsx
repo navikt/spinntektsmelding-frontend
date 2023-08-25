@@ -75,7 +75,6 @@ const Kvittering: NextPage = () => {
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
   const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
-  // const slettKvitteringInnsendt = useBoundStore((state) => state.slettKvitteringInnsendt);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
   const clickEndre = () => {
@@ -86,7 +85,6 @@ const Kvittering: NextPage = () => {
     } else {
       router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });
     }
-    // slettKvitteringInnsendt();
   };
 
   const harAktiveEgenmeldingsperioder = () => {

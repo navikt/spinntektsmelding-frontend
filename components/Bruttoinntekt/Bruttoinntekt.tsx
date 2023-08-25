@@ -14,7 +14,6 @@ import LesMer from '../LesMer';
 import useAmplitude from '../../utils/useAmplitude';
 import Skeleton from 'react-loading-skeleton';
 import Aarsaksvelger from './Aarsaksvelger';
-import React from 'react';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -25,13 +24,9 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
-  const [setEndringsaarsak, endringsaarsak] = useBoundStore((state) => [
-    state.setEndringsaarsak,
-    state.bruttoinntekt.endringsaarsak
-  ]);
+  const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
-  const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
   const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
   const ferie = useBoundStore((state) => state.ferie);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
@@ -87,9 +82,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     },
     [setEndringsaarsak, logEvent]
   );
-
-  const setNyMaanedsinntektBlanktSkjemaHandler = (event: ChangeEvent<HTMLInputElement>) =>
-    setNyMaanedsinntektBlanktSkjema(event.target.value);
 
   const setEndreMaanedsinntektHandler = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {

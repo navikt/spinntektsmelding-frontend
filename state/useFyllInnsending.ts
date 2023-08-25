@@ -215,13 +215,7 @@ export default function useFyllInnsending() {
     const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | undefined =
       finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder);
 
-    const formatertePerioder = innsendbarArbeidsgiverperioder
-      ? innsendbarArbeidsgiverperioder?.map((periode) => ({
-          fom: parseISO(periode.fom),
-          tom: parseISO(periode.tom),
-          id: 'id'
-        }))
-      : undefined;
+    const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
     const bestemmendeFraværsdag = bestemmendeFravaersdag
       ? formatIsoDate(bestemmendeFravaersdag)
@@ -288,6 +282,16 @@ export default function useFyllInnsending() {
 
     return skjemaData;
   };
+}
+
+function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder: SendtPeriode[] | undefined) {
+  return innsendbarArbeidsgiverperioder
+    ? innsendbarArbeidsgiverperioder?.map((periode) => ({
+        fom: parseISO(periode.fom),
+        tom: parseISO(periode.tom),
+        id: 'id'
+      }))
+    : undefined;
 }
 
 function jaEllerNei(velger: YesNo | undefined, returverdi: any): any | undefined {

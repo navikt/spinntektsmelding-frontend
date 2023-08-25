@@ -9,7 +9,7 @@ export interface SkjemadataState {
   setNyInnsending: (endring: boolean) => void;
   setHenterInnsending: (henter: boolean) => void;
   setSlug: (slug: string | Array<string>) => void;
-  setKvitteringInnsendt: (tidspunkt: string) => void;
+  setKvitteringInnsendt: (tidspunkt: string | Date) => void;
   slettKvitteringInnsendt: () => void;
   setSkjemaFeilet: () => void;
   tracker: string;

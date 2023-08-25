@@ -28,7 +28,7 @@ import { useRouter } from 'next/router';
 import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 import useAmplitude from '../../utils/useAmplitude';
 import environment from '../../config/environment';
-import useValiderInntektsmelding from '../../utils/useValiderInntektsmelding';
+import useValiderInntektsmelding, { SubmitInntektsmeldingReturnvalues } from '../../utils/useValiderInntektsmelding';
 import RefusjonUtbetalingEndring from '../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import useErrorRespons, { ErrorResponse } from '../../utils/useErrorResponse';
 import useFyllInnsending, { InnsendingSkjema } from '../../state/useFyllInnsending';
@@ -144,25 +144,14 @@ const Endring: NextPage = () => {
 
     const errorStatus = validerInntektsmelding(opplysningerBekreftet, true);
 
-    if (!endringBruttolonn) {
-      if (errorStatus.errorTexts === undefined) {
-        errorStatus.errorTexts = [];
-      }
-      errorStatus.errorTexts.push({
-        felt: 'endringBruttolonn',
-        text: feiltekster.ENDRING_BRUTTOLOENN
-      });
-    }
+    leggTilFeilmeldingHvisFeil(endringBruttolonn, errorStatus, 'endringBruttolonn', feiltekster.ENDRING_BRUTTOLOENN);
 
-    if (!endringerAvRefusjon) {
-      if (errorStatus.errorTexts === undefined) {
-        errorStatus.errorTexts = [];
-      }
-      errorStatus.errorTexts.push({
-        felt: 'endringerAvRefusjon',
-        text: feiltekster.ENDRINGER_AV_REFUSJON
-      });
-    }
+    leggTilFeilmeldingHvisFeil(
+      endringerAvRefusjon,
+      errorStatus,
+      'endringerAvRefusjon',
+      feiltekster.ENDRINGER_AV_REFUSJON
+    );
 
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
@@ -207,13 +196,18 @@ const Endring: NextPage = () => {
 
               logEvent('skjema innsending feilet', {
                 tittel: 'Innsending feilet - serverfeil',
-                component: 'Hovedskjema'
+                component: 'Delvisskjema'
               });
 
               break;
             }
 
             case 404: {
+              logEvent('skjema innsending feilet', {
+                tittel: 'Innsending feilet - endepunkt mangler',
+                component: 'Delvisskjema'
+              });
+
               const errors: Array<ErrorResponse> = [
                 {
                   value: 'Innsending av skjema feilet',
@@ -228,7 +222,7 @@ const Endring: NextPage = () => {
             case 401: {
               logEvent('skjema innsending feilet', {
                 tittel: 'Innsending feilet - ingen tilgang',
-                component: 'Hovedskjema'
+                component: 'Delvisskjema'
               });
 
               setIngenTilgangOpen(true);
@@ -240,7 +234,7 @@ const Endring: NextPage = () => {
 
               logEvent('skjema innsending feilet', {
                 tittel: 'Innsending feilet',
-                component: 'Hovedskjema'
+                component: 'Delvisskjema'
               });
 
               if (resultat.errors) {
@@ -259,7 +253,7 @@ const Endring: NextPage = () => {
 
           logEvent('skjema validering feilet', {
             tittel: 'Ugyldig UUID ved innsending',
-            component: 'Hovedskjema'
+            component: 'Delvisskjema'
           });
           errorResponse(errors);
           setSenderInn(false);
@@ -562,8 +556,6 @@ const Endring: NextPage = () => {
                     <div className={lokalStyles.belopperiode}>
                       <Datovelger
                         label='Angi siste dag dere krever refusjon for'
-                        // fromDate={minDate}
-                        // toDate={maxDate}
                         onDateChange={refusjonskravetOpphoererDato}
                         id={`lus-sluttdato`}
                         error={visFeilmeldingsTekst(`lus-sluttdato`)}
@@ -605,3 +597,20 @@ const Endring: NextPage = () => {
 };
 
 export default Endring;
+
+function leggTilFeilmeldingHvisFeil(
+  endringerAvRefusjon: string | undefined,
+  errorStatus: SubmitInntektsmeldingReturnvalues,
+  felt: string,
+  feiltekst: string
+) {
+  if (!endringerAvRefusjon) {
+    if (errorStatus.errorTexts === undefined) {
+      errorStatus.errorTexts = [];
+    }
+    errorStatus.errorTexts.push({
+      felt: felt,
+      text: feiltekst
+    });
+  }
+}
