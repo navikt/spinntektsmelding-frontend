@@ -1,5 +1,5 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattNaturalytelse } from './MottattData';
+import { MottattNaturalytelse, TDateISODate } from './MottattData';
 import useBoundStore from './useBoundStore';
 import {
   AArsakType,
@@ -57,6 +57,7 @@ export default function useKvitteringInit() {
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
+  const setTidligereInntektsdata = useBoundStore((state) => state.setTidligereInntektsdata);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
@@ -208,5 +209,11 @@ export default function useKvitteringInit() {
     if (jsonData.tidspunkt) {
       setKvitteringInnsendt(jsonData.tidspunkt);
     }
+
+    setTidligereInntektsdata({
+      beløp: beregnetInntekt,
+      skjæringstidspunkt: jsonData.bestemmendeFraværsdag as TDateISODate,
+      kilde: 'INNTEKTSMELDING'
+    });
   };
 }

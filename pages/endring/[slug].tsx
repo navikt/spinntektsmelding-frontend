@@ -581,10 +581,7 @@ const Endring: NextPage = () => {
                 label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
                 id='bekreft-opplysninger'
                 error={visFeilmeldingsTekst('bekreft-opplysninger')}
-              >
-                NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke
-                er riktige eller fullstendige.
-              </ConfirmationPanel>
+              ></ConfirmationPanel>
               <Feilsammendrag />
               <div className={styles.outerbuttonwrapper}>
                 <div className={styles.buttonwrapper}>

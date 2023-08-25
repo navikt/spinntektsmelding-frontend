@@ -66,6 +66,7 @@ export interface ForespurtDataState {
   hentOpplysningstyper: () => Array<Opplysningstype>;
   hentPaakrevdOpplysningstyper: () => Array<Opplysningstype>;
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
+  setTidligereInntektsdata: (inntekt: ForrigeInntekt) => void;
 }
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
@@ -187,6 +188,16 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     set(
       produce((state: ForespurtDataState) => {
         state.paakrevdeOpplysninger = paakrevdeOpplysninger;
+
+        return state;
+      })
+    );
+  },
+  setTidligereInntektsdata: (inntekt: ForrigeInntekt) => {
+    set(
+      produce((state: ForespurtDataState) => {
+        state.fastsattInntekt = inntekt.beløp;
+        state.gammeltSkjaeringstidspunkt = parseISO(inntekt.skjæringstidspunkt);
 
         return state;
       })
