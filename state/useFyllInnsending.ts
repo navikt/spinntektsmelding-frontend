@@ -205,6 +205,8 @@ export default function useFyllInnsending() {
       refusjonEndringer
     );
 
+    console.log('lonnISykefravaeret', lonnISykefravaeret);
+
     setSkalViseFeilmeldinger(true);
     let perioder;
     if (fravaersperioder) {

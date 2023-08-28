@@ -87,6 +87,10 @@ const Endring: NextPage = () => {
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const ukjentInntekt = useBoundStore((state) => state.ukjentInntekt);
+  const arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret = useBoundStore(
+    (state) => state.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret
+  );
+
   const fyllInnsending = useFyllInnsending();
   const errorResponse = useErrorRespons();
 
@@ -346,118 +350,117 @@ const Endring: NextPage = () => {
                   </RadioGroup>
                 </>
               )}
-              {endringBruttolonn === 'Ja' ||
-                (ukjentInntekt && (
-                  <>
-                    <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
+              {((endringBruttolonn === 'Ja' && !ukjentInntekt) || ukjentInntekt) && (
+                <>
+                  <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
 
-                    <div className={biStyles.endremaaanedsinntektwrapper}>
-                      <div className={biStyles.endremaaanedsinntekt}>
-                        <TextField
-                          label='Ny beregnet månedslønn'
-                          onChange={changeMaanedsintektHandler}
-                          defaultValue={!ukjentInntekt ? formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0) : ''}
-                          id='inntekt.beregnetInntekt'
-                          error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
-                          className={biStyles.bruttoinntektendringsbelop}
-                        />
-                        {!ukjentInntekt && (
-                          <div>
-                            <SelectEndringBruttoinntekt
-                              onChangeBegrunnelse={changeBegrunnelseHandler}
-                              error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
-                              id='bruttoinntekt-endringsaarsak'
-                              nyInnsending={false}
-                              label='Forklaring til endring'
-                            />
-                          </div>
-                        )}
-                      </div>
-                      {endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
-                        <div className={biStyles.endremaaanedsinntekt}>
-                          <TariffendringDato
-                            changeTariffEndretDato={setTariffEndringsdato}
-                            changeTariffKjentDato={setTariffKjentdato}
-                            defaultEndringsdato={tariffendringsdato}
-                            defaultKjentDato={tariffkjentdato}
-                          />
-                        </div>
-                      )}
-                      {endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
-                        <div className={biStyles.endremaaanedsinntekt}>
-                          <div className={lokalStyles.endreperiodeliste}>
-                            <PeriodeListevelger
-                              onRangeListChange={setFeriePeriode}
-                              defaultRange={ferie}
-                              fomTekst='Fra'
-                              tomTekst='Til'
-                              fomIdBase='bruttoinntekt-ful-fom'
-                              tomIdBase='bruttoinntekt-ful-tom'
-                            />
-                          </div>
-                        </div>
-                      )}
-                      {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
-                        <div className={lokalStyles.endremaaanedsinntekt}>
-                          <Datovelger
-                            onDateChange={setLonnsendringDato}
-                            label='Lønnsendring gjelder fra'
-                            id='bruttoinntekt-lonnsendring-fom'
-                            defaultSelected={lonnsendringsdato}
-                            toDate={bestemmendeFravaersdag}
-                            error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
-                          />
-                        </div>
-                      )}
-                      {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
-                        <div className={lokalStyles.endreperiodeliste}>
-                          <PeriodeListevelger
-                            onRangeListChange={setPermisjonPeriode}
-                            defaultRange={permisjon}
-                            fomTekst='Fra'
-                            tomTekst='Til'
-                            fomIdBase='bruttoinntekt-permisjon-fom'
-                            tomIdBase='bruttoinntekt-permisjon-tom'
-                          />
-                        </div>
-                      )}
-                      {endringsaarsak === begrunnelseEndringBruttoinntekt.Permittering && (
-                        <div className={lokalStyles.endreperiodeliste}>
-                          <PeriodeListevelger
-                            onRangeListChange={setPermitteringPeriode}
-                            defaultRange={permittering}
-                            fomTekst='Fra'
-                            tomTekst='Til'
-                            fomIdBase='bruttoinntekt-permittering-fom'
-                            tomIdBase='bruttoinntekt-permittering-tom'
-                          />
-                        </div>
-                      )}
-                      {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
-                        <div className={lokalStyles.endremaaanedsinntekt}>
-                          <Datovelger
-                            onDateChange={setNyStillingDato}
-                            label='Ny stilling fra'
-                            id='bruttoinntekt-nystilling-fom'
-                            defaultSelected={nystillingdato}
-                            toDate={bestemmendeFravaersdag}
-                          />
-                        </div>
-                      )}
-                      {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
-                        <div className={lokalStyles.endremaaanedsinntekt}>
-                          <Datovelger
-                            onDateChange={setNyStillingsprosentDato}
-                            label='Ny stillingsprosent fra'
-                            id='bruttoinntekt-nystillingsprosent-fom'
-                            defaultSelected={nystillingsprosentdato}
-                            toDate={bestemmendeFravaersdag}
+                  <div className={biStyles.endremaaanedsinntektwrapper}>
+                    <div className={biStyles.endremaaanedsinntekt}>
+                      <TextField
+                        label='Ny beregnet månedslønn'
+                        onChange={changeMaanedsintektHandler}
+                        defaultValue={!ukjentInntekt ? formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0) : ''}
+                        id='inntekt.beregnetInntekt'
+                        error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
+                        className={biStyles.bruttoinntektendringsbelop}
+                      />
+                      {!ukjentInntekt && (
+                        <div>
+                          <SelectEndringBruttoinntekt
+                            onChangeBegrunnelse={changeBegrunnelseHandler}
+                            error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
+                            id='bruttoinntekt-endringsaarsak'
+                            nyInnsending={false}
+                            label='Forklaring til endring'
                           />
                         </div>
                       )}
                     </div>
-                  </>
-                ))}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
+                      <div className={biStyles.endremaaanedsinntekt}>
+                        <TariffendringDato
+                          changeTariffEndretDato={setTariffEndringsdato}
+                          changeTariffKjentDato={setTariffKjentdato}
+                          defaultEndringsdato={tariffendringsdato}
+                          defaultKjentDato={tariffkjentdato}
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
+                      <div className={biStyles.endremaaanedsinntekt}>
+                        <div className={lokalStyles.endreperiodeliste}>
+                          <PeriodeListevelger
+                            onRangeListChange={setFeriePeriode}
+                            defaultRange={ferie}
+                            fomTekst='Fra'
+                            tomTekst='Til'
+                            fomIdBase='bruttoinntekt-ful-fom'
+                            tomIdBase='bruttoinntekt-ful-tom'
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
+                      <div className={lokalStyles.endremaaanedsinntekt}>
+                        <Datovelger
+                          onDateChange={setLonnsendringDato}
+                          label='Lønnsendring gjelder fra'
+                          id='bruttoinntekt-lonnsendring-fom'
+                          defaultSelected={lonnsendringsdato}
+                          toDate={bestemmendeFravaersdag}
+                          error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
+                      <div className={lokalStyles.endreperiodeliste}>
+                        <PeriodeListevelger
+                          onRangeListChange={setPermisjonPeriode}
+                          defaultRange={permisjon}
+                          fomTekst='Fra'
+                          tomTekst='Til'
+                          fomIdBase='bruttoinntekt-permisjon-fom'
+                          tomIdBase='bruttoinntekt-permisjon-tom'
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Permittering && (
+                      <div className={lokalStyles.endreperiodeliste}>
+                        <PeriodeListevelger
+                          onRangeListChange={setPermitteringPeriode}
+                          defaultRange={permittering}
+                          fomTekst='Fra'
+                          tomTekst='Til'
+                          fomIdBase='bruttoinntekt-permittering-fom'
+                          tomIdBase='bruttoinntekt-permittering-tom'
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
+                      <div className={lokalStyles.endremaaanedsinntekt}>
+                        <Datovelger
+                          onDateChange={setNyStillingDato}
+                          label='Ny stilling fra'
+                          id='bruttoinntekt-nystilling-fom'
+                          defaultSelected={nystillingdato}
+                          toDate={bestemmendeFravaersdag}
+                        />
+                      </div>
+                    )}
+                    {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
+                      <div className={lokalStyles.endremaaanedsinntekt}>
+                        <Datovelger
+                          onDateChange={setNyStillingsprosentDato}
+                          label='Ny stillingsprosent fra'
+                          id='bruttoinntekt-nystillingsprosent-fom'
+                          defaultSelected={nystillingsprosentdato}
+                          toDate={bestemmendeFravaersdag}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
               <Skillelinje />
               <Heading2>Refusjon</Heading2>
               <BodyLong>
@@ -535,46 +538,61 @@ const Endring: NextPage = () => {
               {endringerAvRefusjon === 'Ja' && (
                 <>
                   <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>
-                  <RefusjonArbeidsgiverBelop
-                    visFeilmeldingsTekst={visFeilmeldingsTekst}
-                    bruttoinntekt={lonnISykefravaeret?.belop || 0}
-                    onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
-                  />
-
-                  <RefusjonUtbetalingEndring
-                    endringer={refusjonEndringer || []}
-                    maxDate={refusjonskravetOpphoerer?.opphorsdato}
-                    // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
-                    onHarEndringer={setHarRefusjonEndringer}
-                    onOppdaterEndringer={oppdaterRefusjonEndringer}
-                    harRefusjonEndring={harRefusjonEndringer}
-                  />
-
                   <RadioGroup
-                    legend='Opphører refusjonkravet i perioden?'
+                    legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
                     className={styles.radiobuttonwrapper}
-                    id={'lus-sluttdato-velg'}
-                    error={visFeilmeldingsTekst('lus-sluttdato-velg')}
-                    onChange={refusjonskravetOpphoererStatus}
-                    defaultValue={refusjonskravetOpphoerer?.status}
+                    id={'lus-radio'}
+                    error={visFeilmeldingsTekst('lus-radio')}
+                    onChange={arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret}
+                    defaultValue={lonnISykefravaeret?.status}
                   >
-                    <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
-                      Ja
-                    </Radio>
-                    <Radio value='Nei' name='fullLonnIArbeidsgiverPerioden'>
-                      Nei
-                    </Radio>
+                    <Radio value='Ja'>Ja</Radio>
+                    <Radio value='Nei'>Nei</Radio>
                   </RadioGroup>
-                  {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
-                    <div className={lokalStyles.belopperiode}>
-                      <Datovelger
-                        label='Angi siste dag dere krever refusjon for'
-                        onDateChange={refusjonskravetOpphoererDato}
-                        id={`lus-sluttdato`}
-                        error={visFeilmeldingsTekst(`lus-sluttdato`)}
-                        defaultSelected={refusjonskravetOpphoerer?.opphorsdato}
+                  {lonnISykefravaeret?.status === 'Ja' && (
+                    <>
+                      <RefusjonArbeidsgiverBelop
+                        visFeilmeldingsTekst={visFeilmeldingsTekst}
+                        bruttoinntekt={lonnISykefravaeret?.belop || 0}
+                        onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
                       />
-                    </div>
+
+                      <RefusjonUtbetalingEndring
+                        endringer={refusjonEndringer || []}
+                        maxDate={refusjonskravetOpphoerer?.opphorsdato}
+                        // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
+                        onHarEndringer={setHarRefusjonEndringer}
+                        onOppdaterEndringer={oppdaterRefusjonEndringer}
+                        harRefusjonEndring={harRefusjonEndringer}
+                      />
+
+                      <RadioGroup
+                        legend='Opphører refusjonkravet i perioden?'
+                        className={styles.radiobuttonwrapper}
+                        id={'lus-sluttdato-velg'}
+                        error={visFeilmeldingsTekst('lus-sluttdato-velg')}
+                        onChange={refusjonskravetOpphoererStatus}
+                        defaultValue={refusjonskravetOpphoerer?.status}
+                      >
+                        <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
+                          Ja
+                        </Radio>
+                        <Radio value='Nei' name='fullLonnIArbeidsgiverPerioden'>
+                          Nei
+                        </Radio>
+                      </RadioGroup>
+                      {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
+                        <div className={lokalStyles.belopperiode}>
+                          <Datovelger
+                            label='Angi siste dag dere krever refusjon for'
+                            onDateChange={refusjonskravetOpphoererDato}
+                            id={`lus-sluttdato`}
+                            error={visFeilmeldingsTekst(`lus-sluttdato`)}
+                            defaultSelected={refusjonskravetOpphoerer?.opphorsdato}
+                          />
+                        </div>
+                      )}
+                    </>
                   )}
                 </>
               )}
