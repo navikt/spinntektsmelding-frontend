@@ -459,14 +459,14 @@
     "@opentelemetry/otlp-transformer" "^0.37.0"
     murmurhash-js "^1.0.0"
 
-"@grafana/faro-core@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-core/-/faro-core-1.1.3.tgz#81716ef366bf230ae523b8f534f5826bd241b610"
-  integrity sha512-3PIutCx6cd8RR083jCm2yLIYAZxymhKe26FWIIs4IaHF9CgzLuA6NIutEWrHVSCBU86dMuQDpRJxvaoL70O4ZA==
+"@grafana/faro-core@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-core/-/faro-core-1.1.4.tgz#45c2ea7a64db38f4efcdcda73b61b98f05cf039f"
+  integrity sha512-JpxtCXHsjkvuWE4gZ/EmsXAXY/buPtLaB3kWQsVMnlNglxoyFM+FXS0VB48Ip66cDmYZcdtxAW1NW3SqaW2O+g==
   dependencies:
     "@opentelemetry/api" "^1.4.1"
     "@opentelemetry/api-metrics" "^0.33.0"
-    "@opentelemetry/otlp-transformer" "^0.37.0"
+    "@opentelemetry/otlp-transformer" "^0.41.2"
     murmurhash-js "^1.0.0"
 
 "@grafana/faro-web-sdk@1.1.1":
@@ -478,21 +478,21 @@
     ua-parser-js "^1.0.32"
     web-vitals "^3.1.1"
 
-"@grafana/faro-web-sdk@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-web-sdk/-/faro-web-sdk-1.1.3.tgz#cf9ec350552c284160c92f5c4eb28fd0cac6f8ce"
-  integrity sha512-bVHNbelwj/WFdRpW//m0nCcUM0yGQKtPmUMjAeBTZNkogALt3D+ILQVwQSiXz5Ci4aXEPJXUgZoM9ibNHVE6AQ==
+"@grafana/faro-web-sdk@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-web-sdk/-/faro-web-sdk-1.1.4.tgz#bf4f93e234f0dabf60b7641c795690074c0bf506"
+  integrity sha512-eyrwi01VWkoaBZVYo3fbyakW/nN6Dhz/dYgaWHOx3Mt0pH+q8IrIAF5oNoy9QGNCsdmld/sbIL+jV6yoyojYDA==
   dependencies:
-    "@grafana/faro-core" "^1.1.3"
+    "@grafana/faro-core" "^1.1.4"
     ua-parser-js "^1.0.32"
     web-vitals "^3.1.1"
 
-"@grafana/faro-web-tracing@1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-web-tracing/-/faro-web-tracing-1.1.3.tgz#02c90043723f84265c9b1103e537eb942c36ba9a"
-  integrity sha512-dLpQacpHdBhZ3tVB+0flbo0G1XkYzui6omxJdJIQybjhygxECeHZURBgHkaLpgpu/y1uFI7U0DArtY5RWR7edw==
+"@grafana/faro-web-tracing@1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-web-tracing/-/faro-web-tracing-1.1.4.tgz#0768527f93fd0bf3e1e2315861be3933ea6867ed"
+  integrity sha512-JtAfnR/vBORMnyrsrKWnlxGIB+7qZYj3envV7nSCrYaXiVCErLhb2k6feyKBIMif14kX/H/FHw4maDWo2RW4hQ==
   dependencies:
-    "@grafana/faro-web-sdk" "^1.1.3"
+    "@grafana/faro-web-sdk" "^1.1.4"
     "@opentelemetry/api" "^1.4.1"
     "@opentelemetry/context-zone" "^1.15.2"
     "@opentelemetry/core" "^1.15.2"
