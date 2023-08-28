@@ -21,7 +21,8 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
     innsenderNavn,
     setInnsenderTelefon,
     feilHentingAvPersondata,
-    feilHentingAvArbeidsgiverdata
+    feilHentingAvArbeidsgiverdata,
+    visFeilmeldingsTekst
   ] = useBoundStore(
     (state) => [
       state.navn,
@@ -32,7 +33,8 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
       state.innsenderNavn,
       state.setInnsenderTelefon,
       state.feilHentingAvPersondata,
-      state.feilHentingAvArbeidsgiverdata
+      state.feilHentingAvArbeidsgiverdata,
+      state.visFeilmeldingsTekst
     ],
     shallow
   );
@@ -104,36 +106,35 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               <div data-cy='orgnummer'>{orgnrUnderenhet || <Skeleton />}</div>
             </div>
             {!virksomhetsnavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
-            {innsenderNavn && (
-              <>
-                <div className={lokalStyles.innsendernavnwrapper}>
-                  <TextLabel>Innsender</TextLabel>
-                  <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                    {innsenderNavn}
+
+            <div className={lokalStyles.innsendernavnwrapper}>
+              {/* <TextLabel>Innsender</TextLabel>
+              <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
+                {innsenderNavn}
+              </div> */}
+            </div>
+            <div className={lokalStyles.telefonnrwrapper}>
+              {erKvittering && (
+                <>
+                  <TextLabel>Telefon innsender</TextLabel>
+                  <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
+                    {innsenderTelefonNr}
                   </div>
-                </div>
-                <div className={lokalStyles.telefonnrwrapper}>
-                  {erKvittering && (
-                    <>
-                      <TextLabel>Telefon innsender</TextLabel>
-                      <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
-                        {innsenderTelefonNr}
-                      </div>
-                    </>
-                  )}
-                  {!erKvittering && (
-                    <TextField
-                      label='Telefon innsender'
-                      type='tel'
-                      autoComplete='tel'
-                      defaultValue={innsenderTelefonNr}
-                      onChange={changeTlfNr}
-                      data-cy='innsendertlf'
-                    />
-                  )}
-                </div>
-              </>
-            )}
+                </>
+              )}
+              {!erKvittering && (
+                <TextField
+                  label='Telefon innsender'
+                  type='tel'
+                  autoComplete='tel'
+                  defaultValue={innsenderTelefonNr}
+                  onChange={changeTlfNr}
+                  data-cy='innsendertlf'
+                  error={visFeilmeldingsTekst('telefon')}
+                  id='telefon'
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

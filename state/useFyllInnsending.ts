@@ -82,6 +82,7 @@ export interface InnsendingSkjema {
   behandlingsdager?: Array<string>;
   årsakInnsending: string;
   forespurtData: Array<Opplysningstype>;
+  telefon: string;
   // innsender: Innsender;
 }
 
@@ -114,8 +115,8 @@ export default function useFyllInnsending() {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  // const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
-  // const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
+  const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
+  const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
@@ -231,13 +232,13 @@ export default function useFyllInnsending() {
       identitetsnummer: identitetsnummer!,
       egenmeldingsperioder: harEgenmeldingsdager
         ? egenmeldingsperioder!.map((periode) => ({
-            fom: formatIsoDate(periode.fom),
-            tom: formatIsoDate(periode.tom)
+            fom: formatIsoDate(periode.fom) as TDateISODate,
+            tom: formatIsoDate(periode.tom) as TDateISODate
           }))
         : [],
       fraværsperioder: fravaersperioder!.map((periode) => ({
-        fom: formatIsoDate(periode.fom),
-        tom: formatIsoDate(periode.tom)
+        fom: formatIsoDate(periode.fom) as TDateISODate,
+        tom: formatIsoDate(periode.tom) as TDateISODate
       })),
       arbeidsgiverperioder:
         innsendbarArbeidsgiverperioder && innsendbarArbeidsgiverperioder.length > 0
@@ -274,6 +275,7 @@ export default function useFyllInnsending() {
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
       årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
       // innsender  // Kommer snart
+      telefon: innsenderTelefonNr || '',
       forespurtData: hentPaakrevdOpplysningstyper()
     };
 

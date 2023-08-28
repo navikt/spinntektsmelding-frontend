@@ -14,6 +14,7 @@ import validerPeriodeEgenmelding, { PeriodeEgenmeldingFeilkode } from '../valida
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import useBoundStore from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
+import validerTelefon, { TelefonFeilkode } from 'validators/validerTelefon';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -43,7 +44,8 @@ type codeUnion =
   | LonnUnderSykefravaeretFeilkode
   | BekreftOpplysningerFeilkoder
   | EndringAvMaanedslonnFeilkode
-  | PeriodeEgenmeldingFeilkode;
+  | PeriodeEgenmeldingFeilkode
+  | TelefonFeilkode;
 
 export interface ValiderResultat {
   felt: string;
@@ -65,6 +67,7 @@ export default function useValiderInntektsmelding() {
     let feilkoderBekreftOpplyninger: Array<ValiderResultat> = [];
     let feilkoderEndringAvMaanedslonn: Array<ValiderResultat> = [];
     let feilkoderArbeidsgiverperioder: Array<ValiderResultat> = [];
+    let feilkoderTelefon: Array<ValiderResultat> = [];
 
     state.setSkalViseFeilmeldinger(true);
 
@@ -115,6 +118,8 @@ export default function useValiderInntektsmelding() {
       feilkoderArbeidsgiverperioder = validerPeriodeEgenmelding(state.arbeidsgiverperioder, 'arbeidsgiverperioder');
     }
 
+    feilkoderTelefon = validerTelefon(state.innsenderTelefonNr);
+
     errorCodes = [
       ...errorCodes,
       ...feilkoderFravaersperioder,
@@ -125,7 +130,8 @@ export default function useValiderInntektsmelding() {
       ...feilkoderLonnUnderSykefravaeret,
       ...feilkoderBekreftOpplyninger,
       ...feilkoderEndringAvMaanedslonn,
-      ...feilkoderArbeidsgiverperioder
+      ...feilkoderArbeidsgiverperioder,
+      ...feilkoderTelefon
     ];
 
     if (errorCodes.length > 0) {
