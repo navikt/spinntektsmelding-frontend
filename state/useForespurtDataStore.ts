@@ -6,6 +6,7 @@ import { YesNo } from './state';
 import { MottattPeriodeRefusjon, TDateISODate } from './MottattData';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import skjemaVariant from '../config/skjemavariant';
+import begrunnelseEndringBruttoinntekt from 'components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 
 export type Opplysningstype = (typeof skjemaVariant)[keyof typeof skjemaVariant];
 
@@ -60,6 +61,7 @@ export interface ForespurtDataState {
   forespurtData?: MottattForespurtData;
   refusjonTilArbeidsgiver?: number;
   fastsattInntekt?: number;
+  ukjentInntekt: boolean;
   gammeltSkjaeringstidspunkt?: Date;
   paakrevdeOpplysninger?: Array<Opplysningstype>;
   initForespurtData: (forespurtData: MottattForespurtData) => void;
@@ -70,6 +72,7 @@ export interface ForespurtDataState {
 }
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
+  ukjentInntekt: false,
   forespurtData: undefined,
   initForespurtData: (forespurtData) => {
     const refusjonskravetOpphoererStatus = get().refusjonskravetOpphoererStatus;
@@ -80,6 +83,8 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const setNyMaanedsinntektBlanktSkjema = get().setNyMaanedsinntektBlanktSkjema;
     const slettAlleArbeidsgiverperioder = get().slettAlleArbeidsgiverperioder;
     const bruttoinntekt = get().bruttoinntekt;
+    const slettBruttoinntekt = get().slettBruttoinntekt;
+    const setEndringsaarsak = get().setEndringsaarsak;
 
     const refusjon = forespurtData?.refusjon?.forslag;
     const inntekt = forespurtData?.inntekt?.forslag;
@@ -139,6 +144,11 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       }
 
       slettAlleArbeidsgiverperioder();
+
+      if (!inntekt?.forrigeInntekt?.beløp) {
+        slettBruttoinntekt();
+        setEndringsaarsak(begrunnelseEndringBruttoinntekt.Feilregistrert);
+      }
     }
 
     set(
@@ -151,10 +161,12 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
           if (fastsattInntekt) {
             state.fastsattInntekt = fastsattInntekt;
             state.gammeltSkjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
+            state.ukjentInntekt = false;
           }
         } else {
-          state.fastsattInntekt = bruttoinntekt.bruttoInntekt;
+          state.fastsattInntekt = undefined;
           state.gammeltSkjaeringstidspunkt = undefined;
+          state.ukjentInntekt = true;
         }
 
         return state;

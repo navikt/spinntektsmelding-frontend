@@ -58,6 +58,7 @@ export interface BruttoinntektState {
     feilHentingAvInntektsdata?: Array<FeilReportElement>
   ) => void;
   rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
+  slettBruttoinntekt: () => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
@@ -335,6 +336,19 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         if (tidligereInntekt) {
           state.tidligereInntekt = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
         }
+
+        return state;
+      })
+    );
+  },
+  slettBruttoinntekt: () => {
+    set(
+      produce((state) => {
+        state.bruttoinntekt = {
+          bruttoInntekt: undefined,
+          manueltKorrigert: false,
+          endringsaarsak: undefined
+        };
 
         return state;
       })

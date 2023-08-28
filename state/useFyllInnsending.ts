@@ -7,10 +7,11 @@ import { Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
+import { TDateISODate } from './MottattData';
 
 export interface SendtPeriode {
-  fom: string;
-  tom: string;
+  fom: TDateISODate;
+  tom: TDateISODate;
 }
 
 interface FullLonnIArbeidsgiverPerioden {

@@ -13,7 +13,7 @@ import {
 import { Periode } from './state';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import skjemaVariant from '../config/skjemavariant';
-import { Opplysningstype } from './useForespurtDataStore';
+import { nanoid } from 'nanoid';
 
 export interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
@@ -63,7 +63,7 @@ export default function useKvitteringInit() {
     initFravaersperiode(jsonData.fraværsperioder);
     if (jsonData.egenmeldingsperioder) initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
 
-    const paakrevdeOpplysninger = jsonData.forespurtData as Array<Opplysningstype>;
+    const paakrevdeOpplysninger = jsonData.forespurtData;
 
     if (paakrevdeOpplysninger) {
       setPaakrevdeOpplysninger(paakrevdeOpplysninger);
@@ -99,8 +99,8 @@ export default function useKvitteringInit() {
 
       switch (aarsak.typpe) {
         case begrunnelseEndringBruttoinntekt.Tariffendring: {
-          setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
-          setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
+          if ('gjelderFra' in aarsak) setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
+          if ('bleKjent' in aarsak) setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
           break;
         }
 
@@ -113,16 +113,19 @@ export default function useKvitteringInit() {
           break;
         }
         case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
-          setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.Permisjon: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom)
-          }));
-          setPermisjonPeriode(perioder);
+          if ('liste' in aarsak) {
+            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
+              fom: parseIsoDate(periode.fom),
+              tom: parseIsoDate(periode.tom),
+              id: nanoid()
+            }));
+            setPermisjonPeriode(perioder);
+          }
           break;
         }
 

@@ -86,6 +86,7 @@ const Endring: NextPage = () => {
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
+  const ukjentInntekt = useBoundStore((state) => state.ukjentInntekt);
   const fyllInnsending = useFyllInnsending();
   const errorResponse = useErrorRespons();
 
@@ -143,9 +144,9 @@ const Endring: NextPage = () => {
     });
 
     const errorStatus = validerInntektsmelding(opplysningerBekreftet, true);
-
-    leggTilFeilmeldingHvisFeil(endringBruttolonn, errorStatus, 'endringBruttolonn', feiltekster.ENDRING_BRUTTOLOENN);
-
+    if (!ukjentInntekt) {
+      leggTilFeilmeldingHvisFeil(endringBruttolonn, errorStatus, 'endringBruttolonn', feiltekster.ENDRING_BRUTTOLOENN);
+    }
     leggTilFeilmeldingHvisFeil(
       endringerAvRefusjon,
       errorStatus,
@@ -317,134 +318,146 @@ const Endring: NextPage = () => {
               <Person erDelvisInnsending />
               <Skillelinje />
               <Heading2>Beregnet månedslønn</Heading2>
-              <BodyLong>
-                I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
-                <strong>{formatCurrency(fastsattInntekt)}</strong> kr
-              </BodyLong>
-              <RadioGroup
-                legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
-                  forsteFravaersdag
-                )} (start av nytt sykefravær)?`}
-                onChange={handleChangeEndringLonn}
-                className={lokalStyles.fancyRadioGruppe}
-                defaultValue={endringBruttolonn}
-              >
-                <Radio value='Ja' className={classNameJa}>
-                  Ja
-                </Radio>
-                <Radio value='Nei' className={classNameNei}>
-                  Nei
-                </Radio>
-              </RadioGroup>
-              {endringBruttolonn === 'Ja' && (
+              {ukjentInntekt && (
+                <BodyLong>
+                  Vi har ikke data fra den siste inntektsmeldingen, derfor må dere angi beregnet månedslønn manuelt.
+                </BodyLong>
+              )}
+              {!ukjentInntekt && (
                 <>
-                  <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
-
-                  <div className={biStyles.endremaaanedsinntektwrapper}>
-                    <div className={biStyles.endremaaanedsinntekt}>
-                      <TextField
-                        label='Ny beregnet månedslønn'
-                        onChange={changeMaanedsintektHandler}
-                        defaultValue={formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)}
-                        id='inntekt.beregnetInntekt'
-                        error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
-                        className={biStyles.bruttoinntektendringsbelop}
-                      />
-                      <div>
-                        <SelectEndringBruttoinntekt
-                          onChangeBegrunnelse={changeBegrunnelseHandler}
-                          error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
-                          id='bruttoinntekt-endringsaarsak'
-                          nyInnsending={false}
-                          label='Forklaring til endring'
-                        />
-                      </div>
-                    </div>
-                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
-                      <div className={biStyles.endremaaanedsinntekt}>
-                        <TariffendringDato
-                          changeTariffEndretDato={setTariffEndringsdato}
-                          changeTariffKjentDato={setTariffKjentdato}
-                          defaultEndringsdato={tariffendringsdato}
-                          defaultKjentDato={tariffkjentdato}
-                        />
-                      </div>
-                    )}
-                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
-                      <div className={biStyles.endremaaanedsinntekt}>
-                        <div className={lokalStyles.endreperiodeliste}>
-                          <PeriodeListevelger
-                            onRangeListChange={setFeriePeriode}
-                            defaultRange={ferie}
-                            fomTekst='Fra'
-                            tomTekst='Til'
-                            fomIdBase='bruttoinntekt-ful-fom'
-                            tomIdBase='bruttoinntekt-ful-tom'
-                          />
-                        </div>
-                      </div>
-                    )}
-                    {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
-                      <div className={lokalStyles.endremaaanedsinntekt}>
-                        <Datovelger
-                          onDateChange={setLonnsendringDato}
-                          label='Lønnsendring gjelder fra'
-                          id='bruttoinntekt-lonnsendring-fom'
-                          defaultSelected={lonnsendringsdato}
-                          toDate={bestemmendeFravaersdag}
-                          error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
-                        />
-                      </div>
-                    )}
-                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
-                      <div className={lokalStyles.endreperiodeliste}>
-                        <PeriodeListevelger
-                          onRangeListChange={setPermisjonPeriode}
-                          defaultRange={permisjon}
-                          fomTekst='Fra'
-                          tomTekst='Til'
-                          fomIdBase='bruttoinntekt-permisjon-fom'
-                          tomIdBase='bruttoinntekt-permisjon-tom'
-                        />
-                      </div>
-                    )}
-                    {endringsaarsak === begrunnelseEndringBruttoinntekt.Permittering && (
-                      <div className={lokalStyles.endreperiodeliste}>
-                        <PeriodeListevelger
-                          onRangeListChange={setPermitteringPeriode}
-                          defaultRange={permittering}
-                          fomTekst='Fra'
-                          tomTekst='Til'
-                          fomIdBase='bruttoinntekt-permittering-fom'
-                          tomIdBase='bruttoinntekt-permittering-tom'
-                        />
-                      </div>
-                    )}
-                    {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
-                      <div className={lokalStyles.endremaaanedsinntekt}>
-                        <Datovelger
-                          onDateChange={setNyStillingDato}
-                          label='Ny stilling fra'
-                          id='bruttoinntekt-nystilling-fom'
-                          defaultSelected={nystillingdato}
-                          toDate={bestemmendeFravaersdag}
-                        />
-                      </div>
-                    )}
-                    {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
-                      <div className={lokalStyles.endremaaanedsinntekt}>
-                        <Datovelger
-                          onDateChange={setNyStillingsprosentDato}
-                          label='Ny stillingsprosent fra'
-                          id='bruttoinntekt-nystillingsprosent-fom'
-                          defaultSelected={nystillingsprosentdato}
-                          toDate={bestemmendeFravaersdag}
-                        />
-                      </div>
-                    )}
-                  </div>
+                  <BodyLong>
+                    I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
+                    <strong>{formatCurrency(fastsattInntekt)}</strong> kr
+                  </BodyLong>
+                  <RadioGroup
+                    legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
+                      forsteFravaersdag
+                    )} (start av nytt sykefravær)?`}
+                    onChange={handleChangeEndringLonn}
+                    className={lokalStyles.fancyRadioGruppe}
+                    defaultValue={endringBruttolonn}
+                  >
+                    <Radio value='Ja' className={classNameJa}>
+                      Ja
+                    </Radio>
+                    <Radio value='Nei' className={classNameNei}>
+                      Nei
+                    </Radio>
+                  </RadioGroup>
                 </>
               )}
+              {endringBruttolonn === 'Ja' ||
+                (ukjentInntekt && (
+                  <>
+                    <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
+
+                    <div className={biStyles.endremaaanedsinntektwrapper}>
+                      <div className={biStyles.endremaaanedsinntekt}>
+                        <TextField
+                          label='Ny beregnet månedslønn'
+                          onChange={changeMaanedsintektHandler}
+                          defaultValue={!ukjentInntekt ? formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0) : ''}
+                          id='inntekt.beregnetInntekt'
+                          error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
+                          className={biStyles.bruttoinntektendringsbelop}
+                        />
+                        {!ukjentInntekt && (
+                          <div>
+                            <SelectEndringBruttoinntekt
+                              onChangeBegrunnelse={changeBegrunnelseHandler}
+                              error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
+                              id='bruttoinntekt-endringsaarsak'
+                              nyInnsending={false}
+                              label='Forklaring til endring'
+                            />
+                          </div>
+                        )}
+                      </div>
+                      {endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
+                        <div className={biStyles.endremaaanedsinntekt}>
+                          <TariffendringDato
+                            changeTariffEndretDato={setTariffEndringsdato}
+                            changeTariffKjentDato={setTariffKjentdato}
+                            defaultEndringsdato={tariffendringsdato}
+                            defaultKjentDato={tariffkjentdato}
+                          />
+                        </div>
+                      )}
+                      {endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
+                        <div className={biStyles.endremaaanedsinntekt}>
+                          <div className={lokalStyles.endreperiodeliste}>
+                            <PeriodeListevelger
+                              onRangeListChange={setFeriePeriode}
+                              defaultRange={ferie}
+                              fomTekst='Fra'
+                              tomTekst='Til'
+                              fomIdBase='bruttoinntekt-ful-fom'
+                              tomIdBase='bruttoinntekt-ful-tom'
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
+                        <div className={lokalStyles.endremaaanedsinntekt}>
+                          <Datovelger
+                            onDateChange={setLonnsendringDato}
+                            label='Lønnsendring gjelder fra'
+                            id='bruttoinntekt-lonnsendring-fom'
+                            defaultSelected={lonnsendringsdato}
+                            toDate={bestemmendeFravaersdag}
+                            error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
+                          />
+                        </div>
+                      )}
+                      {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
+                        <div className={lokalStyles.endreperiodeliste}>
+                          <PeriodeListevelger
+                            onRangeListChange={setPermisjonPeriode}
+                            defaultRange={permisjon}
+                            fomTekst='Fra'
+                            tomTekst='Til'
+                            fomIdBase='bruttoinntekt-permisjon-fom'
+                            tomIdBase='bruttoinntekt-permisjon-tom'
+                          />
+                        </div>
+                      )}
+                      {endringsaarsak === begrunnelseEndringBruttoinntekt.Permittering && (
+                        <div className={lokalStyles.endreperiodeliste}>
+                          <PeriodeListevelger
+                            onRangeListChange={setPermitteringPeriode}
+                            defaultRange={permittering}
+                            fomTekst='Fra'
+                            tomTekst='Til'
+                            fomIdBase='bruttoinntekt-permittering-fom'
+                            tomIdBase='bruttoinntekt-permittering-tom'
+                          />
+                        </div>
+                      )}
+                      {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
+                        <div className={lokalStyles.endremaaanedsinntekt}>
+                          <Datovelger
+                            onDateChange={setNyStillingDato}
+                            label='Ny stilling fra'
+                            id='bruttoinntekt-nystilling-fom'
+                            defaultSelected={nystillingdato}
+                            toDate={bestemmendeFravaersdag}
+                          />
+                        </div>
+                      )}
+                      {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
+                        <div className={lokalStyles.endremaaanedsinntekt}>
+                          <Datovelger
+                            onDateChange={setNyStillingsprosentDato}
+                            label='Ny stillingsprosent fra'
+                            id='bruttoinntekt-nystillingsprosent-fom'
+                            defaultSelected={nystillingsprosentdato}
+                            toDate={bestemmendeFravaersdag}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ))}
               <Skillelinje />
               <Heading2>Refusjon</Heading2>
               <BodyLong>
