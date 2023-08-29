@@ -12,9 +12,12 @@ import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbeta
 export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
   lonnISykefravaeret?: LonnISykefravaeret;
+  opprinneligLonnISykefravaeret?: LonnISykefravaeret;
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
+  opprinneligRefusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   harRefusjonEndringer?: YesNo;
   refusjonEndringer?: Array<EndringsBelop>;
+  opprinneligRefusjonEndringer?: Array<EndringsBelop>;
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) => void;
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
   begrunnelseRedusertUtbetaling: (begrunnelse: string) => void;
@@ -24,6 +27,7 @@ export interface RefusjonArbeidsgiverState {
   refusjonskravetOpphoererDato: (opphoersdato?: Date) => void;
   initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) => void;
   oppdaterRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
+  initRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
   setHarRefusjonEndringer: (harEndringer: YesNo) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
 }
@@ -177,6 +181,24 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
+  initRefusjonEndringer: (endringer: Array<EndringsBelop>) =>
+    set(
+      produce((state) => {
+        state.refusjonEndringer = endringer;
+        state.opprinneligRefusjonEndringer = endringer;
+        if (endringer?.length > 0) {
+          endringer.forEach((endring, index) => {
+            if (endring.belop && endring.belop >= 0) {
+              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-belop-' + index);
+            }
+            if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
+              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-dato-' + index);
+            }
+          });
+        }
+        return state;
+      })
+    ),
   setHarRefusjonEndringer: (harEndringer: YesNo) =>
     set(
       produce((state) => {
@@ -200,7 +222,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         state.lonnISykefravaeret = lonnISykefravaeret;
-
+        state.opprinneligLonnISykefravaeret = lonnISykefravaeret;
         return state;
       })
     )

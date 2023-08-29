@@ -72,6 +72,7 @@ const Endring: NextPage = () => {
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
+  const opprinneligLonnISykefravaeret = useBoundStore((state) => state.opprinneligLonnISykefravaeret);
   const beloepArbeidsgiverBetalerISykefravaeret = useBoundStore(
     (state) => state.beloepArbeidsgiverBetalerISykefravaeret
   );
@@ -471,13 +472,13 @@ const Endring: NextPage = () => {
               <H3Label unPadded topPadded>
                 Refusjon til arbeidsgiver etter arbeidsgiverperiode
               </H3Label>
-              {!lonnISykefravaeret?.status ||
-                (lonnISykefravaeret?.status === 'Nei' && (
+              {!opprinneligLonnISykefravaeret?.status ||
+                (opprinneligLonnISykefravaeret?.status === 'Nei' && (
                   <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
                 ))}
-              {lonnISykefravaeret?.status === 'Ja' && (
+              {opprinneligLonnISykefravaeret?.status === 'Ja' && (
                 <>
-                  {formatCurrency(lonnISykefravaeret?.belop || 0)} kr
+                  {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
                   <H3Label unPadded topPadded>
                     Er det endringer i refusjonskrav i perioden?
                   </H3Label>

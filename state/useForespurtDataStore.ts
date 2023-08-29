@@ -79,7 +79,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
   initForespurtData: (forespurtData) => {
     const refusjonskravetOpphoererStatus = get().refusjonskravetOpphoererStatus;
     const refusjonskravetOpphoererDato = get().refusjonskravetOpphoererDato;
-    const oppdaterRefusjonEndringer = get().oppdaterRefusjonEndringer;
+    const initRefusjonEndringer = get().initRefusjonEndringer;
     const setHarRefusjonEndringer = get().setHarRefusjonEndringer;
     const initLonnISykefravaeret = get().initLonnISykefravaeret;
     const setNyMaanedsinntektBlanktSkjema = get().setNyMaanedsinntektBlanktSkjema;
@@ -139,7 +139,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjon);
 
-      oppdaterRefusjonEndringer(refusjonEndringer);
+      initRefusjonEndringer(refusjonEndringer);
       if (inntekt.forrigeInntekt?.beløp) {
         setNyMaanedsinntektBlanktSkjema(inntekt.forrigeInntekt.beløp);
       }

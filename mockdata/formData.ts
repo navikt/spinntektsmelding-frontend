@@ -49,29 +49,29 @@ const formData: Partial<MottattData> = {
   behandlingsperiode: null,
   behandlingsdager: [],
   forespurtData: {
-    arbeidsgiverperiode: { paakrevd: true },
+    arbeidsgiverperiode: { paakrevd: false },
     inntekt: {
       paakrevd: true,
       forslag: {
         type: 'ForslagInntektGrunnlag',
-        beregningsmaaneder: ['2023-03', '2023-04', '2023-05']
-        // forrigeInntekt: {
-        //   skjæringstidspunkt: '2022-12-24',
-        //   kilde: 'INNTEKTSMELDING',
-        //   beløp: 77500.0
-        // }
+        beregningsmaaneder: ['2023-03', '2023-04', '2023-05'],
+        forrigeInntekt: {
+          skjæringstidspunkt: '2022-12-24',
+          kilde: 'INNTEKTSMELDING',
+          beløp: 77500.0
+        }
       }
     },
     refusjon: {
       paakrevd: true,
       forslag: {
         perioder: [
-          //     { fom: '2023-02-01', tom: '2023-03-01', beløp: 66000 },
-          //     { fom: '2023-03-02', tom: '2023-04-01', beløp: 55000 },
-          //     { fom: '2023-05-02', tom: '2023-05-02', beløp: 44000 }
-        ]
-        //   opphoersdato: '2023-06-01',
-        //   refundert: 76000
+          { fom: '2023-02-01', tom: '2023-03-01', beløp: 66000 },
+          { fom: '2023-03-02', tom: '2023-04-01', beløp: 55000 },
+          { fom: '2023-05-02', tom: '2023-05-02', beløp: 44000 }
+        ],
+        opphoersdato: null
+        //refundert: 76000
       }
     }
   }
