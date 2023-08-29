@@ -111,6 +111,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
+  const erFeriemaaneder = sjekkOmFerieMaaneder(tidligereinntekt);
+
   if (tidligereinntekt && tidligereinntekt.length > 0) {
     return (
       <>
@@ -139,6 +141,13 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
         <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
 
         {!henterData && <TidligereInntekt tidligereinntekt={tidligereinntekt} />}
+        {erFeriemaaneder && (
+          <Alert variant='warning' className={lokalStyles.feriealert}>
+            Lønnsopplysningene kan innholde måneder der det er utbetalt feriepenger. Hvis det i beregningsperioden er
+            utbetalt feriepenger i stedet for lønn, eller det er avviklet ferie uten lønn, skal beregningsgrunnlaget
+            settes lik den ordinære lønnen personen ville hatt hvis det ikke hadde blitt avviklet ferie.
+          </Alert>
+        )}
         {henterData && <Skeleton count={3} />}
         {!endringAvBelop && (
           <TextLabel className={lokalStyles.tbmargin}>
@@ -253,4 +262,12 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
       </>
     );
   }
+}
+
+function sjekkOmFerieMaaneder(tidligereinntekt: Array<HistoriskInntekt> | undefined): boolean {
+  const ferieMnd = tidligereinntekt
+    ?.map((inntekt) => inntekt.maaned.split('-')[1])
+    .filter((mnd) => mnd === '05' || mnd === '06' || mnd === '07');
+
+  return ferieMnd !== undefined && ferieMnd.length > 0;
 }

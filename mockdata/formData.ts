@@ -49,7 +49,7 @@ const formData: Partial<MottattData> = {
   behandlingsperiode: null,
   behandlingsdager: [],
   forespurtData: {
-    arbeidsgiverperiode: { paakrevd: false },
+    arbeidsgiverperiode: { paakrevd: true },
     inntekt: {
       paakrevd: true,
       forslag: {
