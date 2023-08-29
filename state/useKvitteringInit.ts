@@ -176,9 +176,11 @@ export default function useKvitteringInit() {
       });
     }
 
-    setHarRefusjonEndringer(
-      jsonData.refusjon.refusjonEndringer && jsonData.refusjon.refusjonEndringer.length > 0 ? 'Ja' : 'Nei'
-    );
+    if (jsonData.refusjon.utbetalerHeleEllerDeler) {
+      setHarRefusjonEndringer(
+        jsonData.refusjon.refusjonEndringer && jsonData.refusjon.refusjonEndringer.length > 0 ? 'Ja' : 'Nei'
+      );
+    }
 
     if (jsonData.refusjon.refusjonEndringer) {
       const endringer = jsonData.refusjon.refusjonEndringer.map((endring) => ({
@@ -191,7 +193,7 @@ export default function useKvitteringInit() {
     if (jsonData.refusjon.refusjonOpphører) {
       refusjonskravetOpphoererDato(parseIsoDate(jsonData.refusjon.refusjonOpphører));
       refusjonskravetOpphoererStatus('Ja');
-    } else {
+    } else if (jsonData.refusjon.utbetalerHeleEllerDeler) {
       refusjonskravetOpphoererStatus('Nei');
     }
 

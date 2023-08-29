@@ -116,7 +116,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
           belop: 0
         });
 
-        setHarRefusjonEndringer('Nei');
+        setHarRefusjonEndringer(undefined);
       }
 
       const opphoersdatoRefusjon = finnOpphoersdatoRefusjon(refusjon);
@@ -135,7 +135,9 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       const harEndringer = sjekkHarEndring(refusjon);
 
-      setHarRefusjonEndringer(harEndringer);
+      console.log('harEndringer', harEndringer, refusjonsbelop);
+
+      if (refusjonsbelop) setHarRefusjonEndringer(harEndringer);
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjon);
 

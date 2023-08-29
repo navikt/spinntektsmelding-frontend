@@ -28,7 +28,7 @@ export interface RefusjonArbeidsgiverState {
   initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) => void;
   oppdaterRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
   initRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
-  setHarRefusjonEndringer: (harEndringer: YesNo) => void;
+  setHarRefusjonEndringer: (harEndringer?: YesNo) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
 }
 
@@ -136,9 +136,6 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         if (state.refusjonskravetOpphoerer) {
           state.refusjonskravetOpphoerer.status = status;
         } else {
-          if (!state.refusjonskravetOpphoerer) {
-            state.refusjonskravetOpphoerer = {};
-          }
           state.refusjonskravetOpphoerer = {
             status: status
           };
