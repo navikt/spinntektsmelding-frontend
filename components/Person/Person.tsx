@@ -105,8 +105,8 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               <TextLabel>Org.nr. for underenhet</TextLabel>
               <div data-cy='orgnummer'>{orgnrUnderenhet || <Skeleton />}</div>
             </div>
-            {!virksomhetsnavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
-            {!virksomhetsnavn && (
+            {!innsenderNavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
+            {innsenderNavn && (
               <div className={lokalStyles.innsendernavnwrapper}>
                 <TextLabel>Innsender</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
