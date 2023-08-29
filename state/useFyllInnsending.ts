@@ -82,7 +82,7 @@ export interface InnsendingSkjema {
   behandlingsdager?: Array<string>;
   årsakInnsending: string;
   forespurtData: Array<Opplysningstype>;
-  telefon: string;
+  telefonnummer: string;
   // innsender: Innsender;
 }
 
@@ -275,7 +275,7 @@ export default function useFyllInnsending() {
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
       årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
       // innsender  // Kommer snart
-      telefon: innsenderTelefonNr || '',
+      telefonnummer: innsenderTelefonNr || '',
       forespurtData: hentPaakrevdOpplysningstyper()
     };
 
