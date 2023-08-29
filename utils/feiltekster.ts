@@ -51,8 +51,8 @@ const feiltekster = {
   SYKEFRAVAER_TOM: 'Angi til dato',
   ENDRING_BRUTTOLOENN: 'Du må velge om det har vært endringer i beregnet månedslønn',
   ENDRINGER_AV_REFUSJON: 'Du må velge om det har vært endringer i refusjon',
-  UGYLDIG_TELEFON: 'Telefonnr er ugyldig. Et telefon nummer består av 8-siffer',
-  TELEFON_MANGLER: 'Telefonnr mangler'
+  UGYLDIG_TELEFON: 'Telefonnummer er ugyldig. Et telefonnummer består av 8-siffer',
+  TELEFON_MANGLER: 'Telefonnummer mangler'
 };
 
 export default feiltekster;

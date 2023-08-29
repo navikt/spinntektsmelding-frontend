@@ -150,14 +150,9 @@ const Endring: NextPage = () => {
 
     const errorStatus = validerInntektsmelding(opplysningerBekreftet, true);
     if (!ukjentInntekt) {
-      leggTilFeilmeldingHvisFeil(endringBruttolonn, errorStatus, 'endringBruttolonn', feiltekster.ENDRING_BRUTTOLOENN);
+      leggTilFeilmeldingHvisFeil(endringBruttolonn, errorStatus, 'endring-bruttolonn', feiltekster.ENDRING_BRUTTOLOENN);
     }
-    leggTilFeilmeldingHvisFeil(
-      endringerAvRefusjon,
-      errorStatus,
-      'endringerAvRefusjon',
-      feiltekster.ENDRINGER_AV_REFUSJON
-    );
+    leggTilFeilmeldingHvisFeil(endringerAvRefusjon, errorStatus, 'endring-refusjon', feiltekster.ENDRINGER_AV_REFUSJON);
 
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
@@ -273,12 +268,12 @@ const Endring: NextPage = () => {
 
   const handleChangeEndringLonn = (value: string) => {
     setEndringBruttolonn(value as YesNo);
-    slettFeilmelding('endringBruttolonn');
+    slettFeilmelding('endring-bruttolonn');
   };
 
   const handleChangeEndringRefusjon = (value: string) => {
     setEndringerAvRefusjon(value as YesNo);
-    slettFeilmelding('endringerAvRefusjon');
+    slettFeilmelding('endring-refusjon');
   };
 
   const changeMaanedsintektHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -341,6 +336,7 @@ const Endring: NextPage = () => {
                     onChange={handleChangeEndringLonn}
                     className={lokalStyles.fancyRadioGruppe}
                     defaultValue={endringBruttolonn}
+                    id='endring-bruttolonn'
                   >
                     <Radio value='Ja' className={classNameJa}>
                       Ja
@@ -528,6 +524,7 @@ const Endring: NextPage = () => {
                 onChange={handleChangeEndringRefusjon}
                 className={lokalStyles.fancyRadioGruppe}
                 defaultValue={endringerAvRefusjon}
+                id='endring-refusjon'
               >
                 <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
                   Ja

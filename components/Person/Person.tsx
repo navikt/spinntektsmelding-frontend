@@ -117,7 +117,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             <div className={lokalStyles.telefonnrwrapper}>
               {erKvittering && (
                 <>
-                  <TextLabel>Telefon innsender</TextLabel>
+                  <TextLabel>Telefon til innsender</TextLabel>
                   <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
                     {innsenderTelefonNr}
                   </div>
@@ -125,7 +125,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               )}
               {!erKvittering && (
                 <TextField
-                  label='Telefon innsender'
+                  label='Telefon til innsender'
                   type='tel'
                   autoComplete='tel'
                   defaultValue={innsenderTelefonNr}
