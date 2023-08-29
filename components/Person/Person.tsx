@@ -106,13 +106,14 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               <div data-cy='orgnummer'>{orgnrUnderenhet || <Skeleton />}</div>
             </div>
             {!virksomhetsnavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
-
-            <div className={lokalStyles.innsendernavnwrapper}>
-              {/* <TextLabel>Innsender</TextLabel>
-              <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {innsenderNavn}
-              </div> */}
-            </div>
+            {!virksomhetsnavn && (
+              <div className={lokalStyles.innsendernavnwrapper}>
+                <TextLabel>Innsender</TextLabel>
+                <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
+                  {innsenderNavn}
+                </div>
+              </div>
+            )}
             <div className={lokalStyles.telefonnrwrapper}>
               {erKvittering && (
                 <>

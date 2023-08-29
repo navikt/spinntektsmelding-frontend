@@ -62,6 +62,7 @@ export interface ForespurtDataState {
   refusjonTilArbeidsgiver?: number;
   fastsattInntekt?: number;
   ukjentInntekt: boolean;
+  ukjentRefusjon: boolean;
   gammeltSkjaeringstidspunkt?: Date;
   paakrevdeOpplysninger?: Array<Opplysningstype>;
   initForespurtData: (forespurtData: MottattForespurtData) => void;
@@ -73,6 +74,7 @@ export interface ForespurtDataState {
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
   ukjentInntekt: false,
+  ukjentRefusjon: false,
   forespurtData: undefined,
   initForespurtData: (forespurtData) => {
     const refusjonskravetOpphoererStatus = get().refusjonskravetOpphoererStatus;
@@ -82,7 +84,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const initLonnISykefravaeret = get().initLonnISykefravaeret;
     const setNyMaanedsinntektBlanktSkjema = get().setNyMaanedsinntektBlanktSkjema;
     const slettAlleArbeidsgiverperioder = get().slettAlleArbeidsgiverperioder;
-    const bruttoinntekt = get().bruttoinntekt;
     const slettBruttoinntekt = get().slettBruttoinntekt;
     const setEndringsaarsak = get().setEndringsaarsak;
 
@@ -91,7 +92,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const arbeidsgiverperiodePaakrevd = forespurtData?.arbeidsgiverperiode?.paakrevd;
 
     if (!arbeidsgiverperiodePaakrevd) {
-      let kravOpphorer: YesNo = refusjon?.opphoersdato ? 'Ja' : 'Nei';
+      let kravOpphorer: YesNo = jaEllerNei(refusjon);
       let kravOpphorerDato = refusjon?.opphoersdato;
 
       refusjonskravetOpphoererDato(parseISO(kravOpphorerDato as string));
@@ -169,6 +170,10 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
           state.ukjentInntekt = true;
         }
 
+        if (!forespurtData.refusjon?.forslag) {
+          state.ukjentRefusjon = true;
+        }
+
         return state;
       })
     );
@@ -218,6 +223,10 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 });
 
 export default useForespurtDataStore;
+
+function jaEllerNei(refusjon: ForslagInntekt & ForslagRefusjon): YesNo {
+  return refusjon?.opphoersdato ? 'Ja' : 'Nei';
+}
 
 function sjekkHarEndring(refusjon: ForslagInntekt & ForslagRefusjon): YesNo {
   return refusjon?.perioder && refusjon?.perioder.length > 0 ? 'Ja' : 'Nei';

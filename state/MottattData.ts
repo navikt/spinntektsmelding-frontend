@@ -31,7 +31,7 @@ type ForespurteData = {
     forslag: {
       type: string;
       beregningsmaaneder?: Array<string>;
-      forrigeInntekt: {
+      forrigeInntekt?: {
         skjæringstidspunkt: TDateISODate;
         kilde: string;
         beløp: number;
@@ -42,7 +42,7 @@ type ForespurteData = {
     paakrevd: boolean;
     forslag: {
       perioder: Array<MottattPeriodeRefusjon>;
-      opphoersdato: TDateISODate | null;
+      opphoersdato?: TDateISODate | null;
       refundert?: number;
     };
   };

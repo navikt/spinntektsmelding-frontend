@@ -596,7 +596,6 @@ const Endring: NextPage = () => {
                   )}
                 </>
               )}
-
               <ConfirmationPanel
                 className={styles.confirmationpanel}
                 checked={opplysningerBekreftet}
