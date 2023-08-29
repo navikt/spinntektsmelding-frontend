@@ -60,7 +60,7 @@ interface MottattData {
   behandlingsdager: Array<string>;
   behandlingsperiode: MottattPeriode | null;
   innsenderNavn: string;
-  innsenderTelefonNr: string;
+  telefonnummer: string;
   feilReport?: FeilReportFeilListe;
   forespurtData?: ForespurteData;
 }

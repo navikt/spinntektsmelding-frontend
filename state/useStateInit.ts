@@ -56,7 +56,7 @@ export default function useStateInit() {
       jsonData.orgnrUnderenhet,
       jsonData.orgNavn,
       jsonData.innsenderNavn,
-      jsonData.innsenderTelefonNr,
+      jsonData.telefonnummer,
       feilVedLasting
     );
     if (jsonData.behandlingsperiode) {

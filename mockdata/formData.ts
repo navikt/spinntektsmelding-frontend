@@ -45,7 +45,7 @@ const formData: Partial<MottattData> = {
     }
   ],
   innsenderNavn: 'Test Testesen',
-  innsenderTelefonNr: '12345678',
+  telefonnummer: '12345678',
   behandlingsperiode: null,
   behandlingsdager: [],
   forespurtData: {
