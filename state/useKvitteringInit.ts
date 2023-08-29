@@ -75,7 +75,7 @@ export default function useKvitteringInit() {
       jsonData.orgnrUnderenhet,
       jsonData.virksomhetNavn,
       jsonData.innsenderNavn,
-      jsonData.innsenderTelefonNr
+      jsonData.telefonnummer
     );
 
     setSlug(slug);
