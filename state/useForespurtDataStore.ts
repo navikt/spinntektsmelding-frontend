@@ -135,8 +135,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       const harEndringer = sjekkHarEndring(refusjon);
 
-      console.log('harEndringer', harEndringer, refusjonsbelop);
-
       if (refusjonsbelop) setHarRefusjonEndringer(harEndringer);
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjon);

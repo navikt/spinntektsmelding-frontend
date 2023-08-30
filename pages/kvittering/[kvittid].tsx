@@ -158,7 +158,7 @@ const Kvittering: NextPage = () => {
                   <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                   <div className={lokalStyles.fravaerwrapper}>
                     <div className={lokalStyles.fravaertid}>Dato</div>
-                    <div>{formatDate(bestemmendeFravaersdag)} </div>
+                    <div>{bestemmendeFravaersdag ? formatDate(bestemmendeFravaersdag) : '&nbsp;'} </div>
                   </div>
                 </div>
                 {visArbeidsgiverperiode && (
