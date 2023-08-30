@@ -1,5 +1,7 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
+import { Skeleton } from '@navikt/ds-react';
+
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import PageContent from '../../components/PageContent/PageContent';
 
@@ -158,7 +160,9 @@ const Kvittering: NextPage = () => {
                   <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                   <div className={lokalStyles.fravaerwrapper}>
                     <div className={lokalStyles.fravaertid}>Dato</div>
-                    <div>{bestemmendeFravaersdag ? formatDate(bestemmendeFravaersdag) : '&nbsp;'} </div>
+                    <div>
+                      {bestemmendeFravaersdag ? formatDate(bestemmendeFravaersdag) : <Skeleton variant='text' />}{' '}
+                    </div>
                   </div>
                 </div>
                 {visArbeidsgiverperiode && (
