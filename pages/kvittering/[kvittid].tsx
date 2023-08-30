@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { Skeleton } from '@navikt/ds-react';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import PageContent from '../../components/PageContent/PageContent';
@@ -10,7 +9,7 @@ import styles from '../../styles/Home.module.css';
 
 import Heading2 from '../../components/Heading2/Heading2';
 import Heading3 from '../../components/Heading3/Heading3';
-import { BodyLong, BodyShort } from '@navikt/ds-react';
+import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
 import Person from '../../components/Person/Person';
 
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
@@ -139,7 +138,7 @@ const Kvittering: NextPage = () => {
                   <div className={lokalStyles.ytrefravaerswrapper}>
                     <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
                     {egenmeldingsperioder?.map((periode) => (
-                      <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + periode.id} />
+                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'egenmelding' + periode.id} />
                     ))}
                   </div>
                 </div>
@@ -148,7 +147,7 @@ const Kvittering: NextPage = () => {
                 <div className={lokalStyles.ytrefravaerswrapper}>
                   <Heading3 className={classNameHeadingSykmelding}>Sykmelding</Heading3>
                   {fravaersperioder?.map((periode) => (
-                    <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + periode.id} />
+                    <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'fperiode' + periode.id} />
                   ))}
                 </div>
               </div>

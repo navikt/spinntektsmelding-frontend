@@ -206,15 +206,9 @@ export default function useFyllInnsending() {
       refusjonEndringer
     );
 
-    console.log('lonnISykefravaeret', lonnISykefravaeret);
-
     setSkalViseFeilmeldinger(true);
-    let perioder;
-    if (fravaersperioder) {
-      perioder = fravaersperioder.concat(egenmeldingsperioder ?? []);
-    } else {
-      perioder = egenmeldingsperioder;
-    }
+
+    const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
     const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | undefined =
       finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder);
@@ -287,6 +281,16 @@ export default function useFyllInnsending() {
 
     return skjemaData;
   };
+}
+
+function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
+  let perioder;
+  if (fravaersperioder) {
+    perioder = fravaersperioder.concat(egenmeldingsperioder ?? []);
+  } else {
+    perioder = egenmeldingsperioder;
+  }
+  return perioder;
 }
 
 function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder: SendtPeriode[] | undefined) {
