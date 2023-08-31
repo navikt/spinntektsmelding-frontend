@@ -83,7 +83,6 @@ export interface InnsendingSkjema {
   årsakInnsending: string;
   forespurtData: Array<Opplysningstype>;
   telefonnummer: string;
-  // innsender: Innsender;
 }
 
 export default function useFyllInnsending() {
@@ -115,17 +114,11 @@ export default function useFyllInnsending() {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const innsenderNavn = useBoundStore((state) => state.innsenderNavn);
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
-
-  // const innsender: Innsender = {
-  //   navn: innsenderNavn || '',
-  //   telefon: innsenderTelefonNr || ''
-  // };
 
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
     const endringAarsak = (): AArsakType | Tariffendring | PeriodeListe | StillingsEndring | undefined => {
@@ -202,7 +195,7 @@ export default function useFyllInnsending() {
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
 
     const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonsendringer(
-      harRefusjonEndringer === 'Ja',
+      harRefusjonEndringer,
       refusjonEndringer
     );
 
@@ -219,7 +212,7 @@ export default function useFyllInnsending() {
       ? formatIsoDate(bestemmendeFravaersdag)
       : finnBestemmendeFravaersdag(perioder, formatertePerioder);
 
-    const aarsakInnsending = nyInnsending ? 'Ny' : 'Endring'; // Kan være Ny eller Endring
+    const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
 
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
@@ -268,7 +261,6 @@ export default function useFyllInnsending() {
       bekreftOpplysninger: opplysningerBekreftet,
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
       årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
-      // innsender  // Kommer snart
       telefonnummer: innsenderTelefonNr || '',
       forespurtData: hentPaakrevdOpplysningstyper()
     };
@@ -281,6 +273,10 @@ export default function useFyllInnsending() {
 
     return skjemaData;
   };
+}
+
+function nyEllerEndring(nyInnsending: boolean) {
+  return nyInnsending ? 'Ny' : 'Endring';
 }
 
 function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
@@ -328,10 +324,10 @@ function verdiEllerNull(verdi: number | undefined): number {
 }
 
 function konverterRefusjonsendringer(
-  harRefusjonEndringer: boolean | undefined,
+  harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBelop> | undefined
 ): RefusjonEndring[] | undefined {
-  return harRefusjonEndringer && refusjonEndringer
+  return harRefusjonEndringer === 'Ja' && refusjonEndringer
     ? refusjonEndringer.map((endring) => ({
         beløp: endring.belop!,
         dato: formatIsoDate(endring.dato)!
