@@ -58,6 +58,7 @@ export default function useKvitteringInit() {
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const setTidligereInntektsdata = useBoundStore((state) => state.setTidligereInntektsdata);
+  const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
@@ -68,6 +69,8 @@ export default function useKvitteringInit() {
     if (paakrevdeOpplysninger) {
       setPaakrevdeOpplysninger(paakrevdeOpplysninger);
     }
+
+    setInngangFraKvittering();
 
     initPerson(
       jsonData.fulltNavn,

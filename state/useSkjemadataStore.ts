@@ -12,15 +12,18 @@ export interface SkjemadataState {
   setKvitteringInnsendt: (tidspunkt: string | Date) => void;
   slettKvitteringInnsendt: () => void;
   setSkjemaFeilet: () => void;
+  setInngangFraKvittering: () => void;
   tracker: string;
   henterInntektsdata: boolean;
   slug?: string | Array<string>;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
   skjemaType?: Array<Opplysningstype>;
+  inngangFraKvittering?: boolean;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
+  inngangFraKvittering: false,
   tracker: nanoid(),
   nyInnsending: true,
   henterInntektsdata: false,
@@ -66,6 +69,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.skjemaFeilet = true;
+      })
+    );
+  },
+  setInngangFraKvittering: () => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.inngangFraKvittering = true;
       })
     );
   }

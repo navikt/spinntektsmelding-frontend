@@ -1,7 +1,7 @@
 import { BodyLong, Button, ConfirmationPanel, Link, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import SelectEndringBruttoinntekt from '../../components/Bruttoinntekt/SelectEndringBruttoinntekt';
 import PageContent from '../../components/PageContent/PageContent';
@@ -91,6 +91,7 @@ const Endring: NextPage = () => {
   const arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret = useBoundStore(
     (state) => state.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret
   );
+  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
 
   const fyllInnsending = useFyllInnsending();
   const errorResponse = useErrorRespons();
@@ -105,6 +106,13 @@ const Endring: NextPage = () => {
     state.leggTilFeilmelding,
     state.fyllFeilmeldinger
   ]);
+
+  useEffect(() => {
+    if (inngangFraKvittering) {
+      setEndringBruttolonn('Ja');
+      setEndringerAvRefusjon('Ja');
+    }
+  }, [inngangFraKvittering]);
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
