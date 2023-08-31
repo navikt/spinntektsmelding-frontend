@@ -16,6 +16,11 @@ export default defineConfig({
       provider: 'v8'
     },
     reporters: ['vitest-sonar-reporter', 'default'],
-    outputFile: 'sonar-report.xml'
+    outputFile: 'sonar-report.xml',
+    css: {
+      modules: {
+        classNameStrategy: 'non-scoped'
+      }
+    }
   }
 });
