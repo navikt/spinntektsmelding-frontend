@@ -132,7 +132,7 @@ export default function RefusjonArbeidsgiver() {
         {lonnISykefravaeret?.status === 'Ja' && (
           <>
             <RefusjonArbeidsgiverBelop
-              bruttoinntekt={lonnISykefravaeret.belop!}
+              bruttoinntekt={lonnISykefravaeret.belop! || 0}
               onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
               visFeilmeldingsTekst={visFeilmeldingsTekst}
             />

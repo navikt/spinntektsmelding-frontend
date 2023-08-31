@@ -221,6 +221,12 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
             Les mer om beregning av månedslønn.
           </LenkeEksternt>
         </LesMer>
+        {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
+          <Alert variant='info'>
+            Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedsinntekt selv
+            eller forsøke igjen senere.
+          </Alert>
+        )}
         <BodyLong>
           Angi bruttoinntekt som snitt av siste tre måneders lønn. Dersom inntekten har gått opp pga. varig -
           lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes som

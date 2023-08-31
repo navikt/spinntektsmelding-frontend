@@ -246,12 +246,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         }
         state.bruttoinntekt = {
           ...state.bruttoInntekt,
-          bruttoInntekt: snittInntekter,
+          bruttoInntekt: snittInntekter || 0,
           manueltKorrigert: false
         };
         state.opprinneligbruttoinntekt = {
           ...state.opprinneligbruttoinntekt,
-          bruttoInntekt: snittInntekter,
+          bruttoInntekt: snittInntekter || 0,
           manueltKorrigert: false
         };
 
