@@ -148,14 +148,7 @@ const Endring: NextPage = () => {
     }
   }, [fravaersperioder, egenmeldingsperioder]);
 
-  const submitForm = (event: React.FormEvent) => {
-    event.preventDefault();
-
-    logEvent('skjema fullført', {
-      tittel: 'Har trykket send',
-      component: 'BekreftInntektOgRefusjonSkjema'
-    });
-
+  const validateAndSubmitForm = async () => {
     const errorStatus = validerInntektsmelding(opplysningerBekreftet, true);
     if (!ukjentInntekt) {
       leggTilFeilmeldingHvisFeil(endringBruttolonn, errorStatus, 'endring-bruttolonn', feiltekster.ENDRING_BRUTTOLOENN);
@@ -193,85 +186,110 @@ const Endring: NextPage = () => {
               router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
               break;
 
-            case 500: {
-              const errors: Array<ErrorResponse> = [
-                {
-                  value: 'Innsending av skjema feilet',
-                  error: 'Innsending av skjema feilet',
-                  property: 'server'
-                }
-              ];
-              errorResponse(errors);
-
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet - serverfeil',
-                component: 'Delvisskjema'
-              });
-
+            case 500:
+              handleServerError();
               break;
-            }
 
-            case 404: {
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet - endepunkt mangler',
-                component: 'Delvisskjema'
-              });
-
-              const errors: Array<ErrorResponse> = [
-                {
-                  value: 'Innsending av skjema feilet',
-                  error: 'Fant ikke endepunktet for innsending',
-                  property: 'server'
-                }
-              ];
-              errorResponse(errors);
+            case 404:
+              handleNotFound();
               break;
-            }
 
-            case 401: {
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet - ingen tilgang',
-                component: 'Delvisskjema'
-              });
-
-              setIngenTilgangOpen(true);
+            case 401:
+              handleUnauthorized();
               break;
-            }
 
             default:
-              const resultat = await data.json();
-
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet',
-                component: 'Delvisskjema'
-              });
-
-              if (resultat.errors) {
-                const errors: Array<ErrorResponse> = resultat.errors;
-                errorResponse(errors);
-              }
+              handleOtherErrors(data);
           }
         } else {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Innsending av skjema feilet. Ugyldig identifikator - ' + pathSlug,
-              property: 'server'
-            }
-          ];
-
-          logEvent('skjema validering feilet', {
-            tittel: 'Ugyldig UUID ved innsending',
-            component: 'Delvisskjema'
-          });
-          errorResponse(errors);
-          setSenderInn(false);
-
-          return false;
+          handleInvalidUUID();
         }
       };
-      postData();
+      await postData();
     }
+  };
+
+  const handleServerError = () => {
+    const errors: Array<ErrorResponse> = [
+      {
+        value: 'Innsending av skjema feilet',
+        error: 'Innsending av skjema feilet',
+        property: 'server'
+      }
+    ];
+    errorResponse(errors);
+
+    logEvent('skjema innsending feilet', {
+      tittel: 'Innsending feilet - serverfeil',
+      component: 'Delvisskjema'
+    });
+  };
+
+  const handleNotFound = () => {
+    logEvent('skjema innsending feilet', {
+      tittel: 'Innsending feilet - endepunkt mangler',
+      component: 'Delvisskjema'
+    });
+
+    const errors: Array<ErrorResponse> = [
+      {
+        value: 'Innsending av skjema feilet',
+        error: 'Fant ikke endepunktet for innsending',
+        property: 'server'
+      }
+    ];
+    errorResponse(errors);
+  };
+
+  const handleUnauthorized = () => {
+    logEvent('skjema innsending feilet', {
+      tittel: 'Innsending feilet - ingen tilgang',
+      component: 'Delvisskjema'
+    });
+
+    setIngenTilgangOpen(true);
+  };
+
+  const handleOtherErrors = async (data: Response) => {
+    const resultat = await data.json();
+
+    logEvent('skjema innsending feilet', {
+      tittel: 'Innsending feilet',
+      component: 'Delvisskjema'
+    });
+
+    if (resultat.errors) {
+      const errors: Array<ErrorResponse> = resultat.errors;
+      errorResponse(errors);
+    }
+  };
+
+  const handleInvalidUUID = () => {
+    const errors: Array<ErrorResponse> = [
+      {
+        value: 'Innsending av skjema feilet',
+        error: 'Innsending av skjema feilet. Ugyldig identifikator - ' + pathSlug,
+        property: 'server'
+      }
+    ];
+
+    logEvent('skjema validering feilet', {
+      tittel: 'Ugyldig UUID ved innsending',
+      component: 'Delvisskjema'
+    });
+    errorResponse(errors);
+    setSenderInn(false);
+  };
+
+  const submitForm = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    logEvent('skjema fullført', {
+      tittel: 'Har trykket send',
+      component: 'BekreftInntektOgRefusjonSkjema'
+    });
+
+    validateAndSubmitForm();
   };
 
   const handleChangeEndringLonn = (value: string) => {

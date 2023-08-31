@@ -15,7 +15,7 @@ export default function validerTelefon(telefon?: string): Array<ValiderResultat>
       code: TelefonFeilkode.TELEFON_MANGLER
     });
   } else {
-    const telefonRegex = new RegExp('^(\\+\\d{10}|00\\d{10}|\\d{8})$');
+    const telefonRegex = /^(\\+\\d{10}|00\\d{10}|\\d{8})$/;
     const validTelefon = telefonRegex.test(telefon);
     if (!validTelefon) {
       feilkoder.push({
