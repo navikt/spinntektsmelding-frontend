@@ -101,23 +101,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
 
-      if (refusjonsbelop) {
-        initLonnISykefravaeret({
-          status: 'Ja',
-          belop: refusjonsbelop
-        });
-
-        refusjon.perioder = refusjon.perioder.filter((periode) => {
-          return periode.fom !== inntekt?.forrigeInntekt?.skjæringstidspunkt;
-        });
-      } else {
-        initLonnISykefravaeret({
-          status: 'Nei',
-          belop: 0
-        });
-
-        setHarRefusjonEndringer(undefined);
-      }
+      settRefusjonsbelop(refusjonsbelop);
 
       const opphoersdatoRefusjon = finnOpphoersdatoRefusjon(refusjon);
 
@@ -140,43 +124,66 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjon);
 
       initRefusjonEndringer(refusjonEndringer);
+
       if (inntekt.forrigeInntekt?.beløp) {
         setNyMaanedsinntektBlanktSkjema(inntekt.forrigeInntekt.beløp);
-      }
-
-      slettAlleArbeidsgiverperioder();
-
-      if (!inntekt?.forrigeInntekt?.beløp) {
+      } else {
         slettBruttoinntekt();
         setEndringsaarsak(begrunnelseEndringBruttoinntekt.Feilregistrert);
       }
+
+      slettAlleArbeidsgiverperioder();
     }
 
     set(
       produce((state: ForespurtDataState) => {
         state.forespurtData = forespurtData;
 
-        if (inntekt.forrigeInntekt) {
-          const fastsattInntekt = inntekt.forrigeInntekt.beløp;
-
-          if (fastsattInntekt) {
-            state.fastsattInntekt = fastsattInntekt;
-            state.gammeltSkjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
-            state.ukjentInntekt = false;
-          }
-        } else {
-          state.fastsattInntekt = undefined;
-          state.gammeltSkjaeringstidspunkt = undefined;
-          state.ukjentInntekt = true;
-        }
+        settInntektsdataForrigeInnsending();
 
         if (!forespurtData.refusjon?.forslag) {
           state.ukjentRefusjon = true;
         }
 
         return state;
+
+        function settInntektsdataForrigeInnsending() {
+          if (inntekt.forrigeInntekt) {
+            const fastsattInntekt = inntekt.forrigeInntekt.beløp;
+
+            if (fastsattInntekt) {
+              state.fastsattInntekt = fastsattInntekt;
+              state.gammeltSkjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
+              state.ukjentInntekt = false;
+            }
+          } else {
+            state.fastsattInntekt = undefined;
+            state.gammeltSkjaeringstidspunkt = undefined;
+            state.ukjentInntekt = true;
+          }
+        }
       })
     );
+
+    function settRefusjonsbelop(refusjonsbelop: number) {
+      if (refusjonsbelop) {
+        initLonnISykefravaeret({
+          status: 'Ja',
+          belop: refusjonsbelop
+        });
+
+        refusjon.perioder = refusjon.perioder.filter((periode) => {
+          return periode.fom !== inntekt?.forrigeInntekt?.skjæringstidspunkt;
+        });
+      } else {
+        initLonnISykefravaeret({
+          status: 'Nei',
+          belop: 0
+        });
+
+        setHarRefusjonEndringer(undefined);
+      }
+    }
   },
   hentOpplysningstyper: () => {
     const forespurtData = get().forespurtData;
