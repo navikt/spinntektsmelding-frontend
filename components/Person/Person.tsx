@@ -117,7 +117,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             <div className={lokalStyles.telefonnrwrapper}>
               {erKvittering && (
                 <>
-                  <TextLabel>Telefon til innsender</TextLabel>
+                  <TextLabel>Telefon innsender</TextLabel>
                   <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
                     {innsenderTelefonNr}
                   </div>
