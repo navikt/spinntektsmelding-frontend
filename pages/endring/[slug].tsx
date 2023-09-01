@@ -39,7 +39,15 @@ import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../../utils/parseIsoDate';
 
 const Endring: NextPage = () => {
-  const [endringBruttolonn, setEndringBruttolonn] = useState<YesNo | undefined>();
+  const [endringBruttolonn, setEndringBruttolonn] = useBoundStore((state) => [
+    state.endringBruttolonn,
+    state.setEndringBruttolonn
+  ]);
+  const [endringerAvRefusjon, setEndringerAvRefusjon] = useBoundStore((state) => [
+    state.endringerAvRefusjon,
+    state.setEndringerAvRefusjon
+  ]);
+
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
   const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
@@ -96,7 +104,6 @@ const Endring: NextPage = () => {
   const fyllInnsending = useFyllInnsending();
   const errorResponse = useErrorRespons();
 
-  const [endringerAvRefusjon, setEndringerAvRefusjon] = useState<YesNo | undefined>();
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
@@ -106,13 +113,6 @@ const Endring: NextPage = () => {
     state.leggTilFeilmelding,
     state.fyllFeilmeldinger
   ]);
-
-  useEffect(() => {
-    if (inngangFraKvittering) {
-      setEndringBruttolonn('Ja');
-      setEndringerAvRefusjon('Ja');
-    }
-  }, [inngangFraKvittering]);
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
@@ -320,6 +320,13 @@ const Endring: NextPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (inngangFraKvittering) {
+      setEndringBruttolonn('Ja');
+      setEndringerAvRefusjon('Ja');
+    }
+  }, [inngangFraKvittering]);
+
   let cx = classNames.bind(lokalStyles);
   const classNameJa = cx({ fancyRadio: true, selectedRadio: endringBruttolonn === 'Ja' });
   const classNameNei = cx({ fancyRadio: true, selectedRadio: endringBruttolonn === 'Nei' });
@@ -349,7 +356,7 @@ const Endring: NextPage = () => {
                   Vi har ikke data fra den siste inntektsmeldingen, derfor må dere angi beregnet månedslønn manuelt.
                 </BodyLong>
               )}
-              {!ukjentInntekt && (
+              {!ukjentInntekt && !inngangFraKvittering && (
                 <>
                   <BodyLong>
                     I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
@@ -486,11 +493,7 @@ const Endring: NextPage = () => {
               )}
               <Skillelinje />
               <Heading2>Refusjon</Heading2>
-              <BodyLong>
-                I siste inntektsmelding
-                {gammeltSkjaeringstidspunkt && <> ({formatDate(gammeltSkjaeringstidspunkt)})</>} hadde dere følgende
-                refusjonskrav:
-              </BodyLong>
+              <BodyLong>I siste inntektsmelding hadde dere følgende refusjonskrav:</BodyLong>
               <H3Label unPadded topPadded>
                 Refusjon til arbeidsgiver etter arbeidsgiverperiode
               </H3Label>
@@ -543,22 +546,26 @@ const Endring: NextPage = () => {
                   )}
                 </>
               )}
-              <RadioGroup
-                legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
-                  forsteFravaersdag
-                )} (start av nytt sykefravær)?`}
-                onChange={handleChangeEndringRefusjon}
-                className={lokalStyles.fancyRadioGruppe}
-                defaultValue={endringerAvRefusjon}
-                id='endring-refusjon'
-              >
-                <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
-                  Ja
-                </Radio>
-                <Radio value='Nei' className={classNameNeiEndringAvRefusjon}>
-                  Nei
-                </Radio>
-              </RadioGroup>
+              {!endringerAvRefusjon === 'Ja' && (
+                <>
+                  <RadioGroup
+                    legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
+                      forsteFravaersdag
+                    )} (start av nytt sykefravær)?`}
+                    onChange={handleChangeEndringRefusjon}
+                    className={lokalStyles.fancyRadioGruppe}
+                    defaultValue={endringerAvRefusjon}
+                    id='endring-refusjon'
+                  >
+                    <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
+                      Ja
+                    </Radio>
+                    <Radio value='Nei' className={classNameNeiEndringAvRefusjon}>
+                      Nei
+                    </Radio>
+                  </RadioGroup>
+                </>
+              )}
               {endringerAvRefusjon === 'Ja' && (
                 <>
                   <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>
