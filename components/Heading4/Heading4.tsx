@@ -1,16 +1,18 @@
-import { Heading } from '@navikt/ds-react';
-import { ReactNode } from 'react';
+import { Heading, HeadingProps } from '@navikt/ds-react';
 import styles from './Heading4.module.css';
+import classNames from 'classnames/bind';
 
-interface Heading4Props {
-  children: ReactNode;
-  className?: any;
+interface Heading4Props extends Partial<HeadingProps> {
+  topPadded?: boolean;
 }
 
+const cx = classNames.bind(styles);
+
 export default function Heading4(props: Heading4Props) {
-  const classes = !!props.className ? `${styles.heading} ${props.className}` : styles.heading;
+  const className = cx('heading', props.className, { heading_top: props.topPadded });
+
   return (
-    <Heading size='medium' level='4' className={classes}>
+    <Heading size='medium' level='4' className={className}>
       {props.children}
     </Heading>
   );

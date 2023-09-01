@@ -12,19 +12,23 @@ import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbeta
 export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
   lonnISykefravaeret?: LonnISykefravaeret;
+  opprinneligLonnISykefravaeret?: LonnISykefravaeret;
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
+  opprinneligRefusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   harRefusjonEndringer?: YesNo;
   refusjonEndringer?: Array<EndringsBelop>;
+  opprinneligRefusjonEndringer?: Array<EndringsBelop>;
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) => void;
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
   begrunnelseRedusertUtbetaling: (begrunnelse: string) => void;
-  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string) => void;
-  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string) => void;
+  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | undefined) => void;
+  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string | undefined) => void;
   refusjonskravetOpphoererStatus: (status: YesNo) => void;
   refusjonskravetOpphoererDato: (opphoersdato?: Date) => void;
   initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) => void;
   oppdaterRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
-  setHarRefusjonEndringer: (harEndringer: YesNo) => void;
+  initRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
+  setHarRefusjonEndringer: (harEndringer?: YesNo) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
 }
 
@@ -50,6 +54,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     ),
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => {
     const bruttoinntekt = get().bruttoinntekt;
+
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
@@ -86,7 +91,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string) =>
+  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | undefined) =>
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
@@ -103,7 +108,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string) =>
+  beloepUtbetaltUnderArbeidsgiverperioden: (beloep: string | undefined) =>
     set(
       produce((state) => {
         if (!state.fullLonnIArbeidsgiverPerioden) {
@@ -131,9 +136,6 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         if (state.refusjonskravetOpphoerer) {
           state.refusjonskravetOpphoerer.status = status;
         } else {
-          if (!state.refusjonskravetOpphoerer) {
-            state.refusjonskravetOpphoerer = {};
-          }
           state.refusjonskravetOpphoerer = {
             status: status
           };
@@ -163,14 +165,34 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         state.refusjonEndringer = endringer;
-        endringer.forEach((endring, index) => {
-          if (endring.belop && endring.belop >= 0) {
-            slettFeilmeldingFraState(state, 'lus-utbetaling-endring-belop-' + index);
-          }
-          if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
-            slettFeilmeldingFraState(state, 'lus-utbetaling-endring-dato-' + index);
-          }
-        });
+        if (endringer?.length > 0) {
+          endringer.forEach((endring, index) => {
+            if (endring.belop && endring.belop >= 0) {
+              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-belop-' + index);
+            }
+            if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
+              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-dato-' + index);
+            }
+          });
+        }
+        return state;
+      })
+    ),
+  initRefusjonEndringer: (endringer: Array<EndringsBelop>) =>
+    set(
+      produce((state) => {
+        state.refusjonEndringer = endringer;
+        state.opprinneligRefusjonEndringer = endringer;
+        if (endringer?.length > 0) {
+          endringer.forEach((endring, index) => {
+            if (endring.belop && endring.belop >= 0) {
+              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-belop-' + index);
+            }
+            if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
+              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-dato-' + index);
+            }
+          });
+        }
         return state;
       })
     ),
@@ -197,7 +219,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         state.lonnISykefravaeret = lonnISykefravaeret;
-
+        state.opprinneligLonnISykefravaeret = lonnISykefravaeret;
         return state;
       })
     )

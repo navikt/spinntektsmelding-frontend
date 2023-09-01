@@ -1,4 +1,4 @@
-import MottattData from 'state/MottattData';
+import MottattData from '../state/MottattData';
 import testFnr from './testFnr';
 
 const formData: Partial<MottattData> = {
@@ -16,11 +16,11 @@ const formData: Partial<MottattData> = {
   fravaersperioder: [
     {
       fom: '2023-02-20',
-      tom: '2023-03-03'
+      tom: '2023-03-04'
     },
     {
-      fom: '2023-03-05',
-      tom: '2023-03-06'
+      fom: '2023-03-15',
+      tom: '2023-03-16'
     }
   ],
   egenmeldingsperioder: [
@@ -40,26 +40,39 @@ const formData: Partial<MottattData> = {
       inntekt: 88000
     },
     {
-      maaned: '2022-11', // yyyy-MM
+      maaned: '2023-02', // yyyy-MM
       inntekt: 88000
     }
   ],
   innsenderNavn: 'Test Testesen',
-  innsenderTelefonNr: '12345678',
+  telefonnummer: '12345678',
   behandlingsperiode: null,
   behandlingsdager: [],
   forespurtData: {
-    arbeidsgiverperiode: { paakrevd: false },
+    arbeidsgiverperiode: { paakrevd: true },
     inntekt: {
       paakrevd: true,
       forslag: {
         type: 'ForslagInntektGrunnlag',
-        beregningsmaaneder: ['2023-03', '2023-04', '2023-05']
+        beregningsmaaneder: ['2023-03', '2023-04', '2023-05'],
+        forrigeInntekt: {
+          skjæringstidspunkt: '2022-12-24',
+          kilde: 'INNTEKTSMELDING',
+          beløp: 77500.0
+        }
       }
     },
     refusjon: {
       paakrevd: true,
-      forslag: { perioder: [], opphoersdato: null }
+      forslag: {
+        perioder: [
+          { fom: '2023-02-01', tom: '2023-03-01', beløp: 66000 },
+          { fom: '2023-03-02', tom: '2023-04-01', beløp: 55000 },
+          { fom: '2023-05-02', tom: '2023-05-02', beløp: 44000 }
+        ],
+        opphoersdato: null
+        //refundert: 76000
+      }
     }
   }
   // feilReport: {

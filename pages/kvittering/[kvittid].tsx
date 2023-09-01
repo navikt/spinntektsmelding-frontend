@@ -1,5 +1,6 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
+
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import PageContent from '../../components/PageContent/PageContent';
 
@@ -8,7 +9,7 @@ import styles from '../../styles/Home.module.css';
 
 import Heading2 from '../../components/Heading2/Heading2';
 import Heading3 from '../../components/Heading3/Heading3';
-import { BodyLong, BodyShort } from '@navikt/ds-react';
+import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
 import Person from '../../components/Person/Person';
 
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
@@ -34,6 +35,8 @@ import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringA
 import { isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from 'state/state';
+import skjemaVariant from '../../config/skjemavariant';
+import classNames from 'classnames/bind';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -73,11 +76,16 @@ const Kvittering: NextPage = () => {
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
   const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
-  const slettKvitteringInnsendt = useBoundStore((state) => state.slettKvitteringInnsendt);
+  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
   const clickEndre = () => {
-    slettKvitteringInnsendt();
-    router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+    const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
+
+    if (paakrevdeOpplysningstyper.length === 3) {
+      router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+    } else {
+      router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });
+    }
   };
 
   const harAktiveEgenmeldingsperioder = () => {
@@ -85,6 +93,8 @@ const Kvittering: NextPage = () => {
       ? egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined
       : undefined;
   };
+
+  const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
   const innsendingstidspunkt = kvitteringInnsendt && isValid(kvitteringInnsendt) ? kvitteringInnsendt : now;
 
@@ -97,6 +107,15 @@ const Kvittering: NextPage = () => {
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
+
+  const visNaturalytelser = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+
+  const cx = classNames.bind(lokalStyles);
+  const classNameHeadingSykmelding = cx({
+    sykfravaerstyper: paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode)
+  });
 
   return (
     <div className={styles.container}>
@@ -114,24 +133,22 @@ const Kvittering: NextPage = () => {
           <div className={lokalStyles.fravaerswrapperwrapper}>
             <div className={lokalStyles.fravaersperiode}>
               <Heading2>Fraværsperiode</Heading2>
-              <div className={lokalStyles.ytterstefravaerwrapper}>
-                {harAktiveEgenmeldingsperioder() && (
+              {harAktiveEgenmeldingsperioder() && (
+                <div className={lokalStyles.ytterstefravaerwrapper}>
                   <div className={lokalStyles.ytrefravaerswrapper}>
                     <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
-                    {egenmeldingsperioder &&
-                      egenmeldingsperioder.map((periode) => (
-                        <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'egenmelding' + periode.id} />
-                      ))}
+                    {egenmeldingsperioder?.map((periode) => (
+                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'egenmelding' + periode.id} />
+                    ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
               <div className={lokalStyles.ytterstefravaerwrapper}>
                 <div className={lokalStyles.ytrefravaerswrapper}>
-                  <Heading3 className={lokalStyles.sykfravaerstyper}>Sykmelding</Heading3>
-                  {fravaersperioder &&
-                    fravaersperioder.map((periode) => (
-                      <PeriodeFraTil fom={periode.fom!} tom={periode.tom!} key={'fperiode' + periode.id} />
-                    ))}
+                  <Heading3 className={classNameHeadingSykmelding}>Sykmelding</Heading3>
+                  {fravaersperioder?.map((periode) => (
+                    <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'fperiode' + periode.id} />
+                  ))}
                 </div>
               </div>
             </div>
@@ -142,23 +159,26 @@ const Kvittering: NextPage = () => {
                   <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                   <div className={lokalStyles.fravaerwrapper}>
                     <div className={lokalStyles.fravaertid}>Dato</div>
-                    <div>{formatDate(bestemmendeFravaersdag)} </div>
+                    <div>
+                      {bestemmendeFravaersdag ? formatDate(bestemmendeFravaersdag) : <Skeleton variant='text' />}{' '}
+                    </div>
                   </div>
                 </div>
-                <div className={lokalStyles.arbeidsgiverperiode}>
-                  <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
-                  {!ingenArbeidsgiverperioder && (
-                    <BodyLong>
-                      Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
-                      Deretter betaler Nav lønn til den syke eller refunderer bedriften.
-                    </BodyLong>
-                  )}
-                  {ingenArbeidsgiverperioder && <BodyLong>Det er ikke angitt arbeidsgiverperiode.</BodyLong>}
-                  {arbeidsgiverperioder &&
-                    arbeidsgiverperioder.map((periode) => (
+                {visArbeidsgiverperiode && (
+                  <div className={lokalStyles.arbeidsgiverperiode}>
+                    <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
+                    {!ingenArbeidsgiverperioder && (
+                      <BodyLong>
+                        Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
+                        Deretter betaler Nav lønn til den syke eller refunderer bedriften.
+                      </BodyLong>
+                    )}
+                    {ingenArbeidsgiverperioder && <BodyLong>Det er ikke angitt arbeidsgiverperiode.</BodyLong>}
+                    {arbeidsgiverperioder?.map((periode) => (
                       <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
                     ))}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -187,10 +207,14 @@ const Kvittering: NextPage = () => {
           )}
           <Skillelinje />
           <Heading2>Refusjon</Heading2>
-          <div className={lokalStyles.uthevet}>
-            Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
-          </div>
-          <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
+          {visFullLonnIArbeidsgiverperioden && (
+            <>
+              <div className={lokalStyles.uthevet}>
+                Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
+              </div>
+              <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden!} />
+            </>
+          )}
           <div className={lokalStyles.uthevet}>
             Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?
           </div>
@@ -200,9 +224,13 @@ const Kvittering: NextPage = () => {
             harRefusjonEndringer={harRefusjonEndringer}
             refusjonEndringer={refusjonEndringer}
           />
-          <Skillelinje />
-          <Heading2>Eventuelle naturalytelser</Heading2>
-          <BortfallNaturalytelser ytelser={naturalytelser!} />
+          {visNaturalytelser && (
+            <>
+              <Skillelinje />
+              <Heading2>Eventuelle naturalytelser</Heading2>
+              <BortfallNaturalytelser ytelser={naturalytelser!} />
+            </>
+          )}
           <Skillelinje />
           <BodyShort>
             Kvittering - innsendt inntektsmelding - {formatDate(innsendingstidspunkt)} kl.{' '}

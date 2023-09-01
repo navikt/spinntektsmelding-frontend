@@ -23,3 +23,31 @@
   flex-direction: column;
   margin        : 1rem 0 1rem;
 }
+
+.fancyRadioGruppe:global(.navds-radio-group) {
+  margin-top: 1rem;
+}
+
+.refusjonswrapper {
+  display       : flex;
+  flex-direction: row;
+
+}
+
+.refusjonswrapper_child {
+  flex: 1
+}
+
+.belopperiode {
+  display       : flex;
+  flex-direction: row;
+  gap           : 2rem;
+}
+
+.leggtilbutton {
+  margin-top: 1rem;
+}
+
+.table_header {
+  padding-right: 1rem;
+}

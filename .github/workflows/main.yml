@@ -13,7 +13,6 @@ env:
   NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
   NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 jobs:
-
   # Bygg:
   #   runs-on: ubuntu-latest
   #   steps:
@@ -32,7 +31,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --frozen-lockfile
       - run: yarn test
       - name: SonarCloud Scan
@@ -48,10 +47,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --frozen-lockfile
       - run: yarn lint
-
 
   # Snyk:
   #   runs-on: ubuntu-latest
@@ -63,7 +61,7 @@ jobs:
   #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   Docker:
-    needs: [Kodekvalitet,Eslint]
+    needs: [Kodekvalitet, Eslint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -101,6 +99,8 @@ jobs:
   Deploy:
     needs: [Docker]
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - uses: actions/checkout@v3
       - uses: nais/deploy/actions/deploy@v1

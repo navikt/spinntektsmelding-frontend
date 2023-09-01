@@ -3,6 +3,7 @@ import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { FeilReportElement } from './useStateInit';
 import { Organisasjon } from '@navikt/bedriftsmeny';
+import validerTelefon from 'validators/validerTelefon';
 
 export interface PersonState {
   navn?: string;
@@ -32,7 +33,7 @@ export interface PersonState {
   ) => void;
 }
 
-const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set) => ({
+const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set, get) => ({
   navn: undefined,
   identitetsnummer: undefined,
   orgnrUnderenhet: undefined,
@@ -69,6 +70,13 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set) =
     );
   },
   setInnsenderTelefon: (innsenderTelefonNr: string) => {
+    const slettFeilmelding = get().slettFeilmelding;
+
+    const feilmeldinger = validerTelefon(innsenderTelefonNr);
+    if (feilmeldinger.length === 0) {
+      slettFeilmelding('innsender-telefon');
+    }
+
     set(
       produce((state: PersonState) => {
         state.innsenderTelefonNr = innsenderTelefonNr;

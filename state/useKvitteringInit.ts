@@ -1,5 +1,5 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattNaturalytelse } from './MottattData';
+import { MottattNaturalytelse, TDateISODate } from './MottattData';
 import useBoundStore from './useBoundStore';
 import {
   AArsakType,
@@ -12,6 +12,8 @@ import {
 
 import { Periode } from './state';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import skjemaVariant from '../config/skjemavariant';
+import { nanoid } from 'nanoid';
 
 export interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
@@ -53,10 +55,22 @@ export default function useKvitteringInit() {
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
   const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
+  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
+  const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
+  const setTidligereInntektsdata = useBoundStore((state) => state.setTidligereInntektsdata);
+  const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
     if (jsonData.egenmeldingsperioder) initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
+
+    const paakrevdeOpplysninger = jsonData.forespurtData;
+
+    if (paakrevdeOpplysninger) {
+      setPaakrevdeOpplysninger(paakrevdeOpplysninger);
+    }
+
+    setInngangFraKvittering();
 
     initPerson(
       jsonData.fulltNavn,
@@ -64,7 +78,7 @@ export default function useKvitteringInit() {
       jsonData.orgnrUnderenhet,
       jsonData.virksomhetNavn,
       jsonData.innsenderNavn,
-      jsonData.innsenderTelefonNr
+      jsonData.telefonnummer
     );
 
     setSlug(slug);
@@ -88,8 +102,8 @@ export default function useKvitteringInit() {
 
       switch (aarsak.typpe) {
         case begrunnelseEndringBruttoinntekt.Tariffendring: {
-          setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
-          setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
+          if ('gjelderFra' in aarsak) setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
+          if ('bleKjent' in aarsak) setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
           break;
         }
 
@@ -102,16 +116,19 @@ export default function useKvitteringInit() {
           break;
         }
         case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
-          setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.Permisjon: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom)
-          }));
-          setPermisjonPeriode(perioder);
+          if ('liste' in aarsak) {
+            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
+              fom: parseIsoDate(periode.fom),
+              tom: parseIsoDate(periode.tom),
+              id: nanoid()
+            }));
+            setPermisjonPeriode(perioder);
+          }
           break;
         }
 
@@ -149,20 +166,24 @@ export default function useKvitteringInit() {
       status: jsonData.refusjon.utbetalerHeleEllerDeler ? 'Ja' : 'Nei',
       belop: jsonData.refusjon.refusjonPrMnd
     });
+    const paakrevdeData = hentPaakrevdOpplysningstyper();
+    if (paakrevdeData.includes(skjemaVariant.arbeidsgiverperiode) && jsonData.fullLønnIArbeidsgiverPerioden) {
+      initFullLonnIArbeidsgiverPerioden({
+        status: jsonData.fullLønnIArbeidsgiverPerioden.utbetalerFullLønn ? 'Ja' : 'Nei',
+        begrunnelse: jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
+          ? jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
+          : undefined,
+        utbetalt: jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
+          ? jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
+          : undefined
+      });
+    }
 
-    initFullLonnIArbeidsgiverPerioden({
-      status: jsonData.fullLønnIArbeidsgiverPerioden.utbetalerFullLønn ? 'Ja' : 'Nei',
-      begrunnelse: jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
-        ? jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
-        : undefined,
-      utbetalt: jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
-        ? jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
-        : undefined
-    });
-
-    setHarRefusjonEndringer(
-      jsonData.refusjon.refusjonEndringer && jsonData.refusjon.refusjonEndringer.length > 0 ? 'Ja' : 'Nei'
-    );
+    if (jsonData.refusjon.utbetalerHeleEllerDeler) {
+      setHarRefusjonEndringer(
+        jsonData.refusjon.refusjonEndringer && jsonData.refusjon.refusjonEndringer.length > 0 ? 'Ja' : 'Nei'
+      );
+    }
 
     if (jsonData.refusjon.refusjonEndringer) {
       const endringer = jsonData.refusjon.refusjonEndringer.map((endring) => ({
@@ -175,7 +196,7 @@ export default function useKvitteringInit() {
     if (jsonData.refusjon.refusjonOpphører) {
       refusjonskravetOpphoererDato(parseIsoDate(jsonData.refusjon.refusjonOpphører));
       refusjonskravetOpphoererStatus('Ja');
-    } else {
+    } else if (jsonData.refusjon.utbetalerHeleEllerDeler) {
       refusjonskravetOpphoererStatus('Nei');
     }
 
@@ -196,5 +217,11 @@ export default function useKvitteringInit() {
     if (jsonData.tidspunkt) {
       setKvitteringInnsendt(jsonData.tidspunkt);
     }
+
+    setTidligereInntektsdata({
+      beløp: beregnetInntekt,
+      skjæringstidspunkt: jsonData.bestemmendeFraværsdag as TDateISODate,
+      kilde: 'INNTEKTSMELDING'
+    });
   };
 }

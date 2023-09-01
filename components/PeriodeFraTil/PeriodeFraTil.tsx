@@ -3,8 +3,8 @@ import formatDate from '../../utils/formatDate';
 import lokalStyles from '../../pages/kvittering/Kvittering.module.css';
 
 interface PeriodeFraTilProps {
-  fom: Date;
-  tom: Date;
+  fom?: Date;
+  tom?: Date;
 }
 
 export default function PeriodeFraTil(props: PeriodeFraTilProps) {
@@ -13,11 +13,11 @@ export default function PeriodeFraTil(props: PeriodeFraTilProps) {
       <>
         <div className={lokalStyles.fravaerwrapper}>
           <div className={lokalStyles.fravaertid}>Fra</div>
-          <div>{formatDate(props.fom)}</div>
+          <div>{props.fom ? formatDate(props.fom) : '&nbsp;'}</div>
         </div>
         <div className={lokalStyles.fravaerwrapper}>
           <div className={lokalStyles.fravaertid}>Til</div>
-          <div>{formatDate(props.tom)}</div>
+          <div>{props.tom ? formatDate(props.tom) : '&nbsp;'}</div>
         </div>
       </>
     );

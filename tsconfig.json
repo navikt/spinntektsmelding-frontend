@@ -18,5 +18,5 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "state/mappe", "__mocks__/server.js", "__mocks__/handlers.js", "./__tests__/setup.ts"],
   "exclude": ["node_modules", "cypress.config.ts"],
-  "types": ["node", "jest", "@testing-library/jest-dom"]
+  "types": ["node", "jest", "@testing-library/jest-dom", "vitest/globals", "cypress"]
 }

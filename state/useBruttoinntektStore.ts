@@ -38,7 +38,7 @@ export interface BruttoinntektState {
   henterData: boolean;
   feilHentingAvInntektsdata?: Array<FeilReportElement>;
   setNyMaanedsinntekt: (belop: string) => void;
-  setNyMaanedsinntektBlanktSkjema: (belop: string) => void;
+  setNyMaanedsinntektBlanktSkjema: (belop: string | number) => void;
   setEndringsaarsak: (aarsak: string) => void;
   setFeriePeriode: (periode: Array<Periode> | undefined) => void;
   setLonnsendringDato: (endringsdato?: Date) => void;
@@ -58,6 +58,7 @@ export interface BruttoinntektState {
     feilHentingAvInntektsdata?: Array<FeilReportElement>
   ) => void;
   rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
+  slettBruttoinntekt: () => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
@@ -245,12 +246,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         }
         state.bruttoinntekt = {
           ...state.bruttoInntekt,
-          bruttoInntekt: snittInntekter,
+          bruttoInntekt: snittInntekter || 0,
           manueltKorrigert: false
         };
         state.opprinneligbruttoinntekt = {
           ...state.opprinneligbruttoinntekt,
-          bruttoInntekt: snittInntekter,
+          bruttoInntekt: snittInntekter || 0,
           manueltKorrigert: false
         };
 
@@ -335,6 +336,19 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         if (tidligereInntekt) {
           state.tidligereInntekt = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
         }
+
+        return state;
+      })
+    );
+  },
+  slettBruttoinntekt: () => {
+    set(
+      produce((state) => {
+        state.bruttoinntekt = {
+          bruttoInntekt: undefined,
+          manueltKorrigert: false,
+          endringsaarsak: undefined
+        };
 
         return state;
       })

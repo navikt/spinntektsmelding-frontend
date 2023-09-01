@@ -1,0 +1,38 @@
+{
+  "orgnrUnderenhet": "810007842",
+  "identitetsnummer": "16507927681",
+  "fulltNavn": "LEKKER SKOGFIOL",
+  "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "behandlingsdager": [],
+  "egenmeldingsperioder": [],
+  "arbeidsgiverperioder": [],
+  "bestemmendeFraværsdag": "2023-01-24",
+  "fraværsperioder": [
+    {
+      "fom": "2023-01-02",
+      "tom": "2023-01-20"
+    },
+    {
+      "fom": "2023-01-24",
+      "tom": "2023-01-29"
+    }
+  ],
+  "inntekt": {
+    "bekreftet": true,
+    "beregnetInntekt": 45000,
+    "endringÅrsak": null,
+    "manueltKorrigert": false
+  },
+  "fullLønnIArbeidsgiverPerioden": null,
+  "refusjon": {
+    "utbetalerHeleEllerDeler": false,
+    "refusjonPrMnd": null,
+    "refusjonOpphører": null,
+    "refusjonEndringer": null
+  },
+  "naturalytelser": null,
+  "årsakInnsending": "Ny",
+  "bekreftOpplysninger": true,
+  "tidspunkt": "2023-08-28T11:11:16.176683268+02:00",
+  "forespurtData": ["inntekt", "refusjon"]
+}

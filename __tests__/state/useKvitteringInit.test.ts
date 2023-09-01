@@ -12,7 +12,7 @@ import permisjonKvittering from '../../mockdata/kvittering-Permisjon.json';
 import permitteringKvittering from '../../mockdata/kvittering-Permittering.json';
 import nyStillingKvittering from '../../mockdata/kvittering-NyStilling.json';
 import nyStillingsprosentKvittering from '../../mockdata/kvittering-NyStillingsprosent.json';
-import inntektData from '../../mockdata/inntektData';
+import inntektData from '../../mockdata/inntektData.json';
 import parseIsoDate from '../../utils/parseIsoDate';
 
 vi.mock('nanoid');
@@ -21,14 +21,17 @@ const initialState = useBoundStore.getState();
 
 function fetchMock(url, suffix = '') {
   return new Promise((resolve) =>
-    setTimeout(() => {
-      resolve({
-        json: () =>
-          Promise.resolve({
-            data: inntektData
-          })
-      });
-    }, 200 + Math.random() * 300)
+    setTimeout(
+      () => {
+        resolve({
+          json: () =>
+            Promise.resolve({
+              data: inntektData
+            })
+        });
+      },
+      200 + Math.random() * 300
+    )
   );
 }
 
@@ -160,7 +163,8 @@ describe('useKvitteringInit', () => {
     expect(result.current.permisjon).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
-        tom: parseIsoDate('2023-03-31')
+        tom: parseIsoDate('2023-03-31'),
+        id: 'uuid'
       }
     ]);
   });

@@ -8,9 +8,10 @@ import Skeleton from 'react-loading-skeleton';
 
 interface PersonProps {
   erKvittering?: boolean;
+  erDelvisInnsending?: boolean;
 }
 
-export default function Person({ erKvittering }: PersonProps) {
+export default function Person({ erKvittering, erDelvisInnsending }: PersonProps) {
   const [
     navn,
     identitetsnummer,
@@ -20,7 +21,8 @@ export default function Person({ erKvittering }: PersonProps) {
     innsenderNavn,
     setInnsenderTelefon,
     feilHentingAvPersondata,
-    feilHentingAvArbeidsgiverdata
+    feilHentingAvArbeidsgiverdata,
+    visFeilmeldingsTekst
   ] = useBoundStore(
     (state) => [
       state.navn,
@@ -31,7 +33,8 @@ export default function Person({ erKvittering }: PersonProps) {
       state.innsenderNavn,
       state.setInnsenderTelefon,
       state.feilHentingAvPersondata,
-      state.feilHentingAvArbeidsgiverdata
+      state.feilHentingAvArbeidsgiverdata,
+      state.visFeilmeldingsTekst
     ],
     shallow
   );
@@ -62,6 +65,12 @@ export default function Person({ erKvittering }: PersonProps) {
           {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
             <Alert variant='info'>{feilmeldingstekst}</Alert>
           )}
+        </p>
+      )}
+      {erDelvisInnsending && (
+        <p>
+          Da dette sykefraværet er innenfor samme arbeidsgiverperiode som forrige sykefravær trenger vi bare informasjon
+          om inntekt og refusjon.
         </p>
       )}
       <div className={lokalStyles.personinfowrapper}>
@@ -96,37 +105,37 @@ export default function Person({ erKvittering }: PersonProps) {
               <TextLabel>Org.nr. for underenhet</TextLabel>
               <div data-cy='orgnummer'>{orgnrUnderenhet || <Skeleton />}</div>
             </div>
-            {!virksomhetsnavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
+            {!innsenderNavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
             {innsenderNavn && (
-              <>
-                <div className={lokalStyles.innsendernavnwrapper}>
-                  <TextLabel>Innsender</TextLabel>
-                  <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                    {innsenderNavn}
-                  </div>
+              <div className={lokalStyles.innsendernavnwrapper}>
+                <TextLabel>Innsender</TextLabel>
+                <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
+                  {innsenderNavn}
                 </div>
-                <div className={lokalStyles.telefonnrwrapper}>
-                  {erKvittering && (
-                    <>
-                      <TextLabel>Telefon innsender</TextLabel>
-                      <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
-                        {innsenderTelefonNr}
-                      </div>
-                    </>
-                  )}
-                  {!erKvittering && (
-                    <TextField
-                      label='Telefon innsender'
-                      type='tel'
-                      autoComplete='tel'
-                      defaultValue={innsenderTelefonNr}
-                      onChange={changeTlfNr}
-                      data-cy='innsendertlf'
-                    />
-                  )}
-                </div>
-              </>
+              </div>
             )}
+            <div className={lokalStyles.telefonnrwrapper}>
+              {erKvittering && (
+                <>
+                  <TextLabel>Telefon innsender</TextLabel>
+                  <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
+                    {innsenderTelefonNr}
+                  </div>
+                </>
+              )}
+              {!erKvittering && (
+                <TextField
+                  label='Telefon til innsender'
+                  type='tel'
+                  autoComplete='tel'
+                  defaultValue={innsenderTelefonNr}
+                  onChange={changeTlfNr}
+                  data-cy='innsendertlf'
+                  error={visFeilmeldingsTekst('telefon')}
+                  id='telefon'
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

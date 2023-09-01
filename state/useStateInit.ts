@@ -36,6 +36,7 @@ export default function useStateInit() {
   const initPerson = useBoundStore((state) => state.initPerson);
   const initBehandlingsdager = useBoundStore((state) => state.initBehandlingsdager);
   const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
+  const initForespurtData = useBoundStore((state) => state.initForespurtData);
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
 
@@ -55,7 +56,7 @@ export default function useStateInit() {
       jsonData.orgnrUnderenhet,
       jsonData.orgNavn,
       jsonData.innsenderNavn,
-      jsonData.innsenderTelefonNr,
+      jsonData.telefonnummer,
       feilVedLasting
     );
     if (jsonData.behandlingsperiode) {
@@ -82,6 +83,9 @@ export default function useStateInit() {
         parseIsoDate(bestemmendeFravaersdag),
         feilVedLasting.inntekt
       );
+    }
+    if (jsonData.forespurtData) {
+      initForespurtData(jsonData.forespurtData);
     }
   };
 }

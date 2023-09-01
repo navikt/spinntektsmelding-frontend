@@ -1,4 +1,4 @@
-import { Alert, BodyLong, BodyShort, TextField } from '@navikt/ds-react';
+import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
 import { ChangeEvent, useCallback, useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
@@ -7,18 +7,13 @@ import formatCurrency from '../../utils/formatCurrency';
 import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 import TidligereInntekt from './TidligereInntekt';
-import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonEndre from '../ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import TariffendringDato from './TariffendringDato';
-import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
-import PeriodeListevelger from './PeriodeListevelger';
-import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
-import Datovelger from '../Datovelger';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import LesMer from '../LesMer';
 import useAmplitude from '../../utils/useAmplitude';
 import Skeleton from 'react-loading-skeleton';
+import Aarsaksvelger from './Aarsaksvelger';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -29,13 +24,9 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
-  const [setEndringsaarsak, endringsaarsak] = useBoundStore((state) => [
-    state.setEndringsaarsak,
-    state.bruttoinntekt.endringsaarsak
-  ]);
+  const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
-  const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
   const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
   const ferie = useBoundStore((state) => state.ferie);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
@@ -92,9 +83,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     [setEndringsaarsak, logEvent]
   );
 
-  const setNyMaanedsinntektBlanktSkjemaHandler = (event: ChangeEvent<HTMLInputElement>) =>
-    setNyMaanedsinntektBlanktSkjema(event.target.value);
-
   const setEndreMaanedsinntektHandler = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -122,6 +110,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
 
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
+
+  const erFeriemaaneder = sjekkOmFerieMaaneder(tidligereinntekt);
 
   if (tidligereinntekt && tidligereinntekt.length > 0) {
     return (
@@ -151,6 +141,13 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
         <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
 
         {!henterData && <TidligereInntekt tidligereinntekt={tidligereinntekt} />}
+        {erFeriemaaneder && (
+          <Alert variant='warning' className={lokalStyles.feriealert}>
+            Lønnsopplysningene kan innholde måneder der det er utbetalt feriepenger. Hvis det i beregningsperioden er
+            utbetalt feriepenger i stedet for lønn, eller det er avviklet ferie uten lønn, skal beregningsgrunnlaget
+            settes lik den ordinære lønnen personen ville hatt hvis det ikke hadde blitt avviklet ferie.
+          </Alert>
+        )}
         {henterData && <Skeleton count={3} />}
         {!endringAvBelop && (
           <TextLabel className={lokalStyles.tbmargin}>
@@ -165,145 +162,33 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
             </TextLabel>
           )}
           {endringAvBelop && (
-            <div className={lokalStyles.endremaaanedsinntektwrapper}>
-              <div className={lokalStyles.endremaaanedsinntekt}>
-                <TextField
-                  label={`Månedsinntekt ${formatDate(bestemmendeFravaersdag)}`}
-                  onChange={changeMaanedsintektHandler}
-                  defaultValue={formatCurrency(
-                    bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
-                  )}
-                  id='inntekt.beregnetInntekt'
-                  error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
-                  className={lokalStyles.bruttoinntektendringsbelop}
-                  data-cy='inntekt-belop-input'
-                />
-                <div>
-                  <SelectEndringBruttoinntekt
-                    onChangeBegrunnelse={changeBegrunnelseHandler}
-                    error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
-                    id='bruttoinntekt-endringsaarsak'
-                    nyInnsending={nyInnsending}
-                    defaultValue={endringsaarsak}
-                  />
-                </div>
-                <div>
-                  <ButtonTilbakestill
-                    className={lokalStyles.kontrollerknapp}
-                    onClick={clickTilbakestillMaanedsinntekt}
-                  />
-                </div>
-              </div>
-              {endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
-                <div className={lokalStyles.endremaaanedsinntekt}>
-                  <TariffendringDato
-                    changeTariffEndretDato={setTariffEndringsdato}
-                    changeTariffKjentDato={setTariffKjentdato}
-                    defaultEndringsdato={tariffendringsdato}
-                    defaultKjentDato={tariffkjentdato}
-                    visFeilmeldingsTekst={visFeilmeldingsTekst}
-                    defaultMonth={bestemmendeFravaersdag}
-                  />
-                </div>
-              )}
-              {endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
-                <div className={lokalStyles.endreperiodeliste}>
-                  <PeriodeListevelger
-                    onRangeListChange={setFeriePeriode}
-                    defaultRange={ferie}
-                    fomTekst='Fra'
-                    tomTekst='Til'
-                    fomIdBase='bruttoinntekt-ful-fom'
-                    tomIdBase='bruttoinntekt-ful-tom'
-                    visFeilmeldingsTekst={visFeilmeldingsTekst}
-                    defaultMonth={bestemmendeFravaersdag}
-                    toDate={bestemmendeFravaersdag}
-                  />
-                </div>
-              )}
-              {endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
-                <div className={lokalStyles.endremaaanedsinntekt}>
-                  <Datovelger
-                    onDateChange={setLonnsendringDato}
-                    label='Lønnsendring gjelder fra'
-                    id='bruttoinntekt-lonnsendring-fom'
-                    defaultSelected={lonnsendringsdato}
-                    toDate={bestemmendeFravaersdag}
-                    error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
-                    defaultMonth={bestemmendeFravaersdag}
-                  />
-                </div>
-              )}
-              {endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
-                <div className={lokalStyles.endreperiodeliste}>
-                  <PeriodeListevelger
-                    onRangeListChange={setPermisjonPeriode}
-                    defaultRange={permisjon}
-                    fomTekst='Fra'
-                    tomTekst='Til'
-                    fomIdBase='bruttoinntekt-permisjon-fom'
-                    tomIdBase='bruttoinntekt-permisjon-tom'
-                    defaultMonth={bestemmendeFravaersdag}
-                    toDate={bestemmendeFravaersdag}
-                    visFeilmeldingsTekst={visFeilmeldingsTekst}
-                  />
-                </div>
-              )}
-              {endringsaarsak === begrunnelseEndringBruttoinntekt.Permittering && (
-                <div className={lokalStyles.endreperiodeliste}>
-                  <PeriodeListevelger
-                    onRangeListChange={setPermitteringPeriode}
-                    defaultRange={permittering}
-                    fomTekst='Fra'
-                    tomTekst='Til'
-                    fomIdBase='bruttoinntekt-permittering-fom'
-                    tomIdBase='bruttoinntekt-permittering-tom'
-                    defaultMonth={bestemmendeFravaersdag}
-                    toDate={bestemmendeFravaersdag}
-                    visFeilmeldingsTekst={visFeilmeldingsTekst}
-                  />
-                </div>
-              )}
-              {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
-                <div className={lokalStyles.endremaaanedsinntekt}>
-                  <Datovelger
-                    onDateChange={setNyStillingDato}
-                    label='Ny stilling fra'
-                    id='bruttoinntekt-nystilling-fom'
-                    defaultSelected={nystillingdato}
-                    toDate={bestemmendeFravaersdag}
-                    defaultMonth={bestemmendeFravaersdag}
-                  />
-                </div>
-              )}
-              {endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
-                <div className={lokalStyles.endremaaanedsinntekt}>
-                  <Datovelger
-                    onDateChange={setNyStillingsprosentDato}
-                    label='Ny stillingsprosent fra'
-                    id='bruttoinntekt-nystillingsprosent-fom'
-                    defaultSelected={nystillingsprosentdato}
-                    toDate={bestemmendeFravaersdag}
-                    defaultMonth={bestemmendeFravaersdag}
-                  />
-                </div>
-              )}
-              {endringsaarsak === begrunnelseEndringBruttoinntekt.Sykefravaer && (
-                <div className={lokalStyles.endreperiodeliste}>
-                  <PeriodeListevelger
-                    onRangeListChange={setSykefravaerPeriode}
-                    defaultRange={sykefravaerperioder}
-                    fomTekst='Fra'
-                    tomTekst='Til'
-                    fomIdBase='bruttoinntekt-sykefravaerperioder-fom'
-                    tomIdBase='bruttoinntekt-sykefravaerperioder-tom'
-                    defaultMonth={bestemmendeFravaersdag}
-                    toDate={bestemmendeFravaersdag}
-                    visFeilmeldingsTekst={visFeilmeldingsTekst}
-                  />
-                </div>
-              )}
-            </div>
+            <Aarsaksvelger
+              bruttoinntekt={bruttoinntekt}
+              changeMaanedsintektHandler={changeMaanedsintektHandler}
+              changeBegrunnelseHandler={changeBegrunnelseHandler}
+              tariffendringsdato={tariffendringsdato}
+              tariffkjentdato={tariffkjentdato}
+              ferie={ferie}
+              permisjon={permisjon}
+              permittering={permittering}
+              nystillingdato={nystillingdato}
+              nystillingsprosentdato={nystillingsprosentdato}
+              lonnsendringsdato={lonnsendringsdato}
+              sykefravaerperioder={sykefravaerperioder}
+              setTariffEndringsdato={setTariffEndringsdato}
+              setTariffKjentdato={setTariffKjentdato}
+              setFeriePeriode={setFeriePeriode}
+              setLonnsendringDato={setLonnsendringDato}
+              setNyStillingDato={setNyStillingDato}
+              setNyStillingsprosentDato={setNyStillingsprosentDato}
+              setPermisjonPeriode={setPermisjonPeriode}
+              setPermitteringPeriode={setPermitteringPeriode}
+              setSykefravaerPeriode={setSykefravaerPeriode}
+              visFeilmeldingsTekst={visFeilmeldingsTekst}
+              bestemmendeFravaersdag={bestemmendeFravaersdag}
+              nyInnsending={nyInnsending}
+              clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+            />
           )}
           {!endringAvBelop && <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />}
         </div>
@@ -336,21 +221,44 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
             Les mer om beregning av månedslønn.
           </LenkeEksternt>
         </LesMer>
+        {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
+          <Alert variant='info'>
+            Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedsinntekt selv
+            eller forsøke igjen senere.
+          </Alert>
+        )}
         <BodyLong>
           Angi bruttoinntekt som snitt av siste tre måneders lønn. Dersom inntekten har gått opp pga. varig -
           lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes som
           - høyere enn snitt av siste tre måneder.
         </BodyLong>
         <div className={lokalStyles.prosentbody}>
-          <TextField
-            label='Gjennomsnittsinntekt per måned'
-            onChange={setNyMaanedsinntektBlanktSkjemaHandler}
-            defaultValue={formatCurrency(
-              bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0
-            )}
-            id='inntekt.beregnetInntekt'
-            error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
-            className={lokalStyles.bruttoinntektbelop}
+          <Aarsaksvelger
+            bruttoinntekt={bruttoinntekt}
+            changeMaanedsintektHandler={changeMaanedsintektHandler}
+            changeBegrunnelseHandler={changeBegrunnelseHandler}
+            tariffendringsdato={tariffendringsdato}
+            tariffkjentdato={tariffkjentdato}
+            ferie={ferie}
+            permisjon={permisjon}
+            permittering={permittering}
+            nystillingdato={nystillingdato}
+            nystillingsprosentdato={nystillingsprosentdato}
+            lonnsendringsdato={lonnsendringsdato}
+            sykefravaerperioder={sykefravaerperioder}
+            setTariffEndringsdato={setTariffEndringsdato}
+            setTariffKjentdato={setTariffKjentdato}
+            setFeriePeriode={setFeriePeriode}
+            setLonnsendringDato={setLonnsendringDato}
+            setNyStillingDato={setNyStillingDato}
+            setNyStillingsprosentDato={setNyStillingsprosentDato}
+            setPermisjonPeriode={setPermisjonPeriode}
+            setPermitteringPeriode={setPermitteringPeriode}
+            setSykefravaerPeriode={setSykefravaerPeriode}
+            visFeilmeldingsTekst={visFeilmeldingsTekst}
+            bestemmendeFravaersdag={bestemmendeFravaersdag}
+            nyInnsending={nyInnsending}
+            clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
           />
         </div>
         <BodyLong className={lokalStyles.bruttoinntektbelopbeskrivelse}>
@@ -360,4 +268,12 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
       </>
     );
   }
+}
+
+function sjekkOmFerieMaaneder(tidligereinntekt: Array<HistoriskInntekt> | undefined): boolean {
+  const ferieMnd = tidligereinntekt
+    ?.map((inntekt) => inntekt.maaned.split('-')[1])
+    .filter((mnd) => mnd === '05' || mnd === '06' || mnd === '07');
+
+  return ferieMnd !== undefined && ferieMnd.length > 0;
 }

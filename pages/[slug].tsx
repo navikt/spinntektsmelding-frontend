@@ -64,6 +64,9 @@ const Home: NextPage = () => {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setSlug = useBoundStore((state) => state.setSlug);
+  const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
+  const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const logEvent = useAmplitude();
 
@@ -116,6 +119,7 @@ const Home: NextPage = () => {
 
           switch (data.status) {
             case 201:
+              setKvitteringInnsendt(new Date());
               router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
               break;
 
@@ -219,6 +223,7 @@ const Home: NextPage = () => {
       }
     }
     setSlug(pathSlug);
+    setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
@@ -268,10 +273,7 @@ const Home: NextPage = () => {
             label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
             id='bekreft-opplysninger'
             error={visFeilmeldingsTekst('bekreft-opplysninger')}
-          >
-            NAV kan trekke tilbake retten til å få dekket sykepengene i arbeidsgiverperioden hvis opplysningene ikke er
-            riktige eller fullstendige.
-          </ConfirmationPanel>
+          ></ConfirmationPanel>
           <Feilsammendrag />
           <div className={styles.outerbuttonwrapper}>
             <div className={styles.buttonwrapper}>
