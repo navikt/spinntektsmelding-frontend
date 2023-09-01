@@ -63,6 +63,8 @@ jobs:
   Docker:
     needs: [Kodekvalitet, Eslint]
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
