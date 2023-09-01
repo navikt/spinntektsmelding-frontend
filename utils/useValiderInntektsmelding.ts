@@ -14,7 +14,7 @@ import validerPeriodeEgenmelding, { PeriodeEgenmeldingFeilkode } from '../valida
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import useBoundStore from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
-import validerTelefon, { TelefonFeilkode } from 'validators/validerTelefon';
+import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -118,7 +118,7 @@ export default function useValiderInntektsmelding() {
       feilkoderArbeidsgiverperioder = validerPeriodeEgenmelding(state.arbeidsgiverperioder, 'arbeidsgiverperioder');
     }
 
-    feilkoderTelefon = validerTelefon(state.innsenderTelefonNr);
+    // feilkoderTelefon = validerTelefon(state.innsenderTelefonNr);
 
     errorCodes = [
       ...errorCodes,
