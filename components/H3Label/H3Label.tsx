@@ -11,7 +11,7 @@ const cx = classNames.bind(styles);
 
 export default function H3Label(props: H3LabelProps) {
   const className = cx({ heading: !props.unPadded, heading_top: props.topPadded }, props.className);
-  console.log('H3Label', className);
+
   return (
     <Heading size='xsmall' level='3' className={className}>
       {props.children}
