@@ -36,7 +36,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('[data-cy="virksomhetsnavn"]').should('have.text', 'Veldig ampert piggsvin barnehage');
     cy.get('[data-cy="orgnummer"]').should('have.text', '911206722');
     cy.get('[data-cy="innsendernavn"]').should('have.text', 'Test Testesen');
-    // cy.get('[data-cy="innsendertlf"]').should('have.value', '12345678');
+    cy.get('[data-cy="innsendertlf"]').should('have.value', '12345678');
   });
 
   it('should display information on the egenmelding', () => {

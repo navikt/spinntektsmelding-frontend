@@ -105,7 +105,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               <TextLabel>Org.nr. for underenhet</TextLabel>
               <div data-cy='orgnummer'>{orgnrUnderenhet || <Skeleton />}</div>
             </div>
-            {!innsenderNavn && <div className={lokalStyles.virksomhetsnavnwrapper}>&nbsp;</div>}
+            {!innsenderNavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
             {innsenderNavn && (
               <div className={lokalStyles.innsendernavnwrapper}>
                 <TextLabel>Innsender</TextLabel>
@@ -114,7 +114,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
                 </div>
               </div>
             )}
-            {/* <div className={lokalStyles.telefonnrwrapper}>
+            <div className={lokalStyles.telefonnrwrapper}>
               {erKvittering && (
                 <>
                   <TextLabel>Telefon innsender</TextLabel>
@@ -135,7 +135,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
                   id='telefon'
                 />
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
