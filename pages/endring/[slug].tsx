@@ -325,7 +325,7 @@ const Endring: NextPage = () => {
       setEndringBruttolonn('Ja');
       setEndringerAvRefusjon('Ja');
     }
-  }, [inngangFraKvittering]);
+  }, [inngangFraKvittering]); // eslint-disable-line react-hooks/exhaustive-deps
 
   let cx = classNames.bind(lokalStyles);
   const classNameJa = cx({ fancyRadio: true, selectedRadio: endringBruttolonn === 'Ja' });
@@ -402,6 +402,7 @@ const Endring: NextPage = () => {
                             id='bruttoinntekt-endringsaarsak'
                             nyInnsending={false}
                             label='Forklaring til endring'
+                            defaultValue={bruttoinntekt?.endringsaarsak as string}
                           />
                         </div>
                       )}
@@ -497,78 +498,82 @@ const Endring: NextPage = () => {
               <H3Label unPadded topPadded>
                 Refusjon til arbeidsgiver etter arbeidsgiverperiode
               </H3Label>
-              {!opprinneligLonnISykefravaeret?.status ||
-                (opprinneligLonnISykefravaeret?.status === 'Nei' && (
-                  <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
-                ))}
-              {opprinneligLonnISykefravaeret?.status === 'Ja' && (
+              {!inngangFraKvittering && (
                 <>
-                  {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
-                  <H3Label unPadded topPadded>
-                    Er det endringer i refusjonskrav i perioden?
-                  </H3Label>
-                  {harRefusjonEndringer}
-                  {harRefusjonEndringer === 'Ja' && (
-                    <div className={lokalStyles.refusjonswrapper}>
-                      <table>
-                        <thead>
-                          <tr>
-                            <th className={lokalStyles.table_header}>
-                              <strong>Endret refusjon</strong>
-                            </th>
-                            <th>
-                              <strong>Dato for endret refusjon</strong>
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {refusjonEndringer?.map((endring) => (
-                            <tr key={endring.dato?.toString()}>
-                              <td>{formatCurrency(endring.belop)} kr</td>
-                              <td>{formatDate(endring.dato)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                  <H3Label unPadded topPadded>
-                    Opphører refusjonkravet under sykefraværet?
-                  </H3Label>
-                  {refusjonskravetOpphoerer?.status}
-                  {refusjonskravetOpphoerer?.status === 'Ja' && (
+                  {!opprinneligLonnISykefravaeret?.status ||
+                    (opprinneligLonnISykefravaeret?.status === 'Nei' && (
+                      <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
+                    ))}
+                  {opprinneligLonnISykefravaeret?.status === 'Ja' && (
                     <>
+                      {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
                       <H3Label unPadded topPadded>
-                        Siste dag dere krever refusjon for
+                        Er det endringer i refusjonskrav i perioden?
                       </H3Label>
-                      {formatDate(refusjonskravetOpphoerer.opphorsdato)}
+                      {harRefusjonEndringer}
+                      {harRefusjonEndringer === 'Ja' && (
+                        <div className={lokalStyles.refusjonswrapper}>
+                          <table>
+                            <thead>
+                              <tr>
+                                <th className={lokalStyles.table_header}>
+                                  <strong>Endret refusjon</strong>
+                                </th>
+                                <th>
+                                  <strong>Dato for endret refusjon</strong>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {refusjonEndringer?.map((endring) => (
+                                <tr key={endring.dato?.toString()}>
+                                  <td>{formatCurrency(endring.belop)} kr</td>
+                                  <td>{formatDate(endring.dato)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                      <H3Label unPadded topPadded>
+                        Opphører refusjonkravet under sykefraværet?
+                      </H3Label>
+                      {refusjonskravetOpphoerer?.status}
+                      {refusjonskravetOpphoerer?.status === 'Ja' && (
+                        <>
+                          <H3Label unPadded topPadded>
+                            Siste dag dere krever refusjon for
+                          </H3Label>
+                          {formatDate(refusjonskravetOpphoerer.opphorsdato)}
+                        </>
+                      )}
+                    </>
+                  )}
+                  {!endringerAvRefusjon === 'Ja' && (
+                    <>
+                      <RadioGroup
+                        legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
+                          forsteFravaersdag
+                        )} (start av nytt sykefravær)?`}
+                        onChange={handleChangeEndringRefusjon}
+                        className={lokalStyles.fancyRadioGruppe}
+                        defaultValue={endringerAvRefusjon}
+                        id='endring-refusjon'
+                      >
+                        <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
+                          Ja
+                        </Radio>
+                        <Radio value='Nei' className={classNameNeiEndringAvRefusjon}>
+                          Nei
+                        </Radio>
+                      </RadioGroup>
                     </>
                   )}
                 </>
               )}
-              {!endringerAvRefusjon === 'Ja' && (
-                <>
-                  <RadioGroup
-                    legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
-                      forsteFravaersdag
-                    )} (start av nytt sykefravær)?`}
-                    onChange={handleChangeEndringRefusjon}
-                    className={lokalStyles.fancyRadioGruppe}
-                    defaultValue={endringerAvRefusjon}
-                    id='endring-refusjon'
-                  >
-                    <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
-                      Ja
-                    </Radio>
-                    <Radio value='Nei' className={classNameNeiEndringAvRefusjon}>
-                      Nei
-                    </Radio>
-                  </RadioGroup>
-                </>
-              )}
               {endringerAvRefusjon === 'Ja' && (
                 <>
-                  <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>
+                  {!inngangFraKvittering && <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>}
                   <RadioGroup
                     legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
                     className={styles.radiobuttonwrapper}
