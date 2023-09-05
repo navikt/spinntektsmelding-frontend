@@ -21,8 +21,6 @@ export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinn
     [props]
   );
 
-  console.log('props.value', props.value);
-
   return (
     <>
       <Select
