@@ -21,11 +21,7 @@
   "inntekt": {
     "bekreftet": true,
     "beregnetInntekt": 47000,
-    "endringÅrsak": {
-      "gjelderFra": "2023-01-24",
-      "typpe": "VarigLonnsendring"
-    },
-    "manueltKorrigert": true
+    "manueltKorrigert": false
   },
   "fullLønnIArbeidsgiverPerioden": null,
   "refusjon": {

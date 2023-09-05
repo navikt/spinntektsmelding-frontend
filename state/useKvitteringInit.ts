@@ -59,6 +59,7 @@ export default function useKvitteringInit() {
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const setTidligereInntektsdata = useBoundStore((state) => state.setTidligereInntektsdata);
   const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
+  const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
@@ -94,6 +95,7 @@ export default function useKvitteringInit() {
         : jsonData.beregnetInntekt || 0;
 
     setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
+    setOpprinneligNyMaanedsinntekt();
 
     if (jsonData.inntekt.endringÅrsak) {
       const aarsak: Tariffendring | PeriodeListe | StillingsEndring | AArsakType | undefined =

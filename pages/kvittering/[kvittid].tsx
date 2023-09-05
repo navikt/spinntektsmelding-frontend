@@ -34,7 +34,7 @@ import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isValid } from 'date-fns';
 import env from '../../config/environment';
-import { Periode } from 'state/state';
+import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
 import classNames from 'classnames/bind';
 

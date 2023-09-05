@@ -39,6 +39,7 @@ export interface BruttoinntektState {
   feilHentingAvInntektsdata?: Array<FeilReportElement>;
   setNyMaanedsinntekt: (belop: string) => void;
   setNyMaanedsinntektBlanktSkjema: (belop: string | number) => void;
+  setOpprinneligNyMaanedsinntekt: () => void;
   setEndringsaarsak: (aarsak: string) => void;
   setFeriePeriode: (periode: Array<Periode> | undefined) => void;
   setLonnsendringDato: (endringsdato?: Date) => void;
@@ -337,6 +338,14 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.tidligereInntekt = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
         }
 
+        return state;
+      })
+    );
+  },
+  setOpprinneligNyMaanedsinntekt: () => {
+    set(
+      produce((state) => {
+        state.opprinneligbruttoinntekt = { ...state.bruttoinntekt };
         return state;
       })
     );
