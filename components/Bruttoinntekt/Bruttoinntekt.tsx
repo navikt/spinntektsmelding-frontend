@@ -157,9 +157,13 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
         )}
         <div className={lokalStyles.belopwrapper}>
           {!endringAvBelop && (
-            <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
-              {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr/måned
-            </TextLabel>
+            <>
+              <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
+                {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)}{' '}
+                kr/måned
+              </TextLabel>
+              <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />
+            </>
           )}
           {endringAvBelop && (
             <Aarsaksvelger
@@ -190,7 +194,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
               clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
             />
           )}
-          {!endringAvBelop && <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />}
         </div>
         <BodyShort>
           <strong>Stemmer dette?</strong>

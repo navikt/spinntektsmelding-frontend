@@ -3,19 +3,14 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useState, useCallback } from 'react';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import SelectEndringBruttoinntekt from '../../components/Bruttoinntekt/SelectEndringBruttoinntekt';
 import PageContent from '../../components/PageContent/PageContent';
 import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
-import biStyles from '../../components/Bruttoinntekt/Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
-import TariffendringDato from '../../components/Bruttoinntekt/TariffendringDato';
 import useBoundStore from '../../state/useBoundStore';
 import Feilsammendrag from '../../components/Feilsammendrag';
 import feiltekster from '../../utils/feiltekster';
 import lokalStyles from './Endring.module.css';
-import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
-import PeriodeListevelger from '../../components/Bruttoinntekt/PeriodeListevelger';
 import Datovelger from '../../components/Datovelger';
 import classNames from 'classnames/bind';
 import Person from '../../components/Person/Person';
@@ -38,8 +33,8 @@ import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../../utils/parseIsoDate';
 import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
-import TextLabel from 'components/TextLabel';
-import ButtonEndre from 'components/ButtonEndre';
+import TextLabel from '../../components/TextLabel';
+import ButtonEndre from '../../components/ButtonEndre';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useBoundStore((state) => [
@@ -75,7 +70,6 @@ const Endring: NextPage = () => {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
-  const endringsaarsak = useBoundStore((state) => state.bruttoinntekt.endringsaarsak);
   const setSlug = useBoundStore((state) => state.setSlug);
   const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
