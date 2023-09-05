@@ -477,12 +477,12 @@ const Endring: NextPage = () => {
               )}
               <Skillelinje />
               <Heading2>Refusjon</Heading2>
-              <BodyLong>I siste inntektsmelding hadde dere følgende refusjonskrav:</BodyLong>
-              <H3Label unPadded topPadded>
-                Refusjon til arbeidsgiver etter arbeidsgiverperiode
-              </H3Label>
               {!inngangFraKvittering && (
                 <>
+                  <BodyLong>I siste inntektsmelding hadde dere følgende refusjonskrav:</BodyLong>
+                  <H3Label unPadded topPadded>
+                    Refusjon til arbeidsgiver etter arbeidsgiverperiode
+                  </H3Label>
                   {!opprinneligLonnISykefravaeret?.status ||
                     (opprinneligLonnISykefravaeret?.status === 'Nei' && (
                       <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
