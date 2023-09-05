@@ -84,7 +84,7 @@ export default function Aarsaksvelger({
             error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
             id='bruttoinntekt-endringsaarsak'
             nyInnsending={nyInnsending}
-            defaultValue={bruttoinntekt?.endringsaarsak as string}
+            value={bruttoinntekt?.endringsaarsak as string}
           />
         </div>
         <div>

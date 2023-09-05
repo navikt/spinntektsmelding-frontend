@@ -77,6 +77,7 @@ const Kvittering: NextPage = () => {
   const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
+  const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
@@ -107,6 +108,10 @@ const Kvittering: NextPage = () => {
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
+
+  useEffect(() => {
+    setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const visNaturalytelser = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
   const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
