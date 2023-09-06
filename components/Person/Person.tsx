@@ -3,8 +3,7 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
-import { Alert, TextField } from '@navikt/ds-react';
-import Skeleton from 'react-loading-skeleton';
+import { Alert, Skeleton, TextField } from '@navikt/ds-react';
 
 interface PersonProps {
   erKvittering?: boolean;
@@ -56,6 +55,8 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
 
   const feilmeldingstekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
 
+  const skjemadataErLastet = !!identitetsnummer;
+
   return (
     <>
       {!erKvittering && (
@@ -80,12 +81,14 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             {!hentingAvPersondataFeilet && (
               <div className={lokalStyles.ansattwrapper}>
                 <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>{navn || <Skeleton />}</div>
+                <div data-cy='navn'>{navn || <Skeleton variant='text' width='90%' height={28} />}</div>
               </div>
             )}
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Personnummer</TextLabel>
-              <div data-cy='identitetsnummer'>{identitetsnummer || <Skeleton />}</div>
+              <div data-cy='identitetsnummer'>
+                {identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
+              </div>
             </div>
           </div>
         </div>
@@ -93,27 +96,32 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
           <Heading3>Arbeidsgiveren</Heading3>
 
           <div className={lokalStyles.arbeidsgiverwrapper}>
-            {virksomhetsnavn && !hentingAvArbeidsgiverdataFeilet && (
+            {!hentingAvArbeidsgiverdataFeilet && (
               <div className={lokalStyles.virksomhetsnavnwrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn || <Skeleton />}
+                  {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
+                </div>
+              </div>
+            )}
+            {hentingAvArbeidsgiverdataFeilet && (
+              <div className={lokalStyles.virksomhetsnavnwrapper}>
+                <TextLabel>&nbsp;</TextLabel>
+                <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
+                  &nbsp;
                 </div>
               </div>
             )}
             <div className={lokalStyles.orgnrnavnwrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
-              <div data-cy='orgnummer'>{orgnrUnderenhet || <Skeleton />}</div>
+              <div data-cy='orgnummer'>{orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}</div>
             </div>
-            {!innsenderNavn && <div className={lokalStyles.virksomhetsnavnwrapper}></div>}
-            {innsenderNavn && (
-              <div className={lokalStyles.innsendernavnwrapper}>
-                <TextLabel>Innsender</TextLabel>
-                <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                  {innsenderNavn}
-                </div>
+            <div className={lokalStyles.innsendernavnwrapper}>
+              <TextLabel>Innsender</TextLabel>
+              <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
+                {innsenderNavn ?? <Skeleton variant='text' width='90%' height={28} />}
               </div>
-            )}
+            </div>
             <div className={lokalStyles.telefonnrwrapper}>
               {erKvittering && (
                 <>
@@ -125,7 +133,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               )}
               {!erKvittering && (
                 <TextField
-                  label='Telefon til innsender'
+                  label='Telefon innsender'
                   type='tel'
                   autoComplete='tel'
                   defaultValue={innsenderTelefonNr}
@@ -133,6 +141,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
                   data-cy='innsendertlf'
                   error={visFeilmeldingsTekst('telefon')}
                   id='telefon'
+                  readOnly={!skjemadataErLastet}
                 />
               )}
             </div>

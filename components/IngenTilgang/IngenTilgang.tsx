@@ -1,5 +1,4 @@
-import { Alert, Heading, Link, Modal } from '@navikt/ds-react';
-import { useEffect } from 'react';
+import { Alert, Link, Modal } from '@navikt/ds-react';
 import env from '../../config/environment';
 
 interface IngenTilgangProps {
@@ -8,22 +7,19 @@ interface IngenTilgangProps {
 }
 
 export default function IngenTilgang({ handleCloseModal, open }: IngenTilgangProps) {
-  useEffect(() => {
-    Modal.setAppElement('#body');
-  }, []);
-
   return (
     <Modal
       open={open}
       aria-label='Du er blitt logget ut, følg instruksjonene for ikke å miste data'
       onClose={handleCloseModal}
       aria-labelledby='modal-heading'
+      header={{
+        heading: 'Du er blitt logget ut, følg instruksjonene for ikke å miste data',
+        size: 'medium'
+      }}
     >
-      <Modal.Content>
+      <Modal.Body>
         <Alert variant='warning' className='logget-ut-advarsel__innhold'>
-          <Heading size='large' level='2' id='modal-heading'>
-            Du er blitt logget ut, følg instruksjonene for ikke å miste data
-          </Heading>
           <ul>
             <li>Ikke lukk dette vinduet</li>
             <li>
@@ -36,7 +32,7 @@ export default function IngenTilgang({ handleCloseModal, open }: IngenTilgangPro
             <li>Lukk denne meldingen og klikk igjen på “Send”</li>
           </ul>
         </Alert>
-      </Modal.Content>
+      </Modal.Body>
     </Modal>
   );
 }
