@@ -1,4 +1,4 @@
-import { BodyLong, Button, ConfirmationPanel, Link, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { BodyLong, Button, ConfirmationPanel, Link, Radio, RadioGroup } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useState, useCallback } from 'react';
@@ -23,11 +23,7 @@ import { useRouter } from 'next/router';
 import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 import useAmplitude from '../../utils/useAmplitude';
 import environment from '../../config/environment';
-import useValiderInntektsmelding, { SubmitInntektsmeldingReturnvalues } from '../../utils/useValiderInntektsmelding';
 import RefusjonUtbetalingEndring from '../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import useErrorRespons, { ErrorResponse } from '../../utils/useErrorResponse';
-import useFyllInnsending, { InnsendingSkjema } from '../../state/useFyllInnsending';
-import isValidUUID from '../../utils/isValidUUID';
 import IngenTilgang from '../../components/IngenTilgang';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
@@ -35,6 +31,7 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import TextLabel from '../../components/TextLabel';
 import ButtonEndre from '../../components/ButtonEndre';
+import useSendInnSkjema from 'utils/useSendInnSkjema';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useBoundStore((state) => [
@@ -83,13 +80,12 @@ const Endring: NextPage = () => {
   );
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
-  const validerInntektsmelding = useValiderInntektsmelding();
   const router = useRouter();
   const logEvent = useAmplitude();
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const fastsattInntekt = useBoundStore((state) => state.fastsattInntekt);
-  const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const ukjentInntekt = useBoundStore((state) => state.ukjentInntekt);
@@ -102,19 +98,17 @@ const Endring: NextPage = () => {
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
 
-  const fyllInnsending = useFyllInnsending();
-  const errorResponse = useErrorRespons();
-
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
-  const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding, fyllFeilmeldinger] = useBoundStore((state) => [
+  const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
     state.slettFeilmelding,
-    state.leggTilFeilmelding,
-    state.fyllFeilmeldinger
+    state.leggTilFeilmelding
   ]);
   const amplitudeComponent = 'DelvisInnsending';
+
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen);
 
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
 
@@ -181,148 +175,16 @@ const Endring: NextPage = () => {
     }
   }, [fravaersperioder, egenmeldingsperioder]);
 
-  const validateAndSubmitForm = async () => {
-    const errorStatus = validerInntektsmelding(opplysningerBekreftet, true);
-    if (!ukjentInntekt) {
-      leggTilFeilmeldingHvisFeil(endringBruttolonn, errorStatus, 'endring-bruttolonn', feiltekster.ENDRING_BRUTTOLOENN);
-    }
-    leggTilFeilmeldingHvisFeil(endringerAvRefusjon, errorStatus, 'endring-refusjon', feiltekster.ENDRINGER_AV_REFUSJON);
-
-    const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
-
-    if (hasErrors) {
-      fyllFeilmeldinger(errorStatus.errorTexts!);
-
-      logEvent('skjema validering feilet', {
-        tittel: 'Validering feilet',
-        component: 'BekreftInntektOgRefusjonSkjema'
-      });
-    } else {
-      const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
-
-      fyllFeilmeldinger([]);
-      setSenderInn(true);
-      const postData = async () => {
-        if (isValidUUID(pathSlug)) {
-          const data = await fetch(`${environment.innsendingUrl}/${pathSlug}`, {
-            method: 'POST',
-            body: JSON.stringify(skjemaData),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          setSenderInn(false);
-
-          switch (data.status) {
-            case 201:
-              setKvitteringInnsendt(new Date());
-              router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
-              break;
-
-            case 500:
-              handleServerError();
-              break;
-
-            case 404:
-              handleNotFound();
-              break;
-
-            case 401:
-              handleUnauthorized();
-              break;
-
-            default:
-              handleOtherErrors(data);
-          }
-        } else {
-          handleInvalidUUID();
-        }
-      };
-      await postData();
-    }
-  };
-
-  const handleServerError = () => {
-    const errors: Array<ErrorResponse> = [
-      {
-        value: 'Innsending av skjema feilet',
-        error: 'Innsending av skjema feilet',
-        property: 'server'
-      }
-    ];
-    errorResponse(errors);
-
-    logEvent('skjema innsending feilet', {
-      tittel: 'Innsending feilet - serverfeil',
-      component: 'Delvisskjema'
-    });
-  };
-
-  const handleNotFound = () => {
-    logEvent('skjema innsending feilet', {
-      tittel: 'Innsending feilet - endepunkt mangler',
-      component: 'Delvisskjema'
-    });
-
-    const errors: Array<ErrorResponse> = [
-      {
-        value: 'Innsending av skjema feilet',
-        error: 'Fant ikke endepunktet for innsending',
-        property: 'server'
-      }
-    ];
-    errorResponse(errors);
-  };
-
-  const handleUnauthorized = () => {
-    logEvent('skjema innsending feilet', {
-      tittel: 'Innsending feilet - ingen tilgang',
-      component: 'Delvisskjema'
-    });
-
-    setIngenTilgangOpen(true);
-  };
-
-  const handleOtherErrors = async (data: Response) => {
-    const resultat = await data.json();
-
-    logEvent('skjema innsending feilet', {
-      tittel: 'Innsending feilet',
-      component: 'Delvisskjema'
-    });
-
-    if (resultat.errors) {
-      const errors: Array<ErrorResponse> = resultat.errors;
-      errorResponse(errors);
-    }
-  };
-
-  const handleInvalidUUID = () => {
-    const errors: Array<ErrorResponse> = [
-      {
-        value: 'Innsending av skjema feilet',
-        error: 'Innsending av skjema feilet. Ugyldig identifikator - ' + pathSlug,
-        property: 'server'
-      }
-    ];
-
-    logEvent('skjema validering feilet', {
-      tittel: 'Ugyldig UUID ved innsending',
-      component: 'Delvisskjema'
-    });
-    errorResponse(errors);
-    setSenderInn(false);
-  };
-
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
 
-    logEvent('skjema fullført', {
-      tittel: 'Har trykket send',
-      component: 'BekreftInntektOgRefusjonSkjema'
-    });
+    setSenderInn(true);
+    const send = async () => {
+      const status = await sendInnSkjema(opplysningerBekreftet, false, pathSlug!, amplitudeComponent);
+    };
 
-    validateAndSubmitForm();
+    send();
+    setSenderInn(false);
   };
 
   const handleChangeEndringLonn = (value: string) => {
@@ -646,20 +508,3 @@ const Endring: NextPage = () => {
 };
 
 export default Endring;
-
-function leggTilFeilmeldingHvisFeil(
-  endringerAvRefusjon: string | undefined,
-  errorStatus: SubmitInntektsmeldingReturnvalues,
-  felt: string,
-  feiltekst: string
-) {
-  if (!endringerAvRefusjon) {
-    if (errorStatus.errorTexts === undefined) {
-      errorStatus.errorTexts = [];
-    }
-    errorStatus.errorTexts.push({
-      felt: felt,
-      text: feiltekst
-    });
-  }
-}
