@@ -3,9 +3,11 @@ import { HistoriskInntekt } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';
 import lokalStyles from './Bruttoinntekt.module.css';
+import { Skeleton } from '@navikt/ds-react';
 
 interface TidligereInntektProps {
   tidligereinntekt: Array<HistoriskInntekt>;
+  henterData: boolean;
 }
 
 const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
@@ -20,7 +22,22 @@ const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   }
 };
 
-export default function TidligereInntekt({ tidligereinntekt }: TidligereInntektProps) {
+const lasterDataPlaceholder = [
+  {
+    maaned: 'Dummy1',
+    inntekt: 0
+  },
+  {
+    maaned: 'Dummy2',
+    inntekt: 0
+  },
+  {
+    maaned: 'Dummy3',
+    inntekt: 0
+  }
+];
+
+export default function TidligereInntekt({ tidligereinntekt, henterData }: TidligereInntektProps) {
   const [sortertInntekt, setSortertInntekt] = useState<Array<HistoriskInntekt>>([]);
   useEffect(() => {
     const inntekter: Array<HistoriskInntekt> = [...tidligereinntekt].sort(sorterInntekter);
@@ -42,12 +59,30 @@ export default function TidligereInntekt({ tidligereinntekt }: TidligereInntektP
         </tr>
       </thead>
       <tbody>
-        {sortertInntekt.map((inntekt) => (
-          <tr key={inntekt.maaned}>
-            <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt.maaned)}:</td>
-            <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
-          </tr>
-        ))}
+        {henterData && (
+          <>
+            {lasterDataPlaceholder.map((inntekt) => (
+              <tr key={inntekt.maaned}>
+                <td className={lokalStyles.maanedsnavn}>
+                  <Skeleton />:
+                </td>
+                <td className={lokalStyles.maanedsinntekt}>
+                  <Skeleton />
+                </td>
+              </tr>
+            ))}
+          </>
+        )}
+        {!henterData && sortertInntekt.length === 0 && (
+          <>
+            {sortertInntekt.map((inntekt) => (
+              <tr key={inntekt.maaned}>
+                <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt.maaned)}:</td>
+                <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
+              </tr>
+            ))}
+          </>
+        )}
       </tbody>
     </table>
   );

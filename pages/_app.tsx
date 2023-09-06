@@ -4,7 +4,6 @@ import { getFaro, initInstrumentation, pinoLevelToFaroLevel } from '../utils/far
 import type { AppProps } from 'next/app';
 
 import '../components/PageContent/PageContent.css';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 import { configureLogger } from '@navikt/next-logger';
 import env from 'config/environment';

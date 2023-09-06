@@ -12,7 +12,6 @@ import formatDate from '../../utils/formatDate';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import LesMer from '../LesMer';
 import useAmplitude from '../../utils/useAmplitude';
-import Skeleton from 'react-loading-skeleton';
 import Aarsaksvelger from './Aarsaksvelger';
 
 interface BruttoinntektProps {
@@ -140,7 +139,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
 
         <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
 
-        {!henterData && <TidligereInntekt tidligereinntekt={tidligereinntekt} />}
+        <TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={henterData} />
         {erFeriemaaneder && (
           <Alert variant='warning' className={lokalStyles.feriealert}>
             Lønnsopplysningene kan innholde måneder der det er utbetalt feriepenger. Hvis det i beregningsperioden er
@@ -148,7 +147,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
             settes lik den ordinære lønnen personen ville hatt hvis det ikke hadde blitt avviklet ferie.
           </Alert>
         )}
-        {henterData && <Skeleton count={3} />}
         {!endringAvBelop && (
           <TextLabel className={lokalStyles.tbmargin}>
             Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
