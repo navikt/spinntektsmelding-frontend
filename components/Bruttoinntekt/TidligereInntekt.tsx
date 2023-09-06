@@ -73,7 +73,7 @@ export default function TidligereInntekt({ tidligereinntekt, henterData }: Tidli
             ))}
           </>
         )}
-        {!henterData && sortertInntekt.length === 0 && (
+        {!henterData && sortertInntekt.length !== 0 && (
           <>
             {sortertInntekt.map((inntekt) => (
               <tr key={inntekt.maaned}>

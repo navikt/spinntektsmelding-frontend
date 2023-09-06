@@ -14,7 +14,7 @@ describe('HentingAvDataFeilet', () => {
     );
 
     const HeadingTitle = screen.getByRole('heading', {
-      level: 2,
+      level: 1,
       name: /Henting av data til inntektsmeldingen feilet./i
     });
 
@@ -35,7 +35,7 @@ describe('HentingAvDataFeilet', () => {
     );
 
     const button = screen.getByRole('button', {
-      name: /Lukk/i
+      name: 'Lukk'
     });
 
     button.click();
