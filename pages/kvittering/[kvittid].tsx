@@ -97,7 +97,10 @@ const Kvittering: NextPage = () => {
 
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
-  const innsendingstidspunkt = kvitteringInnsendt && isValid(kvitteringInnsendt) ? kvitteringInnsendt : now;
+  const innsendingstidspunkt =
+    kvitteringInnsendt && isValid(kvitteringInnsendt)
+      ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
+      : '';
 
   const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
 
@@ -237,10 +240,7 @@ const Kvittering: NextPage = () => {
             </>
           )}
           <Skillelinje />
-          <BodyShort>
-            Kvittering - innsendt inntektsmelding - {formatDate(innsendingstidspunkt)} kl.{' '}
-            {formatTime(innsendingstidspunkt)}
-          </BodyShort>
+          <BodyShort>Kvittering - innsendt inntektsmelding{innsendingstidspunkt}</BodyShort>
           <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               <ButtonEndre onClick={clickEndre} />

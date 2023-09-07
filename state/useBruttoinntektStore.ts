@@ -79,7 +79,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
-        state.bruttoinntekt.manueltKorrigert = true;
+        if (state.bruttoinntekt.bruttoInntekt !== state.opprinneligbruttoinntekt.bruttoInntekt) {
+          state.bruttoinntekt.manueltKorrigert = true;
+        }
 
         if (state.bruttoinntekt.bruttoInntekt != undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
           state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
@@ -122,7 +124,11 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.bruttoinntekt.endringsaarsak = aarsak;
-        state.bruttoinntekt.manueltKorrigert = true;
+        if (aarsak && aarsak !== '') {
+          state.bruttoinntekt.manueltKorrigert = true;
+        } else {
+          state.bruttoinntekt.manueltKorrigert = false;
+        }
 
         if (aarsak && aarsak !== '') {
           state = slettFeilmeldingFraState(state, 'bruttoinntekt-endringsaarsak');

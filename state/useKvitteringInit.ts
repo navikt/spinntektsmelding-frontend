@@ -110,11 +110,14 @@ export default function useKvitteringInit() {
         }
 
         case begrunnelseEndringBruttoinntekt.Ferie: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom)
-          }));
-          setFeriePeriode(perioder);
+          if ('liste' in aarsak) {
+            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
+              fom: parseIsoDate(periode.fom),
+              tom: parseIsoDate(periode.tom),
+              id: nanoid()
+            }));
+            setFeriePeriode(perioder);
+          }
           break;
         }
         case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
@@ -135,30 +138,36 @@ export default function useKvitteringInit() {
         }
 
         case begrunnelseEndringBruttoinntekt.Permittering: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom)
-          }));
-          setPermitteringPeriode(perioder);
+          if ('liste' in aarsak) {
+            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
+              fom: parseIsoDate(periode.fom),
+              tom: parseIsoDate(periode.tom),
+              id: nanoid()
+            }));
+            setPermitteringPeriode(perioder);
+          }
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.NyStilling: {
-          setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
-          setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom)
-          }));
-          setSykefravaerPeriode(perioder);
+          if ('liste' in aarsak) {
+            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
+              fom: parseIsoDate(periode.fom),
+              tom: parseIsoDate(periode.tom),
+              id: nanoid()
+            }));
+            setSykefravaerPeriode(perioder);
+          }
           break;
         }
       }

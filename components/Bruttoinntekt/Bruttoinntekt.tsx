@@ -51,50 +51,41 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const logEvent = useAmplitude();
   const amplitudeComponent = 'BeregnetMånedslønn';
 
-  const clickTilbakestillMaanedsinntekt = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      event.preventDefault();
+  const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
 
-      logEvent('knapp klikket', {
-        tittel: 'Tilbakestill beregnet månedsinntekt',
-        component: amplitudeComponent
-      });
+    logEvent('knapp klikket', {
+      tittel: 'Tilbakestill beregnet månedsinntekt',
+      component: amplitudeComponent
+    });
 
-      setEndreMaanedsinntekt(false);
-      tilbakestillMaanedsinntekt();
-    },
-    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt, logEvent]
-  );
+    setEndreMaanedsinntekt(false);
+    tilbakestillMaanedsinntekt();
+  };
 
   const changeMaanedsintektHandler = (event: ChangeEvent<HTMLInputElement>) => setNyMaanedsinntekt(event.target.value);
 
-  const changeBegrunnelseHandler = useCallback(
-    (aarsak: string) => {
-      logEvent('filtervalg', {
-        tittel: 'Endringsårsak beregnet månedsinntekt',
-        component: amplitudeComponent,
-        kategori: aarsak,
-        filternavn: 'Endringsårsak beregnet månedsinntekt'
-      });
+  const changeBegrunnelseHandler = (aarsak: string) => {
+    logEvent('filtervalg', {
+      tittel: 'Endringsårsak beregnet månedsinntekt',
+      component: amplitudeComponent,
+      kategori: aarsak,
+      filternavn: 'Endringsårsak beregnet månedsinntekt'
+    });
 
-      setEndringsaarsak(aarsak);
-    },
-    [setEndringsaarsak, logEvent]
-  );
+    setEndringsaarsak(aarsak);
+  };
 
-  const setEndreMaanedsinntektHandler = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      event.preventDefault();
+  const setEndreMaanedsinntektHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
 
-      logEvent('knapp klikket', {
-        tittel: 'Endre beregnet månedsinntekt',
-        component: amplitudeComponent
-      });
+    logEvent('knapp klikket', {
+      tittel: 'Endre beregnet månedsinntekt',
+      component: amplitudeComponent
+    });
 
-      setEndreMaanedsinntekt(true);
-    },
-    [setEndreMaanedsinntekt, logEvent]
-  );
+    setEndreMaanedsinntekt(true);
+  };
 
   const clickLesMerBeregnetMaanedslonn = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -112,128 +103,65 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
 
   const erFeriemaaneder = sjekkOmFerieMaaneder(tidligereinntekt);
 
-  if (tidligereinntekt && tidligereinntekt.length > 0) {
-    return (
-      <>
-        <Heading3 unPadded>Beregnet månedslønn</Heading3>
-        <LesMer
-          header='Informasjon om beregnet månedslønn'
-          open={readMoreOpen}
-          onClick={clickLesMerBeregnetMaanedslonn}
+  const harTidligereInntekt = tidligereinntekt && tidligereinntekt.length > 0;
+
+  // if (harTidligereInntekt) {
+  return (
+    <>
+      <Heading3 unPadded>Beregnet månedslønn</Heading3>
+      <LesMer header='Informasjon om beregnet månedslønn' open={readMoreOpen} onClick={clickLesMerBeregnetMaanedslonn}>
+        Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert til
+        a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
+        <LenkeEksternt
+          href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'
+          isHidden={!readMoreOpen}
         >
-          Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
-          til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
-          <LenkeEksternt
-            href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'
-            isHidden={!readMoreOpen}
-          >
-            Les mer om beregning av månedslønn.
-          </LenkeEksternt>
-        </LesMer>
-        {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
-          <Alert variant='info'>
-            Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedsinntekt selv
-            eller forsøke igjen senere.
-          </Alert>
-        )}
+          Les mer om beregning av månedslønn.
+        </LenkeEksternt>
+      </LesMer>
+      {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
+        <Alert variant='info'>
+          Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedsinntekt selv
+          eller forsøke igjen senere.
+        </Alert>
+      )}
 
-        <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
-
-        <TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={henterData} />
-        {erFeriemaaneder && (
-          <Alert variant='warning' className={lokalStyles.feriealert}>
-            Lønnsopplysningene kan innholde måneder der det er utbetalt feriepenger. Hvis det i beregningsperioden er
-            utbetalt feriepenger i stedet for lønn, eller det er avviklet ferie uten lønn, skal beregningsgrunnlaget
-            settes lik den ordinære lønnen personen ville hatt hvis det ikke hadde blitt avviklet ferie.
-          </Alert>
-        )}
+      {harTidligereInntekt && (
+        <>
+          <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
+          <TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={henterData} />
+        </>
+      )}
+      {!harTidligereInntekt && (
+        <BodyLong>
+          Angi bruttoinntekt som snitt av gjennomsnitt tre måneders lønn. Dersom inntekten har gått opp pga. varig -
+          lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes
+          høyere enn gjennomsnitt av siste tre måneder.
+        </BodyLong>
+      )}
+      {erFeriemaaneder && (
+        <Alert variant='warning' className={lokalStyles.feriealert}>
+          Lønnsopplysningene kan innholde måneder der det er utbetalt feriepenger. Hvis det i beregningsperioden er
+          utbetalt feriepenger i stedet for lønn, eller det er avviklet ferie uten lønn, skal beregningsgrunnlaget
+          settes lik den ordinære lønnen personen ville hatt hvis det ikke hadde blitt avviklet ferie.
+        </Alert>
+      )}
+      {!endringAvBelop && (
+        <TextLabel className={lokalStyles.tbmargin}>
+          Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
+          månedslønn på
+        </TextLabel>
+      )}
+      <div className={lokalStyles.belopwrapper}>
         {!endringAvBelop && (
-          <TextLabel className={lokalStyles.tbmargin}>
-            Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
-            månedslønn på
-          </TextLabel>
+          <>
+            <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
+              {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr/måned
+            </TextLabel>
+            <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />
+          </>
         )}
-        <div className={lokalStyles.belopwrapper}>
-          {!endringAvBelop && (
-            <>
-              <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
-                {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)}{' '}
-                kr/måned
-              </TextLabel>
-              <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />
-            </>
-          )}
-          {endringAvBelop && (
-            <Aarsaksvelger
-              bruttoinntekt={bruttoinntekt}
-              changeMaanedsintektHandler={changeMaanedsintektHandler}
-              changeBegrunnelseHandler={changeBegrunnelseHandler}
-              tariffendringsdato={tariffendringsdato}
-              tariffkjentdato={tariffkjentdato}
-              ferie={ferie}
-              permisjon={permisjon}
-              permittering={permittering}
-              nystillingdato={nystillingdato}
-              nystillingsprosentdato={nystillingsprosentdato}
-              lonnsendringsdato={lonnsendringsdato}
-              sykefravaerperioder={sykefravaerperioder}
-              setTariffEndringsdato={setTariffEndringsdato}
-              setTariffKjentdato={setTariffKjentdato}
-              setFeriePeriode={setFeriePeriode}
-              setLonnsendringDato={setLonnsendringDato}
-              setNyStillingDato={setNyStillingDato}
-              setNyStillingsprosentDato={setNyStillingsprosentDato}
-              setPermisjonPeriode={setPermisjonPeriode}
-              setPermitteringPeriode={setPermitteringPeriode}
-              setSykefravaerPeriode={setSykefravaerPeriode}
-              visFeilmeldingsTekst={visFeilmeldingsTekst}
-              bestemmendeFravaersdag={bestemmendeFravaersdag}
-              nyInnsending={nyInnsending}
-              clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-            />
-          )}
-        </div>
-        <BodyShort>
-          <strong>Stemmer dette?</strong>
-        </BodyShort>
-        <BodyLong>
-          Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i
-          arbeidstid, hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke
-          inkluderes i beregnet månedslønn. Beregningen er gjort etter{' '}
-          <LenkeEksternt href='https://lovdata.no/nav/folketrygdloven/kap8/§8-28'>folketrygdloven $8-28</LenkeEksternt>.
-        </BodyLong>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <Heading3>Beregnet månedslønn</Heading3>
-        <LesMer
-          header='Informasjon om beregnet månedslønn'
-          open={readMoreOpen}
-          onClick={clickLesMerBeregnetMaanedslonn}
-        >
-          Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
-          til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
-          <LenkeEksternt
-            href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'
-            isHidden={!readMoreOpen}
-          >
-            Les mer om beregning av månedslønn.
-          </LenkeEksternt>
-        </LesMer>
-        {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
-          <Alert variant='info'>
-            Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedsinntekt selv
-            eller forsøke igjen senere.
-          </Alert>
-        )}
-        <BodyLong>
-          Angi bruttoinntekt som snitt av siste tre måneders lønn. Dersom inntekten har gått opp pga. varig -
-          lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes som
-          - høyere enn snitt av siste tre måneder.
-        </BodyLong>
-        <div className={lokalStyles.prosentbody}>
+        {endringAvBelop && (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
             changeMaanedsintektHandler={changeMaanedsintektHandler}
@@ -261,14 +189,96 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
             nyInnsending={nyInnsending}
             clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
           />
-        </div>
-        <BodyLong className={lokalStyles.bruttoinntektbelopbeskrivelse}>
-          Vanligvis skal beløpet baseres på et gjennomsnitt av siste tre måneders lønn. Unntak kan være at den ansatte
-          nylig har fått lønnsøkning, redusering i arbeidstid eller har andre endringer i lønn.
-        </BodyLong>
-      </>
-    );
-  }
+        )}
+      </div>
+      <BodyShort className={lokalStyles.bruttoinntektbelopbeskrivelse}>Stemmer dette?</BodyShort>
+      <BodyLong>
+        Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i arbeidstid,
+        hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke inkluderes i beregnet
+        månedslønn. Beregningen er gjort etter{' '}
+        <LenkeEksternt href='https://lovdata.no/nav/folketrygdloven/kap8/§8-28'>folketrygdloven $8-28</LenkeEksternt>.
+      </BodyLong>
+    </>
+  );
+  // } else {
+  //   return (
+  //     <>
+  //       <Heading3>Beregnet månedslønn</Heading3>
+  //       <LesMer
+  //         header='Informasjon om beregnet månedslønn'
+  //         open={readMoreOpen}
+  //         onClick={clickLesMerBeregnetMaanedslonn}
+  //       >
+  //         Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert
+  //         til a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
+  //         <LenkeEksternt
+  //           href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'
+  //           isHidden={!readMoreOpen}
+  //         >
+  //           Les mer om beregning av månedslønn.
+  //         </LenkeEksternt>
+  //       </LesMer>
+  //       {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
+  //         <Alert variant='info'>
+  //           Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedsinntekt selv
+  //           eller forsøke igjen senere.
+  //         </Alert>
+  //       )}
+  //       <BodyLong>
+  //         Angi bruttoinntekt som snitt av siste tre måneders lønn. Dersom inntekten har gått opp pga. varig -
+  //         lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes som
+  //         - høyere enn snitt av siste tre måneder.
+  //       </BodyLong>
+  //       <div className={lokalStyles.belopwrapper}>
+  //         {!endringAvBelop && (
+  //           <>
+  //             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
+  //               {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)}{' '}
+  //               kr/måned
+  //             </TextLabel>
+  //             <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />
+  //           </>
+  //         )}
+  //         {endringAvBelop && (
+  //           <Aarsaksvelger
+  //             bruttoinntekt={bruttoinntekt}
+  //             changeMaanedsintektHandler={changeMaanedsintektHandler}
+  //             changeBegrunnelseHandler={changeBegrunnelseHandler}
+  //             tariffendringsdato={tariffendringsdato}
+  //             tariffkjentdato={tariffkjentdato}
+  //             ferie={ferie}
+  //             permisjon={permisjon}
+  //             permittering={permittering}
+  //             nystillingdato={nystillingdato}
+  //             nystillingsprosentdato={nystillingsprosentdato}
+  //             lonnsendringsdato={lonnsendringsdato}
+  //             sykefravaerperioder={sykefravaerperioder}
+  //             setTariffEndringsdato={setTariffEndringsdato}
+  //             setTariffKjentdato={setTariffKjentdato}
+  //             setFeriePeriode={setFeriePeriode}
+  //             setLonnsendringDato={setLonnsendringDato}
+  //             setNyStillingDato={setNyStillingDato}
+  //             setNyStillingsprosentDato={setNyStillingsprosentDato}
+  //             setPermisjonPeriode={setPermisjonPeriode}
+  //             setPermitteringPeriode={setPermitteringPeriode}
+  //             setSykefravaerPeriode={setSykefravaerPeriode}
+  //             visFeilmeldingsTekst={visFeilmeldingsTekst}
+  //             bestemmendeFravaersdag={bestemmendeFravaersdag}
+  //             nyInnsending={nyInnsending}
+  //             clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+  //           />
+  //         )}
+  //       </div>
+  //       <BodyShort className={lokalStyles.bruttoinntektbelopbeskrivelse}>Stemmer dette?</BodyShort>
+  //       <BodyLong>
+  //         Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i
+  //         arbeidstid, hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke
+  //         inkluderes i beregnet månedslønn. Beregningen er gjort etter{' '}
+  //         <LenkeEksternt href='https://lovdata.no/nav/folketrygdloven/kap8/§8-28'>folketrygdloven $8-28</LenkeEksternt>.
+  //       </BodyLong>
+  //     </>
+  //   );
+  // }
 }
 
 function sjekkOmFerieMaaneder(tidligereinntekt: Array<HistoriskInntekt> | undefined): boolean {

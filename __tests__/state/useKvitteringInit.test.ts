@@ -122,7 +122,8 @@ describe('useKvitteringInit', () => {
     expect(result.current.ferie).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
-        tom: parseIsoDate('2023-03-31')
+        tom: parseIsoDate('2023-03-31'),
+        id: 'uuid'
       }
     ]);
   });
@@ -187,7 +188,8 @@ describe('useKvitteringInit', () => {
     expect(result.current.permittering).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
-        tom: parseIsoDate('2023-03-31')
+        tom: parseIsoDate('2023-03-31'),
+        id: 'uuid'
       }
     ]);
   });
@@ -246,11 +248,13 @@ describe('useKvitteringInit', () => {
     expect(result.current.sykefravaerperioder).toEqual([
       {
         fom: parseIsoDate('2023-02-06'),
-        tom: parseIsoDate('2023-02-10')
+        tom: parseIsoDate('2023-02-10'),
+        id: 'uuid'
       },
       {
         fom: parseIsoDate('2023-02-24'),
-        tom: parseIsoDate('2023-03-06')
+        tom: parseIsoDate('2023-03-06'),
+        id: 'uuid'
       }
     ]);
   });
