@@ -3,6 +3,7 @@ import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { nanoid } from 'nanoid';
 import { Opplysningstype } from './useForespurtDataStore';
+import { YesNo } from './state';
 
 export interface SkjemadataState {
   nyInnsending: boolean;
@@ -13,17 +14,24 @@ export interface SkjemadataState {
   slettKvitteringInnsendt: () => void;
   setSkjemaFeilet: () => void;
   setInngangFraKvittering: () => void;
+  setDirekteInngangKvittering: () => void;
+  setEndringBruttolonn: (endring: YesNo) => void;
+  setEndringerAvRefusjon: (endring: YesNo) => void;
   tracker: string;
   henterInntektsdata: boolean;
   slug?: string | Array<string>;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
   skjemaType?: Array<Opplysningstype>;
-  inngangFraKvittering?: boolean;
+  inngangFraKvittering: boolean;
+  direkteInngangKvittering: boolean;
+  endringBruttolonn?: YesNo;
+  endringerAvRefusjon?: YesNo;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
   inngangFraKvittering: false,
+  direkteInngangKvittering: false,
   tracker: nanoid(),
   nyInnsending: true,
   henterInntektsdata: false,
@@ -76,6 +84,27 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.inngangFraKvittering = true;
+      })
+    );
+  },
+  setDirekteInngangKvittering: () => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.direkteInngangKvittering = true;
+      })
+    );
+  },
+  setEndringBruttolonn: (endring: YesNo) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.endringBruttolonn = endring;
+      })
+    );
+  },
+  setEndringerAvRefusjon: (endring: YesNo) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.endringerAvRefusjon = endring;
       })
     );
   }

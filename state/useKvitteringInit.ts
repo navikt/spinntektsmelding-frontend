@@ -59,6 +59,7 @@ export default function useKvitteringInit() {
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const setTidligereInntektsdata = useBoundStore((state) => state.setTidligereInntektsdata);
   const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
+  const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
 
   return async (jsonData: KvitteringSkjema, slug: string) => {
     initFravaersperiode(jsonData.fraværsperioder);
@@ -94,6 +95,7 @@ export default function useKvitteringInit() {
         : jsonData.beregnetInntekt || 0;
 
     setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
+    setOpprinneligNyMaanedsinntekt();
 
     if (jsonData.inntekt.endringÅrsak) {
       const aarsak: Tariffendring | PeriodeListe | StillingsEndring | AArsakType | undefined =
@@ -108,11 +110,14 @@ export default function useKvitteringInit() {
         }
 
         case begrunnelseEndringBruttoinntekt.Ferie: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom)
-          }));
-          setFeriePeriode(perioder);
+          if ('liste' in aarsak) {
+            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
+              fom: parseIsoDate(periode.fom),
+              tom: parseIsoDate(periode.tom),
+              id: nanoid()
+            }));
+            setFeriePeriode(perioder);
+          }
           break;
         }
         case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
@@ -133,30 +138,36 @@ export default function useKvitteringInit() {
         }
 
         case begrunnelseEndringBruttoinntekt.Permittering: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom)
-          }));
-          setPermitteringPeriode(perioder);
+          if ('liste' in aarsak) {
+            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
+              fom: parseIsoDate(periode.fom),
+              tom: parseIsoDate(periode.tom),
+              id: nanoid()
+            }));
+            setPermitteringPeriode(perioder);
+          }
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.NyStilling: {
-          setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
-          setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-          const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom)
-          }));
-          setSykefravaerPeriode(perioder);
+          if ('liste' in aarsak) {
+            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
+              fom: parseIsoDate(periode.fom),
+              tom: parseIsoDate(periode.tom),
+              id: nanoid()
+            }));
+            setSykefravaerPeriode(perioder);
+          }
           break;
         }
       }

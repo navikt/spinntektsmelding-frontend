@@ -28,7 +28,7 @@ export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinn
         onChange={changeHandler}
         id={props.id}
         error={props.error}
-        defaultValue={props.defaultValue}
+        value={props.value}
       >
         <option value=''>Velg begrunnelse</option>
         {begrunnelseKeys.map((begrunnelseKey) => (

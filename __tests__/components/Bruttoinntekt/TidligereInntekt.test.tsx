@@ -19,7 +19,7 @@ describe('TidligereInntekt', () => {
         inntekt: 345
       }
     ];
-    render(<TidligereInntekt tidligereinntekt={tidligereinntekt} />);
+    render(<TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={false} />);
 
     const rader = screen.getAllByRole('row');
 

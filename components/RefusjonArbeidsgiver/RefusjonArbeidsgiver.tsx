@@ -140,7 +140,11 @@ export default function RefusjonArbeidsgiver() {
             <RefusjonUtbetalingEndring
               endringer={refusjonEndringer || []}
               maxDate={refusjonskravetOpphoerer?.opphorsdato}
-              minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
+              minDate={
+                arbeidsgiverperioder?.length && arbeidsgiverperioder?.length > 0
+                  ? arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom
+                  : undefined
+              }
               onHarEndringer={setHarRefusjonEndringer}
               onOppdaterEndringer={oppdaterRefusjonEndringer}
               harRefusjonEndring={harRefusjonEndringer}

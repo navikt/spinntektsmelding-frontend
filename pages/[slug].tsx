@@ -21,21 +21,17 @@ import Naturalytelser from '../components/Naturalytelser';
 import Person from '../components/Person/Person';
 import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
-import useValiderInntektsmelding from '../utils/useValiderInntektsmelding';
 
-import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
-import useErrorRespons, { ErrorResponse } from '../utils/useErrorResponse';
 import environment from '../config/environment';
 
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
 import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
-import useAmplitude from '../utils/useAmplitude';
-import isValidUUID from '../utils/isValidUUID';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
 import fetchInntektsdata from 'utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
+import useSendInnSkjema from 'utils/useSendInnSkjema';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -51,8 +47,7 @@ const Home: NextPage = () => {
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
-  const [fyllFeilmeldinger, visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
-    state.fyllFeilmeldinger,
+  const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
     state.slettFeilmelding,
     state.leggTilFeilmelding
@@ -65,18 +60,12 @@ const Home: NextPage = () => {
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setSlug = useBoundStore((state) => state.setSlug);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
-  const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
-  const logEvent = useAmplitude();
-
-  const validerInntektsmelding = useValiderInntektsmelding();
-
-  const fyllInnsending = useFyllInnsending();
-
-  const errorResponse = useErrorRespons();
 
   const hentKvitteringsdata = useHentKvitteringsdata();
+
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen);
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
@@ -84,119 +73,13 @@ const Home: NextPage = () => {
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
+    setSenderInn(true);
+    const send = async () => {
+      await sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema');
+    };
 
-    logEvent('skjema fullført', {
-      tittel: 'Har trykket send',
-      component: 'Hovedskjema'
-    });
-
-    const errorStatus = validerInntektsmelding(opplysningerBekreftet);
-
-    const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
-
-    if (hasErrors) {
-      fyllFeilmeldinger(errorStatus.errorTexts!);
-
-      logEvent('skjema validering feilet', {
-        tittel: 'Validering feilet',
-        component: 'Hovedskjema'
-      });
-    } else {
-      const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
-
-      fyllFeilmeldinger([]);
-      setSenderInn(true);
-      const postData = async () => {
-        if (isValidUUID(pathSlug)) {
-          const data = await fetch(`${environment.innsendingUrl}/${pathSlug}`, {
-            method: 'POST',
-            body: JSON.stringify(skjemaData),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          setSenderInn(false);
-
-          switch (data.status) {
-            case 201:
-              setKvitteringInnsendt(new Date());
-              router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
-              break;
-
-            case 500: {
-              const errors: Array<ErrorResponse> = [
-                {
-                  value: 'Innsending av skjema feilet',
-                  error: 'Innsending av skjema feilet',
-                  property: 'server'
-                }
-              ];
-              errorResponse(errors);
-
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet - serverfeil',
-                component: 'Hovedskjema'
-              });
-
-              break;
-            }
-
-            case 404: {
-              const errors: Array<ErrorResponse> = [
-                {
-                  value: 'Innsending av skjema feilet',
-                  error: 'Fant ikke endepunktet for innsending',
-                  property: 'server'
-                }
-              ];
-              errorResponse(errors);
-              break;
-            }
-
-            case 401: {
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet - ingen tilgang',
-                component: 'Hovedskjema'
-              });
-
-              setIngenTilgangOpen(true);
-              break;
-            }
-
-            default:
-              const resultat = await data.json();
-
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet',
-                component: 'Hovedskjema'
-              });
-
-              if (resultat.errors) {
-                const errors: Array<ErrorResponse> = resultat.errors;
-                errorResponse(errors);
-              }
-          }
-        } else {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Innsending av skjema feilet. Ugyldig identifikator',
-              property: 'server'
-            }
-          ];
-
-          logEvent('skjema validering feilet', {
-            tittel: 'Ugyldig UUID ved innsending',
-            component: 'Hovedskjema'
-          });
-          errorResponse(errors);
-          setSenderInn(false);
-
-          return false;
-        }
-      };
-      postData();
-    }
+    send();
+    setSenderInn(false);
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {

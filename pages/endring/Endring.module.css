@@ -1,15 +1,15 @@
 .fancyRadio {
   /* background-color: var(--a-surface-selected); */
-  border       : 1px solid var(--a-border-strong);
-  width        : 100%;
+  border: 1px solid var(--a-border-strong);
+  width: 100%;
   border-radius: var(--a-border-radius-medium);
 }
 
-.fancyRadio>label {
+.fancyRadio > label {
   margin-left: 1rem;
 }
 
-.fancyRadio :global(.navds-radio__input):checked+ :global(.navds-radio__label) {
+.fancyRadio :global(.navds-radio__input):checked + :global(.navds-radio__label) {
   font-weight: bold;
 }
 
@@ -18,10 +18,10 @@
 }
 
 .fancyRadioGruppe :global(.navds-radio-buttons) {
-  display       : flex;
-  gap           : 1rem;
+  display: flex;
+  gap: 1rem;
   flex-direction: column;
-  margin        : 1rem 0 1rem;
+  margin: 1rem 0 1rem;
 }
 
 .fancyRadioGruppe:global(.navds-radio-group) {
@@ -29,19 +29,18 @@
 }
 
 .refusjonswrapper {
-  display       : flex;
+  display: flex;
   flex-direction: row;
-
 }
 
 .refusjonswrapper_child {
-  flex: 1
+  flex: 1;
 }
 
 .belopperiode {
-  display       : flex;
+  display: flex;
   flex-direction: row;
-  gap           : 2rem;
+  gap: 2rem;
 }
 
 .leggtilbutton {
@@ -50,4 +49,16 @@
 
 .table_header {
   padding-right: 1rem;
+}
+
+.belopwrapper {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.maanedsinntekt {
+  margin-bottom: auto;
+  margin-top: auto;
 }

@@ -1,5 +1,10 @@
 import MottattData from '../state/MottattData';
+import formeeeeData from './formData-refusjon';
 import testFnr from './testFnr';
+
+import trengerDelvis from './trenger-delvis.json';
+
+// const formData = trengerDelvis as MottattData;
 
 const formData: Partial<MottattData> = {
   // behandlingsdager: [],

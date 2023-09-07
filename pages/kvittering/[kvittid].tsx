@@ -34,7 +34,7 @@ import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isValid } from 'date-fns';
 import env from '../../config/environment';
-import { Periode } from 'state/state';
+import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
 import classNames from 'classnames/bind';
 
@@ -43,8 +43,6 @@ const Kvittering: NextPage = () => {
   const slug = (router.query.kvittid as string) || '';
   const firstSlug = slug;
   const [pathSlug, setPathSlug] = useState<string>(firstSlug);
-
-  const [now, _setNow] = useState<Date>(new Date());
 
   useEffect(() => {
     setPathSlug(firstSlug);
@@ -77,6 +75,7 @@ const Kvittering: NextPage = () => {
   const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
+  const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
@@ -96,7 +95,10 @@ const Kvittering: NextPage = () => {
 
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
-  const innsendingstidspunkt = kvitteringInnsendt && isValid(kvitteringInnsendt) ? kvitteringInnsendt : now;
+  const innsendingstidspunkt =
+    kvitteringInnsendt && isValid(kvitteringInnsendt)
+      ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
+      : '';
 
   const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
 
@@ -107,6 +109,10 @@ const Kvittering: NextPage = () => {
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
+
+  useEffect(() => {
+    setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const visNaturalytelser = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
   const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
@@ -232,10 +238,7 @@ const Kvittering: NextPage = () => {
             </>
           )}
           <Skillelinje />
-          <BodyShort>
-            Kvittering - innsendt inntektsmelding - {formatDate(innsendingstidspunkt)} kl.{' '}
-            {formatTime(innsendingstidspunkt)}
-          </BodyShort>
+          <BodyShort>Kvittering - innsendt inntektsmelding{innsendingstidspunkt}</BodyShort>
           <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               <ButtonEndre onClick={clickEndre} />

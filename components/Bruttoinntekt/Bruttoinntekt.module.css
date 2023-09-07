@@ -11,6 +11,7 @@
 .maanedsinntekt {
   margin-bottom: auto;
   margin-top: auto;
+  font-weight: var(--a-font-weight-bold);
 }
 
 .endremaaanedsinntekt,
@@ -63,16 +64,6 @@
   margin: 2rem 0;
 }
 
-.prosentbody {
-  display: flex;
-  flex-direction: column;
-}
-
-.prosentbodytext {
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
 .bruttoinntektendringsbelopenkel {
   margin-top: 0.5rem;
 }
@@ -82,7 +73,6 @@
 }
 
 .bruttoinntektbelopbeskrivelse {
-  margin-bottom: 1rem;
   margin-top: 1rem;
   font-weight: var(--a-font-weight-bold);
 }
