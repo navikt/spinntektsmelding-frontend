@@ -44,8 +44,6 @@ const Kvittering: NextPage = () => {
   const firstSlug = slug;
   const [pathSlug, setPathSlug] = useState<string>(firstSlug);
 
-  const [now, _setNow] = useState<Date>(new Date());
-
   useEffect(() => {
     setPathSlug(firstSlug);
   }, [firstSlug]);

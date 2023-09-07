@@ -42,7 +42,7 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang) {
       const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
 
       fyllFeilmeldinger([]);
-      // setSenderInn(true);
+
       const postData = async () => {
         if (!isValidUUID(pathSlug)) {
           const errors: Array<ErrorResponse> = [
@@ -58,7 +58,6 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang) {
             component: amplitudeComponent
           });
           errorResponse(errors);
-          // setSenderInn(false);
 
           return false;
         }
@@ -70,7 +69,6 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang) {
             'Content-Type': 'application/json'
           }
         });
-        // setSenderInn(false);
 
         switch (data.status) {
           case 201:
