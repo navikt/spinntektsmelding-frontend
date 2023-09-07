@@ -75,7 +75,7 @@ const Home: NextPage = () => {
     event.preventDefault();
     setSenderInn(true);
     const send = async () => {
-      const status = await sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema');
+      await sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema');
     };
 
     send();

@@ -1,5 +1,5 @@
 import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -105,7 +105,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
 
   const harTidligereInntekt = tidligereinntekt && tidligereinntekt.length > 0;
 
-  // if (harTidligereInntekt) {
   return (
     <>
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
