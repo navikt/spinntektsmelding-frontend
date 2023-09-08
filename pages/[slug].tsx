@@ -215,6 +215,9 @@ export async function getServerSideProps(context: any) {
     try {
       skjemadata = await fetchInntektskjemaForNotifikasjon(process.env.PREUTFYLT_INNTEKTSMELDING_API, slug, req);
     } catch (error) {
+      console.log('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API);
+      console.log('Feil ved henting av inntektsmelding', error);
+
       logger.info('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API);
       logger.error('Feil ved henting av inntektsmelding', error);
     }
