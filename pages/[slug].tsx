@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 
 import { Button, ConfirmationPanel, Link } from '@navikt/ds-react';
 
@@ -32,14 +31,35 @@ import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
 import fetchInntektsdata from 'utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from 'utils/useSendInnSkjema';
+import fetchKvitteringsdata from 'utils/fetchKvitteringsdata';
+import fetchInntektskjemaForNotifikasjon from 'state/fetchInntektskjemaForNotifikasjon';
+import useKvitteringInit from 'state/useKvitteringInit';
+import { useRouter } from 'next/router';
+import useStateInit from 'state/useStateInit';
 
-const Home: NextPage = () => {
+const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
   const router = useRouter();
-  const slug = (router.query.slug as string) || '';
+  // const slug = (router.query.slug as string) || '';
   const firstSlug = slug;
   const [pathSlug, setPathSlug] = useState<string>(firstSlug);
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
+
+  const initKvitteringInit = useKvitteringInit();
+  const initState = useStateInit();
+
+  console.log('kvitteringsdata', kvitteringsdata);
+  console.log('slug', slug);
+  console.log('skjemadata', skjemadata);
+
+  useEffect(() => {
+    if (kvitteringsdata && slug && kvitteringsdata.status !== 'FEILET') {
+      initKvitteringInit(skjemadata, pathSlug);
+      router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
+    } else if (skjemadata && kvitteringsdata.status === 'FEILET') {
+      initState(skjemadata);
+    }
+  }, [kvitteringsdata, slug, skjemadata]);
 
   useEffect(() => {
     setPathSlug(firstSlug);
@@ -91,24 +111,24 @@ const Home: NextPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (!fravaersperioder) {
-      hentKvitteringsdata(pathSlug);
-    } else {
-      if (bestemmendeFravaersdag) {
-        fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag)
-          .then((inntektSisteTreMnd) => {
-            setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
-          })
-          .catch((error) => {
-            logger.warn('Feil ved henting av tidliger inntektsdata', error);
-          });
-      }
-    }
-    setSlug(pathSlug);
-    setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug]);
+  // useEffect(() => {
+  //   if (!fravaersperioder) {
+  //     hentKvitteringsdata(pathSlug);
+  //   } else {
+  //     if (bestemmendeFravaersdag) {
+  //       fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag)
+  //         .then((inntektSisteTreMnd) => {
+  //           setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
+  //         })
+  //         .catch((error) => {
+  //           logger.warn('Feil ved henting av tidliger inntektsdata', error);
+  //         });
+  //     }
+  //   }
+  //   setSlug(pathSlug);
+  //   setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [pathSlug]);
 
   return (
     <div className={styles.container}>
@@ -178,3 +198,32 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export async function getServerSideProps(context: any) {
+  const slug = context.query.slug;
+  let kvitteringsdata;
+  let error;
+  let skjemadata;
+
+  try {
+    kvitteringsdata = await fetchKvitteringsdata('http://localhost:3000/' + environment.hentKvitteringUrl, slug);
+  } catch (errorStatus) {
+    error = 'Sjit';
+    skjemadata = await fetchInntektskjemaForNotifikasjon('http://localhost:3000/' + environment.skjemadataUrl, slug);
+  }
+  if (!kvitteringsdata) {
+    kvitteringsdata = {
+      status: 'FEILET',
+      statuskode: 'FEILET'
+    };
+  }
+
+  return {
+    props: {
+      slug,
+      kvitteringsdata,
+      error,
+      skjemadata
+    }
+  };
+}
