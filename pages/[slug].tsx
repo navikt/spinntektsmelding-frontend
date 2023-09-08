@@ -200,16 +200,17 @@ const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
 export default Home;
 
 export async function getServerSideProps(context: any) {
+  const req = context.req;
   const slug = context.query.slug;
   let kvitteringsdata;
   let error;
   let skjemadata;
 
   try {
-    kvitteringsdata = await fetchKvitteringsdata('http://localhost:3000/' + environment.hentKvitteringUrl, slug);
+    kvitteringsdata = await fetchKvitteringsdata(environment.hentKvitteringAPI, slug, req);
   } catch (errorStatus) {
     error = 'Sjit';
-    skjemadata = await fetchInntektskjemaForNotifikasjon('http://localhost:3000/' + environment.skjemadataUrl, slug);
+    skjemadata = await fetchInntektskjemaForNotifikasjon(environment.inntektsmeldingUuidAPI, slug, req);
   }
   if (!kvitteringsdata) {
     kvitteringsdata = {

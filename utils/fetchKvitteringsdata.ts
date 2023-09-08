@@ -1,9 +1,10 @@
 import NetworkError from './NetworkError';
 
-const fetchKvitteringsdata = async (url: string, forespoerselId: string) => {
-  const res = await fetch(`${url}/${forespoerselId}`, {
+const fetchKvitteringsdata = async (url: string, forespoerselId: string, req) => {
+  const res = await fetch(`${url}${forespoerselId}`, {
     method: 'GET',
     headers: {
+      Cookie: req.headers.cookie,
       'Content-Type': 'application/json'
     }
   });
