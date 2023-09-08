@@ -30,6 +30,7 @@ import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
+
 import useSendInnSkjema from '../utils/useSendInnSkjema';
 import fetchKvitteringsdata from '../utils/fetchKvitteringsdata';
 import fetchInntektskjemaForNotifikasjon from '../state/fetchInntektskjemaForNotifikasjon';
