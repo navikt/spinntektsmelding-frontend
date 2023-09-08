@@ -27,15 +27,15 @@ import environment from '../config/environment';
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
 import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
-import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
-import fetchInntektsdata from 'utils/fetchInntektsdata';
+import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
+import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
-import useSendInnSkjema from 'utils/useSendInnSkjema';
-import fetchKvitteringsdata from 'utils/fetchKvitteringsdata';
-import fetchInntektskjemaForNotifikasjon from 'state/fetchInntektskjemaForNotifikasjon';
-import useKvitteringInit from 'state/useKvitteringInit';
+import useSendInnSkjema from '../utils/useSendInnSkjema';
+import fetchKvitteringsdata from '../utils/fetchKvitteringsdata';
+import fetchInntektskjemaForNotifikasjon from '../state/fetchInntektskjemaForNotifikasjon';
+import useKvitteringInit from '../state/useKvitteringInit';
 import { useRouter } from 'next/router';
-import useStateInit from 'state/useStateInit';
+import useStateInit from '../state/useStateInit';
 
 const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
   const router = useRouter();
@@ -208,12 +208,12 @@ export async function getServerSideProps(context: any) {
 
   logger.info(req.headers.cookie);
   try {
-    kvitteringsdata = await fetchKvitteringsdata(process.env.KVITTERINGSDATA_API, slug, req);
+    kvitteringsdata = await fetchKvitteringsdata(process.env.KVITTERINGSDATA_API!, slug, req);
   } catch (errorStatus) {
     logger.info('Feil ved henting av kvitteringsdata ' + errorStatus);
     logger.info('Kvitteringsdata url ' + process.env.KVITTERINGSDATA_API);
     try {
-      skjemadata = await fetchInntektskjemaForNotifikasjon(process.env.PREUTFYLT_INNTEKTSMELDING_API, slug, req);
+      skjemadata = await fetchInntektskjemaForNotifikasjon(process.env.PREUTFYLT_INNTEKTSMELDING_API!, slug, req);
     } catch (error) {
       console.log('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API);
       console.log('Feil ved henting av inntektsmelding', error);
