@@ -4,6 +4,7 @@ const fetchKvitteringsdata = async (url: string, forespoerselId: string, req) =>
   const res = await fetch(`${url}${forespoerselId}`, {
     method: 'GET',
     headers: {
+      withCredentials: 'true',
       Cookie: req.headers.cookie,
       'Content-Type': 'application/json'
     }

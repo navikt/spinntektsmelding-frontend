@@ -4,6 +4,7 @@ const fetchInntektskjemaForNotifikasjon = async (url: string, uuid: string, req)
   const res = await fetch(url, {
     method: 'POST',
     headers: {
+      withCredentials: 'true',
       Cookie: req.headers.cookie,
       'Content-Type': 'application/json'
     },

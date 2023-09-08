@@ -206,6 +206,7 @@ export async function getServerSideProps(context: any) {
   let error = null;
   let skjemadata = null;
 
+  logger.info(req.headers.cookie);
   try {
     kvitteringsdata = await fetchKvitteringsdata(process.env.KVITTERINGSDATA_API, slug, req);
   } catch (errorStatus) {
