@@ -4,6 +4,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../config/environment';
 
 import org from '../../mockdata/formData';
+import { logger } from '@navikt/next-logger';
 
 const basePath = environment.inntektsmeldingUuidAPI;
 
@@ -42,6 +43,7 @@ export const config = {
 
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
+  logger.debug('******************env', env);
   if (env == 'development') {
     return res.status(200).json(org);
   } else if (env == 'production') {

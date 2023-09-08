@@ -202,17 +202,19 @@ export default Home;
 export async function getServerSideProps(context: any) {
   const req = context.req;
   const slug = context.query.slug;
-  let kvitteringsdata = null;
+  let kvitteringsdata;
   let error = null;
   let skjemadata = null;
 
   try {
-    kvitteringsdata = await fetchKvitteringsdata(environment.hentKvitteringAPI, slug, req);
+    kvitteringsdata = await fetchKvitteringsdata(process.env.KVITTERINGSDATA_API, slug, req);
   } catch (errorStatus) {
-    logger.info('Feil ved henting av kvitteringsdata', errorStatus);
+    logger.info('Feil ved henting av kvitteringsdata ' + errorStatus);
+    logger.info('Kvitteringsdata url ' + process.env.KVITTERINGSDATA_API);
     try {
-      skjemadata = await fetchInntektskjemaForNotifikasjon(environment.inntektsmeldingUuidAPI, slug, req);
+      skjemadata = await fetchInntektskjemaForNotifikasjon(process.env.PREUTFYLT_INNTEKTSMELDING_API, slug, req);
     } catch (error) {
+      logger.info('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API);
       logger.error('Feil ved henting av inntektsmelding', error);
     }
   }
