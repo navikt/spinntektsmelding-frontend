@@ -31,7 +31,7 @@ export default function useHentSkjemadata() {
         const opplysningstyper = hentPaakrevdOpplysningstyper();
 
         if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
-          router.push(`/endring/${pathSlug}`, undefined, { shallow: true });
+          router.replace(`/endring/${pathSlug}`, undefined, { shallow: true });
         }
       }
     } catch (error: any) {
