@@ -21,7 +21,7 @@ export default function useHentKvitteringsdata() {
       }
       if (skjemadata && pathSlug) {
         initState(skjemadata, pathSlug);
-        router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
+        router.replace(`/kvittering/${pathSlug}`, undefined, { shallow: true });
       }
     } catch (error: any) {
       if (error.status === 401) {
