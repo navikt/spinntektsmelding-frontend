@@ -30,11 +30,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v3
         with:
-<<<<<<< Updated upstream
-          node-version: '18.x'
-=======
           node-version: '20.x'
->>>>>>> Stashed changes
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --frozen-lockfile
       - run: yarn test
@@ -50,11 +46,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v3
         with:
-<<<<<<< Updated upstream
-          node-version: '18.x'
-=======
           node-version: '20.x'
->>>>>>> Stashed changes
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --frozen-lockfile
       - run: yarn lint
