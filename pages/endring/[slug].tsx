@@ -180,7 +180,7 @@ const Endring: NextPage = () => {
 
     setSenderInn(true);
     const send = async () => {
-      await sendInnSkjema(opplysningerBekreftet, false, pathSlug!, amplitudeComponent);
+      await sendInnSkjema(opplysningerBekreftet, true, pathSlug!, amplitudeComponent);
     };
 
     send();
