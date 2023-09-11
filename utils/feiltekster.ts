@@ -28,7 +28,7 @@ const feiltekster = {
   MANGLER_TYPE: 'Angi naturalytelse.',
   MANGLER_BORTFALLSDATO: 'Angi dato naturalytelsen bortfaller.',
   MANGLER_VERDI: 'Angi verdien på naturalytelsen.',
-  LONN_I_ARBEIDSGIVERPERIODEN_BELOP: 'Angi beløp. Må være over lik eller høyere enn 0.',
+  LONN_I_ARBEIDSGIVERPERIODEN_BELOP: 'Angi beløp. Må være høyere enn eller lik 0.',
   MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN: 'Angi om det har vært endring i månedslønn i perioden',
   MANGLER_BELOP: 'Angi ny lønn',
   MANGLER_DATO: 'Angi dato for lønnsendring',

@@ -106,9 +106,7 @@ export default function RefusjonArbeidsgiver() {
               onChange={(event) => beloepUtbetaltUnderArbeidsgiverperioden(event.target.value)}
               id={'lus-uua-input'}
               error={visFeilmeldingsTekst('lus-uua-input')}
-              defaultValue={
-                fullLonnIArbeidsgiverPerioden.utbetalt ? formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt) : ''
-              }
+              defaultValue={formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)}
             />
             <SelectBegrunnelse
               onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
