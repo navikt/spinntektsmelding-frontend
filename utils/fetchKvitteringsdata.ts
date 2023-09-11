@@ -7,7 +7,7 @@ const fetchKvitteringsdata = async (url: string, forespoerselId: string, req: an
       withCredentials: 'true',
       Cookie: req.headers.cookie,
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${req.cookies['id_token']}`
+      Authorization: `Bearer ${req.cookies['selvbetjening-idtoken']}`
     }
   });
 

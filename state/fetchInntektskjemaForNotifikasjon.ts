@@ -7,7 +7,7 @@ const fetchInntektskjemaForNotifikasjon = async (url: string, uuid: string, req:
       withCredentials: 'true',
       Cookie: req.headers.cookie,
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${req.cookies['id_token']}`
+      Authorization: `Bearer ${req.cookies['selvbetjening-idtoken']}`
     },
     body: JSON.stringify({
       uuid
