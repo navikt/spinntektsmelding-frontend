@@ -1,12 +1,13 @@
 import NetworkError from '../utils/NetworkError';
 
-const fetchInntektskjemaForNotifikasjon = async (url: string, uuid: string, req) => {
+const fetchInntektskjemaForNotifikasjon = async (url: string, uuid: string, req: any) => {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
       withCredentials: 'true',
       Cookie: req.headers.cookie,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${req.cookies['id_token']}`
     },
     body: JSON.stringify({
       uuid
