@@ -87,7 +87,7 @@ export default function useValiderInntektsmelding() {
       });
     }
 
-    if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && kunInntektOgRefusjon) {
+    if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && !kunInntektOgRefusjon) {
       feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
     }
 
