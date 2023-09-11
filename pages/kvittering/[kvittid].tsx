@@ -179,7 +179,7 @@ const Kvittering: NextPage = () => {
                         Deretter betaler Nav lønn til den syke eller refunderer bedriften.
                       </BodyLong>
                     )}
-                    {ingenArbeidsgiverperioder && <BodyLong>Det er ikke angitt arbeidsgiverperiode.</BodyLong>}
+                    {ingenArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
                     {arbeidsgiverperioder?.map((periode) => (
                       <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
                     ))}
