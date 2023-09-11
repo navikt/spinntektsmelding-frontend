@@ -141,7 +141,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
     if (inngangFraKvittering && arbeidsgiverperioder?.length === 0) {
       setArbeidsgiverperiodeDisabled(true);
     }
-  }, [inngangFraKvittering]);
+  }, [inngangFraKvittering, arbeidsgiverperioder]);
 
   return (
     <>
