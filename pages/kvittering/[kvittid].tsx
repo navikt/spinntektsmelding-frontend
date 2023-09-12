@@ -37,6 +37,8 @@ import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
 import classNames from 'classnames/bind';
+import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem/KvitteringAnnetSystem';
+import React from 'react';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -249,6 +251,7 @@ const Kvittering: NextPage = () => {
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </div>
         </div>
+        <KvitteringAnnetSystem arkivreferanse='12345678' />
       </PageContent>
     </div>
   );
