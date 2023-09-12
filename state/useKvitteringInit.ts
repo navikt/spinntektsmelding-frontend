@@ -184,9 +184,10 @@ export default function useKvitteringInit() {
         begrunnelse: jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
           ? jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
           : undefined,
-        utbetalt: jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
-          ? jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
-          : undefined
+        utbetalt:
+          jsonData.fullLønnIArbeidsgiverPerioden.utbetalt !== undefined
+            ? jsonData.fullLønnIArbeidsgiverPerioden.utbetalt
+            : undefined
       });
     }
 
@@ -221,7 +222,7 @@ export default function useKvitteringInit() {
       initNaturalytelser(ytelser);
     }
 
-    if (arbeidsgiverperioder) initArbeidsgiverperioder(jsonData.arbeidsgiverperioder);
+    initArbeidsgiverperioder(jsonData.arbeidsgiverperioder);
 
     harArbeidsgiverperiodenBlittEndret();
 

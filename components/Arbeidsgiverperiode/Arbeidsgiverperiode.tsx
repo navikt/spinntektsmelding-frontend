@@ -30,6 +30,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const slettAlleArbeidsgiverperioder = useBoundStore((state) => state.slettAlleArbeidsgiverperioder);
+  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const logEvent = useAmplitude();
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
@@ -135,6 +136,12 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       setArbeidsgiverperiodeDisabled(true);
     }
   }, [arbeidsgiverperioder, manuellEndring]);
+
+  useEffect(() => {
+    if (inngangFraKvittering && arbeidsgiverperioder?.length === 0) {
+      setArbeidsgiverperiodeDisabled(true);
+    }
+  }, [inngangFraKvittering, arbeidsgiverperioder]);
 
   return (
     <>
