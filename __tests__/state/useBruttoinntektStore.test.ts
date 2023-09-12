@@ -161,7 +161,7 @@ describe('useBoundStore', () => {
     expect(result.current.feilmeldinger).toEqual([
       {
         felt: 'bruttoinntekt-endringsaarsak',
-        text: 'Vennligst anngi årsak for endringen.'
+        text: 'Vennligst angi årsak for endringen.'
       }
     ]);
   });

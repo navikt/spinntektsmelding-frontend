@@ -35,13 +35,20 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
   const valideringstatus: Array<ValiderResultat> = [];
 
   if (!state.bruttoinntekt) {
+    valideringstatus.filter((validering) => validering.felt !== 'bruttoinntekt');
     valideringstatus.push({
       felt: 'bruttoinntekt',
       code: BruttoinntektFeilkode.INNTEKT_MANGLER
     });
   } else {
     const bruttoinntekt = state.bruttoinntekt;
-    if (bruttoinntekt.bruttoInntekt === undefined || bruttoinntekt.bruttoInntekt < 0) {
+    if (
+      bruttoinntekt.bruttoInntekt === undefined ||
+      bruttoinntekt.bruttoInntekt < 0 ||
+      bruttoinntekt.bruttoInntekt === null ||
+      Number.isNaN(bruttoinntekt.bruttoInntekt)
+    ) {
+      valideringstatus.filter((validering) => validering.felt !== 'inntekt.beregnetInntekt');
       valideringstatus.push({
         felt: 'inntekt.beregnetInntekt',
         code: BruttoinntektFeilkode.BRUTTOINNTEKT_MANGLER
