@@ -217,6 +217,13 @@ const Endring: NextPage = () => {
   };
 
   const changeBegrunnelseHandler = (verdi: string) => {
+    logEvent('filtervalg', {
+      tittel: 'Endringsårsak beregnet månedsinntekt',
+      component: amplitudeComponent,
+      kategori: verdi,
+      filternavn: 'Endringsårsak beregnet månedsinntekt'
+    });
+
     setEndringsaarsak(verdi);
   };
 
