@@ -57,13 +57,14 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     initArbeidsgiverperioder: (arbeidsgiverperioder) =>
       set(
         produce((state) => {
-          const perioder = arbeidsgiverperioder
-            ? arbeidsgiverperioder.map((periode) => ({
-                fom: parseIsoDate(periode.fom),
-                tom: parseIsoDate(periode.tom),
-                id: nanoid()
-              }))
-            : undefined;
+          const perioder =
+            arbeidsgiverperioder && arbeidsgiverperioder.length > 0
+              ? arbeidsgiverperioder.map((periode) => ({
+                  fom: parseIsoDate(periode.fom),
+                  tom: parseIsoDate(periode.tom),
+                  id: nanoid()
+                }))
+              : [{ id: nanoid() }];
 
           state.arbeidsgiverperioder = structuredClone(perioder);
           state.opprinneligArbeidsgiverperioder = structuredClone(perioder);
