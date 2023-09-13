@@ -44,6 +44,10 @@
   margin-top: 1.5rem;
 }
 
+.endringsboks {
+  max-width: 12rem;
+}
+
 @media screen and (max-width: 500px) {
   .belopswrapper,
   .belopperiode,

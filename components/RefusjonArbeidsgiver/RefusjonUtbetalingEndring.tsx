@@ -111,6 +111,7 @@ export default function RefusjonUtbetalingEndring({
               defaultValue={endring.belop}
               id={`lus-utbetaling-endring-belop-${key}`}
               error={visFeilmeldingsTekst(`lus-utbetaling-endring-belop-${key}`)}
+              className={lokalStyles.endringsboks}
             />
             <Datovelger
               fromDate={minDate}
