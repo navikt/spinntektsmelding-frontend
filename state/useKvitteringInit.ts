@@ -87,8 +87,6 @@ export default function useKvitteringInit() {
     const bestemmendeFravaersdag = jsonData.bestemmendeFraværsdag;
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
-    const arbeidsgiverperioder = jsonData.arbeidsgiverperioder;
-
     const beregnetInntekt =
       jsonData.inntekt && jsonData.inntekt.beregnetInntekt
         ? jsonData.inntekt.beregnetInntekt

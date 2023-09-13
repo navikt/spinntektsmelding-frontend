@@ -32,8 +32,8 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
         <div>
           {props.ferie.map((periode, index) => (
             <PeriodeFraTil
-              fom={periode.fom!}
-              tom={periode.tom!}
+              fom={periode.fom}
+              tom={periode.tom}
               key={`ferieperiode-${periode.id ? periode.id : index}`}
             />
           ))}{' '}
@@ -53,8 +53,8 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
         <div>
           {props.permisjon.map((periode, index) => (
             <PeriodeFraTil
-              fom={periode.fom!}
-              tom={periode.tom!}
+              fom={periode.fom}
+              tom={periode.tom}
               key={`permisjonperiode-${periode.id ? periode.id : index}`}
             />
           ))}{' '}
@@ -66,8 +66,8 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
         <div>
           {props.permittering.map((periode, index) => (
             <PeriodeFraTil
-              fom={periode.fom!}
-              tom={periode.tom!}
+              fom={periode.fom}
+              tom={periode.tom}
               key={`permitteringperiode-${periode.id ? periode.id : index}`}
             />
           ))}{' '}
@@ -95,8 +95,8 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
         <div>
           {props.sykefravaer.map((periode, index) => (
             <PeriodeFraTil
-              fom={periode.fom!}
-              tom={periode.tom!}
+              fom={periode.fom}
+              tom={periode.tom}
               key={`sykefravaer-periode-${periode.id ? periode.id : index}`}
             />
           ))}{' '}
