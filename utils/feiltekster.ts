@@ -30,7 +30,7 @@ const feiltekster = {
   MANGLER_VERDI: 'Angi verdien på naturalytelsen.',
   LONN_I_ARBEIDSGIVERPERIODEN_BELOP: 'Angi beløp. Må være høyere enn eller lik 0 og på formatet 1234,50',
   MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN: 'Angi om det har vært endring i månedslønn i perioden',
-  MANGLER_BELOP: 'Angi ny lønn',
+  MANGLER_BELOP: 'Angi ny lønn. Må være høyere enn eller lik 0 og på formatet 1234,50',
   MANGLER_DATO: 'Angi dato for lønnsendring',
   FERIE_FOM: 'Angi fra dato',
   FERIE_TOM: 'Angi til dato',
