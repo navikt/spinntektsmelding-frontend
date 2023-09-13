@@ -41,14 +41,14 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.contains('Send').click();
 
-    cy.findAllByText('Vennligst angi bruttoinntekt på formatet 1234,50.').should('exist');
+    cy.findAllByText('Vennligst angi bruttoinntekt på formatet 1234,50').should('exist');
 
     cy.findAllByText('Vennligst angi årsak for endringen.').should('exist');
 
     cy.get('[data-cy="inntekt-belop-input"]').clear();
     cy.get('[data-cy="inntekt-belop-input"]').type('70000');
 
-    cy.findAllByText('Vennligst angi bruttoinntekt på formatet 1234,50.').should('have.length', 0);
+    cy.findAllByText('Vennligst angi bruttoinntekt på formatet 1234,50').should('have.length', 0);
 
     cy.get('[data-cy="refusjon-arbeidsgiver-belop"]')
       .invoke('text')
@@ -59,7 +59,6 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('[data-cy="inntekt-belop-input"]').clear().type('75000');
 
     cy.get('[data-cy="refusjon-arbeidsgiver-belop-input"]').should('have.value', '75000');
-
 
     // cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
   });

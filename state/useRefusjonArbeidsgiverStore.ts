@@ -8,6 +8,7 @@ import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldinger
 import feiltekster from '../utils/feiltekster';
 import { CompleteState } from './useBoundStore';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 
 export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
@@ -100,9 +101,9 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.lonnISykefravaeret.belop = stringishToNumber(beloep);
         }
 
-        if (beloep && stringishToNumber(beloep)! >= 0) {
-          state = slettFeilmeldingFraState(state, 'lus-input');
-        } else {
+        state = slettFeilmeldingFraState(state, 'lus-input');
+        const nBelop = stringishToNumber(beloep);
+        if (ugyldigEllerNegativtTall(nBelop)) {
           state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
         return state;
@@ -122,9 +123,8 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
 
         const nBelop = stringishToNumber(beloep);
 
-        if (typeof nBelop !== 'undefined' && nBelop >= 0) {
-          state = slettFeilmeldingFraState(state, 'lus-uua-input');
-        } else {
+        state = slettFeilmeldingFraState(state, 'lus-uua-input');
+        if (ugyldigEllerNegativtTall(nBelop)) {
           state = leggTilFeilmelding(state, 'lus-uua-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
         return state;
@@ -196,7 +196,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  setHarRefusjonEndringer: (harEndringer: YesNo) =>
+  setHarRefusjonEndringer: (harEndringer) =>
     set(
       produce((state) => {
         state.harRefusjonEndringer = harEndringer;

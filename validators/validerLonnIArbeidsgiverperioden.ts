@@ -1,4 +1,5 @@
 import { LonnIArbeidsgiverperioden } from '../state/state';
+import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum LonnIArbeidsgiverperiodenFeilkode {
@@ -22,7 +23,7 @@ export default function validerLonnIArbeidsgiverperioden(lonnIAP?: LonnIArbeidsg
         felt: 'lia-select'
       });
     }
-    if (lonnIAP.status === 'Nei' && (typeof lonnIAP.utbetalt === 'undefined' || lonnIAP.utbetalt < 0)) {
+    if (lonnIAP.status === 'Nei' && ugyldigEllerNegativtTall(lonnIAP.utbetalt)) {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
         felt: 'lus-uua-input'

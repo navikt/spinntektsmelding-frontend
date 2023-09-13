@@ -6,7 +6,7 @@ const feiltekster = {
   MANGLER_FRA: 'Vennligst angi fra dato.',
   MANGLER_TIL: 'Vennligst angi til dato.',
   IKKE_BEKREFTET: 'Bruttoinntekt er ikke bekreftet.',
-  BRUTTOINNTEKT_MANGLER: 'Vennligst angi bruttoinntekt på formatet 1234,50.',
+  BRUTTOINNTEKT_MANGLER: 'Vennligst angi bruttoinntekt på formatet 1234,50',
   LONN_I_ARBEIDSGIVERPERIODEN_MANGLER:
     'Angi om arbeidsgiver betaler ut full lønn til arbeidstaker i arbeidsgiverperioden.',
   LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE:
@@ -28,7 +28,7 @@ const feiltekster = {
   MANGLER_TYPE: 'Angi naturalytelse.',
   MANGLER_BORTFALLSDATO: 'Angi dato naturalytelsen bortfaller.',
   MANGLER_VERDI: 'Angi verdien på naturalytelsen.',
-  LONN_I_ARBEIDSGIVERPERIODEN_BELOP: 'Angi beløp. Må være høyere enn eller lik 0.',
+  LONN_I_ARBEIDSGIVERPERIODEN_BELOP: 'Angi beløp. Må være høyere enn eller lik 0 og på formatet 1234,50',
   MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN: 'Angi om det har vært endring i månedslønn i perioden',
   MANGLER_BELOP: 'Angi ny lønn',
   MANGLER_DATO: 'Angi dato for lønnsendring',

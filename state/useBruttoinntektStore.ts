@@ -10,6 +10,7 @@ import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 import roundTwoDecimals from '../utils/roundTwoDecimals';
 import { FeilReportElement } from './useStateInit';
+import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
@@ -85,11 +86,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
         state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
 
-        if (
-          state.bruttoinntekt.bruttoInntekt === undefined ||
-          state.bruttoinntekt.bruttoInntekt < 0 ||
-          state.bruttoinntekt.bruttoInntekt === null
-        ) {
+        if (ugyldigEllerNegativtTall(state.bruttoinntekt.bruttoInntekt)) {
           state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
 
