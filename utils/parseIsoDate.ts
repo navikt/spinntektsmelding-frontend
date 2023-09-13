@@ -1,5 +1,5 @@
-import { parse } from 'date-fns';
+import { parseISO } from 'date-fns';
 
 export default function parseIsoDate(isoDateString: string): Date {
-  return parse(isoDateString, 'yyyy-MM-dd', new Date());
+  return parseISO(isoDateString);
 }
