@@ -21,7 +21,6 @@ describe('FullLonnIArbeidsgiverperioden', () => {
     render(<FullLonnIArbeidsgiverperioden lonnIPerioden={lonnIPerioden} />);
     expect(screen.getByText('Nei')).toBeInTheDocument();
     expect(screen.getByText('Utbetalt under arbeidsgiverperiode')).toBeInTheDocument();
-    // expect(screen.getByText('1000 kr')).toBeInTheDocument();
     expect(screen.getByText('Begrunnelse for ingen eller redusert utbetaling')).toBeInTheDocument();
     expect(screen.getByText(/Arbeidsgiverperioden er helt eller delvis/)).toBeInTheDocument();
   });
