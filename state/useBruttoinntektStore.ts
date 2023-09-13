@@ -83,9 +83,13 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.bruttoinntekt.manueltKorrigert = true;
         }
 
-        if (state.bruttoinntekt.bruttoInntekt != undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
-          state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
-        } else {
+        state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
+
+        if (
+          state.bruttoinntekt.bruttoInntekt === undefined ||
+          state.bruttoinntekt.bruttoInntekt < 0 ||
+          state.bruttoinntekt.bruttoInntekt === null
+        ) {
           state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
 
@@ -95,9 +99,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.lonnISykefravaeret.belop = stringishToNumber(belop);
         }
 
-        if (belop && stringishToNumber(belop)! >= 0) {
-          state = slettFeilmeldingFraState(state, 'lus-input');
-        } else {
+        state = slettFeilmeldingFraState(state, 'lus-input');
+        if (!belop || stringishToNumber(belop)! < 0) {
           state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
 

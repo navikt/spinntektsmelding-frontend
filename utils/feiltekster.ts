@@ -6,7 +6,7 @@ const feiltekster = {
   MANGLER_FRA: 'Vennligst angi fra dato.',
   MANGLER_TIL: 'Vennligst angi til dato.',
   IKKE_BEKREFTET: 'Bruttoinntekt er ikke bekreftet.',
-  BRUTTOINNTEKT_MANGLER: 'Vennligst anngi bruttoinntekt.',
+  BRUTTOINNTEKT_MANGLER: 'Vennligst angi bruttoinntekt på formatet 1234,50.',
   LONN_I_ARBEIDSGIVERPERIODEN_MANGLER:
     'Angi om arbeidsgiver betaler ut full lønn til arbeidstaker i arbeidsgiverperioden.',
   LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE:
@@ -17,7 +17,7 @@ const feiltekster = {
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG: 'Angi om arbeidsgiver betaler lønn under hele perioden.',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO: 'Angi siste dato det kreves refusjon for.',
   BEKREFT_OPPLYSNINGER: 'Bekreft at opplysningene gitt er riktig og fullstendige.',
-  ENDRINGSAARSAK_MANGLER: 'Vennligst anngi årsak for endringen.',
+  ENDRINGSAARSAK_MANGLER: 'Vennligst angi årsak for endringen.',
   SUM_LAVERE_ENN_INNTEKT: 'Summen av inntektene for de enkelte arbeidsforholdene er høyere enn bruttoinntekten.',
   SERVERFEIL_ARBEIDSGIVER: 'Kunne ikke hente ut arbeidsgiverdata.',
   SERVERFEIL_IM: 'Kunne ikke hente ut inntektsmeldingdata.',
