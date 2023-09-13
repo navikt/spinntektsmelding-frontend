@@ -16,8 +16,8 @@ export interface SendtPeriode {
 
 interface FullLonnIArbeidsgiverPerioden {
   utbetalerFullLønn: boolean;
-  begrunnelse?: string;
-  utbetalt?: number;
+  begrunnelse?: string | null;
+  utbetalt?: number | null;
 }
 
 export interface RefusjonEndring {
@@ -241,8 +241,8 @@ export default function useFyllInnsending() {
       bestemmendeFraværsdag: bestemmendeFraværsdag!,
       fullLønnIArbeidsgiverPerioden: {
         utbetalerFullLønn: fullLonnIArbeidsgiverPerioden?.status === 'Ja',
-        begrunnelse: fullLonnIArbeidsgiverPerioden?.begrunnelse,
-        utbetalt: fullLonnIArbeidsgiverPerioden?.utbetalt
+        begrunnelse: fullLonnIArbeidsgiverPerioden?.status === 'Ja' ? null : fullLonnIArbeidsgiverPerioden?.begrunnelse,
+        utbetalt: fullLonnIArbeidsgiverPerioden?.status === 'Ja' ? null : fullLonnIArbeidsgiverPerioden?.utbetalt
       },
       refusjon: {
         utbetalerHeleEllerDeler: lonnISykefravaeret?.status === 'Ja',
