@@ -21,7 +21,7 @@ import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/Ref
 import { YesNo } from '../../state/state';
 import { useRouter } from 'next/router';
 import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
-import useAmplitude from '../../utils/useAmplitude';
+import logEvent from '../../utils/logEvent';
 import environment from '../../config/environment';
 import RefusjonUtbetalingEndring from '../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import IngenTilgang from '../../components/IngenTilgang';
@@ -31,7 +31,7 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import TextLabel from '../../components/TextLabel';
 import ButtonEndre from '../../components/ButtonEndre';
-import useSendInnSkjema from 'utils/useSendInnSkjema';
+import useSendInnSkjema from '../../utils/useSendInnSkjema';
 
 const Endring: NextPage = () => {
   const [endringBruttolonn, setEndringBruttolonn] = useBoundStore((state) => [
@@ -81,7 +81,7 @@ const Endring: NextPage = () => {
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const router = useRouter();
-  const logEvent = useAmplitude();
+
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const fastsattInntekt = useBoundStore((state) => state.fastsattInntekt);

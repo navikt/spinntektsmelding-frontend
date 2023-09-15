@@ -46,4 +46,12 @@ describe.concurrent('numberOfDaysInRange', () => {
       ])
     ).toBe(12);
   });
+
+  it('should return 0 when we have no periods in FravaaersPeriode', () => {
+    expect(numberOfDaysInRanges([])).toBe(0);
+  });
+
+  it('should return 0 when we have undefined periods in FravaaersPeriode', () => {
+    expect(numberOfDaysInRanges([undefined])).toBe(0);
+  });
 });

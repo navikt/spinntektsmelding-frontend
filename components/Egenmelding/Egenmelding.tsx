@@ -7,7 +7,7 @@ import EgenmeldingPeriode from './EgenmeldingPeriode';
 import ButtonEndre from '../ButtonEndre';
 import { useMemo } from 'react';
 import Feilmelding from '../Feilmelding';
-import useAmplitude from '../../utils/useAmplitude';
+import logEvent from '../../utils/logEvent';
 import { subDays } from 'date-fns';
 import ButtonTilbakestill from '../ButtonTilbakestill';
 
@@ -37,7 +37,6 @@ export default function Egenmelding() {
   const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
-  const logEvent = useAmplitude();
 
   const clickSlettEgenmeldingsperiode = (periode: string) => {
     logEvent('knapp klikket', {

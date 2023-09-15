@@ -34,6 +34,8 @@ export default function valdiderEndringAvMaanedslonn(
         });
       }
 
+      console.log('endring.belop', endring.belop, ugyldigEllerNegativtTall(endring.belop));
+
       if (!endring.dato) {
         feilmeldinger.push({
           felt: `lus-utbetaling-endring-dato-${index}`,
