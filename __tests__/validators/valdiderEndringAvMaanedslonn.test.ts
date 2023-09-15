@@ -32,4 +32,22 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
       }
     ]);
   });
+
+  it('should return error when harRefusjonEndringer is Ja and belop is negative', () => {
+    expect(valdiderEndringAvMaanedslonn('Ja', [{ belop: -1, dato: new Date() }])).toEqual([
+      {
+        code: 'MANGLER_BELOP',
+        felt: 'lus-utbetaling-endring-belop-0'
+      }
+    ]);
+  });
+
+  it('should return error when harRefusjonEndringer is Ja and belop is a string', () => {
+    expect(valdiderEndringAvMaanedslonn('Ja', [{ belop: 'string', dato: new Date() }])).toEqual([
+      {
+        code: 'MANGLER_BELOP',
+        felt: 'lus-utbetaling-endring-belop-0'
+      }
+    ]);
+  });
 });

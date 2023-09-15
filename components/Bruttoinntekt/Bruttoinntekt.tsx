@@ -11,7 +11,7 @@ import ButtonEndre from '../ButtonEndre';
 import formatDate from '../../utils/formatDate';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import LesMer from '../LesMer';
-import useAmplitude from '../../utils/useAmplitude';
+import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 
 interface BruttoinntektProps {
@@ -48,7 +48,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
 
-  const logEvent = useAmplitude();
   const amplitudeComponent = 'BeregnetMånedslønn';
 
   const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
