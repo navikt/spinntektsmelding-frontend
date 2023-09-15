@@ -1,5 +1,5 @@
-import useBoundStore from 'state/useBoundStore';
-import useAmplitude from './useAmplitude';
+import useBoundStore from '../state/useBoundStore';
+import logEvent from './logEvent';
 import useValiderInntektsmelding from './useValiderInntektsmelding';
 import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import isValidUUID from './isValidUUID';
@@ -7,8 +7,7 @@ import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/router';
 
-export default function useSendInnSkjema(innsendingFeiletIngenTilgang) {
-  const logEvent = useAmplitude();
+export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: boolean) => void) {
   const validerInntektsmelding = useValiderInntektsmelding();
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const fyllInnsending = useFyllInnsending();

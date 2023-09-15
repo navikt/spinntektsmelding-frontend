@@ -32,16 +32,23 @@ export enum BruttoinntektFeilkode {
 }
 
 export default function validerBruttoinntekt(state: CompleteState): Array<ValiderResultat> {
-  const valideringstatus: Array<ValiderResultat> = [];
+  let valideringstatus: Array<ValiderResultat> = [];
 
   if (!state.bruttoinntekt) {
+    valideringstatus = valideringstatus.filter((validering) => validering.felt !== 'bruttoinntekt');
     valideringstatus.push({
       felt: 'bruttoinntekt',
       code: BruttoinntektFeilkode.INNTEKT_MANGLER
     });
   } else {
     const bruttoinntekt = state.bruttoinntekt;
-    if (bruttoinntekt.bruttoInntekt === undefined || bruttoinntekt.bruttoInntekt < 0) {
+    if (
+      bruttoinntekt.bruttoInntekt === undefined ||
+      bruttoinntekt.bruttoInntekt < 0 ||
+      bruttoinntekt.bruttoInntekt === null ||
+      Number.isNaN(bruttoinntekt.bruttoInntekt)
+    ) {
+      valideringstatus = valideringstatus.filter((validering) => validering.felt !== 'inntekt.beregnetInntekt');
       valideringstatus.push({
         felt: 'inntekt.beregnetInntekt',
         code: BruttoinntektFeilkode.BRUTTOINNTEKT_MANGLER

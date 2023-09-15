@@ -10,6 +10,7 @@ import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 import roundTwoDecimals from '../utils/roundTwoDecimals';
 import { FeilReportElement } from './useStateInit';
+import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
@@ -83,9 +84,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.bruttoinntekt.manueltKorrigert = true;
         }
 
-        if (state.bruttoinntekt.bruttoInntekt != undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
-          state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
-        } else {
+        state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
+
+        if (ugyldigEllerNegativtTall(state.bruttoinntekt.bruttoInntekt)) {
           state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
 
@@ -95,9 +96,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.lonnISykefravaeret.belop = stringishToNumber(belop);
         }
 
-        if (belop && stringishToNumber(belop)! >= 0) {
-          state = slettFeilmeldingFraState(state, 'lus-input');
-        } else {
+        state = slettFeilmeldingFraState(state, 'lus-input');
+        if (!belop || stringishToNumber(belop)! < 0) {
           state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
 

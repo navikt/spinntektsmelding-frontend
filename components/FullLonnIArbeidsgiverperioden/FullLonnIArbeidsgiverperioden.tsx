@@ -21,7 +21,7 @@ export default function FullLonnIArbeidsgiverperioden({ lonnIPerioden }: FullLon
         <div className={lokalStyle.wrapper}>
           <BodyShort>Nei</BodyShort>
           <div className={lokalStyle.uthevet}>Utbetalt under arbeidsgiverperiode</div>
-          <div>{formatCurrency(lonnIPerioden.utbetalt)} kr</div>
+          <div>{lonnIPerioden.utbetalt ? formatCurrency(lonnIPerioden.utbetalt) : 0} kr</div>
           <div className={lokalStyle.uthevet}>Begrunnelse for ingen eller redusert utbetaling</div>
           <div>{formaterBegrunnelse(lonnIPerioden.begrunnelse)}</div>
         </div>

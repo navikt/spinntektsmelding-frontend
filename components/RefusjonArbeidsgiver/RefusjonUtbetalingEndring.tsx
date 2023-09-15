@@ -101,13 +101,17 @@ export default function RefusjonUtbetalingEndring({
 
       {harRefusjonEndring === 'Ja' &&
         endringer.map((endring, key) => (
-          <div key={key} className={lokalStyles.belopperiode}>
+          <div
+            key={endring.dato ? endring.dato?.toISOString() + endring.belop : key}
+            className={lokalStyles.belopperiode}
+          >
             <TextField
               label='Endret refusjon/måned'
               onChange={(event) => changeBelopHandler(event, key)}
               defaultValue={endring.belop}
               id={`lus-utbetaling-endring-belop-${key}`}
               error={visFeilmeldingsTekst(`lus-utbetaling-endring-belop-${key}`)}
+              className={lokalStyles.endringsboks}
             />
             <Datovelger
               fromDate={minDate}

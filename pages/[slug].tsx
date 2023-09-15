@@ -28,10 +28,10 @@ import environment from '../config/environment';
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
 import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
-import HentingAvDataFeilet from 'components/HentingAvDataFeilet';
-import fetchInntektsdata from 'utils/fetchInntektsdata';
+import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
+import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
-import useSendInnSkjema from 'utils/useSendInnSkjema';
+import useSendInnSkjema from '../utils/useSendInnSkjema';
 
 const Home: NextPage = () => {
   const router = useRouter();
