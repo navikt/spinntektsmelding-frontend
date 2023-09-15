@@ -1,0 +1,8 @@
+{
+  "kvitteringEkstern": {
+    "avsenderSystem": "AltinnPortal",
+    "referanse": "AR123456",
+    "tidspunkt": "2023-09-11T11:11:11.123Z"
+  },
+  "kvitteringDokument": null
+}

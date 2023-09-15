@@ -14,6 +14,7 @@ import { Periode } from './state';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import skjemaVariant from '../config/skjemavariant';
 import { nanoid } from 'nanoid';
+import { SkjemaKvitteringEksterntSystem } from './useSkjemadataStore';
 
 export interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
@@ -22,6 +23,11 @@ export interface KvitteringSkjema extends InnsendingSkjema {
   innsenderTelefonNr: string;
   beregnetInntekt?: number;
   tidspunkt?: string;
+}
+
+interface KvitteringInit {
+  kvitteringEkstern: SkjemaKvitteringEksterntSystem | null;
+  kvitteringDokument: KvitteringSkjema | null;
 }
 
 export default function useKvitteringInit() {
@@ -60,8 +66,26 @@ export default function useKvitteringInit() {
   const setTidligereInntektsdata = useBoundStore((state) => state.setTidligereInntektsdata);
   const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
+  const setSkjemaKvitteringEksterntSystem = useBoundStore((state) => state.setSkjemaKvitteringEksterntSystem);
 
-  return async (jsonData: KvitteringSkjema, slug: string) => {
+  return async (kvitteringsData: KvitteringInit, slug: string) => {
+    let jsonData: KvitteringSkjema;
+    if (kvitteringsData.kvitteringEkstern && kvitteringsData.kvitteringEkstern !== null) {
+      setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);
+      return;
+    }
+
+    if ('kvitteringEkstern' in kvitteringsData) {
+      setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);
+      return;
+    }
+
+    if (kvitteringsData.kvitteringDokument && 'kvitteringDokument' in kvitteringsData) {
+      jsonData = kvitteringsData.kvitteringDokument;
+    } else {
+      jsonData = kvitteringsData;
+    }
+
     initFravaersperiode(jsonData.fraværsperioder);
     if (jsonData.egenmeldingsperioder) initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
 
