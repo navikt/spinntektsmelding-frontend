@@ -13,7 +13,7 @@ import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useEffect, useState } from 'react';
 import LesMer from '../LesMer';
-import useAmplitude from '../../utils/useAmplitude';
+import logEvent from '../../utils/logEvent';
 import { differenceInCalendarDays } from 'date-fns';
 
 interface ArbeidsgiverperiodeProps {
@@ -31,7 +31,6 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const slettAlleArbeidsgiverperioder = useBoundStore((state) => state.slettAlleArbeidsgiverperioder);
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
-  const logEvent = useAmplitude();
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
   const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled] = useState<boolean>(false);
