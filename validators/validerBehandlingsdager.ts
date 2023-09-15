@@ -15,7 +15,7 @@ export default function validerBehandlingsdager(dager: Array<Date>): valideringB
     return valideringBehandlingsdager.FLER_ENN_EN_I_UKEN;
   }
 
-  const sortedDays = [...dager].sort();
+  const sortedDays = [...dager].sort((a, b) => b.getTime() - a.getTime());
 
   for (let i = 0; i < sortedDays.length; i++) {
     if (differenceInCalendarDays(sortedDays[i], sortedDays[i + 1]) > 15) {
