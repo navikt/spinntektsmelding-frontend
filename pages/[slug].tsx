@@ -102,6 +102,7 @@ const Home: NextPage = () => {
           })
           .catch((error) => {
             logger.warn('Feil ved henting av tidliger inntektsdata i hovedskjema', error);
+            logger.warn(error);
           });
       }
     }

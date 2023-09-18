@@ -50,7 +50,7 @@ export default function useHentSkjemadata() {
       }
 
       logger.warn('Feil ved henting av skjemadata i useHentSkjemadata', error);
-      logger.warn('Feil ved henting av skjemadata i useHentSkjemadata - info', error.info);
+      logger.warn(error);
       slettFeilmelding('ukjent');
       leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
       setSkalViseFeilmeldinger(true);

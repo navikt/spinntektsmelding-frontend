@@ -37,7 +37,7 @@ export default function useHentKvitteringsdata() {
           hentSkjemadata(pathSlug);
         } catch (error: any) {
           logger.warn('Feil ved henting av skjemadata i useHentKvitteringsdata', error);
-          logger.warn('Feil ved henting av skjemadata i useHentKvitteringsdata - info', error.info);
+          logger.warn(error);
         }
       }
     }
