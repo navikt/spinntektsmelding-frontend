@@ -27,10 +27,10 @@ const fetchInntektskjemaForNotifikasjon = async (url: string, uuid: string, req:
   }
   try {
     return await res.json();
-  } catch (_error) {
+  } catch (error) {
     const jsonError = new NetworkError('An error occurred while decoding the data.');
     // Attach extra info to the error object.
-    jsonError.info = await res.json();
+    jsonError.info = (error as Error).message;
     jsonError.status = res.status;
     throw jsonError;
   }

@@ -6,6 +6,7 @@ import isValidUUID from './isValidUUID';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/router';
+import { logger } from '@navikt/next-logger';
 
 export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: boolean) => void) {
   const validerInntektsmelding = useValiderInntektsmelding();
@@ -90,6 +91,9 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: 
               component: amplitudeComponent
             });
 
+            logger.error('Feil ved innsending av skjema - 500', data);
+            logger.error(data);
+
             break;
           }
 
@@ -102,6 +106,10 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: 
               }
             ];
             errorResponse(errors);
+
+            logger.error('Feil ved innsending av skjema - 404', data);
+            logger.error(data);
+
             break;
           }
 
