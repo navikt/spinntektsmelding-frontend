@@ -34,7 +34,7 @@ export default function useHentKvitteringsdata() {
 
       if (error.status !== 200 && pathSlug) {
         try {
-          hentSkjemadata(pathSlug);
+          await hentSkjemadata(pathSlug);
         } catch (error: any) {
           logger.warn('Feil ved henting av skjemadata i useHentKvitteringsdata', error);
           logger.warn(error);
