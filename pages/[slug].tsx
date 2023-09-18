@@ -101,7 +101,7 @@ const Home: NextPage = () => {
             setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
           })
           .catch((error) => {
-            logger.warn('Feil ved henting av tidliger inntektsdata', error);
+            logger.warn('Feil ved henting av tidliger inntektsdata i hovedskjema', error);
           });
       }
     }
