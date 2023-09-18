@@ -3,6 +3,7 @@ import environment from '../config/environment';
 import fetchKvitteringsdata from './fetchKvitteringsdata';
 import useHentSkjemadata from './useHentSkjemadata';
 import useKvitteringInit from '../state/useKvitteringInit';
+import { logger } from '@navikt/next-logger';
 
 export default function useHentKvitteringsdata() {
   const initState = useKvitteringInit();
@@ -32,7 +33,12 @@ export default function useHentKvitteringsdata() {
       }
 
       if (error.status !== 200 && pathSlug) {
-        hentSkjemadata(pathSlug);
+        try {
+          await hentSkjemadata(pathSlug);
+        } catch (error: any) {
+          logger.warn('Feil ved henting av skjemadata i useHentKvitteringsdata', error);
+          logger.warn(error);
+        }
       }
     }
   };
