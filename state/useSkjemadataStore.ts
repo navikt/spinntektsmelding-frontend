@@ -17,6 +17,7 @@ export interface SkjemadataState {
   setDirekteInngangKvittering: () => void;
   setEndringBruttolonn: (endring: YesNo) => void;
   setEndringerAvRefusjon: (endring: YesNo) => void;
+  setSkjemaKvitteringEksterntSystem: (eksterntSystem: SkjemaKvitteringEksterntSystem) => void;
   tracker: string;
   henterInntektsdata: boolean;
   slug?: string | Array<string>;
@@ -27,6 +28,13 @@ export interface SkjemadataState {
   direkteInngangKvittering: boolean;
   endringBruttolonn?: YesNo;
   endringerAvRefusjon?: YesNo;
+  kvitteringEksterntSystem?: SkjemaKvitteringEksterntSystem;
+}
+
+export interface SkjemaKvitteringEksterntSystem {
+  avsenderSystem: string;
+  referanse: string;
+  tidspunkt: string;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -105,6 +113,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.endringerAvRefusjon = endring;
+      })
+    );
+  },
+  setSkjemaKvitteringEksterntSystem: (eksterntSystem: SkjemaKvitteringEksterntSystem) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.kvitteringEksterntSystem = eksterntSystem;
       })
     );
   }

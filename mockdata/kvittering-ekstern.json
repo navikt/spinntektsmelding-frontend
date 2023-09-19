@@ -1,0 +1,29 @@
+{
+  "kvitteringEkstern": null,
+  "kvitteringDokument": {
+    "orgnrUnderenhet": "810007842",
+    "identitetsnummer": "10486535275",
+    "fulltNavn": "ULTRAFIOLETT DAMESYKKEL",
+    "telefonnummer": "+4741359019",
+    "innsenderNavn": "Muskuløs Vals",
+    "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "behandlingsdager": [],
+    "egenmeldingsperioder": [{ "fom": "2023-01-20", "tom": "2023-01-20" }],
+    "arbeidsgiverperioder": [{ "fom": "2023-01-20", "tom": "2023-02-04" }],
+    "bestemmendeFraværsdag": "2023-01-20",
+    "fraværsperioder": [{ "fom": "2023-01-23", "tom": "2023-02-22" }],
+    "inntekt": { "bekreftet": true, "beregnetInntekt": 45000, "endringÅrsak": null, "manueltKorrigert": false },
+    "fullLønnIArbeidsgiverPerioden": { "utbetalerFullLønn": false, "begrunnelse": "LovligFravaer", "utbetalt": 30000 },
+    "refusjon": {
+      "utbetalerHeleEllerDeler": true,
+      "refusjonPrMnd": 45000,
+      "refusjonOpphører": "2023-09-29",
+      "refusjonEndringer": [{ "beløp": 20000, "dato": "2023-09-20" }]
+    },
+    "naturalytelser": [{ "naturalytelse": "BIL", "dato": "2023-09-29", "beløp": 6000 }],
+    "årsakInnsending": "Ny",
+    "bekreftOpplysninger": true,
+    "tidspunkt": "2023-09-19T08:08:29.639368431Z",
+    "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
+  }
+}
