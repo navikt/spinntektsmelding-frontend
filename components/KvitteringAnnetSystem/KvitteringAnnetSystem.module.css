@@ -1,0 +1,10 @@
+.hovedinnhold {
+  margin: 2rem 0;
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 1.5rem;
+}
+
+.arkivreferanse {
+  margin-top: 1rem;
+}

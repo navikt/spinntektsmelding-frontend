@@ -1,0 +1,29 @@
+{
+  "orgnrUnderenhet": "810007842",
+  "identitetsnummer": "16507927681",
+  "fulltNavn": "LEKKER SKOGFIOL",
+  "telefonnummer": "12345678",
+  "innsenderNavn": "Muskuløs Vals",
+  "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "behandlingsdager": [],
+  "egenmeldingsperioder": [{ "fom": "2022-12-27", "tom": "2022-12-29" }],
+  "arbeidsgiverperioder": [
+    { "fom": "2022-12-27", "tom": "2022-12-29" },
+    { "fom": "2023-01-02", "tom": "2023-01-14" }
+  ],
+  "bestemmendeFraværsdag": "2023-01-02",
+  "fraværsperioder": [{ "fom": "2023-01-02", "tom": "2023-01-20" }],
+  "inntekt": { "bekreftet": true, "beregnetInntekt": 45000, "endringÅrsak": null, "manueltKorrigert": false },
+  "fullLønnIArbeidsgiverPerioden": { "utbetalerFullLønn": true, "begrunnelse": null, "utbetalt": null },
+  "refusjon": {
+    "utbetalerHeleEllerDeler": false,
+    "refusjonPrMnd": null,
+    "refusjonOpphører": null,
+    "refusjonEndringer": null
+  },
+  "naturalytelser": null,
+  "årsakInnsending": "Endring",
+  "bekreftOpplysninger": true,
+  "tidspunkt": "2023-09-06T14:42:33.341249931+02:00",
+  "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
+}
