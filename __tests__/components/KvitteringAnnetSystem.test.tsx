@@ -17,7 +17,7 @@ describe('KvitteringAnnetSystem', () => {
     expect(getByText('Mottatt inntektsmelding')).toBeInTheDocument();
     expect(getByText('Denne inntektsmeldingen er mottatt fra et eksternt system')).toBeInTheDocument();
     expect(getByText(/Vi har mottatt denne inntektsmeldingen fra Eksternt system/)).toBeInTheDocument();
-    expect(getByText(`Arkivrefferanse: [${props.arkivreferanse}]`)).toBeInTheDocument();
+    expect(getByText(`Arkivreferanse: [${props.arkivreferanse}]`)).toBeInTheDocument();
     expect(getByText(props.lenkeTilKvittering)).toHaveAttribute('href', props.lenkeTilKvitteringHref);
   });
 
@@ -31,7 +31,7 @@ describe('KvitteringAnnetSystem', () => {
     expect(getByText('Mottatt inntektsmelding')).toBeInTheDocument();
     expect(getByText('Denne inntektsmeldingen er mottatt fra et eksternt system')).toBeInTheDocument();
     expect(getByText(/Vi har mottatt denne inntektsmeldingen fra Eksternt system/)).toBeInTheDocument();
-    expect(queryByText('Arkivrefferanse:')).toBeNull();
+    expect(queryByText('Arkivreferanse:')).toBeNull();
     expect(queryByText('Eventuell lenke til kvittering')).toBeNull();
   });
 });
