@@ -459,7 +459,17 @@
     "@opentelemetry/otlp-transformer" "^0.41.2"
     murmurhash-js "^1.0.0"
 
-"@grafana/faro-web-sdk@1.1.4", "@grafana/faro-web-sdk@^1.1.4":
+"@grafana/faro-core@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-core/-/faro-core-1.2.0.tgz#ad58f8d504c1cbe4fb57f9ede66f17115faaaa3e"
+  integrity sha512-ITkem5LgH39GuMRiBPXaLyG1+TCPT0iLIymFFFX+ZJTWkx6Uy0J9N9+HWy/gXPnRFb+kCRt1CNCrFZYWGt8ZxA==
+  dependencies:
+    "@opentelemetry/api" "^1.4.1"
+    "@opentelemetry/api-metrics" "^0.33.0"
+    "@opentelemetry/otlp-transformer" "^0.41.2"
+    murmurhash-js "^1.0.0"
+
+"@grafana/faro-web-sdk@1.1.4":
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/@grafana/faro-web-sdk/-/faro-web-sdk-1.1.4.tgz#bf4f93e234f0dabf60b7641c795690074c0bf506"
   integrity sha512-eyrwi01VWkoaBZVYo3fbyakW/nN6Dhz/dYgaWHOx3Mt0pH+q8IrIAF5oNoy9QGNCsdmld/sbIL+jV6yoyojYDA==
@@ -468,12 +478,21 @@
     ua-parser-js "^1.0.32"
     web-vitals "^3.1.1"
 
-"@grafana/faro-web-tracing@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-web-tracing/-/faro-web-tracing-1.1.4.tgz#0768527f93fd0bf3e1e2315861be3933ea6867ed"
-  integrity sha512-JtAfnR/vBORMnyrsrKWnlxGIB+7qZYj3envV7nSCrYaXiVCErLhb2k6feyKBIMif14kX/H/FHw4maDWo2RW4hQ==
+"@grafana/faro-web-sdk@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-web-sdk/-/faro-web-sdk-1.2.0.tgz#3b40b9cf8ab535214ad517ebad6f8a125426d518"
+  integrity sha512-fQCbEq4Gyn96K/GatpUCBP6iQyK48EBpnf/RvWoLTUmN+ac0/dn+3c+NPZULhqMBHI10cAv9ol9wsGKXj4yYzw==
   dependencies:
-    "@grafana/faro-web-sdk" "^1.1.4"
+    "@grafana/faro-core" "^1.2.0"
+    ua-parser-js "^1.0.32"
+    web-vitals "^3.1.1"
+
+"@grafana/faro-web-tracing@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-web-tracing/-/faro-web-tracing-1.2.0.tgz#7c6dc3502f6ba8338b34b1cda1e70a24bfb8e9be"
+  integrity sha512-+YA8nCwchMAbAkx69kF4/VNI8IspkZF+NHe5igDBb5HWkR4jD1ihiaziebIBv/2N1FYI+lMb5iyQdoTKJhMtOQ==
+  dependencies:
+    "@grafana/faro-web-sdk" "^1.2.0"
     "@opentelemetry/api" "^1.4.1"
     "@opentelemetry/context-zone" "^1.15.2"
     "@opentelemetry/core" "^1.15.2"
