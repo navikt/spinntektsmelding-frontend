@@ -75,14 +75,17 @@ export default function useKvitteringInit() {
       return;
     }
 
-    if ('kvitteringEkstern' in kvitteringsData) {
+    if ('kvitteringEkstern' in kvitteringsData && kvitteringsData.kvitteringEkstern !== null) {
+      console.log('kvitteringsData.kvitteringEkstern', kvitteringsData.kvitteringEkstern);
       setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);
       return;
     }
 
     if (kvitteringsData.kvitteringDokument && 'kvitteringDokument' in kvitteringsData) {
+      console.log('kvitteringsData.kvitteringDokument', kvitteringsData.kvitteringDokument);
       jsonData = kvitteringsData.kvitteringDokument;
     } else {
+      console.log('kvitteringsData', kvitteringsData);
       jsonData = kvitteringsData;
     }
 
