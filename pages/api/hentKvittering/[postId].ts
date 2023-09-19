@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../../config/environment';
 
-import org from '../../../mockdata/kvittering-delvis-lonn.json';
+import org from '../../../mockdata/kvittering-eksternt-system.json';
 
 const basePath = environment.hentKvitteringAPI;
 
