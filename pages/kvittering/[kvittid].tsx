@@ -38,7 +38,6 @@ import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
 import classNames from 'classnames/bind';
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem/KvitteringAnnetSystem';
-import React from 'react';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -146,7 +145,7 @@ const Kvittering: NextPage = () => {
           {kvitteringEksterntSystem?.avsenderSystem && (
             <KvitteringAnnetSystem
               arkivreferanse={kvitteringEksterntSystem.referanse}
-              ekstertSystem={kvitteringEksterntSystem.avsenderSystem}
+              eksterntSystem={kvitteringEksterntSystem.avsenderSystem}
               mottattDato={innsendingstidspunkt}
             />
           )}

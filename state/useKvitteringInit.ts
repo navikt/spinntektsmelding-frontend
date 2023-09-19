@@ -70,23 +70,16 @@ export default function useKvitteringInit() {
 
   return async (kvitteringsData: KvitteringInit, slug: string) => {
     let jsonData: KvitteringSkjema;
+
     if (kvitteringsData.kvitteringEkstern && kvitteringsData.kvitteringEkstern !== null) {
       setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);
       return;
     }
 
-    if ('kvitteringEkstern' in kvitteringsData && kvitteringsData.kvitteringEkstern !== null) {
-      console.log('kvitteringsData.kvitteringEkstern', kvitteringsData.kvitteringEkstern);
-      setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);
-      return;
-    }
-
-    if (kvitteringsData.kvitteringDokument && 'kvitteringDokument' in kvitteringsData) {
-      console.log('kvitteringsData.kvitteringDokument', kvitteringsData.kvitteringDokument);
-      jsonData = kvitteringsData.kvitteringDokument;
+    if (kvitteringsData.kvitteringDokument && kvitteringsData.kvitteringDokument !== null) {
+      jsonData = kvitteringsData.kvitteringDokument!;
     } else {
-      console.log('kvitteringsData', kvitteringsData);
-      jsonData = kvitteringsData;
+      jsonData = kvitteringsData as unknown as KvitteringSkjema;
     }
 
     initFravaersperiode(jsonData.fraværsperioder);

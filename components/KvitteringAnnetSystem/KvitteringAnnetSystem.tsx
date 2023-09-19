@@ -2,14 +2,13 @@ import React from 'react';
 import { BodyLong, BodyShort, Link } from '@navikt/ds-react';
 import Heading1 from '../Heading1/Heading1';
 import Heading2 from '../Heading2/Heading2';
-import styles from '../../styles/Home.module.css';
 import lokalStyles from './KvitteringAnnetSystem.module.css';
 
 interface KvitteringAnnetSystemProps {
   arkivreferanse?: string;
   lenkeTilKvittering?: string;
   lenkeTilKvitteringHref?: string;
-  ekstertSystem: string;
+  eksterntSystem: string;
   mottattDato?: string;
 }
 
@@ -20,12 +19,12 @@ export default function KvitteringAnnetSystem(props: KvitteringAnnetSystemProps)
       <div className={lokalStyles.hovedinnhold}>
         <Heading2>Denne inntektsmeldingen er mottatt fra et eksternt system</Heading2>
         <BodyLong>
-          Vi har mottatt denne inntektsmeldingen fra {props.ekstertSystem}. Hvis du vil se innsendt informasjon eller
+          Vi har mottatt denne inntektsmeldingen fra {props.eksterntSystem}. Hvis du vil se innsendt informasjon eller
           gjøre endringer må du bruke samme system som dere sendte inn denne inntektsmeldingen med.
         </BodyLong>
 
         {props.arkivreferanse && (
-          <BodyShort className={lokalStyles.arkivreferanse}>Arkivrefferanse: [{props.arkivreferanse}]</BodyShort>
+          <BodyShort className={lokalStyles.arkivreferanse}>Arkivreferanse: [{props.arkivreferanse}]</BodyShort>
         )}
 
         {props.lenkeTilKvittering && (

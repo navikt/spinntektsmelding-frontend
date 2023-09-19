@@ -8,7 +8,7 @@ describe('KvitteringAnnetSystem', () => {
       arkivreferanse: '123456',
       lenkeTilKvittering: 'Kvittering',
       lenkeTilKvitteringHref: 'https://example.com/kvittering',
-      ekstertSystem: 'Eksternt system',
+      eksterntSystem: 'Eksternt system',
       mottattDato: '2022-01-01'
     };
 
@@ -23,7 +23,7 @@ describe('KvitteringAnnetSystem', () => {
 
   it('should render the component without optional props', () => {
     const props = {
-      ekstertSystem: 'Eksternt system'
+      eksterntSystem: 'Eksternt system'
     };
 
     const { getByText, queryByText } = render(<KvitteringAnnetSystem {...props} />);
