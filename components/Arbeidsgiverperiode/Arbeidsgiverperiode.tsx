@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import { differenceInCalendarDays } from 'date-fns';
+import SelectBegrunnelse from '../RefusjonArbeidsgiver/SelectBegrunnelse';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -30,10 +31,22 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const slettAlleArbeidsgiverperioder = useBoundStore((state) => state.slettAlleArbeidsgiverperioder);
+  const setBeloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
+    (state) => state.setBeloepUtbetaltUnderArbeidsgiverperioden
+  );
+  const begrunnelseRedusertUtbetaling = useBoundStore((state) => state.begrunnelseRedusertUtbetaling);
+  const arbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useBoundStore(
+    (state) => state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden
+  );
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
+  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
-  const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled] = useState<boolean>(false);
+  const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled] = useBoundStore((state) => [
+    state.arbeidsgiverperiodeDisabled,
+    state.setArbeidsgiverperiodeDisabled
+  ]);
+
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
 
   const antallDagerIArbeidsgiverperioder = (perioder: Array<Periode> | undefined) => {
@@ -109,6 +122,8 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   const handleIngenArbeidsgiverperiodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArbeidsgiverperiodeDisabled(event.target.checked);
     setManuellEndring(true);
+    setBeloepUtbetaltUnderArbeidsgiverperioden('0');
+    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
     if (event.target.checked === true) {
       slettAlleArbeidsgiverperioder();
     }
@@ -208,13 +223,22 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
           </div>
         ))}
       {endretArbeidsgiverperiode && (
-        <Checkbox
-          value='IngenPeriode'
-          onChange={handleIngenArbeidsgiverperiodeChange}
-          checked={arbeidsgiverperiodeDisabled}
-        >
-          Det er ikke arbeidsgiverperiode
-        </Checkbox>
+        <>
+          <Checkbox
+            value='IngenPeriode'
+            onChange={handleIngenArbeidsgiverperiodeChange}
+            checked={arbeidsgiverperiodeDisabled}
+          >
+            Det er ikke arbeidsgiverperiode
+          </Checkbox>
+          {arbeidsgiverperiodeDisabled && (
+            <SelectBegrunnelse
+              onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
+              defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
+              error={visFeilmeldingsTekst('lia-select')}
+            />
+          )}
+        </>
       )}
       {!endretArbeidsgiverperiode && (
         <div className={lokalStyles.endreknapp}>
