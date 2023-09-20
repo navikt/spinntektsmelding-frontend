@@ -16,7 +16,9 @@ export default function validerLonnIArbeidsgiverperioden(
   let errorStatus: Array<ValiderResultat> = [];
 
   const ingenArbeidsgiverperiode =
-    arbeidsgiverperioder?.length === 0 || arbeidsgiverperioder?.filter((p) => p.tom && p.fom).length === 0;
+    arbeidsgiverperioder === undefined ||
+    arbeidsgiverperioder?.length === 0 ||
+    arbeidsgiverperioder?.filter((p) => p.tom && p.fom).length === 0;
 
   if (!lonnIAP) {
     errorStatus.push({
@@ -32,11 +34,11 @@ export default function validerLonnIArbeidsgiverperioden(
     }
     if (lonnIAP.status === 'Nei' && ugyldigEllerNegativtTall(lonnIAP.utbetalt)) {
       errorStatus.push({
-        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_MANGLER,
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
         felt: 'lus-uua-input'
       });
     }
-
+    console.log('ingenArbeidsgiverperiode', ingenArbeidsgiverperiode, lonnIAP.status, arbeidsgiverperioder);
     if (ingenArbeidsgiverperiode && lonnIAP.status === 'Ja') {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,

@@ -1,4 +1,5 @@
 import { LonnIArbeidsgiverperioden } from '../../state/state';
+import parseIsoDate from '../../utils/parseIsoDate';
 import validerLonnIArbeidsgiverperioden from '../../validators/validerLonnIArbeidsgiverperioden';
 
 describe('validerLonnIArbeidsgiverperioden', () => {
@@ -7,7 +8,14 @@ describe('validerLonnIArbeidsgiverperioden', () => {
       status: 'Ja'
     };
 
-    expect(validerLonnIArbeidsgiverperioden(input)).toEqual([]);
+    const arbeidsgiverperioder = [{ fom: parseIsoDate('2020-01-01'), tom: parseIsoDate('2020-01-01'), id: '1' }];
+
+    expect(validerLonnIArbeidsgiverperioden(input)).toEqual([
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
+        felt: 'lia-radio'
+      }
+    ]);
   });
 
   it('should return an empty array when everything is OK', () => {
@@ -106,6 +114,51 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     };
 
     const expected = [];
+
+    expect(validerLonnIArbeidsgiverperioden(input)).toEqual(expected);
+  });
+
+  it('should return an error when status is Ja and arbeidsgiverperioder is missing', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Ja'
+    };
+
+    const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
+        felt: 'lia-radio'
+      }
+    ];
+
+    expect(validerLonnIArbeidsgiverperioden(input, [])).toEqual(expected);
+  });
+
+  it('should return an error when status is Ja and arbeidsgiverperioder has empty dates', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Ja'
+    };
+
+    const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
+        felt: 'lia-radio'
+      }
+    ];
+
+    expect(validerLonnIArbeidsgiverperioden(input, [{ fom: undefined, tom: undefined, id: '1' }])).toEqual(expected);
+  });
+
+  it('should return an error when status is Ja and arbeidsgiverperioder is undefined', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Ja'
+    };
+
+    const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
+        felt: 'lia-radio'
+      }
+    ];
 
     expect(validerLonnIArbeidsgiverperioden(input)).toEqual(expected);
   });
