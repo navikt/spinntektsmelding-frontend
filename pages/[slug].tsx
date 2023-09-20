@@ -94,12 +94,10 @@ const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     setSenderInn(true);
-    const send = async () => {
-      await sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema');
-    };
 
-    send();
-    setSenderInn(false);
+    sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema').finally(() => {
+      setSenderInn(false);
+    });
   };
 
   const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {

@@ -43,33 +43,31 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: 
 
       fyllFeilmeldinger([]);
 
-      const postData = async () => {
-        if (!isValidUUID(pathSlug)) {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Innsending av skjema feilet. Ugyldig identifikator',
-              property: 'server'
-            }
-          ];
-
-          logEvent('skjema validering feilet', {
-            tittel: 'Ugyldig UUID ved innsending',
-            component: amplitudeComponent
-          });
-          errorResponse(errors);
-
-          return false;
-        }
-
-        const data = await fetch(`${environment.innsendingUrl}/${pathSlug}`, {
-          method: 'POST',
-          body: JSON.stringify(skjemaData),
-          headers: {
-            'Content-Type': 'application/json'
+      if (!isValidUUID(pathSlug)) {
+        const errors: Array<ErrorResponse> = [
+          {
+            value: 'Innsending av skjema feilet',
+            error: 'Innsending av skjema feilet. Ugyldig identifikator',
+            property: 'server'
           }
-        });
+        ];
 
+        logEvent('skjema validering feilet', {
+          tittel: 'Ugyldig UUID ved innsending',
+          component: amplitudeComponent
+        });
+        errorResponse(errors);
+
+        return false;
+      }
+
+      return fetch(`${environment.innsendingUrl}/${pathSlug}`, {
+        method: 'POST',
+        body: JSON.stringify(skjemaData),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((data) => {
         switch (data.status) {
           case 201:
             setKvitteringInnsendt(new Date());
@@ -80,7 +78,7 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: 
             const errors: Array<ErrorResponse> = [
               {
                 value: 'Innsending av skjema feilet',
-                error: 'Innsending av skjema feilet',
+                error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
                 property: 'server'
               }
             ];
@@ -124,20 +122,19 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: 
           }
 
           default:
-            const resultat = await data.json();
+            return data.json().then((resultat) => {
+              logEvent('skjema innsending feilet', {
+                tittel: 'Innsending feilet',
+                component: amplitudeComponent
+              });
 
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet',
-              component: amplitudeComponent
+              if (resultat.errors) {
+                const errors: Array<ErrorResponse> = resultat.errors;
+                errorResponse(errors);
+              }
             });
-
-            if (resultat.errors) {
-              const errors: Array<ErrorResponse> = resultat.errors;
-              errorResponse(errors);
-            }
         }
-      };
-      postData();
+      });
     }
   };
 }
