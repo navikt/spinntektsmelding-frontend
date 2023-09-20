@@ -179,11 +179,11 @@ const Endring: NextPage = () => {
     event.preventDefault();
 
     setSenderInn(true);
-    const send = async () => {
-      await sendInnSkjema(opplysningerBekreftet, true, pathSlug!, amplitudeComponent);
-    };
 
-    send();
+    sendInnSkjema(opplysningerBekreftet, true, pathSlug!, amplitudeComponent).finally(() => {
+      setSenderInn(false);
+    });
+
     setSenderInn(false);
   };
 
