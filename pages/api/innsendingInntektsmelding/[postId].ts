@@ -53,7 +53,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
     };
     setTimeout(() => {
       return res.status(201).json(innsendteData);
-    }, 1000);
+    }, 100);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {
       target: basePath,
