@@ -19,48 +19,50 @@ export default function useHentSkjemadata() {
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const router = useRouter();
 
-  return async (pathSlug: string | Array<string>) => {
-    try {
-      let skjemadata;
-      if (Array.isArray(pathSlug)) {
-        return {};
-      }
+  return (pathSlug: string | Array<string>) => {
+    // try {
+    if (Array.isArray(pathSlug)) {
+      return Promise.resolve({});
+    }
 
-      if (pathSlug) {
-        skjemadata = await fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, pathSlug);
-      }
-      if (skjemadata) {
-        initState(skjemadata);
-        const opplysningstyper = hentPaakrevdOpplysningstyper();
+    if (pathSlug) {
+      return fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, pathSlug)
+        .then((skjemadata) => {
+          initState(skjemadata);
+          const opplysningstyper = hentPaakrevdOpplysningstyper();
 
-        if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
-          router.replace(`/endring/${pathSlug}`, undefined, { shallow: true });
-        }
-      }
-    } catch (error: any) {
-      if (error.status === 401) {
-        const ingress = window.location.hostname + environment.baseUrl;
-        const currentPath = window.location.href;
+          if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
+            router.replace(`/endring/${pathSlug}`, undefined, { shallow: true });
+          }
+        })
+        .catch((error: any) => {
+          if (error.status === 401) {
+            const ingress = window.location.hostname + environment.baseUrl;
+            const currentPath = window.location.href;
 
-        window.location.replace(`https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`);
-      }
+            window.location.replace(`https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`);
+          }
 
-      if (error.status === 503 || error.status === 500) {
-        setSkjemaFeilet();
-      }
+          // if (error.status === 503 || error.status === 500) {
+          setSkjemaFeilet();
+          // }
 
-      logger.warn('Feil ved henting av skjemadata i useHentSkjemadata', error);
-      logger.warn(error);
-      slettFeilmelding('ukjent');
-      leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
-      setSkalViseFeilmeldinger(true);
+          logger.warn('Feil ved henting av skjemadata i useHentSkjemadata', error);
+          logger.warn(error);
+          slettFeilmelding('ukjent');
+          leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
+          setSkalViseFeilmeldinger(true);
+        });
+      // if (skjemadata) {
+      // }
+      // } catch (error: any) {
+      // }
+    } else {
+      return Promise.resolve({});
     }
   };
+}
 
-  function isOpplysningstype(
-    value: string,
-    opplysningstyper: (Opplysningstype | undefined)[]
-  ): value is Opplysningstype {
-    return opplysningstyper.includes(value as Opplysningstype);
-  }
+function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | undefined)[]): value is Opplysningstype {
+  return opplysningstyper.includes(value as Opplysningstype);
 }

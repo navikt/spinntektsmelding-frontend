@@ -10,8 +10,13 @@ import Feilmelding from '../Feilmelding';
 import logEvent from '../../utils/logEvent';
 import { subDays } from 'date-fns';
 import ButtonTilbakestill from '../ButtonTilbakestill';
+import EgenmeldingLoader from './EgenmeldingLoader';
 
-export default function Egenmelding() {
+interface EgenmeldingProps {
+  lasterData?: boolean;
+}
+
+export default function Egenmelding({ lasterData }: EgenmeldingProps) {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
 
@@ -96,7 +101,9 @@ export default function Egenmelding() {
 
       <div>
         <div className={localStyles.egenmeldingswrapper}>
-          {egenmeldingsperioder &&
+          {lasterData && <EgenmeldingLoader />}
+          {!lasterData &&
+            egenmeldingsperioder &&
             egenmeldingsperioder.length > 0 &&
             egenmeldingsperioder.map((egenmeldingsperiode, index) => (
               <EgenmeldingPeriode
@@ -113,24 +120,25 @@ export default function Egenmelding() {
                 visFeilmeldingsTekst={visFeilmeldingsTekst}
               />
             ))}
-          {!egenmeldingsperioder ||
-            (egenmeldingsperioder.length === 0 && (
-              <>
-                <EgenmeldingPeriode
-                  key='nyperiode'
-                  periodeId='nyperiode'
-                  egenmeldingsperiode={{ id: 'nyperiode' }}
-                  endreEgenmeldingsperiode={endreEgenmeldingsperiode}
-                  setEgenmeldingDato={setEgenmeldingDato}
-                  toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
-                  kanSlettes={false}
-                  onSlettRad={() => {}}
-                  disabled={endretArbeidsgiverperiode}
-                  rad={0}
-                  visFeilmeldingsTekst={visFeilmeldingsTekst}
-                />
-              </>
-            ))}
+          {!lasterData &&
+            (!egenmeldingsperioder ||
+              (egenmeldingsperioder.length === 0 && (
+                <>
+                  <EgenmeldingPeriode
+                    key='nyperiode'
+                    periodeId='nyperiode'
+                    egenmeldingsperiode={{ id: 'nyperiode' }}
+                    endreEgenmeldingsperiode={endreEgenmeldingsperiode}
+                    setEgenmeldingDato={setEgenmeldingDato}
+                    toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
+                    kanSlettes={false}
+                    onSlettRad={() => {}}
+                    disabled={endretArbeidsgiverperiode}
+                    rad={0}
+                    visFeilmeldingsTekst={visFeilmeldingsTekst}
+                  />
+                </>
+              )))}
         </div>
 
         {visFeilmelding('egenmeldingsperioder-feil') && (
