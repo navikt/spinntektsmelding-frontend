@@ -94,7 +94,7 @@ export default function RefusjonArbeidsgiver() {
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}
           onChange={arbeidsgiverBetalerFullLonnIArbeidsgiverperioden}
-          value={fullLonnIArbeidsgiverPerioden?.status}
+          value={fullLonnIArbeidsgiverPerioden?.status || null}
           disabled={arbeidsgiverperiodeDisabled}
         >
           <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
