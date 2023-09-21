@@ -98,7 +98,10 @@ export default function useValiderInntektsmelding() {
     }
 
     if (!kunInntektOgRefusjon) {
-      feilkoderLonnIArbeidsgiverperioden = validerLonnIArbeidsgiverPerioden(state.fullLonnIArbeidsgiverPerioden);
+      feilkoderLonnIArbeidsgiverperioden = validerLonnIArbeidsgiverPerioden(
+        state.fullLonnIArbeidsgiverPerioden,
+        state.arbeidsgiverperioder
+      );
     }
 
     feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(

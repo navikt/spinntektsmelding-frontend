@@ -209,23 +209,23 @@ describe('useBoundStore', () => {
     expect(result.current.refusjonskravetOpphoerer?.opphorsdato).toEqual(new Date(2022, 2, 7));
   });
 
-  it('should change the beloepUtbetaltUnderArbeidsgiverperioden beløp.', () => {
+  it('should change the setBeloepUtbetaltUnderArbeidsgiverperioden beløp.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.beloepUtbetaltUnderArbeidsgiverperioden('12345');
+      result.current.setBeloepUtbetaltUnderArbeidsgiverperioden('12345');
     });
 
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(12345);
 
     act(() => {
-      result.current.beloepUtbetaltUnderArbeidsgiverperioden('56478');
+      result.current.setBeloepUtbetaltUnderArbeidsgiverperioden('56478');
     });
 
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(56478);
 
     act(() => {
-      result.current.beloepUtbetaltUnderArbeidsgiverperioden('-56478');
+      result.current.setBeloepUtbetaltUnderArbeidsgiverperioden('-56478');
     });
 
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(-56478);

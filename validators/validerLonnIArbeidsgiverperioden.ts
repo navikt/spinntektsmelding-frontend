@@ -1,15 +1,24 @@
-import { LonnIArbeidsgiverperioden } from '../state/state';
+import { LonnIArbeidsgiverperioden, Periode } from '../state/state';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum LonnIArbeidsgiverperiodenFeilkode {
   LONN_I_ARBEIDSGIVERPERIODEN_MANGLER = 'LONN_I_ARBEIDSGIVERPERIODEN_MANGLER',
   LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE = 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
-  LONN_I_ARBEIDSGIVERPERIODEN_BELOP = 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP'
+  LONN_I_ARBEIDSGIVERPERIODEN_BELOP = 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
+  LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE = 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE'
 }
 
-export default function validerLonnIArbeidsgiverperioden(lonnIAP?: LonnIArbeidsgiverperioden): Array<ValiderResultat> {
+export default function validerLonnIArbeidsgiverperioden(
+  lonnIAP?: LonnIArbeidsgiverperioden,
+  arbeidsgiverperioder?: Periode[]
+): Array<ValiderResultat> {
   let errorStatus: Array<ValiderResultat> = [];
+
+  const ingenArbeidsgiverperiode =
+    arbeidsgiverperioder === undefined ||
+    arbeidsgiverperioder?.length === 0 ||
+    arbeidsgiverperioder?.filter((p) => p.tom && p.fom).length === 0;
 
   if (!lonnIAP) {
     errorStatus.push({
@@ -27,6 +36,13 @@ export default function validerLonnIArbeidsgiverperioden(lonnIAP?: LonnIArbeidsg
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
         felt: 'lus-uua-input'
+      });
+    }
+    console.log('ingenArbeidsgiverperiode', ingenArbeidsgiverperiode, lonnIAP.status, arbeidsgiverperioder);
+    if (ingenArbeidsgiverperiode && lonnIAP.status === 'Ja') {
+      errorStatus.push({
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,
+        felt: 'lia-radio'
       });
     }
   }
