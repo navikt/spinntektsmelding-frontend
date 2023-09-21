@@ -18,7 +18,6 @@ export default function useHentKvitteringsdata() {
     if (pathSlug) {
       return fetchKvitteringsdata(environment.hentKvitteringUrl, pathSlug)
         .then((skjemadata) => {
-          console.log('skjemadata', skjemadata);
           if (skjemadata.status === 404) {
             return hentSkjemadata(pathSlug).catch((error: any) => {
               logger.warn('Feil ved henting av skjemadata i useHentKvitteringsdata', error);
