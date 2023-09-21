@@ -33,9 +33,10 @@ export default function RefusjonArbeidsgiver() {
   );
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
 
-  const beloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
-    (state) => state.beloepUtbetaltUnderArbeidsgiverperioden
+  const setBeloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
+    (state) => state.setBeloepUtbetaltUnderArbeidsgiverperioden
   );
+  const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
 
   const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
@@ -57,6 +58,10 @@ export default function RefusjonArbeidsgiver() {
 
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
+
+  const betalerArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
+    ? 'Betaler arbeidsgiver lønn og krever refusjon i sykefraværet?'
+    : 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?';
 
   return (
     <>
@@ -89,7 +94,8 @@ export default function RefusjonArbeidsgiver() {
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}
           onChange={arbeidsgiverBetalerFullLonnIArbeidsgiverperioden}
-          defaultValue={fullLonnIArbeidsgiverPerioden?.status}
+          value={fullLonnIArbeidsgiverPerioden?.status}
+          disabled={arbeidsgiverperiodeDisabled}
         >
           <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
             Ja
@@ -98,30 +104,34 @@ export default function RefusjonArbeidsgiver() {
             Nei
           </Radio>
         </RadioGroup>
-        {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
-          <div className={localStyles.wraputbetaling}>
-            <TextField
-              className={localStyles.refusjonsbelop}
-              label='Utbetalt under arbeidsgiverperiode'
-              onChange={(event) => beloepUtbetaltUnderArbeidsgiverperioden(event.target.value)}
-              id={'lus-uua-input'}
-              error={visFeilmeldingsTekst('lus-uua-input')}
-              defaultValue={
-                Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)
-                  ? ''
-                  : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
-              }
-            />
-            <SelectBegrunnelse
-              onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
-              defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
-              error={visFeilmeldingsTekst('lia-select')}
-            />
-          </div>
+        {!arbeidsgiverperiodeDisabled && (
+          <>
+            {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
+              <div className={localStyles.wraputbetaling}>
+                <TextField
+                  className={localStyles.refusjonsbelop}
+                  label='Utbetalt under arbeidsgiverperiode'
+                  onChange={(event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value)}
+                  id={'lus-uua-input'}
+                  error={visFeilmeldingsTekst('lus-uua-input')}
+                  defaultValue={
+                    Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)
+                      ? ''
+                      : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
+                  }
+                />
+                <SelectBegrunnelse
+                  onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
+                  defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
+                  error={visFeilmeldingsTekst('lia-select')}
+                />
+              </div>
+            )}
+          </>
         )}
 
         <RadioGroup
-          legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+          legend={betalerArbeidsgiverEtterAgpLegend}
           className={styles.radiobuttonwrapper}
           id={'lus-radio'}
           error={visFeilmeldingsTekst('lus-radio')}
