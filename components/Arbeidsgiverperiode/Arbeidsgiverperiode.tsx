@@ -121,11 +121,19 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
 
   const handleIngenArbeidsgiverperiodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArbeidsgiverperiodeDisabled(event.target.checked);
-    setManuellEndring(true);
-    setBeloepUtbetaltUnderArbeidsgiverperioden('0');
-    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
+
     if (event.target.checked === true) {
+      setManuellEndring(true);
+      setBeloepUtbetaltUnderArbeidsgiverperioden('0');
+      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       slettAlleArbeidsgiverperioder();
+    } else {
+      setManuellEndring(false);
+      setBeloepUtbetaltUnderArbeidsgiverperioden(undefined);
+      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(undefined);
+      setArbeidsgiverperiodeDisabled(false);
+      tilbakestillArbeidsgiverperiode();
+      begrunnelseRedusertUtbetaling(undefined);
     }
   };
 
@@ -178,50 +186,49 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
         betaling av sykepenger etter arbeidsgiverperiodens utløp.{' '}
       </BodyLong>
 
-      {arbeidsgiverperioder &&
-        arbeidsgiverperioder.map((periode, periodeIndex) => (
-          <div key={periode.id} className={lokalStyles.datewrapper}>
-            {!endretArbeidsgiverperiode && (
-              <div className={lokalStyles.endrearbeidsgiverperiode}>
-                <div className={lokalStyles.datepickerescape}>
-                  <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-fra`}>Fra</TextLabel>
-                  <div
-                    data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}
-                    id={`arbeidsgiverperioder[${periodeIndex}].fom`}
-                  >
-                    {formatDate(periode.fom)}
-                  </div>
-                </div>
-                <div className={lokalStyles.datepickerescape}>
-                  <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-til`}>Til</TextLabel>
-                  <div
-                    data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}
-                    id={`arbeidsgiverperioder[${periodeIndex}].tom`}
-                  >
-                    {formatDate(periode.tom)}
-                  </div>
+      {arbeidsgiverperioder?.map((periode, periodeIndex) => (
+        <div key={periode.id} className={lokalStyles.datewrapper}>
+          {!endretArbeidsgiverperiode && (
+            <div className={lokalStyles.endrearbeidsgiverperiode}>
+              <div className={lokalStyles.datepickerescape}>
+                <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-fra`}>Fra</TextLabel>
+                <div
+                  data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}
+                  id={`arbeidsgiverperioder[${periodeIndex}].fom`}
+                >
+                  {formatDate(periode.fom)}
                 </div>
               </div>
-            )}
-            {endretArbeidsgiverperiode && (
-              <Periodevelger
-                fomTekst='Fra'
-                fomID={`arbeidsgiverperioder[${periodeIndex}].fom`}
-                fomError={visFeilmeldingsTekst(`arbeidsgiverperioder[${periodeIndex}].fom`)}
-                tomTekst='Til'
-                tomID={`arbeidsgiverperioder[${periodeIndex}].tom`}
-                tomError={visFeilmeldingsTekst(`arbeidsgiverperioder[${periodeIndex}].tom`)}
-                onRangeChange={(oppdatertPeriode) => setArbeidsgiverperiodeDato(oppdatertPeriode, periode.id)}
-                defaultRange={periode}
-                kanSlettes={periodeIndex > 0}
-                periodeId={periodeIndex.toString()}
-                onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
-                toDate={new Date()}
-                disabled={arbeidsgiverperiodeDisabled}
-              />
-            )}
-          </div>
-        ))}
+              <div className={lokalStyles.datepickerescape}>
+                <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-til`}>Til</TextLabel>
+                <div
+                  data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}
+                  id={`arbeidsgiverperioder[${periodeIndex}].tom`}
+                >
+                  {formatDate(periode.tom)}
+                </div>
+              </div>
+            </div>
+          )}
+          {endretArbeidsgiverperiode && (
+            <Periodevelger
+              fomTekst='Fra'
+              fomID={`arbeidsgiverperioder[${periodeIndex}].fom`}
+              fomError={visFeilmeldingsTekst(`arbeidsgiverperioder[${periodeIndex}].fom`)}
+              tomTekst='Til'
+              tomID={`arbeidsgiverperioder[${periodeIndex}].tom`}
+              tomError={visFeilmeldingsTekst(`arbeidsgiverperioder[${periodeIndex}].tom`)}
+              onRangeChange={(oppdatertPeriode) => setArbeidsgiverperiodeDato(oppdatertPeriode, periode.id)}
+              defaultRange={periode}
+              kanSlettes={periodeIndex > 0}
+              periodeId={periodeIndex.toString()}
+              onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
+              toDate={new Date()}
+              disabled={arbeidsgiverperiodeDisabled}
+            />
+          )}
+        </div>
+      ))}
       {endretArbeidsgiverperiode && (
         <>
           <Checkbox
@@ -236,6 +243,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
               onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
               defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
               error={visFeilmeldingsTekst('lia-select')}
+              label='Velg begrunnelse'
             />
           )}
         </>

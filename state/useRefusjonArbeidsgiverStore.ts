@@ -19,9 +19,9 @@ export interface RefusjonArbeidsgiverState {
   harRefusjonEndringer?: YesNo;
   refusjonEndringer?: Array<EndringsBelop>;
   opprinneligRefusjonEndringer?: Array<EndringsBelop>;
-  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) => void;
+  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo | undefined) => void;
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
-  begrunnelseRedusertUtbetaling: (begrunnelse: string) => void;
+  begrunnelseRedusertUtbetaling: (begrunnelse?: string) => void;
   beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | undefined) => void;
   setBeloepUtbetaltUnderArbeidsgiverperioden: (beloep: string | undefined) => void;
   refusjonskravetOpphoererStatus: (status: YesNo) => void;
@@ -36,7 +36,7 @@ export interface RefusjonArbeidsgiverState {
 const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], RefusjonArbeidsgiverState> = (set, get) => ({
   fullLonnIArbeidsgiverPerioden: undefined,
   lonnISykefravaeret: undefined,
-  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo) =>
+  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status) =>
     set(
       produce((state) => {
         if (!state.fullLonnIArbeidsgiverPerioden) {

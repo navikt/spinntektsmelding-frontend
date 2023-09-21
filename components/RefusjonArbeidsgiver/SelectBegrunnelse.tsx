@@ -6,13 +6,15 @@ interface SelectBegrunnelseProps {
   onChangeBegrunnelse: (verdi: string) => void;
   defaultValue?: string;
   error?: React.ReactNode;
+  label?: string;
 }
 
 export default function SelectBegrunnelse(props: SelectBegrunnelseProps) {
   const begrunnelseKeys = Object.keys(begrunnelseIngenEllerRedusertUtbetalingListe);
+  const label = props.label ? props.label : 'Velg begrunnelse for ingen eller redusert utbetaling';
   return (
     <Select
-      label={'Velg begrunnelse for ingen eller redusert utbetaling'}
+      label={label}
       onChange={(event) => props.onChangeBegrunnelse(event.target.value)}
       id={'lia-select'}
       className={localStyles.selectbegrunnelse}

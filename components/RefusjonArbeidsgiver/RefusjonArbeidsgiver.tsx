@@ -59,6 +59,10 @@ export default function RefusjonArbeidsgiver() {
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
+  const betalerArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
+    ? 'Betaler arbeidsgiver lønn og krever refusjon i sykefraværet?'
+    : 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?';
+
   return (
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
@@ -90,7 +94,7 @@ export default function RefusjonArbeidsgiver() {
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}
           onChange={arbeidsgiverBetalerFullLonnIArbeidsgiverperioden}
-          defaultValue={fullLonnIArbeidsgiverPerioden?.status}
+          value={fullLonnIArbeidsgiverPerioden?.status}
           disabled={arbeidsgiverperiodeDisabled}
         >
           <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
@@ -127,7 +131,7 @@ export default function RefusjonArbeidsgiver() {
         )}
 
         <RadioGroup
-          legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+          legend={betalerArbeidsgiverEtterAgpLegend}
           className={styles.radiobuttonwrapper}
           id={'lus-radio'}
           error={visFeilmeldingsTekst('lus-radio')}
