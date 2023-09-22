@@ -226,6 +226,9 @@ export async function getServerSideProps(context: any) {
       logger.error('Feil ved henting av inntektsmelding', error);
     }
   }
+
+  logger.info('getServerSideProps returnerer');
+
   if (!kvitteringsdata) {
     kvitteringsdata = {
       status: 'FEILET',
