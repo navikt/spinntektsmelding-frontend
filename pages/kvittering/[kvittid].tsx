@@ -28,7 +28,7 @@ import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
@@ -38,16 +38,13 @@ import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
 import classNames from 'classnames/bind';
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem/KvitteringAnnetSystem';
+import { logger } from '@navikt/next-logger';
+import fetchKvitteringsdata from '../../utils/fetchKvitteringsdata';
+import useKvitteringInit from '../../state/useKvitteringInit';
+import useStateInit from '../../state/useStateInit';
 
-const Kvittering: NextPage = () => {
+const Kvittering: NextPage = ({ slug, kvitteringsdata, error, skjemadata }) => {
   const router = useRouter();
-  const slug = (router.query.kvittid as string) || '';
-  const firstSlug = slug;
-  const [pathSlug, setPathSlug] = useState<string>(firstSlug);
-
-  useEffect(() => {
-    setPathSlug(firstSlug);
-  }, [firstSlug]);
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
@@ -65,7 +62,6 @@ const Kvittering: NextPage = () => {
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const ferie = useBoundStore((state) => state.ferie);
-  const kvitteringSlug = useBoundStore((state) => state.slug);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const permisjon = useBoundStore((state) => state.permisjon);
   const permittering = useBoundStore((state) => state.permittering);
@@ -78,14 +74,24 @@ const Kvittering: NextPage = () => {
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
+  const initKvitteringInit = useKvitteringInit();
+  const initState = useStateInit();
+
+  const [navn, identitetsnummer, orgnrUnderenhet, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
+    state.navn,
+    state.identitetsnummer,
+    state.orgnrUnderenhet,
+    state.virksomhetsnavn,
+    state.innsenderNavn
+  ]);
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
     if (paakrevdeOpplysningstyper.length === 3) {
-      router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+      router.push(`/${slug}`, undefined, { shallow: true });
     } else {
-      router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });
+      router.push(`/endring/${slug}`, undefined, { shallow: true });
     }
   };
 
@@ -111,12 +117,22 @@ const Kvittering: NextPage = () => {
   const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
 
   useEffect(() => {
-    if (!fravaersperioder) {
-      hentKvitteringsdata(pathSlug);
-    }
+    // if (!fravaersperioder) {
+    //   hentKvitteringsdata(slug);
+    // }
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug]);
+  }, [slug]);
+
+  useEffect(() => {
+    if (kvitteringsdata && slug && (kvitteringsdata.kvitteringEkstern || kvitteringsdata.kvitteringDokument)) {
+      console.log('kvitteringsdata', kvitteringsdata);
+      initKvitteringInit(kvitteringsdata, slug);
+      router.push(`/kvittering/${slug}`, undefined, { shallow: true });
+    } else if (skjemadata && kvitteringsdata.status === 'FEILET') {
+      initState(skjemadata);
+    }
+  }, [kvitteringsdata, slug, skjemadata]);
 
   useEffect(() => {
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,6 +146,16 @@ const Kvittering: NextPage = () => {
   const classNameHeadingSykmelding = cx({
     sykfravaerstyper: paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode)
   });
+
+  skjemadata = kvitteringsdata?.kvitteringDokument;
+
+  const personStatisk = {
+    navn: skjemadata?.navn ?? navn,
+    identitetsnummer: skjemadata?.identitetsnummer ?? identitetsnummer,
+    orgnrUnderenhet: skjemadata?.orgnrUnderenhet ?? orgnrUnderenhet,
+    virksomhetsnavn: skjemadata?.orgNavn ?? virksomhetsnavn,
+    innsenderNavn: skjemadata?.innsenderNavn ?? innsenderNavn
+  };
 
   return (
     <div className={styles.container}>
@@ -151,7 +177,7 @@ const Kvittering: NextPage = () => {
           )}
           {!kvitteringEksterntSystem?.avsenderSystem && (
             <>
-              <Person erKvittering={true} />
+              <Person erKvittering={true} personStatisk={personStatisk} />
               <Skillelinje />
               <div className={lokalStyles.fravaerswrapperwrapper}>
                 <div className={lokalStyles.fravaersperiode}>
@@ -281,4 +307,45 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
         (periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom))
       ).length > 0
     : false;
+}
+
+export async function getServerSideProps(context: any) {
+  const req = context.req;
+  const slug = context.query.kvittid;
+  let kvitteringsdata: any = null;
+  let error = null;
+  let skjemadata = null;
+
+  logger.info('getServerSideProps');
+
+  logger.info(req.headers?.cookie);
+  try {
+    logger.info('fetchKvitteringsdata starter');
+    kvitteringsdata = await fetchKvitteringsdata(process.env.KVITTERINGSDATA_API!, slug, req);
+    logger.info('getServerSideProps slutter');
+  } catch (errorStatus) {
+    logger.info('getServerSideProps catch');
+    logger.info('Feil ved henting av kvitteringsdata ' + errorStatus);
+    logger.info('Kvitteringsdata url ' + process.env.KVITTERINGSDATA_API + slug);
+    try {
+      skjemadata = await fetchInntektskjemaForNotifikasjon(process.env.PREUTFYLT_INNTEKTSMELDING_API!, slug, req);
+    } catch (error) {
+      console.log('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API + slug);
+      console.log('Feil ved henting av inntektsmelding', error);
+
+      logger.info('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API + slug);
+      logger.error('Feil ved henting av inntektsmelding', error);
+    }
+  }
+
+  logger.info('getServerSideProps returnerer');
+
+  return {
+    props: {
+      slug,
+      kvitteringsdata,
+      error,
+      skjemadata
+    }
+  };
 }

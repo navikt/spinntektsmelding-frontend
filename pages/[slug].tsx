@@ -25,10 +25,8 @@ import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import environment from '../config/environment';
 
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
-// import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
-// import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
 
 import useSendInnSkjema from '../utils/useSendInnSkjema';
@@ -38,11 +36,10 @@ import useKvitteringInit from '../state/useKvitteringInit';
 import { useRouter } from 'next/router';
 import useStateInit from '../state/useStateInit';
 
-const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
+const Home: NextPage = ({ slug, kvitteringsdata, error, skjemadata }) => {
   const router = useRouter();
-  // const slug = (router.query.slug as string) || '';
-  const firstSlug = slug;
-  const [pathSlug, setPathSlug] = useState<string>(firstSlug);
+  // const firstSlug = slug;
+  // const [pathSlug, setPathSlug] = useState<string>(firstSlug);
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
@@ -56,16 +53,16 @@ const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
   useEffect(() => {
     if (kvitteringsdata && slug && (kvitteringsdata.kvitteringEkstern || kvitteringsdata.kvitteringDokument)) {
       console.log('kvitteringsdata', kvitteringsdata);
-      initKvitteringInit(kvitteringsdata, pathSlug);
-      router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
+      initKvitteringInit(kvitteringsdata, slug);
+      router.push(`/kvittering/${slug}`, undefined, { shallow: true });
     } else if (skjemadata && kvitteringsdata.status === 'FEILET') {
       initState(skjemadata);
     }
   }, [kvitteringsdata, slug, skjemadata]);
 
-  useEffect(() => {
-    setPathSlug(firstSlug);
-  }, [firstSlug]);
+  // useEffect(() => {
+  //   setPathSlug(firstSlug);
+  // }, [firstSlug]);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
@@ -80,10 +77,17 @@ const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
-  // const setSlug = useBoundStore((state) => state.setSlug);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
+
+  const [navn, identitetsnummer, orgnrUnderenhet, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
+    state.navn,
+    state.identitetsnummer,
+    state.orgnrUnderenhet,
+    state.virksomhetsnavn,
+    state.innsenderNavn
+  ]);
 
   // const hentKvitteringsdata = useHentKvitteringsdata();
 
@@ -129,13 +133,13 @@ const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
   //   setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [pathSlug]);
-
+  skjemadata = kvitteringsdata?.kvitteringDokument;
   const personStatisk = {
-    navn: skjemadata?.navn,
-    identitetsnummer: skjemadata?.identitetsnummer,
-    orgnrUnderenhet: skjemadata?.orgnrUnderenhet,
-    virksomhetsnavn: skjemadata?.orgNavn,
-    innsenderNavn: skjemadata?.innsenderNavn
+    navn: skjemadata?.fulltNavn ?? navn,
+    identitetsnummer: skjemadata?.identitetsnummer ?? identitetsnummer,
+    orgnrUnderenhet: skjemadata?.orgnrUnderenhet ?? orgnrUnderenhet,
+    virksomhetsnavn: skjemadata?.orgNavn ?? virksomhetsnavn,
+    innsenderNavn: skjemadata?.innsenderNavn ?? innsenderNavn
   };
 
   return (
