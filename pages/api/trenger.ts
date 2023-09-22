@@ -43,7 +43,6 @@ export const config = {
 
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
-  logger.debug('******************env', env);
   if (env == 'development') {
     return res.status(200).json(org);
   } else if (env == 'production') {

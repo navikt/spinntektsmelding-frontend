@@ -2,6 +2,7 @@ import NextDocument, { Html, Head, Main, NextScript, DocumentContext } from 'nex
 import { DecoratorComponents, fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr';
 import getConfig from 'next/config';
 import env from '../config/environment';
+import 'node-fetch';
 
 const { serverRuntimeConfig } = getConfig();
 
