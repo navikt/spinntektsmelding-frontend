@@ -201,23 +201,28 @@ export default Home;
 export async function getServerSideProps(context: any) {
   const req = context.req;
   const slug = context.query.slug;
-  let kvitteringsdata;
+  let kvitteringsdata: any = null;
   let error = null;
   let skjemadata = null;
 
-  logger.info(req.headers.cookie);
+  logger.info('getServerSideProps');
+
+  logger.info(req.headers?.cookie);
   try {
+    logger.info('fetchKvitteringsdata starter');
     kvitteringsdata = await fetchKvitteringsdata(process.env.KVITTERINGSDATA_API!, slug, req);
+    logger.info('getServerSideProps slutter');
   } catch (errorStatus) {
+    logger.info('getServerSideProps catch');
     logger.info('Feil ved henting av kvitteringsdata ' + errorStatus);
-    logger.info('Kvitteringsdata url ' + process.env.KVITTERINGSDATA_API);
+    logger.info('Kvitteringsdata url ' + process.env.KVITTERINGSDATA_API + slug);
     try {
       skjemadata = await fetchInntektskjemaForNotifikasjon(process.env.PREUTFYLT_INNTEKTSMELDING_API!, slug, req);
     } catch (error) {
-      console.log('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API);
+      console.log('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API + slug);
       console.log('Feil ved henting av inntektsmelding', error);
 
-      logger.info('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API);
+      logger.info('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API + slug);
       logger.error('Feil ved henting av inntektsmelding', error);
     }
   }
