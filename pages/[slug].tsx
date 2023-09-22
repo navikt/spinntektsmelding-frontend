@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
@@ -25,10 +25,10 @@ import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import environment from '../config/environment';
 
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
-import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
+// import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
-import fetchInntektsdata from '../utils/fetchInntektsdata';
+// import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
 
 import useSendInnSkjema from '../utils/useSendInnSkjema';
@@ -54,8 +54,9 @@ const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
   console.log('skjemadata', skjemadata);
 
   useEffect(() => {
-    if (kvitteringsdata && slug && kvitteringsdata.status !== 'FEILET') {
-      initKvitteringInit(skjemadata, pathSlug);
+    if (kvitteringsdata && slug && (kvitteringsdata.kvitteringEkstern || kvitteringsdata.kvitteringDokument)) {
+      console.log('kvitteringsdata', kvitteringsdata);
+      initKvitteringInit(kvitteringsdata, pathSlug);
       router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
     } else if (skjemadata && kvitteringsdata.status === 'FEILET') {
       initState(skjemadata);
@@ -79,12 +80,12 @@ const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
-  const setSlug = useBoundStore((state) => state.setSlug);
+  // const setSlug = useBoundStore((state) => state.setSlug);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
-  const hentKvitteringsdata = useHentKvitteringsdata();
+  // const hentKvitteringsdata = useHentKvitteringsdata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen);
 
@@ -129,6 +130,14 @@ const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [pathSlug]);
 
+  const personStatisk = {
+    navn: skjemadata?.navn,
+    identitetsnummer: skjemadata?.identitetsnummer,
+    orgnrUnderenhet: skjemadata?.orgnrUnderenhet,
+    virksomhetsnavn: skjemadata?.orgNavn,
+    innsenderNavn: skjemadata?.innsenderNavn
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -140,7 +149,7 @@ const Home: NextPage = ({ slug, kvitteringsdata, skjemadata }) => {
       <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
       <PageContent title='Inntektsmelding'>
         <form className={styles.padded} onSubmit={submitForm}>
-          <Person />
+          <Person personStatisk={personStatisk} />
 
           <Behandlingsdager />
 
@@ -228,13 +237,6 @@ export async function getServerSideProps(context: any) {
   }
 
   logger.info('getServerSideProps returnerer');
-
-  if (!kvitteringsdata) {
-    kvitteringsdata = {
-      status: 'FEILET',
-      statuskode: 'FEILET'
-    };
-  }
 
   return {
     props: {

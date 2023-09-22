@@ -4,13 +4,23 @@ import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
 import { Alert, Skeleton, TextField } from '@navikt/ds-react';
+import React from 'react';
+
+interface PersonStatisk {
+  navn: string;
+  identitetsnummer: string;
+  orgnrUnderenhet: string;
+  virksomhetsnavn: string;
+  innsenderNavn: string;
+}
 
 interface PersonProps {
   erKvittering?: boolean;
   erDelvisInnsending?: boolean;
+  personStatisk?: PersonStatisk;
 }
 
-export default function Person({ erKvittering, erDelvisInnsending }: PersonProps) {
+export default function Person({ erKvittering, erDelvisInnsending, personStatisk }: PersonProps) {
   const [
     navn,
     identitetsnummer,
@@ -81,14 +91,12 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             {!hentingAvPersondataFeilet && (
               <div className={lokalStyles.ansattwrapper}>
                 <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>{navn || <Skeleton variant='text' width='90%' height={28} />}</div>
+                <div data-cy='navn'>{personStatisk?.navn}</div>
               </div>
             )}
             <div className={lokalStyles.ansattwrapper}>
               <TextLabel>Personnummer</TextLabel>
-              <div data-cy='identitetsnummer'>
-                {identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
-              </div>
+              <div data-cy='identitetsnummer'>{personStatisk?.identitetsnummer}</div>
             </div>
           </div>
         </div>
@@ -100,7 +108,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               <div className={lokalStyles.virksomhetsnavnwrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
+                  {personStatisk?.virksomhetsnavn}
                 </div>
               </div>
             )}
@@ -114,12 +122,12 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             )}
             <div className={lokalStyles.orgnrnavnwrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
-              <div data-cy='orgnummer'>{orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}</div>
+              <div data-cy='orgnummer'>{personStatisk?.orgnrUnderenhet}</div>
             </div>
             <div className={lokalStyles.innsendernavnwrapper}>
               <TextLabel>Innsender</TextLabel>
               <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {innsenderNavn ?? <Skeleton variant='text' width='90%' height={28} />}
+                {personStatisk?.innsenderNavn}
               </div>
             </div>
             <div className={lokalStyles.telefonnrwrapper}>

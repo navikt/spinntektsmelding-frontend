@@ -12,6 +12,7 @@ const fetchKvitteringsdata = async (url: string, forespoerselId: string, req: an
   });
 
   if (!res.ok) {
+    console.log('res', res);
     const error = new NetworkError('An error occurred while fetching the data.');
     // Attach extra info to the error object.
     try {
