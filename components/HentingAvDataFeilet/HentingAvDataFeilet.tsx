@@ -18,7 +18,7 @@ export default function HentingAvDataFeilet({ handleCloseModal, open }: HentingA
     >
       <Modal.Body>
         <Alert variant='error'>
-          <BodyLong>Noe gikk galt under hending av data.</BodyLong>
+          <BodyLong>Noe gikk galt under henting av data.</BodyLong>
           <BodyLong>Vennligst prøv igjen ved en senere anledning.</BodyLong>
         </Alert>
       </Modal.Body>
