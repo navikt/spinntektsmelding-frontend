@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { NextPage } from 'next';
+import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
 import { Button, ConfirmationPanel, Link } from '@navikt/ds-react';
@@ -36,7 +36,12 @@ import useKvitteringInit from '../state/useKvitteringInit';
 import { useRouter } from 'next/router';
 import useStateInit from '../state/useStateInit';
 
-const Home: NextPage = ({ slug, kvitteringsdata, error, skjemadata }) => {
+const Home: NextPage = ({
+  slug,
+  kvitteringsdata,
+  error,
+  skjemadata
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   // const firstSlug = slug;
   // const [pathSlug, setPathSlug] = useState<string>(firstSlug);
@@ -133,9 +138,9 @@ const Home: NextPage = ({ slug, kvitteringsdata, error, skjemadata }) => {
   //   setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [pathSlug]);
-  skjemadata = kvitteringsdata?.kvitteringDokument;
+
   const personStatisk = {
-    navn: skjemadata?.fulltNavn ?? navn,
+    navn: skjemadata?.navn ?? navn,
     identitetsnummer: skjemadata?.identitetsnummer ?? identitetsnummer,
     orgnrUnderenhet: skjemadata?.orgnrUnderenhet ?? orgnrUnderenhet,
     virksomhetsnavn: skjemadata?.orgNavn ?? virksomhetsnavn,
@@ -218,29 +223,24 @@ export async function getServerSideProps(context: any) {
   let error = null;
   let skjemadata = null;
 
-  logger.info('getServerSideProps');
+  const isFirstServerCall = req?.url?.indexOf('_next/data') === -1;
 
-  logger.info(req.headers?.cookie);
+  logger.info('getServerSideProps', isFirstServerCall);
+
+  if (!isFirstServerCall) {
+    return { props: {} };
+  }
+
   try {
-    logger.info('fetchKvitteringsdata starter');
     kvitteringsdata = await fetchKvitteringsdata(process.env.KVITTERINGSDATA_API!, slug, req);
-    logger.info('getServerSideProps slutter');
   } catch (errorStatus) {
-    logger.info('getServerSideProps catch');
-    logger.info('Feil ved henting av kvitteringsdata ' + errorStatus);
-    logger.info('Kvitteringsdata url ' + process.env.KVITTERINGSDATA_API + slug);
+    logger.info('Feil ved henting av kvitteringsdata i index' + errorStatus);
     try {
       skjemadata = await fetchInntektskjemaForNotifikasjon(process.env.PREUTFYLT_INNTEKTSMELDING_API!, slug, req);
     } catch (error) {
-      console.log('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API + slug);
-      console.log('Feil ved henting av inntektsmelding', error);
-
-      logger.info('inntektsmelding url fra env ' + process.env.PREUTFYLT_INNTEKTSMELDING_API + slug);
-      logger.error('Feil ved henting av inntektsmelding', error);
+      logger.error('Feil ved henting av inntektsmelding index', error);
     }
   }
-
-  logger.info('getServerSideProps returnerer');
 
   return {
     props: {
