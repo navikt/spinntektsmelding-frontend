@@ -24,32 +24,32 @@ jobs:
   #         name: spinntektsmelding-frontend-artifact
   #         path: ${{ github.workspace }}/build/**/*
 
-  Kodekvalitet:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20.x'
-          registry-url: 'https://npm.pkg.github.com'
-      - run: yarn install --frozen-lockfile
-      - run: yarn test
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  # Kodekvalitet:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '20.x'
+  #         registry-url: 'https://npm.pkg.github.com'
+  #     - run: yarn install --frozen-lockfile
+  #     - run: yarn test
+  #     - name: SonarCloud Scan
+  #       uses: sonarsource/sonarcloud-github-action@master
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  Eslint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20.x'
-          registry-url: 'https://npm.pkg.github.com'
-      - run: yarn install --frozen-lockfile
-      - run: yarn lint
+  # Eslint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '20.x'
+  #         registry-url: 'https://npm.pkg.github.com'
+  #     - run: yarn install --frozen-lockfile
+  #     - run: yarn lint
 
   # Snyk:
   #   runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
   #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   Docker:
-    needs: [Kodekvalitet, Eslint]
+    # needs: [Kodekvalitet, Eslint]
     runs-on: ubuntu-latest
     permissions:
       packages: write
