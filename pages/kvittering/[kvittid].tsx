@@ -1,4 +1,4 @@
-import { NextPage } from 'next';
+import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -44,10 +44,13 @@ import useKvitteringInit from '../../state/useKvitteringInit';
 import useStateInit from '../../state/useStateInit';
 import fetchInntektskjemaForNotifikasjon from '../../state/fetchInntektskjemaForNotifikasjon';
 
-const Kvittering: NextPage = ({ slug, kvitteringsdata, error, skjemadata }) => {
+const Kvittering: NextPage = ({
+  slug,
+  kvitteringsdata,
+  error,
+  skjemadata
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-
-  const hentKvitteringsdata = useHentKvitteringsdata();
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
@@ -90,10 +93,12 @@ const Kvittering: NextPage = ({ slug, kvitteringsdata, error, skjemadata }) => {
     event.preventDefault();
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
+    const pathSlug = slug || router.query.kvittid;
+
     if (paakrevdeOpplysningstyper.length === 3) {
-      router.push(`/${slug}`, undefined, { shallow: true });
+      router.push(`/${pathSlug}`, undefined, { shallow: true });
     } else {
-      router.push(`/endring/${slug}`, undefined, { shallow: true });
+      router.push(`/endring/${pathSlug}`, undefined, { shallow: true });
     }
   };
 
@@ -152,12 +157,14 @@ const Kvittering: NextPage = ({ slug, kvitteringsdata, error, skjemadata }) => {
   skjemadata = kvitteringsdata?.kvitteringDokument;
 
   const personStatisk = {
-    navn: skjemadata?.navn ?? navn,
+    navn: skjemadata?.fulltNavn ?? navn,
     identitetsnummer: skjemadata?.identitetsnummer ?? identitetsnummer,
     orgnrUnderenhet: skjemadata?.orgnrUnderenhet ?? orgnrUnderenhet,
-    virksomhetsnavn: skjemadata?.orgNavn ?? virksomhetsnavn,
+    virksomhetsnavn: skjemadata?.virksomhetNavn ?? virksomhetsnavn,
     innsenderNavn: skjemadata?.innsenderNavn ?? innsenderNavn
   };
+
+  const bestemmendeFravaersdagStatisk = skjemadata?.bestemmendeFravaersdag ?? bestemmendeFravaersdag;
 
   return (
     <div className={styles.container}>
@@ -210,9 +217,7 @@ const Kvittering: NextPage = ({ slug, kvitteringsdata, error, skjemadata }) => {
                       <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                       <div className={lokalStyles.fravaerwrapper}>
                         <div className={lokalStyles.fravaertid}>Dato</div>
-                        <div>
-                          {bestemmendeFravaersdag ? formatDate(bestemmendeFravaersdag) : <Skeleton variant='text' />}{' '}
-                        </div>
+                        <div>{formatDate(bestemmendeFravaersdag)} </div>
                       </div>
                     </div>
                     {visArbeidsgiverperiode && (

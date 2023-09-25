@@ -35,6 +35,7 @@ import fetchInntektskjemaForNotifikasjon from '../state/fetchInntektskjemaForNot
 import useKvitteringInit from '../state/useKvitteringInit';
 import { useRouter } from 'next/router';
 import useStateInit from '../state/useStateInit';
+import fetchInntektsdata from '../utils/fetchInntektsdata';
 
 const Home: NextPage = ({
   slug,
@@ -43,8 +44,7 @@ const Home: NextPage = ({
   skjemadata
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  // const firstSlug = slug;
-  // const [pathSlug, setPathSlug] = useState<string>(firstSlug);
+
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
@@ -64,10 +64,6 @@ const Home: NextPage = ({
       initState(skjemadata);
     }
   }, [kvitteringsdata, slug, skjemadata]);
-
-  // useEffect(() => {
-  //   setPathSlug(firstSlug);
-  // }, [firstSlug]);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
@@ -105,7 +101,7 @@ const Home: NextPage = ({
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     setSenderInn(true);
-
+    const pathSlug = slug || (router.query.slug as string);
     sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema').finally(() => {
       setSenderInn(false);
     });
@@ -120,24 +116,23 @@ const Home: NextPage = ({
     }
   };
 
-  // useEffect(() => {
-  //   if (!fravaersperioder) {
-  //     hentKvitteringsdata(pathSlug);
-  //   } else {
-  //     if (bestemmendeFravaersdag) {
-  //       fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag)
-  //         .then((inntektSisteTreMnd) => {
-  //           setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
-  //         })
-  //         .catch((error) => {
-  //           logger.warn('Feil ved henting av tidliger inntektsdata', error);
-  //         });
-  //     }
-  //   }
-  //   setSlug(pathSlug);
-  //   setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [pathSlug]);
+  useEffect(() => {
+    // if (!fravaersperioder) {
+    //   hentKvitteringsdata(slug);
+    // } else {
+    if (bestemmendeFravaersdag) {
+      fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag)
+        .then((inntektSisteTreMnd) => {
+          setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
+        })
+        .catch((error) => {
+          logger.warn('Feil ved henting av tidliger inntektsdata', error);
+        });
+      // }
+    }
+    setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, fravaersperioder, bestemmendeFravaersdag]);
 
   const personStatisk = {
     navn: skjemadata?.navn ?? navn,
