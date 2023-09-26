@@ -27,7 +27,7 @@ export default function valdiderEndringAvMaanedslonn(
 
   if (harRefusjonEndringer === 'Ja' && refusjonEndringer) {
     refusjonEndringer.forEach((endring, index) => {
-      if (!endring.belop || ugyldigEllerNegativtTall(endring.belop)) {
+      if (ugyldigEllerNegativtTall(endring.belop)) {
         feilmeldinger.push({
           felt: `lus-utbetaling-endring-belop-${index}`,
           code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP
