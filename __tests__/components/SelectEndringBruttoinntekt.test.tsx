@@ -4,7 +4,7 @@ import { axe } from 'jest-axe';
 import SelectEndringBruttoinntekt from '../../components/Bruttoinntekt/SelectEndringBruttoinntekt';
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { vi } from 'vitest';
-import begrunnelseEndringBruttoinntektTekster from 'components/Bruttoinntekt/begrunnelseEndringBruttoinntektTekster';
+import begrunnelseEndringBruttoinntektTekster from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntektTekster';
 
 describe('SelectEndringBruttoinntekt', () => {
   const onChangeBegrunnelse = vi.fn();
