@@ -122,6 +122,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
+      const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
 
       set(
         produce((state) => {
@@ -144,7 +145,11 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             ? sykmeldingsperioder.concat(egenmeldingsperioder ?? [])
             : egenmeldingsperioder;
 
-          const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, state.arbeidsgiverperioder);
+          const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
+            perioder,
+            state.arbeidsgiverperioder,
+            forespurtBestemmendeFraværsdag
+          );
           if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
           if (bestemmendeFravaersdag) {
             state.rekalkulerBruttioinntekt(parseIsoDate(bestemmendeFravaersdag));
@@ -182,6 +187,8 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       const opprinnelig = get().opprinneligArbeidsgiverperioder;
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
+      const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+
       set(
         produce((state) => {
           const perioder = sykmeldingsperioder
@@ -193,7 +200,11 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
           state.arbeidsgiverperioder = nyArbeidsgiverperiode;
 
-          const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, nyArbeidsgiverperiode);
+          const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
+            perioder,
+            nyArbeidsgiverperiode,
+            forespurtBestemmendeFraværsdag
+          );
 
           if (bestemmendeFravaersdag) {
             state.rekalkulerBruttioinntekt(parseIsoDate(bestemmendeFravaersdag));

@@ -5,6 +5,7 @@ import { MottattPeriode } from '../../state/MottattData';
 import { Periode } from '../../state/state';
 import { nanoid } from 'nanoid';
 import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 vi.mock('nanoid');
 
@@ -975,5 +976,84 @@ describe('useBoundStore', () => {
       result.current.harArbeidsgiverperiodenBlittEndret();
     });
     expect(result.current.endretArbeidsgiverperiode).toBeFalsy();
+  });
+
+  it('should set status on arbeidsgiverperiodeDisabled', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.setArbeidsgiverperiodeDisabled(true);
+    });
+
+    expect(result.current.arbeidsgiverperiodeDisabled).toBeTruthy();
+  });
+
+  it('should reset status on arbeidsgiverperiodeDisabled', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.setArbeidsgiverperiodeDisabled(true);
+    });
+
+    expect(result.current.arbeidsgiverperiodeDisabled).toBeTruthy();
+
+    act(() => {
+      result.current.setArbeidsgiverperiodeDisabled(false);
+    });
+
+    expect(result.current.arbeidsgiverperiodeDisabled).toBeFalsy();
+  });
+
+  it('should reset arbeidsgiverperiode and bestemmende fraværsdag when tilbakestillArbeidsgiverperiode is run', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    (nanoid as Mock).mockReturnValue('1');
+
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2021-10-01',
+        tom: '2021-10-05'
+      }
+    ];
+
+    const mottattFravaersperiode: Array<MottattPeriode> = [
+      {
+        fom: '2021-10-01',
+        tom: '2021-10-05'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      result.current.initFravaersperiode(mottattFravaersperiode);
+    });
+
+    act(() => {
+      result.current.setBestemmendeFravaersdag(parseIsoDate('2021-10-01'));
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        id: '1',
+        fom: parseIsoDate('2021-10-01'),
+        tom: parseIsoDate('2021-10-05')
+      }
+    ]);
+
+    expect(result.current.bestemmendeFravaersdag).toEqual(parseIsoDate('2021-10-01'));
+
+    act(() => {
+      result.current.tilbakestillArbeidsgiverperiode();
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        id: '1',
+        fom: parseIsoDate('2021-10-01'),
+        tom: parseIsoDate('2021-10-05')
+      }
+    ]);
+
+    expect(result.current.bestemmendeFravaersdag).toEqual(parseIsoDate('2021-10-01'));
   });
 });

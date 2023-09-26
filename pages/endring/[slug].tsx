@@ -97,6 +97,9 @@ const Endring: NextPage = () => {
   const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
+  const forespurtBestemmendeFraværsdag = useBoundStore(
+    (state) => state.forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt
+  );
 
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
@@ -168,7 +171,7 @@ const Endring: NextPage = () => {
     const fravaer = fravaersperioder?.concat(egenmeldingsperioder ?? []);
     if (!fravaer) return;
 
-    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(fravaer);
+    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(fravaer, undefined, forespurtBestemmendeFraværsdag);
 
     if (bestemmendeFravaersdag) {
       setForsteFravaersdag(parseIsoDate(bestemmendeFravaersdag));

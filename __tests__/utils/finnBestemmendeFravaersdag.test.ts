@@ -173,4 +173,74 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     ];
     expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-16');
   });
+
+  it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the past and the last day is the same', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '2',
+        fom: parseISO('2022-12-16'),
+        tom: parseISO('2022-12-25')
+      }
+    ];
+
+    const arbeidsgiverPeriode: Array<Periode> = [
+      {
+        id: 'a1',
+        fom: parseISO('2022-12-02'),
+        tom: parseISO('2022-12-16')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-16');
+  });
+
+  it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the past and the first day is the same', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '2',
+        fom: parseISO('2022-12-16'),
+        tom: parseISO('2022-12-25')
+      }
+    ];
+
+    const arbeidsgiverPeriode: Array<Periode> = [
+      {
+        id: 'a1',
+        fom: parseISO('2022-12-16'),
+        tom: parseISO('2022-12-18')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-16');
+  });
+
+  it('should return the correct bestemmende fraværsdag for two periode directly following each other and forespurtBestemmende is in the past', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2022-11-12'),
+        tom: parseISO('2022-11-16')
+      },
+      {
+        id: '2',
+        fom: parseISO('2022-11-17'),
+        tom: parseISO('2022-11-22')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-05')).toBe('2022-11-05');
+  });
+
+  it('should return the correct bestemmende fraværsdag for two periode directly following each other and forespurtBestemmende is in the future', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2022-11-12'),
+        tom: parseISO('2022-11-16')
+      },
+      {
+        id: '2',
+        fom: parseISO('2022-11-17'),
+        tom: parseISO('2022-11-22')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-17')).toBe('2022-11-12');
+  });
 });
