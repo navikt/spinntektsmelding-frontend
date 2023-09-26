@@ -97,7 +97,9 @@ const Endring: NextPage = () => {
   const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
-  const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+  const forespurtBestemmendeFraværsdag = useBoundStore(
+    (state) => state.forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt
+  );
 
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
