@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import PeriodeListevelger from '../../components/Bruttoinntekt/PeriodeListevelger';
 import { vi } from 'vitest';
-import parseIsoDate from 'utils/parseIsoDate';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 describe('PeriodeListevelger', () => {
   const onRangeListChange = vi.fn();

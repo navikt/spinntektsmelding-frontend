@@ -6,8 +6,8 @@ import Kvittering from '../../pages/kvittering/[kvittid]';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
-import skjemaVariant from 'config/skjemavariant';
-import { Opplysningstype } from 'state/useForespurtDataStore';
+import skjemaVariant from '../../config/skjemavariant';
+import { Opplysningstype } from '../../state/useForespurtDataStore';
 
 vi.mock('next/router', () => require('next-router-mock'));
 

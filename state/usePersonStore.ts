@@ -3,7 +3,7 @@ import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { FeilReportElement } from './useStateInit';
 import { Organisasjon } from '@navikt/bedriftsmeny';
-import validerTelefon from 'validators/validerTelefon';
+import validerTelefon from '../validators/validerTelefon';
 
 export interface PersonState {
   navn?: string;

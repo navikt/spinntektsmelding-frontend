@@ -1,8 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import TariffendringDato from '../../components/Bruttoinntekt/TariffendringDato';
 import { vi } from 'vitest';
-import parseIsoDate from 'utils/parseIsoDate';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 describe('TariffendringDato', () => {
   const changeTariffEndretDato = vi.fn();
@@ -29,7 +28,6 @@ describe('TariffendringDato', () => {
     );
 
     const firstDatePicker = screen.getAllByRole('textbox')[0];
-    // userEvent.type(firstDatePicker, '01.01.2022');
     fireEvent.change(firstDatePicker, { target: { value: '01.01.2022' } });
     expect(changeTariffEndretDato).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
   });
