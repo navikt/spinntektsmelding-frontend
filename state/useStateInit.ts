@@ -59,6 +59,11 @@ export default function useStateInit() {
       jsonData.telefonnummer,
       feilVedLasting
     );
+
+    if (jsonData.forespurtData) {
+      initForespurtData(jsonData.forespurtData);
+    }
+
     if (jsonData.behandlingsperiode) {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }
@@ -69,7 +74,9 @@ export default function useStateInit() {
       id: nanoid()
     }));
 
-    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder);
+    const forespurtBestemmendeFraværsdag = jsonData.forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+
+    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, undefined, forespurtBestemmendeFraværsdag);
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
@@ -83,9 +90,6 @@ export default function useStateInit() {
         parseIsoDate(bestemmendeFravaersdag),
         feilVedLasting.inntekt
       );
-    }
-    if (jsonData.forespurtData) {
-      initForespurtData(jsonData.forespurtData);
     }
   };
 }

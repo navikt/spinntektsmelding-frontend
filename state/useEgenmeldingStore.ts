@@ -25,7 +25,8 @@ export interface EgenmeldingState {
 const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState> = (set, get) => ({
   egenmeldingsperioder: undefined,
   endreEgenmeldingsperiode: false,
-  setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) =>
+  setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
+    const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
     set(
       produce((state) => {
         if (periodeId === 'nyperiode') {
@@ -41,7 +42,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           if (fPerioder) {
             const agp = finnArbeidsgiverperiode(fPerioder);
             state.arbeidsgiverperioder = agp;
-            const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp);
+            const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp, forespurtBestemmendeFraværsdag);
             if (bestemmende) {
               state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
               state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
@@ -51,8 +52,11 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
         }
         return state;
       })
-    ),
-  slettEgenmeldingsperiode: (periodeId: string) =>
+    );
+  },
+  slettEgenmeldingsperiode: (periodeId: string) => {
+    const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+
     set(
       produce((state) => {
         const nyePerioder = state.egenmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId);
@@ -62,7 +66,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
         if (fPerioder) {
           const agp = finnArbeidsgiverperiode(fPerioder);
           state.arbeidsgiverperioder = agp;
-          const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp);
+          const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp, forespurtBestemmendeFraværsdag);
           if (bestemmende) {
             state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
@@ -72,7 +76,8 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
 
         return state;
       })
-    ),
+    );
+  },
   leggTilEgenmeldingsperiode: () => {
     set(
       produce((state) => {
@@ -98,7 +103,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
   },
   tilbakestillEgenmelding: () => {
     const clonedEgenmelding = structuredClone(get().opprinneligEgenmeldingsperiode);
-
+    const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
     set(
       produce((state) => {
         state.egenmeldingsperioder = clonedEgenmelding;
@@ -111,7 +116,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
         if (fPerioder) {
           const agp = finnArbeidsgiverperiode(fPerioder);
           state.arbeidsgiverperioder = agp;
-          const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp);
+          const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp, forespurtBestemmendeFraværsdag);
           if (bestemmende) {
             state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
