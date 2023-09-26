@@ -59,9 +59,9 @@ const formData: Partial<MottattData> = {
       paakrevd: true,
       forslag: {
         type: 'ForslagInntektGrunnlag',
-        beregningsmaaneder: ['2023-03', '2023-04', '2023-05'],
+        beregningsmaaneder: ['2022-12', '2023-01', '2023-02'],
         forrigeInntekt: {
-          skjæringstidspunkt: '2022-12-24',
+          skjæringstidspunkt: '2023-03-15',
           kilde: 'INNTEKTSMELDING',
           beløp: 77500.0
         }
