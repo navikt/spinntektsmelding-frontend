@@ -168,10 +168,10 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         if (endringer?.length > 0) {
           endringer.forEach((endring, index) => {
             if (endring.belop && endring.belop >= 0) {
-              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-belop-' + index);
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
             if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
-              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-dato-' + index);
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
           });
         }
@@ -186,10 +186,10 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         if (endringer?.length > 0) {
           endringer.forEach((endring, index) => {
             if (endring.belop && endring.belop >= 0) {
-              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-belop-' + index);
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
             if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
-              slettFeilmeldingFraState(state, 'lus-utbetaling-endring-dato-' + index);
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
           });
         }

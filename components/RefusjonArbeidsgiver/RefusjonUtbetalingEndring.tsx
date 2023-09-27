@@ -109,8 +109,8 @@ export default function RefusjonUtbetalingEndring({
               label='Endret refusjon/måned'
               onChange={(event) => changeBelopHandler(event, key)}
               defaultValue={endring.belop}
-              id={`lus-utbetaling-endring-belop-${key}`}
-              error={visFeilmeldingsTekst(`lus-utbetaling-endring-belop-${key}`)}
+              id={`refusjon.refusjonEndringer[${key}].beløp`}
+              error={visFeilmeldingsTekst(`refusjon.refusjonEndringer[${key}].beløp`)}
               className={lokalStyles.endringsboks}
             />
             <Datovelger
