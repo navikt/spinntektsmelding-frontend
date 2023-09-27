@@ -28,7 +28,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
       },
       {
         code: 'MANGLER_DATO',
-        felt: 'lus-utbetaling-endring-dato-0'
+        felt: 'refusjon.refusjonEndringer[0].dato'
       }
     ]);
   });

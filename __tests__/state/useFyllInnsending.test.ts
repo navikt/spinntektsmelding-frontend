@@ -22,7 +22,7 @@ function fetchMock(url, suffix = '') {
             data: inntektData
           })
       });
-    }, 200 + Math.random() * 300)
+    }, 20)
   );
 }
 
@@ -76,7 +76,7 @@ describe('useFyllInnsending', () => {
     }
   });
 
-  it('should fill the state stuff', async () => {
+  it('should fill the state stuff - delvis', async () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     const { result: kvittInit } = renderHook(() => useKvitteringInit());
@@ -109,7 +109,7 @@ describe('useFyllInnsending', () => {
       ]);
       expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeFalsy();
       expect(innsending.refusjon.refusjonPrMnd).toBeUndefined();
-      expect(innsending.refusjon.refusjonOpphører).toBeUndefined();
+      expect(innsending.refusjon.refusjonOpphører).toBe('2023-04-19');
       expect(innsending.refusjon.refusjonEndringer).toBeUndefined();
       expect(innsending.inntekt.beregnetInntekt).toBe(80666.66666666667);
       expect(innsending.inntekt.bekreftet).toBeTruthy();
