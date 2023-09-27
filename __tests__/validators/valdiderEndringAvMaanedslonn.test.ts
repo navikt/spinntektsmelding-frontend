@@ -24,7 +24,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{}])).toEqual([
       {
         code: 'MANGLER_BELOP',
-        felt: 'lus-utbetaling-endring-belop-0'
+        felt: 'refusjon.refusjonEndringer[0].beløp'
       },
       {
         code: 'MANGLER_DATO',
@@ -37,7 +37,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{ belop: -1, dato: new Date() }])).toEqual([
       {
         code: 'MANGLER_BELOP',
-        felt: 'lus-utbetaling-endring-belop-0'
+        felt: 'refusjon.refusjonEndringer[0].beløp'
       }
     ]);
   });
@@ -46,7 +46,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{ belop: 'string', dato: new Date() }])).toEqual([
       {
         code: 'MANGLER_BELOP',
-        felt: 'lus-utbetaling-endring-belop-0'
+        felt: 'refusjon.refusjonEndringer[0].beløp'
       }
     ]);
   });

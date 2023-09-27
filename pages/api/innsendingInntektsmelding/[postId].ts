@@ -45,9 +45,9 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const innsendteData = {
       errors: [
         {
-          property: 'inntekt.beregnetInntekt',
-          error: 'Må være mindre enn 1 000 000',
-          value: '1.0003333333E10'
+          property: 'refusjon.refusjonEndringer[0].beløp',
+          error: 'Må være større enn 0,0',
+          value: '0'
         }
       ]
     };
