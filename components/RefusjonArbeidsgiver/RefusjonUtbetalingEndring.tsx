@@ -117,9 +117,9 @@ export default function RefusjonUtbetalingEndring({
               fromDate={minDate}
               toDate={maxDate}
               onDateChange={(val: Date | undefined) => changeDatoHandler(val, key)}
-              id={`lus-utbetaling-endring-dato-${key}`}
+              id={`refusjon.refusjonEndringer[${key}].dato`}
               label='Dato for endring'
-              error={visFeilmeldingsTekst(`lus-utbetaling-endring-dato-${key}`)}
+              error={visFeilmeldingsTekst(`refusjon.refusjonEndringer[${key}].dato`)}
               defaultSelected={endring.dato}
             />
             {key !== 0 && (

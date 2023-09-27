@@ -38,7 +38,7 @@ export default function valdiderEndringAvMaanedslonn(
 
       if (!endring.dato) {
         feilmeldinger.push({
-          felt: `lus-utbetaling-endring-dato-${index}`,
+          felt: `refusjon.refusjonEndringer[${index}].dato`,
           code: EndringAvMaanedslonnFeilkode.MANGLER_DATO
         });
       }
