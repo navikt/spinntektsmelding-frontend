@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import FullLonnIArbeidsgiverperioden from '../FullLonnIArbeidsgiverperioden';
+import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 
 describe('FullLonnIArbeidsgiverperioden', () => {
   it('should render nothing if lonnIPerioden is falsy', () => {

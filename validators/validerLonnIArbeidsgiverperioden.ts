@@ -38,7 +38,6 @@ export default function validerLonnIArbeidsgiverperioden(
         felt: 'lus-uua-input'
       });
     }
-    console.log('ingenArbeidsgiverperiode', ingenArbeidsgiverperiode, lonnIAP.status, arbeidsgiverperioder);
     if (ingenArbeidsgiverperiode && lonnIAP.status === 'Ja') {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,
