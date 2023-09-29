@@ -19,34 +19,34 @@ const formData: Partial<MottattData> = {
   bruttoinntekt: 77000,
 
   fravaersperioder: [
-    // {
-    //   fom: '2023-03-20',
-    //   tom: '2023-04-04'
-    // },
     {
-      fom: '2023-06-15',
-      tom: '2023-06-16'
+      fom: '2023-02-20',
+      tom: '2023-03-04'
+    },
+    {
+      fom: '2023-03-15',
+      tom: '2023-03-16'
     }
   ],
   egenmeldingsperioder: [
-    // {
-    //   fom: '2023-03-17',
-    //   tom: '2023-03-19'
-    // }
+    {
+      fom: '2023-02-17',
+      tom: '2023-02-19'
+    }
   ],
   tidligereinntekter: [
     // Hva skjer ved jobbskifte?
     {
-      maaned: '2023-05', // yyyy-MM
-      inntekt: 11111
+      maaned: '2023-01', // yyyy-MM
+      inntekt: 66000
     },
     {
-      maaned: '2023-04', // yyyy-MM
-      inntekt: null
+      maaned: '2022-12', // yyyy-MM
+      inntekt: 88000
     },
     {
-      maaned: '2023-03', // yyyy-MM
-      inntekt: 33333
+      maaned: '2023-02', // yyyy-MM
+      inntekt: 88000
     }
   ],
   innsenderNavn: 'Test Testesen',
@@ -61,7 +61,7 @@ const formData: Partial<MottattData> = {
         type: 'ForslagInntektGrunnlag',
         beregningsmaaneder: ['2022-12', '2023-01', '2023-02'],
         forrigeInntekt: {
-          skjæringstidspunkt: '2023-06-15',
+          skjæringstidspunkt: '2023-03-15',
           kilde: 'INNTEKTSMELDING',
           beløp: 77500.0
         }
