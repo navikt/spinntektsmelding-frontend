@@ -4,6 +4,7 @@ import formatCurrency from '../../utils/formatCurrency';
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';
 import lokalStyles from './Bruttoinntekt.module.css';
 import { Skeleton } from '@navikt/ds-react';
+import ugyldigEllerNegativtTall from '../../utils/ugyldigEllerNegativtTall';
 
 interface TidligereInntektProps {
   tidligereinntekt: Array<HistoriskInntekt>;
@@ -78,7 +79,10 @@ export default function TidligereInntekt({ tidligereinntekt, henterData }: Tidli
             {sortertInntekt.map((inntekt) => (
               <tr key={inntekt.maaned}>
                 <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt.maaned)}:</td>
-                <td className={lokalStyles.maanedsinntekt}>{formatCurrency(inntekt.inntekt)} kr</td>
+                <td className={lokalStyles.maanedsinntekt}>
+                  {ugyldigEllerNegativtTall(inntekt.inntekt) && '-'}
+                  {!ugyldigEllerNegativtTall(inntekt.inntekt) && <>{formatCurrency(inntekt.inntekt)} kr</>}
+                </td>
               </tr>
             ))}
           </>
