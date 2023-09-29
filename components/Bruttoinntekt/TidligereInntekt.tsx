@@ -81,7 +81,7 @@ export default function TidligereInntekt({ tidligereinntekt, henterData }: Tidli
                 <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt.maaned)}:</td>
                 <td className={lokalStyles.maanedsinntekt}>
                   {ugyldigEllerNegativtTall(inntekt.inntekt) && '-'}
-                  {!ugyldigEllerNegativtTall(inntekt.inntekt) && <>{formatCurrency(inntekt.inntekt)} kr</>}
+                  {!ugyldigEllerNegativtTall(inntekt.inntekt) && <>{formatCurrency(inntekt.inntekt!)} kr</>}
                 </td>
               </tr>
             ))}

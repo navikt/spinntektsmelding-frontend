@@ -104,6 +104,9 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
 
   const harTidligereInntekt = tidligereinntekt && tidligereinntekt.length > 0;
 
+  const manglendeEller0FraAmeldingen =
+    !tidligereinntekt || tidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
+
   return (
     <>
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
@@ -136,6 +139,13 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
           lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes
           høyere enn gjennomsnitt av siste tre måneder.
         </BodyLong>
+      )}
+      {harTidligereInntekt && manglendeEller0FraAmeldingen && (
+        <Alert variant='warning' className={lokalStyles.feriealert}>
+          Lønnsopplysningene innholder måneder uten rapportert inntekt. Vi estimerer beregnet månedslønn til et snitt av
+          innrapportert inntekt for de tre siste månedene. Hvis dere ser at det skal være en annen beregnet månedslønn
+          må dere endre dette manuelt.
+        </Alert>
       )}
       {erFeriemaaneder && (
         <Alert variant='warning' className={lokalStyles.feriealert}>
@@ -203,7 +213,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
 function sjekkOmFerieMaaneder(tidligereinntekt: Array<HistoriskInntekt> | undefined): boolean {
   const ferieMnd = tidligereinntekt
     ?.map((inntekt) => inntekt.maaned.split('-')[1])
-    .filter((mnd) => mnd === '05' || mnd === '06' || mnd === '07');
+    .filter((mnd) => Number(mnd) >= 5 && Number(mnd) <= 8);
 
   return ferieMnd !== undefined && ferieMnd.length > 0;
 }
