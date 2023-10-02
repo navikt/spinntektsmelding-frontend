@@ -45,6 +45,10 @@ class Environment {
     return this.publicRuntimeConfig.minSideArbeidsgiver;
   }
 
+  get flexJarApi() {
+    return this.publicRuntimeConfig.flexJarUrl;
+  }
+
   public baseUrl = '/im-dialog';
 
   public skjemadataUrl = '/im-dialog/api/trenger';
@@ -52,6 +56,8 @@ class Environment {
   public inntektsdataUrl = '/im-dialog/api/inntektsdata';
 
   public innsendingUrl = '/im-dialog/api/innsendingInntektsmelding';
+
+  public flexjarUrl = '/im-dialog/api/flexjar-backend';
 
   public hentKvitteringUrl = '/im-dialog/api/hentKvittering';
 

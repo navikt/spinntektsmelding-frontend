@@ -1,30 +1,25 @@
-import { useMutation } from '@tanstack/react-query';
 import { logger } from '@navikt/next-logger';
-
-import { AuthenticationError, fetchJsonMedRequestId } from '../utils/fetch';
+import environment from '../config/environment';
 
 interface Feedback {
-  feedback: string;
   feedbackId: string;
   svar: string;
   app: string;
-  soknadstype: string;
   sporsmal: string;
 }
 
-export default function UseFlexjarFeedback() {
-  return useMutation<unknown, Error, object>({
-    mutationFn: async (body) => {
-      return await fetchJsonMedRequestId(`/syk/sykepengesoknad/api/flexjar-backend/api/v1/feedback`, {
-        body: JSON.stringify(body),
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-    },
-    onError: (e) => {
-      if (!(e instanceof AuthenticationError)) {
-        logger.warn(e);
+export default function useSendInnFeedback() {
+  return (feedback: Feedback) => {
+    return fetch(`${environment.innsendingUrl}/feedback`, {
+      // return await fetchJsonMedRequestId(`/syk/sykepengesoknad/api/flexjar-backend/api/v1/feedback`, {
+      body: JSON.stringify(feedback),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    }).then((response) => {
+      if (response.ok) {
+        logger.info('Feedback sendt');
       }
-    }
-  });
+      return response;
+    });
+  };
 }

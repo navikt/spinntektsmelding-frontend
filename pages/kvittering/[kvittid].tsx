@@ -8,7 +8,7 @@ import lokalStyles from './Kvittering.module.css';
 import styles from '../../styles/Home.module.css';
 
 import Heading2 from '../../components/Heading2/Heading2';
-import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
+import { BodyLong, BodyShort, Button, Skeleton, TextField } from '@navikt/ds-react';
 import Person from '../../components/Person/Person';
 
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
@@ -41,6 +41,7 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+import useSendInnFeedback from '../../utils/useSendInnFeedback';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -73,6 +74,19 @@ const Kvittering: NextPage = () => {
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
+
+  const [respons, setRespons] = useState<string>('');
+
+  const sendInnFeedback = useSendInnFeedback();
+
+  const sendResponse = () => {
+    sendInnFeedback({
+      svar: respons,
+      feedbackId: 'DelvisSkjema',
+      sporsmal: 'Hva synes du om delvis utfylling av skjema?',
+      app: 'spinntektsmalding-frontend'
+    });
+  };
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
@@ -256,6 +270,8 @@ const Kvittering: NextPage = () => {
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </div>
         </div>
+        <TextField label='Ka du trur?' onChange={(event) => setRespons(event.target.value)} />
+        <Button onClick={() => sendResponse()}>Send respons</Button>
       </PageContent>
     </div>
   );

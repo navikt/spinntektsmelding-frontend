@@ -5,8 +5,11 @@ import environment from '../../../config/environment';
 
 import org from '../../../mockdata/kvittering-eksternt-system.json';
 import { beskyttetApi } from '../../../auth/beskyttetApi';
+import { getTokenxToken } from '../../../auth/getTokenxToken';
+import getConfig from 'next/config';
+import { logger } from '@navikt/next-logger';
 
-const basePath = environment.hentKvitteringAPI;
+const basePath = environment.flexJarApi;
 
 type Data = typeof org;
 
@@ -27,9 +30,12 @@ const handleProxyInit = (proxy: any) => {
     console.log('RAW Response from the target', JSON.stringify(proxyRes.headers));
   });
 
-  proxy.on('proxyReq', function (proxyReq: any, _req: any, _res: any, _options: any) {
+  proxy.on('proxyReq', async function (proxyReq: any, req: any, _res: any, _options: any) {
     console.log('RAW Request from the client', JSON.stringify(proxyReq.body));
     proxyReq.setHeader('cookie', '');
+    const bearerTokeToken = await bearerToken(req)!;
+    proxyReq.setHeader('Authorize', `bearer ${bearerTokeToken}`);
+    console.log('RAW Request from the client', JSON.stringify(proxyReq));
   });
 };
 
@@ -41,9 +47,11 @@ export const config = {
 };
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+  console.log('Request');
+  logger.info('Request');
   const env = process.env.NODE_ENV;
   if (env == 'development') {
-    return res.status(404).json(org);
+    return res.status(200).json(org);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {
       target: basePath,
@@ -60,10 +68,13 @@ const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse<Da
 
 export default handler;
 
-// async function bearerToken(): Promise<string | undefined> {
-//   if (opts.backendClientId) {
-//     const idportenToken = opts.req.headers.authorization!.split(' ')[1];
-//     return await getTokenxToken(idportenToken, opts.backendClientId);
-//   }
-//   return undefined;
-// }
+async function bearerToken(req: any): Promise<string | undefined> {
+  const { serverRuntimeConfig } = getConfig();
+
+  const backendClientId = serverRuntimeConfig.flexjarBackendClientId;
+  if (backendClientId) {
+    const idportenToken = req.headers.authorization!.split(' ')[1];
+    return await getTokenxToken(idportenToken, backendClientId);
+  }
+  return undefined;
+}
