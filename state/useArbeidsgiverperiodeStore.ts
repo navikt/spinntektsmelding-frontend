@@ -15,6 +15,7 @@ import { finnAktuelleInntekter } from './useBruttoinntektStore';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
+  foreslaattBestemmendeFravaersdag?: Date;
   arbeidsgiverperioder?: Array<Periode>;
   endringsbegrunnelse?: string;
   endretArbeidsgiverperiode: boolean;
@@ -32,10 +33,12 @@ export interface ArbeidsgiverperiodeState {
   harArbeidsgiverperiodenBlittEndret: () => void;
   slettAlleArbeidsgiverperioder: () => void;
   setArbeidsgiverperiodeDisabled: (disabled: boolean) => void;
+  setForeslaattBestemmendeFravaersdag: (bestemmendeFravaersdag: Date | undefined) => void;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => {
   return {
+    foreslaattBestemmendeFravaersdag: undefined,
     arbeidsgiverperiodeDisabled: false,
     bestemmendeFravaersdag: undefined,
     arbeidsgiverperioder: undefined,
@@ -122,7 +125,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
-      const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+      const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
 
       set(
         produce((state) => {
@@ -187,7 +190,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       const opprinnelig = get().opprinneligArbeidsgiverperioder;
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
-      const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+      const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
 
       set(
         produce((state) => {
@@ -258,7 +261,16 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
           return state;
         })
-      )
+      ),
+    setForeslaattBestemmendeFravaersdag: (bestemmendeFravaersdag) => {
+      set(
+        produce((state) => {
+          state.foreslaattBestemmendeFravaersdag = bestemmendeFravaersdag;
+
+          return state;
+        })
+      );
+    }
   };
 };
 

@@ -2,6 +2,7 @@ import { compareAsc, formatISO9075 } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
+
 export interface FravaersPeriode {
   fom: Date;
   tom: Date;
@@ -45,10 +46,14 @@ export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
 const finnBestemmendeFravaersdag = (
   fravaersperioder?: Array<Periode>,
   arbeidsgiverperiode?: Array<Periode>,
-  forespurtBestemmendeFraværsdag?: string
+  forespurtBestemmendeFraværsdag?: string | Date
 ): string | undefined => {
   if (!fravaersperioder || !fravaersperioder?.[0]?.fom) {
     return undefined;
+  }
+
+  if (typeof forespurtBestemmendeFraværsdag === 'string') {
+    forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
   }
 
   const filtrertePerioder = fravaersperioder.filter((periode) => periode.fom && periode.tom);
@@ -96,9 +101,9 @@ const finnBestemmendeFravaersdag = (
   if (forespurtBestemmendeFraværsdag) {
     const forespurtBestemmendeFravaersdagErStorst = hvemDatoErStorst(
       bestemmendeFravaersdag,
-      parseIsoDate(forespurtBestemmendeFraværsdag)
+      forespurtBestemmendeFraværsdag
     )
-      ? parseIsoDate(forespurtBestemmendeFraværsdag)
+      ? forespurtBestemmendeFraværsdag
       : bestemmendeFravaersdag;
 
     return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {

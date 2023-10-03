@@ -63,6 +63,7 @@ interface MottattData {
   telefonnummer: string;
   feilReport?: FeilReportFeilListe;
   forespurtData?: ForespurteData;
+  skjaeringstidspunkt: TDateISODate;
 }
 
 export default MottattData;
