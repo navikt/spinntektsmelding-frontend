@@ -6,7 +6,7 @@ export enum LonnUnderSykefravaeretFeilkode {
   LONN_UNDER_SYKEFRAVAERET_BELOP = 'LONN_UNDER_SYKEFRAVAERET_BELOP',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO = 'LONN_UNDER_SYKEFRAVAERET_SLUTTDATO',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG = 'LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG',
-  LONN_UNDER_SYKEFRAVAERET_BELOP_OVERSTIGER_BRUTTOINNTEKT = 'LONN_UNDER_SYKEFRAVAERET_BELOP_OVERSTIGER_BRUTTOINNTEKT'
+  BELOP_OVERSTIGER_BRUTTOINNTEKT = 'BELOP_OVERSTIGER_BRUTTOINNTEKT'
 }
 
 export default function validerLonnUnderSykefravaeret(
@@ -68,7 +68,7 @@ function validerMaksimaltBelop(
 ) {
   if (lonnUS.belop && bruttoInntekt && bruttoInntekt < lonnUS.belop) {
     errorStatus.push({
-      code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_BELOP_OVERSTIGER_BRUTTOINNTEKT,
+      code: LonnUnderSykefravaeretFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT,
       felt: 'lus-input'
     });
   }

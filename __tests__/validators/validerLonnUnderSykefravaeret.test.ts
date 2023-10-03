@@ -116,7 +116,7 @@ describe('validerLonnUnderSykefravaeret', () => {
 
     const expected = [
       {
-        code: 'LONN_UNDER_SYKEFRAVAERET_BELOP_OVERSTIGER_BRUTTOINNTEKT',
+        code: 'BELOP_OVERSTIGER_BRUTTOINNTEKT',
         felt: 'lus-input'
       }
     ];

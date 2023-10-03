@@ -113,7 +113,8 @@ export default function useValiderInntektsmelding() {
     feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
       state.harRefusjonEndringer,
       state.refusjonEndringer,
-      state.lonnISykefravaeret
+      state.lonnISykefravaeret,
+      state.bruttoinntekt.bruttoInntekt
     );
 
     feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);

@@ -7,13 +7,15 @@ export enum EndringAvMaanedslonnFeilkode {
   MANGLER_BELOP = 'MANGLER_BELOP',
   MANGLER_DATO = 'MANGLER_DATO',
   MANGLER_BELOP_OG_DATO = 'MANGLER_BELOP_OG_DATO',
-  MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN = 'MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN'
+  MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN = 'MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN',
+  BELOP_OVERSTIGER_BRUTTOINNTEKT = 'BELOP_OVERSTIGER_BRUTTOINNTEKT'
 }
 
 export default function valdiderEndringAvMaanedslonn(
   harRefusjonEndringer?: YesNo,
   refusjonEndringer?: Array<EndringsBelop>,
-  lonnISykefravaeret?: LonnISykefravaeret
+  lonnISykefravaeret?: LonnISykefravaeret,
+  bruttoInntekt?: number
 ): Array<ValiderResultat> {
   let feilmeldinger: Array<ValiderResultat> = [];
   const harLonnISykefravaeret = !!lonnISykefravaeret && lonnISykefravaeret.status === 'Ja';
@@ -31,6 +33,12 @@ export default function valdiderEndringAvMaanedslonn(
         feilmeldinger.push({
           felt: `refusjon.refusjonEndringer[${index}].beløp`,
           code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP
+        });
+      }
+      if (endring.belop && bruttoInntekt && endring.belop > bruttoInntekt) {
+        feilmeldinger.push({
+          felt: `refusjon.refusjonEndringer[${index}].beløp`,
+          code: EndringAvMaanedslonnFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT
         });
       }
 
