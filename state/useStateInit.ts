@@ -37,6 +37,7 @@ export default function useStateInit() {
   const initBehandlingsdager = useBoundStore((state) => state.initBehandlingsdager);
   const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
   const initForespurtData = useBoundStore((state) => state.initForespurtData);
+  const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
 
@@ -74,9 +75,10 @@ export default function useStateInit() {
       id: nanoid()
     }));
 
-    const forespurtBestemmendeFraværsdag = jsonData.forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+    const foreslaattBestemmendeFraværsdag = jsonData.skjaeringstidspunkt;
+    setForeslaattBestemmendeFravaersdag(parseIsoDate(foreslaattBestemmendeFraværsdag));
 
-    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, undefined, forespurtBestemmendeFraværsdag);
+    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, undefined, foreslaattBestemmendeFraværsdag);
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);

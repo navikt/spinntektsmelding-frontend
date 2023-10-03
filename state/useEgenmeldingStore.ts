@@ -26,7 +26,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
   egenmeldingsperioder: undefined,
   endreEgenmeldingsperiode: false,
   setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
-    const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+    const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
     set(
       produce((state) => {
         if (periodeId === 'nyperiode') {
@@ -55,7 +55,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
     );
   },
   slettEgenmeldingsperiode: (periodeId: string) => {
-    const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+    const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
 
     set(
       produce((state) => {
@@ -103,7 +103,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
   },
   tilbakestillEgenmelding: () => {
     const clonedEgenmelding = structuredClone(get().opprinneligEgenmeldingsperiode);
-    const forespurtBestemmendeFraværsdag = get().forespurtData?.inntekt.forslag.forrigeInntekt?.skjæringstidspunkt;
+    const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
     set(
       produce((state) => {
         state.egenmeldingsperioder = clonedEgenmelding;

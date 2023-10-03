@@ -117,6 +117,7 @@ export default function useFyllInnsending() {
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
+  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
 
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
@@ -210,7 +211,7 @@ export default function useFyllInnsending() {
 
     const bestemmendeFraværsdag = bestemmendeFravaersdag
       ? formatIsoDate(bestemmendeFravaersdag)
-      : finnBestemmendeFravaersdag(perioder, formatertePerioder);
+      : finnBestemmendeFravaersdag(perioder, formatertePerioder, foreslaattBestemmendeFravaersdag);
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
 
