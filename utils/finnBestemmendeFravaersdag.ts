@@ -2,7 +2,7 @@ import { compareAsc, formatISO9075 } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
-import { type } from 'os';
+
 export interface FravaersPeriode {
   fom: Date;
   tom: Date;
