@@ -15,6 +15,7 @@ import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunn
 import skjemaVariant from '../config/skjemavariant';
 import { nanoid } from 'nanoid';
 import { SkjemaKvitteringEksterntSystem } from './useSkjemadataStore';
+import { konverterBegrunnelseFullLonnIArbeidsgiverperiode } from '../utils/konverterBegrunnelseFullLonnIArbeidsgiverperiode';
 
 export interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
@@ -200,7 +201,7 @@ export default function useKvitteringInit() {
       initFullLonnIArbeidsgiverPerioden({
         status: jsonData.fullLønnIArbeidsgiverPerioden.utbetalerFullLønn ? 'Ja' : 'Nei',
         begrunnelse: jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
-          ? jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse
+          ? konverterBegrunnelseFullLonnIArbeidsgiverperiode(jsonData.fullLønnIArbeidsgiverPerioden.begrunnelse)
           : undefined,
         utbetalt:
           jsonData.fullLønnIArbeidsgiverPerioden.utbetalt !== undefined

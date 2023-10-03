@@ -13,7 +13,7 @@
     "bestemmendeFraværsdag": "2023-01-20",
     "fraværsperioder": [{ "fom": "2023-01-23", "tom": "2023-02-22" }],
     "inntekt": { "bekreftet": true, "beregnetInntekt": 45000, "endringÅrsak": null, "manueltKorrigert": false },
-    "fullLønnIArbeidsgiverPerioden": { "utbetalerFullLønn": false, "begrunnelse": "LovligFravaer", "utbetalt": 30000 },
+    "fullLønnIArbeidsgiverPerioden": { "utbetalerFullLønn": false, "begrunnelse": "LOVLIG_FRAVAER", "utbetalt": 30000 },
     "refusjon": {
       "utbetalerHeleEllerDeler": true,
       "refusjonPrMnd": 45000,
