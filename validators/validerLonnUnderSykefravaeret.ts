@@ -5,12 +5,14 @@ export enum LonnUnderSykefravaeretFeilkode {
   LONN_UNDER_SYKEFRAVAERET_MANGLER = 'LONN_UNDER_SYKEFRAVAERET_MANGLER',
   LONN_UNDER_SYKEFRAVAERET_BELOP = 'LONN_UNDER_SYKEFRAVAERET_BELOP',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO = 'LONN_UNDER_SYKEFRAVAERET_SLUTTDATO',
-  LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG = 'LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG'
+  LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG = 'LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG',
+  BELOP_OVERSTIGER_BRUTTOINNTEKT = 'BELOP_OVERSTIGER_BRUTTOINNTEKT'
 }
 
 export default function validerLonnUnderSykefravaeret(
   lonnUS?: LonnISykefravaeret,
-  refusjonskravetOpphoerer?: RefusjonskravetOpphoerer
+  refusjonskravetOpphoerer?: RefusjonskravetOpphoerer,
+  bruttoInntekt?: number
 ): Array<ValiderResultat> {
   let errorStatus: Array<ValiderResultat> = [];
 
@@ -23,6 +25,7 @@ export default function validerLonnUnderSykefravaeret(
     if (lonnUS.status === 'Ja') {
       validerBelop(lonnUS, errorStatus);
       validerStatus(refusjonskravetOpphoerer, errorStatus);
+      validerMaksimaltBelop(lonnUS, bruttoInntekt, errorStatus);
     }
   }
 
@@ -53,6 +56,19 @@ function validerBelop(lonnUS: LonnISykefravaeret, errorStatus: ValiderResultat[]
   if (typeof lonnUS.belop === 'undefined') {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_BELOP,
+      felt: 'lus-input'
+    });
+  }
+}
+
+function validerMaksimaltBelop(
+  lonnUS: LonnISykefravaeret,
+  bruttoInntekt: number | undefined,
+  errorStatus: ValiderResultat[]
+) {
+  if (lonnUS.belop && bruttoInntekt && bruttoInntekt < lonnUS.belop) {
+    errorStatus.push({
+      code: LonnUnderSykefravaeretFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT,
       felt: 'lus-input'
     });
   }

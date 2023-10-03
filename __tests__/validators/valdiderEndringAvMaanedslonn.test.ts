@@ -50,4 +50,17 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
       }
     ]);
   });
+
+  it('should return error when harRefusjonEndringer is Ja and belop higher than bruttoinntekt', () => {
+    expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), belop: 12345 }], undefined, 555)).toEqual([
+      {
+        code: 'BELOP_OVERSTIGER_BRUTTOINNTEKT',
+        felt: 'refusjon.refusjonEndringer[0].beløp'
+      }
+    ]);
+  });
+
+  it('should not return error when harRefusjonEndringer is Ja and belop lower than bruttoinntekt', () => {
+    expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), belop: 12345 }], undefined, 55555)).toEqual([]);
+  });
 });

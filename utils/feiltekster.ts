@@ -14,6 +14,7 @@ const feiltekster = {
   LONN_UNDER_SYKEFRAVAERET_MANGLER: 'Angi om arbeidsgiver betaler lønn under hele eller deler av sykefraværet.',
   LONN_UNDER_SYKEFRAVAERET_BELOP:
     'Angi refusjonsbeløpet arbeidsgiver har betalt under hele eller deler av sykefraværet.',
+  BELOP_OVERSTIGER_BRUTTOINNTEKT: 'Refusjonsbeløpet som er oppgitt overstiger beregnet månedslønn.',
   LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE:
     'Arbeidsgiver må betale 0 i arbeidsgiverperioden og anngi begrunnelse for at det ikke er arbeidsgiverperiode.',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG: 'Angi om arbeidsgiver betaler lønn under hele perioden.',

@@ -171,7 +171,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
             if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
-              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].dato`);
             }
           });
         }
@@ -189,7 +189,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
             if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
-              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].dato`);
             }
           });
         }

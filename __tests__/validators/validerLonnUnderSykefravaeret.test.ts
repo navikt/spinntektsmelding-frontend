@@ -107,4 +107,35 @@ describe('validerLonnUnderSykefravaeret', () => {
 
     expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer)).toEqual(expected);
   });
+
+  it('should return an error when refusjonsbeløp higer than bruttoinntekt', () => {
+    const inputLUS: LonnISykefravaeret = {
+      status: 'Ja',
+      belop: 1000111
+    };
+
+    const expected = [
+      {
+        code: 'BELOP_OVERSTIGER_BRUTTOINNTEKT',
+        felt: 'lus-input'
+      }
+    ];
+
+    const bruttoInntekt = 1000000;
+
+    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
+  });
+
+  it('should not return an error when refusjonsbeløp lower than bruttoinntekt', () => {
+    const inputLUS: LonnISykefravaeret = {
+      status: 'Ja',
+      belop: 99999
+    };
+
+    const expected: any = [];
+
+    const bruttoInntekt = 1000000;
+
+    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
+  });
 });

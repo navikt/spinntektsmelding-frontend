@@ -106,13 +106,15 @@ export default function useValiderInntektsmelding() {
 
     feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
       state.lonnISykefravaeret,
-      state.refusjonskravetOpphoerer
+      state.refusjonskravetOpphoerer,
+      state.bruttoinntekt.bruttoInntekt
     );
 
     feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
       state.harRefusjonEndringer,
       state.refusjonEndringer,
-      state.lonnISykefravaeret
+      state.lonnISykefravaeret,
+      state.bruttoinntekt.bruttoInntekt
     );
 
     feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);
