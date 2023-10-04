@@ -10,7 +10,7 @@ interface Feedback {
 
 export default function useSendInnFeedback() {
   return (feedback: Feedback) => {
-    return fetch(`${environment.innsendingUrl}/feedback`, {
+    return fetch(`${environment.flexjarUrl}`, {
       // return await fetchJsonMedRequestId(`/syk/sykepengesoknad/api/flexjar-backend/api/v1/feedback`, {
       body: JSON.stringify(feedback),
       method: 'POST',

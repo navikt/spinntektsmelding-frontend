@@ -57,7 +57,7 @@ class Environment {
 
   public innsendingUrl = '/im-dialog/api/innsendingInntektsmelding';
 
-  public flexjarUrl = '/im-dialog/api/flexjar-backend';
+  public flexjarUrl = '/im-dialog/api/flexjar-backend/api/v1/feedback';
 
   public hentKvitteringUrl = '/im-dialog/api/hentKvittering';
 

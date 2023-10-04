@@ -31,7 +31,8 @@ export async function proxyKallTilBackend(opts: Opts) {
     }
     return undefined;
   }
-
+  logger.info('proxyKallTilBackend: ' + api);
+  logger.info('proxyKallTilBackend opts objektet: ' + JSON.stringify(opts.hostname));
   await proxyApiRouteRequest({ ...opts, path: rewritedPath, bearerToken: await bearerToken() });
 }
 

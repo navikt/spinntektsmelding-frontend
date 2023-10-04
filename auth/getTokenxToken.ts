@@ -1,8 +1,6 @@
 import { logger } from '@navikt/next-logger';
-import getConfig from 'next/config';
 import { Client, errors, GrantBody, Issuer } from 'openid-client';
 
-const { serverRuntimeConfig } = getConfig();
 const OPError = errors.OPError;
 
 let _issuer: Issuer<Client>;
@@ -10,27 +8,27 @@ let _client: Client;
 
 async function issuer() {
   if (typeof _issuer === 'undefined') {
-    if (!serverRuntimeConfig.tokenXWellKnownUrl)
+    if (!global.process.env.TOKEN_X_WELL_KNOWN_URL)
       throw new TypeError('Miljøvariabelen "TOKEN_X_WELL_KNOWN_URL må være satt');
-    _issuer = await Issuer.discover(serverRuntimeConfig.tokenXWellKnownUrl);
+    _issuer = await Issuer.discover(global.process.env.TOKEN_X_WELL_KNOWN_URL);
   }
   return _issuer;
 }
 
 function jwk() {
-  if (!serverRuntimeConfig.tokenXPrivateJwk) throw new TypeError('Miljøvariabelen "TOKEN_X_PRIVATE_JWK må være satt');
-  return JSON.parse(serverRuntimeConfig.tokenXPrivateJwk);
+  if (!global.process.env.TOKEN_X_PRIVATE_JWK) throw new TypeError('Miljøvariabelen "TOKEN_X_PRIVATE_JWK må være satt');
+  return JSON.parse(global.process.env.TOKEN_X_PRIVATE_JWK);
 }
 
 async function client() {
   if (typeof _client === 'undefined') {
-    if (!serverRuntimeConfig.tokenXClientId) throw new TypeError('Miljøvariabelen "TOKEN_X_CLIENT_ID må være satt');
+    if (!global.process.env.TOKEN_X_CLIENT_ID) throw new TypeError('Miljøvariabelen "TOKEN_X_CLIENT_ID må være satt');
 
     const _jwk = jwk();
     const _issuer = await issuer();
     _client = new _issuer.Client(
       {
-        client_id: serverRuntimeConfig.tokenXClientId,
+        client_id: global.process.env.TOKEN_X_CLIENT_ID,
         token_endpoint_auth_method: 'private_key_jwt'
       },
       { keys: [_jwk] }

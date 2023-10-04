@@ -56,3 +56,6 @@ spec:
       value: '{{{api-basepath}}}'
     - name: AMPLITUDE_ENABLED
       value: '{{{amplitude-enabled}}}'
+    - name: TEST_VAR
+      value: '{{{test-var}}}'
+   
