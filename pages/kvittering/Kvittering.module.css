@@ -1,11 +1,11 @@
 .ansattwrapper {
-  display: flex;
+  display       : flex;
   flex-direction: column;
 }
 
 .fravaerwrapper {
-  width: 50%;
-  display: inline-block;
+  width     : 50%;
+  display   : inline-block;
   margin-top: 0.5rem;
 }
 
@@ -18,24 +18,24 @@
 }
 
 .arbeidsgiverperiode {
-  display: inline-block;
+  display   : inline-block;
   margin-top: 1rem;
 }
 
 .ytterstefravaerwrapper {
-  display: flex;
+  display       : flex;
   flex-direction: column;
 }
 
 .buttonwrapper {
-  margin-top: 2rem;
-  display: flex;
+  margin-top     : 2rem;
+  display        : flex;
   justify-content: space-between;
 }
 
 .innerbuttonwrapper {
   display: flex;
-  gap: 4rem;
+  gap    : 4rem;
 }
 
 .buttonwrapper button {
@@ -47,19 +47,19 @@
 }
 
 .lukkelenke {
-  margin-top: auto;
+  margin-top   : auto;
   margin-bottom: auto;
 }
 
 @media screen and (max-width: 600px) {
   .ytterstefravaerwrapper {
     flex-direction: column;
-    margin-top: 0;
+    margin-top    : 0;
   }
 
   .ytrefravaerswrapper {
     margin-top: 1.5rem;
-    width: 100%;
+    width     : 100%;
   }
 }
 
@@ -70,24 +70,24 @@
 }
 
 .infoboks {
-  border: 1px solid black;
+  border       : 1px solid black;
   border-radius: 8px;
-  display: inline-block;
-  grid-column: col2 / span 1;
-  height: fit-content;
-  padding: 1rem;
+  display      : inline-block;
+  grid-column  : col2 / span 1;
+  height       : fit-content;
+  padding      : 1rem;
 }
 
 .fravaersdata {
   display: inline-block;
-  height: fit-content;
+  height : fit-content;
 }
 
 .arbeidsgiverwrapper,
 .ytreansattwrapper,
 .personinfowrapper,
 .fravaerswrapperwrapper {
-  display: grid;
+  display              : grid;
   grid-template-columns: [col1] 50% [col2] auto;
 }
 
@@ -96,7 +96,7 @@
 }
 
 .arbeidsforhold {
-  margin-top: 2rem;
+  margin-top   : 2rem;
   margin-bottom: 0.5rem;
 }
 
@@ -105,12 +105,30 @@
 }
 
 .virksomhetsnavn {
-  white-space: nowrap;
-  overflow: hidden;
+  white-space  : nowrap;
+  overflow     : hidden;
   text-overflow: ellipsis;
 }
 
 .uthevet {
-  margin-top: 0.5rem;
+  margin-top : 0.5rem;
   font-weight: 600;
+}
+
+.jarwrapper {
+  display         : flex;
+  background-color: var(--a-gray-50);
+  padding         : var(--a-spacing-6);
+  border          : 1px solid var(--a-gray-40);
+  gap             : var(--a-spacing-6);
+  flex-direction  : column;
+  border-radius   : 16px;
+}
+
+.jarwrapper button {
+  max-width: 15rem;
+}
+
+.outerjarwrapper {
+  margin-top: var(--a-spacing-6);
 }

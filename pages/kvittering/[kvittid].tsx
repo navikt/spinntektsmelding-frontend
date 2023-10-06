@@ -8,7 +8,7 @@ import lokalStyles from './Kvittering.module.css';
 import styles from '../../styles/Home.module.css';
 
 import Heading2 from '../../components/Heading2/Heading2';
-import { BodyLong, BodyShort, Button, Skeleton, TextField } from '@navikt/ds-react';
+import { Alert, BodyLong, BodyShort, Button, Skeleton, Textarea } from '@navikt/ds-react';
 import Person from '../../components/Person/Person';
 
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
@@ -269,9 +269,19 @@ const Kvittering: NextPage = () => {
             </div>
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </div>
+          <div className={lokalStyles.outerjarwrapper + ' skjul-fra-print'}>
+            <div className={lokalStyles.jarwrapper + ' skjul-fra-print'}>
+              <Textarea label='Ka du trur?' onChange={(event) => setRespons(event.target.value)} />
+              <Alert variant='warning'>
+                Ikke skriv inn navn eller andre personopplysninger. Dette er en anonym tilbakemelding og blir kun brukt
+                til å forbedre tjenesten. Du vil ikke få et svar fra oss.
+              </Alert>
+              <Button variant='secondary-neutral' onClick={() => sendResponse()}>
+                Send tilbakemelding
+              </Button>
+            </div>
+          </div>
         </div>
-        <TextField label='Ka du trur?' onChange={(event) => setRespons(event.target.value)} />
-        <Button onClick={() => sendResponse()}>Send respons</Button>
       </PageContent>
     </div>
   );
