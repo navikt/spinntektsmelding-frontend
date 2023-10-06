@@ -9,6 +9,7 @@ enum begrunnelseEndringBruttoinntekt {
   Bonus = 'Bonus',
   Nyansatt = 'Nyansatt',
   Sykefravaer = 'Sykefravaer',
+  Ferietrekk = 'Ferietrekk',
   Feilregistrert = 'Feilregistrert'
 }
 

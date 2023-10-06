@@ -129,4 +129,49 @@ describe('EndringAarsakVisning', () => {
     expect(await screen.findByText(/10.12.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/15.12.2022/)).toBeInTheDocument();
   });
+
+  it('should show Feilregistrert data.', async () => {
+    const { container } = render(<EndringAarsakVisning endringsaarsak={'Feilregistrert'} />);
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should show Bonus data.', async () => {
+    const { container } = render(<EndringAarsakVisning endringsaarsak={'Bonus'} />);
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should show Nyansatt data.', async () => {
+    const { container } = render(<EndringAarsakVisning endringsaarsak={'Nyansatt'} />);
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should show default data.', async () => {
+    const { container } = render(<EndringAarsakVisning endringsaarsak={'Ukjent'} />);
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should show Ferietrekk data.', async () => {
+    const { container } = render(<EndringAarsakVisning endringsaarsak={'Nyansatt'} />);
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+
+    expect(container).toBeEmptyDOMElement();
+  });
 });
