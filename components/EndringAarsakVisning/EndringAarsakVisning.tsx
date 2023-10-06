@@ -106,6 +106,7 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
     case begrunnelseEndringBruttoinntekt.Feilregistrert:
     case begrunnelseEndringBruttoinntekt.Bonus:
     case begrunnelseEndringBruttoinntekt.Nyansatt:
+    case begrunnelseEndringBruttoinntekt.Ferietrekk:
     default: {
       return null;
     }

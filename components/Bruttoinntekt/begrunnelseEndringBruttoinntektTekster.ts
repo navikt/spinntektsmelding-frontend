@@ -14,6 +14,7 @@ const begrunnelseEndringBruttoinntektTekster: BegrunnelserTekster = {
   Bonus: 'Bonus',
   Nyansatt: 'Nyansatt',
   Sykefravaer: 'Sykefravær',
+  Ferietrekk: 'Ferietrekk',
   Feilregistrert: 'Mangelfull eller uriktig rapportering til a-ordningen'
 };
 
