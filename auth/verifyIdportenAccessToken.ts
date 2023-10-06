@@ -3,8 +3,6 @@ import { GetKeyFunction } from 'jose/dist/types/types';
 import getConfig from 'next/config';
 import { Client, Issuer } from 'openid-client';
 
-// import { AuthenticationError } from '../utils/fetch'
-
 const { serverRuntimeConfig } = getConfig();
 
 let _issuer: Issuer<Client>;

@@ -1,12 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// import getConfig from 'next/config';
 import { beskyttetApi } from '../../../auth/beskyttetApi';
 import { proxyKallTilBackend } from '../../../proxy/backendproxy';
 
 const tillatteApier = ['POST /api/v1/feedback'];
-// const { serverRuntimeConfig } = getConfig();
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
   await proxyKallTilBackend({
