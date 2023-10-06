@@ -8,7 +8,7 @@ import lokalStyles from './Kvittering.module.css';
 import styles from '../../styles/Home.module.css';
 
 import Heading2 from '../../components/Heading2/Heading2';
-import { Alert, BodyLong, BodyShort, Button, Skeleton, Textarea } from '@navikt/ds-react';
+import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
 import Person from '../../components/Person/Person';
 
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
@@ -41,7 +41,7 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
-import useSendInnFeedback from '../../utils/useSendInnFeedback';
+import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -74,19 +74,6 @@ const Kvittering: NextPage = () => {
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
-
-  const [respons, setRespons] = useState<string>('');
-
-  const sendInnFeedback = useSendInnFeedback();
-
-  const sendResponse = () => {
-    sendInnFeedback({
-      svar: respons,
-      feedbackId: 'DelvisSkjema',
-      sporsmal: 'Hva synes du om delvis utfylling av skjema?',
-      app: 'spinntektsmalding-frontend'
-    });
-  };
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
@@ -269,18 +256,7 @@ const Kvittering: NextPage = () => {
             </div>
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </div>
-          <div className={lokalStyles.outerjarwrapper + ' skjul-fra-print'}>
-            <div className={lokalStyles.jarwrapper + ' skjul-fra-print'}>
-              <Textarea label='Ka du trur?' onChange={(event) => setRespons(event.target.value)} />
-              <Alert variant='warning'>
-                Ikke skriv inn navn eller andre personopplysninger. Dette er en anonym tilbakemelding og blir kun brukt
-                til å forbedre tjenesten. Du vil ikke få et svar fra oss.
-              </Alert>
-              <Button variant='secondary-neutral' onClick={() => sendResponse()}>
-                Send tilbakemelding
-              </Button>
-            </div>
-          </div>
+          <FlexJarResponse sporsmaal={'Er du fornøyd med opplevelsen?'} feedbackId={'kvittering'} />
         </div>
       </PageContent>
     </div>

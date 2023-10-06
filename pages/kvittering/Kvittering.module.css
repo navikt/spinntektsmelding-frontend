@@ -114,21 +114,3 @@
   margin-top : 0.5rem;
   font-weight: 600;
 }
-
-.jarwrapper {
-  display         : flex;
-  background-color: var(--a-gray-50);
-  padding         : var(--a-spacing-6);
-  border          : 1px solid var(--a-gray-40);
-  gap             : var(--a-spacing-6);
-  flex-direction  : column;
-  border-radius   : 16px;
-}
-
-.jarwrapper button {
-  max-width: 15rem;
-}
-
-.outerjarwrapper {
-  margin-top: var(--a-spacing-6);
-}
