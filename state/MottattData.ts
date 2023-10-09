@@ -1,4 +1,5 @@
 import { HistoriskInntekt } from './state';
+import { MottattForespurtData } from './useForespurtDataStore';
 import { FeilReportElement } from './useStateInit';
 
 export interface MottattPeriode {
@@ -62,7 +63,7 @@ interface MottattData {
   innsenderNavn: string;
   telefonnummer: string;
   feilReport?: FeilReportFeilListe;
-  forespurtData?: ForespurteData;
+  forespurtData?: MottattForespurtData;
   skjaeringstidspunkt: TDateISODate;
 }
 

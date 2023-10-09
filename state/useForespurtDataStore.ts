@@ -53,7 +53,7 @@ type ForespurtData = {
   forslag: ForslagInntekt & ForslagRefusjon;
 };
 
-type MottattForespurtData = {
+export type MottattForespurtData = {
   [key in Opplysningstype]: ForespurtData;
 };
 
