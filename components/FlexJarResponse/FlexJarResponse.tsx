@@ -15,7 +15,7 @@ interface FlexJarResponseProps {
 export default function FlexJarResponse(props: FlexJarResponseProps) {
   const [respons, setRespons] = useState<string>('');
   const [sendt, setSendt] = useState<boolean>(false);
-  const [visFeedback, setVisFeedback] = useState<boolean>(props.kunFeedback);
+  const [visFeedback, setVisFeedback] = useState<boolean>(props.kunFeedback || false);
   const [svarSporsmaal, setSvarSporsmaal] = useState<string>('');
 
   const sendInnFeedback = useSendInnFeedback();
@@ -40,21 +40,25 @@ export default function FlexJarResponse(props: FlexJarResponseProps) {
     return (
       <div className={lokalStyles.outerjarwrapper + ' skjul-fra-print'}>
         <div className={lokalStyles.jarwrapper + ' skjul-fra-print'}>
-          <TextLabel>{props.sporsmaal}</TextLabel>
-          <div className={lokalStyles.buttonwrapper}>
-            <Button
-              variant={svarSporsmaal === 'Ja' ? 'primary-neutral' : 'secondary-neutral'}
-              onClick={() => svarPaaSporsmaal('Ja')}
-            >
-              Ja
-            </Button>
-            <Button
-              variant={svarSporsmaal === 'Nei' ? 'primary-neutral' : 'secondary-neutral'}
-              onClick={() => svarPaaSporsmaal('Nei')}
-            >
-              Nei
-            </Button>
-          </div>
+          {!props.kunFeedback && (
+            <>
+              <TextLabel>{props.sporsmaal}</TextLabel>
+              <div className={lokalStyles.buttonwrapper}>
+                <Button
+                  variant={svarSporsmaal === 'Ja' ? 'primary-neutral' : 'secondary-neutral'}
+                  onClick={() => svarPaaSporsmaal('Ja')}
+                >
+                  Ja
+                </Button>
+                <Button
+                  variant={svarSporsmaal === 'Nei' ? 'primary-neutral' : 'secondary-neutral'}
+                  onClick={() => svarPaaSporsmaal('Nei')}
+                >
+                  Nei
+                </Button>
+              </div>
+            </>
+          )}
           {visFeedback && (
             <>
               <Textarea label={props.sporsmaalFeedback} onChange={(event) => setRespons(event.target.value)} />
