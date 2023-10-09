@@ -19,7 +19,8 @@ export default function FlexJarResponse(props: FlexJarResponseProps) {
     sendInnFeedback({
       svar: respons,
       feedbackId: props.feedbackId,
-      sporsmal: respons,
+      sporsmal: props.sporsmaal,
+      feedback: respons,
       app: 'spinntektsmalding-frontend'
     });
     setSendt(true);

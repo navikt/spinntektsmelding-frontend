@@ -3,6 +3,7 @@ import environment from '../config/environment';
 
 interface Feedback {
   feedbackId: string;
+  feedback: string;
   svar: string;
   app: string;
   sporsmal: string;
