@@ -109,7 +109,7 @@ describe('useFyllInnsending', () => {
       ]);
       expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeFalsy();
       expect(innsending.refusjon.refusjonPrMnd).toBeUndefined();
-      expect(innsending.refusjon.refusjonOpphører).toBe('2023-04-19');
+      expect(innsending.refusjon.refusjonOpphører).toBeUndefined();
       expect(innsending.refusjon.refusjonEndringer).toBeUndefined();
       expect(innsending.inntekt.beregnetInntekt).toBe(80666.66666666667);
       expect(innsending.inntekt.bekreftet).toBeTruthy();
