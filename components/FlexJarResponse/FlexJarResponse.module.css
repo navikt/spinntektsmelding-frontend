@@ -24,3 +24,10 @@
 .jarthankswrapper p {
   line-height: 2.5rem;
 }
+
+.buttonwrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: var(--a-spacing-6);
+}
