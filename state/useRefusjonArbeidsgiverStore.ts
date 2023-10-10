@@ -73,7 +73,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
       })
     );
   },
-  begrunnelseRedusertUtbetaling: (begrunnelse: string) =>
+  begrunnelseRedusertUtbetaling: (begrunnelse) =>
     set(
       produce((state) => {
         if (state.fullLonnIArbeidsgiverPerioden) {
