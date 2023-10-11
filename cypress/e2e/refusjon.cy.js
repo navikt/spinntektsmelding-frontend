@@ -35,7 +35,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('#bekreft-opplysninger').check();
 
     cy.contains('Send').click();
-
+    cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
   });
 });
