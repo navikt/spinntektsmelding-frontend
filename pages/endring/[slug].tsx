@@ -131,7 +131,7 @@ const Endring: NextPage = () => {
       setEndreMaanedsinntekt(false);
       tilbakestillMaanedsinntekt();
     },
-    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt, logEvent]
+    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt]
   );
 
   const setEndreMaanedsinntektHandler = useCallback(
@@ -145,7 +145,7 @@ const Endring: NextPage = () => {
 
       setEndreMaanedsinntekt(true);
     },
-    [setEndreMaanedsinntekt, logEvent]
+    [setEndreMaanedsinntekt]
   );
 
   useEffect(() => {
