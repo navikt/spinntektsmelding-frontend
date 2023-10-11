@@ -30,7 +30,7 @@ type Beregningsmåneder = `${
 
 type OpplysningstypeInntekt = 'ForslagInntektFastsatt' | 'ForslagInntektGrunnlag';
 
-type ForrigeInntekt = {
+export type ForrigeInntekt = {
   skjæringstidspunkt: TDateISODate;
   kilde: 'INNTEKTSMELDING' | 'AAREG';
   beløp: number;
@@ -53,7 +53,7 @@ type ForespurtData = {
   forslag: ForslagInntekt & ForslagRefusjon;
 };
 
-type MottattForespurtData = {
+export type MottattForespurtData = {
   [key in Opplysningstype]: ForespurtData;
 };
 
@@ -86,6 +86,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const slettAlleArbeidsgiverperioder = get().slettAlleArbeidsgiverperioder;
     const slettBruttoinntekt = get().slettBruttoinntekt;
     const setEndringsaarsak = get().setEndringsaarsak;
+    const setOpprinneligNyMaanedsinntekt = get().setOpprinneligNyMaanedsinntekt;
 
     const refusjon = forespurtData?.refusjon?.forslag;
     const inntekt = forespurtData?.inntekt?.forslag;
@@ -127,6 +128,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       if (inntekt.forrigeInntekt?.beløp) {
         setNyMaanedsinntektBlanktSkjema(inntekt.forrigeInntekt.beløp);
+        setOpprinneligNyMaanedsinntekt();
       } else {
         slettBruttoinntekt();
         setEndringsaarsak(begrunnelseEndringBruttoinntekt.Feilregistrert);

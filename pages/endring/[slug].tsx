@@ -84,7 +84,6 @@ const Endring: NextPage = () => {
 
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const fastsattInntekt = useBoundStore((state) => state.fastsattInntekt);
 
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
@@ -131,7 +130,7 @@ const Endring: NextPage = () => {
       setEndreMaanedsinntekt(false);
       tilbakestillMaanedsinntekt();
     },
-    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt, logEvent]
+    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt]
   );
 
   const setEndreMaanedsinntektHandler = useCallback(
@@ -145,7 +144,7 @@ const Endring: NextPage = () => {
 
       setEndreMaanedsinntekt(true);
     },
-    [setEndreMaanedsinntekt, logEvent]
+    [setEndreMaanedsinntekt]
   );
 
   useEffect(() => {
@@ -277,7 +276,7 @@ const Endring: NextPage = () => {
                 <>
                   <BodyLong>
                     I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
-                    <strong>{formatCurrency(fastsattInntekt)}</strong> kr
+                    <strong>{formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)}</strong> kr
                   </BodyLong>
                   <RadioGroup
                     legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(

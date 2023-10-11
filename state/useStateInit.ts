@@ -61,10 +61,6 @@ export default function useStateInit() {
       feilVedLasting
     );
 
-    if (jsonData.forespurtData) {
-      initForespurtData(jsonData.forespurtData);
-    }
-
     if (jsonData.behandlingsperiode) {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }
@@ -92,6 +88,10 @@ export default function useStateInit() {
         parseIsoDate(bestemmendeFravaersdag),
         feilVedLasting.inntekt
       );
+    }
+
+    if (jsonData.forespurtData) {
+      initForespurtData(jsonData.forespurtData);
     }
   };
 }

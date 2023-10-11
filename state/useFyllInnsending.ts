@@ -214,7 +214,6 @@ export default function useFyllInnsending() {
       : finnBestemmendeFravaersdag(perioder, formatertePerioder, foreslaattBestemmendeFravaersdag);
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
-
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
       identitetsnummer: identitetsnummer!,

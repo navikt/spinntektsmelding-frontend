@@ -103,7 +103,6 @@ export default function useValiderInntektsmelding() {
         state.arbeidsgiverperioder
       );
     }
-
     feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
       state.lonnISykefravaeret,
       state.refusjonskravetOpphoerer,
