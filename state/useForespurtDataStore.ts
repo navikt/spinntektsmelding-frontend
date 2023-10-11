@@ -30,7 +30,7 @@ type Beregningsmåneder = `${
 
 type OpplysningstypeInntekt = 'ForslagInntektFastsatt' | 'ForslagInntektGrunnlag';
 
-type ForrigeInntekt = {
+export type ForrigeInntekt = {
   skjæringstidspunkt: TDateISODate;
   kilde: 'INNTEKTSMELDING' | 'AAREG';
   beløp: number;
@@ -127,7 +127,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       initRefusjonEndringer(refusjonEndringer);
 
       if (inntekt.forrigeInntekt?.beløp) {
-        console.log('inntekt.forrigeInntekt?.beløp', inntekt.forrigeInntekt?.beløp);
         setNyMaanedsinntektBlanktSkjema(inntekt.forrigeInntekt.beløp);
         setOpprinneligNyMaanedsinntekt();
       } else {
