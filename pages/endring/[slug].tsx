@@ -277,7 +277,7 @@ const Endring: NextPage = () => {
                 <>
                   <BodyLong>
                     I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
-                    <strong>{formatCurrency(fastsattInntekt)}</strong> kr
+                    <strong>{formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)}</strong> kr
                   </BodyLong>
                   <RadioGroup
                     legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
