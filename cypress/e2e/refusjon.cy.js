@@ -36,6 +36,6 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.contains('Send').click();
 
-    cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
+    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
   });
 });
