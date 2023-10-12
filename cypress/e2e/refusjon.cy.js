@@ -24,18 +24,24 @@ describe('Utfylling og innsending av skjema', () => {
   });
 
   it('can check the radioboxes for refusjon and submit', () => {
+    cy.intercept('/im-dialog/api/trenger').as('trenger');
     cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
       'innsendingInntektsmelding'
     );
-    cy.get('#lia-radio [type="radio"]').first().check();
-    cy.get('#lus-radio [type="radio"]').first().check();
-    cy.get('#lus-radio [type="radio"]').last().check();
-    cy.get('#lus-radio [type="radio"]').first().check();
+
+    cy.wait('@trenger');
+
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
 
     cy.get('#lus-utbetaling-endring-radio [type="radio"]').last().click();
     cy.get('#lus-sluttdato-velg [type="radio"]').last().click();
 
-    cy.get('#bekreft-opplysninger').check();
+    cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
     cy.findByRole('button', { name: 'Send' }).click();
     cy.wait('@innsendingInntektsmelding')
