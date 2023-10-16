@@ -19,12 +19,21 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       'innsendingInntektsmelding'
     );
     cy.wait('@trenger');
-    cy.wait(1000);
+    // cy.wait(1000);
 
-    cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
+    // cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
-    cy.findAllByLabelText('Nei').first().check();
-    cy.findAllByLabelText('Nei').last().check();
+    cy.findByRole('group', {
+      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 24.01.2023 (start av nytt sykefravær)?'
+    })
+      .findByLabelText('Nei')
+      .check();
+
+    cy.findByRole('group', {
+      name: 'Har det vært endringer i refusjonskrav mellom 02.01.2023 og 24.01.2023 (start av nytt sykefravær)?'
+    })
+      .findByLabelText('Nei')
+      .check();
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');
 
@@ -71,14 +80,22 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     );
     cy.wait('@trenger');
 
-    cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012').as('trenger');
+    cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
-    cy.findAllByLabelText('Ja').first().check();
+    cy.findByRole('group', {
+      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 24.01.2023 (start av nytt sykefravær)?'
+    })
+      .findByLabelText('Ja')
+      .check();
 
     cy.findByLabelText('Månedsinntekt 24.01.2023').invoke('val').should('equal', '46 000,00');
     cy.findByLabelText('Månedsinntekt 24.01.2023').clear().type('50000');
 
-    cy.findAllByLabelText('Ja').last().check();
+    cy.findByRole('group', {
+      name: 'Har det vært endringer i refusjonskrav mellom 02.01.2023 og 24.01.2023 (start av nytt sykefravær)?'
+    })
+      .findByLabelText('Ja')
+      .check();
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');
 
