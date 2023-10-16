@@ -19,6 +19,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       'innsendingInntektsmelding'
     );
     cy.wait('@trenger');
+    cy.wait(1000);
 
     cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
