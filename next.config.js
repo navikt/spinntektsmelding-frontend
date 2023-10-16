@@ -47,10 +47,10 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true
   },
-  i18n: {
-    locales: ['no'],
-    defaultLocale: 'no'
-  },
+  // i18n: {
+  //   locales: ['no'],
+  //   defaultLocale: 'no'
+  // },
   serverRuntimeConfig: {
     decoratorEnv: process.env.DECORATOR_ENV,
     decoratorDisabled: process.env.DISABLE_DECORATOR
