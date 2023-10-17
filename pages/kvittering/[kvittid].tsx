@@ -28,7 +28,7 @@ import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
@@ -38,6 +38,7 @@ import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
 import classNames from 'classnames/bind';
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem/KvitteringAnnetSystem';
+import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -210,9 +211,9 @@ const Kvittering: NextPage = () => {
                 <>
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
-                  {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak)}
+                  {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak as string)}
                   <EndringAarsakVisning
-                    endringsaarsak={bruttoinntekt.endringsaarsak}
+                    endringsaarsak={bruttoinntekt.endringsaarsak as keyof typeof begrunnelseEndringBruttoinntekt}
                     ferie={ferie}
                     lonnsendringsdato={lonnsendringsdato}
                     permisjon={permisjon}
