@@ -38,16 +38,4 @@ describe('useSkjemadataStore', () => {
 
     expect(result.current.henterInntektsdata).toBeTruthy();
   });
-
-  it('should set slug.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    expect(result.current.slug).toBe('');
-
-    act(() => {
-      result.current.setSlug('slug');
-    });
-
-    expect(result.current.slug).toBe('slug');
-  });
 });

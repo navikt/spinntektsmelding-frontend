@@ -49,7 +49,6 @@ export default function useKvitteringInit() {
   const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
-  const setSlug = useBoundStore((state) => state.setSlug);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
@@ -69,7 +68,7 @@ export default function useKvitteringInit() {
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const setSkjemaKvitteringEksterntSystem = useBoundStore((state) => state.setSkjemaKvitteringEksterntSystem);
 
-  return async (kvitteringsData: KvitteringInit, slug: string) => {
+  return async (kvitteringsData: KvitteringInit) => {
     let jsonData: KvitteringSkjema;
 
     if (kvitteringsData.kvitteringEkstern && kvitteringsData.kvitteringEkstern !== null) {
@@ -102,8 +101,6 @@ export default function useKvitteringInit() {
       jsonData.innsenderNavn,
       jsonData.telefonnummer
     );
-
-    setSlug(slug);
 
     const bestemmendeFravaersdag = jsonData.bestemmendeFraværsdag;
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));

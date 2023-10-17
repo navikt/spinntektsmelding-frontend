@@ -35,15 +35,9 @@ import useSendInnSkjema from '../utils/useSendInnSkjema';
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const slug = (router.query.slug as string) || '';
-  const firstSlug = slug;
-  const [pathSlug, setPathSlug] = useState<string>(firstSlug);
+
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    setPathSlug(firstSlug);
-  }, [firstSlug]);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
@@ -58,7 +52,6 @@ const Home: NextPage = () => {
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
-  const setSlug = useBoundStore((state) => state.setSlug);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
@@ -75,6 +68,8 @@ const Home: NextPage = () => {
     event.preventDefault();
     setSenderInn(true);
 
+    const pathSlug = router.query.slug as string;
+
     sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema').finally(() => {
       setSenderInn(false);
     });
@@ -90,11 +85,12 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
+    const pathSlug = router.query.slug as string;
     if (!fravaersperioder) {
       hentKvitteringsdata(pathSlug);
     } else {
       if (bestemmendeFravaersdag) {
-        fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag)
+        fetchInntektsdata(environment.inntektsdataUrl, pathSlug, bestemmendeFravaersdag)
           .then((inntektSisteTreMnd) => {
             setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
           })
@@ -104,10 +100,10 @@ const Home: NextPage = () => {
           });
       }
     }
-    setSlug(pathSlug);
+
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug]);
+  }, [router.query.slug]);
 
   return (
     <div className={styles.container}>

@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
 import useBehandlingsdagerStore, { BehandlingsdagerState } from './useBehandlingsdagerStore';
 import useBruttoinntektStore, { BruttoinntektState } from './useBruttoinntektStore';
 import useEgenmeldingStore, { EgenmeldingState } from './useEgenmeldingStore';
@@ -24,7 +24,7 @@ export interface CompleteState
     EgenmeldingState,
     ForespurtDataState {}
 
-const useBoundStore = create<CompleteState>()((...a) => ({
+const useBoundStore = createWithEqualityFn<CompleteState>()((...a) => ({
   ...useBehandlingsdagerStore(...a),
   ...useBruttoinntektStore(...a),
   ...useEgenmeldingStore(...a),

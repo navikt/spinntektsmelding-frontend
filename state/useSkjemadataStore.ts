@@ -9,7 +9,6 @@ export interface SkjemadataState {
   nyInnsending: boolean;
   setNyInnsending: (endring: boolean) => void;
   setHenterInnsending: (henter: boolean) => void;
-  setSlug: (slug: string | Array<string>) => void;
   setKvitteringInnsendt: (tidspunkt: string | Date) => void;
   slettKvitteringInnsendt: () => void;
   setSkjemaFeilet: () => void;
@@ -20,7 +19,6 @@ export interface SkjemadataState {
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: SkjemaKvitteringEksterntSystem) => void;
   tracker: string;
   henterInntektsdata: boolean;
-  slug?: string | Array<string>;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
   skjemaType?: Array<Opplysningstype>;
@@ -43,7 +41,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   tracker: nanoid(),
   nyInnsending: true,
   henterInntektsdata: false,
-  slug: '',
   skjemaFeilet: false,
   setNyInnsending: (endring: boolean) => {
     set(
@@ -56,13 +53,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.henterInntektsdata = henter;
-      })
-    );
-  },
-  setSlug: (slug?: string | Array<string>) => {
-    set(
-      produce((state: SkjemadataState) => {
-        state.slug = slug;
       })
     );
   },

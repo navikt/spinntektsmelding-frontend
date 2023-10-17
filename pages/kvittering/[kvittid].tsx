@@ -42,12 +42,6 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem/Kvitte
 const Kvittering: NextPage = () => {
   const router = useRouter();
   const slug = (router.query.kvittid as string) || '';
-  const firstSlug = slug;
-  const [pathSlug, setPathSlug] = useState<string>(firstSlug);
-
-  useEffect(() => {
-    setPathSlug(firstSlug);
-  }, [firstSlug]);
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
@@ -65,7 +59,6 @@ const Kvittering: NextPage = () => {
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const ferie = useBoundStore((state) => state.ferie);
-  const kvitteringSlug = useBoundStore((state) => state.slug);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const permisjon = useBoundStore((state) => state.permisjon);
   const permittering = useBoundStore((state) => state.permittering);
@@ -81,6 +74,8 @@ const Kvittering: NextPage = () => {
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
+
+    const kvitteringSlug = (router.query.kvittid as string) || '';
 
     if (paakrevdeOpplysningstyper.length === 3) {
       router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
@@ -112,11 +107,13 @@ const Kvittering: NextPage = () => {
 
   useEffect(() => {
     if (!fravaersperioder) {
-      hentKvitteringsdata(pathSlug);
+      const kvitteringSlug = (router.query.kvittid as string) || '';
+      if (!kvitteringSlug || kvitteringSlug === '') return;
+      hentKvitteringsdata(kvitteringSlug);
     }
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug]);
+  }, [router.query.kvittid]);
 
   useEffect(() => {
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
