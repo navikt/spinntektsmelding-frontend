@@ -120,12 +120,8 @@ const Home: NextPage = () => {
 
           <Behandlingsdager />
 
-          {egenmeldingsperioder && (
-            <>
-              <Skillelinje />
-              <Egenmelding />
-            </>
-          )}
+          <Skillelinje />
+          <Egenmelding />
 
           <Skillelinje />
           <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} />
