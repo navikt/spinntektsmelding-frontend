@@ -168,6 +168,8 @@ const Endring: NextPage = () => {
     const fravaer = fravaersperioder?.concat(egenmeldingsperioder ?? []);
     if (!fravaer) return;
 
+    console.log('fravaer', fravaer);
+
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(fravaer, undefined, foreslaattBestemmendeFravaersdag);
 
     if (bestemmendeFravaersdag) {
