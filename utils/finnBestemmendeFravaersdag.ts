@@ -105,13 +105,12 @@ const finnBestemmendeFravaersdag = (
     )
       ? forespurtBestemmendeFraværsdag
       : bestemmendeFravaersdag;
-    console.log('forespurtBestemmendeFravaersdagErStorst', forespurtBestemmendeFravaersdagErStorst);
+
     return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
       representation: 'date'
     });
   }
 
-  console.log('bestemmendeFravaersdag', bestemmendeFravaersdag);
   if (bestemmendeFravaersdag !== undefined) {
     return formatISO9075(bestemmendeFravaersdag, {
       representation: 'date'
