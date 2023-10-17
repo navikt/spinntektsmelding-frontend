@@ -67,7 +67,7 @@ const Endring: NextPage = () => {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
-  const setSlug = useBoundStore((state) => state.setSlug);
+
   const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
@@ -149,26 +149,21 @@ const Endring: NextPage = () => {
 
   useEffect(() => {
     if (!fravaersperioder && router.query.slug) {
-      const slug = Array.isArray(router.query.slug) ? router.query.slug[0] : router.query.slug;
+      const slug = router.query.slug as string;
       hentKvitteringsdata(slug);
       setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
     if (router.query.slug) {
-      setSlug(router.query.slug);
       setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.slug]);
-
-  const pathSlug = Array.isArray(router.query.slug) ? router.query.slug[0] : router.query.slug;
 
   const [forsteFravaersdag, setForsteFravaersdag] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     const fravaer = fravaersperioder?.concat(egenmeldingsperioder ?? []);
     if (!fravaer) return;
-
-    console.log('fravaer', fravaer);
 
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(fravaer, undefined, foreslaattBestemmendeFravaersdag);
 
@@ -182,11 +177,11 @@ const Endring: NextPage = () => {
 
     setSenderInn(true);
 
-    sendInnSkjema(opplysningerBekreftet, true, pathSlug!, amplitudeComponent).finally(() => {
+    const pathSlug = router.query.slug as string;
+
+    sendInnSkjema(opplysningerBekreftet, true, pathSlug, amplitudeComponent).finally(() => {
       setSenderInn(false);
     });
-
-    setSenderInn(false);
   };
 
   const handleChangeEndringLonn = (value: string) => {

@@ -7,7 +7,7 @@ import mottattKvittering from '../../mockdata/kvittering.json';
 
 import inntektData from '../../mockdata/inntektData.json';
 import delvisRefusjon from '../../mockdata/kvittering-delvis-refusjon.json';
-import useKvitteringInit, { KvitteringSkjema } from '../../state/useKvitteringInit';
+import useKvitteringInit, { KvitteringInit } from '../../state/useKvitteringInit';
 
 vi.mock('nanoid');
 
@@ -46,7 +46,7 @@ describe('useFyllInnsending', () => {
     const kvitteringInit = kvittInit.current;
 
     act(() => {
-      kvitteringInit(mottattKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(mottattKvittering as unknown as KvitteringInit);
     });
 
     const { result: fyller } = renderHook(() => useFyllInnsending());
@@ -84,7 +84,7 @@ describe('useFyllInnsending', () => {
     const kvitteringInit = kvittInit.current;
 
     act(() => {
-      kvitteringInit(delvisRefusjon as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(delvisRefusjon as unknown as KvitteringInit);
     });
 
     const { result: fyller } = renderHook(() => useFyllInnsending());

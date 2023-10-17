@@ -1,7 +1,7 @@
 import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import useKvitteringInit, { KvitteringSkjema } from '../../state/useKvitteringInit';
+import useKvitteringInit, { KvitteringInit } from '../../state/useKvitteringInit';
 import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 import annenMottattKvittering from '../../mockdata/kvittering-lang.json';
@@ -56,7 +56,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(mottattKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(mottattKvittering as unknown as KvitteringInit);
     });
 
     expect(result.current.navn).toEqual(mottattKvittering.fulltNavn);
@@ -72,7 +72,6 @@ describe('useKvitteringInit', () => {
         tom: parseIsoDate(mottattKvittering.egenmeldingsperioder[0].tom)
       }
     ]);
-    expect(result.current.slug).toBe('sluggish');
   });
 
   it('should fill the state with other stuff', async () => {
@@ -83,7 +82,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(annenMottattKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(annenMottattKvittering as unknown as KvitteringInit);
     });
 
     expect(result.current.navn).toEqual(annenMottattKvittering.fulltNavn);
@@ -101,7 +100,6 @@ describe('useKvitteringInit', () => {
     expect(result.current.harRefusjonEndringer).toBe('Ja');
     expect(result.current.tariffendringsdato).toEqual(parseIsoDate('2023-02-24'));
     expect(result.current.tariffkjentdato).toEqual(parseIsoDate('2023-03-31'));
-    expect(result.current.slug).toBe('sluggish');
   });
 
   it('should fill the state with ferie stuff', async () => {
@@ -112,7 +110,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(ferieKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(ferieKvittering as unknown as KvitteringInit);
     });
 
     expect(result.current.bruttoinntekt.endringsaarsak).toBe('Ferie');
@@ -136,7 +134,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(varigLonnsendringKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(varigLonnsendringKvittering as unknown as KvitteringInit);
     });
 
     expect(result.current.bruttoinntekt.endringsaarsak).toBe('VarigLonnsendring');
@@ -154,7 +152,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(permisjonKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(permisjonKvittering as unknown as KvitteringInit);
     });
 
     expect(result.current.bruttoinntekt.endringsaarsak).toBe('Permisjon');
@@ -178,7 +176,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(permitteringKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(permitteringKvittering as unknown as KvitteringInit);
     });
 
     expect(result.current.bruttoinntekt.endringsaarsak).toBe('Permittering');
@@ -202,7 +200,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(nyStillingKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(nyStillingKvittering as unknown as KvitteringInit);
     });
 
     expect(result.current.bruttoinntekt.endringsaarsak).toBe('NyStilling');
@@ -220,7 +218,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(nyStillingsprosentKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(nyStillingsprosentKvittering as unknown as KvitteringInit);
     });
 
     expect(result.current.bruttoinntekt.endringsaarsak).toBe('NyStillingsprosent');
@@ -238,7 +236,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(sykKvittering as unknown as KvitteringSkjema, 'sluggish');
+      kvitteringInit(sykKvittering as unknown as KvitteringInit);
     });
 
     expect(result.current.bruttoinntekt.endringsaarsak).toBe('Sykefravaer');
