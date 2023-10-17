@@ -197,9 +197,9 @@ export default function useFyllInnsending() {
 
     setSkalViseFeilmeldinger(true);
 
-    const forespurteData = hentPaakrevdOpplysningstyper();
+    const forespurtData = hentPaakrevdOpplysningstyper();
 
-    const skalSendeArbeidsgiverperiode = forespurteData.includes(skjemaVariant.arbeidsgiverperiode);
+    const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
@@ -266,10 +266,10 @@ export default function useFyllInnsending() {
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
       årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
       telefonnummer: innsenderTelefonNr || '',
-      forespurtData: forespurteData
+      forespurtData: forespurtData
     };
 
-    const paakrevdeData = forespurteData;
+    const paakrevdeData = forespurtData;
 
     if (!paakrevdeData.includes(skjemaVariant.arbeidsgiverperiode)) {
       delete skjemaData.fullLønnIArbeidsgiverPerioden;
