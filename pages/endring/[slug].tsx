@@ -179,11 +179,9 @@ const Endring: NextPage = () => {
 
     const pathSlug = router.query.slug as string;
 
-    sendInnSkjema(opplysningerBekreftet, true, pathSlug!, amplitudeComponent).finally(() => {
+    sendInnSkjema(opplysningerBekreftet, true, pathSlug, amplitudeComponent).finally(() => {
       setSenderInn(false);
     });
-
-    setSenderInn(false);
   };
 
   const handleChangeEndringLonn = (value: string) => {

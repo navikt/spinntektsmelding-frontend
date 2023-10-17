@@ -42,7 +42,6 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
-  const slug = (router.query.kvittid as string) || '';
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
