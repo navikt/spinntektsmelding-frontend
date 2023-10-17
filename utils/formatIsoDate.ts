@@ -1,7 +1,8 @@
 import formatISO from 'date-fns/formatISO';
 import { isValid } from 'date-fns';
+import { TDateISODate } from '../state/MottattData';
 
-export default function formatIsoDate(date?: Date): string {
+export default function formatIsoDate(date?: Date): TDateISODate {
   if (!date) {
     return '';
   }

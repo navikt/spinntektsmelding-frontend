@@ -62,11 +62,6 @@ interface Bruttoinntekt {
   manueltKorrigert: boolean;
 }
 
-interface Innsender {
-  navn: string;
-  telefon: string;
-}
-
 export interface InnsendingSkjema {
   identitetsnummer: string;
   orgnrUnderenhet: string;
@@ -202,10 +197,16 @@ export default function useFyllInnsending() {
 
     setSkalViseFeilmeldinger(true);
 
+    const forespurtData = hentPaakrevdOpplysningstyper();
+
+    const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
+
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
-    const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | undefined =
-      finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder);
+    const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | undefined = finnInnsendbareArbeidsgiverperioder(
+      arbeidsgiverperioder,
+      skalSendeArbeidsgiverperiode
+    );
 
     const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
@@ -219,13 +220,13 @@ export default function useFyllInnsending() {
       identitetsnummer: identitetsnummer!,
       egenmeldingsperioder: harEgenmeldingsdager
         ? egenmeldingsperioder!.map((periode) => ({
-            fom: formatIsoDate(periode.fom) as TDateISODate,
-            tom: formatIsoDate(periode.tom) as TDateISODate
+            fom: formatIsoDate(periode.fom),
+            tom: formatIsoDate(periode.tom)
           }))
         : [],
       fraværsperioder: fravaersperioder!.map((periode) => ({
-        fom: formatIsoDate(periode.fom) as TDateISODate,
-        tom: formatIsoDate(periode.tom) as TDateISODate
+        fom: formatIsoDate(periode.fom),
+        tom: formatIsoDate(periode.tom)
       })),
       arbeidsgiverperioder:
         innsendbarArbeidsgiverperioder && innsendbarArbeidsgiverperioder.length > 0
@@ -265,10 +266,10 @@ export default function useFyllInnsending() {
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
       årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
       telefonnummer: innsenderTelefonNr || '',
-      forespurtData: hentPaakrevdOpplysningstyper()
+      forespurtData: forespurtData
     };
 
-    const paakrevdeData = hentPaakrevdOpplysningstyper();
+    const paakrevdeData = forespurtData;
 
     if (!paakrevdeData.includes(skjemaVariant.arbeidsgiverperiode)) {
       delete skjemaData.fullLønnIArbeidsgiverPerioden;
@@ -306,7 +307,14 @@ function jaEllerNei(velger: YesNo | undefined, returverdi: any): any | undefined
   return velger === 'Ja' ? returverdi : undefined;
 }
 
-function finnInnsendbareArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): SendtPeriode[] | undefined {
+function finnInnsendbareArbeidsgiverperioder(
+  arbeidsgiverperioder: Periode[] | undefined,
+  skalSendeArbeidsgiverperiode: boolean
+): SendtPeriode[] | undefined {
+  if (!skalSendeArbeidsgiverperiode) {
+    return undefined;
+  }
+
   return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
     ? arbeidsgiverperioder
         ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
