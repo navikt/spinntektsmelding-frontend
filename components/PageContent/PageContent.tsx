@@ -7,6 +7,7 @@ import env from '../../config/environment';
 interface PageContentProps {
   children: ReactNode;
   title: string;
+  jsxItem?: ReactNode;
 }
 
 export default function PageContent(props: PageContentProps) {
@@ -17,6 +18,7 @@ export default function PageContent(props: PageContentProps) {
       </div>
       <div className='page-content-header'>
         <Heading2>{props.title}</Heading2>
+        {props.jsxItem && <div className='page-content-header-extra'>{props.jsxItem}</div>}
       </div>
       <div className='page-content-body'>{props.children}</div>
     </main>

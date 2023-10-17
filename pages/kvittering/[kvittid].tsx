@@ -142,7 +142,7 @@ const Kvittering: NextPage = () => {
       </Head>
       <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
 
-      <PageContent title='Kvittering - innsendt inntektsmelding'>
+      <PageContent title='Kvittering - innsendt inntektsmelding' jsxItem={<ButtonEndre onClick={clickEndre} />}>
         <div className={`main-content ${styles.padded}`}>
           {kvitteringEksterntSystem?.avsenderSystem && (
             <KvitteringAnnetSystem
