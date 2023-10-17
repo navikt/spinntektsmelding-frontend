@@ -7,6 +7,9 @@
 .page-content-header {
   background-color: #cce1ff;
   padding: 2rem 2rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  --ac-button-secondary-bg: var(--a-bg-default);
 }
 
 .page-content-body {
@@ -15,4 +18,8 @@
 
 .page-content-breadcrumb {
   margin: 2rem 2.5rem 1rem;
+}
+
+.page-content-header-extra {
+  margin-top: -0.375rem;
 }
