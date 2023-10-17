@@ -39,6 +39,7 @@ import skjemaVariant from '../../config/skjemavariant';
 import classNames from 'classnames/bind';
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem/KvitteringAnnetSystem';
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import isValidUUID from '../../utils/isValidUUID';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -78,9 +79,13 @@ const Kvittering: NextPage = () => {
     const kvitteringSlug = (router.query.kvittid as string) || '';
 
     if (paakrevdeOpplysningstyper.length === 3) {
-      router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+      if (isValidUUID(kvitteringSlug)) {
+        router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+      }
     } else {
-      router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });
+      if (isValidUUID(kvitteringSlug)) {
+        router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });
+      }
     }
   };
 
