@@ -13,7 +13,7 @@ const Document = ({ Decorator }: DocumentProps) => {
   const viseDekoratoren = !serverRuntimeConfig.decoratorDisabled;
 
   return (
-    <Html>
+    <Html lang='no'>
       <Head>
         {viseDekoratoren ? <Decorator.Styles /> : null}
         <meta property='og:test' content={env.environment} key='test' />
