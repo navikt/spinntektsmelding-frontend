@@ -50,6 +50,8 @@ describe('Utfylling og innsending av skjema', () => {
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
 
+    cy.findAllByText('Sykmelding').should('be.visible');
+
     cy.get('[data-cy="bestemmendefravaersdag"]')
       .invoke('text')
       .should('match', /23.08.2023/);

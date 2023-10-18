@@ -31,13 +31,13 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 24.01.2023 (start av nytt sykefravær)?'
+      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 01.01.2023 (start av nytt sykefravær)?'
     })
       .findByLabelText('Nei')
       .check();
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i refusjonskrav mellom 02.01.2023 og 24.01.2023 (start av nytt sykefravær)?'
+      name: 'Har det vært endringer i refusjonskrav mellom 02.01.2023 og 01.01.2023 (start av nytt sykefravær)?'
     })
       .findByLabelText('Nei')
       .check();
@@ -60,7 +60,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         ],
         arbeidsgiverperioder: [],
         inntekt: { bekreftet: true, beregnetInntekt: 46000, manueltKorrigert: false },
-        bestemmendeFraværsdag: '2023-01-24',
+        bestemmendeFraværsdag: '2023-01-01',
         refusjon: { utbetalerHeleEllerDeler: true, refusjonPrMnd: 46000, refusjonOpphører: '2023-09-30' },
         bekreftOpplysninger: true,
         behandlingsdager: [],
@@ -72,11 +72,11 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
 
-    cy.findAllByText('24.01.2023')
-      .should('be.visible')
-      .then((elements) => {
-        expect(elements.length).to.equal(2);
-      });
+    cy.findAllByText('24.01.2023').should('not.exist');
+
+    cy.get('[data-cy="bestemmendefravaersdag"]')
+      .invoke('text')
+      .should('match', /01.01.2023/);
   });
 
   it('Changes and submit', () => {
@@ -97,16 +97,16 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 24.01.2023 (start av nytt sykefravær)?'
+      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 01.01.2023 (start av nytt sykefravær)?'
     })
       .findByLabelText('Ja')
       .check();
 
-    cy.findByLabelText('Månedsinntekt 24.01.2023').invoke('val').should('equal', '46 000,00');
-    cy.findByLabelText('Månedsinntekt 24.01.2023').clear().type('50000');
+    cy.findByLabelText('Månedsinntekt 01.01.2023').invoke('val').should('equal', '46 000,00');
+    cy.findByLabelText('Månedsinntekt 01.01.2023').clear().type('50000');
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i refusjonskrav mellom 02.01.2023 og 24.01.2023 (start av nytt sykefravær)?'
+      name: 'Har det vært endringer i refusjonskrav mellom 02.01.2023 og 01.01.2023 (start av nytt sykefravær)?'
     })
       .findByLabelText('Ja')
       .check();
@@ -136,7 +136,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         ],
         arbeidsgiverperioder: [],
         inntekt: { bekreftet: true, beregnetInntekt: 50000, manueltKorrigert: true, endringÅrsak: { typpe: 'Bonus' } },
-        bestemmendeFraværsdag: '2023-01-24',
+        bestemmendeFraværsdag: '2023-01-01',
         refusjon: { utbetalerHeleEllerDeler: true, refusjonPrMnd: 50000 },
         bekreftOpplysninger: true,
         behandlingsdager: [],
@@ -155,14 +155,10 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .then((elements) => {
         expect(elements.length).to.equal(2);
       });
-    cy.findAllByText('24.01.2023')
-      .should('be.visible')
-      .then((elements) => {
-        expect(elements.length).to.equal(2);
-      });
+    cy.findAllByText('24.01.2023').should('not.exist');
 
     cy.get('[data-cy="bestemmendefravaersdag"]')
       .invoke('text')
-      .should('match', /24.01.2023/);
+      .should('match', /01.01.2023/);
   });
 });

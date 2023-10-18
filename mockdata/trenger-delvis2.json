@@ -1,0 +1,48 @@
+{
+  "navn": "ULTRAFIOLETT DAMESYKKEL",
+  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "innsenderNavn": "Muskuløs Vals",
+  "identitetsnummer": "10486535275",
+  "orgnrUnderenhet": "810007842",
+  "fravaersperioder": [
+    { "fom": "2023-07-10", "tom": "2023-07-14" },
+    { "fom": "2023-07-28", "tom": "2023-08-06" },
+    { "fom": "2023-08-07", "tom": "2023-08-14" },
+    { "fom": "2023-08-23", "tom": "2023-09-05" },
+    { "fom": "2023-09-11", "tom": "2023-09-25" }
+  ],
+  "egenmeldingsperioder": [],
+  "bruttoinntekt": 29485.22,
+  "tidligereinntekter": [
+    { "maaned": "2023-06", "inntekt": 26943.44 },
+    { "maaned": "2023-07", "inntekt": 28019.75 },
+    { "maaned": "2023-08", "inntekt": 33492.48 }
+  ],
+  "behandlingsperiode": null,
+  "behandlingsdager": [],
+  "skjaeringstidspunkt": "2023-08-23",
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": false },
+    "inntekt": {
+      "paakrevd": true,
+      "forslag": {
+        "type": "ForslagInntektGrunnlag",
+        "forrigeInntekt": {
+          "skjæringstidspunkt": "2023-08-23",
+          "kilde": "INNTEKTSMELDING",
+          "beløp": 27682.650000000005
+        }
+      }
+    },
+    "refusjon": {
+      "paakrevd": true,
+      "forslag": {
+        "perioder": [
+          { "fom": "2023-08-23", "beloep": 26780.03 },
+          { "fom": "2023-10-11", "beloep": 0.0 }
+        ],
+        "opphoersdato": null
+      }
+    }
+  }
+}
