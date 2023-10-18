@@ -66,13 +66,14 @@ export default function Aarsaksvelger({
   bestemmendeFravaersdag,
   nyInnsending
 }: AarsaksvelgerProps) {
+  console.log('Bruttoinntekt', bruttoinntekt);
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       <div className={lokalStyles.endremaaanedsinntekt}>
         <TextField
           label={`Månedsinntekt ${formatDate(bestemmendeFravaersdag)}`}
           onChange={changeMaanedsintektHandler}
-          defaultValue={formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)}
+          defaultValue={bruttoinntekt && bruttoinntekt.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
           id='inntekt.beregnetInntekt'
           error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
           className={lokalStyles.bruttoinntektendringsbelop}
