@@ -22,6 +22,20 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
     cy.injectAxe();
+
+    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen.json' }).as('trenger');
+
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
+
+    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen.json' }).as('trenger');
+
+    // cy.wait('@kvittering');
+    // cy.wait('@trenger');
   });
 
   // it('Has no detectable a11y violations on load', () => {
@@ -31,6 +45,9 @@ describe('Utfylling og innsending av skjema', () => {
   // });
 
   it('should display information on the person and the submitter', () => {
+    cy.wait('@kvittering');
+    cy.wait('@trenger');
+
     cy.get('[data-cy="navn"]').should('have.text', 'Test Navn Testesen-Navnesen Jr.');
     cy.get('[data-cy="identitetsnummer"]').should('have.text', '25087327879');
     cy.get('[data-cy="virksomhetsnavn"]').should('have.text', 'Veldig ampert piggsvin barnehage');

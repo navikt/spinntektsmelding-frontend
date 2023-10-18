@@ -70,6 +70,7 @@ export interface ForespurtDataState {
   hentPaakrevdOpplysningstyper: () => Array<Opplysningstype>;
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
   setTidligereInntektsdata: (inntekt: ForrigeInntekt) => void;
+  kanBruttoinntektTilbakebestilles: () => boolean;
 }
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
@@ -228,6 +229,15 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         return state;
       })
     );
+  },
+  kanBruttoinntektTilbakebestilles: () => {
+    const inntekt = get().forespurtData?.inntekt?.forslag.forrigeInntekt?.beløp;
+
+    if (inntekt) {
+      return true;
+    } else {
+      return false;
+    }
   }
 });
 

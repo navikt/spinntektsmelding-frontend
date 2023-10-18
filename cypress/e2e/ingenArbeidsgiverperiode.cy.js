@@ -10,9 +10,21 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
     // cy.clock(now);
 
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
+
+    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen.json' }).as('trenger');
   });
 
   it('can check the "Det er ikke arbeidsgiverperiode" and verify that everithing is OK', () => {
+    cy.wait('@kvittering');
+    cy.wait('@trenger');
+
     cy.get('[data-cy="endre-arbeidsgiverperiode"]').click();
     cy.findByRole('checkbox', { name: /Det er ikke arbeidsgiverperiode/ }).check();
 
