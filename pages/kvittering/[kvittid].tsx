@@ -36,10 +36,12 @@ import { isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
-import classNames from 'classnames/bind';
+
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem/KvitteringAnnetSystem';
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import isValidUUID from '../../utils/isValidUUID';
+import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
+import classNames from 'classnames/bind';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -89,12 +91,6 @@ const Kvittering: NextPage = () => {
     }
   };
 
-  const harAktiveEgenmeldingsperioder = () => {
-    return egenmeldingsperioder
-      ? egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined
-      : undefined;
-  };
-
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
   let innsendingstidspunkt =
@@ -129,8 +125,12 @@ const Kvittering: NextPage = () => {
   const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
   const cx = classNames.bind(lokalStyles);
-  const classNameHeadingSykmelding = cx({
-    sykfravaerstyper: paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode)
+  const classNameWrapperFravaer = cx({
+    fravaerswrapperwrapper: visArbeidsgiverperiode
+  });
+
+  const classNameWrapperSkjaeringstidspunkt = cx({
+    infoboks: visArbeidsgiverperiode
   });
 
   return (
@@ -155,29 +155,16 @@ const Kvittering: NextPage = () => {
             <>
               <Person erKvittering={true} />
               <Skillelinje />
-              <div className={lokalStyles.fravaerswrapperwrapper}>
-                <div className={lokalStyles.fravaersperiode}>
-                  <Heading2>Fraværsperiode</Heading2>
-                  {harAktiveEgenmeldingsperioder() && (
-                    <div className={lokalStyles.ytterstefravaerwrapper}>
-                      <div className={lokalStyles.ytrefravaerswrapper}>
-                        <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
-                        {egenmeldingsperioder?.map((periode) => (
-                          <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'egenmelding' + periode.id} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  <div className={lokalStyles.ytterstefravaerwrapper}>
-                    <div className={lokalStyles.ytrefravaerswrapper}>
-                      <Heading3 className={classNameHeadingSykmelding}>Sykmelding</Heading3>
-                      {fravaersperioder?.map((periode) => (
-                        <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'fperiode' + periode.id} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className={lokalStyles.infoboks}>
+              <div className={classNameWrapperFravaer}>
+                {visArbeidsgiverperiode && (
+                  <Fravaersperiode
+                    fravaersperioder={fravaersperioder}
+                    egenmeldingsperioder={egenmeldingsperioder}
+                    paakrevdeOpplysninger={paakrevdeOpplysninger}
+                  />
+                )}
+
+                <div className={classNameWrapperSkjaeringstidspunkt}>
                   <div className={lokalStyles.ytterstefravaerwrapper}>
                     <div className={lokalStyles.ytrefravaerswrapper}>
                       <Heading2 className={lokalStyles.fravaerstyper}>Bestemmende fraværsdag</Heading2>
