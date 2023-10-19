@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import { differenceInCalendarDays } from 'date-fns';
-import SelectBegrunnelse from '../RefusjonArbeidsgiver/SelectBegrunnelse';
+import SelectBegrunnelse from './SelectBegrunnelse';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -40,6 +40,12 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
   );
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const setForkortetArbeidsgiverperiodeBegrunnelse = useBoundStore(
+    (state) => state.setForkortetArbeidsgiverperiodeBegrunnelse
+  );
+  const begrunnelseForkortetArbeidsgiverperiode = useBoundStore(
+    (state) => state.begrunnelseForkortetArbeidsgiverperiode
+  );
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
   const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled] = useBoundStore((state) => [
@@ -137,6 +143,16 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
     }
   };
 
+  const handleSelectForkortetAgp = (verdi: string) => {
+    logEvent('filtervalg', {
+      tittel: 'Begrunnelse for forkortet arbeidsgiverperiode',
+      value: verdi,
+      component: amplitudeComponent
+    });
+
+    setForkortetArbeidsgiverperiodeBegrunnelse(verdi);
+  };
+
   useEffect(() => {
     const antallDager = antallDagerIArbeidsgiverperioder(arbeidsgiverperioder);
     if (antallDager > 16) {
@@ -147,6 +163,8 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       setValideringsfeil('');
     }
   }, [arbeidsgiverperioder]);
+
+  const antallDagerIAgp = antallDagerIArbeidsgiverperioder(arbeidsgiverperioder);
 
   useEffect(() => {
     if (
@@ -274,6 +292,17 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
           </Button>
           <ButtonTilbakestill onClick={clickTilbakestillArbeidsgiverperiodeHandler} />
         </div>
+      )}
+      {antallDagerIAgp > 0 && antallDagerIAgp < 16 && (
+        <>
+          <BodyLong className={lokalStyles.textwrapper}>
+            Du har lagt inn arbeidsgiverperiode på {antallDagerIAgp} dager, angi forklaring til endring under.
+          </BodyLong>
+          <SelectBegrunnelse
+            onChangeBegrunnelse={handleSelectForkortetAgp}
+            defaultValue={begrunnelseForkortetArbeidsgiverperiode}
+          />
+        </>
       )}
     </>
   );
