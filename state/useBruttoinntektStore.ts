@@ -4,7 +4,7 @@ import { HistoriskInntekt, Inntekt, Periode } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldingerStore';
-import useBoundStore, { CompleteState } from './useBoundStore';
+import { CompleteState } from './useBoundStore';
 import { subMonths, startOfMonth } from 'date-fns';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
@@ -63,13 +63,6 @@ export interface BruttoinntektState {
   rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
 }
-
-// export const usePathBruttoinntektStore = () => {
-//   const roRteRouter useRouter();
-//   const rekalkulerBruttioinntekt = useBoundStore((state) => state.rekalkulerBruttioinntekt);
-
-//   return (bestemmendeFravaersdag: Date) => rekalkulerBruttioinntekt(router, bestemmendeFravaersdag);
-// };
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
   bruttoinntekt: {
