@@ -485,10 +485,10 @@
     "@opentelemetry/otlp-transformer" "^0.41.2"
     murmurhash-js "^1.0.0"
 
-"@grafana/faro-core@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-core/-/faro-core-1.2.0.tgz#ad58f8d504c1cbe4fb57f9ede66f17115faaaa3e"
-  integrity sha512-ITkem5LgH39GuMRiBPXaLyG1+TCPT0iLIymFFFX+ZJTWkx6Uy0J9N9+HWy/gXPnRFb+kCRt1CNCrFZYWGt8ZxA==
+"@grafana/faro-core@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-core/-/faro-core-1.2.1.tgz#a95fd1376a928917f855068f101d356db067a0f4"
+  integrity sha512-gI8CpyhAKRsMbPHom3sAa0qCgiQAXZrlv43Tv2q30PgMgNsV4iWI6UKHN/7NPJyvUFd+h0B/plukYDGZxO1kew==
   dependencies:
     "@opentelemetry/api" "^1.4.1"
     "@opentelemetry/api-metrics" "^0.33.0"
@@ -504,21 +504,21 @@
     ua-parser-js "^1.0.32"
     web-vitals "^3.1.1"
 
-"@grafana/faro-web-sdk@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-web-sdk/-/faro-web-sdk-1.2.0.tgz#3b40b9cf8ab535214ad517ebad6f8a125426d518"
-  integrity sha512-fQCbEq4Gyn96K/GatpUCBP6iQyK48EBpnf/RvWoLTUmN+ac0/dn+3c+NPZULhqMBHI10cAv9ol9wsGKXj4yYzw==
+"@grafana/faro-web-sdk@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-web-sdk/-/faro-web-sdk-1.2.1.tgz#4818884bba26f07ebe563084fc0e4eed4108ef8d"
+  integrity sha512-86Bk3IjVNdV/WufkdPJVUvjx7PYKjPV5n2Szpn+dOewZqEDd1lIqhyFYqVVM9kdjT+ARbSzY5BZvb+r0Kh8tuQ==
   dependencies:
-    "@grafana/faro-core" "^1.2.0"
+    "@grafana/faro-core" "^1.2.1"
     ua-parser-js "^1.0.32"
     web-vitals "^3.1.1"
 
-"@grafana/faro-web-tracing@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-web-tracing/-/faro-web-tracing-1.2.0.tgz#7c6dc3502f6ba8338b34b1cda1e70a24bfb8e9be"
-  integrity sha512-+YA8nCwchMAbAkx69kF4/VNI8IspkZF+NHe5igDBb5HWkR4jD1ihiaziebIBv/2N1FYI+lMb5iyQdoTKJhMtOQ==
+"@grafana/faro-web-tracing@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-web-tracing/-/faro-web-tracing-1.2.1.tgz#d79364eeb5ed994e889a1b6640cf42e5f09e53c5"
+  integrity sha512-2GWXL0fhI+uaq0IO3RRTV2kJZaVLWGjYHIeNMcHnx2f46QETR8A73F3tLpVxyxtudJPGipK+lZ9ROtOznyu7fQ==
   dependencies:
-    "@grafana/faro-web-sdk" "^1.2.0"
+    "@grafana/faro-web-sdk" "^1.2.1"
     "@opentelemetry/api" "^1.4.1"
     "@opentelemetry/context-zone" "^1.15.2"
     "@opentelemetry/core" "^1.15.2"
