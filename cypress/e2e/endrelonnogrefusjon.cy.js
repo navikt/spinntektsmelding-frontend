@@ -66,11 +66,73 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findAllByRole('button', { name: /Endre/ }).first().click();
     cy.findByRole('button', { name: /Legg til periode/ }).click();
 
-    cy.get('[data-cy="egenmelding"] .navds-label').first().should('have.text', 'Fra');
-    cy.get('[data-cy="egenmelding"] .navds-label').last().should('have.text', 'Til');
+    cy.findAllByLabelText('Fra').last().clear().type('30.01.23');
+    cy.realPress('Escape');
+    cy.findAllByLabelText('Til').last().clear().type('01.02.23');
+    cy.realPress('Escape');
 
-    // cy.contains('Send').click();
+    cy.wait('@inntektsdata')
+      .its('request.body')
+      .should('deep.equal', {
+        forespoerselId: '12345678-3456-5678-2457-123456789012',
+        skjaeringstidspunkt: '2023-01-30'
+      });
 
-    // cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
+    cy.contains('Send').click();
+
+    cy.wait('@innsendingInntektsmelding')
+      .its('request.body')
+      .should('deep.equal', {
+        orgnrUnderenhet: '911206722',
+        identitetsnummer: '10486535275',
+        egenmeldingsperioder: [
+          {
+            fom: '2023-02-02',
+            tom: '2023-02-02'
+          },
+          {
+            fom: '2023-01-30',
+            tom: '2023-02-01'
+          }
+        ],
+        fraværsperioder: [
+          {
+            fom: '2023-02-03',
+            tom: '2023-02-24'
+          }
+        ],
+        arbeidsgiverperioder: [
+          {
+            fom: '2023-01-30',
+            tom: '2023-02-14'
+          }
+        ],
+        inntekt: {
+          bekreftet: true,
+          beregnetInntekt: 75000,
+          manueltKorrigert: true,
+          endringÅrsak: {
+            typpe: 'Bonus'
+          }
+        },
+        bestemmendeFraværsdag: '2023-01-30',
+        fullLønnIArbeidsgiverPerioden: {
+          utbetalerFullLønn: true,
+          begrunnelse: null,
+          utbetalt: null
+        },
+        refusjon: {
+          utbetalerHeleEllerDeler: true,
+          refusjonPrMnd: 75000
+        },
+        bekreftOpplysninger: true,
+        behandlingsdager: [],
+        årsakInnsending: 'Ny',
+        telefonnummer: '12345678',
+        forespurtData: ['arbeidsgiverperiode', 'inntekt', 'refusjon']
+      });
+
+    cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
   });
 });
