@@ -1,0 +1,64 @@
+{
+  "navn": "Test Navn Testesen-Navnesen Jr.",
+  "identitetsnummer": "10486535275",
+  "orgnrUnderenhet": "911206722",
+  "orgNavn": "Veldig ampert piggsvin barnehage",
+  "bruttoinntekt": 77000,
+
+  "fravaersperioder": [
+    {
+      "fom": "2023-02-03",
+      "tom": "2023-02-24"
+    }
+  ],
+  "egenmeldingsperioder": [
+    {
+      "fom": "2023-02-02",
+      "tom": "2023-02-02"
+    }
+  ],
+  "tidligereinntekter": [
+    {
+      "maaned": "2023-01",
+      "inntekt": 66000
+    },
+    {
+      "maaned": "2022-12",
+      "inntekt": 88000
+    },
+    {
+      "maaned": "2023-02",
+      "inntekt": 88000
+    }
+  ],
+  "innsenderNavn": "Test Testesen",
+  "telefonnummer": "12345678",
+  "behandlingsperiode": null,
+  "behandlingsdager": [],
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": true },
+    "inntekt": {
+      "paakrevd": true,
+      "forslag": {
+        "type": "ForslagInntektGrunnlag",
+        "beregningsmaaneder": ["2022-12", "2023-01", "2023-02"],
+        "forrigeInntekt": {
+          "skjæringstidspunkt": "2023-03-15",
+          "kilde": "INNTEKTSMELDING",
+          "beløp": 77500.0
+        }
+      }
+    },
+    "refusjon": {
+      "paakrevd": true,
+      "forslag": {
+        "perioder": [
+          { "fom": "2023-02-01", "tom": "2023-03-01", "beløp": 66000 },
+          { "fom": "2023-03-02", "tom": "2023-04-01", "beløp": 55000 },
+          { "fom": "2023-05-02", "tom": "2023-05-02", "beløp": 44000 }
+        ],
+        "opphoersdato": null
+      }
+    }
+  }
+}
