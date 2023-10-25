@@ -38,11 +38,15 @@ spec:
     enabled: true
     sidecar:
       enabled: true
+  tokenx:
+    enabled: true
   accessPolicy:
     outbound:
       external:
         - host: '{{{outbound-external-host}}}'
       rules:
+        - application: flexjar-backend
+          namespace: flex
         - application: nav-dekoratoren
           namespace: personbruker
   env:
@@ -52,3 +56,4 @@ spec:
       value: '{{{api-basepath}}}'
     - name: AMPLITUDE_ENABLED
       value: '{{{amplitude-enabled}}}'
+   
