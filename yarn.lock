@@ -695,10 +695,10 @@
     jsdom "^22.0.0"
     node-cache "^5.1.2"
 
-"@navikt/next-api-proxy@3.3.0":
-  version "3.3.0"
-  resolved "https://npm.pkg.github.com/download/@navikt/next-api-proxy/3.3.0/c3d32b0d9bbfd066b679546165f0ee48d972e954#c3d32b0d9bbfd066b679546165f0ee48d972e954"
-  integrity sha512-Ad/Ybiket4BR/lw8/DFQ4+v6aQFouMRZvmjb4uH+dhM1nST+/yriuUv5ZOkIUPGwkVavOfptrPI6DSYKRRaANg==
+"@navikt/next-api-proxy@3.3.1":
+  version "3.3.1"
+  resolved "https://npm.pkg.github.com/download/@navikt/next-api-proxy/3.3.1/76112e19e03b43f5bf6585643917bb821217367a#76112e19e03b43f5bf6585643917bb821217367a"
+  integrity sha512-5cV5JzyT61DToSVGQqTpHo7brS7zHeH2FEi1dZX+phKWopts9ts1Hsaxeh5CzehrgQrnN88WSTmLoZkwK/XUXQ==
 
 "@navikt/next-logger@1.19.0-1":
   version "1.19.0-1"
