@@ -11,6 +11,7 @@ import environment from '../config/environment';
 import roundTwoDecimals from '../utils/roundTwoDecimals';
 import { FeilReportElement } from './useStateInit';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
+import Router from 'next/router';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
@@ -231,17 +232,14 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     feilHentingAvInntektsdata?
   ) => {
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
-    const sumInntekter = aktuelleInntekter.reduce(
-      (prev, cur) => {
-        prev.inntekt += cur.inntekt;
-        return prev;
-      },
-      { inntekt: 0, maaned: '' }
-    );
+    const sumInntekter = aktuelleInntekter.reduce((prev, cur) => {
+      prev += cur.inntekt ?? 0;
+      return prev;
+    }, 0);
 
     const snittInntekter = bruttoInntekt
       ? roundTwoDecimals(bruttoInntekt)
-      : roundTwoDecimals(sumInntekter.inntekt / aktuelleInntekter.length);
+      : roundTwoDecimals(sumInntekter / aktuelleInntekter.length);
 
     set(
       produce((state) => {
@@ -288,7 +286,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     const opprinneligeInntekt = get().opprinneligeInntekt || [];
     let tidligereInntekt = structuredClone(opprinneligeInntekt);
     const bruttoinntekt = get().bruttoinntekt;
-    const slug = get().slug;
+
+    const slug = Router.query.slug as string;
     let henterData = get().henterData;
     const sisteLonnshentedato = get().sisteLonnshentedato;
 
@@ -319,7 +318,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
 
       const sumInntekter = aktuelleInntekter.reduce((prev, cur) => {
-        prev += cur.inntekt;
+        prev += cur.inntekt ?? 0;
         return prev;
       }, 0);
 

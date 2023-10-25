@@ -41,6 +41,7 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+// import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -81,11 +82,11 @@ const Kvittering: NextPage = () => {
 
     if (paakrevdeOpplysningstyper.length === 3) {
       if (isValidUUID(kvitteringSlug)) {
-        router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+        router.push(`/${kvitteringSlug}`);
       }
     } else {
       if (isValidUUID(kvitteringSlug)) {
-        router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });
+        router.push(`/endring/${kvitteringSlug}`);
       }
     }
   };
@@ -255,6 +256,12 @@ const Kvittering: NextPage = () => {
             </div>
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </div>
+          {/*
+          <FlexJarResponse
+            sporsmaal='Er du fornøyd med opplevelsen?'
+            feedbackId='kvittering'
+            sporsmaalFeedback='Er det noe mer du vil tilføye?'
+          /> */}
         </div>
       </PageContent>
     </div>

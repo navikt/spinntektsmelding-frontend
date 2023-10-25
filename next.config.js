@@ -53,7 +53,13 @@ const nextConfig = {
   // },
   serverRuntimeConfig: {
     decoratorEnv: process.env.DECORATOR_ENV,
-    decoratorDisabled: process.env.DISABLE_DECORATOR
+    decoratorDisabled: process.env.DISABLE_DECORATOR,
+    tokenXWellKnownUrl: process.env.TOKEN_X_WELL_KNOWN_URL,
+    tokenXPrivateJwk: process.env.TOKEN_X_PRIVATE_JWK,
+    tokenXClientId: process.env.TOKEN_X_CLIENT_ID,
+    flexjarBackendClientId: process.env.FLEXJAR_BACKEND_CLIENT_ID,
+    idportenWellKnownUrl: process.env.IDPORTEN_WELL_KNOWN_URL,
+    idportenClientId: process.env.IDPORTEN_CLIENT_ID
   },
   publicRuntimeConfig: {
     environment: process.env.ENVIRONMENT,
@@ -66,6 +72,7 @@ const nextConfig = {
     kvitteringDataApi: process.env.KVITTERINGSDATA_API,
     minSideArbeidsgiver: process.env.MIN_SIDE_ARBEIDSGIVER,
     telemetryUrl: process.env.TELEMETRY_URL,
+    flexJarUrl: process.env.FLEXJAR_URL,
     version
   }
 };

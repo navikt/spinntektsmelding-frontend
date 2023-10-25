@@ -12,6 +12,8 @@ const egenmeldingsperioder: Array<MottattPeriode> = [
 
 const initialState = useBoundStore.getState();
 
+vi.mock('next/router', () => require('next-router-mock'));
+
 describe('useEgenmeldingStore', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);

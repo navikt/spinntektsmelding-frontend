@@ -15,7 +15,22 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "state/mappe", "__mocks__/server.js", "__mocks__/handlers.js", "./__tests__/setup.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "state/mappe",
+    "__mocks__/server.js",
+    "__mocks__/handlers.js",
+    "./__tests__/setup.ts"
+  ],
   "exclude": ["node_modules", "cypress.config.ts"],
-  "types": ["node", "vitest/globals", "@types/testing-library__jest-dom", "cypress", "@types/jest"]
+  "types": [
+    "node",
+    "vitest/globals",
+    "@types/testing-library__jest-dom",
+    "cypress",
+    "@types/jest",
+    "cypress-real-events"
+  ]
 }

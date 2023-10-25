@@ -26,8 +26,6 @@ import environment from '../../config/environment';
 import RefusjonUtbetalingEndring from '../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import IngenTilgang from '../../components/IngenTilgang';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
-import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
-import parseIsoDate from '../../utils/parseIsoDate';
 import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import TextLabel from '../../components/TextLabel';
 import ButtonEndre from '../../components/ButtonEndre';
@@ -64,7 +62,6 @@ const Endring: NextPage = () => {
   const permittering = useBoundStore((state) => state.permittering);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
 
@@ -160,18 +157,7 @@ const Endring: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.slug]);
 
-  const [forsteFravaersdag, setForsteFravaersdag] = useState<Date | undefined>(undefined);
-
-  useEffect(() => {
-    const fravaer = fravaersperioder?.concat(egenmeldingsperioder ?? []);
-    if (!fravaer) return;
-
-    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(fravaer, undefined, foreslaattBestemmendeFravaersdag);
-
-    if (bestemmendeFravaersdag) {
-      setForsteFravaersdag(parseIsoDate(bestemmendeFravaersdag));
-    }
-  }, [fravaersperioder, egenmeldingsperioder, foreslaattBestemmendeFravaersdag]);
+  const forsteFravaersdag = foreslaattBestemmendeFravaersdag;
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
