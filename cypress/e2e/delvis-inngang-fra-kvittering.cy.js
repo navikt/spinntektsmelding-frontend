@@ -13,7 +13,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   });
 
   it('Changes and submit', () => {
-    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
     cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-delvis.json' }).as('trenger');
     cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
       'innsendingInntektsmelding'
@@ -23,6 +22,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
       fixture: '../../mockdata/kvittering-delvis.json'
     }).as('kvittering');
+
+    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@kvittering');
 
