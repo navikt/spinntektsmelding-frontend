@@ -81,11 +81,11 @@ const Kvittering: NextPage = () => {
 
     if (paakrevdeOpplysningstyper.length === 3) {
       if (isValidUUID(kvitteringSlug)) {
-        router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
+        router.push(`/${kvitteringSlug}`);
       }
     } else {
       if (isValidUUID(kvitteringSlug)) {
-        router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });
+        router.push(`/endring/${kvitteringSlug}`);
       }
     }
   };

@@ -23,13 +23,18 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       fixture: '../../mockdata/kvittering-delvis.json'
     }).as('kvittering');
 
+    cy.intercept('/collect', {
+      statusCode: 202,
+      body: 'OK'
+    });
+
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@kvittering');
 
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
 
-    cy.findAllByRole('button', { name: 'Endre' }).first().click();
+    cy.findAllByRole('button', { name: 'Endre' }).last().click();
 
     cy.wait(5000);
 
