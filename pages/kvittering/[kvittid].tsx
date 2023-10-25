@@ -256,11 +256,13 @@ const Kvittering: NextPage = () => {
             </div>
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </div>
+          {/*
           <FlexJarResponse
-            sporsmaal='Er du fornøyd med opplevelsen?'
-            feedbackId='kvittering'
-            sporsmaalFeedback='Er det noe mer du vil tilføye?'
+          sporsmaal='Er du fornøyd med opplevelsen?'
+          feedbackId='kvittering'
+          sporsmaalFeedback='Er det noe mer du vil tilføye?'
           />
+              */}
         </div>
       </PageContent>
     </div>
