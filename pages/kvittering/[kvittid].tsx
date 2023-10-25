@@ -41,7 +41,7 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
-import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
+// import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -258,11 +258,10 @@ const Kvittering: NextPage = () => {
           </div>
           {/*
           <FlexJarResponse
-          sporsmaal='Er du fornøyd med opplevelsen?'
-          feedbackId='kvittering'
-          sporsmaalFeedback='Er det noe mer du vil tilføye?'
-          />
-              */}
+            sporsmaal='Er du fornøyd med opplevelsen?'
+            feedbackId='kvittering'
+            sporsmaalFeedback='Er det noe mer du vil tilføye?'
+          /> */}
         </div>
       </PageContent>
     </div>
