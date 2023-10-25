@@ -6,6 +6,5 @@
   "api-url": "https://helsearbeidsgiver-im-api.intern.dev.nav.no/api",
   "outbound-external-host": "helsearbeidsgiver-im-api.intern.dev.nav.no",
   "api-basepath": "",
-  "amplitude-enabled": true,
-  "test-var": "En variabel i dev"
+  "amplitude-enabled": true
 }
