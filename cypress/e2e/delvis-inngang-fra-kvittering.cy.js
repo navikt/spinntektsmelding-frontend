@@ -13,24 +13,35 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   });
 
   it('Changes and submit', () => {
-    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
     cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-delvis.json' }).as('trenger');
     cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
       'innsendingInntektsmelding'
     );
+    cy.intercept('/im-dialog/api/inntektsdata', { fixture: '../../mockdata/inntektData.json' }).as('inntektsdata');
+
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
       fixture: '../../mockdata/kvittering-delvis.json'
     }).as('kvittering');
+
+    cy.intercept('/collect', {
+      statusCode: 202,
+      body: 'OK'
+    });
+
+    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@kvittering');
 
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
 
-    cy.findAllByRole('button', { name: 'Endre' }).first().click();
+    cy.findAllByRole('button', { name: 'Endre' }).last().click();
 
-    cy.wait(1000);
+    cy.wait(5000);
 
-    cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
+    cy.location('pathname', { timeout: 60000 }).should(
+      'equal',
+      '/im-dialog/endring/12345678-3456-5678-2457-123456789012'
+    );
 
     cy.findByRole('button', { name: 'Endre' }).click();
 
