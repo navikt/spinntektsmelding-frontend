@@ -94,6 +94,7 @@ const Endring: NextPage = () => {
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
+  const kanBruttoinntektTilbakebestilles = useBoundStore((state) => state.kanBruttoinntektTilbakebestilles);
 
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
@@ -234,7 +235,7 @@ const Endring: NextPage = () => {
   const classNameNeiEndringAvRefusjon = cx({ fancyRadio: true, selectedRadio: endringerAvRefusjon === 'Nei' });
 
   const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrrige innsending';
-
+  const kanIkkeTilbakestilles = !kanBruttoinntektTilbakebestilles();
   return (
     <div className={styles.container}>
       <Head>
@@ -321,6 +322,7 @@ const Endring: NextPage = () => {
                           bestemmendeFravaersdag={bestemmendeFravaersdag}
                           nyInnsending={nyInnsending}
                           clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+                          kanIkkeTilbakestilles={kanIkkeTilbakestilles}
                         />
                       </>
                     )}

@@ -103,4 +103,87 @@ describe('useForespurtDataStore', () => {
     expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2022-01-02'));
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(48000);
   });
+
+  it('should set the refusjonsbelop', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initForespurtData({
+        arbeidsgiverperiode: { paakrevd: false },
+        inntekt: {
+          paakrevd: true,
+          forslag: {
+            type: 'ForslagInntektGrunnlag',
+            beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
+            forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
+          }
+        },
+        refusjon: {
+          paakrevd: true,
+          forslag: {
+            perioder: [],
+            opphoersdato: null
+          }
+        }
+      });
+    });
+
+    expect(result.current.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp).toBe(33750);
+    expect(result.current.forespurtData?.refusjon?.forslag?.perioder).toEqual([]);
+    expect(result.current.refusjonTilArbeidsgiver).toBeUndefined();
+    expect(result.current.lonnISykefravaeret?.belop).toBe(0);
+    expect(result.current.lonnISykefravaeret?.status).toBe('Nei');
+    expect(result.current.harRefusjonEndringer).toBeUndefined();
+    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
+  });
+
+  it('should verify that bruttoinntekt can be reset', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initForespurtData({
+        arbeidsgiverperiode: { paakrevd: false },
+        inntekt: {
+          paakrevd: true,
+          forslag: {
+            type: 'ForslagInntektGrunnlag',
+            beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
+            forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
+          }
+        },
+        refusjon: {
+          paakrevd: true,
+          forslag: {
+            perioder: [],
+            opphoersdato: null
+          }
+        }
+      });
+    });
+
+    expect(result.current.kanBruttoinntektTilbakebestilles()).toBeTruthy();
+  });
+
+  it('should verify that bruttoinntekt can not be reset', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initForespurtData({
+        arbeidsgiverperiode: { paakrevd: false },
+        inntekt: {
+          paakrevd: true,
+          forslag: {
+            type: 'ForslagInntektGrunnlag',
+            beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
+          }
+        },
+        refusjon: {
+          paakrevd: true,
+          forslag: {
+            perioder: [],
+            opphoersdato: null
+          }
+        }
+      });
+    });
+
+    expect(result.current.kanBruttoinntektTilbakebestilles()).toBeFalsy();
+  });
 });

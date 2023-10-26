@@ -67,11 +67,11 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: 
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then((data) => {
+      }).then(async (data) => {
         switch (data.status) {
           case 201:
             setKvitteringInnsendt(new Date());
-            router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
+            await router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
             break;
 
           case 500: {

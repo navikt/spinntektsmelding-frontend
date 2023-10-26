@@ -14,7 +14,7 @@ export type Opplysningstype = (typeof skjemaVariant)[keyof typeof skjemaVariant]
 
 type FourDigitString = string & { length: 4 } & { [Symbol.match](string: string): RegExpMatchArray | null };
 
-type Beregningsmåneder = `${
+type Beregningsmåned = `${FourDigitString}-${
   | '01'
   | '02'
   | '03'
@@ -26,7 +26,9 @@ type Beregningsmåneder = `${
   | '09'
   | '10'
   | '11'
-  | '12'}-${FourDigitString}`;
+  | '12'}`;
+
+type Beregningsmåneder = Array<Beregningsmåned>;
 
 type OpplysningstypeInntekt = 'ForslagInntektFastsatt' | 'ForslagInntektGrunnlag';
 
@@ -38,7 +40,7 @@ export type ForrigeInntekt = {
 
 type ForslagInntekt = {
   type: OpplysningstypeInntekt;
-  beregningsmåneder?: Beregningsmåneder;
+  beregningsmaaneder?: Beregningsmåneder;
   forrigeInntekt?: ForrigeInntekt;
 };
 
@@ -50,7 +52,7 @@ type ForslagRefusjon = {
 
 type ForespurtData = {
   paakrevd: boolean;
-  forslag: ForslagInntekt & ForslagRefusjon;
+  forslag?: ForslagInntekt & ForslagRefusjon;
 };
 
 export type MottattForespurtData = {
@@ -70,6 +72,7 @@ export interface ForespurtDataState {
   hentPaakrevdOpplysningstyper: () => Array<Opplysningstype>;
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
   setTidligereInntektsdata: (inntekt: ForrigeInntekt) => void;
+  kanBruttoinntektTilbakebestilles: () => boolean;
 }
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
@@ -228,16 +231,25 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         return state;
       })
     );
+  },
+  kanBruttoinntektTilbakebestilles: () => {
+    const inntekt = get().forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
+
+    if (inntekt) {
+      return true;
+    } else {
+      return false;
+    }
   }
 });
 
 export default useForespurtDataStore;
 
-function jaEllerNei(refusjon: ForslagInntekt & ForslagRefusjon): YesNo {
+function jaEllerNei(refusjon: (ForslagInntekt & ForslagRefusjon) | undefined): YesNo {
   return refusjon?.opphoersdato ? 'Ja' : 'Nei';
 }
 
-function sjekkHarEndring(refusjon: ForslagInntekt & ForslagRefusjon): YesNo {
+function sjekkHarEndring(refusjon: (ForslagInntekt & ForslagRefusjon) | undefined): YesNo {
   return refusjon?.perioder && refusjon?.perioder.length > 0 ? 'Ja' : 'Nei';
 }
 

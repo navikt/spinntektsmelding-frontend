@@ -75,18 +75,18 @@ const Kvittering: NextPage = () => {
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
 
-  const clickEndre = () => {
+  const clickEndre = async () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
     const kvitteringSlug = (router.query.kvittid as string) || '';
 
     if (paakrevdeOpplysningstyper.length === 3) {
       if (isValidUUID(kvitteringSlug)) {
-        router.push(`/${kvitteringSlug}`);
+        await router.push(`/${kvitteringSlug}`);
       }
     } else {
       if (isValidUUID(kvitteringSlug)) {
-        router.push(`/endring/${kvitteringSlug}`);
+        await router.push(`/endring/${kvitteringSlug}`);
       }
     }
   };

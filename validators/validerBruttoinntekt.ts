@@ -1,5 +1,6 @@
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { CompleteState } from '../state/useBoundStore';
+import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 
 export enum BruttoinntektFeilkode {
@@ -42,12 +43,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
     });
   } else {
     const bruttoinntekt = state.bruttoinntekt;
-    if (
-      bruttoinntekt.bruttoInntekt === undefined ||
-      bruttoinntekt.bruttoInntekt < 0 ||
-      bruttoinntekt.bruttoInntekt === null ||
-      Number.isNaN(bruttoinntekt.bruttoInntekt)
-    ) {
+    if (ugyldigEllerNegativtTall(bruttoinntekt.bruttoInntekt)) {
       valideringstatus = valideringstatus.filter((validering) => validering.felt !== 'inntekt.beregnetInntekt');
       valideringstatus.push({
         felt: 'inntekt.beregnetInntekt',

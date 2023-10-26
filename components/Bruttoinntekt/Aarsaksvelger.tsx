@@ -37,6 +37,7 @@ interface AarsaksvelgerProps {
   visFeilmeldingsTekst: (feilmelding: string) => string;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
+  kanIkkeTilbakestilles?: boolean;
 }
 
 export default function Aarsaksvelger({
@@ -64,15 +65,17 @@ export default function Aarsaksvelger({
   setSykefravaerPeriode,
   visFeilmeldingsTekst,
   bestemmendeFravaersdag,
-  nyInnsending
+  nyInnsending,
+  kanIkkeTilbakestilles
 }: AarsaksvelgerProps) {
+  console.log('Bruttoinntekt', bruttoinntekt);
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       <div className={lokalStyles.endremaaanedsinntekt}>
         <TextField
           label={`Månedsinntekt ${formatDate(bestemmendeFravaersdag)}`}
           onChange={changeMaanedsintektHandler}
-          defaultValue={formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)}
+          defaultValue={bruttoinntekt && bruttoinntekt.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
           id='inntekt.beregnetInntekt'
           error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
           className={lokalStyles.bruttoinntektendringsbelop}
@@ -87,9 +90,11 @@ export default function Aarsaksvelger({
             value={bruttoinntekt?.endringsaarsak as string}
           />
         </div>
-        <div>
-          <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={clickTilbakestillMaanedsinntekt} />
-        </div>
+        {!kanIkkeTilbakestilles && (
+          <div>
+            <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={clickTilbakestillMaanedsinntekt} />
+          </div>
+        )}
       </div>
       {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
         <div className={lokalStyles.endremaaanedsinntekt}>
