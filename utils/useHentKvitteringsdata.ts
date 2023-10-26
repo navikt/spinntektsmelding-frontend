@@ -36,37 +36,12 @@ export default function useHentKvitteringsdata() {
           }
 
           if (error.status !== 200 && pathSlug) {
-            // try {
             return hentSkjemadata(pathSlug).catch((error: any) => {
               logger.warn('Feil ved henting av skjemadata i useHentKvitteringsdata', error);
               logger.warn(error);
             });
-            // } catch (error: any) {
-            //   logger.warn('Feil ved henting av skjemadata i useHentKvitteringsdata', error);
-            //   logger.warn(error);
-            // }
           }
         });
     }
   };
 }
-
-// } catch (error: any) {
-//   if (error.status === 401) {
-//     const ingress = window.location.hostname + environment.baseUrl;
-//     const currentPath = window.location.href;
-
-//     window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
-//   }
-
-//   if (error.status !== 200 && pathSlug) {
-//     try {
-//       await hentSkjemadata(pathSlug);
-//     } catch (error: any) {
-//       logger.warn('Feil ved henting av skjemadata i useHentKvitteringsdata', error);
-//       logger.warn(error);
-//     }
-//   }
-// }
-//   };
-// }

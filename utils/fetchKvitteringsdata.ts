@@ -27,27 +27,6 @@ const fetchKvitteringsdata = (url: string, forespoerselId: string) => {
       error.info = errorRes;
       throw error;
     });
-
-  // if (!res.ok) {
-  //   // Attach extra info to the error object.
-  //   try {
-  //     error.info = res;
-  //   } catch (errorStatus) {
-  //     error.info = { errorStatus };
-  //   }
-  //   error.status = res.status;
-  //   throw error;
-  // }
-
-  // try {
-  //   return await res.json();
-  // } catch (_error) {
-  //   const jsonError = new NetworkError('An error occurred while decoding the data.');
-  //   // Attach extra info to the error object.
-  //   jsonError.info = await res.json();
-  //   jsonError.status = res.status;
-  //   throw jsonError;
-  // }
 };
 
 export default fetchKvitteringsdata;

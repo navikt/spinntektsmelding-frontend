@@ -20,7 +20,6 @@ export default function useHentSkjemadata() {
   const router = useRouter();
 
   return (pathSlug: string | Array<string>) => {
-    // try {
     if (Array.isArray(pathSlug)) {
       return Promise.resolve({});
     }
@@ -43,9 +42,7 @@ export default function useHentSkjemadata() {
             window.location.replace(`https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`);
           }
 
-          // if (error.status === 503 || error.status === 500) {
           setSkjemaFeilet();
-          // }
 
           logger.warn('Feil ved henting av skjemadata i useHentSkjemadata', error);
           logger.warn(error);
@@ -53,10 +50,6 @@ export default function useHentSkjemadata() {
           leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
           setSkalViseFeilmeldinger(true);
         });
-      // if (skjemadata) {
-      // }
-      // } catch (error: any) {
-      // }
     } else {
       return Promise.resolve({});
     }
