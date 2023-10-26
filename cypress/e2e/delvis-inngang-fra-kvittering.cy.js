@@ -36,8 +36,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findAllByRole('button', { name: 'Endre' }).last().click();
 
-    cy.wait(5000);
-
     cy.location('pathname', { timeout: 60000 }).should(
       'equal',
       '/im-dialog/endring/12345678-3456-5678-2457-123456789012'
