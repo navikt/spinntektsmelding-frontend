@@ -1,6 +1,11 @@
 import NetworkError from './NetworkError';
+import isValidUUID from './isValidUUID';
 
 const fetchKvitteringsdata = (url: string, forespoerselId: string) => {
+  if (!isValidUUID(forespoerselId) === false) {
+    return Promise.resolve({ status: 404, data: {} });
+  }
+
   return fetch(`${url}/${forespoerselId}`, {
     method: 'GET',
     headers: {
