@@ -135,4 +135,55 @@ describe('useForespurtDataStore', () => {
     expect(result.current.harRefusjonEndringer).toBeUndefined();
     expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
   });
+
+  it('should verify that bruttoinntekt can be reset', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initForespurtData({
+        arbeidsgiverperiode: { paakrevd: false },
+        inntekt: {
+          paakrevd: true,
+          forslag: {
+            type: 'ForslagInntektGrunnlag',
+            beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
+            forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
+          }
+        },
+        refusjon: {
+          paakrevd: true,
+          forslag: {
+            perioder: [],
+            opphoersdato: null
+          }
+        }
+      });
+    });
+
+    expect(result.current.kanBruttoinntektTilbakebestilles()).toBeTruthy();
+  });
+
+  it('should verify that bruttoinntekt can not be reset', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initForespurtData({
+        arbeidsgiverperiode: { paakrevd: false },
+        inntekt: {
+          paakrevd: true,
+          forslag: {
+            type: 'ForslagInntektGrunnlag',
+            beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
+          }
+        },
+        refusjon: {
+          paakrevd: true,
+          forslag: {
+            perioder: [],
+            opphoersdato: null
+          }
+        }
+      });
+    });
+
+    expect(result.current.kanBruttoinntektTilbakebestilles()).toBeFalsy();
+  });
 });
