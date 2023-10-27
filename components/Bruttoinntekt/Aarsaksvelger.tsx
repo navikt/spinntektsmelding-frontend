@@ -68,7 +68,6 @@ export default function Aarsaksvelger({
   nyInnsending,
   kanIkkeTilbakestilles
 }: AarsaksvelgerProps) {
-  console.log('Bruttoinntekt', bruttoinntekt);
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       <div className={lokalStyles.endremaaanedsinntekt}>
