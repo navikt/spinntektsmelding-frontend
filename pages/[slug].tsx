@@ -37,6 +37,7 @@ const Home: NextPage = () => {
   const router = useRouter();
 
   const [senderInn, setSenderInn] = useState<boolean>(false);
+  const [lasterData, setLasterData] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -87,7 +88,10 @@ const Home: NextPage = () => {
   useEffect(() => {
     const pathSlug = router.query.slug as string;
     if (!fravaersperioder) {
-      hentKvitteringsdata(pathSlug);
+      setLasterData(true);
+      hentKvitteringsdata(pathSlug)?.finally(() => {
+        setLasterData(false);
+      });
     } else {
       if (bestemmendeFravaersdag) {
         fetchInntektsdata(environment.inntektsdataUrl, pathSlug, bestemmendeFravaersdag)
@@ -121,10 +125,10 @@ const Home: NextPage = () => {
           <Behandlingsdager />
 
           <Skillelinje />
-          <Egenmelding />
+          <Egenmelding lasterData={lasterData} />
 
           <Skillelinje />
-          <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} />
+          <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} lasterData={lasterData} />
 
           <Skillelinje />
 

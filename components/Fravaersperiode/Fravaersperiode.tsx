@@ -1,15 +1,15 @@
 import { Periode } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
+import EgenmeldingLoader from '../Egenmelding/EgenmeldingLoader';
 import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
 
 interface FravaersperiodeProps {
   egenmeldingsperioder: Array<Periode> | undefined;
+  lasterData?: boolean;
 }
-export default function Fravaersperiode({ egenmeldingsperioder }: FravaersperiodeProps) {
+export default function Fravaersperiode({ egenmeldingsperioder, lasterData }: FravaersperiodeProps) {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-
-  if (!fravaersperioder) return null;
 
   return (
     <>
@@ -19,7 +19,8 @@ export default function Fravaersperiode({ egenmeldingsperioder }: Fravaersperiod
         eventuelle egenmeldinger til å beregne arbeidsgiverperioden.
       </p>
 
-      <FravaerEnkeltAnsattforhold fravaersperioder={fravaersperioder} />
+      {lasterData && <EgenmeldingLoader />}
+      {!lasterData && <FravaerEnkeltAnsattforhold fravaersperioder={fravaersperioder} />}
     </>
   );
 }
