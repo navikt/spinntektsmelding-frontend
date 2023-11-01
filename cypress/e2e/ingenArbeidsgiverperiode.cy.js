@@ -36,7 +36,7 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
       }
     );
 
-    cy.findAllByText(/Refusjon til arbeidsgiver i sykefraværet?/).should('not.exist');
+    cy.findAllByText(/Refusjon til arbeidsgiver i sykefraværet/).should('not.exist');
     cy.findAllByText(/Refusjon til arbeidsgiver etter arbeidsgiverperiode/).should('exist');
 
     cy.get('[data-cy="endre-arbeidsgiverperiode"]').click();
@@ -59,7 +59,7 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
       cy.findByRole('radio', { name: 'Ja' }).click();
     });
 
-    cy.findAllByText(/Refusjon til arbeidsgiver i sykefraværet?/).should('exist');
+    cy.findAllByText(/Refusjon til arbeidsgiver i sykefraværet/).should('exist');
     cy.findAllByText(/Refusjon til arbeidsgiver etter arbeidsgiverperioden/).should('not.exist');
 
     cy.findAllByText(

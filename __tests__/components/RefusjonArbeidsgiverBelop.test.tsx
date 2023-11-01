@@ -37,7 +37,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       />
     );
 
-    expect(screen.getByText('Refusjon til arbeidsgiver i sykefraværet?')).toBeInTheDocument();
+    expect(screen.getByText('Refusjon til arbeidsgiver i sykefraværet')).toBeInTheDocument();
     expect(screen.getByText(/500 000,00/)).toBeInTheDocument();
     expect(
       screen.getByText(
