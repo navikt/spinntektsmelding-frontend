@@ -21,7 +21,7 @@ export default function RefusjonArbeidsgiverBelop({
   const [erEditerbar, setEditerbar] = useState<boolean>(false);
 
   const refusjonTilArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
-    ? 'Refusjon til arbeidsgiver i sykefraværet?'
+    ? 'Refusjon til arbeidsgiver i sykefraværet'
     : 'Refusjon til arbeidsgiver etter arbeidsgiverperiode';
 
   if (!erEditerbar) {
