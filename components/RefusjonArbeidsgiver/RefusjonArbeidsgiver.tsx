@@ -147,6 +147,7 @@ export default function RefusjonArbeidsgiver() {
               bruttoinntekt={lonnISykefravaeret.belop! || 0}
               onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
               visFeilmeldingsTekst={visFeilmeldingsTekst}
+              arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
             />
 
             <RefusjonUtbetalingEndring

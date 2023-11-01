@@ -9,19 +9,25 @@ interface RefusjonArbeidsgiverBelopProps {
   bruttoinntekt: number;
   onOppdaterBelop: (beloep: string) => void;
   visFeilmeldingsTekst: (feilmelding: string) => string;
+  arbeidsgiverperiodeDisabled?: boolean;
 }
 
 export default function RefusjonArbeidsgiverBelop({
   bruttoinntekt,
   onOppdaterBelop,
-  visFeilmeldingsTekst
+  visFeilmeldingsTekst,
+  arbeidsgiverperiodeDisabled = false
 }: RefusjonArbeidsgiverBelopProps) {
   const [erEditerbar, setEditerbar] = useState<boolean>(false);
+
+  const refusjonTilArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
+    ? 'Refusjon til arbeidsgiver i sykefraværet?'
+    : 'Refusjon til arbeidsgiver etter arbeidsgiverperiode';
 
   if (!erEditerbar) {
     return (
       <>
-        <TextLabel>Refusjon til arbeidsgiver etter arbeidsgiverperiode</TextLabel>
+        <TextLabel>{refusjonTilArbeidsgiverEtterAgpLegend}</TextLabel>
         <div className={localStyles.belopswrapper}>
           <div className={localStyles.belop} data-cy='refusjon-arbeidsgiver-belop'>
             {formatCurrency(bruttoinntekt)}&nbsp;kr

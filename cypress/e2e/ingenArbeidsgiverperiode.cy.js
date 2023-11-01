@@ -25,6 +25,20 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
     cy.wait('@kvittering');
     cy.wait('@trenger');
 
+    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon i sykefraværet/ }).should('not.exist');
+    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden/ }).should(
+      'exist'
+    );
+
+    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?/ }).within(
+      () => {
+        cy.findByRole('radio', { name: 'Ja' }).click();
+      }
+    );
+
+    cy.findAllByText(/Refusjon til arbeidsgiver i sykefraværet?/).should('not.exist');
+    cy.findAllByText(/Refusjon til arbeidsgiver etter arbeidsgiverperiode/).should('exist');
+
     cy.get('[data-cy="endre-arbeidsgiverperiode"]').click();
     cy.findByRole('checkbox', { name: /Det er ikke arbeidsgiverperiode/ }).check();
 
@@ -40,6 +54,13 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
     cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden/ }).should(
       'not.exist'
     );
+
+    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon i sykefraværet?/ }).within(() => {
+      cy.findByRole('radio', { name: 'Ja' }).click();
+    });
+
+    cy.findAllByText(/Refusjon til arbeidsgiver i sykefraværet?/).should('exist');
+    cy.findAllByText(/Refusjon til arbeidsgiver etter arbeidsgiverperioden/).should('not.exist');
 
     cy.findAllByText(
       /Hvis du overstyrer arbeidsgiverperioden er det ikke mulig å også endre eller legge til egenmeldingsperioder./
