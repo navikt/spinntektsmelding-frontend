@@ -32,6 +32,12 @@ import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
+import getTrenger from '../api/getTrenger';
+import { useQuery } from '@tanstack/react-query';
+import parseIsoDate from '../utils/parseIsoDate';
+import { Periode } from '../state/state';
+import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
+import { MottattPeriode } from '../state/MottattData';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -40,7 +46,7 @@ const Home: NextPage = () => {
   const [lasterData, setLasterData] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  // const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
@@ -49,9 +55,9 @@ const Home: NextPage = () => {
   ]);
 
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  // const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  // const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
@@ -61,6 +67,10 @@ const Home: NextPage = () => {
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen);
 
+  const slug = router.query.slug as string;
+
+  const trengerQuery = useQuery({ queryKey: ['trenger', slug], queryFn: () => getTrenger(slug) });
+  console.log(trengerQuery);
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
   };
@@ -109,6 +119,24 @@ const Home: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.slug]);
 
+  const fravaersperioder: Array<Periode> = trengerQuery.data?.fravaersperioder?.map((periode: MottattPeriode) => ({
+    fom: parseIsoDate(periode.fom),
+    tom: parseIsoDate(periode.tom),
+    id: `${periode.fom}-${periode.tom}`
+  }));
+
+  const egenmeldingsperioder: Array<Periode> = trengerQuery.data?.egenmeldingsperioder?.map(
+    (periode: MottattPeriode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: `${periode.fom}-${periode.tom}`
+    })
+  );
+
+  const fravaer = fravaersperioder ? fravaersperioder?.concat(egenmeldingsperioder ?? []) : egenmeldingsperioder ?? [];
+
+  const arbeidsgiverperioder: Array<Periode> = fravaer.length > 0 ? finnArbeidsgiverperiode(fravaer) : [];
+
   return (
     <div className={styles.container}>
       <Head>
@@ -120,7 +148,14 @@ const Home: NextPage = () => {
       <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
       <PageContent title='Inntektsmelding'>
         <form className={styles.padded} onSubmit={submitForm}>
-          <Person />
+          <Person
+            navn={trengerQuery.data?.navn}
+            identitetsnummer={trengerQuery.data?.identitetsnummer}
+            orgnrUnderenhet={trengerQuery.data?.orgnrUnderenhet}
+            orgNavn={trengerQuery.data?.orgNavn}
+            innsenderTelefonNr={trengerQuery.data?.innsenderTelefonNr}
+            innsenderNavn={trengerQuery.data?.innsenderNavn}
+          />
 
           <Behandlingsdager />
 
@@ -128,7 +163,7 @@ const Home: NextPage = () => {
           <Egenmelding lasterData={lasterData} />
 
           <Skillelinje />
-          <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} lasterData={lasterData} />
+          <Fravaersperiode fravaersperioder={fravaersperioder} lasterData={trengerQuery.isFetching} />
 
           <Skillelinje />
 

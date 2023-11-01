@@ -26,6 +26,7 @@
     "@navikt/nav-dekoratoren-moduler": "2.0.1",
     "@navikt/next-api-proxy": "3.3.1",
     "@navikt/next-logger": "1.19.0-1",
+    "@tanstack/react-query": "5.0.5",
     "@testing-library/dom": "9.3.1",
     "classnames": "2.3.2",
     "core-js-pure": "3.33.1",
@@ -46,6 +47,7 @@
     "zustand": "4.4.3"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "5.0.5",
     "@testing-library/cypress": "10.0.1",
     "@testing-library/jest-dom": "6.1.4",
     "@testing-library/react": "14.0.0",

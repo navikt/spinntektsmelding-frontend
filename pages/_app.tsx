@@ -8,6 +8,9 @@ import '../components/PageContent/PageContent.css';
 
 import { configureLogger } from '@navikt/next-logger';
 import env from '../config/environment';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 initInstrumentation();
 configureLogger({
@@ -19,7 +22,11 @@ configureLogger({
 });
 
 function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Component {...pageProps} />
+    </QueryClientProvider>
+  );
 }
 
 export default App;

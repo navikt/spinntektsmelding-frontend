@@ -41,6 +41,8 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+import getTrenger from '../../api/getTrenger';
+import { useQuery } from '@tanstack/react-query';
 // import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 
 const Kvittering: NextPage = () => {
@@ -105,6 +107,10 @@ const Kvittering: NextPage = () => {
   }
 
   const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
+
+  const slug = router.query.slug as string;
+
+  const trengerQuery = useQuery({ queryKey: ['trenger', slug], queryFn: () => getTrenger(slug) });
 
   useEffect(() => {
     if (!fravaersperioder) {

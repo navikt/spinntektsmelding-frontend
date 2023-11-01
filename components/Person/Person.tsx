@@ -8,28 +8,46 @@ import { Alert, Skeleton, TextField } from '@navikt/ds-react';
 interface PersonProps {
   erKvittering?: boolean;
   erDelvisInnsending?: boolean;
+  lasterData?: boolean;
+  navn?: string;
+  identitetsnummer?: string;
+  orgnrUnderenhet?: string;
+  orgNavn?: string;
+  innsenderTelefonNr?: string;
+  innsenderNavn?: string;
+  // feilHentingAvPersondata?: string;
+  // feilHentingAvArbeidsgiverdata?: string;
 }
 
-export default function Person({ erKvittering, erDelvisInnsending }: PersonProps) {
+export default function Person({
+  erKvittering,
+  erDelvisInnsending,
+  navn,
+  identitetsnummer,
+  orgnrUnderenhet,
+  orgNavn,
+  innsenderTelefonNr,
+  innsenderNavn
+}: PersonProps) {
   const [
-    navn,
-    identitetsnummer,
-    orgnrUnderenhet,
-    virksomhetsnavn,
-    innsenderTelefonNr,
-    innsenderNavn,
+    // navn,
+    // identitetsnummer,
+    // orgnrUnderenhet,
+    // virksomhetsnavn,
+    // innsenderTelefonNr,
+    // innsenderNavn,
     setInnsenderTelefon,
     feilHentingAvPersondata,
     feilHentingAvArbeidsgiverdata,
     visFeilmeldingsTekst
   ] = useBoundStore(
     (state) => [
-      state.navn,
-      state.identitetsnummer,
-      state.orgnrUnderenhet,
-      state.virksomhetsnavn,
-      state.innsenderTelefonNr,
-      state.innsenderNavn,
+      // state.navn,
+      // state.identitetsnummer,
+      // state.orgnrUnderenhet,
+      // state.virksomhetsnavn,
+      // state.innsenderTelefonNr,
+      // state.innsenderNavn,
       state.setInnsenderTelefon,
       state.feilHentingAvPersondata,
       state.feilHentingAvArbeidsgiverdata,
@@ -101,7 +119,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               <div className={lokalStyles.virksomhetsnavnwrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
+                  {orgNavn || <Skeleton variant='text' width='90%' height={28} />}
                 </div>
               </div>
             )}
