@@ -474,41 +474,22 @@
     aria-hidden "^1.1.3"
     tabbable "^6.0.1"
 
-"@grafana/faro-core@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-core/-/faro-core-1.1.4.tgz#45c2ea7a64db38f4efcdcda73b61b98f05cf039f"
-  integrity sha512-JpxtCXHsjkvuWE4gZ/EmsXAXY/buPtLaB3kWQsVMnlNglxoyFM+FXS0VB48Ip66cDmYZcdtxAW1NW3SqaW2O+g==
+"@grafana/faro-core@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-core/-/faro-core-1.2.3.tgz#03faae6ee93664cfda39dfd3059f42bbdb7aeae0"
+  integrity sha512-y2cfow8JLMrvSC4/Pd64/hByoAw5MWOPHmvpAueWNL0Cohj0XOGbKllQjTjnmCnDuLjAARS0pKAVdyVPjw9s6Q==
   dependencies:
     "@opentelemetry/api" "^1.4.1"
     "@opentelemetry/api-metrics" "^0.33.0"
     "@opentelemetry/otlp-transformer" "^0.41.2"
     murmurhash-js "^1.0.0"
 
-"@grafana/faro-core@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-core/-/faro-core-1.2.1.tgz#a95fd1376a928917f855068f101d356db067a0f4"
-  integrity sha512-gI8CpyhAKRsMbPHom3sAa0qCgiQAXZrlv43Tv2q30PgMgNsV4iWI6UKHN/7NPJyvUFd+h0B/plukYDGZxO1kew==
+"@grafana/faro-web-sdk@1.2.3", "@grafana/faro-web-sdk@^1.2.1":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@grafana/faro-web-sdk/-/faro-web-sdk-1.2.3.tgz#310b5ddee76f75e3775f2ad41d56c18882bb1eef"
+  integrity sha512-c/CcwPVIiSCZC3ux2IAHfVWd0xIa1QUMoBd0n7lQzYFVnC3iufq9Ukp1Hgejqud6peH5VxIBXffNOv2inltv1g==
   dependencies:
-    "@opentelemetry/api" "^1.4.1"
-    "@opentelemetry/api-metrics" "^0.33.0"
-    "@opentelemetry/otlp-transformer" "^0.41.2"
-    murmurhash-js "^1.0.0"
-
-"@grafana/faro-web-sdk@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-web-sdk/-/faro-web-sdk-1.1.4.tgz#bf4f93e234f0dabf60b7641c795690074c0bf506"
-  integrity sha512-eyrwi01VWkoaBZVYo3fbyakW/nN6Dhz/dYgaWHOx3Mt0pH+q8IrIAF5oNoy9QGNCsdmld/sbIL+jV6yoyojYDA==
-  dependencies:
-    "@grafana/faro-core" "^1.1.4"
-    ua-parser-js "^1.0.32"
-    web-vitals "^3.1.1"
-
-"@grafana/faro-web-sdk@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@grafana/faro-web-sdk/-/faro-web-sdk-1.2.1.tgz#4818884bba26f07ebe563084fc0e4eed4108ef8d"
-  integrity sha512-86Bk3IjVNdV/WufkdPJVUvjx7PYKjPV5n2Szpn+dOewZqEDd1lIqhyFYqVVM9kdjT+ARbSzY5BZvb+r0Kh8tuQ==
-  dependencies:
-    "@grafana/faro-core" "^1.2.1"
+    "@grafana/faro-core" "^1.2.3"
     ua-parser-js "^1.0.32"
     web-vitals "^3.1.1"
 
