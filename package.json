@@ -26,7 +26,7 @@
     "@navikt/nav-dekoratoren-moduler": "2.0.1",
     "@navikt/next-api-proxy": "3.3.1",
     "@navikt/next-logger": "1.19.0-1",
-    "@testing-library/dom": "9.3.1",
+    "@testing-library/dom": "9.3.3",
     "classnames": "2.3.2",
     "core-js-pure": "3.33.1",
     "date-fns": "2.30.0",
