@@ -8,7 +8,7 @@ import lokalStyles from './Kvittering.module.css';
 import styles from '../../styles/Home.module.css';
 
 import Heading2 from '../../components/Heading2/Heading2';
-import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
+import { BodyLong, BodyShort, Button, Skeleton } from '@navikt/ds-react';
 import Person from '../../components/Person/Person';
 
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
@@ -41,7 +41,9 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+import TextLabel from '../../components/TextLabel';
 // import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
+import fjStyles from '../../components/FlexJarResponse/FlexJarResponse.module.css';
 
 const Kvittering: NextPage = () => {
   const router = useRouter();
@@ -262,6 +264,19 @@ const Kvittering: NextPage = () => {
             feedbackId='kvittering'
             sporsmaalFeedback='Er det noe mer du vil tilføye?'
           /> */}
+          <div className={fjStyles.outerjarwrapper + ' skjul-fra-print'}>
+            <div className={fjStyles.jarwrapper + ' skjul-fra-print'}>
+              <TextLabel>Spørreundersøkelse om den nye inntektsmeldingen</TextLabel>
+              <BodyLong>
+                NAV ønsker å få innspill i hvordan dere oppfatter innsending av den nye inntektsmeldingen på nav.no i
+                forbindelse med sykmelding av ansatte. Undersøkelsen tar ikke mer enn noen minutt. Svarene dere oppgir i
+                spørreundersøkelsen kan ikke kobles til dere og den er helt anonym.
+              </BodyLong>
+              <Link href='https://www.survey-xact.no/LinkCollector?key=PEL2QK18SK9J' target='_blank'>
+                <Button variant='primary'>Ta undersøkelsen</Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </PageContent>
     </div>
