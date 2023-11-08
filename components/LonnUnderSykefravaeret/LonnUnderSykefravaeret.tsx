@@ -24,7 +24,7 @@ export default function LonnUnderSykefravaeret({
   return (
     <div>
       <BodyShort>Ja</BodyShort>
-      {refusjonEndringer?.length > 0 && (
+      {refusjonEndringer && refusjonEndringer?.length > 0 && (
         <>
           <div className={lokalStyle.uthevet}>Refusjonsbeløp per måned (NAV vil refundere opp til 6G av årslønn)</div>
           <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.belop)} kr/måned</BodyShort>

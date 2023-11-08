@@ -132,7 +132,7 @@ describe('useForespurtDataStore', () => {
     expect(result.current.refusjonTilArbeidsgiver).toBeUndefined();
     expect(result.current.lonnISykefravaeret?.belop).toBe(0);
     expect(result.current.lonnISykefravaeret?.status).toBe('Nei');
-    expect(result.current.harRefusjonEndringer).toBeUndefined();
+    expect(result.current.harRefusjonEndringer).toBe('Nei');
     expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
   });
 

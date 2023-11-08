@@ -8,11 +8,22 @@ import parseIsoDate from '../../utils/parseIsoDate';
 describe('LonnUnderSykefravaeret', () => {
   it('renders a title text', async () => {
     const lonn: LonnISykefravaeret = { belop: 1234 };
-    // refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
-    // harRefusjonEndringer?: YesNo;
-    // refusjonEndringer?: Array<EndringsBelop>;
+    const refusjonEndringer: Array<EndringsBelop> = [
+      { dato: parseIsoDate('2022-02-02'), belop: 1234 },
+      { dato: parseIsoDate('2022-03-03'), belop: 432 }
+    ];
 
-    const { container } = render(<LonnUnderSykefravaeret lonn={lonn} />);
+    const { container } = render(
+      <LonnUnderSykefravaeret
+        lonn={lonn}
+        harRefusjonEndringer={'Ja'}
+        refusjonEndringer={refusjonEndringer}
+        refusjonskravetOpphoerer={{ status: 'Nei' }}
+      />
+    );
+
+    // const { container } = render(<LonnUnderSykefravaeret lonn={lonn} refusjonEndringer={refusjonEndringer} />);
+    // { dato: parseIsoDate('2022-03-03'), belop: 432 } />);
 
     const HeadingTitle = screen.getByText(/NAV vil refundere opp/);
 
