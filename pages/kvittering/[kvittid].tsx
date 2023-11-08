@@ -235,7 +235,7 @@ const Kvittering: NextPage = () => {
               <LonnUnderSykefravaeret
                 lonn={lonnISykefravaeret!}
                 refusjonskravetOpphoerer={refusjonskravetOpphoerer}
-                harRefusjonEndringer={harRefusjonEndringer}
+                harRefusjonEndringer={refusjonEndringer?.length > 0 ? 'Ja' : 'Nei'}
                 refusjonEndringer={refusjonEndringer}
               />
               {visNaturalytelser && (

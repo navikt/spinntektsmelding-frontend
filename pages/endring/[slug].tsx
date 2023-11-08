@@ -36,9 +36,10 @@ const Endring: NextPage = () => {
     state.endringBruttolonn,
     state.setEndringBruttolonn
   ]);
-  const [endringerAvRefusjon, setEndringerAvRefusjon] = useBoundStore((state) => [
+  const [endringerAvRefusjon, setEndringerAvRefusjon, tilbakestillRefusjoner] = useBoundStore((state) => [
     state.endringerAvRefusjon,
-    state.setEndringerAvRefusjon
+    state.setEndringerAvRefusjon,
+    state.tilbakestillRefusjoner
   ]);
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
@@ -192,6 +193,7 @@ const Endring: NextPage = () => {
 
   const handleChangeEndringRefusjon = (value: string) => {
     setEndringerAvRefusjon(value as YesNo);
+    tilbakestillRefusjoner();
     slettFeilmelding('endring-refusjon');
   };
 
@@ -337,18 +339,18 @@ const Endring: NextPage = () => {
                   <H3Label unPadded topPadded>
                     Refusjon til arbeidsgiver etter arbeidsgiverperiode
                   </H3Label>
-                  {!opprinneligLonnISykefravaeret?.status ||
-                    (opprinneligLonnISykefravaeret?.status === 'Nei' && (
+                  {!harRefusjonEndringer ||
+                    (harRefusjonEndringer === 'Nei' && (
                       <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
                     ))}
-                  {opprinneligLonnISykefravaeret?.status === 'Ja' && (
+                  {harRefusjonEndringer === 'Ja' && (
                     <>
                       {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
                       <H3Label unPadded topPadded>
                         Er det endringer i refusjonskrav i perioden?
                       </H3Label>
-                      {harRefusjonEndringer}
-                      {harRefusjonEndringer === 'Ja' && (
+                      {refusjonEndringer?.length > 0 ? 'Ja' : 'Nei'}
+                      {refusjonEndringer?.length > 0 && (
                         <div className={lokalStyles.refusjonswrapper}>
                           <table>
                             <thead>

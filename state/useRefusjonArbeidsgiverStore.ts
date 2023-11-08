@@ -9,6 +9,7 @@ import feiltekster from '../utils/feiltekster';
 import { CompleteState } from './useBoundStore';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
+import { finnOpphoersdatoRefusjon } from './useForespurtDataStore';
 
 export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
@@ -31,6 +32,8 @@ export interface RefusjonArbeidsgiverState {
   initRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
   setHarRefusjonEndringer: (harEndringer?: YesNo) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
+  initRefusjonskravetOpphoerer: (status: YesNo, opphorsdato?: Date) => void;
+  tilbakestillRefusjoner: () => void;
 }
 
 const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], RefusjonArbeidsgiverState> = (set, get) => ({
@@ -220,6 +223,29 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
       produce((state) => {
         state.lonnISykefravaeret = lonnISykefravaeret;
         state.opprinneligLonnISykefravaeret = lonnISykefravaeret;
+        return state;
+      })
+    ),
+  initRefusjonskravetOpphoerer: (status, opphorsdato) =>
+    set(
+      produce((state) => {
+        state.refusjonskravetOpphoerer = { status: status, opphorsdato: opphorsdato };
+        state.opprinneligRefusjonskravetOpphoerer = { status: status, opphorsdato: opphorsdato };
+        return state;
+      })
+    ),
+  tilbakestillRefusjoner: () =>
+    set(
+      produce((state) => {
+        state.refusjonEndringer = state.opprinneligRefusjonEndringer;
+        state.lonnISykefravaeret = state.opprinneligLonnISykefravaeret;
+        state.fullLonnIArbeidsgiverPerioden = undefined;
+        state.refusjonskravetOpphoerer = state.opprinneligRefusjonskravetOpphoerer;
+
+        state.opprinneligRefusjonEndringer.forEach((_, index: number) => {
+          slettFeilmeldingFraState(state, `#refusjon.refusjonEndringer[${index}].beløp`);
+          slettFeilmeldingFraState(state, `#refusjon.refusjonEndringer[${index}].dato`);
+        });
         return state;
       })
     )
