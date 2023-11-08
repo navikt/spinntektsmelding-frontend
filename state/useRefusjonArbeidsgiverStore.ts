@@ -9,7 +9,6 @@ import feiltekster from '../utils/feiltekster';
 import { CompleteState } from './useBoundStore';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
-import { finnOpphoersdatoRefusjon } from './useForespurtDataStore';
 
 export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
@@ -18,6 +17,7 @@ export interface RefusjonArbeidsgiverState {
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   opprinneligRefusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   harRefusjonEndringer?: YesNo;
+  opprinneligHarRefusjonEndringer?: YesNo;
   refusjonEndringer?: Array<EndringsBelop>;
   opprinneligRefusjonEndringer?: Array<EndringsBelop>;
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo | undefined) => void;
@@ -32,7 +32,7 @@ export interface RefusjonArbeidsgiverState {
   initRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
   setHarRefusjonEndringer: (harEndringer?: YesNo) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
-  initRefusjonskravetOpphoerer: (status: YesNo, opphorsdato?: Date) => void;
+  initRefusjonskravetOpphoerer: (status: YesNo, opphorsdato?: Date, harEndringer?: YesNo) => void;
   tilbakestillRefusjoner: () => void;
 }
 
@@ -226,11 +226,13 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  initRefusjonskravetOpphoerer: (status, opphorsdato) =>
+  initRefusjonskravetOpphoerer: (status, opphorsdato, harEndringer) =>
     set(
       produce((state) => {
         state.refusjonskravetOpphoerer = { status: status, opphorsdato: opphorsdato };
         state.opprinneligRefusjonskravetOpphoerer = { status: status, opphorsdato: opphorsdato };
+        state.harRefusjonEndringer = harEndringer;
+        state.opprinneligHarRefusjonEndringer = harEndringer;
         return state;
       })
     ),

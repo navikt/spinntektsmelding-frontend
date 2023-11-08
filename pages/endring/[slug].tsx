@@ -96,7 +96,12 @@ const Endring: NextPage = () => {
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const kanBruttoinntektTilbakebestilles = useBoundStore((state) => state.kanBruttoinntektTilbakebestilles);
-
+  const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer, opprinneligHarRefusjonEndringer] =
+    useBoundStore((state) => [
+      state.opprinneligRefusjonEndringer,
+      state.opprinneligRefusjonskravetOpphoerer,
+      state.opprinneligHarRefusjonEndringer
+    ]);
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
@@ -339,18 +344,18 @@ const Endring: NextPage = () => {
                   <H3Label unPadded topPadded>
                     Refusjon til arbeidsgiver etter arbeidsgiverperiode
                   </H3Label>
-                  {!harRefusjonEndringer ||
-                    (harRefusjonEndringer === 'Nei' && (
+                  {!opprinneligHarRefusjonEndringer ||
+                    (opprinneligHarRefusjonEndringer === 'Nei' && (
                       <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
                     ))}
-                  {harRefusjonEndringer === 'Ja' && (
+                  {opprinneligHarRefusjonEndringer === 'Ja' && (
                     <>
                       {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
                       <H3Label unPadded topPadded>
                         Er det endringer i refusjonskrav i perioden?
                       </H3Label>
-                      {refusjonEndringer?.length > 0 ? 'Ja' : 'Nei'}
-                      {refusjonEndringer?.length > 0 && (
+                      {opprinneligRefusjonEndringer && opprinneligRefusjonEndringer?.length > 0 ? 'Ja' : 'Nei'}
+                      {opprinneligRefusjonEndringer && opprinneligRefusjonEndringer?.length > 0 && (
                         <div className={lokalStyles.refusjonswrapper}>
                           <table>
                             <thead>
@@ -364,7 +369,7 @@ const Endring: NextPage = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {refusjonEndringer?.map((endring) => (
+                              {opprinneligRefusjonEndringer?.map((endring) => (
                                 <tr key={endring.dato?.toString()}>
                                   <td>{formatCurrency(endring.belop)} kr</td>
                                   <td>{formatDate(endring.dato)}</td>
@@ -377,13 +382,13 @@ const Endring: NextPage = () => {
                       <H3Label unPadded topPadded>
                         Opphører refusjonkravet under sykefraværet?
                       </H3Label>
-                      {refusjonskravetOpphoerer?.status}
-                      {refusjonskravetOpphoerer?.status === 'Ja' && (
+                      {opprinneligRefusjonskravetOpphoerer?.status}
+                      {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
                         <>
                           <H3Label unPadded topPadded>
                             Siste dag dere krever refusjon for
                           </H3Label>
-                          {formatDate(refusjonskravetOpphoerer.opphorsdato)}
+                          {formatDate(opprinneligRefusjonskravetOpphoerer.opphorsdato)}
                         </>
                       )}
                     </>

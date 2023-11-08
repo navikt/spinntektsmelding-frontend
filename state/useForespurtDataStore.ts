@@ -119,7 +119,8 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       initRefusjonskravetOpphoerer(
         opphoersdatoRefusjon ? 'Ja' : 'Nei',
-        opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined
+        opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
+        harEndringer
       );
       // if (opphoersdatoRefusjon) {
       //   refusjonskravetOpphoererDato(parseISO(opphoersdatoRefusjon));
@@ -130,7 +131,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       // }
 
       // if (refusjonsbelop)
-      setHarRefusjonEndringer(harEndringer);
+      // setHarRefusjonEndringer(harEndringer);
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(
         refusjonPeriodeEtterAGPUtenOpphoersdato
