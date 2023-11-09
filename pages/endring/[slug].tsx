@@ -243,6 +243,9 @@ const Endring: NextPage = () => {
 
   const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrrige innsending';
   const kanIkkeTilbakestilles = !kanBruttoinntektTilbakebestilles();
+
+  const harEndringer = opprinneligHarRefusjonEndringer ?? lonnISykefravaeret?.status === 'Ja';
+
   return (
     <div className={styles.container}>
       <Head>
@@ -344,11 +347,8 @@ const Endring: NextPage = () => {
                   <H3Label unPadded topPadded>
                     Refusjon til arbeidsgiver etter arbeidsgiverperiode
                   </H3Label>
-                  {!opprinneligHarRefusjonEndringer ||
-                    (opprinneligHarRefusjonEndringer === 'Nei' && (
-                      <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>
-                    ))}
-                  {opprinneligHarRefusjonEndringer === 'Ja' && (
+                  {!harEndringer && <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>}
+                  {harEndringer && (
                     <>
                       {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
                       <H3Label unPadded topPadded>
@@ -443,7 +443,7 @@ const Endring: NextPage = () => {
                         // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
                         onHarEndringer={setHarRefusjonEndringer}
                         onOppdaterEndringer={oppdaterRefusjonEndringer}
-                        harRefusjonEndring={harRefusjonEndringer}
+                        harRefusjonEndring={opprinneligHarRefusjonEndringer}
                       />
 
                       <RadioGroup

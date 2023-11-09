@@ -81,10 +81,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
   ukjentRefusjon: false,
   forespurtData: undefined,
   initForespurtData: (forespurtData) => {
-    const refusjonskravetOpphoererStatus = get().refusjonskravetOpphoererStatus;
-    const refusjonskravetOpphoererDato = get().refusjonskravetOpphoererDato;
     const initRefusjonEndringer = get().initRefusjonEndringer;
-    const setHarRefusjonEndringer = get().setHarRefusjonEndringer;
     const initLonnISykefravaeret = get().initLonnISykefravaeret;
     const setNyMaanedsinntektBlanktSkjema = get().setNyMaanedsinntektBlanktSkjema;
     const slettAlleArbeidsgiverperioder = get().slettAlleArbeidsgiverperioder;
@@ -119,7 +116,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       initRefusjonskravetOpphoerer(
         opphoersdatoRefusjon ? 'Ja' : 'Nei',
         opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
-        harEndringer
+        refusjonPeriodeEtterAGPUtenOpphoersdato.length > 0 ? 'Ja' : 'Nei'
       );
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(
@@ -230,10 +227,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 });
 
 export default useForespurtDataStore;
-
-function jaEllerNei(refusjon: (ForslagInntekt & ForslagRefusjon) | undefined): YesNo {
-  return refusjon?.opphoersdato ? 'Ja' : 'Nei';
-}
 
 function sjekkHarEndring(refusjon: (ForslagInntekt & ForslagRefusjon) | undefined): YesNo {
   return refusjon?.perioder && refusjon?.perioder.length > 0 ? 'Ja' : 'Nei';

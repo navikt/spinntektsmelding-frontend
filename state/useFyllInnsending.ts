@@ -333,12 +333,19 @@ function konverterRefusjonsendringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBelop> | undefined
 ): RefusjonEndring[] | undefined {
-  return harRefusjonEndringer === 'Ja' && refusjonEndringer
-    ? refusjonEndringer.map((endring) => ({
-        beløp: endring.belop!,
-        dato: formatIsoDate(endring.dato)!
-      }))
-    : undefined;
+  const refusjoner =
+    harRefusjonEndringer === 'Ja' && refusjonEndringer
+      ? refusjonEndringer.map((endring) => ({
+          beløp: endring.belop!,
+          dato: formatIsoDate(endring.dato)!
+        }))
+      : undefined;
+
+  if (refusjoner && refusjoner.length > 0) {
+    return refusjoner;
+  } else {
+    return undefined;
+  }
 }
 
 function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode> | undefined) {

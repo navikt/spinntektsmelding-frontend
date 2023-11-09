@@ -111,7 +111,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findAllByLabelText('Telefon innsender').type('12345678');
+    cy.findByLabelText('Telefon innsender').type('12345678');
 
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
@@ -137,7 +137,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         arbeidsgiverperioder: [],
         inntekt: { bekreftet: true, beregnetInntekt: 50000, manueltKorrigert: true, endringÅrsak: { typpe: 'Bonus' } },
         bestemmendeFraværsdag: '2023-01-01',
-        refusjon: { utbetalerHeleEllerDeler: true, refusjonPrMnd: 50000 },
+        refusjon: { utbetalerHeleEllerDeler: true, refusjonPrMnd: 46000 },
         bekreftOpplysninger: true,
         behandlingsdager: [],
         årsakInnsending: 'Ny',
@@ -150,11 +150,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByText('12345678').should('be.visible');
     cy.findByText('Bonus').should('be.visible');
-    cy.findAllByText(/50\s?000,00\s?kr\/måned/)
-      .should('be.visible')
-      .then((elements) => {
-        expect(elements.length).to.equal(2);
-      });
+    cy.findByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
+    cy.findByText(/46\s?000,00\s?kr\/måned/).should('be.visible');
     cy.findAllByText('24.01.2023').should('not.exist');
 
     cy.get('[data-cy="bestemmendefravaersdag"]')
