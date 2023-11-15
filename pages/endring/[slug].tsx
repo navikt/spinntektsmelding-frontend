@@ -81,7 +81,6 @@ const Endring: NextPage = () => {
   const router = useRouter();
 
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
 
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
