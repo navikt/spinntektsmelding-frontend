@@ -2,7 +2,7 @@ import MottattData from '../state/MottattData';
 import formeeeeData from './formData-refusjon';
 import testFnr from './testFnr';
 
-import trengerDelvis from './trenger-delvis-uten-lonn.json';
+import trengerDelvis from './trenger-delvis.json';
 
 // const formData = trengerDelvis as MottattData;
 

@@ -17,6 +17,7 @@ export interface RefusjonArbeidsgiverState {
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   opprinneligRefusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   harRefusjonEndringer?: YesNo;
+  opprinneligHarRefusjonEndringer?: YesNo;
   refusjonEndringer?: Array<EndringsBelop>;
   opprinneligRefusjonEndringer?: Array<EndringsBelop>;
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo | undefined) => void;
@@ -31,6 +32,8 @@ export interface RefusjonArbeidsgiverState {
   initRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
   setHarRefusjonEndringer: (harEndringer?: YesNo) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
+  initRefusjonskravetOpphoerer: (status: YesNo, opphorsdato?: Date, harEndringer?: YesNo) => void;
+  tilbakestillRefusjoner: () => void;
 }
 
 const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], RefusjonArbeidsgiverState> = (set, get) => ({
@@ -220,6 +223,31 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
       produce((state) => {
         state.lonnISykefravaeret = lonnISykefravaeret;
         state.opprinneligLonnISykefravaeret = lonnISykefravaeret;
+        return state;
+      })
+    ),
+  initRefusjonskravetOpphoerer: (status, opphorsdato, harEndringer) =>
+    set(
+      produce((state) => {
+        state.refusjonskravetOpphoerer = { status: status, opphorsdato: opphorsdato };
+        state.opprinneligRefusjonskravetOpphoerer = { status: status, opphorsdato: opphorsdato };
+        state.harRefusjonEndringer = harEndringer;
+        state.opprinneligHarRefusjonEndringer = harEndringer;
+        return state;
+      })
+    ),
+  tilbakestillRefusjoner: () =>
+    set(
+      produce((state) => {
+        state.refusjonEndringer = state.opprinneligRefusjonEndringer;
+        state.lonnISykefravaeret = state.opprinneligLonnISykefravaeret;
+        state.fullLonnIArbeidsgiverPerioden = undefined;
+        state.refusjonskravetOpphoerer = state.opprinneligRefusjonskravetOpphoerer;
+
+        state.opprinneligRefusjonEndringer.forEach((_, index: number) => {
+          slettFeilmeldingFraState(state, `#refusjon.refusjonEndringer[${index}].beløp`);
+          slettFeilmeldingFraState(state, `#refusjon.refusjonEndringer[${index}].dato`);
+        });
         return state;
       })
     )

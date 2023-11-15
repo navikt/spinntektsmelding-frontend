@@ -249,4 +249,62 @@ describe('useBoundStore', () => {
 
     expect(result.current.harRefusjonEndringer).toBeFalsy();
   });
+
+  it('should init refusjonskrav.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initRefusjonskravetOpphoerer('Ja', new Date(2022, 4, 6), 'Nei');
+    });
+
+    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Ja');
+    expect(result.current.refusjonskravetOpphoerer?.opphorsdato).toEqual(new Date(2022, 4, 6));
+    expect(result.current.opprinneligRefusjonskravetOpphoerer?.status).toBe('Ja');
+    expect(result.current.opprinneligRefusjonskravetOpphoerer?.opphorsdato).toEqual(new Date(2022, 4, 6));
+    expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
+    expect(result.current.harRefusjonEndringer).toBe('Nei');
+    expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
+  });
+
+  it('should reset refusjonskrav.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initRefusjonskravetOpphoerer('Ja', new Date(2022, 4, 6), 'Nei');
+      result.current.initRefusjonEndringer([{ belop: 123, dato: new Date(2022, 4, 6) }]);
+      result.current.setHarRefusjonEndringer('Nei');
+    });
+
+    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Ja');
+    expect(result.current.refusjonskravetOpphoerer?.opphorsdato).toEqual(new Date(2022, 4, 6));
+    expect(result.current.opprinneligRefusjonskravetOpphoerer?.status).toBe('Ja');
+    expect(result.current.opprinneligRefusjonskravetOpphoerer?.opphorsdato).toEqual(new Date(2022, 4, 6));
+    expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
+    expect(result.current.harRefusjonEndringer).toBe('Nei');
+    expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
+
+    act(() => {
+      result.current.refusjonskravetOpphoererStatus('Nei');
+      result.current.setHarRefusjonEndringer('Ja');
+      result.current.refusjonskravetOpphoererDato(new Date(2022, 4, 8));
+      result.current.oppdaterRefusjonEndringer([{ belop: 234, dato: new Date(2022, 4, 10) }]);
+    });
+
+    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
+    expect(result.current.refusjonskravetOpphoerer?.opphorsdato).toEqual(new Date(2022, 4, 8));
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+
+    act(() => {
+      result.current.tilbakestillRefusjoner();
+    });
+
+    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Ja');
+    expect(result.current.refusjonskravetOpphoerer?.opphorsdato).toEqual(new Date(2022, 4, 6));
+    expect(result.current.opprinneligRefusjonskravetOpphoerer?.status).toBe('Ja');
+    expect(result.current.opprinneligRefusjonskravetOpphoerer?.opphorsdato).toEqual(new Date(2022, 4, 6));
+    expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+    expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
+    expect(result.current.refusjonEndringer).toEqual([{ belop: 123, dato: new Date(2022, 4, 6) }]);
+  });
 });
