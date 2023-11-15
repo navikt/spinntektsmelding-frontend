@@ -26,10 +26,7 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
         ? new Date()
         : fravaersperioder
             .map((periode) => periode.fom)
-            .reduce(
-              (prevDate, curDate) => ((curDate || new Date()) <= (prevDate || new Date()) ? curDate : prevDate),
-              new Date()
-            ),
+            .reduce((prevDate, curDate) => ((curDate || new Date()) <= (prevDate || new Date()) ? curDate : prevDate)),
     [fravaersperioder]
   );
 
