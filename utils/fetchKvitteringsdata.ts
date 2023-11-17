@@ -13,6 +13,18 @@ const fetchKvitteringsdata = (url: string, forespoerselId: string) => {
     }
   })
     .then((res) => {
+      if (!res.ok) {
+        const error = new NetworkError('An error occurred while fetching the data.');
+        // Attach extra info to the error object.
+        try {
+          error.info = res;
+        } catch (errorStatus) {
+          error.info = { errorStatus };
+        }
+        error.status = res.status;
+        throw error;
+      }
+
       return res
         .json()
         .then((data) => {
