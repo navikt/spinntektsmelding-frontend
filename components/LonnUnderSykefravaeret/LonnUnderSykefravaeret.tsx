@@ -20,7 +20,15 @@ export default function LonnUnderSykefravaeret({
   refusjonEndringer
 }: LonnUnderSykefravaeretProps) {
   if (!lonn) return null;
-  if (lonn.status === 'Nei') return <div className={lokalStyle.wrapper}>Nei</div>;
+  if (lonn.status === 'Nei')
+    return (
+      <>
+        <div className={lokalStyles.uthevet}>
+          Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?
+        </div>
+        <div className={lokalStyle.wrapper}>Nei</div>
+      </>
+    );
   return (
     <>
       <div className={lokalStyles.uthevet}>
