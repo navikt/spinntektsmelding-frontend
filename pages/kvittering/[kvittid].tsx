@@ -80,16 +80,16 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
 
-  const clickEndre = async () => {
+  const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
     if (paakrevdeOpplysningstyper.length === 3) {
       if (isValidUUID(kvitteringSlug)) {
-        await router.push(`/${kvitteringSlug}`);
+        router.push(`/${kvitteringSlug}`);
       }
     } else {
       if (isValidUUID(kvitteringSlug)) {
-        await router.push(`/endring/${kvitteringSlug}`);
+        router.push(`/endring/${kvitteringSlug}`);
       }
     }
   };

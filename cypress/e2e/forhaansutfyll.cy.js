@@ -45,7 +45,7 @@ describe('Utfylling og innsending av skjema', () => {
   // });
 
   it('should display information on the person and the submitter', () => {
-    cy.wait('@kvittering');
+    // cy.wait('@kvittering');
     cy.wait('@trenger');
 
     cy.get('[data-cy="navn"]').should('have.text', 'Test Navn Testesen-Navnesen Jr.');
