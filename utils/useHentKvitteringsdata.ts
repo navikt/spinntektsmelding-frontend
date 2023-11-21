@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import environment from '../config/environment';
 import fetchKvitteringsdata from './fetchKvitteringsdata';
 import useHentSkjemadata from './useHentSkjemadata';

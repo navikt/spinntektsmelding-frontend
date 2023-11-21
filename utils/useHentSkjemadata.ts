@@ -3,7 +3,7 @@ import useBoundStore from '../state/useBoundStore';
 import fetchInntektskjemaForNotifikasjon from '../state/fetchInntektskjemaForNotifikasjon';
 import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Opplysningstype } from '../state/useForespurtDataStore';
 import foresporselType from '../config/foresporseltype';
 import { logger } from '@navikt/next-logger';
@@ -31,7 +31,7 @@ export default function useHentSkjemadata() {
           const opplysningstyper = hentPaakrevdOpplysningstyper();
 
           if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
-            router.replace(`/endring/${pathSlug}`, undefined, { shallow: true });
+            router.replace(`/endring/${pathSlug}`, undefined);
           }
         })
         .catch((error: any) => {

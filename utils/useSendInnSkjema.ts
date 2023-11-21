@@ -5,7 +5,7 @@ import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending'
 import isValidUUID from './isValidUUID';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
 
 export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: boolean) => void) {
@@ -71,7 +71,7 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: 
         switch (data.status) {
           case 201:
             setKvitteringInnsendt(new Date());
-            await router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
+            await router.push(`/kvittering/${pathSlug}`, undefined);
             break;
 
           case 500: {
