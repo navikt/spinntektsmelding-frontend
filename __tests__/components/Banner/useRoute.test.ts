@@ -3,7 +3,7 @@ import useRoute from '../../../components/Banner/useRoute';
 
 const mockPush = vi.fn();
 
-vi.mock('next/router', () => ({
+vi.mock('next/navigation', () => ({
   default: {},
   useRouter: () => ({ push: mockPush })
 }));

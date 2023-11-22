@@ -9,7 +9,15 @@ import useBoundStore from '../../state/useBoundStore';
 import skjemaVariant from '../../config/skjemavariant';
 import { Opplysningstype } from '../../state/useForespurtDataStore';
 
-vi.mock('next/router', () => require('next-router-mock'));
+// vi.mock('next/router', () => require('next-router-mock'));
+const mockPush = vi.fn();
+const mockGet = vi.fn();
+
+vi.mock('next/navigation', () => ({
+  default: {},
+  useRouter: () => ({ push: mockPush }),
+  useSearchParams: () => ({ get: mockGet })
+}));
 
 const initialState = useBoundStore.getState();
 

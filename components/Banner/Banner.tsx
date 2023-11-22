@@ -3,7 +3,7 @@ import Bedriftsmeny from './BedriftsmenyComponent';
 import '@navikt/bedriftsmeny/lib/bedriftsmeny.css';
 import { Organisasjon as AltinnOrganisasjon } from '@navikt/bedriftsmeny/lib/organisasjon';
 import useRoute from './useRoute';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export interface Organisasjon {
   Name: string;
@@ -26,6 +26,8 @@ const Banner: React.FunctionComponent<Props> = (props) => {
 
   const setRoute = useRoute();
 
+  const searchParams = useSearchParams();
+
   const onOrganisasjonChange = (organisasjon?: Organisasjon) => {
     if (organisasjon) {
       setRoute(organisasjon.OrganizationNumber);
@@ -35,9 +37,9 @@ const Banner: React.FunctionComponent<Props> = (props) => {
     }
   };
 
-  const { query, push } = useRouter();
+  const { push } = useRouter();
   const useOrgnrHook: () => [string | null, (orgnr: string) => void] = useCallback(() => {
-    const currentOrgnr = typeof query.bedrift === 'string' ? query.bedrift : null;
+    const currentOrgnr = typeof searchParams.get('bedrift') === 'string' ? searchParams.get('bedrift') : null;
 
     return [
       currentOrgnr,
