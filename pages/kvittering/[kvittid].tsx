@@ -1,4 +1,4 @@
-import { NextPage } from 'next';
+import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -15,7 +15,7 @@ import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
 import PeriodeFraTil from '../../components/PeriodeFraTil/PeriodeFraTil';
 import formatCurrency from '../../utils/formatCurrency';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import BortfallNaturalytelser from '../../components/BortfallNaturalytelser/BortfallNaturalytelser';
 import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
@@ -46,8 +46,11 @@ import TextLabel from '../../components/TextLabel';
 import fjStyles from '../../components/FlexJarResponse/FlexJarResponse.module.css';
 import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
 
-const Kvittering: NextPage = () => {
+const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  kvittid
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
@@ -76,19 +79,18 @@ const Kvittering: NextPage = () => {
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
+  const kvitteringSlug = kvittid || searchParams.get('kvittid');
 
-  const clickEndre = async () => {
+  const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
-
-    const kvitteringSlug = (router.query.kvittid as string) || '';
 
     if (paakrevdeOpplysningstyper.length === 3) {
       if (isValidUUID(kvitteringSlug)) {
-        await router.push(`/${kvitteringSlug}`);
+        router.push(`/${kvitteringSlug}`);
       }
     } else {
       if (isValidUUID(kvitteringSlug)) {
-        await router.push(`/endring/${kvitteringSlug}`);
+        router.push(`/endring/${kvitteringSlug}`);
       }
     }
   };
@@ -110,13 +112,12 @@ const Kvittering: NextPage = () => {
 
   useEffect(() => {
     if (!fravaersperioder) {
-      const kvitteringSlug = (router.query.kvittid as string) || '';
       if (!kvitteringSlug || kvitteringSlug === '') return;
       hentKvitteringsdata(kvitteringSlug);
     }
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query.kvittid]);
+  }, [searchParams]);
 
   useEffect(() => {
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -288,4 +289,14 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
         (periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom))
       ).length > 0
     : false;
+}
+
+export async function getServerSideProps(context: any) {
+  const kvittid = context.query.kvittid;
+
+  return {
+    props: {
+      kvittid
+    }
+  };
 }

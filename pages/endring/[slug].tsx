@@ -1,5 +1,5 @@
 import { BodyLong, Button, ConfirmationPanel, Link, Radio, RadioGroup } from '@navikt/ds-react';
-import { NextPage } from 'next';
+import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useState, useCallback } from 'react';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -19,7 +19,7 @@ import Heading2 from '../../components/Heading2/Heading2';
 import H3Label from '../../components/H3Label';
 import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
 import { YesNo } from '../../state/state';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 import logEvent from '../../utils/logEvent';
 import environment from '../../config/environment';
@@ -31,7 +31,9 @@ import TextLabel from '../../components/TextLabel';
 import ButtonEndre from '../../components/ButtonEndre';
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
 
-const Endring: NextPage = () => {
+const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  slug
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [endringBruttolonn, setEndringBruttolonn] = useBoundStore((state) => [
     state.endringBruttolonn,
     state.setEndringBruttolonn
@@ -78,7 +80,8 @@ const Endring: NextPage = () => {
   );
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
-  const router = useRouter();
+
+  const searchParams = useSearchParams();
 
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
@@ -121,6 +124,8 @@ const Endring: NextPage = () => {
     window.location.href = environment.minSideArbeidsgiver;
   };
 
+  const pathSlug = slug || (searchParams.get('slug') as string);
+
   const clickTilbakestillMaanedsinntekt = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -151,16 +156,16 @@ const Endring: NextPage = () => {
   );
 
   useEffect(() => {
-    if (!fravaersperioder && router.query.slug) {
-      const slug = router.query.slug as string;
+    if (!fravaersperioder && pathSlug) {
+      const slug = pathSlug as string;
       hentKvitteringsdata(slug);
       setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
-    if (router.query.slug) {
+    if (pathSlug) {
       setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query.slug]);
+  }, [pathSlug]);
 
   const forsteFravaersdag = foreslaattBestemmendeFravaersdag;
 
@@ -168,8 +173,6 @@ const Endring: NextPage = () => {
     event.preventDefault();
 
     setSenderInn(true);
-
-    const pathSlug = router.query.slug as string;
 
     sendInnSkjema(opplysningerBekreftet, true, pathSlug, amplitudeComponent).finally(() => {
       setSenderInn(false);
@@ -506,3 +509,13 @@ const Endring: NextPage = () => {
 };
 
 export default Endring;
+
+export async function getServerSideProps(context: any) {
+  const slug = context.query.slug;
+
+  return {
+    props: {
+      slug
+    }
+  };
+}

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import type { NextPage } from 'next';
+import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 
 import { Button, ConfirmationPanel, Link } from '@navikt/ds-react';
 
@@ -32,10 +31,11 @@ import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
+import { useSearchParams } from 'next/navigation';
 
-const Home: NextPage = () => {
-  const router = useRouter();
-
+const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  slug
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [lasterData, setLasterData] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
@@ -56,7 +56,7 @@ const Home: NextPage = () => {
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
-
+  const searchParams = useSearchParams();
   const hentKvitteringsdata = useHentKvitteringsdata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen);
@@ -65,11 +65,11 @@ const Home: NextPage = () => {
     window.location.href = environment.minSideArbeidsgiver;
   };
 
+  const pathSlug = slug || (searchParams.get('slug') as string);
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     setSenderInn(true);
-
-    const pathSlug = router.query.slug as string;
 
     sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema').finally(() => {
       setSenderInn(false);
@@ -86,7 +86,6 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    const pathSlug = router.query.slug as string;
     if (!fravaersperioder) {
       setLasterData(true);
       hentKvitteringsdata(pathSlug)?.finally(() => {
@@ -107,7 +106,7 @@ const Home: NextPage = () => {
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query.slug]);
+  }, [pathSlug]);
 
   return (
     <div className={styles.container}>
@@ -173,3 +172,13 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export async function getServerSideProps(context: any) {
+  const slug = context.query.slug;
+
+  return {
+    props: {
+      slug
+    }
+  };
+}
