@@ -44,6 +44,7 @@ import classNames from 'classnames/bind';
 import TextLabel from '../../components/TextLabel';
 // import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 import fjStyles from '../../components/FlexJarResponse/FlexJarResponse.module.css';
+import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -232,7 +233,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <LonnUnderSykefravaeret
                 lonn={lonnISykefravaeret!}
                 refusjonskravetOpphoerer={refusjonskravetOpphoerer}
-                harRefusjonEndringer={refusjonEndringer && refusjonEndringer?.length > 0 ? 'Ja' : 'Nei'}
+                harRefusjonEndringer={harGyldigeRefusjonEndringer(refusjonEndringer) ? 'Ja' : 'Nei'}
                 refusjonEndringer={refusjonEndringer}
               />
               {visNaturalytelser && (

@@ -31,6 +31,13 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.intercept('/im-dialog/api/inntektsdata', { fixture: '../../mockdata/inntektData.json' }).as('inntektsdata');
 
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
+
     cy.wait('@trenger');
 
     cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
@@ -71,12 +78,10 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findAllByLabelText('Til').last().clear().type('01.02.23');
     cy.realPress('Escape');
 
-    cy.wait('@inntektsdata')
-      .its('request.body')
-      .should('deep.equal', {
-        forespoerselId: '12345678-3456-5678-2457-123456789012',
-        skjaeringstidspunkt: '2023-01-30'
-      });
+    cy.wait('@inntektsdata').its('request.body').should('deep.equal', {
+      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      skjaeringstidspunkt: '2023-01-30'
+    });
 
     cy.contains('Send').click();
 
