@@ -10,7 +10,12 @@ describe('Utfylling og innsending av skjema', () => {
     cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
       'innsendingInntektsmelding'
     );
-
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
     cy.wait('@trenger');
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');

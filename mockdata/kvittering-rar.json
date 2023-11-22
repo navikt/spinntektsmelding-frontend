@@ -1,0 +1,47 @@
+{
+  "orgnrUnderenhet": "810007842",
+  "identitetsnummer": "10486535275",
+  "fulltNavn": "Ultrafiolett Damesykkel",
+  "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "behandlingsdager": [],
+  "egenmeldingsperioder": [],
+  "bestemmendeFraværsdag": "2023-10-13",
+  "fraværsperioder": [
+    {
+      "fom": "2023-10-13",
+      "tom": "2023-10-29"
+    },
+    {
+      "fom": "2023-10-30",
+      "tom": "2023-11-14"
+    }
+  ],
+  "arbeidsgiverperioder": [
+    {
+      "fom": "2023-10-13",
+      "tom": "2023-10-28"
+    }
+  ],
+  "beregnetInntekt": 48842.0,
+  "inntekt": {
+    "bekreftet": true,
+    "beregnetInntekt": 48842.0,
+    "endringÅrsak": {
+      "typpe": "VarigLonnsendring",
+      "gjelderFra": "2023-05-01"
+    },
+    "manueltKorrigert": true
+  },
+  "fullLønnIArbeidsgiverPerioden": {
+    "utbetalerFullLønn": true
+  },
+  "refusjon": {
+    "utbetalerHeleEllerDeler": true,
+    "refusjonPrMnd": 48842.0
+  },
+  "tidspunkt": "2023-11-15T12:26:24.743410560+01:00",
+  "årsakInnsending": "NY",
+  "innsenderNavn": "Test Testesen",
+  "telefonnummer": "12345678",
+  "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
+}

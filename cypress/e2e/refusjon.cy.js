@@ -29,6 +29,13 @@ describe('Utfylling og innsending av skjema', () => {
       'innsendingInntektsmelding'
     );
 
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
+
     cy.wait('@trenger');
 
     cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })

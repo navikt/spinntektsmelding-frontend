@@ -5,6 +5,7 @@ import formatDate from '../../utils/formatDate';
 import { EndringsBelop } from '../RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import lokalStyle from './LonnUnderSykefravaeret.module.css';
 import lokalStyles from '../../pages/kvittering/Kvittering.module.css';
+import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
 
 interface LonnUnderSykefravaeretProps {
   lonn: LonnISykefravaeret;
@@ -42,13 +43,13 @@ export default function LonnUnderSykefravaeret({
             <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.belop)} kr/måned</BodyShort>
           </>
         )}
-        {refusjonEndringer && refusjonEndringer?.length > 0 && (
+        {harGyldigeRefusjonEndringer(refusjonEndringer) && (
           <>
             {harRefusjonEndringer && (
               <>
                 <div className={lokalStyle.uthevet}>Er det endringer i refusjonsbeløpet i perioden?</div>
-                <BodyShort>{refusjonEndringer?.length > 0 ? 'Ja' : 'Nei'}</BodyShort>
-                {refusjonEndringer?.length > 0 && (
+                <BodyShort>{harGyldigeRefusjonEndringer(refusjonEndringer) ? 'Ja' : 'Nei'}</BodyShort>
+                {refusjonEndringer!.length > 0 && (
                   <table className={lokalStyle.lonnTabell}>
                     <thead>
                       <tr>
