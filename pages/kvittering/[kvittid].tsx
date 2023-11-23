@@ -262,7 +262,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             feedbackId='kvittering'
             sporsmaalFeedback='Er det noe mer du vil tilføye?'
           /> */}
-          <div className={fjStyles.outerjarwrapper + ' skjul-fra-print'}>
+          {/* <div className={fjStyles.outerjarwrapper + ' skjul-fra-print'}>
             <div className={fjStyles.jarwrapper + ' skjul-fra-print'}>
               <TextLabel>Spørreundersøkelse om den nye inntektsmeldingen</TextLabel>
               <BodyLong>
@@ -274,7 +274,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 <Button variant='primary'>Ta undersøkelsen</Button>
               </Link>
             </div>
-          </div>
+          </div> */}
         </div>
       </PageContent>
     </div>
