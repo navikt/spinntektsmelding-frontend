@@ -1,5 +1,6 @@
 import { Alert, Link, Modal } from '@navikt/ds-react';
 import env from '../../config/environment';
+import { ExclamationmarkTriangleIcon } from '@navikt/aksel-icons';
 
 interface IngenTilgangProps {
   handleCloseModal: () => void;
@@ -15,7 +16,8 @@ export default function IngenTilgang({ handleCloseModal, open }: IngenTilgangPro
       aria-labelledby='modal-heading'
       header={{
         heading: 'Du er blitt logget ut, følg instruksjonene for ikke å miste data',
-        size: 'medium'
+        size: 'medium',
+        icon: <ExclamationmarkTriangleIcon title='Advarsel' fontSize='1.5rem' />
       }}
     >
       <Modal.Body>
