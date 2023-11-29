@@ -1,6 +1,6 @@
 import { Alert, Button, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { ZodError, z } from 'zod';
+import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 
 import Heading1 from '../../components/Heading1/Heading1';
@@ -13,13 +13,15 @@ import useBoundStore from '../../state/useBoundStore';
 import { FormEvent, useState } from 'react';
 import isFnrNumber from '../../utils/isFnrNumber';
 import visFeilmeldingsTekst from '../../utils/visFeilmeldingsTekst';
+import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
+import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 
 const Initsiering: NextPage = () => {
   const setIdentitetsnummer = useBoundStore((state) => state.setIdentitetsnummer);
   const [fnr, setFnr] = useState<string>('');
 
   const [visFeilmeldinger, setVisFeilmeldinger] = useState(false);
-  const [feilmeldinger, setFeilmeldinger] = useState<ZodError | undefined>(undefined);
+  const [feilmeldinger, setFeilmeldinger] = useState<Feilmelding[] | undefined>(undefined);
 
   const router = useRouter();
 
@@ -34,8 +36,8 @@ const Initsiering: NextPage = () => {
           .string()
           .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
           .max(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
-          .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] })
-      );
+      )
+      .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] });
     const validertFnr = skjemaFnr.safeParse(fnr);
 
     if (validertFnr.success) {
@@ -44,7 +46,9 @@ const Initsiering: NextPage = () => {
       router.push('/initsiering2', { scroll: false });
     } else {
       console.log('Feil i fnr', validertFnr.error);
-      setFeilmeldinger(validertFnr.error);
+      const feilmeldinger = formatZodFeilmeldinger(validertFnr);
+      console.log('Feilmeldinger', feilmeldinger);
+      setFeilmeldinger(feilmeldinger);
     }
   };
 
@@ -81,6 +85,7 @@ const Initsiering: NextPage = () => {
                 Neste
               </Button>
             </form>
+            <FeilListe skalViseFeilmeldinger={visFeilmeldinger} feilmeldinger={feilmeldinger ?? []} />
           </div>
         </main>
       </PageContent>

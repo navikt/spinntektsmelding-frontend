@@ -1,6 +1,6 @@
 import { Alert, Button } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { ZodError, z } from 'zod';
+import { z } from 'zod';
 
 import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
@@ -13,105 +13,61 @@ import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger
 import { FormEvent, useState } from 'react';
 import SelectArbeidsgiver from './SelectArbeidsgiver';
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
-import isMod11Number from '../../utils/isMod10Number';
-import isFnrNumber from '../../utils/isFnrNumber';
 import useBoundStore from '../../state/useBoundStore';
+import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
+import initsieringSkjema from './initsieringSkjema';
 
 const Initsiering: NextPage = () => {
   const [organisasjonsnummer, setOrganisasjonsnummer] = useState<string>('');
   const [visFeilmeldinger, setVisFeilmeldinger] = useState(false);
-  const [zodFeilmeldinger, setZodFeilmeldinger] = useState<ZodError>();
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
+  const [feilmeldinger, setFeilmeldinger] = useState<Feilmelding[] | undefined>(undefined);
 
-  const customErrorMap: z.ZodErrorMap = (error, ctx) => {
-    /*
-    This is where you override the various error codes
-    */
-    switch (error.code) {
-      case z.ZodIssueCode.invalid_type:
-        if (error.expected === 'string') {
-          return { message: `This ain't a string!` };
-        }
-        break;
-      case z.ZodIssueCode.custom:
-        // produce a custom message using error.params
-        // error.params won't be set unless you passed
-        // a `params` arguments into a custom validator
-        const params = error.params || {};
-        if (params.myField) {
-          return { message: `Bad input: ${params.myField}` };
-        }
-        break;
-    }
-
-    // fall back to default message!
-    return { message: ctx.defaultError };
-  };
-
-  const feilmeldinger: Feilmelding[] = [];
-
-  const onChangeArbeidsgiverSelct = (e: any) => {
-    const organisasjonsnummer = z.string();
-    const verdi = organisasjonsnummer.safeParse(e.target.value);
+  const onChangeArbeidsgiverSelect = (e: any) => {
+    const organisasjonsnummerValidering = z.string();
+    const verdi = organisasjonsnummerValidering.safeParse(e.target.value);
+    const skjema = initsieringSkjema;
 
     if (verdi.success) {
+      const organisasjonsnummer = verdi.data;
       setOrganisasjonsnummer(verdi.data);
+
+      const skjemaData = {
+        organisasjonsnummer: organisasjonsnummer,
+        navn: 'navn',
+        personnummer: identitetsnummer
+      };
+
+      const validationResult = skjema.safeParse(skjemaData);
+      const tmpFeilmeldinger: Feilmelding[] = formatZodFeilmeldinger(validationResult);
+      setFeilmeldinger(tmpFeilmeldinger);
+    } else {
+      setOrganisasjonsnummer('');
     }
   };
 
   const submitForm = (e: FormEvent<HTMLFormElement>) => {
+    const skjema = initsieringSkjema;
     e.preventDefault();
     setVisFeilmeldinger(true);
-    const skjema = z.object({
-      organisasjonsnummer: z
-        .string()
-        .transform((val) => val.replace(/\s/g, ''))
-        .pipe(
-          z
-            .string()
-            .min(9, { message: 'Organisasjonsnummeret er for kort, det må være 9 siffer' })
-            .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
-        )
-        .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver', path: ['organisasjonsnummer'] }),
-      navn: z.string().min(1),
-      personnummer: z
-        .string()
-        .transform((val) => val.replace(/\s/g, ''))
-        .pipe(
-          z
-            .string()
-            .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
-            .max(11, { message: 'Personnummeret er for langt, det må være 11 siffer' })
-            .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] })
-        )
-    });
     const skjemaData = {
       organisasjonsnummer: organisasjonsnummer,
       navn: 'navn',
       personnummer: identitetsnummer
     };
 
-    const validationResult = skjema.safeParse(skjemaData, { errorMap: customErrorMap });
+    const validationResult = skjema.safeParse(skjemaData);
 
     if (validationResult.success) {
       console.log('submitForm', validationResult);
+      setFeilmeldinger(undefined);
     } else {
-      const valideringsfeil = validationResult.error.flatten();
-      console.log('Feil i form', valideringsfeil);
-      const feilmeldinger: Feilmelding[] = Object.keys(valideringsfeil.fieldErrors).map((feil) => {
-        console.log('feil', feil);
-        if (valideringsfeil) {
-          console.log('valideringsfeil', valideringsfeil.fieldErrors);
-          // setZodFeilmeldinger(valideringsfeil?.navn?._errors);
-        }
-        return {
-          tekst: valideringsfeil.fieldErrors[feil].message,
-          felt: feil
-        };
-      });
+      console.log('validationResult', validationResult.error.format());
 
-      // console.log('feilmeldinger', feilmeldinger);
-      // setZodFeilmeldinger(valideringsfeil?.navn?._errors);
+      const tmpFeilmeldinger: Feilmelding[] = formatZodFeilmeldinger(validationResult);
+      setFeilmeldinger(tmpFeilmeldinger);
+      setVisFeilmeldinger(true);
+      console.log('feilmeldinger', tmpFeilmeldinger);
     }
   };
 
@@ -146,18 +102,24 @@ const Initsiering: NextPage = () => {
               <div>
                 <div>
                   <SelectArbeidsgiver
-                    onChangeArbeidsgiverSelct={onChangeArbeidsgiverSelct}
+                    onChangeArbeidsgiverSelect={onChangeArbeidsgiverSelect}
                     personnr={identitetsnummer}
                     skalViseFeilmeldinger={visFeilmeldinger}
-                    feilmeldinger={zodFeilmeldinger}
+                    feilmeldinger={feilmeldinger ?? []}
+                    id='organisasjonsnummer'
                   />
                 </div>
               </div>
-              <Button variant='primary' className={lokalStyles.primaryKnapp} disabled={organisasjonsnummer === ''}>
-                Neste
-              </Button>
+              <div>
+                <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
+                  Tilbake
+                </Button>
+                <Button variant='primary' className={lokalStyles.primaryKnapp} disabled={organisasjonsnummer === ''}>
+                  Neste
+                </Button>
+              </div>
             </form>
-            <FeilListe skalViseFeilmeldinger={visFeilmeldinger} feilmeldinger={feilmeldinger} />
+            <FeilListe skalViseFeilmeldinger={visFeilmeldinger} feilmeldinger={feilmeldinger ?? []} />
           </div>
         </main>
       </PageContent>

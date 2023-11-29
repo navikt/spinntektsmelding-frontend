@@ -4,8 +4,8 @@ import useSWR from 'swr';
 import environment from '../../config/environment';
 import Loading from './Loading';
 import { logger } from '@navikt/next-logger';
-import { ZodError } from 'zod';
 import visFeilmeldingsTekst from '../../utils/visFeilmeldingsTekst';
+import { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 
 function fetcher(url: string, idToken?: string) {
   if (!idToken) return Promise.resolve([]);
@@ -33,17 +33,19 @@ interface ArbeidsgiverSelect {
 }
 
 interface SelectArbeidsgiverProps {
-  onChangeArbeidsgiverSelct: (e: any) => void;
+  onChangeArbeidsgiverSelect: (e: any) => void;
   personnr?: string;
-  feilmeldinger?: ZodError;
+  feilmeldinger?: Feilmelding[];
   skalViseFeilmeldinger: boolean;
+  id: string;
 }
 
 export default function SelectArbeidsgiver({
-  onChangeArbeidsgiverSelct,
+  onChangeArbeidsgiverSelect,
   personnr,
   feilmeldinger,
-  skalViseFeilmeldinger
+  skalViseFeilmeldinger,
+  id
 }: SelectArbeidsgiverProps) {
   const idToken = personnr;
   const { data, error } = useSWR(
@@ -61,8 +63,8 @@ export default function SelectArbeidsgiver({
     data && data.length > 0 && !error
       ? data.map((arbeidsgiver: any) => {
           return {
-            orgnr: arbeidsgiver.orgnr,
-            visningsnavn: `Org.nr. ${arbeidsgiver.orgnr} - ${arbeidsgiver.navn}`
+            orgnr: arbeidsgiver.organizationNumber,
+            visningsnavn: `Org.nr. ${arbeidsgiver.organizationNumber} - ${arbeidsgiver.name}`
           };
         })
       : [];
@@ -76,9 +78,9 @@ export default function SelectArbeidsgiver({
     return (
       <Select
         label='Organisasjon'
-        onChange={onChangeArbeidsgiverSelct}
-        error={visFeilmeldingsTekst('organisasjonsnummer', skalViseFeilmeldinger, feilmeldinger)}
-        id='organisasjonsnummer'
+        onChange={onChangeArbeidsgiverSelect}
+        error={visFeilmeldingsTekst(id, skalViseFeilmeldinger, feilmeldinger)}
+        id={id}
       >
         <option value=''>Velg organisasjon</option>
         {arbeidsgivere.map((arbeidsgiver) => (

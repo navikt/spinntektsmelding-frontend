@@ -61,6 +61,8 @@ class Environment {
 
   public hentKvitteringUrl = '/im-dialog/api/hentKvittering';
 
+  public hentArbeidsgivereUrl = '/im-dialog/api/arbeidsgivere';
+
   public amplitudeEnabled = true;
 
   get environment() {
