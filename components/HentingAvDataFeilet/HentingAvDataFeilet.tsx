@@ -1,3 +1,4 @@
+import { ExclamationmarkTriangleIcon } from '@navikt/aksel-icons';
 import { Alert, BodyLong, Button, Modal } from '@navikt/ds-react';
 
 interface HentingAvDataFeiletProps {
@@ -13,7 +14,8 @@ export default function HentingAvDataFeilet({ handleCloseModal, open }: HentingA
       onClose={handleCloseModal}
       header={{
         heading: 'Henting av data til inntektsmeldingen feilet.',
-        size: 'medium'
+        size: 'medium',
+        icon: <ExclamationmarkTriangleIcon title='Advarsel' fontSize='1.5rem' />
       }}
     >
       <Modal.Body>
