@@ -59,6 +59,7 @@ const finnBestemmendeFravaersdag = (
   const filtrertePerioder = fravaersperioder.filter((periode) => periode.fom && periode.tom);
 
   const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(filtrertePerioder);
+  const sorterteArbeidsgiverperioder = arbeidsgiverperiode ? finnSorterteUnikePerioder(arbeidsgiverperiode) : [];
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
 
@@ -87,28 +88,72 @@ const finnBestemmendeFravaersdag = (
     }
   });
 
-  const bestemmendeFravaersdagFraFravaer =
-    tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined
-      ? tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom
-      : undefined;
+  // const bestemmendeFravaersdag = hvemDatoErStorst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
+  //   ? bestemmendeFravaersdagFraFravaer
+  //   : forsteDagArbeidsgiverperiode;
 
-  const forsteDagArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode[0]?.fom : undefined;
+  // if (forespurtBestemmendeFraværsdag) {
+  //   const forespurtBestemmendeFravaersdagErStorst = hvemDatoErStorst(
+  //     bestemmendeFravaersdag,
+  //     forespurtBestemmendeFraværsdag
+  //   )
+  //     ? forespurtBestemmendeFraværsdag
+  //     : bestemmendeFravaersdag;
+  //   return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
+  //     representation: 'date'
+  //   });
+  // }
 
-  const bestemmendeFravaersdag = hvemDatoErStorst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
-    ? bestemmendeFravaersdagFraFravaer
-    : forsteDagArbeidsgiverperiode;
+  // Fjerne overlappende perioder mellom frværsperioder og arbeidsgiverperioder. Hvis det er overlappende perioder, så er det arbeidsgiverperioden som er bestemmende
 
-  if (forespurtBestemmendeFraværsdag) {
-    const forespurtBestemmendeFravaersdagErStorst = hvemDatoErStorst(
-      bestemmendeFravaersdag,
-      forespurtBestemmendeFraværsdag
-    )
-      ? forespurtBestemmendeFraværsdag
-      : bestemmendeFravaersdag;
-    return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
-      representation: 'date'
+  const samletSykePeriode = tilstotendeSykemeldingsperioder.map((periode) => {
+    const arbeidsgiverperiode = sorterteArbeidsgiverperioder.find((ap) => {
+      return (
+        periode.fom &&
+        periode.tom &&
+        ap.fom &&
+        ap.tom &&
+        ((periode.fom < ap.fom && periode.fom > ap.tom) || (periode.tom > ap.fom && periode.tom < ap.tom))
+      );
     });
-  }
+    if (arbeidsgiverperiode) {
+      return {
+        fom: arbeidsgiverperiode.fom,
+        tom: arbeidsgiverperiode.tom,
+        id: arbeidsgiverperiode.id
+      };
+    } else {
+      return {
+        fom: periode.fom,
+        tom: periode.tom,
+        id: periode.id
+      };
+    }
+  });
+
+  const samletPeriode = finnSorterteUnikePerioder([...samletSykePeriode, ...sorterteArbeidsgiverperioder]);
+
+  console.log('sorterteArbeidsgiverperioder', sorterteArbeidsgiverperioder);
+  console.log('samletPeriode', samletPeriode);
+
+  const nyPeriode: Periode[] = [samletPeriode[0]] as Periode[];
+  samletPeriode.forEach((periode) => {
+    const aktivPeriode = nyPeriode[nyPeriode.length - 1];
+    const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
+
+    if (oppdatertPeriode) {
+      nyPeriode[nyPeriode.length - 1] = oppdatertPeriode;
+    } else {
+      nyPeriode.push(periode);
+    }
+  });
+
+  console.log('nyPeriode', nyPeriode);
+
+  const bestemmendeFravaersdagFraFravaer =
+    nyPeriode[nyPeriode.length - 1].fom !== undefined ? nyPeriode[nyPeriode.length - 1].fom : undefined;
+
+  const bestemmendeFravaersdag = bestemmendeFravaersdagFraFravaer;
 
   if (bestemmendeFravaersdag !== undefined) {
     return formatISO9075(bestemmendeFravaersdag, {
