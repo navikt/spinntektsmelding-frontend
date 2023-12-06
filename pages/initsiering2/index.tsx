@@ -10,30 +10,41 @@ import lokalStyles from './Initsiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { FormEvent, useState } from 'react';
-import SelectArbeidsgiver from './SelectArbeidsgiver';
+import { FormEvent, useRef, useState } from 'react';
+import SelectArbeidsgiver, { ArbeidsgiverSelect } from './SelectArbeidsgiver';
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
 import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
-import initsieringSkjema from './initsieringSkjema';
+import initsieringSchema from './initsieringSchema';
+import useSWRImmutable from 'swr/immutable';
+import fetcherArbeidsforhold, { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
+import environment from '../../config/environment';
+import Loading from './Loading';
+import { useRouter } from 'next/navigation';
 
 const Initsiering: NextPage = () => {
-  const [organisasjonsnummer, setOrganisasjonsnummer] = useState<string>('');
   const [visFeilmeldinger, setVisFeilmeldinger] = useState(false);
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
+  const initPerson = useBoundStore((state) => state.initPerson);
   const [feilmeldinger, setFeilmeldinger] = useState<Feilmelding[] | undefined>(undefined);
+  let arbeidsforhold: ArbeidsgiverSelect[] = [];
+  const router = useRouter();
+  const organisasjonsnummer = useRef('');
 
-  const onChangeArbeidsgiverSelect = (e: any) => {
+  const { data, error } = useSWRImmutable([environment.initsierBlankSkjemaUrl, identitetsnummer], ([url, idToken]) =>
+    fetcherArbeidsforhold(url, idToken)
+  );
+
+  const onChangeArbeidsgiverSelect = (orgNr: string) => {
     const organisasjonsnummerValidering = z.string();
-    const verdi = organisasjonsnummerValidering.safeParse(e.target.value);
-    const skjema = initsieringSkjema;
+    const verdi = organisasjonsnummerValidering.safeParse(orgNr);
+    const skjema = initsieringSchema;
 
     if (verdi.success) {
-      const organisasjonsnummer = verdi.data;
-      setOrganisasjonsnummer(verdi.data);
+      organisasjonsnummer.current = verdi.data;
 
       const skjemaData = {
-        organisasjonsnummer: organisasjonsnummer,
+        organisasjonsnummer: organisasjonsnummer.current,
         navn: 'navn',
         personnummer: identitetsnummer
       };
@@ -42,16 +53,16 @@ const Initsiering: NextPage = () => {
       const tmpFeilmeldinger: Feilmelding[] = formatZodFeilmeldinger(validationResult);
       setFeilmeldinger(tmpFeilmeldinger);
     } else {
-      setOrganisasjonsnummer('');
+      organisasjonsnummer.current = '';
     }
   };
 
   const submitForm = (e: FormEvent<HTMLFormElement>) => {
-    const skjema = initsieringSkjema;
+    const skjema = initsieringSchema;
     e.preventDefault();
     setVisFeilmeldinger(true);
     const skjemaData = {
-      organisasjonsnummer: organisasjonsnummer,
+      organisasjonsnummer: organisasjonsnummer.current,
       navn: 'navn',
       personnummer: identitetsnummer
     };
@@ -60,6 +71,12 @@ const Initsiering: NextPage = () => {
 
     if (validationResult.success) {
       console.log('submitForm', validationResult);
+      const validert = validationResult.data;
+      const orgNavn = arbeidsforhold.find(
+        (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validert.organisasjonsnummer
+      )?.virksomhetsnavn!;
+      initPerson(validert.navn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
+      router.push('/blank');
       setFeilmeldinger(undefined);
     } else {
       console.log('validationResult', validationResult.error.format());
@@ -70,6 +87,26 @@ const Initsiering: NextPage = () => {
       console.log('feilmeldinger', tmpFeilmeldinger);
     }
   };
+
+  if (data) {
+    const mottatteData = endepunktArbeidsforholdSchema.safeParse(data);
+
+    if (mottatteData.success && !mottatteData.data.feilReport) {
+      arbeidsforhold =
+        mottatteData && mottatteData.data.underenheter && mottatteData.data.underenheter.length > 0 && !error
+          ? mottatteData.data.underenheter.map((arbeidsgiver: any) => {
+              return {
+                orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet,
+                virksomhetsnavn: arbeidsgiver.virksomhetsnavn
+              };
+            })
+          : [];
+
+      if (arbeidsforhold.length === 1) {
+        organisasjonsnummer.current = arbeidsforhold[0].orgnrUnderenhet;
+      }
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -101,20 +138,27 @@ const Initsiering: NextPage = () => {
               </div>
               <div>
                 <div>
-                  <SelectArbeidsgiver
-                    onChangeArbeidsgiverSelect={onChangeArbeidsgiverSelect}
-                    personnr={identitetsnummer}
-                    skalViseFeilmeldinger={visFeilmeldinger}
-                    feilmeldinger={feilmeldinger ?? []}
-                    id='organisasjonsnummer'
-                  />
+                  {!data && !error && <Loading />}
+                  {data && (
+                    <SelectArbeidsgiver
+                      onChangeArbeidsgiverSelect={onChangeArbeidsgiverSelect}
+                      arbeidsforhold={arbeidsforhold}
+                      skalViseFeilmeldinger={visFeilmeldinger}
+                      feilmeldinger={feilmeldinger ?? []}
+                      id='organisasjonsnummer'
+                    />
+                  )}
                 </div>
               </div>
               <div>
                 <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
                   Tilbake
                 </Button>
-                <Button variant='primary' className={lokalStyles.primaryKnapp} disabled={organisasjonsnummer === ''}>
+                <Button
+                  variant='primary'
+                  className={lokalStyles.primaryKnapp}
+                  disabled={organisasjonsnummer.current === ''}
+                >
                   Neste
                 </Button>
               </div>

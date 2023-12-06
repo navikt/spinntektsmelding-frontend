@@ -86,6 +86,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   };
 
   useEffect(() => {
+    if (pathSlug === 'blank') {
+      return;
+    }
     if (!fravaersperioder) {
       setLasterData(true);
       hentKvitteringsdata(pathSlug)?.finally(() => {
