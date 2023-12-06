@@ -73,6 +73,7 @@ const nextConfig = {
     minSideArbeidsgiver: process.env.MIN_SIDE_ARBEIDSGIVER,
     telemetryUrl: process.env.TELEMETRY_URL,
     flexJarUrl: process.env.FLEXJAR_URL,
+    aktiveOrgnrApi: process.env.AKTIVE_ORGNR_API,
     version
   }
 };

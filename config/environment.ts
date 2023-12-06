@@ -49,6 +49,10 @@ class Environment {
     return this.publicRuntimeConfig.flexJarUrl;
   }
 
+  get aktiveOrgnrApi() {
+    return this.publicRuntimeConfig.aktiveOrgnrApi;
+  }
+
   public baseUrl = '/im-dialog';
 
   public skjemadataUrl = '/im-dialog/api/trenger';

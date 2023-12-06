@@ -5,7 +5,7 @@ import environment from '../../config/environment';
 
 import org from '../../mockdata/blank.json';
 
-const basePath = environment.inntektsmeldingUuidAPI;
+const basePath = environment.aktiveOrgnrApi;
 
 type Data = typeof org;
 
