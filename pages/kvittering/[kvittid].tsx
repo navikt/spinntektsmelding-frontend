@@ -205,7 +205,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
                   {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak as string)}
                   <EndringAarsakVisning
-                    endringsaarsak={bruttoinntekt.endringsaarsak as keyof typeof begrunnelseEndringBruttoinntekt}
+                    endringsaarsak={bruttoinntekt.endringsaarsak}
                     ferie={ferie}
                     lonnsendringsdato={lonnsendringsdato}
                     permisjon={permisjon}
