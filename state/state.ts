@@ -1,4 +1,4 @@
-import begrunnelseEndringBruttoinntekt from 'components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 
 export interface Periode {
   fom?: Date;
