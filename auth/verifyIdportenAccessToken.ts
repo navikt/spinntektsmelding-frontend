@@ -1,9 +1,6 @@
 import { createRemoteJWKSet, FlattenedJWSInput, JWSHeaderParameters, jwtVerify } from 'jose';
 import { GetKeyFunction } from 'jose/dist/types/types';
-import getConfig from 'next/config';
 import { Client, Issuer } from 'openid-client';
-
-const { serverRuntimeConfig } = getConfig();
 
 let _issuer: Issuer<Client>;
 let _remoteJWKSet: GetKeyFunction<JWSHeaderParameters, FlattenedJWSInput>;

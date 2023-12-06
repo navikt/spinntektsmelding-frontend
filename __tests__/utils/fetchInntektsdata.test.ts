@@ -1,7 +1,6 @@
 import createFetchMock from 'vitest-fetch-mock';
 import { vi } from 'vitest';
 import fetchInntektsdata from '../../utils/fetchInntektsdata';
-import formatIsoDate from 'utils/formatIsoDate';
 
 const fetchMocker = createFetchMock(vi);
 fetchMocker.enableMocks();

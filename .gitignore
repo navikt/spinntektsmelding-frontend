@@ -44,3 +44,5 @@ cypress/screenshots
 
 # Snyk
 .dccache
+
+.vscode
