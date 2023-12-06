@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import isMod11Number from '../../utils/isMod10Number';
-import isFnrNumber from '../../utils/isFnrNumber';
+import isMod11Number from '../utils/isMod10Number';
+import isFnrNumber from '../utils/isFnrNumber';
 
 export default z.object({
   organisasjonsnummer: z

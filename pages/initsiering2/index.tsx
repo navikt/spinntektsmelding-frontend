@@ -15,7 +15,7 @@ import SelectArbeidsgiver, { ArbeidsgiverSelect } from './SelectArbeidsgiver';
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
 import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
-import initsieringSchema from './initsieringSchema';
+import initsieringSchema from '../../schema/initsieringSchema';
 import useSWRImmutable from 'swr/immutable';
 import fetcherArbeidsforhold, { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
 import environment from '../../config/environment';
