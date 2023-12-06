@@ -33,7 +33,7 @@
     "history": "5.3.0",
     "html-react-parser": "5.0.6",
     "immer": "10.0.2",
-    "nanoid": "5.0.3",
+    "nanoid": "5.0.4",
     "next": "14.0.3",
     "next-http-proxy-middleware": "1.2.6",
     "node-cache": "5.1.2",
