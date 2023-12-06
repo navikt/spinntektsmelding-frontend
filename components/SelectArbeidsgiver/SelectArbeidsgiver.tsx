@@ -1,7 +1,7 @@
 import { Select } from '@navikt/ds-react';
 import visFeilmeldingsTekst from '../../utils/visFeilmeldingsTekst';
-import { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
-import TextLabel from '../../components/TextLabel';
+import { Feilmelding } from '../Feilsammendrag/FeilListe';
+import TextLabel from '../TextLabel';
 
 export interface ArbeidsgiverSelect {
   orgnrUnderenhet: string;

@@ -11,7 +11,7 @@ import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import { FormEvent, useRef, useState } from 'react';
-import SelectArbeidsgiver, { ArbeidsgiverSelect } from './SelectArbeidsgiver';
+import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
 import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
@@ -19,8 +19,8 @@ import initsieringSchema from '../../schema/initsieringSchema';
 import useSWRImmutable from 'swr/immutable';
 import fetcherArbeidsforhold, { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
 import environment from '../../config/environment';
-import Loading from './Loading';
 import { useRouter } from 'next/navigation';
+import Loading from '../../components/Loading/Loading';
 
 const Initsiering: NextPage = () => {
   const [visFeilmeldinger, setVisFeilmeldinger] = useState(false);
