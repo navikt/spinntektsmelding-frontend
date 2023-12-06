@@ -30,6 +30,7 @@ const Initsiering: NextPage = () => {
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
   const router = useRouter();
   const organisasjonsnummer = useRef('');
+  const backendFeil = useRef([] as Feilmelding[]);
 
   const { data, error } = useSWRImmutable([environment.initsierBlankSkjemaUrl, identitetsnummer], ([url, idToken]) =>
     fetcherArbeidsforhold(url, idToken)
@@ -93,7 +94,7 @@ const Initsiering: NextPage = () => {
 
     if (mottatteData.success && !mottatteData.data.feilReport) {
       arbeidsforhold =
-        mottatteData && mottatteData.data.underenheter && mottatteData.data.underenheter.length > 0 && !error
+        mottatteData?.data?.underenheter && mottatteData.data.underenheter.length > 0 && !error
           ? mottatteData.data.underenheter.map((arbeidsgiver: any) => {
               return {
                 orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet,
@@ -105,9 +106,26 @@ const Initsiering: NextPage = () => {
       if (arbeidsforhold.length === 1) {
         organisasjonsnummer.current = arbeidsforhold[0].orgnrUnderenhet;
       }
+      backendFeil.current = [];
+    }
+
+    if (mottatteData.success && mottatteData.data.feilReport) {
+      const feilmeldingerFraBackend: Feilmelding[] = mottatteData.data.feilReport.feil.map((feil: any) => {
+        return {
+          text: feil.melding,
+          felt: 'backend'
+        };
+      });
+
+      backendFeil.current = feilmeldingerFraBackend;
+      // setFeilmeldinger((gmlFeil) => {
+      //   if (gmlFeil) return [...gmlFeil, ...feilmeldingerFraBackend];
+      //   return feilmeldingerFraBackend;
+      // });
     }
   }
-
+  const visFeilemldingsliste =
+    (feilmeldinger && feilmeldinger.length > 0) || (backendFeil.current && backendFeil.current.length > 0);
   return (
     <div className={styles.container}>
       <Head>
@@ -163,7 +181,10 @@ const Initsiering: NextPage = () => {
                 </Button>
               </div>
             </form>
-            <FeilListe skalViseFeilmeldinger={visFeilmeldinger} feilmeldinger={feilmeldinger ?? []} />
+            <FeilListe
+              skalViseFeilmeldinger={visFeilemldingsliste}
+              feilmeldinger={feilmeldinger ? [...feilmeldinger, ...backendFeil.current] : [...backendFeil.current]}
+            />
           </div>
         </main>
       </PageContent>
