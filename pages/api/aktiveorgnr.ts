@@ -50,7 +50,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
       onProxyInit: handleProxyInit,
       pathRewrite: [
         {
-          patternStr: '^/api/initBlankSkjema',
+          patternStr: '^/api/aktiveorgnr',
           replaceStr: ''
         }
       ]

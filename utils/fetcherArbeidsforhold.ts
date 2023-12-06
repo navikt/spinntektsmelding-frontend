@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-export default function fetcherArbeidsforhold(url: string, idToken?: string) {
-  if (!idToken) return Promise.resolve([]);
+export default function fetcherArbeidsforhold(url: string, identitetsnummer?: string) {
+  if (!identitetsnummer) return Promise.resolve([]);
   return fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ idToken })
+    body: JSON.stringify({ identitetsnummer })
   })
     .then((res) => {
       if (!res.ok) {
