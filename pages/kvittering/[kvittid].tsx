@@ -37,7 +37,6 @@ import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
 
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
-import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
