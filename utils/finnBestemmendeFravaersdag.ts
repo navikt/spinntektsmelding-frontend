@@ -3,11 +3,6 @@ import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
 
-export interface FravaersPeriode {
-  fom: Date;
-  tom: Date;
-}
-
 export const overlappendePeriode = (ene: Periode, andre: Periode) => {
   if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
   if (ene.tom < andre.fom || ene.fom > andre.tom) {
@@ -58,57 +53,59 @@ const finnBestemmendeFravaersdag = (
 
   const filtrertePerioder = fravaersperioder.filter((periode) => periode.fom && periode.tom);
 
-  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(filtrertePerioder);
+  const sorterteSykmeldingsperioder = finnSorterteUnikePerioder(filtrertePerioder);
+  const sorterteArbeidsgiverperioder = arbeidsgiverperiode ? finnSorterteUnikePerioder(arbeidsgiverperiode) : [];
 
-  const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
+  const mergedSykmeldingsperioder = [sorterteSykmeldingsperioder[0]];
 
-  sorterteSykemeldingsperioder.forEach((periode, index) => {
+  sorterteSykmeldingsperioder.forEach((periode, index) => {
     if (index > 0) {
-      const aktivPeriode = mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1];
+      const aktivPeriode = mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1];
       const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
 
       if (oppdatertPeriode) {
-        mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1] = oppdatertPeriode;
+        mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = oppdatertPeriode;
       } else {
-        mergedSykemeldingsperioder.push(periode);
+        mergedSykmeldingsperioder.push(periode);
       }
     }
   });
 
-  const tilstotendeSykemeldingsperioder = [mergedSykemeldingsperioder[0]];
-  mergedSykemeldingsperioder.forEach((periode) => {
-    const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
+  const tilstotendeSykmeldingsperioder = [mergedSykmeldingsperioder[0]];
+  mergedSykmeldingsperioder.forEach((periode) => {
+    const aktivPeriode = tilstotendeSykmeldingsperioder[tilstotendeSykmeldingsperioder.length - 1];
     const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
 
     if (oppdatertPeriode) {
-      tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
+      tilstotendeSykmeldingsperioder[tilstotendeSykmeldingsperioder.length - 1] = oppdatertPeriode;
     } else {
-      tilstotendeSykemeldingsperioder.push(periode);
+      tilstotendeSykmeldingsperioder.push(periode);
     }
   });
 
-  const bestemmendeFravaersdagFraFravaer =
-    tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined
-      ? tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom
-      : undefined;
+  // Fjerne overlappende perioder mellom fraværperioder og arbeidsgiverperioder. Hvis det er overlappende perioder, så er det arbeidsgiverperioden som er bestemmende
 
-  const forsteDagArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode[0]?.fom : undefined;
+  const samletSykePeriode = erstattPerioderSomHarBlittEndretAvArbeidsgiverperioder(
+    tilstotendeSykmeldingsperioder,
+    sorterteArbeidsgiverperioder
+  );
 
-  const bestemmendeFravaersdag = hvemDatoErStorst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
-    ? bestemmendeFravaersdagFraFravaer
-    : forsteDagArbeidsgiverperiode;
+  const samletPeriode = finnSorterteUnikePerioder([...samletSykePeriode, ...sorterteArbeidsgiverperioder]);
 
-  if (forespurtBestemmendeFraværsdag) {
-    const forespurtBestemmendeFravaersdagErStorst = hvemDatoErStorst(
-      bestemmendeFravaersdag,
-      forespurtBestemmendeFraværsdag
-    )
-      ? forespurtBestemmendeFraværsdag
-      : bestemmendeFravaersdag;
-    return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
-      representation: 'date'
-    });
-  }
+  const nyPeriode: Periode[] = [samletPeriode[0]] as Periode[];
+  samletPeriode.forEach((periode) => {
+    const aktivPeriode = nyPeriode[nyPeriode.length - 1];
+    const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
+
+    if (oppdatertPeriode) {
+      nyPeriode[nyPeriode.length - 1] = oppdatertPeriode;
+    } else {
+      nyPeriode.push(periode);
+    }
+  });
+
+  const bestemmendeFravaersdag =
+    nyPeriode[nyPeriode.length - 1].fom !== undefined ? nyPeriode[nyPeriode.length - 1].fom : undefined;
 
   if (bestemmendeFravaersdag !== undefined) {
     return formatISO9075(bestemmendeFravaersdag, {
@@ -119,13 +116,46 @@ const finnBestemmendeFravaersdag = (
 
 export default finnBestemmendeFravaersdag;
 
-export function finnSorterteUnikePerioder(fravaersperioder: Periode[]) {
-  const sorterteSykemeldingsperioder = [...fravaersperioder].sort((a, b) => {
+function erstattPerioderSomHarBlittEndretAvArbeidsgiverperioder(
+  tilstotendeSykmeldingsperioder: Periode[],
+  sorterteArbeidsgiverperioder: Periode[]
+) {
+  return tilstotendeSykmeldingsperioder.map((periode) => {
+    const arbeidsgiverperiode = sorterteArbeidsgiverperioder.find((ap) => {
+      return (
+        periode.fom &&
+        periode.tom &&
+        ap.fom &&
+        ap.tom &&
+        ((periode.fom < ap.fom && periode.tom > ap.fom) ||
+          (periode.fom < ap.tom && periode.tom > ap.tom) ||
+          (periode.tom < ap.fom && periode.tom > ap.tom) ||
+          (periode.tom > ap.fom && periode.tom < ap.tom))
+      );
+    });
+
+    if (arbeidsgiverperiode) {
+      return {
+        fom: arbeidsgiverperiode.fom,
+        tom: arbeidsgiverperiode.tom,
+        id: arbeidsgiverperiode.id
+      };
+    } else {
+      return {
+        fom: periode.fom,
+        tom: periode.tom,
+        id: periode.id
+      };
+    }
+  });
+}
+
+export function finnSorterteUnikePerioder(fravaersperioder: Periode[]): Array<Periode> {
+  const sorterteSykmeldingsperioder = [...fravaersperioder].sort((a, b) => {
     return compareAsc(a.fom || new Date(), b.fom || new Date());
   });
 
-  const unikeSykmeldingsperioder: Array<Periode> = finnUnikePerioder(sorterteSykemeldingsperioder);
-  return unikeSykmeldingsperioder;
+  return finnUnikePerioder(sorterteSykmeldingsperioder);
 }
 
 function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
@@ -133,21 +163,10 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
 
   aktivePerioder.forEach((periode, index) => {
     if (index > 0) {
-      if (periode.fom !== perioder[index - 1].fom && periode.tom !== perioder[index - 1].tom) {
+      if (periode.fom !== perioder[perioder.length - 1].fom && periode.tom !== perioder[perioder.length - 1].tom) {
         perioder.push(periode);
       }
     }
   });
   return perioder;
-}
-
-function hvemDatoErStorst(bestemmende?: Date, arbeidsgiverperiode?: Date): boolean {
-  if (!bestemmende) {
-    return true;
-  }
-
-  if (!arbeidsgiverperiode) {
-    return true;
-  }
-  return bestemmende > arbeidsgiverperiode;
 }
