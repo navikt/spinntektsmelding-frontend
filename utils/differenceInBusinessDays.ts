@@ -13,20 +13,7 @@ import isSameDay from 'date-fns/isSameDay';
 import isValid from 'date-fns/isValid';
 import isWeekend from 'date-fns/isWeekend';
 import toDate from 'date-fns/toDate';
-
-function toInteger(dirtyNumber: unknown): number {
-  if (dirtyNumber === null || dirtyNumber === true || dirtyNumber === false) {
-    return NaN;
-  }
-
-  const number = Number(dirtyNumber);
-
-  if (isNaN(number)) {
-    return number;
-  }
-
-  return number < 0 ? Math.ceil(number) : Math.floor(number);
-}
+import toInteger from './toInteger';
 
 function requiredArgs(required: number, args: IArguments): void {
   if (args.length < required) {

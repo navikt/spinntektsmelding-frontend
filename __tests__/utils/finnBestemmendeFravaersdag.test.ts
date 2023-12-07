@@ -171,7 +171,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2022-12-18')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-16');
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-02');
   });
 
   it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the past and the last day is the same, eller?', () => {

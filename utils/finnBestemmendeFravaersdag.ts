@@ -88,53 +88,14 @@ const finnBestemmendeFravaersdag = (
     }
   });
 
-  // const bestemmendeFravaersdag = hvemDatoErStorst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
-  //   ? bestemmendeFravaersdagFraFravaer
-  //   : forsteDagArbeidsgiverperiode;
+  // Fjerne overlappende perioder mellom fraværperioder og arbeidsgiverperioder. Hvis det er overlappende perioder, så er det arbeidsgiverperioden som er bestemmende
 
-  // if (forespurtBestemmendeFraværsdag) {
-  //   const forespurtBestemmendeFravaersdagErStorst = hvemDatoErStorst(
-  //     bestemmendeFravaersdag,
-  //     forespurtBestemmendeFraværsdag
-  //   )
-  //     ? forespurtBestemmendeFraværsdag
-  //     : bestemmendeFravaersdag;
-  //   return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
-  //     representation: 'date'
-  //   });
-  // }
-
-  // Fjerne overlappende perioder mellom frværsperioder og arbeidsgiverperioder. Hvis det er overlappende perioder, så er det arbeidsgiverperioden som er bestemmende
-
-  const samletSykePeriode = tilstotendeSykemeldingsperioder.map((periode) => {
-    const arbeidsgiverperiode = sorterteArbeidsgiverperioder.find((ap) => {
-      return (
-        periode.fom &&
-        periode.tom &&
-        ap.fom &&
-        ap.tom &&
-        ((periode.fom < ap.fom && periode.fom > ap.tom) || (periode.tom > ap.fom && periode.tom < ap.tom))
-      );
-    });
-    if (arbeidsgiverperiode) {
-      return {
-        fom: arbeidsgiverperiode.fom,
-        tom: arbeidsgiverperiode.tom,
-        id: arbeidsgiverperiode.id
-      };
-    } else {
-      return {
-        fom: periode.fom,
-        tom: periode.tom,
-        id: periode.id
-      };
-    }
-  });
+  const samletSykePeriode = erstattSykeperioderSomHarBlittEndretAvArbeidsgiverperioder(
+    tilstotendeSykemeldingsperioder,
+    sorterteArbeidsgiverperioder
+  );
 
   const samletPeriode = finnSorterteUnikePerioder([...samletSykePeriode, ...sorterteArbeidsgiverperioder]);
-
-  console.log('sorterteArbeidsgiverperioder', sorterteArbeidsgiverperioder);
-  console.log('samletPeriode', samletPeriode);
 
   const nyPeriode: Periode[] = [samletPeriode[0]] as Periode[];
   samletPeriode.forEach((periode) => {
@@ -147,8 +108,6 @@ const finnBestemmendeFravaersdag = (
       nyPeriode.push(periode);
     }
   });
-
-  console.log('nyPeriode', nyPeriode);
 
   const bestemmendeFravaersdagFraFravaer =
     nyPeriode[nyPeriode.length - 1].fom !== undefined ? nyPeriode[nyPeriode.length - 1].fom : undefined;
@@ -164,6 +123,40 @@ const finnBestemmendeFravaersdag = (
 
 export default finnBestemmendeFravaersdag;
 
+function erstattSykeperioderSomHarBlittEndretAvArbeidsgiverperioder(
+  tilstotendeSykemeldingsperioder: Periode[],
+  sorterteArbeidsgiverperioder: Periode[]
+) {
+  return tilstotendeSykemeldingsperioder.map((periode) => {
+    const arbeidsgiverperiode = sorterteArbeidsgiverperioder.find((ap) => {
+      return (
+        periode.fom &&
+        periode.tom &&
+        ap.fom &&
+        ap.tom &&
+        ((periode.fom < ap.fom && periode.tom > ap.fom) ||
+          (periode.fom < ap.tom && periode.tom > ap.tom) ||
+          (periode.tom < ap.fom && periode.tom > ap.tom) ||
+          (periode.tom > ap.fom && periode.tom < ap.tom))
+      );
+    });
+
+    if (arbeidsgiverperiode) {
+      return {
+        fom: arbeidsgiverperiode.fom,
+        tom: arbeidsgiverperiode.tom,
+        id: arbeidsgiverperiode.id
+      };
+    } else {
+      return {
+        fom: periode.fom,
+        tom: periode.tom,
+        id: periode.id
+      };
+    }
+  });
+}
+
 export function finnSorterteUnikePerioder(fravaersperioder: Periode[]) {
   const sorterteSykemeldingsperioder = [...fravaersperioder].sort((a, b) => {
     return compareAsc(a.fom || new Date(), b.fom || new Date());
@@ -178,21 +171,10 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
 
   aktivePerioder.forEach((periode, index) => {
     if (index > 0) {
-      if (periode.fom !== perioder[index - 1].fom && periode.tom !== perioder[index - 1].tom) {
+      if (periode.fom !== perioder[perioder.length - 1].fom && periode.tom !== perioder[perioder.length - 1].tom) {
         perioder.push(periode);
       }
     }
   });
   return perioder;
-}
-
-function hvemDatoErStorst(bestemmende?: Date, arbeidsgiverperiode?: Date): boolean {
-  if (!bestemmende) {
-    return true;
-  }
-
-  if (!arbeidsgiverperiode) {
-    return true;
-  }
-  return bestemmende > arbeidsgiverperiode;
 }
