@@ -3,11 +3,6 @@ import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
 
-export interface FravaersPeriode {
-  fom: Date;
-  tom: Date;
-}
-
 export const overlappendePeriode = (ene: Periode, andre: Periode) => {
   if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
   if (ene.tom < andre.fom || ene.fom > andre.tom) {
@@ -58,40 +53,40 @@ const finnBestemmendeFravaersdag = (
 
   const filtrertePerioder = fravaersperioder.filter((periode) => periode.fom && periode.tom);
 
-  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(filtrertePerioder);
+  const sorterteSykmeldingsperioder = finnSorterteUnikePerioder(filtrertePerioder);
   const sorterteArbeidsgiverperioder = arbeidsgiverperiode ? finnSorterteUnikePerioder(arbeidsgiverperiode) : [];
 
-  const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
+  const mergedSykmeldingsperioder = [sorterteSykmeldingsperioder[0]];
 
-  sorterteSykemeldingsperioder.forEach((periode, index) => {
+  sorterteSykmeldingsperioder.forEach((periode, index) => {
     if (index > 0) {
-      const aktivPeriode = mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1];
+      const aktivPeriode = mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1];
       const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
 
       if (oppdatertPeriode) {
-        mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1] = oppdatertPeriode;
+        mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = oppdatertPeriode;
       } else {
-        mergedSykemeldingsperioder.push(periode);
+        mergedSykmeldingsperioder.push(periode);
       }
     }
   });
 
-  const tilstotendeSykemeldingsperioder = [mergedSykemeldingsperioder[0]];
-  mergedSykemeldingsperioder.forEach((periode) => {
-    const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
+  const tilstotendeSykmeldingsperioder = [mergedSykmeldingsperioder[0]];
+  mergedSykmeldingsperioder.forEach((periode) => {
+    const aktivPeriode = tilstotendeSykmeldingsperioder[tilstotendeSykmeldingsperioder.length - 1];
     const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
 
     if (oppdatertPeriode) {
-      tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
+      tilstotendeSykmeldingsperioder[tilstotendeSykmeldingsperioder.length - 1] = oppdatertPeriode;
     } else {
-      tilstotendeSykemeldingsperioder.push(periode);
+      tilstotendeSykmeldingsperioder.push(periode);
     }
   });
 
   // Fjerne overlappende perioder mellom fraværperioder og arbeidsgiverperioder. Hvis det er overlappende perioder, så er det arbeidsgiverperioden som er bestemmende
 
-  const samletSykePeriode = erstattSykeperioderSomHarBlittEndretAvArbeidsgiverperioder(
-    tilstotendeSykemeldingsperioder,
+  const samletSykePeriode = erstattPerioderSomHarBlittEndretAvArbeidsgiverperioder(
+    tilstotendeSykmeldingsperioder,
     sorterteArbeidsgiverperioder
   );
 
@@ -109,10 +104,8 @@ const finnBestemmendeFravaersdag = (
     }
   });
 
-  const bestemmendeFravaersdagFraFravaer =
+  const bestemmendeFravaersdag =
     nyPeriode[nyPeriode.length - 1].fom !== undefined ? nyPeriode[nyPeriode.length - 1].fom : undefined;
-
-  const bestemmendeFravaersdag = bestemmendeFravaersdagFraFravaer;
 
   if (bestemmendeFravaersdag !== undefined) {
     return formatISO9075(bestemmendeFravaersdag, {
@@ -123,11 +116,11 @@ const finnBestemmendeFravaersdag = (
 
 export default finnBestemmendeFravaersdag;
 
-function erstattSykeperioderSomHarBlittEndretAvArbeidsgiverperioder(
-  tilstotendeSykemeldingsperioder: Periode[],
+function erstattPerioderSomHarBlittEndretAvArbeidsgiverperioder(
+  tilstotendeSykmeldingsperioder: Periode[],
   sorterteArbeidsgiverperioder: Periode[]
 ) {
-  return tilstotendeSykemeldingsperioder.map((periode) => {
+  return tilstotendeSykmeldingsperioder.map((periode) => {
     const arbeidsgiverperiode = sorterteArbeidsgiverperioder.find((ap) => {
       return (
         periode.fom &&
@@ -157,13 +150,12 @@ function erstattSykeperioderSomHarBlittEndretAvArbeidsgiverperioder(
   });
 }
 
-export function finnSorterteUnikePerioder(fravaersperioder: Periode[]) {
-  const sorterteSykemeldingsperioder = [...fravaersperioder].sort((a, b) => {
+export function finnSorterteUnikePerioder(fravaersperioder: Periode[]): Array<Periode> {
+  const sorterteSykmeldingsperioder = [...fravaersperioder].sort((a, b) => {
     return compareAsc(a.fom || new Date(), b.fom || new Date());
   });
 
-  const unikeSykmeldingsperioder: Array<Periode> = finnUnikePerioder(sorterteSykemeldingsperioder);
-  return unikeSykmeldingsperioder;
+  return finnUnikePerioder(sorterteSykmeldingsperioder);
 }
 
 function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {

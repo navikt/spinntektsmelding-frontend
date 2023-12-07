@@ -8,7 +8,7 @@
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "VITE_CJS_TRACE=true vitest run --coverage",
+    "test": "vitest run --coverage",
     "test:watch": "vitest",
     "prepare": "husky install",
     "cy:run": "cypress run",
