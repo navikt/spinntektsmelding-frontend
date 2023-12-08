@@ -107,21 +107,15 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
           })
         : [];
 
-      const opphoersdatoRefusjon = finnOpphoersdatoRefusjon(refusjon);
-
-      const refusjonPeriodeEtterAGPUtenOpphoersdato = [...refusjonPeriodeEtterAGP].filter((periode) => {
-        return periode.fom !== opphoersdatoRefusjon;
-      });
+      const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
 
       initRefusjonskravetOpphoerer(
         opphoersdatoRefusjon ? 'Ja' : 'Nei',
         opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
-        refusjonPeriodeEtterAGPUtenOpphoersdato.length > 0 ? 'Ja' : 'Nei'
+        refusjonPeriodeEtterAGP.length > 0 ? 'Ja' : 'Nei'
       );
 
-      const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(
-        refusjonPeriodeEtterAGPUtenOpphoersdato
-      );
+      const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjonPeriodeEtterAGP);
 
       initRefusjonEndringer(refusjonEndringer);
 
@@ -242,9 +236,13 @@ function refusjonPerioderTilRefusjonEndringer(perioder: MottattPeriodeRefusjon[]
 }
 
 function finnRefusjonIArbeidsgiverperioden(
-  refusjon: ForslagInntekt & ForslagRefusjon,
+  refusjon: (ForslagInntekt & ForslagRefusjon) | undefined,
   skjaeringstidspunkt: TDateISODate | undefined
 ): number {
+  if (!refusjon) {
+    return 0;
+  }
+
   if (!skjaeringstidspunkt) {
     return 0;
   }
@@ -254,18 +252,4 @@ function finnRefusjonIArbeidsgiverperioden(
   });
 
   return refusjonIAGP?.beloep || 0;
-}
-
-export function finnOpphoersdatoRefusjon(
-  refusjon: (ForslagInntekt & ForslagRefusjon) | undefined
-): TDateISODate | null {
-  if (!refusjon || !refusjon.perioder) {
-    return null;
-  }
-
-  const maxDato = refusjon?.perioder.reduce((prev, current) => {
-    return prev.fom > current.fom ? prev : current;
-  }, {} as MottattPeriodeRefusjon);
-
-  return !maxDato.beloep ? maxDato.fom : null;
 }
