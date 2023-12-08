@@ -8,6 +8,7 @@ import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbeta
 import skjemaVariant from '../config/skjemavariant';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import parseIsoDate from '../utils/parseIsoDate';
+import { logger } from '@navikt/next-logger';
 
 export type Opplysningstype = (typeof skjemaVariant)[keyof typeof skjemaVariant];
 
@@ -93,7 +94,11 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const refusjon = forespurtData?.refusjon?.forslag;
     const inntekt = forespurtData?.inntekt?.forslag;
     const arbeidsgiverperiodePaakrevd = forespurtData?.arbeidsgiverperiode?.paakrevd;
+    console.log('********************************');
 
+    console.log('forespurtData', forespurtData);
+    logger.info('forespurtData', forespurtData);
+    console.log('nå', new Date());
     if (!arbeidsgiverperiodePaakrevd) {
       const harEndringer = sjekkHarEndring(refusjon);
 
@@ -101,21 +106,18 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       settRefusjonsbelop(refusjonsbelop, harEndringer);
 
-      const refusjonPeriodeEtterAGP = refusjon
-        ? [...refusjon.perioder].filter((periode) => {
-            return periode.fom !== inntekt?.forrigeInntekt?.skjæringstidspunkt;
-          })
-        : [];
-
+      const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
+      console.log('nå', new Date());
+      console.log('refusjonPerioder', refusjonPerioder);
       const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
 
       initRefusjonskravetOpphoerer(
         opphoersdatoRefusjon ? 'Ja' : 'Nei',
         opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
-        refusjonPeriodeEtterAGP.length > 0 ? 'Ja' : 'Nei'
+        refusjonPerioder.length > 0 ? 'Ja' : 'Nei'
       );
 
-      const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjonPeriodeEtterAGP);
+      const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjonPerioder);
 
       initRefusjonEndringer(refusjonEndringer);
 

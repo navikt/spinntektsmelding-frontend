@@ -40,7 +40,6 @@ export default function useKvitteringInit() {
   const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
   const initFullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.initFullLonnIArbeidsgiverPerioden);
 
-  const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
 
   const initArbeidsgiverperioder = useBoundStore((state) => state.initArbeidsgiverperioder);
@@ -68,6 +67,7 @@ export default function useKvitteringInit() {
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const setSkjemaKvitteringEksterntSystem = useBoundStore((state) => state.setSkjemaKvitteringEksterntSystem);
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
+  const initRefusjonskravetOpphoerer = useBoundStore((state) => state.initRefusjonskravetOpphoerer);
 
   return async (kvitteringsData: KvitteringInit) => {
     let jsonData: KvitteringSkjema;
@@ -212,7 +212,9 @@ export default function useKvitteringInit() {
     }
 
     if (jsonData.refusjon.utbetalerHeleEllerDeler) {
-      setHarRefusjonEndringer(
+      initRefusjonskravetOpphoerer(
+        jsonData.refusjon.refusjonOpphører ? 'Ja' : 'Nei',
+        jsonData.refusjon.refusjonOpphører ? parseIsoDate(jsonData.refusjon.refusjonOpphører) : undefined,
         jsonData.refusjon.refusjonEndringer && jsonData.refusjon.refusjonEndringer.length > 0 ? 'Ja' : 'Nei'
       );
     }
