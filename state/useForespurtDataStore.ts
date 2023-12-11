@@ -8,7 +8,6 @@ import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbeta
 import skjemaVariant from '../config/skjemavariant';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import parseIsoDate from '../utils/parseIsoDate';
-import { logger } from '@navikt/next-logger';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 
 export type Opplysningstype = (typeof skjemaVariant)[keyof typeof skjemaVariant];
