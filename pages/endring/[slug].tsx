@@ -99,17 +99,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const kanBruttoinntektTilbakebestilles = useBoundStore((state) => state.kanBruttoinntektTilbakebestilles);
-  const [
-    opprinneligRefusjonEndringer,
-    opprinneligRefusjonskravetOpphoerer,
-    opprinneligHarRefusjonEndringer,
-    harRefusjonEndringer
-  ] = useBoundStore((state) => [
-    state.opprinneligRefusjonEndringer,
-    state.opprinneligRefusjonskravetOpphoerer,
-    state.opprinneligHarRefusjonEndringer,
-    state.harRefusjonEndringer
-  ]);
+  const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer, harRefusjonEndringer] = useBoundStore(
+    (state) => [
+      state.opprinneligRefusjonEndringer,
+      state.opprinneligRefusjonskravetOpphoerer,
+      state.harRefusjonEndringer
+    ]
+  );
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
