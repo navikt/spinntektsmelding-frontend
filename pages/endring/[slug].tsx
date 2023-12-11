@@ -30,6 +30,7 @@ import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import TextLabel from '../../components/TextLabel';
 import ButtonEndre from '../../components/ButtonEndre';
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
+import Naturalytelser from '../../components/Naturalytelser';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -483,6 +484,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   )}
                 </>
               )}
+              <Skillelinje />
+              <Naturalytelser />
               <ConfirmationPanel
                 className={styles.confirmationpanel}
                 checked={opplysningerBekreftet}

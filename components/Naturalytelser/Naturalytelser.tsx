@@ -33,6 +33,7 @@ export default function Naturalytelser() {
   };
 
   const checkedNaturalytelser = naturalytelser && naturalytelser.length > 0 ? true : false;
+  console.log('checkedNaturalytelser', naturalytelser);
 
   return (
     <>

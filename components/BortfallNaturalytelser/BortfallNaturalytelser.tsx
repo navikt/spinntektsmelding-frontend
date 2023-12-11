@@ -23,7 +23,7 @@ export default function BortfallNaturalytelser({ ytelser }: BortfallNaturalytels
       <tbody>
         {ytelser.map((ytelse) => (
           <tr key={ytelse.type}>
-            <td className={lokalStyles.type}>{naturalytelser[ytelse.type!]}</td>
+            <td className={lokalStyles.type}>{naturalytelser[ytelse.type!.toUpperCase()]}</td>
             <td>{formatDate(ytelse.bortfallsdato)}</td>
             <td>{formatCurrency(ytelse.verdi)} kr</td>
           </tr>
