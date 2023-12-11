@@ -134,7 +134,7 @@ const useNaturalytelserStore: StateCreator<
           bortfallsdato: parseIsoDate(ytelse.bortfallsdato),
           id: nanoid()
         }));
-        console.log('state.naturalytelser', state.naturalytelser);
+
         return state;
       })
     );

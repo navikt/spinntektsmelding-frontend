@@ -95,11 +95,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const refusjon = forespurtData?.refusjon?.forslag;
     const inntekt = forespurtData?.inntekt?.forslag;
     const arbeidsgiverperiodePaakrevd = forespurtData?.arbeidsgiverperiode?.paakrevd;
-    console.log('********************************');
 
-    console.log('forespurtData', forespurtData);
-    logger.info('forespurtData', forespurtData);
-    console.log('nå', new Date());
     if (!arbeidsgiverperiodePaakrevd) {
       const harEndringer = sjekkHarEndring(refusjon);
 
@@ -108,8 +104,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       settRefusjonsbelop(refusjonsbelop, harEndringer);
 
       const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
-      console.log('nå', new Date());
-      console.log('refusjonPerioder', refusjonPerioder);
       const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
 
       initRefusjonskravetOpphoerer(

@@ -480,8 +480,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   )}
                 </>
               )}
-              <Skillelinje />
-              <Naturalytelser />
+
               <ConfirmationPanel
                 className={styles.confirmationpanel}
                 checked={opplysningerBekreftet}

@@ -36,8 +36,6 @@ export default function RefusjonUtbetalingEndring({
     }
   };
 
-  console.log('harRefusjonEndring', harRefusjonEndring);
-
   const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const tmpEndringer = structuredClone(endringer);

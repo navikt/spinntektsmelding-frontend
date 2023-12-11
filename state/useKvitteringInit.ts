@@ -241,8 +241,6 @@ export default function useKvitteringInit() {
         verdi: ytelse.beløp
       }));
 
-      console.log('Ytelser', ytelser);
-
       initNaturalytelser(ytelser);
     }
 

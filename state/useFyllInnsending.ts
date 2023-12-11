@@ -199,6 +199,7 @@ export default function useFyllInnsending() {
     const forespurtData = hentPaakrevdOpplysningstyper();
 
     const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
+    const skalSendeNaturalytelser = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
@@ -268,6 +269,10 @@ export default function useFyllInnsending() {
 
     if (!paakrevdeData.includes(skjemaVariant.arbeidsgiverperiode)) {
       delete skjemaData.fullLønnIArbeidsgiverPerioden;
+    }
+
+    if (!skalSendeNaturalytelser) {
+      delete skjemaData.naturalytelser;
     }
 
     return skjemaData;
