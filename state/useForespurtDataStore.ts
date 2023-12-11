@@ -9,6 +9,7 @@ import skjemaVariant from '../config/skjemavariant';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import parseIsoDate from '../utils/parseIsoDate';
 import { logger } from '@navikt/next-logger';
+import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 
 export type Opplysningstype = (typeof skjemaVariant)[keyof typeof skjemaVariant];
 
@@ -232,7 +233,7 @@ function refusjonPerioderTilRefusjonEndringer(perioder: MottattPeriodeRefusjon[]
   return perioder.map((periode: MottattPeriodeRefusjon) => {
     return {
       dato: periode.fom ? parseISO(periode.fom) : undefined,
-      belop: periode.beloep || undefined
+      belop: ugyldigEllerNegativtTall(periode.beloep) ? undefined : periode.beloep
     };
   });
 }
