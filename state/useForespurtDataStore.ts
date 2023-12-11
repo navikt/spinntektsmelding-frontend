@@ -66,7 +66,6 @@ export interface ForespurtDataState {
   refusjonTilArbeidsgiver?: number;
   fastsattInntekt?: number;
   ukjentInntekt: boolean;
-  ukjentRefusjon: boolean;
   gammeltSkjaeringstidspunkt?: Date;
   paakrevdeOpplysninger?: Array<Opplysningstype>;
   initForespurtData: (forespurtData: MottattForespurtData) => void;
@@ -79,7 +78,6 @@ export interface ForespurtDataState {
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
   ukjentInntekt: false,
-  ukjentRefusjon: false,
   forespurtData: undefined,
   initForespurtData: (forespurtData) => {
     const initRefusjonEndringer = get().initRefusjonEndringer;
@@ -131,10 +129,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         state.forespurtData = forespurtData;
 
         settInntektsdataForrigeInnsending();
-
-        if (!forespurtData.refusjon?.forslag) {
-          state.ukjentRefusjon = true;
-        }
 
         return state;
 

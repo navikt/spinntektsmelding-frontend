@@ -3,6 +3,7 @@ import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { ForrigeInntekt, Opplysningstype } from '../../state/useForespurtDataStore';
 import { parseISO } from 'date-fns';
+import trengerDelvis from '../../mockdata/trenger-delvis.json';
 
 const initialState = useBoundStore.getState();
 
@@ -185,5 +186,22 @@ describe('useForespurtDataStore', () => {
     });
 
     expect(result.current.kanBruttoinntektTilbakebestilles()).toBeFalsy();
+  });
+
+  it('should hentOpplysningstyper', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const input: Opplysningstype[] = ['arbeidsgiverperiode', 'inntekt', 'refusjon'];
+
+    act(() => {
+      result.current.initForespurtData(trengerDelvis.forespurtData);
+    });
+
+    let typer;
+    act(() => {
+      typer = result.current.hentOpplysningstyper();
+    });
+
+    expect(typer).toEqual(input);
   });
 });
