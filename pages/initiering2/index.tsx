@@ -22,7 +22,7 @@ import environment from '../../config/environment';
 import { useRouter } from 'next/navigation';
 import Loading from '../../components/Loading/Loading';
 
-const initiering: NextPage = () => {
+const Initiering: NextPage = () => {
   const [visFeilmeldinger, setVisFeilmeldinger] = useState(false);
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
   const initPerson = useBoundStore((state) => state.initPerson);
@@ -192,4 +192,4 @@ const initiering: NextPage = () => {
   );
 };
 
-export default initiering;
+export default Initiering;

@@ -16,7 +16,7 @@ import visFeilmeldingsTekst from '../../utils/visFeilmeldingsTekst';
 import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 
-const initiering: NextPage = () => {
+const Initiering: NextPage = () => {
   const setIdentitetsnummer = useBoundStore((state) => state.setIdentitetsnummer);
   const [fnr, setFnr] = useState<string>('');
 
@@ -93,4 +93,4 @@ const initiering: NextPage = () => {
   );
 };
 
-export default initiering;
+export default Initiering;
