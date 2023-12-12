@@ -91,7 +91,7 @@ describe('useFyllInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
-    let innsending: InnsendingSkjema;
+    let innsending: InnsendingSkjema = {} as InnsendingSkjema;
 
     act(() => {
       innsending = fyllInnsending(false);
@@ -107,10 +107,13 @@ describe('useFyllInnsending', () => {
           tom: mottattKvittering.egenmeldingsperioder[0].tom
         }
       ]);
-      expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeFalsy();
-      expect(innsending.refusjon.refusjonPrMnd).toBeUndefined();
-      expect(innsending.refusjon.refusjonOpphører).toBeUndefined();
-      expect(innsending.refusjon.refusjonEndringer).toBeUndefined();
+      expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
+      expect(innsending.refusjon.refusjonPrMnd).toBe(80666.66666666667);
+      expect(innsending.refusjon.refusjonOpphører).toBe('2023-04-19');
+      expect(innsending.refusjon.refusjonEndringer).toEqual([
+        { beløp: 1234, dato: '2023-04-13' },
+        { beløp: 12345, dato: '2023-04-20' }
+      ]);
       expect(innsending.inntekt.beregnetInntekt).toBe(80666.66666666667);
       expect(innsending.inntekt.bekreftet).toBeTruthy();
     } else {

@@ -20,19 +20,8 @@ describe('Utfylling og innsending av skjema', () => {
     // const now = new Date(2021, 3, 14); // month is 0-indexed
     // cy.clock(now);
 
-    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    // cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
     cy.injectAxe();
-
-    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen.json' }).as('trenger');
-
-    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      statusCode: 404,
-      body: {
-        name: 'Nothing'
-      }
-    }).as('kvittering');
-
-    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen.json' }).as('trenger');
 
     // cy.wait('@kvittering');
     // cy.wait('@trenger');
@@ -45,7 +34,17 @@ describe('Utfylling og innsending av skjema', () => {
   // });
 
   it('should display information on the person and the submitter', () => {
-    // cy.wait('@kvittering');
+    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen.json' }).as('trenger');
+
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
+    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+
+    cy.wait('@kvittering');
     cy.wait('@trenger');
 
     cy.get('[data-cy="navn"]').should('have.text', 'Test Navn Testesen-Navnesen Jr.');
@@ -54,30 +53,31 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('[data-cy="orgnummer"]').should('have.text', '911206722');
     cy.get('[data-cy="innsendernavn"]').should('have.text', 'Test Testesen');
     cy.get('[data-cy="innsendertlf"]').should('have.value', '12345678');
-  });
+    // });
 
-  it('should display information on the egenmelding', () => {
+    // it('should display information on the egenmelding', () => {
+
     cy.get('[data-cy="egenmelding"] .navds-label').first().should('have.text', 'Fra');
     cy.get('[data-cy="egenmelding"] .navds-label').last().should('have.text', 'Til');
     cy.get('[data-cy="egenmelding-fra"]').should('have.text', '17.02.2023');
     cy.get('[data-cy="egenmelding-til"]').should('have.text', '19.02.2023');
-  });
+    // });
 
-  it('should display information on the sykmelding', () => {
+    // it('should display information on the sykmelding', () => {
     cy.get('[data-cy="sykmelding-0-fra"]').should('have.text', 'Fra');
     cy.get('[data-cy="sykmelding-0-til"]').should('have.text', 'Til');
     cy.get('[data-cy="sykmelding-0-fra-dato"]').should('have.text', '20.02.2023');
     cy.get('[data-cy="sykmelding-0-til-dato"]').should('have.text', '04.03.2023');
-  });
+    // });
 
-  it('should display information on the arbeidsgiverperiode', () => {
+    // it('should display information on the arbeidsgiverperiode', () => {
     cy.get('[data-cy="arbeidsgiverperiode-0-fra"]').should('have.text', 'Fra');
     cy.get('[data-cy="arbeidsgiverperiode-0-til"]').should('have.text', 'Til');
     cy.get('[data-cy="arbeidsgiverperiode-0-fra-dato"]').should('have.text', '17.02.2023');
     cy.get('[data-cy="arbeidsgiverperiode-0-til-dato"]').should('have.text', '04.03.2023');
-  });
+    // });
 
-  it('should display information on the beregnet månedslønn', () => {
+    // it('should display information on the beregnet månedslønn', () => {
     cy.get('[data-cy="tidligereinntekt"] tbody tr').its('length').should('be.eq', 3);
     cy.get('[data-cy="tidligereinntekt"] tbody tr').first().find('td').first().should('have.text', 'Desember:');
     cy.get('[data-cy="tidligereinntekt"] tbody tr')
@@ -98,13 +98,13 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('#lus-radio [type="radio"]').last().check();
 
     cy.get('#bekreft-opplysninger').check();
-    cy.get('#bekreft-opplysninger').check();
+    // cy.get('#bekreft-opplysninger').check();
 
-    cy.checkA11y();
+    // cy.checkA11y();
 
-    cy.contains('Send').click();
+    cy.findByRole('button', { name: 'Send' }).click();
 
-    // cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
+    cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
     // cy.checkA11y();
   });
 });

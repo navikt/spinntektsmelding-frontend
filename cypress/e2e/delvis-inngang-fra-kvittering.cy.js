@@ -128,7 +128,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
 
     cy.findByText('12345678').should('be.visible');
-    cy.findAllByText('Bonus').should('be.visible');
+    cy.findByText(/Bonus/).should('be.visible');
     cy.findAllByText(/50\s?000,00\s?kr\/måned/)
       .should('be.visible')
       .then((elements) => {

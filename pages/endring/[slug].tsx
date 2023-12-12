@@ -98,12 +98,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const kanBruttoinntektTilbakebestilles = useBoundStore((state) => state.kanBruttoinntektTilbakebestilles);
-  const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer, opprinneligHarRefusjonEndringer] =
-    useBoundStore((state) => [
+  const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer, harRefusjonEndringer] = useBoundStore(
+    (state) => [
       state.opprinneligRefusjonEndringer,
       state.opprinneligRefusjonskravetOpphoerer,
-      state.opprinneligHarRefusjonEndringer
-    ]);
+      state.harRefusjonEndringer
+    ]
+  );
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
@@ -246,7 +247,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrrige innsending';
   const kanIkkeTilbakestilles = !kanBruttoinntektTilbakebestilles();
 
-  const harEndringer = opprinneligHarRefusjonEndringer ?? lonnISykefravaeret?.status === 'Ja';
+  const harEndringer = harRefusjonEndringer;
 
   return (
     <div className={styles.container}>
@@ -445,7 +446,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
                         onHarEndringer={setHarRefusjonEndringer}
                         onOppdaterEndringer={oppdaterRefusjonEndringer}
-                        harRefusjonEndring={opprinneligHarRefusjonEndringer}
+                        harRefusjonEndring={harRefusjonEndringer}
                       />
 
                       <RadioGroup
@@ -478,6 +479,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   )}
                 </>
               )}
+
               <ConfirmationPanel
                 className={styles.confirmationpanel}
                 checked={opplysningerBekreftet}

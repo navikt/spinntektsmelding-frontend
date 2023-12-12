@@ -17,7 +17,7 @@
     "utbetalt": 99999
   },
   "refusjon": {
-    "utbetalerHeleEllerDeler": false,
+    "utbetalerHeleEllerDeler": true,
     "refusjonPrMnd": 80666.66666666667,
     "refusjonOpphører": "2023-04-19",
     "refusjonEndringer": [
