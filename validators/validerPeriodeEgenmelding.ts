@@ -1,6 +1,14 @@
 import { Periode } from '../state/state';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
-import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
+
+import {
+  feilRekkefoelgeFomTom,
+  forMangeDagerIPerioden,
+  manglerFomMenIkkeTomMedEnRad,
+  manglerFomOgIkkeBareEnRad,
+  manglerTomMenIkkeFomMedEnRad,
+  manglerTomOgIkkeBareEnRad
+} from './validerPeriodeFravaer';
 
 export enum PeriodeEgenmeldingFeilkode {
   OK = 'OK',
@@ -35,96 +43,8 @@ export default function validerPeriodeEgenmelding(perioder: Array<Periode>, pref
       feilRekkefoelgeFomTom(periode, feilkoder, prefix, index);
 
       forMangeDagerIPerioden(periode, feilkoder, prefix);
-
-      if (index > 0) {
-        if (Math.abs(differenceInCalendarDays(periode.fom as Date, perioder[index - 1].tom as Date)) > 16) {
-          feilkoder.push({
-            felt: `${prefix}-feil`,
-            code: PeriodeEgenmeldingFeilkode.FOR_MANGE_DAGER_MELLOM
-          });
-        }
-      }
     });
   }
 
   return feilkoder;
-}
-function forMangeDagerIPerioden(periode: Periode, feilkoder: ValiderResultat[], prefix: string) {
-  if (Math.abs(differenceInCalendarDays(periode.tom as Date, periode.fom as Date)) >= 16) {
-    feilkoder.push({
-      felt: `${prefix}-feil`,
-      code: PeriodeEgenmeldingFeilkode.FOR_MANGE_DAGER_I_PERIODE
-    });
-  }
-}
-
-function feilRekkefoelgeFomTom(periode: Periode, feilkoder: ValiderResultat[], prefix: string, index: number) {
-  if (periode.fom && periode.tom && periode.fom > periode.tom) {
-    feilkoder.push({
-      felt: `${prefix}[${index}].fom`,
-      code: PeriodeEgenmeldingFeilkode.TIL_FOR_FRA
-    });
-  }
-}
-
-function manglerFomMenIkkeTomMedEnRad(
-  tomPeriode: boolean,
-  manglerFomEllerTomMenIkkeBegge: boolean,
-  periode: Periode,
-  feilkoder: ValiderResultat[],
-  prefix: string,
-  index: number
-) {
-  if (tomPeriode && manglerFomEllerTomMenIkkeBegge && !periode.fom) {
-    feilkoder.push({
-      felt: `${prefix}[${index}].fom`,
-      code: PeriodeEgenmeldingFeilkode.MANGLER_FRA
-    });
-  }
-}
-
-function manglerTomMenIkkeFomMedEnRad(
-  tomPeriode: boolean,
-  manglerFomEllerTomMenIkkeBegge: boolean,
-  periode: Periode,
-  feilkoder: ValiderResultat[],
-  prefix: string,
-  index: number
-) {
-  if (tomPeriode && manglerFomEllerTomMenIkkeBegge && !periode.tom) {
-    feilkoder.push({
-      felt: `${prefix}[${index}].tom`,
-      code: PeriodeEgenmeldingFeilkode.MANGLER_TIL
-    });
-  }
-}
-
-function manglerTomOgIkkeBareEnRad(
-  periode: Periode,
-  tomPeriode: boolean,
-  feilkoder: ValiderResultat[],
-  prefix: string,
-  index: number
-) {
-  if (!periode.tom && !tomPeriode) {
-    feilkoder.push({
-      felt: `${prefix}[${index}].tom`,
-      code: PeriodeEgenmeldingFeilkode.MANGLER_TIL
-    });
-  }
-}
-
-function manglerFomOgIkkeBareEnRad(
-  periode: Periode,
-  tomPeriode: boolean,
-  feilkoder: ValiderResultat[],
-  prefix: string,
-  index: number
-) {
-  if (!periode.fom && !tomPeriode) {
-    feilkoder.push({
-      felt: `${prefix}[${index}].fom`,
-      code: PeriodeEgenmeldingFeilkode.MANGLER_FRA
-    });
-  }
 }

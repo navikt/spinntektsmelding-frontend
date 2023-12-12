@@ -1,12 +1,11 @@
 import MottattData from '../state/MottattData';
-import formeeeeData from './formData-refusjon';
 import testFnr from './testFnr';
 
 import trengerDelvis from './trenger-delvis.json';
 
-const formData = trengerDelvis as MottattData;
+// const formData = trengerDelvis as MottattData;
 
-const form2Data: Partial<MottattData> = {
+const formData: Partial<MottattData> = {
   // behandlingsdager: [],
   // behandlingsperiode: {
   //   fom: '2022-02-20',
@@ -21,7 +20,7 @@ const form2Data: Partial<MottattData> = {
   fravaersperioder: [
     {
       fom: '2023-02-20',
-      tom: '2023-03-04'
+      tom: '2023-03-01'
     },
     {
       fom: '2023-03-15',

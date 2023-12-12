@@ -155,29 +155,29 @@ describe('validerPeriodeEgenmelding', () => {
     expect(validerPeriodeEgenmelding(input, 'egenmeldingsperiode')).toEqual(expected);
   });
 
-  it('should fail if more than 16 days between periodes', () => {
-    const input: Array<Periode> = [
-      {
-        id: 'tilfeldig',
-        fom: new Date(2002, 9, 1),
-        tom: new Date(2002, 9, 10)
-      },
-      {
-        id: 'tilfeldig2',
-        fom: new Date(2002, 10, 1),
-        tom: new Date(2002, 10, 10)
-      }
-    ];
+  // it('should fail if more than 16 days between periodes', () => {
+  //   const input: Array<Periode> = [
+  //     {
+  //       id: 'tilfeldig',
+  //       fom: new Date(2002, 9, 1),
+  //       tom: new Date(2002, 9, 10)
+  //     },
+  //     {
+  //       id: 'tilfeldig2',
+  //       fom: new Date(2002, 10, 1),
+  //       tom: new Date(2002, 10, 10)
+  //     }
+  //   ];
 
-    const expected = [
-      {
-        code: 'FOR_MANGE_DAGER_MELLOM',
-        felt: 'egenmeldingsperiode-feil'
-      }
-    ];
+  //   const expected = [
+  //     {
+  //       code: 'FOR_MANGE_DAGER_MELLOM',
+  //       felt: 'egenmeldingsperiode-feil'
+  //     }
+  //   ];
 
-    expect(validerPeriodeEgenmelding(input, 'egenmeldingsperiode')).toEqual(expected);
-  });
+  //   expect(validerPeriodeEgenmelding(input, 'egenmeldingsperiode')).toEqual(expected);
+  // });
 
   it('should not fail if 16 days between periodes', () => {
     const input: Array<Periode> = [
