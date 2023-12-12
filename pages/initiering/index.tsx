@@ -35,7 +35,7 @@ const Initiering: NextPage = () => {
         z
           .string()
           .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
-          .max(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
+          .max(11, { message: 'Personnummeret er for lang, det må være 11 siffer' })
       )
       .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] });
     const validertFnr = skjemaFnr.safeParse(fnr);
