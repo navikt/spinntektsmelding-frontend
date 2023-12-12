@@ -39,6 +39,7 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
   const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
+  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
 
   const clickSlettEgenmeldingsperiode = (periode: string) => {
     logEvent('knapp klikket', {
@@ -82,6 +83,15 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
     tilbakestillEgenmelding();
   };
 
+  const sisteGyldigeEgenmeldingsdato = useMemo(() => {
+    const sortertArbeidsgiverperiode = arbeidsgiverperioder
+      ? [...arbeidsgiverperioder].sort((a, b) => ((a.fom || new Date()) > (b.fom || new Date()) ? -1 : 1))
+      : [];
+    return sortertArbeidsgiverperiode && sortertArbeidsgiverperiode?.[0]?.tom
+      ? sortertArbeidsgiverperiode?.[0]?.tom
+      : new Date();
+  }, [arbeidsgiverperioder]);
+
   return (
     <div className={localStyles.egenmeldingswrapper}>
       <Heading3>Egenmelding</Heading3>
@@ -109,7 +119,8 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
                 egenmeldingsperiode={egenmeldingsperiode}
                 endreEgenmeldingsperiode={endreEgenmeldingsperiode}
                 setEgenmeldingDato={setEgenmeldingDato}
-                toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
+                // toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
+                toDate={sisteGyldigeEgenmeldingsdato}
                 kanSlettes={!!(egenmeldingsperiode.fom || egenmeldingsperiode.tom || index !== 0)}
                 onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingsperiode.id)}
                 disabled={endretArbeidsgiverperiode}

@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import parseIsoDate from '../utils/parseIsoDate';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
-import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
+import validerPeriodeFravaer from '../validators/validerPeriodeFravaer';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
 import { MottattPeriode } from './MottattData';
@@ -98,7 +98,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           state.arbeidsgiverperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
           state.endretArbeidsgiverperiode = true;
 
-          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
+          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeFravaer(
             state.arbeidsgiverperioder,
             'arbeidsgiverperioder'
           );
@@ -113,7 +113,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           state.arbeidsgiverperioder = [{ id: nanoid() }];
           state.endretArbeidsgiverperiode = true;
 
-          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
+          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeFravaer(
             state.arbeidsgiverperioder,
             'arbeidsgiverperioder'
           );
@@ -140,7 +140,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
           state.endretArbeidsgiverperiode = true;
 
-          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeEgenmelding(
+          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeFravaer(
             state.arbeidsgiverperioder,
             'arbeidsgiverperioder'
           );

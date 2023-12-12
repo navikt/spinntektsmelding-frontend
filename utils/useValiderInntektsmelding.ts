@@ -15,6 +15,7 @@ import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../val
 import useBoundStore from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
 import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
+import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -45,6 +46,7 @@ type codeUnion =
   | BekreftOpplysningerFeilkoder
   | EndringAvMaanedslonnFeilkode
   | PeriodeEgenmeldingFeilkode
+  | PeriodeFravaerFeilkode
   | TelefonFeilkode;
 
 export interface ValiderResultat {
@@ -119,7 +121,7 @@ export default function useValiderInntektsmelding() {
     feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);
 
     if (state.arbeidsgiverperioder && !kunInntektOgRefusjon) {
-      feilkoderArbeidsgiverperioder = validerPeriodeEgenmelding(state.arbeidsgiverperioder, 'arbeidsgiverperioder');
+      feilkoderArbeidsgiverperioder = validerPeriodeFravaer(state.arbeidsgiverperioder, 'arbeidsgiverperioder');
     }
 
     feilkoderTelefon = validerTelefon(state.innsenderTelefonNr);
