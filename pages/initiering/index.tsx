@@ -8,7 +8,7 @@ import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import styles from '../../styles/Home.module.css';
-import lokalStyles from './Initsiering.module.css';
+import lokalStyles from './initiering.module.css';
 import useBoundStore from '../../state/useBoundStore';
 import { FormEvent, useState } from 'react';
 import isFnrNumber from '../../utils/isFnrNumber';
@@ -16,7 +16,7 @@ import visFeilmeldingsTekst from '../../utils/visFeilmeldingsTekst';
 import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 
-const Initsiering: NextPage = () => {
+const initiering: NextPage = () => {
   const setIdentitetsnummer = useBoundStore((state) => state.setIdentitetsnummer);
   const [fnr, setFnr] = useState<string>('');
 
@@ -43,7 +43,7 @@ const Initsiering: NextPage = () => {
     if (validertFnr.success) {
       setFeilmeldinger(undefined);
       setIdentitetsnummer(validertFnr.data);
-      router.push('/initsiering2', { scroll: false });
+      router.push('/initiering2', { scroll: false });
     } else {
       console.log('Feil i fnr', validertFnr.error);
       const feilmeldinger = formatZodFeilmeldinger(validertFnr);
@@ -93,4 +93,4 @@ const Initsiering: NextPage = () => {
   );
 };
 
-export default Initsiering;
+export default initiering;

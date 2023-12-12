@@ -6,7 +6,7 @@ import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import styles from '../../styles/Home.module.css';
-import lokalStyles from './Initsiering.module.css';
+import lokalStyles from './initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -15,14 +15,14 @@ import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectA
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
 import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
-import initsieringSchema from '../../schema/initsieringSchema';
+import initieringSchema from '../../schema/initieringSchema';
 import useSWRImmutable from 'swr/immutable';
 import fetcherArbeidsforhold, { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
 import environment from '../../config/environment';
 import { useRouter } from 'next/navigation';
 import Loading from '../../components/Loading/Loading';
 
-const Initsiering: NextPage = () => {
+const initiering: NextPage = () => {
   const [visFeilmeldinger, setVisFeilmeldinger] = useState(false);
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
   const initPerson = useBoundStore((state) => state.initPerson);
@@ -39,7 +39,7 @@ const Initsiering: NextPage = () => {
   const onChangeArbeidsgiverSelect = (orgNr: string) => {
     const organisasjonsnummerValidering = z.string();
     const verdi = organisasjonsnummerValidering.safeParse(orgNr);
-    const skjema = initsieringSchema;
+    const skjema = initieringSchema;
 
     if (verdi.success) {
       organisasjonsnummer.current = verdi.data;
@@ -59,7 +59,7 @@ const Initsiering: NextPage = () => {
   };
 
   const submitForm = (e: FormEvent<HTMLFormElement>) => {
-    const skjema = initsieringSchema;
+    const skjema = initieringSchema;
     e.preventDefault();
     setVisFeilmeldinger(true);
     const skjemaData = {
@@ -168,7 +168,7 @@ const Initsiering: NextPage = () => {
                   )}
                 </div>
               </div>
-              <div>
+              <div className={lokalStyles.knapperad}>
                 <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
                   Tilbake
                 </Button>
@@ -192,4 +192,4 @@ const Initsiering: NextPage = () => {
   );
 };
 
-export default Initsiering;
+export default initiering;

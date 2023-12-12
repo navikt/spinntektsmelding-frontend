@@ -22,3 +22,9 @@
 .navn {
   min-width: 10rem;
 }
+
+.knapperad {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
