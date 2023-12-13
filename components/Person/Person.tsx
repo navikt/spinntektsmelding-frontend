@@ -53,7 +53,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
     hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
   } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`;
 
-  const feilmeldingstekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
+  const feilmeldingTekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
 
   const skjemadataErLastet = !!identitetsnummer;
 
@@ -65,7 +65,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
           opplysningene vi har om den ansatte og sykefraværet. Vi gjør dere oppmerksom på at den ansatte vil få tilgang
           til å se innsendt informasjon etter personopplysningslovens artikkel 15 og forvaltningsloven § 18.
           {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
-            <Alert variant='info'>{feilmeldingstekst}</Alert>
+            <Alert variant='info'>{feilmeldingTekst}</Alert>
           )}
         </p>
       )}
@@ -75,17 +75,17 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
           om inntekt og refusjon.
         </p>
       )}
-      <div className={lokalStyles.personinfowrapper}>
-        <div className={lokalStyles.denansatte}>
+      <div className={lokalStyles.personInfoWrapper}>
+        <div className={lokalStyles.denAnsatte}>
           <Heading3>Den ansatte</Heading3>
-          <div className={lokalStyles.ytreansattwrapper}>
+          <div className={lokalStyles.ytreAnsattWrapper}>
             {!hentingAvPersondataFeilet && (
-              <div className={lokalStyles.ansattwrapper}>
+              <div className={lokalStyles.ansattWrapper}>
                 <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>{navn || <Skeleton variant='text' width='90%' height={28} />}</div>
+                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, navn)}</div>
               </div>
             )}
-            <div className={lokalStyles.ansattwrapper}>
+            <div className={lokalStyles.ansattWrapper}>
               <TextLabel>Personnummer</TextLabel>
               <div data-cy='identitetsnummer'>
                 {identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
@@ -96,9 +96,9 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
         <div>
           <Heading3>Arbeidsgiveren</Heading3>
 
-          <div className={lokalStyles.arbeidsgiverwrapper}>
+          <div className={lokalStyles.arbeidsgiverWrapper}>
             {!hentingAvArbeidsgiverdataFeilet && (
-              <div className={lokalStyles.virksomhetsnavnwrapper}>
+              <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
                   {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
@@ -106,24 +106,24 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               </div>
             )}
             {hentingAvArbeidsgiverdataFeilet && (
-              <div className={lokalStyles.virksomhetsnavnwrapper}>
+              <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>&nbsp;</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
                   &nbsp;
                 </div>
               </div>
             )}
-            <div className={lokalStyles.orgnrnavnwrapper}>
+            <div className={lokalStyles.orgnrNavnWrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
               <div data-cy='orgnummer'>{orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}</div>
             </div>
-            <div className={lokalStyles.innsendernavnwrapper}>
+            <div className={lokalStyles.innsenderNavnWrapper}>
               <TextLabel>Innsender</TextLabel>
               <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {innsenderNavn ?? <Skeleton variant='text' width='90%' height={28} />}
+                {skeletonLoader(skjemadataErLastet, innsenderNavn)}
               </div>
             </div>
-            <div className={lokalStyles.telefonnrwrapper}>
+            <div className={lokalStyles.telefonWrapper}>
               {erKvittering && (
                 <>
                   <TextLabel>Telefon innsender</TextLabel>
@@ -151,4 +151,8 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
       </div>
     </>
   );
+}
+
+function skeletonLoader(laster: boolean, tekst?: string) {
+  return laster ? tekst : <Skeleton variant='text' width='90%' height={28} />;
 }
