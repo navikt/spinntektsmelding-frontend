@@ -122,7 +122,7 @@ const Initiering: NextPage = () => {
       // });
     }
   }
-  const visFeilemldingsliste =
+  const visFeilmeldingliste =
     (feilmeldinger && feilmeldinger.length > 0) || (backendFeil.current && backendFeil.current.length > 0);
   return (
     <div className={styles.container}>
@@ -180,7 +180,7 @@ const Initiering: NextPage = () => {
               </div>
             </form>
             <FeilListe
-              skalViseFeilmeldinger={visFeilemldingsliste}
+              skalViseFeilmeldinger={visFeilmeldingliste}
               feilmeldinger={feilmeldinger ? [...feilmeldinger, ...backendFeil.current] : [...backendFeil.current]}
             />
           </div>
