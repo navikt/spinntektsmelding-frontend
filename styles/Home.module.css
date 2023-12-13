@@ -3,7 +3,7 @@
 }
 
 .padded {
-  padding      : 1rem 2.5rem;
+  padding: 1rem 2.5rem;
   margin-bottom: 2rem;
 }
 
@@ -17,23 +17,23 @@
 
 .endresykemelding,
 .endrebutton {
-  width     : 33%;
+  width: 33%;
   align-self: end;
 }
 
 .endresykemeldingknapper {
-  padding-top    : 2rem;
-  display        : flex;
+  padding-top: 2rem;
+  display: flex;
   justify-content: space-between;
 }
 
 .datepickerescape {
-  display     : inline-block;
+  display: inline-block;
   margin-right: 2rem;
 }
 
 .datepickerlabel {
-  display      : inline-block;
+  display: inline-block;
   margin-bottom: var(--a-spacing-2);
 }
 
@@ -52,9 +52,9 @@
 }
 
 .endrebutton {
-  max-width : 10rem;
+  max-width: 10rem;
   align-self: initial;
-  height    : min-content;
+  height: min-content;
 }
 
 .legtilbutton {
@@ -63,8 +63,8 @@
 
 .kontrollerknapp {
   margin-top: auto;
-  height    : 3rem;
-  display   : inline-block;
+  height: 3rem;
+  display: inline-block;
 }
 
 .sendbutton {
@@ -72,33 +72,32 @@
 }
 
 .personinfowrapper {
-  display       : flex;
-  gap           : 4rem;
+  display: flex;
+  gap: 4rem;
   flex-direction: row;
 }
 
-
 .virksomhetsnavn {
-  white-space  : nowrap;
-  overflow     : hidden;
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
-  margin-top   : 1rem;
+  margin-top: 1rem;
 }
 
-.arbeidsgiverwrapper {
+.arbeidsgiverWrapper {
   display: flex;
-  gap    : 2rem;
+  gap: 2rem;
 }
 
 .periodewrapper {
   display: flex;
-  gap    : 2rem;
-  margin : 1rem 0;
+  gap: 2rem;
+  margin: 1rem 0;
 }
 
-.radiobuttonwrapper>div {
+.radiobuttonwrapper > div {
   display: flex;
-  gap    : 2rem;
+  gap: 2rem;
 }
 
 .radiobuttonwrapper {
@@ -106,12 +105,12 @@
 }
 
 .opphrefkravperiode {
-  margin: 1rem 0 .5rem
+  margin: 1rem 0 0.5rem;
 }
 
 .naturalytelser {
-  display      : flex;
-  gap          : 2rem;
+  display: flex;
+  gap: 2rem;
   margin-bottom: var(--a-spacing-2);
 }
 
@@ -120,7 +119,7 @@
 }
 
 .lukkelenke {
-  margin-top   : auto;
+  margin-top: auto;
   margin-bottom: auto;
 }
 
@@ -130,7 +129,7 @@
 
 .buttonwrapper {
   display: flex;
-  gap    : 4rem;
+  gap: 4rem;
 }
 
 @media screen and (max-width: 800px) {
@@ -140,7 +139,7 @@
 }
 
 @media screen and (max-width: 600px) {
-  .arbeidsgiverwrapper {
+  .arbeidsgiverWrapper {
     flex-direction: column;
   }
 
@@ -151,13 +150,13 @@
 
 @media screen and (max-width: 500px) {
   .periodewrapper {
-    flex-direction  : column;
-    border          : 1px solid darkgray;
-    border-radius   : 5px;
+    flex-direction: column;
+    border: 1px solid darkgray;
+    border-radius: 5px;
     background-color: var(--a-bg-subtle);
-    padding         : 0.5rem;
-    box-shadow      : 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
-    margin          : 0.25rem 0;
+    padding: 0.5rem;
+    box-shadow: 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
+    margin: 0.25rem 0;
   }
 
   .datepickerescape {

@@ -1,4 +1,4 @@
-.arbeidsgiverwrapper,
+.arbeidsgiverWrapper,
 .ytreansattwrapper,
 .personinfowrapper {
   display: grid;
@@ -10,7 +10,7 @@
   flex-direction: column;
 }
 
-.telefonnrwrapper,
+.telefonWrapper,
 .innsendernavnwrapper {
   margin-top: 1rem;
 }
@@ -27,14 +27,14 @@
 }
 
 @media screen and (max-width: 450px) {
-  .arbeidsgiverwrapper,
+  .arbeidsgiverWrapper,
   .ytreansattwrapper {
     display: grid;
     grid-template-columns: [col1] auto;
   }
 
   .innsendernavnwrapper,
-  .virksomhetsnavnwrapper,
+  .virksomhetsnavnWrapper,
   .ansattwrapper {
     margin-bottom: 0.75rem;
   }

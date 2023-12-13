@@ -53,7 +53,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
     hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
   } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`;
 
-  const feilmeldingstekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
+  const feilmeldingTekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
 
   const skjemadataErLastet = !!identitetsnummer;
 
@@ -65,7 +65,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
           opplysningene vi har om den ansatte og sykefraværet. Vi gjør dere oppmerksom på at den ansatte vil få tilgang
           til å se innsendt informasjon etter personopplysningslovens artikkel 15 og forvaltningsloven § 18.
           {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
-            <Alert variant='info'>{feilmeldingstekst}</Alert>
+            <Alert variant='info'>{feilmeldingTekst}</Alert>
           )}
         </p>
       )}
@@ -96,9 +96,9 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
         <div>
           <Heading3>Arbeidsgiveren</Heading3>
 
-          <div className={lokalStyles.arbeidsgiverwrapper}>
+          <div className={lokalStyles.arbeidsgiverWrapper}>
             {!hentingAvArbeidsgiverdataFeilet && (
-              <div className={lokalStyles.virksomhetsnavnwrapper}>
+              <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
                   {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
@@ -106,7 +106,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               </div>
             )}
             {hentingAvArbeidsgiverdataFeilet && (
-              <div className={lokalStyles.virksomhetsnavnwrapper}>
+              <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>&nbsp;</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
                   &nbsp;
