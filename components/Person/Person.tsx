@@ -82,9 +82,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             {!hentingAvPersondataFeilet && (
               <div className={lokalStyles.ansattwrapper}>
                 <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>
-                  {skjemadataErLastet ? navn : <Skeleton variant='text' width='90%' height={28} />}
-                </div>
+                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, navn)}</div>
               </div>
             )}
             <div className={lokalStyles.ansattwrapper}>
@@ -122,7 +120,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             <div className={lokalStyles.innsendernavnwrapper}>
               <TextLabel>Innsender</TextLabel>
               <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {skjemadataErLastet ? innsenderNavn : <Skeleton variant='text' width='90%' height={28} />}
+                {skeletonLoader(skjemadataErLastet, innsenderNavn)}
               </div>
             </div>
             <div className={lokalStyles.telefonnrwrapper}>
@@ -153,4 +151,8 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
       </div>
     </>
   );
+}
+
+function skeletonLoader(laster: boolean, tekst?: string) {
+  return laster ? tekst : <Skeleton variant='text' width='90%' height={28} />;
 }
