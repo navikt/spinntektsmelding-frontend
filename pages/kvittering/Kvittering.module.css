@@ -1,4 +1,4 @@
-.ansattwrapper {
+.ansattWrapper {
   display: flex;
   flex-direction: column;
 }
@@ -84,8 +84,8 @@
 }
 
 .arbeidsgiverWrapper,
-.ytreansattwrapper,
-.personinfowrapper,
+.ytreAnsattWrapper,
+.personInfoWrapper,
 .fravaerswrapperwrapper {
   display: grid;
   grid-template-columns: [col1] 50% [col2] auto;

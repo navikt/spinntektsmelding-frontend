@@ -71,7 +71,7 @@
   min-width: 10rem;
 }
 
-.personinfowrapper {
+.personInfoWrapper {
   display: flex;
   gap: 4rem;
   flex-direction: row;
@@ -133,7 +133,7 @@
 }
 
 @media screen and (max-width: 800px) {
-  .personinfowrapper {
+  .personInfoWrapper {
     flex-direction: column;
   }
 }

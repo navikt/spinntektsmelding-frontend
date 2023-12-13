@@ -75,17 +75,17 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
           om inntekt og refusjon.
         </p>
       )}
-      <div className={lokalStyles.personinfowrapper}>
-        <div className={lokalStyles.denansatte}>
+      <div className={lokalStyles.personInfoWrapper}>
+        <div className={lokalStyles.denAnsatte}>
           <Heading3>Den ansatte</Heading3>
-          <div className={lokalStyles.ytreansattwrapper}>
+          <div className={lokalStyles.ytreAnsattWrapper}>
             {!hentingAvPersondataFeilet && (
-              <div className={lokalStyles.ansattwrapper}>
+              <div className={lokalStyles.ansattWrapper}>
                 <TextLabel>Navn</TextLabel>
                 <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, navn)}</div>
               </div>
             )}
-            <div className={lokalStyles.ansattwrapper}>
+            <div className={lokalStyles.ansattWrapper}>
               <TextLabel>Personnummer</TextLabel>
               <div data-cy='identitetsnummer'>
                 {identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
@@ -113,17 +113,17 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
                 </div>
               </div>
             )}
-            <div className={lokalStyles.orgnrnavnwrapper}>
+            <div className={lokalStyles.orgnrNavnWrapper}>
               <TextLabel>Org.nr. for underenhet</TextLabel>
               <div data-cy='orgnummer'>{orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}</div>
             </div>
-            <div className={lokalStyles.innsendernavnwrapper}>
+            <div className={lokalStyles.innsenderNavnWrapper}>
               <TextLabel>Innsender</TextLabel>
               <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
                 {skeletonLoader(skjemadataErLastet, innsenderNavn)}
               </div>
             </div>
-            <div className={lokalStyles.telefonnrwrapper}>
+            <div className={lokalStyles.telefonWrapper}>
               {erKvittering && (
                 <>
                   <TextLabel>Telefon innsender</TextLabel>

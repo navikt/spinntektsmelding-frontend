@@ -1,41 +1,41 @@
 .arbeidsgiverWrapper,
-.ytreansattwrapper,
-.personinfowrapper {
+.ytreAnsattWrapper,
+.personInfoWrapper {
   display: grid;
   grid-template-columns: [col1] 50% [col2] auto;
 }
 
-.ansattwrapper {
+.ansattWrapper {
   display: flex;
   flex-direction: column;
 }
 
 .telefonWrapper,
-.innsendernavnwrapper {
+.innsenderNavnWrapper {
   margin-top: 1rem;
 }
 
 @media screen and (max-width: 800px) {
-  .personinfowrapper {
+  .personInfoWrapper {
     display: grid;
     grid-template-columns: [col1] auto;
   }
 
-  .denansatte {
+  .denAnsatte {
     margin-bottom: 1rem;
   }
 }
 
 @media screen and (max-width: 450px) {
   .arbeidsgiverWrapper,
-  .ytreansattwrapper {
+  .ytreAnsattWrapper {
     display: grid;
     grid-template-columns: [col1] auto;
   }
 
-  .innsendernavnwrapper,
+  .innsenderNavnWrapper,
   .virksomhetsnavnWrapper,
-  .ansattwrapper {
+  .ansattWrapper {
     margin-bottom: 0.75rem;
   }
 }
