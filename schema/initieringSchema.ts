@@ -13,7 +13,7 @@ export default z.object({
         .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
     )
     .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver', path: ['organisasjonsnummer'] }),
-  navn: z.string().min(1),
+  fulltNavn: z.string().min(1),
   personnummer: z
     .string()
     .transform((val) => val.replace(/\s/g, ''))

@@ -30,6 +30,7 @@ const Initiering: NextPage = () => {
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
   const router = useRouter();
   const organisasjonsnummer = useRef('');
+  const fulltNavn = useRef('');
   const backendFeil = useRef([] as Feilmelding[]);
 
   const { data, error } = useSWRImmutable([environment.initsierBlankSkjemaUrl, identitetsnummer], ([url, idToken]) =>
@@ -46,7 +47,7 @@ const Initiering: NextPage = () => {
 
       const skjemaData = {
         organisasjonsnummer: organisasjonsnummer.current,
-        navn: 'navn',
+        navn: fulltNavn.current,
         personnummer: identitetsnummer
       };
 
@@ -64,28 +65,24 @@ const Initiering: NextPage = () => {
     setVisFeilmeldinger(true);
     const skjemaData = {
       organisasjonsnummer: organisasjonsnummer.current,
-      navn: 'navn',
+      fulltNavn: fulltNavn.current,
       personnummer: identitetsnummer
     };
 
     const validationResult = skjema.safeParse(skjemaData);
 
     if (validationResult.success) {
-      console.log('submitForm', validationResult);
       const validert = validationResult.data;
       const orgNavn = arbeidsforhold.find(
         (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validert.organisasjonsnummer
       )?.virksomhetsnavn!;
-      initPerson(validert.navn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
+      initPerson(validert.fulltNavn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
       router.push('/blank');
       setFeilmeldinger(undefined);
     } else {
-      console.log('validationResult', validationResult.error.format());
-
       const tmpFeilmeldinger: Feilmelding[] = formatZodFeilmeldinger(validationResult);
       setFeilmeldinger(tmpFeilmeldinger);
       setVisFeilmeldinger(true);
-      console.log('feilmeldinger', tmpFeilmeldinger);
     }
   };
 
@@ -106,6 +103,7 @@ const Initiering: NextPage = () => {
       if (arbeidsforhold.length === 1) {
         organisasjonsnummer.current = arbeidsforhold[0].orgnrUnderenhet;
       }
+      fulltNavn.current = mottatteData.data.fulltNavn;
       backendFeil.current = [];
     }
 
@@ -147,7 +145,7 @@ const Initiering: NextPage = () => {
               <div className={lokalStyles.persondata}>
                 <div className={lokalStyles.navn}>
                   <TextLabel>Navn</TextLabel>
-                  <p></p>
+                  <p>{fulltNavn.current}</p>
                 </div>
                 <div>
                   <TextLabel>Personnummer</TextLabel>

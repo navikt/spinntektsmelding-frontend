@@ -6,7 +6,6 @@ export default function formatZodFeilmeldinger(validationResult: SafeParseReturn
   }
 
   const formaterteFeilmeldinger = validationResult.error.format();
-  console.log('formaterteFeilmeldinger', formaterteFeilmeldinger);
   return Object.keys(formaterteFeilmeldinger)
     .filter((feil) => feil !== '_errors')
     .map((feil) => {

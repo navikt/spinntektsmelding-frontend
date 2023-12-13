@@ -21,6 +21,7 @@ export default function fetcherArbeidsforhold(url: string, identitetsnummer?: st
 }
 
 export const endepunktArbeidsforholdSchema = z.object({
+  fulltNavn: z.string(),
   underenheter: z.array(
     z
       .object({

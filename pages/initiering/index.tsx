@@ -45,9 +45,8 @@ const Initiering: NextPage = () => {
       setIdentitetsnummer(validertFnr.data);
       router.push('/initiering2', { scroll: false });
     } else {
-      console.log('Feil i fnr', validertFnr.error);
       const feilmeldinger = formatZodFeilmeldinger(validertFnr);
-      console.log('Feilmeldinger', feilmeldinger);
+
       setFeilmeldinger(feilmeldinger);
     }
   };
