@@ -243,7 +243,7 @@ describe('useBoundStore', () => {
     expect(inntekter).toEqual(expected);
   });
 
-  it.skip('should rekalkulerBruttioinntekt', () => {
+  it.skip('should rekalkulerBruttoinntekt', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -251,7 +251,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.rekalkulerBruttioinntekt(new Date(2002, 11, 11));
+      result.current.rekalkulerBruttoinntekt(new Date(2002, 11, 11));
     });
 
     expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');

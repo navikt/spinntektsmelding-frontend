@@ -32,6 +32,7 @@ import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
 import { useSearchParams } from 'next/navigation';
+import { SkjemaStatus } from '../state/useSkjemadataStore';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -51,6 +52,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
+  const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
@@ -86,7 +88,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   };
 
   useEffect(() => {
-    if (pathSlug === 'blank') {
+    if (skjemastatus === SkjemaStatus.BLANK) {
       return;
     }
     if (!fravaersperioder) {
@@ -130,7 +132,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Egenmelding lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
-          <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} />
+          <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
 
           <Skillelinje />
 

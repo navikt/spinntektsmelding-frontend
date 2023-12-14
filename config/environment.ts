@@ -67,7 +67,7 @@ class Environment {
 
   public hentArbeidsgivereUrl = '/im-dialog/api/arbeidsgivere';
 
-  public initsierBlankSkjemaUrl = '/im-dialog/api/aktiveorgnr';
+  public initierBlankSkjemaUrl = '/im-dialog/api/aktiveorgnr';
 
   public amplitudeEnabled = true;
 

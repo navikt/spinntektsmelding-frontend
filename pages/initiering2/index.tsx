@@ -21,11 +21,13 @@ import fetcherArbeidsforhold, { endepunktArbeidsforholdSchema } from '../../util
 import environment from '../../config/environment';
 import { useRouter } from 'next/navigation';
 import Loading from '../../components/Loading/Loading';
+import { SkjemaStatus } from '../../state/useSkjemadataStore';
 
 const Initiering: NextPage = () => {
   const [visFeilmeldinger, setVisFeilmeldinger] = useState(false);
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
   const initPerson = useBoundStore((state) => state.initPerson);
+  const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const [feilmeldinger, setFeilmeldinger] = useState<Feilmelding[] | undefined>(undefined);
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
   const router = useRouter();
@@ -33,7 +35,7 @@ const Initiering: NextPage = () => {
   const fulltNavn = useRef('');
   const backendFeil = useRef([] as Feilmelding[]);
 
-  const { data, error } = useSWRImmutable([environment.initsierBlankSkjemaUrl, identitetsnummer], ([url, idToken]) =>
+  const { data, error } = useSWRImmutable([environment.initierBlankSkjemaUrl, identitetsnummer], ([url, idToken]) =>
     fetcherArbeidsforhold(url, idToken)
   );
 
@@ -77,6 +79,7 @@ const Initiering: NextPage = () => {
         (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validert.organisasjonsnummer
       )?.virksomhetsnavn!;
       initPerson(validert.fulltNavn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
+      setSkjemaStatus(SkjemaStatus.BLANK);
       router.push('/blank');
       setFeilmeldinger(undefined);
     } else {

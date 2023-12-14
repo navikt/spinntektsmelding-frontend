@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import useBoundStore from '../../state/useBoundStore';
+import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import EgenmeldingLoader from '../Egenmelding/EgenmeldingLoader';
 import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
@@ -6,14 +8,24 @@ import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
 interface FravaersperiodeProps {
   lasterData?: boolean;
   setIsDirtyForm: (dirty: boolean) => void;
+  skjemastatus?: SkjemaStatus;
 }
-export default function Fravaersperiode({ lasterData, setIsDirtyForm }: FravaersperiodeProps) {
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+
+export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyForm }: FravaersperiodeProps) {
+  const fravaerPerioder = useBoundStore((state) => state.fravaersperioder);
+  const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-
   const arbeidsgiverperioderMedData = arbeidsgiverperioder?.filter((periode) => periode?.fom && periode?.tom);
-
   const startSisteAktivePeriode = arbeidsgiverperioderMedData?.[arbeidsgiverperioderMedData.length - 1]?.tom;
+
+  useEffect(() => {
+    console.log('fravaerPerioder - useEffect', fravaerPerioder);
+    if (skjemastatus === SkjemaStatus.BLANK && (!fravaerPerioder || fravaerPerioder.length === 0)) {
+      console.log('fravaerPerioder - useEffect - treff', fravaerPerioder);
+      leggTilFravaersperiode();
+    }
+  }, [fravaerPerioder, skjemastatus]);
+  console.log('fravaerPerioder', fravaerPerioder, skjemastatus);
 
   return (
     <>
@@ -26,8 +38,9 @@ export default function Fravaersperiode({ lasterData, setIsDirtyForm }: Fravaers
       {lasterData && <EgenmeldingLoader />}
       {!lasterData && (
         <FravaerEnkeltAnsattforhold
-          fravaersperioder={fravaersperioder}
+          fravaerPerioder={fravaerPerioder}
           startSisteAktivePeriode={startSisteAktivePeriode}
+          skjemastatus={skjemastatus}
           setIsDirtyForm={setIsDirtyForm}
         />
       )}

@@ -7,21 +7,33 @@ import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
 import { Alert, Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
-import ButtonEndre from '../ButtonEndre';
+// import ButtonEndre from '../ButtonEndre';
 import { Periode } from '../../state/state';
 import Periodevelger from '../Bruttoinntekt/Periodevelger';
 import localStyles from './FravaerEnkeltAnsattforhold.module.css';
+import { SkjemaStatus } from '../../state/useSkjemadataStore';
+import ButtonEndre from '../ButtonEndre';
 
 interface FravaerEnkeltAnsattforholdProps {
-  fravaersperioder?: Array<Periode>;
   startSisteAktivePeriode?: Date;
   setIsDirtyForm: (dirty: boolean) => void;
+  fravaerPerioder?: Array<Periode>;
+  skjemastatus?: SkjemaStatus;
 }
 
+// export default function FravaerEnkeltAnsattforhold({
+//   fravaersperioder,
+//   setIsDirtyForm
+// }: FravaerEnkeltAnsattforholdProps) {
+//   fravaerPerioder?: Array<Periode>;
+//   skjemastatus?: SkjemaStatus;
+// }
+
 export default function FravaerEnkeltAnsattforhold({
-  fravaersperioder,
-  setIsDirtyForm,
-  startSisteAktivePeriode
+  startSisteAktivePeriode,
+  fravaerPerioder,
+  skjemastatus,
+  setIsDirtyForm
 }: FravaerEnkeltAnsattforholdProps) {
   const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
@@ -47,10 +59,10 @@ export default function FravaerEnkeltAnsattforhold({
   };
 
   useEffect(() => {
-    if (fravaersperioder && !fravaersperioder[0].fom && !endreSykemelding) {
+    if (fravaerPerioder && !fravaerPerioder[0].fom && !endreSykemelding) {
       setEndreSykemelding(true);
     }
-  }, [endreSykemelding, fravaersperioder]);
+  }, [endreSykemelding, fravaerPerioder]);
 
   const isNotDisabled = (periode: Periode, startSisteAktivePeriode?: Date) => {
     return periode.fom && startSisteAktivePeriode && periode.fom < startSisteAktivePeriode;
@@ -59,7 +71,7 @@ export default function FravaerEnkeltAnsattforhold({
 
   return (
     <>
-      {fravaersperioder?.map((periode, periodeIndex) => (
+      {fravaerPerioder?.map((periode, periodeIndex) => (
         <div className={styles.periodewrapper} key={periode.id}>
           {!endreSykemelding && (
             <div>

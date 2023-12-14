@@ -44,7 +44,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
             state.arbeidsgiverperioder = agp;
             const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp, forespurtBestemmendeFraværsdag);
             if (bestemmende) {
-              state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+              state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
               state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
               state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
             }
@@ -68,7 +68,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           state.arbeidsgiverperioder = agp;
           const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp, forespurtBestemmendeFraværsdag);
           if (bestemmende) {
-            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+            state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
             state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
           }
@@ -118,7 +118,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           state.arbeidsgiverperioder = agp;
           const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp, forespurtBestemmendeFraværsdag);
           if (bestemmende) {
-            state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
+            state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
             state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
           }

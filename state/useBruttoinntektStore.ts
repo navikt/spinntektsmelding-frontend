@@ -60,7 +60,7 @@ export interface BruttoinntektState {
     bestemmendeFravaersdag: Date,
     feilHentingAvInntektsdata?: Array<FeilReportElement>
   ) => void;
-  rekalkulerBruttioinntekt: (bestemmendeFravaersdag: Date) => void;
+  rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
 }
 
@@ -282,7 +282,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     );
   },
-  rekalkulerBruttioinntekt: async (bestemmendeFravaersdag: Date) => {
+  rekalkulerBruttoinntekt: async (bestemmendeFravaersdag: Date) => {
     const opprinneligeInntekt = get().opprinneligeInntekt || [];
     let tidligereInntekt = structuredClone(opprinneligeInntekt);
     const bruttoinntekt = get().bruttoinntekt;
@@ -340,6 +340,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.opprinneligeInntekt = tidligereInntekt;
 
         if (tidligereInntekt) {
+          console.log('tidligereInntekt', tidligereInntekt, bestemmendeFravaersdag);
           state.tidligereInntekt = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
         }
 
@@ -377,7 +378,7 @@ export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[], best
   const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
   const sisteMnd = `00${subMonths(bestemmendeFravaersdag, 3).getMonth() + 1}`.slice(-2);
   const sisteMaaned = `${subMonths(bestemmendeFravaersdag, 3).getFullYear()}-${sisteMnd}`;
-
+  debugger;
   if (!tidligereInntekt) return [];
   const aktuelleInntekter = tidligereInntekt
     .filter((inntekt) => inntekt.maaned < bestemmendeMaaned && inntekt.maaned >= sisteMaaned)

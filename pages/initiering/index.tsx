@@ -56,39 +56,41 @@ const Initiering: NextPage = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Innsending av oppdatert informasjon om inntektsmelding</title>
-        <meta name='description' content='Innsending av inntektsmelding' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
-      <PageContent title='Oppdatert informasjon - innsendt inntektsmelding'>
-        <main className='main-content'>
-          <div className={styles.padded}>
-            <Heading1>Opprett inntektsmelding ifm. sykmelding</Heading1>
-            <Alert variant='info'>
-              Du vil normalt få et varsel når Nav trenger inntektsmelding. Vi sender ut varsel når arbeidsgiverperioden
-              er ferdig og den sykmeldte har sendt inn søknad om sykepenger. Hvis du ikke fått denne oppgaven og du
-              mener at du skal levere inntektsmelding så er det mulig å opprette den manuelt.
-            </Alert>
-            <form className={lokalStyles.form} onSubmit={submitForm}>
-              <TextField
-                label='Angi personnummer for den ansatte'
-                description='(ddmmååxxxxx)'
-                className={lokalStyles.personnummer}
-                onChange={onChangeFnrInput}
-                error={visFeilmeldingsTekst('identitetsnummer', visFeilmeldinger, feilmeldinger)}
-              />
-              <Button variant='primary' className={lokalStyles.primaryKnapp}>
-                Neste
-              </Button>
-            </form>
-            <FeilListe skalViseFeilmeldinger={visFeilmeldinger} feilmeldinger={feilmeldinger ?? []} />
-          </div>
-        </main>
-      </PageContent>
-    </div>
+    <EnforceLoginLoader authCallback={authCallback}>
+      <div className={styles.container}>
+        <Head>
+          <title>Innsending av oppdatert informasjon om inntektsmelding</title>
+          <meta name='description' content='Innsending av inntektsmelding' />
+          <link rel='icon' href='/favicon.ico' />
+        </Head>
+        <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
+        <PageContent title='Oppdatert informasjon - innsendt inntektsmelding'>
+          <main className='main-content'>
+            <div className={styles.padded}>
+              <Heading1>Opprett inntektsmelding ifm. sykmelding</Heading1>
+              <Alert variant='info'>
+                Du vil normalt få et varsel når Nav trenger inntektsmelding. Vi sender ut varsel når
+                arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn søknad om sykepenger. Hvis du ikke fått
+                denne oppgaven og du mener at du skal levere inntektsmelding så er det mulig å opprette den manuelt.
+              </Alert>
+              <form className={lokalStyles.form} onSubmit={submitForm}>
+                <TextField
+                  label='Angi personnummer for den ansatte'
+                  description='(ddmmååxxxxx)'
+                  className={lokalStyles.personnummer}
+                  onChange={onChangeFnrInput}
+                  error={visFeilmeldingsTekst('identitetsnummer', visFeilmeldinger, feilmeldinger)}
+                />
+                <Button variant='primary' className={lokalStyles.primaryKnapp}>
+                  Neste
+                </Button>
+              </form>
+              <FeilListe skalViseFeilmeldinger={visFeilmeldinger} feilmeldinger={feilmeldinger ?? []} />
+            </div>
+          </main>
+        </PageContent>
+      </div>
+    </EnforceLoginLoader>
   );
 };
 
