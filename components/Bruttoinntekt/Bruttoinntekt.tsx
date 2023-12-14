@@ -65,7 +65,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
 
   const changeMaanedsintektHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setNyMaanedsinntekt(event.target.value);
-    // setIsDirtyForm(true);
   };
 
   const changeBegrunnelseHandler = (aarsak: string) => {
@@ -76,7 +75,6 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
       filternavn: 'Endringsårsak beregnet månedsinntekt'
     });
 
-    // setIsDirtyForm(true);
     setEndringsaarsak(aarsak);
   };
 
@@ -184,8 +182,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
         {endringAvBelop && (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
-            changeMaanedsintektHandler={changeMaanedsintektHandler}
-            changeBegrunnelseHandler={changeBegrunnelseHandler}
+            changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
+            changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
             tariffendringsdato={tariffendringsdato}
             tariffkjentdato={tariffkjentdato}
             ferie={ferie}

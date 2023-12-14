@@ -42,8 +42,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
     state.slettFeilmelding,
