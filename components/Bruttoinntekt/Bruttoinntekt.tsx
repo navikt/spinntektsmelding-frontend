@@ -16,9 +16,10 @@ import Aarsaksvelger from './Aarsaksvelger';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
+  setIsDirtyForm: (dirty: boolean) => void;
 }
 
-export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektProps) {
+export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }: BruttoinntektProps) {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
@@ -62,7 +63,10 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
     tilbakestillMaanedsinntekt();
   };
 
-  const changeMaanedsintektHandler = (event: ChangeEvent<HTMLInputElement>) => setNyMaanedsinntekt(event.target.value);
+  const changeMaanedsintektHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setNyMaanedsinntekt(event.target.value);
+    // setIsDirtyForm(true);
+  };
 
   const changeBegrunnelseHandler = (aarsak: string) => {
     logEvent('filtervalg', {
@@ -72,7 +76,15 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
       filternavn: 'Endringsårsak beregnet månedsinntekt'
     });
 
+    // setIsDirtyForm(true);
     setEndringsaarsak(aarsak);
+  };
+
+  const addIsDirtyForm = (fn: (param: any) => void) => {
+    return (param: any) => {
+      setIsDirtyForm(true);
+      fn(param);
+    };
   };
 
   const setEndreMaanedsinntektHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -183,15 +195,15 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag }: BruttoinntektP
             nystillingsprosentdato={nystillingsprosentdato}
             lonnsendringsdato={lonnsendringsdato}
             sykefravaerperioder={sykefravaerperioder}
-            setTariffEndringsdato={setTariffEndringsdato}
-            setTariffKjentdato={setTariffKjentdato}
-            setFeriePeriode={setFeriePeriode}
-            setLonnsendringDato={setLonnsendringDato}
-            setNyStillingDato={setNyStillingDato}
-            setNyStillingsprosentDato={setNyStillingsprosentDato}
-            setPermisjonPeriode={setPermisjonPeriode}
-            setPermitteringPeriode={setPermitteringPeriode}
-            setSykefravaerPeriode={setSykefravaerPeriode}
+            setTariffEndringsdato={addIsDirtyForm(setTariffEndringsdato)}
+            setTariffKjentdato={addIsDirtyForm(setTariffKjentdato)}
+            setFeriePeriode={addIsDirtyForm(setFeriePeriode)}
+            setLonnsendringDato={addIsDirtyForm(setLonnsendringDato)}
+            setNyStillingDato={addIsDirtyForm(setNyStillingDato)}
+            setNyStillingsprosentDato={addIsDirtyForm(setNyStillingsprosentDato)}
+            setPermisjonPeriode={addIsDirtyForm(setPermisjonPeriode)}
+            setPermitteringPeriode={addIsDirtyForm(setPermitteringPeriode)}
+            setSykefravaerPeriode={addIsDirtyForm(setSykefravaerPeriode)}
             visFeilmeldingsTekst={visFeilmeldingsTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending}

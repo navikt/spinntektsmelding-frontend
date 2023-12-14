@@ -40,6 +40,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [lasterData, setLasterData] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
+  const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
+
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
@@ -124,22 +126,22 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Behandlingsdager />
 
           <Skillelinje />
-          <Egenmelding lasterData={lasterData} />
+          <Egenmelding lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
-          <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} lasterData={lasterData} />
-
-          <Skillelinje />
-
-          <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} />
+          <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
 
-          <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} />
+          <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
 
-          <RefusjonArbeidsgiver />
+          <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} setIsDirtyForm={setIsDirtyForm} />
+
+          <Skillelinje />
+
+          <RefusjonArbeidsgiver setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
           <Naturalytelser />
@@ -154,7 +156,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Feilsammendrag />
           <div className={styles.outerbuttonwrapper}>
             <div className={styles.buttonwrapper}>
-              <Button className={styles.sendbutton} loading={senderInn}>
+              <Button className={styles.sendbutton} loading={senderInn} disabled={!isDirtyForm}>
                 Send
               </Button>
 

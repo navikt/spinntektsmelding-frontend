@@ -4,7 +4,7 @@ import TextLabel from '../TextLabel';
 import { BodyLong, Button, Checkbox } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
-import Periodevelger from '../Bruttoinntekt/Periodevelger';
+import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 import { Periode } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
@@ -19,9 +19,10 @@ import SelectBegrunnelse from '../RefusjonArbeidsgiver/SelectBegrunnelse';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
+  setIsDirtyForm: (dirty: boolean) => void;
 }
 
-export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: ArbeidsgiverperiodeProps) {
+export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyForm }: ArbeidsgiverperiodeProps) {
   const leggTilArbeidsgiverperiode = useBoundStore((state) => state.leggTilArbeidsgiverperiode);
   const slettArbeidsgiverperiode = useBoundStore((state) => state.slettArbeidsgiverperiode);
   const setArbeidsgiverperiodeDato = useBoundStore((state) => state.setArbeidsgiverperiodeDato);
@@ -69,7 +70,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       tittel: 'Slett arbeidsgiverperiode',
       component: amplitudeComponent
     });
-
+    setIsDirtyForm(true);
     slettArbeidsgiverperiode(periode);
   };
 
@@ -117,6 +118,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
     setReadMoreOpen(!readMoreOpen);
   };
 
+  const setArbeidsgiverperiodeDatofelt = (periode: PeriodeParam | undefined, periodeIndex: string) => {
+    setIsDirtyForm(true);
+    setArbeidsgiverperiodeDato(periode, periodeIndex);
+  };
+
   const [valideringsfeil, setValideringsfeil] = useState<string>('');
 
   const handleIngenArbeidsgiverperiodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,6 +141,12 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
       tilbakestillArbeidsgiverperiode();
       begrunnelseRedusertUtbetaling(undefined);
     }
+    setIsDirtyForm(true);
+  };
+
+  const setBegrunnelseRedusertUtbetaling = (begrunnelse: string | undefined) => {
+    begrunnelseRedusertUtbetaling(begrunnelse);
+    setIsDirtyForm(true);
   };
 
   useEffect(() => {
@@ -218,7 +230,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
               tomTekst='Til'
               tomID={`arbeidsgiverperioder[${periodeIndex}].tom`}
               tomError={visFeilmeldingsTekst(`arbeidsgiverperioder[${periodeIndex}].tom`)}
-              onRangeChange={(oppdatertPeriode) => setArbeidsgiverperiodeDato(oppdatertPeriode, periode.id)}
+              onRangeChange={(oppdatertPeriode) => setArbeidsgiverperiodeDatofelt(oppdatertPeriode, periode.id)}
               defaultRange={periode}
               kanSlettes={periodeIndex > 0}
               periodeId={periodeIndex.toString()}
@@ -240,7 +252,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder }: Arbeidsgiv
           </Checkbox>
           {arbeidsgiverperiodeDisabled && (
             <SelectBegrunnelse
-              onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
+              onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
               defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
               error={visFeilmeldingsTekst('lia-select')}
               label='Velg begrunnelse'

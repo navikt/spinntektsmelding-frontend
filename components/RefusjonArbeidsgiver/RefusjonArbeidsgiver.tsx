@@ -13,7 +13,11 @@ import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useState } from 'react';
 import LesMer from '../LesMer';
 
-export default function RefusjonArbeidsgiver() {
+interface RefusjonArbeidsgiverProps {
+  setIsDirtyForm: (dirty: boolean) => void;
+}
+
+export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeidsgiverProps) {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
@@ -43,8 +47,8 @@ export default function RefusjonArbeidsgiver() {
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const muteableArbeidsgiverperioder = structuredClone(arbeidsgiverperioder);
-  const sisteArbeidsgiverperiode = muteableArbeidsgiverperioder?.sort((a, b) => {
+  const mutableArbeidsgiverperioder = structuredClone(arbeidsgiverperioder);
+  const sisteArbeidsgiverperiode = mutableArbeidsgiverperioder?.sort((a, b) => {
     if (!a.fom || !b.fom) {
       return 0;
     }
@@ -55,6 +59,13 @@ export default function RefusjonArbeidsgiver() {
     }
     return 0;
   });
+
+  const addIsDirtyForm = (fn: (param: any) => void) => {
+    return (param: any) => {
+      setIsDirtyForm(true);
+      fn(param);
+    };
+  };
 
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
@@ -93,7 +104,7 @@ export default function RefusjonArbeidsgiver() {
           className={styles.radiobuttonwrapper}
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}
-          onChange={arbeidsgiverBetalerFullLonnIArbeidsgiverperioden}
+          onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
           value={fullLonnIArbeidsgiverPerioden?.status || null}
           disabled={arbeidsgiverperiodeDisabled}
         >
@@ -111,7 +122,7 @@ export default function RefusjonArbeidsgiver() {
                 <TextField
                   className={localStyles.refusjonsbelop}
                   label='Utbetalt under arbeidsgiverperiode'
-                  onChange={(event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value)}
+                  onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
                   id={'lus-uua-input'}
                   error={visFeilmeldingsTekst('lus-uua-input')}
                   defaultValue={
@@ -121,7 +132,7 @@ export default function RefusjonArbeidsgiver() {
                   }
                 />
                 <SelectBegrunnelse
-                  onChangeBegrunnelse={begrunnelseRedusertUtbetaling}
+                  onChangeBegrunnelse={addIsDirtyForm(begrunnelseRedusertUtbetaling)}
                   defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
                   error={visFeilmeldingsTekst('lia-select')}
                 />
@@ -135,7 +146,7 @@ export default function RefusjonArbeidsgiver() {
           className={styles.radiobuttonwrapper}
           id={'lus-radio'}
           error={visFeilmeldingsTekst('lus-radio')}
-          onChange={arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret}
+          onChange={addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret)}
           defaultValue={lonnISykefravaeret?.status}
         >
           <Radio value='Ja'>Ja</Radio>
@@ -145,7 +156,7 @@ export default function RefusjonArbeidsgiver() {
           <>
             <RefusjonArbeidsgiverBelop
               bruttoinntekt={lonnISykefravaeret.belop! || 0}
-              onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
+              onOppdaterBelop={addIsDirtyForm(beloepArbeidsgiverBetalerISykefravaeret)}
               visFeilmeldingsTekst={visFeilmeldingsTekst}
               arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
             />
@@ -158,8 +169,8 @@ export default function RefusjonArbeidsgiver() {
                   ? arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom
                   : undefined
               }
-              onHarEndringer={setHarRefusjonEndringer}
-              onOppdaterEndringer={oppdaterRefusjonEndringer}
+              onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
+              onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
               harRefusjonEndring={harRefusjonEndringer}
             />
 
@@ -168,7 +179,7 @@ export default function RefusjonArbeidsgiver() {
               className={styles.radiobuttonwrapper}
               id={'lus-sluttdato-velg'}
               error={visFeilmeldingsTekst('lus-sluttdato-velg')}
-              onChange={refusjonskravetOpphoererStatus}
+              onChange={addIsDirtyForm(refusjonskravetOpphoererStatus)}
               defaultValue={refusjonskravetOpphoerer?.status}
             >
               <Radio value='Ja'>Ja</Radio>
@@ -178,7 +189,7 @@ export default function RefusjonArbeidsgiver() {
               <div className={styles.datepickerescape}>
                 <Datovelger
                   fromDate={sisteDagIArbeidsgiverperioden}
-                  onDateChange={refusjonskravetOpphoererDato}
+                  onDateChange={addIsDirtyForm(refusjonskravetOpphoererDato)}
                   id={'lus-sluttdato'}
                   label='Angi siste dag dere krever refusjon for'
                   error={visFeilmeldingsTekst('lus-sluttdato')}

@@ -13,7 +13,7 @@ import { finnAktuelleInntekter } from './useBruttoinntektStore';
 export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;
   opprinneligEgenmeldingsperiode?: Array<Periode>;
-  endreEgenmeldingsperiode: boolean;
+  kanEndreEgenmeldingPeriode: boolean;
   setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
   slettEgenmeldingsperiode: (periodeId: string) => void;
   leggTilEgenmeldingsperiode: () => void;
@@ -24,7 +24,7 @@ export interface EgenmeldingState {
 
 const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState> = (set, get) => ({
   egenmeldingsperioder: undefined,
-  endreEgenmeldingsperiode: false,
+  kanEndreEgenmeldingPeriode: false,
   setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
     const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
     set(
@@ -95,7 +95,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
   setEndreEgenmelding: (status: boolean) => {
     set(
       produce((state) => {
-        state.endreEgenmeldingsperiode = status;
+        state.kanEndreEgenmeldingPeriode = status;
 
         return state;
       })
@@ -109,7 +109,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
         state.egenmeldingsperioder = clonedEgenmelding;
 
         if (clonedEgenmelding && clonedEgenmelding.length > 0 && clonedEgenmelding[0].fom) {
-          state.endreEgenmeldingsperiode = false;
+          state.kanEndreEgenmeldingPeriode = false;
         }
 
         const fPerioder = finnFravaersperioder(state.fravaersperioder, clonedEgenmelding);
@@ -134,14 +134,14 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
         state.egenmeldingsperioder = [];
 
         if (egenmeldingsperioder && egenmeldingsperioder.length > 0) {
-          state.endreEgenmeldingsperiode = false;
+          state.kanEndreEgenmeldingPeriode = false;
           state.egenmeldingsperioder = egenmeldingsperioder.map((periode) => ({
             fom: parseIsoDate(periode.fom),
             tom: parseIsoDate(periode.tom),
             id: nanoid()
           }));
         } else {
-          state.endreEgenmeldingsperiode = true;
+          state.kanEndreEgenmeldingPeriode = true;
         }
 
         state.opprinneligEgenmeldingsperiode = structuredClone(state.egenmeldingsperioder);

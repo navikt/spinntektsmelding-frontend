@@ -11,9 +11,13 @@ import Periodevelger from '../Bruttoinntekt/Periodevelger';
 
 interface FravaerEnkeltAnsattforholdProps {
   fravaersperioder: Array<Periode>;
+  setIsDirtyForm: (dirty: boolean) => void;
 }
 
-export default function FravaerEnkeltAnsattforhold({ fravaersperioder }: FravaerEnkeltAnsattforholdProps) {
+export default function FravaerEnkeltAnsattforhold({
+  fravaersperioder,
+  setIsDirtyForm
+}: FravaerEnkeltAnsattforholdProps) {
   const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
@@ -27,11 +31,13 @@ export default function FravaerEnkeltAnsattforhold({ fravaersperioder }: Fravaer
 
   const clickLeggTilFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    setIsDirtyForm(true);
     leggTilFravaersperiode();
   };
 
   const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    setIsDirtyForm(true);
     setEndreSykemelding(!endreSykemelding);
   };
 

@@ -148,13 +148,13 @@ describe('useEgenmeldingStore', () => {
       result.current.initEgenmeldingsperiode(egenmeldingsperioder);
     });
 
-    expect(result.current.endreEgenmeldingsperiode).toBeFalsy();
+    expect(result.current.kanEndreEgenmeldingPeriode).toBeFalsy();
 
     act(() => {
       result.current.setEndreEgenmelding(true);
     });
 
-    expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
+    expect(result.current.kanEndreEgenmeldingPeriode).toBeTruthy();
   });
 
   it('should set ting tilbake.', () => {
@@ -164,19 +164,19 @@ describe('useEgenmeldingStore', () => {
       result.current.initEgenmeldingsperiode(egenmeldingsperioder);
     });
 
-    expect(result.current.endreEgenmeldingsperiode).toBeFalsy();
+    expect(result.current.kanEndreEgenmeldingPeriode).toBeFalsy();
 
     act(() => {
       result.current.setEndreEgenmelding(true);
     });
 
-    expect(result.current.endreEgenmeldingsperiode).toBeTruthy();
+    expect(result.current.kanEndreEgenmeldingPeriode).toBeTruthy();
 
     act(() => {
       result.current.tilbakestillEgenmelding();
     });
 
-    expect(result.current.endreEgenmeldingsperiode).toBeFalsy();
+    expect(result.current.kanEndreEgenmeldingPeriode).toBeFalsy();
   });
 
   it('should set ting tilbake. And fix bestemmende fraværsdag', () => {
