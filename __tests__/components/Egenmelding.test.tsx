@@ -27,7 +27,9 @@ describe('Egenmelding', () => {
   });
 
   it('should have no violations', async () => {
-    const { container } = render(<Egenmelding />);
+    const mockFn = vi.fn();
+
+    const { container } = render(<Egenmelding setIsDirtyForm={mockFn} />);
 
     const results = await axe(container);
 
@@ -35,12 +37,14 @@ describe('Egenmelding', () => {
   });
 
   it('should be able to add periode', async () => {
+    const mockFn = vi.fn();
+
     // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
     vi.mock('../../components/Datovelger', () => ({
       default: () => <div>Datovelger</div>
     }));
 
-    const { container } = render(<Egenmelding />);
+    const { container } = render(<Egenmelding setIsDirtyForm={mockFn} />);
 
     userEvent.click(screen.getByText('Endre'));
 
@@ -53,6 +57,8 @@ describe('Egenmelding', () => {
   });
 
   it('should show perioder', async () => {
+    const mockFn = vi.fn();
+
     // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
     // vi.mock('../../components/Datovelger', () => ({
     //   default: () => <div>Datovelger</div>
@@ -63,7 +69,7 @@ describe('Egenmelding', () => {
       result.current.initEgenmeldingsperiode(egenmeldingsperioder);
     });
 
-    const { container } = render(<Egenmelding />);
+    const { container } = render(<Egenmelding setIsDirtyForm={mockFn} />);
 
     expect(await screen.findByText('06.06.2022')).toBeInTheDocument();
     expect(await screen.findByText('06.07.2022')).toBeInTheDocument();
@@ -78,6 +84,8 @@ describe('Egenmelding', () => {
   });
 
   it('should show empty datepickers when there are no perioder', async () => {
+    const mockFn = vi.fn();
+
     // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
     vi.mock('../../components/Datovelger', () => ({
       default: () => <div>Datovelger</div>
@@ -88,7 +96,7 @@ describe('Egenmelding', () => {
       result.current.initEgenmeldingsperiode(undefined);
     });
 
-    const { container } = render(<Egenmelding />);
+    const { container } = render(<Egenmelding setIsDirtyForm={mockFn} />);
 
     expect(await screen.findAllByText('Datovelger')).toHaveLength(2);
 
