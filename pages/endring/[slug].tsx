@@ -107,6 +107,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   );
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
+  const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
@@ -115,11 +116,18 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   ]);
   const amplitudeComponent = 'DelvisInnsending';
 
-  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen);
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, amplitudeComponent);
 
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
 
   const hentKvitteringsdata = useHentKvitteringsdata();
+
+  const addIsDirtyForm = (fn: (param: any) => void) => {
+    return (param: any) => {
+      setIsDirtyForm(true);
+      fn(param);
+    };
+  };
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
@@ -175,7 +183,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
     setSenderInn(true);
 
-    sendInnSkjema(opplysningerBekreftet, true, pathSlug, amplitudeComponent).finally(() => {
+    sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm).finally(() => {
       setSenderInn(false);
     });
   };
@@ -279,7 +287,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
                       forsteFravaersdag
                     )} (start av nytt sykefravær)?`}
-                    onChange={handleChangeEndringLonn}
+                    onChange={addIsDirtyForm(handleChangeEndringLonn)}
                     className={lokalStyles.fancyRadioGruppe}
                     defaultValue={endringBruttolonn}
                     id='endring-bruttolonn'
@@ -311,8 +319,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       <>
                         <Aarsaksvelger
                           bruttoinntekt={bruttoinntekt}
-                          changeMaanedsintektHandler={changeMaanedsintektHandler}
-                          changeBegrunnelseHandler={changeBegrunnelseHandler}
+                          changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
+                          changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
                           tariffendringsdato={tariffendringsdato}
                           tariffkjentdato={tariffkjentdato}
                           ferie={ferie}
@@ -322,15 +330,15 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                           nystillingsprosentdato={nystillingsprosentdato}
                           lonnsendringsdato={lonnsendringsdato}
                           sykefravaerperioder={sykefravaerperioder}
-                          setTariffEndringsdato={setTariffEndringsdato}
-                          setTariffKjentdato={setTariffKjentdato}
-                          setFeriePeriode={setFeriePeriode}
-                          setLonnsendringDato={setLonnsendringDato}
-                          setNyStillingDato={setNyStillingDato}
-                          setNyStillingsprosentDato={setNyStillingsprosentDato}
-                          setPermisjonPeriode={setPermisjonPeriode}
-                          setPermitteringPeriode={setPermitteringPeriode}
-                          setSykefravaerPeriode={setSykefravaerPeriode}
+                          setTariffEndringsdato={addIsDirtyForm(setTariffEndringsdato)}
+                          setTariffKjentdato={addIsDirtyForm(setTariffKjentdato)}
+                          setFeriePeriode={addIsDirtyForm(setFeriePeriode)}
+                          setLonnsendringDato={addIsDirtyForm(setLonnsendringDato)}
+                          setNyStillingDato={addIsDirtyForm(setNyStillingDato)}
+                          setNyStillingsprosentDato={addIsDirtyForm(setNyStillingsprosentDato)}
+                          setPermisjonPeriode={addIsDirtyForm(setPermisjonPeriode)}
+                          setPermitteringPeriode={addIsDirtyForm(setPermitteringPeriode)}
+                          setSykefravaerPeriode={addIsDirtyForm(setSykefravaerPeriode)}
                           visFeilmeldingsTekst={visFeilmeldingsTekst}
                           bestemmendeFravaersdag={bestemmendeFravaersdag}
                           nyInnsending={nyInnsending}
@@ -402,7 +410,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
                           forsteFravaersdag
                         )} (start av nytt sykefravær)?`}
-                        onChange={handleChangeEndringRefusjon}
+                        onChange={addIsDirtyForm(handleChangeEndringRefusjon)}
                         className={lokalStyles.fancyRadioGruppe}
                         defaultValue={endringerAvRefusjon}
                         id='endring-refusjon'
@@ -426,7 +434,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     className={styles.radiobuttonwrapper}
                     id={'lus-radio'}
                     error={visFeilmeldingsTekst('lus-radio')}
-                    onChange={arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret}
+                    onChange={addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret)}
                     defaultValue={lonnISykefravaeret?.status}
                   >
                     <Radio value='Ja'>Ja</Radio>
@@ -437,15 +445,15 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       <RefusjonArbeidsgiverBelop
                         visFeilmeldingsTekst={visFeilmeldingsTekst}
                         bruttoinntekt={lonnISykefravaeret?.belop || 0}
-                        onOppdaterBelop={beloepArbeidsgiverBetalerISykefravaeret}
+                        onOppdaterBelop={addIsDirtyForm(beloepArbeidsgiverBetalerISykefravaeret)}
                       />
 
                       <RefusjonUtbetalingEndring
                         endringer={refusjonEndringer || []}
                         maxDate={refusjonskravetOpphoerer?.opphorsdato}
                         // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
-                        onHarEndringer={setHarRefusjonEndringer}
-                        onOppdaterEndringer={oppdaterRefusjonEndringer}
+                        onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
+                        onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
                         harRefusjonEndring={harRefusjonEndringer}
                       />
 
@@ -454,7 +462,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         className={styles.radiobuttonwrapper}
                         id={'lus-sluttdato-velg'}
                         error={visFeilmeldingsTekst('lus-sluttdato-velg')}
-                        onChange={refusjonskravetOpphoererStatus}
+                        onChange={addIsDirtyForm(refusjonskravetOpphoererStatus)}
                         defaultValue={refusjonskravetOpphoerer?.status}
                       >
                         <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
@@ -468,7 +476,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         <div className={lokalStyles.belopperiode}>
                           <Datovelger
                             label='Angi siste dag dere krever refusjon for'
-                            onDateChange={refusjonskravetOpphoererDato}
+                            onDateChange={addIsDirtyForm(refusjonskravetOpphoererDato)}
                             id={`lus-sluttdato`}
                             error={visFeilmeldingsTekst(`lus-sluttdato`)}
                             defaultSelected={refusjonskravetOpphoerer?.opphorsdato}

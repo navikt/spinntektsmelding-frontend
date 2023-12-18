@@ -8,7 +8,7 @@ import localStyles from './Egenmelding.module.css';
 interface EgenmeldingPeriodeInterface {
   periodeId: string;
   egenmeldingsperiode: Periode;
-  endreEgenmeldingsperiode: boolean;
+  kanEndreEgenmeldingPeriode: boolean;
   setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
   toDate: Date;
   kanSlettes: boolean;
@@ -21,7 +21,7 @@ interface EgenmeldingPeriodeInterface {
 export default function EgenmeldingPeriode({
   periodeId,
   egenmeldingsperiode,
-  endreEgenmeldingsperiode,
+  kanEndreEgenmeldingPeriode,
   setEgenmeldingDato,
   toDate,
   kanSlettes,
@@ -34,7 +34,7 @@ export default function EgenmeldingPeriode({
     setEgenmeldingDato(dateRange, periodeId);
   };
 
-  if (!endreEgenmeldingsperiode) {
+  if (!kanEndreEgenmeldingPeriode) {
     return (
       <div data-cy='egenmelding'>
         <div className={styles.datepickerescape}>

@@ -12,7 +12,7 @@ describe('EgenmeldingPeriode', () => {
       <EgenmeldingPeriode
         periodeId='1'
         egenmeldingsperiode={{ fom: new Date(2022, 10, 10), tom: new Date(2022, 10, 10), id: '1' }}
-        endreEgenmeldingsperiode={false}
+        kanEndreEgenmeldingPeriode={false}
         setEgenmeldingDato={vi.fn()}
         toDate={new Date(2022, 10, 10)}
         kanSlettes={false}
@@ -40,7 +40,7 @@ describe('EgenmeldingPeriode', () => {
       <EgenmeldingPeriode
         periodeId='1'
         egenmeldingsperiode={{ fom: new Date(2022, 10, 10), tom: new Date(2022, 10, 10), id: '1' }}
-        endreEgenmeldingsperiode={true}
+        kanEndreEgenmeldingPeriode={true}
         setEgenmeldingDato={vi.fn()}
         toDate={new Date(2022, 10, 10)}
         kanSlettes={false}

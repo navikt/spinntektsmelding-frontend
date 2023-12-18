@@ -11,12 +11,14 @@ import logEvent from '../../utils/logEvent';
 import { subDays } from 'date-fns';
 import ButtonTilbakestill from '../ButtonTilbakestill';
 import EgenmeldingLoader from './EgenmeldingLoader';
+import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 
 interface EgenmeldingProps {
   lasterData?: boolean;
+  setIsDirtyForm: (dirty: boolean) => void;
 }
 
-export default function Egenmelding({ lasterData }: EgenmeldingProps) {
+export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingProps) {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
 
@@ -33,7 +35,7 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
   const slettEgenmeldingsperiode = useBoundStore((state) => state.slettEgenmeldingsperiode);
   const leggTilEgenmeldingsperiode = useBoundStore((state) => state.leggTilEgenmeldingsperiode);
   const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
-  const endreEgenmeldingsperiode = useBoundStore((state) => state.endreEgenmeldingsperiode);
+  const kanEndreEgenmeldingPeriode = useBoundStore((state) => state.kanEndreEgenmeldingPeriode);
   const setEndreEgenmelding = useBoundStore((state) => state.setEndreEgenmelding);
   const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
   const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
@@ -46,7 +48,7 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
       tittel: 'Slett egenmeldingsperioder',
       component: 'Egenmelding'
     });
-
+    setIsDirtyForm(true);
     slettEgenmeldingsperiode(periode);
   };
 
@@ -57,7 +59,7 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
       tittel: 'Legg til egenmeldingsperioder',
       component: 'Egenmelding'
     });
-
+    setIsDirtyForm(true);
     leggTilEgenmeldingsperiode();
   };
 
@@ -81,6 +83,11 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
     });
 
     tilbakestillEgenmelding();
+  };
+
+  const setEgenmeldingDatofelt = (dato: PeriodeParam | undefined, id: string) => {
+    setIsDirtyForm(true);
+    setEgenmeldingDato(dato, id);
   };
 
   const sisteGyldigeEgenmeldingsdato = useMemo(() => {
@@ -117,8 +124,8 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
                 key={egenmeldingsperiode.id}
                 periodeId={egenmeldingsperiode.id}
                 egenmeldingsperiode={egenmeldingsperiode}
-                endreEgenmeldingsperiode={endreEgenmeldingsperiode}
-                setEgenmeldingDato={setEgenmeldingDato}
+                kanEndreEgenmeldingPeriode={kanEndreEgenmeldingPeriode}
+                setEgenmeldingDato={setEgenmeldingDatofelt}
                 // toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
                 toDate={sisteGyldigeEgenmeldingsdato}
                 kanSlettes={!!(egenmeldingsperiode.fom || egenmeldingsperiode.tom || index !== 0)}
@@ -136,8 +143,8 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
                     key='nyperiode'
                     periodeId='nyperiode'
                     egenmeldingsperiode={{ id: 'nyperiode' }}
-                    endreEgenmeldingsperiode={endreEgenmeldingsperiode}
-                    setEgenmeldingDato={setEgenmeldingDato}
+                    kanEndreEgenmeldingPeriode={kanEndreEgenmeldingPeriode}
+                    setEgenmeldingDato={setEgenmeldingDatofelt}
                     toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
                     kanSlettes={false}
                     onSlettRad={() => {}}
@@ -152,12 +159,12 @@ export default function Egenmelding({ lasterData }: EgenmeldingProps) {
         {visFeilmelding('egenmeldingsperioder-feil') && (
           <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingsTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}
-        {!endreEgenmeldingsperiode && (
+        {!kanEndreEgenmeldingPeriode && (
           <div className={localStyles.endresykemeldingknapper}>
             <ButtonEndre onClick={clickEndreFravaersperiodeHandler} disabled={endretArbeidsgiverperiode} />
           </div>
         )}
-        {endreEgenmeldingsperiode && (
+        {kanEndreEgenmeldingPeriode && (
           <div className={localStyles.endresykemeldingknapper}>
             <Button
               variant='secondary'

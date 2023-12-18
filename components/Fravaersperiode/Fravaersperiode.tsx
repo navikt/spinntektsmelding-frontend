@@ -1,14 +1,13 @@
-import { Periode } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import EgenmeldingLoader from '../Egenmelding/EgenmeldingLoader';
 import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
 
 interface FravaersperiodeProps {
-  egenmeldingsperioder: Array<Periode> | undefined;
   lasterData?: boolean;
+  setIsDirtyForm: (dirty: boolean) => void;
 }
-export default function Fravaersperiode({ egenmeldingsperioder, lasterData }: FravaersperiodeProps) {
+export default function Fravaersperiode({ lasterData, setIsDirtyForm }: FravaersperiodeProps) {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
 
   return (
@@ -20,7 +19,9 @@ export default function Fravaersperiode({ egenmeldingsperioder, lasterData }: Fr
       </p>
 
       {lasterData && <EgenmeldingLoader />}
-      {!lasterData && <FravaerEnkeltAnsattforhold fravaersperioder={fravaersperioder} />}
+      {!lasterData && (
+        <FravaerEnkeltAnsattforhold fravaersperioder={fravaersperioder} setIsDirtyForm={setIsDirtyForm} />
+      )}
     </>
   );
 }

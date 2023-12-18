@@ -40,7 +40,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [lasterData, setLasterData] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
@@ -59,7 +59,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const searchParams = useSearchParams();
   const hentKvitteringsdata = useHentKvitteringsdata();
 
-  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen);
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
@@ -71,7 +71,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     event.preventDefault();
     setSenderInn(true);
 
-    sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema').finally(() => {
+    sendInnSkjema(opplysningerBekreftet, false, pathSlug, isDirtyForm).finally(() => {
       setSenderInn(false);
     });
   };
@@ -98,7 +98,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
           })
           .catch((error) => {
-            logger.warn('Feil ved henting av tidliger inntektsdata i hovedskjema', error);
+            logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
             logger.warn(error);
           });
       }
@@ -124,22 +124,22 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Behandlingsdager />
 
           <Skillelinje />
-          <Egenmelding lasterData={lasterData} />
+          <Egenmelding lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
-          <Fravaersperiode egenmeldingsperioder={egenmeldingsperioder} lasterData={lasterData} />
-
-          <Skillelinje />
-
-          <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} />
+          <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
 
-          <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} />
+          <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
 
-          <RefusjonArbeidsgiver />
+          <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} setIsDirtyForm={setIsDirtyForm} />
+
+          <Skillelinje />
+
+          <RefusjonArbeidsgiver setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
           <Naturalytelser />
@@ -154,7 +154,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Feilsammendrag />
           <div className={styles.outerbuttonwrapper}>
             <div className={styles.buttonwrapper}>
-              <Button className={styles.sendbutton} loading={senderInn}>
+              <Button className={styles.sendbutton} loading={senderInn} id='knapp-innsending'>
                 Send
               </Button>
 
