@@ -3,9 +3,9 @@ import testFnr from './testFnr';
 
 import trengerDelvis from './trenger-delvis.json';
 
-const formData = trengerDelvis as MottattData;
+// const formData = trengerDelvis as MottattData;
 
-const form2Data: Partial<MottattData> = {
+const formData: Partial<MottattData> = {
   // behandlingsdager: [],
   // behandlingsperiode: {
   //   fom: '2022-02-20',

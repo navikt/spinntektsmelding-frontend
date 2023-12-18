@@ -116,7 +116,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   ]);
   const amplitudeComponent = 'DelvisInnsending';
 
-  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen);
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, amplitudeComponent);
 
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
 
@@ -124,7 +124,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const addIsDirtyForm = (fn: (param: any) => void) => {
     return (param: any) => {
-      console.log('addIsDirtyForm');
       setIsDirtyForm(true);
       fn(param);
     };
@@ -184,7 +183,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
     setSenderInn(true);
 
-    sendInnSkjema(opplysningerBekreftet, true, pathSlug, amplitudeComponent).finally(() => {
+    sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm).finally(() => {
       setSenderInn(false);
     });
   };
@@ -500,7 +499,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
               <Feilsammendrag />
               <div className={styles.outerbuttonwrapper}>
                 <div className={styles.buttonwrapper}>
-                  <Button className={styles.sendbutton} loading={senderInn} disabled={!isDirtyForm}>
+                  <Button className={styles.sendbutton} loading={senderInn}>
                     Send
                   </Button>
 

@@ -8,9 +8,13 @@ import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
 
-export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: boolean) => void) {
+export default function useSendInnSkjema(
+  innsendingFeiletIngenTilgang: (feilet: boolean) => void,
+  amplitudeComponent: string
+) {
   const validerInntektsmelding = useValiderInntektsmelding();
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
+  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllInnsending();
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const errorResponse = useErrorRespons();
@@ -20,12 +24,35 @@ export default function useSendInnSkjema(innsendingFeiletIngenTilgang: (feilet: 
     opplysningerBekreftet: boolean,
     kunInntektOgRefusjon: boolean,
     pathSlug: string,
-    amplitudeComponent: string
+    isDirtyForm: boolean
   ) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
       component: amplitudeComponent
     });
+
+    if (!isDirtyForm) {
+      logEvent('skjema fullført', {
+        tittel: 'Innsending uten endringer i skjema',
+        component: amplitudeComponent
+      });
+
+      logger.info('Innsending uten endringer i skjema');
+
+      const errors: Array<ErrorResponse> = [
+        {
+          value: 'Innsending av skjema feilet',
+          error: 'Innsending feilet, det er ikke gjort endringer i skjema.',
+          property: 'knapp-innsending'
+        }
+      ];
+      fyllFeilmeldinger([]);
+
+      errorResponse(errors);
+      setSkalViseFeilmeldinger(true);
+
+      return false;
+    }
 
     const errorStatus = validerInntektsmelding(opplysningerBekreftet, kunInntektOgRefusjon);
 

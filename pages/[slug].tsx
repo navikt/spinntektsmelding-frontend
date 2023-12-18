@@ -59,7 +59,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const searchParams = useSearchParams();
   const hentKvitteringsdata = useHentKvitteringsdata();
 
-  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen);
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
@@ -71,7 +71,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     event.preventDefault();
     setSenderInn(true);
 
-    sendInnSkjema(opplysningerBekreftet, false, pathSlug, 'Hovedskjema').finally(() => {
+    sendInnSkjema(opplysningerBekreftet, false, pathSlug, isDirtyForm).finally(() => {
       setSenderInn(false);
     });
   };
@@ -98,7 +98,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
           })
           .catch((error) => {
-            logger.warn('Feil ved henting av tidliger inntektsdata i hovedskjema', error);
+            logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
             logger.warn(error);
           });
       }
@@ -154,7 +154,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Feilsammendrag />
           <div className={styles.outerbuttonwrapper}>
             <div className={styles.buttonwrapper}>
-              <Button className={styles.sendbutton} loading={senderInn} disabled={!isDirtyForm}>
+              <Button className={styles.sendbutton} loading={senderInn} id='knapp-innsending'>
                 Send
               </Button>
 
