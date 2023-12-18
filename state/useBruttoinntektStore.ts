@@ -340,7 +340,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.opprinneligeInntekt = tidligereInntekt;
 
         if (tidligereInntekt) {
-          console.log('tidligereInntekt', tidligereInntekt, bestemmendeFravaersdag);
           state.tidligereInntekt = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
         }
 
