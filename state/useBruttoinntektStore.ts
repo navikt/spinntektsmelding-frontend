@@ -378,7 +378,6 @@ export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[], best
   const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
   const sisteMnd = `00${subMonths(bestemmendeFravaersdag, 3).getMonth() + 1}`.slice(-2);
   const sisteMaaned = `${subMonths(bestemmendeFravaersdag, 3).getFullYear()}-${sisteMnd}`;
-  debugger;
   if (!tidligereInntekt) return [];
   const aktuelleInntekter = tidligereInntekt
     .filter((inntekt) => inntekt.maaned < bestemmendeMaaned && inntekt.maaned >= sisteMaaned)

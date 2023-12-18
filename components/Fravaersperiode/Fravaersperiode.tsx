@@ -19,13 +19,10 @@ export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyFo
   const startSisteAktivePeriode = arbeidsgiverperioderMedData?.[arbeidsgiverperioderMedData.length - 1]?.tom;
 
   useEffect(() => {
-    console.log('fravaerPerioder - useEffect', fravaerPerioder);
-    if (skjemastatus === SkjemaStatus.BLANK && (!fravaerPerioder || fravaerPerioder.length === 0)) {
-      console.log('fravaerPerioder - useEffect - treff', fravaerPerioder);
+    if (skjemastatus === SkjemaStatus.BLANK && (!fravaerPerioder || fravaerPerioder.length < 1)) {
       leggTilFravaersperiode();
     }
-  }, [fravaerPerioder, skjemastatus]);
-  console.log('fravaerPerioder', fravaerPerioder, skjemastatus);
+  }, [fravaerPerioder, skjemastatus, leggTilFravaersperiode]);
 
   return (
     <>

@@ -99,6 +99,8 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
       : new Date();
   }, [arbeidsgiverperioder]);
 
+  const ikkeEgenmeldingPerioder = !egenmeldingsperioder || egenmeldingsperioder.length === 0;
+
   return (
     <div className={localStyles.egenmeldingswrapper}>
       <Heading3>Egenmelding</Heading3>
@@ -112,7 +114,6 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
           Hvis du overstyrer arbeidsgiverperioden er det ikke mulig å også endre eller legge til egenmeldingsperioder.
         </Alert>
       )}
-
       <div>
         <div className={localStyles.egenmeldingswrapper}>
           {lasterData && <EgenmeldingLoader />}
@@ -135,25 +136,21 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
                 visFeilmeldingsTekst={visFeilmeldingsTekst}
               />
             ))}
-          {!lasterData &&
-            (!egenmeldingsperioder ||
-              (egenmeldingsperioder.length === 0 && (
-                <>
-                  <EgenmeldingPeriode
-                    key='nyperiode'
-                    periodeId='nyperiode'
-                    egenmeldingsperiode={{ id: 'nyperiode' }}
-                    kanEndreEgenmeldingPeriode={kanEndreEgenmeldingPeriode}
-                    setEgenmeldingDato={setEgenmeldingDatofelt}
-                    toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
-                    kanSlettes={false}
-                    onSlettRad={() => {}}
-                    disabled={endretArbeidsgiverperiode}
-                    rad={0}
-                    visFeilmeldingsTekst={visFeilmeldingsTekst}
-                  />
-                </>
-              )))}
+          {!lasterData && ikkeEgenmeldingPerioder && (
+            <EgenmeldingPeriode
+              key='nyperiode'
+              periodeId='nyperiode'
+              egenmeldingsperiode={{ id: 'nyperiode' }}
+              kanEndreEgenmeldingPeriode={true}
+              setEgenmeldingDato={setEgenmeldingDatofelt}
+              toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
+              kanSlettes={false}
+              onSlettRad={() => {}}
+              disabled={endretArbeidsgiverperiode}
+              rad={0}
+              visFeilmeldingsTekst={visFeilmeldingsTekst}
+            />
+          )}
         </div>
 
         {visFeilmelding('egenmeldingsperioder-feil') && (

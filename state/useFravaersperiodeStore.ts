@@ -26,18 +26,21 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
   fravaersperioder: undefined,
   opprinneligFravaersperiode: undefined,
 
-  leggTilFravaersperiode: () =>
+  leggTilFravaersperiode: () => {
+    let kopiPeriode = structuredClone(get().fravaersperioder);
     set(
       produce((state) => {
         const nyFravaersperiode: Periode = { id: nanoid() };
-        if (!state.fravaersperioder) {
-          state.fravaersperioder = [];
+        if (!kopiPeriode) {
+          kopiPeriode = [];
         }
-        state.fravaersperioder.push(nyFravaersperiode);
+        kopiPeriode.push(nyFravaersperiode);
+        state.fravaersperioder = kopiPeriode;
 
         return state;
       })
-    ),
+    );
+  },
 
   slettFravaersperiode: (periodeId: string) =>
     set(
