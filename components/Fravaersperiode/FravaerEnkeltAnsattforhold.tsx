@@ -133,6 +133,7 @@ export default function FravaerEnkeltAnsattforhold({
           </Button>
 
           <Button
+            variant='tertiary'
             className={styles.kontrollerknapp}
             onClick={(event) => clickTilbakestillFravaersperiodeHandler(event)}
           >

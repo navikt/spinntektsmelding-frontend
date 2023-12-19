@@ -124,17 +124,17 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<Ege
           {!lasterData &&
             egenmeldingsperioder &&
             egenmeldingsperioder.length > 0 &&
-            egenmeldingsperioder.map((egenmeldingsperiode, index) => (
+            egenmeldingsperioder.map((egenmeldingPeriode, index) => (
               <EgenmeldingPeriode
-                key={egenmeldingsperiode.id}
-                periodeId={egenmeldingsperiode.id}
-                egenmeldingsperiode={egenmeldingsperiode}
+                key={egenmeldingPeriode.id}
+                periodeId={egenmeldingPeriode.id}
+                egenmeldingsperiode={egenmeldingPeriode}
                 kanEndreEgenmeldingPeriode={periodeKanEndres}
                 setEgenmeldingDato={setEgenmeldingDatofelt}
                 // toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
                 toDate={sisteGyldigeEgenmeldingDato}
-                kanSlettes={!!(egenmeldingsperiode.fom || egenmeldingsperiode.tom || index !== 0)}
-                onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingsperiode.id)}
+                kanSlettes={!!(egenmeldingPeriode.fom || egenmeldingPeriode.tom || index !== 0)}
+                onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingPeriode.id)}
                 disabled={endretArbeidsgiverperiode}
                 rad={index}
                 visFeilmeldingsTekst={visFeilmeldingsTekst}
