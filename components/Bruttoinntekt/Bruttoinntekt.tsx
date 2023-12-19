@@ -13,6 +13,7 @@ import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
+import { SkjemaStatus } from '../../state/useSkjemadataStore';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -48,6 +49,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
+  const skjemastatus = useBoundStore((state) => state.skjemastatus);
 
   const amplitudeComponent = 'BeregnetMånedslønn';
 
@@ -117,6 +119,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const manglendeEller0FraAmeldingen =
     !tidligereinntekt || tidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
 
+  const erBlanktSkjema = skjemastatus === SkjemaStatus.BLANK;
+
   return (
     <>
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
@@ -164,14 +168,14 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
           settes lik den ordinære lønnen personen ville hatt hvis det ikke hadde blitt avviklet ferie.
         </Alert>
       )}
-      {!endringAvBelop && (
+      {!endringAvBelop && !erBlanktSkjema && (
         <TextLabel className={lokalStyles.tbmargin}>
           Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
           månedslønn på
         </TextLabel>
       )}
       <div className={lokalStyles.belopwrapper}>
-        {!endringAvBelop && (
+        {!endringAvBelop && !erBlanktSkjema && (
           <>
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
               {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr/måned
@@ -179,7 +183,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
             <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />
           </>
         )}
-        {endringAvBelop && (
+        {(endringAvBelop || erBlanktSkjema) && (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
             changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
@@ -206,6 +210,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending}
             clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+            kanIkkeTilbakestilles={erBlanktSkjema}
           />
         )}
       </div>

@@ -12,15 +12,17 @@ import { subDays } from 'date-fns';
 import ButtonTilbakestill from '../ButtonTilbakestill';
 import EgenmeldingLoader from './EgenmeldingLoader';
 import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
+import { SkjemaStatus } from '../../state/useSkjemadataStore';
 
 interface EgenmeldingProps {
   lasterData?: boolean;
   setIsDirtyForm: (dirty: boolean) => void;
 }
 
-export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingProps) {
+export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<EgenmeldingProps>) {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const skjemastatus = useBoundStore((state) => state.skjemastatus);
 
   const forsteFravaersdag = useMemo(
     () =>
@@ -90,7 +92,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
     setEgenmeldingDato(dato, id);
   };
 
-  const sisteGyldigeEgenmeldingsdato = useMemo(() => {
+  const sisteGyldigeEgenmeldingDato = useMemo(() => {
     const sortertArbeidsgiverperiode = arbeidsgiverperioder
       ? [...arbeidsgiverperioder].sort((a, b) => ((a.fom || new Date()) > (b.fom || new Date()) ? -1 : 1))
       : [];
@@ -101,8 +103,10 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
 
   const ikkeEgenmeldingPerioder = !egenmeldingsperioder || egenmeldingsperioder.length === 0;
 
+  const periodeKanEndres = kanEndreEgenmeldingPeriode || skjemastatus === SkjemaStatus.BLANK;
+
   return (
-    <div className={localStyles.egenmeldingswrapper}>
+    <div className={localStyles.egenmeldingWrapper}>
       <Heading3>Egenmelding</Heading3>
       <BodyLong>
         Hvis den ansatte har oppgitt at egenmeldingsdager ble benyttet i forkant av sykmeldingen, er disse
@@ -115,7 +119,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
         </Alert>
       )}
       <div>
-        <div className={localStyles.egenmeldingswrapper}>
+        <div className={localStyles.egenmeldingWrapper}>
           {lasterData && <EgenmeldingLoader />}
           {!lasterData &&
             egenmeldingsperioder &&
@@ -125,10 +129,10 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
                 key={egenmeldingsperiode.id}
                 periodeId={egenmeldingsperiode.id}
                 egenmeldingsperiode={egenmeldingsperiode}
-                kanEndreEgenmeldingPeriode={kanEndreEgenmeldingPeriode}
+                kanEndreEgenmeldingPeriode={periodeKanEndres}
                 setEgenmeldingDato={setEgenmeldingDatofelt}
                 // toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
-                toDate={sisteGyldigeEgenmeldingsdato}
+                toDate={sisteGyldigeEgenmeldingDato}
                 kanSlettes={!!(egenmeldingsperiode.fom || egenmeldingsperiode.tom || index !== 0)}
                 onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingsperiode.id)}
                 disabled={endretArbeidsgiverperiode}
@@ -156,12 +160,12 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
         {visFeilmelding('egenmeldingsperioder-feil') && (
           <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingsTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}
-        {!kanEndreEgenmeldingPeriode && (
+        {!kanEndreEgenmeldingPeriode && skjemastatus !== SkjemaStatus.BLANK && (
           <div className={localStyles.endresykemeldingknapper}>
             <ButtonEndre onClick={clickEndreFravaersperiodeHandler} disabled={endretArbeidsgiverperiode} />
           </div>
         )}
-        {kanEndreEgenmeldingPeriode && (
+        {(kanEndreEgenmeldingPeriode || skjemastatus === SkjemaStatus.BLANK) && (
           <div className={localStyles.endresykemeldingknapper}>
             <Button
               variant='secondary'

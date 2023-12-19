@@ -7,7 +7,6 @@ import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
 import { Alert, Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
-// import ButtonEndre from '../ButtonEndre';
 import { Periode } from '../../state/state';
 import Periodevelger from '../Bruttoinntekt/Periodevelger';
 import localStyles from './FravaerEnkeltAnsattforhold.module.css';
@@ -21,20 +20,12 @@ interface FravaerEnkeltAnsattforholdProps {
   skjemastatus?: SkjemaStatus;
 }
 
-// export default function FravaerEnkeltAnsattforhold({
-//   fravaersperioder,
-//   setIsDirtyForm
-// }: FravaerEnkeltAnsattforholdProps) {
-//   fravaerPerioder?: Array<Periode>;
-//   skjemastatus?: SkjemaStatus;
-// }
-
 export default function FravaerEnkeltAnsattforhold({
   startSisteAktivePeriode,
   fravaerPerioder,
   skjemastatus,
   setIsDirtyForm
-}: FravaerEnkeltAnsattforholdProps) {
+}: Readonly<FravaerEnkeltAnsattforholdProps>) {
   const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
@@ -128,7 +119,9 @@ export default function FravaerEnkeltAnsattforhold({
           )}
         </div>
       ))}
-      {endreSykemelding && <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />}
+      {skjemastatus !== SkjemaStatus.BLANK && endreSykemelding && (
+        <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />
+      )}
       {endreSykemelding && (
         <div className={styles.endresykemeldingknapper}>
           <Button

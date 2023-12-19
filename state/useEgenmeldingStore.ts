@@ -108,7 +108,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
       produce((state) => {
         state.egenmeldingsperioder = clonedEgenmelding;
 
-        if (clonedEgenmelding && clonedEgenmelding.length > 0 && clonedEgenmelding[0].fom) {
+        if (clonedEgenmelding && clonedEgenmelding.length > 0 && clonedEgenmelding[0].fom && clonedEgenmelding[0].tom) {
           state.kanEndreEgenmeldingPeriode = false;
         }
 

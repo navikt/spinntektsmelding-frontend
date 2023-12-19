@@ -10,6 +10,7 @@ export interface FravaersPeriode {
 }
 
 export const overlappendePeriode = (ene: Periode, andre: Periode) => {
+  if (!ene || !andre) return null;
   if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
   if (ene.tom < andre.fom || ene.fom > andre.tom) {
     return null;
@@ -25,6 +26,7 @@ export const overlappendePeriode = (ene: Periode, andre: Periode) => {
 };
 
 export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
+  if (!ene || !andre) return null;
   if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
   }
@@ -54,7 +56,7 @@ const finnBestemmendeFravaersdag = (
   arbeidsgiverperiode?: Array<Periode>,
   forespurtBestemmendeFraværsdag?: string | Date
 ): string | undefined => {
-  if (!fravaersperioder || !fravaersperioder?.[0]?.fom) {
+  if (!fravaersperioder || !fravaersperioder[0] || !fravaersperioder?.[0]?.fom) {
     return undefined;
   }
 
