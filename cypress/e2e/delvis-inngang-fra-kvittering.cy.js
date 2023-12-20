@@ -14,9 +14,12 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
   it('Changes and submit', () => {
     cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-delvis.json' }).as('trenger');
-    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
-      'innsendingInntektsmelding'
-    );
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', {
+      statusCode: 201,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('innsendingInntektsmelding');
     cy.intercept('/im-dialog/api/inntektsdata', { fixture: '../../mockdata/inntektData.json' }).as('inntektsdata');
 
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {

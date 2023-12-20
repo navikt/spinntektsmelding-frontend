@@ -43,10 +43,6 @@ describe('Utfylling og innsending av skjema', () => {
       }
     }).as('kvittering');
 
-    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
-      'innsendingInntektsmelding'
-    );
-
     cy.intercept('/im-dialog/api/inntektsdata', {
       statusCode: 404,
       body: {
@@ -54,20 +50,12 @@ describe('Utfylling og innsending av skjema', () => {
       }
     }).as('inntektsdata');
 
-    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
-      'innsendingInntektsmelding'
-    );
-
-    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
-      'innsendingInntektsmelding'
-    );
-
-    cy.intercept('/im-dialog/api/inntektsdata', {
-      statusCode: 404,
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', {
+      statusCode: 201,
       body: {
         name: 'Nothing'
       }
-    }).as('inntektsdata');
+    }).as('innsendingInntektsmelding');
 
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 

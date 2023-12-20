@@ -7,9 +7,12 @@ describe('Utfylling og innsending av skjema', () => {
 
   it('can check the radioboxes for refusjon and submit', () => {
     cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-to-arbeidsforhold.json' }).as('trenger');
-    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
-      'innsendingInntektsmelding'
-    );
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', {
+      statusCode: 201,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('innsendingInntektsmelding');
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
       statusCode: 404,
       body: {
