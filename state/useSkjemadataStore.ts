@@ -121,13 +121,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setEndringerAvRefusjon: (endring: YesNo) => {
-    set(
-      produce((state: SkjemadataState) => {
-        state.endringerAvRefusjon = endring;
-      })
-    );
-  },
   setSkjemaStatus: (status: SkjemaStatus) => {
     set(
       produce((state: SkjemadataState) => {
