@@ -53,7 +53,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
   const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
+  const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);

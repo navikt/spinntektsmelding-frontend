@@ -5,6 +5,8 @@ import { MottattPeriode } from '../../state/MottattData';
 import { vi } from 'vitest';
 import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
 
+vi.mock('next/router', () => require('next-router-mock'));
+
 const fravaersperiode: Array<MottattPeriode> = [
   { fom: '2022-06-06', tom: '2022-07-06' },
   { fom: '2022-08-06', tom: '2022-09-06' },

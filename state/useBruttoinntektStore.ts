@@ -29,7 +29,7 @@ export interface BruttoinntektState {
   opprinneligeInntekt?: Array<HistoriskInntekt>;
   ferie?: Array<Periode>;
   lonnsendringsdato?: Date;
-  tariffendringsdato?: Date;
+  tariffendringDato?: Date;
   tariffkjentdato?: Date;
   nystillingdato?: Date;
   nystillingsprosentdato?: Date;
@@ -158,7 +158,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setTariffEndringsdato: (endringsdato?: Date) =>
     set(
       produce((state) => {
-        state.tariffendringsdato = endringsdato;
+        state.tariffendringDato = endringsdato;
 
         return state;
       })

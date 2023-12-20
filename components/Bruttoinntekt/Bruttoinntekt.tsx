@@ -34,7 +34,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
   const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
+  const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
@@ -188,7 +188,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
             bruttoinntekt={bruttoinntekt}
             changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
             changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
-            tariffendringsdato={tariffendringsdato}
+            tariffendringDato={tariffendringDato}
             tariffkjentdato={tariffkjentdato}
             ferie={ferie}
             permisjon={permisjon}
@@ -214,7 +214,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
           />
         )}
       </div>
-      <BodyShort className={lokalStyles.bruttoinntektbelopbeskrivelse}>Stemmer dette?</BodyShort>
+      <BodyShort className={lokalStyles.bruttoinntektBelopBeskrivelse}>Stemmer dette?</BodyShort>
       <BodyLong>
         Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i arbeidstid,
         hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke inkluderes i beregnet

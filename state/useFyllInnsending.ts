@@ -92,8 +92,8 @@ export default function useFyllInnsending() {
     state.refusjonskravetOpphoerer
   ]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
-  const [tariffendringsdato, tariffkjentdato] = useBoundStore((state) => [
-    state.tariffendringsdato,
+  const [tariffendringDato, tariffkjentdato] = useBoundStore((state) => [
+    state.tariffendringDato,
     state.tariffkjentdato
   ]);
   const ferie = useBoundStore((state) => state.ferie);
@@ -123,7 +123,7 @@ export default function useFyllInnsending() {
         case begrunnelseEndringBruttoinntekt.Tariffendring:
           return {
             typpe: begrunnelseEndringBruttoinntekt.Tariffendring,
-            gjelderFra: formatIsoDate(tariffendringsdato),
+            gjelderFra: formatIsoDate(tariffendringDato),
             bleKjent: formatIsoDate(tariffkjentdato)
           };
 

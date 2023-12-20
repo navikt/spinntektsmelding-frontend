@@ -98,7 +98,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.egenmeldingsperioder).toEqual([]);
     expect(result.current.harRefusjonEndringer).toBe('Ja');
-    expect(result.current.tariffendringsdato).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.tariffendringDato).toEqual(parseIsoDate('2023-02-24'));
     expect(result.current.tariffkjentdato).toEqual(parseIsoDate('2023-03-31'));
   });
 

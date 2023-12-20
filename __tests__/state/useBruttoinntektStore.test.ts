@@ -356,7 +356,7 @@ describe('useBoundStore', () => {
       result.current.setTariffEndringsdato(new Date(2002, 10, 11));
     });
 
-    expect(result.current.tariffendringsdato).toEqual(new Date(2002, 10, 11));
+    expect(result.current.tariffendringDato).toEqual(new Date(2002, 10, 11));
   });
 
   it('should setLonnsendringDato', () => {
