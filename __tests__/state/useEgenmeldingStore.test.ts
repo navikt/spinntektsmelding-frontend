@@ -3,6 +3,7 @@ import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../state/MottattData';
 import { vi } from 'vitest';
 import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
+import PeriodeType from '../../config/PeriodeType';
 
 const egenmeldingsperioder: Array<MottattPeriode> = [
   { fom: '2022-06-06', tom: '2022-07-06' },
@@ -120,15 +121,13 @@ describe('useEgenmeldingStore', () => {
       result.current.initEgenmeldingsperiode(egenmeldingsperioder);
     });
 
-    const periodeId = result.current.egenmeldingsperioder?.[0].id;
-
     act(() => {
-      result.current.setEgenmeldingDato(datoSpenn, 'nyperiode');
+      result.current.setEgenmeldingDato(datoSpenn, PeriodeType.NY_PERIODE);
     });
 
     expect(result.current.egenmeldingsperioder?.[0].tom).toEqual(new Date(2022, 5, 15));
     expect(result.current.egenmeldingsperioder?.[0].fom).toEqual(new Date(2022, 4, 14));
-    expect(result.current.egenmeldingsperioder?.[0].id).not.toEqual('nyperiode');
+    expect(result.current.egenmeldingsperioder?.[0].id).not.toEqual(PeriodeType.NY_PERIODE);
   });
 
   it('should add a backup of egenmelding opprinneligEgenmelding.', () => {

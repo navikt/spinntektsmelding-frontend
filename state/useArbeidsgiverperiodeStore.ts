@@ -12,6 +12,7 @@ import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
 import { MottattPeriode } from './MottattData';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
+import PeriodeType from '../config/PeriodeType';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
@@ -129,14 +130,18 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
       set(
         produce((state) => {
-          state.arbeidsgiverperioder = state.arbeidsgiverperioder.map((periode: Periode) => {
-            if (periode.id === periodeId) {
-              periode.tom = dateValue?.tom;
-              periode.fom = dateValue?.fom;
+          if (periodeId === PeriodeType.NY_PERIODE) {
+            state.arbeidsgiverperioder = [{ ...dateValue, id: nanoid() }];
+          } else {
+            state.arbeidsgiverperioder = state.arbeidsgiverperioder.map((periode: Periode) => {
+              if (periode.id === periodeId) {
+                periode.tom = dateValue?.tom;
+                periode.fom = dateValue?.fom;
+                return periode;
+              }
               return periode;
-            }
-            return periode;
-          });
+            });
+          }
 
           state.endretArbeidsgiverperiode = true;
 

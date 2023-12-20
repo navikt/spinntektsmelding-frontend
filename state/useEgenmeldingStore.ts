@@ -9,6 +9,7 @@ import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
+import PeriodeType from '../config/PeriodeType';
 
 export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;
@@ -29,7 +30,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
     const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
     set(
       produce((state) => {
-        if (periodeId === 'nyperiode') {
+        if (periodeId === PeriodeType.NY_PERIODE) {
           const hasSetDateValue = dateValue && (dateValue.fom || dateValue?.tom);
 
           if (hasSetDateValue) {

@@ -13,6 +13,7 @@ import ButtonTilbakestill from '../ButtonTilbakestill';
 import EgenmeldingLoader from './EgenmeldingLoader';
 import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
+import PeriodeType from '../../config/PeriodeType';
 
 interface EgenmeldingProps {
   lasterData?: boolean;
@@ -142,9 +143,9 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<Ege
             ))}
           {!lasterData && ikkeEgenmeldingPerioder && (
             <EgenmeldingPeriode
-              key='nyperiode'
-              periodeId='nyperiode'
-              egenmeldingsperiode={{ id: 'nyperiode' }}
+              key={PeriodeType.NY_PERIODE}
+              periodeId={PeriodeType.NY_PERIODE}
+              egenmeldingsperiode={{ id: PeriodeType.NY_PERIODE }}
               kanEndreEgenmeldingPeriode={true}
               setEgenmeldingDato={setEgenmeldingDatofelt}
               toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}

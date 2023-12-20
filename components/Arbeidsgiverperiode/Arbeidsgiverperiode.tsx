@@ -16,6 +16,8 @@ import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import { differenceInCalendarDays } from 'date-fns';
 import SelectBegrunnelse from '../RefusjonArbeidsgiver/SelectBegrunnelse';
+import PeriodeType from '../../config/PeriodeType';
+import { SkjemaStatus } from '../../state/useSkjemadataStore';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -41,6 +43,8 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
   );
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const skjemastatus = useBoundStore((state) => state.skjemastatus);
+
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
   const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled] = useBoundStore((state) => [
@@ -48,7 +52,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
     state.setArbeidsgiverperiodeDisabled
   ]);
 
-  const [manuellEndring, setManuellEndring] = useState<boolean>(false);
+  // const [manuellEndring, setManuellEndring] = useState<boolean>(false);
 
   const antallDagerIArbeidsgiverperioder = (perioder: Array<Periode> | undefined) => {
     if (typeof perioder === 'undefined') {
@@ -129,16 +133,16 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
     setArbeidsgiverperiodeDisabled(event.target.checked);
 
     if (event.target.checked === true) {
-      setManuellEndring(true);
+      // setManuellEndring(true);
       setBeloepUtbetaltUnderArbeidsgiverperioden('0');
       arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       slettAlleArbeidsgiverperioder();
     } else {
-      setManuellEndring(false);
+      // setManuellEndring(false);
       setBeloepUtbetaltUnderArbeidsgiverperioden(undefined);
       arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(undefined);
       setArbeidsgiverperiodeDisabled(false);
-      tilbakestillArbeidsgiverperiode();
+      if (skjemastatus !== SkjemaStatus.BLANK) tilbakestillArbeidsgiverperiode();
       begrunnelseRedusertUtbetaling(undefined);
     }
     setIsDirtyForm(true);
@@ -160,16 +164,16 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
     }
   }, [arbeidsgiverperioder]);
 
-  useEffect(() => {
-    if (
-      arbeidsgiverperioder?.length === 1 &&
-      !arbeidsgiverperioder[0].fom &&
-      !arbeidsgiverperioder[0].tom &&
-      !manuellEndring
-    ) {
-      setArbeidsgiverperiodeDisabled(true);
-    }
-  }, [arbeidsgiverperioder, manuellEndring]);
+  // useEffect(() => {
+  //   if (
+  //     arbeidsgiverperioder?.length === 1 &&
+  //     !arbeidsgiverperioder[0].fom &&
+  //     !arbeidsgiverperioder[0].tom &&
+  //     !manuellEndring
+  //   ) {
+  //     setArbeidsgiverperiodeDisabled(true);
+  //   }
+  // }, [arbeidsgiverperioder, manuellEndring]);
 
   useEffect(() => {
     if (inngangFraKvittering && arbeidsgiverperioder?.length === 0) {
@@ -197,7 +201,6 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
         du mener dette er feil må dere korrigere perioden. Informasjonen brukes til å avgjøre når Nav skal overta
         betaling av sykepenger etter arbeidsgiverperiodens utløp.{' '}
       </BodyLong>
-
       {arbeidsgiverperioder?.map((periode, periodeIndex) => (
         <div key={periode.id} className={lokalStyles.datewrapper}>
           {!endretArbeidsgiverperiode && (
@@ -242,6 +245,45 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
           )}
         </div>
       ))}
+      {(!arbeidsgiverperioder || arbeidsgiverperioder?.length === 0) && (
+        <>
+          {!endretArbeidsgiverperiode && (
+            <div className={lokalStyles.endrearbeidsgiverperiode}>
+              <div className={lokalStyles.datepickerescape}>
+                <TextLabel data-cy={`arbeidsgiverperiode-1-fra`}>Fra</TextLabel>
+                <div data-cy={`arbeidsgiverperiode-1-fra-dato`} id={`arbeidsgiverperioder[1].fom`}>
+                  -
+                </div>
+              </div>
+              <div className={lokalStyles.datepickerescape}>
+                <TextLabel data-cy={`arbeidsgiverperiode-1-til`}>Til</TextLabel>
+                <div data-cy={`arbeidsgiverperiode-1-til-dato`} id={`arbeidsgiverperioder[1].tom`}>
+                  -
+                </div>
+              </div>
+            </div>
+          )}
+          {endretArbeidsgiverperiode && (
+            <Periodevelger
+              fomTekst='Fra'
+              fomID={`arbeidsgiverperioder[ny].fom`}
+              fomError={visFeilmeldingsTekst(`arbeidsgiverperioder[ny].fom`)}
+              tomTekst='Til'
+              tomID={`arbeidsgiverperioder[ny].tom`}
+              tomError={visFeilmeldingsTekst(`arbeidsgiverperioder[ny].tom`)}
+              onRangeChange={(oppdatertPeriode) =>
+                setArbeidsgiverperiodeDatofelt(oppdatertPeriode, PeriodeType.NY_PERIODE)
+              }
+              // defaultRange={periode}
+              kanSlettes={false}
+              periodeId={PeriodeType.NY_PERIODE.toString()}
+              onSlettRad={() => clickSlettArbeidsgiverperiode(PeriodeType.NY_PERIODE)}
+              toDate={new Date()}
+              disabled={arbeidsgiverperiodeDisabled}
+            />
+          )}
+        </>
+      )}
       {endretArbeidsgiverperiode && (
         <>
           <Checkbox
@@ -269,11 +311,9 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
           />
         </div>
       )}
-
       {visFeilmelding('arbeidsgiverperiode-feil') && (
         <Feilmelding id='arbeidsgiverperiode-feil'>{visFeilmeldingsTekst('arbeidsgiverperiode-feil')}</Feilmelding>
       )}
-
       {valideringsfeil.length > 0 && <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{valideringsfeil}</Feilmelding>}
       {endretArbeidsgiverperiode && (
         <div className={lokalStyles.endreknapper}>
