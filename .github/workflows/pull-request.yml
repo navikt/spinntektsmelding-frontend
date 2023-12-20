@@ -22,7 +22,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --frozen-lockfile
       - run: yarn build
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: spinntektsmelding-frontend-artifact
           path: ${{ github.workspace }}/build/**/*
