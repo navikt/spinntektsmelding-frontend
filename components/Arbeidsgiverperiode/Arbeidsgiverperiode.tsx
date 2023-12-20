@@ -133,12 +133,10 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
     setArbeidsgiverperiodeDisabled(event.target.checked);
 
     if (event.target.checked === true) {
-      // setManuellEndring(true);
       setBeloepUtbetaltUnderArbeidsgiverperioden('0');
       arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       slettAlleArbeidsgiverperioder();
     } else {
-      // setManuellEndring(false);
       setBeloepUtbetaltUnderArbeidsgiverperioden(undefined);
       arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(undefined);
       setArbeidsgiverperiodeDisabled(false);
@@ -163,17 +161,6 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       setValideringsfeil('');
     }
   }, [arbeidsgiverperioder]);
-
-  // useEffect(() => {
-  //   if (
-  //     arbeidsgiverperioder?.length === 1 &&
-  //     !arbeidsgiverperioder[0].fom &&
-  //     !arbeidsgiverperioder[0].tom &&
-  //     !manuellEndring
-  //   ) {
-  //     setArbeidsgiverperiodeDisabled(true);
-  //   }
-  // }, [arbeidsgiverperioder, manuellEndring]);
 
   useEffect(() => {
     if (inngangFraKvittering && arbeidsgiverperioder?.length === 0) {
@@ -274,7 +261,6 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
               onRangeChange={(oppdatertPeriode) =>
                 setArbeidsgiverperiodeDatofelt(oppdatertPeriode, PeriodeType.NY_PERIODE)
               }
-              // defaultRange={periode}
               kanSlettes={false}
               periodeId={PeriodeType.NY_PERIODE.toString()}
               onSlettRad={() => clickSlettArbeidsgiverperiode(PeriodeType.NY_PERIODE)}

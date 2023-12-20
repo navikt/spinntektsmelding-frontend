@@ -119,10 +119,6 @@ const Initiering: NextPage = () => {
       });
 
       backendFeil.current = feilmeldingerFraBackend;
-      // setFeilmeldinger((gmlFeil) => {
-      //   if (gmlFeil) return [...gmlFeil, ...feilmeldingerFraBackend];
-      //   return feilmeldingerFraBackend;
-      // });
     }
   }
   const visFeilmeldingliste =
