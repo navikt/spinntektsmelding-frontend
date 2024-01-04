@@ -1,4 +1,4 @@
-import { Mock, vi } from 'vitest';
+import { vi } from 'vitest';
 import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../state/MottattData';
@@ -32,6 +32,10 @@ describe('useBoundStore', () => {
     cleanup();
   });
 
+  afterAll(() => {
+    vi.resetAllMocks();
+  });
+
   it('should set bestemmende fraværsdag.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -63,7 +67,7 @@ describe('useBoundStore', () => {
   it('should add empty arbeidsgiver periode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    (nanoid as Mock).mockReturnValue('2');
+    mocked_nanoid.mockReturnValue('2');
 
     const datoSpenn: Periode[] = [
       {
@@ -207,7 +211,7 @@ describe('useBoundStore', () => {
   it('should init Arbeidsgiverperiode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -241,7 +245,7 @@ describe('useBoundStore', () => {
   it('should init Arbeidsgiverperiode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -275,7 +279,7 @@ describe('useBoundStore', () => {
   it('should delete an arbeidsgiverperiode for a given ID.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -321,7 +325,7 @@ describe('useBoundStore', () => {
   it('should reset Arbeidsgiverperiode to its initial value.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -572,7 +576,7 @@ describe('useBoundStore', () => {
   it('should set the har blitt endret flag.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -629,7 +633,7 @@ describe('useBoundStore', () => {
   it('should not set the har blitt endret flag.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -682,382 +686,385 @@ describe('useBoundStore', () => {
 
     expect(result.current.endretArbeidsgiverperiode).toBeFalsy();
   });
-});
 
-it('should delete a periode.', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
+  it('should delete a periode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
-  (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
-  const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-01',
-      tom: '2022-10-05'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-  act(() => {
-    result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        fom: new Date(2022, 9, 1),
+        id: '1',
+        tom: new Date(2022, 9, 5)
+      },
+      {
+        fom: new Date(2022, 9, 10),
+        id: '2',
+        tom: new Date(2022, 9, 15)
+      }
+    ]);
+
+    act(() => {
+      result.current.slettArbeidsgiverperiode('1');
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        fom: new Date(2022, 9, 10),
+        id: '2',
+        tom: new Date(2022, 9, 15)
+      }
+    ]);
   });
 
-  expect(result.current.arbeidsgiverperioder).toEqual([
-    {
-      fom: new Date(2022, 9, 1),
-      id: '1',
-      tom: new Date(2022, 9, 5)
-    },
-    {
-      fom: new Date(2022, 9, 10),
-      id: '2',
-      tom: new Date(2022, 9, 15)
-    }
-  ]);
+  it('should update a periode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
-  act(() => {
-    result.current.slettArbeidsgiverperiode('1');
-  });
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
-  expect(result.current.arbeidsgiverperioder).toEqual([
-    {
-      fom: new Date(2022, 9, 10),
-      id: '2',
-      tom: new Date(2022, 9, 15)
-    }
-  ]);
-});
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-it('should update a periode.', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
 
-  (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
+    act(() => {
+      result.current.setArbeidsgiverperiodeDato(
+        {
+          fom: new Date(2022, 9, 4),
+          tom: new Date(2022, 9, 6)
+        },
+        '1'
+      );
+    });
 
-  const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-01',
-      tom: '2022-10-05'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
-
-  act(() => {
-    result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
-  });
-
-  act(() => {
-    result.current.setArbeidsgiverperiodeDato(
+    expect(result.current.arbeidsgiverperioder).toEqual([
       {
         fom: new Date(2022, 9, 4),
+        id: '1',
         tom: new Date(2022, 9, 6)
       },
-      '1'
-    );
+      {
+        fom: new Date(2022, 9, 10),
+        id: '2',
+        tom: new Date(2022, 9, 15)
+      }
+    ]);
   });
 
-  expect(result.current.arbeidsgiverperioder).toEqual([
-    {
-      fom: new Date(2022, 9, 4),
-      id: '1',
-      tom: new Date(2022, 9, 6)
-    },
-    {
-      fom: new Date(2022, 9, 10),
-      id: '2',
-      tom: new Date(2022, 9, 15)
-    }
-  ]);
-});
+  it('should delete all periode.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
-it('should delete all periode.', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
-  (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-  const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-01',
-      tom: '2022-10-05'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
 
-  act(() => {
-    result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    act(() => {
+      result.current.slettAlleArbeidsgiverperioder();
+    });
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        id: '3'
+      }
+    ]);
   });
 
-  act(() => {
-    result.current.slettAlleArbeidsgiverperioder();
-  });
-  expect(result.current.arbeidsgiverperioder).toEqual([
-    {
-      id: '3'
-    }
-  ]);
-});
+  it('should check if arbeidsgiverperiode has not been changed', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
-it('should check if arbeidsgiverperiode has not been changed', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
-  (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-  const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-01',
-      tom: '2022-10-05'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      result.current.initFravaersperiode(mottattArbeidsgiverperiode);
+    });
 
-  act(() => {
-    result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
-    result.current.initFravaersperiode(mottattArbeidsgiverperiode);
+    act(() => {
+      result.current.harArbeidsgiverperiodenBlittEndret();
+    });
+    expect(result.current.endretArbeidsgiverperiode).toBeFalsy();
   });
 
-  act(() => {
-    result.current.harArbeidsgiverperiodenBlittEndret();
-  });
-  expect(result.current.endretArbeidsgiverperiode).toBeFalsy();
-});
+  it('should check if arbeidsgiverperiode has been changed', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
-it('should check if arbeidsgiverperiode has been changed', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
-  (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-02',
+        tom: '2022-10-06'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-  const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-02',
-      tom: '2022-10-06'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
+    const mottattFravaersperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-  const mottattFravaersperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-01',
-      tom: '2022-10-05'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      result.current.initFravaersperiode(mottattFravaersperiode);
+    });
 
-  act(() => {
-    result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
-    result.current.initFravaersperiode(mottattFravaersperiode);
-  });
-
-  act(() => {
-    result.current.harArbeidsgiverperiodenBlittEndret();
-  });
-  expect(result.current.endretArbeidsgiverperiode).toBeTruthy();
-});
-
-it('should check if arbeidsgiverperiode has been changed and we have egenmeldingsperiode', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
-
-  (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
-
-  const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-09-27',
-      tom: '2022-09-30'
-    },
-    {
-      fom: '2022-10-02',
-      tom: '2022-10-06'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
-
-  const mottattFravaersperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-01',
-      tom: '2022-10-05'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
-
-  const mottattEgenmeldingsperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-09-27',
-      tom: '2022-09-30'
-    }
-  ];
-
-  act(() => {
-    result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
-    result.current.initFravaersperiode(mottattFravaersperiode);
-    result.current.initEgenmeldingsperiode;
+    act(() => {
+      result.current.harArbeidsgiverperiodenBlittEndret();
+    });
+    expect(result.current.endretArbeidsgiverperiode).toBeTruthy();
   });
 
-  act(() => {
-    result.current.harArbeidsgiverperiodenBlittEndret();
-  });
-  expect(result.current.endretArbeidsgiverperiode).toBeTruthy();
-});
+  it('should check if arbeidsgiverperiode has been changed and we have egenmeldingsperiode', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
-it('should check if arbeidsgiverperiode has been changed and we only have egenmeldingsperiode', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
-  (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-09-27',
+        tom: '2022-09-30'
+      },
+      {
+        fom: '2022-10-02',
+        tom: '2022-10-06'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-  const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-02',
-      tom: '2022-10-06'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
+    const mottattFravaersperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-  const mottattFravaersperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-01',
-      tom: '2022-10-05'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
+    const mottattEgenmeldingsperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-09-27',
+        tom: '2022-09-30'
+      }
+    ];
 
-  act(() => {
-    result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
-    result.current.initEgenmeldingsperiode(mottattFravaersperiode);
-  });
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      result.current.initFravaersperiode(mottattFravaersperiode);
+      result.current.initEgenmeldingsperiode;
+    });
 
-  act(() => {
-    result.current.harArbeidsgiverperiodenBlittEndret();
-  });
-  expect(result.current.endretArbeidsgiverperiode).toBeTruthy();
-});
-
-it('should not change status if arbeidsgiverperiode is missing', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
-
-  (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
-
-  const mottattFravaersperiode: Array<MottattPeriode> = [
-    {
-      fom: '2022-10-01',
-      tom: '2022-10-05'
-    },
-    {
-      fom: '2022-10-10',
-      tom: '2022-10-15'
-    }
-  ];
-
-  act(() => {
-    result.current.initEgenmeldingsperiode(mottattFravaersperiode);
+    act(() => {
+      result.current.harArbeidsgiverperiodenBlittEndret();
+    });
+    expect(result.current.endretArbeidsgiverperiode).toBeTruthy();
   });
 
-  act(() => {
-    result.current.harArbeidsgiverperiodenBlittEndret();
-  });
-  expect(result.current.endretArbeidsgiverperiode).toBeFalsy();
-});
+  it('should check if arbeidsgiverperiode has been changed and we only have egenmeldingsperiode', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
-it('should set status on arbeidsgiverperiodeDisabled', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
-  act(() => {
-    result.current.setArbeidsgiverperiodeDisabled(true);
-  });
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-02',
+        tom: '2022-10-06'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-  expect(result.current.arbeidsgiverperiodeDisabled).toBeTruthy();
-});
+    const mottattFravaersperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
 
-it('should reset status on arbeidsgiverperiodeDisabled', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+      result.current.initEgenmeldingsperiode(mottattFravaersperiode);
+    });
 
-  act(() => {
-    result.current.setArbeidsgiverperiodeDisabled(true);
-  });
-
-  expect(result.current.arbeidsgiverperiodeDisabled).toBeTruthy();
-
-  act(() => {
-    result.current.setArbeidsgiverperiodeDisabled(false);
-  });
-
-  expect(result.current.arbeidsgiverperiodeDisabled).toBeFalsy();
-});
-
-it('should reset arbeidsgiverperiode and bestemmende fraværsdag when tilbakestillArbeidsgiverperiode is run', () => {
-  const { result } = renderHook(() => useBoundStore((state) => state));
-
-  (nanoid as Mock).mockReturnValue('1');
-
-  const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
-    {
-      fom: '2021-10-01',
-      tom: '2021-10-05'
-    }
-  ];
-
-  const mottattFravaersperiode: Array<MottattPeriode> = [
-    {
-      fom: '2021-10-01',
-      tom: '2021-10-05'
-    }
-  ];
-
-  act(() => {
-    result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
-    result.current.initFravaersperiode(mottattFravaersperiode);
+    act(() => {
+      result.current.harArbeidsgiverperiodenBlittEndret();
+    });
+    expect(result.current.endretArbeidsgiverperiode).toBeTruthy();
   });
 
-  act(() => {
-    result.current.setBestemmendeFravaersdag(parseIsoDate('2021-10-01'));
+  it('should not change status if arbeidsgiverperiode is missing', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
+
+    const mottattFravaersperiode: Array<MottattPeriode> = [
+      {
+        fom: '2022-10-01',
+        tom: '2022-10-05'
+      },
+      {
+        fom: '2022-10-10',
+        tom: '2022-10-15'
+      }
+    ];
+
+    act(() => {
+      result.current.initEgenmeldingsperiode(mottattFravaersperiode);
+    });
+
+    act(() => {
+      result.current.harArbeidsgiverperiodenBlittEndret();
+    });
+    expect(result.current.endretArbeidsgiverperiode).toBeFalsy();
   });
 
-  expect(result.current.arbeidsgiverperioder).toEqual([
-    {
-      id: '1',
-      fom: parseIsoDate('2021-10-01'),
-      tom: parseIsoDate('2021-10-05')
-    }
-  ]);
+  it('should set status on arbeidsgiverperiodeDisabled', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
-  expect(result.current.bestemmendeFravaersdag).toEqual(parseIsoDate('2021-10-01'));
+    act(() => {
+      result.current.setArbeidsgiverperiodeDisabled(true);
+    });
 
-  act(() => {
-    result.current.tilbakestillArbeidsgiverperiode();
+    expect(result.current.arbeidsgiverperiodeDisabled).toBeTruthy();
   });
 
-  expect(result.current.arbeidsgiverperioder).toEqual([
-    {
-      id: '1',
-      fom: parseIsoDate('2021-10-01'),
-      tom: parseIsoDate('2021-10-05')
-    }
-  ]);
+  it('should reset status on arbeidsgiverperiodeDisabled', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
-  expect(result.current.bestemmendeFravaersdag).toEqual(parseIsoDate('2021-10-01'));
+    act(() => {
+      result.current.setArbeidsgiverperiodeDisabled(true);
+    });
+
+    expect(result.current.arbeidsgiverperiodeDisabled).toBeTruthy();
+
+    act(() => {
+      result.current.setArbeidsgiverperiodeDisabled(false);
+    });
+
+    expect(result.current.arbeidsgiverperiodeDisabled).toBeFalsy();
+  });
+
+  it('should reset arbeidsgiverperiode and bestemmende fraværsdag when tilbakestillArbeidsgiverperiode is run', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3').mockReturnValueOnce('4');
+
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2021-10-01',
+        tom: '2021-10-05'
+      }
+    ];
+
+    const mottattFravaersperiode: Array<MottattPeriode> = [
+      {
+        fom: '2021-10-01',
+        tom: '2021-10-05'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
+
+    act(() => {
+      result.current.initFravaersperiode(mottattFravaersperiode);
+    });
+
+    act(() => {
+      result.current.setBestemmendeFravaersdag(parseIsoDate('2021-10-01'));
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        id: '1',
+        fom: parseIsoDate('2021-10-01'),
+        tom: parseIsoDate('2021-10-05')
+      }
+    ]);
+
+    expect(result.current.bestemmendeFravaersdag).toEqual(parseIsoDate('2021-10-01'));
+
+    act(() => {
+      result.current.tilbakestillArbeidsgiverperiode();
+    });
+
+    expect(result.current.arbeidsgiverperioder).toEqual([
+      {
+        id: '2',
+        fom: parseIsoDate('2021-10-01'),
+        tom: parseIsoDate('2021-10-05')
+      }
+    ]);
+
+    expect(result.current.bestemmendeFravaersdag).toEqual(parseIsoDate('2021-10-01'));
+  });
 });
