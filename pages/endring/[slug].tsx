@@ -30,6 +30,7 @@ import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import TextLabel from '../../components/TextLabel';
 import ButtonEndre from '../../components/ButtonEndre';
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
+import { isEqual } from 'date-fns';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -252,10 +253,23 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const classNameJaEndringAvRefusjon = cx({ fancyRadio: true, selectedRadio: endringerAvRefusjon === 'Ja' });
   const classNameNeiEndringAvRefusjon = cx({ fancyRadio: true, selectedRadio: endringerAvRefusjon === 'Nei' });
 
-  const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrrige innsending';
+  const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrige innsending';
   const kanIkkeTilbakestilles = !kanBruttoinntektTilbakebestilles();
 
   const harEndringer = harRefusjonEndringer;
+
+  const kreverIkkeRefusjon =
+    gammeltSkjaeringstidspunkt &&
+    opprinneligRefusjonEndringer?.[0].dato &&
+    isEqual(gammeltSkjaeringstidspunkt, opprinneligRefusjonEndringer?.[0].dato);
+
+  const refusjonEndringerUtenSkjaeringstidspunkt =
+    gammeltSkjaeringstidspunkt && refusjonEndringer
+      ? refusjonEndringer?.filter((endring) => {
+          if (!endring.dato) return false;
+          return !isEqual(gammeltSkjaeringstidspunkt, endring.dato);
+        })
+      : refusjonEndringer;
 
   return (
     <div className={styles.container}>
@@ -352,77 +366,82 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
               )}
               <Skillelinje />
               <Heading2>Refusjon</Heading2>
+              {kreverIkkeRefusjon && (
+                <BodyLong>I henhold til siste inntektsmelding hadde dere ikke noe refusjonskrav.</BodyLong>
+              )}
               {!inngangFraKvittering && (
                 <>
-                  <BodyLong>I siste inntektsmelding hadde dere følgende refusjonskrav:</BodyLong>
-                  <H3Label unPadded topPadded>
-                    Refusjon til arbeidsgiver etter arbeidsgiverperiode
-                  </H3Label>
-                  {!harEndringer && <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>}
-                  {harEndringer && (
+                  {!kreverIkkeRefusjon && (
                     <>
-                      {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
+                      <BodyLong>I siste inntektsmelding hadde dere følgende refusjonskrav:</BodyLong>
                       <H3Label unPadded topPadded>
-                        Er det endringer i refusjonskrav i perioden?
+                        Refusjon til arbeidsgiver etter arbeidsgiverperiode
                       </H3Label>
-                      {opprinneligRefusjonEndringer && opprinneligRefusjonEndringer?.length > 0 ? 'Ja' : 'Nei'}
-                      {opprinneligRefusjonEndringer && opprinneligRefusjonEndringer?.length > 0 && (
-                        <div className={lokalStyles.refusjonswrapper}>
-                          <table>
-                            <thead>
-                              <tr>
-                                <th className={lokalStyles.table_header}>
-                                  <strong>Endret refusjon</strong>
-                                </th>
-                                <th>
-                                  <strong>Dato for endret refusjon</strong>
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {opprinneligRefusjonEndringer?.map((endring) => (
-                                <tr key={endring.dato?.toString()}>
-                                  <td>{formatCurrency(endring.belop)} kr</td>
-                                  <td>{formatDate(endring.dato)}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                      <H3Label unPadded topPadded>
-                        Opphører refusjonkravet under sykefraværet?
-                      </H3Label>
-                      {opprinneligRefusjonskravetOpphoerer?.status}
-                      {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
+                      {!harEndringer && <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>}
+                      {harEndringer && (
                         <>
+                          {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
                           <H3Label unPadded topPadded>
-                            Siste dag dere krever refusjon for
+                            Er det endringer i refusjonskrav i perioden?
                           </H3Label>
-                          {formatDate(opprinneligRefusjonskravetOpphoerer.opphorsdato)}
+                          {opprinneligRefusjonEndringer && opprinneligRefusjonEndringer?.length > 0 ? 'Ja' : 'Nei'}
+                          {opprinneligRefusjonEndringer && opprinneligRefusjonEndringer?.length > 0 && (
+                            <div className={lokalStyles.refusjonswrapper}>
+                              <table>
+                                <thead>
+                                  <tr>
+                                    <th className={lokalStyles.table_header}>
+                                      <strong>Endret refusjon</strong>
+                                    </th>
+                                    <th>
+                                      <strong>Dato for endret refusjon</strong>
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {opprinneligRefusjonEndringer?.map((endring) => (
+                                    <tr key={endring.dato?.toString()}>
+                                      <td>{formatCurrency(endring.belop)} kr</td>
+                                      <td>{formatDate(endring.dato)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                          <H3Label unPadded topPadded>
+                            Opphører refusjonkravet under sykefraværet?
+                          </H3Label>
+                          {opprinneligRefusjonskravetOpphoerer?.status}
+                          {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
+                            <>
+                              <H3Label unPadded topPadded>
+                                Siste dag dere krever refusjon for
+                              </H3Label>
+                              {formatDate(opprinneligRefusjonskravetOpphoerer.opphoersdato)}
+                            </>
+                          )}
                         </>
                       )}
                     </>
                   )}
                   {!inngangFraKvittering && (
-                    <>
-                      <RadioGroup
-                        legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
-                          forsteFravaersdag
-                        )} (start av nytt sykefravær)?`}
-                        onChange={addIsDirtyForm(handleChangeEndringRefusjon)}
-                        className={lokalStyles.fancyRadioGruppe}
-                        defaultValue={endringerAvRefusjon}
-                        id='endring-refusjon'
-                      >
-                        <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
-                          Ja
-                        </Radio>
-                        <Radio value='Nei' className={classNameNeiEndringAvRefusjon}>
-                          Nei
-                        </Radio>
-                      </RadioGroup>
-                    </>
+                    <RadioGroup
+                      legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
+                        forsteFravaersdag
+                      )} (start av nytt sykefravær)?`}
+                      onChange={addIsDirtyForm(handleChangeEndringRefusjon)}
+                      className={lokalStyles.fancyRadioGruppe}
+                      defaultValue={endringerAvRefusjon}
+                      id='endring-refusjon'
+                    >
+                      <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
+                        Ja
+                      </Radio>
+                      <Radio value='Nei' className={classNameNeiEndringAvRefusjon}>
+                        Nei
+                      </Radio>
+                    </RadioGroup>
                   )}
                 </>
               )}
@@ -449,8 +468,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       />
 
                       <RefusjonUtbetalingEndring
-                        endringer={refusjonEndringer || []}
-                        maxDate={refusjonskravetOpphoerer?.opphorsdato}
+                        endringer={refusjonEndringerUtenSkjaeringstidspunkt || []}
+                        maxDate={refusjonskravetOpphoerer?.opphoersdato}
                         // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
                         onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
                         onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
@@ -479,7 +498,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                             onDateChange={addIsDirtyForm(refusjonskravetOpphoererDato)}
                             id={`lus-sluttdato`}
                             error={visFeilmeldingsTekst(`lus-sluttdato`)}
-                            defaultSelected={refusjonskravetOpphoerer?.opphorsdato}
+                            defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
                           />
                         </div>
                       )}

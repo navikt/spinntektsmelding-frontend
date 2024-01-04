@@ -73,7 +73,7 @@ describe('LonnUnderSykefravaeret', () => {
     const lonn: LonnISykefravaeret = { status: 'Ja', belop: 2345 };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
       status: 'Ja',
-      opphorsdato: parseIsoDate('2022-04-04')
+      opphoersdato: parseIsoDate('2022-04-04')
     };
     const harRefusjonEndringer: YesNo = 'Ja';
     const refusjonEndringer: Array<EndringsBelop> = [
@@ -103,7 +103,7 @@ describe('LonnUnderSykefravaeret', () => {
     const lonn: LonnISykefravaeret = { status: 'Ja', belop: 2345, status: 'Nei' };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
       status: 'Ja',
-      opphorsdato: parseIsoDate('2022-04-04')
+      opphoersdato: parseIsoDate('2022-04-04')
     };
     const harRefusjonEndringer: YesNo = 'Ja';
     const refusjonEndringer: Array<EndringsBelop> = [

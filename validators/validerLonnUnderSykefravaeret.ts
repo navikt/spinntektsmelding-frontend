@@ -44,7 +44,7 @@ function validerStatus(refusjonskravetOpphoerer: RefusjonskravetOpphoerer | unde
 }
 
 function validerJaStatusMedDato(refusjonskravetOpphoerer: RefusjonskravetOpphoerer, errorStatus: ValiderResultat[]) {
-  if (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphorsdato) {
+  if (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphoersdato) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_SLUTTDATO,
       felt: 'lus-sluttdato'

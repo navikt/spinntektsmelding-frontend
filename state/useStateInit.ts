@@ -72,10 +72,13 @@ export default function useStateInit() {
     }));
 
     const foreslaattBestemmendeFraværsdag = jsonData.skjaeringstidspunkt;
-    setForeslaattBestemmendeFravaersdag(parseIsoDate(foreslaattBestemmendeFraværsdag));
 
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, undefined, foreslaattBestemmendeFraværsdag);
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
+
+    if (foreslaattBestemmendeFraværsdag) {
+      setForeslaattBestemmendeFravaersdag(parseIsoDate(foreslaattBestemmendeFraværsdag));
+    } else if (bestemmendeFravaersdag) setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
 

@@ -248,7 +248,7 @@ export default function useFyllInnsending() {
           lonnISykefravaeret?.status,
           jaEllerNei(
             refusjonskravetOpphoerer?.status,
-            refusjonskravetOpphoerer?.opphorsdato ? formatIsoDate(refusjonskravetOpphoerer?.opphorsdato) : undefined
+            refusjonskravetOpphoerer?.opphoersdato ? formatIsoDate(refusjonskravetOpphoerer?.opphoersdato) : undefined
           )
         ),
         refusjonEndringer: jaEllerNei(lonnISykefravaeret?.status, innsendingRefusjonEndringer)

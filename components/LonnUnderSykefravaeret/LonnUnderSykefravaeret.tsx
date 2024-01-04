@@ -76,7 +76,9 @@ export default function LonnUnderSykefravaeret({
         {refusjonskravetOpphoerer && refusjonskravetOpphoerer.status === 'Ja' && (
           <>
             <div className={lokalStyle.uthevet}>Opphørsdato</div>
-            <BodyShort className={lokalStyle.svartekster}>{formatDate(refusjonskravetOpphoerer.opphorsdato)}</BodyShort>
+            <BodyShort className={lokalStyle.svartekster}>
+              {formatDate(refusjonskravetOpphoerer.opphoersdato)}
+            </BodyShort>
           </>
         )}
       </div>

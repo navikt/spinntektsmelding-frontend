@@ -10,7 +10,7 @@ const lonnUS: LonnISykefravaeret = {
 
 const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
   status: 'Ja',
-  opphorsdato: new Date(2002, 1, 2)
+  opphoersdato: new Date(2002, 1, 2)
 };
 describe('validerLonnUnderSykefravaeret', () => {
   it('should return an empty array when everything is OK', () => {
