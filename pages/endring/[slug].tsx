@@ -257,11 +257,12 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const kanIkkeTilbakestilles = !kanBruttoinntektTilbakebestilles();
 
   const harEndringer = harRefusjonEndringer;
-
+  // debugger;
   const kreverIkkeRefusjon =
     gammeltSkjaeringstidspunkt &&
-    opprinneligRefusjonEndringer?.[0].dato &&
-    isEqual(gammeltSkjaeringstidspunkt, opprinneligRefusjonEndringer?.[0].dato);
+    opprinneligRefusjonEndringer?.filter((endring) => {
+      return !isEqual(gammeltSkjaeringstidspunkt, endring.dato || gammeltSkjaeringstidspunkt);
+    }).length === 0;
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     gammeltSkjaeringstidspunkt && refusjonEndringer
@@ -373,6 +374,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 <>
                   {!kreverIkkeRefusjon && (
                     <>
+                      {formatDate(gammeltSkjaeringstidspunkt)}
                       <BodyLong>I siste inntektsmelding hadde dere følgende refusjonskrav:</BodyLong>
                       <H3Label unPadded topPadded>
                         Refusjon til arbeidsgiver etter arbeidsgiverperiode
@@ -384,31 +386,35 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                           <H3Label unPadded topPadded>
                             Er det endringer i refusjonskrav i perioden?
                           </H3Label>
-                          {opprinneligRefusjonEndringer && opprinneligRefusjonEndringer?.length > 0 ? 'Ja' : 'Nei'}
-                          {opprinneligRefusjonEndringer && opprinneligRefusjonEndringer?.length > 0 && (
-                            <div className={lokalStyles.refusjonswrapper}>
-                              <table>
-                                <thead>
-                                  <tr>
-                                    <th className={lokalStyles.table_header}>
-                                      <strong>Endret refusjon</strong>
-                                    </th>
-                                    <th>
-                                      <strong>Dato for endret refusjon</strong>
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {opprinneligRefusjonEndringer?.map((endring) => (
-                                    <tr key={endring.dato?.toString()}>
-                                      <td>{formatCurrency(endring.belop)} kr</td>
-                                      <td>{formatDate(endring.dato)}</td>
+                          {refusjonEndringerUtenSkjaeringstidspunkt &&
+                          refusjonEndringerUtenSkjaeringstidspunkt?.length > 0
+                            ? 'Ja'
+                            : 'Nei'}
+                          {refusjonEndringerUtenSkjaeringstidspunkt &&
+                            refusjonEndringerUtenSkjaeringstidspunkt?.length > 0 && (
+                              <div className={lokalStyles.refusjonswrapper}>
+                                <table>
+                                  <thead>
+                                    <tr>
+                                      <th className={lokalStyles.table_header}>
+                                        <strong>Endret refusjon</strong>
+                                      </th>
+                                      <th>
+                                        <strong>Dato for endret refusjon</strong>
+                                      </th>
                                     </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          )}
+                                  </thead>
+                                  <tbody>
+                                    {refusjonEndringerUtenSkjaeringstidspunkt?.map((endring) => (
+                                      <tr key={endring.dato?.toString()}>
+                                        <td>{formatCurrency(endring.belop)} kr</td>
+                                        <td>{formatDate(endring.dato)}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
                           <H3Label unPadded topPadded>
                             Opphører refusjonkravet under sykefraværet?
                           </H3Label>
