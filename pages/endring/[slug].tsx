@@ -374,7 +374,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 <>
                   {!kreverIkkeRefusjon && (
                     <>
-                      {formatDate(gammeltSkjaeringstidspunkt)}
                       <BodyLong>I siste inntektsmelding hadde dere følgende refusjonskrav:</BodyLong>
                       <H3Label unPadded topPadded>
                         Refusjon til arbeidsgiver etter arbeidsgiverperiode

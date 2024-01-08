@@ -31,7 +31,7 @@ import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
-import { isValid } from 'date-fns';
+import { isEqual, isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
@@ -77,10 +77,18 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
+  const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
 
   const refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
-    endring.dato !== bestemmendeFravaersdag;
+    return (
+      !endring.dato ||
+      !bestemmendeFravaersdag ||
+      !gammeltSkjaeringstidspunkt ||
+      (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato!, gammeltSkjaeringstidspunkt))
+    );
   });
+
+  console.log('refusjonEndringerUtenSkjaeringstidspunkt', refusjonEndringerUtenSkjaeringstidspunkt, refusjonEndringer);
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();

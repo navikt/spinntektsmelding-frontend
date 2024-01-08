@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { parseISO } from 'date-fns';
+import { isEqual, parseISO } from 'date-fns';
 import { YesNo } from './state';
 import { MottattPeriodeRefusjon, TDateISODate } from './MottattData';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
@@ -232,7 +232,7 @@ function sjekkHarEndring(refusjon: (ForslagInntekt & ForslagRefusjon) | undefine
 
 function perioderEksklBestemmendeFravaersdag(refusjon: ForslagInntekt & ForslagRefusjon, bestemmendeFravaersdag: any) {
   return refusjon?.perioder.filter((periode) => {
-    periode.fom !== bestemmendeFravaersdag;
+    return !isEqual(parseIsoDate(periode.fom), bestemmendeFravaersdag);
   });
 }
 
