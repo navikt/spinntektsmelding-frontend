@@ -2,6 +2,7 @@ import { compareAsc, formatISO9075 } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
+import finnArbeidsgiverperiode from './finnArbeidsgiverperiode';
 
 export interface FravaersPeriode {
   fom: Date;
@@ -43,6 +44,11 @@ export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
   return null;
 };
 
+/******
+ * Funksjonen finner bestemmende fraværsdag for gitte fraværsperiode.
+ * Hvis det er flere perioder vil fom for den siste perioden være bestemmende.
+ * Perioder etter arbeidsgiverperioden (16 første dagene) vil ikke bli tatt med i beregningen.
+ */
 const finnBestemmendeFravaersdag = (
   fravaersperioder?: Array<Periode>,
   arbeidsgiverperiode?: Array<Periode>,
@@ -58,34 +64,36 @@ const finnBestemmendeFravaersdag = (
 
   const filtrertePerioder = fravaersperioder.filter((periode) => periode.fom && periode.tom);
 
-  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(filtrertePerioder);
+  // const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(filtrertePerioder);
 
-  const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
+  // const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
 
-  sorterteSykemeldingsperioder.forEach((periode, index) => {
-    if (index > 0) {
-      const aktivPeriode = mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1];
-      const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
+  // sorterteSykemeldingsperioder.forEach((periode, index) => {
+  //   if (index > 0) {
+  //     const aktivPeriode = mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1];
+  //     const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
 
-      if (oppdatertPeriode) {
-        mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1] = oppdatertPeriode;
-      } else {
-        mergedSykemeldingsperioder.push(periode);
-      }
-    }
-  });
+  //     if (oppdatertPeriode) {
+  //       mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1] = oppdatertPeriode;
+  //     } else {
+  //       mergedSykemeldingsperioder.push(periode);
+  //     }
+  //   }
+  // });
 
-  const tilstotendeSykemeldingsperioder = [mergedSykemeldingsperioder[0]];
-  mergedSykemeldingsperioder.forEach((periode) => {
-    const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
-    const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
+  // const tilstotendeSykemeldingsperioder = [mergedSykemeldingsperioder[0]];
+  // mergedSykemeldingsperioder.forEach((periode) => {
+  //   const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
+  //   const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
 
-    if (oppdatertPeriode) {
-      tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
-    } else {
-      tilstotendeSykemeldingsperioder.push(periode);
-    }
-  });
+  //   if (oppdatertPeriode) {
+  //     tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
+  //   } else {
+  //     tilstotendeSykemeldingsperioder.push(periode);
+  //   }
+  // });
+
+  const tilstotendeSykemeldingsperioder = finnArbeidsgiverperiode(filtrertePerioder);
 
   const bestemmendeFravaersdagFraFravaer =
     tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined

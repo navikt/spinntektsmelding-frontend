@@ -1,0 +1,8 @@
+.isDisabled {
+  color: #c6c2bf;
+  cursor: not-allowed;
+}
+
+.alertEscape {
+  display: block;
+}
