@@ -103,7 +103,7 @@ describe('Utfylling og innsending av skjema', () => {
     // cy.checkA11y();
 
     cy.findByRole('button', { name: 'Send' }).click();
-
+    cy.wait('@kvittering');
     cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
     // cy.checkA11y();
   });
