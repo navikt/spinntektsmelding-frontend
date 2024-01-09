@@ -1,6 +1,6 @@
 .isDisabled {
   opacity: 0.65;
-  cursor: not-allowed;
+  cursor : not-allowed;
 }
 
 .alertEscape {
