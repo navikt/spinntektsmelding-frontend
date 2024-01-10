@@ -43,25 +43,31 @@ describe('Utfylling og innsending av skjema', () => {
       }
     }).as('kvittering');
 
-<<<<<<< HEAD
     cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
       'innsendingInntektsmelding'
     );
 
-=======
-<<<<<<< HEAD
->>>>>>> 70b9258 (Ingen refusjon (#416))
     cy.intercept('/im-dialog/api/inntektsdata', {
       statusCode: 404,
       body: {
         name: 'Nothing'
       }
     }).as('inntektsdata');
-=======
+
     cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
       'innsendingInntektsmelding'
     );
->>>>>>> cef6367 (Ingen refusjon (#416))
+
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
+      'innsendingInntektsmelding'
+    );
+
+    cy.intercept('/im-dialog/api/inntektsdata', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('inntektsdata');
 
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
@@ -122,6 +128,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
       .findByLabelText('Nei')
       .check();
+
 
     // It should display an alert about the sykemelding that is not covered by the inntektsmelding
     cy.findAllByText('Dere vil motta en separat forespørsel om inntektsmelding for denne perioden.').should(
