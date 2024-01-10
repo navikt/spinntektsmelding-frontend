@@ -6,7 +6,7 @@
   "behandlingsdager": [],
   "egenmeldingsperioder": [],
   "arbeidsgiverperioder": [],
-  "bestemmendeFraværsdag": "2023-01-31",
+  "bestemmendeFraværsdag": "2023-01-02",
   "fraværsperioder": [
     { "fom": "2023-01-02", "tom": "2023-01-29" },
     { "fom": "2023-01-31", "tom": "2023-02-08" }

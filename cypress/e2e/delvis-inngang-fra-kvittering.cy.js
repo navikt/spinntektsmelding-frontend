@@ -45,8 +45,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByRole('button', { name: 'Endre' }).click();
 
-    cy.findByLabelText('Månedsinntekt 31.01.2023').invoke('val').should('equal', '65 000,00');
-    cy.findByLabelText('Månedsinntekt 31.01.2023').clear().type('50000');
+    cy.findByLabelText('Månedsinntekt 02.01.2023').invoke('val').should('equal', '65 000,00');
+    cy.findByLabelText('Månedsinntekt 02.01.2023').clear().type('50000');
 
     cy.findByRole('group', {
       name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
@@ -111,7 +111,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
             typpe: 'Bonus'
           }
         },
-        bestemmendeFraværsdag: '2023-01-31',
+        bestemmendeFraværsdag: '2023-01-02',
         refusjon: {
           utbetalerHeleEllerDeler: true,
           refusjonPrMnd: 50000,
@@ -138,6 +138,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.get('[data-cy="bestemmendefravaersdag"]')
       .invoke('text')
-      .should('match', /31.01.2023/);
+      .should('match', /02.01.2023/);
   });
 });

@@ -63,7 +63,7 @@ describe('Utfylling og innsending av skjema', () => {
         ],
         arbeidsgiverperioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
         inntekt: { bekreftet: true, beregnetInntekt: 77000, manueltKorrigert: false },
-        bestemmendeFraværsdag: '2023-03-15',
+        bestemmendeFraværsdag: '2023-02-17',
         fullLønnIArbeidsgiverPerioden: { utbetalerFullLønn: true, begrunnelse: null, utbetalt: null },
         refusjon: { utbetalerHeleEllerDeler: true, refusjonPrMnd: 77000 },
         bekreftOpplysninger: true,

@@ -26,9 +26,11 @@ describe('Utfylling og innsending av skjema', () => {
     cy.wait('@trenger');
 
     cy.get('[data-cy="endre-arbeidsgiverperiode"]').click();
-    cy.get('.navds-alert--info .navds-alert__wrapper').should(
-      'have.text',
-      'Hvis du overstyrer arbeidsgiverperioden er det ikke mulig å også endre eller legge til egenmeldingsperioder.'
-    );
+    cy.get('.navds-alert--info .navds-alert__wrapper')
+      .first()
+      .should(
+        'have.text',
+        'Hvis du overstyrer arbeidsgiverperioden er det ikke mulig å også endre eller legge til egenmeldingsperioder.'
+      );
   });
 });
