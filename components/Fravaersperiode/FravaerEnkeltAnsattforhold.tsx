@@ -59,62 +59,63 @@ export default function FravaerEnkeltAnsattforhold({
 
   return (
     <>
-      {fravaersperioder &&
-        fravaersperioder.map((periode, periodeIndex) => (
-          <div className={styles.periodewrapper} key={periode.id}>
-            {!endreSykemelding && (
-              <div>
-                <div className={styles.datepickerescape}>
-                  <TextLabel
-                    data-cy={`sykmelding-${periodeIndex}-fra`}
-                    className={cx({ isDisabled: !isNotDisabled(periode, startSisteAktivePeriode) })}
-                  >
-                    Fra
-                  </TextLabel>
-                  <div
-                    data-cy={`sykmelding-${periodeIndex}-fra-dato`}
-                    className={cx({ isDisabled: !isNotDisabled(periode, startSisteAktivePeriode) })}
-                  >
-                    {formatDate(periode.fom)}
-                  </div>
+      {fravaersperioder?.map((periode, periodeIndex) => (
+        <div className={styles.periodewrapper} key={periode.id}>
+          {!endreSykemelding && (
+            <div>
+              <div className={styles.datepickerescape}>
+                <TextLabel
+                  data-cy={`sykmelding-${periodeIndex}-fra`}
+                  className={cx({ isDisabled: !isNotDisabled?.(periode, startSisteAktivePeriode) })}
+                >
+                  Fra
+                </TextLabel>
+                <div
+                  data-cy={`sykmelding-${periodeIndex}-fra-dato`}
+                  className={cx({ isDisabled: !isNotDisabled?.(periode, startSisteAktivePeriode) })}
+                >
+                  {formatDate?.(periode.fom)}
                 </div>
-                <div className={styles.datepickerescape}>
-                  <TextLabel
-                    data-cy={`sykmelding-${periodeIndex}-til`}
-                    className={cx({ isDisabled: !isNotDisabled(periode, startSisteAktivePeriode) })}
-                  >
-                    Til
-                  </TextLabel>
-                  <div
-                    data-cy={`sykmelding-${periodeIndex}-til-dato`}
-                    className={cx({ isDisabled: !isNotDisabled(periode, startSisteAktivePeriode) })}
-                  >
-                    {formatDate(periode.tom)}
-                  </div>
-                </div>
-                {!isNotDisabled(periode, startSisteAktivePeriode) && (
-                  <div className={localStyles.alertEscape}>
-                    <Alert variant='info'>Denne perioden vil ikke bli tatt med i denne inntektsmeldingen</Alert>
-                  </div>
-                )}
               </div>
-            )}
-            {endreSykemelding && (
-              <Periodevelger
-                fomTekst='Fra'
-                fomID={`fom-${periode.id}`}
-                tomTekst='Til'
-                tomID={`tom-${periode.id}`}
-                onRangeChange={(oppdatertPeriode) => setFravaersperiodeDato(periode.id, oppdatertPeriode)}
-                defaultRange={periode}
-                kanSlettes={periodeIndex > 0}
-                periodeId={periode.id}
-                onSlettRad={() => slettFravaersperiode(periode.id)}
-                toDate={new Date()}
-              />
-            )}
-          </div>
-        ))}
+              <div className={styles.datepickerescape}>
+                <TextLabel
+                  data-cy={`sykmelding-${periodeIndex}-til`}
+                  className={cx({ isDisabled: !isNotDisabled?.(periode, startSisteAktivePeriode) })}
+                >
+                  Til
+                </TextLabel>
+                <div
+                  data-cy={`sykmelding-${periodeIndex}-til-dato`}
+                  className={cx({ isDisabled: !isNotDisabled?.(periode, startSisteAktivePeriode) })}
+                >
+                  {formatDate?.(periode.tom)}
+                </div>
+              </div>
+              {!isNotDisabled?.(periode, startSisteAktivePeriode) && (
+                <div className={localStyles.alertEscape}>
+                  <Alert variant='info'>
+                    Dere vil motta en separat forespørsel om inntektsmelding for denne perioden.
+                  </Alert>
+                </div>
+              )}
+            </div>
+          )}
+          {endreSykemelding && (
+            <Periodevelger
+              fomTekst='Fra'
+              fomID={`fom-${periode.id}`}
+              tomTekst='Til'
+              tomID={`tom-${periode.id}`}
+              onRangeChange={(oppdatertPeriode) => setFravaersperiodeDato?.(periode.id, oppdatertPeriode)}
+              defaultRange={periode}
+              kanSlettes={periodeIndex > 0}
+              periodeId={periode.id}
+              onSlettRad={() => slettFravaersperiode?.(periode.id)}
+              toDate={new Date()}
+            />
+          )}
+        </div>
+      ))}
       {endreSykemelding && <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />}
       {endreSykemelding && (
         <div className={styles.endresykemeldingknapper}>

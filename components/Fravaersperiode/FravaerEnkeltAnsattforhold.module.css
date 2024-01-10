@@ -1,5 +1,5 @@
 .isDisabled {
-  color: #c6c2bf;
+  opacity: 0.65;
   cursor: not-allowed;
 }
 
