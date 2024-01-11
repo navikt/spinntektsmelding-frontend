@@ -47,6 +47,28 @@ describe('Utfylling og innsending av skjema', () => {
       'innsendingInntektsmelding'
     );
 
+    cy.intercept('/im-dialog/api/inntektsdata', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('inntektsdata');
+
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
+      'innsendingInntektsmelding'
+    );
+
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
+      'innsendingInntektsmelding'
+    );
+
+    cy.intercept('/im-dialog/api/inntektsdata', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('inntektsdata');
+
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@kvittering');
@@ -84,20 +106,20 @@ describe('Utfylling og innsending av skjema', () => {
 
     // it('should display information on the beregnet månedslønn', () => {
     cy.get('[data-cy="tidligereinntekt"] tbody tr').its('length').should('be.eq', 3);
-    cy.get('[data-cy="tidligereinntekt"] tbody tr').first().find('td').first().should('have.text', 'Desember:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').first().find('td').first().should('have.text', 'November:');
     cy.get('[data-cy="tidligereinntekt"] tbody tr')
       .first()
       .find('td')
       .last()
       .invoke('text')
       .should('match', /88\s000,00\skr/);
-    cy.get('[data-cy="tidligereinntekt"] tbody tr').last().find('td').first().should('have.text', 'Februar:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').last().find('td').first().should('have.text', 'Januar:');
     cy.get('[data-cy="tidligereinntekt"] tbody tr')
       .last()
       .find('td')
       .last()
       .invoke('text')
-      .should('match', /88\s000,00\skr/);
+      .should('match', /66\s000,00\skr/);
 
     cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .findByLabelText('Ja')
@@ -106,6 +128,11 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
       .findByLabelText('Nei')
       .check();
+
+    // It should display an alert about the sykemelding that is not covered by the inntektsmelding
+    cy.findAllByText('Dere vil motta en separat forespørsel om inntektsmelding for denne perioden.').should(
+      'be.visible'
+    );
 
     cy.findByRole('checkbox', {
       name: 'Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
@@ -116,7 +143,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findByRole('button', { name: 'Send' }).click();
     cy.wait('@innsendingInntektsmelding');
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
-    // cy.injectAxe();
+
     cy.checkA11y();
   });
 });

@@ -9,7 +9,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    exclude: [...configDefaults.exclude, './__tests__/setup.ts'],
+    exclude: [...configDefaults.exclude, './__tests__/setup.ts', '__mocks__/**.*'],
     setupFiles: './__tests__/setup.ts',
     coverage: {
       reporter: ['text', 'lcov', 'html'],

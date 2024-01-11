@@ -24,7 +24,7 @@ const form3Data: Partial<MottattData> = {
     },
     {
       fom: '2023-03-15',
-      tom: '2023-03-16'
+      tom: '2023-03-18'
     }
   ],
   egenmeldingsperioder: [

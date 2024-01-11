@@ -44,9 +44,12 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
             state.arbeidsgiverperioder = agp;
             const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp, forespurtBestemmendeFraværsdag);
             if (bestemmende) {
+              console.log('Finner bestemmende fraværsdag: ', bestemmende);
               state.rekalkulerBruttioinntekt(parseIsoDate(bestemmende));
               state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
               state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+            } else {
+              console.log('Finner ikke bestemmende fraværsdag');
             }
           }
         }

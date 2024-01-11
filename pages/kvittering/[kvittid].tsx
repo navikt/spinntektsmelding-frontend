@@ -78,6 +78,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
+  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
 
   const refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
     return (
@@ -104,8 +105,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     }
   };
 
-  const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
-
   let innsendingstidspunkt =
     kvitteringInnsendt && isValid(kvitteringInnsendt)
       ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
@@ -118,6 +117,17 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   }
 
   const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
+
+  console.log('hentPaakrevdOpplysningstyper', hentPaakrevdOpplysningstyper());
+  const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
+
+  const trengerArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+
+  const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
+    ? bestemmendeFravaersdag
+    : foreslaattBestemmendeFravaersdag;
+
+  console.log('foreslaattBestemmendeFravaersdag', foreslaattBestemmendeFravaersdag);
 
   useEffect(() => {
     if (!fravaersperioder) {
@@ -184,7 +194,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                       <div className={lokalStyles.fravaerwrapper}>
                         <div className={lokalStyles.fravaertid}>Dato</div>
                         <div data-cy='bestemmendefravaersdag'>
-                          {bestemmendeFravaersdag ? formatDate(bestemmendeFravaersdag) : <Skeleton variant='text' />}{' '}
+                          {visningBestemmendeFravaersdag ? (
+                            formatDate(visningBestemmendeFravaersdag)
+                          ) : (
+                            <Skeleton variant='text' />
+                          )}{' '}
                         </div>
                       </div>
                     </div>

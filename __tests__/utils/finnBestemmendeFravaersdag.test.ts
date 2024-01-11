@@ -105,7 +105,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     expect(finnBestemmendeFravaersdag(periode)).toBe('2022-12-12');
   });
 
-  it('should return the correct arbeidsgiverperiode periode for short periods and a jump', () => {
+  it('should return the correct arbeidsgiverperiode periode for short periods and a jump. Gap after 16 days periode.', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
@@ -133,7 +133,74 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2023-05-07')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode)).toBe('2023-05-02');
+    expect(finnBestemmendeFravaersdag(periode)).toBe('2023-01-12');
+  });
+
+  it('should return the correct arbeidsgiverperiode periode for short periods and a jump. Gap before 16 days periode.', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2023-01-01'),
+        tom: parseISO('2023-01-12')
+      },
+      {
+        id: '2',
+        fom: parseISO('2023-01-14'),
+        tom: parseISO('2023-03-10')
+      },
+      {
+        id: '3',
+        fom: parseISO('2023-03-11'),
+        tom: parseISO('2023-03-29')
+      },
+      {
+        id: '4',
+        fom: parseISO('2023-03-30'),
+        tom: parseISO('2023-04-16')
+      },
+      {
+        id: '5',
+        fom: parseISO('2023-05-02'),
+        tom: parseISO('2023-05-07')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode)).toBe('2023-01-14');
+  });
+
+  it('should return the correct arbeidsgiverperiode periode for shorter periods and a jump. Gap before 16 days periode.', () => {
+    const periode: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2023-01-01'),
+        tom: parseISO('2023-01-06')
+      },
+      {
+        id: '1.5',
+        fom: parseISO('2023-01-08'),
+        tom: parseISO('2023-01-12')
+      },
+      {
+        id: '2',
+        fom: parseISO('2023-01-14'),
+        tom: parseISO('2023-03-10')
+      },
+      {
+        id: '3',
+        fom: parseISO('2023-03-11'),
+        tom: parseISO('2023-03-29')
+      },
+      {
+        id: '4',
+        fom: parseISO('2023-03-30'),
+        tom: parseISO('2023-04-16')
+      },
+      {
+        id: '5',
+        fom: parseISO('2023-05-02'),
+        tom: parseISO('2023-05-07')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode)).toBe('2023-01-14');
   });
 
   it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the future', () => {

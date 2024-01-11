@@ -9,6 +9,9 @@ interface FravaersperiodeProps {
 }
 export default function Fravaersperiode({ lasterData, setIsDirtyForm }: FravaersperiodeProps) {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+
+  const startSisteAktivePeriode = arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom;
 
   return (
     <>
@@ -20,7 +23,11 @@ export default function Fravaersperiode({ lasterData, setIsDirtyForm }: Fravaers
 
       {lasterData && <EgenmeldingLoader />}
       {!lasterData && (
-        <FravaerEnkeltAnsattforhold fravaersperioder={fravaersperioder} setIsDirtyForm={setIsDirtyForm} />
+        <FravaerEnkeltAnsattforhold
+          fravaersperioder={fravaersperioder}
+          startSisteAktivePeriode={startSisteAktivePeriode}
+          setIsDirtyForm={setIsDirtyForm}
+        />
       )}
     </>
   );
