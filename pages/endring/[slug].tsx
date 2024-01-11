@@ -331,36 +331,34 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     )}
 
                     {(bruttoinntekt?.manueltKorrigert || endreMaanedsinntekt) && (
-                      <>
-                        <Aarsaksvelger
-                          bruttoinntekt={bruttoinntekt}
-                          changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
-                          changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
-                          tariffendringsdato={tariffendringsdato}
-                          tariffkjentdato={tariffkjentdato}
-                          ferie={ferie}
-                          permisjon={permisjon}
-                          permittering={permittering}
-                          nystillingdato={nystillingdato}
-                          nystillingsprosentdato={nystillingsprosentdato}
-                          lonnsendringsdato={lonnsendringsdato}
-                          sykefravaerperioder={sykefravaerperioder}
-                          setTariffEndringsdato={addIsDirtyForm(setTariffEndringsdato)}
-                          setTariffKjentdato={addIsDirtyForm(setTariffKjentdato)}
-                          setFeriePeriode={addIsDirtyForm(setFeriePeriode)}
-                          setLonnsendringDato={addIsDirtyForm(setLonnsendringDato)}
-                          setNyStillingDato={addIsDirtyForm(setNyStillingDato)}
-                          setNyStillingsprosentDato={addIsDirtyForm(setNyStillingsprosentDato)}
-                          setPermisjonPeriode={addIsDirtyForm(setPermisjonPeriode)}
-                          setPermitteringPeriode={addIsDirtyForm(setPermitteringPeriode)}
-                          setSykefravaerPeriode={addIsDirtyForm(setSykefravaerPeriode)}
-                          visFeilmeldingsTekst={visFeilmeldingsTekst}
-                          bestemmendeFravaersdag={bestemmendeFravaersdag}
-                          nyInnsending={nyInnsending}
-                          clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-                          kanIkkeTilbakestilles={kanIkkeTilbakestilles}
-                        />
-                      </>
+                      <Aarsaksvelger
+                        bruttoinntekt={bruttoinntekt}
+                        changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
+                        changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
+                        tariffendringsdato={tariffendringsdato}
+                        tariffkjentdato={tariffkjentdato}
+                        ferie={ferie}
+                        permisjon={permisjon}
+                        permittering={permittering}
+                        nystillingdato={nystillingdato}
+                        nystillingsprosentdato={nystillingsprosentdato}
+                        lonnsendringsdato={lonnsendringsdato}
+                        sykefravaerperioder={sykefravaerperioder}
+                        setTariffEndringsdato={addIsDirtyForm(setTariffEndringsdato)}
+                        setTariffKjentdato={addIsDirtyForm(setTariffKjentdato)}
+                        setFeriePeriode={addIsDirtyForm(setFeriePeriode)}
+                        setLonnsendringDato={addIsDirtyForm(setLonnsendringDato)}
+                        setNyStillingDato={addIsDirtyForm(setNyStillingDato)}
+                        setNyStillingsprosentDato={addIsDirtyForm(setNyStillingsprosentDato)}
+                        setPermisjonPeriode={addIsDirtyForm(setPermisjonPeriode)}
+                        setPermitteringPeriode={addIsDirtyForm(setPermitteringPeriode)}
+                        setSykefravaerPeriode={addIsDirtyForm(setSykefravaerPeriode)}
+                        visFeilmeldingsTekst={visFeilmeldingsTekst}
+                        bestemmendeFravaersdag={forsteFravaersdag}
+                        nyInnsending={nyInnsending}
+                        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+                        kanIkkeTilbakestilles={kanIkkeTilbakestilles}
+                      />
                     )}
                   </div>
                 </div>
