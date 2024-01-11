@@ -46,12 +46,3 @@ cypress/screenshots
 .dccache
 
 .vscode
-
-#Yarn2
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
