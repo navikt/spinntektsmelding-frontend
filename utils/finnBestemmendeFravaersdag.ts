@@ -64,35 +64,6 @@ const finnBestemmendeFravaersdag = (
 
   const filtrertePerioder = fravaersperioder.filter((periode) => periode.fom && periode.tom);
 
-  // const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(filtrertePerioder);
-
-  // const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
-
-  // sorterteSykemeldingsperioder.forEach((periode, index) => {
-  //   if (index > 0) {
-  //     const aktivPeriode = mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1];
-  //     const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
-
-  //     if (oppdatertPeriode) {
-  //       mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1] = oppdatertPeriode;
-  //     } else {
-  //       mergedSykemeldingsperioder.push(periode);
-  //     }
-  //   }
-  // });
-
-  // const tilstotendeSykemeldingsperioder = [mergedSykemeldingsperioder[0]];
-  // mergedSykemeldingsperioder.forEach((periode) => {
-  //   const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
-  //   const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
-
-  //   if (oppdatertPeriode) {
-  //     tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
-  //   } else {
-  //     tilstotendeSykemeldingsperioder.push(periode);
-  //   }
-  // });
-
   const tilstotendeSykemeldingsperioder = finnArbeidsgiverperiode(filtrertePerioder);
 
   const bestemmendeFravaersdagFraFravaer =
