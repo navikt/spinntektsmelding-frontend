@@ -1,4 +1,4 @@
-import { isValid, parseISO } from 'date-fns';
+import { isEqual, isValid, parseISO } from 'date-fns';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
@@ -112,8 +112,9 @@ export default function useFyllInnsending() {
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-
+  const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const opprinneligRefusjonEndringer = useBoundStore((state) => state.opprinneligRefusjonEndringer);
 
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
     const endringAarsak = (): AArsakType | Tariffendring | PeriodeListe | StillingsEndring | undefined => {
@@ -213,7 +214,17 @@ export default function useFyllInnsending() {
     const bestemmendeFraværsdag = skalSendeArbeidsgiverperiode
       ? finnBestemmendeFravaersdag(perioder, formatertePerioder, foreslaattBestemmendeFravaersdag)
       : formatIsoDate(foreslaattBestemmendeFravaersdag);
-
+    console.log('gammeltSkjaeringstidspunkt', gammeltSkjaeringstidspunkt);
+    console.log('lonnISykefravaeret', lonnISykefravaeret);
+    const kreverIkkeRefusjon =
+      lonnISykefravaeret?.status === 'Nei' &&
+      (!opprinneligRefusjonEndringer ||
+        (!!gammeltSkjaeringstidspunkt &&
+          opprinneligRefusjonEndringer?.filter((endring) => {
+            return !isEqual(gammeltSkjaeringstidspunkt, endring.dato || gammeltSkjaeringstidspunkt);
+          }).length === 0));
+    console.log('opprinneligRefusjonEndringer', opprinneligRefusjonEndringer);
+    console.log('kreverIkkeRefusjon', kreverIkkeRefusjon);
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
@@ -242,16 +253,15 @@ export default function useFyllInnsending() {
         utbetalt: fullLonnIArbeidsgiverPerioden?.status === 'Ja' ? null : fullLonnIArbeidsgiverPerioden?.utbetalt
       },
       refusjon: {
-        utbetalerHeleEllerDeler: lonnISykefravaeret?.status === 'Ja',
-        refusjonPrMnd: jaEllerNei(lonnISykefravaeret?.status, lonnISykefravaeret?.belop),
-        refusjonOpphører: jaEllerNei(
-          lonnISykefravaeret?.status,
-          jaEllerNei(
-            refusjonskravetOpphoerer?.status,
-            refusjonskravetOpphoerer?.opphorsdato ? formatIsoDate(refusjonskravetOpphoerer?.opphorsdato) : undefined
-          )
-        ),
-        refusjonEndringer: jaEllerNei(lonnISykefravaeret?.status, innsendingRefusjonEndringer)
+        utbetalerHeleEllerDeler: !kreverIkkeRefusjon,
+        refusjonPrMnd: !kreverIkkeRefusjon ? lonnISykefravaeret?.belop : undefined,
+        refusjonOpphører: !kreverIkkeRefusjon
+          ? refusjonskravetOpphoerer?.opphoersdato
+            ? formatIsoDate(refusjonskravetOpphoerer?.opphoersdato)
+            : undefined
+          : undefined,
+
+        refusjonEndringer: !kreverIkkeRefusjon ? innsendingRefusjonEndringer : undefined
       },
       naturalytelser: naturalytelser?.map((ytelse) => ({
         naturalytelse: verdiEllerBlank(ytelse.type),

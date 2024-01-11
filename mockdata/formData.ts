@@ -1,11 +1,11 @@
 import MottattData from '../state/MottattData';
 import testFnr from './testFnr';
 
-import trengerDelvis from './trenger-delvis.json';
+import trengerDelvis from './trenger-originalen.json';
 
-// const formData = trengerDelvis as MottattData;
+const formData = trengerDelvis as MottattData;
 
-const formData: Partial<MottattData> = {
+const form3Data: Partial<MottattData> = {
   // behandlingsdager: [],
   // behandlingsperiode: {
   //   fom: '2022-02-20',
@@ -70,9 +70,9 @@ const formData: Partial<MottattData> = {
       paakrevd: true,
       forslag: {
         perioder: [
-          { fom: '2023-02-01', tom: '2023-03-01', beløp: 66000 },
-          { fom: '2023-03-02', tom: '2023-04-01', beløp: 55000 },
-          { fom: '2023-05-02', tom: '2023-05-02', beløp: 44000 }
+          { fom: '2023-02-01', tom: '2023-03-01', beloep: 66000 },
+          { fom: '2023-03-02', tom: '2023-04-01', beloep: 55000 },
+          { fom: '2023-05-02', tom: '2023-05-02', beloep: 44000 }
         ],
         opphoersdato: null
         //refundert: 76000

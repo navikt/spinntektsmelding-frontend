@@ -42,6 +42,11 @@ describe('Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('kvittering');
+
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012').as(
+      'innsendingInntektsmelding'
+    );
+
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@kvittering');
@@ -94,17 +99,24 @@ describe('Utfylling og innsending av skjema', () => {
       .invoke('text')
       .should('match', /88\s000,00\skr/);
 
-    cy.get('#lia-radio [type="radio"]').first().check();
-    cy.get('#lus-radio [type="radio"]').last().check();
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
 
-    cy.get('#bekreft-opplysninger').check();
-    // cy.get('#bekreft-opplysninger').check();
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+      .findByLabelText('Nei')
+      .check();
 
-    // cy.checkA11y();
+    cy.findByRole('checkbox', {
+      name: 'Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+    }).check();
+    cy.injectAxe();
+    cy.checkA11y();
 
     cy.findByRole('button', { name: 'Send' }).click();
-
-    cy.get('h2').first().should('have.text', 'Kvittering - innsendt inntektsmelding');
-    // cy.checkA11y();
+    cy.wait('@innsendingInntektsmelding');
+    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
+    // cy.injectAxe();
+    cy.checkA11y();
   });
 });

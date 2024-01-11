@@ -39,7 +39,7 @@ export interface Naturalytelse {
 
 export interface RefusjonskravetOpphoerer {
   status?: YesNo;
-  opphorsdato?: Date;
+  opphoersdato?: Date;
 }
 
 interface InntektsmeldingSkjema {

@@ -163,7 +163,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
 
             <RefusjonUtbetalingEndring
               endringer={refusjonEndringer || []}
-              maxDate={refusjonskravetOpphoerer?.opphorsdato}
+              maxDate={refusjonskravetOpphoerer?.opphoersdato}
               minDate={
                 arbeidsgiverperioder?.length && arbeidsgiverperioder?.length > 0
                   ? arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom
@@ -193,7 +193,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
                   id={'lus-sluttdato'}
                   label='Angi siste dag dere krever refusjon for'
                   error={visFeilmeldingsTekst('lus-sluttdato')}
-                  defaultSelected={refusjonskravetOpphoerer?.opphorsdato}
+                  defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
                 />
               </div>
             )}

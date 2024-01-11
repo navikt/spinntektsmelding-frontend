@@ -32,7 +32,7 @@ export interface RefusjonArbeidsgiverState {
   initRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
   setHarRefusjonEndringer: (harEndringer?: YesNo) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
-  initRefusjonskravetOpphoerer: (status: YesNo, opphorsdato?: Date, harEndringer?: YesNo) => void;
+  initRefusjonskravetOpphoerer: (status: YesNo, opphoersdato?: Date, harEndringer?: YesNo) => void;
   tilbakestillRefusjoner: () => void;
 }
 
@@ -151,13 +151,13 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         if (state.refusjonskravetOpphoerer) {
-          state.refusjonskravetOpphoerer.opphorsdato = opphoersdato;
+          state.refusjonskravetOpphoerer.opphoersdato = opphoersdato;
         } else {
           if (!state.refusjonskravetOpphoerer) {
             state.refusjonskravetOpphoerer = {};
           }
           state.refusjonskravetOpphoerer = {
-            opphorsdato: opphoersdato
+            opphoersdato: opphoersdato
           };
         }
 
@@ -226,11 +226,11 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  initRefusjonskravetOpphoerer: (status, opphorsdato, harEndringer) =>
+  initRefusjonskravetOpphoerer: (status, opphoersdato, harEndringer) =>
     set(
       produce((state) => {
-        state.refusjonskravetOpphoerer = { status: status, opphorsdato: opphorsdato };
-        state.opprinneligRefusjonskravetOpphoerer = { status: status, opphorsdato: opphorsdato };
+        state.refusjonskravetOpphoerer = { status: status, opphoersdato: opphoersdato };
+        state.opprinneligRefusjonskravetOpphoerer = { status: status, opphoersdato: opphoersdato };
         state.harRefusjonEndringer = harEndringer;
         state.opprinneligHarRefusjonEndringer = harEndringer;
         return state;
