@@ -64,7 +64,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const permisjon = useBoundStore((state) => state.permisjon);
   const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
   const permittering = useBoundStore((state) => state.permittering);
-  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
