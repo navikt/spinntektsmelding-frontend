@@ -89,8 +89,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     );
   });
 
-  console.log('refusjonEndringerUtenSkjaeringstidspunkt', refusjonEndringerUtenSkjaeringstidspunkt, refusjonEndringer);
-
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
@@ -118,7 +116,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
 
-  console.log('hentPaakrevdOpplysningstyper', hentPaakrevdOpplysningstyper());
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
   const trengerArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
@@ -126,8 +123,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
     ? bestemmendeFravaersdag
     : foreslaattBestemmendeFravaersdag;
-
-  console.log('foreslaattBestemmendeFravaersdag', foreslaattBestemmendeFravaersdag);
 
   useEffect(() => {
     if (!fravaersperioder) {

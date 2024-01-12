@@ -214,8 +214,7 @@ export default function useFyllInnsending() {
     const bestemmendeFraværsdag = skalSendeArbeidsgiverperiode
       ? finnBestemmendeFravaersdag(perioder, formatertePerioder, foreslaattBestemmendeFravaersdag)
       : formatIsoDate(foreslaattBestemmendeFravaersdag);
-    console.log('gammeltSkjaeringstidspunkt', gammeltSkjaeringstidspunkt);
-    console.log('lonnISykefravaeret', lonnISykefravaeret);
+
     const kreverIkkeRefusjon =
       lonnISykefravaeret?.status === 'Nei' &&
       (!opprinneligRefusjonEndringer ||
@@ -223,8 +222,7 @@ export default function useFyllInnsending() {
           opprinneligRefusjonEndringer?.filter((endring) => {
             return !isEqual(gammeltSkjaeringstidspunkt, endring.dato || gammeltSkjaeringstidspunkt);
           }).length === 0));
-    console.log('opprinneligRefusjonEndringer', opprinneligRefusjonEndringer);
-    console.log('kreverIkkeRefusjon', kreverIkkeRefusjon);
+
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,

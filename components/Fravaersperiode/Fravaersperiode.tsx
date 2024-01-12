@@ -13,7 +13,7 @@ export default function Fravaersperiode({ lasterData, setIsDirtyForm }: Fravaers
 
   const arbeidsgiverperioderMedData = arbeidsgiverperioder?.filter((periode) => periode?.fom && periode?.tom);
 
-  const startSisteAktivePeriode = arbeidsgiverperioderMedData?.[arbeidsgiverperioderMedData.length - 1].tom;
+  const startSisteAktivePeriode = arbeidsgiverperioderMedData?.[arbeidsgiverperioderMedData.length - 1]?.tom;
 
   return (
     <>
