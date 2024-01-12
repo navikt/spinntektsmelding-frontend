@@ -237,6 +237,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
               onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
               toDate={new Date()}
               disabled={arbeidsgiverperiodeDisabled}
+              defaultMonth={periodeIndex > 0 ? arbeidsgiverperioder?.[periodeIndex - 1].tom : undefined}
             />
           )}
         </div>
