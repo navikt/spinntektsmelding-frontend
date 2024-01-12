@@ -11,7 +11,9 @@ export default function Fravaersperiode({ lasterData, setIsDirtyForm }: Fravaers
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
 
-  const startSisteAktivePeriode = arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom;
+  const arbeidsgiverperioderMedData = arbeidsgiverperioder?.filter((periode) => periode?.fom && periode?.tom);
+
+  const startSisteAktivePeriode = arbeidsgiverperioderMedData?.[arbeidsgiverperioderMedData.length - 1]?.tom;
 
   return (
     <>
