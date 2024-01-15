@@ -32,10 +32,10 @@ export default function FlexJarResponseEnkel(props: FlexJarResponseProps) {
 
   if (!sendt) {
     return (
-      <div className={lokalStyles.outerjarwrapper + ' skjul-fra-print'}>
-        <div className={lokalStyles.jarwrapper + ' skjul-fra-print'}>
-          {props.visFeedback && (
-            <>
+      <>
+        {props.visFeedback && (
+          <div className={lokalStyles.outerjarwrapper + ' skjul-fra-print'}>
+            <div className={lokalStyles.jarwrapper + ' skjul-fra-print'}>
               <Textarea label={labelFeedback} onChange={(event) => setRespons(event.target.value)} />
               <Alert variant='warning'>
                 Ikke skriv inn navn eller andre personopplysninger. Dette er en anonym tilbakemelding og blir kun brukt
@@ -44,10 +44,10 @@ export default function FlexJarResponseEnkel(props: FlexJarResponseProps) {
               <Button variant='secondary-neutral' onClick={() => sendResponse()}>
                 Send tilbakemelding
               </Button>
-            </>
-          )}
-        </div>
-      </div>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
