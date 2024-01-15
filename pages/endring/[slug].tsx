@@ -362,7 +362,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         bruttoinntekt={bruttoinntekt}
                         changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
                         changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
-                        tariffendringsdato={tariffendringsdato}
+                        tariffendringDato={tariffendringDato}
                         tariffkjentdato={tariffkjentdato}
                         ferie={ferie}
                         permisjon={permisjon}
