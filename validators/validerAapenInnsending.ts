@@ -115,18 +115,22 @@ const schema = z.object({
     z.object({
       beloep: z.number().min(0),
       inntektsdato: z.date(),
-      naturalytelser: z.array(
-        z.object({
-          naturalytelse: NaturalytelseEnum,
-          verdiBeloep: z.number().min(0),
-          sluttdato: z.date()
-        })
+      naturalytelser: z.optional(
+        z.array(
+          z.object({
+            naturalytelse: NaturalytelseEnum,
+            verdiBeloep: z.number().min(0),
+            sluttdato: z.date()
+          })
+        )
       ),
       endringAarsak: z.optional(InntektEndringAarsakEnum)
     })
   )
 });
 
-export default function validerAapenInnsending(data: any) {
+type AapenInnsending = z.infer<typeof schema>;
+
+export default function validerAapenInnsending(data: Partial<AapenInnsending>) {
   return schema.safeParse(data);
 }

@@ -33,6 +33,7 @@ import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
 import { useSearchParams } from 'next/navigation';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
+import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -67,10 +68,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     window.location.href = environment.minSideArbeidsgiver;
   };
 
+  const fyllAapenInnsending = useFyllAapenInnsending();
+
   const pathSlug = slug || (searchParams.get('slug') as string);
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
+    if (slug === 'blank') {
+      const data = fyllAapenInnsending();
+      console.log(data);
+      return;
+    }
     setSenderInn(true);
 
     sendInnSkjema(opplysningerBekreftet, false, pathSlug, isDirtyForm).finally(() => {
