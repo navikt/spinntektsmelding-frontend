@@ -210,7 +210,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
     setSenderInn(true);
 
-    sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm, feilmeldinger).finally(() => {
+    sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm).finally(() => {
       setSenderInn(false);
     });
   };
