@@ -134,7 +134,7 @@ describe('useForespurtDataStore', () => {
     expect(result.current.lonnISykefravaeret?.belop).toBe(0);
     expect(result.current.lonnISykefravaeret?.status).toBeFalsy();
     expect(result.current.harRefusjonEndringer).toBe('Nei');
-    expect(result.current.refusjonskravetOpphoerer?.status).toBeUndefined();
+    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
   });
 
   it('should verify that bruttoinntekt can be reset', () => {
