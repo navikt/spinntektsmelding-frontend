@@ -1,5 +1,5 @@
 import { Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, MouseEvent } from 'react';
 import lokalStyles from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
 import stringishToNumber from '../../utils/stringishToNumber';
@@ -28,11 +28,11 @@ export default function RefusjonUtbetalingEndring({
   onOppdaterEndringer,
   onHarEndringer,
   harRefusjonEndring
-}: RefusjonUtbetalingEndringProps) {
+}: Readonly<RefusjonUtbetalingEndringProps>) {
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const oppdaterEndringer = (endringer?: Array<EndringsBelop>): void => {
     if (onOppdaterEndringer) {
-      onOppdaterEndringer(endringer || []);
+      onOppdaterEndringer(endringer ?? []);
     }
   };
 
@@ -47,10 +47,12 @@ export default function RefusjonUtbetalingEndring({
   }
 
   const changeBelopHandler = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+    event.preventDefault();
     const strBelop = event.currentTarget.value;
     const tmpEndringer = structuredClone(endringer);
 
-    if (!tmpEndringer[index].belop && typeof tmpEndringer[index].belop !== 'undefined') {
+    debugger;
+    if (!tmpEndringer[index]) {
       tmpEndringer[index] = {
         belop: stringishToNumber(strBelop),
         dato: undefined
@@ -63,7 +65,7 @@ export default function RefusjonUtbetalingEndring({
   const changeDatoHandler = (dato: Date | undefined, index: number) => {
     const tmpEndringer = structuredClone(endringer);
 
-    if (!tmpEndringer[index].dato && tmpEndringer[index].dato !== undefined) {
+    if (!tmpEndringer[index]) {
       tmpEndringer[index] = {
         belop: undefined,
         dato: dato
@@ -79,7 +81,8 @@ export default function RefusjonUtbetalingEndring({
     }
   };
 
-  const onSlettClick = (index: number) => {
+  const onSlettClick = (index: number, e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
     const tmpEndringer = structuredClone(endringer);
     tmpEndringer.splice(index, 1);
     oppdaterEndringer(tmpEndringer);
@@ -101,11 +104,11 @@ export default function RefusjonUtbetalingEndring({
 
       {harRefusjonEndring === 'Ja' &&
         endringer.map((endring, key) => (
-          <div key={key} className={lokalStyles.belopperiode}>
+          <div key={endring.dato ? endring.dato.toUTCString() : key} className={lokalStyles.belopperiode}>
             <TextField
               label='Endret refusjon/måned'
               onChange={(event) => changeBelopHandler(event, key)}
-              defaultValue={endring.belop}
+              defaultValue={endring.belop !== undefined ? endring.belop : ''}
               id={`refusjon.refusjonEndringer[${key}].beløp`}
               error={visFeilmeldingsTekst(`refusjon.refusjonEndringer[${key}].beløp`)}
               className={lokalStyles.endringsboks}
@@ -119,13 +122,11 @@ export default function RefusjonUtbetalingEndring({
               error={visFeilmeldingsTekst(`refusjon.refusjonEndringer[${key}].dato`)}
               defaultSelected={endring.dato}
             />
-            {key !== 0 && (
-              <ButtonSlette
-                title='Slett periode'
-                onClick={() => onSlettClick(key)}
-                className={lokalStyles.sletteknapp}
-              />
-            )}
+            <ButtonSlette
+              title='Slett periode'
+              onClick={(e) => onSlettClick(key, e)}
+              className={lokalStyles.sletteknapp}
+            />
           </div>
         ))}
 

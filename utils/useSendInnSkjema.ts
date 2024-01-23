@@ -1,6 +1,6 @@
 import useBoundStore from '../state/useBoundStore';
 import logEvent from './logEvent';
-import useValiderInntektsmelding from './useValiderInntektsmelding';
+import useValiderInntektsmelding, { ValiderTekster } from './useValiderInntektsmelding';
 import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import isValidUUID from './isValidUUID';
 import environment from '../config/environment';
@@ -59,7 +59,7 @@ export default function useSendInnSkjema(
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
     if (hasErrors) {
-      fyllFeilmeldinger(errorStatus.errorTexts!);
+      fyllFeilmeldinger(errorStatus.errorTexts!!);
 
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',

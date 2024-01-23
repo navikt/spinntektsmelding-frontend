@@ -109,10 +109,22 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
-  const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
+  const aapentManglendeData = inngangFraKvittering || ukjentInntekt;
+
+  const [
+    visFeilmeldingsTekst,
+    slettFeilmelding,
+    leggTilFeilmelding,
+    feilmeldinger,
+    fyllFeilmeldinger,
+    setSkalViseFeilmeldinger
+  ] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
     state.slettFeilmelding,
-    state.leggTilFeilmelding
+    state.leggTilFeilmelding,
+    state.feilmeldinger,
+    state.fyllFeilmeldinger,
+    state.setSkalViseFeilmeldinger
   ]);
   const amplitudeComponent = 'DelvisInnsending';
 
@@ -181,9 +193,24 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
 
+    fyllFeilmeldinger([]);
+    if (endringerAvRefusjon === undefined) {
+      leggTilFeilmelding('endring-refusjon', feiltekster.ENDRINGER_AV_REFUSJON);
+    }
+
+    if (endringBruttolonn === undefined) {
+      leggTilFeilmelding('endring-bruttolonn', feiltekster.ENDRING_BRUTTOLOENN);
+    }
+
+    if (endringerAvRefusjon === undefined || endringBruttolonn === undefined) {
+      setSkalViseFeilmeldinger(true);
+
+      return;
+    }
+
     setSenderInn(true);
 
-    sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm).finally(() => {
+    sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm, feilmeldinger).finally(() => {
       setSenderInn(false);
     });
   };
@@ -239,11 +266,11 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   };
 
   useEffect(() => {
-    if (inngangFraKvittering) {
+    if (aapentManglendeData) {
       setEndringBruttolonn('Ja');
       setEndringerAvRefusjon('Ja');
     }
-  }, [inngangFraKvittering]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [aapentManglendeData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   let cx = classNames.bind(lokalStyles);
   const classNameJa = cx({ fancyRadio: true, selectedRadio: endringBruttolonn === 'Ja' });
@@ -291,7 +318,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   Vi har ikke data fra den siste inntektsmeldingen, derfor må dere angi beregnet månedslønn manuelt.
                 </BodyLong>
               )}
-              {!ukjentInntekt && !inngangFraKvittering && (
+              {!ukjentInntekt && !aapentManglendeData && (
                 <>
                   <BodyLong>
                     I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
@@ -305,6 +332,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     className={lokalStyles.fancyRadioGruppe}
                     defaultValue={endringBruttolonn}
                     id='endring-bruttolonn'
+                    error={visFeilmeldingsTekst('endring-bruttolonn')}
                   >
                     <Radio value='Ja' className={classNameJa}>
                       Ja
@@ -367,7 +395,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
               {kreverIkkeRefusjon && (
                 <BodyLong>I henhold til siste inntektsmelding hadde dere ikke noe refusjonskrav.</BodyLong>
               )}
-              {!inngangFraKvittering && (
+              {!aapentManglendeData && (
                 <>
                   {!kreverIkkeRefusjon && (
                     <>
@@ -427,7 +455,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       )}
                     </>
                   )}
-                  {!inngangFraKvittering && (
+                  {!aapentManglendeData && (
                     <RadioGroup
                       legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
                         forsteFravaersdag
@@ -436,6 +464,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       className={lokalStyles.fancyRadioGruppe}
                       defaultValue={endringerAvRefusjon}
                       id='endring-refusjon'
+                      error={visFeilmeldingsTekst('endring-refusjon')}
                     >
                       <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
                         Ja
@@ -449,7 +478,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
               )}
               {endringerAvRefusjon === 'Ja' && (
                 <>
-                  {!inngangFraKvittering && <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>}
+                  {!aapentManglendeData && <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>}
                   <RadioGroup
                     legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
                     className={styles.radiobuttonwrapper}

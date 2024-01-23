@@ -132,9 +132,9 @@ describe('useForespurtDataStore', () => {
     expect(result.current.forespurtData?.refusjon?.forslag?.perioder).toEqual([]);
     expect(result.current.refusjonTilArbeidsgiver).toBeUndefined();
     expect(result.current.lonnISykefravaeret?.belop).toBe(0);
-    expect(result.current.lonnISykefravaeret?.status).toBe('Nei');
+    expect(result.current.lonnISykefravaeret?.status).toBeFalsy();
     expect(result.current.harRefusjonEndringer).toBe('Nei');
-    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
+    expect(result.current.refusjonskravetOpphoerer?.status).toBeUndefined();
   });
 
   it('should verify that bruttoinntekt can be reset', () => {
