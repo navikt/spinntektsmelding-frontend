@@ -1,0 +1,51 @@
+{
+  "navn": "ULTRAFIOLETT DAMESYKKEL",
+  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "innsenderNavn": "",
+  "identitetsnummer": "10486535275",
+  "orgnrUnderenhet": "810007842",
+  "skjaeringstidspunkt": null,
+  "fravaersperioder": [
+    {
+      "fom": "2023-04-25",
+      "tom": "2023-04-29"
+    }
+  ],
+  "egenmeldingsperioder": [],
+  "bruttoinntekt": 45000,
+  "tidligereinntekter": [
+    {
+      "maaned": "2023-01",
+      "inntekt": 45000
+    },
+    {
+      "maaned": "2023-02",
+      "inntekt": 45000
+    },
+    {
+      "maaned": "2023-03",
+      "inntekt": 45000
+    }
+  ],
+  "behandlingsperiode": null,
+  "behandlingsdager": [],
+  "forespurtData": {
+    "arbeidsgiverperiode": {
+      "paakrevd": false
+    },
+    "inntekt": {
+      "paakrevd": true,
+      "forslag": {
+        "type": "ForslagInntektGrunnlag",
+        "forrigeInntekt": null
+      }
+    },
+    "refusjon": {
+      "paakrevd": true,
+      "forslag": {
+        "perioder": [],
+        "opphoersdato": null
+      }
+    }
+  }
+}
