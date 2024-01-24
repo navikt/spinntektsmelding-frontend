@@ -96,7 +96,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
     if (!arbeidsgiverperiodePaakrevd) {
       const harEndringer = sjekkHarEndring(refusjon, bestemmendeFravaersdag);
-
       const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
 
       settRefusjonsbelop(refusjonsbelop, harEndringer);
@@ -108,9 +107,11 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         ? perioderEksklBestemmendeFravaersdag(refusjon, bestemmendeFravaersdag)
         : refusjon?.perioder;
 
+      const refusjonskravetOpphoererStatus: YesNo | undefined = opphoersdatoRefusjon ? 'Ja' : 'Nei';
+
       refusjonerUtenBfd = refusjonerUtenBfd ? refusjonerUtenBfd : [];
       initRefusjonskravetOpphoerer(
-        opphoersdatoRefusjon ? 'Ja' : 'Nei',
+        refusjonskravetOpphoererStatus,
         opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
         refusjonerUtenBfd.length > 0 ? 'Ja' : 'Nei'
       );
@@ -156,10 +157,10 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       })
     );
 
-    function settRefusjonsbelop(refusjonsbelop: number, harEndringer: YesNo) {
+    function settRefusjonsbelop(belop: number, harEndringer: YesNo | undefined) {
       initLonnISykefravaeret({
         status: harEndringer,
-        belop: refusjonsbelop ?? 0
+        belop: belop ?? 0
       });
     }
   },
@@ -218,8 +219,19 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
 export default useForespurtDataStore;
 
-function sjekkHarEndring(refusjon: (ForslagInntekt & ForslagRefusjon) | undefined, bestemmendeFravaersdag): YesNo {
-  if (!refusjon) {
+function sjekkHarEndring(
+  refusjon: (ForslagInntekt & ForslagRefusjon) | undefined,
+  bestemmendeFravaersdag
+): YesNo | undefined {
+  if (refusjon?.opphoersdato === null && refusjon?.perioder.length === 0) {
+    return undefined;
+  }
+
+  if (refusjon?.opphoersdato || (refusjon?.perioder && refusjon?.perioder.length > 0)) {
+    return 'Ja';
+  }
+
+  if (refusjon) {
     return 'Nei';
   }
 

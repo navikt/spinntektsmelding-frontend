@@ -26,7 +26,7 @@ export default function Datovelger({
   disabled,
   defaultMonth,
   error
-}: DatovelgerProps) {
+}: Readonly<DatovelgerProps>) {
   if (!defaultSelected || !isValid(defaultSelected)) {
     defaultSelected = undefined;
   }

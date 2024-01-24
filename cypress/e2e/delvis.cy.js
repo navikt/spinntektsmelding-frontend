@@ -66,10 +66,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           refusjonPrMnd: 46000,
           refusjonEndringer: [
             {
-              beløp: 46000,
-              dato: '2023-01-02'
-            },
-            {
               beløp: 0,
               dato: '2023-09-30'
             }
@@ -133,6 +129,10 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
     cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
 
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
+
     cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
     cy.findByRole('button', { name: 'Send' }).click();
@@ -154,10 +154,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           utbetalerHeleEllerDeler: true,
           refusjonPrMnd: 46000,
           refusjonEndringer: [
-            {
-              beløp: 46000,
-              dato: '2023-01-02'
-            },
             {
               beløp: 0,
               dato: '2023-09-30'

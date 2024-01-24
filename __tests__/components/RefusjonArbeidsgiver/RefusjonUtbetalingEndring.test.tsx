@@ -72,9 +72,9 @@ describe('RefusjonUtbetalingEndring', () => {
       ></RefusjonUtbetalingEndring>
     );
 
-    const SlettButton = screen.getByTitle(/Slett periode/i);
+    const SlettButton = screen.getAllByTitle(/Slett periode/i).pop();
 
-    fireEvent.click(SlettButton);
+    fireEvent.click(SlettButton as Element);
 
     expect(onOppdaterEndringer).toHaveBeenCalledWith([{ belop: 1234 }]);
   });

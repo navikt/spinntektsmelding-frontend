@@ -190,9 +190,13 @@ export default function useFyllInnsending() {
 
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
 
+    const RefusjonUtbetalingEndringUtenGammelBFD = refusjonEndringer?.filter((endring) => {
+      return !isEqual(gammeltSkjaeringstidspunkt as Date, endring.dato || (gammeltSkjaeringstidspunkt as Date));
+    });
+
     const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonsendringer(
       harRefusjonEndringer,
-      refusjonEndringer
+      RefusjonUtbetalingEndringUtenGammelBFD
     );
 
     setSkalViseFeilmeldinger(true);
