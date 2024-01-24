@@ -48,6 +48,19 @@
   max-width: 12rem;
 }
 
+.alert_box {
+  margin-top: 1rem;
+}
+
+.alert_span {
+  margin-top: auto;
+}
+
+.endre_knapp {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 @media screen and (max-width: 500px) {
   .belopswrapper,
   .belopperiode,

@@ -26,7 +26,7 @@ export default function FlexJarResponse(props: FlexJarResponseProps) {
       feedbackId: props.feedbackId,
       sporsmal: props.sporsmaal || '',
       feedback: respons,
-      app: 'spinntektsmalding-frontend'
+      app: 'spinntektsmelding-frontend'
     });
     setSendt(true);
   };

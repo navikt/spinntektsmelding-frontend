@@ -1,7 +1,7 @@
 import MottattData from '../state/MottattData';
 import testFnr from './testFnr';
 
-import trengerDelvis from './trenger-delvis-ikke-behandlet.json';
+import trengerDelvis from './trenger-originalen-16dager.json';
 
 const formData = trengerDelvis as MottattData;
 
