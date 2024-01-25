@@ -74,6 +74,7 @@ const nextConfig = {
     telemetryUrl: process.env.TELEMETRY_URL,
     flexJarUrl: process.env.FLEXJAR_URL,
     aktiveOrgnrApi: process.env.AKTIVE_ORGNR_API,
+    innsendingAGInitiertApi: process.env.INNSENDING_AG_INITIERT_API,
     version
   }
 };

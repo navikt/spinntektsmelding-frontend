@@ -179,7 +179,7 @@ const schema = z.object({
   sykmeldingsperioder: z.array(PeriodeSchema),
   agp: z.object({
     perioder: z.array(PeriodeSchema),
-    egenmeldinger: z.array(PeriodeSchema),
+    egenmeldinger: z.union([z.array(PeriodeSchema), z.tuple([])]),
     redusertLoennIAgp: z.optional(
       z.object({
         beloep: z.number().min(0),
@@ -215,6 +215,7 @@ const schema = z.object({
 type AapenInnsending = z.infer<typeof schema>;
 
 export default function validerAapenInnsending(data: Partial<AapenInnsending>) {
+  console.log('validerAapenInnsending', data);
   return schema.safeParse(data);
 }
 

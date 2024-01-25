@@ -88,7 +88,9 @@ export default function useFyllInnsending() {
       agp: {
         perioder: arbeidsgiverperioder!.map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! })),
         egenmeldinger: egenmeldingsperioder
-          ? egenmeldingsperioder!.map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! }))
+          ? egenmeldingsperioder
+              .filter((periode) => periode.fom && periode.tom)
+              .map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! }))
           : [],
         redusertLoennIAgp: jaEllerNei(
           fullLonnIArbeidsgiverPerioden?.utbetalerFullLønn,

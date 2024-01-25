@@ -34,6 +34,7 @@ import useSendInnSkjema from '../utils/useSendInnSkjema';
 import { useSearchParams } from 'next/navigation';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
+import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -63,25 +64,30 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const hentKvitteringsdata = useHentKvitteringsdata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
+  const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
+    setIngenTilgangOpen,
+    'HovedskjemaArbeidsgiverInitiert'
+  );
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
   };
-
-  const fyllAapenInnsending = useFyllAapenInnsending();
 
   const pathSlug = slug || (searchParams.get('slug') as string);
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     if (slug === 'arbeidsgiverInitiertInnsending') {
-      const validerteData = fyllAapenInnsending();
-      console.log(validerteData);
-      if (validerteData.success) {
-        sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm).finally(() => {
-          setSenderInn(false);
-        });
-      }
+      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm).finally(() => {
+        setSenderInn(false);
+      });
+      // const validerteData = fyllAapenInnsending();
+      // console.log(validerteData);
+      // if (validerteData.success) {
+      //   sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm).finally(() => {
+      //     setSenderInn(false);
+      //   });
+      // }
       return;
     }
     setSenderInn(true);

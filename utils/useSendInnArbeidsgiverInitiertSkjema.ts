@@ -7,6 +7,7 @@ import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
+import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -19,13 +20,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const errorResponse = useErrorRespons();
   const router = useRouter();
+  const fyllAapenInnsending = useFyllAapenInnsending();
 
-  return async (
-    opplysningerBekreftet: boolean,
-    kunInntektOgRefusjon: boolean,
-    pathSlug: string,
-    isDirtyForm: boolean
-  ) => {
+  return async (opplysningerBekreftet: boolean, pathSlug: string, isDirtyForm: boolean) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
       component: amplitudeComponent
@@ -54,41 +51,33 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       return false;
     }
 
-    const errorStatus = validerInntektsmelding(opplysningerBekreftet, kunInntektOgRefusjon);
+    const validerteData = fyllAapenInnsending();
 
-    const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
+    const hasErrors = validerteData.success !== true;
 
     if (hasErrors) {
-      fyllFeilmeldinger(errorStatus.errorTexts!!);
+      const errors: ValiderTekster[] = validerteData.error.issues.map((issue) => {
+        return {
+          text: issue.message,
+          felt: issue.path.join('.')
+        };
+      });
+
+      fyllFeilmeldinger(errors);
 
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',
         component: amplitudeComponent
       });
+
+      // errorResponse(errors);
+      setSkalViseFeilmeldinger(true);
     } else {
-      const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
+      const skjemaData = validerteData.data;
 
       fyllFeilmeldinger([]);
 
-      if (!isValidUUID(pathSlug)) {
-        const errors: Array<ErrorResponse> = [
-          {
-            value: 'Innsending av skjema feilet',
-            error: 'Innsending av skjema feilet. Ugyldig identifikator',
-            property: 'server'
-          }
-        ];
-
-        logEvent('skjema validering feilet', {
-          tittel: 'Ugyldig UUID ved innsending',
-          component: amplitudeComponent
-        });
-        errorResponse(errors);
-
-        return false;
-      }
-
-      return fetch(`${environment.innsendingUrl}/${pathSlug}`, {
+      return fetch(`${environment.innsendingAGInitiertUrl}`, {
         method: 'POST',
         body: JSON.stringify(skjemaData),
         headers: {

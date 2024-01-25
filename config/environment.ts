@@ -53,6 +53,10 @@ class Environment {
     return this.publicRuntimeConfig.aktiveOrgnrApi;
   }
 
+  get innsendingAGInitiertApi() {
+    return this.publicRuntimeConfig.innsendingAGInitiertApi;
+  }
+
   public baseUrl = '/im-dialog';
 
   public skjemadataUrl = '/im-dialog/api/trenger';
@@ -70,6 +74,8 @@ class Environment {
   public initierBlankSkjemaUrl = '/im-dialog/api/aktiveorgnr';
 
   public amplitudeEnabled = true;
+
+  public innsendingAGInitiertUrl = '/im-dialog/api/aapen-inntektsmelding';
 
   get environment() {
     return this.publicRuntimeConfig.environment;
