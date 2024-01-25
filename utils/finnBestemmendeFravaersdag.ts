@@ -69,7 +69,7 @@ const finnBestemmendeFravaersdag = (
   const tilstotendeSykemeldingsperioder = finnArbeidsgiverperiode(filtrertePerioder);
 
   const bestemmendeFravaersdagFraFravaer =
-    tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom !== undefined
+    tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1]?.fom !== undefined
       ? tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom
       : undefined;
 

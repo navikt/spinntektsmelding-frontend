@@ -8,8 +8,12 @@ import useBoundStore from './useBoundStore';
 import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
-import validerAapenInnsending from '../validators/validerAapenInnsending';
-import { RefusjonEndring, SendtPeriode } from './useFyllInnsending';
+import validerAapenInnsending, {
+  EndringAarsak,
+  InntektEndringAarsakEnum,
+  RefusjonEndring
+} from '../validators/validerAapenInnsending';
+import { SendtPeriode } from './useFyllInnsending';
 
 export default function useFyllInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
@@ -59,16 +63,33 @@ export default function useFyllInnsending() {
     foreslaattBestemmendeFravaersdag
   );
   return () => {
+    console.log('bruttoinntekt', bruttoinntekt);
+    const endringAarsak: EndringAarsak = fyllEndringaarsak(bruttoinntekt, {
+      ferie,
+      nystillingdato,
+      nystillingsprosentdato,
+      permisjon,
+      permittering,
+      tariffendringDato,
+      tariffkjentdato,
+      lonnsendringsdato,
+      sykefravaerperioder
+    });
+
     const innsending = validerAapenInnsending({
       sykmeldtFnr: identitetsnummer,
       avsender: {
         orgnr: orgnrUnderenhet!,
         tlf: innsenderTelefonNr!
       },
-      sykmeldingsperioder: fravaersperioder!.map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! })),
+      sykmeldingsperioder: fravaersperioder!
+        .filter((periode) => periode.fom && periode.tom)
+        .map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! })),
       agp: {
         perioder: arbeidsgiverperioder!.map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! })),
-        egenmeldinger: egenmeldingsperioder!.map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! })),
+        egenmeldinger: egenmeldingsperioder
+          ? egenmeldingsperioder!.map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! }))
+          : [],
         redusertLoennIAgp: jaEllerNei(
           fullLonnIArbeidsgiverPerioden?.utbetalerFullLønn,
           fullLonnIArbeidsgiverPerioden?.utbetalt
@@ -76,18 +97,108 @@ export default function useFyllInnsending() {
       },
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt!,
-        inntektsdato: bestemmendeFravaersdag, // Skjæringstidspunkt?
+        inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
         naturalytelser: naturalytelser?.map((ytelse) => ({
           naturalytelse: ytelse.type,
           verdiBeloep: ytelse.verdi,
           sluttdato: ytelse.bortfallsdato
         })),
-        endringAarsak: bruttoinntekt.endringsaarsak
+        endringAarsak: endringAarsak
+      },
+      refusjon: {
+        beloepPerMaaned: bruttoinntekt.bruttoInntekt!,
+        sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
+        endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
       }
     });
 
     return innsending;
   };
+}
+
+function fyllEndringaarsak(bruttoinntekt: Inntekt, parametere) {
+  switch (bruttoinntekt.endringsaarsak) {
+    case InntektEndringAarsakEnum.enum.Bonus:
+      return {
+        aarsak: 'Bonus'
+      };
+
+    case InntektEndringAarsakEnum.enum.Feilregistrert:
+      return {
+        aarsak: 'Feilregistrert'
+      };
+
+    case InntektEndringAarsakEnum.enum.Ferie:
+      return {
+        aarsak: 'Ferie',
+        perioder: parametere.ferie?.map((periode) => ({
+          fom: periode.fom,
+          tom: periode.tom
+        }))
+      };
+
+    case InntektEndringAarsakEnum.enum.Ferietrekk:
+      return {
+        aarsak: 'Ferietrekk'
+      };
+
+    case InntektEndringAarsakEnum.enum.Nyansatt:
+      return {
+        aarsak: 'Nyansatt'
+      };
+
+    case InntektEndringAarsakEnum.enum.NyStilling:
+      return {
+        aarsak: 'NyStilling',
+        gjelderFra: parametere.nystillingdato
+      };
+
+    case InntektEndringAarsakEnum.enum.NyStillingsprosent:
+      return {
+        aarsak: 'NyStillingsprosent',
+        gjelderFra: parametere.nystillingsprosentdato
+      };
+
+    case InntektEndringAarsakEnum.enum.Permisjon:
+      return {
+        aarsak: 'Permisjon',
+        perioder: parametere.permisjon?.map((periode) => ({
+          fom: periode.fom,
+          tom: periode.tom
+        }))
+      };
+
+    case InntektEndringAarsakEnum.enum.Permittering:
+      return {
+        aarsak: 'Permittering',
+        perioder: parametere.permittering?.map((periode) => ({
+          fom: periode.fom,
+          tom: periode.tom
+        }))
+      };
+
+    case InntektEndringAarsakEnum.enum.Sykefravaer:
+      return {
+        aarsak: 'Sykefravaer',
+        perioder: parametere.sykefravaerperioder?.map((periode) => ({
+          fom: periode.fom,
+          tom: periode.tom
+        }))
+      };
+
+    case InntektEndringAarsakEnum.enum.Tariffendring:
+      return {
+        aarsak: 'Tariffendring',
+        gjelderFra: parametere.tariffendringDato,
+        bleKjent: parametere.tariffkjentdato
+      };
+
+    case InntektEndringAarsakEnum.enum.VarigLoennsendring:
+      return {
+        aarsak: 'VarigLoennsendring',
+        gjelderFra: parametere.lonnsendringsdato
+      };
+  }
 }
 
 function nyEllerEndring(nyInnsending: boolean) {
@@ -145,15 +256,15 @@ function verdiEllerNull(verdi: number | undefined): number {
   return verdi ?? 0;
 }
 
-function konverterRefusjonsendringer(
+function konverterRefusjonEndringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBelop> | undefined
 ): RefusjonEndring[] | undefined {
   const refusjoner =
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
-          beløp: endring.belop!,
-          dato: formatIsoDate(endring.dato)!
+          beloep: endring.belop!,
+          startDato: endring.dato!
         }))
       : undefined;
 

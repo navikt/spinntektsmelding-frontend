@@ -80,7 +80,7 @@ const Initiering: NextPage = () => {
       )?.virksomhetsnavn!;
       initPerson(validert.fulltNavn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
       setSkjemaStatus(SkjemaStatus.BLANK);
-      router.push('/blank');
+      router.push('/arbeidsgiverInitiertInnsending');
       setFeilmeldinger(undefined);
     } else {
       const tmpFeilmeldinger: Feilmelding[] = formatZodFeilmeldinger(validationResult);

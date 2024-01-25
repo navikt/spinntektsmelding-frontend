@@ -74,9 +74,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
-    if (slug === 'blank') {
-      const data = fyllAapenInnsending();
-      console.log(data);
+    if (slug === 'arbeidsgiverInitiertInnsending') {
+      const validerteData = fyllAapenInnsending();
+      console.log(validerteData);
+      if (validerteData.success) {
+        sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm).finally(() => {
+          setSenderInn(false);
+        });
+      }
       return;
     }
     setSenderInn(true);
