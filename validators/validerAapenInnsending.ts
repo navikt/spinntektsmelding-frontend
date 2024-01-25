@@ -58,15 +58,27 @@ export const InntektEndringAarsakEnum = z.enum([
   'VarigLoennsendring'
 ]);
 
+const leftPad = (val: number) => {
+  return val < 10 ? `0${val}` : val;
+};
+
+const toLocalIso = (val: Date) => {
+  return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
+};
+
 const PeriodeSchema = z.object({
-  fom: z.date({
-    required_error: 'Vennligst fyll inn fra dato',
-    invalid_type_error: 'Dette er ikke en dato'
-  }),
-  tom: z.date({
-    required_error: 'Vennligst fyll inn til dato',
-    invalid_type_error: 'Dette er ikke en dato'
-  })
+  fom: z
+    .date({
+      required_error: 'Vennligst fyll inn fra dato',
+      invalid_type_error: 'Dette er ikke en dato'
+    })
+    .transform((val) => toLocalIso(val)),
+  tom: z
+    .date({
+      required_error: 'Vennligst fyll inn til dato',
+      invalid_type_error: 'Dette er ikke en dato'
+    })
+    .transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakBonusSchema = z.object({
