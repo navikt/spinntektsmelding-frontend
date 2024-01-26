@@ -276,7 +276,7 @@ function konverterRefusjonEndringer(
   if (refusjoner && refusjoner.length > 0) {
     return refusjoner;
   } else {
-    return undefined;
+    return [];
   }
 }
 

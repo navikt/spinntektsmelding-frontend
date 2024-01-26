@@ -33,7 +33,8 @@ const handleProxyInit = (proxy: any) => {
 
 export const config = {
   api: {
-    externalResolver: true
+    externalResolver: true,
+    bodyParser: false
   }
 };
 
