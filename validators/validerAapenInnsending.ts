@@ -176,7 +176,9 @@ const EndringAarsakSchema = z.discriminatedUnion('aarsak', [
 ]);
 
 const RefusjonEndringSchema = z.object({
-  startDato: z.date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' }),
+  startDato: z
+    .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
+    .transform((val) => toLocalIso(val)),
   beloep: z
     .number({ required_error: 'Vennligst fyll inn beløpet for endret refusjon.' })
     .min(0, { message: 'Beløpet må være større enn eller lik 0' })
