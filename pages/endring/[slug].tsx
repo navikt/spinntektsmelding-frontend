@@ -283,7 +283,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const kanIkkeTilbakestilles = !kanBruttoinntektTilbakebestilles();
 
   const harEndringer = harRefusjonEndringer;
-  // debugger;
+
   const kreverIkkeRefusjon =
     gammeltSkjaeringstidspunkt &&
     opprinneligRefusjonEndringer?.filter((endring) => {

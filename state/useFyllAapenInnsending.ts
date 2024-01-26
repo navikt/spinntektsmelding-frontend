@@ -92,10 +92,13 @@ export default function useFyllInnsending() {
               .filter((periode) => periode.fom && periode.tom)
               .map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! }))
           : [],
-        redusertLoennIAgp: jaEllerNei(
-          fullLonnIArbeidsgiverPerioden?.utbetalerFullLønn,
-          fullLonnIArbeidsgiverPerioden?.utbetalt
-        )
+        redusertLoennIAgp:
+          fullLonnIArbeidsgiverPerioden?.status === 'Nei'
+            ? {
+                beloep: fullLonnIArbeidsgiverPerioden?.utbetalt,
+                begrunnelse: fullLonnIArbeidsgiverPerioden?.begrunnelse
+              }
+            : undefined
       },
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt!,
