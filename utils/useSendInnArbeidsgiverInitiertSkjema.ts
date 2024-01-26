@@ -1,22 +1,20 @@
 import useBoundStore from '../state/useBoundStore';
 import logEvent from './logEvent';
 import useValiderInntektsmelding, { ValiderTekster } from './useValiderInntektsmelding';
-import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
-import isValidUUID from './isValidUUID';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
 import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
+import feiltekster from './feiltekster';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
   amplitudeComponent: string
 ) {
-  const validerInntektsmelding = useValiderInntektsmelding();
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
-  const fyllInnsending = useFyllInnsending();
+
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const errorResponse = useErrorRespons();
   const router = useRouter();
@@ -55,13 +53,22 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
     const hasErrors = validerteData.success !== true;
 
-    if (hasErrors) {
-      const errors: ValiderTekster[] = validerteData.error.issues.map((issue) => {
-        return {
-          text: issue.message,
-          felt: issue.path.join('.')
-        };
-      });
+    if (hasErrors || !opplysningerBekreftet) {
+      const errors: ValiderTekster[] = hasErrors
+        ? validerteData.error.issues.map((issue) => {
+            return {
+              text: issue.message,
+              felt: issue.path.join('.')
+            };
+          })
+        : [];
+
+      if (!opplysningerBekreftet) {
+        errors.push({
+          text: feiltekster.BEKREFT_OPPLYSNINGER,
+          felt: 'bekreft-opplysninger'
+        });
+      }
 
       fyllFeilmeldinger(errors);
 

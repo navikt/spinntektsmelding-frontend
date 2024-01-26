@@ -33,7 +33,6 @@ import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
 import { useSearchParams } from 'next/navigation';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
-import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
@@ -81,13 +80,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm).finally(() => {
         setSenderInn(false);
       });
-      // const validerteData = fyllAapenInnsending();
-      // console.log(validerteData);
-      // if (validerteData.success) {
-      //   sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm).finally(() => {
-      //     setSenderInn(false);
-      //   });
-      // }
+
       return;
     }
     setSenderInn(true);
