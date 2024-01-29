@@ -95,7 +95,14 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const arbeidsgiverperiodePaakrevd = forespurtData?.arbeidsgiverperiode?.paakrevd;
 
     if (!arbeidsgiverperiodePaakrevd) {
-      const harEndringer = sjekkHarEndring(refusjon, bestemmendeFravaersdag);
+      let refusjonerUtenOpprinneligBfd = refusjon?.perioder
+        ? perioderEksklBestemmendeFravaersdag(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt)
+        : refusjon?.perioder;
+
+      const refusjonUtenBfd = structuredClone(refusjon);
+      refusjonUtenBfd.perioder = refusjonerUtenOpprinneligBfd;
+      console.log(refusjonerUtenOpprinneligBfd);
+      const harEndringer = sjekkHarEndring(refusjonUtenBfd, bestemmendeFravaersdag);
       const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
 
       settRefusjonsbelop(refusjonsbelop, harEndringer);
@@ -103,17 +110,13 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
       const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
 
-      let refusjonerUtenBfd = refusjon?.perioder
-        ? perioderEksklBestemmendeFravaersdag(refusjon, bestemmendeFravaersdag)
-        : refusjon?.perioder;
-
       const refusjonskravetOpphoererStatus: YesNo | undefined = opphoersdatoRefusjon ? 'Ja' : 'Nei';
 
-      refusjonerUtenBfd = refusjonerUtenBfd ? refusjonerUtenBfd : [];
+      refusjonerUtenOpprinneligBfd = refusjonerUtenOpprinneligBfd ? refusjonerUtenOpprinneligBfd : [];
       initRefusjonskravetOpphoerer(
         refusjonskravetOpphoererStatus,
         opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
-        refusjonerUtenBfd.length > 0 ? 'Ja' : 'Nei'
+        refusjonerUtenOpprinneligBfd.length > 0 ? 'Ja' : 'Nei'
       );
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjonPerioder);
