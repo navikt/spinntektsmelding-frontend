@@ -63,7 +63,6 @@ export default function useFyllInnsending() {
     foreslaattBestemmendeFravaersdag
   );
   return () => {
-    console.log('bruttoinntekt', bruttoinntekt);
     const endringAarsak: EndringAarsak = fyllEndringaarsak(bruttoinntekt, {
       ferie,
       nystillingdato,
@@ -103,11 +102,13 @@ export default function useFyllInnsending() {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt!,
         inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
-        naturalytelser: naturalytelser?.map((ytelse) => ({
-          naturalytelse: ytelse.type,
-          verdiBeloep: ytelse.verdi,
-          sluttdato: ytelse.bortfallsdato
-        })),
+        naturalytelser: naturalytelser
+          ? naturalytelser?.map((ytelse) => ({
+              naturalytelse: ytelse.type,
+              verdiBeloep: ytelse.verdi,
+              sluttdato: ytelse.bortfallsdato
+            }))
+          : [],
         endringAarsak: endringAarsak
       },
       refusjon: {

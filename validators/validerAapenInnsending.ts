@@ -229,15 +229,16 @@ const schema = z.object({
     z.object({
       beloep: z.number().min(0),
       inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
-      naturalytelser: z.optional(
+      naturalytelser: z.union([
         z.array(
           z.object({
             naturalytelse: NaturalytelseEnum,
             verdiBeloep: z.number().min(0),
             sluttdato: z.date()
           })
-        )
-      ),
+        ),
+        z.tuple([])
+      ]),
       endringAarsak: z.optional(EndringAarsakSchema)
     })
   ),
@@ -253,7 +254,6 @@ const schema = z.object({
 type AapenInnsending = z.infer<typeof schema>;
 
 export default function validerAapenInnsending(data: Partial<AapenInnsending>) {
-  console.log('validerAapenInnsending', data);
   return schema.safeParse(data);
 }
 

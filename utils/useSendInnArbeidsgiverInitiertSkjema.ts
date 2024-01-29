@@ -52,9 +52,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     const validerteData = fyllAapenInnsending();
 
     const hasErrors = validerteData.success !== true;
-    if (hasErrors) {
-      console.log('validerteData.error', validerteData.error.issues);
-    }
+
     if (hasErrors || !opplysningerBekreftet) {
       const errors: ValiderTekster[] = hasErrors
         ? validerteData.error.issues.map((issue) => {

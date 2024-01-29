@@ -51,7 +51,6 @@ export default function RefusjonUtbetalingEndring({
     const strBelop = event.currentTarget.value;
     const tmpEndringer = structuredClone(endringer);
 
-    debugger;
     if (!tmpEndringer[index]) {
       tmpEndringer[index] = {
         belop: stringishToNumber(strBelop),
