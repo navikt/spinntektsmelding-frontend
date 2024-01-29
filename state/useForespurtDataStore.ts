@@ -101,13 +101,16 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       const refusjonUtenBfd = structuredClone(refusjon);
       refusjonUtenBfd.perioder = refusjonerUtenOpprinneligBfd;
-      console.log(refusjonerUtenOpprinneligBfd);
+      console.log('refusjonerUtenOpprinneligBfd', refusjonerUtenOpprinneligBfd);
+      console.log('inntekt?.forrigeInntekt?.skjæringstidspunkt', inntekt?.forrigeInntekt?.skjæringstidspunkt);
+      console.log('refusjonUtenBfd', refusjonUtenBfd);
+      console.log('refusjon', refusjon);
       const harEndringer = sjekkHarEndring(refusjonUtenBfd, bestemmendeFravaersdag);
       const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
-
+      console.log('harEndringer', harEndringer);
       settRefusjonsbelop(refusjonsbelop, harEndringer);
 
-      const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
+      const refusjonPerioder = refusjonUtenBfd ? [...refusjonUtenBfd.perioder] : [];
       const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
 
       const refusjonskravetOpphoererStatus: YesNo | undefined = opphoersdatoRefusjon ? 'Ja' : 'Nei';
@@ -227,7 +230,12 @@ function sjekkHarEndring(
   bestemmendeFravaersdag
 ): YesNo | undefined {
   if (refusjon?.opphoersdato === null && refusjon?.perioder.length === 0) {
-    return undefined;
+    console.log(
+      'refusjon?.opphoersdato === null && refusjon?.perioder.length === 0',
+      refusjon?.opphoersdato,
+      refusjon?.perioder.length
+    );
+    return 'Nei';
   }
 
   if (refusjon?.opphoersdato || (refusjon?.perioder && refusjon?.perioder.length > 0)) {
@@ -245,9 +253,12 @@ function sjekkHarEndring(
   return perioderEksklusiveBestemmendeFravaersdag && perioderEksklusiveBestemmendeFravaersdag.length > 0 ? 'Ja' : 'Nei';
 }
 
-function perioderEksklBestemmendeFravaersdag(refusjon: ForslagInntekt & ForslagRefusjon, bestemmendeFravaersdag: any) {
+function perioderEksklBestemmendeFravaersdag(
+  refusjon: ForslagInntekt & ForslagRefusjon,
+  bestemmendeFravaersdag: TDateISODate
+) {
   return refusjon?.perioder.filter((periode) => {
-    return !isEqual(parseIsoDate(periode.fom), bestemmendeFravaersdag);
+    return periode.fom !== bestemmendeFravaersdag;
   });
 }
 

@@ -219,7 +219,7 @@ export default function useFyllInnsending() {
       ? finnBestemmendeFravaersdag(perioder, formatertePerioder, foreslaattBestemmendeFravaersdag)
       : formatIsoDate(foreslaattBestemmendeFravaersdag);
     console.log('lonnISykefravaeret?.status', lonnISykefravaeret?.status);
-    const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei'; // &&
+    const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {
