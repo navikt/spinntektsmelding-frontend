@@ -298,9 +298,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         })
       : refusjonEndringer;
 
-  console.log('kreverIkkeRefusjon', kreverIkkeRefusjon);
-  console.log('gammeltSkjaeringstidspunkt', gammeltSkjaeringstidspunkt);
-  console.log('opprinneligRefusjonEndringer', opprinneligRefusjonEndringer);
   return (
     <div className={styles.container}>
       <Head>

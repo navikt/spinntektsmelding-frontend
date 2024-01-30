@@ -99,14 +99,9 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         ? perioderEksklBestemmendeFravaersdag(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt)
         : refusjon?.perioder;
 
-      // const refusjonUtenBfd = structuredClone(refusjon);
-      // if (refusjonUtenBfd) {
-      //   refusjonUtenBfd.perioder = refusjonerUtenOpprinneligBfd;
-      // }
-
       const harEndringer = sjekkHarEndring(refusjon, bestemmendeFravaersdag);
       const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
-      console.log('harEndringer', harEndringer);
+
       settRefusjonsbelop(refusjonsbelop, harEndringer);
 
       const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
@@ -229,11 +224,6 @@ function sjekkHarEndring(
   bestemmendeFravaersdag
 ): YesNo | undefined {
   if (refusjon?.opphoersdato === null && refusjon?.perioder.length === 0) {
-    console.log(
-      'refusjon?.opphoersdato === null && refusjon?.perioder.length === 0',
-      refusjon?.opphoersdato,
-      refusjon?.perioder.length
-    );
     return 'Nei';
   }
 
@@ -262,7 +252,7 @@ function sjekkHarEndring(
 
 function perioderEksklBestemmendeFravaersdag(
   refusjon: ForslagInntekt & ForslagRefusjon,
-  bestemmendeFravaersdag: TDateISODate
+  bestemmendeFravaersdag?: TDateISODate
 ) {
   return refusjon?.perioder.filter((periode) => {
     return periode.fom !== bestemmendeFravaersdag;

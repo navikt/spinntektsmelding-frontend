@@ -1,7 +1,7 @@
 import { configure, render, screen } from '@testing-library/react';
-import LabelLabel from '../../components/LabelLabel';
+import Loading from '../../components/Loading/Loading';
 
-describe('LabelLabel', () => {
+describe('Loading', () => {
   beforeEach(() => {
     configure({
       throwSuggestions: true
@@ -9,9 +9,9 @@ describe('LabelLabel', () => {
   });
 
   it('renders a title text', () => {
-    render(<LabelLabel>Innholdtekst</LabelLabel>);
+    render(<Loading />);
 
-    const HeadingTitle = screen.getByText(/Innholdtekst/i);
+    const HeadingTitle = screen.getByText(/Laster arbeidsforhold/i);
 
     expect(HeadingTitle).toBeInTheDocument();
   });
