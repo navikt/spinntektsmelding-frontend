@@ -287,7 +287,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const kreverIkkeRefusjon =
     gammeltSkjaeringstidspunkt &&
     opprinneligRefusjonEndringer?.filter((endring) => {
-      return !isEqual(gammeltSkjaeringstidspunkt, endring.dato || gammeltSkjaeringstidspunkt);
+      return gammeltSkjaeringstidspunkt !== endring.dato && endring.belop !== 0;
     }).length === 0;
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
@@ -298,6 +298,9 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         })
       : refusjonEndringer;
 
+  console.log('kreverIkkeRefusjon', kreverIkkeRefusjon);
+  console.log('gammeltSkjaeringstidspunkt', gammeltSkjaeringstidspunkt);
+  console.log('opprinneligRefusjonEndringer', opprinneligRefusjonEndringer);
   return (
     <div className={styles.container}>
       <Head>

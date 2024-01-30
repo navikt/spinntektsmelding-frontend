@@ -99,18 +99,17 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         ? perioderEksklBestemmendeFravaersdag(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt)
         : refusjon?.perioder;
 
-      const refusjonUtenBfd = structuredClone(refusjon);
-      refusjonUtenBfd.perioder = refusjonerUtenOpprinneligBfd;
-      console.log('refusjonerUtenOpprinneligBfd', refusjonerUtenOpprinneligBfd);
-      console.log('inntekt?.forrigeInntekt?.skjæringstidspunkt', inntekt?.forrigeInntekt?.skjæringstidspunkt);
-      console.log('refusjonUtenBfd', refusjonUtenBfd);
-      console.log('refusjon', refusjon);
-      const harEndringer = sjekkHarEndring(refusjonUtenBfd, bestemmendeFravaersdag);
+      // const refusjonUtenBfd = structuredClone(refusjon);
+      // if (refusjonUtenBfd) {
+      //   refusjonUtenBfd.perioder = refusjonerUtenOpprinneligBfd;
+      // }
+
+      const harEndringer = sjekkHarEndring(refusjon, bestemmendeFravaersdag);
       const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
       console.log('harEndringer', harEndringer);
       settRefusjonsbelop(refusjonsbelop, harEndringer);
 
-      const refusjonPerioder = refusjonUtenBfd ? [...refusjonUtenBfd.perioder] : [];
+      const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
       const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
 
       const refusjonskravetOpphoererStatus: YesNo | undefined = opphoersdatoRefusjon ? 'Ja' : 'Nei';
@@ -238,7 +237,15 @@ function sjekkHarEndring(
     return 'Nei';
   }
 
-  if (refusjon?.opphoersdato || (refusjon?.perioder && refusjon?.perioder.length > 0)) {
+  const perioderEksklusiveBestemmendeFravaersdagHvisIngenBeløp = refusjon?.perioder.filter((periode) => {
+    return periode.fom !== bestemmendeFravaersdag && periode.beloep !== 0;
+  });
+
+  if (
+    refusjon?.opphoersdato ||
+    (perioderEksklusiveBestemmendeFravaersdagHvisIngenBeløp &&
+      perioderEksklusiveBestemmendeFravaersdagHvisIngenBeløp.length > 0)
+  ) {
     return 'Ja';
   }
 
