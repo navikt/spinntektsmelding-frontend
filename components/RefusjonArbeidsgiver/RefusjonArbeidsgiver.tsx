@@ -74,6 +74,9 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
     ? 'Betaler arbeidsgiver lønn og krever refusjon i sykefraværet?'
     : 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?';
 
+  const betalerArbeidsgiverFullLonnLegend = arbeidsgiverperiodeKort
+    ? 'Betaler arbeidsgiver ut full lønn de første 16 dagene?'
+    : 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?';
   return (
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
@@ -100,7 +103,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
 
       <div>
         <RadioGroup
-          legend='Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?'
+          legend={betalerArbeidsgiverFullLonnLegend}
           className={styles.radiobuttonwrapper}
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}

@@ -20,6 +20,7 @@ import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
 import formatCurrency from '../../utils/formatCurrency';
+import { finnSammenhengendePeriode } from '../../utils/finnArbeidsgiverperiode';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -71,10 +72,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
 
     let dagerTotalt = 0;
 
-    perioder.forEach((periode) => {
-      if (dagerTotalt < 16) {
-        dagerTotalt = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt + 1;
-      }
+    const mergeDatePeriods = finnSammenhengendePeriode(perioder);
+
+    mergeDatePeriods.forEach((periode) => {
+      const justering = periode.fom === periode.tom ? 0 : 1;
+      dagerTotalt = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt + justering;
     });
     return dagerTotalt;
   };
@@ -339,18 +341,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
           )}
         </>
       )}
-      {!endretArbeidsgiverperiode && (
-        <div className={lokalStyles.endreknapp}>
-          <ButtonEndre
-            onClick={(event) => clickEndreArbeidsgiverperiodeHandler(event)}
-            data-cy='endre-arbeidsgiverperiode'
-          />
-        </div>
-      )}
+
       {visFeilmelding('arbeidsgiverperiode-feil') && (
         <Feilmelding id='arbeidsgiverperiode-feil'>{visFeilmeldingsTekst('arbeidsgiverperiode-feil')}</Feilmelding>
       )}
-      {valideringsfeil.length > 0 && <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{valideringsfeil}</Feilmelding>}
+
       {endretArbeidsgiverperiode && (
         <div className={lokalStyles.endreknapper}>
           <Button

@@ -27,6 +27,12 @@ const finn16dager = (perioder: Array<Periode>) => {
 };
 
 const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<Periode> => {
+  const tilstotendeSykemeldingsperioder = finnSammenhengendePeriode(fravaersperioder);
+
+  return finn16dager(tilstotendeSykemeldingsperioder);
+};
+
+export const finnSammenhengendePeriode = (fravaersperioder: Array<Periode>): Array<Periode> => {
   const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
@@ -54,7 +60,7 @@ const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<Period
     }
   });
 
-  return finn16dager(tilstotendeSykemeldingsperioder);
+  return tilstotendeSykemeldingsperioder;
 };
 
 export default finnArbeidsgiverperiode;
