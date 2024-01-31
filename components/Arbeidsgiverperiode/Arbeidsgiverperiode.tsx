@@ -41,9 +41,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
     (state) => state.setBeloepUtbetaltUnderArbeidsgiverperioden
   );
   const begrunnelseRedusertUtbetaling = useBoundStore((state) => state.begrunnelseRedusertUtbetaling);
-  const arbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useBoundStore(
-    (state) => state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden
-  );
+  const [arbeidsgiverBetalerFullLonnIArbeidsgiverperioden, slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden] =
+    useBoundStore((state) => [
+      state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+      state.slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
+    ]);
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
@@ -148,7 +150,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       slettAlleArbeidsgiverperioder();
     } else {
       setBeloepUtbetaltUnderArbeidsgiverperioden(undefined);
-      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(undefined);
+      slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       setArbeidsgiverperiodeDisabled(false);
       if (skjemastatus !== SkjemaStatus.BLANK) tilbakestillArbeidsgiverperiode();
       begrunnelseRedusertUtbetaling(undefined);
