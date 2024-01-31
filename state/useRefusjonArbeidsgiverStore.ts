@@ -34,6 +34,7 @@ export interface RefusjonArbeidsgiverState {
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
   initRefusjonskravetOpphoerer: (status: YesNo | undefined, opphoersdato?: Date, harEndringer?: YesNo) => void;
   tilbakestillRefusjoner: () => void;
+  slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden: () => void;
 }
 
 const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], RefusjonArbeidsgiverState> = (set, get) => ({
@@ -48,7 +49,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
 
         if (!state.fullLonnIArbeidsgiverPerioden) {
           state.fullLonnIArbeidsgiverPerioden = { status: status };
-        } else state.fullLonnIArbeidsgiverPerioden.status = status;
+        } else if (status !== undefined) state.fullLonnIArbeidsgiverPerioden.status = status;
 
         state = slettFeilmeldingFraState(state, 'lia-radio');
         state = slettFeilmeldingFraState(state, 'lus-uua-input');
@@ -248,6 +249,23 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           slettFeilmeldingFraState(state, `#refusjon.refusjonEndringer[${index}].beløp`);
           slettFeilmeldingFraState(state, `#refusjon.refusjonEndringer[${index}].dato`);
         });
+        return state;
+      })
+    ),
+  slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden: () =>
+    set(
+      produce((state) => {
+        if (!state.fullLonnIArbeidsgiverPerioden) {
+          state.fullLonnIArbeidsgiverPerioden = {};
+        }
+
+        if (!state.fullLonnIArbeidsgiverPerioden) {
+          state.fullLonnIArbeidsgiverPerioden = { status: undefined };
+        } else state.fullLonnIArbeidsgiverPerioden.status = undefined;
+
+        state = slettFeilmeldingFraState(state, 'lia-radio');
+        state = slettFeilmeldingFraState(state, 'lus-uua-input');
+
         return state;
       })
     )

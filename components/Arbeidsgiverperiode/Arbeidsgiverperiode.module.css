@@ -42,3 +42,19 @@
     gap: 2rem;
   }
 }
+
+.selectbegrunnelsekortagp {
+  margin-top: 1rem;
+}
+
+.wraputbetaling {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.refusjonsbelop > input {
+  max-width: 18rem;
+}

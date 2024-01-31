@@ -1,0 +1,41 @@
+{
+  "kvitteringDokument": {
+    "orgnrUnderenhet": "810007842",
+    "identitetsnummer": "16446719762",
+    "fulltNavn": "TILFELDIG FORMANN",
+    "telefonnummer": "+4741359019",
+    "innsenderNavn": "MUSKULØS VALS",
+    "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "behandlingsdager": [],
+    "egenmeldingsperioder": [],
+    "arbeidsgiverperioder": [
+      {
+        "fom": "2023-10-01",
+        "tom": "2023-10-16"
+      }
+    ],
+    "bestemmendeFraværsdag": "2023-10-01",
+    "fraværsperioder": [
+      {
+        "fom": "2023-10-01",
+        "tom": "2023-10-22"
+      }
+    ],
+    "inntekt": {
+      "bekreftet": true,
+      "beregnetInntekt": 47000,
+      "manueltKorrigert": false
+    },
+    "fullLønnIArbeidsgiverPerioden": {
+      "utbetalerFullLønn": true
+    },
+    "refusjon": {
+      "utbetalerHeleEllerDeler": true,
+      "refusjonPrMnd": 47000
+    },
+    "årsakInnsending": "NY",
+    "bekreftOpplysninger": true,
+    "tidspunkt": "2024-01-31T08:33:02.751380294+01:00",
+    "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
+  }
+}

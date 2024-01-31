@@ -22,6 +22,7 @@ export interface ArbeidsgiverperiodeState {
   endretArbeidsgiverperiode: boolean;
   opprinneligArbeidsgiverperioder?: Array<Periode>;
   arbeidsgiverperiodeDisabled: boolean;
+  arbeidsgiverperiodeKort: boolean;
   setBestemmendeFravaersdag: (bestemmendeFravaersdag: Date | undefined) => void;
   setArbeidsgiverperioder: (arbeidsgiverperioder: Array<Periode> | undefined) => void;
   initArbeidsgiverperioder: (arbeidsgiverperioder: Array<MottattPeriode> | undefined) => void;
@@ -34,6 +35,7 @@ export interface ArbeidsgiverperiodeState {
   harArbeidsgiverperiodenBlittEndret: () => void;
   slettAlleArbeidsgiverperioder: () => void;
   setArbeidsgiverperiodeDisabled: (disabled: boolean) => void;
+  setArbeidsgiverperiodeKort: (disabled: boolean) => void;
   setForeslaattBestemmendeFravaersdag: (bestemmendeFravaersdag: Date | undefined) => void;
 }
 
@@ -44,6 +46,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     bestemmendeFravaersdag: undefined,
     arbeidsgiverperioder: undefined,
     endretArbeidsgiverperiode: false,
+    arbeidsgiverperiodeKort: false,
     setBestemmendeFravaersdag: (bestemmendeFravaersdag) => {
       set(
         produce((state) => {
@@ -275,7 +278,15 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           return state;
         })
       );
-    }
+    },
+    setArbeidsgiverperiodeKort: (kort) =>
+      set(
+        produce((state) => {
+          state.arbeidsgiverperiodeKort = kort;
+
+          return state;
+        })
+      )
   };
 };
 
