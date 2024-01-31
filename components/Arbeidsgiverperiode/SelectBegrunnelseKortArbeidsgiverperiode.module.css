@@ -1,0 +1,13 @@
+.selectbegrunnelse {
+  margin-top: 1rem;
+}
+
+.selectbegrunnelse > div {
+  height: 48px;
+}
+
+@media screen and (max-width: 500px) {
+  .selectbegrunnelse > label {
+    height: inherit;
+  }
+}

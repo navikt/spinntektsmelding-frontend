@@ -41,7 +41,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
     (state) => state.setBeloepUtbetaltUnderArbeidsgiverperioden
   );
   const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
-
+  const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
   const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
@@ -105,8 +105,8 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}
           onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
-          value={fullLonnIArbeidsgiverPerioden?.status || null}
-          disabled={arbeidsgiverperiodeDisabled}
+          defaultValue={fullLonnIArbeidsgiverPerioden?.status || null}
+          disabled={arbeidsgiverperiodeDisabled || arbeidsgiverperiodeKort}
         >
           <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
             Ja
@@ -115,7 +115,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
             Nei
           </Radio>
         </RadioGroup>
-        {!arbeidsgiverperiodeDisabled && (
+        {!arbeidsgiverperiodeDisabled && !arbeidsgiverperiodeKort && (
           <>
             {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
               <div className={localStyles.wraputbetaling}>

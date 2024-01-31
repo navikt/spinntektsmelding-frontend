@@ -48,7 +48,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
 
         if (!state.fullLonnIArbeidsgiverPerioden) {
           state.fullLonnIArbeidsgiverPerioden = { status: status };
-        } else state.fullLonnIArbeidsgiverPerioden.status = status;
+        } else if (status !== undefined) state.fullLonnIArbeidsgiverPerioden.status = status;
 
         state = slettFeilmeldingFraState(state, 'lia-radio');
         state = slettFeilmeldingFraState(state, 'lus-uua-input');
