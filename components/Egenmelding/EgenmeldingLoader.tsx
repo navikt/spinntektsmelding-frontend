@@ -8,13 +8,13 @@ export default function EgenmeldingLoader() {
     <div data-cy='egenmelding'>
       <div className={styles.datepickerescape}>
         <TextLabel>Fra</TextLabel>
-        <div id={`egenmeldingsperioder.loader.fom`} data-cy='egenmelding-fra' className={lokalStyles.skeleton}>
+        <div data-cy='egenmelding-fra' className={lokalStyles.skeleton}>
           <Skeleton variant='text' height={28} />
         </div>
       </div>
       <div className={styles.datepickerescape}>
         <TextLabel>Til</TextLabel>
-        <div id={`egenmeldingsperioder.loader.tom`} data-cy='egenmelding-til' className={lokalStyles.skeleton}>
+        <div data-cy='egenmelding-til' className={lokalStyles.skeleton}>
           <Skeleton variant='text' height={28} />
         </div>
       </div>

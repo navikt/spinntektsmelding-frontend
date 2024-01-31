@@ -49,6 +49,14 @@ class Environment {
     return this.publicRuntimeConfig.flexJarUrl;
   }
 
+  get aktiveOrgnrApi() {
+    return this.publicRuntimeConfig.aktiveOrgnrApi;
+  }
+
+  get innsendingAGInitiertApi() {
+    return this.publicRuntimeConfig.innsendingAGInitiertApi;
+  }
+
   public baseUrl = '/im-dialog';
 
   public skjemadataUrl = '/im-dialog/api/trenger';
@@ -61,7 +69,13 @@ class Environment {
 
   public hentKvitteringUrl = '/im-dialog/api/hentKvittering';
 
+  public hentArbeidsgivereUrl = '/im-dialog/api/arbeidsgivere';
+
+  public initierBlankSkjemaUrl = '/im-dialog/api/aktiveorgnr';
+
   public amplitudeEnabled = true;
+
+  public innsendingAGInitiertUrl = '/im-dialog/api/aapen-inntektsmelding';
 
   get environment() {
     return this.publicRuntimeConfig.environment;

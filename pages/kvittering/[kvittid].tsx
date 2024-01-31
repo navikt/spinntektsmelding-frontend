@@ -72,7 +72,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
-  const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
+  const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
@@ -234,7 +234,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                     permittering={permittering}
                     nystillingdato={nystillingdato}
                     nystillingsprosentdato={nystillingsprosentdato}
-                    tariffendringDato={tariffendringsdato}
+                    tariffendringDato={tariffendringDato}
                     tariffkjentdato={tariffkjentdato}
                     sykefravaer={sykefravaerperioder}
                   />

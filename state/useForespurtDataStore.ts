@@ -95,6 +95,10 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const arbeidsgiverperiodePaakrevd = forespurtData?.arbeidsgiverperiode?.paakrevd;
 
     if (!arbeidsgiverperiodePaakrevd) {
+      let refusjonerUtenOpprinneligBfd = refusjon?.perioder
+        ? perioderEksklBestemmendeFravaersdag(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt)
+        : refusjon?.perioder;
+
       const harEndringer = sjekkHarEndring(refusjon, bestemmendeFravaersdag);
       const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
 
@@ -103,17 +107,13 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
       const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
 
-      let refusjonerUtenBfd = refusjon?.perioder
-        ? perioderEksklBestemmendeFravaersdag(refusjon, bestemmendeFravaersdag)
-        : refusjon?.perioder;
-
       const refusjonskravetOpphoererStatus: YesNo | undefined = opphoersdatoRefusjon ? 'Ja' : 'Nei';
 
-      refusjonerUtenBfd = refusjonerUtenBfd ? refusjonerUtenBfd : [];
+      refusjonerUtenOpprinneligBfd = refusjonerUtenOpprinneligBfd ? refusjonerUtenOpprinneligBfd : [];
       initRefusjonskravetOpphoerer(
         refusjonskravetOpphoererStatus,
         opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
-        refusjonerUtenBfd.length > 0 ? 'Ja' : 'Nei'
+        refusjonerUtenOpprinneligBfd.length > 0 ? 'Ja' : 'Nei'
       );
 
       const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjonPerioder);
@@ -224,10 +224,18 @@ function sjekkHarEndring(
   bestemmendeFravaersdag
 ): YesNo | undefined {
   if (refusjon?.opphoersdato === null && refusjon?.perioder.length === 0) {
-    return undefined;
+    return 'Nei';
   }
 
-  if (refusjon?.opphoersdato || (refusjon?.perioder && refusjon?.perioder.length > 0)) {
+  const perioderEksklusiveBestemmendeFravaersdagHvisIngenBeløp = refusjon?.perioder.filter((periode) => {
+    return periode.fom !== bestemmendeFravaersdag && periode.beloep !== 0;
+  });
+
+  if (
+    refusjon?.opphoersdato ||
+    (perioderEksklusiveBestemmendeFravaersdagHvisIngenBeløp &&
+      perioderEksklusiveBestemmendeFravaersdagHvisIngenBeløp.length > 0)
+  ) {
     return 'Ja';
   }
 
@@ -242,9 +250,12 @@ function sjekkHarEndring(
   return perioderEksklusiveBestemmendeFravaersdag && perioderEksklusiveBestemmendeFravaersdag.length > 0 ? 'Ja' : 'Nei';
 }
 
-function perioderEksklBestemmendeFravaersdag(refusjon: ForslagInntekt & ForslagRefusjon, bestemmendeFravaersdag: any) {
+function perioderEksklBestemmendeFravaersdag(
+  refusjon: ForslagInntekt & ForslagRefusjon,
+  bestemmendeFravaersdag?: TDateISODate
+) {
   return refusjon?.perioder.filter((periode) => {
-    return !isEqual(parseIsoDate(periode.fom), bestemmendeFravaersdag);
+    return periode.fom !== bestemmendeFravaersdag;
   });
 }
 

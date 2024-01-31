@@ -60,7 +60,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
       } else {
         switch (bruttoinntekt.endringsaarsak) {
           case begrunnelseEndringBruttoinntekt.Tariffendring: {
-            if (!state.tariffendringsdato) {
+            if (!state.tariffendringDato) {
               valideringstatus.push({
                 felt: 'bruttoinntekt-tariffendring-fom',
                 code: BruttoinntektFeilkode.TARIFFENDRING_FOM

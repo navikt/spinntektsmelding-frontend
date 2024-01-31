@@ -13,7 +13,7 @@ describe('FravaerEnkeltAnsattforhold', () => {
 
     render(
       <FravaerEnkeltAnsattforhold
-        fravaersperioder={fravaersperioder}
+        fravaerPerioder={fravaersperioder}
         startSisteAktivePeriode={new Date(2002, 0, 10)}
         setIsDirtyForm={mockFn}
       />
@@ -42,7 +42,7 @@ describe('FravaerEnkeltAnsattforhold', () => {
 
     render(
       <FravaerEnkeltAnsattforhold
-        fravaersperioder={fravaersperioder}
+        fravaerPerioder={fravaersperioder}
         startSisteAktivePeriode={new Date(2002, 2, 10)}
         setIsDirtyForm={mockFn}
       />

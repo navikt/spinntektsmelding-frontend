@@ -53,7 +53,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
   const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
+  const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
@@ -283,11 +283,11 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const kanIkkeTilbakestilles = !kanBruttoinntektTilbakebestilles();
 
   const harEndringer = harRefusjonEndringer;
-  // debugger;
+
   const kreverIkkeRefusjon =
     gammeltSkjaeringstidspunkt &&
     opprinneligRefusjonEndringer?.filter((endring) => {
-      return !isEqual(gammeltSkjaeringstidspunkt, endring.dato || gammeltSkjaeringstidspunkt);
+      return gammeltSkjaeringstidspunkt !== endring.dato && endring.belop !== 0;
     }).length === 0;
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
@@ -362,7 +362,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         bruttoinntekt={bruttoinntekt}
                         changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
                         changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
-                        tariffendringsdato={tariffendringsdato}
+                        tariffendringDato={tariffendringDato}
                         tariffkjentdato={tariffkjentdato}
                         ferie={ferie}
                         permisjon={permisjon}

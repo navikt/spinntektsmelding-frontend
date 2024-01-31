@@ -5,6 +5,11 @@ import { nanoid } from 'nanoid';
 import { Opplysningstype } from './useForespurtDataStore';
 import { YesNo } from './state';
 
+export enum SkjemaStatus {
+  FULL = 'FULL',
+  BLANK = 'BLANK'
+}
+
 export interface SkjemadataState {
   nyInnsending: boolean;
   setNyInnsending: (endring: boolean) => void;
@@ -17,6 +22,7 @@ export interface SkjemadataState {
   setEndringBruttolonn: (endring: YesNo) => void;
   setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: SkjemaKvitteringEksterntSystem) => void;
+  setSkjemaStatus: (status: SkjemaStatus) => void;
   tracker: string;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
@@ -27,6 +33,7 @@ export interface SkjemadataState {
   endringBruttolonn?: YesNo;
   endringerAvRefusjon?: YesNo;
   kvitteringEksterntSystem?: SkjemaKvitteringEksterntSystem;
+  skjemastatus: SkjemaStatus;
 }
 
 export interface SkjemaKvitteringEksterntSystem {
@@ -42,6 +49,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   nyInnsending: true,
   henterInntektsdata: false,
   skjemaFeilet: false,
+  skjemastatus: SkjemaStatus.FULL,
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
@@ -110,6 +118,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.kvitteringEksterntSystem = eksterntSystem;
+      })
+    );
+  },
+  setSkjemaStatus: (status: SkjemaStatus) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.skjemastatus = status;
       })
     );
   }

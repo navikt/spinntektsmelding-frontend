@@ -13,6 +13,7 @@ import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
+import { SkjemaStatus } from '../../state/useSkjemadataStore';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -33,7 +34,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
   const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const tariffendringsdato = useBoundStore((state) => state.tariffendringsdato);
+  const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
@@ -48,6 +49,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
+  const skjemastatus = useBoundStore((state) => state.skjemastatus);
 
   const amplitudeComponent = 'BeregnetMånedslønn';
 
@@ -117,6 +119,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const manglendeEller0FraAmeldingen =
     !tidligereinntekt || tidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
 
+  const erBlanktSkjema = skjemastatus === SkjemaStatus.BLANK;
+
   return (
     <>
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
@@ -164,14 +168,14 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
           settes lik den ordinære lønnen personen ville hatt hvis det ikke hadde blitt avviklet ferie.
         </Alert>
       )}
-      {!endringAvBelop && (
+      {!endringAvBelop && !erBlanktSkjema && (
         <TextLabel className={lokalStyles.tbmargin}>
           Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
           månedslønn på
         </TextLabel>
       )}
       <div className={lokalStyles.belopwrapper}>
-        {!endringAvBelop && (
+        {!endringAvBelop && !erBlanktSkjema && (
           <>
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
               {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr/måned
@@ -179,12 +183,12 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
             <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />
           </>
         )}
-        {endringAvBelop && (
+        {(endringAvBelop || erBlanktSkjema) && (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
             changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
             changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
-            tariffendringsdato={tariffendringsdato}
+            tariffendringDato={tariffendringDato}
             tariffkjentdato={tariffkjentdato}
             ferie={ferie}
             permisjon={permisjon}
@@ -206,10 +210,11 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending}
             clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+            kanIkkeTilbakestilles={erBlanktSkjema}
           />
         )}
       </div>
-      <BodyShort className={lokalStyles.bruttoinntektbelopbeskrivelse}>Stemmer dette?</BodyShort>
+      <BodyShort className={lokalStyles.bruttoinntektBelopBeskrivelse}>Stemmer dette?</BodyShort>
       <BodyLong>
         Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i arbeidstid,
         hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke inkluderes i beregnet

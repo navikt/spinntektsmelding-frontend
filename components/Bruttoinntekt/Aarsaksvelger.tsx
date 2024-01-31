@@ -16,7 +16,7 @@ interface AarsaksvelgerProps {
   changeMaanedsintektHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   changeBegrunnelseHandler: (verdi: string) => void;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  tariffendringsdato?: Date;
+  tariffendringDato?: Date;
   tariffkjentdato?: Date;
   ferie?: Array<Periode>;
   permisjon?: Array<Periode>;
@@ -45,7 +45,7 @@ export default function Aarsaksvelger({
   changeMaanedsintektHandler,
   changeBegrunnelseHandler,
   clickTilbakestillMaanedsinntekt,
-  tariffendringsdato,
+  tariffendringDato,
   tariffkjentdato,
   ferie,
   permisjon,
@@ -100,7 +100,7 @@ export default function Aarsaksvelger({
           <TariffendringDato
             changeTariffEndretDato={setTariffEndringsdato}
             changeTariffKjentDato={setTariffKjentdato}
-            defaultEndringsdato={tariffendringsdato}
+            defaultEndringsdato={tariffendringDato}
             defaultKjentDato={tariffkjentdato}
             visFeilmeldingsTekst={visFeilmeldingsTekst}
             defaultMonth={bestemmendeFravaersdag}

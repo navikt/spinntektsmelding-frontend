@@ -12,15 +12,18 @@ import { subDays } from 'date-fns';
 import ButtonTilbakestill from '../ButtonTilbakestill';
 import EgenmeldingLoader from './EgenmeldingLoader';
 import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
+import { SkjemaStatus } from '../../state/useSkjemadataStore';
+import PeriodeType from '../../config/PeriodeType';
 
 interface EgenmeldingProps {
   lasterData?: boolean;
   setIsDirtyForm: (dirty: boolean) => void;
 }
 
-export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingProps) {
+export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<EgenmeldingProps>) {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const skjemastatus = useBoundStore((state) => state.skjemastatus);
 
   const forsteFravaersdag = useMemo(
     () =>
@@ -90,7 +93,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
     setEgenmeldingDato(dato, id);
   };
 
-  const sisteGyldigeEgenmeldingsdato = useMemo(() => {
+  const sisteGyldigeEgenmeldingDato = useMemo(() => {
     const sortertArbeidsgiverperiode = arbeidsgiverperioder
       ? [...arbeidsgiverperioder].sort((a, b) => ((a.fom || new Date()) > (b.fom || new Date()) ? -1 : 1))
       : [];
@@ -99,8 +102,12 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
       : new Date();
   }, [arbeidsgiverperioder]);
 
+  const ikkeEgenmeldingPerioder = !egenmeldingsperioder || egenmeldingsperioder.length === 0;
+
+  const periodeKanEndres = kanEndreEgenmeldingPeriode || skjemastatus === SkjemaStatus.BLANK;
+
   return (
-    <div className={localStyles.egenmeldingswrapper}>
+    <div className={localStyles.egenmeldingWrapper}>
       <Heading3>Egenmelding</Heading3>
       <BodyLong>
         Hvis den ansatte har oppgitt at egenmeldingsdager ble benyttet i forkant av sykmeldingen, er disse
@@ -112,59 +119,54 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: EgenmeldingP
           Hvis du overstyrer arbeidsgiverperioden er det ikke mulig å også endre eller legge til egenmeldingsperioder.
         </Alert>
       )}
-
       <div>
-        <div className={localStyles.egenmeldingswrapper}>
+        <div className={localStyles.egenmeldingWrapper}>
           {lasterData && <EgenmeldingLoader />}
           {!lasterData &&
             egenmeldingsperioder &&
             egenmeldingsperioder.length > 0 &&
-            egenmeldingsperioder.map((egenmeldingsperiode, index) => (
+            egenmeldingsperioder.map((egenmeldingPeriode, index) => (
               <EgenmeldingPeriode
-                key={egenmeldingsperiode.id}
-                periodeId={egenmeldingsperiode.id}
-                egenmeldingsperiode={egenmeldingsperiode}
-                kanEndreEgenmeldingPeriode={kanEndreEgenmeldingPeriode}
+                key={egenmeldingPeriode.id}
+                periodeId={egenmeldingPeriode.id}
+                egenmeldingsperiode={egenmeldingPeriode}
+                kanEndreEgenmeldingPeriode={periodeKanEndres}
                 setEgenmeldingDato={setEgenmeldingDatofelt}
                 // toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
-                toDate={sisteGyldigeEgenmeldingsdato}
-                kanSlettes={!!(egenmeldingsperiode.fom || egenmeldingsperiode.tom || index !== 0)}
-                onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingsperiode.id)}
+                toDate={sisteGyldigeEgenmeldingDato}
+                kanSlettes={!!(egenmeldingPeriode.fom || egenmeldingPeriode.tom || index !== 0)}
+                onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingPeriode.id)}
                 disabled={endretArbeidsgiverperiode}
                 rad={index}
                 visFeilmeldingsTekst={visFeilmeldingsTekst}
               />
             ))}
-          {!lasterData &&
-            (!egenmeldingsperioder ||
-              (egenmeldingsperioder.length === 0 && (
-                <>
-                  <EgenmeldingPeriode
-                    key='nyperiode'
-                    periodeId='nyperiode'
-                    egenmeldingsperiode={{ id: 'nyperiode' }}
-                    kanEndreEgenmeldingPeriode={kanEndreEgenmeldingPeriode}
-                    setEgenmeldingDato={setEgenmeldingDatofelt}
-                    toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
-                    kanSlettes={false}
-                    onSlettRad={() => {}}
-                    disabled={endretArbeidsgiverperiode}
-                    rad={0}
-                    visFeilmeldingsTekst={visFeilmeldingsTekst}
-                  />
-                </>
-              )))}
+          {!lasterData && ikkeEgenmeldingPerioder && (
+            <EgenmeldingPeriode
+              key={PeriodeType.NY_PERIODE}
+              periodeId={PeriodeType.NY_PERIODE}
+              egenmeldingsperiode={{ id: PeriodeType.NY_PERIODE }}
+              kanEndreEgenmeldingPeriode={true}
+              setEgenmeldingDato={setEgenmeldingDatofelt}
+              toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
+              kanSlettes={false}
+              onSlettRad={() => {}}
+              disabled={endretArbeidsgiverperiode}
+              rad={0}
+              visFeilmeldingsTekst={visFeilmeldingsTekst}
+            />
+          )}
         </div>
 
         {visFeilmelding('egenmeldingsperioder-feil') && (
           <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingsTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}
-        {!kanEndreEgenmeldingPeriode && (
+        {!kanEndreEgenmeldingPeriode && skjemastatus !== SkjemaStatus.BLANK && (
           <div className={localStyles.endresykemeldingknapper}>
             <ButtonEndre onClick={clickEndreFravaersperiodeHandler} disabled={endretArbeidsgiverperiode} />
           </div>
         )}
-        {kanEndreEgenmeldingPeriode && (
+        {(kanEndreEgenmeldingPeriode || skjemastatus === SkjemaStatus.BLANK) && (
           <div className={localStyles.endresykemeldingknapper}>
             <Button
               variant='secondary'

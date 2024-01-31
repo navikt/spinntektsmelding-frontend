@@ -92,8 +92,8 @@ export default function useFyllInnsending() {
     state.refusjonskravetOpphoerer
   ]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
-  const [tariffendringsdato, tariffkjentdato] = useBoundStore((state) => [
-    state.tariffendringsdato,
+  const [tariffendringDato, tariffkjentdato] = useBoundStore((state) => [
+    state.tariffendringDato,
     state.tariffkjentdato
   ]);
   const ferie = useBoundStore((state) => state.ferie);
@@ -123,7 +123,7 @@ export default function useFyllInnsending() {
         case begrunnelseEndringBruttoinntekt.Tariffendring:
           return {
             typpe: begrunnelseEndringBruttoinntekt.Tariffendring,
-            gjelderFra: formatIsoDate(tariffendringsdato),
+            gjelderFra: formatIsoDate(tariffendringDato),
             bleKjent: formatIsoDate(tariffkjentdato)
           };
 
@@ -219,13 +219,7 @@ export default function useFyllInnsending() {
       ? finnBestemmendeFravaersdag(perioder, formatertePerioder, foreslaattBestemmendeFravaersdag)
       : formatIsoDate(foreslaattBestemmendeFravaersdag);
 
-    const kreverIkkeRefusjon =
-      lonnISykefravaeret?.status === 'Nei' &&
-      (!opprinneligRefusjonEndringer ||
-        (!!gammeltSkjaeringstidspunkt &&
-          opprinneligRefusjonEndringer?.filter((endring) => {
-            return !isEqual(gammeltSkjaeringstidspunkt, endring.dato || gammeltSkjaeringstidspunkt);
-          }).length === 0));
+    const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {
@@ -257,11 +251,7 @@ export default function useFyllInnsending() {
       refusjon: {
         utbetalerHeleEllerDeler: !kreverIkkeRefusjon,
         refusjonPrMnd: !kreverIkkeRefusjon ? lonnISykefravaeret?.belop : undefined,
-        refusjonOpphører: !kreverIkkeRefusjon
-          ? refusjonskravetOpphoerer?.opphoersdato
-            ? formatIsoDate(refusjonskravetOpphoerer?.opphoersdato)
-            : undefined
-          : undefined,
+        refusjonOpphører: formaterOpphørsdato(kreverIkkeRefusjon, refusjonskravetOpphoerer),
 
         refusjonEndringer: !kreverIkkeRefusjon ? innsendingRefusjonEndringer : undefined
       },
@@ -289,6 +279,19 @@ export default function useFyllInnsending() {
 
     return skjemaData;
   };
+}
+
+function formaterOpphørsdato(
+  kreverIkkeRefusjon: boolean,
+  refusjonskravetOpphoerer:
+    | import('/Users/kent/git/spinntektsmelding-frontend/state/state').RefusjonskravetOpphoerer
+    | undefined
+): string | undefined {
+  return !kreverIkkeRefusjon
+    ? refusjonskravetOpphoerer?.opphoersdato
+      ? formatIsoDate(refusjonskravetOpphoerer?.opphoersdato)
+      : undefined
+    : undefined;
 }
 
 function nyEllerEndring(nyInnsending: boolean) {

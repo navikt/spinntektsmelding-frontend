@@ -7,6 +7,7 @@ expect.extend(matchers);
 // import '@testing-library/jest-dom/extend-expect';
 import { toHaveNoViolations } from 'jest-axe';
 import { setConfig } from 'next/config';
+// import { setConfig } from 'next/config';
 
 // Extend the functionality to support axe
 expect.extend(toHaveNoViolations);

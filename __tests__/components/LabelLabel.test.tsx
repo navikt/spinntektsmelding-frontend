@@ -9,9 +9,9 @@ describe('LabelLabel', () => {
   });
 
   it('renders a title text', () => {
-    render(<LabelLabel>Innholdstekst</LabelLabel>);
+    render(<LabelLabel>Innholdtekst</LabelLabel>);
 
-    const HeadingTitle = screen.getByText(/Innholdstekst/i);
+    const HeadingTitle = screen.getByText(/Innholdtekst/i);
 
     expect(HeadingTitle).toBeInTheDocument();
   });
