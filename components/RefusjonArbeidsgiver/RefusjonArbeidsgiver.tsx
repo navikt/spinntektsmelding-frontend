@@ -73,7 +73,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
   const betalerArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
     ? 'Betaler arbeidsgiver lønn og krever refusjon i sykefraværet?'
     : 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?';
-  console.log('fullLonnIArbeidsgiverPerioden', fullLonnIArbeidsgiverPerioden);
+
   return (
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
