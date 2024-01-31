@@ -20,7 +20,6 @@ import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
 import formatCurrency from '../../utils/formatCurrency';
-import localStyles from '../RefusjonArbeidsgiver/RefusjonArbeidsgiver.module.css';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -285,6 +284,42 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
           )}
         </>
       )}
+      {!endretArbeidsgiverperiode && (
+        <div className={lokalStyles.endreknapp}>
+          <ButtonEndre
+            onClick={(event) => clickEndreArbeidsgiverperiodeHandler(event)}
+            data-cy='endre-arbeidsgiverperiode'
+          />
+        </div>
+      )}
+      {visFeilmelding('arbeidsgiverperiode-feil') && (
+        <Feilmelding id='arbeidsgiverperiode-feil'>{visFeilmeldingsTekst('arbeidsgiverperiode-feil')}</Feilmelding>
+      )}
+      {advarselLangPeriode.length > 0 && (
+        <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{advarselLangPeriode}</Feilmelding>
+      )}
+      {advarselKortPeriode.length > 0 && <span id='arbeidsgiverperiode-kort-feil'>{advarselKortPeriode}</span>}
+      {advarselKortPeriode.length > 0 && (
+        <div className={lokalStyles.wraputbetaling}>
+          <TextField
+            className={lokalStyles.refusjonsbelop}
+            label='Utbetalt under arbeidsgiverperiode'
+            onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
+            id={'lus-uua-input'}
+            error={visFeilmeldingsTekst('lus-uua-input')}
+            defaultValue={
+              fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
+                ? ''
+                : formatCurrency(fullLonnIArbeidsgiverPerioden?.utbetalt)
+            }
+          />
+          <SelectBegrunnelseKortArbeidsgiverperiode
+            onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
+            defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
+            error={visFeilmeldingsTekst('lia-select')}
+          />
+        </div>
+      )}
       {endretArbeidsgiverperiode && (
         <>
           <Checkbox
@@ -303,42 +338,6 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
             />
           )}
         </>
-      )}
-      {!endretArbeidsgiverperiode && (
-        <div className={lokalStyles.endreknapp}>
-          <ButtonEndre
-            onClick={(event) => clickEndreArbeidsgiverperiodeHandler(event)}
-            data-cy='endre-arbeidsgiverperiode'
-          />
-        </div>
-      )}
-      {visFeilmelding('arbeidsgiverperiode-feil') && (
-        <Feilmelding id='arbeidsgiverperiode-feil'>{visFeilmeldingsTekst('arbeidsgiverperiode-feil')}</Feilmelding>
-      )}
-      {advarselLangPeriode.length > 0 && (
-        <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{advarselLangPeriode}</Feilmelding>
-      )}
-      {advarselKortPeriode.length > 0 && <span id='arbeidsgiverperiode-kort-feil'>{advarselKortPeriode}</span>}
-      {advarselKortPeriode.length > 0 && (
-        <div className={localStyles.wraputbetaling}>
-          <TextField
-            className={localStyles.refusjonsbelop}
-            label='Utbetalt under arbeidsgiverperiode'
-            onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
-            id={'lus-uua-input'}
-            error={visFeilmeldingsTekst('lus-uua-input')}
-            defaultValue={
-              Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
-                ? ''
-                : formatCurrency(fullLonnIArbeidsgiverPerioden?.utbetalt)
-            }
-          />
-          <SelectBegrunnelseKortArbeidsgiverperiode
-            onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
-            defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-            error={visFeilmeldingsTekst('lia-select')}
-          />
-        </div>
       )}
       {endretArbeidsgiverperiode && (
         <div className={lokalStyles.endreknapper}>

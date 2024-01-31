@@ -198,6 +198,7 @@ export default function useKvitteringInit() {
       belop: jsonData.refusjon.refusjonPrMnd
     });
     const paakrevdeData = hentPaakrevdOpplysningstyper();
+
     if (paakrevdeData.includes(skjemaVariant.arbeidsgiverperiode) && jsonData.fullLønnIArbeidsgiverPerioden) {
       initFullLonnIArbeidsgiverPerioden({
         status: jsonData.fullLønnIArbeidsgiverPerioden.utbetalerFullLønn ? 'Ja' : 'Nei',
