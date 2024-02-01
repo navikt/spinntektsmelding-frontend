@@ -16,7 +16,8 @@ interface RefusjonUtbetalingEndringProps {
   endringer: Array<EndringsBelop>;
   minDate?: Date;
   maxDate?: Date;
-  harRefusjonEndring?: YesNo;
+  harRefusjonEndringer?: YesNo;
+  harRefusjonEndringerDefault?: YesNo;
   onOppdaterEndringer?: (endringer: Array<EndringsBelop>) => void;
   onHarEndringer?: (harEndring: YesNo) => void;
 }
@@ -27,7 +28,8 @@ export default function RefusjonUtbetalingEndring({
   maxDate,
   onOppdaterEndringer,
   onHarEndringer,
-  harRefusjonEndring
+  harRefusjonEndringer,
+  harRefusjonEndringerDefault
 }: Readonly<RefusjonUtbetalingEndringProps>) {
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const oppdaterEndringer = (endringer?: Array<EndringsBelop>): void => {
@@ -76,6 +78,7 @@ export default function RefusjonUtbetalingEndring({
 
   const changeHarEndringerHandler = (status: string) => {
     if (onHarEndringer) {
+      console.log('changeHarEndringerHandler', status);
       onHarEndringer(status as YesNo);
     }
   };
@@ -95,13 +98,12 @@ export default function RefusjonUtbetalingEndring({
         className={styles.radiobuttonwrapper}
         error={visFeilmeldingsTekst('lus-utbetaling-endring-radio')}
         onChange={changeHarEndringerHandler}
-        defaultValue={harRefusjonEndring}
+        defaultValue={harRefusjonEndringerDefault}
       >
         <Radio value='Ja'>Ja</Radio>
         <Radio value='Nei'>Nei</Radio>
       </RadioGroup>
-
-      {harRefusjonEndring === 'Ja' &&
+      {harRefusjonEndringer === 'Ja' &&
         endringer.map((endring, key) => (
           <div key={endring.dato ? endring.dato.toUTCString() : key} className={lokalStyles.belopperiode}>
             <TextField
@@ -129,7 +131,7 @@ export default function RefusjonUtbetalingEndring({
           </div>
         ))}
 
-      {harRefusjonEndring === 'Ja' && (
+      {harRefusjonEndringer === 'Ja' && (
         <Button
           variant='secondary'
           className={lokalStyles.legtilbutton}

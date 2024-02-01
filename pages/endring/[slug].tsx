@@ -98,13 +98,21 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const kanBruttoinntektTilbakebestilles = useBoundStore((state) => state.kanBruttoinntektTilbakebestilles);
-  const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer, harRefusjonEndringer] = useBoundStore(
-    (state) => [
-      state.opprinneligRefusjonEndringer,
-      state.opprinneligRefusjonskravetOpphoerer,
-      state.harRefusjonEndringer
-    ]
-  );
+  const [
+    opprinneligRefusjonEndringer,
+    opprinneligRefusjonskravetOpphoerer,
+    harRefusjonEndringer,
+    arbeidsgiverKreverRefusjon,
+    arbeidsgiverRefusjonskravOpphører,
+    arbeidsgiverRefusjonskravHarEndringer
+  ] = useBoundStore((state) => [
+    state.opprinneligRefusjonEndringer,
+    state.opprinneligRefusjonskravetOpphoerer,
+    state.harRefusjonEndringer,
+    state.arbeidsgiverKreverRefusjon,
+    state.arbeidsgiverRefusjonskravOpphører,
+    state.arbeidsgiverRefusjonskravHarEndringer
+  ]);
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
@@ -485,7 +493,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     id={'lus-radio'}
                     error={visFeilmeldingsTekst('lus-radio')}
                     onChange={addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret)}
-                    defaultValue={lonnISykefravaeret?.status}
+                    defaultValue={arbeidsgiverKreverRefusjon() ? 'Ja' : undefined}
                   >
                     <Radio value='Ja'>Ja</Radio>
                     <Radio value='Nei'>Nei</Radio>
@@ -504,7 +512,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
                         onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
                         onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
-                        harRefusjonEndring={harRefusjonEndringer}
+                        harRefusjonEndringer={harRefusjonEndringer}
+                        harRefusjonEndringerDefault={arbeidsgiverRefusjonskravHarEndringer() ? 'Ja' : undefined}
                       />
 
                       <RadioGroup
@@ -513,7 +522,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         id={'lus-sluttdato-velg'}
                         error={visFeilmeldingsTekst('lus-sluttdato-velg')}
                         onChange={addIsDirtyForm(refusjonskravetOpphoererStatus)}
-                        defaultValue={refusjonskravetOpphoerer?.status}
+                        defaultValue={arbeidsgiverRefusjonskravOpphører() ? 'Ja' : undefined}
                       >
                         <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
                           Ja

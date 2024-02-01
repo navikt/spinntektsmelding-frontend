@@ -74,6 +74,9 @@ export interface ForespurtDataState {
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
   setTidligereInntektsdata: (inntekt: ForrigeInntekt) => void;
   kanBruttoinntektTilbakebestilles: () => boolean;
+  arbeidsgiverKreverRefusjon: () => boolean;
+  arbeidsgiverRefusjonskravOpphører: () => boolean;
+  arbeidsgiverRefusjonskravHarEndringer: () => boolean;
 }
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
@@ -214,6 +217,39 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     } else {
       return false;
     }
+  },
+  arbeidsgiverKreverRefusjon: () => {
+    const refusjon = get().forespurtData?.refusjon?.forslag;
+
+    if (refusjon) {
+      if (refusjon.perioder.length === 1 && refusjon.perioder[0].beloep === 0) {
+        return false;
+      }
+      return refusjon.perioder.length > 0;
+    } else {
+      return false;
+    }
+  },
+  arbeidsgiverRefusjonskravHarEndringer: () => {
+    const refusjon = get().forespurtData?.refusjon?.forslag;
+
+    if (refusjon) {
+      if (refusjon.perioder.length === 1 && refusjon.perioder[0].beloep === 0) {
+        return false;
+      }
+      return refusjon.perioder.length > 0;
+    } else {
+      return false;
+    }
+  },
+  arbeidsgiverRefusjonskravOpphører: () => {
+    const refusjon = get().forespurtData?.refusjon?.forslag;
+
+    if (refusjon) {
+      return refusjon.opphoersdato !== null;
+    } else {
+      return false;
+    }
   }
 });
 
@@ -221,14 +257,14 @@ export default useForespurtDataStore;
 
 function sjekkHarEndring(
   refusjon: (ForslagInntekt & ForslagRefusjon) | undefined,
-  bestemmendeFravaersdag
+  bestemmendeFravaersdag: Date | undefined
 ): YesNo | undefined {
   if (refusjon?.opphoersdato === null && refusjon?.perioder.length === 0) {
     return 'Nei';
   }
 
   const perioderEksklusiveBestemmendeFravaersdagHvisIngenBeløp = refusjon?.perioder.filter((periode) => {
-    return periode.fom !== bestemmendeFravaersdag && periode.beloep !== 0;
+    return parseIsoDate(periode.fom) !== bestemmendeFravaersdag && periode.beloep !== 0;
   });
 
   if (
