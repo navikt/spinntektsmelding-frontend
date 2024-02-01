@@ -203,7 +203,6 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
   setHarRefusjonEndringer: (harEndringer) =>
     set(
       produce((state) => {
-        console.log('setHarRefusjonEndringer', harEndringer);
         state.harRefusjonEndringer = harEndringer;
         if (!state.refusjonEndringer) {
           state.refusjonEndringer = [{}];

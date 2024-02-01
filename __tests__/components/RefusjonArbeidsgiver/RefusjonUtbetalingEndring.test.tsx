@@ -28,7 +28,7 @@ describe('RefusjonUtbetalingEndring', () => {
       <RefusjonUtbetalingEndring
         endringer={endringer}
         onOppdaterEndringer={onOppdaterEndringer}
-        harRefusjonEndring={'Ja'}
+        harRefusjonEndringer={'Ja'}
       ></RefusjonUtbetalingEndring>
     );
 
@@ -49,7 +49,7 @@ describe('RefusjonUtbetalingEndring', () => {
         endringer={endringer}
         onOppdaterEndringer={onOppdaterEndringer}
         onHarEndringer={onHarEndringer}
-        // harRefusjonEndring={'Ja'}
+        // harRefusjonEndringer={'Ja'}
       ></RefusjonUtbetalingEndring>
     );
 
@@ -68,7 +68,7 @@ describe('RefusjonUtbetalingEndring', () => {
       <RefusjonUtbetalingEndring
         endringer={endringer}
         onOppdaterEndringer={onOppdaterEndringer}
-        harRefusjonEndring={'Ja'}
+        harRefusjonEndringer={'Ja'}
       ></RefusjonUtbetalingEndring>
     );
 
@@ -89,7 +89,7 @@ describe('RefusjonUtbetalingEndring', () => {
         endringer={endringer}
         onOppdaterEndringer={onOppdaterEndringer}
         onHarEndringer={onHarEndringer}
-        harRefusjonEndring={'Ja'}
+        harRefusjonEndringer={'Ja'}
       ></RefusjonUtbetalingEndring>
     );
 
@@ -112,7 +112,7 @@ describe('RefusjonUtbetalingEndring', () => {
         endringer={endringer}
         onOppdaterEndringer={onOppdaterEndringer}
         onHarEndringer={onHarEndringer}
-        harRefusjonEndring={'Ja'}
+        harRefusjonEndringer={'Ja'}
       ></RefusjonUtbetalingEndring>
     );
 

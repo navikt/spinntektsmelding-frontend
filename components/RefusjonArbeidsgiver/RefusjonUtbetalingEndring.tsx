@@ -78,7 +78,6 @@ export default function RefusjonUtbetalingEndring({
 
   const changeHarEndringerHandler = (status: string) => {
     if (onHarEndringer) {
-      console.log('changeHarEndringerHandler', status);
       onHarEndringer(status as YesNo);
     }
   };
