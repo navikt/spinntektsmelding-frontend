@@ -115,7 +115,8 @@ export default function useFyllInnsending() {
         beloepPerMaaned: bruttoinntekt.bruttoInntekt!,
         sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
         endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
-      }
+      },
+      aarsakInnsending: 'Ny'
     });
 
     return innsending;
