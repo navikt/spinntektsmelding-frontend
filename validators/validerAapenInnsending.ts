@@ -248,7 +248,8 @@ const schema = z.object({
       endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
       sluttdato: z.date().nullable()
     })
-  )
+  ),
+  aarsakInnsending: z.enum(['Endring', 'Ny'])
 });
 
 type AapenInnsending = z.infer<typeof schema>;
