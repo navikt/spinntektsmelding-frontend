@@ -49,7 +49,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
-
+  const [manuellEndring, setManuellEndring] = useState<boolean>(false);
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
   const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled, setArbeidsgiverperiodeKort] = useBoundStore(
@@ -104,6 +104,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
   };
 
   const clickEndreArbeidsgiverperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setManuellEndring(true);
     event.preventDefault();
 
     logEvent('knapp klikket', {
@@ -176,6 +177,9 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       : '';
 
   useEffect(() => {
+    if (!manuellEndring) {
+      return;
+    }
     if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
       setArbeidsgiverperiodeKort(antallDager < 16);
       if (antallDager < 16) {
@@ -189,7 +193,8 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
     setArbeidsgiverperiodeKort,
     arbeidsgiverperioder,
     arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
-    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
+    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+    manuellEndring
   ]);
 
   useEffect(() => {
