@@ -176,9 +176,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       : '';
 
   useEffect(() => {
-    setArbeidsgiverperiodeKort(antallDager < 16);
-    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(antallDager < 16 ? 'Nei' : undefined);
-  }, [antallDager, setArbeidsgiverperiodeKort]);
+    if (arbeidsgiverperioder?.length === 0) {
+      setArbeidsgiverperiodeKort(antallDager < 16);
+      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(antallDager < 16 ? 'Nei' : undefined);
+    }
+  }, [antallDager, setArbeidsgiverperiodeKort, arbeidsgiverperioder, arbeidsgiverBetalerFullLonnIArbeidsgiverperioden]);
 
   useEffect(() => {
     if (inngangFraKvittering && arbeidsgiverperioder?.length === 0) {

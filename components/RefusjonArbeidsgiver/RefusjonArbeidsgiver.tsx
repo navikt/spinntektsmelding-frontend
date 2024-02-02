@@ -100,7 +100,6 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
         Vi må vite om arbeidsgiver betaler lønn til den ansatte under sykmeldingsperioden og om NAV skal betale ut
         sykepenger til den ansatte eller bedriften etter arbeidsgiverperioden.{' '}
       </BodyLong>
-
       <div>
         <RadioGroup
           legend={betalerArbeidsgiverFullLonnLegend}
@@ -150,7 +149,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
           id={'lus-radio'}
           error={visFeilmeldingsTekst('lus-radio')}
           onChange={addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret)}
-          defaultValue={lonnISykefravaeret?.status}
+          // defaultValue={lonnISykefravaeret?.status}
         >
           <Radio value='Ja'>Ja</Radio>
           <Radio value='Nei'>Nei</Radio>
@@ -174,7 +173,8 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
               }
               onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
               onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
-              harRefusjonEndring={harRefusjonEndringer}
+              harRefusjonEndringer={harRefusjonEndringer}
+              harRefusjonEndringerDefault={harRefusjonEndringer}
             />
 
             <RadioGroup
