@@ -49,7 +49,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
-
+  const [manuellEndring, setManuellEndring] = useState<boolean>(false);
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
   const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled, setArbeidsgiverperiodeKort] = useBoundStore(
@@ -104,6 +104,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
   };
 
   const clickEndreArbeidsgiverperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setManuellEndring(true);
     event.preventDefault();
 
     logEvent('knapp klikket', {
@@ -176,11 +177,25 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       : '';
 
   useEffect(() => {
-    if (arbeidsgiverperioder?.length === 0) {
-      setArbeidsgiverperiodeKort(antallDager < 16);
-      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(antallDager < 16 ? 'Nei' : undefined);
+    if (!manuellEndring) {
+      return;
     }
-  }, [antallDager, setArbeidsgiverperiodeKort, arbeidsgiverperioder, arbeidsgiverBetalerFullLonnIArbeidsgiverperioden]);
+    if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
+      setArbeidsgiverperiodeKort(antallDager < 16);
+      if (antallDager < 16) {
+        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
+      } else {
+        slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+      }
+    }
+  }, [
+    antallDager,
+    setArbeidsgiverperiodeKort,
+    arbeidsgiverperioder,
+    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+    manuellEndring
+  ]);
 
   useEffect(() => {
     if (inngangFraKvittering && arbeidsgiverperioder?.length === 0) {

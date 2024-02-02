@@ -107,7 +107,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}
           onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
-          defaultValue={fullLonnIArbeidsgiverPerioden?.status || null}
+          value={fullLonnIArbeidsgiverPerioden?.status || null}
           disabled={arbeidsgiverperiodeDisabled || arbeidsgiverperiodeKort}
         >
           <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
