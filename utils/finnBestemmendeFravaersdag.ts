@@ -54,7 +54,8 @@ export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
 const finnBestemmendeFravaersdag = (
   fravaersperioder?: Array<Periode>,
   arbeidsgiverperiode?: Array<Periode>,
-  forespurtBestemmendeFraværsdag?: string | Date
+  forespurtBestemmendeFraværsdag?: string | Date,
+  arbeidsgiverKanFlytteBFD?: boolean
 ): string | undefined => {
   if (!fravaersperioder || !fravaersperioder[0] || !fravaersperioder?.[0]?.fom) {
     return undefined;

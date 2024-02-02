@@ -40,6 +40,9 @@ export default function useStateInit() {
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
+  const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
+    (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
+  );
 
   return (jsonData: MottattData) => {
     const feilRapporter = feilRapportMapper(jsonData.feilReport?.feil);
@@ -73,7 +76,12 @@ export default function useStateInit() {
 
     const foreslaattBestemmendeFraværsdag = jsonData.skjaeringstidspunkt;
 
-    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, undefined, foreslaattBestemmendeFraværsdag);
+    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
+      perioder,
+      undefined,
+      foreslaattBestemmendeFraværsdag,
+      arbeidsgiverKanFlytteSkjæringstidspunkt()
+    );
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     if (foreslaattBestemmendeFraværsdag) {

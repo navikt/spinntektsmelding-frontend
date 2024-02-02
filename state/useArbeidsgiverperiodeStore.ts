@@ -37,6 +37,7 @@ export interface ArbeidsgiverperiodeState {
   setArbeidsgiverperiodeDisabled: (disabled: boolean) => void;
   setArbeidsgiverperiodeKort: (disabled: boolean) => void;
   setForeslaattBestemmendeFravaersdag: (bestemmendeFravaersdag: Date | undefined) => void;
+  arbeidsgiverKanFlytteSkjæringstidspunkt: () => boolean;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => {
@@ -130,7 +131,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
       const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
-
+      const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
         produce((state) => {
           if (periodeId === PeriodeType.NY_PERIODE) {
@@ -159,7 +160,8 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
             perioder,
             state.arbeidsgiverperioder,
-            forespurtBestemmendeFraværsdag
+            forespurtBestemmendeFraværsdag,
+            arbeidsgiverKanFlytteSkjæringstidspunkt()
           );
           if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
           if (bestemmendeFravaersdag) {
@@ -199,7 +201,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
       const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
-
+      const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
         produce((state) => {
           const perioder = sykmeldingsperioder
@@ -214,7 +216,8 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
             perioder,
             nyArbeidsgiverperiode,
-            forespurtBestemmendeFraværsdag
+            forespurtBestemmendeFraværsdag,
+            arbeidsgiverKanFlytteSkjæringstidspunkt()
           );
 
           if (bestemmendeFravaersdag) {
@@ -286,7 +289,12 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
           return state;
         })
-      )
+      ),
+    arbeidsgiverKanFlytteSkjæringstidspunkt: () => {
+      const foreslaattBestemmendeFravaersdag = get().foreslaattBestemmendeFravaersdag;
+
+      return !!foreslaattBestemmendeFravaersdag;
+    }
   };
 };
 
