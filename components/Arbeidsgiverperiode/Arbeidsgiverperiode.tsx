@@ -176,11 +176,21 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       : '';
 
   useEffect(() => {
-    if (arbeidsgiverperioder?.length === 0) {
+    if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
       setArbeidsgiverperiodeKort(antallDager < 16);
-      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(antallDager < 16 ? 'Nei' : undefined);
+      if (antallDager < 16) {
+        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
+      } else {
+        slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+      }
     }
-  }, [antallDager, setArbeidsgiverperiodeKort, arbeidsgiverperioder, arbeidsgiverBetalerFullLonnIArbeidsgiverperioden]);
+  }, [
+    antallDager,
+    setArbeidsgiverperiodeKort,
+    arbeidsgiverperioder,
+    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
+  ]);
 
   useEffect(() => {
     if (inngangFraKvittering && arbeidsgiverperioder?.length === 0) {
