@@ -67,39 +67,37 @@ export default function Periodevelger({
   }
 
   return (
-    <>
-      <div className={lokalStyles.endremaaanedsinntekt}>
-        <Datovelger
-          fromDate={fromDate}
-          toDate={toDate}
-          label={fomTekst}
-          id={fomID}
-          onDateChange={onFomChange}
-          defaultSelected={defaultRange?.fom}
+    <div className={lokalStyles.endremaaanedsinntekt}>
+      <Datovelger
+        fromDate={fromDate}
+        toDate={toDate}
+        label={fomTekst}
+        id={fomID}
+        onDateChange={onFomChange}
+        defaultSelected={defaultRange?.fom}
+        disabled={disabled}
+        defaultMonth={defaultMonth}
+        error={fomError}
+      />
+      <Datovelger
+        fromDate={fromDate}
+        label={tomTekst}
+        id={tomID}
+        onDateChange={onTomChange}
+        defaultSelected={defaultRange?.tom}
+        toDate={toDate}
+        disabled={disabled}
+        defaultMonth={defaultMonth || defaultRange?.fom}
+        error={tomError}
+      />
+      {kanSlettes && (
+        <ButtonSlette
+          title='Slett periode'
+          onClick={onSlettClick}
+          className={lokalStyles.sletteknapp}
           disabled={disabled}
-          defaultMonth={defaultMonth}
-          error={fomError}
         />
-        <Datovelger
-          fromDate={fromDate}
-          label={tomTekst}
-          id={tomID}
-          onDateChange={onTomChange}
-          defaultSelected={defaultRange?.tom}
-          toDate={toDate}
-          disabled={disabled}
-          defaultMonth={defaultMonth || defaultRange?.fom}
-          error={tomError}
-        />
-        {kanSlettes && (
-          <ButtonSlette
-            title='Slett periode'
-            onClick={onSlettClick}
-            className={lokalStyles.sletteknapp}
-            disabled={disabled}
-          />
-        )}
-      </div>
-    </>
+      )}
+    </div>
   );
 }
