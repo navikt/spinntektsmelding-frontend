@@ -5,7 +5,7 @@ import { BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
-import { Periode } from '../../state/state';
+import { LonnIArbeidsgiverperioden, Periode } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
@@ -47,7 +47,9 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       state.slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
     ]);
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
-  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined = useBoundStore(
+    (state) => state.fullLonnIArbeidsgiverPerioden
+  );
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
   const amplitudeComponent = 'Arbeidsgiverperiode';
@@ -329,9 +331,9 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
             id={'lus-uua-input'}
             error={visFeilmeldingsTekst('lus-uua-input')}
             defaultValue={
-              fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
+              !fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
                 ? ''
-                : formatCurrency(fullLonnIArbeidsgiverPerioden?.utbetalt)
+                : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
             }
           />
           <SelectBegrunnelseKortArbeidsgiverperiode
