@@ -293,7 +293,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     arbeidsgiverKanFlytteSkjæringstidspunkt: () => {
       const foreslaattBestemmendeFravaersdag = get().foreslaattBestemmendeFravaersdag;
 
-      return !!foreslaattBestemmendeFravaersdag;
+      return !foreslaattBestemmendeFravaersdag;
     }
   };
 };

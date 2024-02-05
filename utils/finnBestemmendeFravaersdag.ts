@@ -76,20 +76,31 @@ const finnBestemmendeFravaersdag = (
 
   const forsteDagArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode[0]?.fom : undefined;
 
-  const bestemmendeFravaersdag = hvemDatoErStorst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
-    ? bestemmendeFravaersdagFraFravaer
-    : forsteDagArbeidsgiverperiode;
+  console.log('forespurtBestemmendeFraværsdag', forespurtBestemmendeFraværsdag, !arbeidsgiverKanFlytteBFD);
+  console.log('bestemmendeFravaersdagFraFravaer', bestemmendeFravaersdagFraFravaer);
 
-  if (forespurtBestemmendeFraværsdag) {
-    const forespurtBestemmendeFravaersdagErStorst = hvemDatoErStorst(
-      bestemmendeFravaersdag,
-      forespurtBestemmendeFraværsdag
-    )
-      ? forespurtBestemmendeFraværsdag
-      : bestemmendeFravaersdag;
-    return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
-      representation: 'date'
-    });
+  let bestemmendeFravaersdag = bestemmendeFravaersdagFraFravaer;
+
+  if (!arbeidsgiverKanFlytteBFD) {
+    console.log('Kan ikke flytte BFD');
+    bestemmendeFravaersdag = hvemDatoErStorst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
+      ? bestemmendeFravaersdagFraFravaer
+      : forsteDagArbeidsgiverperiode;
+    if (forespurtBestemmendeFraværsdag) {
+      const forespurtBestemmendeFravaersdagErStorst = hvemDatoErStorst(
+        bestemmendeFravaersdag,
+        forespurtBestemmendeFraværsdag
+      )
+        ? forespurtBestemmendeFraværsdag
+        : bestemmendeFravaersdag;
+      return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
+        representation: 'date'
+      });
+    }
+  }
+
+  if (arbeidsgiverKanFlytteBFD) {
+    console.log('Kan flytte BFD');
   }
 
   if (bestemmendeFravaersdag !== undefined) {
