@@ -40,9 +40,7 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
-// import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
-import FlexJarResponseEnkel from '../../components/FlexJarResponseEnkel/FlexJarResponseEnkel';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -80,7 +78,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  const bruttoInntektEndring = useBoundStore((state) => state.bruttoinntekt.endringsaarsak);
 
   const refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
     return (
@@ -278,8 +275,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             </div>
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </div>
-
-          <FlexJarResponseEnkel visFeedback={bruttoInntektEndring === 'Feilregistrert'} feedbackId='kvittering' />
         </div>
       </PageContent>
     </div>
