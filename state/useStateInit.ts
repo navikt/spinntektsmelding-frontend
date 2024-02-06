@@ -71,6 +71,8 @@ export default function useStateInit() {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }
 
+    if (jsonData.skjaeringstidspunkt) setSkjaeringstidspunkt(jsonData.skjaeringstidspunkt);
+
     const perioder = jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
