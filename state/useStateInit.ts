@@ -37,7 +37,10 @@ export default function useStateInit() {
   const initBehandlingsdager = useBoundStore((state) => state.initBehandlingsdager);
   const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
   const initForespurtData = useBoundStore((state) => state.initForespurtData);
-  const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
+  const [setForeslaattBestemmendeFravaersdag, setSkjaeringstidspunkt] = useBoundStore((state) => [
+    state.setForeslaattBestemmendeFravaersdag,
+    state.setSkjaeringstidspunkt
+  ]);
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(

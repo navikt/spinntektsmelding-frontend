@@ -109,6 +109,10 @@ export default function useKvitteringInit() {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
     }
 
+    if (jsonData.skjaeringstidspunkt) {
+      setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.skjaeringstidspunkt));
+    }
+
     const beregnetInntekt =
       jsonData.inntekt && jsonData.inntekt.beregnetInntekt
         ? jsonData.inntekt.beregnetInntekt
