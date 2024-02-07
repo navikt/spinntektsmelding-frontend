@@ -55,12 +55,6 @@ export default function FravaerEnkeltAnsattforhold({
     }
   }, [endreSykemelding, fravaerPerioder]);
 
-  const isNotDisabled = (periode: Periode, sisteAktivePeriode: Periode) => {
-    // if (periode.fom && sisteAktivePeriode && periode.fom.getTime() <= sisteAktivePeriode.tom?.getTime()!) {
-    //   return true;
-    // }
-    return periode.fom && sisteAktivePeriode && periode.fom.getTime() <= sisteAktivePeriode.tom?.getTime()!;
-  };
   const cx = classNames.bind(localStyles);
 
   const sortertePerioder = fravaerPerioder
@@ -155,4 +149,8 @@ export default function FravaerEnkeltAnsattforhold({
       )}
     </>
   );
+}
+
+function isNotDisabled(periode: Periode, sisteAktivePeriode: Periode) {
+  return periode.fom && sisteAktivePeriode && periode.fom.getTime() <= sisteAktivePeriode.tom?.getTime()!;
 }
