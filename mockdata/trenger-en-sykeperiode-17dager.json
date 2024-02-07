@@ -4,19 +4,21 @@
   "orgnrUnderenhet": "911206722",
   "orgNavn": "Veldig ampert piggsvin barnehage",
   "bruttoinntekt": 77000,
-  "skjaeringstidspunkt": "2023-02-02",
   "fravaersperioder": [
     {
-      "fom": "2023-02-03",
-      "tom": "2023-02-24"
-    }
-  ],
-  "egenmeldingsperioder": [
+      "fom": "2023-02-01",
+      "tom": "2023-02-16"
+    },
     {
-      "fom": "2023-02-02",
-      "tom": "2023-02-02"
+      "fom": "2023-02-20",
+      "tom": "2023-02-26"
+    },
+    {
+      "fom": "2023-02-28",
+      "tom": "2023-02-28"
     }
   ],
+  "egenmeldingsperioder": [],
   "tidligereinntekter": [
     {
       "maaned": "2023-01",

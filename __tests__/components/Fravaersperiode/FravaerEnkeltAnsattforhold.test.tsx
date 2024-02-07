@@ -14,7 +14,7 @@ describe('FravaerEnkeltAnsattforhold', () => {
     render(
       <FravaerEnkeltAnsattforhold
         fravaerPerioder={fravaersperioder}
-        startSisteAktivePeriode={new Date(2002, 0, 10)}
+        sisteAktivePeriode={{ fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' }}
         setIsDirtyForm={mockFn}
       />
     );
@@ -43,7 +43,7 @@ describe('FravaerEnkeltAnsattforhold', () => {
     render(
       <FravaerEnkeltAnsattforhold
         fravaerPerioder={fravaersperioder}
-        startSisteAktivePeriode={new Date(2002, 2, 10)}
+        sisteAktivePeriode={{ fom: new Date(2002, 2, 1), tom: new Date(2002, 2, 15), id: '3' }}
         setIsDirtyForm={mockFn}
       />
     );

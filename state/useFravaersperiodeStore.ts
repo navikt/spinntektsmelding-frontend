@@ -60,6 +60,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
 
   setFravaersperiodeDato: (periodeId: string, oppdatertPeriode: PeriodeParam | undefined) => {
     const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
+    const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
     set(
       produce((state) => {
         if (state.fravaersperioder) {
@@ -84,7 +85,12 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
         if (fPerioder && fPerioder.length > 0) {
           const agp = finnArbeidsgiverperiode(fPerioder);
           state.arbeidsgiverperioder = agp;
-          const bestemmende = finnBestemmendeFravaersdag(fPerioder, agp, forespurtBestemmendeFraværsdag);
+          const bestemmende = finnBestemmendeFravaersdag(
+            fPerioder,
+            agp,
+            forespurtBestemmendeFraværsdag,
+            arbeidsgiverKanFlytteSkjæringstidspunkt()
+          );
           if (bestemmende) {
             state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmende);

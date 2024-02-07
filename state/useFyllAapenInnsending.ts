@@ -50,6 +50,9 @@ export default function useFyllInnsending() {
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const opprinneligRefusjonEndringer = useBoundStore((state) => state.opprinneligRefusjonEndringer);
+  const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
+    (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
+  );
 
   const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
   const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(
@@ -60,7 +63,8 @@ export default function useFyllInnsending() {
   const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
     perioder,
     formatertePerioder,
-    foreslaattBestemmendeFravaersdag
+    foreslaattBestemmendeFravaersdag,
+    arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
   return () => {
     const endringAarsak: EndringAarsak = fyllEndringaarsak(bruttoinntekt, {

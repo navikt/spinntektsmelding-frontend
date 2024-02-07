@@ -37,9 +37,15 @@ export default function useStateInit() {
   const initBehandlingsdager = useBoundStore((state) => state.initBehandlingsdager);
   const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
   const initForespurtData = useBoundStore((state) => state.initForespurtData);
-  const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
+  const [setForeslaattBestemmendeFravaersdag, setSkjaeringstidspunkt] = useBoundStore((state) => [
+    state.setForeslaattBestemmendeFravaersdag,
+    state.setSkjaeringstidspunkt
+  ]);
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
+  const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
+    (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
+  );
 
   return (jsonData: MottattData) => {
     const feilRapporter = feilRapportMapper(jsonData.feilReport?.feil);
@@ -65,6 +71,8 @@ export default function useStateInit() {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }
 
+    if (jsonData.skjaeringstidspunkt) setSkjaeringstidspunkt(jsonData.skjaeringstidspunkt);
+
     const perioder = jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
@@ -73,7 +81,12 @@ export default function useStateInit() {
 
     const foreslaattBestemmendeFraværsdag = jsonData.skjaeringstidspunkt;
 
-    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(perioder, undefined, foreslaattBestemmendeFraværsdag);
+    const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
+      perioder,
+      undefined,
+      foreslaattBestemmendeFraværsdag,
+      arbeidsgiverKanFlytteSkjæringstidspunkt()
+    );
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     if (foreslaattBestemmendeFraværsdag) {

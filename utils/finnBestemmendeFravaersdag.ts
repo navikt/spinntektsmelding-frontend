@@ -54,11 +54,16 @@ export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
 const finnBestemmendeFravaersdag = (
   fravaersperioder?: Array<Periode>,
   arbeidsgiverperiode?: Array<Periode>,
-  forespurtBestemmendeFraværsdag?: string | Date
+  forespurtBestemmendeFraværsdag?: string | Date,
+  arbeidsgiverKanFlytteBFD?: boolean
 ): string | undefined => {
   if (!fravaersperioder || !fravaersperioder[0] || !fravaersperioder?.[0]?.fom) {
     return undefined;
   }
+
+  const sortertArbeidsgiverperiode = arbeidsgiverperiode
+    ? [...arbeidsgiverperiode].sort((a, b) => compareAsc(a.fom || new Date(), b.fom || new Date()))
+    : undefined;
 
   if (typeof forespurtBestemmendeFraværsdag === 'string') {
     forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
@@ -75,20 +80,23 @@ const finnBestemmendeFravaersdag = (
 
   const forsteDagArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode[0]?.fom : undefined;
 
-  const bestemmendeFravaersdag = hvemDatoErStorst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
-    ? bestemmendeFravaersdagFraFravaer
-    : forsteDagArbeidsgiverperiode;
+  let bestemmendeFravaersdag = bestemmendeFravaersdagFraFravaer;
 
-  if (forespurtBestemmendeFraværsdag) {
-    const forespurtBestemmendeFravaersdagErStorst = hvemDatoErStorst(
-      bestemmendeFravaersdag,
-      forespurtBestemmendeFraværsdag
-    )
-      ? forespurtBestemmendeFraværsdag
-      : bestemmendeFravaersdag;
-    return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
-      representation: 'date'
-    });
+  if (!arbeidsgiverKanFlytteBFD) {
+    bestemmendeFravaersdag = hvemDatoErTidligst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
+      ? bestemmendeFravaersdagFraFravaer
+      : forsteDagArbeidsgiverperiode;
+    if (forespurtBestemmendeFraværsdag) {
+      const forespurtBestemmendeFravaersdagErStorst = hvemDatoErTidligst(
+        bestemmendeFravaersdag,
+        forespurtBestemmendeFraværsdag
+      )
+        ? forespurtBestemmendeFraværsdag
+        : bestemmendeFravaersdag;
+      return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
+        representation: 'date'
+      });
+    }
   }
 
   if (bestemmendeFravaersdag !== undefined) {
@@ -122,7 +130,7 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
   return perioder;
 }
 
-function hvemDatoErStorst(bestemmende?: Date, arbeidsgiverperiode?: Date): boolean {
+function hvemDatoErTidligst(bestemmende?: Date, arbeidsgiverperiode?: Date): boolean {
   if (!bestemmende) {
     return true;
   }

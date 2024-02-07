@@ -4,6 +4,9 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import EgenmeldingLoader from '../Egenmelding/EgenmeldingLoader';
 import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
+import { finnPeriodeMedAntallDager, finnSammenhengendePeriode } from '../../utils/finnArbeidsgiverperiode';
+import { Periode } from '../../state/state';
+import { finnFravaersperioder } from '../../state/useEgenmeldingStore';
 
 interface FravaersperiodeProps {
   lasterData?: boolean;
@@ -12,11 +15,19 @@ interface FravaersperiodeProps {
 }
 
 export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyForm }: FravaersperiodeProps) {
+  const finnPerioder = (perioder?: Periode[]) => {
+    if (!perioder) return [];
+    const sammenhengenePerioder = finnSammenhengendePeriode(perioder);
+    const avgrensetPeriode = finnPeriodeMedAntallDager(sammenhengenePerioder, 17);
+    return avgrensetPeriode;
+  };
+
   const fravaerPerioder = useBoundStore((state) => state.fravaersperioder);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
-  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const arbeidsgiverperioderMedData = arbeidsgiverperioder?.filter((periode) => periode?.fom && periode?.tom);
-  const startSisteAktivePeriode = arbeidsgiverperioderMedData?.[arbeidsgiverperioderMedData.length - 1]?.tom;
+  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  const sykOgEgenmeldingPerioder = finnFravaersperioder(egenmeldingsperioder ?? [], fravaerPerioder);
+  const perioderTilBruk = finnPerioder(sykOgEgenmeldingPerioder);
+  const sisteAktivePeriode = perioderTilBruk?.[perioderTilBruk.length - 1];
 
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.BLANK && (!fravaerPerioder || fravaerPerioder.length < 1)) {
@@ -36,7 +47,7 @@ export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyFo
       {!lasterData && (
         <FravaerEnkeltAnsattforhold
           fravaerPerioder={fravaerPerioder}
-          startSisteAktivePeriode={startSisteAktivePeriode}
+          sisteAktivePeriode={sisteAktivePeriode}
           skjemastatus={skjemastatus}
           setIsDirtyForm={setIsDirtyForm}
         />

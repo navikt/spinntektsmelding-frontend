@@ -14,14 +14,14 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import ButtonEndre from '../ButtonEndre';
 
 interface FravaerEnkeltAnsattforholdProps {
-  startSisteAktivePeriode?: Date;
+  sisteAktivePeriode?: Periode;
   setIsDirtyForm: (dirty: boolean) => void;
   fravaerPerioder?: Array<Periode>;
   skjemastatus?: SkjemaStatus;
 }
 
 export default function FravaerEnkeltAnsattforhold({
-  startSisteAktivePeriode,
+  sisteAktivePeriode,
   fravaerPerioder,
   skjemastatus,
   setIsDirtyForm
@@ -55,27 +55,32 @@ export default function FravaerEnkeltAnsattforhold({
     }
   }, [endreSykemelding, fravaerPerioder]);
 
-  const isNotDisabled = (periode: Periode, startSisteAktivePeriode?: Date) => {
-    return periode.fom && startSisteAktivePeriode && periode.fom < startSisteAktivePeriode;
-  };
   const cx = classNames.bind(localStyles);
 
+  const sortertePerioder = fravaerPerioder
+    ? [...fravaerPerioder].sort((a, b) => {
+        if (a.fom && b.fom) {
+          return a.fom.getTime() - b.fom.getTime();
+        }
+        return 0;
+      })
+    : [];
   return (
     <>
-      {fravaerPerioder?.map((periode, periodeIndex) => (
+      {sortertePerioder?.map((periode, periodeIndex) => (
         <div className={styles.periodewrapper} key={periode.id}>
           {!endreSykemelding && (
             <div>
               <div className={styles.datepickerescape}>
                 <TextLabel
                   data-cy={`sykmelding-${periodeIndex}-fra`}
-                  className={cx({ isDisabled: !isNotDisabled?.(periode, startSisteAktivePeriode) })}
+                  className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
                 >
                   Fra
                 </TextLabel>
                 <div
                   data-cy={`sykmelding-${periodeIndex}-fra-dato`}
-                  className={cx({ isDisabled: !isNotDisabled?.(periode, startSisteAktivePeriode) })}
+                  className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
                 >
                   {formatDate?.(periode.fom)}
                 </div>
@@ -83,18 +88,18 @@ export default function FravaerEnkeltAnsattforhold({
               <div className={styles.datepickerescape}>
                 <TextLabel
                   data-cy={`sykmelding-${periodeIndex}-til`}
-                  className={cx({ isDisabled: !isNotDisabled?.(periode, startSisteAktivePeriode) })}
+                  className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
                 >
                   Til
                 </TextLabel>
                 <div
                   data-cy={`sykmelding-${periodeIndex}-til-dato`}
-                  className={cx({ isDisabled: !isNotDisabled?.(periode, startSisteAktivePeriode) })}
+                  className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
                 >
                   {formatDate?.(periode.tom)}
                 </div>
               </div>
-              {!isNotDisabled?.(periode, startSisteAktivePeriode) && (
+              {!isNotDisabled?.(periode, sisteAktivePeriode) && (
                 <div className={localStyles.alertEscape}>
                   <Alert variant='info'>
                     Dere vil motta en separat forespørsel om inntektsmelding for denne perioden.
@@ -143,4 +148,8 @@ export default function FravaerEnkeltAnsattforhold({
       )}
     </>
   );
+}
+
+function isNotDisabled(periode: Periode, sisteAktivePeriode: Periode) {
+  return periode.fom && sisteAktivePeriode && periode.fom.getTime() <= sisteAktivePeriode.tom?.getTime()!;
 }

@@ -9,13 +9,14 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import validerPeriodeFravaer from '../validators/validerPeriodeFravaer';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
-import { MottattPeriode } from './MottattData';
+import { MottattPeriode, TDateISODate } from './MottattData';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
 
 export interface ArbeidsgiverperiodeState {
   bestemmendeFravaersdag?: Date;
+  skjaeringstidspunkt?: Date;
   foreslaattBestemmendeFravaersdag?: Date;
   arbeidsgiverperioder?: Array<Periode>;
   endringsbegrunnelse?: string;
@@ -37,6 +38,8 @@ export interface ArbeidsgiverperiodeState {
   setArbeidsgiverperiodeDisabled: (disabled: boolean) => void;
   setArbeidsgiverperiodeKort: (disabled: boolean) => void;
   setForeslaattBestemmendeFravaersdag: (bestemmendeFravaersdag: Date | undefined) => void;
+  arbeidsgiverKanFlytteSkjæringstidspunkt: () => boolean;
+  setSkjaeringstidspunkt: (skjaeringstidspunkt: TDateISODate | null) => void;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => {
@@ -130,7 +133,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
       const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
-
+      const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
         produce((state) => {
           if (periodeId === PeriodeType.NY_PERIODE) {
@@ -159,7 +162,8 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
             perioder,
             state.arbeidsgiverperioder,
-            forespurtBestemmendeFraværsdag
+            forespurtBestemmendeFraværsdag,
+            arbeidsgiverKanFlytteSkjæringstidspunkt()
           );
           if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
           if (bestemmendeFravaersdag) {
@@ -199,7 +203,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
       const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
-
+      const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
         produce((state) => {
           const perioder = sykmeldingsperioder
@@ -214,7 +218,8 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
             perioder,
             nyArbeidsgiverperiode,
-            forespurtBestemmendeFraværsdag
+            forespurtBestemmendeFraværsdag,
+            arbeidsgiverKanFlytteSkjæringstidspunkt()
           );
 
           if (bestemmendeFravaersdag) {
@@ -286,7 +291,20 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
 
           return state;
         })
-      )
+      ),
+    arbeidsgiverKanFlytteSkjæringstidspunkt: () => {
+      const skjaeringstidspunkt = get().skjaeringstidspunkt;
+
+      return !skjaeringstidspunkt;
+    },
+    setSkjaeringstidspunkt: (skjaeringstidspunkt) => {
+      set(
+        produce((state) => {
+          state.skjaeringstidspunkt = skjaeringstidspunkt ? parseIsoDate(skjaeringstidspunkt) : null;
+          return state;
+        })
+      );
+    }
   };
 };
 

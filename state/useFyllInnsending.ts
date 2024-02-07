@@ -115,6 +115,9 @@ export default function useFyllInnsending() {
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const opprinneligRefusjonEndringer = useBoundStore((state) => state.opprinneligRefusjonEndringer);
+  const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
+    (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
+  );
 
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
     const endringAarsak = (): AArsakType | Tariffendring | PeriodeListe | StillingsEndring | undefined => {
@@ -216,7 +219,12 @@ export default function useFyllInnsending() {
     const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
     const bestemmendeFraværsdag = skalSendeArbeidsgiverperiode
-      ? finnBestemmendeFravaersdag(perioder, formatertePerioder, foreslaattBestemmendeFravaersdag)
+      ? finnBestemmendeFravaersdag(
+          perioder,
+          formatertePerioder,
+          foreslaattBestemmendeFravaersdag,
+          arbeidsgiverKanFlytteSkjæringstidspunkt()
+        )
       : formatIsoDate(foreslaattBestemmendeFravaersdag);
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
