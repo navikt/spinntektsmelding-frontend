@@ -132,7 +132,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
-      const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
+      const skjaeringstidspunkt = get().skjaeringstidspunkt;
       const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
         produce((state) => {
@@ -162,7 +162,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
             perioder,
             state.arbeidsgiverperioder,
-            forespurtBestemmendeFraværsdag,
+            skjaeringstidspunkt,
             arbeidsgiverKanFlytteSkjæringstidspunkt()
           );
           if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
@@ -202,7 +202,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       const opprinnelig = get().opprinneligArbeidsgiverperioder;
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().fravaersperioder;
-      const forespurtBestemmendeFraværsdag = get().foreslaattBestemmendeFravaersdag;
+      const skjaeringstidspunkt = get().skjaeringstidspunkt;
       const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
         produce((state) => {
@@ -218,7 +218,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
             perioder,
             nyArbeidsgiverperiode,
-            forespurtBestemmendeFraværsdag,
+            skjaeringstidspunkt,
             arbeidsgiverKanFlytteSkjæringstidspunkt()
           );
 

@@ -46,7 +46,7 @@ export default function useFyllInnsending() {
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
-  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
+  const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const opprinneligRefusjonEndringer = useBoundStore((state) => state.opprinneligRefusjonEndringer);
@@ -63,7 +63,7 @@ export default function useFyllInnsending() {
   const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
     perioder,
     formatertePerioder,
-    foreslaattBestemmendeFravaersdag,
+    skjaeringstidspunkt,
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
   return () => {

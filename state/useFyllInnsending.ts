@@ -111,13 +111,14 @@ export default function useFyllInnsending() {
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
-  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
+  const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
-  const opprinneligRefusjonEndringer = useBoundStore((state) => state.opprinneligRefusjonEndringer);
+  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
+  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
 
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
     const endringAarsak = (): AArsakType | Tariffendring | PeriodeListe | StillingsEndring | undefined => {
@@ -222,10 +223,12 @@ export default function useFyllInnsending() {
       ? finnBestemmendeFravaersdag(
           perioder,
           formatertePerioder,
-          foreslaattBestemmendeFravaersdag,
+          skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt()
         )
-      : formatIsoDate(foreslaattBestemmendeFravaersdag);
+      : inngangFraKvittering
+        ? formatIsoDate(bestemmendeFravaersdag)
+        : formatIsoDate(skjaeringstidspunkt);
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
 

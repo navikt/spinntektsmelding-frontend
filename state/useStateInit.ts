@@ -79,18 +79,18 @@ export default function useStateInit() {
       id: nanoid()
     }));
 
-    const foreslaattBestemmendeFraværsdag = jsonData.skjaeringstidspunkt;
+    const skjaeringstidspunkt = jsonData.skjaeringstidspunkt;
 
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
       perioder,
       undefined,
-      foreslaattBestemmendeFraværsdag,
+      skjaeringstidspunkt,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
-    if (foreslaattBestemmendeFraværsdag) {
-      setForeslaattBestemmendeFravaersdag(parseIsoDate(foreslaattBestemmendeFraværsdag));
+    if (skjaeringstidspunkt) {
+      setForeslaattBestemmendeFravaersdag(parseIsoDate(skjaeringstidspunkt));
     } else if (bestemmendeFravaersdag) setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
