@@ -65,7 +65,6 @@ export default function FravaerEnkeltAnsattforhold({
         return 0;
       })
     : [];
-
   return (
     <>
       {sortertePerioder?.map((periode, periodeIndex) => (

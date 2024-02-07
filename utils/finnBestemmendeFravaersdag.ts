@@ -61,6 +61,10 @@ const finnBestemmendeFravaersdag = (
     return undefined;
   }
 
+  const sortertArbeidsgiverperiode = arbeidsgiverperiode
+    ? [...arbeidsgiverperiode].sort((a, b) => compareAsc(a.fom || new Date(), b.fom || new Date()))
+    : undefined;
+
   if (typeof forespurtBestemmendeFraværsdag === 'string') {
     forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
   }
