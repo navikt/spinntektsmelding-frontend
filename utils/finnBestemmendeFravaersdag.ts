@@ -61,6 +61,10 @@ const finnBestemmendeFravaersdag = (
     return undefined;
   }
 
+  const sortertArbeidsgiverperiode = arbeidsgiverperiode
+    ? [...arbeidsgiverperiode].sort((a, b) => compareAsc(a.fom || new Date(), b.fom || new Date()))
+    : undefined;
+
   if (typeof forespurtBestemmendeFraværsdag === 'string') {
     forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
   }
@@ -83,11 +87,11 @@ const finnBestemmendeFravaersdag = (
 
   if (!arbeidsgiverKanFlytteBFD) {
     console.log('Kan ikke flytte BFD');
-    bestemmendeFravaersdag = hvemDatoErStorst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
+    bestemmendeFravaersdag = hvemDatoErTidligst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
       ? bestemmendeFravaersdagFraFravaer
       : forsteDagArbeidsgiverperiode;
     if (forespurtBestemmendeFraværsdag) {
-      const forespurtBestemmendeFravaersdagErStorst = hvemDatoErStorst(
+      const forespurtBestemmendeFravaersdagErStorst = hvemDatoErTidligst(
         bestemmendeFravaersdag,
         forespurtBestemmendeFraværsdag
       )
@@ -134,7 +138,7 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
   return perioder;
 }
 
-function hvemDatoErStorst(bestemmende?: Date, arbeidsgiverperiode?: Date): boolean {
+function hvemDatoErTidligst(bestemmende?: Date, arbeidsgiverperiode?: Date): boolean {
   if (!bestemmende) {
     return true;
   }

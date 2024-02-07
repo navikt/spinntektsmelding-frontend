@@ -2,19 +2,19 @@ import { addDays, differenceInCalendarDays } from 'date-fns';
 import { Periode } from '../state/state';
 import { finnSorterteUnikePerioder, overlappendePeriode, tilstoetendePeriode } from './finnBestemmendeFravaersdag';
 
-const finn16dager = (perioder: Array<Periode>) => {
+export const finnPeriodeMedAntallDager = (perioder: Array<Periode>, antallDager: number) => {
   let dagerTotalt = 0;
   const arbPeriode: Array<Periode> = [];
 
   perioder.forEach((periode) => {
-    if (dagerTotalt < 16 && periode?.fom && periode?.tom) {
+    if (dagerTotalt < antallDager && periode?.fom && periode?.tom) {
       const dagerTilNaa = differenceInCalendarDays(periode.tom, periode.fom) + dagerTotalt + 1;
-      if (dagerTilNaa < 16) {
+      if (dagerTilNaa < antallDager) {
         arbPeriode.push(periode);
       } else {
         arbPeriode.push({
           fom: periode.fom,
-          tom: addDays(periode.fom, 15 - dagerTotalt),
+          tom: addDays(periode.fom, antallDager - 1 - dagerTotalt),
           id: periode.id
         });
       }
@@ -26,10 +26,10 @@ const finn16dager = (perioder: Array<Periode>) => {
   return arbPeriode;
 };
 
-const finnArbeidsgiverperiode = (fravaersperioder: Array<Periode>): Array<Periode> => {
-  const tilstotendeSykemeldingsperioder = finnSammenhengendePeriode(fravaersperioder);
+const finnArbeidsgiverperiode = (fravaerPerioder: Array<Periode>): Array<Periode> => {
+  const tilstotendePerioder = finnSammenhengendePeriode(fravaerPerioder);
 
-  return finn16dager(tilstotendeSykemeldingsperioder);
+  return finnPeriodeMedAntallDager(tilstotendePerioder, 16);
 };
 
 export const finnSammenhengendePeriode = (fravaersperioder: Array<Periode>): Array<Periode> => {

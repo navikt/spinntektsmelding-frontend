@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../config/environment';
 
-import org from '../../mockdata/trenger-en-sykeperiode.json';
+import org from '../../mockdata/trenger-en-sykeperiode-17dager.json';
 
 const basePath = environment.inntektsmeldingUuidAPI;
 
