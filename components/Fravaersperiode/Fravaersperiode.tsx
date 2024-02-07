@@ -6,6 +6,7 @@ import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
 import { finnPeriodeMedAntallDager, finnSammenhengendePeriode } from '../../utils/finnArbeidsgiverperiode';
 import { Periode } from '../../state/state';
+import { finnFravaersperioder } from '../../state/useEgenmeldingStore';
 
 interface FravaersperiodeProps {
   lasterData?: boolean;
@@ -23,11 +24,10 @@ export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyFo
 
   const fravaerPerioder = useBoundStore((state) => state.fravaersperioder);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
-  // const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const perioderTilBruk = finnPerioder(fravaerPerioder);
+  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  const sykOgEgenmeldingPerioder = finnFravaersperioder(egenmeldingsperioder ?? [], fravaerPerioder);
+  const perioderTilBruk = finnPerioder(sykOgEgenmeldingPerioder);
   const sisteAktivePeriode = perioderTilBruk?.[perioderTilBruk.length - 1];
-
-  console.log('fravaerPerioder', fravaerPerioder);
 
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.BLANK && (!fravaerPerioder || fravaerPerioder.length < 1)) {
