@@ -80,13 +80,9 @@ const finnBestemmendeFravaersdag = (
 
   const forsteDagArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode[0]?.fom : undefined;
 
-  console.log('forespurtBestemmendeFraværsdag', forespurtBestemmendeFraværsdag, !arbeidsgiverKanFlytteBFD);
-  console.log('bestemmendeFravaersdagFraFravaer', bestemmendeFravaersdagFraFravaer);
-
   let bestemmendeFravaersdag = bestemmendeFravaersdagFraFravaer;
 
   if (!arbeidsgiverKanFlytteBFD) {
-    console.log('Kan ikke flytte BFD');
     bestemmendeFravaersdag = hvemDatoErTidligst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
       ? bestemmendeFravaersdagFraFravaer
       : forsteDagArbeidsgiverperiode;
@@ -101,10 +97,6 @@ const finnBestemmendeFravaersdag = (
         representation: 'date'
       });
     }
-  }
-
-  if (arbeidsgiverKanFlytteBFD) {
-    console.log('Kan flytte BFD');
   }
 
   if (bestemmendeFravaersdag !== undefined) {

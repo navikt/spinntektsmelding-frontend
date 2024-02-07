@@ -71,7 +71,7 @@ export default function FravaerEnkeltAnsattforhold({
         return 0;
       })
     : [];
-  console.log('sortertePerioder', sortertePerioder);
+
   return (
     <>
       {sortertePerioder?.map((periode, periodeIndex) => (

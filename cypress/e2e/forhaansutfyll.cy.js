@@ -34,7 +34,7 @@ describe('Utfylling og innsending av skjema', () => {
   // });
 
   it('should display information on the person and the submitter', () => {
-    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen.json' }).as('trenger');
+    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-forhaandsutfyll.json' }).as('trenger');
 
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
       statusCode: 404,
@@ -63,7 +63,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.wait('@trenger');
 
     cy.get('[data-cy="navn"]').should('have.text', 'Test Navn Testesen-Navnesen Jr.');
-    cy.get('[data-cy="identitetsnummer"]').should('have.text', '25087327879');
+    cy.get('[data-cy="identitetsnummer"]').should('have.text', '10486535275');
     cy.get('[data-cy="virksomhetsnavn"]').should('have.text', 'Veldig ampert piggsvin barnehage');
     cy.get('[data-cy="orgnummer"]').should('have.text', '911206722');
     cy.get('[data-cy="innsendernavn"]').should('have.text', 'Test Testesen');
@@ -74,22 +74,22 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.get('[data-cy="egenmelding"] .navds-label').first().should('have.text', 'Fra');
     cy.get('[data-cy="egenmelding"] .navds-label').last().should('have.text', 'Til');
-    cy.get('[data-cy="egenmelding-fra"]').should('have.text', '17.02.2023');
-    cy.get('[data-cy="egenmelding-til"]').should('have.text', '19.02.2023');
+    cy.get('[data-cy="egenmelding-fra"]').should('have.text', '01.02.2023');
+    cy.get('[data-cy="egenmelding-til"]').should('have.text', '03.02.2023');
     // });
 
     // it('should display information on the sykmelding', () => {
     cy.get('[data-cy="sykmelding-0-fra"]').should('have.text', 'Fra');
     cy.get('[data-cy="sykmelding-0-til"]').should('have.text', 'Til');
-    cy.get('[data-cy="sykmelding-0-fra-dato"]').should('have.text', '20.02.2023');
-    cy.get('[data-cy="sykmelding-0-til-dato"]').should('have.text', '04.03.2023');
+    cy.get('[data-cy="sykmelding-0-fra-dato"]').should('have.text', '04.02.2023');
+    cy.get('[data-cy="sykmelding-0-til-dato"]').should('have.text', '15.02.2023');
     // });
 
     // it('should display information on the arbeidsgiverperiode', () => {
     cy.get('[data-cy="arbeidsgiverperiode-0-fra"]').should('have.text', 'Fra');
     cy.get('[data-cy="arbeidsgiverperiode-0-til"]').should('have.text', 'Til');
-    cy.get('[data-cy="arbeidsgiverperiode-0-fra-dato"]').should('have.text', '17.02.2023');
-    cy.get('[data-cy="arbeidsgiverperiode-0-til-dato"]').should('have.text', '04.03.2023');
+    cy.get('[data-cy="arbeidsgiverperiode-0-fra-dato"]').should('have.text', '01.02.2023');
+    cy.get('[data-cy="arbeidsgiverperiode-0-til-dato"]').should('have.text', '15.02.2023');
     // });
 
     // it('should display information on the beregnet månedslønn', () => {
