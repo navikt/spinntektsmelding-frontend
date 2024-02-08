@@ -1,4 +1,4 @@
-import { Alert, BodyShort } from '@navikt/ds-react';
+import { Alert, BodyShort, Link } from '@navikt/ds-react';
 import { LonnISykefravaeret, RefusjonskravetOpphoerer, YesNo } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
@@ -83,7 +83,14 @@ export default function LonnUnderSykefravaeret({
         )}
       </div>
       <Alert variant='info'>
-        Husk å kontrollere at dere har rapportert inn korrekt kontonummer i Altinn for å motta refusjon fra NAV.
+        Husk å kontroller at dere har rapportert inn korrekt kontonummer til Altinn for å motta refusjon fra NAV. Dere
+        finner{' '}
+        <Link
+          href='https://info.altinn.no/skjemaoversikt/arbeids--og-velferdsetaten-nav/bankkontonummer-for-refusjoner-fra-nav-til-arbeidsgiver/'
+          target='_blank'
+        >
+          skjema for rapportering av kontonummer i Altinn.
+        </Link>
       </Alert>
     </>
   );
