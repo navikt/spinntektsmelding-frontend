@@ -197,7 +197,7 @@ const EndringAarsakSchema = z.discriminatedUnion('aarsak', [
   EndringAarsakVarigLoennsendringSchema
 ]);
 
-const RefusjonEndringSchema = z.object({
+export const RefusjonEndringSchema = z.object({
   startDato: z
     .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
     .transform((val) => toLocalIso(val)),
@@ -231,7 +231,9 @@ const schema = z.object({
   }),
   inntekt: z.optional(
     z.object({
-      beloep: z.number().min(0),
+      beloep: z
+        .number({ required_error: 'Vennligst angi månedsinntekt' })
+        .min(0, 'Månedsinntekt må være større enn eller lik 0'),
       inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
       naturalytelser: z.union([
         z.array(
@@ -248,7 +250,9 @@ const schema = z.object({
   ),
   refusjon: z.optional(
     z.object({
-      beloepPerMaaned: z.number().min(0),
+      beloepPerMaaned: z
+        .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
+        .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
       endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
       sluttdato: z.date().nullable()
     })
