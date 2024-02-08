@@ -103,6 +103,28 @@ const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
   return val;
 });
 
+export const PersonnummerSchema = z
+  .string()
+  .transform((val) => val.replace(/\s/g, ''))
+  .pipe(
+    z
+      .string()
+      .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
+      .max(11, { message: 'Personnummeret er for langt, det må være 11 siffer' })
+  )
+  .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] });
+
+export const OrganisasjonsnummerSchema = z
+  .string()
+  .transform((val) => val.replace(/\s/g, ''))
+  .pipe(
+    z
+      .string()
+      .min(9, { message: 'Organisasjonsnummeret er for kort, det må være 9 siffer' })
+      .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
+  )
+  .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver', path: ['organisasjonsnummer'] });
+
 const EndringAarsakBonusSchema = z.object({
   aarsak: z.literal('Bonus')
 });
@@ -185,27 +207,9 @@ const RefusjonEndringSchema = z.object({
 });
 
 const schema = z.object({
-  sykmeldtFnr: z
-    .string()
-    .transform((val) => val.replace(/\s/g, ''))
-    .pipe(
-      z
-        .string()
-        .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
-        .max(11, { message: 'Personnummeret er for langt, det må være 11 siffer' })
-    )
-    .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] }),
+  sykmeldtFnr: PersonnummerSchema,
   avsender: z.object({
-    orgnr: z
-      .string()
-      .transform((val) => val.replace(/\s/g, ''))
-      .pipe(
-        z
-          .string()
-          .min(9, { message: 'Organisasjonsnummeret er for kort, det må være 9 siffer' })
-          .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
-      )
-      .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver', path: ['organisasjonsnummer'] }),
+    orgnr: OrganisasjonsnummerSchema,
     tlf: z
       .string({
         required_error: 'Vennligst fyll inn telefonnummer',
