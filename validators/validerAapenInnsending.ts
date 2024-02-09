@@ -103,6 +103,28 @@ const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
   return val;
 });
 
+export const PersonnummerSchema = z
+  .string()
+  .transform((val) => val.replace(/\s/g, ''))
+  .pipe(
+    z
+      .string()
+      .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
+      .max(11, { message: 'Personnummeret er for langt, det må være 11 siffer' })
+  )
+  .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] });
+
+export const OrganisasjonsnummerSchema = z
+  .string()
+  .transform((val) => val.replace(/\s/g, ''))
+  .pipe(
+    z
+      .string()
+      .min(9, { message: 'Organisasjonsnummeret er for kort, det må være 9 siffer' })
+      .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
+  )
+  .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver', path: ['organisasjonsnummer'] });
+
 const EndringAarsakBonusSchema = z.object({
   aarsak: z.literal('Bonus')
 });
@@ -175,7 +197,7 @@ const EndringAarsakSchema = z.discriminatedUnion('aarsak', [
   EndringAarsakVarigLoennsendringSchema
 ]);
 
-const RefusjonEndringSchema = z.object({
+export const RefusjonEndringSchema = z.object({
   startDato: z
     .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
     .transform((val) => toLocalIso(val)),
@@ -185,27 +207,9 @@ const RefusjonEndringSchema = z.object({
 });
 
 const schema = z.object({
-  sykmeldtFnr: z
-    .string()
-    .transform((val) => val.replace(/\s/g, ''))
-    .pipe(
-      z
-        .string()
-        .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
-        .max(11, { message: 'Personnummeret er for langt, det må være 11 siffer' })
-    )
-    .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] }),
+  sykmeldtFnr: PersonnummerSchema,
   avsender: z.object({
-    orgnr: z
-      .string()
-      .transform((val) => val.replace(/\s/g, ''))
-      .pipe(
-        z
-          .string()
-          .min(9, { message: 'Organisasjonsnummeret er for kort, det må være 9 siffer' })
-          .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
-      )
-      .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver', path: ['organisasjonsnummer'] }),
+    orgnr: OrganisasjonsnummerSchema,
     tlf: z
       .string({
         required_error: 'Vennligst fyll inn telefonnummer',
@@ -227,7 +231,9 @@ const schema = z.object({
   }),
   inntekt: z.optional(
     z.object({
-      beloep: z.number().min(0),
+      beloep: z
+        .number({ required_error: 'Vennligst angi månedsinntekt' })
+        .min(0, 'Månedsinntekt må være større enn eller lik 0'),
       inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
       naturalytelser: z.union([
         z.array(
@@ -244,7 +250,9 @@ const schema = z.object({
   ),
   refusjon: z.optional(
     z.object({
-      beloepPerMaaned: z.number().min(0),
+      beloepPerMaaned: z
+        .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
+        .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
       endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
       sluttdato: z.date().nullable()
     })

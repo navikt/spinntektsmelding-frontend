@@ -1,13 +1,9 @@
-import { isEqual, isValid, parseISO } from 'date-fns';
-import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import { isValid, parseISO } from 'date-fns';
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
-import skjemaVariant from '../config/skjemavariant';
-import { Opplysningstype } from './useForespurtDataStore';
-import { TDateISODate } from './MottattData';
 import validerAapenInnsending, {
   EndringAarsak,
   InntektEndringAarsakEnum,
@@ -21,9 +17,8 @@ export default function useFyllInnsending() {
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, refusjonskravetOpphoerer] = useBoundStore((state) => [
+  const [fullLonnIArbeidsgiverPerioden, refusjonskravetOpphoerer] = useBoundStore((state) => [
     state.fullLonnIArbeidsgiverPerioden,
-    state.lonnISykefravaeret,
     state.refusjonskravetOpphoerer
   ]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
@@ -38,18 +33,12 @@ export default function useFyllInnsending() {
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
-  const behandlingsdager = useBoundStore((state) => state.behandlingsdager);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
-  const nyInnsending = useBoundStore((state) => state.nyInnsending);
-  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
-  const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
-  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
-  const opprinneligRefusjonEndringer = useBoundStore((state) => state.opprinneligRefusjonEndringer);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
@@ -66,7 +55,7 @@ export default function useFyllInnsending() {
     skjaeringstidspunkt,
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
-  return () => {
+  return (skjemaData: any) => {
     const endringAarsak: EndringAarsak = fyllEndringaarsak(bruttoinntekt, {
       ferie,
       nystillingdato,
@@ -212,10 +201,6 @@ function fyllEndringaarsak(bruttoinntekt: Inntekt, parametere) {
   }
 }
 
-function nyEllerEndring(nyInnsending: boolean) {
-  return nyInnsending ? 'Ny' : 'Endring';
-}
-
 function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
   let perioder;
   if (fravaersperioder) {
@@ -236,10 +221,6 @@ function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperio
     : undefined;
 }
 
-function jaEllerNei(velger: YesNo | undefined, returverdi: any): any | undefined {
-  return velger === 'Ja' ? returverdi : undefined;
-}
-
 function finnInnsendbareArbeidsgiverperioder(
   arbeidsgiverperioder: Periode[] | undefined,
   skalSendeArbeidsgiverperiode: boolean
@@ -253,18 +234,6 @@ function finnInnsendbareArbeidsgiverperioder(
         ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
         .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
     : [];
-}
-
-function verdiEllerFalse(verdi: boolean | undefined): boolean {
-  return verdi ?? false;
-}
-
-function verdiEllerBlank(verdi: string | undefined): string {
-  return verdi ?? '';
-}
-
-function verdiEllerNull(verdi: number | undefined): number {
-  return verdi ?? 0;
 }
 
 function konverterRefusjonEndringer(
@@ -284,11 +253,4 @@ function konverterRefusjonEndringer(
   } else {
     return [];
   }
-}
-
-function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode> | undefined) {
-  return (
-    egenmeldingsperioder &&
-    (egenmeldingsperioder.length > 1 || (egenmeldingsperioder[0]?.fom && egenmeldingsperioder[0]?.tom))
-  );
 }

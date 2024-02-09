@@ -20,7 +20,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
 
-  return async (opplysningerBekreftet: boolean, pathSlug: string, isDirtyForm: boolean) => {
+  return async (opplysningerBekreftet: boolean, pathSlug: string, isDirtyForm: boolean, skjemaData: any) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
       component: amplitudeComponent
@@ -49,7 +49,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       return false;
     }
 
-    const validerteData = fyllAapenInnsending();
+    const validerteData = fyllAapenInnsending(skjemaData);
 
     const hasErrors = validerteData.success !== true;
 
