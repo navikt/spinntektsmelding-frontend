@@ -2,6 +2,8 @@ import { Alert, Button, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
@@ -10,51 +12,38 @@ import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger
 import styles from '../../styles/Home.module.css';
 import lokalStyles from './initiering.module.css';
 import useBoundStore from '../../state/useBoundStore';
-import { FormEvent, useState } from 'react';
+
 import isFnrNumber from '../../utils/isFnrNumber';
-import visFeilmeldingsTekst from '../../utils/visFeilmeldingsTekst';
-import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
-import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
+
+import FeilListe from '../../components/Feilsammendrag/FeilListe';
+import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
+import { useMemo } from 'react';
+import { PersonnummerSchema } from '../../validators/validerAapenInnsending';
+
+const skjemaFnr = z.object({
+  identitetsnummer: PersonnummerSchema
+});
 
 const Initiering: NextPage = () => {
+  type SkjemaFnr = z.infer<typeof skjemaFnr>;
   const setIdentitetsnummer = useBoundStore((state) => state.setIdentitetsnummer);
-  const [fnr, setFnr] = useState<string>('');
 
-  const [visFeilmeldinger, setVisFeilmeldinger] = useState(false);
-  const [feilmeldinger, setFeilmeldinger] = useState<Feilmelding[] | undefined>(undefined);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: zodResolver(skjemaFnr)
+  });
 
   const router = useRouter();
 
-  const submitForm = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setVisFeilmeldinger(true);
-    const skjemaFnr = z
-      .string()
-      .transform((val) => val.replace(/\s/g, ''))
-      .pipe(
-        z
-          .string()
-          .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
-          .max(11, { message: 'Personnummeret er for langt, det må være 11 siffer' })
-      )
-      .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] });
-    const validertFnr = skjemaFnr.safeParse(fnr);
-
-    if (validertFnr.success) {
-      setFeilmeldinger(undefined);
-      setIdentitetsnummer(validertFnr.data);
-      router.push('/initiering2', { scroll: false });
-    } else {
-      const feilmeldinger = formatZodFeilmeldinger(validertFnr);
-
-      setFeilmeldinger(feilmeldinger);
-    }
+  const submitForm: SubmitHandler<SkjemaFnr> = (skjemaData: SkjemaFnr) => {
+    setIdentitetsnummer(skjemaData.identitetsnummer);
+    router.push('/initiering2', { scroll: false });
   };
 
-  const onChangeFnrInput = (e: any) => {
-    setFnr(e.target.value);
-  };
-
+  const feilmeldinger = formatRHFFeilmeldinger(errors);
   return (
     <div className={styles.container}>
       <Head>
@@ -72,19 +61,19 @@ const Initiering: NextPage = () => {
               er ferdig og den sykmeldte har sendt inn søknad om sykepenger. Hvis du ikke fått denne oppgaven og du
               mener at du skal levere inntektsmelding så er det mulig å opprette den manuelt.
             </Alert>
-            <form className={lokalStyles.form} onSubmit={submitForm}>
+            <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
               <TextField
                 label='Angi personnummer for den ansatte'
                 description='(ddmmååxxxxx)'
                 className={lokalStyles.personnummer}
-                onChange={onChangeFnrInput}
-                error={visFeilmeldingsTekst('identitetsnummer', visFeilmeldinger, feilmeldinger)}
+                {...register('identitetsnummer')}
+                error={errors.identitetsnummer?.message as string}
               />
               <Button variant='primary' className={lokalStyles.primaryKnapp}>
                 Neste
               </Button>
             </form>
-            <FeilListe skalViseFeilmeldinger={visFeilmeldinger} feilmeldinger={feilmeldinger ?? []} />
+            <FeilListe skalViseFeilmeldinger={feilmeldinger.length > 0} feilmeldinger={feilmeldinger ?? []} />
           </div>
         </main>
       </PageContent>
