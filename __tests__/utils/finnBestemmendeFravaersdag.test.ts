@@ -1,6 +1,9 @@
 import { parseISO } from 'date-fns';
 import { Periode } from '../../state/state';
-import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
+import finnBestemmendeFravaersdag, {
+  tilstoetendePeriode,
+  tilstoetendePeriodeManuellJustering
+} from '../../utils/finnBestemmendeFravaersdag';
 
 describe.concurrent('finnBestemmendeFravaersdag', () => {
   it('should return the correct bestemmende fraværsdag for two periode directly following each other', () => {
@@ -309,5 +312,37 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
       }
     ];
     expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-17')).toBe('2022-11-12');
+  });
+
+  it('should return null for tilstøtende perioder, uten helg', () => {
+    const periode1: Periode = {
+      id: '1',
+      fom: parseISO('2023-11-29'),
+      tom: parseISO('2023-12-01')
+    };
+    const periode2: Periode = {
+      id: '2',
+      fom: parseISO('2023-12-04'),
+      tom: parseISO('2023-12-04')
+    };
+    expect(tilstoetendePeriodeManuellJustering(periode1, periode2)).toBeNull();
+  });
+
+  it('should return null for tilstøtende perioder, uten helg', () => {
+    const periode1: Periode = {
+      id: '1',
+      fom: parseISO('2023-11-29'),
+      tom: parseISO('2023-12-01')
+    };
+    const periode2: Periode = {
+      id: '2',
+      fom: parseISO('2023-12-04'),
+      tom: parseISO('2023-12-04')
+    };
+    expect(tilstoetendePeriode(periode1, periode2)).toEqual({
+      id: '1',
+      fom: parseISO('2023-11-29'),
+      tom: parseISO('2023-12-04')
+    });
   });
 });
