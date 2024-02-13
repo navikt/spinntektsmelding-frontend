@@ -54,7 +54,7 @@ export const tilstoetendePeriodeManuellJustering = (ene: Periode, andre: Periode
 
   if (!ene.fom || !ene.tom || !andre.fom || !andre.tom) return null;
 
-  if (differenceInDays(andre.fom, ene.tom) <= 0) {
+  if (differenceInDays(andre.fom, ene.tom) <= 1) {
     const obj: Periode = {
       fom: ene.fom,
       tom: andre.tom,

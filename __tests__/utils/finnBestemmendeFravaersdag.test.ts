@@ -314,11 +314,43 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-17')).toBe('2022-11-12');
   });
 
-  it('should return null for tilstøtende perioder, uten helg', () => {
+  it('should return null for tilstøtende perioder, uten helg, manuell', () => {
     const periode1: Periode = {
       id: '1',
       fom: parseISO('2023-11-29'),
       tom: parseISO('2023-12-01')
+    };
+    const periode2: Periode = {
+      id: '2',
+      fom: parseISO('2023-12-04'),
+      tom: parseISO('2023-12-04')
+    };
+    expect(tilstoetendePeriodeManuellJustering(periode1, periode2)).toBeNull();
+  });
+
+  it('should return joined periode for tilstøtende perioder, manuell', () => {
+    const periode1: Periode = {
+      id: '1',
+      fom: parseISO('2023-11-29'),
+      tom: parseISO('2023-12-03')
+    };
+    const periode2: Periode = {
+      id: '2',
+      fom: parseISO('2023-12-04'),
+      tom: parseISO('2023-12-04')
+    };
+    expect(tilstoetendePeriodeManuellJustering(periode1, periode2)).toEqual({
+      id: '1',
+      fom: parseISO('2023-11-29'),
+      tom: parseISO('2023-12-04')
+    });
+  });
+
+  it('should return null for nesten tilstøtende perioder, manuell', () => {
+    const periode1: Periode = {
+      id: '1',
+      fom: parseISO('2023-11-29'),
+      tom: parseISO('2023-12-02')
     };
     const periode2: Periode = {
       id: '2',
