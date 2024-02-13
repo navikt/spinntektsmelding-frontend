@@ -1,4 +1,4 @@
-import { compareAsc, formatISO9075 } from 'date-fns';
+import { compareAsc, differenceInDays, formatISO9075 } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
@@ -34,6 +34,27 @@ export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
   if (!ene.fom || !ene.tom || !andre.fom || !andre.tom) return null;
 
   if (differenceInBusinessDays(andre.fom, ene.tom, { includeStartDate: false, includeEndDate: false }) <= 0) {
+    const obj: Periode = {
+      fom: ene.fom,
+      tom: andre.tom,
+      id: ene.id
+    };
+
+    return obj;
+  }
+
+  return null;
+};
+
+export const tilstoetendePeriodeManuellJustering = (ene: Periode, andre: Periode) => {
+  if (!ene || !andre) return null;
+  if (ene.tom === andre.tom && ene.fom === andre.fom) {
+    return ene;
+  }
+
+  if (!ene.fom || !ene.tom || !andre.fom || !andre.tom) return null;
+
+  if (differenceInDays(andre.fom, ene.tom) <= 1) {
     const obj: Periode = {
       fom: ene.fom,
       tom: andre.tom,

@@ -14,13 +14,16 @@ import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useEffect, useMemo, useState } from 'react';
 import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, differenceInDays } from 'date-fns';
 import SelectBegrunnelse from '../RefusjonArbeidsgiver/SelectBegrunnelse';
 import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
 import formatCurrency from '../../utils/formatCurrency';
-import { finnSammenhengendePeriode } from '../../utils/finnArbeidsgiverperiode';
+import {
+  finnSammenhengendePeriode,
+  finnSammenhengendePeriodeManuellJustering
+} from '../../utils/finnArbeidsgiverperiode';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -67,6 +70,22 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       setIsDirtyForm(true);
       func(event);
     };
+  };
+
+  const antallDagerIArbeidsgiverperioderManuellJustering = (perioder: Array<Periode> | undefined) => {
+    if (typeof perioder === 'undefined') {
+      return 0;
+    }
+
+    let dagerTotalt = 0;
+
+    const mergeDatePeriods = finnSammenhengendePeriodeManuellJustering(perioder);
+
+    mergeDatePeriods.forEach((periode) => {
+      const justering = periode.fom === periode.tom ? 0 : 1;
+      dagerTotalt = differenceInDays(periode.tom!, periode.fom!) + dagerTotalt + justering;
+    });
+    return dagerTotalt;
   };
 
   const antallDagerIArbeidsgiverperioder = (perioder: Array<Periode> | undefined) => {
@@ -166,7 +185,13 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
     setIsDirtyForm(true);
   };
 
-  const antallDager = useMemo(() => antallDagerIArbeidsgiverperioder(arbeidsgiverperioder), [arbeidsgiverperioder]);
+  const antallDager = useMemo(
+    () =>
+      manuellEndring
+        ? antallDagerIArbeidsgiverperioderManuellJustering(arbeidsgiverperioder)
+        : antallDagerIArbeidsgiverperioder(arbeidsgiverperioder),
+    [arbeidsgiverperioder, manuellEndring]
+  );
 
   const advarselLangPeriode =
     antallDager > 16

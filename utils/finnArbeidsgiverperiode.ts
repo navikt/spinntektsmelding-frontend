@@ -1,6 +1,11 @@
 import { addDays, differenceInCalendarDays } from 'date-fns';
 import { Periode } from '../state/state';
-import { finnSorterteUnikePerioder, overlappendePeriode, tilstoetendePeriode } from './finnBestemmendeFravaersdag';
+import {
+  finnSorterteUnikePerioder,
+  overlappendePeriode,
+  tilstoetendePeriode,
+  tilstoetendePeriodeManuellJustering
+} from './finnBestemmendeFravaersdag';
 
 export const finnPeriodeMedAntallDager = (perioder: Array<Periode>, antallDager: number) => {
   let dagerTotalt = 0;
@@ -33,6 +38,40 @@ const finnArbeidsgiverperiode = (fravaerPerioder: Array<Periode>): Array<Periode
 };
 
 export const finnSammenhengendePeriode = (fravaersperioder: Array<Periode>): Array<Periode> => {
+  const { mergedSykemeldingsperioder, tilstotendeSykemeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
+  mergedSykemeldingsperioder.forEach((periode) => {
+    const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
+    const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
+
+    if (oppdatertPeriode) {
+      tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
+    } else {
+      tilstotendeSykemeldingsperioder.push(periode);
+    }
+  });
+
+  return tilstotendeSykemeldingsperioder;
+};
+
+export const finnSammenhengendePeriodeManuellJustering = (fravaersperioder: Array<Periode>): Array<Periode> => {
+  const { mergedSykemeldingsperioder, tilstotendeSykemeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
+  mergedSykemeldingsperioder.forEach((periode) => {
+    const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
+    const oppdatertPeriode = tilstoetendePeriodeManuellJustering(aktivPeriode, periode);
+
+    if (oppdatertPeriode) {
+      tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
+    } else {
+      tilstotendeSykemeldingsperioder.push(periode);
+    }
+  });
+
+  return tilstotendeSykemeldingsperioder;
+};
+
+export default finnArbeidsgiverperiode;
+
+function joinPerioderMedOverlapp(fravaersperioder: Periode[]) {
   const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
@@ -49,18 +88,5 @@ export const finnSammenhengendePeriode = (fravaersperioder: Array<Periode>): Arr
   });
 
   const tilstotendeSykemeldingsperioder = [mergedSykemeldingsperioder[0]];
-  mergedSykemeldingsperioder.forEach((periode) => {
-    const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
-    const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
-
-    if (oppdatertPeriode) {
-      tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
-    } else {
-      tilstotendeSykemeldingsperioder.push(periode);
-    }
-  });
-
-  return tilstotendeSykemeldingsperioder;
-};
-
-export default finnArbeidsgiverperiode;
+  return { mergedSykemeldingsperioder, tilstotendeSykemeldingsperioder };
+}
