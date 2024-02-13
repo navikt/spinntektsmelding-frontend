@@ -29,7 +29,7 @@
     "@navikt/next-api-proxy": "3.3.1",
     "@navikt/next-logger": "1.19.0-1",
     "@testing-library/dom": "9.3.3",
-    "classnames": "2.3.2",
+    "classnames": "2.5.1",
     "core-js-pure": "3.33.3",
     "date-fns": "2.30.0",
     "immer": "10.0.3",
