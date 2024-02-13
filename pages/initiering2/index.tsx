@@ -16,7 +16,6 @@ import { useRef } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
-import formatZodFeilmeldinger from '../../utils/formatZodFeilmeldinger';
 import initieringSchema from '../../schema/initieringSchema';
 import useSWRImmutable from 'swr/immutable';
 
@@ -81,8 +80,6 @@ const Initiering2: NextPage = () => {
           initPerson(validert.fulltNavn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
           setSkjemaStatus(SkjemaStatus.BLANK);
           router.push('/arbeidsgiverInitiertInnsending');
-        } else {
-          const tmpFeilmeldinger: Feilmelding[] = formatZodFeilmeldinger(validationResult);
         }
       }
     }
