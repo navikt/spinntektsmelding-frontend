@@ -1,6 +1,4 @@
 import { Select } from '@navikt/ds-react';
-import visFeilmeldingsTekst from '../../utils/visFeilmeldingsTekst';
-import { Feilmelding } from '../Feilsammendrag/FeilListe';
 import TextLabel from '../TextLabel';
 
 export interface ArbeidsgiverSelect {
@@ -9,40 +7,25 @@ export interface ArbeidsgiverSelect {
 }
 
 interface SelectArbeidsgiverProps {
-  onChangeArbeidsgiverSelect: (e: any) => void;
   arbeidsforhold: ArbeidsgiverSelect[];
-  feilmeldinger?: Feilmelding[];
-  skalViseFeilmeldinger: boolean;
   id: string;
+  register: any;
+  error?: string;
 }
 
-export default function SelectArbeidsgiver({
-  onChangeArbeidsgiverSelect,
-  arbeidsforhold,
-  feilmeldinger,
-  skalViseFeilmeldinger,
-  id
-}: Readonly<SelectArbeidsgiverProps>) {
-  const onChangeSelect = (e: any) => {
-    onChangeArbeidsgiverSelect(e.target.value);
-  };
-  // visningsnavn: `Org.nr. ${arbeidsgiver.orgnrUnderenhet} - ${arbeidsgiver.virksomhetsnavn}`,
+export default function SelectArbeidsgiver({ arbeidsforhold, id, register, error }: Readonly<SelectArbeidsgiverProps>) {
   if (arbeidsforhold.length === 1) {
     return (
       <>
         <TextLabel>Organisasjon</TextLabel>
         <p>{`Org.nr. ${arbeidsforhold[0].orgnrUnderenhet} - ${arbeidsforhold[0].virksomhetsnavn}`}</p>
+        <input type='hidden' value={arbeidsforhold[0].orgnrUnderenhet} name='organisasjonsnummer' {...register(id)} />
       </>
     );
   }
 
   return (
-    <Select
-      label='Organisasjon'
-      onChange={onChangeSelect}
-      error={visFeilmeldingsTekst(id, skalViseFeilmeldinger, feilmeldinger)}
-      id={id}
-    >
+    <Select label='Organisasjon' error={error} {...register(id)}>
       <option value=''>Velg organisasjon</option>
       {arbeidsforhold.map((arbeidsgiver) => (
         <option value={arbeidsgiver.orgnrUnderenhet} key={arbeidsgiver.orgnrUnderenhet}>

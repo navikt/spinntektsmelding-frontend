@@ -13,19 +13,16 @@ import styles from '../../styles/Home.module.css';
 import lokalStyles from './initiering.module.css';
 import useBoundStore from '../../state/useBoundStore';
 
-import isFnrNumber from '../../utils/isFnrNumber';
-
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { useMemo } from 'react';
 import { PersonnummerSchema } from '../../validators/validerAapenInnsending';
 
-const skjemaFnr = z.object({
+const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema
 });
 
 const Initiering: NextPage = () => {
-  type SkjemaFnr = z.infer<typeof skjemaFnr>;
+  type SkjemaFnr = z.infer<typeof skjemaFnrSchema>;
   const setIdentitetsnummer = useBoundStore((state) => state.setIdentitetsnummer);
 
   const {
@@ -33,7 +30,7 @@ const Initiering: NextPage = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    resolver: zodResolver(skjemaFnr)
+    resolver: zodResolver(skjemaFnrSchema)
   });
 
   const router = useRouter();
