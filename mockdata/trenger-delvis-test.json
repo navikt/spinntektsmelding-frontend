@@ -1,0 +1,44 @@
+{
+  "navn": "DISKRET HANDLEKRAFT",
+  "orgNavn": "ANSTENDIG PIGGSVIN SYKEHJEM",
+  "innsenderNavn": "MUSKULØS VALS",
+  "identitetsnummer": "18468037250",
+  "orgnrUnderenhet": "810007982",
+
+  "skjaeringstidspunkt": "2024-01-02",
+  "fravaersperioder": [
+    {
+      "fom": "2024-01-02",
+      "tom": "2024-01-03"
+    }
+  ],
+  "egenmeldingsperioder": [],
+  "forespurtData": {
+    "arbeidsgiverperiode": {
+      "paakrevd": false
+    },
+    "inntekt": {
+      "paakrevd": true,
+      "forslag": {
+        "type": "ForslagInntektGrunnlag",
+        "forrigeInntekt": {
+          "skjæringstidspunkt": "2023-07-31",
+          "kilde": "INNTEKTSMELDING",
+          "beløp": 44050.0
+        }
+      }
+    },
+    "refusjon": {
+      "paakrevd": true,
+      "forslag": {
+        "perioder": [
+          {
+            "fom": "2023-09-26",
+            "beloep": 44050.0
+          }
+        ],
+        "opphoersdato": null
+      }
+    }
+  }
+}
