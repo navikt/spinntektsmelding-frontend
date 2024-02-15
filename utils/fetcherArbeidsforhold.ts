@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { OrganisasjonsnummerSchema } from '../validators/validerAapenInnsending';
 
 export default function fetcherArbeidsforhold(url: string, identitetsnummer?: string) {
   if (!identitetsnummer) return Promise.resolve([]);
@@ -25,7 +26,7 @@ export const endepunktArbeidsforholdSchema = z.object({
   underenheter: z.array(
     z
       .object({
-        orgnrUnderenhet: z.string(),
+        orgnrUnderenhet: OrganisasjonsnummerSchema,
         virksomhetsnavn: z.string()
       })
       .optional()

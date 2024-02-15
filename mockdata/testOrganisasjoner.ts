@@ -15,7 +15,7 @@ const testOrganisasjoner: MottatArbeidsgiver[] = [
     type: 'Business',
     parentOrganizationNumber: '810007702',
     organizationForm: 'BEDR',
-    organizationNumber: '99810008032',
+    organizationNumber: '810008032',
     socialSecurityNumber: null,
     status: 'Active'
   },

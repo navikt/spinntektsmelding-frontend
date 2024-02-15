@@ -111,19 +111,21 @@ export const PersonnummerSchema = z
       .string()
       .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
       .max(11, { message: 'Personnummeret er for langt, det må være 11 siffer' })
-  )
-  .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer', path: ['identitetsnummer'] });
+      .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer' })
+  );
 
 export const OrganisasjonsnummerSchema = z
   .string()
   .transform((val) => val.replace(/\s/g, ''))
   .pipe(
     z
-      .string()
+      .string({
+        required_error: 'Organisasjon er ikke valgt'
+      })
       .min(9, { message: 'Organisasjonsnummeret er for kort, det må være 9 siffer' })
       .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
-  )
-  .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver', path: ['organisasjonsnummer'] });
+      .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver' })
+  );
 
 const EndringAarsakBonusSchema = z.object({
   aarsak: z.literal('Bonus')

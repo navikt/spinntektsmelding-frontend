@@ -70,12 +70,12 @@ describe('endepunktArbeidsforholdSchema', () => {
       fulltNavn: 'John Doe',
       underenheter: [
         {
-          orgnrUnderenhet: '123',
-          virksomhetsnavn: 'Company A'
+          orgnrUnderenhet: '810008032',
+          virksomhetsnavn: 'ANSTENDIG PIGGSVIN BRANNVESEN'
         },
         {
-          orgnrUnderenhet: '456',
-          virksomhetsnavn: 'Company B'
+          orgnrUnderenhet: '810007842',
+          virksomhetsnavn: 'ANSTENDIG PIGGSVIN BARNEHAGE'
         }
       ]
     };
@@ -88,11 +88,11 @@ describe('endepunktArbeidsforholdSchema', () => {
       fulltNavn: 'John Doe',
       underenheter: [
         {
-          orgnrUnderenhet: '123',
-          virksomhetsnavn: 'Company A'
+          orgnrUnderenhet: '99810008032',
+          virksomhetsnavn: 'ANSTENDIG PIGGSVIN BRANNVESEN'
         },
         {
-          orgnrUnderenhet: '456',
+          orgnrUnderenhet: '810007842',
           virksomhetsnavn: 123 // Invalid type
         }
       ]
