@@ -30,7 +30,8 @@ import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import TextLabel from '../../components/TextLabel';
 import ButtonEndre from '../../components/ButtonEndre';
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
-import { isEqual } from 'date-fns';
+import { isBefore, isEqual } from 'date-fns';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -98,6 +99,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const kanBruttoinntektTilbakebestilles = useBoundStore((state) => state.kanBruttoinntektTilbakebestilles);
+  const forespurtData = useBoundStore((state) => state.forespurtData);
   const [
     opprinneligRefusjonEndringer,
     opprinneligRefusjonskravetOpphoerer,
@@ -302,9 +304,29 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     gammeltSkjaeringstidspunkt && refusjonEndringer
       ? refusjonEndringer?.filter((endring) => {
           if (!endring.dato) return false;
-          return !isEqual(gammeltSkjaeringstidspunkt, endring.dato);
+          return !isBefore(gammeltSkjaeringstidspunkt, endring.dato);
         })
       : refusjonEndringer;
+
+  const refusjonOpphoerer = !!forespurtData?.refusjon.forslag?.opphoersdato;
+  let refusjonBelop = forespurtData?.refusjon.forslag?.perioder.reduce((acc, periode) => {
+    const fom = parseIsoDate(periode.fom);
+    if (isBefore(gammeltSkjaeringstidspunkt!, fom)) {
+      return periode.beloep;
+    }
+    return acc;
+  }, 0);
+
+  if (
+    refusjonOpphoerer &&
+    isBefore(parseIsoDate(forespurtData?.refusjon.forslag?.opphoersdato!), gammeltSkjaeringstidspunkt!)
+  ) {
+    refusjonBelop = 0;
+  }
+
+  const refusjonskravEndringer = forespurtData?.refusjon.forslag?.perioder.filter((periode) => {
+    return isBefore(gammeltSkjaeringstidspunkt!, parseIsoDate(periode.fom));
+  });
 
   return (
     <div className={styles.container}>
@@ -401,27 +423,28 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
               <Skillelinje />
               <Heading2>Refusjon</Heading2>
               {kreverIkkeRefusjon && (
-                <BodyLong>I henhold til siste inntektsmelding hadde dere ikke noe refusjonskrav.</BodyLong>
+                <BodyLong>I henhold til siste inntektsmelding hadde dere ikke refusjonskrav.</BodyLong>
               )}
               {!aapentManglendeData && (
                 <>
                   {!kreverIkkeRefusjon && (
                     <>
-                      <BodyLong>I siste inntektsmelding hadde dere følgende refusjonskrav:</BodyLong>
                       <H3Label unPadded topPadded>
-                        Refusjon til arbeidsgiver etter arbeidsgiverperiode
+                        Refusjon til arbeidsgiver
                       </H3Label>
                       {!harEndringer && <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>}
                       {harEndringer && (
                         <>
-                          {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
-                          <H3Label unPadded topPadded>
-                            Er det endringer i refusjonskrav i perioden?
-                          </H3Label>
+                          {formatCurrency(refusjonBelop || 0)} kr
                           {refusjonEndringerUtenSkjaeringstidspunkt &&
-                          refusjonEndringerUtenSkjaeringstidspunkt?.length > 0
-                            ? 'Ja'
-                            : 'Nei'}
+                            refusjonEndringerUtenSkjaeringstidspunkt?.length === 0 && (
+                              <>
+                                <H3Label unPadded topPadded>
+                                  Er det endringer i refusjonskrav i perioden?
+                                </H3Label>
+                                Nei
+                              </>
+                            )}
                           {refusjonEndringerUtenSkjaeringstidspunkt &&
                             refusjonEndringerUtenSkjaeringstidspunkt?.length > 0 && (
                               <div className={lokalStyles.refusjonswrapper}>
@@ -465,7 +488,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   )}
                   {!aapentManglendeData && (
                     <RadioGroup
-                      legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
+                      legend={`Er det endringer i refusjonskravet etter ${formatDate(
                         forsteFravaersdag
                       )} (start av nytt sykefravær)?`}
                       onChange={addIsDirtyForm(handleChangeEndringRefusjon)}
@@ -502,18 +525,22 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     <>
                       <RefusjonArbeidsgiverBelop
                         visFeilmeldingsTekst={visFeilmeldingsTekst}
-                        bruttoinntekt={lonnISykefravaeret?.belop || 0}
+                        bruttoinntekt={refusjonBelop || 0}
                         onOppdaterBelop={addIsDirtyForm(beloepArbeidsgiverBetalerISykefravaeret)}
                       />
 
                       <RefusjonUtbetalingEndring
-                        endringer={refusjonEndringerUtenSkjaeringstidspunkt || []}
+                        endringer={refusjonskravEndringer || []}
                         maxDate={refusjonskravetOpphoerer?.opphoersdato}
                         // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
                         onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
                         onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
-                        harRefusjonEndringer={harRefusjonEndringer}
-                        harRefusjonEndringerDefault={arbeidsgiverRefusjonskravHarEndringer() ? 'Ja' : undefined}
+                        harRefusjonEndringer={
+                          refusjonskravEndringer && refusjonskravEndringer.length > 0 ? 'Ja' : undefined
+                        }
+                        harRefusjonEndringerDefault={
+                          refusjonskravEndringer && refusjonskravEndringer.length > 0 ? 'Ja' : undefined
+                        }
                       />
 
                       <RadioGroup
