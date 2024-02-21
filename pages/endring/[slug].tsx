@@ -35,8 +35,12 @@ import DatoVelger from '../../components/DatoVelger/DatoVelger';
 import PersonData from '../../components/PersonData/PersonData';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
+<<<<<<< HEAD
 import { LonnISykefravaeret, YesNo } from '../../state/state';
 import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
+=======
+import { LonnISykefravaeret } from '../../state/state';
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -44,6 +48,10 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   type Skjema = z.infer<typeof delvisInnsendingSchema>;
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
+<<<<<<< HEAD
+=======
+  const [setEndringBruttolonn] = useBoundStore((state) => [state.setEndringBruttolonn]);
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
   const [setEndringerAvRefusjon, tilbakestillRefusjoner] = useBoundStore((state) => [
     state.setEndringerAvRefusjon,
     state.tilbakestillRefusjoner
@@ -62,14 +70,22 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
 
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
+<<<<<<< HEAD
+=======
+  const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
+  const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
+<<<<<<< HEAD
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
 
   const [initRefusjonskravetOpphoerer] = useBoundStore((state) => [state.initRefusjonskravetOpphoerer]);
 
+=======
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
   const [initLonnISykefravaeret, initRefusjonEndringer, setInnsenderTelefon] = useBoundStore((state) => [
     state.initLonnISykefravaeret,
     state.initRefusjonEndringer,
@@ -115,6 +131,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
+<<<<<<< HEAD
     skjaeringstidspunkt && refusjonEndringer
       ? refusjonEndringer?.filter((endring) => {
           if (!endring.dato) return false;
@@ -132,23 +149,60 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         .map((endring) => {
           return {
             beloep: endring.beloep,
+=======
+    gammeltSkjaeringstidspunkt && refusjonEndringer
+      ? refusjonEndringer
+          ?.filter((endring) => {
+            if (!endring.dato) return false;
+            return !isBefore(endring.dato, gammeltSkjaeringstidspunkt);
+          })
+          .map((endring) => {
+            return {
+              beloep: endring.belop,
+              dato: endring.dato
+            };
+          })
+      : refusjonEndringer;
+
+  const refusjonPrMnd = !nyInnsending
+    ? lonnISykefravaeret!.belop
+    : refusjonEndringer
+        ?.filter((endring) => {
+          if (!endring.dato) return false;
+          return !isAfter(endring.dato, gammeltSkjaeringstidspunkt);
+        })
+        .map((endring) => {
+          return {
+            beloep: endring.belop,
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
             dato: endring.dato
           };
         })
         .sort((a, b) => {
+<<<<<<< HEAD
           return a.dato && b.dato ? (a.dato < b.dato ? 1 : -1) : 0;
+=======
+          return a.dato && b.dato ? (a.dato > b.dato ? 1 : -1) : 0;
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
         })[0]?.beloep;
 
   const aktiveRefusjonEndringer = nyInnsending
     ? refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
       ? refusjonEndringerUtenSkjaeringstidspunkt
       : [{ beloep: undefined, dato: undefined }]
+<<<<<<< HEAD
     : refusjonEndringer;
 
   const refusjonOpphorsdato = !nyInnsending ? refusjonskravetOpphoerer?.opphoersdato : undefined;
   const refusjonOpphoererStaus = !nyInnsending ? refusjonskravetOpphoerer?.status : undefined;
 
   const methods = useForm<Skjema>({
+=======
+    : refusjonEndringer?.map((endring) => ({ beloep: endring.belop || endring.beloep, dato: endring.dato }));
+
+  console.log('aktiveRefusjonEndringer', aktiveRefusjonEndringer);
+  const methods = useForm({
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
     resolver: zodResolver(delvisInnsendingSchema),
     defaultValues: {
       inntekt: {
@@ -158,6 +212,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       opplysningerBekreftet: false,
       refusjon: {
         refusjonPrMnd: refusjonPrMnd,
+<<<<<<< HEAD
         refusjonEndringer: aktiveRefusjonEndringer,
         harEndringer:
           refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
@@ -166,6 +221,9 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         refusjonOpphoerer: refusjonOpphorsdato,
         kravetOpphoerer: refusjonOpphoererStaus,
         kreverRefusjon: refusjonPrMnd !== 0 ? 'Ja' : 'Nei'
+=======
+        refusjonEndringer: aktiveRefusjonEndringer
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
       }
     }
   });
@@ -176,13 +234,21 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     formState: { isDirty, errors }
   } = methods;
 
+<<<<<<< HEAD
   const harEndringBruttoloenn = watch('endringBruttoloenn');
+=======
+  const harEndringBruttolonn = watch('endringBruttolonn');
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
 
   const harEndringRefusjon = watch('refusjon.erDetEndringRefusjon');
 
   let skalRefusjonskravetOpphoere = watch('refusjon.kravetOpphoerer');
 
+<<<<<<< HEAD
   const arbeidsgiverKreverRefusjon = watch('refusjon.kreverRefusjon');
+=======
+  const arbeidsgiverKreverRefusjon = watch('refusjon.kreverRefusjon' as const);
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
@@ -237,8 +303,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
     sendInnDelvisSkjema(true, pathSlug, isDirty, skjemaData).finally(() => {
       const lonnISykefravaeret: LonnISykefravaeret = {
+<<<<<<< HEAD
         beloep: skjemaData.refusjon.refusjonPrMnd,
         status: skjemaData.refusjon.kreverRefusjon
+=======
+        belop: skjemaData.refusjon.refusjonPrMnd,
+        status: skjemaData.refusjon.kreverRefusjon ?? skjemaData.refusjon.refusjonPrMnd ? 'Ja' : 'Nei'
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
       };
 
       initLonnISykefravaeret(lonnISykefravaeret);
@@ -246,6 +317,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         skjemaData.refusjon.refusjonEndringer
           ? skjemaData.refusjon.refusjonEndringer
               ?.filter((endring) => endring && endring.beloep !== undefined)
+<<<<<<< HEAD
               .map((endring) => ({ beloep: endring.beloep, dato: endring.dato }))
           : []
       );
@@ -259,6 +331,12 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
       setNyMaanedsinntekt(skjemaData.inntekt.beloep ? skjemaData.inntekt.beloep?.toString() : '');
       setEndringsaarsak(skjemaData.inntekt.endringAarsak?.aarsak ?? '');
+=======
+              .map((endring) => ({ belop: endring.beloep, dato: endring.dato }))
+          : []
+      );
+      setInnsenderTelefon(skjemaData.telefon);
+>>>>>>> ced3405 (Rett før jeg bytter alt fra belop til beloep)
       // oppdaterRefusjonEndringer(skjemaData.refusjon.refusjonEndringer ?? []);
 
       setSenderInn(false);
@@ -308,6 +386,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   ) {
     refusjonBelop = 0;
   }
+
+  const feilmeldinger = mapErrorsObjectToFeilmeldinger(errors);
 
   const feilmeldinger = mapErrorsObjectToFeilmeldinger(errors);
 
@@ -524,6 +604,29 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 };
 
 export default Endring;
+
+function mapErrorsObjectToFeilmeldinger(errors) {
+  const mapErrorsObject = (errors: any, subKey = ''): any[] => {
+    return Object.keys(errors).flatMap((key) => {
+      if (!errors[key].message) {
+        return mapErrorsObject(errors[key], subKey ? `${subKey}.${key}` : key);
+      }
+      return {
+        key: subKey ? `${subKey}.${key}` : key,
+        message: errors[key].message
+      };
+    });
+  };
+  const errorsMapped = mapErrorsObject(errors);
+
+  const feilmeldinger = errorsMapped.map((error) => {
+    return {
+      felt: error.key,
+      text: error.message
+    };
+  });
+  return feilmeldinger;
+}
 
 export async function getServerSideProps(context: any) {
   const slug = context.query.slug;

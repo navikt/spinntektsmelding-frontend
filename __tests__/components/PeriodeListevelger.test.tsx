@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import PeriodeListevelger from '../../components/Bruttoinntekt/PeriodeListevelger';
+import PeriodeListevelger from '../../components/Bruttoinntekt/PeriodeListevelger2';
 import { vi } from 'vitest';
 import parseIsoDate from '../../utils/parseIsoDate';
 

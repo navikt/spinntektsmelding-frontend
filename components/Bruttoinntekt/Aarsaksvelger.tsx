@@ -7,7 +7,7 @@ import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import { Inntekt, Periode } from '../../state/state';
 import React from 'react';
 import Datovelger from '../Datovelger';
-import PeriodeListevelger from './PeriodeListevelger';
+import PeriodeListevelger from './PeriodeListevelger2';
 import TariffendringDato from './TariffendringDato';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 
