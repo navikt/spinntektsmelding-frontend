@@ -2,6 +2,9 @@ import { Faro, getWebInstrumentations, initializeFaro, LogLevel } from '@grafana
 import { TracingInstrumentation } from '@grafana/faro-web-tracing';
 
 import env from '../config/environment';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
 
 let faro: Faro | null = null;
 export function initInstrumentation(): void {
@@ -10,8 +13,13 @@ export function initInstrumentation(): void {
   getFaro();
 }
 
-export function getFaro(): Faro {
+export function getFaro(): Faro | null {
   if (faro != null) return faro;
+
+  if (publicRuntimeConfig.loggingDisabled) {
+    return null;
+  }
+
   faro = initializeFaro({
     url: env.telemetryUrl,
     app: {

@@ -31,7 +31,7 @@ import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
-import { isEqual, isValid } from 'date-fns';
+import { isBefore, isEqual, isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
@@ -79,14 +79,22 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
 
-  const refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
-    return (
-      !endring.dato ||
-      !bestemmendeFravaersdag ||
-      !gammeltSkjaeringstidspunkt ||
-      (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato!, gammeltSkjaeringstidspunkt))
-    );
-  });
+  const refusjonEndringerUtenSkjaeringstidspunkt =
+    gammeltSkjaeringstidspunkt && refusjonEndringer
+      ? refusjonEndringer
+          ?.filter((endring) => {
+            if (!endring.dato) return false;
+            return !isBefore(endring.dato, gammeltSkjaeringstidspunkt);
+          })
+          .map((endring) => {
+            return {
+              belop: endring.belop ?? endring.beloep,
+              dato: endring.dato
+            };
+          })
+      : refusjonEndringer;
+
+  console.log('refusjonEndringerUtenSkjaeringstidspunkt', refusjonEndringerUtenSkjaeringstidspunkt);
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();

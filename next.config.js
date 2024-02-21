@@ -75,7 +75,8 @@ const nextConfig = {
     flexJarUrl: process.env.FLEXJAR_URL,
     aktiveOrgnrApi: process.env.AKTIVE_ORGNR_API,
     innsendingAGInitiertApi: process.env.INNSENDING_AG_INITIERT_INNTEKTSMELDING_API,
-    version
+    version,
+    loggingDisabled: process.env.DISABLE_DECORATOR
   }
 };
 

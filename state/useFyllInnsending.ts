@@ -140,9 +140,9 @@ export default function useFyllInnsending() {
             }))
           };
 
-        case begrunnelseEndringBruttoinntekt.VarigLonnsendring:
+        case begrunnelseEndringBruttoinntekt.VarigLoennsendring:
           return {
-            typpe: begrunnelseEndringBruttoinntekt.VarigLonnsendring,
+            typpe: 'VarigLonnsendring', // TODO: Denne må rettes opp når vi får samme navnet på alle apiene.
             gjelderFra: formatIsoDate(lonnsendringsdato)
           };
 

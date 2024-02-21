@@ -1,7 +1,7 @@
 enum begrunnelseEndringBruttoinntekt {
   Tariffendring = 'Tariffendring',
   Ferie = 'Ferie',
-  VarigLonnsendring = 'VarigLonnsendring',
+  VarigLoennsendring = 'VarigLoennsendring',
   Permisjon = 'Permisjon',
   Permittering = 'Permittering',
   NyStilling = 'NyStilling',

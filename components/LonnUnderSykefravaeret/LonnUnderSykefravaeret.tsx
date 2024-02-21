@@ -19,7 +19,7 @@ export default function LonnUnderSykefravaeret({
   refusjonskravetOpphoerer,
   harRefusjonEndringer,
   refusjonEndringer
-}: LonnUnderSykefravaeretProps) {
+}: Readonly<LonnUnderSykefravaeretProps>) {
   if (!lonn) return null;
   if (lonn.status === 'Nei')
     return (

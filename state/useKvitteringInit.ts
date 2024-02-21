@@ -144,7 +144,7 @@ export default function useKvitteringInit() {
           }
           break;
         }
-        case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
+        case begrunnelseEndringBruttoinntekt.VarigLoennsendring: {
           if ('gjelderFra' in aarsak) setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
           break;
         }

@@ -184,7 +184,7 @@ const EndringAarsakVarigLoennsendringSchema = z.object({
   gjelderFra: z.date()
 });
 
-const EndringAarsakSchema = z.discriminatedUnion('aarsak', [
+export const EndringAarsakSchema = z.discriminatedUnion('aarsak', [
   EndringAarsakBonusSchema,
   EndringAarsakFeilregistrertSchema,
   EndringAarsakFerieSchema,
@@ -199,6 +199,14 @@ const EndringAarsakSchema = z.discriminatedUnion('aarsak', [
   EndringAarsakVarigLoennsendringSchema
 ]);
 
+export const telefonNummerSchema = z
+  .string({
+    required_error: 'Vennligst fyll inn telefonnummer',
+    invalid_type_error: 'Dette er ikke et telefonnummer'
+  })
+  .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
+  .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' });
+
 export const RefusjonEndringSchema = z.object({
   startDato: z
     .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
@@ -212,13 +220,7 @@ const schema = z.object({
   sykmeldtFnr: PersonnummerSchema,
   avsender: z.object({
     orgnr: OrganisasjonsnummerSchema,
-    tlf: z
-      .string({
-        required_error: 'Vennligst fyll inn telefonnummer',
-        invalid_type_error: 'Dette er ikke et telefonnummer'
-      })
-      .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
-      .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' })
+    tlf: telefonNummerSchema
   }),
   sykmeldingsperioder: PeriodeListeSchema,
   agp: z.object({

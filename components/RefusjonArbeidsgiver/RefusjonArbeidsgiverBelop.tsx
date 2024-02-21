@@ -17,7 +17,7 @@ export default function RefusjonArbeidsgiverBelop({
   onOppdaterBelop,
   visFeilmeldingsTekst,
   arbeidsgiverperiodeDisabled = false
-}: RefusjonArbeidsgiverBelopProps) {
+}: Readonly<RefusjonArbeidsgiverBelopProps>) {
   const [erEditerbar, setEditerbar] = useState<boolean>(false);
 
   const refusjonTilArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
