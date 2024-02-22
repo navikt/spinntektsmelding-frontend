@@ -122,7 +122,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
             {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
               <div className={localStyles.wraputbetaling}>
                 <TextField
-                  className={localStyles.refusjonsbelop}
+                  className={localStyles.refusjonsbeloep}
                   label='Utbetalt under arbeidsgiverperiode'
                   onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
                   id={'lus-uua-input'}
@@ -157,7 +157,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
         {lonnISykefravaeret?.status === 'Ja' && (
           <>
             <RefusjonArbeidsgiverBelop
-              bruttoinntekt={lonnISykefravaeret.belop! || 0}
+              bruttoinntekt={lonnISykefravaeret.beloep! || 0}
               onOppdaterBelop={addIsDirtyForm(beloepArbeidsgiverBetalerISykefravaeret)}
               visFeilmeldingsTekst={visFeilmeldingsTekst}
               arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}

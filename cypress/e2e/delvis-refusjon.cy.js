@@ -43,7 +43,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .check();
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i refusjonskrav mellom 01.07.2023 og 08.08.2023 (start av nytt sykefravær)?'
+      name: 'Er det endringer i refusjonskravet etter 08.08.2023 (start av nytt sykefravær)?'
     })
       .findByLabelText('Nei')
       .check();
@@ -134,7 +134,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByLabelText('Månedsinntekt 08.08.2023').clear().type('50000');
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i refusjonskrav mellom 01.07.2023 og 08.08.2023 (start av nytt sykefravær)?'
+      name: 'Er det endringer i refusjonskravet etter 08.08.2023 (start av nytt sykefravær)?'
     })
       .findByLabelText('Ja')
       .check();

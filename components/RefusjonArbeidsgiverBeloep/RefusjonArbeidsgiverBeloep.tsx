@@ -34,14 +34,14 @@ export default function RefusjonArbeidsgiverBeloep({
     return (
       <>
         <TextLabel>{refusjonTilArbeidsgiverEtterAgpLegend}</TextLabel>
-        <div className={localStyles.belopswrapper}>
-          <div className={localStyles.belop} data-cy='refusjon-arbeidsgiver-belop'>
+        <div className={localStyles.beloepswrapper}>
+          <div className={localStyles.beloep} data-cy='refusjon-arbeidsgiver-beloep'>
             {formatCurrency(bruttoinntekt)}&nbsp;kr
           </div>
           <ButtonEndre
             className={localStyles.endre_knapp}
             onClick={() => setErEditerbar(true)}
-            data-cy='endre-refusjon-arbeidsgiver-belop'
+            data-cy='endre-refusjon-arbeidsgiver-beloep'
           />
           <span>
             Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør NAV. NAV vil
@@ -54,12 +54,12 @@ export default function RefusjonArbeidsgiverBeloep({
 
   return (
     <>
-      <div className={localStyles.belopswrapper}>
+      <div className={localStyles.beloepswrapper}>
         <TextField
-          className={localStyles.refusjonsbelop}
+          className={localStyles.refusjonsbeloep}
           label='Oppgi refusjonsbeløpet per måned'
           error={errors.refusjonBeloep?.message as string}
-          data-cy='refusjon-arbeidsgiver-belop-input'
+          data-cy='refusjon-arbeidsgiver-beloep-input'
           {...register('refusjon.refusjonPrMnd', {
             setValueAs: (value) => stringishToNumber(value)
           })}

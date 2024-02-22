@@ -24,7 +24,7 @@ export default z.object({
   opplysningerBekreftet: z.boolean().refine((value) => value === true, {
     message: 'Vennligst bekreft at opplysningene er riktige og fullstendige.'
   }),
-  endringBruttolonn: JaNeiSchema,
+  endringBruttoloenn: JaNeiSchema,
   refusjonBeloep: PositiveNumberSchema.optional(),
   refusjon: z
     .object({

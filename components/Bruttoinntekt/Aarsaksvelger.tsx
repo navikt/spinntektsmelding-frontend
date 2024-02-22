@@ -7,7 +7,7 @@ import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import { Inntekt, Periode } from '../../state/state';
 import React from 'react';
 import Datovelger from '../Datovelger';
-import PeriodeListevelger from './PeriodeListevelger2';
+import PeriodeListevelger from './PeriodeListevelger';
 import TariffendringDato from './TariffendringDato';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 
@@ -77,8 +77,8 @@ export default function Aarsaksvelger({
           defaultValue={bruttoinntekt && bruttoinntekt.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
           id='inntekt.beregnetInntekt'
           error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
-          className={lokalStyles.bruttoinntektendringsbelop}
-          data-cy='inntekt-belop-input'
+          className={lokalStyles.bruttoinntektendringsbeloep}
+          data-cy='inntekt-beloep-input'
         />
         <div>
           <SelectEndringBruttoinntekt

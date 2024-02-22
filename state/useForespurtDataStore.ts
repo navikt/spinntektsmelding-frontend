@@ -103,9 +103,9 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         : refusjon?.perioder;
 
       const harEndringer = sjekkHarEndring(refusjon, bestemmendeFravaersdag);
-      const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
+      const refusjonsbeloep = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
 
-      settRefusjonsbelop(refusjonsbelop, harEndringer);
+      settRefusjonsbeloep(refusjonsbeloep, harEndringer);
 
       const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
       const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
@@ -160,10 +160,10 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       })
     );
 
-    function settRefusjonsbelop(belop: number, harEndringer: YesNo | undefined) {
+    function settRefusjonsbeloep(beloep: number, harEndringer: YesNo | undefined) {
       initLonnISykefravaeret({
         status: harEndringer,
-        belop: belop ?? 0
+        beloep: beloep ?? 0
       });
     }
   },
@@ -299,7 +299,7 @@ function refusjonPerioderTilRefusjonEndringer(perioder: MottattPeriodeRefusjon[]
   return perioder.map((periode: MottattPeriodeRefusjon) => {
     return {
       dato: periode.fom ? parseISO(periode.fom) : undefined,
-      belop: ugyldigEllerNegativtTall(periode.beloep) ? undefined : periode.beloep
+      beloep: ugyldigEllerNegativtTall(periode.beloep) ? undefined : periode.beloep
     };
   });
 }

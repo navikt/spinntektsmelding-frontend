@@ -66,9 +66,9 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.lonnISykefravaeret = { status: status };
         } else state.lonnISykefravaeret.status = status;
         if (status === 'Ja') {
-          state.lonnISykefravaeret.belop = bruttoinntekt.bruttoInntekt;
+          state.lonnISykefravaeret.beloep = bruttoinntekt.bruttoInntekt;
         } else {
-          delete state.lonnISykefravaeret.belop;
+          delete state.lonnISykefravaeret.beloep;
         }
 
         state = slettFeilmeldingFraState(state, 'lus-radio');
@@ -100,9 +100,9 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
-          state.lonnISykefravaeret = { belop: stringishToNumber(beloep) };
+          state.lonnISykefravaeret = { beloep: stringishToNumber(beloep) };
         } else {
-          state.lonnISykefravaeret.belop = stringishToNumber(beloep);
+          state.lonnISykefravaeret.beloep = stringishToNumber(beloep);
         }
 
         state = slettFeilmeldingFraState(state, 'lus-input');
@@ -171,7 +171,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         state.refusjonEndringer = endringer;
         if (endringer?.length > 0) {
           endringer.forEach((endring, index) => {
-            if (endring.belop && endring.belop >= 0) {
+            if (endring.beloep && endring.beloep >= 0) {
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
             if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
@@ -189,7 +189,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         state.opprinneligRefusjonEndringer = endringer;
         if (endringer?.length > 0) {
           endringer.forEach((endring, index) => {
-            if (endring.belop && endring.belop >= 0) {
+            if (endring.beloep && endring.beloep >= 0) {
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
             if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {

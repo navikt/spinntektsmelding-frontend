@@ -124,6 +124,12 @@ export default function useKvitteringInit() {
     if (jsonData.inntekt.endringÅrsak) {
       const aarsak: Tariffendring | PeriodeListe | StillingsEndring | AArsakType | undefined =
         jsonData.inntekt.endringÅrsak;
+
+      if (aarsak.typpe === 'VarigLonnsendring') {
+        //TODO: This is a bug, should be VarigLoennsendring.
+        aarsak.typpe = begrunnelseEndringBruttoinntekt.VarigLoennsendring;
+      }
+
       setEndringsaarsak(aarsak.typpe);
 
       switch (aarsak.typpe) {
@@ -144,6 +150,7 @@ export default function useKvitteringInit() {
           }
           break;
         }
+
         case begrunnelseEndringBruttoinntekt.VarigLoennsendring: {
           if ('gjelderFra' in aarsak) setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
           break;
@@ -199,7 +206,7 @@ export default function useKvitteringInit() {
 
     initLonnISykefravaeret({
       status: jsonData.refusjon.utbetalerHeleEllerDeler ? 'Ja' : 'Nei',
-      belop: jsonData.refusjon.refusjonPrMnd
+      beloep: jsonData.refusjon.refusjonPrMnd
     });
     const paakrevdeData = hentPaakrevdOpplysningstyper();
 
@@ -226,7 +233,7 @@ export default function useKvitteringInit() {
 
     if (jsonData.refusjon.refusjonEndringer) {
       const endringer = jsonData.refusjon.refusjonEndringer.map((endring) => ({
-        belop: endring.beløp,
+        beloep: endring.beløp,
         dato: parseIsoDate(endring.dato)
       }));
       oppdaterRefusjonEndringer(endringer);

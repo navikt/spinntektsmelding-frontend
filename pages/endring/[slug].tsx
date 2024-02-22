@@ -35,7 +35,8 @@ import DatoVelger from '../../components/DatoVelger/DatoVelger';
 import PersonData from '../../components/PersonData/PersonData';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
-import { LonnISykefravaeret } from '../../state/state';
+import { LonnISykefravaeret, YesNo } from '../../state/state';
+import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -43,7 +44,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   type Skjema = z.infer<typeof delvisInnsendingSchema>;
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
-  const [setEndringBruttolonn] = useBoundStore((state) => [state.setEndringBruttolonn]);
   const [setEndringerAvRefusjon, tilbakestillRefusjoner] = useBoundStore((state) => [
     state.setEndringerAvRefusjon,
     state.tilbakestillRefusjoner
@@ -62,12 +62,14 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
 
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
-  const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
-  const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
+  const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
+
+  const [initRefusjonskravetOpphoerer] = useBoundStore((state) => [state.initRefusjonskravetOpphoerer]);
+
   const [initLonnISykefravaeret, initRefusjonEndringer, setInnsenderTelefon] = useBoundStore((state) => [
     state.initLonnISykefravaeret,
     state.initRefusjonEndringer,
@@ -113,45 +115,40 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
-    gammeltSkjaeringstidspunkt && refusjonEndringer
-      ? refusjonEndringer
-          ?.filter((endring) => {
-            if (!endring.dato) return false;
-            return !isBefore(endring.dato, gammeltSkjaeringstidspunkt);
-          })
-          .map((endring) => {
-            return {
-              beloep: endring.belop,
-              dato: endring.dato
-            };
-          })
+    skjaeringstidspunkt && refusjonEndringer
+      ? refusjonEndringer?.filter((endring) => {
+          if (!endring.dato) return false;
+          return isAfter(endring.dato, skjaeringstidspunkt);
+        })
       : refusjonEndringer;
 
   const refusjonPrMnd = !nyInnsending
-    ? lonnISykefravaeret!.belop
+    ? lonnISykefravaeret!.beloep
     : refusjonEndringer
         ?.filter((endring) => {
           if (!endring.dato) return false;
-          return !isAfter(endring.dato, gammeltSkjaeringstidspunkt);
+          return !isAfter(endring.dato, skjaeringstidspunkt);
         })
         .map((endring) => {
           return {
-            beloep: endring.belop,
+            beloep: endring.beloep,
             dato: endring.dato
           };
         })
         .sort((a, b) => {
-          return a.dato && b.dato ? (a.dato > b.dato ? 1 : -1) : 0;
+          return a.dato && b.dato ? (a.dato < b.dato ? 1 : -1) : 0;
         })[0]?.beloep;
 
   const aktiveRefusjonEndringer = nyInnsending
     ? refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
       ? refusjonEndringerUtenSkjaeringstidspunkt
       : [{ beloep: undefined, dato: undefined }]
-    : refusjonEndringer?.map((endring) => ({ beloep: endring.belop || endring.beloep, dato: endring.dato }));
+    : refusjonEndringer;
 
-  console.log('aktiveRefusjonEndringer', aktiveRefusjonEndringer);
-  const methods = useForm({
+  const refusjonOpphorsdato = !nyInnsending ? refusjonskravetOpphoerer?.opphoersdato : undefined;
+  const refusjonOpphoererStaus = !nyInnsending ? refusjonskravetOpphoerer?.status : undefined;
+
+  const methods = useForm<Skjema>({
     resolver: zodResolver(delvisInnsendingSchema),
     defaultValues: {
       inntekt: {
@@ -161,7 +158,14 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       opplysningerBekreftet: false,
       refusjon: {
         refusjonPrMnd: refusjonPrMnd,
-        refusjonEndringer: aktiveRefusjonEndringer
+        refusjonEndringer: aktiveRefusjonEndringer,
+        harEndringer:
+          refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
+            ? 'Ja'
+            : 'Nei',
+        refusjonOpphoerer: refusjonOpphorsdato,
+        kravetOpphoerer: refusjonOpphoererStaus,
+        kreverRefusjon: refusjonPrMnd !== 0 ? 'Ja' : 'Nei'
       }
     }
   });
@@ -172,13 +176,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     formState: { isDirty, errors }
   } = methods;
 
-  const harEndringBruttolonn = watch('endringBruttolonn');
+  const harEndringBruttoloenn = watch('endringBruttoloenn');
 
   const harEndringRefusjon = watch('refusjon.erDetEndringRefusjon');
 
   let skalRefusjonskravetOpphoere = watch('refusjon.kravetOpphoerer');
 
-  const arbeidsgiverKreverRefusjon = watch('refusjon.kreverRefusjon' as const);
+  const arbeidsgiverKreverRefusjon = watch('refusjon.kreverRefusjon');
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
@@ -233,8 +237,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
     sendInnDelvisSkjema(true, pathSlug, isDirty, skjemaData).finally(() => {
       const lonnISykefravaeret: LonnISykefravaeret = {
-        belop: skjemaData.refusjon.refusjonPrMnd,
-        status: skjemaData.refusjon.kreverRefusjon ?? skjemaData.refusjon.refusjonPrMnd ? 'Ja' : 'Nei'
+        beloep: skjemaData.refusjon.refusjonPrMnd,
+        status: skjemaData.refusjon.kreverRefusjon
       };
 
       initLonnISykefravaeret(lonnISykefravaeret);
@@ -242,10 +246,19 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         skjemaData.refusjon.refusjonEndringer
           ? skjemaData.refusjon.refusjonEndringer
               ?.filter((endring) => endring && endring.beloep !== undefined)
-              .map((endring) => ({ belop: endring.beloep, dato: endring.dato }))
+              .map((endring) => ({ beloep: endring.beloep, dato: endring.dato }))
           : []
       );
       setInnsenderTelefon(skjemaData.telefon);
+
+      initRefusjonskravetOpphoerer(
+        skjemaData.refusjon.kravetOpphoerer as YesNo,
+        skjemaData.refusjon.refusjonOpphoerer,
+        skjemaData.refusjon.harEndringer as YesNo
+      );
+
+      setNyMaanedsinntekt(skjemaData.inntekt.beloep ? skjemaData.inntekt.beloep?.toString() : '');
+      setEndringsaarsak(skjemaData.inntekt.endringAarsak?.aarsak ?? '');
       // oppdaterRefusjonEndringer(skjemaData.refusjon.refusjonEndringer ?? []);
 
       setSenderInn(false);
@@ -270,7 +283,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   useEffect(() => {
     if (aapentManglendeData) {
-      setEndringBruttolonn('Ja');
       setEndringerAvRefusjon('Ja');
     }
   }, [aapentManglendeData]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -283,7 +295,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const kreverIkkeRefusjon = nyInnsending
     ? gammeltSkjaeringstidspunkt &&
       opprinneligRefusjonEndringer?.filter((endring) => {
-        return gammeltSkjaeringstidspunkt !== endring.dato && endring.belop !== 0;
+        return gammeltSkjaeringstidspunkt !== endring.dato && endring.beloep !== 0;
       }).length === 0
     : lonnISykefravaeret?.status === 'Nei' || !lonnISykefravaeret;
 
@@ -296,10 +308,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   ) {
     refusjonBelop = 0;
   }
-
-  const refusjonskravEndringer = forespurtData?.refusjon.forslag?.perioder.filter((periode) => {
-    return isBefore(gammeltSkjaeringstidspunkt!, parseIsoDate(periode.fom));
-  });
 
   const feilmeldinger = mapErrorsObjectToFeilmeldinger(errors);
 
@@ -334,43 +342,43 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
                         forsteFravaersdag
                       )} (start av nytt sykefravær)?`}
-                      name='endringBruttolonn'
+                      name='endringBruttoloenn'
                     />
                   </>
                 )}
-                {((harEndringBruttolonn === 'Ja' && !ukjentInntekt) || ukjentInntekt) && (
+                {((harEndringBruttoloenn === 'Ja' && !ukjentInntekt) || ukjentInntekt) && (
                   <div>
                     <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
 
-                    <div className={lokalStyles.belopwrapper}>
-                      {!bruttoinntekt?.manueltKorrigert && !endreMaanedsinntekt && (
+                    <div className={lokalStyles.beloepwrapper}>
+                      {/* {!bruttoinntekt?.manueltKorrigert && !endreMaanedsinntekt && (
                         <>
-                          <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
+                          <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
                             {formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)} kr/måned
                           </TextLabel>
-                          <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />
+                          <ButtonEndre data-cy='endre-beloep' onClick={setEndreMaanedsinntektHandler} />
                         </>
                       )}
 
-                      {(bruttoinntekt?.manueltKorrigert || endreMaanedsinntekt) && (
-                        <VelgAarsak
-                          changeMaanedsintektHandler={changeMaanedsintektHandler}
-                          changeBegrunnelseHandler={changeBegrunnelseHandler}
-                          tariffendringDato={tariffendringDato}
-                          tariffkjentdato={tariffkjentdato}
-                          ferie={ferie}
-                          permisjon={permisjon}
-                          permittering={permittering}
-                          nystillingdato={nystillingdato}
-                          nystillingsprosentdato={nystillingsprosentdato}
-                          lonnsendringsdato={lonnsendringsdato}
-                          sykefravaerperioder={sykefravaerperioder}
-                          bestemmendeFravaersdag={forsteFravaersdag}
-                          nyInnsending={nyInnsending}
-                          clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-                          kanIkkeTilbakestilles={kanIkkeTilbakestilles}
-                        />
-                      )}
+                      {(bruttoinntekt?.manueltKorrigert || endreMaanedsinntekt) && ( */}
+                      <VelgAarsak
+                        changeMaanedsintektHandler={changeMaanedsintektHandler}
+                        changeBegrunnelseHandler={changeBegrunnelseHandler}
+                        tariffendringDato={tariffendringDato}
+                        tariffkjentdato={tariffkjentdato}
+                        ferie={ferie}
+                        permisjon={permisjon}
+                        permittering={permittering}
+                        nystillingdato={nystillingdato}
+                        nystillingsprosentdato={nystillingsprosentdato}
+                        lonnsendringsdato={lonnsendringsdato}
+                        sykefravaerperioder={sykefravaerperioder}
+                        bestemmendeFravaersdag={forsteFravaersdag}
+                        nyInnsending={nyInnsending}
+                        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+                        kanIkkeTilbakestilles={kanIkkeTilbakestilles}
+                      />
+                      {/* )} */}
                     </div>
                   </div>
                 )}
@@ -390,42 +398,48 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         {harEndringer && (
                           <>
                             {formatCurrency(refusjonBelop || 0)} kr
-                            {aktiveRefusjonEndringer && aktiveRefusjonEndringer?.length === 0 && (
+                            {refusjonEndringerUtenSkjaeringstidspunkt &&
+                              refusjonEndringerUtenSkjaeringstidspunkt?.length === 0 && (
+                                <>
+                                  <H3Label unPadded topPadded>
+                                    Er det endringer i refusjonskrav i perioden?
+                                  </H3Label>
+                                  Nei
+                                </>
+                              )}
+                            {refusjonEndringerUtenSkjaeringstidspunkt &&
+                              refusjonEndringerUtenSkjaeringstidspunkt?.length > 0 && (
+                                <div className={lokalStyles.refusjonswrapper}>
+                                  <table>
+                                    <thead>
+                                      <tr>
+                                        <th className={lokalStyles.table_header}>
+                                          <strong>Endret refusjon</strong>
+                                        </th>
+                                        <th>
+                                          <strong>Dato for endret refusjon</strong>
+                                        </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {aktiveRefusjonEndringer?.map((endring) => (
+                                        <tr key={endring.dato?.toString()}>
+                                          <td>{formatCurrency(endring.beloep)} kr</td>
+                                          <td>{formatDate(endring.dato)}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              )}
+                            {opprinneligRefusjonskravetOpphoerer?.status === 'Nei' && (
                               <>
                                 <H3Label unPadded topPadded>
-                                  Er det endringer i refusjonskrav i perioden?
+                                  Opphører refusjonkravet under sykefraværet?
                                 </H3Label>
-                                Nei
+                                {opprinneligRefusjonskravetOpphoerer?.status}
                               </>
                             )}
-                            {aktiveRefusjonEndringer && aktiveRefusjonEndringer?.length > 0 && (
-                              <div className={lokalStyles.refusjonswrapper}>
-                                <table>
-                                  <thead>
-                                    <tr>
-                                      <th className={lokalStyles.table_header}>
-                                        <strong>Endret refusjon</strong>
-                                      </th>
-                                      <th>
-                                        <strong>Dato for endret refusjon</strong>
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {aktiveRefusjonEndringer?.map((endring) => (
-                                      <tr key={endring.dato?.toString()}>
-                                        <td>{formatCurrency(endring.beloep)} kr</td>
-                                        <td>{formatDate(endring.dato)}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            )}
-                            <H3Label unPadded topPadded>
-                              Opphører refusjonkravet under sykefraværet?
-                            </H3Label>
-                            {opprinneligRefusjonskravetOpphoerer?.status}
                             {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
                               <>
                                 <H3Label unPadded topPadded>
@@ -466,7 +480,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         />
                         <OrdinaryJaNei legend='Opphører refusjonkravet i perioden?' name='refusjon.kravetOpphoerer' />
                         {skalRefusjonskravetOpphoere === 'Ja' && (
-                          <div className={lokalStyles.belopperiode}>
+                          <div className={lokalStyles.beloepperiode}>
                             <DatoVelger
                               label='Angi siste dag dere krever refusjon for'
                               defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
@@ -510,29 +524,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 };
 
 export default Endring;
-
-function mapErrorsObjectToFeilmeldinger(errors) {
-  const mapErrorsObject = (errors: any, subKey = ''): any[] => {
-    return Object.keys(errors).flatMap((key) => {
-      if (!errors[key].message) {
-        return mapErrorsObject(errors[key], subKey ? `${subKey}.${key}` : key);
-      }
-      return {
-        key: subKey ? `${subKey}.${key}` : key,
-        message: errors[key].message
-      };
-    });
-  };
-  const errorsMapped = mapErrorsObject(errors);
-
-  const feilmeldinger = errorsMapped.map((error) => {
-    return {
-      felt: error.key,
-      text: error.message
-    };
-  });
-  return feilmeldinger;
-}
 
 export async function getServerSideProps(context: any) {
   const slug = context.query.slug;

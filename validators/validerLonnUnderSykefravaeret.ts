@@ -53,7 +53,7 @@ function validerJaStatusMedDato(refusjonskravetOpphoerer: RefusjonskravetOpphoer
 }
 
 function validerBelop(lonnUS: LonnISykefravaeret, errorStatus: ValiderResultat[]) {
-  if (typeof lonnUS.belop === 'undefined') {
+  if (typeof lonnUS.beloep === 'undefined') {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_BELOP,
       felt: 'lus-input'
@@ -66,7 +66,7 @@ function validerMaksimaltBelop(
   bruttoInntekt: number | undefined,
   errorStatus: ValiderResultat[]
 ) {
-  if (lonnUS.belop && bruttoInntekt && bruttoInntekt < lonnUS.belop) {
+  if (lonnUS.beloep && bruttoInntekt && bruttoInntekt < lonnUS.beloep) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT,
       felt: 'lus-input'

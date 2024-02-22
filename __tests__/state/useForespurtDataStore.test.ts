@@ -105,7 +105,7 @@ describe('useForespurtDataStore', () => {
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(48000);
   });
 
-  it('should set the refusjonsbelop', () => {
+  it('should set the refusjonsbeloep', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
     act(() => {
       result.current.initForespurtData({
@@ -131,7 +131,7 @@ describe('useForespurtDataStore', () => {
     expect(result.current.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp).toBe(33750);
     expect(result.current.forespurtData?.refusjon?.forslag?.perioder).toEqual([]);
     expect(result.current.refusjonTilArbeidsgiver).toBeUndefined();
-    expect(result.current.lonnISykefravaeret?.belop).toBe(0);
+    expect(result.current.lonnISykefravaeret?.beloep).toBe(0);
     expect(result.current.lonnISykefravaeret?.status).toBe('Nei');
     expect(result.current.harRefusjonEndringer).toBe('Nei');
     expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');

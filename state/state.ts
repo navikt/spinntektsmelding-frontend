@@ -21,7 +21,7 @@ export interface HistoriskInntekt {
 
 export interface LonnISykefravaeret {
   status?: YesNo;
-  belop?: number;
+  beloep?: number;
 }
 
 export interface LonnIArbeidsgiverperioden {

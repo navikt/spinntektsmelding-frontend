@@ -101,7 +101,6 @@ export default function useFyllDelvisInnsending() {
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
-  const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
@@ -114,24 +113,24 @@ export default function useFyllDelvisInnsending() {
   return (skjema: SkjemaData): InnsendingSkjema => {
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
 
-    const RefusjonUtbetalingEndringUtenGammelBFD = refusjonEndringer?.filter((endring) => {
-      return isAfter(endring.dato || (gammeltSkjaeringstidspunkt as Date), gammeltSkjaeringstidspunkt as Date);
-    });
-    console.log('RefusjonUtbetalingEndringUtenGammelBFD', RefusjonUtbetalingEndringUtenGammelBFD);
+    const RefusjonUtbetalingEndringUtenGammelBFD = skjema.refusjon.refusjonEndringer
+      ? skjema.refusjon.refusjonEndringer
+      : skjaeringstidspunkt && refusjonEndringer
+        ? refusjonEndringer?.filter((endring) => {
+            if (!endring.dato) return false;
+            return isAfter(endring.dato, skjaeringstidspunkt);
+          })
+        : refusjonEndringer;
 
     const harRefusjonEndringerTilInnsending =
       skjema.refusjon.erDetEndringRefusjon === 'Nei'
         ? harRefusjonEndringer === 'Ja'
         : skjema.refusjon.erDetEndringRefusjon === 'Ja';
 
-    console.log('harRefusjonEndringerTilInnsending', harRefusjonEndringerTilInnsending);
-
     const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonsendringer(
       harRefusjonEndringerTilInnsending ? 'Ja' : 'Nei',
       RefusjonUtbetalingEndringUtenGammelBFD
     );
-
-    console.log('innsendingRefusjonEndringer', innsendingRefusjonEndringer);
 
     setSkalViseFeilmeldinger(true);
 
@@ -160,9 +159,6 @@ export default function useFyllDelvisInnsending() {
         ? formatIsoDate(bestemmendeFravaersdag)
         : formatIsoDate(skjaeringstidspunkt);
 
-    console.log('lonnISykefravaeret', lonnISykefravaeret);
-    const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
-
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
@@ -182,7 +178,11 @@ export default function useFyllDelvisInnsending() {
         bekreftet: true,
         beregnetInntekt: skjema.inntekt.beloep!,
         manueltKorrigert: !!skjema.inntekt.endringAarsak?.aarsak,
-        endringÅrsak: { ...skjema.inntekt.endringAarsak!, typpe: skjema.inntekt.endringAarsak?.aarsak! }
+        endringÅrsak: {
+          ...skjema.inntekt.endringAarsak!,
+          typpe: skjema.inntekt.endringAarsak?.aarsak!,
+          aarsak: undefined
+        }
       },
       bestemmendeFraværsdag: bestemmendeFraværsdag!,
       fullLønnIArbeidsgiverPerioden: {
@@ -191,11 +191,11 @@ export default function useFyllDelvisInnsending() {
         utbetalt: fullLonnIArbeidsgiverPerioden?.status === 'Ja' ? null : fullLonnIArbeidsgiverPerioden?.utbetalt
       },
       refusjon: {
-        utbetalerHeleEllerDeler: skjema.refusjon.kreverRefusjon === 'Ja' || (skjema.refusjon.refusjonPrMnd ?? 0) > 0,
+        utbetalerHeleEllerDeler: skjema.refusjon.kreverRefusjon === 'Ja',
         refusjonPrMnd: skjema.refusjon.refusjonPrMnd ?? 0,
         refusjonOpphører: formaterOpphørsdato(
-          skjema.refusjon.kreverRefusjon !== 'Ja',
-          formatIsoDate(skjema.refusjon.refusjonOpphoerer!)
+          skjema.refusjon.kravetOpphoerer as YesNo,
+          skjema.refusjon.refusjonOpphoerer!
         ),
 
         refusjonEndringer: harRefusjonEndringerTilInnsending ? innsendingRefusjonEndringer : undefined
@@ -226,17 +226,13 @@ export default function useFyllDelvisInnsending() {
   };
 }
 
-function formaterOpphørsdato(
-  kreverIkkeRefusjon: boolean,
-  refusjonskravetOpphoerer:
-    | import('/Users/kent/git/spinntektsmelding-frontend/state/state').RefusjonskravetOpphoerer
-    | undefined
-): string | undefined {
-  return !kreverIkkeRefusjon
-    ? refusjonskravetOpphoerer?.opphoersdato
-      ? formatIsoDate(refusjonskravetOpphoerer?.opphoersdato)
-      : undefined
-    : undefined;
+function formaterOpphørsdato(kravetOpphoerer: YesNo, refusjonskravetOpphoerer: Date): TDateISODate | undefined {
+  const formatertDato =
+    kravetOpphoerer === 'Ja' && refusjonskravetOpphoerer ? formatIsoDate(refusjonskravetOpphoerer) : undefined;
+  if (formatertDato) {
+    return formatertDato;
+  }
+  return undefined;
 }
 
 function nyEllerEndring(nyInnsending: boolean) {
@@ -282,10 +278,6 @@ function finnInnsendbareArbeidsgiverperioder(
     : [];
 }
 
-function verdiEllerFalse(verdi: boolean | undefined): boolean {
-  return verdi ?? false;
-}
-
 function verdiEllerBlank(verdi: string | undefined): string {
   return verdi ?? '';
 }
@@ -300,10 +292,12 @@ function konverterRefusjonsendringer(
 ): RefusjonEndring[] | undefined {
   const refusjoner =
     harRefusjonEndringer === 'Ja' && refusjonEndringer
-      ? refusjonEndringer.map((endring) => ({
-          beløp: endring.belop!,
-          dato: formatIsoDate(endring.dato)!
-        }))
+      ? refusjonEndringer
+          .filter((endring) => endring.beloep && endring.dato)
+          .map((endring) => ({
+            beløp: endring.beloep!,
+            dato: formatIsoDate(endring.dato)!
+          }))
       : undefined;
 
   if (refusjoner && refusjoner.length > 0) {

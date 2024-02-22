@@ -29,13 +29,13 @@ export default function valdiderEndringAvMaanedslonn(
 
   if (harRefusjonEndringer === 'Ja' && refusjonEndringer) {
     refusjonEndringer.forEach((endring, index) => {
-      if (ugyldigEllerNegativtTall(endring.belop)) {
+      if (ugyldigEllerNegativtTall(endring.beloep)) {
         feilmeldinger.push({
           felt: `refusjon.refusjonEndringer[${index}].beløp`,
           code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP
         });
       }
-      if (endring.belop && bruttoInntekt && endring.belop > bruttoInntekt) {
+      if (endring.beloep && bruttoInntekt && endring.beloep > bruttoInntekt) {
         feilmeldinger.push({
           felt: `refusjon.refusjonEndringer[${index}].beløp`,
           code: EndringAvMaanedslonnFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT

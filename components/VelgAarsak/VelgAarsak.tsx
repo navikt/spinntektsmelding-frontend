@@ -64,8 +64,8 @@ export default function VelgAarsak({
           // defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt?.bruttoInntekt) : ''}
           id='inntekt.beregnetInntekt'
           error={errors.inntekt?.beloep?.message as string}
-          className={lokalStyles.bruttoinntektendringsbelop}
-          data-cy='inntekt-belop-input'
+          className={lokalStyles.bruttoinntektendringsbeloep}
+          data-cy='inntekt-beloep-input'
           {...register('inntekt.beloep', {
             setValueAs: (value) => stringishToNumber(value)
           })}

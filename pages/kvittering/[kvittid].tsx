@@ -88,13 +88,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           })
           .map((endring) => {
             return {
-              belop: endring.belop ?? endring.beloep,
+              beloep: endring.beloep ?? endring.beloep,
               dato: endring.dato
             };
           })
       : refusjonEndringer;
-
-  console.log('refusjonEndringerUtenSkjaeringstidspunkt', refusjonEndringerUtenSkjaeringstidspunkt);
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();

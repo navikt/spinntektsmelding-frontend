@@ -61,7 +61,7 @@ describe('RefusjonUtbetalingEndring', () => {
   });
 
   it('should add periode when "Legg til periode" is clicked and delete it when "Slett" is clicked', async () => {
-    const endringer: Array<EndringsBelop> = [{ belop: 1234 }, {}];
+    const endringer: Array<EndringsBelop> = [{ beloep: 1234 }, {}];
     const onOppdaterEndringer = vi.fn();
 
     render(
@@ -76,7 +76,7 @@ describe('RefusjonUtbetalingEndring', () => {
 
     fireEvent.click(SlettButton as Element);
 
-    expect(onOppdaterEndringer).toHaveBeenCalledWith([{ belop: 1234 }]);
+    expect(onOppdaterEndringer).toHaveBeenCalledWith([{ beloep: 1234 }]);
   });
 
   it('should do stuff when beløp is changed', async () => {
@@ -99,7 +99,7 @@ describe('RefusjonUtbetalingEndring', () => {
       target: { value: '1234' }
     });
 
-    expect(onOppdaterEndringer).toHaveBeenCalledWith([{ belop: 1234 }]);
+    expect(onOppdaterEndringer).toHaveBeenCalledWith([{ beloep: 1234 }]);
   });
 
   it('should do stuff when dato is changed', async () => {

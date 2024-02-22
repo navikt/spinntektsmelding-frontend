@@ -174,13 +174,13 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
           månedslønn på
         </TextLabel>
       )}
-      <div className={lokalStyles.belopwrapper}>
+      <div className={lokalStyles.beloepwrapper}>
         {!endringAvBelop && !erBlanktSkjema && (
           <>
-            <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
+            <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
               {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr/måned
             </TextLabel>
-            <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />
+            <ButtonEndre data-cy='endre-beloep' onClick={setEndreMaanedsinntektHandler} />
           </>
         )}
         {(endringAvBelop || erBlanktSkjema) && (

@@ -261,7 +261,7 @@ export default function useFyllInnsending() {
       },
       refusjon: {
         utbetalerHeleEllerDeler: !kreverIkkeRefusjon,
-        refusjonPrMnd: !kreverIkkeRefusjon ? lonnISykefravaeret?.belop : undefined,
+        refusjonPrMnd: !kreverIkkeRefusjon ? lonnISykefravaeret?.beloep : undefined,
         refusjonOpphører: formaterOpphørsdato(kreverIkkeRefusjon, refusjonskravetOpphoerer),
 
         refusjonEndringer: !kreverIkkeRefusjon ? innsendingRefusjonEndringer : undefined
@@ -367,7 +367,7 @@ function konverterRefusjonsendringer(
   const refusjoner =
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
-          beløp: endring.belop!,
+          beløp: endring.beloep!,
           dato: formatIsoDate(endring.dato)!
         }))
       : undefined;

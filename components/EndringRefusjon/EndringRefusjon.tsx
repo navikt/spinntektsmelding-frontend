@@ -9,7 +9,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import DatoVelger from '../DatoVelger/DatoVelger';
 
 export interface EndringsBelop {
-  belop?: number;
+  beloep?: number;
   dato?: Date;
 }
 interface EndringRefusjonProps {
@@ -42,7 +42,7 @@ export default function EndringRefusjon({ minDate, maxDate }: Readonly<EndringRe
 
       {harEndringRefusjon === 'Ja' &&
         fields.map((endring, key) => (
-          <div key={endring.id} className={lokalStyles.belopperiode}>
+          <div key={endring.id} className={lokalStyles.beloepperiode}>
             <TextField
               label='Endret refusjon/måned'
               error={errors.refusjon?.refusjonEndringer?.[key]?.beloep?.message as string}

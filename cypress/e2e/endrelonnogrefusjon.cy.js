@@ -54,22 +54,22 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('#lus-utbetaling-endring-radio [type="radio"]').last().click();
     cy.get('#lus-sluttdato-velg [type="radio"]').last().click();
 
-    cy.get('[data-cy="endre-belop"]').click();
+    cy.get('[data-cy="endre-beloep"]').click();
 
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
-    cy.get('[data-cy="inntekt-belop-input"]').clear();
-    cy.get('[data-cy="inntekt-belop-input"]').type('70000');
+    cy.get('[data-cy="inntekt-beloep-input"]').clear();
+    cy.get('[data-cy="inntekt-beloep-input"]').type('70000');
 
-    cy.get('[data-cy="refusjon-arbeidsgiver-belop"]')
+    cy.get('[data-cy="refusjon-arbeidsgiver-beloep"]')
       .invoke('text')
       .should('match', /70\s000,00\skr/);
 
-    cy.get('[data-cy="endre-refusjon-arbeidsgiver-belop"]').click();
+    cy.get('[data-cy="endre-refusjon-arbeidsgiver-beloep"]').click();
 
-    cy.get('[data-cy="inntekt-belop-input"]').clear().type('75000');
+    cy.get('[data-cy="inntekt-beloep-input"]').clear().type('75000');
 
-    cy.get('[data-cy="refusjon-arbeidsgiver-belop-input"]').should('have.value', '75000');
+    cy.get('[data-cy="refusjon-arbeidsgiver-beloep-input"]').should('have.value', '75000');
 
     cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
 

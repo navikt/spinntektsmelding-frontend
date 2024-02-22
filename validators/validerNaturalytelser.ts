@@ -32,7 +32,7 @@ export default function validerNaturalytelser(
 
       if (!ytelse.verdi) {
         feilkoder.push({
-          felt: 'naturalytelse-belop-' + ytelse.id,
+          felt: 'naturalytelse-beloep-' + ytelse.id,
           code: NaturalytelserFeilkoder.MANGLER_VERDI
         });
       }

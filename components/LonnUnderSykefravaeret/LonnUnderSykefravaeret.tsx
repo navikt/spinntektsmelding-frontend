@@ -40,7 +40,7 @@ export default function LonnUnderSykefravaeret({
         {lonn && lonn.status === 'Ja' && (
           <>
             <div className={lokalStyle.uthevet}>Refusjonsbeløp per måned (NAV vil refundere opp til 6G av årslønn)</div>
-            <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.belop)} kr/måned</BodyShort>
+            <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.beloep)} kr/måned</BodyShort>
           </>
         )}
         {harGyldigeRefusjonEndringer(refusjonEndringer) && (
@@ -61,7 +61,7 @@ export default function LonnUnderSykefravaeret({
                       {refusjonEndringer?.map((endring) => (
                         <tr key={endring.dato?.toString()}>
                           <td>{formatDate(endring.dato)}</td>
-                          <td>{formatCurrency(endring.belop)}</td>
+                          <td>{formatCurrency(endring.beloep)}</td>
                         </tr>
                       ))}
                     </tbody>
