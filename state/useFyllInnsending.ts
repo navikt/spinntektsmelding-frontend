@@ -232,16 +232,16 @@ export default function useFyllInnsending() {
             )!
           );
 
-    const bestemmendeFraværsdag = skalSendeArbeidsgiverperiode
-      ? finnBestemmendeFravaersdag(
-          perioder,
-          formatertePerioder,
-          skjaeringstidspunkt,
-          arbeidsgiverKanFlytteSkjæringstidspunkt()
-        )
-      : inngangFraKvittering
-        ? formatIsoDate(bestemmendeFravaersdag)
-        : formatIsoDate(beregnetSkjaeringstidspunkt);
+    const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
+      skalSendeArbeidsgiverperiode,
+      perioder,
+      formatertePerioder,
+      skjaeringstidspunkt,
+      arbeidsgiverKanFlytteSkjæringstidspunkt(),
+      inngangFraKvittering,
+      bestemmendeFravaersdag,
+      beregnetSkjaeringstidspunkt
+    );
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
 
@@ -303,6 +303,34 @@ export default function useFyllInnsending() {
 
     return skjemaData;
   };
+}
+
+function hentBestemmendeFraværsdag(
+  skalSendeArbeidsgiverperiode: boolean,
+  perioder: Periode[] | undefined,
+  formatertePerioder: { fom: Date; tom: Date; id: string }[] | undefined,
+  skjaeringstidspunkt: Date | undefined,
+  arbeidsgiverKanFlytteSkjæringstidspunkt: boolean,
+  inngangFraKvittering: boolean,
+  bestemmendeFravaersdag: Date | undefined,
+  beregnetSkjaeringstidspunkt: Date
+) {
+  if (!isValid(beregnetSkjaeringstidspunkt)) {
+    beregnetSkjaeringstidspunkt = parseIsoDate(
+      finnBestemmendeFravaersdag(perioder, undefined, undefined, arbeidsgiverKanFlytteSkjæringstidspunkt)!
+    );
+  }
+  console.log('Beregnet skjæringstidspunkt', beregnetSkjaeringstidspunkt);
+  return skalSendeArbeidsgiverperiode
+    ? finnBestemmendeFravaersdag(
+        perioder,
+        formatertePerioder,
+        skjaeringstidspunkt,
+        arbeidsgiverKanFlytteSkjæringstidspunkt
+      )
+    : inngangFraKvittering
+      ? formatIsoDate(bestemmendeFravaersdag)
+      : formatIsoDate(beregnetSkjaeringstidspunkt);
 }
 
 function formaterOpphørsdato(
