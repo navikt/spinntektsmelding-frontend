@@ -8,6 +8,7 @@ import useBoundStore from './useBoundStore';
 import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
+import parseIsoDate from '../utils/parseIsoDate';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -218,6 +219,18 @@ export default function useFyllInnsending() {
     );
 
     const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
+    debugger;
+    const beregnetSkjaeringstidspunkt =
+      skjaeringstidspunkt && isValid(skjaeringstidspunkt)
+        ? skjaeringstidspunkt
+        : parseIsoDate(
+            finnBestemmendeFravaersdag(
+              perioder,
+              formatertePerioder,
+              skjaeringstidspunkt,
+              arbeidsgiverKanFlytteSkjæringstidspunkt()
+            )
+          );
 
     const bestemmendeFraværsdag = skalSendeArbeidsgiverperiode
       ? finnBestemmendeFravaersdag(
@@ -228,7 +241,9 @@ export default function useFyllInnsending() {
         )
       : inngangFraKvittering
         ? formatIsoDate(bestemmendeFravaersdag)
-        : formatIsoDate(skjaeringstidspunkt);
+        : formatIsoDate(beregnetSkjaeringstidspunkt);
+
+    console.log('skjaeringstidspunkt', skjaeringstidspunkt);
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
 

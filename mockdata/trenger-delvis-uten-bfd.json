@@ -1,0 +1,60 @@
+{
+  "navn": "OVERMODIG ADRESSAT",
+  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "innsenderNavn": "",
+  "identitetsnummer": "19496806711",
+  "orgnrUnderenhet": "810007842",
+  "skjaeringstidspunkt": null,
+  "fravaersperioder": [
+    {
+      "fom": "2024-01-07",
+      "tom": "2024-02-02"
+    }
+  ],
+  "egenmeldingsperioder": [],
+  "bruttoinntekt": 55000,
+  "tidligereinntekter": [
+    {
+      "maaned": "2023-10",
+      "inntekt": 55000
+    },
+    {
+      "maaned": "2023-11",
+      "inntekt": 55000
+    },
+    {
+      "maaned": "2023-12",
+      "inntekt": 55000
+    }
+  ],
+  "behandlingsperiode": null,
+  "behandlingsdager": [],
+  "forespurtData": {
+    "arbeidsgiverperiode": {
+      "paakrevd": false
+    },
+    "inntekt": {
+      "paakrevd": true,
+      "forslag": {
+        "type": "ForslagInntektGrunnlag",
+        "forrigeInntekt": {
+          "skjæringstidspunkt": "2023-09-18",
+          "kilde": "INNTEKTSMELDING",
+          "beløp": 55000
+        }
+      }
+    },
+    "refusjon": {
+      "paakrevd": true,
+      "forslag": {
+        "perioder": [
+          {
+            "fom": "2023-09-18",
+            "beloep": 55000
+          }
+        ],
+        "opphoersdato": null
+      }
+    }
+  }
+}
