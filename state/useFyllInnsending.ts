@@ -219,7 +219,7 @@ export default function useFyllInnsending() {
     );
 
     const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
-    debugger;
+
     const beregnetSkjaeringstidspunkt =
       skjaeringstidspunkt && isValid(skjaeringstidspunkt)
         ? skjaeringstidspunkt
@@ -229,7 +229,7 @@ export default function useFyllInnsending() {
               formatertePerioder,
               skjaeringstidspunkt,
               arbeidsgiverKanFlytteSkjæringstidspunkt()
-            )
+            )!
           );
 
     const bestemmendeFraværsdag = skalSendeArbeidsgiverperiode
@@ -242,8 +242,6 @@ export default function useFyllInnsending() {
       : inngangFraKvittering
         ? formatIsoDate(bestemmendeFravaersdag)
         : formatIsoDate(beregnetSkjaeringstidspunkt);
-
-    console.log('skjaeringstidspunkt', skjaeringstidspunkt);
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
 
