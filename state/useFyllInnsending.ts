@@ -320,7 +320,7 @@ function hentBestemmendeFraværsdag(
       finnBestemmendeFravaersdag(perioder, undefined, undefined, arbeidsgiverKanFlytteSkjæringstidspunkt)!
     );
   }
-  console.log('Beregnet skjæringstidspunkt', beregnetSkjaeringstidspunkt);
+
   return skalSendeArbeidsgiverperiode
     ? finnBestemmendeFravaersdag(
         perioder,
