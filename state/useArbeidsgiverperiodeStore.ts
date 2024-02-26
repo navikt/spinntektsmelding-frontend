@@ -294,6 +294,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       ),
     arbeidsgiverKanFlytteSkjæringstidspunkt: () => {
       const skjaeringstidspunkt = get().skjaeringstidspunkt;
+
       return !skjaeringstidspunkt;
     },
     setSkjaeringstidspunkt: (skjaeringstidspunkt) => {

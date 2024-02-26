@@ -81,11 +81,9 @@ export default function useStateInit() {
 
     const skjaeringstidspunkt = jsonData.skjaeringstidspunkt;
 
-    const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
-
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
       perioder,
-      arbeidsgiverperiode,
+      undefined,
       skjaeringstidspunkt,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
@@ -95,14 +93,18 @@ export default function useStateInit() {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(skjaeringstidspunkt));
     } else if (bestemmendeFravaersdag) setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
+    const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
+
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
 
-    initBruttoinntekt(
-      jsonData.bruttoinntekt,
-      jsonData.tidligereinntekter,
-      parseIsoDate(bestemmendeFravaersdag!),
-      feilVedLasting.inntekt
-    );
+    if (bestemmendeFravaersdag) {
+      initBruttoinntekt(
+        jsonData.bruttoinntekt,
+        jsonData.tidligereinntekter,
+        parseIsoDate(bestemmendeFravaersdag),
+        feilVedLasting.inntekt
+      );
+    }
 
     if (jsonData.forespurtData) {
       initForespurtData(jsonData.forespurtData);
