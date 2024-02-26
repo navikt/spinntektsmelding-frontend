@@ -1,7 +1,11 @@
 import formatIsoDate from './formatIsoDate';
 import NetworkError from './NetworkError';
 
-const fetchInntektsdata = async (url: string, forespoerselId: string, skjaeringstidspunkt: Date) => {
+const fetchInntektsdata = async (url: string, forespoerselId: string, skjaeringstidspunkt: Date | undefined) => {
+  if (!skjaeringstidspunkt) {
+    throw new Error('No skjaeringstidspunkt provided');
+  }
+
   const tidspunkt = formatIsoDate(skjaeringstidspunkt);
   const res = await fetch(url, {
     method: 'POST',
