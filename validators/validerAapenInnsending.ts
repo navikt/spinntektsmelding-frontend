@@ -184,20 +184,26 @@ const EndringAarsakVarigLoennsendringSchema = z.object({
   gjelderFra: z.date()
 });
 
-export const EndringAarsakSchema = z.discriminatedUnion('aarsak', [
-  EndringAarsakBonusSchema,
-  EndringAarsakFeilregistrertSchema,
-  EndringAarsakFerieSchema,
-  EndringAarsakFerietrekkSchema,
-  EndringAarsakNyansattSchema,
-  EndringAarsakNyStillingSchema,
-  EndringAarsakNyStillingsprosentSchema,
-  EndringAarsakPermisjonSchema,
-  EndringAarsakPermitteringSchema,
-  EndringAarsakSykefravaerSchema,
-  EndringAarsakTariffendringSchema,
-  EndringAarsakVarigLoennsendringSchema
-]);
+export const EndringAarsakSchema = z.discriminatedUnion(
+  'aarsak',
+  [
+    EndringAarsakBonusSchema,
+    EndringAarsakFeilregistrertSchema,
+    EndringAarsakFerieSchema,
+    EndringAarsakFerietrekkSchema,
+    EndringAarsakNyansattSchema,
+    EndringAarsakNyStillingSchema,
+    EndringAarsakNyStillingsprosentSchema,
+    EndringAarsakPermisjonSchema,
+    EndringAarsakPermitteringSchema,
+    EndringAarsakSykefravaerSchema,
+    EndringAarsakTariffendringSchema,
+    EndringAarsakVarigLoennsendringSchema
+  ],
+  {
+    errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak for endringen.' })
+  }
+);
 
 export const telefonNummerSchema = z
   .string({

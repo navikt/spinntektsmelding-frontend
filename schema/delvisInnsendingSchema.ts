@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { EndringAarsakSchema, PersonnummerSchema, telefonNummerSchema } from '../validators/validerAapenInnsending';
+import { EndringAarsakSchema, telefonNummerSchema } from '../validators/validerAapenInnsending';
 
 const JaNeiSchema = z.enum(['Ja', 'Nei'], {
   errorMap: (issue, ctx) => ({ message: 'Vennligst angi om det har vært endringer.' })

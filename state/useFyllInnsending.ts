@@ -305,7 +305,7 @@ export default function useFyllInnsending() {
   };
 }
 
-function hentBestemmendeFraværsdag(
+export function hentBestemmendeFraværsdag(
   skalSendeArbeidsgiverperiode: boolean,
   perioder: Periode[] | undefined,
   formatertePerioder: { fom: Date; tom: Date; id: string }[] | undefined,

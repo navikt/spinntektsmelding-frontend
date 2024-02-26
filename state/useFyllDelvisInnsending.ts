@@ -10,6 +10,8 @@ import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
 import delvisInnsendingSchema from '../schema/delvisInnsendingSchema';
 import { z } from 'zod';
+import { hentBestemmendeFraværsdag } from './useFyllInnsending';
+import parseIsoDate from '../utils/parseIsoDate';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -148,16 +150,28 @@ export default function useFyllDelvisInnsending() {
 
     const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
-    const bestemmendeFraværsdag = skalSendeArbeidsgiverperiode
-      ? finnBestemmendeFravaersdag(
-          perioder,
-          formatertePerioder,
-          skjaeringstidspunkt,
-          arbeidsgiverKanFlytteSkjæringstidspunkt()
-        )
-      : inngangFraKvittering
-        ? formatIsoDate(bestemmendeFravaersdag)
-        : formatIsoDate(skjaeringstidspunkt);
+    const beregnetSkjaeringstidspunkt =
+      skjaeringstidspunkt && isValid(skjaeringstidspunkt)
+        ? skjaeringstidspunkt
+        : parseIsoDate(
+            finnBestemmendeFravaersdag(
+              perioder,
+              formatertePerioder,
+              skjaeringstidspunkt,
+              arbeidsgiverKanFlytteSkjæringstidspunkt()
+            )!
+          );
+
+    const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
+      skalSendeArbeidsgiverperiode,
+      perioder,
+      formatertePerioder,
+      skjaeringstidspunkt,
+      arbeidsgiverKanFlytteSkjæringstidspunkt(),
+      inngangFraKvittering,
+      bestemmendeFravaersdag,
+      beregnetSkjaeringstidspunkt
+    );
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {
@@ -178,11 +192,13 @@ export default function useFyllDelvisInnsending() {
         bekreftet: true,
         beregnetInntekt: skjema.inntekt.beloep!,
         manueltKorrigert: !!skjema.inntekt.endringAarsak?.aarsak,
-        endringÅrsak: {
-          ...skjema.inntekt.endringAarsak!,
-          typpe: skjema.inntekt.endringAarsak?.aarsak!,
-          aarsak: undefined
-        }
+        endringÅrsak: skjema.inntekt.endringAarsak?.aarsak
+          ? {
+              ...skjema.inntekt.endringAarsak,
+              typpe: skjema.inntekt.endringAarsak?.aarsak,
+              aarsak: undefined
+            }
+          : undefined
       },
       bestemmendeFraværsdag: bestemmendeFraværsdag!,
       fullLønnIArbeidsgiverPerioden: {
