@@ -136,12 +136,15 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       hentKvitteringsdata(pathSlug)?.finally(() => {
         setLasterData(false);
       });
-
+      console.log('Henter kvitteringsdata', bestemmendeFravaersdag);
       if (bestemmendeFravaersdag) {
+        console.log('Bestemmende fraværsdag', bestemmendeFravaersdag);
         setSisteInntektsdato(parseIsoDate(format(bestemmendeFravaersdag, 'yyyy-MM-01')));
       }
     } else {
       if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
+        console.log('Henter inntektsdata', inntektsdato);
+        console.log('Henter inntektsdata om den ikke er ', sisteInntektsdato);
         if (inntektsdato) {
           fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
             .then((inntektSisteTreMnd) => {
