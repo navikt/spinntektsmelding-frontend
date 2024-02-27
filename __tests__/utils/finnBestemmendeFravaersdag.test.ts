@@ -570,4 +570,16 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     ];
     expect(finnBestemmendeFravaersdag(periode1, periode2, '2023-11-29', false)).toEqual('2023-11-29');
   });
+
+  it('should return correct bfd when arbeidsgiverKanFlytte is false and forespurtBestemmendeFraværsdag is given, different periodes and arbeidsgiverperiode = []', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [];
+    expect(finnBestemmendeFravaersdag(periode1, periode2, undefined, true)).toEqual('2023-11-29');
+  });
 });

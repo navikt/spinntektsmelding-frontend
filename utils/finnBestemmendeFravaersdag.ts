@@ -82,9 +82,10 @@ const finnBestemmendeFravaersdag = (
     return undefined;
   }
 
-  const sortertArbeidsgiverperiode = arbeidsgiverperiode
-    ? [...arbeidsgiverperiode].sort((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
-    : undefined;
+  const sortertArbeidsgiverperiode =
+    arbeidsgiverperiode && arbeidsgiverperiode.length > 0
+      ? [...arbeidsgiverperiode].sort((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
+      : undefined;
 
   const sammenhengendeAgp = sortertArbeidsgiverperiode
     ? finnSammenhengendePeriode(sortertArbeidsgiverperiode)
@@ -129,7 +130,7 @@ const finnBestemmendeFravaersdag = (
     }
   }
 
-  if (!arbeidsgiverperiode) {
+  if (!sortertArbeidsgiverperiode) {
     return formatISO9075(bestemmendeFravaersdag as Date, {
       representation: 'date'
     });

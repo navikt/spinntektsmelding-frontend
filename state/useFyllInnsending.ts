@@ -3,7 +3,7 @@ import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunn
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Periode, YesNo } from './state';
+import { Periode, RefusjonskravetOpphoerer, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
@@ -335,9 +335,7 @@ function hentBestemmendeFraværsdag(
 
 function formaterOpphørsdato(
   kreverIkkeRefusjon: boolean,
-  refusjonskravetOpphoerer:
-    | import('/Users/kent/git/spinntektsmelding-frontend/state/state').RefusjonskravetOpphoerer
-    | undefined
+  refusjonskravetOpphoerer: RefusjonskravetOpphoerer | undefined
 ): string | undefined {
   return !kreverIkkeRefusjon
     ? refusjonskravetOpphoerer?.opphoersdato
@@ -368,10 +366,6 @@ function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperio
         id: 'id'
       }))
     : undefined;
-}
-
-function jaEllerNei(velger: YesNo | undefined, returverdi: any): any | undefined {
-  return velger === 'Ja' ? returverdi : undefined;
 }
 
 function finnInnsendbareArbeidsgiverperioder(
