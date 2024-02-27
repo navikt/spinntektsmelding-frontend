@@ -1,8 +1,8 @@
-import { compareAsc, differenceInDays, formatISO9075 } from 'date-fns';
+import { compareAsc, compareDesc, differenceInDays, formatISO9075 } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
-import finnArbeidsgiverperiode from './finnArbeidsgiverperiode';
+import finnArbeidsgiverperiode, { finnSammenhengendePeriode } from './finnArbeidsgiverperiode';
 
 export interface FravaersPeriode {
   fom: Date;
@@ -82,8 +82,17 @@ const finnBestemmendeFravaersdag = (
     return undefined;
   }
 
-  const sortertArbeidsgiverperiode = arbeidsgiverperiode
-    ? [...arbeidsgiverperiode].sort((a, b) => compareAsc(a.fom || new Date(), b.fom || new Date()))
+  const sortertArbeidsgiverperiode =
+    arbeidsgiverperiode && arbeidsgiverperiode.length > 0
+      ? [...arbeidsgiverperiode].sort((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
+      : undefined;
+
+  const sammenhengendeAgp = sortertArbeidsgiverperiode
+    ? finnSammenhengendePeriode(sortertArbeidsgiverperiode)
+    : undefined;
+
+  const sortertSammenhengendeAgp = sammenhengendeAgp
+    ? [...sammenhengendeAgp].sort((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
     : undefined;
 
   if (typeof forespurtBestemmendeFraværsdag === 'string') {
@@ -99,7 +108,7 @@ const finnBestemmendeFravaersdag = (
       ? tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom
       : undefined;
 
-  const forsteDagArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode[0]?.fom : undefined;
+  const forsteDagArbeidsgiverperiode = sortertSammenhengendeAgp ? sortertSammenhengendeAgp[0]?.fom : undefined;
 
   let bestemmendeFravaersdag = bestemmendeFravaersdagFraFravaer;
 
@@ -121,8 +130,14 @@ const finnBestemmendeFravaersdag = (
     }
   }
 
-  if (bestemmendeFravaersdag !== undefined) {
-    return formatISO9075(bestemmendeFravaersdag, {
+  if (!sortertArbeidsgiverperiode) {
+    return formatISO9075(bestemmendeFravaersdag as Date, {
+      representation: 'date'
+    });
+  }
+
+  if (forsteDagArbeidsgiverperiode !== undefined) {
+    return formatISO9075(forsteDagArbeidsgiverperiode, {
       representation: 'date'
     });
   }

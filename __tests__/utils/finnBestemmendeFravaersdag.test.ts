@@ -4,6 +4,7 @@ import finnBestemmendeFravaersdag, {
   tilstoetendePeriode,
   tilstoetendePeriodeManuellJustering
 } from '../../utils/finnBestemmendeFravaersdag';
+import { describe } from 'vitest';
 
 describe.concurrent('finnBestemmendeFravaersdag', () => {
   it('should return the correct bestemmende fraværsdag for two periode directly following each other', () => {
@@ -136,7 +137,29 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2023-05-07')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode)).toBe('2023-01-12');
+    const agp: Array<Periode> = [
+      {
+        id: '1',
+        fom: parseISO('2023-01-12'),
+        tom: parseISO('2023-02-12')
+      },
+      {
+        id: '2',
+        fom: parseISO('2023-02-13'),
+        tom: parseISO('2023-03-10')
+      },
+      {
+        id: '3',
+        fom: parseISO('2023-03-11'),
+        tom: parseISO('2023-03-29')
+      },
+      {
+        id: '4',
+        fom: parseISO('2023-03-30'),
+        tom: parseISO('2023-04-16')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode, agp)).toBe('2023-01-12');
   });
 
   it('should return the correct arbeidsgiverperiode periode for short periods and a jump. Gap before 16 days periode.', () => {
@@ -241,7 +264,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2022-12-18')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-16');
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-02');
   });
 
   it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the past and the last day is the same', () => {
@@ -260,7 +283,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2022-12-16')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-16');
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-02');
   });
 
   it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the past and the first day is the same', () => {
@@ -295,7 +318,15 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2022-11-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-05')).toBe('2022-11-05');
+
+    const arbeidsgiverPeriode: Array<Periode> = [
+      {
+        id: 'a1',
+        fom: parseISO('2022-12-16'),
+        tom: parseISO('2022-12-18')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode, '2022-11-05')).toBe('2022-11-05');
   });
 
   it('should return the correct bestemmende fraværsdag for two periode directly following each other and forespurtBestemmende is in the future', () => {
@@ -376,5 +407,179 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
       fom: parseISO('2023-11-29'),
       tom: parseISO('2023-12-04')
     });
+  });
+
+  it('should return correct bfd when arbeidsgiverKanFlytte is true and forespurtBestemmendeFraværsdag is undefined', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [
+      {
+        id: '2',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode1, periode2, undefined, true)).toEqual('2023-11-29');
+  });
+
+  it('should return correct bfd when arbeidsgiverKanFlytte is false and forespurtBestemmendeFraværsdag is undefined', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [
+      {
+        id: '2',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode1, periode2, undefined, false)).toEqual('2023-11-29');
+  });
+
+  it('should return correct bfd when forespurtBestemmendeFraværsdag is undefined', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [
+      {
+        id: '2',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode1, periode2, undefined)).toEqual('2023-11-29');
+  });
+
+  it('return undefined when no params are given', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [
+      {
+        id: '2',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag()).toEqual(undefined);
+  });
+
+  /***** */
+  it('should return correct bfd when arbeidsgiverKanFlytte is true and forespurtBestemmendeFraværsdag is undefined, different periodes', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [
+      {
+        id: '2',
+        fom: parseISO('2023-11-30'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode1, periode2, undefined, true)).toEqual('2023-11-30');
+  });
+
+  it('should return correct bfd when arbeidsgiverKanFlytte is false and forespurtBestemmendeFraværsdag is undefined, different periodes', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [
+      {
+        id: '2',
+        fom: parseISO('2023-11-30'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode1, periode2, undefined, false)).toEqual('2023-11-30');
+  });
+  it('should return correct bfd when forespurtBestemmendeFraværsdag is undefined, different periodes', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [
+      {
+        id: '2',
+        fom: parseISO('2023-11-30'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode1, periode2, undefined)).toEqual('2023-11-30');
+  });
+
+  it('return undefined when no params are given, different periodes', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [
+      {
+        id: '2',
+        fom: parseISO('2023-11-30'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag()).toEqual(undefined);
+  });
+
+  it('should return correct bfd when arbeidsgiverKanFlytte is false and forespurtBestemmendeFraværsdag is given, different periodes', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [
+      {
+        id: '2',
+        fom: parseISO('2023-11-30'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode1, periode2, '2023-11-29', false)).toEqual('2023-11-29');
+  });
+
+  it('should return correct bfd when arbeidsgiverKanFlytte is false and forespurtBestemmendeFraværsdag is given, different periodes and arbeidsgiverperiode = []', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2023-11-29'),
+        tom: parseISO('2023-12-03')
+      }
+    ];
+    const periode2: Periode[] = [];
+    expect(finnBestemmendeFravaersdag(periode1, periode2, undefined, true)).toEqual('2023-11-29');
   });
 });

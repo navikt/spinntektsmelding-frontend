@@ -5,28 +5,28 @@
   "identitetsnummer": "17458609411",
   "orgnrUnderenhet": "810007982",
   "skjaeringstidspunkt": null,
-  "fravaersperioder": [{ "fom": "2023-10-23", "tom": "2023-10-28" }],
+  "fravaersperioder": [{ "fom": "2023-12-21", "tom": "2024-01-15" }],
   "egenmeldingsperioder": [],
-  "bruttoinntekt": 64000.0,
+  "bruttoinntekt": null,
   "tidligereinntekter": [
-    { "maaned": "2023-07", "inntekt": 64000.0 },
-    { "maaned": "2023-08", "inntekt": 64000.0 },
-    { "maaned": "2023-09", "inntekt": 64000.0 }
+    { "maaned": "2023-09", "inntekt": null },
+    { "maaned": "2023-10", "inntekt": null },
+    { "maaned": "2023-11", "inntekt": null }
   ],
   "behandlingsperiode": null,
   "behandlingsdager": [],
   "forespurtData": {
-    "arbeidsgiverperiode": { "paakrevd": false },
+    "arbeidsgiverperiode": { "paakrevd": true },
     "inntekt": {
       "paakrevd": true,
       "forslag": {
         "type": "ForslagInntektGrunnlag",
-        "forrigeInntekt": { "skjæringstidspunkt": "2023-10-02", "kilde": "INNTEKTSMELDING", "beløp": 64000.0 }
+        "forrigeInntekt": null
       }
     },
     "refusjon": {
       "paakrevd": true,
-      "forslag": { "perioder": [{ "fom": "2023-10-02", "beloep": 0.0 }], "opphoersdato": null }
+      "forslag": { "perioder": [], "opphoersdato": null }
     }
   }
 }

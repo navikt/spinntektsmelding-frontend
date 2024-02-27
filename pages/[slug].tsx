@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -34,6 +34,9 @@ import useSendInnSkjema from '../utils/useSendInnSkjema';
 import { useSearchParams } from 'next/navigation';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
+import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
+import parseIsoDate from '../utils/parseIsoDate';
+import { format, isEqual } from 'date-fns';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -57,8 +60,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
-  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
+  const [hentPaakrevdOpplysningstyper, arbeidsgiverKanFlytteSkjæringstidspunkt, initBruttoinntekt] = useBoundStore(
+    (state) => [
+      state.hentPaakrevdOpplysningstyper,
+      state.arbeidsgiverKanFlytteSkjæringstidspunkt,
+      state.initBruttoinntekt
+    ]
+  );
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
+  const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
+
   const searchParams = useSearchParams();
   const hentKvitteringsdata = useHentKvitteringsdata();
 
@@ -77,7 +88,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     if (slug === 'arbeidsgiverInitiertInnsending') {
-      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm).finally(() => {
+      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm, []).finally(() => {
         setSenderInn(false);
       });
 
@@ -99,6 +110,23 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   };
 
+  const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
+    fravaersperioder,
+    arbeidsgiverperioder,
+    bestemmendeFravaersdag,
+    arbeidsgiverKanFlytteSkjæringstidspunkt()
+  );
+
+  const beregnetBestemmendeFraværsdag = useMemo(() => {
+    return beregnetBestemmendeFraværsdagISO ? parseIsoDate(beregnetBestemmendeFraværsdagISO) : bestemmendeFravaersdag;
+  }, [beregnetBestemmendeFraværsdagISO, bestemmendeFravaersdag]);
+
+  const inntektsdato = useMemo(() => {
+    return beregnetBestemmendeFraværsdag
+      ? parseIsoDate(format(beregnetBestemmendeFraværsdag, 'yyyy-MM-01'))
+      : undefined;
+  }, [beregnetBestemmendeFraværsdag]);
+
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.BLANK) {
       return;
@@ -108,22 +136,34 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       hentKvitteringsdata(pathSlug)?.finally(() => {
         setLasterData(false);
       });
-    } else {
+
       if (bestemmendeFravaersdag) {
-        fetchInntektsdata(environment.inntektsdataUrl, pathSlug, bestemmendeFravaersdag)
-          .then((inntektSisteTreMnd) => {
-            setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
-          })
-          .catch((error) => {
-            logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
-            logger.warn(error);
-          });
+        setSisteInntektsdato(parseIsoDate(format(bestemmendeFravaersdag, 'yyyy-MM-01')));
+      }
+    } else {
+      if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
+        if (inntektsdato) {
+          fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
+            .then((inntektSisteTreMnd) => {
+              setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
+              initBruttoinntekt(
+                inntektSisteTreMnd.beregnetInntekt,
+                inntektSisteTreMnd.tidligereInntekter,
+                inntektsdato
+              );
+            })
+            .catch((error) => {
+              logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
+              logger.warn(error);
+            });
+        }
+        setSisteInntektsdato(inntektsdato);
       }
     }
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug]);
+  }, [pathSlug, skjemastatus, inntektsdato, fravaersperioder]);
 
   return (
     <div className={styles.container}>
@@ -152,7 +192,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
           <Skillelinje />
 
-          <Bruttoinntekt bestemmendeFravaersdag={bestemmendeFravaersdag} setIsDirtyForm={setIsDirtyForm} />
+          <Bruttoinntekt bestemmendeFravaersdag={beregnetBestemmendeFraværsdag} setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
 
