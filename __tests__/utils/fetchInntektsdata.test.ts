@@ -38,7 +38,7 @@ describe('fetchInntektsdata', () => {
   it('should throw an error if the response is not ok', async () => {
     fetch.mockResponseOnce('', { status: 404 });
 
-    await expect(fetchInntektsdata(url, forespoerselId, skjaeringstidspunkt)).rejects.toThrow(
+    await expect(() => fetchInntektsdata(url, forespoerselId, skjaeringstidspunkt)).rejects.toThrow(
       'An error occurred while fetching the data.'
     );
   });
@@ -46,8 +46,14 @@ describe('fetchInntektsdata', () => {
   it('should throw an error if the response cannot be decoded', async () => {
     fetch.mockResponseOnce('invalid json', { status: 200 });
 
-    await expect(fetchInntektsdata(url, forespoerselId, skjaeringstidspunkt)).rejects.toThrow(
+    await expect(() => fetchInntektsdata(url, forespoerselId, skjaeringstidspunkt)).rejects.toThrow(
       'An error occurred while decoding the data.'
+    );
+  });
+
+  it('should throw an error when skjaeringstidspunkt is not set', async () => {
+    await expect(() => fetchInntektsdata(url, forespoerselId, undefined)).rejects.toThrow(
+      'No skjaeringstidspunkt provided'
     );
   });
 });

@@ -5,6 +5,7 @@ import environment from '../../config/environment';
 
 import org from '../../mockdata/trenger-delvis-refusjon.json';
 
+
 const basePath = environment.inntektsmeldingUuidAPI;
 
 type Data = typeof org;

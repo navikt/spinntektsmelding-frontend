@@ -3,11 +3,12 @@ import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunn
 import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Periode, YesNo } from './state';
+import { Periode, RefusjonskravetOpphoerer, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
+import parseIsoDate from '../utils/parseIsoDate';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -219,16 +220,28 @@ export default function useFyllInnsending() {
 
     const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
-    const bestemmendeFraværsdag = skalSendeArbeidsgiverperiode
-      ? finnBestemmendeFravaersdag(
-          perioder,
-          formatertePerioder,
-          skjaeringstidspunkt,
-          arbeidsgiverKanFlytteSkjæringstidspunkt()
-        )
-      : inngangFraKvittering
-        ? formatIsoDate(bestemmendeFravaersdag)
-        : formatIsoDate(skjaeringstidspunkt);
+    const beregnetSkjaeringstidspunkt =
+      skjaeringstidspunkt && isValid(skjaeringstidspunkt)
+        ? skjaeringstidspunkt
+        : parseIsoDate(
+            finnBestemmendeFravaersdag(
+              perioder,
+              formatertePerioder,
+              skjaeringstidspunkt,
+              arbeidsgiverKanFlytteSkjæringstidspunkt()
+            )!
+          );
+
+    const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
+      skalSendeArbeidsgiverperiode,
+      perioder,
+      formatertePerioder,
+      skjaeringstidspunkt,
+      arbeidsgiverKanFlytteSkjæringstidspunkt(),
+      inngangFraKvittering,
+      bestemmendeFravaersdag,
+      beregnetSkjaeringstidspunkt
+    );
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
 
@@ -292,11 +305,37 @@ export default function useFyllInnsending() {
   };
 }
 
+function hentBestemmendeFraværsdag(
+  skalSendeArbeidsgiverperiode: boolean,
+  perioder: Periode[] | undefined,
+  formatertePerioder: { fom: Date; tom: Date; id: string }[] | undefined,
+  skjaeringstidspunkt: Date | undefined,
+  arbeidsgiverKanFlytteSkjæringstidspunkt: boolean,
+  inngangFraKvittering: boolean,
+  bestemmendeFravaersdag: Date | undefined,
+  beregnetSkjaeringstidspunkt: Date
+) {
+  if (!isValid(beregnetSkjaeringstidspunkt)) {
+    beregnetSkjaeringstidspunkt = parseIsoDate(
+      finnBestemmendeFravaersdag(perioder, undefined, undefined, arbeidsgiverKanFlytteSkjæringstidspunkt)!
+    );
+  }
+
+  return skalSendeArbeidsgiverperiode
+    ? finnBestemmendeFravaersdag(
+        perioder,
+        formatertePerioder,
+        skjaeringstidspunkt,
+        arbeidsgiverKanFlytteSkjæringstidspunkt
+      )
+    : inngangFraKvittering
+      ? formatIsoDate(bestemmendeFravaersdag)
+      : formatIsoDate(beregnetSkjaeringstidspunkt);
+}
+
 function formaterOpphørsdato(
   kreverIkkeRefusjon: boolean,
-  refusjonskravetOpphoerer:
-    | import('/Users/kent/git/spinntektsmelding-frontend/state/state').RefusjonskravetOpphoerer
-    | undefined
+  refusjonskravetOpphoerer: RefusjonskravetOpphoerer | undefined
 ): string | undefined {
   return !kreverIkkeRefusjon
     ? refusjonskravetOpphoerer?.opphoersdato
@@ -327,10 +366,6 @@ function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperio
         id: 'id'
       }))
     : undefined;
-}
-
-function jaEllerNei(velger: YesNo | undefined, returverdi: any): any | undefined {
-  return velger === 'Ja' ? returverdi : undefined;
 }
 
 function finnInnsendbareArbeidsgiverperioder(

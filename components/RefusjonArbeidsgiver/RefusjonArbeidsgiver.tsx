@@ -89,10 +89,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
       >
         Arbeidsgiveren kan forskuttere sykepenger til den sykmeldte eller velge at NAV skal betale sykepenger direkte
         til den sykmeldte etter arbeidsgiverperioden.{' '}
-        <LenkeEksternt
-          href='https://www.nav.no/no/bedrift/oppfolging/sykmeldt-arbeidstaker/sykepenger/na%CC%8Ar-du-forskutterer-sykepenger-etter-arbeidsgiverperioden_kap1'
-          isHidden={!readMoreOpen}
-        >
+        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/forskuttere-sykepenger' isHidden={!readMoreOpen}>
           Les om de ulike refusjonsreglene.
         </LenkeEksternt>
       </LesMer>
