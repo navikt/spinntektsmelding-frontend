@@ -1,5 +1,5 @@
 import { isValid, parseISO } from 'date-fns';
-import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode, YesNo } from './state';
@@ -238,7 +238,7 @@ function finnInnsendbareArbeidsgiverperioder(
 
 function konverterRefusjonEndringer(
   harRefusjonEndringer: YesNo | undefined,
-  refusjonEndringer: Array<EndringsBelop> | undefined
+  refusjonEndringer: Array<EndringsBeloep> | undefined
 ): RefusjonEndring[] | undefined {
   const refusjoner =
     harRefusjonEndringer === 'Ja' && refusjonEndringer

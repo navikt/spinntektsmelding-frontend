@@ -16,16 +16,14 @@ const PositiveNumberSchema = z
 
 export default z.object({
   inntekt: z.object({
+    endringBruttoloenn: JaNeiSchema,
     beloep: z.number().gte(0).optional(),
-
-    endringAarsak: z.optional(EndringAarsakSchema)
+    endringAarsak: EndringAarsakSchema.optional()
   }),
   telefon: telefonNummerSchema,
   opplysningerBekreftet: z.boolean().refine((value) => value === true, {
     message: 'Vennligst bekreft at opplysningene er riktige og fullstendige.'
   }),
-  endringBruttoloenn: JaNeiSchema,
-  refusjonBeloep: PositiveNumberSchema.optional(),
   refusjon: z
     .object({
       erDetEndringRefusjon: JaNeiSchema.optional(),

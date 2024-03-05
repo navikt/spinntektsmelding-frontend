@@ -6,6 +6,7 @@ import localStyles from '../RefusjonArbeidsgiver/RefusjonArbeidsgiver.module.css
 import ButtonEndre from '../ButtonEndre';
 import { useFormContext } from 'react-hook-form';
 import stringishToNumber from '../../utils/stringishToNumber';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 
 interface RefusjonArbeidsgiverBeloepProps {
   arbeidsgiverperiodeDisabled?: boolean;
@@ -26,17 +27,21 @@ export default function RefusjonArbeidsgiverBeloep({
     ? 'Refusjon til arbeidsgiver i sykefraværet'
     : 'Refusjon til arbeidsgiver etter arbeidsgiverperiode';
 
-  let bruttoinntekt = watch('refusjon.refusjonPrMnd');
-  if (bruttoinntekt === undefined) {
-    bruttoinntekt = getValues('refusjon.refusjonPrMnd');
-  }
+  const beloepFeltnavn = 'refusjon.refusjonPrMnd';
+  const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
+
+  let refusjonPrMnd = watch(beloepFeltnavn);
+  // if (refusjonPrMnd === undefined) {
+  //   refusjonPrMnd = getValues('refusjon.refusjonPrMnd');
+  // }
+
   if (!erEditerbar) {
     return (
       <>
         <TextLabel>{refusjonTilArbeidsgiverEtterAgpLegend}</TextLabel>
         <div className={localStyles.beloepswrapper}>
           <div className={localStyles.beloep} data-cy='refusjon-arbeidsgiver-beloep'>
-            {formatCurrency(bruttoinntekt)}&nbsp;kr
+            {formatCurrency(refusjonPrMnd)}&nbsp;kr
           </div>
           <ButtonEndre
             className={localStyles.endre_knapp}
@@ -58,9 +63,9 @@ export default function RefusjonArbeidsgiverBeloep({
         <TextField
           className={localStyles.refusjonsbeloep}
           label='Oppgi refusjonsbeløpet per måned'
-          error={errors.refusjonBeloep?.message as string}
+          error={beloepError}
           data-cy='refusjon-arbeidsgiver-beloep-input'
-          {...register('refusjon.refusjonPrMnd', {
+          {...register(beloepFeltnavn, {
             setValueAs: (value) => stringishToNumber(value)
           })}
         />

@@ -4,6 +4,7 @@ import { Periode } from '../../state/state';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import DatoVelger from '../DatoVelger/DatoVelger';
 import ButtonSlette from '../ButtonSlette';
+import { use, useEffect } from 'react';
 
 interface PeriodeListevelgerProps {
   defaultRange?: Array<Periode>;
@@ -25,23 +26,34 @@ export default function PeriodeListevelger({
 }: PeriodeListevelgerProps) {
   const {
     formState: { errors },
-    watch,
-    getValues,
-    control,
-    register
+    control
   } = useFormContext();
 
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name
   });
+
+  useEffect(() => {
+    if (defaultRange) {
+      defaultRange.forEach((range) => {
+        append(range);
+      });
+    }
+  }, [defaultRange]);
+
+  useEffect(() => {
+    if (fields.length === 0) {
+      append({});
+    }
+  }, []);
 
   return (
     <>
       {fields.map((range, key) => (
         <div className={lokalStyles.endremaaanedsinntekt} key={range.id}>
           <DatoVelger
-            name={`${name}[${key}].fom`}
+            name={`${name}.${key}.fom`}
             // fromDate={fromDate}
             toDate={toDate}
             label={fomTekst}
@@ -49,12 +61,12 @@ export default function PeriodeListevelger({
             defaultMonth={defaultMonth}
           />
           <DatoVelger
-            name={`${name}[${key}].tom`}
+            name={`${name}.${key}.tom`}
             // fromDate={fromDate}
             label={tomTekst}
             // defaultSelected={defaultRange?.tom}
             toDate={toDate}
-            // defaultMonth={defaultMonth || defaultRange?.fom}
+            defaultMonth={defaultMonth}
           />
           {key > 0 && (
             <ButtonSlette title='Slett periode' onClick={() => remove(key)} className={lokalStyles.sletteknapp} />

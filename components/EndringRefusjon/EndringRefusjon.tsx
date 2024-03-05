@@ -7,8 +7,9 @@ import ButtonSlette from '../ButtonSlette';
 import OrdinaryJaNei from '../OrdinaryJaNei/OrdinaryJaNei';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import DatoVelger from '../DatoVelger/DatoVelger';
+import { useEffect } from 'react';
 
-export interface EndringsBelop {
+export interface EndringsBeloep {
   beloep?: number;
   dato?: Date;
 }
@@ -35,6 +36,17 @@ export default function EndringRefusjon({ minDate, maxDate }: Readonly<EndringRe
   if (harEndringRefusjon === undefined) {
     harEndringRefusjon = getValues('refusjon.harEndringer');
   }
+
+  const addClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    append({});
+  };
+
+  useEffect(() => {
+    if (fields.length === 0) {
+      append({});
+    }
+  }, []);
 
   return (
     <>
@@ -63,7 +75,7 @@ export default function EndringRefusjon({ minDate, maxDate }: Readonly<EndringRe
         ))}
 
       {harEndringRefusjon === 'Ja' && (
-        <Button variant='secondary' className={lokalStyles.legtilbutton} onClick={(event) => append({})}>
+        <Button variant='secondary' className={lokalStyles.legtilbutton} onClick={addClick}>
           Legg til periode
         </Button>
       )}

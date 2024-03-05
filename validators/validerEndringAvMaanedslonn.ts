@@ -1,4 +1,4 @@
-import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import { LonnISykefravaeret, YesNo } from '../state/state';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
@@ -13,7 +13,7 @@ export enum EndringAvMaanedslonnFeilkode {
 
 export default function valdiderEndringAvMaanedslonn(
   harRefusjonEndringer?: YesNo,
-  refusjonEndringer?: Array<EndringsBelop>,
+  refusjonEndringer?: Array<EndringsBeloep>,
   lonnISykefravaeret?: LonnISykefravaeret,
   bruttoInntekt?: number
 ): Array<ValiderResultat> {

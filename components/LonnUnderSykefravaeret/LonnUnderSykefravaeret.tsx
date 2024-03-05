@@ -2,7 +2,7 @@ import { Alert, BodyShort, Link } from '@navikt/ds-react';
 import { LonnISykefravaeret, RefusjonskravetOpphoerer, YesNo } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
-import { EndringsBelop } from '../RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { EndringsBeloep } from '../RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import lokalStyle from './LonnUnderSykefravaeret.module.css';
 import lokalStyles from '../../pages/kvittering/Kvittering.module.css';
 import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
@@ -11,7 +11,7 @@ interface LonnUnderSykefravaeretProps {
   lonn: LonnISykefravaeret;
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   harRefusjonEndringer?: YesNo;
-  refusjonEndringer?: Array<EndringsBelop>;
+  refusjonEndringer?: Array<EndringsBeloep>;
 }
 
 export default function LonnUnderSykefravaeret({

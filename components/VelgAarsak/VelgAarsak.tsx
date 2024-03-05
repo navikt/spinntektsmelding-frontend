@@ -49,7 +49,6 @@ export default function VelgAarsak({
   const {
     formState: { errors },
     watch,
-    getValues,
     register
   } = useFormContext();
 
@@ -57,12 +56,10 @@ export default function VelgAarsak({
 
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
-      {endringAarsak}
       <div className={lokalStyles.endremaaanedsinntekt}>
         <TextField
           label={`Månedsinntekt ${formatDate(bestemmendeFravaersdag)}`}
           // defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt?.bruttoInntekt) : ''}
-          id='inntekt.beregnetInntekt'
           error={errors.inntekt?.beloep?.message as string}
           className={lokalStyles.bruttoinntektendringsbeloep}
           data-cy='inntekt-beloep-input'

@@ -240,23 +240,25 @@ const schema = z.object({
     )
   }),
   inntekt: z.optional(
-    z.object({
-      beloep: z
-        .number({ required_error: 'Vennligst angi månedsinntekt' })
-        .min(0, 'Månedsinntekt må være større enn eller lik 0'),
-      inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
-      naturalytelser: z.union([
-        z.array(
-          z.object({
-            naturalytelse: NaturalytelseEnum,
-            verdiBeloep: z.number().min(0),
-            sluttdato: z.date()
-          })
-        ),
-        z.tuple([])
-      ]),
-      endringAarsak: z.optional(EndringAarsakSchema)
-    })
+    z
+      .object({
+        beloep: z
+          .number({ required_error: 'Vennligst angi månedsinntekt' })
+          .min(0, 'Månedsinntekt må være større enn eller lik 0'),
+        inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
+        naturalytelser: z.union([
+          z.array(
+            z.object({
+              naturalytelse: NaturalytelseEnum,
+              verdiBeloep: z.number().min(0),
+              sluttdato: z.date()
+            })
+          ),
+          z.tuple([])
+        ]),
+        endringAarsak: EndringAarsakSchema.optional()
+      })
+      .optional()
   ),
   refusjon: z.optional(
     z.object({

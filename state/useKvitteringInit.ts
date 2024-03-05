@@ -37,7 +37,7 @@ export default function useKvitteringInit() {
   const initPerson = useBoundStore((state) => state.initPerson);
 
   const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
-  const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
+  const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
   const initFullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.initFullLonnIArbeidsgiverPerioden);
 
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
@@ -118,7 +118,7 @@ export default function useKvitteringInit() {
         ? jsonData.inntekt.beregnetInntekt
         : jsonData.beregnetInntekt || 0;
 
-    setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
+    setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
 
     if (jsonData.inntekt.endringÅrsak) {

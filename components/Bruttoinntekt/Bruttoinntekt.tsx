@@ -24,7 +24,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
-  const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
+  const setNyMaanedsinntektOgRefusjonsbeloep = useBoundStore((state) => state.setNyMaanedsinntektOgRefusjonsbeloep);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
@@ -66,7 +66,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   };
 
   const changeMaanedsintektHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setNyMaanedsinntekt(event.target.value);
+    setNyMaanedsinntektOgRefusjonsbeloep(event.target.value);
   };
 
   const changeBegrunnelseHandler = (aarsak: string) => {

@@ -1,6 +1,6 @@
 import { isAfter, isBefore, isEqual, isValid, parseISO } from 'date-fns';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
-import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode, YesNo } from './state';
@@ -304,7 +304,7 @@ function verdiEllerNull(verdi: number | undefined): number {
 
 function konverterRefusjonsendringer(
   harRefusjonEndringer: YesNo | undefined,
-  refusjonEndringer: Array<EndringsBelop> | undefined
+  refusjonEndringer: Array<EndringsBeloep> | undefined
 ): RefusjonEndring[] | undefined {
   const refusjoner =
     harRefusjonEndringer === 'Ja' && refusjonEndringer

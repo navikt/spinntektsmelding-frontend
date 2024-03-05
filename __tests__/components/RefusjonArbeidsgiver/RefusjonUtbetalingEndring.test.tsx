@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 
 import RefusjonUtbetalingEndring, {
-  EndringsBelop
+  EndringsBeloep
 } from '../../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import { vi } from 'vitest';
 
@@ -61,7 +61,7 @@ describe('RefusjonUtbetalingEndring', () => {
   });
 
   it('should add periode when "Legg til periode" is clicked and delete it when "Slett" is clicked', async () => {
-    const endringer: Array<EndringsBelop> = [{ beloep: 1234 }, {}];
+    const endringer: Array<EndringsBeloep> = [{ beloep: 1234 }, {}];
     const onOppdaterEndringer = vi.fn();
 
     render(

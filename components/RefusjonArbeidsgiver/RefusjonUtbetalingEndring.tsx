@@ -8,17 +8,17 @@ import Datovelger from '../Datovelger';
 import useBoundStore from '../../state/useBoundStore';
 import { YesNo } from '../../state/state';
 
-export interface EndringsBelop {
+export interface EndringsBeloep {
   beloep?: number;
   dato?: Date;
 }
 interface RefusjonUtbetalingEndringProps {
-  endringer: Array<EndringsBelop>;
+  endringer: Array<EndringsBeloep>;
   minDate?: Date;
   maxDate?: Date;
   harRefusjonEndringer?: YesNo;
   harRefusjonEndringerDefault?: YesNo;
-  onOppdaterEndringer?: (endringer: Array<EndringsBelop>) => void;
+  onOppdaterEndringer?: (endringer: Array<EndringsBeloep>) => void;
   onHarEndringer?: (harEndring: YesNo) => void;
 }
 
@@ -32,7 +32,7 @@ export default function RefusjonUtbetalingEndring({
   harRefusjonEndringerDefault
 }: Readonly<RefusjonUtbetalingEndringProps>) {
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
-  const oppdaterEndringer = (endringer?: Array<EndringsBelop>): void => {
+  const oppdaterEndringer = (endringer?: Array<EndringsBeloep>): void => {
     if (onOppdaterEndringer) {
       onOppdaterEndringer(endringer ?? []);
     }

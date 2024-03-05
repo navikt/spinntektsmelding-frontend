@@ -39,8 +39,8 @@ export interface BruttoinntektState {
   sisteLonnshentedato?: Date;
   henterData: boolean;
   feilHentingAvInntektsdata?: Array<FeilReportElement>;
-  setNyMaanedsinntekt: (beloep: string) => void;
-  setNyMaanedsinntektBlanktSkjema: (beloep: string | number) => void;
+  setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => void;
+  setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
   setEndringsaarsak: (aarsak: string) => void;
   setFeriePeriode: (periode: Array<Periode> | undefined) => void;
@@ -77,7 +77,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   },
   tidligereInntekt: undefined,
   henterData: false,
-  setNyMaanedsinntekt: (beloep: string) => {
+  setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => {
     set(
       produce((state) => {
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(beloep);
@@ -106,7 +106,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     );
   },
-  setNyMaanedsinntektBlanktSkjema: (beloep: string | number) =>
+  setBareNyMaanedsinntekt: (beloep: string | number) =>
     set(
       produce((state) => {
         state.bruttoinntekt.bruttoInntekt = typeof beloep === 'string' ? stringishToNumber(beloep) : beloep;
