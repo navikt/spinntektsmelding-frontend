@@ -32,4 +32,8 @@ describe.concurrent('stringishToNumber', () => {
   it('should return a number when input is string big number with dot and no space', () => {
     expect(stringishToNumber('12345.12')).toBe(12345.12);
   });
+
+  it('should return a number when input is number', () => {
+    expect(stringishToNumber(12345.12)).toBe(12345.12);
+  });
 });
