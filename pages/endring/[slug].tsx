@@ -125,8 +125,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const aapentManglendeData = inngangFraKvittering || ukjentInntekt;
 
-  console.log('aapentManglendeData', aapentManglendeData);
-
   const [innsenderTelefonNr] = useBoundStore((state) => [state.innsenderTelefonNr]);
 
   const amplitudeComponent = 'DelvisInnsending';
