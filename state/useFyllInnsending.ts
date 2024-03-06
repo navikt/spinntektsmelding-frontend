@@ -244,7 +244,6 @@ export default function useFyllInnsending() {
     );
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
-    console.log('kreverIkkeRefusjon', kreverIkkeRefusjon);
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {

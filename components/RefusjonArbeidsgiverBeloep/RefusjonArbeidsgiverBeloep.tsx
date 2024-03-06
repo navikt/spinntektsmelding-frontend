@@ -29,10 +29,7 @@ export default function RefusjonArbeidsgiverBeloep({
   const beloepFeltnavn = 'refusjon.refusjonPrMnd';
   const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
 
-  let refusjonPrMnd = watch(beloepFeltnavn);
-  // if (refusjonPrMnd === undefined) {
-  //   refusjonPrMnd = getValues('refusjon.refusjonPrMnd');
-  // }
+  const refusjonPrMnd = watch(beloepFeltnavn);
 
   const endreClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

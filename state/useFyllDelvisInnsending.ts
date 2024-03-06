@@ -127,8 +127,6 @@ export default function useFyllDelvisInnsending() {
           })
         : refusjonEndringer;
 
-    console.log('RefusjonUtbetalingEndringUtenGammelBFD', RefusjonUtbetalingEndringUtenGammelBFD);
-
     const harRefusjonEndringerTilInnsending =
       skjema.refusjon.erDetEndringRefusjon === 'Nei'
         ? harRefusjonEndringer === 'Ja'
@@ -138,12 +136,7 @@ export default function useFyllDelvisInnsending() {
       harRefusjonEndringerTilInnsending ? 'Ja' : 'Nei',
       RefusjonUtbetalingEndringUtenGammelBFD
     );
-    console.log('skjema.refusjon.refusjonEndringer', skjema.refusjon.refusjonEndringer);
-    console.log('harRefusjonEndringerTilInnsending', harRefusjonEndringerTilInnsending);
-    console.log('innsendingRefusjonEndringer', innsendingRefusjonEndringer);
-    console.log('harRefusjonEndringerTilInnsending', harRefusjonEndringerTilInnsending);
-    console.log('skjaeringstidspunkt', skjaeringstidspunkt);
-    console.log('bestemmendeFravaersdag', bestemmendeFravaersdag);
+
     setSkalViseFeilmeldinger(true);
 
     const forespurtData = hentPaakrevdOpplysningstyper();
