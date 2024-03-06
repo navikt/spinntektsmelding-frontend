@@ -17,7 +17,6 @@ export default function RefusjonArbeidsgiverBeloep({
 }: Readonly<RefusjonArbeidsgiverBeloepProps>) {
   const [erEditerbar, setErEditerbar] = useState<boolean>(false);
   const {
-    getValues,
     register,
     watch,
     formState: { errors }
@@ -35,6 +34,11 @@ export default function RefusjonArbeidsgiverBeloep({
   //   refusjonPrMnd = getValues('refusjon.refusjonPrMnd');
   // }
 
+  const endreClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setErEditerbar(true);
+  };
+
   if (!erEditerbar) {
     return (
       <>
@@ -45,7 +49,7 @@ export default function RefusjonArbeidsgiverBeloep({
           </div>
           <ButtonEndre
             className={localStyles.endre_knapp}
-            onClick={() => setErEditerbar(true)}
+            onClick={endreClick}
             data-cy='endre-refusjon-arbeidsgiver-beloep'
           />
           <span>

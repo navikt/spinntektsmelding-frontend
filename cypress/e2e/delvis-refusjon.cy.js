@@ -75,13 +75,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         bestemmendeFraværsdag: '2023-08-08',
         refusjon: {
           utbetalerHeleEllerDeler: true,
-          refusjonPrMnd: 0,
-          refusjonEndringer: [
-            {
-              beløp: 11000,
-              dato: '2023-07-22'
-            }
-          ]
+          refusjonPrMnd: 10000
         },
         bekreftOpplysninger: true,
         behandlingsdager: [],
@@ -130,7 +124,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findByLabelText('Månedsinntekt 08.08.2023').invoke('val').should('equal', '26 000,00');
+    cy.findByLabelText('Månedsinntekt 08.08.2023').invoke('val').should('equal', '26000');
     cy.findByLabelText('Månedsinntekt 08.08.2023').clear().type('50000');
 
     cy.findByRole('group', {
@@ -176,13 +170,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         bestemmendeFraværsdag: '2023-08-08',
         refusjon: {
           utbetalerHeleEllerDeler: true,
-          refusjonPrMnd: 0,
-          refusjonEndringer: [
-            {
-              beløp: 11000,
-              dato: '2023-07-22'
-            }
-          ]
+          refusjonPrMnd: 10000
         },
         bekreftOpplysninger: true,
         behandlingsdager: [],

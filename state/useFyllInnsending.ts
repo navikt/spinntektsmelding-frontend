@@ -1,4 +1,4 @@
-import { isEqual, isValid, parseISO } from 'date-fns';
+import { isAfter, isValid, parseISO } from 'date-fns';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
@@ -196,7 +196,7 @@ export default function useFyllInnsending() {
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
 
     const RefusjonUtbetalingEndringUtenGammelBFD = refusjonEndringer?.filter((endring) => {
-      return !isEqual(gammeltSkjaeringstidspunkt as Date, endring.dato || (gammeltSkjaeringstidspunkt as Date));
+      return endring.dato && isAfter(endring.dato, gammeltSkjaeringstidspunkt as Date);
     });
 
     const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonsendringer(
@@ -244,6 +244,7 @@ export default function useFyllInnsending() {
     );
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
+    console.log('kreverIkkeRefusjon', kreverIkkeRefusjon);
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {

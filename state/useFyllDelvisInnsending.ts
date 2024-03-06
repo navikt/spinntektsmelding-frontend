@@ -116,13 +116,18 @@ export default function useFyllDelvisInnsending() {
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
 
     const RefusjonUtbetalingEndringUtenGammelBFD = skjema.refusjon.refusjonEndringer
-      ? skjema.refusjon.refusjonEndringer
-      : skjaeringstidspunkt && refusjonEndringer
+      ? skjema.refusjon.refusjonEndringer.filter((endring) => {
+          if (!endring.dato) return false;
+          return isAfter(endring.dato, bestemmendeFravaersdag);
+        })
+      : bestemmendeFravaersdag && refusjonEndringer
         ? refusjonEndringer?.filter((endring) => {
             if (!endring.dato) return false;
-            return isAfter(endring.dato, skjaeringstidspunkt);
+            return isAfter(endring.dato, bestemmendeFravaersdag);
           })
         : refusjonEndringer;
+
+    console.log('RefusjonUtbetalingEndringUtenGammelBFD', RefusjonUtbetalingEndringUtenGammelBFD);
 
     const harRefusjonEndringerTilInnsending =
       skjema.refusjon.erDetEndringRefusjon === 'Nei'
@@ -133,7 +138,12 @@ export default function useFyllDelvisInnsending() {
       harRefusjonEndringerTilInnsending ? 'Ja' : 'Nei',
       RefusjonUtbetalingEndringUtenGammelBFD
     );
-
+    console.log('skjema.refusjon.refusjonEndringer', skjema.refusjon.refusjonEndringer);
+    console.log('harRefusjonEndringerTilInnsending', harRefusjonEndringerTilInnsending);
+    console.log('innsendingRefusjonEndringer', innsendingRefusjonEndringer);
+    console.log('harRefusjonEndringerTilInnsending', harRefusjonEndringerTilInnsending);
+    console.log('skjaeringstidspunkt', skjaeringstidspunkt);
+    console.log('bestemmendeFravaersdag', bestemmendeFravaersdag);
     setSkalViseFeilmeldinger(true);
 
     const forespurtData = hentPaakrevdOpplysningstyper();
@@ -172,6 +182,23 @@ export default function useFyllDelvisInnsending() {
       bestemmendeFravaersdag,
       beregnetSkjaeringstidspunkt
     );
+
+    const beregnetRefusjonPrMnd = !nyInnsending
+      ? lonnISykefravaeret!.beloep
+      : refusjonEndringer
+          ?.filter((endring) => {
+            if (!endring.dato) return false;
+            return !isAfter(endring.dato, skjaeringstidspunkt);
+          })
+          .map((endring) => {
+            return {
+              beloep: endring.beloep,
+              dato: endring.dato
+            };
+          })
+          .sort((a, b) => {
+            return a.dato && b.dato ? (a.dato < b.dato ? 1 : -1) : 0;
+          })[0]?.beloep;
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {
@@ -309,7 +336,7 @@ function konverterRefusjonsendringer(
   const refusjoner =
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer
-          .filter((endring) => endring.beloep && endring.dato)
+          .filter((endring) => endring.dato)
           .map((endring) => ({
             beløp: endring.beloep!,
             dato: formatIsoDate(endring.dato)!

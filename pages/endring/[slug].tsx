@@ -118,10 +118,14 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       state.harRefusjonEndringer
     ]
   );
+  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
   const aapentManglendeData = inngangFraKvittering || ukjentInntekt;
+
+  console.log('aapentManglendeData', aapentManglendeData);
 
   const [innsenderTelefonNr] = useBoundStore((state) => [state.innsenderTelefonNr]);
 
@@ -129,24 +133,24 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const sendInnDelvisSkjema = useSendInnDelvisSkjema(setIngenTilgangOpen, amplitudeComponent);
 
-  const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
-
   const hentKvitteringsdata = useHentKvitteringsdata();
+
+  const foersteDatoForRefusjon = skjaeringstidspunkt ?? bestemmendeFravaersdag;
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     skjaeringstidspunkt && refusjonEndringer
       ? refusjonEndringer?.filter((endring) => {
           if (!endring.dato) return false;
-          return isAfter(endring.dato, skjaeringstidspunkt);
+          return isAfter(endring.dato, foersteDatoForRefusjon);
         })
       : refusjonEndringer;
 
   const refusjonPrMnd = !nyInnsending
-    ? lonnISykefravaeret!.beloep
+    ? lonnISykefravaeret!.beloep ?? bruttoinntekt?.bruttoInntekt
     : refusjonEndringer
         ?.filter((endring) => {
           if (!endring.dato) return false;
-          return !isAfter(endring.dato, skjaeringstidspunkt);
+          return !isAfter(endring.dato, foersteDatoForRefusjon);
         })
         .map((endring) => {
           return {
@@ -210,9 +214,11 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const harEndringRefusjon = watch('refusjon.erDetEndringRefusjon');
 
-  let skalRefusjonskravetOpphoere = watch('refusjon.kravetOpphoerer');
+  const skalRefusjonskravetOpphoere = watch('refusjon.kravetOpphoerer');
 
   const arbeidsgiverKreverRefusjon = watch('refusjon.kreverRefusjon');
+
+  // const inntektBeloep = watch('inntekt.beloep');
 
   useEffect(() => {
     if (refusjonPrMnd) {
@@ -224,7 +230,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     if (bruttoinntekt.bruttoInntekt) {
       setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
     }
-  }, [bruttoinntekt.bruttoInntekt]);
+  }, [bruttoinntekt.bruttoInntekt, setValue]);
+
+  // useEffect(() => {
+  //   if (inntektBeloep) {
+  //     setValue('refusjon.refusjonPrMnd', inntektBeloep);
+  //   }
+  // }, [inntektBeloep, setValue]);
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
@@ -241,22 +253,10 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         component: amplitudeComponent
       });
 
-      setEndreMaanedsinntekt(false);
       tilbakestillMaanedsinntekt();
     },
-    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt]
+    [tilbakestillMaanedsinntekt]
   );
-
-  const setEndreMaanedsinntektHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    logEvent('knapp klikket', {
-      tittel: 'Endre beregnet månedsinntekt',
-      component: amplitudeComponent
-    });
-
-    setEndreMaanedsinntekt(true);
-  };
 
   useEffect(() => {
     if (!fravaersperioder && pathSlug) {
@@ -441,7 +441,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     Vi har ikke data fra den siste inntektsmeldingen, derfor må dere angi beregnet månedslønn manuelt.
                   </BodyLong>
                 )}
-                {!ukjentInntekt && !aapentManglendeData && (
+                {!ukjentInntekt && (
                   <>
                     <BodyLong>
                       I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
@@ -460,16 +460,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
 
                     <div className={lokalStyles.beloepwrapper}>
-                      {/* {!bruttoinntekt?.manueltKorrigert && !endreMaanedsinntekt && (
-                        <>
-                          <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
-                            {formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)} kr/måned
-                          </TextLabel>
-                          <ButtonEndre data-cy='endre-beloep' onClick={setEndreMaanedsinntektHandler} />
-                        </>
-                      )}
-
-                      {(bruttoinntekt?.manueltKorrigert || endreMaanedsinntekt) && ( */}
                       <VelgAarsak
                         changeMaanedsintektHandler={changeMaanedsintektHandler}
                         changeBegrunnelseHandler={changeBegrunnelseHandler}
@@ -496,81 +486,78 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 {kreverIkkeRefusjon && (
                   <BodyLong>I henhold til siste inntektsmelding hadde dere ikke refusjonskrav.</BodyLong>
                 )}
-                {!aapentManglendeData && (
+
+                {!kreverIkkeRefusjon && (
                   <>
-                    {!kreverIkkeRefusjon && (
+                    <H3Label unPadded topPadded>
+                      Refusjon til arbeidsgiver
+                    </H3Label>
+                    {!harEndringer && <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>}
+                    {harEndringer && (
                       <>
-                        <H3Label unPadded topPadded>
-                          Refusjon til arbeidsgiver
-                        </H3Label>
-                        {!harEndringer && <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>}
-                        {harEndringer && (
+                        {formatCurrency(refusjonBeloep || 0)} kr
+                        {refusjonEndringerUtenSkjaeringstidspunkt &&
+                          refusjonEndringerUtenSkjaeringstidspunkt?.length === 0 && (
+                            <>
+                              <H3Label unPadded topPadded>
+                                Er det endringer i refusjonskrav i perioden?
+                              </H3Label>
+                              Nei
+                            </>
+                          )}
+                        {refusjonEndringerUtenSkjaeringstidspunkt &&
+                          refusjonEndringerUtenSkjaeringstidspunkt?.length > 0 && (
+                            <div className={lokalStyles.refusjonswrapper}>
+                              <table>
+                                <thead>
+                                  <tr>
+                                    <th className={lokalStyles.table_header}>
+                                      <strong>Endret refusjon</strong>
+                                    </th>
+                                    <th>
+                                      <strong>Dato for endret refusjon</strong>
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {aktiveRefusjonEndringer?.map((endring) => (
+                                    <tr key={endring.dato?.toString()}>
+                                      <td>{formatCurrency(endring.beloep)} kr</td>
+                                      <td>{formatDate(endring.dato)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        {opprinneligRefusjonskravetOpphoerer?.status === 'Nei' && (
                           <>
-                            {formatCurrency(refusjonBeloep || 0)} kr
-                            {refusjonEndringerUtenSkjaeringstidspunkt &&
-                              refusjonEndringerUtenSkjaeringstidspunkt?.length === 0 && (
-                                <>
-                                  <H3Label unPadded topPadded>
-                                    Er det endringer i refusjonskrav i perioden?
-                                  </H3Label>
-                                  Nei
-                                </>
-                              )}
-                            {refusjonEndringerUtenSkjaeringstidspunkt &&
-                              refusjonEndringerUtenSkjaeringstidspunkt?.length > 0 && (
-                                <div className={lokalStyles.refusjonswrapper}>
-                                  <table>
-                                    <thead>
-                                      <tr>
-                                        <th className={lokalStyles.table_header}>
-                                          <strong>Endret refusjon</strong>
-                                        </th>
-                                        <th>
-                                          <strong>Dato for endret refusjon</strong>
-                                        </th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {aktiveRefusjonEndringer?.map((endring) => (
-                                        <tr key={endring.dato?.toString()}>
-                                          <td>{formatCurrency(endring.beloep)} kr</td>
-                                          <td>{formatDate(endring.dato)}</td>
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              )}
-                            {opprinneligRefusjonskravetOpphoerer?.status === 'Nei' && (
-                              <>
-                                <H3Label unPadded topPadded>
-                                  Opphører refusjonkravet under sykefraværet?
-                                </H3Label>
-                                {opprinneligRefusjonskravetOpphoerer?.status}
-                              </>
-                            )}
-                            {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
-                              <>
-                                <H3Label unPadded topPadded>
-                                  Siste dag dere krever refusjon for
-                                </H3Label>
-                                {formatDate(opprinneligRefusjonskravetOpphoerer.opphoersdato)}
-                              </>
-                            )}
+                            <H3Label unPadded topPadded>
+                              Opphører refusjonkravet under sykefraværet?
+                            </H3Label>
+                            {opprinneligRefusjonskravetOpphoerer?.status}
+                          </>
+                        )}
+                        {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
+                          <>
+                            <H3Label unPadded topPadded>
+                              Siste dag dere krever refusjon for
+                            </H3Label>
+                            {formatDate(opprinneligRefusjonskravetOpphoerer.opphoersdato)}
                           </>
                         )}
                       </>
                     )}
-                    {!aapentManglendeData && (
-                      <FancyJaNei
-                        legend={`Er det endringer i refusjonskravet etter ${formatDate(
-                          forsteFravaersdag
-                        )} (start av nytt sykefravær)?`}
-                        name='refusjon.erDetEndringRefusjon'
-                      />
-                    )}
                   </>
                 )}
+
+                <FancyJaNei
+                  legend={`Er det endringer i refusjonskravet etter ${formatDate(
+                    forsteFravaersdag
+                  )} (start av nytt sykefravær)?`}
+                  name='refusjon.erDetEndringRefusjon'
+                />
+
                 {harEndringRefusjon === 'Ja' && (
                   <>
                     {!aapentManglendeData && <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>}
