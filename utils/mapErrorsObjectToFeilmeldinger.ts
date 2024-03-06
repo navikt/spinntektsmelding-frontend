@@ -2,7 +2,6 @@ export default function mapErrorsObjectToFeilmeldinger(errors) {
   const mapErrorsObject = (errors: any, subKey = ''): any[] => {
     return Object.keys(errors).flatMap((key) => {
       if (typeof errors[key] === 'string') {
-        console.log('errors[key]', errors[key]);
         return {
           key: subKey ? `${subKey}.${key}` : key,
           message: errors[key]
@@ -10,7 +9,6 @@ export default function mapErrorsObjectToFeilmeldinger(errors) {
       }
 
       if (!errors[key].message) {
-        console.log('!errors[key].message', errors[key]);
         return mapErrorsObject(errors[key], subKey ? `${subKey}.${key}` : key);
       }
 
