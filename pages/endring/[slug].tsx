@@ -170,6 +170,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const refusjonOpphoererStatus = !nyInnsending ? refusjonskravetOpphoerer?.status : undefined;
 
   const opprinneligRefusjonskravetOpphoererStatus = opprinneligRefusjonskravetOpphoerer?.status;
+  const opprinneligRefusjonskravetOpphoererDato = opprinneligRefusjonskravetOpphoerer?.opphoersdato;
   // useEffect(() => {
   //   if (bruttoinntekt.bruttoInntekt) {
   //     setValue(
@@ -194,7 +195,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
             ? 'Ja'
             : 'Nei',
-        refusjonOpphoerer: refusjonOpphoererDato,
+        refusjonOpphoerer: opprinneligRefusjonskravetOpphoererDato,
         kravetOpphoerer: opprinneligRefusjonskravetOpphoererStatus,
         kreverRefusjon: refusjonPrMnd !== 0 ? 'Ja' : 'Nei'
       }
