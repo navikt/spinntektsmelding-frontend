@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { BodyLong, Button, ConfirmationPanel, Link } from '@navikt/ds-react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
-import { useEffect, useState, useCallback, use } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import PageContent from '../../components/PageContent/PageContent';
 import styles from '../../styles/Home.module.css';
@@ -22,7 +22,7 @@ import environment from '../../config/environment';
 import IngenTilgang from '../../components/IngenTilgang';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import useSendInnDelvisSkjema from '../../utils/useSendInnDelvisSkjema';
-import { isAfter, isBefore, sub } from 'date-fns';
+import { isAfter, isBefore } from 'date-fns';
 import parseIsoDate from '../../utils/parseIsoDate';
 import delvisInnsendingSchema from '../../schema/delvisInnsendingSchema';
 import FancyJaNei from '../../components/FancyJaNei/FancyJaNei';
@@ -43,10 +43,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   type Skjema = z.infer<typeof delvisInnsendingSchema>;
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
-  const [setEndringerAvRefusjon, tilbakestillRefusjoner] = useBoundStore((state) => [
-    state.setEndringerAvRefusjon,
-    state.tilbakestillRefusjoner
-  ]);
+  const [setEndringerAvRefusjon] = useBoundStore((state) => [state.setEndringerAvRefusjon]);
 
   const ferie = useBoundStore((state) => state.ferie);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
@@ -166,8 +163,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       : [{ beloep: undefined, dato: undefined }]
     : refusjonEndringer;
 
-  const refusjonOpphoererDato = !nyInnsending ? refusjonskravetOpphoerer?.opphoersdato : undefined;
-  const refusjonOpphoererStatus = !nyInnsending ? refusjonskravetOpphoerer?.status : undefined;
+  // const refusjonOpphoererDato = !nyInnsending ? refusjonskravetOpphoerer?.opphoersdato : undefined;
+  // const refusjonOpphoererStatus = !nyInnsending ? refusjonskravetOpphoerer?.status : undefined;
 
   const opprinneligRefusjonskravetOpphoererStatus = opprinneligRefusjonskravetOpphoerer?.status;
   const opprinneligRefusjonskravetOpphoererDato = opprinneligRefusjonskravetOpphoerer?.opphoersdato;
@@ -361,7 +358,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           // Fall gjennom uten å gjøre noe
           break;
       }
-      // oppdaterRefusjonEndringer(skjemaData.refusjon.refusjonEndringer ?? []);
 
       setSenderInn(false);
     });
@@ -415,8 +411,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   useEffect(() => {
     if (harEndringBruttoloenn === 'Nei') {
       unregister('inntekt.endringAarsak');
-    } else {
-      // register('inntekt.endringAarsak');
     }
   }, [harEndringBruttoloenn, unregister, register]);
 
