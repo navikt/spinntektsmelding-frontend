@@ -22,7 +22,6 @@ export default function EndringRefusjon({ minDate, maxDate }: Readonly<EndringRe
   const {
     formState: { errors },
     watch,
-    getValues,
     control,
     register
   } = useFormContext();
@@ -32,10 +31,7 @@ export default function EndringRefusjon({ minDate, maxDate }: Readonly<EndringRe
     name: 'refusjon.refusjonEndringer' // unique name for your Field Array
   });
 
-  let harEndringRefusjon = watch('refusjon.harEndringer');
-  if (harEndringRefusjon === undefined) {
-    harEndringRefusjon = getValues('refusjon.harEndringer');
-  }
+  const harEndringRefusjon = watch('refusjon.harEndringer');
 
   const addClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();

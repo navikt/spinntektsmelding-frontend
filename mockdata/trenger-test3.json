@@ -1,0 +1,32 @@
+{
+  "navn": "TENTATIV DOKUMENT",
+  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "innsenderNavn": "",
+  "identitetsnummer": "11457918943",
+  "orgnrUnderenhet": "810007842",
+  "skjaeringstidspunkt": null,
+  "fravaersperioder": [{ "fom": "2023-12-25", "tom": "2023-12-31" }],
+  "egenmeldingsperioder": [],
+  "bruttoinntekt": 54300.0,
+  "tidligereinntekter": [
+    { "maaned": "2023-09", "inntekt": 54300.0 },
+    { "maaned": "2023-10", "inntekt": 54300.0 },
+    { "maaned": "2023-11", "inntekt": 54300.0 }
+  ],
+  "behandlingsperiode": null,
+  "behandlingsdager": [],
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": false },
+    "inntekt": {
+      "paakrevd": true,
+      "forslag": {
+        "type": "ForslagInntektGrunnlag",
+        "forrigeInntekt": { "skjæringstidspunkt": "2023-12-01", "kilde": "INNTEKTSMELDING", "beløp": 54300.0 }
+      }
+    },
+    "refusjon": {
+      "paakrevd": true,
+      "forslag": { "perioder": [{ "fom": "2023-12-01", "beloep": 54300.0 }], "opphoersdato": null }
+    }
+  }
+}

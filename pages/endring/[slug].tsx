@@ -134,15 +134,20 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
   const foersteDatoForRefusjon = skjaeringstidspunkt ?? bestemmendeFravaersdag;
-
+  console.log('foersteDatoForRefusjon', foersteDatoForRefusjon);
   const refusjonEndringerUtenSkjaeringstidspunkt =
-    skjaeringstidspunkt && refusjonEndringer
+    foersteDatoForRefusjon && refusjonEndringer
       ? refusjonEndringer?.filter((endring) => {
           if (!endring.dato) return false;
           return isAfter(endring.dato, foersteDatoForRefusjon);
         })
       : refusjonEndringer;
-
+  console.log(
+    'refusjonEndringerUtenSkjaeringstidspunkt',
+    refusjonEndringerUtenSkjaeringstidspunkt,
+    refusjonEndringerUtenSkjaeringstidspunkt?.length
+  );
+  console.log('nyInnsending', nyInnsending);
   const refusjonPrMnd = !nyInnsending
     ? lonnISykefravaeret!.beloep ?? bruttoinntekt?.bruttoInntekt
     : refusjonEndringer
@@ -177,6 +182,10 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   //     );
   //   }
   // }, [refusjonEndringerUtenSkjaeringstidspunkt]);
+
+  if (refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0) {
+    console.log('refusjonEndringerUtenSkjaeringstidspunkt 2', refusjonEndringerUtenSkjaeringstidspunkt);
+  }
 
   const methods = useForm<Skjema>({
     resolver: zodResolver(delvisInnsendingSchema),
