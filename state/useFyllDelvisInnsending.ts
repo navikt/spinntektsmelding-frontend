@@ -215,6 +215,7 @@ export default function useFyllDelvisInnsending() {
         endringÅrsak: skjema.inntekt.endringAarsak?.aarsak
           ? {
               ...skjema.inntekt.endringAarsak,
+              liste: skjema.inntekt.endringAarsak?.perioder ?? undefined,
               typpe: skjema.inntekt.endringAarsak?.aarsak,
               aarsak: undefined
             }
