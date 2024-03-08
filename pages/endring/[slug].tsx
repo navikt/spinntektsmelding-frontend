@@ -490,6 +490,20 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     {harEndringer && (
                       <>
                         {formatCurrency(refusjonBeloep || 0)} kr
+                        {errors.refusjon?.refusjonPrMnd?.message && (
+                          <div className='navds-form-field navds-form-field--medium navds-text-field--error endring-error-bottom-padded'>
+                            <div
+                              className='navds-form-field__error'
+                              id='textField-error-refusjon-refusjonPrMnd'
+                              aria-relevant='additions removals'
+                              aria-live='polite'
+                            >
+                              <p className='navds-error-message navds-label' id='refusjon.refusjonPrMnd'>
+                                {errors.refusjon?.refusjonPrMnd?.message}
+                              </p>
+                            </div>
+                          </div>
+                        )}
                         {refusjonEndringerUtenSkjaeringstidspunkt &&
                           refusjonEndringerUtenSkjaeringstidspunkt?.length === 0 && (
                             <>

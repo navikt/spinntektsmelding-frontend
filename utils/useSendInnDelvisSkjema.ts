@@ -9,6 +9,7 @@ import { logger } from '@navikt/next-logger';
 
 import useFyllDelvisInnsending from '../state/useFyllDelvisInnsending';
 import useValiderDelvisInntektsmelding from './useValiderDelvisInntektsmelding';
+import { useFormContext } from 'react-hook-form';
 
 export default function useSendInnDelvisSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,

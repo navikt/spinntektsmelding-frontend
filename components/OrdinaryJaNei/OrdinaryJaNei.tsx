@@ -2,6 +2,7 @@ import { Radio, RadioGroup } from '@navikt/ds-react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import styles from '../../styles/Home.module.css';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 
 interface OrdinaryJaNeiProps {
   legend: string;
@@ -14,13 +15,7 @@ export default function OrdinaryJaNei({ legend, name }: Readonly<OrdinaryJaNeiPr
   } = useFormContext();
 
   const errorKey = name.split('.');
-  const error = errorKey.reduce((acc, key) => {
-    if (acc?.[key]?.message) {
-      return acc[key]?.message as string;
-    } else {
-      return acc?.[key];
-    }
-  }, errors);
+  const error = findErrorInRHFErrors(name, errors);
 
   return (
     <Controller

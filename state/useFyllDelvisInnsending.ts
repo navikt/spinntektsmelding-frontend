@@ -1,5 +1,5 @@
-import { isAfter, isBefore, isEqual, isValid, parseISO } from 'date-fns';
-import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import { isAfter, isValid, parseISO } from 'date-fns';
+
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
