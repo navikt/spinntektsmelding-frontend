@@ -45,7 +45,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
       errors: [{ property: 'refusjon.refusjonPrMnd', error: 'Must be less than or equal to 40 000', value: '45000.0' }]
     };
     setTimeout(() => {
-      return res.status(400).json(innsendteData);
+      return res.status(201).json(innsendteData);
     }, 100);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {
