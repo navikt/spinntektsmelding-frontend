@@ -126,8 +126,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const amplitudeComponent = 'DelvisInnsending';
 
-  const sendInnDelvisSkjema = useSendInnDelvisSkjema(setIngenTilgangOpen, amplitudeComponent);
-
   const hentKvitteringsdata = useHentKvitteringsdata();
 
   const foersteDatoForRefusjon = skjaeringstidspunkt ?? bestemmendeFravaersdag;
@@ -202,6 +200,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const {
     unregister,
     setValue,
+    setError,
     register,
     watch,
     formState: { isDirty, errors }
@@ -268,6 +267,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   }, [pathSlug]);
 
   const forsteFravaersdag = foreslaattBestemmendeFravaersdag;
+
+  const sendInnDelvisSkjema = useSendInnDelvisSkjema(setIngenTilgangOpen, amplitudeComponent, setError);
 
   const submitForm: SubmitHandler<Skjema> = (skjemaData: Skjema) => {
     console.log('submitForm', skjemaData);

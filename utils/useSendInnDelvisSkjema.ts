@@ -9,11 +9,12 @@ import { logger } from '@navikt/next-logger';
 
 import useFyllDelvisInnsending from '../state/useFyllDelvisInnsending';
 import useValiderDelvisInntektsmelding from './useValiderDelvisInntektsmelding';
-import { useFormContext } from 'react-hook-form';
+import { UseFormSetError } from 'react-hook-form';
 
 export default function useSendInnDelvisSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
-  amplitudeComponent: string
+  amplitudeComponent: string,
+  setError: UseFormSetError<any>
 ) {
   const validerInntektsmelding = useValiderDelvisInntektsmelding();
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
@@ -120,6 +121,10 @@ export default function useSendInnDelvisSkjema(
             component: amplitudeComponent
           });
 
+          setError('server', {
+            message: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.'
+          });
+
           logger.error('Feil ved innsending av skjema - 500', data);
           logger.error(data);
 
@@ -135,6 +140,7 @@ export default function useSendInnDelvisSkjema(
             }
           ];
           errorResponse(errors);
+          setError('server', { message: 'Fant ikke endepunktet for innsending' });
 
           logger.error('Feil ved innsending av skjema - 404', data);
           logger.error(data);
@@ -161,6 +167,10 @@ export default function useSendInnDelvisSkjema(
 
             if (resultat.errors) {
               const errors: Array<ErrorResponse> = resultat.errors;
+
+              resultat.errors.forEach((error: ErrorResponse) => {
+                setError(error.property, { message: error.error });
+              });
               errorResponse(errors);
             }
           });
