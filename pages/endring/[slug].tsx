@@ -82,14 +82,16 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     setInnsenderTelefon,
     refusjonskravetOpphoererDato,
     refusjonskravetOpphoererStatus,
-    setHarRefusjonEndringer
+    setHarRefusjonEndringer,
+    initRefusjonskravetOpphoerer
   ] = useBoundStore((state) => [
     state.initLonnISykefravaeret,
     state.initRefusjonEndringer,
     state.setInnsenderTelefon,
     state.refusjonskravetOpphoererDato,
     state.refusjonskravetOpphoererStatus,
-    state.setHarRefusjonEndringer
+    state.setHarRefusjonEndringer,
+    state.initRefusjonskravetOpphoerer
   ]);
 
   const searchParams = useSearchParams();
@@ -282,13 +284,22 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       };
 
       initLonnISykefravaeret(lonnISykefravaeretGreier);
+      const refusjonEndringer = skjemaData.refusjon.refusjonEndringer;
       initRefusjonEndringer(
-        skjemaData.refusjon.refusjonEndringer
-          ? skjemaData.refusjon.refusjonEndringer
+        refusjonEndringer
+          ? refusjonEndringer
               ?.filter((endring) => endring && endring.beloep !== undefined)
               .map((endring) => ({ beloep: endring.beloep, dato: endring.dato }))
           : []
       );
+
+      if (!!skjemaData.refusjon.kravetOpphoerer) {
+        initRefusjonskravetOpphoerer(
+          skjemaData.refusjon.kravetOpphoerer as YesNo,
+          skjemaData.refusjon.refusjonOpphoerer,
+          skjemaData.refusjon.harEndringer as YesNo
+        );
+      }
       setInnsenderTelefon(skjemaData.telefon);
 
       if (skjemaData.refusjon.kravetOpphoerer)
