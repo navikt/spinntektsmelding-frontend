@@ -194,6 +194,20 @@ export default function useFyllDelvisInnsending() {
           })[0]?.beloep;
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
+
+    const endringAarsak = skjema.inntekt.endringAarsak?.aarsak
+      ? {
+          ...skjema.inntekt.endringAarsak,
+          liste: skjema.inntekt.endringAarsak?.perioder ?? undefined,
+          typpe:
+            skjema.inntekt.endringAarsak?.aarsak === 'VarigLoennsendring'
+              ? 'VarigLonnsendring'
+              : skjema.inntekt.endringAarsak?.aarsak,
+          aarsak: undefined,
+          perioder: undefined
+        }
+      : undefined;
+
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
       identitetsnummer: identitetsnummer!,
@@ -212,15 +226,7 @@ export default function useFyllDelvisInnsending() {
         bekreftet: true,
         beregnetInntekt: skjema.inntekt.beloep!,
         manueltKorrigert: !!skjema.inntekt.endringAarsak?.aarsak,
-        endringÅrsak: skjema.inntekt.endringAarsak?.aarsak
-          ? {
-              ...skjema.inntekt.endringAarsak,
-              liste: skjema.inntekt.endringAarsak?.perioder ?? undefined,
-              typpe: skjema.inntekt.endringAarsak?.aarsak,
-              aarsak: undefined,
-              perioder: undefined
-            }
-          : undefined
+        endringÅrsak: endringAarsak
       },
       bestemmendeFraværsdag: bestemmendeFraværsdag!,
       fullLønnIArbeidsgiverPerioden: {
