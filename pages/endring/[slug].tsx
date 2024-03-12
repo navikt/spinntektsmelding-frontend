@@ -303,8 +303,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
       switch (skjemaData.inntekt.endringAarsak?.aarsak) {
         case begrunnelseEndringBruttoinntekt.Tariffendring:
-          setTariffEndringsdato(skjemaData.inntekt.endringAarsak.gjelderFra);
-          setTariffKjentdato(skjemaData.inntekt.endringAarsak.gjelderFra);
+          setTariffEndringsdato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
+          setTariffKjentdato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
           break;
         case begrunnelseEndringBruttoinntekt.Ferie: {
           const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
@@ -316,7 +316,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           break;
         }
         case begrunnelseEndringBruttoinntekt.VarigLoennsendring:
-          setLonnsendringDato(skjemaData.inntekt.endringAarsak.gjelderFra);
+          setLonnsendringDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
           break;
         case begrunnelseEndringBruttoinntekt.Permisjon: {
           const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
@@ -337,10 +337,10 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           break;
         }
         case begrunnelseEndringBruttoinntekt.NyStilling:
-          setNyStillingDato(skjemaData.inntekt.endringAarsak.gjelderFra);
+          setNyStillingDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
           break;
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent:
-          setNyStillingsprosentDato(skjemaData.inntekt.endringAarsak.gjelderFra);
+          setNyStillingsprosentDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
           break;
         case begrunnelseEndringBruttoinntekt.Sykefravaer: {
           const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
