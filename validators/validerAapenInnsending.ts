@@ -150,12 +150,12 @@ const EndringAarsakNyansattSchema = z.object({
 
 const EndringAarsakNyStillingSchema = z.object({
   aarsak: z.literal('NyStilling'),
-  gjelderFra: z.date()
+  gjelderFra: z.date().transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakNyStillingsprosentSchema = z.object({
   aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: z.date()
+  gjelderFra: z.date().transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakPermisjonSchema = z.object({
@@ -175,13 +175,13 @@ const EndringAarsakSykefravaerSchema = z.object({
 
 const EndringAarsakTariffendringSchema = z.object({
   aarsak: z.literal('Tariffendring'),
-  gjelderFra: z.date(),
-  bleKjent: z.date()
+  gjelderFra: z.date().transform((val) => toLocalIso(val)),
+  bleKjent: z.date().transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakVarigLoennsendringSchema = z.object({
   aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: z.date()
+  gjelderFra: z.date().transform((val) => toLocalIso(val))
 });
 
 export const EndringAarsakSchema = z.discriminatedUnion(
@@ -251,7 +251,7 @@ const schema = z.object({
             z.object({
               naturalytelse: NaturalytelseEnum,
               verdiBeloep: z.number().min(0),
-              sluttdato: z.date()
+              sluttdato: z.date().transform((val) => toLocalIso(val))
             })
           ),
           z.tuple([])
@@ -266,7 +266,10 @@ const schema = z.object({
         .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
       endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
-      sluttdato: z.date().nullable()
+      sluttdato: z
+        .date()
+        .transform((val) => toLocalIso(val))
+        .nullable()
     })
   ),
   aarsakInnsending: z.enum(['Endring', 'Ny'])
