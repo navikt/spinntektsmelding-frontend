@@ -39,8 +39,8 @@ export interface BruttoinntektState {
   sisteLonnshentedato?: Date;
   henterData: boolean;
   feilHentingAvInntektsdata?: Array<FeilReportElement>;
-  setNyMaanedsinntekt: (belop: string) => void;
-  setNyMaanedsinntektBlanktSkjema: (belop: string | number) => void;
+  setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => void;
+  setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
   setEndringsaarsak: (aarsak: string) => void;
   setFeriePeriode: (periode: Array<Periode> | undefined) => void;
@@ -77,10 +77,10 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   },
   tidligereInntekt: undefined,
   henterData: false,
-  setNyMaanedsinntekt: (belop: string) => {
+  setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => {
     set(
       produce((state) => {
-        state.bruttoinntekt.bruttoInntekt = stringishToNumber(belop);
+        state.bruttoinntekt.bruttoInntekt = stringishToNumber(beloep);
         if (state.bruttoinntekt.bruttoInntekt !== state.opprinneligbruttoinntekt.bruttoInntekt) {
           state.bruttoinntekt.manueltKorrigert = true;
         }
@@ -92,13 +92,13 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         }
 
         if (!state.lonnISykefravaeret) {
-          state.lonnISykefravaeret = { belop: stringishToNumber(belop) };
+          state.lonnISykefravaeret = { beloep: stringishToNumber(beloep) };
         } else {
-          state.lonnISykefravaeret.belop = stringishToNumber(belop);
+          state.lonnISykefravaeret.beloep = stringishToNumber(beloep);
         }
 
         state = slettFeilmeldingFraState(state, 'lus-input');
-        if (!belop || stringishToNumber(belop)! < 0) {
+        if (!beloep || stringishToNumber(beloep)! < 0) {
           state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
 
@@ -106,10 +106,10 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     );
   },
-  setNyMaanedsinntektBlanktSkjema: (belop: string | number) =>
+  setBareNyMaanedsinntekt: (beloep: string | number) =>
     set(
       produce((state) => {
-        state.bruttoinntekt.bruttoInntekt = typeof belop === 'string' ? stringishToNumber(belop) : belop;
+        state.bruttoinntekt.bruttoInntekt = typeof beloep === 'string' ? stringishToNumber(beloep) : beloep;
         state.bruttoinntekt.manueltKorrigert = false;
         if (state.bruttoinntekt.bruttoInntekt !== undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
           state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');

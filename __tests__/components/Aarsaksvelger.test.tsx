@@ -32,6 +32,10 @@ describe('Aarsaksvelger', () => {
   const setTariffKjentdato = vi.fn();
   const visFeilmeldingsTekst = vi.fn();
 
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('renders the component', () => {
     render(
       <Aarsaksvelger
@@ -177,7 +181,7 @@ describe('Aarsaksvelger', () => {
 
     await user.selectOptions(select, 'Varig lønnsendring');
 
-    expect(changeBegrunnelseHandler).toHaveBeenCalledWith('VarigLonnsendring');
+    expect(changeBegrunnelseHandler).toHaveBeenCalledWith('VarigLoennsendring');
   });
 
   it('calls the setTariffKjentdato function when the TariffendringDato component is used', async () => {

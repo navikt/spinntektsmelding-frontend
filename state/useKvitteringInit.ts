@@ -37,7 +37,7 @@ export default function useKvitteringInit() {
   const initPerson = useBoundStore((state) => state.initPerson);
 
   const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
-  const setNyMaanedsinntektBlanktSkjema = useBoundStore((state) => state.setNyMaanedsinntektBlanktSkjema);
+  const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
   const initFullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.initFullLonnIArbeidsgiverPerioden);
 
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
@@ -118,12 +118,18 @@ export default function useKvitteringInit() {
         ? jsonData.inntekt.beregnetInntekt
         : jsonData.beregnetInntekt || 0;
 
-    setNyMaanedsinntektBlanktSkjema(beregnetInntekt.toString());
+    setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
 
     if (jsonData.inntekt.endringÅrsak) {
       const aarsak: Tariffendring | PeriodeListe | StillingsEndring | AArsakType | undefined =
         jsonData.inntekt.endringÅrsak;
+
+      if (aarsak.typpe === 'VarigLonnsendring') {
+        //TODO: This is a bug, should be VarigLoennsendring.
+        aarsak.typpe = begrunnelseEndringBruttoinntekt.VarigLoennsendring;
+      }
+
       setEndringsaarsak(aarsak.typpe);
 
       switch (aarsak.typpe) {
@@ -144,7 +150,7 @@ export default function useKvitteringInit() {
           }
           break;
         }
-        case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
+        case begrunnelseEndringBruttoinntekt.VarigLoennsendring: {
           if ('gjelderFra' in aarsak) setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
           break;
         }
@@ -199,7 +205,7 @@ export default function useKvitteringInit() {
 
     initLonnISykefravaeret({
       status: jsonData.refusjon.utbetalerHeleEllerDeler ? 'Ja' : 'Nei',
-      belop: jsonData.refusjon.refusjonPrMnd
+      beloep: jsonData.refusjon.refusjonPrMnd
     });
     const paakrevdeData = hentPaakrevdOpplysningstyper();
 
@@ -226,7 +232,7 @@ export default function useKvitteringInit() {
 
     if (jsonData.refusjon.refusjonEndringer) {
       const endringer = jsonData.refusjon.refusjonEndringer.map((endring) => ({
-        belop: endring.beløp,
+        beloep: endring.beløp,
         dato: parseIsoDate(endring.dato)
       }));
       oppdaterRefusjonEndringer(endringer);

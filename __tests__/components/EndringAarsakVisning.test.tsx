@@ -42,7 +42,7 @@ describe('EndringAarsakVisning', () => {
 
   it('should show VarigLonnsendring data.', async () => {
     const { container } = render(
-      <EndringAarsakVisning endringsaarsak={'VarigLonnsendring'} lonnsendringsdato={new Date(2022, 11, 15)} />
+      <EndringAarsakVisning endringsaarsak={'VarigLoennsendring'} lonnsendringsdato={new Date(2022, 11, 15)} />
     );
     const results = await axe(container);
 

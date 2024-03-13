@@ -70,6 +70,8 @@ const toLocalIso = (val: Date) => {
   return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
 };
 
+const datoManglerFeilmelding = { required_error: 'Vennligst fyll inn fra dato' };
+
 const PeriodeSchema = z
   .object({
     fom: z
@@ -150,12 +152,12 @@ const EndringAarsakNyansattSchema = z.object({
 
 const EndringAarsakNyStillingSchema = z.object({
   aarsak: z.literal('NyStilling'),
-  gjelderFra: z.date()
+  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakNyStillingsprosentSchema = z.object({
   aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: z.date()
+  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakPermisjonSchema = z.object({
@@ -175,29 +177,43 @@ const EndringAarsakSykefravaerSchema = z.object({
 
 const EndringAarsakTariffendringSchema = z.object({
   aarsak: z.literal('Tariffendring'),
-  gjelderFra: z.date(),
-  bleKjent: z.date()
+  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val)),
+  bleKjent: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakVarigLoennsendringSchema = z.object({
   aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: z.date()
+  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
 });
 
-const EndringAarsakSchema = z.discriminatedUnion('aarsak', [
-  EndringAarsakBonusSchema,
-  EndringAarsakFeilregistrertSchema,
-  EndringAarsakFerieSchema,
-  EndringAarsakFerietrekkSchema,
-  EndringAarsakNyansattSchema,
-  EndringAarsakNyStillingSchema,
-  EndringAarsakNyStillingsprosentSchema,
-  EndringAarsakPermisjonSchema,
-  EndringAarsakPermitteringSchema,
-  EndringAarsakSykefravaerSchema,
-  EndringAarsakTariffendringSchema,
-  EndringAarsakVarigLoennsendringSchema
-]);
+export const EndringAarsakSchema = z.discriminatedUnion(
+  'aarsak',
+  [
+    EndringAarsakBonusSchema,
+    EndringAarsakFeilregistrertSchema,
+    EndringAarsakFerieSchema,
+    EndringAarsakFerietrekkSchema,
+    EndringAarsakNyansattSchema,
+    EndringAarsakNyStillingSchema,
+    EndringAarsakNyStillingsprosentSchema,
+    EndringAarsakPermisjonSchema,
+    EndringAarsakPermitteringSchema,
+    EndringAarsakSykefravaerSchema,
+    EndringAarsakTariffendringSchema,
+    EndringAarsakVarigLoennsendringSchema
+  ],
+  {
+    errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak for endringen.' })
+  }
+);
+
+export const telefonNummerSchema = z
+  .string({
+    required_error: 'Vennligst fyll inn telefonnummer',
+    invalid_type_error: 'Dette er ikke et telefonnummer'
+  })
+  .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
+  .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' });
 
 export const RefusjonEndringSchema = z.object({
   startDato: z
@@ -212,13 +228,7 @@ const schema = z.object({
   sykmeldtFnr: PersonnummerSchema,
   avsender: z.object({
     orgnr: OrganisasjonsnummerSchema,
-    tlf: z
-      .string({
-        required_error: 'Vennligst fyll inn telefonnummer',
-        invalid_type_error: 'Dette er ikke et telefonnummer'
-      })
-      .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
-      .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' })
+    tlf: telefonNummerSchema
   }),
   sykmeldingsperioder: PeriodeListeSchema,
   agp: z.object({
@@ -232,23 +242,25 @@ const schema = z.object({
     )
   }),
   inntekt: z.optional(
-    z.object({
-      beloep: z
-        .number({ required_error: 'Vennligst angi månedsinntekt' })
-        .min(0, 'Månedsinntekt må være større enn eller lik 0'),
-      inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
-      naturalytelser: z.union([
-        z.array(
-          z.object({
-            naturalytelse: NaturalytelseEnum,
-            verdiBeloep: z.number().min(0),
-            sluttdato: z.date()
-          })
-        ),
-        z.tuple([])
-      ]),
-      endringAarsak: z.optional(EndringAarsakSchema)
-    })
+    z
+      .object({
+        beloep: z
+          .number({ required_error: 'Vennligst angi månedsinntekt' })
+          .min(0, 'Månedsinntekt må være større enn eller lik 0'),
+        inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
+        naturalytelser: z.union([
+          z.array(
+            z.object({
+              naturalytelse: NaturalytelseEnum,
+              verdiBeloep: z.number().min(0),
+              sluttdato: z.date().transform((val) => toLocalIso(val))
+            })
+          ),
+          z.tuple([])
+        ]),
+        endringAarsak: EndringAarsakSchema.optional()
+      })
+      .optional()
   ),
   refusjon: z.optional(
     z.object({
@@ -256,7 +268,10 @@ const schema = z.object({
         .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
       endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
-      sluttdato: z.date().nullable()
+      sluttdato: z
+        .date()
+        .transform((val) => toLocalIso(val))
+        .nullable()
     })
   ),
   aarsakInnsending: z.enum(['Endring', 'Ny'])

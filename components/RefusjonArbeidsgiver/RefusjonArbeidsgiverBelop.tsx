@@ -17,7 +17,7 @@ export default function RefusjonArbeidsgiverBelop({
   onOppdaterBelop,
   visFeilmeldingsTekst,
   arbeidsgiverperiodeDisabled = false
-}: RefusjonArbeidsgiverBelopProps) {
+}: Readonly<RefusjonArbeidsgiverBelopProps>) {
   const [erEditerbar, setEditerbar] = useState<boolean>(false);
 
   const refusjonTilArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
@@ -28,14 +28,14 @@ export default function RefusjonArbeidsgiverBelop({
     return (
       <>
         <TextLabel>{refusjonTilArbeidsgiverEtterAgpLegend}</TextLabel>
-        <div className={localStyles.belopswrapper}>
-          <div className={localStyles.belop} data-cy='refusjon-arbeidsgiver-belop'>
+        <div className={localStyles.beloepswrapper}>
+          <div className={localStyles.beloep} data-cy='refusjon-arbeidsgiver-beloep'>
             {formatCurrency(bruttoinntekt)}&nbsp;kr
           </div>
           <ButtonEndre
             className={localStyles.endre_knapp}
             onClick={() => setEditerbar(true)}
-            data-cy='endre-refusjon-arbeidsgiver-belop'
+            data-cy='endre-refusjon-arbeidsgiver-beloep'
           />
           <span>
             Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør NAV. NAV vil
@@ -48,15 +48,15 @@ export default function RefusjonArbeidsgiverBelop({
 
   return (
     <>
-      <div className={localStyles.belopswrapper}>
+      <div className={localStyles.beloepswrapper}>
         <TextField
-          className={localStyles.refusjonsbelop}
+          className={localStyles.refusjonsbeloep}
           label='Oppgi refusjonsbeløpet per måned'
           value={bruttoinntekt}
           onChange={(event) => onOppdaterBelop(event.target.value)}
           id={'lus-input'}
           error={visFeilmeldingsTekst('lus-input')}
-          data-cy='refusjon-arbeidsgiver-belop-input'
+          data-cy='refusjon-arbeidsgiver-beloep-input'
         />
         <span className={localStyles.alert_span}>
           Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør NAV. NAV vil

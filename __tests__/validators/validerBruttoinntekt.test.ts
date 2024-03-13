@@ -191,7 +191,7 @@ describe('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLonnsendring
+        endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring
       }
     };
 
@@ -210,7 +210,7 @@ describe('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLonnsendring
+        endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring
       },
       lonnsendringsdato: new Date(2002, 1, 2),
       bestemmendeFravaersdag: new Date(2002, 1, 1)
@@ -231,7 +231,7 @@ describe('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLonnsendring
+        endringsaarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring
       },
       lonnsendringsdato: new Date(2002, 1, 2),
       bestemmendeFravaersdag: new Date(2002, 1, 3)

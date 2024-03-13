@@ -40,7 +40,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .check();
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i refusjonskrav mellom 02.01.2023 og 24.02.2023 (start av nytt sykefravær)?'
+      name: 'Er det endringer i refusjonskravet etter 24.02.2023 (start av nytt sykefravær)?'
     })
       .findByLabelText('Nei')
       .check();
@@ -117,11 +117,11 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findByLabelText('Månedsinntekt 24.02.2023').invoke('val').should('equal', '46 000,00');
+    cy.findByLabelText('Månedsinntekt 24.02.2023').invoke('val').should('equal', '46000');
     cy.findByLabelText('Månedsinntekt 24.02.2023').clear().type('50000');
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i refusjonskrav mellom 02.01.2023 og 24.02.2023 (start av nytt sykefravær)?'
+      name: 'Er det endringer i refusjonskravet etter 24.02.2023 (start av nytt sykefravær)?'
     })
       .findByLabelText('Ja')
       .check();

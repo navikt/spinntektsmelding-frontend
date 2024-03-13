@@ -2,18 +2,18 @@
   margin-top: 1.5rem;
 }
 
-.belopswrapper {
+.beloepswrapper {
   display: flex;
   gap: 2rem;
   margin-top: 0.75rem;
 }
 
-.belop {
+.beloep {
   margin-top: auto;
   margin-bottom: auto;
 }
 
-.refusjonsbelop > input {
+.refusjonsbeloep > input {
   max-width: 18rem;
 }
 
@@ -25,14 +25,14 @@
   height: 48px;
 }
 
-.belopperiode,
+.beloepperiode,
 .wraputbetaling {
   display: flex;
   flex-direction: row;
   gap: 2rem;
 }
 
-.belopperiode {
+.beloepperiode {
   margin-bottom: 1rem;
 }
 
@@ -62,8 +62,8 @@
 }
 
 @media screen and (max-width: 500px) {
-  .belopswrapper,
-  .belopperiode,
+  .beloepswrapper,
+  .beloepperiode,
   .wraputbetaling {
     flex-direction: column;
   }

@@ -4,7 +4,7 @@ import { CompleteState } from './useBoundStore';
 import { isEqual, parseISO } from 'date-fns';
 import { YesNo } from './state';
 import { MottattPeriodeRefusjon, TDateISODate } from './MottattData';
-import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import skjemaVariant from '../config/skjemavariant';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import parseIsoDate from '../utils/parseIsoDate';
@@ -85,7 +85,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
   initForespurtData: (forespurtData) => {
     const initRefusjonEndringer = get().initRefusjonEndringer;
     const initLonnISykefravaeret = get().initLonnISykefravaeret;
-    const setNyMaanedsinntektBlanktSkjema = get().setNyMaanedsinntektBlanktSkjema;
+    const setBareNyMaanedsinntekt = get().setBareNyMaanedsinntekt;
     const slettAlleArbeidsgiverperioder = get().slettAlleArbeidsgiverperioder;
     const slettBruttoinntekt = get().slettBruttoinntekt;
     const setEndringsaarsak = get().setEndringsaarsak;
@@ -103,9 +103,9 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         : refusjon?.perioder;
 
       const harEndringer = sjekkHarEndring(refusjon, bestemmendeFravaersdag);
-      const refusjonsbelop = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
+      const refusjonsbeloep = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
 
-      settRefusjonsbelop(refusjonsbelop, harEndringer);
+      settRefusjonsbeloep(refusjonsbeloep, harEndringer);
 
       const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
       const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
@@ -119,12 +119,12 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         refusjonerUtenOpprinneligBfd.length > 0 ? 'Ja' : 'Nei'
       );
 
-      const refusjonEndringer: Array<EndringsBelop> = refusjonPerioderTilRefusjonEndringer(refusjonPerioder);
+      const refusjonEndringer: Array<EndringsBeloep> = refusjonPerioderTilRefusjonEndringer(refusjonPerioder);
 
       initRefusjonEndringer(refusjonEndringer);
 
       if (inntekt?.forrigeInntekt?.beløp) {
-        setNyMaanedsinntektBlanktSkjema(inntekt.forrigeInntekt.beløp);
+        setBareNyMaanedsinntekt(inntekt.forrigeInntekt.beløp);
         setOpprinneligNyMaanedsinntekt();
       } else {
         slettBruttoinntekt();
@@ -160,10 +160,10 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       })
     );
 
-    function settRefusjonsbelop(belop: number, harEndringer: YesNo | undefined) {
+    function settRefusjonsbeloep(beloep: number, harEndringer: YesNo | undefined) {
       initLonnISykefravaeret({
         status: harEndringer,
-        belop: belop ?? 0
+        beloep: beloep ?? 0
       });
     }
   },
@@ -295,11 +295,11 @@ function perioderEksklBestemmendeFravaersdag(
   });
 }
 
-function refusjonPerioderTilRefusjonEndringer(perioder: MottattPeriodeRefusjon[]): EndringsBelop[] {
+function refusjonPerioderTilRefusjonEndringer(perioder: MottattPeriodeRefusjon[]): EndringsBeloep[] {
   return perioder.map((periode: MottattPeriodeRefusjon) => {
     return {
       dato: periode.fom ? parseISO(periode.fom) : undefined,
-      belop: ugyldigEllerNegativtTall(periode.beloep) ? undefined : periode.beloep
+      beloep: ugyldigEllerNegativtTall(periode.beloep) ? undefined : periode.beloep
     };
   });
 }

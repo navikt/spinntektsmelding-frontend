@@ -1,4 +1,4 @@
-import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import { LonnISykefravaeret, YesNo } from '../state/state';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
@@ -13,7 +13,7 @@ export enum EndringAvMaanedslonnFeilkode {
 
 export default function valdiderEndringAvMaanedslonn(
   harRefusjonEndringer?: YesNo,
-  refusjonEndringer?: Array<EndringsBelop>,
+  refusjonEndringer?: Array<EndringsBeloep>,
   lonnISykefravaeret?: LonnISykefravaeret,
   bruttoInntekt?: number
 ): Array<ValiderResultat> {
@@ -29,13 +29,13 @@ export default function valdiderEndringAvMaanedslonn(
 
   if (harRefusjonEndringer === 'Ja' && refusjonEndringer) {
     refusjonEndringer.forEach((endring, index) => {
-      if (ugyldigEllerNegativtTall(endring.belop)) {
+      if (ugyldigEllerNegativtTall(endring.beloep)) {
         feilmeldinger.push({
           felt: `refusjon.refusjonEndringer[${index}].beløp`,
           code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP
         });
       }
-      if (endring.belop && bruttoInntekt && endring.belop > bruttoInntekt) {
+      if (endring.beloep && bruttoInntekt && endring.beloep > bruttoInntekt) {
         feilmeldinger.push({
           felt: `refusjon.refusjonEndringer[${index}].beløp`,
           code: EndringAvMaanedslonnFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT

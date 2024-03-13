@@ -77,8 +77,8 @@ export default function Aarsaksvelger({
           defaultValue={bruttoinntekt && bruttoinntekt.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
           id='inntekt.beregnetInntekt'
           error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
-          className={lokalStyles.bruttoinntektendringsbelop}
-          data-cy='inntekt-belop-input'
+          className={lokalStyles.bruttoinntektendringsbeloep}
+          data-cy='inntekt-beloep-input'
         />
         <div>
           <SelectEndringBruttoinntekt
@@ -122,7 +122,7 @@ export default function Aarsaksvelger({
           />
         </div>
       )}
-      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLonnsendring && (
+      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLoennsendring && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <Datovelger
             onDateChange={setLonnsendringDato}

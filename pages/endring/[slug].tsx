@@ -1,4 +1,7 @@
-import { BodyLong, Button, ConfirmationPanel, Link, Radio, RadioGroup } from '@navikt/ds-react';
+import { z } from 'zod';
+import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { BodyLong, Button, ConfirmationPanel, Link } from '@navikt/ds-react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useState, useCallback } from 'react';
@@ -8,78 +11,88 @@ import styles from '../../styles/Home.module.css';
 import formatDate from '../../utils/formatDate';
 import formatCurrency from '../../utils/formatCurrency';
 import useBoundStore from '../../state/useBoundStore';
-import Feilsammendrag from '../../components/Feilsammendrag';
-import feiltekster from '../../utils/feiltekster';
 import lokalStyles from './Endring.module.css';
-import Datovelger from '../../components/Datovelger';
-import classNames from 'classnames/bind';
-import Person from '../../components/Person/Person';
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Heading2 from '../../components/Heading2/Heading2';
 import H3Label from '../../components/H3Label';
-import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
-import { YesNo } from '../../state/state';
 import { useSearchParams } from 'next/navigation';
 import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 import logEvent from '../../utils/logEvent';
 import environment from '../../config/environment';
-import RefusjonUtbetalingEndring from '../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import IngenTilgang from '../../components/IngenTilgang';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
-import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
-import TextLabel from '../../components/TextLabel';
-import ButtonEndre from '../../components/ButtonEndre';
-import useSendInnSkjema from '../../utils/useSendInnSkjema';
-import { isEqual } from 'date-fns';
+import useSendInnDelvisSkjema from '../../utils/useSendInnDelvisSkjema';
+import { isAfter, isBefore } from 'date-fns';
+import parseIsoDate from '../../utils/parseIsoDate';
+import delvisInnsendingSchema from '../../schema/delvisInnsendingSchema';
+import FancyJaNei from '../../components/FancyJaNei/FancyJaNei';
+import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
+import RefusjonArbeidsgiverBeloep from '../../components/RefusjonArbeidsgiverBeloep/RefusjonArbeidsgiverBeloep';
+import EndringRefusjon from '../../components/EndringRefusjon/EndringRefusjon';
+import DatoVelger from '../../components/DatoVelger/DatoVelger';
+import PersonData from '../../components/PersonData/PersonData';
+import FeilListe from '../../components/Feilsammendrag/FeilListe';
+import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
+import { LonnISykefravaeret, Periode, YesNo } from '../../state/state';
+import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
+import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [endringBruttolonn, setEndringBruttolonn] = useBoundStore((state) => [
-    state.endringBruttolonn,
-    state.setEndringBruttolonn
-  ]);
-  const [endringerAvRefusjon, setEndringerAvRefusjon, tilbakestillRefusjoner] = useBoundStore((state) => [
-    state.endringerAvRefusjon,
-    state.setEndringerAvRefusjon,
-    state.tilbakestillRefusjoner
-  ]);
+  type Skjema = z.infer<typeof delvisInnsendingSchema>;
+  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
-  const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
+  const [setEndringerAvRefusjon] = useBoundStore((state) => [state.setEndringerAvRefusjon]);
 
-  const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
   const ferie = useBoundStore((state) => state.ferie);
-  const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
-  const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
-  const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
   const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-  const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
-  const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
-  const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
   const permisjon = useBoundStore((state) => state.permisjon);
-  const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
   const permittering = useBoundStore((state) => state.permittering);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-  const setNyMaanedsinntekt = useBoundStore((state) => state.setNyMaanedsinntekt);
+  const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
 
-  const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
-  const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
-  const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
-  const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const opprinneligLonnISykefravaeret = useBoundStore((state) => state.opprinneligLonnISykefravaeret);
-  const beloepArbeidsgiverBetalerISykefravaeret = useBoundStore(
-    (state) => state.beloepArbeidsgiverBetalerISykefravaeret
-  );
+
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
+  const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
+
+  // Bruttoinntekt
+  const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
+  const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
+  const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
+  const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
+  const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
+  const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
+  const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
+  const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
+  const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
+  // Bruttoinntekt slutt
+
+  const [
+    initLonnISykefravaeret,
+    initRefusjonEndringer,
+    setInnsenderTelefon,
+    refusjonskravetOpphoererDato,
+    refusjonskravetOpphoererStatus,
+    setHarRefusjonEndringer,
+    initRefusjonskravetOpphoerer
+  ] = useBoundStore((state) => [
+    state.initLonnISykefravaeret,
+    state.initRefusjonEndringer,
+    state.setInnsenderTelefon,
+    state.refusjonskravetOpphoererDato,
+    state.refusjonskravetOpphoererStatus,
+    state.setHarRefusjonEndringer,
+    state.initRefusjonskravetOpphoerer
+  ]);
 
   const searchParams = useSearchParams();
 
@@ -88,66 +101,121 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const ukjentInntekt = useBoundStore((state) => state.ukjentInntekt);
-  const arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret = useBoundStore(
-    (state) => state.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret
-  );
+
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
-  const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
+
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const kanBruttoinntektTilbakebestilles = useBoundStore((state) => state.kanBruttoinntektTilbakebestilles);
-  const [
-    opprinneligRefusjonEndringer,
-    opprinneligRefusjonskravetOpphoerer,
-    harRefusjonEndringer,
-    arbeidsgiverKreverRefusjon,
-    arbeidsgiverRefusjonskravOpphører,
-    arbeidsgiverRefusjonskravHarEndringer
-  ] = useBoundStore((state) => [
-    state.opprinneligRefusjonEndringer,
-    state.opprinneligRefusjonskravetOpphoerer,
-    state.harRefusjonEndringer,
-    state.arbeidsgiverKreverRefusjon,
-    state.arbeidsgiverRefusjonskravOpphører,
-    state.arbeidsgiverRefusjonskravHarEndringer
-  ]);
+  const forespurtData = useBoundStore((state) => state.forespurtData);
+  const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer, harRefusjonEndringer] = useBoundStore(
+    (state) => [
+      state.opprinneligRefusjonEndringer,
+      state.opprinneligRefusjonskravetOpphoerer,
+      state.harRefusjonEndringer
+    ]
+  );
+  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
-  const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
   const aapentManglendeData = inngangFraKvittering || ukjentInntekt;
 
-  const [
-    visFeilmeldingsTekst,
-    slettFeilmelding,
-    leggTilFeilmelding,
-    feilmeldinger,
-    fyllFeilmeldinger,
-    setSkalViseFeilmeldinger
-  ] = useBoundStore((state) => [
-    state.visFeilmeldingsTekst,
-    state.slettFeilmelding,
-    state.leggTilFeilmelding,
-    state.feilmeldinger,
-    state.fyllFeilmeldinger,
-    state.setSkalViseFeilmeldinger
-  ]);
+  const [innsenderTelefonNr] = useBoundStore((state) => [state.innsenderTelefonNr]);
+
   const amplitudeComponent = 'DelvisInnsending';
-
-  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, amplitudeComponent);
-
-  const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
-  const addIsDirtyForm = (fn: (param: any) => void) => {
-    return (param: any) => {
-      setIsDirtyForm(true);
-      fn(param);
-    };
-  };
+  const foersteDatoForRefusjon = skjaeringstidspunkt ?? bestemmendeFravaersdag;
+
+  const refusjonEndringerUtenSkjaeringstidspunkt =
+    foersteDatoForRefusjon && refusjonEndringer
+      ? refusjonEndringer?.filter((endring) => {
+          if (!endring.dato) return false;
+          return isAfter(endring.dato, foersteDatoForRefusjon);
+        })
+      : refusjonEndringer;
+
+  const refusjonPrMnd = !nyInnsending
+    ? lonnISykefravaeret!.beloep ?? bruttoinntekt?.bruttoInntekt
+    : refusjonEndringer
+        ?.filter((endring) => {
+          if (!endring.dato) return false;
+          return !isAfter(endring.dato, foersteDatoForRefusjon);
+        })
+        .map((endring) => {
+          return {
+            beloep: endring.beloep,
+            dato: endring.dato
+          };
+        })
+        .sort((a, b) => {
+          return a.dato && b.dato ? (a.dato < b.dato ? 1 : -1) : 0;
+        })[0]?.beloep;
+
+  const aktiveRefusjonEndringer = nyInnsending
+    ? refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
+      ? refusjonEndringerUtenSkjaeringstidspunkt
+      : [{ beloep: undefined, dato: undefined }]
+    : refusjonEndringer;
+
+  const opprinneligRefusjonskravetOpphoererStatus = opprinneligRefusjonskravetOpphoerer?.status;
+  const opprinneligRefusjonskravetOpphoererDato = opprinneligRefusjonskravetOpphoerer?.opphoersdato;
+
+  const methods = useForm<Skjema>({
+    resolver: zodResolver(delvisInnsendingSchema),
+    defaultValues: {
+      inntekt: {
+        beloep: bruttoinntekt.bruttoInntekt
+      },
+      telefon: innsenderTelefonNr,
+      opplysningerBekreftet: false,
+      refusjon: {
+        refusjonPrMnd: refusjonPrMnd,
+        refusjonEndringer: aktiveRefusjonEndringer,
+        harEndringer:
+          refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
+            ? 'Ja'
+            : 'Nei',
+        refusjonOpphoerer: opprinneligRefusjonskravetOpphoererDato,
+        kravetOpphoerer: opprinneligRefusjonskravetOpphoererStatus,
+        kreverRefusjon: refusjonPrMnd !== 0 ? 'Ja' : 'Nei'
+      }
+    }
+  });
+
+  const {
+    unregister,
+    setValue,
+    setError,
+    register,
+    watch,
+    formState: { isDirty, errors }
+  } = methods;
+
+  const harEndringBruttoloenn = watch('inntekt.endringBruttoloenn');
+
+  const harEndringRefusjon = watch('refusjon.erDetEndringRefusjon');
+
+  const skalRefusjonskravetOpphoere = watch('refusjon.kravetOpphoerer');
+
+  const arbeidsgiverKreverRefusjon = watch('refusjon.kreverRefusjon');
+
+  useEffect(() => {
+    if (refusjonPrMnd) {
+      setValue('refusjon.refusjonPrMnd', refusjonPrMnd);
+    }
+  }, [refusjonPrMnd, setValue]);
+
+  useEffect(() => {
+    if (bruttoinntekt.bruttoInntekt) {
+      setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+    }
+  }, [bruttoinntekt.bruttoInntekt, setValue]);
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
@@ -164,24 +232,9 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         component: amplitudeComponent
       });
 
-      setEndreMaanedsinntekt(false);
       tilbakestillMaanedsinntekt();
     },
-    [setEndreMaanedsinntekt, tilbakestillMaanedsinntekt]
-  );
-
-  const setEndreMaanedsinntektHandler = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      event.preventDefault();
-
-      logEvent('knapp klikket', {
-        tittel: 'Endre beregnet månedsinntekt',
-        component: amplitudeComponent
-      });
-
-      setEndreMaanedsinntekt(true);
-    },
-    [setEndreMaanedsinntekt]
+    [tilbakestillMaanedsinntekt]
   );
 
   useEffect(() => {
@@ -198,59 +251,112 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const forsteFravaersdag = foreslaattBestemmendeFravaersdag;
 
-  const submitForm = (event: React.FormEvent) => {
-    event.preventDefault();
+  const sendInnDelvisSkjema = useSendInnDelvisSkjema(setIngenTilgangOpen, amplitudeComponent, setError);
 
-    fyllFeilmeldinger([]);
-    if (endringerAvRefusjon === undefined) {
-      leggTilFeilmelding('endring-refusjon', feiltekster.ENDRINGER_AV_REFUSJON);
-    }
-
-    if (endringBruttolonn === undefined) {
-      leggTilFeilmelding('endring-bruttolonn', feiltekster.ENDRING_BRUTTOLOENN);
-    }
-
-    if (endringerAvRefusjon === undefined || endringBruttolonn === undefined) {
-      setSkalViseFeilmeldinger(true);
-
-      return;
-    }
-
+  const submitForm: SubmitHandler<Skjema> = (skjemaData: Skjema) => {
     setSenderInn(true);
 
-    sendInnSkjema(opplysningerBekreftet, true, pathSlug, isDirtyForm).finally(() => {
+    sendInnDelvisSkjema(true, pathSlug, isDirty, skjemaData).finally(() => {
+      const lonnISykefravaeretGreier: LonnISykefravaeret = {
+        beloep: skjemaData.refusjon.refusjonPrMnd,
+        status: skjemaData.refusjon.kreverRefusjon
+      };
+
+      initLonnISykefravaeret(lonnISykefravaeretGreier);
+      const refusjonEndringer = skjemaData.refusjon.refusjonEndringer;
+      initRefusjonEndringer(
+        refusjonEndringer
+          ? refusjonEndringer
+              ?.filter((endring) => endring && endring.beloep !== undefined)
+              .map((endring) => ({ beloep: endring.beloep, dato: endring.dato }))
+          : []
+      );
+
+      if (!!skjemaData.refusjon.kravetOpphoerer) {
+        initRefusjonskravetOpphoerer(
+          skjemaData.refusjon.kravetOpphoerer as YesNo,
+          skjemaData.refusjon.refusjonOpphoerer,
+          skjemaData.refusjon.harEndringer as YesNo
+        );
+      }
+      setInnsenderTelefon(skjemaData.telefon);
+
+      if (skjemaData.refusjon.kravetOpphoerer)
+        refusjonskravetOpphoererStatus(skjemaData.refusjon.kravetOpphoerer as YesNo);
+      if (skjemaData.refusjon.refusjonOpphoerer) refusjonskravetOpphoererDato(skjemaData.refusjon.refusjonOpphoerer);
+      setHarRefusjonEndringer(skjemaData.refusjon.harEndringer as YesNo);
+
+      if (skjemaData.inntekt.beloep) {
+        setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
+      }
+      setEndringsaarsak(skjemaData.inntekt.endringAarsak?.aarsak ?? '');
+
+      switch (skjemaData.inntekt.endringAarsak?.aarsak) {
+        case begrunnelseEndringBruttoinntekt.Tariffendring:
+          setTariffEndringsdato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
+          setTariffKjentdato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
+          break;
+        case begrunnelseEndringBruttoinntekt.Ferie: {
+          const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom),
+            id: periode.fom + '-' + periode.tom
+          }));
+          setFeriePeriode(datoPerioder);
+          break;
+        }
+        case begrunnelseEndringBruttoinntekt.VarigLoennsendring:
+          setLonnsendringDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
+          break;
+        case begrunnelseEndringBruttoinntekt.Permisjon: {
+          const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom),
+            id: periode.fom + '-' + periode.tom
+          }));
+          setPermisjonPeriode(datoPerioder);
+          break;
+        }
+        case begrunnelseEndringBruttoinntekt.Permittering: {
+          const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom),
+            id: periode.fom + '-' + periode.tom
+          }));
+          setPermitteringPeriode(datoPerioder);
+          break;
+        }
+        case begrunnelseEndringBruttoinntekt.NyStilling:
+          setNyStillingDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
+          break;
+        case begrunnelseEndringBruttoinntekt.NyStillingsprosent:
+          setNyStillingsprosentDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
+          break;
+        case begrunnelseEndringBruttoinntekt.Sykefravaer: {
+          const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom),
+            id: periode.fom + '-' + periode.tom
+          }));
+          setSykefravaerPeriode(datoPerioder);
+          break;
+        }
+        case begrunnelseEndringBruttoinntekt.Feilregistrert:
+        case begrunnelseEndringBruttoinntekt.Bonus:
+        case begrunnelseEndringBruttoinntekt.Nyansatt:
+        case begrunnelseEndringBruttoinntekt.Ferietrekk:
+        default:
+          // Fall gjennom uten å gjøre noe
+          break;
+      }
+
       setSenderInn(false);
     });
   };
 
-  const handleChangeEndringLonn = (value: string) => {
-    setEndringBruttolonn(value as YesNo);
-    slettFeilmelding('endring-bruttolonn');
-    if (value === 'Nei') {
-      setEndreMaanedsinntekt(false);
-      tilbakestillMaanedsinntekt();
-      logEvent('knapp klikket', {
-        tittel: 'Tilbakestill beregnet månedsinntekt',
-        component: amplitudeComponent
-      });
-    } else {
-      setEndreMaanedsinntekt(true);
-      logEvent('knapp klikket', {
-        tittel: 'Endre beregnet månedsinntekt',
-        component: amplitudeComponent
-      });
-    }
-  };
-
-  const handleChangeEndringRefusjon = (value: string) => {
-    setEndringerAvRefusjon(value as YesNo);
-    tilbakestillRefusjoner();
-    slettFeilmelding('endring-refusjon');
-  };
-
   const changeMaanedsintektHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    setNyMaanedsinntekt(event.target.value);
+    setBareNyMaanedsinntekt(event.target.value);
   };
 
   const changeBegrunnelseHandler = (verdi: string) => {
@@ -264,47 +370,40 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     setEndringsaarsak(verdi);
   };
 
-  const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
-    setOpplysningerBekreftet(!!event.currentTarget.checked);
-    if (event.currentTarget.checked) {
-      slettFeilmelding('bekreft-opplysninger');
-    } else {
-      leggTilFeilmelding('bekreft-opplysninger', feiltekster.BEKREFT_OPPLYSNINGER);
-    }
-  };
-
   useEffect(() => {
     if (aapentManglendeData) {
-      setEndringBruttolonn('Ja');
       setEndringerAvRefusjon('Ja');
     }
   }, [aapentManglendeData]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  let cx = classNames.bind(lokalStyles);
-  const classNameJa = cx({ fancyRadio: true, selectedRadio: endringBruttolonn === 'Ja' });
-  const classNameNei = cx({ fancyRadio: true, selectedRadio: endringBruttolonn === 'Nei' });
-
-  const classNameJaEndringAvRefusjon = cx({ fancyRadio: true, selectedRadio: endringerAvRefusjon === 'Ja' });
-  const classNameNeiEndringAvRefusjon = cx({ fancyRadio: true, selectedRadio: endringerAvRefusjon === 'Nei' });
 
   const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrige innsending';
   const kanIkkeTilbakestilles = !kanBruttoinntektTilbakebestilles();
 
   const harEndringer = harRefusjonEndringer;
 
-  const kreverIkkeRefusjon =
-    gammeltSkjaeringstidspunkt &&
-    opprinneligRefusjonEndringer?.filter((endring) => {
-      return gammeltSkjaeringstidspunkt !== endring.dato && endring.belop !== 0;
-    }).length === 0;
+  const kreverIkkeRefusjon = nyInnsending
+    ? gammeltSkjaeringstidspunkt &&
+      opprinneligRefusjonEndringer?.filter((endring) => {
+        return gammeltSkjaeringstidspunkt !== endring.dato && endring.beloep !== 0;
+      }).length === 0
+    : lonnISykefravaeret?.status === 'Nei' || !lonnISykefravaeret;
 
-  const refusjonEndringerUtenSkjaeringstidspunkt =
-    gammeltSkjaeringstidspunkt && refusjonEndringer
-      ? refusjonEndringer?.filter((endring) => {
-          if (!endring.dato) return false;
-          return !isEqual(gammeltSkjaeringstidspunkt, endring.dato);
-        })
-      : refusjonEndringer;
+  const refusjonOpphoerer = !!forespurtData?.refusjon.forslag?.opphoersdato;
+  let refusjonBeloep = refusjonPrMnd;
+
+  if (
+    refusjonOpphoerer &&
+    isBefore(parseIsoDate(forespurtData?.refusjon.forslag?.opphoersdato!), gammeltSkjaeringstidspunkt!)
+  ) {
+    refusjonBeloep = 0;
+  }
+
+  const feilmeldinger = mapErrorsObjectToFeilmeldinger(errors);
+  useEffect(() => {
+    if (harEndringBruttoloenn === 'Nei') {
+      unregister('inntekt.endringAarsak');
+    }
+  }, [harEndringBruttoloenn, unregister, register]);
 
   return (
     <div className={styles.container}>
@@ -317,59 +416,38 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       <div>
         <PageContent title='Oppdatert informasjon - innsendt inntektsmelding'>
           <main className={`main-content`}>
-            <form className={styles.padded} onSubmit={submitForm}>
-              <Person erDelvisInnsending />
-              <Skillelinje />
-              <Heading2>Beregnet månedslønn</Heading2>
-              {ukjentInntekt && (
-                <BodyLong>
-                  Vi har ikke data fra den siste inntektsmeldingen, derfor må dere angi beregnet månedslønn manuelt.
-                </BodyLong>
-              )}
-              {!ukjentInntekt && !aapentManglendeData && (
-                <>
+            <FormProvider {...methods}>
+              <form className={styles.padded} onSubmit={methods.handleSubmit(submitForm)}>
+                <PersonData erDelvisInnsending />
+                <Skillelinje />
+                <Heading2>Beregnet månedslønn</Heading2>
+                {ukjentInntekt && (
                   <BodyLong>
-                    I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
-                    <strong>{formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)}</strong> kr
+                    Vi har ikke data fra den siste inntektsmeldingen, derfor må dere angi beregnet månedslønn manuelt.
                   </BodyLong>
-                  <RadioGroup
-                    legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
-                      forsteFravaersdag
-                    )} (start av nytt sykefravær)?`}
-                    onChange={addIsDirtyForm(handleChangeEndringLonn)}
-                    className={lokalStyles.fancyRadioGruppe}
-                    defaultValue={endringBruttolonn}
-                    id='endring-bruttolonn'
-                    error={visFeilmeldingsTekst('endring-bruttolonn')}
-                  >
-                    <Radio value='Ja' className={classNameJa}>
-                      Ja
-                    </Radio>
-                    <Radio value='Nei' className={classNameNei}>
-                      Nei
-                    </Radio>
-                  </RadioGroup>
-                </>
-              )}
-              {((endringBruttolonn === 'Ja' && !ukjentInntekt) || ukjentInntekt) && (
-                <div>
-                  <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
+                )}
+                {!ukjentInntekt && (
+                  <>
+                    <BodyLong>
+                      I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
+                      <strong>{formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)}</strong>&nbsp;kr
+                    </BodyLong>
+                    <FancyJaNei
+                      legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
+                        forsteFravaersdag
+                      )} (start av nytt sykefravær)?`}
+                      name='inntekt.endringBruttoloenn'
+                    />
+                  </>
+                )}
+                {((harEndringBruttoloenn === 'Ja' && !ukjentInntekt) || ukjentInntekt) && (
+                  <div>
+                    <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
 
-                  <div className={lokalStyles.belopwrapper}>
-                    {!bruttoinntekt?.manueltKorrigert && !endreMaanedsinntekt && (
-                      <>
-                        <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-belop'>
-                          {formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)} kr/måned
-                        </TextLabel>
-                        <ButtonEndre data-cy='endre-belop' onClick={setEndreMaanedsinntektHandler} />
-                      </>
-                    )}
-
-                    {(bruttoinntekt?.manueltKorrigert || endreMaanedsinntekt) && (
-                      <Aarsaksvelger
-                        bruttoinntekt={bruttoinntekt}
-                        changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
-                        changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
+                    <div className={lokalStyles.beloepwrapper}>
+                      <VelgAarsak
+                        changeMaanedsintektHandler={changeMaanedsintektHandler}
+                        changeBegrunnelseHandler={changeBegrunnelseHandler}
                         tariffendringDato={tariffendringDato}
                         tariffkjentdato={tariffkjentdato}
                         ferie={ferie}
@@ -379,195 +457,157 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         nystillingsprosentdato={nystillingsprosentdato}
                         lonnsendringsdato={lonnsendringsdato}
                         sykefravaerperioder={sykefravaerperioder}
-                        setTariffEndringsdato={addIsDirtyForm(setTariffEndringsdato)}
-                        setTariffKjentdato={addIsDirtyForm(setTariffKjentdato)}
-                        setFeriePeriode={addIsDirtyForm(setFeriePeriode)}
-                        setLonnsendringDato={addIsDirtyForm(setLonnsendringDato)}
-                        setNyStillingDato={addIsDirtyForm(setNyStillingDato)}
-                        setNyStillingsprosentDato={addIsDirtyForm(setNyStillingsprosentDato)}
-                        setPermisjonPeriode={addIsDirtyForm(setPermisjonPeriode)}
-                        setPermitteringPeriode={addIsDirtyForm(setPermitteringPeriode)}
-                        setSykefravaerPeriode={addIsDirtyForm(setSykefravaerPeriode)}
-                        visFeilmeldingsTekst={visFeilmeldingsTekst}
                         bestemmendeFravaersdag={forsteFravaersdag}
                         nyInnsending={nyInnsending}
                         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
                         kanIkkeTilbakestilles={kanIkkeTilbakestilles}
                       />
-                    )}
+                    </div>
                   </div>
-                </div>
-              )}
-              <Skillelinje />
-              <Heading2>Refusjon</Heading2>
-              {kreverIkkeRefusjon && (
-                <BodyLong>I henhold til siste inntektsmelding hadde dere ikke noe refusjonskrav.</BodyLong>
-              )}
-              {!aapentManglendeData && (
-                <>
-                  {!kreverIkkeRefusjon && (
-                    <>
-                      <BodyLong>I siste inntektsmelding hadde dere følgende refusjonskrav:</BodyLong>
-                      <H3Label unPadded topPadded>
-                        Refusjon til arbeidsgiver etter arbeidsgiverperiode
-                      </H3Label>
-                      {!harEndringer && <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>}
-                      {harEndringer && (
-                        <>
-                          {formatCurrency(opprinneligLonnISykefravaeret?.belop || 0)} kr
-                          <H3Label unPadded topPadded>
-                            Er det endringer i refusjonskrav i perioden?
-                          </H3Label>
-                          {refusjonEndringerUtenSkjaeringstidspunkt &&
-                          refusjonEndringerUtenSkjaeringstidspunkt?.length > 0
-                            ? 'Ja'
-                            : 'Nei'}
-                          {refusjonEndringerUtenSkjaeringstidspunkt &&
-                            refusjonEndringerUtenSkjaeringstidspunkt?.length > 0 && (
-                              <div className={lokalStyles.refusjonswrapper}>
-                                <table>
-                                  <thead>
-                                    <tr>
-                                      <th className={lokalStyles.table_header}>
-                                        <strong>Endret refusjon</strong>
-                                      </th>
-                                      <th>
-                                        <strong>Dato for endret refusjon</strong>
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {refusjonEndringerUtenSkjaeringstidspunkt?.map((endring) => (
-                                      <tr key={endring.dato?.toString()}>
-                                        <td>{formatCurrency(endring.belop)} kr</td>
-                                        <td>{formatDate(endring.dato)}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            )}
-                          <H3Label unPadded topPadded>
-                            Opphører refusjonkravet under sykefraværet?
-                          </H3Label>
-                          {opprinneligRefusjonskravetOpphoerer?.status}
-                          {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
+                )}
+                <Skillelinje />
+                <Heading2>Refusjon</Heading2>
+                {kreverIkkeRefusjon && (
+                  <BodyLong>I henhold til siste inntektsmelding hadde dere ikke refusjonskrav.</BodyLong>
+                )}
+
+                {!kreverIkkeRefusjon && (
+                  <>
+                    <H3Label unPadded topPadded>
+                      Refusjon til arbeidsgiver
+                    </H3Label>
+                    {!harEndringer && <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>}
+                    {harEndringer && (
+                      <>
+                        {formatCurrency(refusjonBeloep || 0)} kr
+                        {errors.refusjon?.refusjonPrMnd?.message && (
+                          <div className='navds-form-field navds-form-field--medium navds-text-field--error endring-error-bottom-padded'>
+                            <div
+                              className='navds-form-field__error'
+                              id='textField-error-refusjon-refusjonPrMnd'
+                              aria-relevant='additions removals'
+                              aria-live='polite'
+                            >
+                              <p className='navds-error-message navds-label' id='refusjon.refusjonPrMnd'>
+                                {errors.refusjon?.refusjonPrMnd?.message}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        {refusjonEndringerUtenSkjaeringstidspunkt &&
+                          refusjonEndringerUtenSkjaeringstidspunkt?.length === 0 && (
                             <>
                               <H3Label unPadded topPadded>
-                                Siste dag dere krever refusjon for
+                                Er det endringer i refusjonskrav i perioden?
                               </H3Label>
-                              {formatDate(opprinneligRefusjonskravetOpphoerer.opphoersdato)}
+                              Nei
                             </>
                           )}
-                        </>
-                      )}
-                    </>
-                  )}
-                  {!aapentManglendeData && (
-                    <RadioGroup
-                      legend={`Har det vært endringer i refusjonskrav mellom ${sisteInnsending} og ${formatDate(
-                        forsteFravaersdag
-                      )} (start av nytt sykefravær)?`}
-                      onChange={addIsDirtyForm(handleChangeEndringRefusjon)}
-                      className={lokalStyles.fancyRadioGruppe}
-                      defaultValue={endringerAvRefusjon}
-                      id='endring-refusjon'
-                      error={visFeilmeldingsTekst('endring-refusjon')}
-                    >
-                      <Radio value='Ja' className={classNameJaEndringAvRefusjon}>
-                        Ja
-                      </Radio>
-                      <Radio value='Nei' className={classNameNeiEndringAvRefusjon}>
-                        Nei
-                      </Radio>
-                    </RadioGroup>
-                  )}
-                </>
-              )}
-              {endringerAvRefusjon === 'Ja' && (
-                <>
-                  {!aapentManglendeData && <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>}
-                  <RadioGroup
-                    legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
-                    className={styles.radiobuttonwrapper}
-                    id={'lus-radio'}
-                    error={visFeilmeldingsTekst('lus-radio')}
-                    onChange={addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret)}
-                    defaultValue={arbeidsgiverKreverRefusjon() ? 'Ja' : undefined}
-                  >
-                    <Radio value='Ja'>Ja</Radio>
-                    <Radio value='Nei'>Nei</Radio>
-                  </RadioGroup>
-                  {lonnISykefravaeret?.status === 'Ja' && (
-                    <>
-                      <RefusjonArbeidsgiverBelop
-                        visFeilmeldingsTekst={visFeilmeldingsTekst}
-                        bruttoinntekt={lonnISykefravaeret?.belop || 0}
-                        onOppdaterBelop={addIsDirtyForm(beloepArbeidsgiverBetalerISykefravaeret)}
-                      />
+                        {refusjonEndringerUtenSkjaeringstidspunkt &&
+                          refusjonEndringerUtenSkjaeringstidspunkt?.length > 0 && (
+                            <div className={lokalStyles.refusjonswrapper}>
+                              <table>
+                                <thead>
+                                  <tr>
+                                    <th className={lokalStyles.table_header}>
+                                      <strong>Endret refusjon</strong>
+                                    </th>
+                                    <th>
+                                      <strong>Dato for endret refusjon</strong>
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {aktiveRefusjonEndringer?.map((endring) => (
+                                    <tr key={endring.dato?.toString()}>
+                                      <td>{formatCurrency(endring.beloep)} kr</td>
+                                      <td>{formatDate(endring.dato)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        {opprinneligRefusjonskravetOpphoerer?.status === 'Nei' && (
+                          <>
+                            <H3Label unPadded topPadded>
+                              Opphører refusjonkravet under sykefraværet?
+                            </H3Label>
+                            {opprinneligRefusjonskravetOpphoerer?.status}
+                          </>
+                        )}
+                        {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
+                          <>
+                            <H3Label unPadded topPadded>
+                              Siste dag dere krever refusjon for
+                            </H3Label>
+                            {formatDate(opprinneligRefusjonskravetOpphoerer.opphoersdato)}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
 
-                      <RefusjonUtbetalingEndring
-                        endringer={refusjonEndringerUtenSkjaeringstidspunkt || []}
-                        maxDate={refusjonskravetOpphoerer?.opphoersdato}
-                        // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
-                        onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
-                        onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
-                        harRefusjonEndringer={harRefusjonEndringer}
-                        harRefusjonEndringerDefault={arbeidsgiverRefusjonskravHarEndringer() ? 'Ja' : undefined}
-                      />
+                <FancyJaNei
+                  legend={`Er det endringer i refusjonskravet etter ${formatDate(
+                    forsteFravaersdag
+                  )} (start av nytt sykefravær)?`}
+                  name='refusjon.erDetEndringRefusjon'
+                />
 
-                      <RadioGroup
-                        legend='Opphører refusjonkravet i perioden?'
-                        className={styles.radiobuttonwrapper}
-                        id={'lus-sluttdato-velg'}
-                        error={visFeilmeldingsTekst('lus-sluttdato-velg')}
-                        onChange={addIsDirtyForm(refusjonskravetOpphoererStatus)}
-                        defaultValue={arbeidsgiverRefusjonskravOpphører() ? 'Ja' : undefined}
-                      >
-                        <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
-                          Ja
-                        </Radio>
-                        <Radio value='Nei' name='fullLonnIArbeidsgiverPerioden'>
-                          Nei
-                        </Radio>
-                      </RadioGroup>
-                      {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
-                        <div className={lokalStyles.belopperiode}>
-                          <Datovelger
-                            label='Angi siste dag dere krever refusjon for'
-                            onDateChange={addIsDirtyForm(refusjonskravetOpphoererDato)}
-                            id={`lus-sluttdato`}
-                            error={visFeilmeldingsTekst(`lus-sluttdato`)}
-                            defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
-                          />
-                        </div>
-                      )}
-                    </>
-                  )}
-                </>
-              )}
+                {harEndringRefusjon === 'Ja' && (
+                  <>
+                    {!aapentManglendeData && <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>}
+                    <OrdinaryJaNei
+                      legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+                      name='refusjon.kreverRefusjon'
+                    />
 
-              <ConfirmationPanel
-                className={styles.confirmationpanel}
-                checked={opplysningerBekreftet}
-                onClick={clickOpplysningerBekreftet}
-                label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
-                id='bekreft-opplysninger'
-                error={visFeilmeldingsTekst('bekreft-opplysninger')}
-              ></ConfirmationPanel>
-              <Feilsammendrag />
-              <div className={styles.outerbuttonwrapper}>
-                <div className={styles.buttonwrapper}>
-                  <Button className={styles.sendbutton} loading={senderInn}>
-                    Send
-                  </Button>
+                    {arbeidsgiverKreverRefusjon === 'Ja' && (
+                      <>
+                        <RefusjonArbeidsgiverBeloep />
 
-                  <Link className={styles.lukkelenke} href={environment.minSideArbeidsgiver}>
-                    Lukk
-                  </Link>
+                        <EndringRefusjon
+                          maxDate={refusjonskravetOpphoerer?.opphoersdato}
+                          // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
+                        />
+                        <OrdinaryJaNei legend='Opphører refusjonkravet i perioden?' name='refusjon.kravetOpphoerer' />
+                        {skalRefusjonskravetOpphoere === 'Ja' && (
+                          <div className={lokalStyles.beloepperiode}>
+                            <DatoVelger
+                              label='Angi siste dag dere krever refusjon for'
+                              defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
+                              name='refusjon.refusjonOpphoerer'
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+
+                <ConfirmationPanel
+                  className={styles.confirmationpanel}
+                  label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+                  id='bekreft-opplysninger'
+                  error={errors.opplysningerBekreftet?.message as string}
+                  {...register('opplysningerBekreftet')}
+                ></ConfirmationPanel>
+                <FeilListe skalViseFeilmeldinger={feilmeldinger.length > 0} feilmeldinger={feilmeldinger ?? []} />
+                <div className={styles.outerbuttonwrapper}>
+                  <div className={styles.buttonwrapper}>
+                    <Button className={styles.sendbutton} loading={senderInn}>
+                      Send
+                    </Button>
+
+                    <Link className={styles.lukkelenke} href={environment.minSideArbeidsgiver}>
+                      Lukk
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            </FormProvider>
           </main>
           <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
           <HentingAvDataFeilet open={skjemaFeilet} handleCloseModal={lukkHentingFeiletModal} />

@@ -1,4 +1,3 @@
-import { SafeParseReturnType } from 'zod';
 import { Feilmelding } from '../components/Feilsammendrag/FeilListe';
 export default function formatRHFFeilmeldinger(validationResult: any): Feilmelding[] {
   const fmKeys = Object.keys(validationResult);

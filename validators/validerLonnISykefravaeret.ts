@@ -23,7 +23,7 @@ export default function validerLonnISykefravaeret(lonn: LonnISykefravaeret): Arr
     });
   }
 
-  if (lonn.status === 'Ja' && (!lonn.belop || lonn.belop === 0)) {
+  if (lonn.status === 'Ja' && (!lonn.beloep || lonn.beloep === 0)) {
     feilkoder.push({
       felt: '',
       code: FullLonnISykefravaeret.MANGLER_BELOP_LONN_I_SYKEFRAVAERET

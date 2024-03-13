@@ -5,7 +5,7 @@ const arbeidsforhold = ['arbeider'];
 
 const lonnUS: LonnISykefravaeret = {
   status: 'Nei',
-  belop: 123
+  beloep: 123
 };
 
 const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
@@ -20,7 +20,7 @@ describe('validerLonnUnderSykefravaeret', () => {
   it('should return an error when sluttdato is missing', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja',
-      belop: 123
+      beloep: 123
     };
 
     const expected = [
@@ -36,7 +36,7 @@ describe('validerLonnUnderSykefravaeret', () => {
   it('should return an empty array when sluttdato is present and status is Nei', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja',
-      belop: 123
+      beloep: 123
     };
 
     expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer)).toEqual([]);
@@ -71,7 +71,7 @@ describe('validerLonnUnderSykefravaeret', () => {
 
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja',
-      belop: 123
+      beloep: 123
     };
 
     const expected = [
@@ -87,7 +87,7 @@ describe('validerLonnUnderSykefravaeret', () => {
   it('should return an empty array when everything is ok and lus status = Nei', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Nei',
-      belop: 123
+      beloep: 123
     };
 
     expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer)).toEqual([]);
@@ -111,7 +111,7 @@ describe('validerLonnUnderSykefravaeret', () => {
   it('should return an error when refusjonsbeløp higer than bruttoinntekt', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja',
-      belop: 1000111
+      beloep: 1000111
     };
 
     const expected = [
@@ -129,7 +129,7 @@ describe('validerLonnUnderSykefravaeret', () => {
   it('should not return an error when refusjonsbeløp lower than bruttoinntekt', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja',
-      belop: 99999
+      beloep: 99999
     };
 
     const expected: any = [];

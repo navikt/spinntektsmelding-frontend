@@ -87,7 +87,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
           setReadMoreOpen(!readMoreOpen);
         }}
       >
-        Arbeidsgiveren kan forskottere sykepenger til den sykmeldte eller velge at NAV skal betale sykepenger direkte
+        Arbeidsgiveren kan forskuttere sykepenger til den sykmeldte eller velge at NAV skal betale sykepenger direkte
         til den sykmeldte etter arbeidsgiverperioden.{' '}
         <LenkeEksternt href='https://www.nav.no/arbeidsgiver/forskuttere-sykepenger' isHidden={!readMoreOpen}>
           Les om de ulike refusjonsreglene.
@@ -119,7 +119,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
             {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
               <div className={localStyles.wraputbetaling}>
                 <TextField
-                  className={localStyles.refusjonsbelop}
+                  className={localStyles.refusjonsbeloep}
                   label='Utbetalt under arbeidsgiverperiode'
                   onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
                   id={'lus-uua-input'}
@@ -154,7 +154,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
         {lonnISykefravaeret?.status === 'Ja' && (
           <>
             <RefusjonArbeidsgiverBelop
-              bruttoinntekt={lonnISykefravaeret.belop! || 0}
+              bruttoinntekt={lonnISykefravaeret.beloep! || 0}
               onOppdaterBelop={addIsDirtyForm(beloepArbeidsgiverBetalerISykefravaeret)}
               visFeilmeldingsTekst={visFeilmeldingsTekst}
               arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}

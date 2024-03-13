@@ -1,0 +1,28 @@
+.fancyRadio {
+  border: 1px solid var(--a-border-strong);
+  width: 100%;
+  border-radius: var(--a-border-radius-medium);
+}
+
+.fancyRadio > label {
+  margin-left: 1rem;
+}
+
+.fancyRadio :global(.navds-radio__input):checked + :global(.navds-radio__label) {
+  font-weight: bold;
+}
+
+.selectedRadio {
+  background-color: var(--a-blue-100);
+}
+
+.fancyRadioGruppe :global(.navds-radio-buttons) {
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  margin: 1rem 0 1rem;
+}
+
+.fancyRadioGruppe:global(.navds-radio-group) {
+  margin-top: 1rem;
+}

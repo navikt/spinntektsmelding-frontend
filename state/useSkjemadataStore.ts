@@ -19,7 +19,6 @@ export interface SkjemadataState {
   setSkjemaFeilet: () => void;
   setInngangFraKvittering: () => void;
   setDirekteInngangKvittering: () => void;
-  setEndringBruttolonn: (endring: YesNo) => void;
   setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: SkjemaKvitteringEksterntSystem) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
@@ -30,7 +29,6 @@ export interface SkjemadataState {
   skjemaType?: Array<Opplysningstype>;
   inngangFraKvittering: boolean;
   direkteInngangKvittering: boolean;
-  endringBruttolonn?: YesNo;
   endringerAvRefusjon?: YesNo;
   kvitteringEksterntSystem?: SkjemaKvitteringEksterntSystem;
   skjemastatus: SkjemaStatus;
@@ -97,13 +95,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.direkteInngangKvittering = true;
-      })
-    );
-  },
-  setEndringBruttolonn: (endring: YesNo) => {
-    set(
-      produce((state: SkjemadataState) => {
-        state.endringBruttolonn = endring;
       })
     );
   },

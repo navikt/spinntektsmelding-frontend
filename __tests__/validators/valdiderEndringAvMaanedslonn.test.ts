@@ -33,8 +33,8 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     ]);
   });
 
-  it('should return error when harRefusjonEndringer is Ja and belop is negative', () => {
-    expect(valdiderEndringAvMaanedslonn('Ja', [{ belop: -1, dato: new Date() }])).toEqual([
+  it('should return error when harRefusjonEndringer is Ja and beloep is negative', () => {
+    expect(valdiderEndringAvMaanedslonn('Ja', [{ beloep: -1, dato: new Date() }])).toEqual([
       {
         code: 'MANGLER_BELOP',
         felt: 'refusjon.refusjonEndringer[0].beløp'
@@ -42,8 +42,8 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     ]);
   });
 
-  it('should return error when harRefusjonEndringer is Ja and belop is a string', () => {
-    expect(valdiderEndringAvMaanedslonn('Ja', [{ belop: 'string', dato: new Date() }])).toEqual([
+  it('should return error when harRefusjonEndringer is Ja and beloep is a string', () => {
+    expect(valdiderEndringAvMaanedslonn('Ja', [{ beloep: 'string', dato: new Date() }])).toEqual([
       {
         code: 'MANGLER_BELOP',
         felt: 'refusjon.refusjonEndringer[0].beløp'
@@ -51,8 +51,8 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     ]);
   });
 
-  it('should return error when harRefusjonEndringer is Ja and belop higher than bruttoinntekt', () => {
-    expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), belop: 12345 }], undefined, 555)).toEqual([
+  it('should return error when harRefusjonEndringer is Ja and beloep higher than bruttoinntekt', () => {
+    expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), beloep: 12345 }], undefined, 555)).toEqual([
       {
         code: 'BELOP_OVERSTIGER_BRUTTOINNTEKT',
         felt: 'refusjon.refusjonEndringer[0].beløp'
@@ -60,7 +60,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     ]);
   });
 
-  it('should not return error when harRefusjonEndringer is Ja and belop lower than bruttoinntekt', () => {
-    expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), belop: 12345 }], undefined, 55555)).toEqual([]);
+  it('should not return error when harRefusjonEndringer is Ja and beloep lower than bruttoinntekt', () => {
+    expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), beloep: 12345 }], undefined, 55555)).toEqual([]);
   });
 });

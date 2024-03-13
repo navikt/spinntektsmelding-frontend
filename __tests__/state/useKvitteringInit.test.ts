@@ -137,7 +137,7 @@ describe('useKvitteringInit', () => {
       kvitteringInit(varigLonnsendringKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringsaarsak).toBe('VarigLonnsendring');
+    expect(result.current.bruttoinntekt.endringsaarsak).toBe('VarigLoennsendring');
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 

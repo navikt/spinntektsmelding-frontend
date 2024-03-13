@@ -3,7 +3,7 @@ import validerLonnISykefravaeret from '../../validators/validerLonnISykefravaere
 
 const lonnUS: LonnISykefravaeret = {
   status: 'Nei',
-  belop: 123
+  beloep: 123
 };
 
 describe('validerLonnISykefravaeret', () => {
@@ -11,7 +11,7 @@ describe('validerLonnISykefravaeret', () => {
     expect(validerLonnISykefravaeret(lonnUS)).toEqual([]);
   });
 
-  it('should return an error when belop is missing', () => {
+  it('should return an error when beloep is missing', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja'
     };
@@ -39,7 +39,7 @@ describe('validerLonnISykefravaeret', () => {
 
   it('should return an error when status is missing', () => {
     const inputLUS: LonnISykefravaeret = {
-      belop: 123
+      beloep: 123
     };
 
     const expected = [
@@ -52,10 +52,10 @@ describe('validerLonnISykefravaeret', () => {
     expect(validerLonnISykefravaeret(inputLUS)).toEqual(expected);
   });
 
-  it('should return an error when belop is 0', () => {
+  it('should return an error when beloep is 0', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja',
-      belop: 0
+      beloep: 0
     };
 
     const expected = [
@@ -71,7 +71,7 @@ describe('validerLonnISykefravaeret', () => {
   it('should return an empty array when status is Nei', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Nei',
-      belop: 0
+      beloep: 0
     };
 
     const expected: unknown = [];
@@ -79,10 +79,10 @@ describe('validerLonnISykefravaeret', () => {
     expect(validerLonnISykefravaeret(inputLUS)).toEqual(expected);
   });
 
-  it('should return an empty array when status is Ja and belop is not 0', () => {
+  it('should return an empty array when status is Ja and beloep is not 0', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja',
-      belop: 123
+      beloep: 123
     };
 
     const expected: unknown = [];

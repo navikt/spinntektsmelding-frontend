@@ -7,7 +7,7 @@ import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldinger
 
 import feiltekster from '../utils/feiltekster';
 import { CompleteState } from './useBoundStore';
-import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 
 export interface RefusjonArbeidsgiverState {
@@ -18,8 +18,8 @@ export interface RefusjonArbeidsgiverState {
   opprinneligRefusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   harRefusjonEndringer?: YesNo;
   opprinneligHarRefusjonEndringer?: YesNo;
-  refusjonEndringer?: Array<EndringsBelop>;
-  opprinneligRefusjonEndringer?: Array<EndringsBelop>;
+  refusjonEndringer?: Array<EndringsBeloep>;
+  opprinneligRefusjonEndringer?: Array<EndringsBeloep>;
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo | undefined) => void;
   arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
   begrunnelseRedusertUtbetaling: (begrunnelse?: string) => void;
@@ -28,8 +28,8 @@ export interface RefusjonArbeidsgiverState {
   refusjonskravetOpphoererStatus: (status: YesNo) => void;
   refusjonskravetOpphoererDato: (opphoersdato?: Date) => void;
   initFullLonnIArbeidsgiverPerioden: (lonnIArbeidsgiverperioden: LonnIArbeidsgiverperioden) => void;
-  oppdaterRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
-  initRefusjonEndringer: (endringer: Array<EndringsBelop>) => void;
+  oppdaterRefusjonEndringer: (endringer: Array<EndringsBeloep>) => void;
+  initRefusjonEndringer: (endringer: Array<EndringsBeloep>) => void;
   setHarRefusjonEndringer: (harEndringer?: YesNo) => void;
   initLonnISykefravaeret: (lonnISykefravaeret: LonnISykefravaeret) => void;
   initRefusjonskravetOpphoerer: (status: YesNo | undefined, opphoersdato?: Date, harEndringer?: YesNo) => void;
@@ -66,9 +66,9 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.lonnISykefravaeret = { status: status };
         } else state.lonnISykefravaeret.status = status;
         if (status === 'Ja') {
-          state.lonnISykefravaeret.belop = bruttoinntekt.bruttoInntekt;
+          state.lonnISykefravaeret.beloep = bruttoinntekt.bruttoInntekt;
         } else {
-          delete state.lonnISykefravaeret.belop;
+          delete state.lonnISykefravaeret.beloep;
         }
 
         state = slettFeilmeldingFraState(state, 'lus-radio');
@@ -100,14 +100,14 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
-          state.lonnISykefravaeret = { belop: stringishToNumber(beloep) };
+          state.lonnISykefravaeret = { beloep: stringishToNumber(beloep) };
         } else {
-          state.lonnISykefravaeret.belop = stringishToNumber(beloep);
+          state.lonnISykefravaeret.beloep = stringishToNumber(beloep);
         }
 
         state = slettFeilmeldingFraState(state, 'lus-input');
-        const nBelop = stringishToNumber(beloep);
-        if (ugyldigEllerNegativtTall(nBelop)) {
+        const nBeloep = stringishToNumber(beloep);
+        if (ugyldigEllerNegativtTall(nBeloep)) {
           state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
         return state;
@@ -125,10 +125,10 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.fullLonnIArbeidsgiverPerioden.utbetalt = stringishToNumber(beloep);
         }
 
-        const nBelop = stringishToNumber(beloep);
+        const nBeloep = stringishToNumber(beloep);
 
         state = slettFeilmeldingFraState(state, 'lus-uua-input');
-        if (ugyldigEllerNegativtTall(nBelop)) {
+        if (ugyldigEllerNegativtTall(nBeloep)) {
           state = leggTilFeilmelding(state, 'lus-uua-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
         return state;
@@ -165,13 +165,13 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  oppdaterRefusjonEndringer: (endringer: Array<EndringsBelop>) =>
+  oppdaterRefusjonEndringer: (endringer: Array<EndringsBeloep>) =>
     set(
       produce((state) => {
         state.refusjonEndringer = endringer;
         if (endringer?.length > 0) {
           endringer.forEach((endring, index) => {
-            if (endring.belop && endring.belop >= 0) {
+            if (endring.beloep && endring.beloep >= 0) {
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
             if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
@@ -182,14 +182,14 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  initRefusjonEndringer: (endringer: Array<EndringsBelop>) =>
+  initRefusjonEndringer: (endringer: Array<EndringsBeloep>) =>
     set(
       produce((state) => {
         state.refusjonEndringer = endringer;
         state.opprinneligRefusjonEndringer = endringer;
         if (endringer?.length > 0) {
           endringer.forEach((endring, index) => {
-            if (endring.belop && endring.belop >= 0) {
+            if (endring.beloep && endring.beloep >= 0) {
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
             if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
