@@ -70,6 +70,8 @@ const toLocalIso = (val: Date) => {
   return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
 };
 
+const datoManglerFeilmelding = { required_error: 'Vennligst fyll inn fra dato' };
+
 const PeriodeSchema = z
   .object({
     fom: z
@@ -150,12 +152,12 @@ const EndringAarsakNyansattSchema = z.object({
 
 const EndringAarsakNyStillingSchema = z.object({
   aarsak: z.literal('NyStilling'),
-  gjelderFra: z.date().transform((val) => toLocalIso(val))
+  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakNyStillingsprosentSchema = z.object({
   aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: z.date().transform((val) => toLocalIso(val))
+  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakPermisjonSchema = z.object({
@@ -175,13 +177,13 @@ const EndringAarsakSykefravaerSchema = z.object({
 
 const EndringAarsakTariffendringSchema = z.object({
   aarsak: z.literal('Tariffendring'),
-  gjelderFra: z.date().transform((val) => toLocalIso(val)),
-  bleKjent: z.date().transform((val) => toLocalIso(val))
+  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val)),
+  bleKjent: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
 });
 
 const EndringAarsakVarigLoennsendringSchema = z.object({
   aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: z.date().transform((val) => toLocalIso(val))
+  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
 });
 
 export const EndringAarsakSchema = z.discriminatedUnion(
