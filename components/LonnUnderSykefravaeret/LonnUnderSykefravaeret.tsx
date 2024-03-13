@@ -2,7 +2,7 @@ import { Alert, BodyShort, Link } from '@navikt/ds-react';
 import { LonnISykefravaeret, RefusjonskravetOpphoerer, YesNo } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
-import { EndringsBelop } from '../RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { EndringsBeloep } from '../RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import lokalStyle from './LonnUnderSykefravaeret.module.css';
 import lokalStyles from '../../pages/kvittering/Kvittering.module.css';
 import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
@@ -11,7 +11,7 @@ interface LonnUnderSykefravaeretProps {
   lonn: LonnISykefravaeret;
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   harRefusjonEndringer?: YesNo;
-  refusjonEndringer?: Array<EndringsBelop>;
+  refusjonEndringer?: Array<EndringsBeloep>;
 }
 
 export default function LonnUnderSykefravaeret({
@@ -19,7 +19,7 @@ export default function LonnUnderSykefravaeret({
   refusjonskravetOpphoerer,
   harRefusjonEndringer,
   refusjonEndringer
-}: LonnUnderSykefravaeretProps) {
+}: Readonly<LonnUnderSykefravaeretProps>) {
   if (!lonn) return null;
   if (lonn.status === 'Nei')
     return (
@@ -40,7 +40,7 @@ export default function LonnUnderSykefravaeret({
         {lonn && lonn.status === 'Ja' && (
           <>
             <div className={lokalStyle.uthevet}>Refusjonsbeløp per måned (NAV vil refundere opp til 6G av årslønn)</div>
-            <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.belop)} kr/måned</BodyShort>
+            <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.beloep)} kr/måned</BodyShort>
           </>
         )}
         {harGyldigeRefusjonEndringer(refusjonEndringer) && (
@@ -61,7 +61,7 @@ export default function LonnUnderSykefravaeret({
                       {refusjonEndringer?.map((endring) => (
                         <tr key={endring.dato?.toString()}>
                           <td>{formatDate(endring.dato)}</td>
-                          <td>{formatCurrency(endring.belop)}</td>
+                          <td>{formatCurrency(endring.beloep)}</td>
                         </tr>
                       ))}
                     </tbody>

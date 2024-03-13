@@ -90,7 +90,7 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     expect(validerLonnIArbeidsgiverperioden(input)).toEqual(expected);
   });
 
-  it('should return an error when status is Nei and utbetalt is positive, not regarding belop', () => {
+  it('should return an error when status is Nei and utbetalt is positive, not regarding beloep', () => {
     const input: LonnIArbeidsgiverperioden = {
       status: 'Nei',
       utbetalt: 1234

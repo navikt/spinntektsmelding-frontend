@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../config/environment';
 
-import org from '../../mockdata/trenger-test.json';
+import org from '../../mockdata/trenger-test5.json';
 
 const basePath = environment.inntektsmeldingUuidAPI;
 

@@ -40,7 +40,7 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
         </div>
       ) : null;
     }
-    case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
+    case begrunnelseEndringBruttoinntekt.VarigLoennsendring: {
       return (
         <>
           <div className={lokalStyle.uthevet}>Varig lønnsendringsdato</div>

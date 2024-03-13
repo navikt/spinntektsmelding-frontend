@@ -104,41 +104,41 @@ describe('useBoundStore', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('Ny begrunnelse');
   });
 
-  it('should set the belop on lonnISykefravaeret', () => {
+  it('should set the beloep on lonnISykefravaeret', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.beloepArbeidsgiverBetalerISykefravaeret('567,89');
     });
 
-    expect(result.current.lonnISykefravaeret?.belop).toBe(567.89);
+    expect(result.current.lonnISykefravaeret?.beloep).toBe(567.89);
   });
 
-  it('should set the empty belop on lonnISykefravaeret', () => {
+  it('should set the empty beloep on lonnISykefravaeret', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.beloepArbeidsgiverBetalerISykefravaeret('');
     });
 
-    expect(result.current.lonnISykefravaeret?.belop).toBeUndefined();
+    expect(result.current.lonnISykefravaeret?.beloep).toBeUndefined();
     expect(result.current.feilmeldinger[0].felt).toBe('lus-input');
   });
 
-  it('should change the belop on lonnISykefravaeret', () => {
+  it('should change the beloep on lonnISykefravaeret', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.beloepArbeidsgiverBetalerISykefravaeret('567,89');
     });
 
-    expect(result.current.lonnISykefravaeret?.belop).toBe(567.89);
+    expect(result.current.lonnISykefravaeret?.beloep).toBe(567.89);
 
     act(() => {
       result.current.beloepArbeidsgiverBetalerISykefravaeret('777,88');
     });
 
-    expect(result.current.lonnISykefravaeret?.belop).toBe(777.88);
+    expect(result.current.lonnISykefravaeret?.beloep).toBe(777.88);
   });
 
   it('should set the refusjonskravetOpphoerer Status.', () => {
@@ -271,7 +271,7 @@ describe('useBoundStore', () => {
 
     act(() => {
       result.current.initRefusjonskravetOpphoerer('Ja', new Date(2022, 4, 6), 'Nei');
-      result.current.initRefusjonEndringer([{ belop: 123, dato: new Date(2022, 4, 6) }]);
+      result.current.initRefusjonEndringer([{ beloep: 123, dato: new Date(2022, 4, 6) }]);
       result.current.setHarRefusjonEndringer('Nei');
     });
 
@@ -287,7 +287,7 @@ describe('useBoundStore', () => {
       result.current.refusjonskravetOpphoererStatus('Nei');
       result.current.setHarRefusjonEndringer('Ja');
       result.current.refusjonskravetOpphoererDato(new Date(2022, 4, 8));
-      result.current.oppdaterRefusjonEndringer([{ belop: 234, dato: new Date(2022, 4, 10) }]);
+      result.current.oppdaterRefusjonEndringer([{ beloep: 234, dato: new Date(2022, 4, 10) }]);
     });
 
     expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
@@ -305,6 +305,6 @@ describe('useBoundStore', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
     expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
-    expect(result.current.refusjonEndringer).toEqual([{ belop: 123, dato: new Date(2022, 4, 6) }]);
+    expect(result.current.refusjonEndringer).toEqual([{ beloep: 123, dato: new Date(2022, 4, 6) }]);
   });
 });

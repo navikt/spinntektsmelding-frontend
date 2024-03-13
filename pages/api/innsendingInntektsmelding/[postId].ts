@@ -42,13 +42,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
     const innsendteData = {
-      errors: [
-        {
-          property: 'refusjon.refusjonEndringer[0].beløp',
-          error: 'Må være større enn 0,0',
-          value: '0'
-        }
-      ]
+      errors: [{ property: 'refusjon.refusjonPrMnd', error: 'Must be less than or equal to 40 000', value: '45000.0' }]
     };
     setTimeout(() => {
       return res.status(201).json(innsendteData);

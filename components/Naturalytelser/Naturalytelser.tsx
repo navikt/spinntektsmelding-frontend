@@ -81,7 +81,7 @@ export default function Naturalytelser() {
                       className={styles.fnr}
                       onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
                       defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
-                      error={visFeilmeldingsTekst('naturalytelse-belop-' + element.id)}
+                      error={visFeilmeldingsTekst('naturalytelse-beloep-' + element.id)}
                     ></TextField>
                   </td>
                   <td>

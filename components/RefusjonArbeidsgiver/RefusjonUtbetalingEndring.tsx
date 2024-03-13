@@ -8,17 +8,17 @@ import Datovelger from '../Datovelger';
 import useBoundStore from '../../state/useBoundStore';
 import { YesNo } from '../../state/state';
 
-export interface EndringsBelop {
-  belop?: number;
+export interface EndringsBeloep {
+  beloep?: number;
   dato?: Date;
 }
 interface RefusjonUtbetalingEndringProps {
-  endringer: Array<EndringsBelop>;
+  endringer: Array<EndringsBeloep>;
   minDate?: Date;
   maxDate?: Date;
   harRefusjonEndringer?: YesNo;
   harRefusjonEndringerDefault?: YesNo;
-  onOppdaterEndringer?: (endringer: Array<EndringsBelop>) => void;
+  onOppdaterEndringer?: (endringer: Array<EndringsBeloep>) => void;
   onHarEndringer?: (harEndring: YesNo) => void;
 }
 
@@ -32,7 +32,7 @@ export default function RefusjonUtbetalingEndring({
   harRefusjonEndringerDefault
 }: Readonly<RefusjonUtbetalingEndringProps>) {
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
-  const oppdaterEndringer = (endringer?: Array<EndringsBelop>): void => {
+  const oppdaterEndringer = (endringer?: Array<EndringsBeloep>): void => {
     if (onOppdaterEndringer) {
       onOppdaterEndringer(endringer ?? []);
     }
@@ -55,10 +55,10 @@ export default function RefusjonUtbetalingEndring({
 
     if (!tmpEndringer[index]) {
       tmpEndringer[index] = {
-        belop: stringishToNumber(strBelop),
+        beloep: stringishToNumber(strBelop),
         dato: undefined
       };
-    } else tmpEndringer[index].belop = stringishToNumber(strBelop);
+    } else tmpEndringer[index].beloep = stringishToNumber(strBelop);
 
     oppdaterEndringer(tmpEndringer);
   };
@@ -68,7 +68,7 @@ export default function RefusjonUtbetalingEndring({
 
     if (!tmpEndringer[index]) {
       tmpEndringer[index] = {
-        belop: undefined,
+        beloep: undefined,
         dato: dato
       };
     } else tmpEndringer[index].dato = dato;
@@ -104,11 +104,11 @@ export default function RefusjonUtbetalingEndring({
       </RadioGroup>
       {harRefusjonEndringer === 'Ja' &&
         endringer.map((endring, key) => (
-          <div key={endring.dato ? endring.dato.toUTCString() : key} className={lokalStyles.belopperiode}>
+          <div key={endring.dato ? endring.dato.toUTCString() : key} className={lokalStyles.beloepperiode}>
             <TextField
               label='Endret refusjon/måned'
               onChange={(event) => changeBelopHandler(event, key)}
-              defaultValue={endring.belop !== undefined ? endring.belop : ''}
+              defaultValue={endring.beloep !== undefined ? endring.beloep : ''}
               id={`refusjon.refusjonEndringer[${key}].beløp`}
               error={visFeilmeldingsTekst(`refusjon.refusjonEndringer[${key}].beløp`)}
               className={lokalStyles.endringsboks}

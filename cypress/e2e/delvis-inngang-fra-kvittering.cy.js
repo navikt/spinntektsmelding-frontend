@@ -46,10 +46,21 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       '/im-dialog/endring/12345678-3456-5678-2457-123456789012'
     );
 
-    cy.findByRole('button', { name: 'Endre' }).click();
+    cy.findByRole('group', {
+      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 02.01.2023 (start av nytt sykefravær)?'
+    })
+      .findByLabelText('Ja')
+      .check();
+    // cy.findByRole('button', { name: 'Endre' }).click();
 
-    cy.findByLabelText('Månedsinntekt 02.01.2023').invoke('val').should('equal', '65 000,00');
+    cy.findByLabelText('Månedsinntekt 02.01.2023').invoke('val').should('equal', '65000');
     cy.findByLabelText('Månedsinntekt 02.01.2023').clear().type('50000');
+
+    cy.findByRole('group', {
+      name: 'Er det endringer i refusjonskravet etter 02.01.2023 (start av nytt sykefravær)?'
+    })
+      .findByLabelText('Ja')
+      .check();
 
     cy.findByRole('group', {
       name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
@@ -72,11 +83,11 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findByRole('group', {
-      name: 'Er det endringer i refusjonsbeløpet i perioden?'
-    })
-      .findByLabelText('Nei')
-      .check();
+    // cy.findByRole('group', {
+    //   name: 'Er det endringer i refusjonsbeløpet i perioden?'
+    // })
+    //   .findByLabelText('Nei')
+    //   .check();
 
     cy.findByRole('group', {
       name: 'Opphører refusjonkravet i perioden?'
@@ -86,6 +97,13 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByLabelText('Angi siste dag dere krever refusjon for').clear().type('30.09.23');
     cy.realPress('Escape');
+
+    cy.findByRole('button', { name: 'Endre' }).click();
+
+    cy.findByLabelText('Oppgi refusjonsbeløpet per måned').clear().type('50000');
+    cy.realPress('Escape');
+
+    cy.wait(1000);
 
     cy.findByRole('button', { name: 'Send' }).click();
 

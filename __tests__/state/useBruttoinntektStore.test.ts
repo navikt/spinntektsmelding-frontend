@@ -45,7 +45,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyMaanedsinntekt('56000,23');
+      result.current.setNyMaanedsinntektOgRefusjonsbeloep('56000,23');
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(56000.23);
@@ -59,7 +59,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyMaanedsinntekt('-1');
+      result.current.setNyMaanedsinntektOgRefusjonsbeloep('-1');
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(-1);
@@ -77,7 +77,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyMaanedsinntekt('0');
+      result.current.setNyMaanedsinntektOgRefusjonsbeloep('0');
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(0);
@@ -92,7 +92,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyMaanedsinntektBlanktSkjema('-1');
+      result.current.setBareNyMaanedsinntekt('-1');
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(-1);
@@ -102,7 +102,7 @@ describe('useBoundStore', () => {
     });
   });
 
-  it('should setNyMaanedsinntektBlanktSkjema string', () => {
+  it('should setBareNyMaanedsinntekt string', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -110,14 +110,14 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyMaanedsinntektBlanktSkjema('1234,56');
+      result.current.setBareNyMaanedsinntekt('1234,56');
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(1234.56);
     expect(result.current.feilmeldinger.length).toBe(0);
   });
 
-  it('should setNyMaanedsinntektBlanktSkjema number', () => {
+  it('should setBareNyMaanedsinntekt number', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -125,7 +125,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyMaanedsinntektBlanktSkjema(1234.56);
+      result.current.setBareNyMaanedsinntekt(1234.56);
     });
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(1234.56);
@@ -175,7 +175,7 @@ describe('useBoundStore', () => {
 
     act(() => {
       result.current.setEndringsaarsak('AARSAK');
-      result.current.setNyMaanedsinntekt('56000,23');
+      result.current.setNyMaanedsinntektOgRefusjonsbeloep('56000,23');
     });
 
     act(() => {

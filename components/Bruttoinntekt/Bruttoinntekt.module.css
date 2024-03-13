@@ -38,11 +38,11 @@
   margin-top: 1rem;
 }
 
-.bruttoinntektendringsbelop > label {
+.bruttoinntektEndringsBeloep > label {
   max-height: var(--a-font-line-height-large);
 }
 
-.bruttoinntektendringsbelop > input {
+.bruttoinntektEndringsBeloep > input {
   margin-bottom: auto;
 }
 
@@ -64,11 +64,11 @@
   margin: 2rem 0;
 }
 
-.bruttoinntektendringsbelopenkel {
+.bruttoinntektEndringsBeloepenkel {
   margin-top: 0.5rem;
 }
 
-.bruttoinntektendringsbelopenkel > input {
+.bruttoinntektEndringsBeloepenkel > input {
   max-width: 10rem;
 }
 

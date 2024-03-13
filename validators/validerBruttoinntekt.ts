@@ -101,7 +101,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
             break;
           }
 
-          case begrunnelseEndringBruttoinntekt.VarigLonnsendring: {
+          case begrunnelseEndringBruttoinntekt.VarigLoennsendring: {
             if (!state.lonnsendringsdato) {
               valideringstatus.push({
                 felt: 'bruttoinntekt-lonnsendring-fom',

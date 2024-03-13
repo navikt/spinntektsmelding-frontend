@@ -1,6 +1,6 @@
-import { isEqual, isValid, parseISO } from 'date-fns';
+import { isAfter, isValid, parseISO } from 'date-fns';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
-import { EndringsBelop } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode, RefusjonskravetOpphoerer, YesNo } from './state';
@@ -141,9 +141,9 @@ export default function useFyllInnsending() {
             }))
           };
 
-        case begrunnelseEndringBruttoinntekt.VarigLonnsendring:
+        case begrunnelseEndringBruttoinntekt.VarigLoennsendring:
           return {
-            typpe: begrunnelseEndringBruttoinntekt.VarigLonnsendring,
+            typpe: 'VarigLonnsendring', // TODO: Denne må rettes opp når vi får samme navnet på alle apiene.
             gjelderFra: formatIsoDate(lonnsendringsdato)
           };
 
@@ -196,7 +196,7 @@ export default function useFyllInnsending() {
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
 
     const RefusjonUtbetalingEndringUtenGammelBFD = refusjonEndringer?.filter((endring) => {
-      return !isEqual(gammeltSkjaeringstidspunkt as Date, endring.dato || (gammeltSkjaeringstidspunkt as Date));
+      return endring.dato && isAfter(endring.dato, gammeltSkjaeringstidspunkt as Date);
     });
 
     const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonsendringer(
@@ -274,7 +274,7 @@ export default function useFyllInnsending() {
       },
       refusjon: {
         utbetalerHeleEllerDeler: !kreverIkkeRefusjon,
-        refusjonPrMnd: !kreverIkkeRefusjon ? lonnISykefravaeret?.belop : undefined,
+        refusjonPrMnd: !kreverIkkeRefusjon ? lonnISykefravaeret?.beloep : undefined,
         refusjonOpphører: formaterOpphørsdato(kreverIkkeRefusjon, refusjonskravetOpphoerer),
 
         refusjonEndringer: !kreverIkkeRefusjon ? innsendingRefusjonEndringer : undefined
@@ -305,7 +305,7 @@ export default function useFyllInnsending() {
   };
 }
 
-function hentBestemmendeFraværsdag(
+export function hentBestemmendeFraværsdag(
   skalSendeArbeidsgiverperiode: boolean,
   perioder: Periode[] | undefined,
   formatertePerioder: { fom: Date; tom: Date; id: string }[] | undefined,
@@ -397,12 +397,12 @@ function verdiEllerNull(verdi: number | undefined): number {
 
 function konverterRefusjonsendringer(
   harRefusjonEndringer: YesNo | undefined,
-  refusjonEndringer: Array<EndringsBelop> | undefined
+  refusjonEndringer: Array<EndringsBeloep> | undefined
 ): RefusjonEndring[] | undefined {
   const refusjoner =
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
-          beløp: endring.belop!,
+          beløp: endring.beloep!,
           dato: formatIsoDate(endring.dato)!
         }))
       : undefined;

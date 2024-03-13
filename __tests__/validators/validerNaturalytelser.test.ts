@@ -65,7 +65,7 @@ describe('validerNaturalytelser', () => {
     const expected = [
       {
         code: 'MANGLER_VERDI',
-        felt: 'naturalytelse-belop-tilfeldig'
+        felt: 'naturalytelse-beloep-tilfeldig'
       }
     ];
 
@@ -88,7 +88,7 @@ describe('validerNaturalytelser', () => {
       },
       {
         code: 'MANGLER_VERDI',
-        felt: 'naturalytelse-belop-tilfeldig'
+        felt: 'naturalytelse-beloep-tilfeldig'
       }
     ];
 

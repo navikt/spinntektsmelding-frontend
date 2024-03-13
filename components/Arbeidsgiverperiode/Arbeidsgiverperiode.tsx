@@ -350,7 +350,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       {advarselKortPeriode.length > 0 && (
         <div className={lokalStyles.wraputbetaling}>
           <TextField
-            className={lokalStyles.refusjonsbelop}
+            className={lokalStyles.refusjonsbeloep}
             label='Utbetalt under arbeidsgiverperiode'
             onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
             id={'lus-uua-input'}

@@ -10,7 +10,7 @@ describe.concurrent('formatBegrunnelseEndringBruttoinntekt', () => {
   });
 
   it('shold return VarigLonnsendring', () => {
-    expect(formatBegrunnelseEndringBruttoinntekt('VarigLonnsendring')).toBe('Varig lønnsendring');
+    expect(formatBegrunnelseEndringBruttoinntekt('VarigLoennsendring')).toBe('Varig lønnsendring');
   });
 
   it('shold return Permisjon', () => {
