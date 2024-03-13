@@ -68,7 +68,6 @@ export default function useSendInnDelvisSkjema(
         component: amplitudeComponent
       });
 
-      console.log('Validering feilet', errorStatus.errorTexts);
       return false;
     }
     const skjemaData: InnsendingSkjema = fyllInnsending(form);

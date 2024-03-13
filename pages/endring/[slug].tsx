@@ -163,19 +163,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       : [{ beloep: undefined, dato: undefined }]
     : refusjonEndringer;
 
-  // const refusjonOpphoererDato = !nyInnsending ? refusjonskravetOpphoerer?.opphoersdato : undefined;
-  // const refusjonOpphoererStatus = !nyInnsending ? refusjonskravetOpphoerer?.status : undefined;
-
   const opprinneligRefusjonskravetOpphoererStatus = opprinneligRefusjonskravetOpphoerer?.status;
   const opprinneligRefusjonskravetOpphoererDato = opprinneligRefusjonskravetOpphoerer?.opphoersdato;
-  // useEffect(() => {
-  //   if (bruttoinntekt.bruttoInntekt) {
-  //     setValue(
-  //       'refusjon.harEndringer',
-  //       refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0 ? 'Ja' : 'Nei'
-  //     );
-  //   }
-  // }, [refusjonEndringerUtenSkjaeringstidspunkt]);
 
   const methods = useForm<Skjema>({
     resolver: zodResolver(delvisInnsendingSchema),
@@ -216,8 +205,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const arbeidsgiverKreverRefusjon = watch('refusjon.kreverRefusjon');
 
-  // const inntektBeloep = watch('inntekt.beloep');
-
   useEffect(() => {
     if (refusjonPrMnd) {
       setValue('refusjon.refusjonPrMnd', refusjonPrMnd);
@@ -229,12 +216,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
     }
   }, [bruttoinntekt.bruttoInntekt, setValue]);
-
-  // useEffect(() => {
-  //   if (inntektBeloep) {
-  //     setValue('refusjon.refusjonPrMnd', inntektBeloep);
-  //   }
-  // }, [inntektBeloep, setValue]);
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.minSideArbeidsgiver;
@@ -273,8 +254,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const sendInnDelvisSkjema = useSendInnDelvisSkjema(setIngenTilgangOpen, amplitudeComponent, setError);
 
   const submitForm: SubmitHandler<Skjema> = (skjemaData: Skjema) => {
-    console.log('submitForm', skjemaData);
-
     setSenderInn(true);
 
     sendInnDelvisSkjema(true, pathSlug, isDirty, skjemaData).finally(() => {
@@ -483,7 +462,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
                         kanIkkeTilbakestilles={kanIkkeTilbakestilles}
                       />
-                      {/* )} */}
                     </div>
                   </div>
                 )}
