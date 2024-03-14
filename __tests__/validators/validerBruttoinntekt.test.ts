@@ -2,7 +2,7 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import { CompleteState } from '../../state/useBoundStore';
 import validerBruttoinntekt from '../../validators/validerBruttoinntekt';
 
-describe('validerBruttoinntekt', () => {
+describe.concurrent('validerBruttoinntekt', () => {
   it('should return an empty array when everything is OK', () => {
     const input: CompleteState = {
       bruttoinntekt: {
@@ -97,7 +97,7 @@ describe('validerBruttoinntekt', () => {
       },
       {
         code: 'TARIFFENDRING_KJENT',
-        felt: 'bruttoinntekt-tariffendring-kjelt'
+        felt: 'bruttoinntekt-tariffendring-kjent'
       }
     ];
 
@@ -135,11 +135,11 @@ describe('validerBruttoinntekt', () => {
 
     const expected = [
       {
-        code: 'FERIE_FOM',
+        code: 'MANGLER_FRA',
         felt: 'bruttoinntekt-ful-fom-undefined'
       },
       {
-        code: 'FERIE_TOM',
+        code: 'MANGLER_TIL',
         felt: 'bruttoinntekt-ful-tom-undefined'
       }
     ];
@@ -158,7 +158,7 @@ describe('validerBruttoinntekt', () => {
 
     const expected = [
       {
-        code: 'FERIE_TOM',
+        code: 'MANGLER_TIL',
         felt: 'bruttoinntekt-ful-tom-1'
       }
     ];
@@ -178,7 +178,7 @@ describe('validerBruttoinntekt', () => {
 
     const expected = [
       {
-        code: 'FERIE_FOM',
+        code: 'MANGLER_FRA',
         felt: 'bruttoinntekt-ful-fom-1'
       }
     ];
@@ -273,11 +273,11 @@ describe('validerBruttoinntekt', () => {
 
     const expected = [
       {
-        code: 'PERMISJON_FOM',
+        code: 'MANGLER_FRA',
         felt: 'bruttoinntekt-permisjon-fom-undefined'
       },
       {
-        code: 'PERMISJON_TOM',
+        code: 'MANGLER_TIL',
         felt: 'bruttoinntekt-permisjon-tom-undefined'
       }
     ];
@@ -296,7 +296,7 @@ describe('validerBruttoinntekt', () => {
 
     const expected = [
       {
-        code: 'PERMISJON_TOM',
+        code: 'MANGLER_TIL',
         felt: 'bruttoinntekt-permisjon-tom-1'
       }
     ];
@@ -316,7 +316,7 @@ describe('validerBruttoinntekt', () => {
 
     const expected = [
       {
-        code: 'PERMISJON_FOM',
+        code: 'MANGLER_FRA',
         felt: 'bruttoinntekt-permisjon-fom-1'
       }
     ];
@@ -355,11 +355,11 @@ describe('validerBruttoinntekt', () => {
 
     const expected = [
       {
-        code: 'PERMITTERING_FOM',
+        code: 'MANGLER_FRA',
         felt: 'bruttoinntekt-permittering-fom-undefined'
       },
       {
-        code: 'PERMITTERING_TOM',
+        code: 'MANGLER_TIL',
         felt: 'bruttoinntekt-permittering-tom-undefined'
       }
     ];
@@ -378,7 +378,7 @@ describe('validerBruttoinntekt', () => {
 
     const expected = [
       {
-        code: 'PERMITTERING_TOM',
+        code: 'MANGLER_TIL',
         felt: 'bruttoinntekt-permittering-tom-1'
       }
     ];
@@ -398,7 +398,7 @@ describe('validerBruttoinntekt', () => {
 
     const expected = [
       {
-        code: 'PERMITTERING_FOM',
+        code: 'MANGLER_FRA',
         felt: 'bruttoinntekt-permittering-fom-1'
       }
     ];
@@ -578,7 +578,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
 
   const expected = [
     {
-      code: 'SYKEFRAVAER_TOM',
+      code: 'MANGLER_TIL',
       felt: 'bruttoinntekt-sykefravaerperioder-tom-1'
     }
   ];
@@ -598,7 +598,7 @@ it('should return an error when permittering tom is missing', () => {
 
   const expected = [
     {
-      code: 'SYKEFRAVAER_FOM',
+      code: 'MANGLER_FRA',
       felt: 'bruttoinntekt-sykefravaerperioder-fom-1'
     }
   ];
