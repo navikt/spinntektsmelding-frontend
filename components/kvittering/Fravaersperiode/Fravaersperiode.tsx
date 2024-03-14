@@ -21,7 +21,7 @@ export default function Fravaersperiode({
   const classNameHeadingSykmelding = cx({
     sykfravaerstyper: paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode)
   });
-
+  console.log('fravaersperioder', fravaersperioder);
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder
       ? egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined
