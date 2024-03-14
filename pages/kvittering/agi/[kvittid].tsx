@@ -9,7 +9,7 @@ import styles from '../../../styles/Home.module.css';
 
 import Heading2 from '../../../components/Heading2/Heading2';
 import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
-import Person from '../../../components/Person/Person';
+// import Person from '../../../components/Person/Person';
 
 import Skillelinje from '../../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
@@ -33,7 +33,7 @@ import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isEqual, isValid } from 'date-fns';
 import env from '../../../config/environment';
-import { Periode } from '../../../state/state';
+import { Periode, YesNo } from '../../../state/state';
 import skjemaVariant from '../../../config/skjemavariant';
 
 import KvitteringAnnetSystem from '../../../components/KvitteringAnnetSystem';
@@ -45,6 +45,7 @@ import hentKvitteringsdataSSR from '../../../utils/hentKvitteringsdataSSR';
 import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../state/MottattData';
+import useKvitteringInit from '../../../state/useKvitteringInit';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -53,38 +54,30 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const hentKvitteringsdata = useHentKvitteringsdata();
-
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-
-  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
-  // const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-  // const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
-  // const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  // const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
-  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+
   const ferie = useBoundStore((state) => state.ferie);
   const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const permisjon = useBoundStore((state) => state.permisjon);
   const permittering = useBoundStore((state) => state.permittering);
   const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
-  // const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
+
   const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
   const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
   const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
-  const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
+
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
 
-  const kvitteringDokument = kvittering?.kvitteringDokument;
+  const kvitteringInit = useKvitteringInit();
+
+  const kvitteringDokument = kvittering?.kvitteringDokument ? kvittering?.kvitteringDokument : kvittering;
 
   console.log('kvitteringDokument', kvitteringDokument);
 
@@ -93,17 +86,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   // const fravaersperioder = kvitteringDokument?.fraværsperioder;
   const bestemmendeFravaersdag = kvitteringDokument?.bestemmendeFraværsdag;
   const arbeidsgiverperioder = kvitteringDokument?.arbeidsgiverperioder;
-  const refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
-    return (
-      !endring.dato ||
-      !bestemmendeFravaersdag ||
-      !gammeltSkjaeringstidspunkt ||
-      (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato!, gammeltSkjaeringstidspunkt))
-    );
-  });
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
+
+    // Må lagre data som kan endres i hovedskjema - Start
+    kvitteringInit(kvittering);
+    // Må lagre data som kan endres i hovedskjema - Slutt
 
     if (paakrevdeOpplysningstyper.length === 3) {
       if (isValidUUID(kvitteringSlug)) {
@@ -133,28 +122,32 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   // const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
   const paakrevdeOpplysninger = kvitteringDokument.forespurtData;
 
-  const trengerArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const trengerArbeidsgiverperiode =
+    !paakrevdeOpplysninger ||
+    paakrevdeOpplysninger.length === 0 ||
+    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
   const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
     ? parseIsoDate(kvitteringDokument.bestemmendeFraværsdag)
     : foreslaattBestemmendeFravaersdag;
 
   useEffect(() => {
-    //   if (!fravaersperioder) {
-    //     if (!kvitteringSlug || kvitteringSlug === '') return;
-    //     hentKvitteringsdata(kvitteringSlug);
-    //   }
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  // useEffect(() => {
-  //   setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  const visNaturalytelser = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
-  const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
-  const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const visNaturalytelser =
+    !paakrevdeOpplysninger ||
+    paakrevdeOpplysninger.length === 0 ||
+    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const visArbeidsgiverperiode =
+    !paakrevdeOpplysninger ||
+    paakrevdeOpplysninger.length === 0 ||
+    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const visFullLonnIArbeidsgiverperioden =
+    !paakrevdeOpplysninger ||
+    paakrevdeOpplysninger.length === 0 ||
+    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
   const inntekt = kvitteringDokument.inntekt;
 
@@ -177,6 +170,33 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const classNameWrapperSkjaeringstidspunkt = cx({
     infoboks: visArbeidsgiverperiode
+  });
+
+  const fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden;
+  fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden.utbetalerFullLønn ? 'Ja' : 'Nei';
+
+  const loenn = {
+    status: kvitteringDokument.refusjon.utbetalerHeleEllerDeler ? 'Ja' : ('Nei' as YesNo),
+    beloep: kvitteringDokument.refusjon.refusjonPrMnd
+  };
+
+  const refusjonskravetOpphoerer = {
+    status: kvitteringDokument?.refusjon?.refusjonOpphører ? 'Ja' : ('Nei' as YesNo),
+    opphoersdato: parseIsoDate(kvitteringDokument.refusjon.refusjonOpphører)
+  };
+
+  const refusjonEndringer = kvitteringDokument?.refusjon?.refusjonEndringer?.map((endring) => ({
+    dato: parseIsoDate(endring.dato),
+    beloep: endring.beløp
+  }));
+
+  const refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
+    return (
+      !endring.dato ||
+      !bestemmendeFravaersdag ||
+      !gammeltSkjaeringstidspunkt ||
+      (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato!, gammeltSkjaeringstidspunkt))
+    );
   });
 
   return (
@@ -259,13 +279,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <Heading2>Beregnet månedslønn</Heading2>
               <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
               <BodyShort>{formatCurrency(inntekt.beregnetInntekt)} kr/måned</BodyShort>
-              {bruttoinntekt.endringsaarsak && (
+              {inntekt.endringÅrsak && (
                 <>
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
-                  {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak as string)}
+                  {formatBegrunnelseEndringBruttoinntekt(inntekt.endringÅrsak.typpe as string)}
                   <EndringAarsakVisning
-                    endringsaarsak={bruttoinntekt.endringsaarsak}
+                    endringsaarsak={inntekt.endringÅrsak.typpe}
                     ferie={ferie}
                     lonnsendringsdato={lonnsendringsdato}
                     permisjon={permisjon}
@@ -285,11 +305,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <div className={lokalStyles.uthevet}>
                     Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
                   </div>
-                  <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden} />
+                  <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLoennIArbeidsgiverPerioden} />
                 </>
               )}
               <LonnUnderSykefravaeret
-                lonn={lonnISykefravaeret!}
+                lonn={loenn}
                 refusjonskravetOpphoerer={refusjonskravetOpphoerer}
                 harRefusjonEndringer={
                   harGyldigeRefusjonEndringer(refusjonEndringerUtenSkjaeringstidspunkt) ? 'Ja' : 'Nei'
@@ -324,14 +344,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
 export default Kvittering;
 
-function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefined): boolean {
-  return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
-    ? arbeidsgiverperioder?.filter(
-        (periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom))
-      ).length > 0
-    : false;
-}
-
 export async function getServerSideProps(context: any) {
   const kvittid = context.query.kvittid;
 
@@ -340,7 +352,7 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       kvittid,
-      kvittering: kvittering.data
+      kvittering: kvittering?.data
     }
   };
 }
