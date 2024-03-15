@@ -78,6 +78,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
+  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     gammeltSkjaeringstidspunkt && refusjonEndringer
@@ -256,9 +257,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <LonnUnderSykefravaeret
                 lonn={lonnISykefravaeret!}
                 refusjonskravetOpphoerer={refusjonskravetOpphoerer}
-                harRefusjonEndringer={
-                  harGyldigeRefusjonEndringer(refusjonEndringerUtenSkjaeringstidspunkt) ? 'Ja' : 'Nei'
-                }
+                harRefusjonEndringer={harRefusjonEndringer}
                 refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
               />
               {visNaturalytelser && (

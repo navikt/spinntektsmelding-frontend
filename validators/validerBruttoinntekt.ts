@@ -85,8 +85,6 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
             } else {
               const feilkoder = validerPeriode(state.ferie, 'bruttoinntekt-ful');
               valideringstatus = valideringstatus.concat(feilkoder);
-              console.log('valideringstatus', valideringstatus);
-              console.log('feilkoder', feilkoder);
             }
             break;
           }

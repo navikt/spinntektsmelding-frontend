@@ -45,34 +45,35 @@ export default function LonnUnderSykefravaeret({
         )}
         {harGyldigeRefusjonEndringer(refusjonEndringer) && (
           <>
-            {harRefusjonEndringer && (
+            {harRefusjonEndringer === 'Nei' && (
               <>
                 <div className={lokalStyle.uthevet}>Er det endringer i refusjonsbeløpet i perioden?</div>
-                <BodyShort>{harGyldigeRefusjonEndringer(refusjonEndringer) ? 'Ja' : 'Nei'}</BodyShort>
-                {refusjonEndringer!.length > 0 && (
-                  <table className={lokalStyle.lonnTabell}>
-                    <thead>
-                      <tr>
-                        <td className={lokalStyle.uthevet}>Dato for endring</td>
-                        <td className={lokalStyle.uthevet}>Endret refusjonsbeløp</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {refusjonEndringer?.map((endring) => (
-                        <tr key={endring.dato?.toString()}>
-                          <td>{formatDate(endring.dato)}</td>
-                          <td>{formatCurrency(endring.beloep)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
+                <BodyShort>{harRefusjonEndringer}</BodyShort>
               </>
             )}
-            <div className={lokalStyle.uthevet}>Opphører refusjonkravet i perioden</div>
-            <BodyShort className={lokalStyle.svartekster}>{refusjonskravetOpphoerer.status}</BodyShort>
+            {harRefusjonEndringer === 'Ja' && refusjonEndringer!.length > 0 && (
+              <table className={lokalStyle.lonnTabell}>
+                <thead>
+                  <tr>
+                    <td className={lokalStyle.uthevet}>Dato for endring</td>
+                    <td className={lokalStyle.uthevet}>Endret refusjonsbeløp</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {refusjonEndringer?.map((endring) => (
+                    <tr key={endring.dato?.toString()}>
+                      <td>{formatDate(endring.dato)}</td>
+                      <td>{formatCurrency(endring.beloep)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </>
         )}
+        <div className={lokalStyle.uthevet}>Opphører refusjonkravet i perioden</div>
+        <BodyShort className={lokalStyle.svartekster}>{refusjonskravetOpphoerer.status}</BodyShort>
+
         {refusjonskravetOpphoerer && refusjonskravetOpphoerer.status === 'Ja' && (
           <>
             <div className={lokalStyle.uthevet}>Opphørsdato</div>
