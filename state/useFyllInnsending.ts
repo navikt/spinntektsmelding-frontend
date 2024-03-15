@@ -194,15 +194,20 @@ export default function useFyllInnsending() {
     };
 
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
-
-    const RefusjonUtbetalingEndringUtenGammelBFD = refusjonEndringer?.filter((endring) => {
-      return endring.dato && isAfter(endring.dato, gammeltSkjaeringstidspunkt as Date);
-    });
+    console.log('refusjonEndringer - ute', refusjonEndringer);
+    console.log('gammeltSkjaeringstidspunkt', gammeltSkjaeringstidspunkt);
+    const RefusjonUtbetalingEndringUtenGammelBFD = gammeltSkjaeringstidspunkt
+      ? refusjonEndringer?.filter((endring) => {
+          return endring.dato && isAfter(endring.dato, gammeltSkjaeringstidspunkt as Date);
+        })
+      : refusjonEndringer;
 
     const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonsendringer(
       harRefusjonEndringer,
       RefusjonUtbetalingEndringUtenGammelBFD
     );
+
+    console.log('innsendingRefusjonEndringer', innsendingRefusjonEndringer);
 
     setSkalViseFeilmeldinger(true);
 
@@ -244,7 +249,7 @@ export default function useFyllInnsending() {
     );
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
-
+    console.log('lonnISykefravaeret', lonnISykefravaeret);
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
@@ -399,6 +404,8 @@ function konverterRefusjonsendringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBeloep> | undefined
 ): RefusjonEndring[] | undefined {
+  console.log('harRefusjonEndringer', harRefusjonEndringer);
+  console.log('refusjonEndringer', refusjonEndringer);
   const refusjoner =
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
