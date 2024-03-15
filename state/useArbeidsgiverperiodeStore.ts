@@ -231,7 +231,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             );
           }
 
-          slettFeilmeldingFraState(state, 'arbeidsgiverperiode-feil');
+          slettFeilmeldingFraState(state, 'arbeidsgiverperioder-feil');
 
           state.endretArbeidsgiverperiode = false;
           return state;

@@ -34,10 +34,10 @@ export default function TariffendringDato({
       <Datovelger
         onDateChange={changeTariffKjentDato}
         label='Dato tariffendring ble kjent'
-        id='bruttoinntekt-tariffendring-kjelt'
+        id='bruttoinntekt-tariffendring-kjent'
         defaultSelected={defaultKjentDato}
         toDate={tilDato}
-        error={visFeilmeldingsTekst ? visFeilmeldingsTekst('bruttoinntekt-tariffendring-kjelt') : undefined}
+        error={visFeilmeldingsTekst ? visFeilmeldingsTekst('bruttoinntekt-tariffendring-kjent') : undefined}
         defaultMonth={defaultMonth}
       />
     </div>
