@@ -12,7 +12,7 @@ const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
   status: 'Ja',
   opphoersdato: new Date(2002, 1, 2)
 };
-describe('validerLonnUnderSykefravaeret', () => {
+describe.concurrent('validerLonnUnderSykefravaeret', () => {
   it('should return an empty array when everything is OK', () => {
     expect(validerLonnUnderSykefravaeret(lonnUS)).toEqual([]);
   });
@@ -137,5 +137,18 @@ describe('validerLonnUnderSykefravaeret', () => {
     const bruttoInntekt = 1000000;
 
     expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
+  });
+
+  it('should not return an error when refusjonsbeløp is higher than bruttoinntekt and there is updated submission', () => {
+    const inputLUS: LonnISykefravaeret = {
+      status: 'Ja',
+      beloep: 99999
+    };
+
+    const expected: any = [];
+
+    const bruttoInntekt = 9000;
+
+    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt, true)).toEqual(expected);
   });
 });
