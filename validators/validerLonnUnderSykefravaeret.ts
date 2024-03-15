@@ -10,22 +10,25 @@ export enum LonnUnderSykefravaeretFeilkode {
 }
 
 export default function validerLonnUnderSykefravaeret(
-  lonnUS?: LonnISykefravaeret,
+  refusjon?: LonnISykefravaeret,
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer,
-  bruttoInntekt?: number
+  bruttoInntekt?: number,
+  innsendingEndring?: boolean
 ): Array<ValiderResultat> {
   let errorStatus: Array<ValiderResultat> = [];
 
-  if (!lonnUS) {
+  if (!refusjon) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_MANGLER,
       felt: 'lus-radio'
     });
   } else {
-    if (lonnUS.status === 'Ja') {
-      validerBelop(lonnUS, errorStatus);
+    if (refusjon.status === 'Ja') {
+      validerBelop(refusjon, errorStatus);
       validerStatus(refusjonskravetOpphoerer, errorStatus);
-      validerMaksimaltBelop(lonnUS, bruttoInntekt, errorStatus);
+      if (!innsendingEndring) {
+        validerMaksimaltBelop(refusjon, bruttoInntekt, errorStatus);
+      }
     }
   }
 
@@ -52,8 +55,8 @@ function validerJaStatusMedDato(refusjonskravetOpphoerer: RefusjonskravetOpphoer
   }
 }
 
-function validerBelop(lonnUS: LonnISykefravaeret, errorStatus: ValiderResultat[]) {
-  if (typeof lonnUS.beloep === 'undefined') {
+function validerBelop(refusjon: LonnISykefravaeret, errorStatus: ValiderResultat[]) {
+  if (typeof refusjon.beloep === 'undefined') {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_BELOP,
       felt: 'lus-input'
@@ -62,11 +65,11 @@ function validerBelop(lonnUS: LonnISykefravaeret, errorStatus: ValiderResultat[]
 }
 
 function validerMaksimaltBelop(
-  lonnUS: LonnISykefravaeret,
+  refusjon: LonnISykefravaeret,
   bruttoInntekt: number | undefined,
   errorStatus: ValiderResultat[]
 ) {
-  if (lonnUS.beloep && bruttoInntekt && bruttoInntekt < lonnUS.beloep) {
+  if (refusjon.beloep && bruttoInntekt && bruttoInntekt < refusjon.beloep) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT,
       felt: 'lus-input'
