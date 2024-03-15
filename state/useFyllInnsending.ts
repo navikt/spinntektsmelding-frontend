@@ -194,10 +194,11 @@ export default function useFyllInnsending() {
     };
 
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
-
-    const RefusjonUtbetalingEndringUtenGammelBFD = refusjonEndringer?.filter((endring) => {
-      return endring.dato && isAfter(endring.dato, gammeltSkjaeringstidspunkt as Date);
-    });
+    const RefusjonUtbetalingEndringUtenGammelBFD = gammeltSkjaeringstidspunkt
+      ? refusjonEndringer?.filter((endring) => {
+          return endring.dato && isAfter(endring.dato, gammeltSkjaeringstidspunkt);
+        })
+      : refusjonEndringer;
 
     const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonsendringer(
       harRefusjonEndringer,
@@ -244,7 +245,6 @@ export default function useFyllInnsending() {
     );
 
     const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
-
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
