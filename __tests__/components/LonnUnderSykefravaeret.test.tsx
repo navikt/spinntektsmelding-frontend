@@ -158,4 +158,34 @@ describe('LonnUnderSykefravaeret', () => {
 
     expect(results).toHaveNoViolations();
   });
+
+  it('dont render a title text without refusjon endringer', async () => {
+    const lonn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Ja' };
+    const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
+      status: 'Ja',
+      opphoersdato: parseIsoDate('2022-04-04')
+    };
+    const harRefusjonEndringer: YesNo = 'Ja';
+    const refusjonEndringer: Array<EndringsBeloep> = [
+      { dato: parseIsoDate('2022-02-02'), beloep: 1234 },
+      { dato: parseIsoDate('2022-03-03'), beloep: 432 }
+    ];
+
+    const { container } = render(
+      <LonnUnderSykefravaeret
+        lonn={lonn}
+        harRefusjonEndringer={harRefusjonEndringer}
+        refusjonEndringer={refusjonEndringer}
+        refusjonskravetOpphoerer={refusjonskravetOpphoerer}
+      />
+    );
+
+    const littTekst = screen.queryByText(/Er det endringer i refusjonsbeløpet i perioden/);
+
+    expect(littTekst).not.toBeInTheDocument();
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
 });
