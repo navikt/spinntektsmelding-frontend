@@ -340,8 +340,8 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
           />
         </div>
       )}
-      {visFeilmelding('arbeidsgiverperiode-feil') && (
-        <Feilmelding id='arbeidsgiverperiode-feil'>{visFeilmeldingsTekst('arbeidsgiverperiode-feil')}</Feilmelding>
+      {visFeilmelding('arbeidsgiverperioder-feil') && (
+        <Feilmelding id='arbeidsgiverperioder-feil'>{visFeilmeldingsTekst('arbeidsgiverperioder-feil')}</Feilmelding>
       )}
       {advarselLangPeriode.length > 0 && (
         <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{advarselLangPeriode}</Feilmelding>
@@ -388,8 +388,8 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
         </>
       )}
 
-      {visFeilmelding('arbeidsgiverperiode-feil') && (
-        <Feilmelding id='arbeidsgiverperiode-feil'>{visFeilmeldingsTekst('arbeidsgiverperiode-feil')}</Feilmelding>
+      {visFeilmelding('arbeidsgiverperioder-feil') && (
+        <Feilmelding id='arbeidsgiverperioder-feil'>{visFeilmeldingsTekst('arbeidsgiverperioder-feil')}</Feilmelding>
       )}
 
       {endretArbeidsgiverperiode && (

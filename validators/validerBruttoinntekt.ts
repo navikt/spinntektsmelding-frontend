@@ -2,6 +2,7 @@ import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunn
 import { CompleteState } from '../state/useBoundStore';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import validerPeriode from './validerPeriode';
 
 export enum BruttoinntektFeilkode {
   OK = 'OK',
@@ -69,7 +70,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
 
             if (!state.tariffkjentdato) {
               valideringstatus.push({
-                felt: 'bruttoinntekt-tariffendring-kjelt',
+                felt: 'bruttoinntekt-tariffendring-kjent',
                 code: BruttoinntektFeilkode.TARIFFENDRING_KJENT
               });
             }
@@ -82,21 +83,10 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                 code: BruttoinntektFeilkode.FERIE_MANGLER
               });
             } else {
-              state.ferie.forEach((ferieperiode) => {
-                if (!ferieperiode.fom) {
-                  valideringstatus.push({
-                    felt: `bruttoinntekt-ful-fom-${ferieperiode.id}`,
-                    code: BruttoinntektFeilkode.FERIE_FOM
-                  });
-                }
-
-                if (!ferieperiode.tom) {
-                  valideringstatus.push({
-                    felt: `bruttoinntekt-ful-tom-${ferieperiode.id}`,
-                    code: BruttoinntektFeilkode.FERIE_TOM
-                  });
-                }
-              });
+              const feilkoder = validerPeriode(state.ferie, 'bruttoinntekt-ful');
+              valideringstatus = valideringstatus.concat(feilkoder);
+              console.log('valideringstatus', valideringstatus);
+              console.log('feilkoder', feilkoder);
             }
             break;
           }
@@ -125,21 +115,8 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                 code: BruttoinntektFeilkode.PERMISJON_MANGLER
               });
             } else {
-              state.permisjon.forEach((permisjonperiode) => {
-                if (!permisjonperiode.fom) {
-                  valideringstatus.push({
-                    felt: `bruttoinntekt-permisjon-fom-${permisjonperiode.id}`,
-                    code: BruttoinntektFeilkode.PERMISJON_FOM
-                  });
-                }
-
-                if (!permisjonperiode.tom) {
-                  valideringstatus.push({
-                    felt: `bruttoinntekt-permisjon-tom-${permisjonperiode.id}`,
-                    code: BruttoinntektFeilkode.PERMISJON_TOM
-                  });
-                }
-              });
+              const feilkoder = validerPeriode(state.permisjon, 'bruttoinntekt-permisjon');
+              valideringstatus = valideringstatus.concat(feilkoder);
             }
             break;
           }
@@ -151,21 +128,8 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                 code: BruttoinntektFeilkode.PERMITTERING_MANGLER
               });
             } else {
-              state.permittering.forEach((permitteringperiode) => {
-                if (!permitteringperiode.fom) {
-                  valideringstatus.push({
-                    felt: `bruttoinntekt-permittering-fom-${permitteringperiode.id}`,
-                    code: BruttoinntektFeilkode.PERMITTERING_FOM
-                  });
-                }
-
-                if (!permitteringperiode.tom) {
-                  valideringstatus.push({
-                    felt: `bruttoinntekt-permittering-tom-${permitteringperiode.id}`,
-                    code: BruttoinntektFeilkode.PERMITTERING_TOM
-                  });
-                }
-              });
+              const feilkoder = validerPeriode(state.permittering, 'bruttoinntekt-permittering');
+              valideringstatus = valideringstatus.concat(feilkoder);
             }
             break;
           }
@@ -211,21 +175,8 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                 code: BruttoinntektFeilkode.SYKEFRAVAER_MANGLER
               });
             } else {
-              state.sykefravaerperioder.forEach((periode) => {
-                if (!periode.fom) {
-                  valideringstatus.push({
-                    felt: `bruttoinntekt-sykefravaerperioder-fom-${periode.id}`,
-                    code: BruttoinntektFeilkode.SYKEFRAVAER_FOM
-                  });
-                }
-
-                if (!periode.tom) {
-                  valideringstatus.push({
-                    felt: `bruttoinntekt-sykefravaerperioder-tom-${periode.id}`,
-                    code: BruttoinntektFeilkode.SYKEFRAVAER_TOM
-                  });
-                }
-              });
+              const feilkoder = validerPeriode(state.sykefravaerperioder, 'bruttoinntekt-sykefravaerperioder');
+              valideringstatus = valideringstatus.concat(feilkoder);
             }
             break;
           }
