@@ -48,6 +48,11 @@ export default function PeriodeListevelger({
     }
   }, []);
 
+  const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+    event.preventDefault();
+    append({});
+  };
+
   return (
     <>
       {fields.map((range, key) => (
@@ -73,7 +78,7 @@ export default function PeriodeListevelger({
           )}
         </div>
       ))}
-      <Button variant='secondary' onClick={(event) => append({})} className={lokalStyles.leggtilperiodeknapp}>
+      <Button variant='secondary' onClick={handleLeggTilPeriode} className={lokalStyles.leggtilperiodeknapp}>
         Legg til periode
       </Button>
     </>

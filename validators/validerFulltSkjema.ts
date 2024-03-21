@@ -69,7 +69,7 @@ const toLocalIso = (val: Date) => {
   return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
 };
 
-const PeriodeSchema = z
+export const PeriodeSchema = z
   .object({
     fom: z
       .date({
