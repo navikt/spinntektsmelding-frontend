@@ -8,6 +8,7 @@ export interface SammenslaattPeriode {
 }
 
 export default function slaaSammenPerioder(perioder: { fom: Date; tom: Date; id: string }[]): SammenslaattPeriode[] {
+  const perioderSorted = [...perioder].sort((a, b) => (a.fom > b.fom ? -1 : 1));
   const sammenslaattePerioder = perioder
     .toSorted((a, b) => (a.fom > b.fom ? -1 : 1))
     .reduce((acc, periode) => {
@@ -36,14 +37,14 @@ export default function slaaSammenPerioder(perioder: { fom: Date; tom: Date; id:
         ...periode
       };
     }
-
-    const tom = periode.periode.toSorted((a, b) => (a.fom < b.fom ? -1 : 1))[periode.periode.length - 1].tom;
-    const fom = periode.periode.toSorted((a, b) => (a.fom < b.fom ? -1 : 1))[0].fom;
+    const sortertePerioder = [...periode.periode].sort((a, b) => (a.fom < b.fom ? -1 : 1));
+    const tom = sortertePerioder[sortertePerioder.length - 1].tom;
+    const fom = sortertePerioder[0].fom;
     return {
       ...periode,
       tom,
       fom,
-      periode: periode.periode.toSorted((a, b) => (a.fom < b.fom ? -1 : 1))
+      periode: sortertePerioder
     };
   });
 

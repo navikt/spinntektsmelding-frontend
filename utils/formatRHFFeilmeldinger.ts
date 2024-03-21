@@ -12,16 +12,3 @@ export default function formatRHFFeilmeldinger(validationResult: any): Feilmeldi
     } as Feilmelding;
   });
 }
-export function getAllKeysAsString(main: any): string {
-  const obj = structuredClone(main);
-  let keys: string[] = [];
-  for (let key in obj) {
-    if (typeof obj[key] === 'object' && obj[key] !== null) {
-      console.log('key', key);
-      keys = keys.concat(getAllKeysAsString(obj[key]));
-    } else {
-      keys.push(key);
-    }
-  }
-  return keys.join(', ');
-}

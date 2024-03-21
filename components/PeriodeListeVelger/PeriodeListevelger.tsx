@@ -40,13 +40,13 @@ export default function PeriodeListevelger({
         append(range);
       });
     }
-  }, [defaultRange]);
+  }, [append, defaultRange]);
 
   useEffect(() => {
     if (fields.length === 0) {
       append({});
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     event.preventDefault();
