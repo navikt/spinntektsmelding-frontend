@@ -53,6 +53,11 @@ export default function PeriodeListevelger({
     append({});
   };
 
+  const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+    event.preventDefault();
+    append({});
+  };
+
   return (
     <>
       {fields.map((range, key) => (
