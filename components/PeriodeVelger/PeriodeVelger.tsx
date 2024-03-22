@@ -1,6 +1,6 @@
 import { Checkbox, CheckboxGroup, Label, Radio, RadioGroup } from '@navikt/ds-react';
 import lokalStyle from './PeriodeVelger.module.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import formatDate from '../../utils/formatDate';
 import VisMer from './VisMer';
 import slaaSammenPerioder from './slaaSammenPerioder';
@@ -8,7 +8,7 @@ import { useController, useFormContext } from 'react-hook-form';
 import PeriodeListevelger from '../PeriodeListeVelger/PeriodeListevelger';
 
 interface PeriodeVelgerProps {
-  perioder: { fom: Date; tom: Date; id: string }[];
+  perioder?: { fom: Date; tom: Date; id: string }[];
   perioderSomVises?: number;
 }
 
