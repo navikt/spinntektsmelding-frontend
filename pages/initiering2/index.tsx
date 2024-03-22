@@ -26,7 +26,7 @@ import { useRouter } from 'next/navigation';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import { OrganisasjonsnummerSchema, PersonnummerSchema } from '../../validators/validerAapenInnsending';
-import formatRHFFeilmeldinger, { getAllKeysAsString } from '../../utils/formatRHFFeilmeldinger';
+import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import PeriodeVelger from '../../components/PeriodeVelger/PeriodeVelger';
 import { PeriodeSchema } from '../../validators/validerFulltSkjema';
 import { MottattPeriode } from '../../state/MottattData';
