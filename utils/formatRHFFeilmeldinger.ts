@@ -6,10 +6,12 @@ export default function formatRHFFeilmeldinger(validationResult: any): Feilmeldi
   }
 
   return fmKeys.map((feil) => {
-    return {
-      text: validationResult[feil].message,
-      felt: feil
-    } as Feilmelding;
+    if (validationResult[feil].message)
+      return {
+        text: validationResult[feil].message,
+        felt: feil
+      } as Feilmelding;
+    else return formatRHFFeilmeldinger(validationResult[feil]);
   });
 }
 export function getAllKeysAsString(main: any): string {
