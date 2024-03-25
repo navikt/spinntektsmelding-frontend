@@ -15,7 +15,7 @@ interface PeriodeVelgerProps {
 export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readonly<PeriodeVelgerProps>) {
   const { control, setValue } = useFormContext();
   const {
-    field,
+    // field,
     // fieldState: { invalid, isTouched, isDirty },
     formState: { errors }
     // formState: { touchedFields, dirtyFields }
@@ -30,7 +30,7 @@ export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readon
 
   const [shownRows, setShownRows] = useState<number>(perioderSomVises);
 
-  const sammenslaatePerioder = slaaSammenPerioder(perioder);
+  const sammenslaatePerioder = perioder ? slaaSammenPerioder(perioder) : [];
 
   const handleVisMerClick = () => {
     setShownRows(shownRows + perioderSomVises);
