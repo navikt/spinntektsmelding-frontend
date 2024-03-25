@@ -17,7 +17,9 @@ const PositiveNumberSchema = z
 export default z
   .object({
     inntekt: z.object({
-      endringBruttoloenn: JaNeiSchema,
+      endringBruttoloenn: z.enum(['Ja', 'Nei'], {
+        errorMap: (issue, ctx) => ({ message: 'Vennligst angi om det har vært endringer i beregnet månedslønn.' })
+      }),
       beloep: z.number().gte(0).optional(),
       endringAarsak: EndringAarsakSchema.optional()
     }),
@@ -27,9 +29,23 @@ export default z
     }),
     refusjon: z
       .object({
-        erDetEndringRefusjon: JaNeiSchema.optional(),
-        kreverRefusjon: JaNeiSchema.optional(),
-        harEndringer: JaNeiSchema.optional(),
+        erDetEndringRefusjon: z
+          .enum(['Ja', 'Nei'], {
+            errorMap: (issue, ctx) => ({ message: 'Vennligst angi om det har vært endringer i refusjonskravet.' })
+          })
+          .optional(),
+        kreverRefusjon: z
+          .enum(['Ja', 'Nei'], {
+            errorMap: (issue, ctx) => ({
+              message: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.'
+            })
+          })
+          .optional(),
+        harEndringer: z
+          .enum(['Ja', 'Nei'], {
+            errorMap: (issue, ctx) => ({ message: 'Vennligst angi om det er endringer i refusjonsbeløpet.' })
+          })
+          .optional(),
         refusjonPrMnd: z.number().gte(0).optional(),
         refusjonEndringer: z
           .array(
@@ -39,7 +55,11 @@ export default z
             })
           )
           .optional(),
-        kravetOpphoerer: JaNeiSchema.optional(),
+        kravetOpphoerer: z
+          .enum(['Ja', 'Nei'], {
+            errorMap: (issue, ctx) => ({ message: 'Vennligst angi om kravet opphører.' })
+          })
+          .optional(),
         refusjonOpphoerer: z.date().optional()
       })
       .superRefine((value, ctx) => {
