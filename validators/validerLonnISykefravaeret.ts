@@ -1,5 +1,5 @@
 import { LonnISykefravaeret } from '../state/state';
-import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum FullLonnISykefravaeret {
   MANGLER_VALG_AV_LONN_I_SYKEFRAVAERET = 'MANGLER_VALG_AV_LONN_I_SYKEFRAVAERET',
