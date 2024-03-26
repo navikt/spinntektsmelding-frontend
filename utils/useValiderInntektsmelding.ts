@@ -16,6 +16,7 @@ import useBoundStore from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
 import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
+import validerPeriodeOverlapp, { PeriodeOverlappFeilkode } from '../validators/validerPeriodeOverlapp';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -47,7 +48,8 @@ type codeUnion =
   | EndringAvMaanedslonnFeilkode
   | PeriodeEgenmeldingFeilkode
   | PeriodeFravaerFeilkode
-  | TelefonFeilkode;
+  | TelefonFeilkode
+  | PeriodeOverlappFeilkode;
 
 export interface ValiderResultat {
   felt: string;
@@ -123,6 +125,11 @@ export default function useValiderInntektsmelding() {
 
     if (state.arbeidsgiverperioder && !kunInntektOgRefusjon) {
       feilkoderArbeidsgiverperioder = validerPeriodeFravaer(state.arbeidsgiverperioder, 'arbeidsgiverperioder');
+      const feilkoderOverlapp = validerPeriodeOverlapp(state.arbeidsgiverperioder);
+      console.log('feilkoderOverlapp', feilkoderOverlapp);
+      if (feilkoderOverlapp.length > 0) {
+        feilkoderArbeidsgiverperioder = [...feilkoderArbeidsgiverperioder, ...feilkoderOverlapp];
+      }
     }
 
     feilkoderTelefon = validerTelefon(state.innsenderTelefonNr);
