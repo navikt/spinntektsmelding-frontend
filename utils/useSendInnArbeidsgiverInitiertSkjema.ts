@@ -1,6 +1,6 @@
 import useBoundStore from '../state/useBoundStore';
 import logEvent from './logEvent';
-import useValiderInntektsmelding, { ValiderTekster } from './useValiderInntektsmelding';
+import { ValiderTekster } from './validerInntektsmelding';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/navigation';

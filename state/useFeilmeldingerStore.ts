@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
-import { ValiderResultat, ValiderTekster } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat, ValiderTekster } from '../utils/validerInntektsmelding';
 import { CompleteState } from './useBoundStore';
 import feiltekster from '../utils/feiltekster';
 

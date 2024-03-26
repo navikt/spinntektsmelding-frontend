@@ -1,7 +1,7 @@
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import { LonnISykefravaeret, YesNo } from '../state/state';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
-import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum EndringAvMaanedslonnFeilkode {
   MANGLER_BELOP = 'MANGLER_BELOP',

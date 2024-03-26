@@ -1,22 +1,22 @@
 import useBoundStore from '../state/useBoundStore';
 import logEvent from './logEvent';
-import useValiderInntektsmelding, { ValiderTekster } from './useValiderInntektsmelding';
 import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
 import isValidUUID from './isValidUUID';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
+import validerInntektsmelding from './validerInntektsmelding';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
   amplitudeComponent: string
 ) {
-  const validerInntektsmelding = useValiderInntektsmelding();
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllInnsending();
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const state = useBoundStore((state) => state);
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
@@ -54,7 +54,7 @@ export default function useSendInnSkjema(
       return false;
     }
 
-    const errorStatus = validerInntektsmelding(opplysningerBekreftet, kunInntektOgRefusjon);
+    const errorStatus = validerInntektsmelding(state, opplysningerBekreftet, kunInntektOgRefusjon);
 
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
