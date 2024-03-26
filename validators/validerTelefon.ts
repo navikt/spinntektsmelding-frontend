@@ -1,4 +1,4 @@
-import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum TelefonFeilkode {
   OK = 'OK',

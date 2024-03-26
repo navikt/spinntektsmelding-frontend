@@ -1,6 +1,6 @@
 import { LonnIArbeidsgiverperioden, Periode } from '../state/state';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
-import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum LonnIArbeidsgiverperiodenFeilkode {
   LONN_I_ARBEIDSGIVERPERIODEN_MANGLER = 'LONN_I_ARBEIDSGIVERPERIODEN_MANGLER',
