@@ -1,5 +1,5 @@
 import { LonnISykefravaeret, RefusjonskravetOpphoerer } from '../state/state';
-import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum LonnUnderSykefravaeretFeilkode {
   LONN_UNDER_SYKEFRAVAERET_MANGLER = 'LONN_UNDER_SYKEFRAVAERET_MANGLER',

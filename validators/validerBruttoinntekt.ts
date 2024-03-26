@@ -1,7 +1,7 @@
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { CompleteState } from '../state/useBoundStore';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
-import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat } from '../utils/validerInntektsmelding';
 import validerPeriode from './validerPeriode';
 
 export enum BruttoinntektFeilkode {

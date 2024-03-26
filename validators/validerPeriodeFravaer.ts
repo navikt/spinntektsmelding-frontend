@@ -1,5 +1,5 @@
 import { Periode } from '../state/state';
-import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat } from '../utils/validerInntektsmelding';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
 
 export enum PeriodeFravaerFeilkode {

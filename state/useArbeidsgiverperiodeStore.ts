@@ -7,7 +7,7 @@ import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import parseIsoDate from '../utils/parseIsoDate';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import validerPeriodeFravaer from '../validators/validerPeriodeFravaer';
-import { ValiderResultat } from '../utils/useValiderInntektsmelding';
+import { ValiderResultat } from '../utils/validerInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
 import { MottattPeriode, TDateISODate } from './MottattData';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';

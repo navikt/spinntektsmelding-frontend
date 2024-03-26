@@ -388,10 +388,6 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
         </>
       )}
 
-      {visFeilmelding('arbeidsgiverperioder-feil') && (
-        <Feilmelding id='arbeidsgiverperioder-feil'>{visFeilmeldingsTekst('arbeidsgiverperioder-feil')}</Feilmelding>
-      )}
-
       {endretArbeidsgiverperiode && (
         <div className={lokalStyles.endreknapper}>
           <Button
