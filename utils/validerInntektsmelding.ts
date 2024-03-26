@@ -12,7 +12,7 @@ import validerLonnUnderSykefravaeret, {
 } from '../validators/validerLonnUnderSykefravaeret';
 import validerPeriodeEgenmelding, { PeriodeEgenmeldingFeilkode } from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
-import useBoundStore, { CompleteState } from '../state/useBoundStore';
+import { CompleteState } from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
 import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
