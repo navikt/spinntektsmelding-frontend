@@ -1,4 +1,4 @@
-import lokalStyles from './Bruttoinntekt.module.css';
+import lokalStyles from './PeriodeListevelger.module.css';
 import { Periode } from '../../state/state';
 import ButtonSlette from '../ButtonSlette';
 import Datovelger from '../Datovelger';
