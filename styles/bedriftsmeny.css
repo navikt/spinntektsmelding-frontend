@@ -1,0 +1,57 @@
+.navbm-bedriftsmeny {
+  background-color: var(--a-bg-default);
+  border-bottom: 0.25rem solid var(--a-border-focus-on-inverted);
+  padding: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .navbm-bedriftsmeny {
+    padding: 32px 16px 24px;
+  }
+}
+
+.navbm-piktogram {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 32px 0 64px;
+  align-items: flex-start;
+}
+
+.navbm-piktogram > svg {
+  height: 52px;
+  width: 52px;
+}
+
+@media (max-width: 70.5rem) {
+  .navbm-piktogram {
+    display: none;
+  }
+}
+
+.navbm-innhold-header {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-width: 30rem;
+  gap: 1.25rem;
+}
+
+.navbm-innhold-footer {
+  grid-column-start: 2;
+  grid-row-start: 2;
+}
+
+.navbm-container {
+  display: grid;
+  grid-template-columns: 1fr minmax(1rem, 60rem) 1fr;
+}
+
+.navbm-innhold {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column-start: 2;
+  justify-content: space-between;
+  column-gap: 48px;
+  row-gap: 16px;
+  align-items: center;
+}
