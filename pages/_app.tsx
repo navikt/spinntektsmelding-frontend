@@ -1,5 +1,6 @@
 import '../styles/globals.css';
 import '@navikt/ds-css';
+import '../styles/bedriftsmeny.css';
 import 'core-js-pure/actual/structured-clone';
 import { getFaro, initInstrumentation, pinoLevelToFaroLevel } from '../utils/faro';
 import type { AppProps } from 'next/app';
