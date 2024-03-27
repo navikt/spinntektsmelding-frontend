@@ -20,7 +20,7 @@ export default function validerLonnIArbeidsgiverperioden(
     arbeidsgiverperioder?.length === 0 ||
     arbeidsgiverperioder?.filter((p) => p.tom && p.fom).length === 0;
 
-  if (!lonnIAP) {
+  if (!lonnIAP || !lonnIAP.status || lonnIAP.status === undefined) {
     errorStatus.push({
       code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_MANGLER,
       felt: 'lia-radio'
