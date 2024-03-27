@@ -7,13 +7,19 @@ WORKDIR /app
 # COPY .npmrc.docker .npmrc 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc ./
+RUN corepack enable
+RUN yarn set version berry
+COPY .yarnrc.yml yarn.lock ./
+COPY .yarn ./.yarn
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc
 
 # RUN npm config set always-auth true   # Er ikke støttet lengre, men kan den bare slettes?
 
-RUN yarn --frozen-lockfile --ignore-scripts
+RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
+    export NPM_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) && \
+    yarn install --immutable --ignore-scripts
 
 
 # Rebuild the source code only when needed
