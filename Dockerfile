@@ -19,7 +19,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     export NPM_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) && \
-    yarn install --immutable
+    yarn install --immutable --ignore-scripts
 
 
 # Rebuild the source code only when needed
