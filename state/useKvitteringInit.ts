@@ -141,11 +141,7 @@ export default function useKvitteringInit() {
 
         case begrunnelseEndringBruttoinntekt.Ferie: {
           if ('liste' in aarsak) {
-            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-              fom: parseIsoDate(periode.fom),
-              tom: parseIsoDate(periode.tom),
-              id: nanoid()
-            }));
+            const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
             setFeriePeriode(perioder);
           }
           break;
@@ -157,11 +153,7 @@ export default function useKvitteringInit() {
 
         case begrunnelseEndringBruttoinntekt.Permisjon: {
           if ('liste' in aarsak) {
-            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-              fom: parseIsoDate(periode.fom),
-              tom: parseIsoDate(periode.tom),
-              id: nanoid()
-            }));
+            const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
             setPermisjonPeriode(perioder);
           }
           break;
@@ -169,11 +161,7 @@ export default function useKvitteringInit() {
 
         case begrunnelseEndringBruttoinntekt.Permittering: {
           if ('liste' in aarsak) {
-            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-              fom: parseIsoDate(periode.fom),
-              tom: parseIsoDate(periode.tom),
-              id: nanoid()
-            }));
+            const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
             setPermitteringPeriode(perioder);
           }
           break;
@@ -191,11 +179,7 @@ export default function useKvitteringInit() {
 
         case begrunnelseEndringBruttoinntekt.Sykefravaer: {
           if ('liste' in aarsak) {
-            const perioder: Array<Periode> = aarsak.liste.map((periode: SendtPeriode) => ({
-              fom: parseIsoDate(periode.fom),
-              tom: parseIsoDate(periode.tom),
-              id: nanoid()
-            }));
+            const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
             setSykefravaerPeriode(perioder);
           }
           break;
@@ -269,4 +253,12 @@ export default function useKvitteringInit() {
       kilde: 'INNTEKTSMELDING'
     });
   };
+}
+
+function mapPeriodeTilPeriode(aarsak: PeriodeListe): Periode[] {
+  return aarsak.liste.map((periode: SendtPeriode) => ({
+    fom: parseIsoDate(periode.fom),
+    tom: parseIsoDate(periode.tom),
+    id: nanoid()
+  }));
 }

@@ -297,11 +297,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           setTariffKjentdato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
           break;
         case begrunnelseEndringBruttoinntekt.Ferie: {
-          const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom),
-            id: periode.fom + '-' + periode.tom
-          }));
+          const datoPerioder: Periode[] = mapEndringsAarsakPeriodeTilPeriode(skjemaData);
           setFeriePeriode(datoPerioder);
           break;
         }
@@ -309,20 +305,12 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           setLonnsendringDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
           break;
         case begrunnelseEndringBruttoinntekt.Permisjon: {
-          const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom),
-            id: periode.fom + '-' + periode.tom
-          }));
+          const datoPerioder: Periode[] = mapEndringsAarsakPeriodeTilPeriode(skjemaData);
           setPermisjonPeriode(datoPerioder);
           break;
         }
         case begrunnelseEndringBruttoinntekt.Permittering: {
-          const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom),
-            id: periode.fom + '-' + periode.tom
-          }));
+          const datoPerioder: Periode[] = mapEndringsAarsakPeriodeTilPeriode(skjemaData);
           setPermitteringPeriode(datoPerioder);
           break;
         }
@@ -333,11 +321,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           setNyStillingsprosentDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
           break;
         case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-          const datoPerioder: Periode[] = skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
-            fom: parseIsoDate(periode.fom),
-            tom: parseIsoDate(periode.tom),
-            id: periode.fom + '-' + periode.tom
-          }));
+          const datoPerioder: Periode[] = mapEndringsAarsakPeriodeTilPeriode(skjemaData);
           setSykefravaerPeriode(datoPerioder);
           break;
         }
@@ -618,6 +602,14 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 };
 
 export default Endring;
+
+function mapEndringsAarsakPeriodeTilPeriode(skjemaData: z.infer<any>): Periode[] {
+  return skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
+    fom: parseIsoDate(periode.fom),
+    tom: parseIsoDate(periode.tom),
+    id: periode.fom + '-' + periode.tom
+  }));
+}
 
 export async function getServerSideProps(context: any) {
   const slug = context.query.slug;
