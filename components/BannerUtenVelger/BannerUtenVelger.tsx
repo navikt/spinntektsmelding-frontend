@@ -1,5 +1,4 @@
 import React from 'react';
-import '@navikt/bedriftsmeny/lib/bedriftsmeny.css';
 import Heading1 from '../Heading1/Heading1';
 
 interface Props {
