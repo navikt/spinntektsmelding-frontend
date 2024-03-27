@@ -3,7 +3,6 @@ import { ValiderResultat } from '../utils/validerInntektsmelding';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
 
 export enum PeriodeFravaerFeilkode {
-  OK = 'OK',
   MANGLER_PERIODE = 'MANGLER_PERIODE',
   MANGLER_TIL = 'MANGLER_TIL',
   MANGLER_FRA = 'MANGLER_FRA',

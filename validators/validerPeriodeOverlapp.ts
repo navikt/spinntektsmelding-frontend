@@ -2,7 +2,6 @@ import { Periode } from '../state/state';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum PeriodeOverlappFeilkode {
-  OK = 'OK',
   PERIODE_OVERLAPPER = 'PERIODE_OVERLAPPER'
 }
 
