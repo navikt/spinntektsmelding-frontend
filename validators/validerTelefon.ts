@@ -1,7 +1,6 @@
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum TelefonFeilkode {
-  OK = 'OK',
   UGYLDIG_TELEFON = 'UGYLDIG_TELEFON',
   TELEFON_MANGLER = 'TELEFON_MANGLER'
 }

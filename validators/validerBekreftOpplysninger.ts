@@ -1,7 +1,6 @@
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum BekreftOpplysningerFeilkoder {
-  OK = 'OK',
   BEKREFT_OPPLYSNINGER = 'BEKREFT_OPPLYSNINGER'
 }
 

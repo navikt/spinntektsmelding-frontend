@@ -12,10 +12,14 @@ import env from '../config/environment';
 initInstrumentation();
 configureLogger({
   basePath: env.baseUrl,
-  onLog: (log) =>
-    getFaro().api.pushLog(log.messages, {
-      level: pinoLevelToFaroLevel(log.level.label)
-    })
+  onLog: (log) => {
+    const faro = getFaro();
+    if (faro) {
+      return faro.api.pushLog(log.messages, {
+        level: pinoLevelToFaroLevel(log.level.label)
+      });
+    }
+  }
 });
 
 function App({ Component, pageProps }: AppProps) {

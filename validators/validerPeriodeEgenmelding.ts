@@ -11,7 +11,6 @@ import {
 } from './validerPeriodeFravaer';
 
 export enum PeriodeEgenmeldingFeilkode {
-  OK = 'OK',
   MANGLER_PERIODE = 'MANGLER_PERIODE',
   MANGLER_TIL = 'MANGLER_TIL',
   MANGLER_FRA = 'MANGLER_FRA',
