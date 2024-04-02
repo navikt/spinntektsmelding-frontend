@@ -32,6 +32,7 @@ import { PeriodeSchema } from '../../validators/validerFulltSkjema';
 import { MottattPeriode } from '../../state/MottattData';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { differenceInDays } from 'date-fns';
+import isMod11Number from '../../utils/isMod10Number';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -49,13 +50,24 @@ const Initiering2: NextPage = () => {
 
   const skjemaSchema = z
     .object({
-      organisasjonsnummer: OrganisasjonsnummerSchema,
+      organisasjonsnummer: z
+        .string()
+        .transform((val) => val.replace(/\s/g, ''))
+        .pipe(
+          z
+            .string({
+              required_error: 'Organisasjon er ikke valgt'
+            })
+
+            .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
+        ),
       navn: z.string().optional(),
       personnummer: PersonnummerSchema.optional(),
-      perioder: z.array(PeriodeSchema, { required_error: 'Vennligst velg en periode' })
+      perioder: z.array(PeriodeSchema, { required_error: 'Vennligst velg en periode' }).optional()
     })
     .superRefine((value, ctx) => {
-      if (value.perioder.length === 0) {
+      console.log('value', value.perioder);
+      if (!value.perioder || value.perioder.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Vennligst velg en periode',
@@ -63,7 +75,7 @@ const Initiering2: NextPage = () => {
         });
       }
 
-      if (value.perioder.length > 0) {
+      if (value.perioder && value.perioder.length > 0) {
         const sortedPerioder = value.perioder.sort((a, b) => a.fom > b.fom);
         for (let i = 0; i < sortedPerioder.length - 1; i++) {
           if (sortedPerioder[i].tom >= sortedPerioder[i + 1].fom) {
@@ -76,13 +88,13 @@ const Initiering2: NextPage = () => {
         }
       }
 
-      if (value.perioder.length > 0) {
+      if (value.perioder && value.perioder.length > 0) {
         const sortedPerioder = value.perioder.sort((a, b) => a.fom > b.fom);
         for (let i = 0; i < sortedPerioder.length - 1; i++) {
           if (
-            Math.abs(differenceInDays(parseIsoDate(sortedPerioder[i].fom), parseIsoDate(sortedPerioder[i + 1].tom))) >
-            16
+            Math.abs(differenceInDays(parseIsoDate(sortedPerioder[i].tom), parseIsoDate(sortedPerioder[i + 1].om))) > 16
           ) {
+            console.log('sortedPerioder[i].fom', sortedPerioder[i].fom, sortedPerioder[i + 1].tom);
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: 'Det kan ikke være mer enn 16 dager mellom periodene',

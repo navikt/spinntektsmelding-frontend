@@ -1,4 +1,4 @@
-import { Checkbox, CheckboxGroup, Label, Radio, RadioGroup } from '@navikt/ds-react';
+import { Label, Radio, RadioGroup } from '@navikt/ds-react';
 import lokalStyle from './PeriodeVelger.module.css';
 import { useState } from 'react';
 import formatDate from '../../utils/formatDate';
@@ -46,27 +46,9 @@ export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readon
     if (valg && !valg.periode) {
       setValue('perioder', [valg]);
     } else {
-      setValue('perioder', valg.periode);
+      setValue('perioder', valg ? valg.periode : undefined);
     }
     setSelectedGroup(val);
-  };
-
-  const handleChange = (val: string[]) => {
-    const valg = sammenslaatePerioder.find((p) => p.id === selectedGroup);
-    let valgtPeriode;
-
-    if (!valg) {
-      setValue('perioder', []);
-      return;
-    }
-
-    if (!valg.periode) {
-      valgtPeriode = [valg];
-    } else {
-      valgtPeriode = valg?.periode.filter((p) => val.includes(p.id));
-    }
-
-    setValue('perioder', valgtPeriode);
   };
 
   if (!perioder || perioder.length === 0) {
@@ -93,20 +75,13 @@ export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readon
                 {formatDate(periode.fom)} - {formatDate(periode.tom)}
               </Radio>
               {selectedGroup === periode.id && periode.periode && (
-                <CheckboxGroup
-                  className={lokalStyle.checkboxGroup}
-                  legend={`${formatDate(periode.fom)} - ${formatDate(periode.tom)}`}
-                  onChange={(val: any[]) => handleChange(val)}
-                  size='small'
-                  hideLegend={true}
-                  defaultValue={findDefaultValues([periode, ...periode.periode])}
-                >
+                <>
                   {periode.periode?.map((p) => (
-                    <Checkbox value={p.id} key={p.id}>
+                    <div key={p.id} className={lokalStyle.checkboxContent}>
                       {formatDate(p.fom)} - {formatDate(p.tom)}
-                    </Checkbox>
+                    </div>
                   ))}
-                </CheckboxGroup>
+                </>
               )}
             </>
           )}
@@ -119,8 +94,3 @@ export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readon
     </RadioGroup>
   );
 }
-
-const findDefaultValues = (perioder: { fom: Date; tom: Date; id: string }[]) => {
-  const defaultValues = perioder.map((p) => p.id);
-  return defaultValues;
-};
