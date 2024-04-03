@@ -1,9 +1,8 @@
 import lokalStyles from '../Bruttoinntekt/Bruttoinntekt.module.css';
-import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
 import { TextField } from '@navikt/ds-react';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
-import { Inntekt, Periode } from '../../state/state';
+import { Periode } from '../../state/state';
 import React from 'react';
 import PeriodeListevelger from '../PeriodeListeVelger/PeriodeListevelger';
 import begrunnelseEndringBruttoinntekt from '../Bruttoinntekt/begrunnelseEndringBruttoinntekt';

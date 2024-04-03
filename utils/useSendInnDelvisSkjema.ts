@@ -57,7 +57,7 @@ export default function useSendInnDelvisSkjema(
     }
 
     const errorStatus = validerInntektsmelding(true, kunInntektOgRefusjon);
-
+    console.log('errorStatus', errorStatus);
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
     if (hasErrors) {

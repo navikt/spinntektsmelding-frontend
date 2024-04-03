@@ -34,6 +34,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
       code: BruttoinntektFeilkode.INNTEKT_MANGLER
     });
   } else {
+    debugger;
     const bruttoinntekt = state.bruttoinntekt;
     if (ugyldigEllerNegativtTall(bruttoinntekt.bruttoInntekt)) {
       valideringstatus = valideringstatus.filter((validering) => validering.felt !== 'inntekt.beregnetInntekt');
