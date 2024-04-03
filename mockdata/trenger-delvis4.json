@@ -1,0 +1,20 @@
+{
+  "navn": "ULTRAFIOLETT DAMESYKKEL",
+  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "innsenderNavn": "Muskuløs Vals",
+  "identitetsnummer": "10486535275",
+  "orgnrUnderenhet": "810007842",
+  "fravarsPerioder": [{ "fom": "2024-02-05", "tom": "2024-02-18" }],
+  "egenmeldingsPerioder": [],
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": false },
+    "inntekt": { "paakrevd": true, "forslag": { "type": "ForslagInntektGrunnlag", "forrigeInntekt": null } },
+    "refusjon": { "paakrevd": true, "forslag": { "perioder": [], "opphoersdato": null } }
+  },
+  "bruttoinntekt": 55000.0,
+  "tidligereinntekter": [
+    { "maaned": "2023-11", "inntekt": 55000.0 },
+    { "maaned": "2023-12", "inntekt": 55000.0 },
+    { "maaned": "2024-01", "inntekt": 55000.0 }
+  ]
+}
