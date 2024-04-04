@@ -261,10 +261,11 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const submitForm: SubmitHandler<Skjema> = (skjemaData: Skjema) => {
     setSenderInn(true);
-
+    console.log('skjemaData.inntekt.beloep', skjemaData.inntekt.beloep);
     if (skjemaData.inntekt.beloep) {
       setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
     }
+    console.log('bruttoinntekt.bruttoInntekt', bruttoinntekt.bruttoInntekt);
 
     sendInnDelvisSkjema(true, pathSlug, isDirty, skjemaData).finally(() => {
       const lonnISykefravaeretGreier: LonnISykefravaeret = {

@@ -91,7 +91,7 @@ export default function useValiderDelvisInntektsmelding() {
       feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
     }
 
-    feilkoderBruttoinntekt = validerBruttoinntekt(state);
+    // feilkoderBruttoinntekt = validerBruttoinntekt(state);
 
     if (state.naturalytelser) {
       feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);

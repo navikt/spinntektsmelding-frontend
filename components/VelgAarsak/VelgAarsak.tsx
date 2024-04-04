@@ -11,6 +11,7 @@ import DatoVelger from '../DatoVelger/DatoVelger';
 import EndringBruttoinntektAarsak from '../EndringBruttoinntektAarsak/EndringBruttoinntektAarsak';
 import stringishToNumber from '../../utils/stringishToNumber';
 import TariffendringDato from '../TariffendringDato/TariffendringDato';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 
 interface VelgAarsakProps {
   changeMaanedsintektHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -53,13 +54,16 @@ export default function VelgAarsak({
 
   const endringAarsak = watch('inntekt.endringAarsak.aarsak');
 
+  const beloepFeltnavn = 'inntekt.beloep';
+  const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
+
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       <div className={lokalStyles.endremaaanedsinntekt}>
         <TextField
           label={`Månedsinntekt ${formatDate(bestemmendeFravaersdag)}`}
           // defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt?.bruttoInntekt) : ''}
-          error={errors.inntekt?.beloep?.message as string}
+          error={beloepError}
           className={lokalStyles.bruttoinntektendringsbeloep}
           data-cy='inntekt-beloep-input'
           {...register('inntekt.beloep', {

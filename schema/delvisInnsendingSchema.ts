@@ -16,13 +16,23 @@ const PositiveNumberSchema = z
 
 export default z
   .object({
-    inntekt: z.object({
-      endringBruttoloenn: z.enum(['Ja', 'Nei'], {
-        errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer i beregnet månedslønn.' })
+    inntekt: z
+      .object({
+        endringBruttoloenn: z.enum(['Ja', 'Nei'], {
+          errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer i beregnet månedslønn.' })
+        }),
+        beloep: z.number().gte(0).optional(),
+        endringAarsak: EndringAarsakSchema.optional()
+      })
+      .superRefine((value, ctx) => {
+        if (value.endringBruttoloenn === 'Ja' && value.beloep === undefined) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Vennligst angi månedsinntekt.',
+            path: ['beloep']
+          });
+        }
       }),
-      beloep: z.number().gte(0).optional(),
-      endringAarsak: EndringAarsakSchema.optional()
-    }),
     telefon: telefonNummerSchema,
     opplysningerBekreftet: z.boolean().refine((value) => value === true, {
       message: 'Vennligst bekreft at opplysningene er riktige og fullstendige.'
@@ -31,10 +41,7 @@ export default z
       .object({
         erDetEndringRefusjon: z
           .enum(['Ja', 'Nei'], {
-            errorMap: (issue, _ctx) => {
-              console.log('issue', issue);
-              return { message: 'Vennligst angi om det har vært endringer i refusjonskravet.' };
-            }
+            errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer i refusjonskravet.' })
           })
           .optional(),
         kreverRefusjon: z

@@ -88,6 +88,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
 
         if (ugyldigEllerNegativtTall(state.bruttoinntekt.bruttoInntekt)) {
+          console.log('state.bruttoinntekt.bruttoInntekt', state.bruttoinntekt.bruttoInntekt);
+
           state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
 
