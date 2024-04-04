@@ -4043,10 +4043,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js-pure@npm:3.33.3":
-  version: 3.33.3
-  resolution: "core-js-pure@npm:3.33.3"
-  checksum: 10c0/97cf39cc013f6a4f77700762de36b495228b3c087fc04b61e86bfbfb475595529966cabbcf37e738e3a468c486e815c85118d120cc6fc4960da08a14caf69826
+"core-js-pure@npm:3.36.1":
+  version: 3.36.1
+  resolution: "core-js-pure@npm:3.36.1"
+  checksum: 10c0/b964c7aa35665a4ecd513f62d695d99e96bb9e42621f7fcc823a613fab4155525d5c2875e46fcc4e6a3396c1fb7d543aee8f7afd83aa34531261b30af759c3d6
   languageName: node
   linkType: hard
 
@@ -9920,7 +9920,7 @@ __metadata:
     "@vitest/ui": "npm:1.4.0"
     axe-core: "npm:4.8.4"
     classnames: "npm:2.5.1"
-    core-js-pure: "npm:3.33.3"
+    core-js-pure: "npm:3.36.1"
     cross-env: "npm:7.0.3"
     cypress: "npm:13.7.1"
     cypress-axe: "npm:1.5.0"
