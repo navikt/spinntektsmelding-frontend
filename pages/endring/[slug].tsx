@@ -183,7 +183,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
             : 'Nei',
         refusjonOpphoerer: opprinneligRefusjonskravetOpphoererDato,
         kravetOpphoerer: opprinneligRefusjonskravetOpphoererStatus,
-        kreverRefusjon: refusjonPrMnd !== 0 ? 'Ja' : 'Nei'
+        kreverRefusjon: refusjonPrMnd !== 0 && typeof refusjonPrMnd !== 'undefined' ? 'Ja' : 'Nei'
       }
     }
   });
@@ -210,6 +210,12 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       setValue('refusjon.refusjonPrMnd', refusjonPrMnd);
     }
   }, [refusjonPrMnd, setValue]);
+
+  useEffect(() => {
+    if (ukjentInntekt) {
+      setValue('inntekt.endringBruttoloenn', 'Ja');
+    }
+  }, [ukjentInntekt, setValue]);
 
   useEffect(() => {
     if (bruttoinntekt.bruttoInntekt) {
@@ -255,12 +261,19 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const submitForm: SubmitHandler<Skjema> = (skjemaData: Skjema) => {
     setSenderInn(true);
+    console.log('skjemaData.inntekt.beloep', skjemaData.inntekt.beloep);
+    if (skjemaData.inntekt.beloep) {
+      setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
+    }
+    console.log('bruttoinntekt.bruttoInntekt', bruttoinntekt.bruttoInntekt);
 
     sendInnDelvisSkjema(true, pathSlug, isDirty, skjemaData).finally(() => {
       const lonnISykefravaeretGreier: LonnISykefravaeret = {
         beloep: skjemaData.refusjon.refusjonPrMnd,
         status: skjemaData.refusjon.kreverRefusjon
       };
+
+      console.log('skjemaData', skjemaData);
 
       initLonnISykefravaeret(lonnISykefravaeretGreier);
       const refusjonEndringer = skjemaData.refusjon.refusjonEndringer;
