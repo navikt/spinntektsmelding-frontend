@@ -8,19 +8,19 @@ import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
 
 import useFyllDelvisInnsending from '../state/useFyllDelvisInnsending';
-import useValiderDelvisInntektsmelding from './useValiderDelvisInntektsmelding';
 import { UseFormSetError } from 'react-hook-form';
+import validerDelvisInntektsmelding from './validerDelvisInntektsmelding';
 
 export default function useSendInnDelvisSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
   amplitudeComponent: string,
   setError: UseFormSetError<any>
 ) {
-  const validerInntektsmelding = useValiderDelvisInntektsmelding();
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllDelvisInnsending();
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const state = useBoundStore((state) => state);
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
@@ -56,8 +56,8 @@ export default function useSendInnDelvisSkjema(
       return false;
     }
 
-    const errorStatus = validerInntektsmelding(true, kunInntektOgRefusjon);
-
+    const errorStatus = validerDelvisInntektsmelding(state, true, kunInntektOgRefusjon);
+    console.log('errorStatus', errorStatus);
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
     if (hasErrors) {

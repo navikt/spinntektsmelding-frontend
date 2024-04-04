@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { EndringAarsakSchema, telefonNummerSchema } from '../validators/validerAapenInnsending';
 
 const JaNeiSchema = z.enum(['Ja', 'Nei'], {
-  errorMap: (issue, ctx) => ({ message: 'Vennligst angi om det har vært endringer.' })
+  errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer.' })
 });
 
 const PositiveNumberSchema = z
@@ -16,13 +16,23 @@ const PositiveNumberSchema = z
 
 export default z
   .object({
-    inntekt: z.object({
-      endringBruttoloenn: z.enum(['Ja', 'Nei'], {
-        errorMap: (issue, ctx) => ({ message: 'Vennligst angi om det har vært endringer i beregnet månedslønn.' })
+    inntekt: z
+      .object({
+        endringBruttoloenn: z.enum(['Ja', 'Nei'], {
+          errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer i beregnet månedslønn.' })
+        }),
+        beloep: z.number().gte(0).optional(),
+        endringAarsak: EndringAarsakSchema.optional()
+      })
+      .superRefine((value, ctx) => {
+        if (value.endringBruttoloenn === 'Ja' && value.beloep === undefined) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Vennligst angi månedsinntekt.',
+            path: ['beloep']
+          });
+        }
       }),
-      beloep: z.number().gte(0).optional(),
-      endringAarsak: EndringAarsakSchema.optional()
-    }),
     telefon: telefonNummerSchema,
     opplysningerBekreftet: z.boolean().refine((value) => value === true, {
       message: 'Vennligst bekreft at opplysningene er riktige og fullstendige.'
@@ -31,19 +41,19 @@ export default z
       .object({
         erDetEndringRefusjon: z
           .enum(['Ja', 'Nei'], {
-            errorMap: (issue, ctx) => ({ message: 'Vennligst angi om det har vært endringer i refusjonskravet.' })
+            errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer i refusjonskravet.' })
           })
           .optional(),
         kreverRefusjon: z
           .enum(['Ja', 'Nei'], {
-            errorMap: (issue, ctx) => ({
+            errorMap: (_issue, _ctx) => ({
               message: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.'
             })
           })
           .optional(),
         harEndringer: z
           .enum(['Ja', 'Nei'], {
-            errorMap: (issue, ctx) => ({ message: 'Vennligst angi om det er endringer i refusjonsbeløpet.' })
+            errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det er endringer i refusjonsbeløpet.' })
           })
           .optional(),
         refusjonPrMnd: z.number().gte(0).optional(),
@@ -57,7 +67,7 @@ export default z
           .optional(),
         kravetOpphoerer: z
           .enum(['Ja', 'Nei'], {
-            errorMap: (issue, ctx) => ({ message: 'Vennligst angi om kravet opphører.' })
+            errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om kravet opphører.' })
           })
           .optional(),
         refusjonOpphoerer: z.date().optional()
@@ -77,6 +87,14 @@ export default z
       })
   })
   .superRefine((value, ctx) => {
+    if (typeof value.refusjon.refusjonPrMnd === 'undefined' && value.refusjon.kreverRefusjon === 'Ja') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Refusjonsbeløp mangler selv om det kreves refusjon.',
+        path: ['refusjon', 'refusjonPrMnd']
+      });
+    }
+
     if ((value.inntekt.beloep ?? 0) < (value.refusjon.refusjonPrMnd ?? 0)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
