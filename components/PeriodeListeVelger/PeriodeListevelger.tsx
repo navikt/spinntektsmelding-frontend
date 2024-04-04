@@ -4,7 +4,7 @@ import { Periode } from '../../state/state';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import DatoVelger from '../DatoVelger/DatoVelger';
 import ButtonSlette from '../ButtonSlette';
-import { use, useEffect } from 'react';
+import { useEffect } from 'react';
 
 interface PeriodeListevelgerProps {
   defaultRange?: Array<Periode>;
