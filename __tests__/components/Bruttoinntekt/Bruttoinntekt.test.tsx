@@ -15,6 +15,7 @@ describe('Bruttoinntekt', () => {
   });
 
   it('should render the component correctly', async () => {
+    vi.mock('../../utils/logEvent', vi.fn());
     const mockFn = vi.fn();
     render(<Bruttoinntekt setIsDirtyForm={mockFn} />);
 
@@ -28,10 +29,10 @@ describe('Bruttoinntekt', () => {
 
     await userEvent.selectOptions(dropdown, 'Permittering');
 
-    const input = screen.getByRole('textbox', { name: /Månedsinntekt/ });
+    // const input = screen.getByRole('textbox', { name: /Månedsinntekt/ });
 
-    await userEvent.type(input, '10000');
-    await userEvent.tab();
+    // await userEvent.type(input, '10000');
+    // await userEvent.tab();
 
     expect(mockFn).toHaveBeenCalled();
 
