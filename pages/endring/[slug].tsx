@@ -458,6 +458,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         nyInnsending={nyInnsending}
                         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
                         kanIkkeTilbakestilles={kanIkkeTilbakestilles}
+                        sammeSomSist={ukjentInntekt}
                       />
                     </div>
                   </div>
