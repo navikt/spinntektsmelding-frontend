@@ -26,7 +26,7 @@ describe('fetchKvitteringsdata', () => {
 
   it('throws a NetworkError when the request fails', async () => {
     http.get('http://example.com/api/forespoersel/8d50ef20-37b5-4829-ad83-56219e70b375', () => {
-      return new HttpResponse('Stuff went wrong', { status: 500 });
+      return new HttpResponse(null, { status: 500, statusText: 'Internal Server Error' });
     });
 
     const url = 'http://example.com/api/forespoersel';
