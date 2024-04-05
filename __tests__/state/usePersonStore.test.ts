@@ -4,7 +4,12 @@ import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
 import testFnr from '../../mockdata/testFnr';
 
-const inputPerson: [string, string, string] = ['Navn Navnesen', testFnr.GyldigeFraDolly.TestPerson1, '123456789'];
+const inputPerson: [string, string, string, string] = [
+  'Navn Navnesen',
+  testFnr.GyldigeFraDolly.TestPerson1,
+  '123456789',
+  'Org Orgesen AS'
+];
 
 const initialState = useBoundStore.getState();
 
@@ -59,7 +64,7 @@ describe('usePersonStore', () => {
     expect(result.current.identitetsnummer).toEqual(testFnr.GyldigeFraDolly.TestPerson2);
   });
 
-  it('should set the virksomhetsnavn.', () => {
+  it('should set the innsendernavn.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -67,17 +72,23 @@ describe('usePersonStore', () => {
     });
 
     act(() => {
-      result.current.setOrgUnderenhet({
-        Name: 'NAV eksempelfirma',
-        Type: 'AS',
-        OrganizationNumber: '912834765',
-        OrganizationForm: 'Vet ikke',
-        Status: 'Eksempel',
-        ParentOrganizationNumber: '987654321'
-      });
+      result.current.setInnsenderNavn('NAV eksempelnavn');
     });
 
-    expect(result.current.orgnrUnderenhet).toBe('912834765');
-    expect(result.current.virksomhetsnavn).toBe('NAV eksempelfirma');
+    expect(result.current.innsenderNavn).toBe('NAV eksempelnavn');
+  });
+
+  it('should set the innsender telefon.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initPerson(...inputPerson);
+    });
+
+    act(() => {
+      result.current.setInnsenderTelefon('12345678');
+    });
+
+    expect(result.current.innsenderTelefonNr).toBe('12345678');
   });
 });
