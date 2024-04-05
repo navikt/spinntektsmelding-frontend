@@ -2,7 +2,6 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { FeilReportElement } from './useStateInit';
-import { Organisasjon } from '@navikt/bedriftsmeny';
 import validerTelefon from '../validators/validerTelefon';
 
 export interface PersonState {
@@ -18,7 +17,6 @@ export interface PersonState {
   setIdentitetsnummer: (identitetsnummer: string) => void;
   setInnsenderNavn: (navn: string) => void;
   setInnsenderTelefon: (identitetsnummer: string) => void;
-  setOrgUnderenhet: (organisasjon: Organisasjon) => void;
   initPerson: (
     navn: string,
     identitetsnummer: string,
@@ -51,14 +49,6 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set, g
     set(
       produce((state: PersonState) => {
         state.identitetsnummer = identitetsnummer;
-      })
-    );
-  },
-  setOrgUnderenhet: (organisasjon: Organisasjon) => {
-    set(
-      produce((state: PersonState) => {
-        state.orgnrUnderenhet = organisasjon.OrganizationNumber;
-        state.virksomhetsnavn = organisasjon.Name;
       })
     );
   },
