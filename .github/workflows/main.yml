@@ -65,6 +65,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
+      contents: write # to write sarif
+      security-events: write # push sarif to github security
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -97,6 +99,21 @@ jobs:
             "NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}"
           build-args: |
             "BUILDMODE=development"
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+          limit-severities-for-sarif: true
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: inputs.upload-sarif
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
 
   Deploy:
     needs: [Docker]
