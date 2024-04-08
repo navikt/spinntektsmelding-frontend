@@ -9832,7 +9832,7 @@ __metadata:
     vite: "npm:^5.2.6"
     vitest: "npm:1.4.0"
     vitest-fetch-mock: "npm:0.2.2"
-    vitest-sonar-reporter: "npm:0.4.1"
+    vitest-sonar-reporter: "npm:2.0.0"
     zod: "npm:3.22.4"
     zustand: "npm:4.5.0"
   languageName: unknown
@@ -10958,12 +10958,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest-sonar-reporter@npm:0.4.1":
-  version: 0.4.1
-  resolution: "vitest-sonar-reporter@npm:0.4.1"
+"vitest-sonar-reporter@npm:2.0.0":
+  version: 2.0.0
+  resolution: "vitest-sonar-reporter@npm:2.0.0"
   peerDependencies:
-    vitest: ">=0.18.0"
-  checksum: 10c0/df63e7b67f914fa20c05a1261c630846e8670c2e918515506d781749a49dff99be45502e9d09ddd6c89fea916e3f137b093e3920631c6ce2227482e376787d82
+    vitest: ">=1"
+  checksum: 10c0/5b589468ddc9df8122b2b3b98ab63ae3114c53455339174678d1684cd20053815aad6d6e531917fc06bac2f9de2346e6568d2b068b11e7d450baf60be05c16c5
   languageName: node
   linkType: hard
 
