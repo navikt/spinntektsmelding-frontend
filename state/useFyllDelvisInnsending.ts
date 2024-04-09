@@ -86,14 +86,12 @@ export interface InnsendingSkjema {
 
 export default function useFyllDelvisInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, refusjonskravetOpphoerer] = useBoundStore((state) => [
+  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret] = useBoundStore((state) => [
     state.fullLonnIArbeidsgiverPerioden,
-    state.lonnISykefravaeret,
-    state.refusjonskravetOpphoerer
+    state.lonnISykefravaeret
   ]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
@@ -176,37 +174,24 @@ export default function useFyllDelvisInnsending() {
       beregnetSkjaeringstidspunkt
     );
 
-    const beregnetRefusjonPrMnd = !nyInnsending
-      ? lonnISykefravaeret!.beloep
-      : refusjonEndringer
-          ?.filter((endring) => {
-            if (!endring.dato) return false;
-            return !isAfter(endring.dato, skjaeringstidspunkt);
-          })
-          .map((endring) => {
-            return {
-              beloep: endring.beloep,
-              dato: endring.dato
-            };
-          })
-          .sort((a, b) => {
-            return a.dato && b.dato ? (a.dato < b.dato ? 1 : -1) : 0;
-          })[0]?.beloep;
-
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
 
-    const endringAarsak = skjema.inntekt.endringAarsak?.aarsak
-      ? {
-          ...skjema.inntekt.endringAarsak,
-          liste: skjema.inntekt.endringAarsak?.perioder ?? undefined,
-          typpe:
-            skjema.inntekt.endringAarsak?.aarsak === 'VarigLoennsendring'
-              ? 'VarigLonnsendring'
-              : skjema.inntekt.endringAarsak?.aarsak,
-          aarsak: undefined,
-          perioder: undefined
-        }
-      : undefined;
+    const endringAarsak =
+      skjema.inntekt.endringAarsak?.aarsak && skjema.inntekt.endringAarsak?.aarsak !== 'SammeSomSist'
+        ? {
+            ...skjema.inntekt.endringAarsak,
+            liste: skjema.inntekt.endringAarsak?.perioder ?? undefined,
+            typpe:
+              skjema.inntekt.endringAarsak?.aarsak === 'VarigLoennsendring'
+                ? 'VarigLonnsendring'
+                : skjema.inntekt.endringAarsak?.aarsak,
+            aarsak: undefined,
+            perioder: undefined
+          }
+        : undefined;
+
+    const manueltKorrigertInntekt =
+      !!skjema.inntekt.endringAarsak?.aarsak && skjema.inntekt.endringAarsak?.aarsak !== 'SammeSomSist';
 
     const skjemaData: InnsendingSkjema = {
       orgnrUnderenhet: orgnrUnderenhet!,
@@ -225,7 +210,7 @@ export default function useFyllDelvisInnsending() {
       inntekt: {
         bekreftet: true,
         beregnetInntekt: skjema.inntekt.beloep!,
-        manueltKorrigert: !!skjema.inntekt.endringAarsak?.aarsak,
+        manueltKorrigert: manueltKorrigertInntekt,
         endringÅrsak: endringAarsak
       },
       bestemmendeFraværsdag: bestemmendeFraværsdag!,

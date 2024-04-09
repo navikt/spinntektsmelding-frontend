@@ -15,7 +15,8 @@ const begrunnelseEndringBruttoinntektTekster: BegrunnelserTekster = {
   Nyansatt: 'Nyansatt',
   Sykefravaer: 'Sykefravær',
   Ferietrekk: 'Ferietrekk/Utbetaling av feriepenger',
-  Feilregistrert: 'Mangelfull eller uriktig rapportering til a-ordningen'
+  Feilregistrert: 'Mangelfull eller uriktig rapportering til a-ordningen',
+  SammeSomSist: 'Samme inntekt som sist innsending'
 };
 
 export default begrunnelseEndringBruttoinntektTekster;
