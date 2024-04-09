@@ -33,7 +33,7 @@ export default function validerLonnIArbeidsgiverperioden(
         felt: 'lus-uua-input'
       });
     }
-    if (ingenArbeidsgiverperiode && lonnIAP?.status === 'Ja') {
+    if (lonnIAP?.status === 'Ja') {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,
         felt: 'lia-radio'
