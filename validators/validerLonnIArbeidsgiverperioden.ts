@@ -20,7 +20,9 @@ export default function validerLonnIArbeidsgiverperioden(
     arbeidsgiverperioder?.length === 0 ||
     arbeidsgiverperioder?.filter((p) => p.tom && p.fom).length === 0;
 
-  if (!lonnIAP || !lonnIAP.status || lonnIAP.status === undefined) {
+  if (!ingenArbeidsgiverperiode && !lonnIAP?.status) {
+    console.log('lonnIAP - 1', lonnIAP);
+    console.log('ingenArbeidsgiverperiode', ingenArbeidsgiverperiode);
     errorStatus.push({
       code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_MANGLER,
       felt: 'lia-radio'
@@ -39,6 +41,7 @@ export default function validerLonnIArbeidsgiverperioden(
       });
     }
     if (ingenArbeidsgiverperiode && lonnIAP.status === 'Ja') {
+      console.log('lonnIAP - 2', lonnIAP);
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,
         felt: 'lia-radio'
