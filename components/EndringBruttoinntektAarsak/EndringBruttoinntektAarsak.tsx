@@ -8,6 +8,7 @@ import begrunnelseEndringBruttoinntektTekster from '../Bruttoinntekt/begrunnelse
 interface EndringBruttoinntektAarsakProps extends Partial<SelectProps> {
   nyInnsending: boolean;
   name: string;
+  sammeSomSist?: boolean;
 }
 
 export default function EndringBruttoinntektAarsak(props: Readonly<EndringBruttoinntektAarsakProps>) {
@@ -18,6 +19,10 @@ export default function EndringBruttoinntektAarsak(props: Readonly<EndringBrutto
   const begrunnelseKeys = Object.keys(begrunnelseEndringBruttoinntekt).filter(
     (endring) => (endring !== 'Tariffendring' && props.nyInnsending === true) || props.nyInnsending === false
   );
+
+  if (props.sammeSomSist) {
+    begrunnelseKeys.push('SammeSomSist');
+  }
 
   const error = findErrorInRHFErrors(props.name, errors);
 

@@ -146,6 +146,10 @@ const EndringAarsakFerietrekkSchema = z.object({
   aarsak: z.literal('Ferietrekk')
 });
 
+const EndringAarsakSammeSomSistSchema = z.object({
+  aarsak: z.literal('SammeSomSist')
+});
+
 const EndringAarsakNyansattSchema = z.object({
   aarsak: z.literal('Nyansatt')
 });
@@ -200,7 +204,8 @@ export const EndringAarsakSchema = z.discriminatedUnion(
     EndringAarsakPermitteringSchema,
     EndringAarsakSykefravaerSchema,
     EndringAarsakTariffendringSchema,
-    EndringAarsakVarigLoennsendringSchema
+    EndringAarsakVarigLoennsendringSchema,
+    EndringAarsakSammeSomSistSchema
   ],
   {
     errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak for endringen.' })
