@@ -81,7 +81,7 @@
     "vite": "^5.2.6",
     "vitest": "1.4.0",
     "vitest-fetch-mock": "0.2.2",
-    "vitest-sonar-reporter": "0.4.1"
+    "vitest-sonar-reporter": "2.0.0"
   },
   "packageManager": "yarn@4.1.1"
 }
