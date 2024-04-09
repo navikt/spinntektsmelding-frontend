@@ -20,9 +20,29 @@ export default function validerLonnIArbeidsgiverperioden(
     arbeidsgiverperioder?.length === 0 ||
     arbeidsgiverperioder?.filter((p) => p.tom && p.fom).length === 0;
 
-  if (!ingenArbeidsgiverperiode && !lonnIAP?.status) {
-    console.log('lonnIAP - 1', lonnIAP);
-    console.log('ingenArbeidsgiverperiode', ingenArbeidsgiverperiode);
+  if (ingenArbeidsgiverperiode) {
+    if (!lonnIAP?.begrunnelse || lonnIAP?.begrunnelse?.length === 0) {
+      errorStatus.push({
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE,
+        felt: 'lia-select'
+      });
+    }
+    if (ugyldigEllerNegativtTall(lonnIAP?.utbetalt)) {
+      errorStatus.push({
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
+        felt: 'lus-uua-input'
+      });
+    }
+    if (ingenArbeidsgiverperiode && lonnIAP?.status === 'Ja') {
+      errorStatus.push({
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,
+        felt: 'lia-radio'
+      });
+    }
+    return errorStatus;
+  }
+
+  if (!lonnIAP?.status) {
     errorStatus.push({
       code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_MANGLER,
       felt: 'lia-radio'
@@ -41,7 +61,6 @@ export default function validerLonnIArbeidsgiverperioden(
       });
     }
     if (ingenArbeidsgiverperiode && lonnIAP.status === 'Ja') {
-      console.log('lonnIAP - 2', lonnIAP);
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,
         felt: 'lia-radio'
