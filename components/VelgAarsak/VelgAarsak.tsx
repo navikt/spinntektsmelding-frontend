@@ -29,6 +29,7 @@ interface VelgAarsakProps {
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
   kanIkkeTilbakestilles?: boolean;
+  sammeSomSist?: boolean;
 }
 
 export default function VelgAarsak({
@@ -44,7 +45,8 @@ export default function VelgAarsak({
   sykefravaerperioder,
   bestemmendeFravaersdag,
   nyInnsending,
-  kanIkkeTilbakestilles
+  kanIkkeTilbakestilles,
+  sammeSomSist
 }: Readonly<VelgAarsakProps>) {
   const {
     formState: { errors },
@@ -74,6 +76,7 @@ export default function VelgAarsak({
           <EndringBruttoinntektAarsak
             name='inntekt.endringAarsak.aarsak'
             nyInnsending={nyInnsending}
+            sammeSomSist={sammeSomSist}
             // value={endringAarsak as string}
           />
         </div>

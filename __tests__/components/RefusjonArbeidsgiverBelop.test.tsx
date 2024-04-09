@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 
 describe('RefusjonArbeidsgiverBelop', () => {
   const bruttoinntekt = 500000;
