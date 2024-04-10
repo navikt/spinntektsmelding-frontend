@@ -2,15 +2,15 @@ import validerDelvisInntektsmelding, {
   SubmitInntektsmeldingReturnvalues
 } from '../../utils/validerDelvisInntektsmelding';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { vi } from 'vitest';
+import { vi, describe } from 'vitest';
 
-describe('validerDelvisInntektsmelding', () => {
+describe.concurrent('validerDelvisInntektsmelding', () => {
   let opplysningerBekreftet: boolean;
   let kunInntektOgRefusjon: boolean | undefined;
 
   beforeEach(() => {
     opplysningerBekreftet = true;
-    kunInntektOgRefusjon = false;
+    kunInntektOgRefusjon = true;
   });
 
   afterEach(() => {
@@ -46,7 +46,7 @@ describe('validerDelvisInntektsmelding', () => {
     expect(result.valideringOK).toBe(true);
   });
 
-  it('should return valideringOK as false and errorTexts when there are errors', () => {
+  it('should return valideringOK as false and errorTexts when there are errors. kunInntektOgRefusjon = true', () => {
     const mockSetSkalViseFeilmeldinger = vi.fn();
 
     const state = {
@@ -84,14 +84,58 @@ describe('validerDelvisInntektsmelding', () => {
           text: 'MANGLER_PERIODE'
         },
         {
-          felt: 'lia-radio',
-          text: 'Angi om arbeidsgiver betaler ut full lønn til arbeidstaker i arbeidsgiverperioden.'
+          felt: 'lus-radio',
+          text: 'Angi om arbeidsgiver betaler lønn under hele eller deler av sykefraværet.'
+        }
+      ]
+    });
+  });
+
+  it('should return valideringOK as false and errorTexts when there are errors. kunInntektOgRefusjon = false', () => {
+    const mockSetSkalViseFeilmeldinger = vi.fn();
+
+    const state = {
+      fravaersperioder: [],
+      egenmeldingsperioder: [],
+      naturalytelser: [],
+      hasBortfallAvNaturalytelser: false,
+      fullLonnIArbeidsgiverPerioden: 0,
+      arbeidsgiverperioder: [],
+      lonnISykefravaeret: 0,
+      refusjonskravetOpphoerer: false,
+      bruttoinntekt: { bruttoInntekt: 0 },
+      nyInnsending: false,
+      harRefusjonEndringer: false,
+      refusjonEndringer: [],
+      innsenderTelefonNr: '',
+      setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger
+    };
+
+    const result: SubmitInntektsmeldingReturnvalues = validerDelvisInntektsmelding(state, opplysningerBekreftet, false);
+
+    expect(result).toEqual({
+      valideringOK: false,
+      errorTexts: [
+        {
+          felt: '',
+          text: 'Mangler fraværsperiode.'
+        },
+        {
+          felt: 'backend',
+          text: 'MANGLER_PERIODE'
+        },
+        {
+          felt: 'lia-select',
+          text: 'Begrunnelse for redusert utbetaling av lønn i arbeidsgiverperioden mangler.'
+        },
+        {
+          felt: 'lus-uua-input',
+          text: 'Angi beløp. Må være høyere enn eller lik 0 og på formatet 1234,50'
         },
         {
           felt: 'lus-radio',
           text: 'Angi om arbeidsgiver betaler lønn under hele eller deler av sykefraværet.'
         },
-
         {
           felt: 'backend',
           text: 'MANGLER_PERIODE'
