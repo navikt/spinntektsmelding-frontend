@@ -1,73 +1,14 @@
 import { z } from 'zod';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
-import { OrganisasjonsnummerSchema, PersonnummerSchema } from './validerAapenInnsending';
-
-const NaturalytelseEnum = z.enum([
-  'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
-  'ANNET',
-  'BEDRIFTSBARNEHAGEPLASS',
-  'BESOEKSREISERHJEMMETANNET',
-  'BIL',
-  'BOLIG',
-  'ELEKTRONISKKOMMUNIKASJON',
-  'FRITRANSPORT',
-  'INNBETALINGTILUTENLANDSKPENSJONSORDNING',
-  'KOSTBESPARELSEIHJEMMET',
-  'KOSTDAGER',
-  'KOSTDOEGN',
-  'LOSJI',
-  'OPSJONER',
-  'RENTEFORDELLAAN',
-  'SKATTEPLIKTIGDELFORSIKRINGER',
-  'TILSKUDDBARNEHAGEPLASS',
-  'YRKEBILTJENESTLIGBEHOVKILOMETER',
-  'YRKEBILTJENESTLIGBEHOVLISTEPRIS'
-]);
-
-const BegrunnelseRedusertLoennIAgpEnum = z.enum(
-  [
-    'ArbeidOpphoert',
-    'BeskjedGittForSent',
-    'BetvilerArbeidsufoerhet',
-    'FerieEllerAvspasering',
-    'FiskerMedHyre',
-    'FravaerUtenGyldigGrunn',
-    'IkkeFravaer',
-    'IkkeFullStillingsandel',
-    'IkkeLoenn',
-    'LovligFravaer',
-    'ManglerOpptjening',
-    'Permittering',
-    'Saerregler',
-    'StreikEllerLockout',
-    'TidligereVirksomhet'
-  ],
-  { required_error: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.' }
-);
-
-export const InntektEndringAarsakEnum = z.enum([
-  'Bonus',
-  'Feilregistrert',
-  'Ferie',
-  'Ferietrekk',
-  'Nyansatt',
-  'NyStilling',
-  'NyStillingsprosent',
-  'Permisjon',
-  'Permittering',
-  'Sykefravaer',
-  'Tariffendring',
-  'VarigLoennsendring'
-]);
-
-const leftPad = (val: number) => {
-  return val < 10 ? `0${val}` : val;
-};
-
-const toLocalIso = (val: Date) => {
-  return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
-};
+import {
+  EndringAarsakSchema,
+  OrganisasjonsnummerSchema,
+  PersonnummerSchema,
+  BegrunnelseRedusertLoennIAgpEnum,
+  NaturalytelseEnum,
+  toLocalIso
+} from './validerAapenInnsending';
 
 export const PeriodeSchema = z
   .object({
@@ -101,78 +42,6 @@ const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
   }
   return val;
 });
-
-const EndringAarsakBonusSchema = z.object({
-  aarsak: z.literal('Bonus')
-});
-
-const EndringAarsakFeilregistrertSchema = z.object({
-  aarsak: z.literal('Feilregistrert')
-});
-
-const EndringAarsakFerieSchema = z.object({
-  aarsak: z.literal('Ferie'),
-  perioder: z.array(PeriodeSchema)
-});
-
-const EndringAarsakFerietrekkSchema = z.object({
-  aarsak: z.literal('Ferietrekk')
-});
-
-const EndringAarsakNyansattSchema = z.object({
-  aarsak: z.literal('Nyansatt')
-});
-
-const EndringAarsakNyStillingSchema = z.object({
-  aarsak: z.literal('NyStilling'),
-  gjelderFra: z.date()
-});
-
-const EndringAarsakNyStillingsprosentSchema = z.object({
-  aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: z.date()
-});
-
-const EndringAarsakPermisjonSchema = z.object({
-  aarsak: z.literal('Permisjon'),
-  perioder: z.array(PeriodeSchema)
-});
-
-const EndringAarsakPermitteringSchema = z.object({
-  aarsak: z.literal('Permittering'),
-  perioder: z.array(PeriodeSchema)
-});
-
-const EndringAarsakSykefravaerSchema = z.object({
-  aarsak: z.literal('Sykefravaer'),
-  perioder: z.array(PeriodeSchema)
-});
-
-const EndringAarsakTariffendringSchema = z.object({
-  aarsak: z.literal('Tariffendring'),
-  gjelderFra: z.date(),
-  bleKjent: z.date()
-});
-
-const EndringAarsakVarigLoennsendringSchema = z.object({
-  aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: z.date()
-});
-
-const EndringAarsakSchema = z.discriminatedUnion('aarsak', [
-  EndringAarsakBonusSchema,
-  EndringAarsakFeilregistrertSchema,
-  EndringAarsakFerieSchema,
-  EndringAarsakFerietrekkSchema,
-  EndringAarsakNyansattSchema,
-  EndringAarsakNyStillingSchema,
-  EndringAarsakNyStillingsprosentSchema,
-  EndringAarsakPermisjonSchema,
-  EndringAarsakPermitteringSchema,
-  EndringAarsakSykefravaerSchema,
-  EndringAarsakTariffendringSchema,
-  EndringAarsakVarigLoennsendringSchema
-]);
 
 export const RefusjonEndringSchema = z.object({
   startDato: z

@@ -4,7 +4,7 @@ import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
 
-const NaturalytelseEnum = z.enum([
+export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
   'ANNET',
   'BEDRIFTSBARNEHAGEPLASS',
@@ -26,7 +26,7 @@ const NaturalytelseEnum = z.enum([
   'YRKEBILTJENESTLIGBEHOVLISTEPRIS'
 ]);
 
-const BegrunnelseRedusertLoennIAgpEnum = z.enum(
+export const BegrunnelseRedusertLoennIAgpEnum = z.enum(
   [
     'ArbeidOpphoert',
     'BeskjedGittForSent',
@@ -66,7 +66,7 @@ const leftPad = (val: number) => {
   return val < 10 ? `0${val}` : val;
 };
 
-const toLocalIso = (val: Date) => {
+export const toLocalIso = (val: Date) => {
   return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
 };
 
