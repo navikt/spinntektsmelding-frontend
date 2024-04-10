@@ -375,7 +375,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
             onChange={handleIngenArbeidsgiverperiodeChange}
             checked={arbeidsgiverperiodeDisabled}
           >
-            Det er ikke arbeidsgiverperiode
+            Det er ikke arbeidsgiverperiode i dette sykefraværet
           </Checkbox>
           {arbeidsgiverperiodeDisabled && (
             <SelectBegrunnelse
