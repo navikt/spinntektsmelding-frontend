@@ -24,7 +24,7 @@ import environment from '../../config/environment';
 import { useRouter } from 'next/navigation';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
-import { OrganisasjonsnummerSchema, PersonnummerSchema } from '../../validators/validerAapenInnsending';
+import { PersonnummerSchema } from '../../validators/validerAapenInnsending';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import PeriodeVelger from '../../components/PeriodeVelger/PeriodeVelger';
 import { PeriodeSchema } from '../../validators/validerFulltSkjema';
@@ -141,7 +141,7 @@ const Initiering2: NextPage = () => {
         };
 
         const validationResult = skjema.safeParse(skjemaData);
-        console.log('validationResult', validationResult);
+
         if (validationResult.success) {
           const validert = validationResult.data;
           const orgNavn = arbeidsforhold.find(
@@ -152,8 +152,6 @@ const Initiering2: NextPage = () => {
           initFravaersperiode(validert.perioder as MottattPeriode[]);
           tilbakestillArbeidsgiverperiode();
           router.push('/arbeidsgiverInitiertInnsending');
-        } else {
-          console.log('validationResult', validationResult.error);
         }
       }
     }
@@ -191,9 +189,6 @@ const Initiering2: NextPage = () => {
     }
   }
   const feilmeldinger = formatRHFFeilmeldinger(errors);
-  console.log('errors', errors);
-
-  console.log('feilmeldinger', feilmeldinger);
 
   const visFeilmeldingliste =
     (feilmeldinger && feilmeldinger.length > 0) || (backendFeil.current && backendFeil.current.length > 0);
