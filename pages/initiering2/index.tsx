@@ -193,7 +193,6 @@ const Initiering2: NextPage = () => {
   }
   const feilmeldinger = formatRHFFeilmeldinger(errors);
   console.log('errors', errors);
-  // console.log('errors', getAllKeysAsString(errors));
 
   console.log('feilmeldinger', feilmeldinger);
 
