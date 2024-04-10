@@ -108,7 +108,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  const kanBruttoinntektTilbakebestilles = useBoundStore((state) => state.kanBruttoinntektTilbakebestilles);
   const forespurtData = useBoundStore((state) => state.forespurtData);
   const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer, harRefusjonEndringer] = useBoundStore(
     (state) => [
@@ -261,11 +260,10 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const submitForm: SubmitHandler<Skjema> = (skjemaData: Skjema) => {
     setSenderInn(true);
-    console.log('skjemaData.inntekt.beloep', skjemaData.inntekt.beloep);
+
     if (skjemaData.inntekt.beloep) {
       setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
     }
-    console.log('bruttoinntekt.bruttoInntekt', bruttoinntekt.bruttoInntekt);
 
     sendInnDelvisSkjema(true, pathSlug, isDirty, skjemaData).finally(() => {
       const lonnISykefravaeretGreier: LonnISykefravaeret = {
@@ -374,7 +372,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   }, [aapentManglendeData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrige innsending';
-  const kanIkkeTilbakestilles = !kanBruttoinntektTilbakebestilles();
 
   const harEndringer = harRefusjonEndringer;
 
@@ -458,7 +455,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         bestemmendeFravaersdag={forsteFravaersdag}
                         nyInnsending={nyInnsending}
                         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-                        kanIkkeTilbakestilles={kanIkkeTilbakestilles}
+                        kanIkkeTilbakestilles={true}
                         sammeSomSist={ukjentInntekt}
                       />
                     </div>
