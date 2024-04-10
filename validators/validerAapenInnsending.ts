@@ -220,7 +220,7 @@ export const telefonNummerSchema = z
   .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
   .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' });
 
-export const RefusjonEndringSchema = z.object({
+const RefusjonEndringSchema = z.object({
   startDato: z
     .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
     .transform((val) => toLocalIso(val)),
