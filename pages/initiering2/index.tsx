@@ -2,7 +2,6 @@ import { Alert, Button } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Heading1 from '../../components/Heading1/Heading1';
@@ -273,7 +272,6 @@ const Initiering2: NextPage = () => {
               skalViseFeilmeldinger={visFeilmeldingliste}
               feilmeldinger={feilmeldinger ? [...feilmeldinger, ...backendFeil.current] : [...backendFeil.current]}
             />
-            <ErrorMessage errors={errors} name='singleErrorInput' render={({ message }) => <p>{message}</p>} />
           </div>
         </main>
       </PageContent>
