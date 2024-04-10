@@ -74,8 +74,12 @@ describe('validerInntektsmelding', () => {
           text: 'MANGLER_PERIODE'
         },
         {
-          felt: 'lia-radio',
-          text: 'Angi om arbeidsgiver betaler ut full lønn til arbeidstaker i arbeidsgiverperioden.'
+          felt: 'lia-select',
+          text: 'Begrunnelse for redusert utbetaling av lønn i arbeidsgiverperioden mangler.'
+        },
+        {
+          felt: 'lus-uua-input',
+          text: 'Angi beløp. Må være høyere enn eller lik 0 og på formatet 1234,50'
         },
         {
           felt: 'lus-radio',

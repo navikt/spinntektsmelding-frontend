@@ -5,26 +5,27 @@ import validerLonnIArbeidsgiverperioden from '../../validators/validerLonnIArbei
 describe('validerLonnIArbeidsgiverperioden', () => {
   it('should return an empty array when everything is OK', () => {
     const input: LonnIArbeidsgiverperioden = {
-      status: 'Ja'
+      status: 'Ja',
+      begrunnelse: 'test',
+      utbetalt: 1234
     };
 
     const arbeidsgiverperioder = [{ fom: parseIsoDate('2020-01-01'), tom: parseIsoDate('2020-01-01'), id: '1' }];
 
-    expect(validerLonnIArbeidsgiverperioden(input)).toEqual([
-      {
-        code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
-        felt: 'lia-radio'
-      }
-    ]);
+    expect(validerLonnIArbeidsgiverperioden(input, arbeidsgiverperioder)).toEqual([]);
   });
 
-  it('should return an empty array when everything is OK', () => {
+  it('should return an error array when input is missing', () => {
     const input = undefined;
 
     const expected = [
       {
-        code: 'LONN_I_ARBEIDSGIVERPERIODEN_MANGLER',
-        felt: 'lia-radio'
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
+        felt: 'lia-select'
+      },
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
+        felt: 'lus-uua-input'
       }
     ];
 
@@ -125,6 +126,14 @@ describe('validerLonnIArbeidsgiverperioden', () => {
 
     const expected = [
       {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
+        felt: 'lia-select'
+      },
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
+        felt: 'lus-uua-input'
+      },
+      {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
         felt: 'lia-radio'
       }
@@ -140,6 +149,14 @@ describe('validerLonnIArbeidsgiverperioden', () => {
 
     const expected = [
       {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
+        felt: 'lia-select'
+      },
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
+        felt: 'lus-uua-input'
+      },
+      {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
         felt: 'lia-radio'
       }
@@ -154,6 +171,14 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     };
 
     const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
+        felt: 'lia-select'
+      },
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
+        felt: 'lus-uua-input'
+      },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
         felt: 'lia-radio'

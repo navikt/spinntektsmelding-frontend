@@ -20,7 +20,29 @@ export default function validerLonnIArbeidsgiverperioden(
     arbeidsgiverperioder?.length === 0 ||
     arbeidsgiverperioder?.filter((p) => p.tom && p.fom).length === 0;
 
-  if (!lonnIAP || !lonnIAP.status || lonnIAP.status === undefined) {
+  if (ingenArbeidsgiverperiode) {
+    if (!lonnIAP?.begrunnelse || lonnIAP?.begrunnelse?.length === 0) {
+      errorStatus.push({
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE,
+        felt: 'lia-select'
+      });
+    }
+    if (ugyldigEllerNegativtTall(lonnIAP?.utbetalt)) {
+      errorStatus.push({
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
+        felt: 'lus-uua-input'
+      });
+    }
+    if (lonnIAP?.status === 'Ja') {
+      errorStatus.push({
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,
+        felt: 'lia-radio'
+      });
+    }
+    return errorStatus;
+  }
+
+  if (!lonnIAP?.status) {
     errorStatus.push({
       code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_MANGLER,
       felt: 'lia-radio'
