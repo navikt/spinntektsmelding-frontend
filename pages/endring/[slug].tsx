@@ -399,6 +399,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   useEffect(() => {
     if (harEndringBruttoloenn === 'Nei') {
       unregister('inntekt.endringAarsak');
+      setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
     }
   }, [harEndringBruttoloenn, unregister, register]);
 
