@@ -1,4 +1,5 @@
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import { EndringAarsak } from '../validators/validerAapenInnsending';
 
 export interface Periode {
   fom?: Date;
@@ -12,6 +13,7 @@ export interface Inntekt {
   bruttoInntekt?: number;
   manueltKorrigert: boolean;
   endringsaarsak?: keyof typeof begrunnelseEndringBruttoinntekt;
+  endringAarsak?: EndringAarsak;
 }
 
 export interface HistoriskInntekt {

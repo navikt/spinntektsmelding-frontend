@@ -12,6 +12,8 @@ import roundTwoDecimals from '../utils/roundTwoDecimals';
 import { FeilReportElement } from './useStateInit';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import Router from 'next/router';
+import { EndringAarsak } from '../validators/validerAapenInnsending';
+import formatIsoDate from '../utils/formatIsoDate';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
@@ -62,18 +64,21 @@ export interface BruttoinntektState {
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
+  setEndringAarsak: (endringAarsak: EndringAarsak) => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
   bruttoinntekt: {
     bruttoInntekt: undefined,
     manueltKorrigert: false,
-    endringsaarsak: undefined
+    endringsaarsak: undefined,
+    endringAarsak: undefined
   },
   opprinneligbruttoinntekt: {
     bruttoInntekt: undefined,
     manueltKorrigert: false,
-    endringsaarsak: undefined
+    endringsaarsak: undefined,
+    endringAarsak: undefined
   },
   tidligereInntekt: undefined,
   henterData: false,
@@ -88,8 +93,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
 
         if (ugyldigEllerNegativtTall(state.bruttoinntekt.bruttoInntekt)) {
-          console.log('state.bruttoinntekt.bruttoInntekt', state.bruttoinntekt.bruttoInntekt);
-
           state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
 
@@ -127,6 +130,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.bruttoinntekt.endringsaarsak = aarsak;
+        if (!state.bruttoinntekt.endringAarsak.aarsak) {
+          state.bruttoinntekt.endringAarsak = { aarsak: aarsak };
+        } else {
+          state.bruttoinntekt.endringAarsak.aarsak = aarsak;
+        }
+
         if (aarsak && aarsak !== '') {
           state.bruttoinntekt.manueltKorrigert = true;
         } else {
@@ -138,7 +147,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsaarsak', feiltekster.ENDRINGSAARSAK_MANGLER);
         }
-
         return state;
       })
     ),
@@ -146,6 +154,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.ferie = periode;
+        state.bruttoinntekt.endringAarsak.perioder =
+          periode?.map((periode) => ({
+            fom: formatIsoDate(periode.fom),
+            tom: formatIsoDate(periode.tom)
+          })) || [];
+
         return state;
       })
     ),
@@ -153,7 +167,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.lonnsendringsdato = endringsdato;
-
+        state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(endringsdato);
         return state;
       })
     ),
@@ -161,6 +175,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.tariffendringDato = endringsdato;
+        state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(endringsdato);
 
         return state;
       })
@@ -169,7 +184,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.tariffkjentdato = kjentFraDato;
-
+        state.bruttoinntekt.endringAarsak.bleKjent = formatIsoDate(kjentFraDato);
         return state;
       })
     ),
@@ -177,6 +192,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.nystillingsprosentdato = dato;
+        state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(dato);
 
         return state;
       })
@@ -185,6 +201,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.nystillingdato = dato;
+        state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(dato);
 
         return state;
       })
@@ -193,6 +210,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.permisjon = periode;
+        state.bruttoinntekt.endringAarsak.perioder =
+          periode?.map((periode) => ({
+            fom: formatIsoDate(periode.fom),
+            tom: formatIsoDate(periode.tom)
+          })) || [];
+
         return state;
       })
     ),
@@ -200,6 +223,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.permittering = periode;
+        state.bruttoinntekt.endringAarsak.perioder =
+          periode?.map((periode) => ({
+            fom: formatIsoDate(periode.fom),
+            tom: formatIsoDate(periode.tom)
+          })) || [];
+
         return state;
       })
     ),
@@ -207,6 +236,11 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.sykefravaerperioder = periode;
+        state.bruttoinntekt.endringAarsak.perioder =
+          periode?.map((periode) => ({
+            fom: formatIsoDate(periode.fom),
+            tom: formatIsoDate(periode.tom)
+          })) || [];
         return state;
       })
     ),
@@ -264,10 +298,26 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
         if (!state.bruttoinntekt.endringsaarsak) {
           state.bruttoinntekt.endringsaarsak = '';
+          state.bruttoinntekt.endringAarsak = { aarsak: '' };
         }
+        if (!state.bruttoinntekt.endringAarsak) {
+          state.bruttoinntekt.endringAarsak = { aarsak: '' };
+        }
+        if (!state.bruttoinntekt.endringAarsak.aarsak) {
+          state.bruttoinntekt.endringAarsak.aarsak = '';
+        }
+
         if (!state.opprinneligbruttoinntekt.endringsaarsak) {
           state.opprinneligbruttoinntekt.endringsaarsak = '';
         }
+
+        if (!state.opprinneligbruttoinntekt.endringAarsak) {
+          state.opprinneligbruttoinntekt.endringAarsak = { aarsak: '' };
+        }
+        if (!state.opprinneligbruttoinntekt.endringAarsak.aarsak) {
+          state.opprinneligbruttoinntekt.endringAarsak.aarsak = '';
+        }
+
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         state.opprinneligeInntekt = tidligereInntekt;
 
@@ -363,13 +413,22 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt = {
           bruttoInntekt: undefined,
           manueltKorrigert: false,
-          endringsaarsak: undefined
+          endringsaarsak: undefined,
+          endringAarsak: undefined
         };
 
         return state;
       })
     );
-  }
+  },
+  setEndringAarsak: (endringAarsak: EndringAarsak) =>
+    set(
+      produce((state) => {
+        state.bruttoinntekt.endringAarsak = endringAarsak;
+        state.opprinneligbruttoinntekt.endringAarsak = endringAarsak;
+        return state;
+      })
+    )
 });
 
 export default useBruttoinntektStore;
