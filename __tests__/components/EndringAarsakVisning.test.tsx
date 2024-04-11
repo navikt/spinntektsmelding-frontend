@@ -1,16 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
-
+import { expect } from 'vitest';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 
 describe('EndringAarsakVisning', () => {
   it('should show tariffendringsdata.', async () => {
     const { container } = render(
-      <EndringAarsakVisning
-        endringsaarsak={'Tariffendring'}
-        tariffendringDato={new Date(2022, 10, 10)}
-        tariffkjentdato={new Date(2022, 10, 15)}
-      />
+      <EndringAarsakVisning aarsak={'Tariffendring'} gjelderFra={'2022-11-10'} bleKjent={'2022-11-15'} />
     );
     const results = await axe(container);
 
@@ -24,10 +20,10 @@ describe('EndringAarsakVisning', () => {
 
   it('should show ferie data.', async () => {
     const perioder = [
-      { fom: new Date(2022, 10, 10), tom: new Date(2022, 10, 15), id: '1' },
-      { fom: new Date(2022, 11, 10), tom: new Date(2022, 11, 15), id: '2' }
+      { fom: '2022-11-10', tom: '2022-11-15' },
+      { fom: '2022-12-10', tom: '2022-12-15' }
     ];
-    const { container } = render(<EndringAarsakVisning endringsaarsak={'Ferie'} ferie={perioder} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Ferie'} perioder={perioder} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -41,9 +37,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show VarigLonnsendring data.', async () => {
-    const { container } = render(
-      <EndringAarsakVisning endringsaarsak={'VarigLoennsendring'} lonnsendringsdato={new Date(2022, 11, 15)} />
-    );
+    const { container } = render(<EndringAarsakVisning aarsak={'VarigLoennsendring'} gjelderFra={'2022-12-15'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -54,10 +48,10 @@ describe('EndringAarsakVisning', () => {
 
   it('should show permisjon data.', async () => {
     const perioder = [
-      { fom: new Date(2022, 10, 10), tom: new Date(2022, 10, 15), id: '1' },
-      { fom: new Date(2022, 11, 10), tom: new Date(2022, 11, 15), id: '2' }
+      { fom: '2022-11-10', tom: '2022-11-15' },
+      { fom: '2022-12-10', tom: '2022-12-15' }
     ];
-    const { container } = render(<EndringAarsakVisning endringsaarsak={'Permisjon'} permisjon={perioder} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Permisjon'} perioder={perioder} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -72,10 +66,10 @@ describe('EndringAarsakVisning', () => {
 
   it('should show permitering data.', async () => {
     const perioder = [
-      { fom: new Date(2022, 10, 10), tom: new Date(2022, 10, 15), id: '1' },
-      { fom: new Date(2022, 11, 10), tom: new Date(2022, 11, 15), id: '2' }
+      { fom: '2022-11-10', tom: '2022-11-15' },
+      { fom: '2022-12-10', tom: '2022-12-15' }
     ];
-    const { container } = render(<EndringAarsakVisning endringsaarsak={'Permittering'} permittering={perioder} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Permittering'} perioder={perioder} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -89,9 +83,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show NyStilling.', async () => {
-    const { container } = render(
-      <EndringAarsakVisning endringsaarsak={'NyStilling'} nystillingdato={new Date(2022, 10, 10)} />
-    );
+    const { container } = render(<EndringAarsakVisning aarsak={'NyStilling'} gjelderFra={'2022-11-10'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -101,9 +93,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show NyStillingsprosent.', async () => {
-    const { container } = render(
-      <EndringAarsakVisning endringsaarsak={'NyStillingsprosent'} nystillingsprosentdato={new Date(2022, 10, 10)} />
-    );
+    const { container } = render(<EndringAarsakVisning aarsak={'NyStillingsprosent'} gjelderFra={'2022-11-10'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -114,10 +104,10 @@ describe('EndringAarsakVisning', () => {
 
   it('should show sykefravær data.', async () => {
     const perioder = [
-      { fom: new Date(2022, 10, 10), tom: new Date(2022, 10, 15), id: '1' },
-      { fom: new Date(2022, 11, 10), tom: new Date(2022, 11, 15), id: '2' }
+      { fom: '2022-11-10', tom: '2022-11-15' },
+      { fom: '2022-12-10', tom: '2022-12-15' }
     ];
-    const { container } = render(<EndringAarsakVisning endringsaarsak={'Sykefravaer'} sykefravaer={perioder} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Sykefravaer'} perioder={perioder} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -131,7 +121,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Feilregistrert data.', async () => {
-    const { container } = render(<EndringAarsakVisning endringsaarsak={'Feilregistrert'} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Feilregistrert'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -140,7 +130,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Bonus data.', async () => {
-    const { container } = render(<EndringAarsakVisning endringsaarsak={'Bonus'} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Bonus'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -149,7 +139,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Nyansatt data.', async () => {
-    const { container } = render(<EndringAarsakVisning endringsaarsak={'Nyansatt'} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Nyansatt'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -158,7 +148,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show default data.', async () => {
-    const { container } = render(<EndringAarsakVisning endringsaarsak={'Ukjent'} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Ukjent'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -167,7 +157,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Ferietrekk data.', async () => {
-    const { container } = render(<EndringAarsakVisning endringsaarsak={'Nyansatt'} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Nyansatt'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();

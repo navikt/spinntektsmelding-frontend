@@ -31,7 +31,7 @@ import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
-import { isBefore, isEqual, isValid } from 'date-fns';
+import { isBefore, isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
@@ -40,6 +40,8 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import formatIsoDate from '../../utils/formatIsoDate';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -154,6 +156,58 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const classNameWrapperSkjaeringstidspunkt = cx({
     infoboks: visArbeidsgiverperiode
   });
+  let perioder: { fom: string; tom: string }[] = [];
+  let gjelderFra = '';
+  let bleKjent = '';
+  switch (bruttoinntekt.endringsaarsak) {
+    case begrunnelseEndringBruttoinntekt.Tariffendring:
+      gjelderFra = tariffendringDato ? formatDate(tariffendringDato) : '';
+      bleKjent = tariffkjentdato ? formatDate(tariffkjentdato) : '';
+      break;
+
+    case begrunnelseEndringBruttoinntekt.Ferie:
+      perioder = ferie!.map((periode) => ({
+        fom: formatIsoDate(periode.fom),
+        tom: formatIsoDate(periode.tom)
+      }));
+      break;
+
+    case begrunnelseEndringBruttoinntekt.VarigLoennsendring:
+      gjelderFra = lonnsendringsdato ? formatDate(lonnsendringsdato) : '';
+      break;
+
+    case begrunnelseEndringBruttoinntekt.Permisjon:
+      perioder = permisjon!.map((periode) => ({
+        fom: formatIsoDate(periode.fom),
+        tom: formatIsoDate(periode.tom)
+      }));
+      break;
+
+    case begrunnelseEndringBruttoinntekt.Permittering:
+      perioder = permittering!.map((periode) => ({
+        fom: formatIsoDate(periode.fom),
+        tom: formatIsoDate(periode.tom)
+      }));
+      break;
+
+    case begrunnelseEndringBruttoinntekt.NyStilling:
+      gjelderFra = nystillingdato ? formatIsoDate(nystillingdato) : '';
+      break;
+
+    case begrunnelseEndringBruttoinntekt.NyStillingsprosent:
+      gjelderFra = nystillingsprosentdato ? formatIsoDate(nystillingsprosentdato) : '';
+      break;
+
+    case begrunnelseEndringBruttoinntekt.Sykefravaer:
+      perioder = sykefravaerperioder!.map((periode) => ({
+        fom: formatIsoDate(periode.fom),
+        tom: formatIsoDate(periode.tom)
+      }));
+      break;
+
+    default:
+      break;
+  }
 
   return (
     <div className={styles.container}>
@@ -230,16 +284,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
                   {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak as string)}
                   <EndringAarsakVisning
-                    endringsaarsak={bruttoinntekt.endringsaarsak}
-                    ferie={ferie}
-                    lonnsendringsdato={lonnsendringsdato}
-                    permisjon={permisjon}
-                    permittering={permittering}
-                    nystillingdato={nystillingdato}
-                    nystillingsprosentdato={nystillingsprosentdato}
-                    tariffendringDato={tariffendringDato}
-                    tariffkjentdato={tariffkjentdato}
-                    sykefravaer={sykefravaerperioder}
+                    aarsak={bruttoinntekt.endringsaarsak}
+                    perioder={perioder}
+                    gjelderFra={gjelderFra}
+                    bleKjent={bleKjent}
                   />
                 </>
               )}
