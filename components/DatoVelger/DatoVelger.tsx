@@ -1,5 +1,4 @@
 import { DatePicker, useDatepicker } from '@navikt/ds-react';
-import { find } from 'cypress/types/lodash';
 import { isValid } from 'date-fns';
 import { useEffect } from 'react';
 import { FieldPath, FieldValues, useController, useFormContext } from 'react-hook-form';

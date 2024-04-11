@@ -40,13 +40,18 @@ export default function PeriodeListevelger({
         append(range);
       });
     }
-  }, [defaultRange]);
+  }, [append, defaultRange]);
 
   useEffect(() => {
     if (fields.length === 0) {
       append({});
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+    event.preventDefault();
+    append({});
+  };
 
   return (
     <>
@@ -73,7 +78,7 @@ export default function PeriodeListevelger({
           )}
         </div>
       ))}
-      <Button variant='secondary' onClick={(event) => append({})} className={lokalStyles.leggtilperiodeknapp}>
+      <Button variant='secondary' onClick={handleLeggTilPeriode} className={lokalStyles.leggtilperiodeknapp}>
         Legg til periode
       </Button>
     </>
