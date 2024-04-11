@@ -1,8 +1,8 @@
-import { z } from 'zod';
 import delvisInnsendingSchema from '../../schema/delvisInnsendingSchema';
 import { YesNo } from '../../state/state';
+import { describe, expect, it } from 'vitest';
 
-describe('delvisInnsendingSchema', () => {
+describe.concurrent('delvisInnsendingSchema', () => {
   it('should validate a valid input', () => {
     const validInput = {
       inntekt: {

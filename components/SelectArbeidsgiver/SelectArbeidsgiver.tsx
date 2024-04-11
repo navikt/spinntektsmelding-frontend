@@ -26,7 +26,7 @@ export default function SelectArbeidsgiver({ arbeidsforhold, id, register, error
 
   return (
     <Select label='Organisasjon' error={error} {...register(id)}>
-      <option value=''>Velg organisasjon</option>
+      <option>Velg organisasjon</option>
       {arbeidsforhold.map((arbeidsgiver) => (
         <option value={arbeidsgiver.orgnrUnderenhet} key={arbeidsgiver.orgnrUnderenhet}>
           {`Org.nr. ${arbeidsgiver.orgnrUnderenhet} - ${arbeidsgiver.virksomhetsnavn}`}
