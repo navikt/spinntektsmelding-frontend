@@ -1,28 +1,11 @@
-import { Periode } from '../../state/state';
 import formatDate from '../../utils/formatDate';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { EndringAarsakSchema } from '../../validators/validerAapenInnsending';
+import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import begrunnelseEndringBruttoinntekt from '../Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import PeriodeFraTil from '../PeriodeFraTil/PeriodeFraTil';
 import lokalStyle from './EndringAarsakVisning.module.css';
-import { z } from 'zod';
 
-interface EndringAarsakVisningProps {
-  endringsaarsak: keyof typeof begrunnelseEndringBruttoinntekt;
-  tariffendringDato?: Date;
-  tariffkjentdato?: Date;
-  ferie?: Array<Periode>;
-  lonnsendringsdato?: Date;
-  permisjon?: Array<Periode>;
-  permittering?: Array<Periode>;
-  nystillingdato?: Date;
-  nystillingsprosentdato?: Date;
-  sykefravaer?: Array<Periode>;
-}
-
-type EndringAarsakVisningType = z.infer<typeof EndringAarsakSchema>;
-
-export default function EndringAarsakVisning(props: EndringAarsakVisningType) {
+export default function EndringAarsakVisning(props: EndringAarsak) {
   const formatIsoDate = (isoDate: string) => formatDate(parseIsoDate(isoDate));
 
   switch (props.aarsak) {

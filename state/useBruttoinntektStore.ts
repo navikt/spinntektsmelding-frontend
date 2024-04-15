@@ -29,15 +29,6 @@ export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   tidligereInntekt?: Array<HistoriskInntekt>;
   opprinneligeInntekt?: Array<HistoriskInntekt>;
-  ferie?: Array<Periode>;
-  lonnsendringsdato?: Date;
-  tariffendringDato?: Date;
-  tariffkjentdato?: Date;
-  nystillingdato?: Date;
-  nystillingsprosentdato?: Date;
-  permisjon?: Array<Periode>;
-  sykefravaerperioder?: Array<Periode>;
-  permittering?: Array<Periode>;
   sisteLonnshentedato?: Date;
   henterData: boolean;
   feilHentingAvInntektsdata?: Array<FeilReportElement>;
@@ -129,8 +120,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setEndringsaarsak: (aarsak: string) =>
     set(
       produce((state) => {
-        state.bruttoinntekt.endringsaarsak = aarsak;
-        if (!state.bruttoinntekt.endringAarsak.aarsak) {
+        if (!state.bruttoinntekt.endringAarsak?.aarsak) {
           state.bruttoinntekt.endringAarsak = { aarsak: aarsak };
         } else {
           state.bruttoinntekt.endringAarsak.aarsak = aarsak;
@@ -153,7 +143,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setFeriePeriode: (periode) =>
     set(
       produce((state) => {
-        state.ferie = periode;
         state.bruttoinntekt.endringAarsak.perioder =
           periode?.map((periode) => ({
             fom: formatIsoDate(periode.fom),
@@ -166,7 +155,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setLonnsendringDato: (endringsdato) =>
     set(
       produce((state) => {
-        state.lonnsendringsdato = endringsdato;
         state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(endringsdato);
         return state;
       })
@@ -174,7 +162,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setTariffEndringsdato: (endringsdato?: Date) =>
     set(
       produce((state) => {
-        state.tariffendringDato = endringsdato;
         state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(endringsdato);
 
         return state;
@@ -183,7 +170,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setTariffKjentdato: (kjentFraDato?: Date) =>
     set(
       produce((state) => {
-        state.tariffkjentdato = kjentFraDato;
         state.bruttoinntekt.endringAarsak.bleKjent = formatIsoDate(kjentFraDato);
         return state;
       })
@@ -191,7 +177,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setNyStillingsprosentDato: (dato) =>
     set(
       produce((state) => {
-        state.nystillingsprosentdato = dato;
         state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(dato);
 
         return state;
@@ -200,7 +185,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setNyStillingDato: (dato) =>
     set(
       produce((state) => {
-        state.nystillingdato = dato;
         state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(dato);
 
         return state;
@@ -209,7 +193,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setPermisjonPeriode: (periode) =>
     set(
       produce((state) => {
-        state.permisjon = periode;
         state.bruttoinntekt.endringAarsak.perioder =
           periode?.map((periode) => ({
             fom: formatIsoDate(periode.fom),
@@ -222,7 +205,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setPermitteringPeriode: (periode) =>
     set(
       produce((state) => {
-        state.permittering = periode;
         state.bruttoinntekt.endringAarsak.perioder =
           periode?.map((periode) => ({
             fom: formatIsoDate(periode.fom),
@@ -235,7 +217,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setSykefravaerPeriode: (periode) =>
     set(
       produce((state) => {
-        state.sykefravaerperioder = periode;
         state.bruttoinntekt.endringAarsak.perioder =
           periode?.map((periode) => ({
             fom: formatIsoDate(periode.fom),
@@ -296,19 +277,11 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           manueltKorrigert: false
         };
 
-        if (!state.bruttoinntekt.endringsaarsak) {
-          state.bruttoinntekt.endringsaarsak = '';
-          state.bruttoinntekt.endringAarsak = { aarsak: '' };
-        }
         if (!state.bruttoinntekt.endringAarsak) {
           state.bruttoinntekt.endringAarsak = { aarsak: '' };
         }
         if (!state.bruttoinntekt.endringAarsak.aarsak) {
           state.bruttoinntekt.endringAarsak.aarsak = '';
-        }
-
-        if (!state.opprinneligbruttoinntekt.endringsaarsak) {
-          state.opprinneligbruttoinntekt.endringsaarsak = '';
         }
 
         if (!state.opprinneligbruttoinntekt.endringAarsak) {

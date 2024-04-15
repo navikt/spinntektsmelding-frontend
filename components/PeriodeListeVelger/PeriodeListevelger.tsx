@@ -5,9 +5,10 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import DatoVelger from '../DatoVelger/DatoVelger';
 import ButtonSlette from '../ButtonSlette';
 import { useEffect } from 'react';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 interface PeriodeListevelgerProps {
-  defaultRange?: Array<Periode>;
+  defaultRange?: Array<{ fom: string; tom: string }>;
   fomTekst: string;
   tomTekst: string;
   defaultMonth?: Date;
@@ -37,7 +38,7 @@ export default function PeriodeListevelger({
   useEffect(() => {
     if (defaultRange) {
       defaultRange.forEach((range) => {
-        append(range);
+        append({ fom: parseIsoDate(range.fom), tom: parseIsoDate(range.tom) });
       });
     }
   }, [append, defaultRange]);

@@ -14,6 +14,7 @@ import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
+import { EndringAarsak } from '../../validators/validerAapenInnsending';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -29,28 +30,28 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
-  const ferie = useBoundStore((state) => state.ferie);
+  // const ferie = useBoundStore((state) => state.ferie);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
-  const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
+  // const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
   const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
   const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
-  const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
+  // const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
+  // const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
-  const nystillingdato = useBoundStore((state) => state.nystillingdato);
+  // const nystillingdato = useBoundStore((state) => state.nystillingdato);
   const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
-  const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
+  // const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
   const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
-  const permisjon = useBoundStore((state) => state.permisjon);
+  // const permisjon = useBoundStore((state) => state.permisjon);
   const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
   const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
-  const permittering = useBoundStore((state) => state.permittering);
-  const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
+  // const permittering = useBoundStore((state) => state.permittering);
+  // const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
-
+  const endringAarsak: EndringAarsak = useBoundStore((state) => state.bruttoinntekt.endringAarsak?.aarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
   const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -188,15 +189,16 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
             bruttoinntekt={bruttoinntekt}
             changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
             changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
-            tariffendringDato={tariffendringDato}
-            tariffkjentdato={tariffkjentdato}
-            ferie={ferie}
-            permisjon={permisjon}
-            permittering={permittering}
-            nystillingdato={nystillingdato}
-            nystillingsprosentdato={nystillingsprosentdato}
-            lonnsendringsdato={lonnsendringsdato}
-            sykefravaerperioder={sykefravaerperioder}
+            defaultEndringAarsak={endringAarsak}
+            // tariffendringDato={tariffendringDato}
+            // tariffkjentdato={tariffkjentdato}
+            // ferie={ferie}
+            // permisjon={permisjon}
+            // permittering={permittering}
+            // nystillingdato={nystillingdato}
+            // nystillingsprosentdato={nystillingsprosentdato}
+            // lonnsendringsdato={lonnsendringsdato}
+            // sykefravaerperioder={sykefravaerperioder}
             setTariffEndringsdato={addIsDirtyForm(setTariffEndringsdato)}
             setTariffKjentdato={addIsDirtyForm(setTariffKjentdato)}
             setFeriePeriode={addIsDirtyForm(setFeriePeriode)}

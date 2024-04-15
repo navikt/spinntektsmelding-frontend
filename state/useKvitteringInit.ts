@@ -26,7 +26,7 @@ export interface KvitteringSkjema extends InnsendingSkjema {
   tidspunkt?: string;
 }
 
-interface KvitteringInit {
+export interface KvitteringInit {
   kvitteringEkstern: SkjemaKvitteringEksterntSystem | null;
   kvitteringDokument: KvitteringSkjema | null;
 }
@@ -113,10 +113,7 @@ export default function useKvitteringInit() {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.skjaeringstidspunkt));
     }
 
-    const beregnetInntekt =
-      jsonData.inntekt && jsonData.inntekt.beregnetInntekt
-        ? jsonData.inntekt.beregnetInntekt
-        : jsonData.beregnetInntekt || 0;
+    const beregnetInntekt = jsonData.inntekt?.beregnetInntekt ?? jsonData.beregnetInntekt ?? 0;
 
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
@@ -124,7 +121,6 @@ export default function useKvitteringInit() {
     if (jsonData.inntekt.endringÅrsak) {
       const aarsak: Tariffendring | PeriodeListe | StillingsEndring | AArsakType | undefined =
         jsonData.inntekt.endringÅrsak;
-
       if (aarsak.typpe === 'VarigLonnsendring') {
         //TODO: This is a bug, should be VarigLoennsendring.
         aarsak.typpe = begrunnelseEndringBruttoinntekt.VarigLoennsendring;

@@ -36,6 +36,7 @@ import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 import { LonnISykefravaeret, Periode, YesNo } from '../../state/state';
 import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import { EndringAarsak } from '../../validators/validerAapenInnsending';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -45,16 +46,9 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const [setEndringerAvRefusjon] = useBoundStore((state) => [state.setEndringerAvRefusjon]);
 
-  const ferie = useBoundStore((state) => state.ferie);
-  const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
-  const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
-  const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
-  const nystillingdato = useBoundStore((state) => state.nystillingdato);
-  const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
-  const permisjon = useBoundStore((state) => state.permisjon);
-  const permittering = useBoundStore((state) => state.permittering);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
+  const setEndringAarsak = useBoundStore((state) => state.setEndringAarsak);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
 
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
@@ -63,18 +57,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
-
-  // Bruttoinntekt
-  const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
-  const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
-  const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
-  const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
-  const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
-  const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
-  const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
-  const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
-  // Bruttoinntekt slutt
 
   const [
     initLonnISykefravaeret,
@@ -103,7 +85,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const ukjentInntekt = useBoundStore((state) => state.ukjentInntekt);
 
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
-  const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
 
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
@@ -117,6 +98,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     ]
   );
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+
+  const endringAarsak: EndringAarsak = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
 
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
@@ -300,50 +283,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       if (skjemaData.inntekt.beloep) {
         setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
       }
-      setEndringsaarsak(skjemaData.inntekt.endringAarsak?.aarsak ?? '');
 
-      switch (skjemaData.inntekt.endringAarsak?.aarsak) {
-        case begrunnelseEndringBruttoinntekt.Tariffendring:
-          setTariffEndringsdato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
-          setTariffKjentdato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
-          break;
-        case begrunnelseEndringBruttoinntekt.Ferie: {
-          const datoPerioder: Periode[] = mapEndringsAarsakPeriodeTilPeriode(skjemaData);
-          setFeriePeriode(datoPerioder);
-          break;
-        }
-        case begrunnelseEndringBruttoinntekt.VarigLoennsendring:
-          setLonnsendringDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
-          break;
-        case begrunnelseEndringBruttoinntekt.Permisjon: {
-          const datoPerioder: Periode[] = mapEndringsAarsakPeriodeTilPeriode(skjemaData);
-          setPermisjonPeriode(datoPerioder);
-          break;
-        }
-        case begrunnelseEndringBruttoinntekt.Permittering: {
-          const datoPerioder: Periode[] = mapEndringsAarsakPeriodeTilPeriode(skjemaData);
-          setPermitteringPeriode(datoPerioder);
-          break;
-        }
-        case begrunnelseEndringBruttoinntekt.NyStilling:
-          setNyStillingDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
-          break;
-        case begrunnelseEndringBruttoinntekt.NyStillingsprosent:
-          setNyStillingsprosentDato(parseIsoDate(skjemaData.inntekt.endringAarsak.gjelderFra));
-          break;
-        case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-          const datoPerioder: Periode[] = mapEndringsAarsakPeriodeTilPeriode(skjemaData);
-          setSykefravaerPeriode(datoPerioder);
-          break;
-        }
-        case begrunnelseEndringBruttoinntekt.Feilregistrert:
-        case begrunnelseEndringBruttoinntekt.Bonus:
-        case begrunnelseEndringBruttoinntekt.Nyansatt:
-        case begrunnelseEndringBruttoinntekt.Ferietrekk:
-        default:
-          // Fall gjennom uten å gjøre noe
-          break;
-      }
+      setEndringAarsak(skjemaData.inntekt.endringAarsak);
 
       setSenderInn(false);
     });
@@ -443,15 +384,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       <VelgAarsak
                         changeMaanedsintektHandler={changeMaanedsintektHandler}
                         changeBegrunnelseHandler={changeBegrunnelseHandler}
-                        tariffendringDato={tariffendringDato}
-                        tariffkjentdato={tariffkjentdato}
-                        ferie={ferie}
-                        permisjon={permisjon}
-                        permittering={permittering}
-                        nystillingdato={nystillingdato}
-                        nystillingsprosentdato={nystillingsprosentdato}
-                        lonnsendringsdato={lonnsendringsdato}
-                        sykefravaerperioder={sykefravaerperioder}
+                        defaultEndringAarsak={endringAarsak}
                         bestemmendeFravaersdag={forsteFravaersdag}
                         nyInnsending={nyInnsending}
                         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}

@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
-import { vi } from 'vitest';
+import { expect, vi } from 'vitest';
 import parseIsoDate from '../../utils/parseIsoDate';
 
 // Mock the ResizeObserver
@@ -43,8 +43,8 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        tariffendringDato={new Date()}
-        tariffkjentdato={new Date()}
+        // tariffendringDato={new Date()}
+        // tariffkjentdato={new Date()}
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
@@ -73,8 +73,8 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        tariffendringDato={new Date()}
-        tariffkjentdato={new Date()}
+        // tariffendringDato={new Date()}
+        // tariffkjentdato={new Date()}
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
@@ -101,8 +101,8 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        tariffendringDato={new Date()}
-        tariffkjentdato={new Date()}
+        // tariffendringDato={new Date()}
+        // tariffkjentdato={new Date()}
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
@@ -131,8 +131,8 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        tariffendringDato={new Date()}
-        tariffkjentdato={new Date()}
+        // tariffendringDato={new Date()}
+        // tariffkjentdato={new Date()}
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
@@ -160,8 +160,8 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        tariffendringDato={new Date()}
-        tariffkjentdato={new Date()}
+        // tariffendringDato={new Date()}
+        // tariffkjentdato={new Date()}
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
@@ -191,8 +191,8 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        tariffendringDato={new Date()}
-        tariffkjentdato={new Date()}
+        // tariffendringDato={new Date()}
+        // tariffkjentdato={new Date()}
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
@@ -204,6 +204,7 @@ describe('Aarsaksvelger', () => {
         setLonnsendringDato={vi.fn}
         setSykefravaerPeriode={vi.fn}
         nyInnsending={false}
+        defaultEndringAarsak={{ aarsak: 'Tariffendring', gjelderFra: '2022-01-01', bleKjent: '2022-01-01' }}
       />
     );
 

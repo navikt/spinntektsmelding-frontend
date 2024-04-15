@@ -10,21 +10,16 @@ import Datovelger from '../Datovelger';
 import PeriodeListevelger from './PeriodeListevelger';
 import TariffendringDato from './TariffendringDato';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
+import { EndringAarsak } from '../../validators/validerAapenInnsending';
+import parseIsoDate from '../../utils/parseIsoDate';
+import { nanoid } from 'nanoid';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
   changeMaanedsintektHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   changeBegrunnelseHandler: (verdi: string) => void;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  tariffendringDato?: Date;
-  tariffkjentdato?: Date;
-  ferie?: Array<Periode>;
-  permisjon?: Array<Periode>;
-  permittering?: Array<Periode>;
-  nystillingdato?: Date;
-  nystillingsprosentdato?: Date;
-  lonnsendringsdato?: Date;
-  sykefravaerperioder?: Array<Periode>;
+  defaultEndringAarsak: EndringAarsak;
   setTariffEndringsdato: (dato?: Date) => void;
   setTariffKjentdato: (dato?: Date) => void;
   setFeriePeriode: (periode?: Array<Periode>) => void;
@@ -45,15 +40,7 @@ export default function Aarsaksvelger({
   changeMaanedsintektHandler,
   changeBegrunnelseHandler,
   clickTilbakestillMaanedsinntekt,
-  tariffendringDato,
-  tariffkjentdato,
-  ferie,
-  permisjon,
-  permittering,
-  nystillingdato,
-  nystillingsprosentdato,
-  lonnsendringsdato,
-  sykefravaerperioder,
+  defaultEndringAarsak,
   setTariffEndringsdato,
   setTariffKjentdato,
   setFeriePeriode,
@@ -68,6 +55,8 @@ export default function Aarsaksvelger({
   nyInnsending,
   kanIkkeTilbakestilles
 }: AarsaksvelgerProps) {
+  const blankPeriode: Periode[] = [{ fom: undefined, tom: undefined, id: nanoid() }];
+
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       <div className={lokalStyles.endremaaanedsinntekt}>
@@ -86,7 +75,7 @@ export default function Aarsaksvelger({
             error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
             id='bruttoinntekt-endringsaarsak'
             nyInnsending={nyInnsending}
-            value={bruttoinntekt?.endringsaarsak as string}
+            value={defaultEndringAarsak?.aarsak as string}
           />
         </div>
         {!kanIkkeTilbakestilles && (
@@ -95,23 +84,27 @@ export default function Aarsaksvelger({
           </div>
         )}
       </div>
-      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
+      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <TariffendringDato
             changeTariffEndretDato={setTariffEndringsdato}
             changeTariffKjentDato={setTariffKjentdato}
-            defaultEndringsdato={tariffendringDato}
-            defaultKjentDato={tariffkjentdato}
+            defaultEndringsdato={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
+            defaultKjentDato={parseIsoDate(defaultEndringAarsak?.bleKjent)}
             visFeilmeldingsTekst={visFeilmeldingsTekst}
             defaultMonth={bestemmendeFravaersdag}
           />
         </div>
       )}
-      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.Ferie && (
+      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
             onRangeListChange={setFeriePeriode}
-            defaultRange={ferie}
+            defaultRange={
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && defaultEndringAarsak?.perioder
+                ? periodeMapper(defaultEndringAarsak.perioder)
+                : blankPeriode
+            }
             fomTekst='Fra'
             tomTekst='Til'
             fomIdBase='bruttoinntekt-ful-fom'
@@ -122,24 +115,29 @@ export default function Aarsaksvelger({
           />
         </div>
       )}
-      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.VarigLoennsendring && (
+      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.VarigLoennsendring && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <Datovelger
             onDateChange={setLonnsendringDato}
             label='Lønnsendring gjelder fra'
             id='bruttoinntekt-lonnsendring-fom'
-            defaultSelected={lonnsendringsdato}
+            defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
             defaultMonth={bestemmendeFravaersdag}
           />
         </div>
       )}
-      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
+      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
             onRangeListChange={setPermisjonPeriode}
-            defaultRange={permisjon}
+            defaultRange={
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon &&
+              defaultEndringAarsak?.perioder
+                ? periodeMapper(defaultEndringAarsak.perioder)
+                : blankPeriode
+            }
             fomTekst='Fra'
             tomTekst='Til'
             fomIdBase='bruttoinntekt-permisjon-fom'
@@ -150,11 +148,16 @@ export default function Aarsaksvelger({
           />
         </div>
       )}
-      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.Permittering && (
+      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
             onRangeListChange={setPermitteringPeriode}
-            defaultRange={permittering}
+            defaultRange={
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering &&
+              periodeMapper(defaultEndringAarsak?.perioder)
+                ? defaultEndringAarsak.perioder
+                : blankPeriode
+            }
             fomTekst='Fra'
             tomTekst='Til'
             fomIdBase='bruttoinntekt-permittering-fom'
@@ -165,35 +168,40 @@ export default function Aarsaksvelger({
           />
         </div>
       )}
-      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
+      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <Datovelger
             onDateChange={setNyStillingDato}
             label='Ny stilling fra'
             id='bruttoinntekt-nystilling-fom'
-            defaultSelected={nystillingdato}
+            defaultSelected={defaultEndringAarsak?.gjelderFra}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
           />
         </div>
       )}
-      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
+      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <Datovelger
             onDateChange={setNyStillingsprosentDato}
             label='Ny stillingsprosent fra'
             id='bruttoinntekt-nystillingsprosent-fom'
-            defaultSelected={nystillingsprosentdato}
+            defaultSelected={defaultEndringAarsak?.gjelderFra}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
           />
         </div>
       )}
-      {bruttoinntekt?.endringsaarsak === begrunnelseEndringBruttoinntekt.Sykefravaer && (
+      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
             onRangeListChange={setSykefravaerPeriode}
-            defaultRange={sykefravaerperioder}
+            defaultRange={
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer &&
+              defaultEndringAarsak?.perioder
+                ? periodeMapper(defaultEndringAarsak.perioder)
+                : blankPeriode
+            }
             fomTekst='Fra'
             tomTekst='Til'
             fomIdBase='bruttoinntekt-sykefravaerperioder-fom'
@@ -206,4 +214,13 @@ export default function Aarsaksvelger({
       )}
     </div>
   );
+}
+
+export function periodeMapper(perioder: { fom: string; tom: string }[]): Periode[] {
+  if (!perioder) return [];
+  return perioder.map((periode) => ({
+    fom: parseIsoDate(periode.fom),
+    tom: parseIsoDate(periode.tom),
+    id: periode.fom + '-' + periode.tom
+  }));
 }

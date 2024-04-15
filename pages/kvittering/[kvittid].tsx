@@ -153,8 +153,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     fravaerswrapperwrapper: visArbeidsgiverperiode
   });
 
-  console.log('bruttoinntekt.endringAarsak', bruttoinntekt.endringAarsak);
-
   const classNameWrapperSkjaeringstidspunkt = cx({
     infoboks: visArbeidsgiverperiode
   });
