@@ -1,4 +1,4 @@
-import formatDate from '../../utils/formatDate';
+import formatIsoAsReadableDate from '../../utils/formatIsoAsReadableDate';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import begrunnelseEndringBruttoinntekt from '../Bruttoinntekt/begrunnelseEndringBruttoinntekt';
@@ -6,14 +6,12 @@ import PeriodeFraTil from '../PeriodeFraTil/PeriodeFraTil';
 import lokalStyle from './EndringAarsakVisning.module.css';
 
 export default function EndringAarsakVisning(props: EndringAarsak) {
-  const formatIsoDate = (isoDate: string) => formatDate(parseIsoDate(isoDate));
-
   switch (props.aarsak) {
     case begrunnelseEndringBruttoinntekt.Tariffendring: {
       return (
         <>
-          <div>Tariffendring gjelder fra: {formatIsoDate(props.gjelderFra)}</div>
-          <div>Dato tariffendring ble kjent: {formatIsoDate(props.bleKjent)}</div>
+          <div>Tariffendring gjelder fra: {formatIsoAsReadableDate(props.gjelderFra)}</div>
+          <div>Dato tariffendring ble kjent: {formatIsoAsReadableDate(props.bleKjent)}</div>
         </>
       );
     }
@@ -34,7 +32,7 @@ export default function EndringAarsakVisning(props: EndringAarsak) {
       return (
         <>
           <div className={lokalStyle.uthevet}>Varig lønnsendringsdato</div>
-          <div>{formatIsoDate(props.gjelderFra)}</div>
+          <div>{formatIsoAsReadableDate(props.gjelderFra)}</div>
         </>
       );
     }
@@ -68,7 +66,7 @@ export default function EndringAarsakVisning(props: EndringAarsak) {
       return (
         <>
           <div className={lokalStyle.uthevet}>Ny stilling fra</div>
-          <div>{formatIsoDate(props.gjelderFra)}</div>
+          <div>{formatIsoAsReadableDate(props.gjelderFra)}</div>
         </>
       );
     }
@@ -76,7 +74,7 @@ export default function EndringAarsakVisning(props: EndringAarsak) {
       return (
         <>
           <div className={lokalStyle.uthevet}>Ny stillingsprosent fra</div>
-          <div>{formatIsoDate(props.gjelderFra)}</div>
+          <div>{formatIsoAsReadableDate(props.gjelderFra)}</div>
         </>
       );
     }

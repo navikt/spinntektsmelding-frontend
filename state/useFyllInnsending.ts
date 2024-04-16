@@ -93,17 +93,7 @@ export default function useFyllInnsending() {
     state.refusjonskravetOpphoerer
   ]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
-  const [tariffendringDato, tariffkjentdato] = useBoundStore((state) => [
-    state.tariffendringDato,
-    state.tariffkjentdato
-  ]);
-  const ferie = useBoundStore((state) => state.ferie);
-  const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
-  const permisjon = useBoundStore((state) => state.permisjon);
-  const permittering = useBoundStore((state) => state.permittering);
-  const nystillingdato = useBoundStore((state) => state.nystillingdato);
-  const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
-  const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
+
   const behandlingsdager = useBoundStore((state) => state.behandlingsdager);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
@@ -123,72 +113,35 @@ export default function useFyllInnsending() {
 
   return (opplysningerBekreftet: boolean): InnsendingSkjema => {
     const endringAarsak = (): AArsakType | Tariffendring | PeriodeListe | StillingsEndring | undefined => {
-      if (!bruttoinntekt.endringsaarsak) return undefined;
-      switch (bruttoinntekt.endringsaarsak) {
+      if (!bruttoinntekt?.endringAarsak?.aarsak || bruttoinntekt?.endringAarsak?.aarsak === '') return undefined;
+      switch (bruttoinntekt.endringAarsak.aarsak) {
         case begrunnelseEndringBruttoinntekt.Tariffendring:
           return {
-            typpe: begrunnelseEndringBruttoinntekt.Tariffendring,
-            gjelderFra: formatIsoDate(tariffendringDato),
-            bleKjent: formatIsoDate(tariffkjentdato)
+            typpe: bruttoinntekt.endringAarsak.aarsak,
+            gjelderFra: bruttoinntekt?.endringAarsak?.gjelderFra,
+            bleKjent: bruttoinntekt?.endringAarsak?.bleKjent
           };
 
         case begrunnelseEndringBruttoinntekt.Ferie:
+        case begrunnelseEndringBruttoinntekt.Permisjon:
+        case begrunnelseEndringBruttoinntekt.Permittering:
+        case begrunnelseEndringBruttoinntekt.Sykefravaer:
           return {
-            typpe: begrunnelseEndringBruttoinntekt.Ferie,
-            liste: ferie!.map((periode) => ({
-              fom: formatIsoDate(periode.fom),
-              tom: formatIsoDate(periode.tom)
-            }))
+            typpe: bruttoinntekt.endringAarsak.aarsak,
+            liste: bruttoinntekt?.endringAarsak?.perioder
           };
 
         case begrunnelseEndringBruttoinntekt.VarigLoennsendring:
-          return {
-            typpe: 'VarigLonnsendring', // TODO: Denne må rettes opp når vi får samme navnet på alle apiene.
-            gjelderFra: formatIsoDate(lonnsendringsdato)
-          };
-
-        case begrunnelseEndringBruttoinntekt.Permisjon:
-          return {
-            typpe: begrunnelseEndringBruttoinntekt.Permisjon,
-            liste: permisjon!.map((periode) => ({
-              fom: formatIsoDate(periode.fom),
-              tom: formatIsoDate(periode.tom)
-            }))
-          };
-
-        case begrunnelseEndringBruttoinntekt.Permittering:
-          return {
-            typpe: begrunnelseEndringBruttoinntekt.Permittering,
-            liste: permittering!.map((periode) => ({
-              fom: formatIsoDate(periode.fom),
-              tom: formatIsoDate(periode.tom)
-            }))
-          };
-
         case begrunnelseEndringBruttoinntekt.NyStilling:
-          return {
-            typpe: begrunnelseEndringBruttoinntekt.NyStilling,
-            gjelderFra: formatIsoDate(nystillingdato)
-          };
-
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent:
           return {
-            typpe: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
-            gjelderFra: formatIsoDate(nystillingsprosentdato)
-          };
-
-        case begrunnelseEndringBruttoinntekt.Sykefravaer:
-          return {
-            typpe: begrunnelseEndringBruttoinntekt.Sykefravaer,
-            liste: sykefravaerperioder!.map((periode) => ({
-              fom: formatIsoDate(periode.fom),
-              tom: formatIsoDate(periode.tom)
-            }))
+            typpe: bruttoinntekt.endringAarsak.aarsak,
+            gjelderFra: bruttoinntekt?.endringAarsak?.gjelderFra
           };
 
         default:
           return {
-            typpe: bruttoinntekt.endringsaarsak.toString()
+            typpe: bruttoinntekt.endringAarsak.aarsak
           };
       }
     };
@@ -286,7 +239,7 @@ export default function useFyllInnsending() {
       })),
       bekreftOpplysninger: opplysningerBekreftet,
       behandlingsdager: behandlingsdager ? behandlingsdager.map((dag) => formatIsoDate(dag)) : [],
-      årsakInnsending: aarsakInnsending, // Kan også være Ny eller Endring
+      årsakInnsending: aarsakInnsending,
       telefonnummer: innsenderTelefonNr || '',
       forespurtData: forespurtData
     };

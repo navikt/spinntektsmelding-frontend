@@ -101,7 +101,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
     setReadMoreOpen(!readMoreOpen);
   };
 
-  const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringsaarsak;
+  const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringAarsak?.aarsak;
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
   const erFeriemaaneder = sjekkOmFerieMaaneder(tidligereinntekt);
