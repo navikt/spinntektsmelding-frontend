@@ -22,13 +22,10 @@ interface AarsaksvelgerProps {
   defaultEndringAarsak: EndringAarsak;
   setTariffEndringsdato: (dato?: Date) => void;
   setTariffKjentdato: (dato?: Date) => void;
-  setFeriePeriode: (periode?: Array<Periode>) => void;
-  setPermisjonPeriode: (periode?: Array<Periode>) => void;
-  setPermitteringPeriode: (periode?: Array<Periode>) => void;
   setNyStillingDato: (dato?: Date) => void;
   setNyStillingsprosentDato: (dato?: Date) => void;
   setLonnsendringDato: (dato?: Date) => void;
-  setSykefravaerPeriode: (periode?: Array<Periode>) => void;
+  setPerioder: (periode?: Array<Periode>) => void;
   visFeilmeldingsTekst: (feilmelding: string) => string;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
@@ -43,13 +40,10 @@ export default function Aarsaksvelger({
   defaultEndringAarsak,
   setTariffEndringsdato,
   setTariffKjentdato,
-  setFeriePeriode,
-  setPermisjonPeriode,
-  setPermitteringPeriode,
   setNyStillingDato,
   setNyStillingsprosentDato,
   setLonnsendringDato,
-  setSykefravaerPeriode,
+  setPerioder,
   visFeilmeldingsTekst,
   bestemmendeFravaersdag,
   nyInnsending,
@@ -99,7 +93,7 @@ export default function Aarsaksvelger({
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            onRangeListChange={setFeriePeriode}
+            onRangeListChange={setPerioder}
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && defaultEndringAarsak?.perioder
                 ? periodeMapper(defaultEndringAarsak.perioder)
@@ -131,7 +125,7 @@ export default function Aarsaksvelger({
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            onRangeListChange={setPermisjonPeriode}
+            onRangeListChange={setPerioder}
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon &&
               defaultEndringAarsak?.perioder
@@ -151,11 +145,11 @@ export default function Aarsaksvelger({
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            onRangeListChange={setPermitteringPeriode}
+            onRangeListChange={setPerioder}
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering &&
-              periodeMapper(defaultEndringAarsak?.perioder)
-                ? defaultEndringAarsak.perioder
+              defaultEndringAarsak?.perioder
+                ? periodeMapper(defaultEndringAarsak.perioder)
                 : blankPeriode
             }
             fomTekst='Fra'
@@ -174,7 +168,7 @@ export default function Aarsaksvelger({
             onDateChange={setNyStillingDato}
             label='Ny stilling fra'
             id='bruttoinntekt-nystilling-fom'
-            defaultSelected={defaultEndringAarsak?.gjelderFra}
+            defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
           />
@@ -186,7 +180,7 @@ export default function Aarsaksvelger({
             onDateChange={setNyStillingsprosentDato}
             label='Ny stillingsprosent fra'
             id='bruttoinntekt-nystillingsprosent-fom'
-            defaultSelected={defaultEndringAarsak?.gjelderFra}
+            defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
           />
@@ -195,7 +189,7 @@ export default function Aarsaksvelger({
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            onRangeListChange={setSykefravaerPeriode}
+            onRangeListChange={setPerioder}
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer &&
               defaultEndringAarsak?.perioder

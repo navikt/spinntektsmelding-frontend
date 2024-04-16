@@ -123,6 +123,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                 code: BruttoinntektFeilkode.PERMITTERING_MANGLER
               });
             } else {
+              console.log('endringAarsak.perioder', endringAarsak.perioder);
               const feilkoder = validerPeriode(periodeMapper(endringAarsak.perioder), 'bruttoinntekt-permittering');
               valideringstatus = valideringstatus.concat(feilkoder);
             }

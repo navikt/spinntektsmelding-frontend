@@ -29,15 +29,12 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
-  const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
+  const setPerioder = useBoundStore((state) => state.setPerioder);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
   const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
   const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
   const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
-  const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
-  const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
-  const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
@@ -183,13 +180,10 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
             defaultEndringAarsak={endringAarsak}
             setTariffEndringsdato={addIsDirtyForm(setTariffEndringsdato)}
             setTariffKjentdato={addIsDirtyForm(setTariffKjentdato)}
-            setFeriePeriode={addIsDirtyForm(setFeriePeriode)}
+            setPerioder={addIsDirtyForm(setPerioder)}
             setLonnsendringDato={addIsDirtyForm(setLonnsendringDato)}
             setNyStillingDato={addIsDirtyForm(setNyStillingDato)}
             setNyStillingsprosentDato={addIsDirtyForm(setNyStillingsprosentDato)}
-            setPermisjonPeriode={addIsDirtyForm(setPermisjonPeriode)}
-            setPermitteringPeriode={addIsDirtyForm(setPermitteringPeriode)}
-            setSykefravaerPeriode={addIsDirtyForm(setSykefravaerPeriode)}
             visFeilmeldingsTekst={visFeilmeldingsTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending}

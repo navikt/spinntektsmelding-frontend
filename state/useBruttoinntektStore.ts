@@ -36,15 +36,12 @@ export interface BruttoinntektState {
   setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
   setEndringsaarsak: (aarsak: string) => void;
-  setFeriePeriode: (periode: Array<Periode> | undefined) => void;
+  setPerioder: (periode: Array<Periode> | undefined) => void;
   setLonnsendringDato: (endringsdato?: Date) => void;
   setTariffEndringsdato: (endringsdato?: Date) => void;
   setTariffKjentdato: (kjentFraDato?: Date) => void;
   setNyStillingDato: (dato?: Date) => void;
   setNyStillingsprosentDato: (dato?: Date) => void;
-  setPermisjonPeriode: (periode: Array<Periode> | undefined) => void;
-  setPermitteringPeriode: (periode: Array<Periode> | undefined) => void;
-  setSykefravaerPeriode: (periode: Array<Periode> | undefined) => void;
   tilbakestillMaanedsinntekt: () => void;
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
@@ -140,7 +137,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setFeriePeriode: (periode) =>
+  setPerioder: (periode) =>
     set(
       produce((state) => {
         state.bruttoinntekt.endringAarsak.perioder =
@@ -187,41 +184,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       produce((state) => {
         state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(dato);
 
-        return state;
-      })
-    ),
-  setPermisjonPeriode: (periode) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.perioder =
-          periode?.map((periode) => ({
-            fom: formatIsoDate(periode.fom),
-            tom: formatIsoDate(periode.tom)
-          })) || [];
-
-        return state;
-      })
-    ),
-  setPermitteringPeriode: (periode) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.perioder =
-          periode?.map((periode) => ({
-            fom: formatIsoDate(periode.fom),
-            tom: formatIsoDate(periode.tom)
-          })) || [];
-
-        return state;
-      })
-    ),
-  setSykefravaerPeriode: (periode) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.perioder =
-          periode?.map((periode) => ({
-            fom: formatIsoDate(periode.fom),
-            tom: formatIsoDate(periode.tom)
-          })) || [];
         return state;
       })
     ),

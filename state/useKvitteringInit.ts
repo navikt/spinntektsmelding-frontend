@@ -52,13 +52,10 @@ export default function useKvitteringInit() {
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
   const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
-  const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
-  const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
   const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
   const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
   const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
-  const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
+  const setPerioder = useBoundStore((state) => state.setPerioder);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
@@ -138,7 +135,7 @@ export default function useKvitteringInit() {
         case begrunnelseEndringBruttoinntekt.Ferie: {
           if ('liste' in aarsak) {
             const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
-            setFeriePeriode(perioder);
+            setPerioder(perioder);
           }
           break;
         }
@@ -150,7 +147,7 @@ export default function useKvitteringInit() {
         case begrunnelseEndringBruttoinntekt.Permisjon: {
           if ('liste' in aarsak) {
             const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
-            setPermisjonPeriode(perioder);
+            setPerioder(perioder);
           }
           break;
         }
@@ -158,7 +155,7 @@ export default function useKvitteringInit() {
         case begrunnelseEndringBruttoinntekt.Permittering: {
           if ('liste' in aarsak) {
             const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
-            setPermitteringPeriode(perioder);
+            setPerioder(perioder);
           }
           break;
         }
@@ -176,7 +173,7 @@ export default function useKvitteringInit() {
         case begrunnelseEndringBruttoinntekt.Sykefravaer: {
           if ('liste' in aarsak) {
             const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
-            setSykefravaerPeriode(perioder);
+            setPerioder(perioder);
           }
           break;
         }

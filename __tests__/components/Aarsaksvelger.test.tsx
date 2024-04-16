@@ -46,13 +46,13 @@ describe('Aarsaksvelger', () => {
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setFeriePeriode={vi.fn}
-        setPermisjonPeriode={vi.fn}
-        setPermitteringPeriode={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
         setNyStillingDato={vi.fn}
         setNyStillingsprosentDato={vi.fn}
         setLonnsendringDato={vi.fn}
-        setSykefravaerPeriode={vi.fn}
+        setPerioder={vi.fn}
         nyInnsending={false}
       />
     );
@@ -74,13 +74,13 @@ describe('Aarsaksvelger', () => {
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setFeriePeriode={vi.fn}
-        setPermisjonPeriode={vi.fn}
-        setPermitteringPeriode={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
         setNyStillingDato={vi.fn}
         setNyStillingsprosentDato={vi.fn}
         setLonnsendringDato={vi.fn}
-        setSykefravaerPeriode={vi.fn}
+        setPerioder={vi.fn}
         nyInnsending={false}
       />
     );
@@ -100,13 +100,13 @@ describe('Aarsaksvelger', () => {
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setFeriePeriode={vi.fn}
-        setPermisjonPeriode={vi.fn}
-        setPermitteringPeriode={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
         setNyStillingDato={vi.fn}
         setNyStillingsprosentDato={vi.fn}
         setLonnsendringDato={vi.fn}
-        setSykefravaerPeriode={vi.fn}
+        setPerioder={vi.fn}
         nyInnsending={false}
       />
     );
@@ -128,13 +128,13 @@ describe('Aarsaksvelger', () => {
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setFeriePeriode={vi.fn}
-        setPermisjonPeriode={vi.fn}
-        setPermitteringPeriode={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
         setNyStillingDato={vi.fn}
         setNyStillingsprosentDato={vi.fn}
         setLonnsendringDato={vi.fn}
-        setSykefravaerPeriode={vi.fn}
+        setPerioder={vi.fn}
         nyInnsending={false}
       />
     );
@@ -155,13 +155,13 @@ describe('Aarsaksvelger', () => {
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setFeriePeriode={vi.fn}
-        setPermisjonPeriode={vi.fn}
-        setPermitteringPeriode={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
         setNyStillingDato={vi.fn}
         setNyStillingsprosentDato={vi.fn}
         setLonnsendringDato={vi.fn}
-        setSykefravaerPeriode={vi.fn}
+        setPerioder={vi.fn}
         nyInnsending={false}
       />
     );
@@ -184,13 +184,13 @@ describe('Aarsaksvelger', () => {
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setFeriePeriode={vi.fn}
-        setPermisjonPeriode={vi.fn}
-        setPermitteringPeriode={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
         setNyStillingDato={vi.fn}
         setNyStillingsprosentDato={vi.fn}
         setLonnsendringDato={vi.fn}
-        setSykefravaerPeriode={vi.fn}
+        setPerioder={vi.fn}
         nyInnsending={false}
         defaultEndringAarsak={{ aarsak: 'Tariffendring', gjelderFra: '2022-01-01', bleKjent: '2022-01-01' }}
       />
@@ -210,8 +210,8 @@ describe('Aarsaksvelger', () => {
     expect(setTariffEndringsdato).toHaveBeenCalledTimes(1);
   });
 
-  it.skip('calls the setFeriePeriode function when the endringsaarsak is ferie', async () => {
-    const setFeriePeriode = vi.fn();
+  it.skip('calls the setPerioder function when the endringsaarsak is ferie', async () => {
+    const setPerioder = vi.fn();
 
     render(
       <Aarsaksvelger
@@ -224,13 +224,13 @@ describe('Aarsaksvelger', () => {
         setTariffEndringsdato={setTariffEndringsdato}
         setTariffKjentdato={setTariffKjentdato}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setFeriePeriode={setFeriePeriode}
-        setPermisjonPeriode={vi.fn}
-        setPermitteringPeriode={vi.fn}
+        setPerioder={setPerioder}
+        setPerioder={vi.fn}
+        setPerioder={vi.fn}
         setNyStillingDato={vi.fn}
         setNyStillingsprosentDato={vi.fn}
         setLonnsendringDato={vi.fn}
-        setSykefravaerPeriode={vi.fn}
+        setPerioder={vi.fn}
         nyInnsending={false}
         ferie={[{ fom: undefined, tom: undefined, id: '1' }]}
       />
@@ -241,7 +241,7 @@ describe('Aarsaksvelger', () => {
     const input = screen.getByLabelText('Fra');
     await user.clear(input);
     await user.type(input, '02.02.2022');
-    expect(setFeriePeriode).toHaveBeenCalledWith([
+    expect(setPerioder).toHaveBeenCalledWith([
       {
         fom: parseIsoDate('2022-02-02'),
         id: '1',

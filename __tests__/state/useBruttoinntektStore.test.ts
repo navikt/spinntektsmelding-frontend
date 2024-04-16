@@ -273,7 +273,7 @@ describe('useBoundStore', () => {
     ]);
   });
 
-  it('should setPermitteringPeriode', () => {
+  it('should setPerioder', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -281,13 +281,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setPermitteringPeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+      result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
     expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);
   });
 
-  it('should setPermisjonPeriode', () => {
+  it('should setPerioder', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -295,7 +295,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setPermisjonPeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+      result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
     expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);
@@ -371,7 +371,7 @@ describe('useBoundStore', () => {
     expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
   });
 
-  it('should setFeriePeriode', () => {
+  it('should setPerioder', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -379,7 +379,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setFeriePeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+      result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
     expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);

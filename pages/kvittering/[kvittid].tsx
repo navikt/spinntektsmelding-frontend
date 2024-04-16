@@ -153,12 +153,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const perioder: { fom: string; tom: string }[] = bruttoinntekt.endringAarsak?.perioder
     ? bruttoinntekt.endringAarsak?.perioder
     : [];
-  const gjelderFra = bruttoinntekt.endringAarsak?.gjelderFra
-    ? formatIsoAsReadableDate(bruttoinntekt.endringAarsak?.gjelderFra)
-    : '';
-  const bleKjent = bruttoinntekt.endringAarsak?.bleKjent
-    ? formatIsoAsReadableDate(bruttoinntekt.endringAarsak?.bleKjent)
-    : '';
+  const gjelderFra = bruttoinntekt.endringAarsak?.gjelderFra ? bruttoinntekt.endringAarsak?.gjelderFra : '';
+  const bleKjent = bruttoinntekt.endringAarsak?.bleKjent ? bruttoinntekt.endringAarsak?.bleKjent : '';
   console.log('perioder', perioder);
   return (
     <div className={styles.container}>
