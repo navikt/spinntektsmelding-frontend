@@ -50,11 +50,8 @@ export default function useKvitteringInit() {
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
-  const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
-  const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
-  const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
-  const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
+  const setEndringAarsakGjelderFra = useBoundStore((state) => state.setEndringAarsakGjelderFra);
+  const setEndringAarsakBleKjent = useBoundStore((state) => state.setEndringAarsakBleKjent);
   const setPerioder = useBoundStore((state) => state.setPerioder);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
@@ -127,8 +124,8 @@ export default function useKvitteringInit() {
 
       switch (aarsak.typpe) {
         case begrunnelseEndringBruttoinntekt.Tariffendring: {
-          if ('gjelderFra' in aarsak) setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
-          if ('bleKjent' in aarsak) setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
+          if ('gjelderFra' in aarsak) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
+          if ('bleKjent' in aarsak) setEndringAarsakBleKjent(parseIsoDate(aarsak.bleKjent));
           break;
         }
 
@@ -140,7 +137,7 @@ export default function useKvitteringInit() {
           break;
         }
         case begrunnelseEndringBruttoinntekt.VarigLoennsendring: {
-          if ('gjelderFra' in aarsak) setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
@@ -161,12 +158,12 @@ export default function useKvitteringInit() {
         }
 
         case begrunnelseEndringBruttoinntekt.NyStilling: {
-          if ('gjelderFra' in aarsak) setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
-          if ('gjelderFra' in aarsak) setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 

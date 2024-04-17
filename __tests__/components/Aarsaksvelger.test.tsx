@@ -28,8 +28,8 @@ describe('Aarsaksvelger', () => {
   const changeMaanedsintektHandler = vi.fn();
   const changeBegrunnelseHandler = vi.fn();
   const clickTilbakestillMaanedsinntekt = vi.fn();
-  const setTariffEndringsdato = vi.fn();
-  const setTariffKjentdato = vi.fn();
+  const setEndringAarsakGjelderFra = vi.fn();
+  const setEndringAarsakBleKjent = vi.fn();
   const visFeilmeldingsTekst = vi.fn();
 
   beforeEach(() => {
@@ -43,15 +43,9 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        setTariffEndringsdato={setTariffEndringsdato}
-        setTariffKjentdato={setTariffKjentdato}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setNyStillingDato={vi.fn}
-        setNyStillingsprosentDato={vi.fn}
-        setLonnsendringDato={vi.fn}
         setPerioder={vi.fn}
         nyInnsending={false}
       />
@@ -71,15 +65,9 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        setTariffEndringsdato={setTariffEndringsdato}
-        setTariffKjentdato={setTariffKjentdato}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setNyStillingDato={vi.fn}
-        setNyStillingsprosentDato={vi.fn}
-        setLonnsendringDato={vi.fn}
         setPerioder={vi.fn}
         nyInnsending={false}
       />
@@ -97,15 +85,9 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        setTariffEndringsdato={setTariffEndringsdato}
-        setTariffKjentdato={setTariffKjentdato}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setNyStillingDato={vi.fn}
-        setNyStillingsprosentDato={vi.fn}
-        setLonnsendringDato={vi.fn}
         setPerioder={vi.fn}
         nyInnsending={false}
       />
@@ -125,15 +107,9 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        setTariffEndringsdato={setTariffEndringsdato}
-        setTariffKjentdato={setTariffKjentdato}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setNyStillingDato={vi.fn}
-        setNyStillingsprosentDato={vi.fn}
-        setLonnsendringDato={vi.fn}
         setPerioder={vi.fn}
         nyInnsending={false}
       />
@@ -152,15 +128,9 @@ describe('Aarsaksvelger', () => {
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        setTariffEndringsdato={setTariffEndringsdato}
-        setTariffKjentdato={setTariffKjentdato}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setNyStillingDato={vi.fn}
-        setNyStillingsprosentDato={vi.fn}
-        setLonnsendringDato={vi.fn}
         setPerioder={vi.fn}
         nyInnsending={false}
       />
@@ -174,22 +144,16 @@ describe('Aarsaksvelger', () => {
     expect(changeBegrunnelseHandler).toHaveBeenCalledWith('VarigLoennsendring');
   });
 
-  it('calls the setTariffKjentdato function when the TariffendringDato component is used', async () => {
+  it('calls the setEndringAarsakBleKjent function when the TariffendringDato component is used', async () => {
     render(
       <Aarsaksvelger
         bruttoinntekt={{ bruttoInntekt: 1000, endringsaarsak: 'Tariffendring', manueltKorrigert: false }}
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        setTariffEndringsdato={setTariffEndringsdato}
-        setTariffKjentdato={setTariffKjentdato}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setNyStillingDato={vi.fn}
-        setNyStillingsprosentDato={vi.fn}
-        setLonnsendringDato={vi.fn}
         setPerioder={vi.fn}
         nyInnsending={false}
         defaultEndringAarsak={{ aarsak: 'Tariffendring', gjelderFra: '2022-01-01', bleKjent: '2022-01-01' }}
@@ -202,12 +166,12 @@ describe('Aarsaksvelger', () => {
     const input = screen.getByLabelText('Dato tariffendring ble kjent');
     userEvent.clear(input);
     userEvent.type(input, '2022-01-01');
-    expect(setTariffKjentdato).toHaveBeenCalledTimes(1);
+    expect(setEndringAarsakBleKjent).toHaveBeenCalledTimes(1);
 
     const inputGjelderFra = screen.getByLabelText('Tariffendring gjelder fra');
     userEvent.clear(inputGjelderFra);
     userEvent.type(inputGjelderFra, '2022-01-01');
-    expect(setTariffEndringsdato).toHaveBeenCalledTimes(1);
+    expect(setEndringAarsakGjelderFra).toHaveBeenCalledTimes(1);
   });
 
   it.skip('calls the setPerioder function when the endringsaarsak is ferie', async () => {
@@ -221,16 +185,10 @@ describe('Aarsaksvelger', () => {
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
         tariffendringDato={new Date()}
         tariffkjentdato={new Date()}
-        setTariffEndringsdato={setTariffEndringsdato}
-        setTariffKjentdato={setTariffKjentdato}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
         setPerioder={setPerioder}
-        setPerioder={vi.fn}
-        setPerioder={vi.fn}
-        setNyStillingDato={vi.fn}
-        setNyStillingsprosentDato={vi.fn}
-        setLonnsendringDato={vi.fn}
-        setPerioder={vi.fn}
         nyInnsending={false}
         ferie={[{ fom: undefined, tom: undefined, id: '1' }]}
       />

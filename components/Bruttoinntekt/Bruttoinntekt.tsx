@@ -30,11 +30,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const setPerioder = useBoundStore((state) => state.setPerioder);
-  const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
-  const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
-  const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
-  const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
+  const setEndringAarsakGjelderFra = useBoundStore((state) => state.setEndringAarsakGjelderFra);
+  const setEndringAarsakBleKjent = useBoundStore((state) => state.setEndringAarsakBleKjent);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
@@ -178,12 +175,9 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
             changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
             changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
             defaultEndringAarsak={endringAarsak}
-            setTariffEndringsdato={addIsDirtyForm(setTariffEndringsdato)}
-            setTariffKjentdato={addIsDirtyForm(setTariffKjentdato)}
+            setEndringAarsakGjelderFra={addIsDirtyForm(setEndringAarsakGjelderFra)}
+            setEndringAarsakBleKjent={addIsDirtyForm(setEndringAarsakBleKjent)}
             setPerioder={addIsDirtyForm(setPerioder)}
-            setLonnsendringDato={addIsDirtyForm(setLonnsendringDato)}
-            setNyStillingDato={addIsDirtyForm(setNyStillingDato)}
-            setNyStillingsprosentDato={addIsDirtyForm(setNyStillingsprosentDato)}
             visFeilmeldingsTekst={visFeilmeldingsTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending}

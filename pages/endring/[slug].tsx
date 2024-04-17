@@ -254,8 +254,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         status: skjemaData.refusjon.kreverRefusjon
       };
 
-      console.log('skjemaData', skjemaData);
-
       initLonnISykefravaeret(lonnISykefravaeretGreier);
       const refusjonEndringer = skjemaData.refusjon.refusjonEndringer;
       initRefusjonEndringer(

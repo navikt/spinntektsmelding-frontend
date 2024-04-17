@@ -301,7 +301,7 @@ describe('useBoundStore', () => {
     expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);
   });
 
-  it('should setNyStillingDato', () => {
+  it('should setEndringAarsakGjelderFra', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -309,13 +309,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyStillingDato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
     expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
   });
 
-  it('should setNyStillingsprosentDato', () => {
+  it('should setEndringAarsakGjelderFra', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -323,13 +323,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyStillingsprosentDato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
     expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
   });
 
-  it('should setTariffKjentdato', () => {
+  it('should setEndringAarsakBleKjent', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -337,13 +337,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setTariffKjentdato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakBleKjent(new Date(2002, 10, 11));
     });
 
     expect(result.current.bruttoinntekt.endringAarsak.bleKjent).toEqual('2002-11-11');
   });
 
-  it('should setTariffEndringsdato', () => {
+  it('should setEndringAarsakGjelderFra', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -351,13 +351,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setTariffEndringsdato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
     expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
   });
 
-  it('should setLonnsendringDato', () => {
+  it('should setEndringAarsakGjelderFra', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -365,7 +365,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setLonnsendringDato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
     expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');

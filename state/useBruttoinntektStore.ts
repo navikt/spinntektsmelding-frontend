@@ -37,11 +37,8 @@ export interface BruttoinntektState {
   setOpprinneligNyMaanedsinntekt: () => void;
   setEndringsaarsak: (aarsak: string) => void;
   setPerioder: (periode: Array<Periode> | undefined) => void;
-  setLonnsendringDato: (endringsdato?: Date) => void;
-  setTariffEndringsdato: (endringsdato?: Date) => void;
-  setTariffKjentdato: (kjentFraDato?: Date) => void;
-  setNyStillingDato: (dato?: Date) => void;
-  setNyStillingsprosentDato: (dato?: Date) => void;
+  setEndringAarsakGjelderFra: (endringsdato?: Date) => void;
+  setEndringAarsakBleKjent: (kjentFraDato?: Date) => void;
   tilbakestillMaanedsinntekt: () => void;
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
@@ -149,41 +146,17 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setLonnsendringDato: (endringsdato) =>
+  setEndringAarsakGjelderFra: (endringsdato) =>
     set(
       produce((state) => {
         state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(endringsdato);
         return state;
       })
     ),
-  setTariffEndringsdato: (endringsdato?: Date) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(endringsdato);
-
-        return state;
-      })
-    ),
-  setTariffKjentdato: (kjentFraDato?: Date) =>
+  setEndringAarsakBleKjent: (kjentFraDato?: Date) =>
     set(
       produce((state) => {
         state.bruttoinntekt.endringAarsak.bleKjent = formatIsoDate(kjentFraDato);
-        return state;
-      })
-    ),
-  setNyStillingsprosentDato: (dato) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(dato);
-
-        return state;
-      })
-    ),
-  setNyStillingDato: (dato) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(dato);
-
         return state;
       })
     ),

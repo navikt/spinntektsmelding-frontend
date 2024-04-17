@@ -20,11 +20,8 @@ interface AarsaksvelgerProps {
   changeBegrunnelseHandler: (verdi: string) => void;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
   defaultEndringAarsak: EndringAarsak;
-  setTariffEndringsdato: (dato?: Date) => void;
-  setTariffKjentdato: (dato?: Date) => void;
-  setNyStillingDato: (dato?: Date) => void;
-  setNyStillingsprosentDato: (dato?: Date) => void;
-  setLonnsendringDato: (dato?: Date) => void;
+  setEndringAarsakGjelderFra: (dato?: Date) => void;
+  setEndringAarsakBleKjent: (dato?: Date) => void;
   setPerioder: (periode?: Array<Periode>) => void;
   visFeilmeldingsTekst: (feilmelding: string) => string;
   bestemmendeFravaersdag?: Date;
@@ -38,11 +35,8 @@ export default function Aarsaksvelger({
   changeBegrunnelseHandler,
   clickTilbakestillMaanedsinntekt,
   defaultEndringAarsak,
-  setTariffEndringsdato,
-  setTariffKjentdato,
-  setNyStillingDato,
-  setNyStillingsprosentDato,
-  setLonnsendringDato,
+  setEndringAarsakGjelderFra,
+  setEndringAarsakBleKjent,
   setPerioder,
   visFeilmeldingsTekst,
   bestemmendeFravaersdag,
@@ -81,8 +75,8 @@ export default function Aarsaksvelger({
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <TariffendringDato
-            changeTariffEndretDato={setTariffEndringsdato}
-            changeTariffKjentDato={setTariffKjentdato}
+            changeTariffEndretDato={setEndringAarsakGjelderFra}
+            changeTariffKjentDato={setEndringAarsakBleKjent}
             defaultEndringsdato={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             defaultKjentDato={parseIsoDate(defaultEndringAarsak?.bleKjent)}
             visFeilmeldingsTekst={visFeilmeldingsTekst}
@@ -112,7 +106,7 @@ export default function Aarsaksvelger({
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.VarigLoennsendring && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <Datovelger
-            onDateChange={setLonnsendringDato}
+            onDateChange={setEndringAarsakGjelderFra}
             label='Lønnsendring gjelder fra'
             id='bruttoinntekt-lonnsendring-fom'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
@@ -165,7 +159,7 @@ export default function Aarsaksvelger({
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <Datovelger
-            onDateChange={setNyStillingDato}
+            onDateChange={setEndringAarsakGjelderFra}
             label='Ny stilling fra'
             id='bruttoinntekt-nystilling-fom'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
@@ -177,7 +171,7 @@ export default function Aarsaksvelger({
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <Datovelger
-            onDateChange={setNyStillingsprosentDato}
+            onDateChange={setEndringAarsakGjelderFra}
             label='Ny stillingsprosent fra'
             id='bruttoinntekt-nystillingsprosent-fom'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
