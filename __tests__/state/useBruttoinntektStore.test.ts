@@ -143,7 +143,7 @@ describe('useBoundStore', () => {
       result.current.setEndringsaarsak('AARSAK');
     });
 
-    expect(result.current.bruttoinntekt?.endringsaarsak).toBe('AARSAK');
+    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBe('AARSAK');
   });
 
   it('should set empty endringsaarsak and give an error.', () => {
@@ -157,7 +157,7 @@ describe('useBoundStore', () => {
       result.current.setEndringsaarsak('');
     });
 
-    expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
+    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBe('');
     expect(result.current.feilmeldinger).toEqual([
       {
         felt: 'bruttoinntekt-endringsaarsak',
@@ -182,7 +182,7 @@ describe('useBoundStore', () => {
       result.current.tilbakestillMaanedsinntekt();
     });
 
-    expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
+    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBe('');
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(40000);
   });
@@ -254,7 +254,7 @@ describe('useBoundStore', () => {
       result.current.rekalkulerBruttoinntekt(new Date(2002, 11, 11));
     });
 
-    expect(result.current.bruttoinntekt?.endringsaarsak).toBe('');
+    expect(result.current.bruttoinntekt?.endrinAarsak).toBeUndefined();
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(50000);
     expect(result.current.tidligereInntekt).toEqual([
@@ -273,7 +273,7 @@ describe('useBoundStore', () => {
     ]);
   });
 
-  it('should setPermitteringPeriode', () => {
+  it('should setPerioder', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -281,15 +281,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setPermitteringPeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+      result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.permittering).toEqual([
-      { fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }
-    ]);
+    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);
   });
 
-  it('should setPermisjonPeriode', () => {
+  it('should setPerioder', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -297,13 +295,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setPermisjonPeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+      result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.permisjon).toEqual([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);
   });
 
-  it('should setNyStillingDato', () => {
+  it('should setEndringAarsakGjelderFra', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -311,13 +309,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyStillingDato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
-    expect(result.current.nystillingdato).toEqual(new Date(2002, 10, 11));
+    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
   });
 
-  it('should setNyStillingsprosentDato', () => {
+  it('should setEndringAarsakGjelderFra', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -325,13 +323,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setNyStillingsprosentDato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
-    expect(result.current.nystillingsprosentdato).toEqual(new Date(2002, 10, 11));
+    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
   });
 
-  it('should setTariffKjentdato', () => {
+  it('should setEndringAarsakBleKjent', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -339,13 +337,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setTariffKjentdato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakBleKjent(new Date(2002, 10, 11));
     });
 
-    expect(result.current.tariffkjentdato).toEqual(new Date(2002, 10, 11));
+    expect(result.current.bruttoinntekt.endringAarsak.bleKjent).toEqual('2002-11-11');
   });
 
-  it('should setTariffEndringsdato', () => {
+  it('should setEndringAarsakGjelderFra', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -353,13 +351,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setTariffEndringsdato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
-    expect(result.current.tariffendringDato).toEqual(new Date(2002, 10, 11));
+    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
   });
 
-  it('should setLonnsendringDato', () => {
+  it('should setEndringAarsakGjelderFra', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -367,13 +365,13 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setLonnsendringDato(new Date(2002, 10, 11));
+      result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
-    expect(result.current.lonnsendringsdato).toEqual(new Date(2002, 10, 11));
+    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
   });
 
-  it('should setFeriePeriode', () => {
+  it('should setPerioder', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -381,10 +379,10 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setFeriePeriode([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+      result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.permisjon).toEqual([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
+    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);
   });
 
   it('should setTidligereInntekter', () => {

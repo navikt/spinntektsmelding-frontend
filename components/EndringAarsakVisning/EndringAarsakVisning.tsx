@@ -1,40 +1,28 @@
-import { Periode } from '../../state/state';
-import formatDate from '../../utils/formatDate';
+import formatIsoAsReadableDate from '../../utils/formatIsoAsReadableDate';
+import parseIsoDate from '../../utils/parseIsoDate';
+import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import begrunnelseEndringBruttoinntekt from '../Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import PeriodeFraTil from '../PeriodeFraTil/PeriodeFraTil';
 import lokalStyle from './EndringAarsakVisning.module.css';
 
-interface EndringAarsakVisningProps {
-  endringsaarsak: keyof typeof begrunnelseEndringBruttoinntekt;
-  tariffendringDato?: Date;
-  tariffkjentdato?: Date;
-  ferie?: Array<Periode>;
-  lonnsendringsdato?: Date;
-  permisjon?: Array<Periode>;
-  permittering?: Array<Periode>;
-  nystillingdato?: Date;
-  nystillingsprosentdato?: Date;
-  sykefravaer?: Array<Periode>;
-}
-
-export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
-  switch (String(props.endringsaarsak)) {
+export default function EndringAarsakVisning(props: EndringAarsak) {
+  switch (props.aarsak) {
     case begrunnelseEndringBruttoinntekt.Tariffendring: {
       return (
         <>
-          <div>Tariffendring gjelder fra: {formatDate(props.tariffendringDato)}</div>
-          <div>Dato tariffendring ble kjent: {formatDate(props.tariffkjentdato)}</div>
+          <div>Tariffendring gjelder fra: {formatIsoAsReadableDate(props.gjelderFra)}</div>
+          <div>Dato tariffendring ble kjent: {formatIsoAsReadableDate(props.bleKjent)}</div>
         </>
       );
     }
     case begrunnelseEndringBruttoinntekt.Ferie: {
-      return props.ferie ? (
+      return props.perioder ? (
         <div>
-          {props.ferie.map((periode, index) => (
+          {props.perioder.map((periode, index) => (
             <PeriodeFraTil
-              fom={periode.fom}
-              tom={periode.tom}
-              key={`ferieperiode-${periode.id ? periode.id : index}`}
+              fom={parseIsoDate(periode.fom)}
+              tom={parseIsoDate(periode.tom)}
+              key={`ferieperiode-${periode.fom}-${periode.tom}`}
             />
           ))}{' '}
         </div>
@@ -44,31 +32,31 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
       return (
         <>
           <div className={lokalStyle.uthevet}>Varig lønnsendringsdato</div>
-          <div>{formatDate(props.lonnsendringsdato)}</div>
+          <div>{formatIsoAsReadableDate(props.gjelderFra)}</div>
         </>
       );
     }
     case begrunnelseEndringBruttoinntekt.Permisjon: {
-      return props.permisjon ? (
+      return props.perioder ? (
         <div>
-          {props.permisjon.map((periode, index) => (
+          {props.perioder.map((periode, index) => (
             <PeriodeFraTil
-              fom={periode.fom}
-              tom={periode.tom}
-              key={`permisjonperiode-${periode.id ? periode.id : index}`}
+              fom={parseIsoDate(periode.fom)}
+              tom={parseIsoDate(periode.tom)}
+              key={`permisjonperiode-${periode.fom}-${periode.tom}`}
             />
           ))}{' '}
         </div>
       ) : null;
     }
     case begrunnelseEndringBruttoinntekt.Permittering: {
-      return props.permittering ? (
+      return props.perioder ? (
         <div>
-          {props.permittering.map((periode, index) => (
+          {props.perioder.map((periode, index) => (
             <PeriodeFraTil
-              fom={periode.fom}
-              tom={periode.tom}
-              key={`permitteringperiode-${periode.id ? periode.id : index}`}
+              fom={parseIsoDate(periode.fom)}
+              tom={parseIsoDate(periode.tom)}
+              key={`permitteringperiode-${periode.fom}-${periode.tom}`}
             />
           ))}{' '}
         </div>
@@ -78,7 +66,7 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
       return (
         <>
           <div className={lokalStyle.uthevet}>Ny stilling fra</div>
-          <div>{formatDate(props.nystillingdato)}</div>
+          <div>{formatIsoAsReadableDate(props.gjelderFra)}</div>
         </>
       );
     }
@@ -86,18 +74,18 @@ export default function EndringAarsakVisning(props: EndringAarsakVisningProps) {
       return (
         <>
           <div className={lokalStyle.uthevet}>Ny stillingsprosent fra</div>
-          <div>{formatDate(props.nystillingsprosentdato)}</div>
+          <div>{formatIsoAsReadableDate(props.gjelderFra)}</div>
         </>
       );
     }
     case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-      return props.sykefravaer ? (
+      return props.perioder ? (
         <div>
-          {props.sykefravaer.map((periode, index) => (
+          {props.perioder.map((periode, index) => (
             <PeriodeFraTil
-              fom={periode.fom}
-              tom={periode.tom}
-              key={`sykefravaer-periode-${periode.id ? periode.id : index}`}
+              fom={parseIsoDate(periode.fom)}
+              tom={parseIsoDate(periode.tom)}
+              key={`sykefravaer-periode-${periode.fom}-${periode.tom}`}
             />
           ))}{' '}
         </div>
