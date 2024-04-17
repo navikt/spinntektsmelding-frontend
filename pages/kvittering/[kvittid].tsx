@@ -31,7 +31,7 @@ import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
-import { isBefore, isEqual, isValid } from 'date-fns';
+import { isBefore, isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
@@ -40,6 +40,9 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+// import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+
+import formatIsoAsReadableDate from '../../utils/formatIsoAsReadableDate';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -61,16 +64,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const ferie = useBoundStore((state) => state.ferie);
-  const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
-  const permisjon = useBoundStore((state) => state.permisjon);
-  const permittering = useBoundStore((state) => state.permittering);
-  const nystillingdato = useBoundStore((state) => state.nystillingdato);
-  const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
+
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
-  const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
-  const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
-  const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
+
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
@@ -154,7 +150,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const classNameWrapperSkjaeringstidspunkt = cx({
     infoboks: visArbeidsgiverperiode
   });
-
+  const perioder: { fom: string; tom: string }[] = bruttoinntekt.endringAarsak?.perioder
+    ? bruttoinntekt.endringAarsak?.perioder
+    : [];
+  const gjelderFra = bruttoinntekt.endringAarsak?.gjelderFra ? bruttoinntekt.endringAarsak?.gjelderFra : '';
+  const bleKjent = bruttoinntekt.endringAarsak?.bleKjent ? bruttoinntekt.endringAarsak?.bleKjent : '';
   return (
     <div className={styles.container}>
       <Head>
@@ -224,22 +224,16 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <Heading2>Beregnet månedslønn</Heading2>
               <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
               <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
-              {bruttoinntekt.endringsaarsak && (
+              {bruttoinntekt.endringAarsak?.aarsak && (
                 <>
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
-                  {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringsaarsak as string)}
+                  {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringAarsak.aarsak as string)}
                   <EndringAarsakVisning
-                    endringsaarsak={bruttoinntekt.endringsaarsak}
-                    ferie={ferie}
-                    lonnsendringsdato={lonnsendringsdato}
-                    permisjon={permisjon}
-                    permittering={permittering}
-                    nystillingdato={nystillingdato}
-                    nystillingsprosentdato={nystillingsprosentdato}
-                    tariffendringDato={tariffendringDato}
-                    tariffkjentdato={tariffkjentdato}
-                    sykefravaer={sykefravaerperioder}
+                    aarsak={bruttoinntekt.endringAarsak.aarsak}
+                    perioder={perioder}
+                    gjelderFra={gjelderFra}
+                    bleKjent={bleKjent}
                   />
                 </>
               )}

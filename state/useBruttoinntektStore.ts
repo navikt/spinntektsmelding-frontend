@@ -12,6 +12,8 @@ import roundTwoDecimals from '../utils/roundTwoDecimals';
 import { FeilReportElement } from './useStateInit';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import Router from 'next/router';
+import { EndringAarsak } from '../validators/validerAapenInnsending';
+import formatIsoDate from '../utils/formatIsoDate';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
@@ -27,15 +29,6 @@ export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   tidligereInntekt?: Array<HistoriskInntekt>;
   opprinneligeInntekt?: Array<HistoriskInntekt>;
-  ferie?: Array<Periode>;
-  lonnsendringsdato?: Date;
-  tariffendringDato?: Date;
-  tariffkjentdato?: Date;
-  nystillingdato?: Date;
-  nystillingsprosentdato?: Date;
-  permisjon?: Array<Periode>;
-  sykefravaerperioder?: Array<Periode>;
-  permittering?: Array<Periode>;
   sisteLonnshentedato?: Date;
   henterData: boolean;
   feilHentingAvInntektsdata?: Array<FeilReportElement>;
@@ -43,15 +36,9 @@ export interface BruttoinntektState {
   setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
   setEndringsaarsak: (aarsak: string) => void;
-  setFeriePeriode: (periode: Array<Periode> | undefined) => void;
-  setLonnsendringDato: (endringsdato?: Date) => void;
-  setTariffEndringsdato: (endringsdato?: Date) => void;
-  setTariffKjentdato: (kjentFraDato?: Date) => void;
-  setNyStillingDato: (dato?: Date) => void;
-  setNyStillingsprosentDato: (dato?: Date) => void;
-  setPermisjonPeriode: (periode: Array<Periode> | undefined) => void;
-  setPermitteringPeriode: (periode: Array<Periode> | undefined) => void;
-  setSykefravaerPeriode: (periode: Array<Periode> | undefined) => void;
+  setPerioder: (periode: Array<Periode> | undefined) => void;
+  setEndringAarsakGjelderFra: (endringsdato?: Date) => void;
+  setEndringAarsakBleKjent: (kjentFraDato?: Date) => void;
   tilbakestillMaanedsinntekt: () => void;
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
@@ -62,18 +49,21 @@ export interface BruttoinntektState {
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
+  setEndringAarsak: (endringAarsak: EndringAarsak) => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
   bruttoinntekt: {
     bruttoInntekt: undefined,
     manueltKorrigert: false,
-    endringsaarsak: undefined
+    endringsaarsak: undefined,
+    endringAarsak: undefined
   },
   opprinneligbruttoinntekt: {
     bruttoInntekt: undefined,
     manueltKorrigert: false,
-    endringsaarsak: undefined
+    endringsaarsak: undefined,
+    endringAarsak: undefined
   },
   tidligereInntekt: undefined,
   henterData: false,
@@ -88,8 +78,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
 
         if (ugyldigEllerNegativtTall(state.bruttoinntekt.bruttoInntekt)) {
-          console.log('state.bruttoinntekt.bruttoInntekt', state.bruttoinntekt.bruttoInntekt);
-
           state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
         }
 
@@ -126,7 +114,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setEndringsaarsak: (aarsak: string) =>
     set(
       produce((state) => {
-        state.bruttoinntekt.endringsaarsak = aarsak;
+        if (!state.bruttoinntekt.endringAarsak?.aarsak || state.bruttoinntekt.endringAarsak?.aarsak !== aarsak) {
+          state.bruttoinntekt.endringAarsak = { aarsak: aarsak };
+        } else {
+          state.bruttoinntekt.endringAarsak.aarsak = aarsak;
+        }
+
         if (aarsak && aarsak !== '') {
           state.bruttoinntekt.manueltKorrigert = true;
         } else {
@@ -138,75 +131,32 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsaarsak', feiltekster.ENDRINGSAARSAK_MANGLER);
         }
+        return state;
+      })
+    ),
+  setPerioder: (periode) =>
+    set(
+      produce((state) => {
+        state.bruttoinntekt.endringAarsak.perioder =
+          periode?.map((periode) => ({
+            fom: formatIsoDate(periode.fom),
+            tom: formatIsoDate(periode.tom)
+          })) || [];
 
         return state;
       })
     ),
-  setFeriePeriode: (periode) =>
+  setEndringAarsakGjelderFra: (endringsdato) =>
     set(
       produce((state) => {
-        state.ferie = periode;
+        state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(endringsdato);
         return state;
       })
     ),
-  setLonnsendringDato: (endringsdato) =>
+  setEndringAarsakBleKjent: (kjentFraDato?: Date) =>
     set(
       produce((state) => {
-        state.lonnsendringsdato = endringsdato;
-
-        return state;
-      })
-    ),
-  setTariffEndringsdato: (endringsdato?: Date) =>
-    set(
-      produce((state) => {
-        state.tariffendringDato = endringsdato;
-
-        return state;
-      })
-    ),
-  setTariffKjentdato: (kjentFraDato?: Date) =>
-    set(
-      produce((state) => {
-        state.tariffkjentdato = kjentFraDato;
-
-        return state;
-      })
-    ),
-  setNyStillingsprosentDato: (dato) =>
-    set(
-      produce((state) => {
-        state.nystillingsprosentdato = dato;
-
-        return state;
-      })
-    ),
-  setNyStillingDato: (dato) =>
-    set(
-      produce((state) => {
-        state.nystillingdato = dato;
-
-        return state;
-      })
-    ),
-  setPermisjonPeriode: (periode) =>
-    set(
-      produce((state) => {
-        state.permisjon = periode;
-        return state;
-      })
-    ),
-  setPermitteringPeriode: (periode) =>
-    set(
-      produce((state) => {
-        state.permittering = periode;
-        return state;
-      })
-    ),
-  setSykefravaerPeriode: (periode) =>
-    set(
-      produce((state) => {
-        state.sykefravaerperioder = periode;
+        state.bruttoinntekt.endringAarsak.bleKjent = formatIsoDate(kjentFraDato);
         return state;
       })
     ),
@@ -262,12 +212,20 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           manueltKorrigert: false
         };
 
-        if (!state.bruttoinntekt.endringsaarsak) {
-          state.bruttoinntekt.endringsaarsak = '';
+        if (!state.bruttoinntekt.endringAarsak) {
+          state.bruttoinntekt.endringAarsak = { aarsak: '' };
         }
-        if (!state.opprinneligbruttoinntekt.endringsaarsak) {
-          state.opprinneligbruttoinntekt.endringsaarsak = '';
+        if (!state.bruttoinntekt.endringAarsak.aarsak) {
+          state.bruttoinntekt.endringAarsak.aarsak = '';
         }
+
+        if (!state.opprinneligbruttoinntekt.endringAarsak) {
+          state.opprinneligbruttoinntekt.endringAarsak = { aarsak: '' };
+        }
+        if (!state.opprinneligbruttoinntekt.endringAarsak.aarsak) {
+          state.opprinneligbruttoinntekt.endringAarsak.aarsak = '';
+        }
+
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         state.opprinneligeInntekt = tidligereInntekt;
 
@@ -363,13 +321,22 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt = {
           bruttoInntekt: undefined,
           manueltKorrigert: false,
-          endringsaarsak: undefined
+          endringsaarsak: undefined,
+          endringAarsak: undefined
         };
 
         return state;
       })
     );
-  }
+  },
+  setEndringAarsak: (endringAarsak: EndringAarsak) =>
+    set(
+      produce((state) => {
+        state.bruttoinntekt.endringAarsak = endringAarsak;
+        state.opprinneligbruttoinntekt.endringAarsak = endringAarsak;
+        return state;
+      })
+    )
 });
 
 export default useBruttoinntektStore;

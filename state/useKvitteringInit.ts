@@ -26,7 +26,7 @@ export interface KvitteringSkjema extends InnsendingSkjema {
   tidspunkt?: string;
 }
 
-interface KvitteringInit {
+export interface KvitteringInit {
   kvitteringEkstern: SkjemaKvitteringEksterntSystem | null;
   kvitteringDokument: KvitteringSkjema | null;
 }
@@ -50,15 +50,9 @@ export default function useKvitteringInit() {
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
-  const setTariffEndringsdato = useBoundStore((state) => state.setTariffEndringsdato);
-  const setTariffKjentdato = useBoundStore((state) => state.setTariffKjentdato);
-  const setFeriePeriode = useBoundStore((state) => state.setFeriePeriode);
-  const setPermisjonPeriode = useBoundStore((state) => state.setPermisjonPeriode);
-  const setPermitteringPeriode = useBoundStore((state) => state.setPermitteringPeriode);
-  const setNyStillingDato = useBoundStore((state) => state.setNyStillingDato);
-  const setNyStillingsprosentDato = useBoundStore((state) => state.setNyStillingsprosentDato);
-  const setLonnsendringDato = useBoundStore((state) => state.setLonnsendringDato);
-  const setSykefravaerPeriode = useBoundStore((state) => state.setSykefravaerPeriode);
+  const setEndringAarsakGjelderFra = useBoundStore((state) => state.setEndringAarsakGjelderFra);
+  const setEndringAarsakBleKjent = useBoundStore((state) => state.setEndringAarsakBleKjent);
+  const setPerioder = useBoundStore((state) => state.setPerioder);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
@@ -113,10 +107,7 @@ export default function useKvitteringInit() {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.skjaeringstidspunkt));
     }
 
-    const beregnetInntekt =
-      jsonData.inntekt && jsonData.inntekt.beregnetInntekt
-        ? jsonData.inntekt.beregnetInntekt
-        : jsonData.beregnetInntekt || 0;
+    const beregnetInntekt = jsonData.inntekt?.beregnetInntekt ?? jsonData.beregnetInntekt ?? 0;
 
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
@@ -124,7 +115,6 @@ export default function useKvitteringInit() {
     if (jsonData.inntekt.endringÅrsak) {
       const aarsak: Tariffendring | PeriodeListe | StillingsEndring | AArsakType | undefined =
         jsonData.inntekt.endringÅrsak;
-
       if (aarsak.typpe === 'VarigLonnsendring') {
         //TODO: This is a bug, should be VarigLoennsendring.
         aarsak.typpe = begrunnelseEndringBruttoinntekt.VarigLoennsendring;
@@ -134,27 +124,27 @@ export default function useKvitteringInit() {
 
       switch (aarsak.typpe) {
         case begrunnelseEndringBruttoinntekt.Tariffendring: {
-          if ('gjelderFra' in aarsak) setTariffEndringsdato(parseIsoDate(aarsak.gjelderFra));
-          if ('bleKjent' in aarsak) setTariffKjentdato(parseIsoDate(aarsak.bleKjent));
+          if ('gjelderFra' in aarsak) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
+          if ('bleKjent' in aarsak) setEndringAarsakBleKjent(parseIsoDate(aarsak.bleKjent));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.Ferie: {
           if ('liste' in aarsak) {
             const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
-            setFeriePeriode(perioder);
+            setPerioder(perioder);
           }
           break;
         }
         case begrunnelseEndringBruttoinntekt.VarigLoennsendring: {
-          if ('gjelderFra' in aarsak) setLonnsendringDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.Permisjon: {
           if ('liste' in aarsak) {
             const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
-            setPermisjonPeriode(perioder);
+            setPerioder(perioder);
           }
           break;
         }
@@ -162,25 +152,25 @@ export default function useKvitteringInit() {
         case begrunnelseEndringBruttoinntekt.Permittering: {
           if ('liste' in aarsak) {
             const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
-            setPermitteringPeriode(perioder);
+            setPerioder(perioder);
           }
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.NyStilling: {
-          if ('gjelderFra' in aarsak) setNyStillingDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
-          if ('gjelderFra' in aarsak) setNyStillingsprosentDato(parseIsoDate(aarsak.gjelderFra));
+          if ('gjelderFra' in aarsak) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
           break;
         }
 
         case begrunnelseEndringBruttoinntekt.Sykefravaer: {
           if ('liste' in aarsak) {
             const perioder: Array<Periode> = mapPeriodeTilPeriode(aarsak);
-            setSykefravaerPeriode(perioder);
+            setPerioder(perioder);
           }
           break;
         }

@@ -65,7 +65,6 @@ const Initiering2: NextPage = () => {
       perioder: z.array(PeriodeSchema, { required_error: 'Vennligst velg en periode' }).optional()
     })
     .superRefine((value, ctx) => {
-      console.log('value', value.perioder);
       if (!value.perioder || value.perioder.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -93,7 +92,6 @@ const Initiering2: NextPage = () => {
           if (
             Math.abs(differenceInDays(parseIsoDate(sortedPerioder[i].tom), parseIsoDate(sortedPerioder[i + 1].om))) > 16
           ) {
-            console.log('sortedPerioder[i].fom', sortedPerioder[i].fom, sortedPerioder[i + 1].tom);
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: 'Det kan ikke være mer enn 16 dager mellom periodene',
@@ -122,8 +120,6 @@ const Initiering2: NextPage = () => {
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;
-
-    console.log('formData', formData);
 
     if (data) {
       const mottatteData = endepunktArbeidsforholdSchema.safeParse(data);
@@ -184,8 +180,6 @@ const Initiering2: NextPage = () => {
             })
           : [];
       }
-    } else {
-      console.log('mottatteData', mottatteData.error);
     }
   }
   const feilmeldinger = formatRHFFeilmeldinger(errors);

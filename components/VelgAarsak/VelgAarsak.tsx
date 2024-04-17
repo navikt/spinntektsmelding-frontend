@@ -2,7 +2,6 @@ import lokalStyles from '../Bruttoinntekt/Bruttoinntekt.module.css';
 import formatDate from '../../utils/formatDate';
 import { TextField } from '@navikt/ds-react';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
-import { Periode } from '../../state/state';
 import React from 'react';
 import PeriodeListevelger from '../PeriodeListeVelger/PeriodeListevelger';
 import begrunnelseEndringBruttoinntekt from '../Bruttoinntekt/begrunnelseEndringBruttoinntekt';
@@ -12,20 +11,14 @@ import EndringBruttoinntektAarsak from '../EndringBruttoinntektAarsak/EndringBru
 import stringishToNumber from '../../utils/stringishToNumber';
 import TariffendringDato from '../TariffendringDato/TariffendringDato';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import { EndringAarsak } from '../../validators/validerAapenInnsending';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 interface VelgAarsakProps {
   changeMaanedsintektHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   changeBegrunnelseHandler: (verdi: string) => void;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  tariffendringDato?: Date;
-  tariffkjentdato?: Date;
-  ferie?: Array<Periode>;
-  permisjon?: Array<Periode>;
-  permittering?: Array<Periode>;
-  nystillingdato?: Date;
-  nystillingsprosentdato?: Date;
-  lonnsendringsdato?: Date;
-  sykefravaerperioder?: Array<Periode>;
+  defaultEndringAarsak: EndringAarsak;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
   kanIkkeTilbakestilles?: boolean;
@@ -34,15 +27,7 @@ interface VelgAarsakProps {
 
 export default function VelgAarsak({
   clickTilbakestillMaanedsinntekt,
-  tariffendringDato,
-  tariffkjentdato,
-  ferie,
-  permisjon,
-  permittering,
-  nystillingdato,
-  nystillingsprosentdato,
-  lonnsendringsdato,
-  sykefravaerperioder,
+  defaultEndringAarsak,
   bestemmendeFravaersdag,
   nyInnsending,
   kanIkkeTilbakestilles,
@@ -58,6 +43,8 @@ export default function VelgAarsak({
 
   const beloepFeltnavn = 'inntekt.beloep';
   const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
+
+  const blankPeriode: { fom: string; tom: string }[] = [{ fom: '', tom: '' }];
 
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
@@ -89,8 +76,16 @@ export default function VelgAarsak({
       {endringAarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <TariffendringDato
-            defaultEndringsdato={tariffendringDato}
-            defaultKjentDato={tariffkjentdato}
+            defaultEndringsdato={
+              defaultEndringAarsak.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
+                ? parseIsoDate(defaultEndringAarsak.gjelderFra)
+                : undefined
+            }
+            defaultKjentDato={
+              defaultEndringAarsak.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
+                ? parseIsoDate(defaultEndringAarsak.bleKjent)
+                : undefined
+            }
             defaultMonth={bestemmendeFravaersdag}
           />
         </div>
@@ -98,7 +93,11 @@ export default function VelgAarsak({
       {endringAarsak === begrunnelseEndringBruttoinntekt.Ferie && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            defaultRange={ferie}
+            defaultRange={
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && defaultEndringAarsak?.perioder
+                ? defaultEndringAarsak.perioder
+                : blankPeriode
+            }
             fomTekst='Fra'
             tomTekst='Til'
             defaultMonth={bestemmendeFravaersdag}
@@ -111,7 +110,7 @@ export default function VelgAarsak({
         <div className={lokalStyles.endremaaanedsinntekt}>
           <DatoVelger
             label='Lønnsendring gjelder fra'
-            defaultSelected={lonnsendringsdato}
+            defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
             name='inntekt.endringAarsak.gjelderFra'
@@ -122,7 +121,12 @@ export default function VelgAarsak({
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
             name='inntekt.endringAarsak.perioder'
-            defaultRange={permisjon}
+            defaultRange={
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon &&
+              defaultEndringAarsak?.perioder
+                ? defaultEndringAarsak.perioder
+                : blankPeriode
+            }
             fomTekst='Fra'
             tomTekst='Til'
             defaultMonth={bestemmendeFravaersdag}
@@ -134,7 +138,12 @@ export default function VelgAarsak({
       {endringAarsak === begrunnelseEndringBruttoinntekt.Permittering && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            defaultRange={permittering}
+            defaultRange={
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering &&
+              defaultEndringAarsak?.perioder
+                ? defaultEndringAarsak.perioder
+                : blankPeriode
+            }
             fomTekst='Fra'
             tomTekst='Til'
             name='inntekt.endringAarsak.perioder'
@@ -147,7 +156,7 @@ export default function VelgAarsak({
         <div className={lokalStyles.endremaaanedsinntekt}>
           <DatoVelger
             label='Ny stilling fra'
-            defaultSelected={nystillingdato}
+            defaultSelected={defaultEndringAarsak?.gjelderFra}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
             name='inntekt.endringAarsak.gjelderFra'
@@ -158,7 +167,7 @@ export default function VelgAarsak({
         <div className={lokalStyles.endremaaanedsinntekt}>
           <DatoVelger
             label='Ny stillingsprosent fra'
-            defaultSelected={nystillingsprosentdato}
+            defaultSelected={defaultEndringAarsak?.gjelderFra}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
             name='inntekt.endringAarsak.gjelderFra'
@@ -169,7 +178,12 @@ export default function VelgAarsak({
       {endringAarsak === begrunnelseEndringBruttoinntekt.Sykefravaer && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            defaultRange={sykefravaerperioder}
+            defaultRange={
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer &&
+              defaultEndringAarsak?.perioder
+                ? defaultEndringAarsak.perioder
+                : blankPeriode
+            }
             fomTekst='Fra'
             tomTekst='Til'
             defaultMonth={bestemmendeFravaersdag}

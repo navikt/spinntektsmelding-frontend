@@ -94,12 +94,12 @@ describe('useKvitteringInit', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('LovligFravaer');
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toBe(30000);
 
-    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Tariffendring');
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Tariffendring');
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.egenmeldingsperioder).toEqual([]);
     expect(result.current.harRefusjonEndringer).toBe('Ja');
-    expect(result.current.tariffendringDato).toEqual(parseIsoDate('2023-02-24'));
-    expect(result.current.tariffkjentdato).toEqual(parseIsoDate('2023-03-31'));
+    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual('2023-02-24');
+    expect(result.current.bruttoinntekt.endringAarsak?.bleKjent).toEqual('2023-03-31');
   });
 
   it('should fill the state with ferie stuff', async () => {
@@ -113,15 +113,14 @@ describe('useKvitteringInit', () => {
       kvitteringInit(ferieKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Ferie');
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Ferie');
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.ferie).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
       {
-        fom: parseIsoDate('2023-02-24'),
-        tom: parseIsoDate('2023-03-31'),
-        id: 'uuid'
+        fom: '2023-02-24',
+        tom: '2023-03-31'
       }
     ]);
   });
@@ -137,11 +136,11 @@ describe('useKvitteringInit', () => {
       kvitteringInit(varigLonnsendringKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringsaarsak).toBe('VarigLoennsendring');
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('VarigLoennsendring');
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.lonnsendringsdato).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual('2023-02-24');
   });
 
   it('should fill the state with permisjon stuff', async () => {
@@ -155,15 +154,14 @@ describe('useKvitteringInit', () => {
       kvitteringInit(permisjonKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Permisjon');
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Permisjon');
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.permisjon).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
       {
-        fom: parseIsoDate('2023-02-24'),
-        tom: parseIsoDate('2023-03-31'),
-        id: 'uuid'
+        fom: '2023-02-24',
+        tom: '2023-03-31'
       }
     ]);
   });
@@ -179,15 +177,14 @@ describe('useKvitteringInit', () => {
       kvitteringInit(permitteringKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Permittering');
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Permittering');
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.permittering).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
       {
-        fom: parseIsoDate('2023-02-24'),
-        tom: parseIsoDate('2023-03-31'),
-        id: 'uuid'
+        fom: '2023-02-24',
+        tom: '2023-03-31'
       }
     ]);
   });
@@ -203,11 +200,11 @@ describe('useKvitteringInit', () => {
       kvitteringInit(nyStillingKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringsaarsak).toBe('NyStilling');
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('NyStilling');
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.nystillingdato).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual('2023-02-24');
   });
 
   it('should fill the state with NyStillingsprosent stuff', async () => {
@@ -221,11 +218,11 @@ describe('useKvitteringInit', () => {
       kvitteringInit(nyStillingsprosentKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringsaarsak).toBe('NyStillingsprosent');
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('NyStillingsprosent');
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.nystillingsprosentdato).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual('2023-02-24');
   });
 
   it('should fill the state with syk stuff', async () => {
@@ -239,20 +236,18 @@ describe('useKvitteringInit', () => {
       kvitteringInit(sykKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringsaarsak).toBe('Sykefravaer');
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Sykefravaer');
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.sykefravaerperioder).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
       {
-        fom: parseIsoDate('2023-02-06'),
-        tom: parseIsoDate('2023-02-10'),
-        id: 'uuid'
+        fom: '2023-02-06',
+        tom: '2023-02-10'
       },
       {
-        fom: parseIsoDate('2023-02-24'),
-        tom: parseIsoDate('2023-03-06'),
-        id: 'uuid'
+        fom: '2023-02-24',
+        tom: '2023-03-06'
       }
     ]);
   });

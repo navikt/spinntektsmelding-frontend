@@ -55,5 +55,6 @@
   "naturalytelser": null,
   "årsakInnsending": "Ny",
   "bekreftOpplysninger": true,
-  "tidspunkt": "2023-04-26T08:01:31.170336157+02:00"
+  "tidspunkt": "2023-04-26T08:01:31.170336157+02:00",
+  "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
 }
