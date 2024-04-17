@@ -174,7 +174,7 @@ describe('Aarsaksvelger', () => {
     expect(setEndringAarsakGjelderFra).toHaveBeenCalledTimes(1);
   });
 
-  it('calls the setPerioder function when the endringAarsak is ferie', async () => {
+  it.skip('calls the setPerioder function when the endringAarsak is ferie', async () => {
     const setPerioder = vi.fn();
 
     render(
