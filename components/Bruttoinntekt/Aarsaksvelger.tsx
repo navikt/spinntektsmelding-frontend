@@ -42,7 +42,7 @@ export default function Aarsaksvelger({
   bestemmendeFravaersdag,
   nyInnsending,
   kanIkkeTilbakestilles
-}: AarsaksvelgerProps) {
+}: Readonly<AarsaksvelgerProps>) {
   const blankPeriode: Periode[] = [{ fom: undefined, tom: undefined, id: nanoid() }];
 
   return (
