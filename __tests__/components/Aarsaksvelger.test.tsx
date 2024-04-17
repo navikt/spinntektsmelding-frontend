@@ -34,6 +34,8 @@ describe('Aarsaksvelger', () => {
   const setEndringAarsakBleKjent = vi.fn();
   const visFeilmeldingsTekst = vi.fn();
 
+  const user = userEvent.setup();
+
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -74,7 +76,7 @@ describe('Aarsaksvelger', () => {
         nyInnsending={false}
       />
     );
-    const user = userEvent.setup();
+
     const input = screen.getByLabelText(/edsinntekt/);
     await user.type(input, '20000');
     expect(changeMaanedsintektHandler).toHaveBeenCalledTimes(5);
@@ -94,7 +96,6 @@ describe('Aarsaksvelger', () => {
         nyInnsending={false}
       />
     );
-    const user = userEvent.setup();
 
     const select = screen.getByLabelText('Velg endringsårsak');
     await user.selectOptions(select, 'Bonus');
@@ -138,7 +139,6 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const user = userEvent.setup();
     const select = screen.getByLabelText('Velg endringsårsak');
 
     await user.selectOptions(select, 'Varig lønnsendring');
@@ -149,7 +149,11 @@ describe('Aarsaksvelger', () => {
   it('calls the setEndringAarsakBleKjent function when the TariffendringDato component is used', async () => {
     render(
       <Aarsaksvelger
-        bruttoinntekt={{ bruttoInntekt: 1000, endringsaarsak: 'Tariffendring', manueltKorrigert: false }}
+        bruttoinntekt={{
+          bruttoInntekt: 1000,
+          endringAarsak: { aarsak: 'Tariffendring', gjelderFra: '2022-01-01', bleKjent: '2022-01-01' },
+          manueltKorrigert: false
+        }}
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
@@ -162,19 +166,18 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    await waitFor(() => screen.getByLabelText('Dato tariffendring ble kjent'));
-    const input = screen.getByLabelText('Dato tariffendring ble kjent');
-    userEvent.clear(input);
-    userEvent.type(input, '2022-01-01');
-    expect(setEndringAarsakBleKjent).toHaveBeenCalledTimes(1);
+    const inputGjelderFra = screen.getByLabelText(/Tariffendring gjelder fra/);
+    await user.clear(inputGjelderFra);
+    await user.type(inputGjelderFra, '10.01.2022');
+    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2022-01-10'));
 
-    const inputGjelderFra = screen.getByLabelText('Tariffendring gjelder fra');
-    userEvent.clear(inputGjelderFra);
-    userEvent.type(inputGjelderFra, '2022-01-01');
-    expect(setEndringAarsakGjelderFra).toHaveBeenCalledTimes(1);
+    const input = screen.getByLabelText('Dato tariffendring ble kjent');
+    await user.clear(input);
+    await user.type(input, '01.01.2022');
+    expect(setEndringAarsakBleKjent).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
   });
 
-  it.skip('calls the setPerioder function when the endringAarsak is ferie', async () => {
+  it('calls the setPerioder function when the endringAarsak is ferie', async () => {
     const setPerioder = vi.fn();
 
     render(
@@ -195,8 +198,6 @@ describe('Aarsaksvelger', () => {
         defaultEndringAarsak={{ aarsak: 'Ferie', perioder: perioder }}
       />
     );
-
-    const user = userEvent.setup();
 
     const input = screen.getByLabelText('Fra');
     await user.clear(input);
@@ -233,8 +234,6 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const user = userEvent.setup();
-
     const input = screen.getByLabelText(/Lønnsendring gjelder fra/);
     await user.clear(input);
     await user.type(input, '02.01.2022');
@@ -242,7 +241,7 @@ describe('Aarsaksvelger', () => {
   });
 
   it('calls the setPerioder function when the endringsaarsak is Permisjon', async () => {
-    const setPerioder = vi.fn();
+    const setPerioderrr = vi.fn();
 
     render(
       <Aarsaksvelger
@@ -257,18 +256,16 @@ describe('Aarsaksvelger', () => {
         setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
         setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setPerioder={setPerioder}
+        setPerioder={setPerioderrr}
         nyInnsending={false}
         defaultEndringAarsak={{ aarsak: 'Permisjon', perioder: perioder }}
       />
     );
 
-    const user = userEvent.setup();
-
     const input = screen.getByLabelText('Fra');
     await user.clear(input);
     await user.type(input, '02.01.2022');
-    expect(setPerioder).toHaveBeenCalledWith([
+    expect(setPerioderrr).toHaveBeenCalledWith([
       {
         fom: parseIsoDate('2022-01-02'),
         id: '2022-01-01-2022-01-05',
@@ -294,8 +291,6 @@ describe('Aarsaksvelger', () => {
         defaultEndringAarsak={{ aarsak: 'Permittering', perioder: perioder }}
       />
     );
-
-    const user = userEvent.setup();
 
     const input = screen.getByLabelText('Fra');
     await user.clear(input);
@@ -332,8 +327,6 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const user = userEvent.setup();
-
     const input = screen.getByLabelText(/Ny stilling fra/);
     await user.clear(input);
     await user.type(input, '02.01.2022');
@@ -363,8 +356,6 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const user = userEvent.setup();
-
     const input = screen.getByLabelText(/Ny stillingsprosent fra/);
     await user.clear(input);
     await user.type(input, '02.01.2022');
@@ -388,8 +379,6 @@ describe('Aarsaksvelger', () => {
         defaultEndringAarsak={{ aarsak: 'Sykefravaer', perioder: perioder }}
       />
     );
-
-    const user = userEvent.setup();
 
     const input = screen.getByLabelText('Fra');
     await user.clear(input);
