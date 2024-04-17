@@ -24,6 +24,8 @@ const IntersectionObserverMock = vi.fn(() => ({
 vi.stubGlobal('IntersectionObserver', IntersectionObserverMock);
 vi.stubGlobal('ResizeObserver', IntersectionObserverMock);
 
+const perioder = [{ fom: '2022-01-01', tom: '2022-01-05' }];
+
 describe('Aarsaksvelger', () => {
   const changeMaanedsintektHandler = vi.fn();
   const changeBegrunnelseHandler = vi.fn();
@@ -160,8 +162,6 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const user = userEvent.setup();
-
     await waitFor(() => screen.getByLabelText('Dato tariffendring ble kjent'));
     const input = screen.getByLabelText('Dato tariffendring ble kjent');
     userEvent.clear(input);
@@ -174,23 +174,25 @@ describe('Aarsaksvelger', () => {
     expect(setEndringAarsakGjelderFra).toHaveBeenCalledTimes(1);
   });
 
-  it.skip('calls the setPerioder function when the endringsaarsak is ferie', async () => {
+  it('calls the setPerioder function when the endringAarsak is ferie', async () => {
     const setPerioder = vi.fn();
 
     render(
       <Aarsaksvelger
-        bruttoinntekt={{ bruttoInntekt: 1000, endringsaarsak: 'Ferie', manueltKorrigert: false }}
+        bruttoinntekt={{
+          bruttoInntekt: 1000,
+          endringAarsak: { aarsak: 'Ferie', perioder: perioder },
+          manueltKorrigert: false
+        }}
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
-        tariffendringDato={new Date()}
-        tariffkjentdato={new Date()}
         setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
         setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
         setPerioder={setPerioder}
         nyInnsending={false}
-        ferie={[{ fom: undefined, tom: undefined, id: '1' }]}
+        defaultEndringAarsak={{ aarsak: 'Ferie', perioder: perioder }}
       />
     );
 
@@ -198,12 +200,205 @@ describe('Aarsaksvelger', () => {
 
     const input = screen.getByLabelText('Fra');
     await user.clear(input);
-    await user.type(input, '02.02.2022');
+    await user.type(input, '02.01.2022');
     expect(setPerioder).toHaveBeenCalledWith([
       {
-        fom: parseIsoDate('2022-02-02'),
-        id: '1',
-        tom: undefined
+        fom: parseIsoDate('2022-01-02'),
+        id: '2022-01-01-2022-01-05',
+        tom: parseIsoDate('2022-01-05')
+      }
+    ]);
+  });
+
+  it('calls the setPerioder function when the endringsaarsak is VarigLoennsendring', async () => {
+    const setPerioder = vi.fn();
+    const setEndringAarsakGjelderFra = vi.fn();
+
+    render(
+      <Aarsaksvelger
+        bruttoinntekt={{
+          bruttoInntekt: 1000,
+          endringAarsak: { aarsak: 'VarigLoennsendring', gjelderFra: '2022-01-01' },
+          manueltKorrigert: false
+        }}
+        changeMaanedsintektHandler={changeMaanedsintektHandler}
+        changeBegrunnelseHandler={changeBegrunnelseHandler}
+        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
+        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        setPerioder={setPerioder}
+        nyInnsending={false}
+        defaultEndringAarsak={{ aarsak: 'VarigLoennsendring', gjelderFra: '2022-01-01' }}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    const input = screen.getByLabelText(/Lønnsendring gjelder fra/);
+    await user.clear(input);
+    await user.type(input, '02.01.2022');
+    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2022-01-02'));
+  });
+
+  it('calls the setPerioder function when the endringsaarsak is Permisjon', async () => {
+    const setPerioder = vi.fn();
+
+    render(
+      <Aarsaksvelger
+        bruttoinntekt={{
+          bruttoInntekt: 1000,
+          endringAarsak: { aarsak: 'Permisjon', perioder: perioder },
+          manueltKorrigert: false
+        }}
+        changeMaanedsintektHandler={changeMaanedsintektHandler}
+        changeBegrunnelseHandler={changeBegrunnelseHandler}
+        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
+        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        setPerioder={setPerioder}
+        nyInnsending={false}
+        defaultEndringAarsak={{ aarsak: 'Permisjon', perioder: perioder }}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    const input = screen.getByLabelText('Fra');
+    await user.clear(input);
+    await user.type(input, '02.01.2022');
+    expect(setPerioder).toHaveBeenCalledWith([
+      {
+        fom: parseIsoDate('2022-01-02'),
+        id: '2022-01-01-2022-01-05',
+        tom: parseIsoDate('2022-01-05')
+      }
+    ]);
+  });
+
+  it('calls the setPerioder function when the endringsaarsak is Permittering', async () => {
+    const setPerioder = vi.fn();
+
+    render(
+      <Aarsaksvelger
+        bruttoinntekt={{ bruttoInntekt: 1000, endringsaarsak: 'Permittering', manueltKorrigert: false }}
+        changeMaanedsintektHandler={changeMaanedsintektHandler}
+        changeBegrunnelseHandler={changeBegrunnelseHandler}
+        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
+        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        setPerioder={setPerioder}
+        nyInnsending={false}
+        defaultEndringAarsak={{ aarsak: 'Permittering', perioder: perioder }}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    const input = screen.getByLabelText('Fra');
+    await user.clear(input);
+    await user.type(input, '02.01.2022');
+    expect(setPerioder).toHaveBeenCalledWith([
+      {
+        fom: parseIsoDate('2022-01-02'),
+        id: '2022-01-01-2022-01-05',
+        tom: parseIsoDate('2022-01-05')
+      }
+    ]);
+  });
+
+  it('calls the setPerioder function when the endringsaarsak is NyStilling', async () => {
+    const setPerioder = vi.fn();
+    const setEndringAarsakGjelderFra = vi.fn();
+
+    render(
+      <Aarsaksvelger
+        bruttoinntekt={{
+          bruttoInntekt: 1000,
+          endringAarsak: { aarsak: 'NyStilling', gjelderFra: '2022-01-01' },
+          manueltKorrigert: false
+        }}
+        changeMaanedsintektHandler={changeMaanedsintektHandler}
+        changeBegrunnelseHandler={changeBegrunnelseHandler}
+        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
+        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        setPerioder={setPerioder}
+        nyInnsending={false}
+        defaultEndringAarsak={{ aarsak: 'NyStilling', gjelderFra: '2022-01-01' }}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    const input = screen.getByLabelText(/Ny stilling fra/);
+    await user.clear(input);
+    await user.type(input, '02.01.2022');
+    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2022-01-02'));
+  });
+
+  it('calls the setPerioder function when the endringsaarsak is NyStillingsprosent', async () => {
+    const setPerioder = vi.fn();
+    const setEndringAarsakGjelderFra = vi.fn();
+
+    render(
+      <Aarsaksvelger
+        bruttoinntekt={{
+          bruttoInntekt: 1000,
+          endringAarsak: { aarsak: 'NyStillingsprosent', gjelderFra: '2022-01-01' },
+          manueltKorrigert: false
+        }}
+        changeMaanedsintektHandler={changeMaanedsintektHandler}
+        changeBegrunnelseHandler={changeBegrunnelseHandler}
+        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
+        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        setPerioder={setPerioder}
+        nyInnsending={false}
+        defaultEndringAarsak={{ aarsak: 'NyStillingsprosent', gjelderFra: '2022-01-01' }}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    const input = screen.getByLabelText(/Ny stillingsprosent fra/);
+    await user.clear(input);
+    await user.type(input, '02.01.2022');
+    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2022-01-02'));
+  });
+
+  it('calls the setPerioder function when the endringsaarsak is Sykefravaer', async () => {
+    const setPerioder = vi.fn();
+
+    render(
+      <Aarsaksvelger
+        bruttoinntekt={{ bruttoInntekt: 1000, endringsaarsak: 'Sykefravaer', manueltKorrigert: false }}
+        changeMaanedsintektHandler={changeMaanedsintektHandler}
+        changeBegrunnelseHandler={changeBegrunnelseHandler}
+        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
+        setEndringAarsakBleKjent={setEndringAarsakBleKjent}
+        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        setPerioder={setPerioder}
+        nyInnsending={false}
+        defaultEndringAarsak={{ aarsak: 'Sykefravaer', perioder: perioder }}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    const input = screen.getByLabelText('Fra');
+    await user.clear(input);
+    await user.type(input, '02.01.2022');
+    expect(setPerioder).toHaveBeenCalledWith([
+      {
+        fom: parseIsoDate('2022-01-02'),
+        id: '2022-01-01-2022-01-05',
+        tom: parseIsoDate('2022-01-05')
       }
     ]);
   });
