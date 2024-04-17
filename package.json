@@ -31,7 +31,7 @@
     "@testing-library/dom": "9.3.3",
     "classnames": "2.5.1",
     "core-js-pure": "3.36.1",
-    "date-fns": "2.30.0",
+    "date-fns": "3.6.0",
     "immer": "10.0.3",
     "jose": "5.2.2",
     "nanoid": "5.0.4",
