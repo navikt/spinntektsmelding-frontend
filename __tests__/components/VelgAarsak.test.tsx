@@ -5,12 +5,14 @@ import { vi, expect } from 'vitest';
 import { useFormContext, useFieldArray } from 'react-hook-form';
 import formatDate from '../../utils/formatDate';
 import userEvent from '@testing-library/user-event';
+import { EndringAarsak } from '../../validators/validerAapenInnsending';
+import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 
 vi.mock('react-hook-form');
 
 describe('VelgAarsak', () => {
   const clickTilbakestillMaanedsinntekt = vi.fn();
-  const sykefravaerperioder = [{ fom: '2022-01-01', tom: '2022-01-05' }];
+  const perioder = [{ fom: '2022-01-01', tom: '2022-01-05' }];
   const bestemmendeFravaersdag = parseIsoDate('2022-01-01');
   const nyInnsending = true;
   const kanIkkeTilbakestilles = false;
@@ -20,7 +22,7 @@ describe('VelgAarsak', () => {
   beforeEach(() => {
     vi.mocked(useFormContext).mockReturnValue({
       formState: { errors: {} },
-      watch: vi.fn(() => 'inntekt.endringAarsak.aarsak'),
+      watch: vi.fn(() => 'inntekt.endringAarsak.aarsak'), //.mockReturnValue('VarigLoennsendring'),
       register: vi.fn()
     });
   });
@@ -67,41 +69,12 @@ describe('VelgAarsak', () => {
   });
 
   it.skip('should show Sykefravaer', () => {
-    // Her må det mockes mer for å få testen til å fungere
     const clickTilbakestillMaanedsinntektMock = vi.fn();
-    vi.mocked(useFormContext).mockReturnValue({
-      formState: {
-        errors: {},
-        isDirty: true,
-        dirtyFields: { 'inntekt.beloep': true },
-        isLoading: false,
-        isSubmitted: false,
-        isSubmitSuccessful: false,
-        isSubmitting: false,
-        isValidating: false,
-        isValid: true,
-        disabled: false,
-        submitCount: 0,
-        touchedFields: {}
-      },
-      watch: () => {},
-      register: vi.fn()
-    });
-
-    vi.mocked(useFieldArray).mockReturnValue({
-      fields: [
-        {
-          id: '1',
-          fom: parseIsoDate('2022-01-01'),
-          tom: parseIsoDate('2022-01-05')
-        }
-      ]
-    });
 
     render(
       <VelgAarsak
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntektMock}
-        defaultEndringAarsak={{ aarsak: 'Sykefravaer', perioder: sykefravaerperioder }}
+        defaultEndringAarsak={{ aarsak: 'Sykefravaer', perioder: perioder }}
         bestemmendeFravaersdag={bestemmendeFravaersdag}
         nyInnsending={nyInnsending}
         kanIkkeTilbakestilles={kanIkkeTilbakestilles}
@@ -111,7 +84,67 @@ describe('VelgAarsak', () => {
       />
     );
 
-    expect(screen.getByText(/Fra/)).toBeInTheDocument();
-    expect(screen.getByText(/Til/)).toBeInTheDocument();
+    expect(screen.getByText(/Månedsinntekt/)).toBeInTheDocument();
+    expect(screen.getByText(/01.01.2022/)).toBeInTheDocument();
+  });
+
+  it.skip('should show Ferie', () => {
+    const clickTilbakestillMaanedsinntektMock = vi.fn();
+
+    render(
+      <VelgAarsak
+        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntektMock}
+        defaultEndringAarsak={{ aarsak: 'Ferie', perioder: perioder }}
+        bestemmendeFravaersdag={bestemmendeFravaersdag}
+        nyInnsending={nyInnsending}
+        kanIkkeTilbakestilles={kanIkkeTilbakestilles}
+        sammeSomSist={sammeSomSist}
+        changeMaanedsintektHandler={vi.fn()}
+        changeBegrunnelseHandler={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText(/Månedsinntekt/)).toBeInTheDocument();
+    expect(screen.getByText(/01.01.2022/)).toBeInTheDocument();
+  });
+
+  it.skip('should show Tariffendring', () => {
+    const clickTilbakestillMaanedsinntektMock = vi.fn();
+
+    render(
+      <VelgAarsak
+        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntektMock}
+        defaultEndringAarsak={{ aarsak: 'Tariffendring', bleKjent: '2022-01-01', gjelderFra: '2022-01-05' }}
+        bestemmendeFravaersdag={bestemmendeFravaersdag}
+        nyInnsending={nyInnsending}
+        kanIkkeTilbakestilles={kanIkkeTilbakestilles}
+        sammeSomSist={sammeSomSist}
+        changeMaanedsintektHandler={vi.fn()}
+        changeBegrunnelseHandler={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText(/Månedsinntekt/)).toBeInTheDocument();
+    expect(screen.getByText(/01.01.2022/)).toBeInTheDocument();
+  });
+
+  it.skip('should show VarigLoennsendring', () => {
+    const clickTilbakestillMaanedsinntektMock = vi.fn();
+    const dea: EndringAarsak = { aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring, gjelderFra: '2022-01-05' };
+    render(
+      <VelgAarsak
+        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntektMock}
+        defaultEndringAarsak={dea}
+        bestemmendeFravaersdag={bestemmendeFravaersdag}
+        nyInnsending={nyInnsending}
+        kanIkkeTilbakestilles={kanIkkeTilbakestilles}
+        sammeSomSist={sammeSomSist}
+        changeMaanedsintektHandler={vi.fn()}
+        changeBegrunnelseHandler={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText(/Månedsinntekt/)).toBeInTheDocument();
+    expect(screen.getByText(/01.01.2022/)).toBeInTheDocument();
   });
 });
