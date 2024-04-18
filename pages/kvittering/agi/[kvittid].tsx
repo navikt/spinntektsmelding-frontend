@@ -58,7 +58,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
-  const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
+  const kvitteringEksterntSystem = kvittering?.kvitteringEkstern;
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
@@ -137,13 +137,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const inntekt = kvitteringDokument.inntekt;
 
-  const fravaersperioder: Periode[] = kvitteringDokument.fraværsperioder.map((periode: MottattPeriode) => ({
+  const fravaersperioder: Periode[] = kvitteringDokument.fraværsperioder?.map((periode: MottattPeriode) => ({
     fom: parseIsoDate(periode.fom),
     tom: parseIsoDate(periode.tom),
     id: periode.fom + periode.tom
   }));
 
-  const egenmeldingsperioder: Periode[] = kvitteringDokument.egenmeldingsperioder.map((periode: MottattPeriode) => ({
+  const egenmeldingsperioder: Periode[] = kvitteringDokument.egenmeldingsperioder?.map((periode: MottattPeriode) => ({
     fom: parseIsoDate(periode.fom),
     tom: parseIsoDate(periode.tom),
     id: periode.fom + periode.tom
@@ -158,17 +158,17 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     infoboks: visArbeidsgiverperiode
   });
 
-  const fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden;
-  fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden.utbetalerFullLønn ? 'Ja' : 'Nei';
+  const fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden ?? {};
+  fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.utbetalerFullLønn ? 'Ja' : 'Nei';
 
   const loenn = {
-    status: kvitteringDokument.refusjon.utbetalerHeleEllerDeler ? 'Ja' : ('Nei' as YesNo),
-    beloep: kvitteringDokument.refusjon.refusjonPrMnd
+    status: kvitteringDokument.refusjon?.utbetalerHeleEllerDeler ? 'Ja' : ('Nei' as YesNo),
+    beloep: kvitteringDokument.refusjon?.refusjonPrMnd
   };
 
   const refusjonskravetOpphoerer = {
     status: kvitteringDokument?.refusjon?.refusjonOpphører ? 'Ja' : ('Nei' as YesNo),
-    opphoersdato: parseIsoDate(kvitteringDokument.refusjon.refusjonOpphører)
+    opphoersdato: parseIsoDate(kvitteringDokument.refusjon?.refusjonOpphører)
   };
 
   const refusjonEndringer = kvitteringDokument?.refusjon?.refusjonEndringer?.map((endring) => ({
