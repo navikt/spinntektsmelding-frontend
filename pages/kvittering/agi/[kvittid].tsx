@@ -21,7 +21,6 @@ import FullLonnIArbeidsgiverperioden from '../../../components/FullLonnIArbeidsg
 import LonnUnderSykefravaeret from '../../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../../state/useBoundStore';
-import useHentKvitteringsdata from '../../../utils/useHentKvitteringsdata';
 
 import ButtonPrint from '../../../components/ButtonPrint';
 
@@ -58,16 +57,16 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
 
-  const ferie = useBoundStore((state) => state.ferie);
-  const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
-  const permisjon = useBoundStore((state) => state.permisjon);
-  const permittering = useBoundStore((state) => state.permittering);
-  const nystillingdato = useBoundStore((state) => state.nystillingdato);
-  const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
+  // const ferie = useBoundStore((state) => state.ferie);
+  // const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
+  // const permisjon = useBoundStore((state) => state.permisjon);
+  // const permittering = useBoundStore((state) => state.permittering);
+  // const nystillingdato = useBoundStore((state) => state.nystillingdato);
+  // const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
 
-  const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
-  const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
-  const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
+  // const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
+  // const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
+  // const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
@@ -285,16 +284,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
                   {formatBegrunnelseEndringBruttoinntekt(inntekt.endringÅrsak.typpe as string)}
                   <EndringAarsakVisning
-                    endringsaarsak={inntekt.endringÅrsak.typpe}
-                    ferie={ferie}
-                    lonnsendringsdato={lonnsendringsdato}
-                    permisjon={permisjon}
-                    permittering={permittering}
-                    nystillingdato={nystillingdato}
-                    nystillingsprosentdato={nystillingsprosentdato}
-                    tariffendringDato={tariffendringDato}
-                    tariffkjentdato={tariffkjentdato}
-                    sykefravaer={sykefravaerperioder}
+                    aarsak={inntekt.endringÅrsak.typpe}
+                    gjelderFra={inntekt.endringÅrsak.gjelderFra}
+                    bleKjent={inntekt.endringÅrsak.bleKjent}
+                    perioder={inntekt.endringÅrsak.liste}
                   />
                 </>
               )}

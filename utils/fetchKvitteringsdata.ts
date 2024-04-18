@@ -5,6 +5,7 @@ const fetchKvitteringsdata = (url: string, forespoerselId: string) => {
   if (isValidUUID(forespoerselId) === false) {
     return Promise.resolve({ status: 404, data: {} });
   }
+  console.log('fetchKvitteringsdata', url, forespoerselId);
   return fetch(`${url}/${forespoerselId}`, {
     method: 'GET',
     headers: {
