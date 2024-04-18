@@ -15,6 +15,9 @@ export default function EndringAarsakVisning(props: EndringAarsak) {
         </>
       );
     }
+    case begrunnelseEndringBruttoinntekt.Sykefravaer:
+    case begrunnelseEndringBruttoinntekt.Permittering:
+    case begrunnelseEndringBruttoinntekt.Permisjon:
     case begrunnelseEndringBruttoinntekt.Ferie: {
       return props.perioder ? (
         <div>
@@ -22,7 +25,7 @@ export default function EndringAarsakVisning(props: EndringAarsak) {
             <PeriodeFraTil
               fom={parseIsoDate(periode.fom)}
               tom={parseIsoDate(periode.tom)}
-              key={`ferieperiode-${periode.fom}-${periode.tom}`}
+              key={`${props.aarsak.toLowerCase()}periode-${periode.fom}-${periode.tom}`}
             />
           ))}{' '}
         </div>
@@ -35,32 +38,6 @@ export default function EndringAarsakVisning(props: EndringAarsak) {
           <div>{formatIsoAsReadableDate(props.gjelderFra)}</div>
         </>
       );
-    }
-    case begrunnelseEndringBruttoinntekt.Permisjon: {
-      return props.perioder ? (
-        <div>
-          {props.perioder.map((periode, index) => (
-            <PeriodeFraTil
-              fom={parseIsoDate(periode.fom)}
-              tom={parseIsoDate(periode.tom)}
-              key={`permisjonperiode-${periode.fom}-${periode.tom}`}
-            />
-          ))}{' '}
-        </div>
-      ) : null;
-    }
-    case begrunnelseEndringBruttoinntekt.Permittering: {
-      return props.perioder ? (
-        <div>
-          {props.perioder.map((periode, index) => (
-            <PeriodeFraTil
-              fom={parseIsoDate(periode.fom)}
-              tom={parseIsoDate(periode.tom)}
-              key={`permitteringperiode-${periode.fom}-${periode.tom}`}
-            />
-          ))}{' '}
-        </div>
-      ) : null;
     }
     case begrunnelseEndringBruttoinntekt.NyStilling: {
       return (
@@ -78,19 +55,7 @@ export default function EndringAarsakVisning(props: EndringAarsak) {
         </>
       );
     }
-    case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-      return props.perioder ? (
-        <div>
-          {props.perioder.map((periode, index) => (
-            <PeriodeFraTil
-              fom={parseIsoDate(periode.fom)}
-              tom={parseIsoDate(periode.tom)}
-              key={`sykefravaer-periode-${periode.fom}-${periode.tom}`}
-            />
-          ))}{' '}
-        </div>
-      ) : null;
-    }
+
     case begrunnelseEndringBruttoinntekt.Feilregistrert:
     case begrunnelseEndringBruttoinntekt.Bonus:
     case begrunnelseEndringBruttoinntekt.Nyansatt:

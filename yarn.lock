@@ -3035,11 +3035,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/ui@npm:1.4.0":
-  version: 1.4.0
-  resolution: "@vitest/ui@npm:1.4.0"
+"@vitest/ui@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@vitest/ui@npm:1.5.0"
   dependencies:
-    "@vitest/utils": "npm:1.4.0"
+    "@vitest/utils": "npm:1.5.0"
     fast-glob: "npm:^3.3.2"
     fflate: "npm:^0.8.1"
     flatted: "npm:^3.2.9"
@@ -3047,20 +3047,8 @@ __metadata:
     picocolors: "npm:^1.0.0"
     sirv: "npm:^2.0.4"
   peerDependencies:
-    vitest: 1.4.0
-  checksum: 10c0/38f8e69b8735a6f63c6503e1f9bbca3e0ab59b6f5e19258e8e0756f3f85941b58dcf6c5e58895a853b930aeed419d54ae2b8e80f2a235ad3bb5c9ab0da0ab232
-  languageName: node
-  linkType: hard
-
-"@vitest/utils@npm:1.4.0":
-  version: 1.4.0
-  resolution: "@vitest/utils@npm:1.4.0"
-  dependencies:
-    diff-sequences: "npm:^29.6.3"
-    estree-walker: "npm:^3.0.3"
-    loupe: "npm:^2.3.7"
-    pretty-format: "npm:^29.7.0"
-  checksum: 10c0/cfa352484f0ea2614444a94fc35979bea94fac64e9756238c685ae74bcd027893a1798b9d6d92c1cdd454b1f7f08f453d0cca108274f0449b6f5efd345822a4c
+    vitest: 1.5.0
+  checksum: 10c0/2b565024a6cdd4d4ab157b298a03fdda325883419f4da1f6ed95f482f583d44f22b962f7c9cef966c22719c2ec0f56e32a55c52743bad330480697eef2d1174b
   languageName: node
   linkType: hard
 
@@ -8810,7 +8798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.2.5":
+"prettier@npm:^3.2.5":
   version: 3.2.5
   resolution: "prettier@npm:3.2.5"
   bin:
@@ -9854,7 +9842,7 @@ __metadata:
     "@types/testing-library__jest-dom": "npm:6.0.0"
     "@vitejs/plugin-react": "npm:4.2.1"
     "@vitest/coverage-v8": "npm:1.2.2"
-    "@vitest/ui": "npm:1.4.0"
+    "@vitest/ui": "npm:^1.5.0"
     axe-core: "npm:4.8.4"
     classnames: "npm:2.5.1"
     core-js-pure: "npm:3.36.1"
@@ -9880,7 +9868,7 @@ __metadata:
     openid-client: "npm:5.6.5"
     pino: "npm:8.20.0"
     pino-pretty: "npm:10.3.1"
-    prettier: "npm:3.2.5"
+    prettier: "npm:^3.2.5"
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
     react-hook-form: "npm:7.50.1"
