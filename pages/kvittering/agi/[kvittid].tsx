@@ -9,7 +9,6 @@ import styles from '../../../styles/Home.module.css';
 
 import Heading2 from '../../../components/Heading2/Heading2';
 import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
-// import Person from '../../../components/Person/Person';
 
 import Skillelinje from '../../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
@@ -57,16 +56,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
 
-  // const ferie = useBoundStore((state) => state.ferie);
-  // const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
-  // const permisjon = useBoundStore((state) => state.permisjon);
-  // const permittering = useBoundStore((state) => state.permittering);
-  // const nystillingdato = useBoundStore((state) => state.nystillingdato);
-  // const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
-
-  // const tariffkjentdato = useBoundStore((state) => state.tariffkjentdato);
-  // const tariffendringDato = useBoundStore((state) => state.tariffendringDato);
-  // const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
@@ -77,8 +66,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringInit = useKvitteringInit();
 
   const kvitteringDokument = kvittering?.kvitteringDokument ? kvittering?.kvitteringDokument : kvittering;
-
-  console.log('kvitteringDokument', kvitteringDokument);
 
   const kvitteringInnsendt = new Date(kvitteringDokument?.tidspunkt);
   // const egenmeldingsperioder = kvitteringDokument?.egenmeldingsperioder;
