@@ -40,7 +40,7 @@ describe('kvittering', () => {
   it('renders a title text', () => {
     const spy = vi.spyOn(window, 'print');
 
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' />);
+    render(<Kvittering />);
 
     const buttonTitle = screen.getByRole('button', {
       name: /Skriv ut/i
@@ -70,7 +70,7 @@ describe('kvittering', () => {
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' />);
+    render(<Kvittering />);
 
     const textBlock = screen.getByText(/Arbeidsgiver er ansvarlig for/i);
 
@@ -94,7 +94,7 @@ describe('kvittering', () => {
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' />);
+    render(<Kvittering />);
 
     const textBlock = screen.queryByText(/Arbeidsgiver er ansvarlig for/i);
 
@@ -102,7 +102,7 @@ describe('kvittering', () => {
   });
 
   it('should have no violations', async () => {
-    const { container } = render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' />);
+    const { container } = render(<Kvittering />);
 
     const results = await axe(container);
 
