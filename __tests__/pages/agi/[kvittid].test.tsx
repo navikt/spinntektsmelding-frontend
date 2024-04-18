@@ -1,8 +1,11 @@
 import { cleanup, render, screen } from '@testing-library/react';
-import Kvittering from '../../../pages/kvittering/[kvittid]';
+import Kvittering from '../../../pages/kvittering/agi/[kvittid]';
 import { expect, vi } from 'vitest';
 import useBoundStore from '../../../state/useBoundStore';
 import env from '../../../config/environment';
+
+import kvitteringsdata from '../../../mockdata/kvittering-ferie.json';
+import kvitteringsdataUtenAgp from '../../../mockdata/kvittering-uten-agp.json';
 
 const mockPush = vi.fn();
 const mockGet = vi.fn();
@@ -32,7 +35,7 @@ describe('Kvittering', () => {
   });
 
   it('renders a title text', () => {
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' />);
+    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvittering={kvitteringsdata} />);
 
     const buttonTitle = screen.getByRole('button', {
       name: /Skriv ut/i
@@ -42,7 +45,7 @@ describe('Kvittering', () => {
   });
 
   it('renders full arbeidsgiverperiode text', () => {
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' />);
+    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvittering={kvitteringsdata} />);
 
     const textBlock = screen.getByText(/Arbeidsgiverperiode/);
 
@@ -50,7 +53,7 @@ describe('Kvittering', () => {
   });
 
   it('renders without arbeidsgiverperiode text', () => {
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' />);
+    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvittering={kvitteringsdataUtenAgp} />);
 
     const textBlock = screen.queryByText(/Det er ikke arbeidsgiverperiode./);
 
