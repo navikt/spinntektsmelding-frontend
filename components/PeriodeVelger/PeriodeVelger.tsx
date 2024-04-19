@@ -87,7 +87,9 @@ export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readon
           )}
         </>
       ))}
-      {shownRows < perioder.length && <VisMer onClick={handleVisMerClick} />}
+      {shownRows < sammenslaatePerioder.length && shownRows !== perioder.length && (
+        <VisMer onClick={handleVisMerClick} />
+      )}
 
       <Radio value='Annen'>Annen periode</Radio>
       {selectedGroup === 'Annen' && <PeriodeListevelger fomTekst='Fra' tomTekst='Til' name='perioder' />}
