@@ -215,20 +215,22 @@ const Initiering2: NextPage = () => {
                     <p>{identitetsnummer}</p>
                   </div>
                 </div>
-                <div>
-                  <div>
-                    {!data && !error && <Loading />}
-                    {data && (
-                      <SelectArbeidsgiver
-                        arbeidsforhold={arbeidsforhold}
-                        id='organisasjonsnummer'
-                        register={register}
-                        error={errors.organisasjonsnummer?.message as string}
-                      />
-                    )}
-                  </div>
-                </div>
-                <PeriodeVelger perioder={perioder} />
+                {!data && !error && <Loading />}
+                {data && (
+                  <>
+                    <div>
+                      <div>
+                        <SelectArbeidsgiver
+                          arbeidsforhold={arbeidsforhold}
+                          id='organisasjonsnummer'
+                          register={register}
+                          error={errors.organisasjonsnummer?.message as string}
+                        />
+                      </div>
+                    </div>
+                    <PeriodeVelger perioder={perioder} />
+                  </>
+                )}
                 {errors.perioder?.root?.message && (
                   <div className='navds-form-field navds-form-field--medium navds-text-field--error endring-error-bottom-padded'>
                     <div
