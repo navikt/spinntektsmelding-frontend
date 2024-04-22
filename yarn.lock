@@ -2788,7 +2788,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:18.2.14, @types/react-dom@npm:^18.0.0":
+"@types/react-dom@npm:18.2.25":
+  version: 18.2.25
+  resolution: "@types/react-dom@npm:18.2.25"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10c0/87604407eca6884c5b4d4657cb511dc5ba28ea1cfa5d0ce1fc2d659a7ad1b64ae85dcda60e3f010641f9a52a6a60dfcaa6be3b0d0de9d624475052a13dae01f4
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^18.0.0":
   version: 18.2.14
   resolution: "@types/react-dom@npm:18.2.14"
   dependencies:
@@ -9854,7 +9863,7 @@ __metadata:
     "@types/jest-axe": "npm:3.5.9"
     "@types/node": "npm:^20.11.30"
     "@types/react": "npm:18.2.74"
-    "@types/react-dom": "npm:18.2.14"
+    "@types/react-dom": "npm:18.2.25"
     "@types/testing-library__jest-dom": "npm:6.0.0"
     "@vitejs/plugin-react": "npm:4.2.1"
     "@vitest/coverage-v8": "npm:1.2.2"
