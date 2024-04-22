@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../config/environment';
 
-import org from '../../mockdata/trenger-originalen-16dager.json';
+import org from '../../mockdata/trenger-test6.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 import { apiConfig } from '../../utils/api/apiConfig';
 

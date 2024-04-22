@@ -1,0 +1,39 @@
+{
+  "navn": "RØD METER",
+  "orgNavn": "ANSTENDIG PIGGSVIN SYKEHJEM",
+  "innsenderNavn": "",
+  "identitetsnummer": "27467549222",
+  "orgnrUnderenhet": "810007982",
+  "skjaeringstidspunkt": null,
+  "fravaersperioder": [{ "fom": "2024-03-18", "tom": "2024-03-24" }],
+  "egenmeldingsperioder": [],
+  "bruttoinntekt": 0.0,
+  "tidligereinntekter": [
+    { "maaned": "2023-12", "inntekt": 0.0 },
+    { "maaned": "2024-01", "inntekt": null },
+    { "maaned": "2024-02", "inntekt": null }
+  ],
+  "behandlingsperiode": null,
+  "behandlingsdager": [],
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": false },
+    "inntekt": {
+      "paakrevd": true,
+      "forslag": {
+        "type": "ForslagInntektGrunnlag",
+        "forrigeInntekt": {
+          "skjæringstidspunkt": "2024-02-01",
+          "kilde": "INNTEKTSMELDING",
+          "beløp": 0.0
+        }
+      }
+    },
+    "refusjon": {
+      "paakrevd": true,
+      "forslag": {
+        "perioder": [{ "fom": "2024-02-01", "beloep": 0.0 }],
+        "opphoersdato": null
+      }
+    }
+  }
+}

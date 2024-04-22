@@ -123,7 +123,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       initRefusjonEndringer(refusjonEndringer);
 
-      if (inntekt?.forrigeInntekt?.beløp) {
+      if (typeof inntekt?.forrigeInntekt?.beløp === 'number') {
         setBareNyMaanedsinntekt(inntekt.forrigeInntekt.beløp);
         setOpprinneligNyMaanedsinntekt();
       } else {

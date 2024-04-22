@@ -44,7 +44,8 @@ export default function VelgAarsak({
   const beloepFeltnavn = 'inntekt.beloep';
   const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
 
-  const blankPeriode: { fom: string; tom: string }[] = [{ fom: '', tom: '' }];
+  // const blankPeriode: { fom: string; tom: string }[] = [{ fom: '', tom: '' }];
+  const blankPeriode = undefined;
 
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
