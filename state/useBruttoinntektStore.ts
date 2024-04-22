@@ -315,7 +315,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     );
   },
   slettBruttoinntekt: () => {
-    console.log('slettBruttoinntekt');
     set(
       produce((state) => {
         state.bruttoinntekt = {
