@@ -97,7 +97,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setBareNyMaanedsinntekt: (beloep: string | number) =>
     set(
       produce((state) => {
-        console.log('setBareNyMaanedsinntekt', beloep);
         state.bruttoinntekt.bruttoInntekt = typeof beloep === 'string' ? stringishToNumber(beloep) : beloep;
         state.bruttoinntekt.manueltKorrigert = false;
         if (state.bruttoinntekt.bruttoInntekt !== undefined && state.bruttoinntekt.bruttoInntekt >= 0) {
@@ -182,7 +181,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     bestemmendeFravaersdag: Date,
     feilHentingAvInntektsdata?
   ) => {
-    console.log('initBruttoinntekt', bruttoInntekt);
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
     const sumInntekter = aktuelleInntekter.reduce((prev, cur) => {
       prev += cur.inntekt ?? 0;
@@ -193,7 +191,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       typeof bruttoInntekt === 'number'
         ? roundTwoDecimals(bruttoInntekt)
         : roundTwoDecimals(sumInntekter / aktuelleInntekter.length);
-    console.log('snittInntekter', snittInntekter);
+
     set(
       produce((state) => {
         if (!state.bruttoInntekt) {
@@ -285,7 +283,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
       snittInntekter = sumInntekter / aktuelleInntekter.length;
     }
-    console.log('snittInntekter', snittInntekter);
+
     set(
       produce((state) => {
         state.henterData = henterData;
