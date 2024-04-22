@@ -123,7 +123,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       initRefusjonEndringer(refusjonEndringer);
 
-      if (inntekt?.forrigeInntekt?.beløp) {
+      if (typeof inntekt?.forrigeInntekt?.beløp === 'number') {
         setBareNyMaanedsinntekt(inntekt.forrigeInntekt.beløp);
         setOpprinneligNyMaanedsinntekt();
       } else {
@@ -146,7 +146,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
           if (inntekt?.forrigeInntekt) {
             const fastsattInntekt = inntekt.forrigeInntekt.beløp;
 
-            if (fastsattInntekt) {
+            if (typeof fastsattInntekt === 'number') {
               state.fastsattInntekt = fastsattInntekt;
               state.gammeltSkjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
               state.ukjentInntekt = false;

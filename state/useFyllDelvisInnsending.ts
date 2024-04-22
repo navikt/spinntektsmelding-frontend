@@ -89,10 +89,7 @@ export default function useFyllDelvisInnsending() {
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret] = useBoundStore((state) => [
-    state.fullLonnIArbeidsgiverPerioden,
-    state.lonnISykefravaeret
-  ]);
+  const [fullLonnIArbeidsgiverPerioden] = useBoundStore((state) => [state.fullLonnIArbeidsgiverPerioden]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
@@ -198,13 +195,13 @@ export default function useFyllDelvisInnsending() {
       identitetsnummer: identitetsnummer!,
       egenmeldingsperioder: harEgenmeldingsdager
         ? egenmeldingsperioder!.map((periode) => ({
-            fom: formatIsoDate(periode.fom),
-            tom: formatIsoDate(periode.tom)
+            fom: formatIsoDate(periode.fom) as TDateISODate,
+            tom: formatIsoDate(periode.tom) as TDateISODate
           }))
         : [],
       fraværsperioder: fravaersperioder!.map((periode) => ({
-        fom: formatIsoDate(periode.fom),
-        tom: formatIsoDate(periode.tom)
+        fom: formatIsoDate(periode.fom) as TDateISODate,
+        tom: formatIsoDate(periode.tom) as TDateISODate
       })),
       arbeidsgiverperioder: innsendbarArbeidsgiverperioder,
       inntekt: {

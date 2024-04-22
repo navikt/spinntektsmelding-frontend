@@ -56,13 +56,11 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   bruttoinntekt: {
     bruttoInntekt: undefined,
     manueltKorrigert: false,
-    endringsaarsak: undefined,
     endringAarsak: undefined
   },
   opprinneligbruttoinntekt: {
     bruttoInntekt: undefined,
     manueltKorrigert: false,
-    endringsaarsak: undefined,
     endringAarsak: undefined
   },
   tidligereInntekt: undefined,
@@ -189,9 +187,10 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       return prev;
     }, 0);
 
-    const snittInntekter = bruttoInntekt
-      ? roundTwoDecimals(bruttoInntekt)
-      : roundTwoDecimals(sumInntekter / aktuelleInntekter.length);
+    const snittInntekter =
+      typeof bruttoInntekt === 'number'
+        ? roundTwoDecimals(bruttoInntekt)
+        : roundTwoDecimals(sumInntekter / aktuelleInntekter.length);
 
     set(
       produce((state) => {
@@ -293,7 +292,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.bruttoinntekt = {
             bruttoInntekt: snittInntekter,
             manueltKorrigert: false,
-            endringsaarsak: ''
+            endringAarsak: undefined
           };
         }
 

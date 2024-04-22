@@ -105,6 +105,47 @@ describe('useForespurtDataStore', () => {
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(48000);
   });
 
+  it('should set init stuff when forrigeInntekt beløp is 0.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const forespurtData = {
+      arbeidsgiverperiode: { paakrevd: false },
+      inntekt: {
+        paakrevd: true,
+        forslag: {
+          type: 'ForslagInntektGrunnlag',
+          beregningsmaaneder: ['2022-10', '2022-11', '2022-09'],
+          forrigeInntekt: { skjæringstidspunkt: '2022-01-02', kilde: 'INNTEKTSMELDING', beløp: 0 }
+        }
+      },
+      refusjon: {
+        paakrevd: true,
+        forslag: {
+          perioder: [
+            { fom: '2023-01-02', beloep: 0 },
+            { fom: '2023-09-30', beloep: undefined }
+          ],
+          opphoersdato: null
+        }
+      }
+    };
+
+    const input: Opplysningstype[] = ['inntekt', 'refusjon'];
+
+    act(() => {
+      result.current.initForespurtData(forespurtData);
+    });
+    let typer;
+    act(() => {
+      typer = result.current.hentPaakrevdOpplysningstyper();
+    });
+
+    expect(typer).toEqual(input);
+    expect(result.current.fastsattInntekt).toBe(0);
+    expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2022-01-02'));
+    expect(result.current.bruttoinntekt.bruttoInntekt).toBe(0);
+  });
+
   it('should set the refusjonsbeloep', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
     act(() => {
