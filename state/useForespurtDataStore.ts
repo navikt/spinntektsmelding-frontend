@@ -146,7 +146,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
           if (inntekt?.forrigeInntekt) {
             const fastsattInntekt = inntekt.forrigeInntekt.beløp;
 
-            if (fastsattInntekt) {
+            if (typeof fastsattInntekt === 'number') {
               state.fastsattInntekt = fastsattInntekt;
               state.gammeltSkjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
               state.ukjentInntekt = false;
