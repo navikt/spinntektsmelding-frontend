@@ -34,11 +34,11 @@ describe('HentingAvDataFeilet', () => {
       </div>
     );
 
-    const button = screen.getByRole('button', {
+    const button = screen.getAllByRole('button', {
       name: 'Lukk'
     });
 
-    button.click();
+    button[0].click();
 
     expect(closeHandler).toHaveBeenCalled();
   });

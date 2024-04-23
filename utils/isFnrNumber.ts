@@ -1,6 +1,6 @@
-import fnrvalidator from '@navikt/fnrvalidator';
+import { idnr } from '@navikt/fnrvalidator';
 
 export default function isFnrNumber(fnr: string) {
-  const status = fnrvalidator.idnr(fnr);
+  const status = idnr(fnr);
   return status.status === 'valid';
 }
