@@ -2,10 +2,7 @@ import { compareAsc, compareDesc, differenceInDays, formatISO9075 } from 'date-f
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
-import finnArbeidsgiverperiode, {
-  finnSammenhengendePeriode,
-  finnSammenhengendePeriodeManuellJustering
-} from './finnArbeidsgiverperiode';
+import finnArbeidsgiverperiode, { finnSammenhengendePeriodeManuellJustering } from './finnArbeidsgiverperiode';
 
 export interface FravaersPeriode {
   fom: Date;
