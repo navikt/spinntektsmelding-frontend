@@ -4,13 +4,17 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../../config/environment';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 import org from '../../../mockdata/kvittering-ferie.json';
-import { apiConfig } from '../../../utils/api/apiConfig';
 
 const basePath = environment.hentKvitteringAPI;
 
 type Data = typeof org;
 
-export const config = apiConfig;
+export const config = {
+  api: {
+    externalResolver: true,
+    bodyParser: false
+  }
+};
 
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;

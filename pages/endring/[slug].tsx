@@ -35,7 +35,6 @@ import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 import { LonnISykefravaeret, Periode, YesNo } from '../../state/state';
 import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
-import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({

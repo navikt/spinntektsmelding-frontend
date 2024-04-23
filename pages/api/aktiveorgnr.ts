@@ -5,13 +5,17 @@ import environment from '../../config/environment';
 
 import org from '../../mockdata/blank.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
-import { a } from 'vitest/dist/suite-ynYMzeLu';
 
 const basePath = environment.aktiveOrgnrApi;
 
 type Data = typeof org;
 
-export const config = apiConfig;
+export const config = {
+  api: {
+    externalResolver: true,
+    bodyParser: false
+  }
+};
 
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
