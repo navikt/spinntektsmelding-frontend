@@ -3,15 +3,19 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../config/environment';
 
-import org from '../../mockdata/trenger-test6.json';
+import org from '../../mockdata/trenger-originalen-helgefrisk.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
-import { apiConfig } from '../../utils/api/apiConfig';
 
 const basePath = environment.inntektsmeldingUuidAPI;
 
 type Data = typeof org;
 
-export const config = apiConfig;
+export const config = {
+  api: {
+    externalResolver: true,
+    bodyParser: false
+  }
+};
 
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
