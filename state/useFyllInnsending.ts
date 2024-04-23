@@ -132,6 +132,10 @@ export default function useFyllInnsending() {
           };
 
         case begrunnelseEndringBruttoinntekt.VarigLoennsendring:
+          return {
+            typpe: 'VarigLonnsendring', // TODO: Dette er en feil i koden, skal være VarigLoennsendring når vi får rettet opp i dette
+            gjelderFra: bruttoinntekt?.endringAarsak?.gjelderFra
+          };
         case begrunnelseEndringBruttoinntekt.NyStilling:
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent:
           return {
