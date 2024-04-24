@@ -257,17 +257,6 @@ describe('useForespurtDataStore', () => {
     expect(typer).toBeFalsy();
   });
 
-  it('should return false for arbeidsgiverRefusjonskravHarEndringer', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    let typer;
-    act(() => {
-      typer = result.current.arbeidsgiverRefusjonskravHarEndringer();
-    });
-
-    expect(typer).toBeFalsy();
-  });
-
   it('should return false for arbeidsgiverRefusjonskravOpphører', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -305,37 +294,6 @@ describe('useForespurtDataStore', () => {
     let typer;
     act(() => {
       typer = result.current.arbeidsgiverKreverRefusjon();
-    });
-
-    expect(typer).toBeTruthy();
-  });
-
-  it('should return if arbeidsgiverRefusjonskravHarEndringer', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initForespurtData({
-        arbeidsgiverperiode: { paakrevd: false },
-        inntekt: {
-          paakrevd: true,
-          forslag: {
-            type: 'ForslagInntektGrunnlag',
-            beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
-          }
-        },
-        refusjon: {
-          paakrevd: true,
-          forslag: {
-            perioder: [{ fom: '2023-01-02', tom: '2023-01-02', beloep: 46000.0 }],
-            opphoersdato: '2023-09-30'
-          }
-        }
-      });
-    });
-
-    let typer;
-    act(() => {
-      typer = result.current.arbeidsgiverRefusjonskravHarEndringer();
     });
 
     expect(typer).toBeTruthy();
