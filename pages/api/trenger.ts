@@ -22,7 +22,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   if (env == 'development') {
     setTimeout(() => {
       return res.status(200).json(org);
-    }, 500);
+    }, 5);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {
       target: basePath,
