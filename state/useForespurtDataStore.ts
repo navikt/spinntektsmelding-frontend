@@ -76,7 +76,6 @@ export interface ForespurtDataState {
   kanBruttoinntektTilbakebestilles: () => boolean;
   arbeidsgiverKreverRefusjon: () => boolean;
   arbeidsgiverRefusjonskravOpphører: () => boolean;
-  arbeidsgiverRefusjonskravHarEndringer: () => boolean;
 }
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
@@ -230,18 +229,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       return false;
     }
   },
-  arbeidsgiverRefusjonskravHarEndringer: () => {
-    const refusjon = get().forespurtData?.refusjon?.forslag;
 
-    if (refusjon) {
-      if (refusjon.perioder.length === 1 && refusjon.perioder[0].beloep === 0) {
-        return false;
-      }
-      return refusjon.perioder.length > 0;
-    } else {
-      return false;
-    }
-  },
   arbeidsgiverRefusjonskravOpphører: () => {
     const refusjon = get().forespurtData?.refusjon?.forslag;
 

@@ -42,7 +42,7 @@ export default function EndringRefusjon({ minDate, maxDate }: Readonly<EndringRe
     if (fields.length === 0) {
       append({});
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

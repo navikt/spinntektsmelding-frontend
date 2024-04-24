@@ -95,22 +95,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           state.kanEndreEgenmeldingPeriode = false;
         }
 
-        const fPerioder = finnFravaersperioder(state.fravaersperioder, clonedEgenmelding);
-        if (fPerioder) {
-          const agp = finnArbeidsgiverperiode(fPerioder);
-          state.arbeidsgiverperioder = agp;
-          const bestemmende = finnBestemmendeFravaersdag(
-            fPerioder,
-            agp,
-            skjaeringstidspunkt,
-            arbeidsgiverKanFlytteSkjæringstidspunkt()
-          );
-          if (bestemmende) {
-            state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
-            state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
-          }
-        }
+        oppdaterOgRekalkulerInntektOgBfd(state, skjaeringstidspunkt, arbeidsgiverKanFlytteSkjæringstidspunkt);
 
         return state;
       })

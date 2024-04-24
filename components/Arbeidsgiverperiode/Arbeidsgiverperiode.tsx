@@ -346,7 +346,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       {advarselLangPeriode.length > 0 && (
         <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{advarselLangPeriode}</Feilmelding>
       )}
-      {advarselKortPeriode.length > 0 && <span id='arbeidsgiverperiode-kort-feil'>{advarselKortPeriode}</span>}
+      {advarselKortPeriode.length > 0 && (
+        <span className={lokalStyles.arbeidsgiverKortPeriode} id='arbeidsgiverperiode-kort-feil'>
+          {advarselKortPeriode}
+        </span>
+      )}
       {advarselKortPeriode.length > 0 && (
         <div className={lokalStyles.wraputbetaling}>
           <TextField

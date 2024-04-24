@@ -336,7 +336,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       unregister('inntekt.endringAarsak');
       setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
     }
-  }, [harEndringBruttoloenn, unregister, register]);
+  }, [harEndringBruttoloenn, unregister, register, setValue, bruttoinntekt.bruttoInntekt]);
 
   return (
     <div className={styles.container}>

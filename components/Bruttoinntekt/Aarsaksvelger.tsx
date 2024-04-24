@@ -57,7 +57,7 @@ export default function Aarsaksvelger({
           className={lokalStyles.bruttoinntektendringsbeloep}
           data-cy='inntekt-beloep-input'
         />
-        <div>
+        <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
           <SelectEndringBruttoinntekt
             onChangeBegrunnelse={changeBegrunnelseHandler}
             error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}

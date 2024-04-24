@@ -58,3 +58,8 @@
 .refusjonsbelop > input {
   max-width: 18rem;
 }
+
+.arbeidsgiverKortPeriode {
+  margin-top: 1rem;
+  display: inline-block;
+}
