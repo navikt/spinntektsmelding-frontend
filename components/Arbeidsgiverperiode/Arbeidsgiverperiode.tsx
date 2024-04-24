@@ -207,8 +207,6 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       : '';
 
   useEffect(() => {
-    console.log('arbeidsgiverperioder', arbeidsgiverperioder);
-    console.log('manuellEndring', manuellEndring);
     if (!manuellEndring) {
       return;
     }
