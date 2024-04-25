@@ -92,10 +92,7 @@ const Initiering2: NextPage = () => {
             });
           }
         }
-        // }
 
-        // if (value.perioder && value.perioder.length > 0) {
-        // const sortedPerioder = value.perioder.toSorted((a, b) => Number(a.fom > b.fom));
         for (let i = 0; i < sortedPerioder.length - 1; i++) {
           if (
             Math.abs(differenceInDays(parseIsoDate(sortedPerioder[i].tom), parseIsoDate(sortedPerioder[i + 1].fom))) >

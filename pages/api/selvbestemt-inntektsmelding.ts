@@ -6,7 +6,7 @@ import environment from '../../config/environment';
 import org from '../../mockdata/testOrganisasjoner';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = environment.innsendingAGInitiertApi;
+const basePath = environment.innsendingSelvbestemtInntektsmeldingApi;
 
 type Data = typeof org;
 

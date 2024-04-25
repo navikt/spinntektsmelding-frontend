@@ -53,8 +53,8 @@ class Environment {
     return this.publicRuntimeConfig.aktiveOrgnrApi;
   }
 
-  get innsendingAGInitiertApi() {
-    return this.publicRuntimeConfig.innsendingAGInitiertApi;
+  get innsendingSelvbestemtInntektsmeldingApi() {
+    return this.publicRuntimeConfig.innsendingSelvbestemtInntektsmeldingApi;
   }
 
   public baseUrl = '/im-dialog';
