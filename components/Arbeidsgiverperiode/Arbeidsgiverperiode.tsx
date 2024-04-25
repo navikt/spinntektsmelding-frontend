@@ -1,7 +1,7 @@
 import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
-import { BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
+import { Alert, BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
@@ -24,6 +24,7 @@ import {
   finnSammenhengendePeriode,
   finnSammenhengendePeriodeManuellJustering
 } from '../../utils/finnArbeidsgiverperiode';
+import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeopphold';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -55,6 +56,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
   );
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
+  const [advarselOppholdHelg, setAdvarselOppholdHelg] = useState<string>('');
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
   const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled, setArbeidsgiverperiodeKort] = useBoundStore(
@@ -207,6 +209,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
     if (!manuellEndring) {
       return;
     }
+
     if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
       setArbeidsgiverperiodeKort(antallDager < 16);
       if (antallDager < 16) {
@@ -214,6 +217,18 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       } else {
         slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       }
+    }
+
+    if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 1) {
+      if (perioderInneholderHelgeopphold(arbeidsgiverperioder)) {
+        setAdvarselOppholdHelg(
+          'Normalt inkluderes lørdag og søndag i arbeidsgiverperioden uansett om arbeid  i helgen har vært planlagt eller ikke. Dere skal kun legge inn opphold i arbeidsgiverperioden i helgen de dagene den ansatte har vært på jobb.'
+        );
+      } else {
+        setAdvarselOppholdHelg('');
+      }
+    } else {
+      setAdvarselOppholdHelg('');
     }
   }, [
     antallDager,
@@ -342,6 +357,11 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       )}
       {visFeilmelding('arbeidsgiverperioder-feil') && (
         <Feilmelding id='arbeidsgiverperioder-feil'>{visFeilmeldingsTekst('arbeidsgiverperioder-feil')}</Feilmelding>
+      )}
+      {advarselOppholdHelg.length > 0 && (
+        <Alert variant='info' id='arbeidsgiverperioder-helg'>
+          {advarselOppholdHelg}
+        </Alert>
       )}
       {advarselLangPeriode.length > 0 && (
         <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{advarselLangPeriode}</Feilmelding>
