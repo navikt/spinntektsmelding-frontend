@@ -61,4 +61,48 @@ describe('perioderInneholderHelgeopphold', () => {
 
     expect(perioderInneholderHelgeopphold(perioder)).toBe(true);
   });
+
+  it('should return true if perioder contain weekend gap on second periode', () => {
+    const perioder = [
+      {
+        fom: new Date('2024-02-17T00:00:00.000Z'),
+        tom: new Date('2024-02-18T00:00:00.000Z'),
+        id: 'UoNlt6XCeouVcU8tCbYHei'
+      },
+      {
+        fom: new Date('2024-02-20T00:00:00.000Z'),
+        tom: new Date('2024-03-01T00:00:00.000Z'),
+        id: 'UoNlt6XCeouVcU8tCbYvF'
+      },
+      {
+        id: 'ec1n_P5F_G2iXCTq-foFg',
+        tom: new Date('2024-03-08T00:00:00.000Z'),
+        fom: new Date('2024-03-04T00:00:00.000Z')
+      }
+    ];
+
+    expect(perioderInneholderHelgeopphold(perioder)).toBe(true);
+  });
+
+  it('should return false if perioder contain no gap between periodes', () => {
+    const perioder = [
+      {
+        fom: new Date('2024-02-17T00:00:00.000Z'),
+        tom: new Date('2024-02-18T00:00:00.000Z'),
+        id: 'UoNlt6XCeouVcU8tCbYHei'
+      },
+      {
+        fom: new Date('2024-02-20T00:00:00.000Z'),
+        tom: new Date('2024-03-01T00:00:00.000Z'),
+        id: 'UoNlt6XCeouVcU8tCbYvF'
+      },
+      {
+        id: 'ec1n_P5F_G2iXCTq-foFg',
+        tom: new Date('2024-03-08T00:00:00.000Z'),
+        fom: new Date('2024-03-05T00:00:00.000Z')
+      }
+    ];
+
+    expect(perioderInneholderHelgeopphold(perioder)).toBe(false);
+  });
 });

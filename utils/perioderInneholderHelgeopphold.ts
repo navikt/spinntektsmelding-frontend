@@ -10,7 +10,7 @@ const perioderInneholderHelgeopphold = (perioder: Periode[]) => {
     const forrigePeriode = sortertePerioder[index - 1];
     const periode = sortertePerioder[index];
 
-    if (!forrigePeriode?.tom || !periode?.fom) return false;
+    if (!forrigePeriode?.tom || !periode?.fom) break;
 
     if (
       differenceInDays(periode.fom, forrigePeriode.tom) > 1 &&
@@ -20,8 +20,8 @@ const perioderInneholderHelgeopphold = (perioder: Periode[]) => {
     ) {
       return true;
     }
-    return false;
   }
+  return false;
 };
 
 export default perioderInneholderHelgeopphold;
