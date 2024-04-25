@@ -75,7 +75,7 @@ class Environment {
 
   public amplitudeEnabled = true;
 
-  public innsendingAGInitiertUrl = '/im-dialog/api/aapen-inntektsmelding';
+  public innsendingAGInitiertUrl = '/im-dialog/api/selvbestemt-inntektsmelding';
 
   get environment() {
     return this.publicRuntimeConfig.environment;
