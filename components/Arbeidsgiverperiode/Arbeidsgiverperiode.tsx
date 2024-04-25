@@ -11,7 +11,7 @@ import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import { differenceInCalendarDays, differenceInDays } from 'date-fns';
@@ -24,7 +24,6 @@ import {
   finnSammenhengendePeriode,
   finnSammenhengendePeriodeManuellJustering
 } from '../../utils/finnArbeidsgiverperiode';
-import { a } from 'vitest/dist/suite-ynYMzeLu';
 import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeopphold';
 
 interface ArbeidsgiverperiodeProps {
