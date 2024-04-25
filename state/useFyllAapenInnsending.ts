@@ -4,11 +4,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
-import validerAapenInnsending, {
-  EndringAarsak,
-  InntektEndringAarsakEnum,
-  RefusjonEndring
-} from '../validators/validerAapenInnsending';
+import validerAapenInnsending, { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
 import { SendtPeriode } from './useFyllInnsending';
 
 export default function useFyllInnsending() {
@@ -22,17 +18,6 @@ export default function useFyllInnsending() {
     state.refusjonskravetOpphoerer
   ]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
-  const [tariffendringDato, tariffkjentdato] = useBoundStore((state) => [
-    state.tariffendringDato,
-    state.tariffkjentdato
-  ]);
-  const ferie = useBoundStore((state) => state.ferie);
-  const lonnsendringsdato = useBoundStore((state) => state.lonnsendringsdato);
-  const permisjon = useBoundStore((state) => state.permisjon);
-  const permittering = useBoundStore((state) => state.permittering);
-  const nystillingdato = useBoundStore((state) => state.nystillingdato);
-  const nystillingsprosentdato = useBoundStore((state) => state.nystillingsprosentdato);
-  const sykefravaerperioder = useBoundStore((state) => state.sykefravaerperioder);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
@@ -56,17 +41,7 @@ export default function useFyllInnsending() {
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
   return (skjemaData: any) => {
-    const endringAarsak: EndringAarsak = fyllEndringaarsak(bruttoinntekt, {
-      ferie,
-      nystillingdato,
-      nystillingsprosentdato,
-      permisjon,
-      permittering,
-      tariffendringDato,
-      tariffkjentdato,
-      lonnsendringsdato,
-      sykefravaerperioder
-    });
+    const endringAarsak: EndringAarsak = bruttoinntekt.endringAarsak;
 
     const innsending = validerAapenInnsending({
       sykmeldtFnr: identitetsnummer,
@@ -78,7 +53,10 @@ export default function useFyllInnsending() {
         .filter((periode) => periode.fom && periode.tom)
         .map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! })),
       agp: {
-        perioder: arbeidsgiverperioder!.map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! })),
+        perioder: arbeidsgiverperioder!.map((periode) => ({
+          fom: periode!.fom!,
+          tom: periode!.tom!
+        })),
         egenmeldinger: egenmeldingsperioder
           ? egenmeldingsperioder
               .filter((periode) => periode.fom && periode.tom)
@@ -114,91 +92,6 @@ export default function useFyllInnsending() {
 
     return innsending;
   };
-}
-
-function fyllEndringaarsak(bruttoinntekt: Inntekt, parametere) {
-  switch (bruttoinntekt.endringsaarsak) {
-    case InntektEndringAarsakEnum.enum.Bonus:
-      return {
-        aarsak: 'Bonus'
-      };
-
-    case InntektEndringAarsakEnum.enum.Feilregistrert:
-      return {
-        aarsak: 'Feilregistrert'
-      };
-
-    case InntektEndringAarsakEnum.enum.Ferie:
-      return {
-        aarsak: 'Ferie',
-        perioder: parametere.ferie?.map((periode) => ({
-          fom: periode.fom,
-          tom: periode.tom
-        }))
-      };
-
-    case InntektEndringAarsakEnum.enum.Ferietrekk:
-      return {
-        aarsak: 'Ferietrekk'
-      };
-
-    case InntektEndringAarsakEnum.enum.Nyansatt:
-      return {
-        aarsak: 'Nyansatt'
-      };
-
-    case InntektEndringAarsakEnum.enum.NyStilling:
-      return {
-        aarsak: 'NyStilling',
-        gjelderFra: parametere.nystillingdato
-      };
-
-    case InntektEndringAarsakEnum.enum.NyStillingsprosent:
-      return {
-        aarsak: 'NyStillingsprosent',
-        gjelderFra: parametere.nystillingsprosentdato
-      };
-
-    case InntektEndringAarsakEnum.enum.Permisjon:
-      return {
-        aarsak: 'Permisjon',
-        perioder: parametere.permisjon?.map((periode) => ({
-          fom: periode.fom,
-          tom: periode.tom
-        }))
-      };
-
-    case InntektEndringAarsakEnum.enum.Permittering:
-      return {
-        aarsak: 'Permittering',
-        perioder: parametere.permittering?.map((periode) => ({
-          fom: periode.fom,
-          tom: periode.tom
-        }))
-      };
-
-    case InntektEndringAarsakEnum.enum.Sykefravaer:
-      return {
-        aarsak: 'Sykefravaer',
-        perioder: parametere.sykefravaerperioder?.map((periode) => ({
-          fom: periode.fom,
-          tom: periode.tom
-        }))
-      };
-
-    case InntektEndringAarsakEnum.enum.Tariffendring:
-      return {
-        aarsak: 'Tariffendring',
-        gjelderFra: parametere.tariffendringDato,
-        bleKjent: parametere.tariffkjentdato
-      };
-
-    case InntektEndringAarsakEnum.enum.VarigLoennsendring:
-      return {
-        aarsak: 'VarigLoennsendring',
-        gjelderFra: parametere.lonnsendringsdato
-      };
-  }
 }
 
 function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
