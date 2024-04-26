@@ -7,7 +7,7 @@ import useBoundStore from './useBoundStore';
 import validerAapenInnsending, { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
 import { SendtPeriode } from './useFyllInnsending';
 
-export default function useFyllInnsending() {
+export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
