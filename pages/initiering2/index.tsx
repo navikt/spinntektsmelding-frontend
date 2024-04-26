@@ -150,7 +150,7 @@ const Initiering2: NextPage = () => {
             (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validert.organisasjonsnummer
           )?.virksomhetsnavn!;
           initPerson(validert.fulltNavn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
-          setSkjemaStatus(SkjemaStatus.BLANK);
+          setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
           initFravaersperiode(validert.perioder as MottattPeriode[]);
           tilbakestillArbeidsgiverperiode();
           router.push('/arbeidsgiverInitiertInnsending');

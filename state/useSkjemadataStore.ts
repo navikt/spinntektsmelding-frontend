@@ -7,7 +7,8 @@ import { YesNo } from './state';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
-  BLANK = 'BLANK'
+  BLANK = 'BLANK',
+  SELVBESTEMT = 'SELVBESTEMT'
 }
 
 export interface SkjemadataState {

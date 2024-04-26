@@ -176,7 +176,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       setBeloepUtbetaltUnderArbeidsgiverperioden(undefined);
       slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       setArbeidsgiverperiodeDisabled(false);
-      if (skjemastatus !== SkjemaStatus.BLANK) tilbakestillArbeidsgiverperiode();
+      if (skjemastatus !== SkjemaStatus.SELVBESTEMT) tilbakestillArbeidsgiverperiode();
       begrunnelseRedusertUtbetaling(undefined);
     }
     setIsDirtyForm(true);
