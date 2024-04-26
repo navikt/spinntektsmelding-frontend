@@ -68,7 +68,7 @@ export default function useFyllInnsending() {
                 beloep: fullLonnIArbeidsgiverPerioden?.utbetalt,
                 begrunnelse: fullLonnIArbeidsgiverPerioden?.begrunnelse
               }
-            : undefined
+            : null
       },
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt!,
@@ -80,7 +80,7 @@ export default function useFyllInnsending() {
               sluttdato: ytelse.bortfallsdato
             }))
           : [],
-        endringAarsak: endringAarsak
+        endringAarsak: endringAarsak ?? null
       },
       refusjon: {
         beloepPerMaaned: bruttoinntekt.bruttoInntekt!,
