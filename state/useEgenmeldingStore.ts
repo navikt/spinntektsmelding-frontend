@@ -63,8 +63,11 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
     const egenmeldingsperioder = get().egenmeldingsperioder;
     set(
       produce((state) => {
-        const nyePerioder = state.egenmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId);
-        const oppdatertePerioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
+        const tomPeriode = [{ id: nanoid() }];
+        const nyePerioder = egenmeldingsperioder
+          ? egenmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId)
+          : tomPeriode;
+        const oppdatertePerioder = nyePerioder.length === 0 ? tomPeriode : nyePerioder;
         state.egenmeldingsperioder = oppdatertePerioder;
 
         oppdaterOgRekalkulerInntektOgBfd(
