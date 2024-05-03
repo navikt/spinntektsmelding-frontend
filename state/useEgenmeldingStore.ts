@@ -124,7 +124,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt,
           fravaersperioder,
-          clonedEgenmelding
+          egenmeldingsperioder
         );
 
         return state;
@@ -177,7 +177,6 @@ function oppdaterOgRekalkulerInntektOgBfd(
       skjaeringstidspunkt,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
-    console.log('fPerioder', fPerioder);
     console.log('bestemmende', bestemmende, skjaeringstidspunkt, arbeidsgiverKanFlytteSkjæringstidspunkt());
     if (bestemmende) {
       state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
