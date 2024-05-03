@@ -54,6 +54,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   ]);
 
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
@@ -110,12 +111,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   };
 
-  const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
+  const beregnetBestemmendeFraværsdagISO = useMemo(() => {
+    return finnBestemmendeFravaersdag(
+      fravaersperioder,
+      arbeidsgiverperioder,
+      foreslaattBestemmendeFravaersdag,
+      arbeidsgiverKanFlytteSkjæringstidspunkt()
+    );
+  }, [
     fravaersperioder,
     arbeidsgiverperioder,
-    bestemmendeFravaersdag,
-    arbeidsgiverKanFlytteSkjæringstidspunkt()
-  );
+    foreslaattBestemmendeFravaersdag,
+    arbeidsgiverKanFlytteSkjæringstidspunkt
+  ]);
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     return beregnetBestemmendeFraværsdagISO ? parseIsoDate(beregnetBestemmendeFraværsdagISO) : bestemmendeFravaersdag;
@@ -138,9 +146,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       });
 
       if (bestemmendeFravaersdag) {
+        console.log('Henter inntektsdata for bestemmende fraværsdag', bestemmendeFravaersdag);
         setSisteInntektsdato(parseIsoDate(format(bestemmendeFravaersdag, 'yyyy-MM-01')));
       }
     } else {
+      console.log('Henter inntektsdata for ny måned', sisteInntektsdato, inntektsdato);
       if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
         if (inntektsdato) {
           fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)

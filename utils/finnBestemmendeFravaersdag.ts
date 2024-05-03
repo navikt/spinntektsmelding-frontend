@@ -1,8 +1,9 @@
-import { compareAsc, compareDesc, differenceInDays, formatISO9075 } from 'date-fns';
+import { compareAsc, compareDesc, differenceInDays, formatISO9075, isBefore } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
-import finnArbeidsgiverperiode, { finnSammenhengendePeriodeManuellJustering } from './finnArbeidsgiverperiode';
+import { finnSammenhengendePeriode, finnSammenhengendePeriodeManuellJustering } from './finnArbeidsgiverperiode';
+import finnAktiveFravaersperioder from './finnAktiveFravaersperioder';
 
 export interface FravaersPeriode {
   fom: Date;
@@ -82,71 +83,86 @@ const finnBestemmendeFravaersdag = (
     return undefined;
   }
 
-  const sortertArbeidsgiverperiode =
-    arbeidsgiverperiode && arbeidsgiverperiode.length > 0
-      ? [...arbeidsgiverperiode].sort((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
-      : undefined;
-
-  const sammenhengendeAgp = sortertArbeidsgiverperiode
-    ? finnSammenhengendePeriodeManuellJustering(sortertArbeidsgiverperiode)
-    : undefined;
-
-  const sortertSammenhengendeAgp = sammenhengendeAgp
-    ? [...sammenhengendeAgp].sort((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
-    : undefined;
-
-  if (typeof forespurtBestemmendeFraværsdag === 'string') {
-    forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
-  }
-
-  const filtrertePerioder = fravaersperioder.filter((periode) => periode.fom && periode.tom);
-
-  const tilstotendeSykemeldingsperioder = finnArbeidsgiverperiode(filtrertePerioder);
-
-  const bestemmendeFravaersdagFraFravaer =
-    tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1]?.fom !== undefined
-      ? tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1].fom
-      : undefined;
-
-  const forsteDagArbeidsgiverperiode = sortertSammenhengendeAgp ? sortertSammenhengendeAgp[0]?.fom : undefined;
-
-  let bestemmendeFravaersdag = bestemmendeFravaersdagFraFravaer;
-
-  if (!arbeidsgiverKanFlytteBFD) {
-    bestemmendeFravaersdag = hvemDatoErTidligst(bestemmendeFravaersdagFraFravaer, forsteDagArbeidsgiverperiode)
-      ? bestemmendeFravaersdagFraFravaer
-      : forsteDagArbeidsgiverperiode;
+  if (arbeidsgiverKanFlytteBFD) {
+    if (typeof forespurtBestemmendeFraværsdag === 'string') {
+      forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
+    }
     if (forespurtBestemmendeFraværsdag) {
-      const forespurtBestemmendeFravaersdagErStorst = hvemDatoErTidligst(
-        bestemmendeFravaersdag,
-        forespurtBestemmendeFraværsdag
-      )
-        ? forespurtBestemmendeFraværsdag
-        : bestemmendeFravaersdag;
-
-      return formatISO9075(forespurtBestemmendeFravaersdagErStorst as Date, {
+      return formatISO9075(forespurtBestemmendeFraværsdag as Date, {
         representation: 'date'
       });
     }
   }
 
-  if (!sortertArbeidsgiverperiode) {
-    return formatISO9075(bestemmendeFravaersdag as Date, {
+  const sorterteSykemeldingsperioder = finnSammenhengendePeriode(
+    finnSorterteUnikePerioder(fravaersperioder.filter((periode) => periode.fom && periode.tom))
+  );
+
+  const aktuelleFravaersperioder = finnAktiveFravaersperioder(sorterteSykemeldingsperioder);
+
+  if (!arbeidsgiverperiode || !arbeidsgiverperiode[0] || !arbeidsgiverperiode?.[0]?.fom) {
+    return formatISO9075(aktuelleFravaersperioder[aktuelleFravaersperioder.length - 1].fom as Date, {
       representation: 'date'
     });
   }
 
-  if (forsteDagArbeidsgiverperiode !== undefined) {
-    return formatISO9075(forsteDagArbeidsgiverperiode, {
+  const sortertArbeidsgiverperiode =
+    arbeidsgiverperiode && arbeidsgiverperiode.length > 0
+      ? arbeidsgiverperiode.toSorted((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
+      : undefined;
+
+  const sammenhengendeAgp = finnSammenhengendePeriodeManuellJustering(sortertArbeidsgiverperiode!);
+
+  const overskytendeFravaersperioder =
+    arbeidsgiverperiode && aktuelleFravaersperioder
+      ? aktuelleFravaersperioder.filter((periode) => {
+          if (!periode.fom) return false;
+          if (
+            !sammenhengendeAgp ||
+            !sammenhengendeAgp[sammenhengendeAgp.length - 1] ||
+            !sammenhengendeAgp[sammenhengendeAgp.length - 1].fom
+          ) {
+            return false;
+          }
+
+          return !isBefore(periode.fom, sammenhengendeAgp[sammenhengendeAgp.length - 1].fom);
+        })
+      : [];
+
+  const dagerEtterAgp = finnSammenhengendePeriodeManuellJustering(
+    sammenhengendeAgp.concat(overskytendeFravaersperioder)
+  );
+
+  const bestemmendeFravaersdag = dagerEtterAgp[dagerEtterAgp.length - 1].fom;
+
+  if (!arbeidsgiverKanFlytteBFD) {
+    if (typeof forespurtBestemmendeFraværsdag === 'string') {
+      forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
+    }
+    const tidligsteBFD = finnTidligsteDato([bestemmendeFravaersdag, forespurtBestemmendeFraværsdag]);
+
+    return formatISO9075(tidligsteBFD as Date, {
       representation: 'date'
     });
+  }
+
+  return formatISO9075(bestemmendeFravaersdag as Date, {
+    representation: 'date'
+  });
+
+  function finnTidligsteDato(datoer: Array<Date | undefined>) {
+    return datoer.reduce((acc, dato) => {
+      if (!dato) return acc;
+      if (!acc) return dato;
+      return dato < acc ? dato : acc;
+    }, undefined);
   }
 };
 
 export default finnBestemmendeFravaersdag;
 
 export function finnSorterteUnikePerioder(fravaersperioder: Periode[]) {
-  const sorterteSykemeldingsperioder = [...fravaersperioder].sort((a, b) => {
+  const sorterteSykemeldingsperioder = fravaersperioder.toSorted((a, b) => {
     return compareAsc(a.fom || new Date(), b.fom || new Date());
   });
 
@@ -159,21 +175,10 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
 
   aktivePerioder.forEach((periode, index) => {
     if (index > 0) {
-      if (periode.fom !== perioder[index - 1].fom && periode.tom !== perioder[index - 1].tom) {
+      if (perioder[index - 1] && periode.fom !== perioder[index - 1].fom && periode.tom !== perioder[index - 1].tom) {
         perioder.push(periode);
       }
     }
   });
   return perioder;
-}
-
-function hvemDatoErTidligst(bestemmende?: Date, arbeidsgiverperiode?: Date): boolean {
-  if (!bestemmende) {
-    return true;
-  }
-
-  if (!arbeidsgiverperiode) {
-    return true;
-  }
-  return bestemmende > arbeidsgiverperiode;
 }
