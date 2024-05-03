@@ -53,8 +53,8 @@ class Environment {
     return this.publicRuntimeConfig.aktiveOrgnrApi;
   }
 
-  get innsendingAGInitiertApi() {
-    return this.publicRuntimeConfig.innsendingAGInitiertApi;
+  get innsendingSelvbestemtInntektsmeldingApi() {
+    return this.publicRuntimeConfig.innsendingSelvbestemtInntektsmeldingApi;
   }
 
   public baseUrl = '/im-dialog';
@@ -75,7 +75,7 @@ class Environment {
 
   public amplitudeEnabled = true;
 
-  public innsendingAGInitiertUrl = '/im-dialog/api/aapen-inntektsmelding';
+  public innsendingAGInitiertUrl = '/im-dialog/api/selvbestemt-inntektsmelding';
 
   get environment() {
     return this.publicRuntimeConfig.environment;

@@ -74,7 +74,15 @@ const Initiering2: NextPage = () => {
       }
 
       if (value.perioder && value.perioder.length > 0) {
-        const sortedPerioder = value.perioder.sort((a, b) => a.fom > b.fom);
+        const sortedPerioder = value.perioder.toSorted((a, b) => {
+          if (a.fom < b.fom) {
+            return -1;
+          } else if (a.fom > b.fom) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
         for (let i = 0; i < sortedPerioder.length - 1; i++) {
           if (sortedPerioder[i].tom >= sortedPerioder[i + 1].fom) {
             ctx.addIssue({
@@ -84,13 +92,11 @@ const Initiering2: NextPage = () => {
             });
           }
         }
-      }
 
-      if (value.perioder && value.perioder.length > 0) {
-        const sortedPerioder = value.perioder.sort((a, b) => a.fom > b.fom);
         for (let i = 0; i < sortedPerioder.length - 1; i++) {
           if (
-            Math.abs(differenceInDays(parseIsoDate(sortedPerioder[i].tom), parseIsoDate(sortedPerioder[i + 1].om))) > 16
+            Math.abs(differenceInDays(parseIsoDate(sortedPerioder[i].tom), parseIsoDate(sortedPerioder[i + 1].fom))) >
+            16
           ) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
@@ -144,7 +150,7 @@ const Initiering2: NextPage = () => {
             (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validert.organisasjonsnummer
           )?.virksomhetsnavn!;
           initPerson(validert.fulltNavn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
-          setSkjemaStatus(SkjemaStatus.BLANK);
+          setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
           initFravaersperiode(validert.perioder as MottattPeriode[]);
           tilbakestillArbeidsgiverperiode();
           router.push('/arbeidsgiverInitiertInnsending');

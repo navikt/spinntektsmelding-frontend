@@ -22,7 +22,7 @@ export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyFo
   const sisteAktivePeriode = perioderTilBruk?.[perioderTilBruk.length - 1];
 
   useEffect(() => {
-    if (skjemastatus === SkjemaStatus.BLANK && (!fravaerPerioder || fravaerPerioder.length < 1)) {
+    if (skjemastatus === SkjemaStatus.SELVBESTEMT && (!fravaerPerioder || fravaerPerioder.length < 1)) {
       leggTilFravaersperiode();
     }
   }, [fravaerPerioder, skjemastatus, leggTilFravaersperiode]);

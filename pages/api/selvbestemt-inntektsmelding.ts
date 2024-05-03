@@ -3,10 +3,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../config/environment';
 
-import org from '../../mockdata/testOrganisasjoner';
+import org from '../../mockdata/respons-selvbestemt.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = environment.innsendingAGInitiertApi;
+const basePath = environment.innsendingSelvbestemtInntektsmeldingApi;
 
 type Data = typeof org;
 
@@ -27,7 +27,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
       onProxyInit: handleProxyInit,
       pathRewrite: [
         {
-          patternStr: '^/api/aapen-inntektsmelding',
+          patternStr: '^/api/selvbestemt-inntektsmelding',
           replaceStr: ''
         }
       ]

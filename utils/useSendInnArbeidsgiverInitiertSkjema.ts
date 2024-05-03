@@ -94,8 +94,15 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         switch (data.status) {
           case 200:
           case 201:
-            setKvitteringInnsendt(new Date());
-            router.push(`/kvittering/${pathSlug}`, undefined);
+            data.json().then((response) => {
+              console.log(response);
+              if (response.selvbestemtId) {
+                pathSlug = response.selvbestemtId;
+              }
+
+              setKvitteringInnsendt(new Date());
+              router.push(`/kvittering/${pathSlug}`, undefined);
+            });
             break;
 
           case 500: {

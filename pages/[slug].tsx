@@ -88,7 +88,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
-    if (slug === 'arbeidsgiverInitiertInnsending') {
+    if (slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
       sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm, []).finally(() => {
         setSenderInn(false);
       });
@@ -136,7 +136,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [beregnetBestemmendeFraværsdag]);
 
   useEffect(() => {
-    if (skjemastatus === SkjemaStatus.BLANK) {
+    if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
       return;
     }
     if (!fravaersperioder) {
