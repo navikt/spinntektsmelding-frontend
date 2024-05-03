@@ -64,14 +64,15 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
     set(
       produce((state) => {
         const nyePerioder = state.egenmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId);
-        state.egenmeldingsperioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
+        const oppdatertePerioder = nyePerioder.length === 0 ? [{ id: nanoid() }] : nyePerioder;
+        state.egenmeldingsperioder = oppdatertePerioder;
 
         oppdaterOgRekalkulerInntektOgBfd(
           state,
           skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt,
           fravaersperioder,
-          egenmeldingsperioder
+          oppdatertePerioder
         );
 
         return state;
@@ -120,7 +121,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt,
           fravaersperioder,
-          egenmeldingsperioder
+          clonedEgenmelding
         );
 
         return state;
