@@ -104,7 +104,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<Ege
 
   const ikkeEgenmeldingPerioder = !egenmeldingsperioder || egenmeldingsperioder.length === 0;
 
-  const periodeKanEndres = kanEndreEgenmeldingPeriode || skjemastatus === SkjemaStatus.BLANK;
+  const periodeKanEndres = kanEndreEgenmeldingPeriode || skjemastatus === SkjemaStatus.SELVBESTEMT;
 
   return (
     <div className={localStyles.egenmeldingWrapper}>
@@ -161,12 +161,12 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<Ege
         {visFeilmelding('egenmeldingsperioder-feil') && (
           <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingsTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}
-        {!kanEndreEgenmeldingPeriode && skjemastatus !== SkjemaStatus.BLANK && (
+        {!kanEndreEgenmeldingPeriode && skjemastatus !== SkjemaStatus.SELVBESTEMT && (
           <div className={localStyles.endresykemeldingknapper}>
             <ButtonEndre onClick={clickEndreFravaersperiodeHandler} disabled={endretArbeidsgiverperiode} />
           </div>
         )}
-        {(kanEndreEgenmeldingPeriode || skjemastatus === SkjemaStatus.BLANK) && (
+        {(kanEndreEgenmeldingPeriode || skjemastatus === SkjemaStatus.SELVBESTEMT) && (
           <div className={localStyles.endresykemeldingknapper}>
             <Button
               variant='secondary'

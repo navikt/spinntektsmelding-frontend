@@ -105,7 +105,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const manglendeEller0FraAmeldingen =
     !tidligereinntekt || tidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
 
-  const erBlanktSkjema = skjemastatus === SkjemaStatus.BLANK;
+  const erBlanktSkjema = skjemastatus === SkjemaStatus.SELVBESTEMT;
 
   return (
     <>

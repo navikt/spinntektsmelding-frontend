@@ -124,7 +124,7 @@ export default function FravaerEnkeltAnsattforhold({
           )}
         </div>
       ))}
-      {skjemastatus !== SkjemaStatus.BLANK && endreSykemelding && (
+      {skjemastatus !== SkjemaStatus.SELVBESTEMT && endreSykemelding && (
         <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />
       )}
       {endreSykemelding && (

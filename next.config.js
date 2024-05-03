@@ -74,7 +74,7 @@ const nextConfig = {
     telemetryUrl: process.env.TELEMETRY_URL,
     flexJarUrl: process.env.FLEXJAR_URL,
     aktiveOrgnrApi: process.env.AKTIVE_ORGNR_API,
-    innsendingAGInitiertApi: process.env.INNSENDING_AG_INITIERT_INNTEKTSMELDING_API,
+    innsendingSelvbestemtInntektsmeldingApi: process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API,
     version,
     loggingDisabled: process.env.DISABLE_DECORATOR
   }
