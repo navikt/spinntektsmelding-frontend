@@ -206,6 +206,8 @@ export function finnFravaersperioder(fravaersperioder: Array<Periode>, egenmeldi
   const perioder =
     fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
 
-  const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom);
+  const fPerioder = perioder
+    ?.filter((periode) => periode.fom && periode.tom)
+    .toSorted((a, b) => compareAsc(a.fom || new Date(), b.fom || new Date()));
   return fPerioder;
 }

@@ -83,7 +83,7 @@ const finnBestemmendeFravaersdag = (
     return undefined;
   }
 
-  if (arbeidsgiverKanFlytteBFD) {
+  if (!arbeidsgiverKanFlytteBFD) {
     if (typeof forespurtBestemmendeFraværsdag === 'string') {
       forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
     }
@@ -108,7 +108,9 @@ const finnBestemmendeFravaersdag = (
 
   const sortertArbeidsgiverperiode =
     arbeidsgiverperiode && arbeidsgiverperiode.length > 0
-      ? arbeidsgiverperiode.toSorted((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
+      ? arbeidsgiverperiode
+          .toSorted((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
+          .filter((periode) => periode.fom && periode.tom)
       : undefined;
 
   const sammenhengendeAgp = finnSammenhengendePeriodeManuellJustering(sortertArbeidsgiverperiode!);

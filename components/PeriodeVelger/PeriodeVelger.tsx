@@ -55,7 +55,7 @@ export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readon
     return (
       <>
         <Label>Angi periode du vil sende inntektsmelding for</Label>
-        <PeriodeListevelger fomTekst='Fra' tomTekst='Til' name='perioder' />
+        <PeriodeListevelger fomTekst='Sykmelding fra' tomTekst='Sykmelding til' name='perioder' />
       </>
     );
   }

@@ -15,7 +15,12 @@
       "tom": "2024-03-24"
     }
   ],
-  "egenmeldingsperioder": [],
+  "egenmeldingsperioder": [
+    {
+      "fom": "2024-02-05",
+      "tom": "2024-02-06"
+    }
+  ],
   "tidligereinntekter": [
     {
       "maaned": "2024-01",

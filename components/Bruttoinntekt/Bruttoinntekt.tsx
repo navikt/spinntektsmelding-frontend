@@ -39,6 +39,8 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const endringAarsak: EndringAarsak = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
+  console.log('bestemmendeFravaersdag', bestemmendeFravaersdag);
+
   const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
