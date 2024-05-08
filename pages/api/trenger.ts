@@ -6,7 +6,7 @@ import environment from '../../config/environment';
 import org from '../../mockdata/trenger-originalen-helgefrisk.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = environment.inntektsmeldingUuidAPI;
+const basePath = 'http://' + global.process.env.IM_API_URI + environment.inntektsmeldingUuidAPI;
 
 type Data = typeof org;
 
