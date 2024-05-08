@@ -53,6 +53,8 @@ spec:
           namespace: flex
         - application: nav-dekoratoren
           namespace: personbruker
+        - application: im-api
+          namespace: helsearbeidsgiver
   env:
     - name: API_URL
       value: '{{{api-url}}}'

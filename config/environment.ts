@@ -45,10 +45,6 @@ class Environment {
     return this.publicRuntimeConfig.minSideArbeidsgiver;
   }
 
-  get flexJarApi() {
-    return this.publicRuntimeConfig.flexJarUrl;
-  }
-
   get aktiveOrgnrApi() {
     return this.publicRuntimeConfig.aktiveOrgnrApi;
   }
