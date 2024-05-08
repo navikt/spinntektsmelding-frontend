@@ -11,7 +11,11 @@ spec:
   image: {{ image }}
   port: 3000
   ingresses:
-    - '{{{ingress}}}'
+    {{#if ingress}}
+      {{#each ingress as |i| }}
+        - '{{{i}}}'
+      {{/each}}
+    {{/if}}
   liveness:
     path: /im-dialog/api/is-alive
     initialDelay: 15
