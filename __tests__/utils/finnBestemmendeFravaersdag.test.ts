@@ -664,4 +664,75 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     ];
     expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, undefined, true)).toEqual('2024-03-07');
   });
+
+  it('should return correct bfd when agp is exactly 16 days, kanSette is true, ting', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2024-02-05'),
+        tom: parseISO('2024-02-06')
+      },
+      {
+        id: '2',
+        fom: parseISO('2024-02-15'),
+        tom: parseISO('2024-02-28')
+      },
+      {
+        id: '3',
+        fom: parseISO('2024-03-07'),
+        tom: parseISO('2024-03-24')
+      }
+    ];
+    const arbeidsgiverperiode: Periode[] = [
+      {
+        id: 'a1',
+        fom: parseISO('2024-02-05'),
+        tom: parseISO('2024-02-06')
+      },
+      {
+        id: 'a2',
+        fom: parseISO('2024-02-15'),
+        tom: parseISO('2024-02-28')
+      }
+    ];
+    expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, parseISO('2024-02-15'), true)).toEqual(
+      '2024-03-07'
+    );
+
+    expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true)).toEqual('2024-03-07');
+  });
+
+  it('should return correct bfd when agp is exactly 16 days, kanSette is true, string input', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2024-02-05'),
+        tom: parseISO('2024-02-06')
+      },
+      {
+        id: '2',
+        fom: parseISO('2024-02-15'),
+        tom: parseISO('2024-02-28')
+      },
+      {
+        id: '3',
+        fom: parseISO('2024-03-07'),
+        tom: parseISO('2024-03-24')
+      }
+    ];
+    const arbeidsgiverperiode: Periode[] = [
+      {
+        id: 'a1',
+        fom: parseISO('2024-02-05'),
+        tom: parseISO('2024-02-06')
+      },
+      {
+        id: 'a2',
+        fom: parseISO('2024-02-15'),
+        tom: parseISO('2024-02-28')
+      }
+    ];
+
+    expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true)).toEqual('2024-03-07');
+  });
 });

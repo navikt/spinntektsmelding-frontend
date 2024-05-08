@@ -113,8 +113,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   };
 
-  const egenmeldingPerioderStr = JSON.stringify(egenmeldingsperioder);
-
   const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
   const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
     altFravaer,
@@ -122,15 +120,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     foreslaattBestemmendeFravaersdag,
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
+
   console.log(
-    'Beregnet bestemmende fraværsdag',
     altFravaer,
-
-    egenmeldingPerioderStr,
-    arbeidsgiverKanFlytteSkjæringstidspunkt()
+    arbeidsgiverperioder,
+    foreslaattBestemmendeFravaersdag,
+    arbeidsgiverKanFlytteSkjæringstidspunkt(),
+    beregnetBestemmendeFraværsdagISO
   );
-
-  console.log('beregnetBestemmendeFraværsdagISO', beregnetBestemmendeFraværsdagISO);
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     return beregnetBestemmendeFraværsdagISO ? parseIsoDate(beregnetBestemmendeFraværsdagISO) : bestemmendeFravaersdag;
