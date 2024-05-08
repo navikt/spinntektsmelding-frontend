@@ -5,7 +5,7 @@ import environment from '../../../config/environment';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 import org from '../../../mockdata/kvittering-ferie.json';
 
-const basePath = global.process.env.IM_API_URI + environment.hentKvitteringAPI;
+const basePath = 'http://' + global.process.env.IM_API_URI + environment.hentKvitteringAPI;
 
 type Data = typeof org;
 
