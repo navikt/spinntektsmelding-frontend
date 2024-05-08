@@ -6,7 +6,7 @@ import environment from '../../config/environment';
 import org from '../../mockdata/blank.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = environment.aktiveOrgnrApi;
+const basePath = 'http://' + global.process.env.IM_API_URI + environment.aktiveOrgnrApi;
 
 type Data = typeof org;
 
