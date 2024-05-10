@@ -342,7 +342,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2022-11-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-17')).toBe('2022-11-17');
+    expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-17')).toBe('2022-11-12');
   });
 
   it('should return the correct bestemmende fraværsdag for two periode directly following each other and forespurtBestemmende is in the future 2', () => {
@@ -358,7 +358,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2022-11-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-18')).toBe('2022-11-18');
+    expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-18')).toBe('2022-11-12');
   });
 
   it('should return null for tilstøtende perioder, uten helg, manuell', () => {

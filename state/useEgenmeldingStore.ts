@@ -164,12 +164,10 @@ function oppdaterOgRekalkulerInntektOgBfd(
   egenmeldingsperioder: Array<Periode>
 ) {
   const fPerioder = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
-  console.log('fPerioder', fPerioder);
   if (fPerioder) {
     const agp = finnArbeidsgiverperiode(
       fPerioder.toSorted((a, b) => compareAsc(a.fom || new Date(), b.fom || new Date()))
     );
-    console.log('agp', agp);
     state.arbeidsgiverperioder = agp;
     const bestemmende = finnBestemmendeFravaersdag(
       fPerioder,
@@ -177,8 +175,6 @@ function oppdaterOgRekalkulerInntektOgBfd(
       skjaeringstidspunkt,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
-    console.log('fPerioder', fPerioder);
-    console.log('bestemmende', bestemmende, skjaeringstidspunkt, arbeidsgiverKanFlytteSkjæringstidspunkt());
     if (bestemmende) {
       state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
       state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
