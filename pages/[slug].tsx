@@ -113,25 +113,23 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   };
 
-  const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
-  const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
-    altFravaer,
-    arbeidsgiverperioder,
-    foreslaattBestemmendeFravaersdag,
-    arbeidsgiverKanFlytteSkjæringstidspunkt()
-  );
-
-  console.log(
-    altFravaer,
-    arbeidsgiverperioder,
-    foreslaattBestemmendeFravaersdag,
-    arbeidsgiverKanFlytteSkjæringstidspunkt(),
-    beregnetBestemmendeFraværsdagISO
-  );
-
   const beregnetBestemmendeFraværsdag = useMemo(() => {
+    const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
+    const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
+      altFravaer,
+      arbeidsgiverperioder,
+      foreslaattBestemmendeFravaersdag,
+      arbeidsgiverKanFlytteSkjæringstidspunkt()
+    );
     return beregnetBestemmendeFraværsdagISO ? parseIsoDate(beregnetBestemmendeFraværsdagISO) : bestemmendeFravaersdag;
-  }, [beregnetBestemmendeFraværsdagISO, bestemmendeFravaersdag]);
+  }, [
+    arbeidsgiverperioder,
+    egenmeldingsperioder,
+    foreslaattBestemmendeFravaersdag,
+    fravaersperioder,
+    arbeidsgiverKanFlytteSkjæringstidspunkt,
+    bestemmendeFravaersdag
+  ]);
 
   const inntektsdato = useMemo(() => {
     return beregnetBestemmendeFraværsdag

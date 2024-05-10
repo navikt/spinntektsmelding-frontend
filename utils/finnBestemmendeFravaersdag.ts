@@ -1,4 +1,4 @@
-import { compareAsc, compareDesc, differenceInDays, formatISO9075, isBefore } from 'date-fns';
+import { compareAsc, compareDesc, differenceInDays, formatISO9075, isBefore, isEqual } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
@@ -177,7 +177,11 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
 
   aktivePerioder.forEach((periode, index) => {
     if (index > 0) {
-      if (perioder[index - 1] && periode.fom !== perioder[index - 1].fom && periode.tom !== perioder[index - 1].tom) {
+      if (
+        perioder[index - 1] &&
+        !isEqual(periode.fom, perioder[index - 1].fom) &&
+        !isEqual(periode.tom, perioder[index - 1].tom)
+      ) {
         perioder.push(periode);
       }
     }
