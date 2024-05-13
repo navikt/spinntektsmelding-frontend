@@ -145,10 +145,6 @@ const Initiering2: NextPage = () => {
     }
   );
 
-  // if (error) {
-  //   console.error('Kunne ikke hente arbeidsforhold', error);
-  // }
-
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;
 

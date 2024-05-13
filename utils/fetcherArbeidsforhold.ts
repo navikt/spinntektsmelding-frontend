@@ -21,7 +21,7 @@ export default function fetcherArbeidsforhold(url: string, identitetsnummer?: st
       return res.json();
     })
     .catch((error) => {
-      const newError = new NetworkError('Kunne ikke tolke resutatet fra serveren');
+      const newError = new NetworkError('Kunne ikke tolke resultatet fra serveren');
       newError.status = error.status;
       newError.info = error.info;
       throw newError;

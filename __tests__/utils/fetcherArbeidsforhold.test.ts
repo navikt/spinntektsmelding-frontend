@@ -53,7 +53,9 @@ describe('fetcherArbeidsforhold', () => {
       ok: false
     } as any);
 
-    await expect(fetcherArbeidsforhold(url, identitetsnummer)).rejects.toThrowError('Kunne ikke hente arbeidsforhold');
+    await expect(fetcherArbeidsforhold(url, identitetsnummer)).rejects.toThrowError(
+      'Kunne ikke tolke resultatet fra serveren'
+    );
     expect(global.fetch).toHaveBeenCalledWith(url, {
       method: 'POST',
       headers: {
