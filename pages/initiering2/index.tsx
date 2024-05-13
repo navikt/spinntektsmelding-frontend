@@ -120,9 +120,34 @@ const Initiering2: NextPage = () => {
     formState: { errors }
   } = methods;
 
-  const { data, error } = useSWRImmutable([environment.initierBlankSkjemaUrl, identitetsnummer], ([url, idToken]) =>
-    fetcherArbeidsforhold(url, idToken)
+  const { data, error } = useSWRImmutable(
+    [environment.initierBlankSkjemaUrl, identitetsnummer],
+    ([url, idToken]) => fetcherArbeidsforhold(url, idToken),
+    {
+      onError: (err) => {
+        console.error('Kunne ikke hente arbeidsforhold', err);
+        if (err.status === 401) {
+          const ingress = window.location.hostname + environment.baseUrl;
+          const currentPath = window.location.href;
+
+          window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
+        }
+
+        if (err.status !== 200) {
+          backendFeil.current.push({
+            felt: 'Backend',
+            text: 'Kunne ikke hente arbeidsforhold'
+          });
+        }
+      },
+      refreshInterval: 0,
+      shouldRetryOnError: false
+    }
   );
+
+  // if (error) {
+  //   console.error('Kunne ikke hente arbeidsforhold', error);
+  // }
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;

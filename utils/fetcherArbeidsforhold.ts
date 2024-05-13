@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { OrganisasjonsnummerSchema } from '../validators/validerAapenInnsending';
+import NetworkError from './NetworkError';
 
 export default function fetcherArbeidsforhold(url: string, identitetsnummer?: string) {
   if (!identitetsnummer) return Promise.resolve([]);
@@ -12,12 +13,18 @@ export default function fetcherArbeidsforhold(url: string, identitetsnummer?: st
   })
     .then((res) => {
       if (!res.ok) {
-        throw new Error('Kunne ikke hente arbeidsforhold');
+        const error = new NetworkError('Kunne ikke hente arbeidsforhold, vennligst prøv igjen senere');
+        error.status = res.status;
+        error.info = res.json();
+        throw error;
       }
       return res.json();
     })
     .catch((error) => {
-      throw error;
+      const newError = new NetworkError('Kunne ikke tolke resutatet fra serveren');
+      newError.status = error.status;
+      newError.info = error.info;
+      throw newError;
     });
 }
 
