@@ -37,6 +37,7 @@ import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgive
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import { format, isEqual } from 'date-fns';
+import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -54,7 +55,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   ]);
 
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
@@ -110,16 +113,23 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   };
 
-  const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
-    fravaersperioder,
-    arbeidsgiverperioder,
-    bestemmendeFravaersdag,
-    arbeidsgiverKanFlytteSkjæringstidspunkt()
-  );
-
   const beregnetBestemmendeFraværsdag = useMemo(() => {
+    const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
+    const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
+      altFravaer,
+      arbeidsgiverperioder,
+      foreslaattBestemmendeFravaersdag,
+      arbeidsgiverKanFlytteSkjæringstidspunkt()
+    );
     return beregnetBestemmendeFraværsdagISO ? parseIsoDate(beregnetBestemmendeFraværsdagISO) : bestemmendeFravaersdag;
-  }, [beregnetBestemmendeFraværsdagISO, bestemmendeFravaersdag]);
+  }, [
+    arbeidsgiverperioder,
+    egenmeldingsperioder,
+    foreslaattBestemmendeFravaersdag,
+    fravaersperioder,
+    arbeidsgiverKanFlytteSkjæringstidspunkt,
+    bestemmendeFravaersdag
+  ]);
 
   const inntektsdato = useMemo(() => {
     return beregnetBestemmendeFraværsdag
@@ -138,9 +148,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       });
 
       if (bestemmendeFravaersdag) {
+        console.log('Henter inntektsdata for bestemmende fraværsdag', bestemmendeFravaersdag);
         setSisteInntektsdato(parseIsoDate(format(bestemmendeFravaersdag, 'yyyy-MM-01')));
       }
     } else {
+      console.log('Henter inntektsdata for ny måned', sisteInntektsdato, inntektsdato);
       if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
         if (inntektsdato) {
           fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
