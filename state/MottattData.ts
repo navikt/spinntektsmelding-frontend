@@ -65,6 +65,8 @@ interface MottattData {
   feilReport?: FeilReportFeilListe;
   forespurtData?: MottattForespurtData;
   skjaeringstidspunkt: TDateISODate;
+  eksternBestemmendeFravaersdag: TDateISODate;
+  bestemmendeFravaersdag: TDateISODate;
 }
 
 export default MottattData;

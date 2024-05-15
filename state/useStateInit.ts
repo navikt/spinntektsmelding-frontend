@@ -9,7 +9,6 @@ type Datafelt = 'virksomhet' | 'arbeidstaker-informasjon' | 'forespoersel-svar' 
 
 export type FeilReportElement = {
   melding: string;
-  status: number;
   datafelt: Datafelt;
 };
 
@@ -40,6 +39,10 @@ export default function useStateInit() {
   const [setForeslaattBestemmendeFravaersdag, setSkjaeringstidspunkt] = useBoundStore((state) => [
     state.setForeslaattBestemmendeFravaersdag,
     state.setSkjaeringstidspunkt
+  ]);
+  const [setMottattBestemmendeFravaersdag, setMottattEksternBestemmendeFravaersdag] = useBoundStore((state) => [
+    state.setMottattBestemmendeFravaersdag,
+    state.setMottattEksternBestemmendeFravaersdag
   ]);
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
@@ -80,6 +83,8 @@ export default function useStateInit() {
     }));
 
     const skjaeringstidspunkt = jsonData.skjaeringstidspunkt;
+    setMottattBestemmendeFravaersdag(jsonData.bestemmendeFravaersdag);
+    setMottattEksternBestemmendeFravaersdag(jsonData.eksternBestemmendeFravaersdag);
 
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
 

@@ -4,6 +4,7 @@ import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
 import { finnSammenhengendePeriode, finnSammenhengendePeriodeManuellJustering } from './finnArbeidsgiverperiode';
 import finnAktiveFravaersperioder from './finnAktiveFravaersperioder';
+import { TDateISODate } from '../state/MottattData';
 
 export interface FravaersPeriode {
   fom: Date;
@@ -77,8 +78,20 @@ const finnBestemmendeFravaersdag = (
   fravaersperioder?: Array<Periode>,
   arbeidsgiverperiode?: Array<Periode>,
   forespurtBestemmendeFraværsdag?: string | Date,
-  arbeidsgiverKanFlytteBFD?: boolean
+  arbeidsgiverKanFlytteBFD?: boolean,
+  mottattBestemmendeFravaersdag?: TDateISODate,
+  mottattEksternBestemmendeFravaersdag?: TDateISODate,
+  laastTilMottattPeriode?: boolean
 ): string | undefined => {
+  if (laastTilMottattPeriode && mottattBestemmendeFravaersdag) {
+    if (!mottattEksternBestemmendeFravaersdag) return mottattBestemmendeFravaersdag;
+    if (isBefore(parseIsoDate(mottattBestemmendeFravaersdag), parseIsoDate(mottattEksternBestemmendeFravaersdag))) {
+      return mottattBestemmendeFravaersdag as string;
+    } else {
+      return mottattEksternBestemmendeFravaersdag as string;
+    }
+  }
+
   if (!fravaersperioder || !fravaersperioder[0] || !fravaersperioder?.[0]?.fom) {
     return undefined;
   }
