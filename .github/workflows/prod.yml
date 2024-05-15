@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: '22.x'
           registry-url: 'https://npm.pkg.github.com'
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
       - run: yarn test
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: '22.x'
           registry-url: 'https://npm.pkg.github.com'
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
       - run: yarn lint
 
   Docker:

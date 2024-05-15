@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '22.x'
           registry-url: 'https://npm.pkg.github.com'
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
       - run: yarn build
       - uses: actions/upload-artifact@v4
         with:
@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: '22.x'
           registry-url: 'https://npm.pkg.github.com'
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
       - run: yarn test
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
@@ -52,5 +52,5 @@ jobs:
         with:
           node-version: '22.x'
           registry-url: 'https://npm.pkg.github.com'
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
       - run: yarn lint
