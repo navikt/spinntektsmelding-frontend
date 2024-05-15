@@ -3,19 +3,22 @@ import logEvent from './logEvent';
 import { ValiderTekster } from './validerInntektsmelding';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
+import { SkjemaStatus } from '../state/useSkjemadataStore';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
-  amplitudeComponent: string
+  amplitudeComponent: string,
+  skjemastatus: SkjemaStatus
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const setKvitteringsdata = useBoundStore((state) => state.setKvitteringsdata);
   const errorResponse = useErrorRespons();
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
@@ -82,13 +85,13 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       // errorResponse(errors);
       setSkalViseFeilmeldinger(true);
     } else {
-      const skjemaData = validerteData.data;
+      setKvitteringsdata(validerteData.data);
 
       fyllFeilmeldinger([]);
 
       return fetch(`${environment.innsendingAGInitiertUrl}`, {
         method: 'POST',
-        body: JSON.stringify(skjemaData),
+        body: JSON.stringify(validerteData.data),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -97,13 +100,16 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
           case 200:
           case 201:
             data.json().then((response) => {
-              console.log(response);
               if (response.selvbestemtId) {
                 pathSlug = response.selvbestemtId;
               }
 
               setKvitteringInnsendt(new Date());
-              router.push(`/kvittering/${pathSlug}`, undefined);
+              if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
+                router.push(`/kvittering/agi/${pathSlug}`, undefined, { shallow: true });
+              } else {
+                router.push(`/kvittering/${pathSlug}`, undefined);
+              }
             });
             break;
 

@@ -29,9 +29,14 @@ import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeo
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
   setIsDirtyForm: (dirty: boolean) => void;
+  skjemastatus: SkjemaStatus;
 }
 
-export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyForm }: ArbeidsgiverperiodeProps) {
+export default function Arbeidsgiverperiode({
+  arbeidsgiverperioder,
+  setIsDirtyForm,
+  skjemastatus
+}: ArbeidsgiverperiodeProps) {
   const leggTilArbeidsgiverperiode = useBoundStore((state) => state.leggTilArbeidsgiverperiode);
   const slettArbeidsgiverperiode = useBoundStore((state) => state.slettArbeidsgiverperiode);
   const setArbeidsgiverperiodeDato = useBoundStore((state) => state.setArbeidsgiverperiodeDato);
@@ -54,7 +59,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
   const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined = useBoundStore(
     (state) => state.fullLonnIArbeidsgiverPerioden
   );
-  const skjemastatus = useBoundStore((state) => state.skjemastatus);
+
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
   const [advarselOppholdHelg, setAdvarselOppholdHelg] = useState<string>('');
   const amplitudeComponent = 'Arbeidsgiverperiode';
@@ -206,7 +211,25 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
       : '';
 
   useEffect(() => {
+    if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
+      setArbeidsgiverperiodeKort(antallDager < 16);
+      if (antallDager < 16) {
+        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
+      } else {
+        slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+      }
+    }
+  }, [
+    antallDager,
+    setArbeidsgiverperiodeKort,
+    skjemastatus,
+    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
+  ]);
+
+  useEffect(() => {
     if (!manuellEndring) {
+      console.log('manuellEndring', manuellEndring);
       return;
     }
 

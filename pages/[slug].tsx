@@ -79,7 +79,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
     setIngenTilgangOpen,
-    'HovedskjemaArbeidsgiverInitiert'
+    'HovedskjemaArbeidsgiverInitiert',
+    skjemastatus
   );
 
   const lukkHentingFeiletModal = () => {
@@ -200,7 +201,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
           <Skillelinje />
 
-          <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} setIsDirtyForm={setIsDirtyForm} />
+          <Arbeidsgiverperiode
+            arbeidsgiverperioder={arbeidsgiverperioder}
+            setIsDirtyForm={setIsDirtyForm}
+            skjemastatus={skjemastatus}
+          />
 
           <Skillelinje />
 

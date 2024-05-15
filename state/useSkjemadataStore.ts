@@ -4,6 +4,7 @@ import { CompleteState } from './useBoundStore';
 import { nanoid } from 'nanoid';
 import { Opplysningstype } from './useForespurtDataStore';
 import { YesNo } from './state';
+import { AapenInnsending } from '../validators/validerAapenInnsending';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
@@ -23,6 +24,7 @@ export interface SkjemadataState {
   setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: SkjemaKvitteringEksterntSystem) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
+  setKvitteringsdata: (data: any) => void;
   tracker: string;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
@@ -33,6 +35,7 @@ export interface SkjemadataState {
   endringerAvRefusjon?: YesNo;
   kvitteringEksterntSystem?: SkjemaKvitteringEksterntSystem;
   skjemastatus: SkjemaStatus;
+  kvitteringData?: AapenInnsending;
 }
 
 export interface SkjemaKvitteringEksterntSystem {
@@ -49,6 +52,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   henterInntektsdata: false,
   skjemaFeilet: false,
   skjemastatus: SkjemaStatus.FULL,
+  kvitteringData: undefined,
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
@@ -117,6 +121,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.skjemastatus = status;
+      })
+    );
+  },
+  setKvitteringsdata: (data: any) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.kvitteringData = data;
       })
     );
   }

@@ -41,6 +41,9 @@ export default function useFyllAapenInnsending() {
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
   return (skjemaData: any) => {
+    console.log('validerAapenInnsending', skjemaData);
+    console.log('fullLonnIArbeidsgiverPerioden', fullLonnIArbeidsgiverPerioden);
+
     const endringAarsak: EndringAarsak = bruttoinntekt.endringAarsak;
 
     const innsending = validerAapenInnsending({
@@ -68,7 +71,7 @@ export default function useFyllAapenInnsending() {
                 beloep: fullLonnIArbeidsgiverPerioden?.utbetalt,
                 begrunnelse: fullLonnIArbeidsgiverPerioden?.begrunnelse
               }
-            : null
+            : undefined
       },
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt!,

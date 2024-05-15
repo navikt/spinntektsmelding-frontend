@@ -25,7 +25,7 @@ import ButtonPrint from '../../../components/ButtonPrint';
 
 import ButtonEndre from '../../../components/ButtonEndre';
 import formatDate from '../../../utils/formatDate';
-import { useEffect } from 'react';
+import { use, useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
@@ -44,6 +44,9 @@ import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../state/MottattData';
 import useKvitteringInit from '../../../state/useKvitteringInit';
+import AapenInnsending from '../../../validators/validerAapenInnsending';
+import { SkjemaStatus } from '../../../state/useSkjemadataStore';
+import { stat } from 'fs';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -53,8 +56,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const searchParams = useSearchParams();
 
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
+  const kvitteringData: AapenInnsending = useBoundStore((state) => state.kvitteringData);
 
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
+  const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
 
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
 
@@ -62,16 +67,18 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
+  const dataFraBackend = !!kvittering?.kvitteringDokument;
 
   const kvitteringInit = useKvitteringInit();
 
-  const kvitteringDokument = kvittering?.kvitteringDokument ? kvittering?.kvitteringDokument : kvittering;
+  const kvitteringDokument = kvittering?.kvitteringDokument ? kvittering?.kvitteringDokument : kvitteringData;
 
   const kvitteringInnsendt = new Date(kvitteringDokument?.tidspunkt);
   // const egenmeldingsperioder = kvitteringDokument?.egenmeldingsperioder;
   // const fravaersperioder = kvitteringDokument?.fraværsperioder;
   const bestemmendeFravaersdag = kvitteringDokument?.bestemmendeFraværsdag;
-  const arbeidsgiverperioder = kvitteringDokument?.arbeidsgiverperioder;
+  const arbeidsgiverperioder = dataFraBackend ? kvitteringDokument?.arbeidsgiverperioder : kvitteringData.agp.perioder;
+  console.log('kvitteringData', kvitteringData);
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
@@ -90,7 +97,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       }
     }
   };
-
+  console.log('kvitteringData', kvitteringData);
   let innsendingstidspunkt =
     kvitteringInnsendt && isValid(kvitteringInnsendt)
       ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
@@ -106,48 +113,62 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const ingenArbeidsgiverperioder = arbeidsgiverperioder && arbeidsgiverperioder.length === 0;
 
   // const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
-  const paakrevdeOpplysninger = kvitteringDokument.forespurtData;
+  // const paakrevdOpplysninger = kvitteringDokument.forespurtData;
+  const paakrevdeOpplysninger = ['arbeidsgiverperiode', 'naturalytelser', 'refusjon'];
+  // const trengerArbeidsgiverperiode =
+  //   !paakrevdeOpplysninger ||
+  //   paakrevdeOpplysninger.length === 0 ||
+  //   paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
-  const trengerArbeidsgiverperiode =
-    !paakrevdeOpplysninger ||
-    paakrevdeOpplysninger.length === 0 ||
-    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  // const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
+  //   ? parseIsoDate(kvitteringDokument.bestemmendeFraværsdag)
+  //   : foreslaattBestemmendeFravaersdag;
 
-  const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
-    ? parseIsoDate(kvitteringDokument.bestemmendeFraværsdag)
-    : foreslaattBestemmendeFravaersdag;
+  const visningBestemmendeFravaersdag = dataFraBackend
+    ? parseIsoDate(bestemmendeFravaersdag)
+    : parseIsoDate(kvitteringData.inntekt.inntektsdato);
 
   useEffect(() => {
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  const visNaturalytelser =
-    !paakrevdeOpplysninger ||
-    paakrevdeOpplysninger.length === 0 ||
-    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
-  const visArbeidsgiverperiode =
-    !paakrevdeOpplysninger ||
-    paakrevdeOpplysninger.length === 0 ||
-    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
-  const visFullLonnIArbeidsgiverperioden =
-    !paakrevdeOpplysninger ||
-    paakrevdeOpplysninger.length === 0 ||
-    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const visNaturalytelser = true;
+  const visArbeidsgiverperiode = true;
+  const visFullLonnIArbeidsgiverperioden = true;
+  const inntekt = dataFraBackend
+    ? kvitteringDokument.inntekt
+    : {
+        beregnetInntekt: kvitteringData.inntekt.beloep
+      };
 
-  const inntekt = kvitteringDokument.inntekt;
+  let fravaersperioder: Periode[] = [];
+  let egenmeldingsperioder: Periode[] = [];
+  if (dataFraBackend) {
+    fravaersperioder = kvitteringDokument.fraværsperioder?.map((periode: MottattPeriode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: periode.fom + periode.tom
+    }));
 
-  const fravaersperioder: Periode[] = kvitteringDokument.fraværsperioder?.map((periode: MottattPeriode) => ({
-    fom: parseIsoDate(periode.fom),
-    tom: parseIsoDate(periode.tom),
-    id: periode.fom + periode.tom
-  }));
+    egenmeldingsperioder = kvitteringDokument.egenmeldingsperioder?.map((periode: MottattPeriode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: periode.fom + periode.tom
+    }));
+  } else {
+    fravaersperioder = kvitteringData.agp.perioder?.map((periode: MottattPeriode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: periode.fom + periode.tom
+    }));
 
-  const egenmeldingsperioder: Periode[] = kvitteringDokument.egenmeldingsperioder?.map((periode: MottattPeriode) => ({
-    fom: parseIsoDate(periode.fom),
-    tom: parseIsoDate(periode.tom),
-    id: periode.fom + periode.tom
-  }));
+    egenmeldingsperioder = kvitteringData.agp.egenmeldinger?.map((periode: MottattPeriode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: periode.fom + periode.tom
+    }));
+  }
 
   const cx = classNames.bind(lokalStyles);
   const classNameWrapperFravaer = cx({
@@ -158,32 +179,99 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     infoboks: visArbeidsgiverperiode
   });
 
-  const fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden ?? {};
-  fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.utbetalerFullLønn ? 'Ja' : 'Nei';
+  let fullLoennIArbeidsgiverPerioden;
+  // if (dataFraBackend) {
+  //   fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden ?? {};
+  //   fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.utbetalerFullLønn ? 'Ja' : 'Nei';
+  // }
 
-  const loenn = {
-    status: kvitteringDokument.refusjon?.utbetalerHeleEllerDeler ? 'Ja' : ('Nei' as YesNo),
-    beloep: kvitteringDokument.refusjon?.refusjonPrMnd
-  };
+  if (dataFraBackend) {
+    fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden ?? {};
+    fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.utbetalerFullLønn ? 'Ja' : 'Nei';
+  } else {
+    fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
+    fullLoennIArbeidsgiverPerioden.status = kvitteringData.agp.redusertLoennIAgp.beloep ? 'Ja' : 'Nei';
+    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData.agp.redusertLoennIAgp.beloep;
+    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData.agp.redusertLoennIAgp.begrunnelse;
+  }
 
-  const refusjonskravetOpphoerer = {
-    status: kvitteringDokument?.refusjon?.refusjonOpphører ? 'Ja' : ('Nei' as YesNo),
-    opphoersdato: parseIsoDate(kvitteringDokument.refusjon?.refusjonOpphører)
-  };
+  let loenn = { status: '', beloep: 0 };
+  if (dataFraBackend) {
+    loenn = {
+      status: kvitteringDokument.refusjon?.utbetalerHeleEllerDeler ? 'Ja' : ('Nei' as YesNo),
+      beloep: kvitteringDokument.refusjon?.refusjonPrMnd
+    };
+  } else {
+    loenn = {
+      status: kvitteringData.agp.redusertLoennIAgp.beloep ? 'Ja' : 'Nei',
+      beloep: kvitteringData.agp.redusertLoennIAgp.beloep
+    };
+  }
 
-  const refusjonEndringer = kvitteringDokument?.refusjon?.refusjonEndringer?.map((endring) => ({
-    dato: parseIsoDate(endring.dato),
-    beloep: endring.beløp
-  }));
+  let refusjonskravetOpphoerer = { status: '', opphoersdato: null };
+  if (dataFraBackend) {
+    refusjonskravetOpphoerer = {
+      status: kvitteringDokument?.refusjon?.refusjonOpphører ? 'Ja' : ('Nei' as YesNo),
+      opphoersdato: parseIsoDate(kvitteringDokument.refusjon?.refusjonOpphører)
+    };
+  } else {
+    refusjonskravetOpphoerer = {
+      status: kvitteringData.refusjon.beloepPerMaaned ? 'Ja' : 'Nei',
+      opphoersdato: parseIsoDate(kvitteringData.refusjon.sluttdato)
+    };
+  }
 
-  const refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
-    return (
-      !endring.dato ||
-      !bestemmendeFravaersdag ||
-      !gammeltSkjaeringstidspunkt ||
-      (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato!, gammeltSkjaeringstidspunkt))
-    );
-  });
+  let refusjonEndringer = [];
+  if (dataFraBackend) {
+    refusjonEndringer = kvitteringDokument?.refusjon?.refusjonEndringer?.map((endring) => ({
+      dato: parseIsoDate(endring.dato),
+      beloep: endring.beløp
+    }));
+  } else {
+    refusjonEndringer = kvitteringData.refusjon.endringer.map((endring) => ({
+      dato: parseIsoDate(endring.startDato),
+      beloep: endring.beloep
+    }));
+  }
+  let refusjonEndringerUtenSkjaeringstidspunkt = [];
+  if (dataFraBackend) {
+    refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
+      return (
+        !endring.dato ||
+        !bestemmendeFravaersdag ||
+        !gammeltSkjaeringstidspunkt ||
+        (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato!, gammeltSkjaeringstidspunkt))
+      );
+    });
+  } else {
+    refusjonEndringerUtenSkjaeringstidspunkt =
+      gammeltSkjaeringstidspunkt && refusjonEndringer
+        ? refusjonEndringer
+            ?.filter((endring) => {
+              if (!endring.dato) return false;
+              return !isBefore(endring.dato, gammeltSkjaeringstidspunkt);
+            })
+            .map((endring) => {
+              return {
+                beloep: endring.beloep ?? endring.beloep,
+                dato: endring.dato
+              };
+            })
+        : refusjonEndringer;
+  }
+  // const refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
+  //   return (
+  //     !endring.dato ||
+  //     !bestemmendeFravaersdag ||
+  //     !gammeltSkjaeringstidspunkt ||
+  //     (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato!, gammeltSkjaeringstidspunkt))
+  //   );
+  // });
+
+  useEffect(() => {
+    setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -327,7 +415,13 @@ export default Kvittering;
 export async function getServerSideProps(context: any) {
   const kvittid = context.query.kvittid;
 
-  const kvittering = await hentKvitteringsdataSSR(kvittid);
+  let kvittering = null;
+
+  try {
+    kvittering = await hentKvitteringsdataSSR(kvittid);
+  } catch (error) {
+    kvittering = { data: null };
+  }
 
   return {
     props: {

@@ -319,9 +319,10 @@ const schema = z.object({
   aarsakInnsending: z.enum(['Endring', 'Ny'])
 });
 
-type AapenInnsending = z.infer<typeof schema>;
+export type AapenInnsending = z.infer<typeof schema>;
 
 export default function validerAapenInnsending(data: Partial<AapenInnsending>) {
+  console.log('validerAapenInnsending', data);
   return schema.safeParse(data);
 }
 
