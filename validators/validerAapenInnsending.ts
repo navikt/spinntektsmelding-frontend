@@ -239,7 +239,7 @@ const schema = z.object({
   agp: z.object({
     perioder: z.array(PeriodeSchema),
     egenmeldinger: z.union([z.array(PeriodeSchema), z.tuple([])]),
-    redusertLoennIAgp: z.optional(
+    redusertLoennIAgp: z.nullable(
       z.object({
         beloep: z.number().min(0),
         begrunnelse: BegrunnelseRedusertLoennIAgpEnum
