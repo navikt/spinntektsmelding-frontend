@@ -110,7 +110,6 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
     const skjaeringstidspunkt = get().skjaeringstidspunkt;
     const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
     const fravaersperioder = get().fravaersperioder;
-    const egenmeldingsperioder = get().egenmeldingsperioder;
     set(
       produce((state) => {
         state.egenmeldingsperioder = clonedEgenmelding;
@@ -124,7 +123,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt,
           fravaersperioder,
-          egenmeldingsperioder
+          clonedEgenmelding
         );
 
         return state;
