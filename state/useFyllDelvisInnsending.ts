@@ -12,6 +12,7 @@ import delvisInnsendingSchema from '../schema/delvisInnsendingSchema';
 import { z } from 'zod';
 import { hentBestemmendeFraværsdag } from './useFyllInnsending';
 import parseIsoDate from '../utils/parseIsoDate';
+import { finnFoersteFravaersdag } from '../pages/endring/[slug]';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -103,7 +104,20 @@ export default function useFyllDelvisInnsending() {
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
-  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const [bestemmendeFravaersdag, mottattBestemmendeFravaersdag, mottattEksternBestemmendeFravaersdag] = useBoundStore(
+    (state) => [
+      state.bestemmendeFravaersdag,
+      state.mottattBestemmendeFravaersdag,
+      state.mottattEksternBestemmendeFravaersdag
+    ]
+  );
+  const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
+
+  const beregnetBestemmendeFravaersdag = finnFoersteFravaersdag(
+    bestemmendeFravaersdag,
+    mottattBestemmendeFravaersdag,
+    mottattEksternBestemmendeFravaersdag
+  );
 
   type SkjemaData = z.infer<typeof delvisInnsendingSchema>;
 
@@ -113,12 +127,12 @@ export default function useFyllDelvisInnsending() {
     const RefusjonUtbetalingEndringUtenGammelBFD = skjema.refusjon.refusjonEndringer
       ? skjema.refusjon.refusjonEndringer.filter((endring) => {
           if (!endring.dato) return false;
-          return isAfter(endring.dato, bestemmendeFravaersdag);
+          return isAfter(endring.dato, beregnetBestemmendeFravaersdag);
         })
-      : bestemmendeFravaersdag && refusjonEndringer
+      : beregnetBestemmendeFravaersdag && refusjonEndringer
         ? refusjonEndringer?.filter((endring) => {
             if (!endring.dato) return false;
-            return isAfter(endring.dato, bestemmendeFravaersdag);
+            return isAfter(endring.dato, beregnetBestemmendeFravaersdag);
           })
         : refusjonEndringer;
 
@@ -160,16 +174,17 @@ export default function useFyllDelvisInnsending() {
             )!
           );
 
-    const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
-      skalSendeArbeidsgiverperiode,
-      perioder,
-      formatertePerioder,
-      skjaeringstidspunkt,
-      arbeidsgiverKanFlytteSkjæringstidspunkt(),
-      inngangFraKvittering,
-      bestemmendeFravaersdag,
-      beregnetSkjaeringstidspunkt
+    const bestemmendeFraværsdagTilInnsending = finnFoersteFravaersdag(
+      beregnetSkjaeringstidspunkt,
+      mottattBestemmendeFravaersdag,
+      mottattEksternBestemmendeFravaersdag
     );
+
+    console.log('bestemmendeFraværsdagTilInnsending', bestemmendeFraværsdagTilInnsending);
+
+    const bestemmendeFraværsdag = formatIsoDate(bestemmendeFraværsdagTilInnsending);
+
+    setForeslaattBestemmendeFravaersdag(bestemmendeFraværsdagTilInnsending);
 
     const aarsakInnsending = nyEllerEndring(nyInnsending); // Kan være Ny eller Endring
 

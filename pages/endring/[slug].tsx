@@ -564,10 +564,10 @@ function mapEndringsAarsakPeriodeTilPeriode(skjemaData: z.infer<any>): Periode[]
   }));
 }
 
-function finnFoersteFravaersdag(
+export function finnFoersteFravaersdag(
   foreslaattBestemmendeFravaersdag: Date,
-  mottattBestemmendeFravaersdag: TDateISODate,
-  mottattEksternBestemmendeFravaersdag: TDateISODate
+  mottattBestemmendeFravaersdag?: TDateISODate,
+  mottattEksternBestemmendeFravaersdag?: TDateISODate
 ): Date {
   if (mottattBestemmendeFravaersdag) {
     if (
