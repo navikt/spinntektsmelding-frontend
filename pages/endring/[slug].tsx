@@ -36,6 +36,7 @@ import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 import { LonnISykefravaeret, Periode, YesNo } from '../../state/state';
 import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
+import { TDateISODate } from '../../state/MottattData';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -96,7 +97,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       state.harRefusjonEndringer
     ]
   );
-  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const [bestemmendeFravaersdag, mottattBestemmendeFravaersdag, mottattEksternBestemmendeFravaersdag] = useBoundStore(
+    (state) => [
+      state.bestemmendeFravaersdag,
+      state.mottattBestemmendeFravaersdag,
+      state.mottattEksternBestemmendeFravaersdag
+    ]
+  );
 
   const endringAarsak: EndringAarsak = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
 
@@ -236,7 +243,11 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
-  const forsteFravaersdag = foreslaattBestemmendeFravaersdag;
+  const forsteFravaersdag = finnFoersteFravaersdag(
+    foreslaattBestemmendeFravaersdag,
+    mottattBestemmendeFravaersdag,
+    mottattEksternBestemmendeFravaersdag
+  );
 
   const sendInnDelvisSkjema = useSendInnDelvisSkjema(setIngenTilgangOpen, amplitudeComponent, setError);
 
@@ -551,6 +562,23 @@ function mapEndringsAarsakPeriodeTilPeriode(skjemaData: z.infer<any>): Periode[]
     tom: parseIsoDate(periode.tom),
     id: periode.fom + '-' + periode.tom
   }));
+}
+
+export function finnFoersteFravaersdag(
+  foreslaattBestemmendeFravaersdag: Date,
+  mottattBestemmendeFravaersdag?: TDateISODate,
+  mottattEksternBestemmendeFravaersdag?: TDateISODate
+): Date {
+  if (mottattBestemmendeFravaersdag) {
+    if (
+      mottattEksternBestemmendeFravaersdag &&
+      isBefore(parseIsoDate(mottattEksternBestemmendeFravaersdag), parseIsoDate(mottattBestemmendeFravaersdag))
+    ) {
+      return parseIsoDate(mottattEksternBestemmendeFravaersdag);
+    }
+    return parseIsoDate(mottattBestemmendeFravaersdag);
+  }
+  return foreslaattBestemmendeFravaersdag;
 }
 
 export async function getServerSideProps(context: any) {
