@@ -280,7 +280,7 @@ const schema = z.object({
   sykmeldingsperioder: SykPeriodeListeSchema,
   agp: z.object({
     perioder: z.array(SykPeriodeSchema),
-    egenmeldinger: z.union([z.array(PeriodeSchema), z.tuple([])]),
+    egenmeldinger: z.array(PeriodeSchema).or(z.tuple([])),
     redusertLoennIAgp: z.nullable(
       z.object({
         beloep: z.number().min(0),
