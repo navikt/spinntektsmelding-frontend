@@ -70,9 +70,12 @@ export const toLocalIso = (val: Date) => {
   return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
 };
 
-const datoManglerFeilmelding = { required_error: 'Vennligst fyll inn fra dato' };
+const datoManglerFeilmelding = {
+  required_error: 'Vennligst fyll inn fra dato',
+  invalid_type_error: 'Dette er ikke en dato'
+};
 
-const PeriodeSchema = z
+const SykPeriodeSchema = z
   .object({
     fom: z
       .date({
@@ -86,6 +89,39 @@ const PeriodeSchema = z
         invalid_type_error: 'Dette er ikke en dato'
       })
       .transform((val) => toLocalIso(val))
+  })
+  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
+
+const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => {
+  for (let i = 0; i < val.length - 1; i++) {
+    const tom = new Date(val[i].tom);
+    const fom = new Date(val[i + 1].fom);
+    const forskjellMs = Number(tom) - Number(fom);
+    const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
+    if (forskjellDager > 16) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: feiltekster.FOR_MANGE_DAGER_MELLOM
+      });
+    }
+  }
+  return val;
+});
+
+const PeriodeSchema = z
+  .object({
+    fom: z
+      .string({
+        required_error: 'Vennligst fyll inn fra dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+      .date(),
+    tom: z
+      .string({
+        required_error: 'Vennligst fyll inn til dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+      .date()
   })
   .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
 
@@ -104,6 +140,12 @@ const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
   }
   return val;
 });
+const DatoValideringSchema = z
+  .string({
+    required_error: 'Vennligst fyll inn dato',
+    invalid_type_error: 'Dette er ikke en dato'
+  })
+  .date();
 
 export const PersonnummerSchema = z
   .string()
@@ -156,12 +198,12 @@ const EndringAarsakNyansattSchema = z.object({
 
 const EndringAarsakNyStillingSchema = z.object({
   aarsak: z.literal('NyStilling'),
-  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
+  gjelderFra: DatoValideringSchema
 });
 
 const EndringAarsakNyStillingsprosentSchema = z.object({
   aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
+  gjelderFra: DatoValideringSchema
 });
 
 const EndringAarsakPermisjonSchema = z.object({
@@ -181,13 +223,13 @@ const EndringAarsakSykefravaerSchema = z.object({
 
 const EndringAarsakTariffendringSchema = z.object({
   aarsak: z.literal('Tariffendring'),
-  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val)),
-  bleKjent: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
+  gjelderFra: DatoValideringSchema,
+  bleKjent: DatoValideringSchema
 });
 
 const EndringAarsakVarigLoennsendringSchema = z.object({
   aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val))
+  gjelderFra: DatoValideringSchema
 });
 
 export const EndringAarsakSchema = z.discriminatedUnion(
@@ -235,9 +277,9 @@ const schema = z.object({
     orgnr: OrganisasjonsnummerSchema,
     tlf: telefonNummerSchema
   }),
-  sykmeldingsperioder: PeriodeListeSchema,
+  sykmeldingsperioder: SykPeriodeListeSchema,
   agp: z.object({
-    perioder: z.array(PeriodeSchema),
+    perioder: z.array(SykPeriodeSchema),
     egenmeldinger: z.union([z.array(PeriodeSchema), z.tuple([])]),
     redusertLoennIAgp: z.nullable(
       z.object({

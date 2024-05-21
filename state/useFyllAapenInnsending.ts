@@ -43,6 +43,8 @@ export default function useFyllAapenInnsending() {
   return (skjemaData: any) => {
     const endringAarsak: EndringAarsak = bruttoinntekt.endringAarsak;
 
+    console.log('endringAarsak', endringAarsak);
+
     const innsending = validerAapenInnsending({
       sykmeldtFnr: identitetsnummer,
       avsender: {

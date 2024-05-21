@@ -51,6 +51,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
     const validerteData = fyllAapenInnsending(skjemaData);
 
+    console.log('validerteData', validerteData);
+
     const hasErrors = validerteData.success !== true;
 
     if (hasErrors || !opplysningerBekreftet) {
