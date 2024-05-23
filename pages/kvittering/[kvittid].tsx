@@ -93,7 +93,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
-    if (paakrevdeOpplysningstyper.length === 3) {
+    if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
       if (isValidUUID(kvitteringSlug)) {
         router.push(`/${kvitteringSlug}`);
       }
