@@ -8,6 +8,7 @@ import { logger } from '@navikt/next-logger';
 import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
+import isValidUUID from './isValidUUID';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -89,7 +90,11 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
       fyllFeilmeldinger([]);
 
-      return fetch(`${environment.innsendingAGInitiertUrl}`, {
+      const URI = isValidUUID(pathSlug)
+        ? `${environment.innsendingAGInitiertUrl}/${pathSlug}`
+        : environment.innsendingAGInitiertUrl;
+
+      return fetch(URI, {
         method: 'POST',
         body: JSON.stringify(validerteData.data),
         headers: {

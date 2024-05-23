@@ -25,7 +25,7 @@ import ButtonPrint from '../../../components/ButtonPrint';
 
 import ButtonEndre from '../../../components/ButtonEndre';
 import formatDate from '../../../utils/formatDate';
-import { use, useEffect } from 'react';
+import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
@@ -46,7 +46,6 @@ import { MottattPeriode } from '../../../state/MottattData';
 import useKvitteringInit from '../../../state/useKvitteringInit';
 import AapenInnsending from '../../../validators/validerAapenInnsending';
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
-import { stat } from 'fs';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
