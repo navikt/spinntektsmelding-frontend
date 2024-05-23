@@ -80,7 +80,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     kvitteringInit(kvittering);
     // Må lagre data som kan endres i hovedskjema - Slutt
 
-    if (paakrevdeOpplysningstyper.length === 3) {
+    if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
       if (isValidUUID(kvitteringSlug)) {
         router.push(`/${kvitteringSlug}`);
       }
