@@ -1,4 +1,4 @@
-import handler from './[postId]';
+import handler from './[postid]';
 
 export const config = {
   api: {
