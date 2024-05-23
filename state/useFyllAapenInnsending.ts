@@ -71,7 +71,7 @@ export default function useFyllAapenInnsending() {
                 beloep: fullLonnIArbeidsgiverPerioden?.utbetalt,
                 begrunnelse: fullLonnIArbeidsgiverPerioden?.begrunnelse
               }
-            : undefined
+            : null
       },
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt!,

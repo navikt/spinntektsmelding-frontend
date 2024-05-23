@@ -65,6 +65,7 @@ export default function useKvitteringInit() {
 
   return async (kvitteringsData: KvitteringInit) => {
     let jsonData: KvitteringSkjema;
+    if (!kvitteringsData) return;
 
     if (kvitteringsData.kvitteringEkstern && kvitteringsData.kvitteringEkstern !== null) {
       setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);

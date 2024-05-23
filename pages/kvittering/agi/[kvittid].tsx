@@ -189,9 +189,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.utbetalerFullLønn ? 'Ja' : 'Nei';
   } else {
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
-    fullLoennIArbeidsgiverPerioden.status = kvitteringData.agp.redusertLoennIAgp.beloep ? 'Ja' : 'Nei';
-    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData.agp.redusertLoennIAgp.beloep;
-    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData.agp.redusertLoennIAgp.begrunnelse;
+    fullLoennIArbeidsgiverPerioden.status = kvitteringData.agp.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringData.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
+    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData.agp.redusertLoennIAgp?.beloep;
+    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData.agp.redusertLoennIAgp?.begrunnelse;
+
+    console.log('fullLoennIArbeidsgiverPerioden', fullLoennIArbeidsgiverPerioden);
   }
 
   let loenn = { status: '', beloep: 0 };
@@ -202,8 +204,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     };
   } else {
     loenn = {
-      status: kvitteringData.agp.redusertLoennIAgp.beloep ? 'Ja' : 'Nei',
-      beloep: kvitteringData.agp.redusertLoennIAgp.beloep
+      status: kvitteringData.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei',
+      beloep: kvitteringData.agp.redusertLoennIAgp?.beloep
     };
   }
 
