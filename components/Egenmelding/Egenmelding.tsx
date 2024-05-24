@@ -8,7 +8,7 @@ import ButtonEndre from '../ButtonEndre';
 import { useMemo } from 'react';
 import Feilmelding from '../Feilmelding';
 import logEvent from '../../utils/logEvent';
-import { subDays } from 'date-fns';
+import { addDays, differenceInCalendarDays, isAfter, isBefore, isValid, subDays } from 'date-fns';
 import ButtonTilbakestill from '../ButtonTilbakestill';
 import EgenmeldingLoader from './EgenmeldingLoader';
 import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
@@ -94,13 +94,41 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<Ege
   };
 
   const sisteGyldigeEgenmeldingDato = useMemo(() => {
+    const totaltAntallEgenmeldingsdagerDager =
+      egenmeldingsperioder?.reduce((acc, periode) => {
+        if (!isValid(periode.fom) || !isValid(periode.tom)) {
+          return acc;
+        }
+
+        const dagerIPeriode = differenceInCalendarDays(periode.tom, periode.fom) + 1;
+        return acc + dagerIPeriode;
+      }, 0) || 0;
+
+    let egenmeldingDag =
+      egenmeldingsperioder
+        ?.filter((periode) => periode.fom && periode.tom)
+        .toSorted((a, b) => (isBefore(a.fom || new Date(), b.fom || new Date()) ? 1 : -1))?.[0]?.tom || new Date();
+    egenmeldingDag = addDays(
+      egenmeldingDag,
+      totaltAntallEgenmeldingsdagerDager < 16 ? 17 - totaltAntallEgenmeldingsdagerDager : 16
+    );
+
+    const bareFomPeriode = egenmeldingsperioder?.find((periode) => periode.fom && !periode.tom);
+
+    if (bareFomPeriode) {
+      egenmeldingDag = addDays(bareFomPeriode.fom, 15 - totaltAntallEgenmeldingsdagerDager);
+    }
+
     const sortertArbeidsgiverperiode = arbeidsgiverperioder
       ? [...arbeidsgiverperioder].sort((a, b) => ((a.fom || new Date()) > (b.fom || new Date()) ? -1 : 1))
       : [];
-    return sortertArbeidsgiverperiode && sortertArbeidsgiverperiode?.[0]?.tom
-      ? sortertArbeidsgiverperiode?.[0]?.tom
-      : new Date();
-  }, [arbeidsgiverperioder]);
+    const agpDag =
+      sortertArbeidsgiverperiode && sortertArbeidsgiverperiode?.[sortertArbeidsgiverperiode.length - 1]?.tom
+        ? sortertArbeidsgiverperiode?.[0]?.tom
+        : new Date();
+
+    return isBefore(agpDag, egenmeldingDag) ? agpDag : egenmeldingDag;
+  }, [arbeidsgiverperioder, egenmeldingsperioder]);
 
   const ikkeEgenmeldingPerioder = !egenmeldingsperioder || egenmeldingsperioder.length === 0;
 
@@ -187,4 +215,8 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<Ege
       </div>
     </div>
   );
+}
+
+function daysBetween(fom: Date | undefined, tom: Date | undefined) {
+  throw new Error('Function not implemented.');
 }
