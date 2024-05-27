@@ -53,6 +53,12 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       return false;
     }
 
+    if (isValidUUID(pathSlug)) {
+      skjemaData.aarsakInnsending = 'Endring';
+    } else {
+      skjemaData.aarsakInnsending = 'Ny';
+    }
+
     const validerteData = fyllAapenInnsending(skjemaData);
 
     console.log('validerteData', validerteData);
@@ -93,10 +99,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       const URI = isValidUUID(pathSlug)
         ? `${environment.innsendingAGInitiertUrl}/${pathSlug}`
         : environment.innsendingAGInitiertUrl;
-
-      if (isValidUUID(pathSlug)) {
-        validerteData.data.aarsakInnsending = 'Endring';
-      }
 
       return fetch(URI, {
         method: 'POST',
