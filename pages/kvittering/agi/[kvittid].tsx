@@ -44,7 +44,7 @@ import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../state/MottattData';
 import useKvitteringInit from '../../../state/useKvitteringInit';
-import AapenInnsending from '../../../validators/validerAapenInnsending';
+
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
@@ -61,6 +61,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
 
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
+  const [navn, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
+    state.navn,
+    state.virksomhetsnavn,
+    state.innsenderNavn
+  ]);
 
   const kvitteringEksterntSystem = kvittering?.kvitteringEkstern;
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
@@ -78,6 +83,24 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const bestemmendeFravaersdag = kvitteringDokument?.bestemmendeFraværsdag;
   const arbeidsgiverperioder = dataFraBackend ? kvitteringDokument?.arbeidsgiverperioder : kvitteringData.agp.perioder;
   console.log('kvitteringData', kvitteringData);
+
+  const personData = dataFraBackend
+    ? {
+        navn: kvitteringDokument.fulltNavn,
+        identitetsnummer: kvitteringDokument.identitetsnummer,
+        orgnrUnderenhet: kvitteringDokument.orgnrUnderenhet,
+        virksomhetNavn: kvitteringDokument.virksomhetNavn,
+        innsenderNavn: kvitteringDokument.innsenderNavn,
+        innsenderTelefonNr: kvitteringDokument.telefonnummer
+      }
+    : {
+        navn: navn,
+        identitetsnummer: kvitteringData.sykmeldtFnr,
+        orgnrUnderenhet: kvitteringData.avsender.orgnr,
+        virksomhetNavn: virksomhetsnavn,
+        innsenderNavn: innsenderNavn,
+        innsenderTelefonNr: kvitteringData.avsender.tlf
+      };
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
@@ -107,21 +130,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     innsendingstidspunkt =
       tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
   }
-
-  // const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
   const ingenArbeidsgiverperioder = arbeidsgiverperioder && arbeidsgiverperioder.length === 0;
 
-  // const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
-  // const paakrevdOpplysninger = kvitteringDokument.forespurtData;
   const paakrevdeOpplysninger = ['arbeidsgiverperiode', 'naturalytelser', 'refusjon'];
-  // const trengerArbeidsgiverperiode =
-  //   !paakrevdeOpplysninger ||
-  //   paakrevdeOpplysninger.length === 0 ||
-  //   paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
-
-  // const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
-  //   ? parseIsoDate(kvitteringDokument.bestemmendeFraværsdag)
-  //   : foreslaattBestemmendeFravaersdag;
 
   const visningBestemmendeFravaersdag = dataFraBackend
     ? parseIsoDate(bestemmendeFravaersdag)
@@ -179,10 +190,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   });
 
   let fullLoennIArbeidsgiverPerioden;
-  // if (dataFraBackend) {
-  //   fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden ?? {};
-  //   fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.utbetalerFullLønn ? 'Ja' : 'Nei';
-  // }
 
   if (dataFraBackend) {
     fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden ?? {};
@@ -260,14 +267,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             })
         : refusjonEndringer;
   }
-  // const refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
-  //   return (
-  //     !endring.dato ||
-  //     !bestemmendeFravaersdag ||
-  //     !gammeltSkjaeringstidspunkt ||
-  //     (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato!, gammeltSkjaeringstidspunkt))
-  //   );
-  // });
 
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
@@ -294,14 +293,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           )}
           {!kvitteringEksterntSystem?.avsenderSystem && (
             <>
-              <PersonVisning
-                navn={kvitteringDokument.fulltNavn}
-                identitetsnummer={kvitteringDokument.identitetsnummer}
-                orgnrUnderenhet={kvitteringDokument.orgnrUnderenhet}
-                virksomhetNavn={kvitteringDokument.virksomhetNavn}
-                innsenderNavn={kvitteringDokument.innsenderNavn}
-                innsenderTelefonNr={kvitteringDokument.telefonnummer}
-              />
+              <PersonVisning {...personData} />
               <Skillelinje />
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (
