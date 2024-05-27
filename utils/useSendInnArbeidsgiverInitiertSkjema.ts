@@ -94,6 +94,10 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         ? `${environment.innsendingAGInitiertUrl}/${pathSlug}`
         : environment.innsendingAGInitiertUrl;
 
+      if (isValidUUID(pathSlug)) {
+        validerteData.data.aarsakInnsending = 'Endring';
+      }
+
       return fetch(URI, {
         method: 'POST',
         body: JSON.stringify(validerteData.data),
