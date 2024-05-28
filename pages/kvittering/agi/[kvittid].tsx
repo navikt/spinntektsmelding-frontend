@@ -31,7 +31,7 @@ import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isEqual, isValid } from 'date-fns';
 import env from '../../../config/environment';
-import { Periode, YesNo } from '../../../state/state';
+import { LonnISykefravaeret, Periode, RefusjonskravetOpphoerer, YesNo } from '../../../state/state';
 import skjemaVariant from '../../../config/skjemavariant';
 
 import KvitteringAnnetSystem from '../../../components/KvitteringAnnetSystem';
@@ -70,7 +70,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringEksterntSystem = kvittering?.kvitteringEkstern;
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
-  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
+  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const dataFraBackend = !!kvittering?.kvitteringDokument;
 
   const kvitteringInit = useKvitteringInit();
@@ -82,7 +82,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   // const fravaersperioder = kvitteringDokument?.fraværsperioder;
   const bestemmendeFravaersdag = kvitteringDokument?.bestemmendeFraværsdag;
   const arbeidsgiverperioder = dataFraBackend ? kvitteringDokument?.arbeidsgiverperioder : kvitteringData.agp.perioder;
-  console.log('kvitteringData', kvitteringData);
+  console.log('lonnISykefravaeret', lonnISykefravaeret);
 
   const personData = dataFraBackend
     ? {
@@ -203,20 +203,20 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     console.log('fullLoennIArbeidsgiverPerioden', fullLoennIArbeidsgiverPerioden);
   }
 
-  let loenn = { status: '', beloep: 0 };
+  let loenn: LonnISykefravaeret = { status: undefined, beloep: 0 };
   if (dataFraBackend) {
     loenn = {
-      status: kvitteringDokument.refusjon?.utbetalerHeleEllerDeler ? 'Ja' : ('Nei' as YesNo),
+      status: kvitteringDokument.refusjon?.utbetalerHeleEllerDeler ? 'Ja' : 'Nei',
       beloep: kvitteringDokument.refusjon?.refusjonPrMnd
     };
   } else {
     loenn = {
-      status: kvitteringData.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei',
-      beloep: kvitteringData.agp.redusertLoennIAgp?.beloep
+      status: kvitteringData.refusjon?.beloepPerMaaned ? 'Ja' : 'Nei',
+      beloep: kvitteringData.refusjon?.beloepPerMaaned
     };
   }
 
-  let refusjonskravetOpphoerer = { status: '', opphoersdato: null };
+  let refusjonskravetOpphoerer: RefusjonskravetOpphoerer = { status: undefined, opphoersdato: undefined };
   if (dataFraBackend) {
     refusjonskravetOpphoerer = {
       status: kvitteringDokument?.refusjon?.refusjonOpphører ? 'Ja' : ('Nei' as YesNo),
@@ -224,8 +224,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     };
   } else {
     refusjonskravetOpphoerer = {
-      status: kvitteringData.refusjon.beloepPerMaaned ? 'Ja' : 'Nei',
-      opphoersdato: parseIsoDate(kvitteringData.refusjon.sluttdato)
+      status: kvitteringData.refusjon?.sluttdato ? 'Ja' : 'Nei',
+      opphoersdato: kvitteringData.refusjon?.sluttdato ? parseIsoDate(kvitteringData.refusjon?.sluttdato) : undefined
     };
   }
 
@@ -236,10 +236,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       beloep: endring.beløp
     }));
   } else {
-    refusjonEndringer = kvitteringData.refusjon.endringer.map((endring) => ({
-      dato: parseIsoDate(endring.startDato),
-      beloep: endring.beloep
-    }));
+    refusjonEndringer = kvitteringData.refusjon?.endringer
+      ? kvitteringData.refusjon?.endringer.map((endring) => ({
+          dato: parseIsoDate(endring.startDato),
+          beloep: endring.beloep
+        }))
+      : [];
   }
   let refusjonEndringerUtenSkjaeringstidspunkt = [];
   if (dataFraBackend) {
@@ -370,7 +372,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 </>
               )}
               <LonnUnderSykefravaeret
-                lonn={loenn}
+                loenn={loenn}
                 refusjonskravetOpphoerer={refusjonskravetOpphoerer}
                 harRefusjonEndringer={
                   harGyldigeRefusjonEndringer(refusjonEndringerUtenSkjaeringstidspunkt) ? 'Ja' : 'Nei'

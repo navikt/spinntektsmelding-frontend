@@ -24,6 +24,7 @@ export default function useFyllAapenInnsending() {
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
+  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
@@ -85,7 +86,6 @@ export default function useFyllAapenInnsending() {
           : [],
         endringAarsak: endringAarsak ?? null
       },
-<<<<<<< HEAD
       refusjon:
         lonnISykefravaeret?.status === 'Ja'
           ? {
@@ -94,13 +94,6 @@ export default function useFyllAapenInnsending() {
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : undefined,
-=======
-      refusjon: {
-        beloepPerMaaned: bruttoinntekt.bruttoInntekt!,
-        sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
-        endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
-      },
->>>>>>> 52f1d64 (Ny eller endring)
       aarsakInnsending: skjemaData.aarsakInnsending
     });
 
