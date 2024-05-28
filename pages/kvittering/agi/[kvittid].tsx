@@ -81,8 +81,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   // const egenmeldingsperioder = kvitteringDokument?.egenmeldingsperioder;
   // const fravaersperioder = kvitteringDokument?.fraværsperioder;
   const bestemmendeFravaersdag = kvitteringDokument?.bestemmendeFraværsdag;
-  const arbeidsgiverperioder = dataFraBackend ? kvitteringDokument?.arbeidsgiverperioder : kvitteringData.agp.perioder;
-  console.log('lonnISykefravaeret', lonnISykefravaeret);
+  const arbeidsgiverperioder = dataFraBackend
+    ? kvitteringDokument?.arbeidsgiverperioder
+    : kvitteringData?.agp?.perioder;
 
   const personData = dataFraBackend
     ? {
