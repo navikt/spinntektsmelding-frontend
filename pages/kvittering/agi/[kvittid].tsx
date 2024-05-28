@@ -55,7 +55,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const searchParams = useSearchParams();
 
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
-  const kvitteringData: AapenInnsending = useBoundStore((state) => state.kvitteringData);
+  const kvitteringData = useBoundStore((state) => state.kvitteringData);
 
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
@@ -71,7 +71,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const dataFraBackend = !!kvittering?.kvitteringDokument;
+  const dataFraBackend = !!kvittering;
 
   const kvitteringInit = useKvitteringInit();
 
