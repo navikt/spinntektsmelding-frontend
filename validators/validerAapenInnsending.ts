@@ -111,17 +111,17 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
 const PeriodeSchema = z
   .object({
     fom: z
-      .string({
+      .date({
         required_error: 'Vennligst fyll inn fra dato',
         invalid_type_error: 'Dette er ikke en dato'
       })
-      .date(),
+      .transform((val) => toLocalIso(val)),
     tom: z
-      .string({
+      .date({
         required_error: 'Vennligst fyll inn til dato',
         invalid_type_error: 'Dette er ikke en dato'
       })
-      .date()
+      .transform((val) => toLocalIso(val))
   })
   .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
 
@@ -140,12 +140,7 @@ const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
   }
   return val;
 });
-const DatoValideringSchema = z
-  .string({
-    required_error: 'Vennligst fyll inn dato',
-    invalid_type_error: 'Dette er ikke en dato'
-  })
-  .date();
+const DatoValideringSchema = z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val));
 
 export const PersonnummerSchema = z
   .string()

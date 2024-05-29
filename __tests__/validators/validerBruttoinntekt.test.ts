@@ -1,5 +1,6 @@
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { CompleteState } from '../../state/useBoundStore';
+import parseIsoDate from '../../utils/parseIsoDate';
 import validerBruttoinntekt from '../../validators/validerBruttoinntekt';
 
 describe.concurrent('validerBruttoinntekt', () => {
@@ -159,7 +160,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Ferie,
-          perioder: [{ fom: '2022-01-01' }]
+          perioder: [{ fom: parseIsoDate('2022-01-01') }]
         }
       }
     };
@@ -181,7 +182,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Ferie,
-          perioder: [{ tom: '2022-01-01' }]
+          perioder: [{ tom: parseIsoDate('2022-01-01') }]
         }
       }
     };
@@ -220,7 +221,10 @@ describe.concurrent('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring, gjelderFra: '2002-02-02' }
+        endringAarsak: {
+          aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
+          gjelderFra: parseIsoDate('2002-02-02')
+        }
       },
       bestemmendeFravaersdag: new Date(2002, 1, 1)
     };
@@ -242,7 +246,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
-          gjelderFra: '2002-01-02'
+          gjelderFra: parseIsoDate('2002-01-02')
         }
       },
       bestemmendeFravaersdag: new Date(2002, 1, 3)
@@ -299,14 +303,17 @@ describe.concurrent('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permisjon, perioder: [{ fom: '2022-02-02' }] }
+        endringAarsak: {
+          aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
+          perioder: [{ fom: parseIsoDate('2022-02-02') }]
+        }
       }
     };
 
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-permisjon-tom-2022-02-02-undefined'
+        felt: 'bruttoinntekt-permisjon-tom-1643756400000-undefined'
       }
     ];
 
@@ -318,14 +325,17 @@ describe.concurrent('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permisjon, perioder: [{ tom: '2022-02-02' }] }
+        endringAarsak: {
+          aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
+          perioder: [{ tom: parseIsoDate('2022-02-02') }]
+        }
       }
     };
 
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permisjon-fom-undefined-2022-02-02'
+        felt: 'bruttoinntekt-permisjon-fom-undefined-1643756400000'
       }
     ];
 
@@ -378,14 +388,17 @@ describe.concurrent('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permittering, perioder: [{ fom: '2022-02-02' }] }
+        endringAarsak: {
+          aarsak: begrunnelseEndringBruttoinntekt.Permittering,
+          perioder: [{ fom: parseIsoDate('2022-02-02') }]
+        }
       }
     };
 
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-permittering-tom-2022-02-02-undefined'
+        felt: 'bruttoinntekt-permittering-tom-1643756400000-undefined'
       }
     ];
 
@@ -397,14 +410,17 @@ describe.concurrent('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permittering, perioder: [{ tom: '2022-02-02' }] }
+        endringAarsak: {
+          aarsak: begrunnelseEndringBruttoinntekt.Permittering,
+          perioder: [{ tom: parseIsoDate('2022-02-02') }]
+        }
       }
     };
 
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permittering-fom-undefined-2022-02-02'
+        felt: 'bruttoinntekt-permittering-fom-undefined-1643756400000'
       }
     ];
 
@@ -585,7 +601,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
       manueltKorrigert: true,
       endringAarsak: {
         aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
-        perioder: [{ tom: '2022-01-02' }]
+        perioder: [{ tom: parseIsoDate('2022-01-02') }]
       }
     }
   };
@@ -593,26 +609,29 @@ it('should return an error when Sykefravaer fom is missing', () => {
   const expected = [
     {
       code: 'MANGLER_FRA',
-      felt: 'bruttoinntekt-sykefravaerperioder-fom-undefined-2022-01-02'
+      felt: 'bruttoinntekt-sykefravaerperioder-fom-undefined-1641078000000'
     }
   ];
 
   expect(validerBruttoinntekt(input)).toEqual(expected);
 });
 
-it('should return an error when permittering tom is missing', () => {
+it('should return an error when permittering tom is missing, sykefravær', () => {
   const input: CompleteState = {
     bruttoinntekt: {
       bruttoInntekt: 123,
       manueltKorrigert: true,
-      endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer, perioder: [{ fom: '2022-01-02' }] }
+      endringAarsak: {
+        aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
+        perioder: [{ fom: parseIsoDate('2022-01-02') }]
+      }
     }
   };
 
   const expected = [
     {
       code: 'MANGLER_TIL',
-      felt: 'bruttoinntekt-sykefravaerperioder-tom-2022-01-02-undefined'
+      felt: 'bruttoinntekt-sykefravaerperioder-tom-1641078000000-undefined'
     }
   ];
 

@@ -137,24 +137,24 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       produce((state) => {
         state.bruttoinntekt.endringAarsak.perioder =
           periode?.map((periode) => ({
-            fom: formatIsoDate(periode.fom),
-            tom: formatIsoDate(periode.tom)
+            fom: periode.fom,
+            tom: periode.tom
           })) || [];
 
         return state;
       })
     ),
-  setEndringAarsakGjelderFra: (endringsdato) =>
+  setEndringAarsakGjelderFra: (endringDato) =>
     set(
       produce((state) => {
-        state.bruttoinntekt.endringAarsak.gjelderFra = formatIsoDate(endringsdato);
+        state.bruttoinntekt.endringAarsak.gjelderFra = endringDato;
         return state;
       })
     ),
   setEndringAarsakBleKjent: (kjentFraDato?: Date) =>
     set(
       produce((state) => {
-        state.bruttoinntekt.endringAarsak.bleKjent = formatIsoDate(kjentFraDato);
+        state.bruttoinntekt.endringAarsak.bleKjent = kjentFraDato;
         return state;
       })
     ),
@@ -320,7 +320,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt = {
           bruttoInntekt: undefined,
           manueltKorrigert: false,
-          endringsaarsak: undefined,
           endringAarsak: undefined
         };
 

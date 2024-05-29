@@ -43,8 +43,6 @@ export default function useFyllAapenInnsending() {
   return (skjemaData: any) => {
     const endringAarsak: EndringAarsak = bruttoinntekt.endringAarsak;
 
-    console.log('endringAarsak', endringAarsak);
-
     const innsending = validerAapenInnsending({
       sykmeldtFnr: identitetsnummer,
       avsender: {
@@ -84,12 +82,15 @@ export default function useFyllAapenInnsending() {
           : [],
         endringAarsak: endringAarsak ?? null
       },
-      refusjon: {
-        beloepPerMaaned: bruttoinntekt.bruttoInntekt!,
-        sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
-        endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
-      },
-      aarsakInnsending: 'Ny'
+      refusjon:
+        lonnISykefravaeret?.status === 'Ja'
+          ? {
+              beloepPerMaaned: bruttoinntekt.bruttoInntekt!,
+              sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
+              endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
+            }
+          : undefined,
+      aarsakInnsending: skjemaData.aarsakInnsending
     });
 
     return innsending;

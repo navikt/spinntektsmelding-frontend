@@ -204,11 +204,15 @@ export default function Aarsaksvelger({
   );
 }
 
-export function periodeMapper(perioder: { fom: string; tom: string }[]): Periode[] {
+export function periodeMapper(perioder: { fom: Date; tom: Date }[]): Periode[] {
   if (!perioder) return [];
-  return perioder.map((periode) => ({
-    fom: parseIsoDate(periode.fom),
-    tom: parseIsoDate(periode.tom),
-    id: periode.fom + '-' + periode.tom
-  }));
+  return perioder.map((periode) => {
+    const fomId = periode.fom ? periode.fom.getTime() : 'undefined';
+    const tomId = periode.tom ? periode.tom.getTime() : 'undefined';
+    return {
+      fom: periode.fom,
+      tom: periode.tom,
+      id: fomId + '-' + tomId
+    };
+  });
 }
