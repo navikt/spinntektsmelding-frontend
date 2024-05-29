@@ -46,7 +46,6 @@ import { MottattPeriode } from '../../../state/MottattData';
 import useKvitteringInit from '../../../state/useKvitteringInit';
 
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
-import { k } from 'vite/dist/node/types.d-aGj9QkWt';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -416,7 +415,12 @@ export async function getServerSideProps(context: any) {
   let kvittering = null;
 
   try {
-    kvittering = await hentKvitteringsdataSSR(kvittid);
+    let token = '';
+    if (context.req.headers.authorization) {
+      token = context.req.headers.authorization!.replace('Bearer ', '');
+    }
+
+    kvittering = await hentKvitteringsdataSSR(kvittid, token);
     kvittering!.status = 200;
   } catch (error: any) {
     console.error('Error fetching selvbestemt kvittering:', error);
