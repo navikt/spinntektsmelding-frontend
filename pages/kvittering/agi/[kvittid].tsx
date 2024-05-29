@@ -46,10 +46,12 @@ import { MottattPeriode } from '../../../state/MottattData';
 import useKvitteringInit from '../../../state/useKvitteringInit';
 
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
+import { k } from 'vite/dist/node/types.d-aGj9QkWt';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
-  kvittering
+  kvittering,
+  kvitteringStatus
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -415,14 +417,23 @@ export async function getServerSideProps(context: any) {
 
   try {
     kvittering = await hentKvitteringsdataSSR(kvittid);
-  } catch (error) {
-    kvittering = { data: null };
+    kvittering!.status = 200;
+  } catch (error: any) {
+    console.error('Error fetching selvbestemt kvittering:', error);
+    kvittering = { data: null, status: error.status };
+
+    if (error.status === 404) {
+      return {
+        notFound: true
+      };
+    }
   }
 
   return {
     props: {
       kvittid,
-      kvittering: kvittering?.data
+      kvittering: kvittering?.data,
+      kvitteringStatus: kvittering?.status
     }
   };
 }
