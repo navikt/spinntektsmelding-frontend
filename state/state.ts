@@ -1,3 +1,4 @@
+import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 
 export interface Periode {
