@@ -13,6 +13,7 @@ import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { nanoid } from 'nanoid';
+import formatIsoDate from '../../utils/formatIsoDate';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
@@ -207,12 +208,20 @@ export default function Aarsaksvelger({
 export function periodeMapper(perioder: { fom: Date; tom: Date }[]): Periode[] {
   if (!perioder) return [];
   return perioder.map((periode) => {
-    const fomId = periode.fom ? periode.fom.getTime() : 'undefined';
-    const tomId = periode.tom ? periode.tom.getTime() : 'undefined';
+    const fomId = periode.fom ? isoDate(periode.fom) : 'undefined';
+    const tomId = periode.tom ? isoDate(periode.tom) : 'undefined';
+
     return {
       fom: periode.fom,
       tom: periode.tom,
       id: fomId + '-' + tomId
     };
   });
+}
+
+function isoDate(date: Date | string): string {
+  if (typeof date === 'string') {
+    return date;
+  }
+  return formatIsoDate(date);
 }

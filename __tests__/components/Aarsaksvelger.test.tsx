@@ -210,7 +210,7 @@ describe('Aarsaksvelger', () => {
     expect(setPerioder).toHaveBeenCalledWith([
       {
         fom: parseIsoDate('2022-01-02'),
-        id: '1640991600000-1641337200000',
+        id: '2022-01-01-2022-01-05',
         tom: parseIsoDate('2022-01-05')
       }
     ]);
@@ -273,7 +273,7 @@ describe('Aarsaksvelger', () => {
     expect(setPerioderrr).toHaveBeenCalledWith([
       {
         fom: parseIsoDate('2022-01-02'),
-        id: '1640991600000-1641337200000',
+        id: '2022-01-01-2022-01-05',
         tom: parseIsoDate('2022-01-05')
       }
     ]);
@@ -303,7 +303,7 @@ describe('Aarsaksvelger', () => {
     expect(setPerioder).toHaveBeenCalledWith([
       {
         fom: parseIsoDate('2022-01-02'),
-        id: '1640991600000-1641337200000',
+        id: '2022-01-01-2022-01-05',
         tom: parseIsoDate('2022-01-05')
       }
     ]);
@@ -391,7 +391,7 @@ describe('Aarsaksvelger', () => {
     expect(setPerioder).toHaveBeenCalledWith([
       {
         fom: parseIsoDate('2022-01-02'),
-        id: '1640991600000-1641337200000',
+        id: '2022-01-01-2022-01-05',
         tom: parseIsoDate('2022-01-05')
       }
     ]);

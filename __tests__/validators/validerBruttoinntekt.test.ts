@@ -171,7 +171,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-ful-tom-1640995200000-undefined'
+        felt: 'bruttoinntekt-ful-tom-2022-01-01-undefined'
       }
     ];
 
@@ -193,7 +193,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-ful-fom-undefined-1640995200000'
+        felt: 'bruttoinntekt-ful-fom-undefined-2022-01-01'
       }
     ];
 
@@ -316,7 +316,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-permisjon-tom-1643760000000-undefined'
+        felt: 'bruttoinntekt-permisjon-tom-2022-02-02-undefined'
       }
     ];
 
@@ -338,7 +338,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permisjon-fom-undefined-1643760000000'
+        felt: 'bruttoinntekt-permisjon-fom-undefined-2022-02-02'
       }
     ];
 
@@ -401,7 +401,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-permittering-tom-1643760000000-undefined'
+        felt: 'bruttoinntekt-permittering-tom-2022-02-02-undefined'
       }
     ];
 
@@ -423,7 +423,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permittering-fom-undefined-1643760000000'
+        felt: 'bruttoinntekt-permittering-fom-undefined-2022-02-02'
       }
     ];
 
@@ -612,7 +612,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
   const expected = [
     {
       code: 'MANGLER_FRA',
-      felt: 'bruttoinntekt-sykefravaerperioder-fom-undefined-1641081600000'
+      felt: 'bruttoinntekt-sykefravaerperioder-fom-undefined-2022-01-02'
     }
   ];
 
@@ -634,7 +634,7 @@ it('should return an error when permittering tom is missing, sykefravær', () =>
   const expected = [
     {
       code: 'MANGLER_TIL',
-      felt: 'bruttoinntekt-sykefravaerperioder-tom-1641081600000-undefined'
+      felt: 'bruttoinntekt-sykefravaerperioder-tom-2022-01-02-undefined'
     }
   ];
 
