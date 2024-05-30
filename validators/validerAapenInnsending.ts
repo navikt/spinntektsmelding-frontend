@@ -3,7 +3,6 @@ import isFnrNumber from '../utils/isFnrNumber';
 import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
-import { PeriodeSchema } from './validerFulltSkjema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -109,6 +108,38 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
   return val;
 });
 
+const PeriodeSchema = z
+  .object({
+    fom: z
+      .date({
+        required_error: 'Vennligst fyll inn fra dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+      .transform((val) => toLocalIso(val)),
+    tom: z
+      .date({
+        required_error: 'Vennligst fyll inn til dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+      .transform((val) => toLocalIso(val))
+  })
+  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
+
+const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
+  for (let i = 0; i < val.length - 1; i++) {
+    const tom = new Date(val[i].tom);
+    const fom = new Date(val[i + 1].fom);
+    const forskjellMs = Number(tom) - Number(fom);
+    const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
+    if (forskjellDager > 16) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: feiltekster.FOR_MANGE_DAGER_MELLOM
+      });
+    }
+  }
+  return val;
+});
 const DatoValideringSchema = z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val));
 
 export const PersonnummerSchema = z
