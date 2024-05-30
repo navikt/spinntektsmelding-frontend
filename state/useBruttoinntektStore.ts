@@ -13,7 +13,6 @@ import { FeilReportElement } from './useStateInit';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import Router from 'next/router';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
-import formatIsoDate from '../utils/formatIsoDate';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
