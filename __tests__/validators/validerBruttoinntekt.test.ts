@@ -2,6 +2,9 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import { CompleteState } from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import validerBruttoinntekt from '../../validators/validerBruttoinntekt';
+import timezone_mock from 'timezone-mock';
+
+timezone_mock.register('UTC');
 
 describe.concurrent('validerBruttoinntekt', () => {
   it('should return an empty array when everything is OK', () => {
@@ -168,7 +171,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-ful-tom-1640991600000-undefined'
+        felt: 'bruttoinntekt-ful-tom-1640995200000-undefined'
       }
     ];
 
@@ -190,7 +193,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-ful-fom-undefined-1640991600000'
+        felt: 'bruttoinntekt-ful-fom-undefined-1640995200000'
       }
     ];
 
@@ -313,7 +316,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-permisjon-tom-1643756400000-undefined'
+        felt: 'bruttoinntekt-permisjon-tom-1643760000000-undefined'
       }
     ];
 
@@ -335,7 +338,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permisjon-fom-undefined-1643756400000'
+        felt: 'bruttoinntekt-permisjon-fom-undefined-1643760000000'
       }
     ];
 
@@ -398,7 +401,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-permittering-tom-1643756400000-undefined'
+        felt: 'bruttoinntekt-permittering-tom-1643760000000-undefined'
       }
     ];
 
@@ -420,7 +423,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permittering-fom-undefined-1643756400000'
+        felt: 'bruttoinntekt-permittering-fom-undefined-1643760000000'
       }
     ];
 
@@ -609,7 +612,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
   const expected = [
     {
       code: 'MANGLER_FRA',
-      felt: 'bruttoinntekt-sykefravaerperioder-fom-undefined-1641078000000'
+      felt: 'bruttoinntekt-sykefravaerperioder-fom-undefined-1641081600000'
     }
   ];
 
@@ -631,7 +634,7 @@ it('should return an error when permittering tom is missing, sykefravær', () =>
   const expected = [
     {
       code: 'MANGLER_TIL',
-      felt: 'bruttoinntekt-sykefravaerperioder-tom-1641078000000-undefined'
+      felt: 'bruttoinntekt-sykefravaerperioder-tom-1641081600000-undefined'
     }
   ];
 
