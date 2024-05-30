@@ -168,7 +168,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-ful-tom-2022-01-01-undefined'
+        felt: 'bruttoinntekt-ful-tom-1640991600000-undefined'
       }
     ];
 
@@ -190,7 +190,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-ful-fom-undefined-2022-01-01'
+        felt: 'bruttoinntekt-ful-fom-undefined-1640991600000'
       }
     ];
 
@@ -216,7 +216,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     expect(validerBruttoinntekt(input)).toEqual(expected);
   });
 
-  it('should return an error when varig lønnsendring date is afte bestemmend fraværsdag', () => {
+  it('should return an error when varig lønnsendring date is after bestemmende fraværsdag', () => {
     const input: CompleteState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
@@ -226,7 +226,7 @@ describe.concurrent('validerBruttoinntekt', () => {
           gjelderFra: parseIsoDate('2002-02-02')
         }
       },
-      bestemmendeFravaersdag: new Date(2002, 1, 1)
+      bestemmendeFravaersdag: parseIsoDate('2002-02-01')
     };
 
     const expected = [

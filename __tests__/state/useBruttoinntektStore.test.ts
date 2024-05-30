@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 import feiltekster from '../../utils/feiltekster';
 import { finnAktuelleInntekter, sorterInntekter } from '../../state/useBruttoinntektStore';
 import { HistoriskInntekt } from '../../state/state';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 const inputInntekt: number = 40000;
 const tidligereInntekt: Array<HistoriskInntekt> = [
@@ -284,10 +285,12 @@ describe('useBoundStore', () => {
       result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);
+    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([
+      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
+    ]);
   });
 
-  it('should setPerioder', () => {
+  it('should setPerioder, some other data', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -298,7 +301,9 @@ describe('useBoundStore', () => {
       result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);
+    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([
+      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
+    ]);
   });
 
   it('should setEndringAarsakGjelderFra', () => {
@@ -312,7 +317,7 @@ describe('useBoundStore', () => {
       result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
+    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual(parseIsoDate('2002-11-11'));
   });
 
   it('should setEndringAarsakGjelderFra', () => {
@@ -326,7 +331,7 @@ describe('useBoundStore', () => {
       result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
+    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual(parseIsoDate('2002-11-11'));
   });
 
   it('should setEndringAarsakBleKjent', () => {
@@ -340,10 +345,10 @@ describe('useBoundStore', () => {
       result.current.setEndringAarsakBleKjent(new Date(2002, 10, 11));
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.bleKjent).toEqual('2002-11-11');
+    expect(result.current.bruttoinntekt.endringAarsak.bleKjent).toEqual(parseIsoDate('2002-11-11'));
   });
 
-  it('should setEndringAarsakGjelderFra', () => {
+  it('should setEndringAarsakGjelderFra, 2', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -354,10 +359,10 @@ describe('useBoundStore', () => {
       result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
+    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual(parseIsoDate('2002-11-11'));
   });
 
-  it('should setEndringAarsakGjelderFra', () => {
+  it('should setEndringAarsakGjelderFra, 3', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -368,7 +373,7 @@ describe('useBoundStore', () => {
       result.current.setEndringAarsakGjelderFra(new Date(2002, 10, 11));
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual('2002-11-11');
+    expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual(parseIsoDate('2002-11-11'));
   });
 
   it('should setPerioder', () => {
@@ -382,7 +387,9 @@ describe('useBoundStore', () => {
       result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([{ fom: '2002-11-11', tom: '2002-11-11' }]);
+    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([
+      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
+    ]);
   });
 
   it('should setTidligereInntekter', () => {

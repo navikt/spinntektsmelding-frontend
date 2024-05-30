@@ -98,8 +98,8 @@ describe('useKvitteringInit', () => {
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.egenmeldingsperioder).toEqual([]);
     expect(result.current.harRefusjonEndringer).toBe('Ja');
-    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual('2023-02-24');
-    expect(result.current.bruttoinntekt.endringAarsak?.bleKjent).toEqual('2023-03-31');
+    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.bruttoinntekt.endringAarsak?.bleKjent).toEqual(parseIsoDate('2023-03-31'));
   });
 
   it('should fill the state with ferie stuff', async () => {
@@ -119,8 +119,8 @@ describe('useKvitteringInit', () => {
 
     expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
       {
-        fom: '2023-02-24',
-        tom: '2023-03-31'
+        fom: parseIsoDate('2023-02-24'),
+        tom: parseIsoDate('2023-03-31')
       }
     ]);
   });
@@ -140,7 +140,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual('2023-02-24');
+    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
   });
 
   it('should fill the state with permisjon stuff', async () => {
@@ -160,8 +160,8 @@ describe('useKvitteringInit', () => {
 
     expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
       {
-        fom: '2023-02-24',
-        tom: '2023-03-31'
+        fom: parseIsoDate('2023-02-24'),
+        tom: parseIsoDate('2023-03-31')
       }
     ]);
   });
@@ -183,8 +183,8 @@ describe('useKvitteringInit', () => {
 
     expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
       {
-        fom: '2023-02-24',
-        tom: '2023-03-31'
+        fom: parseIsoDate('2023-02-24'),
+        tom: parseIsoDate('2023-03-31')
       }
     ]);
   });
@@ -204,7 +204,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual('2023-02-24');
+    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
   });
 
   it('should fill the state with NyStillingsprosent stuff', async () => {
@@ -222,7 +222,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual('2023-02-24');
+    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
   });
 
   it('should fill the state with syk stuff', async () => {
@@ -242,12 +242,12 @@ describe('useKvitteringInit', () => {
 
     expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
       {
-        fom: '2023-02-06',
-        tom: '2023-02-10'
+        fom: parseIsoDate('2023-02-06'),
+        tom: parseIsoDate('2023-02-10')
       },
       {
-        fom: '2023-02-24',
-        tom: '2023-03-06'
+        fom: parseIsoDate('2023-02-24'),
+        tom: parseIsoDate('2023-03-06')
       }
     ]);
   });
