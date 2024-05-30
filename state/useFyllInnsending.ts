@@ -118,8 +118,8 @@ export default function useFyllInnsending() {
         case begrunnelseEndringBruttoinntekt.Tariffendring:
           return {
             typpe: bruttoinntekt.endringAarsak.aarsak,
-            gjelderFra: bruttoinntekt?.endringAarsak?.gjelderFra,
-            bleKjent: bruttoinntekt?.endringAarsak?.bleKjent
+            gjelderFra: formatIsoDate(bruttoinntekt?.endringAarsak?.gjelderFra),
+            bleKjent: formatIsoDate(bruttoinntekt?.endringAarsak?.bleKjent)
           };
 
         case begrunnelseEndringBruttoinntekt.Ferie:
@@ -128,19 +128,22 @@ export default function useFyllInnsending() {
         case begrunnelseEndringBruttoinntekt.Sykefravaer:
           return {
             typpe: bruttoinntekt.endringAarsak.aarsak,
-            liste: bruttoinntekt?.endringAarsak?.perioder
+            liste: bruttoinntekt?.endringAarsak?.perioder.map((periode) => ({
+              fom: formatIsoDate(periode.fom),
+              tom: formatIsoDate(periode.tom)
+            }))
           };
 
         case begrunnelseEndringBruttoinntekt.VarigLoennsendring:
           return {
             typpe: 'VarigLonnsendring', // TODO: Dette er en feil i koden, skal være VarigLoennsendring når vi får rettet opp i dette
-            gjelderFra: bruttoinntekt?.endringAarsak?.gjelderFra
+            gjelderFra: formatIsoDate(bruttoinntekt?.endringAarsak?.gjelderFra)
           };
         case begrunnelseEndringBruttoinntekt.NyStilling:
         case begrunnelseEndringBruttoinntekt.NyStillingsprosent:
           return {
             typpe: bruttoinntekt.endringAarsak.aarsak,
-            gjelderFra: bruttoinntekt?.endringAarsak?.gjelderFra
+            gjelderFra: formatIsoDate(bruttoinntekt?.endringAarsak?.gjelderFra)
           };
 
         default:
