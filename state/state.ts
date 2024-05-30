@@ -12,7 +12,6 @@ export type YesNo = 'Ja' | 'Nei';
 export interface Inntekt {
   bruttoInntekt?: number;
   manueltKorrigert: boolean;
-  endringsaarsak?: keyof typeof begrunnelseEndringBruttoinntekt;
   endringAarsak?: EndringAarsak;
 }
 

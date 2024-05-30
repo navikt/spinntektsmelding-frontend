@@ -1,3 +1,4 @@
+import { isAfter } from 'date-fns';
 import { periodeMapper } from '../components/Bruttoinntekt/Aarsaksvelger';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { CompleteState } from '../state/useBoundStore';
@@ -90,10 +91,15 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                 code: BruttoinntektFeilkode.LONNSENDRING_FOM_MANGLER
               });
             } else {
-              if (
-                state.bestemmendeFravaersdag &&
-                parseIsoDate(endringAarsak.gjelderFra) > state.bestemmendeFravaersdag
-              ) {
+              let gjelderFra: Date;
+
+              if (typeof endringAarsak.gjelderFra === 'string') {
+                gjelderFra = parseIsoDate(endringAarsak.gjelderFra);
+              } else {
+                gjelderFra = endringAarsak.gjelderFra;
+              }
+
+              if (state.bestemmendeFravaersdag && isAfter(gjelderFra, state.bestemmendeFravaersdag)) {
                 valideringstatus.push({
                   felt: 'bruttoinntekt-lonnsendring-fom',
                   code: BruttoinntektFeilkode.LONNSENDRING_FOM_ETTER_BFD

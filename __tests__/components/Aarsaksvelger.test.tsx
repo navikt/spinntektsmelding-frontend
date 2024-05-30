@@ -24,7 +24,7 @@ const IntersectionObserverMock = vi.fn(() => ({
 vi.stubGlobal('IntersectionObserver', IntersectionObserverMock);
 vi.stubGlobal('ResizeObserver', IntersectionObserverMock);
 
-const perioder = [{ fom: '2022-01-01', tom: '2022-01-05' }];
+const perioder = [{ fom: parseIsoDate('2022-01-01'), tom: parseIsoDate('2022-01-05') }];
 
 describe('Aarsaksvelger', () => {
   const changeMaanedsintektHandler = vi.fn();
@@ -202,6 +202,11 @@ describe('Aarsaksvelger', () => {
     const input = screen.getByLabelText('Fra');
     await user.clear(input);
     await user.type(input, '02.01.2022');
+
+    const input2 = screen.getByLabelText('Fra');
+    await user.clear(input2);
+    await user.type(input2, '05.01.2022');
+
     expect(setPerioder).toHaveBeenCalledWith([
       {
         fom: parseIsoDate('2022-01-02'),
