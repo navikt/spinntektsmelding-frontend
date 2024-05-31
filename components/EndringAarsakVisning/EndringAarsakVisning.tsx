@@ -23,8 +23,8 @@ export default function EndringAarsakVisning(props: EndringAarsak) {
         <div>
           {props.perioder.map((periode, index) => (
             <PeriodeFraTil
-              fom={parseIsoDate(periode.fom)}
-              tom={parseIsoDate(periode.tom)}
+              fom={enforceDate(periode.fom)}
+              tom={enforceDate(periode.tom)}
               key={`${props.aarsak.toLowerCase()}periode-${periode.fom}-${periode.tom}`}
             />
           ))}{' '}
@@ -64,4 +64,11 @@ export default function EndringAarsakVisning(props: EndringAarsak) {
       return null;
     }
   }
+}
+
+function enforceDate(dato: Date | string): Date {
+  if (typeof dato === 'string') {
+    return parseIsoDate(dato);
+  }
+  return dato;
 }
