@@ -36,5 +36,3 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
 };
 
 export default handler;
-
-('Error 500: io.ktor.server.plugins.BadRequestException: Failed to convert request body to class no.nav.helsearbeidsgiver.inntektsmelding.api.inntekt.InntektRequest');
