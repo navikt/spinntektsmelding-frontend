@@ -6,7 +6,7 @@ import environment from '../../config/environment';
 import org from '../../mockdata/inntektData.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + environment.inntektsdataAPI;
+const basePath = 'http://' + global.process.env.IM_API_URI + environment.inntektsdataSelvbestemtAPI;
 
 type Data = typeof org;
 
@@ -36,3 +36,5 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
 };
 
 export default handler;
+
+('Error 500: io.ktor.server.plugins.BadRequestException: Failed to convert request body to class no.nav.helsearbeidsgiver.inntektsmelding.api.inntekt.InntektRequest');
