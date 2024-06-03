@@ -300,12 +300,12 @@ const schema = z.object({
           ),
           z.tuple([])
         ]),
-        endringAarsak: EndringAarsakSchema.optional()
+        endringAarsak: EndringAarsakSchema.nullable()
       })
       .optional()
   ),
-  refusjon: z.optional(
-    z.object({
+  refusjon: z
+    .object({
       beloepPerMaaned: z
         .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
@@ -315,7 +315,7 @@ const schema = z.object({
         .transform((val) => toLocalIso(val))
         .nullable()
     })
-  ),
+    .or(z.tuple([])),
   aarsakInnsending: z.enum(['Endring', 'Ny'])
 });
 

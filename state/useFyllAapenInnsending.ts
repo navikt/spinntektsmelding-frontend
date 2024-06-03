@@ -45,7 +45,8 @@ export default function useFyllAapenInnsending() {
     console.log('validerAapenInnsending', skjemaData);
     console.log('fullLonnIArbeidsgiverPerioden', fullLonnIArbeidsgiverPerioden);
 
-    const endringAarsak: EndringAarsak = bruttoinntekt.endringAarsak;
+    const endringAarsak: EndringAarsak | undefined =
+      bruttoinntekt.endringAarsak !== null ? bruttoinntekt.endringAarsak : undefined;
 
     const innsending = validerAapenInnsending({
       sykmeldtFnr: identitetsnummer,

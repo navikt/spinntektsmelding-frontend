@@ -7,7 +7,7 @@ import parseIsoDate from '../../utils/parseIsoDate';
 
 describe('LonnUnderSykefravaeret', () => {
   it('renders a title text', async () => {
-    const lonn: LonnISykefravaeret = { status: 'Ja', beloep: 1234 };
+    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 1234 };
     const refusjonEndringer: Array<EndringsBeloep> = [
       { dato: parseIsoDate('2022-02-02'), beloep: 1234 },
       { dato: parseIsoDate('2022-03-03'), beloep: 432 }
@@ -15,14 +15,14 @@ describe('LonnUnderSykefravaeret', () => {
 
     const { container } = render(
       <LonnUnderSykefravaeret
-        lonn={lonn}
+        loenn={loenn}
         harRefusjonEndringer={'Ja'}
         refusjonEndringer={refusjonEndringer}
         refusjonskravetOpphoerer={{ status: 'Nei' }}
       />
     );
 
-    // const { container } = render(<LonnUnderSykefravaeret lonn={lonn} refusjonEndringer={refusjonEndringer} />);
+    // const { container } = render(<LonnUnderSykefravaeret loenn={loenn} refusjonEndringer={refusjonEndringer} />);
     // { dato: parseIsoDate('2022-03-03'), beloep: 432 } />);
 
     const HeadingTitle = screen.getByText(/NAV vil refundere opp/);
@@ -35,7 +35,7 @@ describe('LonnUnderSykefravaeret', () => {
   });
 
   it('renders a title text and refusjon endringer', async () => {
-    const lonn: LonnISykefravaeret = { status: 'Ja', beloep: 2345 };
+    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345 };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = { status: 'Nei' };
     const harRefusjonEndringer: YesNo = 'Ja';
     const refusjonEndringer: Array<EndringsBeloep> = [
@@ -45,7 +45,7 @@ describe('LonnUnderSykefravaeret', () => {
 
     const { container } = render(
       <LonnUnderSykefravaeret
-        lonn={lonn}
+        loenn={loenn}
         harRefusjonEndringer={harRefusjonEndringer}
         refusjonEndringer={refusjonEndringer}
         refusjonskravetOpphoerer={refusjonskravetOpphoerer}
@@ -70,7 +70,7 @@ describe('LonnUnderSykefravaeret', () => {
   });
 
   it('renders a title text and refusjon endringer with an end date', async () => {
-    const lonn: LonnISykefravaeret = { status: 'Ja', beloep: 2345 };
+    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345 };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
       status: 'Ja',
       opphoersdato: parseIsoDate('2022-04-04')
@@ -83,7 +83,7 @@ describe('LonnUnderSykefravaeret', () => {
 
     const { container } = render(
       <LonnUnderSykefravaeret
-        lonn={lonn}
+        loenn={loenn}
         harRefusjonEndringer={harRefusjonEndringer}
         refusjonEndringer={refusjonEndringer}
         refusjonskravetOpphoerer={refusjonskravetOpphoerer}
@@ -100,7 +100,7 @@ describe('LonnUnderSykefravaeret', () => {
   });
 
   it('renders a title text and refusjon endringer with an end date', async () => {
-    const lonn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Nei' };
+    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Nei' };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
       status: 'Ja',
       opphoersdato: parseIsoDate('2022-04-04')
@@ -113,7 +113,7 @@ describe('LonnUnderSykefravaeret', () => {
 
     const { container } = render(
       <LonnUnderSykefravaeret
-        lonn={lonn}
+        loenn={loenn}
         harRefusjonEndringer={harRefusjonEndringer}
         refusjonEndringer={refusjonEndringer}
         refusjonskravetOpphoerer={refusjonskravetOpphoerer}
@@ -130,7 +130,7 @@ describe('LonnUnderSykefravaeret', () => {
   });
 
   it('renders a title text without refusjon endringer', async () => {
-    const lonn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Ja' };
+    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Ja' };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
       status: 'Ja',
       opphoersdato: parseIsoDate('2022-04-04')
@@ -143,7 +143,7 @@ describe('LonnUnderSykefravaeret', () => {
 
     const { container } = render(
       <LonnUnderSykefravaeret
-        lonn={lonn}
+        loenn={loenn}
         harRefusjonEndringer={harRefusjonEndringer}
         refusjonEndringer={refusjonEndringer}
         refusjonskravetOpphoerer={refusjonskravetOpphoerer}
@@ -160,7 +160,7 @@ describe('LonnUnderSykefravaeret', () => {
   });
 
   it('dont render a title text without refusjon endringer', async () => {
-    const lonn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Ja' };
+    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Ja' };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
       status: 'Ja',
       opphoersdato: parseIsoDate('2022-04-04')
@@ -173,7 +173,7 @@ describe('LonnUnderSykefravaeret', () => {
 
     const { container } = render(
       <LonnUnderSykefravaeret
-        lonn={lonn}
+        loenn={loenn}
         harRefusjonEndringer={harRefusjonEndringer}
         refusjonEndringer={refusjonEndringer}
         refusjonskravetOpphoerer={refusjonskravetOpphoerer}

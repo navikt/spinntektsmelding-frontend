@@ -66,6 +66,7 @@ const nextConfig = {
     innsendingInntektsmeldingApi: process.env.INNSENDING_INNTEKTSMELDING_API,
     inntektsmeldingKjenteDataApi: process.env.PREUTFYLT_INNTEKTSMELDING_API,
     tidligereInntekterApi: process.env.INNTEKTSDATA_API,
+    tidligereInntekterSelvbestemtApi: process.env.INNTEKTSDATA_SELVBESTEMT_API,
     logoutServiceUrl: process.env.LOGOUT_SERVICE_URL,
     loginServiceUrl: process.env.LOGIN_SERVICE_URL,
     arbeidsgiverListe: process.env.ARBEIDSGIVERLISTE_API,

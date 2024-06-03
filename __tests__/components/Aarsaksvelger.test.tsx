@@ -240,13 +240,14 @@ describe('Aarsaksvelger', () => {
     );
 
     const input = screen.getByLabelText(/Lønnsendring gjelder fra/);
+    expect(input).toBeInTheDocument();
     await user.clear(input);
     await user.type(input, '02.01.2022');
     expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2022-01-02'));
   });
 
   it('calls the setPerioder function when the endringsaarsak is Permisjon', async () => {
-    const setPerioderrr = vi.fn();
+    const setPerioderMock = vi.fn();
 
     render(
       <Aarsaksvelger
@@ -261,7 +262,7 @@ describe('Aarsaksvelger', () => {
         setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
         setEndringAarsakBleKjent={setEndringAarsakBleKjent}
         visFeilmeldingsTekst={visFeilmeldingsTekst}
-        setPerioder={setPerioderrr}
+        setPerioder={setPerioderMock}
         nyInnsending={false}
         defaultEndringAarsak={{ aarsak: 'Permisjon', perioder: perioder }}
       />
@@ -270,7 +271,7 @@ describe('Aarsaksvelger', () => {
     const input = screen.getByLabelText('Fra');
     await user.clear(input);
     await user.type(input, '02.01.2022');
-    expect(setPerioderrr).toHaveBeenCalledWith([
+    expect(setPerioderMock).toHaveBeenCalledWith([
       {
         fom: parseIsoDate('2022-01-02'),
         id: '2022-01-01-2022-01-05',

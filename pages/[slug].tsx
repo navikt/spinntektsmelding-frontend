@@ -38,6 +38,8 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
+import fetcherInntektsdataSelvbestemt from '../utils/fetcherInntektsdataSelvbestemt';
+import useSWRImmutable from 'swr/immutable';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -72,6 +74,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   );
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
+
+  const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
 
   const searchParams = useSearchParams();
   const hentKvitteringsdata = useHentKvitteringsdata();
@@ -179,6 +183,37 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug, skjemastatus, inntektsdato, fravaersperioder]);
 
+  const { data, error } = useSWRImmutable(
+    [environment.inntektsdataSelvbestemtUrl, identitetsnummer, orgnrUnderenhet, inntektsdato],
+    ([url, idToken, orgnrUnderenhet, inntektsdato]) =>
+      fetcherInntektsdataSelvbestemt(url, idToken, orgnrUnderenhet, inntektsdato),
+    {
+      onError: (err) => {
+        console.error('Kunne ikke hente arbeidsforhold', err);
+        // if (err.status === 401) {
+        //   const ingress = window.location.hostname + environment.baseUrl;
+        //   const currentPath = window.location.href;
+
+        //   window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
+        // }
+
+        // if (err.status !== 200) {
+        //   backendFeil.current.push({
+        //     felt: 'Backend',
+        //     text: 'Kunne ikke hente arbeidsforhold'
+        //   });
+        // }
+      },
+      refreshInterval: 0,
+      shouldRetryOnError: false
+    }
+  );
+
+  const sbBruttoinntekt = !error ? data?.bruttoinntekt : undefined;
+  const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
+
+  console.log(data, error);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -210,7 +245,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
           <Skillelinje />
 
-          <Bruttoinntekt bestemmendeFravaersdag={beregnetBestemmendeFraværsdag} setIsDirtyForm={setIsDirtyForm} />
+          <Bruttoinntekt
+            bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
+            setIsDirtyForm={setIsDirtyForm}
+            erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
+            sbBruttoinntekt={sbBruttoinntekt}
+            sbTidligereinntekt={sbTidligerinntekt}
+          />
 
           <Skillelinje />
 
