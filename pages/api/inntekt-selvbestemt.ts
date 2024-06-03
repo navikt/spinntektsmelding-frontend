@@ -27,7 +27,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
       onProxyInit: handleProxyInit,
       pathRewrite: [
         {
-          patternStr: '^/api/inntektsdata',
+          patternStr: '^/api/inntekt-selvbestemt',
           replaceStr: ''
         }
       ]
