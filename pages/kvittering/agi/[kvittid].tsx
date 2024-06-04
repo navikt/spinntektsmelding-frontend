@@ -108,9 +108,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
+    console.log('kvittering', kvitteringData);
     // Må lagre data som kan endres i hovedskjema - Start
-    kvittering.fraværsperioder = kvittering.sykmeldingsperioder;
-    kvittering.egenmeldingsperioder = kvittering.agp?.egenmeldinger;
+    const kvittering = prepareForInitiering(kvitteringData);
     kvitteringInit(kvittering);
     // Må lagre data som kan endres i hovedskjema - Slutt
 
@@ -275,9 +275,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         : refusjonEndringer;
   }
 
-  console.log('fullLoennIArbeidsgiverPerioden', fullLoennIArbeidsgiverPerioden);
-  console.log('Hæ?', !!kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend);
-
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -415,6 +412,24 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
 export default Kvittering;
 
+function prepareForInitiering(kvitteringData: any) {
+  const kvittering = {
+    fulltNavn: kvitteringData.fulltNavn,
+    identitetsnummer: kvitteringData.sykmeldtFnr,
+    orgnrUnderenhet: kvitteringData.avsender.orgnr,
+    virksomhetNavn: kvitteringData.virksomhetNavn,
+    innsenderNavn: kvitteringData.innsenderNavn,
+    telefonnummer: kvitteringData.avsender.tlf
+  };
+
+  kvittering.fraværsperioder = kvitteringData.sykmeldingsperioder;
+  kvittering.egenmeldingsperioder = kvitteringData.agp?.egenmeldinger;
+  kvittering.inntekt = kvitteringData.inntekt;
+  kvittering.inntekt.endringÅrsak = kvitteringData.inntekt.endringAarsak;
+
+  return kvittering;
+}
+
 export async function getServerSideProps(context: any) {
   const kvittid = context.query.kvittid;
 
@@ -444,7 +459,7 @@ export async function getServerSideProps(context: any) {
       kvittid,
       kvittering: kvittering?.data,
       kvitteringStatus: kvittering?.status,
-      dataFraBackend: !!kvittering?.data
+      dataFraBackend: !!kvittering?.data?.kvitteringDokument
     }
   };
 }
