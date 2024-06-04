@@ -315,7 +315,7 @@ const schema = z.object({
         .transform((val) => toLocalIso(val))
         .nullable()
     })
-    .or(z.tuple([])),
+    .optional(),
   aarsakInnsending: z.enum(['Endring', 'Ny'])
 });
 

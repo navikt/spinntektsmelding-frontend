@@ -94,7 +94,7 @@ export default function useFyllAapenInnsending() {
               sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
-          : [],
+          : undefined,
       aarsakInnsending: skjemaData.aarsakInnsending
     });
 
