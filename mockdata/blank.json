@@ -1,7 +1,4 @@
 {
   "fulltNavn": "MUSKULØS VALS",
-  "underenheter": [
-    { "orgnrUnderenhet": "810007842", "virksomhetsnavn": "ANSTENDIG PIGGSVIN BARNEHAGE" },
-    { "orgnrUnderenhet": "810007982", "virksomhetsnavn": "ANSTENDIG PIGGSVIN BARNESKOLE" }
-  ]
+  "underenheter": [{ "orgnrUnderenhet": "810007842", "virksomhetsnavn": "ANSTENDIG PIGGSVIN BARNEHAGE" }]
 }

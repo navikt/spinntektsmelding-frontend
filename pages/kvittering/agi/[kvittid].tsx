@@ -50,7 +50,8 @@ import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
   kvittering,
-  kvitteringStatus
+  kvitteringStatus,
+  dataFraBackend = false
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -72,7 +73,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const dataFraBackend = !!kvittering;
+  // const dataFraBackend = !!kvittering;
 
   const kvitteringInit = useKvitteringInit();
 
@@ -108,6 +109,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
     // Må lagre data som kan endres i hovedskjema - Start
+    kvittering.fraværsperioder = kvittering.sykmeldingsperioder;
+    kvittering.egenmeldingsperioder = kvittering.agp?.egenmeldinger;
     kvitteringInit(kvittering);
     // Må lagre data som kan endres i hovedskjema - Slutt
 
@@ -138,7 +141,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const visningBestemmendeFravaersdag = dataFraBackend
     ? parseIsoDate(bestemmendeFravaersdag)
-    : parseIsoDate(kvitteringData.inntekt.inntektsdato);
+    : parseIsoDate(kvitteringData?.inntekt?.inntektsdato);
 
   useEffect(() => {
     setNyInnsending(false);
@@ -151,7 +154,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const inntekt = dataFraBackend
     ? kvitteringDokument.inntekt
     : {
-        beregnetInntekt: kvitteringData.inntekt.beloep
+        beregnetInntekt: kvitteringData?.inntekt?.beloep
       };
 
   let fravaersperioder: Periode[] = [];
@@ -198,9 +201,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.utbetalerFullLønn ? 'Ja' : 'Nei';
   } else {
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
-    fullLoennIArbeidsgiverPerioden.status = kvitteringData.agp.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringData.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
-    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData.agp.redusertLoennIAgp?.beloep;
-    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData.agp.redusertLoennIAgp?.begrunnelse;
+    fullLoennIArbeidsgiverPerioden.status = !!kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringData.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
+    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData?.agp?.redusertLoennIAgp?.beloep;
+    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData?.agp.redusertLoennIAgp?.begrunnelse;
 
     console.log('fullLoennIArbeidsgiverPerioden', fullLoennIArbeidsgiverPerioden);
   }
@@ -213,8 +216,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     };
   } else {
     loenn = {
-      status: kvitteringData.refusjon?.beloepPerMaaned ? 'Ja' : 'Nei',
-      beloep: kvitteringData.refusjon?.beloepPerMaaned
+      status: kvitteringData?.refusjon?.beloepPerMaaned ? 'Ja' : 'Nei',
+      beloep: kvitteringData?.refusjon?.beloepPerMaaned
     };
   }
 
@@ -226,8 +229,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     };
   } else {
     refusjonskravetOpphoerer = {
-      status: kvitteringData.refusjon?.sluttdato ? 'Ja' : 'Nei',
-      opphoersdato: kvitteringData.refusjon?.sluttdato ? parseIsoDate(kvitteringData.refusjon?.sluttdato) : undefined
+      status: kvitteringData?.refusjon?.sluttdato ? 'Ja' : 'Nei',
+      opphoersdato: kvitteringData?.refusjon?.sluttdato ? parseIsoDate(kvitteringData?.refusjon?.sluttdato) : undefined
     };
   }
 
@@ -238,8 +241,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       beloep: endring.beløp
     }));
   } else {
-    refusjonEndringer = kvitteringData.refusjon?.endringer
-      ? kvitteringData.refusjon?.endringer.map((endring) => ({
+    refusjonEndringer = kvitteringData?.refusjon?.endringer
+      ? kvitteringData?.refusjon?.endringer.map((endring) => ({
           dato: parseIsoDate(endring.startDato),
           beloep: endring.beloep
         }))
@@ -271,6 +274,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             })
         : refusjonEndringer;
   }
+
+  console.log('fullLoennIArbeidsgiverPerioden', fullLoennIArbeidsgiverPerioden);
+  console.log('Hæ?', !!kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend);
 
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
@@ -432,12 +438,13 @@ export async function getServerSideProps(context: any) {
       };
     }
   }
-
+  console.log('kvittering hentet', kvittering);
   return {
     props: {
       kvittid,
       kvittering: kvittering?.data,
-      kvitteringStatus: kvittering?.status
+      kvitteringStatus: kvittering?.status,
+      dataFraBackend: !!kvittering?.data
     }
   };
 }

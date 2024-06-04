@@ -119,7 +119,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
               if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
                 router.push(`/kvittering/agi/${pathSlug}`, undefined, { shallow: true });
               } else {
-                router.push(`/kvittering/${pathSlug}`, undefined);
+                router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
               }
             });
             break;

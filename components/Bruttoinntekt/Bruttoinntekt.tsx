@@ -1,5 +1,5 @@
 import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
-import { ChangeEvent, use, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -13,7 +13,6 @@ import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
-import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 
 interface BruttoinntektProps {
@@ -121,9 +120,6 @@ export default function Bruttoinntekt({
     !sisteTreMndTidligereinntekt || sisteTreMndTidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
 
   const erBlanktSkjema = false; // skjemastatus === SkjemaStatus.SELVBESTEMT;
-
-  console.log('sisteTreMndTidligereinntekt', sisteTreMndTidligereinntekt);
-  console.log('sbBruttoinntekt', sbBruttoinntekt);
 
   useEffect(() => {
     if (sbBruttoinntekt !== undefined) {
