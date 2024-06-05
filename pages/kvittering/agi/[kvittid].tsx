@@ -409,7 +409,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 export default Kvittering;
 
 function prepareForInitiering(kvitteringData: any) {
-  const kvittering = {
+  const kvittering: any = {
     fulltNavn: kvitteringData.fulltNavn,
     identitetsnummer: kvitteringData.sykmeldtFnr,
     orgnrUnderenhet: kvitteringData.avsender.orgnr,
@@ -420,8 +420,7 @@ function prepareForInitiering(kvitteringData: any) {
 
   kvittering.fraværsperioder = kvitteringData.sykmeldingsperioder;
   kvittering.egenmeldingsperioder = kvitteringData.agp?.egenmeldinger;
-  kvittering.inntekt = kvitteringData.inntekt;
-  kvittering.inntekt.endringÅrsak = kvitteringData.inntekt.endringAarsak;
+  kvittering.inntekt = { ...kvitteringData.inntekt, endringÅrsak: kvitteringData.inntekt.endringAarsak };
 
   return kvittering;
 }
