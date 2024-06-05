@@ -42,9 +42,6 @@ export default function useFyllAapenInnsending() {
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
   return (skjemaData: any) => {
-    console.log('validerAapenInnsending', skjemaData);
-    console.log('fullLonnIArbeidsgiverPerioden', fullLonnIArbeidsgiverPerioden);
-
     const endringAarsak: EndringAarsak | undefined =
       bruttoinntekt.endringAarsak !== null ? bruttoinntekt.endringAarsak : undefined;
 

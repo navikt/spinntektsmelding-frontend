@@ -123,7 +123,6 @@ export default function Bruttoinntekt({
 
   useEffect(() => {
     if (sbBruttoinntekt !== undefined) {
-      console.log('sbBruttoinntekt endret', sbBruttoinntekt);
       setBareNyMaanedsinntekt(sbBruttoinntekt);
       setEndreMaanedsinntekt(false);
     }

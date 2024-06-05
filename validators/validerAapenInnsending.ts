@@ -322,7 +322,6 @@ const schema = z.object({
 export type AapenInnsending = z.infer<typeof schema>;
 
 export default function validerAapenInnsending(data: Partial<AapenInnsending>) {
-  console.log('validerAapenInnsending', data);
   return schema.safeParse(data);
 }
 

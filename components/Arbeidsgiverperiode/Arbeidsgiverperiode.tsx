@@ -229,7 +229,6 @@ export default function Arbeidsgiverperiode({
 
   useEffect(() => {
     if (!manuellEndring) {
-      console.log('manuellEndring', manuellEndring);
       return;
     }
 

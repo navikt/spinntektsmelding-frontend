@@ -98,17 +98,16 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       }
     : {
         navn: navn,
-        identitetsnummer: kvitteringData.sykmeldtFnr,
-        orgnrUnderenhet: kvitteringData.avsender.orgnr,
+        identitetsnummer: kvitteringData?.sykmeldtFnr,
+        orgnrUnderenhet: kvitteringData?.avsender.orgnr,
         virksomhetNavn: virksomhetsnavn,
         innsenderNavn: innsenderNavn,
-        innsenderTelefonNr: kvitteringData.avsender.tlf
+        innsenderTelefonNr: kvitteringData?.avsender.tlf
       };
 
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
-    console.log('kvittering', kvitteringData);
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(kvitteringData);
     kvitteringInit(kvittering);
@@ -124,7 +123,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       }
     }
   };
-  console.log('kvitteringData', kvitteringData);
   let innsendingstidspunkt =
     kvitteringInnsendt && isValid(kvitteringInnsendt)
       ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
@@ -204,8 +202,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     fullLoennIArbeidsgiverPerioden.status = !!kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringData.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
     fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData?.agp?.redusertLoennIAgp?.beloep;
     fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData?.agp.redusertLoennIAgp?.begrunnelse;
-
-    console.log('fullLoennIArbeidsgiverPerioden', fullLoennIArbeidsgiverPerioden);
   }
 
   let loenn: LonnISykefravaeret = { status: undefined, beloep: 0 };
@@ -453,7 +449,7 @@ export async function getServerSideProps(context: any) {
       };
     }
   }
-  console.log('kvittering hentet', kvittering);
+
   return {
     props: {
       kvittid,

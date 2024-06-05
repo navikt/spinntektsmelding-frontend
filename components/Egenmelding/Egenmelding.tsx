@@ -18,9 +18,10 @@ import PeriodeType from '../../config/PeriodeType';
 interface EgenmeldingProps {
   lasterData?: boolean;
   setIsDirtyForm: (dirty: boolean) => void;
+  selvbestemtInnsending?: boolean;
 }
 
-export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<EgenmeldingProps>) {
+export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInnsending }: Readonly<EgenmeldingProps>) {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
@@ -138,9 +139,20 @@ export default function Egenmelding({ lasterData, setIsDirtyForm }: Readonly<Ege
     <div className={localStyles.egenmeldingWrapper}>
       <Heading3>Egenmelding</Heading3>
       <BodyLong>
-        Hvis den ansatte har oppgitt at egenmeldingsdager ble benyttet i forkant av sykmeldingen, er disse
-        forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder som har mindre enn 16 dagers mellomrom
-        før sykmeldingen skal inkluderes. Dere kan endre og legge til egenmeldingsperioder.
+        {!selvbestemtInnsending && (
+          <>
+            Hvis den ansatte har oppgitt at egenmeldingsdager ble benyttet i forkant av sykmeldingen, er disse
+            forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder som har mindre enn 16 dagers
+            mellomrom før sykmeldingen skal inkluderes. Dere kan endre og legge til egenmeldingsperioder.
+          </>
+        )}
+        {selvbestemtInnsending && (
+          <>
+            Angi om den ansatte har brukt egenmeldingsdager i forkant til sykmeldingen. Alle egenmeldingsperioder med
+            mindre enn 16 dagers mellomrom før sykmeldingen skal inkluderes. Dere kan endre og legge til
+            egenmeldingsperioder.
+          </>
+        )}
       </BodyLong>
       {endretArbeidsgiverperiode && (
         <Alert variant='info'>

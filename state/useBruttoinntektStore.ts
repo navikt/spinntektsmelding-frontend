@@ -112,7 +112,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setEndringsaarsak: (aarsak: string) =>
     set(
       produce((state) => {
-        console.log('setEndringsaarsak', aarsak);
         if (!state.bruttoinntekt.endringAarsak?.aarsak || state.bruttoinntekt.endringAarsak?.aarsak !== aarsak) {
           state.bruttoinntekt.endringAarsak = { aarsak: aarsak };
         } else {

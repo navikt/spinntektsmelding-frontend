@@ -93,6 +93,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const pathSlug = slug || (searchParams.get('slug') as string);
 
+  const selvbestemtInnsending = slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -154,11 +156,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       });
 
       if (bestemmendeFravaersdag) {
-        console.log('Henter inntektsdata for bestemmende fraværsdag', bestemmendeFravaersdag);
         setSisteInntektsdato(parseIsoDate(format(bestemmendeFravaersdag, 'yyyy-MM-01')));
       }
     } else {
-      console.log('Henter inntektsdata for ny måned', sisteInntektsdato, inntektsdato);
       if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
         if (inntektsdato) {
           fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
@@ -212,8 +212,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const sbBruttoinntekt = !error ? data?.bruttoinntekt : undefined;
   const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
 
-  console.log(data, error);
-
   return (
     <div className={styles.container}>
       <Head>
@@ -230,10 +228,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Behandlingsdager />
 
           <Skillelinje />
-          <Egenmelding lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} />
+          <Egenmelding
+            lasterData={lasterData}
+            setIsDirtyForm={setIsDirtyForm}
+            selvbestemtInnsending={selvbestemtInnsending}
+          />
 
           <Skillelinje />
-          <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
+          <Fravaersperiode
+            lasterData={lasterData}
+            setIsDirtyForm={setIsDirtyForm}
+            skjemastatus={skjemastatus}
+            selvbestemtInnsending={selvbestemtInnsending}
+          />
 
           <Skillelinje />
 

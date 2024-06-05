@@ -180,8 +180,6 @@ export default function useFyllDelvisInnsending() {
       mottattEksternBestemmendeFravaersdag
     );
 
-    console.log('bestemmendeFraværsdagTilInnsending', bestemmendeFraværsdagTilInnsending);
-
     const bestemmendeFraværsdag = formatIsoDate(bestemmendeFraværsdagTilInnsending);
 
     setForeslaattBestemmendeFravaersdag(bestemmendeFraværsdagTilInnsending);

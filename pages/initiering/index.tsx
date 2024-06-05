@@ -49,7 +49,7 @@ const Initiering: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
-      <PageContent title='Oppdatert informasjon - innsendt inntektsmelding'>
+      <PageContent title='Inntektsmelding'>
         <main className='main-content'>
           <div className={styles.padded}>
             <Heading1>Opprett inntektsmelding ifm. sykmelding</Heading1>

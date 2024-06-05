@@ -36,7 +36,9 @@ describe('Kvittering', () => {
   });
 
   it('renders a title text', () => {
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvittering={kvitteringsdata} />);
+    render(
+      <Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvittering={kvitteringsdata} dataFraBackend={true} />
+    );
 
     const buttonTitle = screen.getByRole('button', {
       name: /Skriv ut/i
@@ -46,7 +48,14 @@ describe('Kvittering', () => {
   });
 
   it('renders full arbeidsgiverperiode text', () => {
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvittering={kvitteringsdata} />);
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={kvitteringsdata}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
 
     const textBlock = screen.getByText(/Arbeidsgiverperiode/);
 
@@ -57,7 +66,9 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ kvitteringDokument: kvitteringsdataUtenAgp }}
+        kvittering={kvitteringsdataUtenAgp}
+        dataFraBackend={true}
+        kvitteringStatus={200}
       />
     );
 
@@ -67,7 +78,14 @@ describe('Kvittering', () => {
   });
 
   it.skip('renders without kvittering fra eksternt system', () => {
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvittering={kvitteringsdataEksterntSystem} />);
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={kvitteringsdataEksterntSystem}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
 
     const textBlock = screen.getByText(/AR123456/i);
 

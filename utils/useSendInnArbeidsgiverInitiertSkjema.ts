@@ -58,11 +58,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     } else {
       skjemaData.aarsakInnsending = 'Ny';
     }
-    console.log('skjemaData', skjemaData);
     const validerteData = fyllAapenInnsending(skjemaData);
-
-    console.log('validerteData', validerteData);
-
     const hasErrors = validerteData.success !== true;
 
     if (hasErrors || !opplysningerBekreftet) {

@@ -1,40 +1,42 @@
 {
-  "orgnrUnderenhet": "810007842",
-  "identitetsnummer": "16507927681",
-  "fulltNavn": "LEKKER SKOGFIOL",
-  "telefonnummer": "+4741359019",
-  "innsenderNavn": "Muskuløs Vals",
-  "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
-  "behandlingsdager": [],
-  "egenmeldingsperioder": [],
-  "arbeidsgiverperioder": [],
-  "bestemmendeFraværsdag": "2023-01-02",
-  "fraværsperioder": [
-    {
-      "fom": "2023-01-02",
-      "tom": "2023-01-20"
-    }
-  ],
-  "inntekt": {
-    "bekreftet": true,
-    "beregnetInntekt": 45000,
-    "endringÅrsak": null,
-    "manueltKorrigert": false
-  },
-  "fullLønnIArbeidsgiverPerioden": {
-    "utbetalerFullLønn": false,
-    "begrunnelse": "ManglerOpptjening",
-    "utbetalt": 0
-  },
-  "refusjon": {
-    "utbetalerHeleEllerDeler": false,
-    "refusjonPrMnd": null,
-    "refusjonOpphører": null,
-    "refusjonEndringer": null
-  },
-  "naturalytelser": null,
-  "årsakInnsending": "Ny",
-  "bekreftOpplysninger": true,
-  "tidspunkt": "2023-09-11T11:01:46.793968905+02:00",
-  "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
+  "kvitteringDokument": {
+    "orgnrUnderenhet": "810007842",
+    "identitetsnummer": "16507927681",
+    "fulltNavn": "LEKKER SKOGFIOL",
+    "telefonnummer": "+4741359019",
+    "innsenderNavn": "Muskuløs Vals",
+    "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "behandlingsdager": [],
+    "egenmeldingsperioder": [],
+    "arbeidsgiverperioder": [],
+    "bestemmendeFraværsdag": "2023-01-02",
+    "fraværsperioder": [
+      {
+        "fom": "2023-01-02",
+        "tom": "2023-01-20"
+      }
+    ],
+    "inntekt": {
+      "bekreftet": true,
+      "beregnetInntekt": 45000,
+      "endringÅrsak": null,
+      "manueltKorrigert": false
+    },
+    "fullLønnIArbeidsgiverPerioden": {
+      "utbetalerFullLønn": false,
+      "begrunnelse": "ManglerOpptjening",
+      "utbetalt": 0
+    },
+    "refusjon": {
+      "utbetalerHeleEllerDeler": false,
+      "refusjonPrMnd": null,
+      "refusjonOpphører": null,
+      "refusjonEndringer": null
+    },
+    "naturalytelser": null,
+    "årsakInnsending": "Ny",
+    "bekreftOpplysninger": true,
+    "tidspunkt": "2023-09-11T11:01:46.793968905+02:00",
+    "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
+  }
 }
