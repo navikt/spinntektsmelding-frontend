@@ -12,6 +12,7 @@ import Datovelger from '../Datovelger';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useState } from 'react';
 import LesMer from '../LesMer';
+import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 
 interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -66,7 +67,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
       fn(param);
     };
   };
-
+  const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
@@ -117,25 +118,28 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
         {!arbeidsgiverperiodeDisabled && !arbeidsgiverperiodeKort && (
           <>
             {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
-              <div className={localStyles.wraputbetaling}>
-                <TextField
-                  className={localStyles.refusjonsbeloep}
-                  label='Utbetalt under arbeidsgiverperiode'
-                  onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
-                  id={'lus-uua-input'}
-                  error={visFeilmeldingsTekst('lus-uua-input')}
-                  defaultValue={
-                    Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)
-                      ? ''
-                      : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
-                  }
-                />
-                <SelectBegrunnelse
-                  onChangeBegrunnelse={addIsDirtyForm(begrunnelseRedusertUtbetaling)}
-                  defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
-                  error={visFeilmeldingsTekst('lia-select')}
-                />
-              </div>
+              <>
+                <div className={localStyles.wraputbetaling}>
+                  <TextField
+                    className={localStyles.refusjonsbeloep}
+                    label='Utbetalt under arbeidsgiverperiode'
+                    onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
+                    id={'lus-uua-input'}
+                    error={visFeilmeldingsTekst('lus-uua-input')}
+                    defaultValue={
+                      Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)
+                        ? ''
+                        : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
+                    }
+                  />
+                  <SelectBegrunnelse
+                    onChangeBegrunnelse={addIsDirtyForm(begrunnelseRedusertUtbetaling)}
+                    defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
+                    error={visFeilmeldingsTekst('lia-select')}
+                  />
+                </div>
+                {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
+              </>
             )}
           </>
         )}
