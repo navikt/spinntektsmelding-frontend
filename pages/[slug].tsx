@@ -186,7 +186,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const { data, error } = useSWRImmutable(
     [environment.inntektsdataSelvbestemtUrl, identitetsnummer, orgnrUnderenhet, inntektsdato],
     ([url, idToken, orgnrUnderenhet, inntektsdato]) =>
-      fetcherInntektsdataSelvbestemt(url, idToken, orgnrUnderenhet, inntektsdato),
+      fetcherInntektsdataSelvbestemt(selvbestemtInnsending ? url : null, idToken, orgnrUnderenhet, inntektsdato),
     {
       onError: (err) => {
         console.error('Kunne ikke hente arbeidsforhold', err);

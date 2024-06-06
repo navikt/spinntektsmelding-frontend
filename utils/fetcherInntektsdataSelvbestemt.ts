@@ -3,11 +3,12 @@ import NetworkError from './NetworkError';
 import formatIsoDate from './formatIsoDate';
 
 export default function fetcherInntektsdataSelvbestemt(
-  url: string,
+  url: string | null,
   identitetsnummer?: string,
   orgnrUnderenhet?: string,
   inntektsdato?: Date
 ) {
+  if (!url) return Promise.resolve([]);
   if (!identitetsnummer) return Promise.resolve([]);
   return fetch(url, {
     method: 'POST',
