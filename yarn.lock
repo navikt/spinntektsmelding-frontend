@@ -6555,9 +6555,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"knip@npm:5.16.0":
-  version: 5.16.0
-  resolution: "knip@npm:5.16.0"
+"knip@npm:5.17.4":
+  version: 5.17.4
+  resolution: "knip@npm:5.17.4"
   dependencies:
     "@ericcornelissen/bash-parser": "npm:0.5.2"
     "@nodelib/fs.walk": "npm:2.0.0"
@@ -6583,7 +6583,7 @@ __metadata:
   bin:
     knip: bin/knip.js
     knip-bun: bin/knip-bun.js
-  checksum: 10c0/7c27efcc06bbbfd58d8e06faba6e952e81ebd668840e3615392ce2bf2d3be25aa26328772bfbe3a5679805e9779ced2632ac166d2fb9c1ff2d8fd50f0afee49e
+  checksum: 10c0/dc4414d85562fefcbc2b7279e77bdcf92d583ac5aa1a7ae0fd79aed7bacbe24fc48ba96d04854c9086c2ad3cf18e64d2e0acd5256b016ed8c65990099c630e88
   languageName: node
   linkType: hard
 
@@ -8868,7 +8868,7 @@ __metadata:
     jest-axe: "npm:8.0.0"
     jose: "npm:5.3.0"
     jsdom: "npm:24.0.0"
-    knip: "npm:5.16.0"
+    knip: "npm:5.17.4"
     lint-staged: "npm:15.2.2"
     msw: "npm:^2.3.0"
     nanoid: "npm:5.0.7"
