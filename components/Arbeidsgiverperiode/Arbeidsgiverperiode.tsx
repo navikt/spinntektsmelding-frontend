@@ -25,6 +25,7 @@ import {
   finnSammenhengendePeriodeManuellJustering
 } from '../../utils/finnArbeidsgiverperiode';
 import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeopphold';
+import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -267,6 +268,8 @@ export default function Arbeidsgiverperiode({
     }
   }, [inngangFraKvittering, arbeidsgiverperioder, setArbeidsgiverperiodeDisabled]);
 
+  const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
+
   return (
     <>
       <Heading3 unPadded id='arbeidsgiverperioder'>
@@ -394,25 +397,28 @@ export default function Arbeidsgiverperiode({
         </span>
       )}
       {advarselKortPeriode.length > 0 && (
-        <div className={lokalStyles.wraputbetaling}>
-          <TextField
-            className={lokalStyles.refusjonsbeloep}
-            label='Utbetalt under arbeidsgiverperiode'
-            onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
-            id={'lus-uua-input'}
-            error={visFeilmeldingsTekst('lus-uua-input')}
-            defaultValue={
-              !fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
-                ? ''
-                : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
-            }
-          />
-          <SelectBegrunnelseKortArbeidsgiverperiode
-            onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
-            defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-            error={visFeilmeldingsTekst('lia-select')}
-          />
-        </div>
+        <>
+          <div className={lokalStyles.wraputbetaling}>
+            <TextField
+              className={lokalStyles.refusjonsbeloep}
+              label='Utbetalt under arbeidsgiverperiode'
+              onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
+              id={'lus-uua-input'}
+              error={visFeilmeldingsTekst('lus-uua-input')}
+              defaultValue={
+                !fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
+                  ? ''
+                  : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
+              }
+            />
+            <SelectBegrunnelseKortArbeidsgiverperiode
+              onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
+              defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
+              error={visFeilmeldingsTekst('lia-select')}
+            />
+          </div>
+          {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
+        </>
       )}
       {endretArbeidsgiverperiode && (
         <>
@@ -424,12 +430,15 @@ export default function Arbeidsgiverperiode({
             Det er ikke arbeidsgiverperiode i dette sykefraværet
           </Checkbox>
           {arbeidsgiverperiodeDisabled && (
-            <SelectBegrunnelse
-              onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
-              defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-              error={visFeilmeldingsTekst('lia-select')}
-              label='Velg begrunnelse'
-            />
+            <>
+              <SelectBegrunnelse
+                onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
+                defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
+                error={visFeilmeldingsTekst('lia-select')}
+                label='Velg begrunnelse'
+              />
+              {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
+            </>
           )}
         </>
       )}
