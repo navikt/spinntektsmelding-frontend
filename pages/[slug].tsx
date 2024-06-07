@@ -39,6 +39,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import fetcherInntektsdataSelvbestemt from '../utils/fetcherInntektsdataSelvbestemt';
+import fetcherInntektsdataSelvbestemtTest from '../utils/fetcherInntektsdataSelvbestemtTest';
 import useSWRImmutable from 'swr/immutable';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({

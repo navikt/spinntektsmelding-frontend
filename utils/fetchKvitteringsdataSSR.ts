@@ -6,6 +6,8 @@ const fetchKvitteringsdata = (url: string, forespoerselId: string, token?: strin
     return Promise.resolve({ status: 404, data: {} });
   }
 
+  console.log('fetchKvitteringsdata', url, forespoerselId, token);
+
   return fetch(`${url}/${forespoerselId}`, {
     method: 'GET',
     headers: {

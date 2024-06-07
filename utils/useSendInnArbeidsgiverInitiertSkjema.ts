@@ -92,13 +92,16 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
       fyllFeilmeldinger([]);
 
-      const URI = isValidUUID(pathSlug)
-        ? `${environment.innsendingAGInitiertUrl}/${pathSlug}`
-        : environment.innsendingAGInitiertUrl;
+      const innsending =
+        pathSlug !== 'arbeidsgiverInitiertInnsending'
+          ? { ...validerteData.data, selvbestemtId: pathSlug }
+          : { ...validerteData.data, selvbestemtId: null };
+
+      const URI = environment.innsendingAGInitiertUrl;
 
       return fetch(URI, {
         method: 'POST',
-        body: JSON.stringify(validerteData.data),
+        body: JSON.stringify(innsending),
         headers: {
           'Content-Type': 'application/json'
         }
