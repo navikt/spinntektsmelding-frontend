@@ -109,7 +109,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
     // Må lagre data som kan endres i hovedskjema - Start
-    const kvittering = prepareForInitiering(kvitteringData);
+    const kvittering = prepareForInitiering(
+      kvitteringData,
+      personData.navn,
+      personData.virksomhetNavn,
+      personData.innsenderNavn
+    );
     kvitteringInit(kvittering);
     // Må lagre data som kan endres i hovedskjema - Slutt
 
@@ -408,13 +413,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
 export default Kvittering;
 
-function prepareForInitiering(kvitteringData: any) {
+function prepareForInitiering(kvitteringData: any, navn: string, virksomhetsnavn: string, innsenderNavn: string) {
   const kvittering: any = {
-    fulltNavn: kvitteringData.fulltNavn,
+    fulltNavn: navn,
     identitetsnummer: kvitteringData.sykmeldtFnr,
     orgnrUnderenhet: kvitteringData.avsender.orgnr,
-    virksomhetNavn: kvitteringData.virksomhetNavn,
-    innsenderNavn: kvitteringData.innsenderNavn,
+    virksomhetNavn: virksomhetsnavn,
+    innsenderNavn: innsenderNavn,
     telefonnummer: kvitteringData.avsender.tlf
   };
 
@@ -422,6 +427,14 @@ function prepareForInitiering(kvitteringData: any) {
   kvittering.egenmeldingsperioder = kvitteringData.agp?.egenmeldinger;
   kvittering.inntekt = { ...kvitteringData.inntekt, endringÅrsak: kvitteringData.inntekt.endringAarsak };
 
+  kvittering.refusjon = {
+    utbetalerHeleEllerDeler: kvitteringData.refusjon?.betalerHeleEllerDeler ? true : false,
+    refusjonPrMnd: kvitteringData.refusjon?.beloepPerMaaned,
+    refusjonOpphører: kvitteringData.refusjon?.sluttdato,
+    refusjonEndringer: kvitteringData.refusjon?.endringer ? kvitteringData.refusjon?.endringer : []
+  };
+
+  kvittering.arbeidsgiverperioder = kvitteringData.agp?.perioder;
   return kvittering;
 }
 
