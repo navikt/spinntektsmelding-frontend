@@ -7,6 +7,10 @@ export default function hentKvitteringsdataSSR(pathSlug?: string | Array<string>
   }
 
   if (pathSlug) {
-    return fetchKvitteringsdataSSR('http://localhost:3000/' + environment.innsendingAGInitiertUrl, pathSlug, token);
+    return fetchKvitteringsdataSSR(
+      'http://' + global.process.env.IM_API_URI + process.env.INNTEKTSDATA_SELVBESTEMT_API,
+      pathSlug,
+      token
+    );
   }
 }
