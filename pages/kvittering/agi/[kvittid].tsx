@@ -46,6 +46,7 @@ import { MottattPeriode } from '../../../state/MottattData';
 import useKvitteringInit from '../../../state/useKvitteringInit';
 
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
+import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -443,13 +444,31 @@ export async function getServerSideProps(context: any) {
 
   let kvittering = null;
 
+  const token = getToken(context.req);
+  if (!token) {
+    /* håndter manglende token */
+    console.error('Mangler token');
+  }
+
+  const validation = await validateToken(token);
+  if (!validation.ok) {
+    /* håndter valideringsfeil */
+    console.error('Valideringsfeil');
+  }
+
+  const obo = await requestOboToken(token, 'dev-gcp:helsearbeidsgiver:im-api');
+  if (!obo.ok) {
+    /* håndter obo-feil */
+    console.error('OBO-feil');
+  }
+
   try {
     let token = '';
     if (context.req.headers.authorization) {
       token = context.req.headers.authorization!.replace('Bearer ', '');
     }
 
-    kvittering = await hentKvitteringsdataSSR(kvittid, token);
+    kvittering = await hentKvitteringsdataSSR(kvittid, obo.token || token);
     kvittering!.status = 200;
   } catch (error: any) {
     console.error('Error fetching selvbestemt kvittering:', error);

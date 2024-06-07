@@ -5,11 +5,12 @@ const fetchKvitteringsdata = (url: string, forespoerselId: string, token?: strin
   if (isValidUUID(forespoerselId) === false) {
     return Promise.resolve({ status: 404, data: {} });
   }
+
   return fetch(`${url}/${forespoerselId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
     .then((res) => {

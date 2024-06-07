@@ -8,7 +8,7 @@ export default function hentKvitteringsdataSSR(pathSlug?: string | Array<string>
 
   if (pathSlug) {
     return fetchKvitteringsdataSSR(
-      'http://' + global.process.env.IM_API_URI + process.env.INNTEKTSDATA_SELVBESTEMT_API + '/' + pathSlug,
+      'http://' + global.process.env.IM_API_URI + process.env.INNTEKTSDATA_SELVBESTEMT_API,
       pathSlug,
       token
     );
