@@ -281,6 +281,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         : refusjonEndringer;
   }
 
+  const endringAarsak = dataFraBackend
+    ? kvitteringDokument.inntekt.endringAarsak
+    : kvitteringData?.inntekt.endringAarsak;
+
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -363,12 +367,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 <>
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
-                  {formatBegrunnelseEndringBruttoinntekt(inntekt.endringÅrsak.typpe as string)}
+                  {formatBegrunnelseEndringBruttoinntekt(endringAarsak.aarsak as string)}
                   <EndringAarsakVisning
-                    aarsak={inntekt.endringÅrsak.typpe}
-                    gjelderFra={inntekt.endringÅrsak.gjelderFra}
-                    bleKjent={inntekt.endringÅrsak.bleKjent}
-                    perioder={inntekt.endringÅrsak.liste}
+                    aarsak={endringAarsak.aarsak}
+                    gjelderFra={endringAarsak.gjelderFra}
+                    bleKjent={endringAarsak.bleKjent}
+                    perioder={endringAarsak.liste}
                   />
                 </>
               )}
@@ -459,7 +463,7 @@ export async function getServerSideProps(context: any) {
     /* håndter valideringsfeil */
     console.error('Valideringsfeil');
     const ingress = context.req.headers.host + environment.baseUrl;
-    const currentPath = context.resolvedUrl;
+    const currentPath = `https://${ingress}/${context.resolvedUrl}`;
 
     const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
     return {
