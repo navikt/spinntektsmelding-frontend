@@ -39,7 +39,6 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import fetcherInntektsdataSelvbestemt from '../utils/fetcherInntektsdataSelvbestemt';
-import fetcherInntektsdataSelvbestemtTest from '../utils/fetcherInntektsdataSelvbestemtTest';
 import useSWRImmutable from 'swr/immutable';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
@@ -187,7 +186,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const { data, error } = useSWRImmutable(
     [environment.inntektsdataSelvbestemtUrl, identitetsnummer, orgnrUnderenhet, inntektsdato],
     ([url, idToken, orgnrUnderenhet, inntektsdato]) =>
-      fetcherInntektsdataSelvbestemt(selvbestemtInnsending ? url : null, idToken, orgnrUnderenhet, inntektsdato),
+      fetcherInntektsdataSelvbestemt(
+        slug === 'arbeidsgiverInitiertInnsending' ? url : null,
+        idToken,
+        orgnrUnderenhet,
+        inntektsdato
+      ),
     {
       onError: (err) => {
         console.error('Kunne ikke hente arbeidsforhold', err);

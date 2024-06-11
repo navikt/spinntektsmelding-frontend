@@ -81,6 +81,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const kvitteringEksterntSystem = kvittering?.kvitteringEkstern;
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
+
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
 
   const kvitteringInit = useKvitteringInit();
@@ -92,7 +93,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringInnsendt = new Date(kvitteringDokument?.tidspunkt);
   const bestemmendeFravaersdag = dataFraBackend
     ? kvitteringDokument?.inntekt.inntektsdato
-    : kvitteringData?.bestemmendeFraværsdag;
+    : kvitteringData?.inntekt?.inntektsdato;
   const arbeidsgiverperioder = dataFraBackend ? kvitteringDokument?.agp?.perioder : kvitteringData?.agp?.perioder;
 
   const personData: PersonData = dataFraBackend
@@ -133,6 +134,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       }
     }
   };
+
   let innsendingstidspunkt =
     kvitteringInnsendt && isValid(kvitteringInnsendt)
       ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
@@ -164,7 +166,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     : {
         beregnetInntekt: kvitteringData?.inntekt?.beloep
       };
-
+  console.log('kvitteringData', kvitteringData);
   let fravaersperioder: Periode[] = [];
   let egenmeldingsperioder: Periode[] = [];
   if (dataFraBackend) {
@@ -180,7 +182,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       id: periode.fom + periode.tom
     }));
   } else {
-    fravaersperioder = kvitteringData.agp.perioder?.map((periode: MottattPeriode) => ({
+    fravaersperioder = kvitteringData.sykmeldingsperioder?.map((periode: MottattPeriode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
       id: periode.fom + periode.tom
@@ -363,7 +365,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <Heading2>Beregnet månedslønn</Heading2>
               <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
               <BodyShort>{formatCurrency(inntekt.beregnetInntekt)} kr/måned</BodyShort>
-              {inntekt.endringÅrsak && (
+              {endringAarsak && (
                 <>
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
@@ -372,7 +374,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                     aarsak={endringAarsak.aarsak}
                     gjelderFra={endringAarsak.gjelderFra}
                     bleKjent={endringAarsak.bleKjent}
-                    perioder={endringAarsak.liste}
+                    perioder={endringAarsak.perioder}
                   />
                 </>
               )}
@@ -463,7 +465,7 @@ export async function getServerSideProps(context: any) {
     /* håndter valideringsfeil */
     console.error('Valideringsfeil');
     const ingress = context.req.headers.host + environment.baseUrl;
-    const currentPath = `https://${ingress}/${context.resolvedUrl}`;
+    const currentPath = `https://${ingress}${context.resolvedUrl}`;
 
     const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
     return {

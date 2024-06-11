@@ -1,5 +1,5 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattNaturalytelse, TDateISODate } from './MottattData';
+import { MottattNaturalytelse, MottattPeriode, TDateISODate } from './MottattData';
 import useBoundStore from './useBoundStore';
 import {
   AArsakType,
@@ -176,6 +176,21 @@ export default function useKvitteringInit() {
           break;
         }
       }
+    }
+
+    if (jsonData.inntekt.endringAarsak) {
+      const aarsak = jsonData.inntekt.endringAarsak;
+
+      setEndringsaarsak(aarsak.aarsak);
+      if (aarsak.perioder)
+        setPerioder(
+          aarsak.perioder.map((periode: MottattPeriode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom)
+          }))
+        );
+      if (aarsak.gjelderFra) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
+      if (aarsak.bleKjent) setEndringAarsakBleKjent(parseIsoDate(aarsak.bleKjent));
     }
 
     initLonnISykefravaeret({

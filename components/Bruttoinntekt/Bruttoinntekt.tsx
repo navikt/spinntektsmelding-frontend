@@ -46,7 +46,6 @@ export default function Bruttoinntekt({
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
-  const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const endringAarsak: EndringAarsak = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
