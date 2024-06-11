@@ -87,7 +87,7 @@ export default function useFyllAapenInnsending() {
       refusjon:
         lonnISykefravaeret?.status === 'Ja'
           ? {
-              beloepPerMaaned: bruttoinntekt.bruttoInntekt!,
+              beloepPerMaaned: lonnISykefravaeret.beloep!,
               sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }

@@ -29,9 +29,8 @@ import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
-import { isEqual, isValid } from 'date-fns';
+import { isBefore, isEqual, isValid } from 'date-fns';
 import { LonnISykefravaeret, Periode, RefusjonskravetOpphoerer, YesNo } from '../../../state/state';
-import skjemaVariant from '../../../config/skjemavariant';
 
 import KvitteringAnnetSystem from '../../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../../utils/isValidUUID';
@@ -124,14 +123,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     kvitteringInit(kvittering);
     // Må lagre data som kan endres i hovedskjema - Slutt
 
-    if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
-      if (isValidUUID(kvitteringSlug)) {
-        router.push(`/${kvitteringSlug}`);
-      }
-    } else {
-      if (isValidUUID(kvitteringSlug)) {
-        router.push(`/endring/${kvitteringSlug}`);
-      }
+    if (isValidUUID(kvitteringSlug)) {
+      router.push(`/${kvitteringSlug}`);
     }
   };
 
@@ -450,6 +443,14 @@ function prepareForInitiering(kvitteringData: any, personData: PersonData) {
 }
 
 export async function getServerSideProps(context: any) {
+  // return {
+  //   props: {
+  //     kvittid: context.query.kvittid,
+  //     // kvittering: undefined,
+  //     // kvitteringStatus: undefined,
+  //     dataFraBackend: false
+  //   }
+  // };
   const kvittid = context.query.kvittid;
 
   let kvittering: { status: number; data: { success: any } };
@@ -495,6 +496,8 @@ export async function getServerSideProps(context: any) {
       };
     }
   }
+
+  console.log('kvittering', kvittering?.data?.success);
 
   return {
     props: {
