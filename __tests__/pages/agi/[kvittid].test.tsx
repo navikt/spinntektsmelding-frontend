@@ -4,8 +4,8 @@ import { expect, vi } from 'vitest';
 import useBoundStore from '../../../state/useBoundStore';
 import env from '../../../config/environment';
 
-import kvitteringsdata from '../../../mockdata/kvittering-data.json';
-import kvitteringsdataUtenAgp from '../../../mockdata/kvittering-uten-agp.json';
+import kvitteringsdata from '../../../mockdata/selvbestemt-kvittering.json';
+import kvitteringsdataUtenAgp from '../../../mockdata/selvbestemt-kvittering-uten-agp.json';
 import kvitteringsdataEksterntSystem from '../../../mockdata/kvittering-eksternt-system.json';
 
 const mockPush = vi.fn();
