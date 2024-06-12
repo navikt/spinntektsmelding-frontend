@@ -1,5 +1,4 @@
 import NetworkError from './NetworkError';
-
 import formatIsoDate from './formatIsoDate';
 
 export default function fetcherInntektsdataSelvbestemt(
@@ -26,7 +25,7 @@ export default function fetcherInntektsdataSelvbestemt(
         const error = new NetworkError('Kunne ikke hente arbeidsforhold, vennligst prøv igjen senere');
         error.status = res.status;
         // error.info = res.json();
-        throw error;
+        return Promise.reject(error);
       }
       return res.json();
     })
@@ -34,6 +33,6 @@ export default function fetcherInntektsdataSelvbestemt(
       const newError = new NetworkError('Kunne ikke tolke resultatet fra serveren');
       newError.status = error.status;
       newError.info = error.info;
-      throw newError;
+      return Promise.reject(newError);
     });
 }
