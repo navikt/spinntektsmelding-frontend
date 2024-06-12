@@ -136,7 +136,7 @@ const Initiering2: NextPage = () => {
           const ingress = window.location.hostname + environment.baseUrl;
           const currentPath = window.location.href;
 
-          window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
+          window.location.replace(`https://${ingress}/oauth2/login?redirect=${ingress}/initiering`);
         }
 
         if (err.status !== 200) {
