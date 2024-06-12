@@ -100,7 +100,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         navn: kvitteringDokument.sykmeldt.navn,
         identitetsnummer: kvitteringDokument.sykmeldt.fnr,
         orgnrUnderenhet: kvitteringDokument.avsender.orgnr,
-        virksomhetNavn: kvitteringDokument.avsender.orgnr,
+        virksomhetNavn: kvitteringDokument.avsender.orgNavn,
         innsenderNavn: kvitteringDokument.avsender.navn,
         innsenderTelefonNr: kvitteringDokument.avsender.tlf
       }
@@ -114,8 +114,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       };
 
   const clickEndre = () => {
-    const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
-
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
 
     // Må lagre data som kan endres i hovedskjema - Start
@@ -497,7 +495,7 @@ export async function getServerSideProps(context: any) {
     }
   }
 
-  console.log('kvittering', kvittering?.data?.success);
+  console.log('kvittering', JSON.stringify(kvittering?.data?.success));
 
   return {
     props: {

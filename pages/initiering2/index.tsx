@@ -120,6 +120,10 @@ const Initiering2: NextPage = () => {
     formState: { errors }
   } = methods;
 
+  if (!identitetsnummer) {
+    router.back();
+  }
+
   const { data, error } = useSWRImmutable(
     [environment.initierBlankSkjemaUrl, identitetsnummer],
     ([url, idToken]) => fetcherArbeidsforhold(url, idToken),
