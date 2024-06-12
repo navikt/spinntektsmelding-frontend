@@ -21,7 +21,6 @@ import useSWRImmutable from 'swr/immutable';
 
 import fetcherArbeidsforhold, { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
 import environment from '../../config/environment';
-import { useRouter } from 'next/navigation';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import { PersonnummerSchema } from '../../validators/validerAapenInnsending';
@@ -33,6 +32,7 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
+import { Periode } from '../../state/state';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -43,7 +43,6 @@ const Initiering2: NextPage = () => {
 
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
   let perioder: { fom: Date; tom: Date; id: string }[] = [];
-  const router = useRouter();
 
   let fulltNavn = '';
   const backendFeil = useRef([] as Feilmelding[]);
@@ -121,10 +120,6 @@ const Initiering2: NextPage = () => {
     handleSubmit,
     formState: { errors }
   } = methods;
-
-  if (!identitetsnummer) {
-    router.back();
-  }
 
   const { data, error } = useSWRImmutable(
     [environment.initierBlankSkjemaUrl, identitetsnummer],
@@ -218,9 +213,11 @@ const Initiering2: NextPage = () => {
 
   const sykeperioder = watch('perioder');
 
-  const antallSykedager = numberOfDaysInRanges(
-    sykeperioder.filter((periode) => periode !== undefined && periode.fom && periode.tom)
-  );
+  const antallSykedager = sykeperioder
+    ? numberOfDaysInRanges(
+        sykeperioder.filter((periode: Periode[]) => periode !== undefined && periode.fom && periode.tom)
+      )
+    : 0;
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
