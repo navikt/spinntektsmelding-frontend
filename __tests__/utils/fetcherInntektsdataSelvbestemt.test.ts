@@ -1,13 +1,12 @@
 import { vi } from 'vitest';
 import fetcherInntektsdataSelvbestemt from '../../utils/fetcherInntektsdataSelvbestemt';
 import NetworkError from '../../utils/NetworkError';
-import formatIsoDate from '../../utils/formatIsoDate';
 
 describe('fetcherInntektsdataSelvbestemt', () => {
   const url = 'https://example.com/api';
   const identitetsnummer = '123456789';
   const orgnrUnderenhet = '987654321';
-  const inntektsdato = new Date();
+  const inntektsdato = new Date(2025, 3, 7);
 
   beforeEach(() => {
     global.fetch = vi.fn();
@@ -31,7 +30,7 @@ describe('fetcherInntektsdataSelvbestemt', () => {
     const expectedRequestBody = JSON.stringify({
       sykmeldtFnr: identitetsnummer,
       orgnr: orgnrUnderenhet,
-      inntektsdato: formatIsoDate(inntektsdato)
+      inntektsdato: '2025-04-07'
     });
 
     const mockResponse = {
