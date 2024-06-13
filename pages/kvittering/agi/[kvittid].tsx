@@ -197,8 +197,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   let fullLoennIArbeidsgiverPerioden;
 
   if (dataFraBackend) {
-    fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden ?? {};
-    fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.redusertLoennIAgp ? 'Nei' : 'Ja';
+    // fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden ?? {};
+    // fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.redusertLoennIAgp ? 'Nei' : 'Ja';
+    fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
+    fullLoennIArbeidsgiverPerioden.status = !!kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringDokument.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
+    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringDokument?.agp?.redusertLoennIAgp?.beloep;
+    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringDokument?.agp.redusertLoennIAgp?.begrunnelse;
   } else {
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
     fullLoennIArbeidsgiverPerioden.status = !!kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringData.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
