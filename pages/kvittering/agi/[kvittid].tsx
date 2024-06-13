@@ -431,6 +431,7 @@ function prepareForInitiering(kvitteringData: any, personData: PersonData) {
   kvittering.fraværsperioder = kvitteringData.sykmeldingsperioder;
   kvittering.egenmeldingsperioder = kvitteringData.agp?.egenmeldinger;
   kvittering.inntekt = { ...kvitteringData.inntekt, endringÅrsak: kvitteringData.inntekt.endringAarsak };
+  kvittering.beregnetInntekt = kvitteringData.inntekt.beloep;
 
   kvittering.refusjon = {
     utbetalerHeleEllerDeler: kvitteringData.refusjon?.betalerHeleEllerDeler ? true : false,
