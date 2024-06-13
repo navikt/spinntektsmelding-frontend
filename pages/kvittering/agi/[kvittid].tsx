@@ -71,7 +71,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
 
-  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const [navn, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
     state.navn,
     state.virksomhetsnavn,

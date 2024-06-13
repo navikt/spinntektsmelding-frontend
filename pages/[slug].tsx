@@ -61,7 +61,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  const skjemastatus = useBoundStore((state) => state.skjemastatus);
+  const [skjemastatus, inngangFraKvittering] = useBoundStore((state) => [
+    state.skjemastatus,
+    state.inngangFraKvittering
+  ]);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
@@ -214,7 +217,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   );
 
-  const sbBruttoinntekt = !error ? data?.bruttoinntekt : undefined;
+  const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
   const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
 
   return (
