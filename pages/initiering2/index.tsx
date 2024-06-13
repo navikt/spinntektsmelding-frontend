@@ -33,6 +33,7 @@ import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import { Periode } from '../../state/state';
+import { useRouter } from 'next/router';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -40,6 +41,7 @@ const Initiering2: NextPage = () => {
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const router = useRouter();
 
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
   let perioder: { fom: Date; tom: Date; id: string }[] = [];
