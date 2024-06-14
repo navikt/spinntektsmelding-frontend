@@ -441,6 +441,12 @@ function prepareForInitiering(kvitteringData: any, personData: PersonData) {
     refusjonEndringer: kvitteringData.refusjon?.endringer ? kvitteringData.refusjon?.endringer : []
   };
 
+  kvittering.fullLønnIArbeidsgiverPerioden = {
+    status: !!kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
+    utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep,
+    begrunnelse: kvitteringData?.agp.redusertLoennIAgp?.begrunnelse
+  };
+
   kvittering.arbeidsgiverperioder = kvitteringData.agp?.perioder;
   return kvittering;
 }
