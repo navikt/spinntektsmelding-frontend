@@ -1,4 +1,4 @@
-import { Alert, Button } from '@navikt/ds-react';
+import { Alert, Button, Link } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
@@ -264,11 +264,11 @@ const Initiering2: NextPage = () => {
                     </div>
                     <PeriodeVelger perioder={perioder} />
                     {antallSykedager > 16 && (
-                      <Alert variant='info'>
+                      <Alert variant='info' className={lokalStyles.alertPadding}>
                         <Heading1>Er du sikker på at du skal opprette inntektsmelding nå?</Heading1>
-                        Vi sender ut varsle når arbeidsgiverperioden er over og den sykmeldte har sendt inn søknad om
-                        sykepenger. Hvis du ikke har fått varsel og mener at du skal levere inntektsmelding, er det
-                        mulig å opprette den manuelt her.
+                        Vi sender ut varsel når arbeidsgiverperioden er over og den sykmeldte har sendt inn søknad om
+                        sykepenger. Hvis du ikke har fått varsel og en <Link href='#'>oppgave i saksoversikten</Link> er
+                        det mulig å opprette den manuelt her.
                       </Alert>
                     )}
                   </>

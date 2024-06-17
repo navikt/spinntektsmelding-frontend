@@ -119,7 +119,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input, personData);
-    console.log('kvittering', kvittering);
     kvitteringInit(kvittering);
     // Må lagre data som kan endres i hovedskjema - Slutt
 
@@ -159,7 +158,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     : {
         beregnetInntekt: kvitteringData?.inntekt?.beloep
       };
-  console.log('kvitteringData', kvitteringData);
+
   let fravaersperioder: Periode[] = [];
   let egenmeldingsperioder: Periode[] = [];
   if (dataFraBackend) {
@@ -450,8 +449,6 @@ function prepareForInitiering(kvitteringData: any, personData: PersonData) {
   };
 
   kvittering.arbeidsgiverperioder = kvitteringData.agp?.perioder;
-
-  console.log('kvittering fiks', kvittering);
 
   return kvittering;
 }

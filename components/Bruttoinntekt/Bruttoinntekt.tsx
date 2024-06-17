@@ -188,7 +188,11 @@ export default function Bruttoinntekt({
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
               {formatCurrency(gjennomsnittligInntekt ? gjennomsnittligInntekt : 0)} kr/måned
             </TextLabel>
-            <ButtonEndre data-cy='endre-beloep' onClick={setEndreMaanedsinntektHandler} />
+            <ButtonEndre
+              data-cy='endre-beloep'
+              onClick={setEndreMaanedsinntektHandler}
+              className={lokalStyles.endrePadding}
+            />
           </>
         )}
         {(endringAvBelop || erBlanktSkjema) && (

@@ -110,8 +110,6 @@ export default function useKvitteringInit() {
 
     const beregnetInntekt = jsonData.inntekt?.beregnetInntekt ?? jsonData.beregnetInntekt ?? jsonData.beloep ?? 0;
 
-    console.log('beregnetInntekt', beregnetInntekt);
-
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
 

@@ -28,3 +28,8 @@
   flex-direction: row;
   gap: 1rem;
 }
+
+.alertPadding {
+  margin-top: -0.75rem;
+  margin-bottom: 1rem;
+}

@@ -45,7 +45,7 @@ export default function Fravaersperiode({
         )}
         {selvbestemtInnsending && (
           <>
-            Dere har angitt følgende sykmeldingsperiode. Hvis dere har angitt feil periode eller vil legge til flere
+            Dere har angitt sykmeldingsperiode vist under. Hvis dere har angitt feil periode eller vil legge til flere
             sykmeldingsperioder, må dere opprette dette skjema igjen.
           </>
         )}
