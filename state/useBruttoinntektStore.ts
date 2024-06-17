@@ -66,6 +66,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   tidligereInntekt: undefined,
   henterData: false,
   setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => {
+    console.log('setNyMaanedsinntektOgRefusjonsbeloep', beloep);
     set(
       produce((state) => {
         state.bruttoinntekt.bruttoInntekt = stringishToNumber(beloep);
@@ -97,6 +98,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setBareNyMaanedsinntekt: (beloep: string | number) =>
     set(
       produce((state) => {
+        console.log('setBareNyMaanedsinntekt', beloep);
         state.bruttoinntekt.bruttoInntekt = typeof beloep === 'string' ? stringishToNumber(beloep) : beloep;
         state.bruttoinntekt.manueltKorrigert = false;
         if (state.bruttoinntekt.bruttoInntekt !== undefined && state.bruttoinntekt.bruttoInntekt >= 0) {

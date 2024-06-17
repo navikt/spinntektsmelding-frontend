@@ -108,7 +108,9 @@ export default function Bruttoinntekt({
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringAarsak?.aarsak;
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
-  const gjennomsnittligInntekt = erSelvbestemt ? sbBruttoinntekt : bruttoinntekt?.bruttoInntekt;
+  const gjennomsnittligInntekt = erSelvbestemt
+    ? sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt
+    : bruttoinntekt?.bruttoInntekt;
   const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereinntekt : tidligereinntekt;
 
   const erFeriemaaneder = sjekkOmFerieMaaneder(sisteTreMndTidligereinntekt);

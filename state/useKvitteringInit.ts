@@ -108,7 +108,9 @@ export default function useKvitteringInit() {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.skjaeringstidspunkt));
     }
 
-    const beregnetInntekt = jsonData.inntekt?.beregnetInntekt ?? jsonData.beregnetInntekt ?? 0;
+    const beregnetInntekt = jsonData.inntekt?.beregnetInntekt ?? jsonData.beregnetInntekt ?? jsonData.beloep ?? 0;
+
+    console.log('beregnetInntekt', beregnetInntekt);
 
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();

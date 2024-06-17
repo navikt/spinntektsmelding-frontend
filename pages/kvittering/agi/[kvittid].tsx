@@ -1,3 +1,5 @@
+// import testdata from '../../../mockdata/selvbestemt-kvittering.json';
+
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -448,6 +450,9 @@ function prepareForInitiering(kvitteringData: any, personData: PersonData) {
   };
 
   kvittering.arbeidsgiverperioder = kvitteringData.agp?.perioder;
+
+  console.log('kvittering fiks', kvittering);
+
   return kvittering;
 }
 
@@ -455,9 +460,9 @@ export async function getServerSideProps(context: any) {
   // return {
   //   props: {
   //     kvittid: context.query.kvittid,
-  //     // kvittering: undefined,
-  //     // kvitteringStatus: undefined,
-  //     dataFraBackend: false
+  //     kvittering: testdata,
+  //     kvitteringStatus: 200,
+  //     dataFraBackend: true
   //   }
   // };
   const kvittid = context.query.kvittid;
@@ -513,7 +518,7 @@ export async function getServerSideProps(context: any) {
       kvittid,
       kvittering: kvittering?.data?.success,
       kvitteringStatus: kvittering?.status,
-      dataFraBackend: !!kvittering?.data?.success.selvbestemtInntektsmelding
+      dataFraBackend: !!kvittering?.data?.success?.selvbestemtInntektsmelding
     }
   };
 }
