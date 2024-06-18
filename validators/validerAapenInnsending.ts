@@ -278,7 +278,7 @@ const schema = z.object({
     egenmeldinger: SykPeriodeListeSchema,
     redusertLoennIAgp: z.nullable(
       z.object({
-        beloep: z.number().min(0),
+        beloep: z.number({ required_error: 'Angi beløp utbetalt under arbeidsgiverperioden' }).min(0),
         begrunnelse: BegrunnelseRedusertLoennIAgpEnum
       })
     )
