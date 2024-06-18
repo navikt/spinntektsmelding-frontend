@@ -157,9 +157,8 @@ const Initiering2: NextPage = () => {
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;
-    console.log('formData', formData);
+
     if (data) {
-      console.log('data', data);
       const mottatteData = endepunktArbeidsforholdSchema.safeParse(data);
       if (mottatteData.success && !mottatteData.data.feilReport) {
         const skjemaData = {

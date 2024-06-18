@@ -55,7 +55,7 @@ export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readon
     return (
       <>
         <Label>Angi sykmeldingsperiode du vil sende inntektsmelding for</Label>
-        <PeriodeListevelger fomTekst='Sykmelding fra' tomTekst='Sykmelding til' name='perioder' />
+        <PeriodeListevelger fomTekst='Sykmelding fra' tomTekst='Sykmelding til' name='perioder' toDate={new Date()} />
       </>
     );
   }
@@ -92,7 +92,9 @@ export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readon
       )}
 
       <Radio value='Annen'>Annen periode</Radio>
-      {selectedGroup === 'Annen' && <PeriodeListevelger fomTekst='Fra' tomTekst='Til' name='perioder' />}
+      {selectedGroup === 'Annen' && (
+        <PeriodeListevelger fomTekst='Fra' tomTekst='Til' name='perioder' toDate={new Date()} />
+      )}
     </RadioGroup>
   );
 }

@@ -508,8 +508,6 @@ export async function getServerSideProps(context: any) {
     }
   }
 
-  console.log('kvittering', JSON.stringify(kvittering?.data?.success));
-
   return {
     props: {
       kvittid,
