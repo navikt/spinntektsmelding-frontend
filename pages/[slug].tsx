@@ -38,8 +38,6 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
-import fetcherInntektsdataSelvbestemt from '../utils/fetcherInntektsdataSelvbestemt';
-import useSWRImmutable from 'swr/immutable';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
