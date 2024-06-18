@@ -258,7 +258,7 @@ export const telefonNummerSchema = z
   .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' });
 
 const RefusjonEndringSchema = z.object({
-  startDato: z
+  startdato: z
     .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
     .transform((val) => toLocalIso(val)),
   beloep: z

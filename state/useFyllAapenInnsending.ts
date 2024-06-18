@@ -142,7 +142,7 @@ function konverterRefusjonEndringer(
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
           beloep: endring.beloep!,
-          startDato: endring.dato!
+          startdato: endring.dato!
         }))
       : undefined;
 
