@@ -267,8 +267,9 @@ const Initiering2: NextPage = () => {
                       <Alert variant='info' className={lokalStyles.alertPadding}>
                         <Heading1>Er du sikker på at du skal opprette inntektsmelding nå?</Heading1>
                         Vi sender ut varsel når arbeidsgiverperioden er over og den sykmeldte har sendt inn søknad om
-                        sykepenger. Hvis du ikke har fått varsel og en <Link href='#'>oppgave i saksoversikten</Link> er
-                        det mulig å opprette den manuelt her.
+                        sykepenger. Hvis du ikke har fått varsel og en{' '}
+                        <Link href={environment.saksoversiktUrl}>oppgave i saksoversikten</Link> er det mulig å opprette
+                        den manuelt her.
                       </Alert>
                     )}
                   </>

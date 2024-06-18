@@ -77,7 +77,8 @@ const nextConfig = {
     aktiveOrgnrApi: process.env.AKTIVE_ORGNR_API,
     innsendingSelvbestemtInntektsmeldingApi: process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API,
     version,
-    loggingDisabled: process.env.DISABLE_DECORATOR
+    loggingDisabled: process.env.DISABLE_DECORATOR,
+    saksoversiktUrl: process.env.SAKSOVERSIKT_URL
   }
 };
 

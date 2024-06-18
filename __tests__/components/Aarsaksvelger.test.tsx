@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import { expect, vi } from 'vitest';

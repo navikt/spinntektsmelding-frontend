@@ -49,6 +49,10 @@ class Environment {
     return this.publicRuntimeConfig.minSideArbeidsgiver;
   }
 
+  get saksoversiktUrl() {
+    return this.publicRuntimeConfig.saksoversiktUrl;
+  }
+
   get aktiveOrgnrApi() {
     return this.publicRuntimeConfig.aktiveOrgnrApi;
   }
