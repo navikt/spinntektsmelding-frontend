@@ -99,6 +99,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
+    setSenderInn(true);
 
     if (slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
       sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm, {}).finally(() => {
@@ -107,7 +108,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
       return;
     }
-    setSenderInn(true);
 
     sendInnSkjema(opplysningerBekreftet, false, pathSlug, isDirtyForm).finally(() => {
       setSenderInn(false);
