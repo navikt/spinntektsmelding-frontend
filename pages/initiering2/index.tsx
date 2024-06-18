@@ -52,7 +52,9 @@ const Initiering2: NextPage = () => {
   const skjemaSchema = z
     .object({
       organisasjonsnummer: z
-        .string()
+        .string({
+          required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+        })
         .transform((val) => val.replace(/\s/g, ''))
         .pipe(
           z
@@ -136,7 +138,12 @@ const Initiering2: NextPage = () => {
           window.location.replace(`https://${ingress}/oauth2/login?redirect=${ingress}/initiering`);
         }
 
-        if (err.status !== 200) {
+        if (err.status === 404) {
+          backendFeil.current.push({
+            felt: 'Backend',
+            text: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+          });
+        } else if (err.status !== 200) {
           backendFeil.current.push({
             felt: 'Backend',
             text: 'Kunne ikke hente arbeidsforhold'
@@ -150,8 +157,9 @@ const Initiering2: NextPage = () => {
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;
-
+    console.log('formData', formData);
     if (data) {
+      console.log('data', data);
       const mottatteData = endepunktArbeidsforholdSchema.safeParse(data);
       if (mottatteData.success && !mottatteData.data.feilReport) {
         const skjemaData = {
