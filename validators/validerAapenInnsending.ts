@@ -284,7 +284,7 @@ const schema = z
             beloep: z.number({ required_error: 'Angi beløp utbetalt under arbeidsgiverperioden' }).min(0),
             begrunnelse: BegrunnelseRedusertLoennIAgpEnum
           })
-          .refine((val) => val.beloep > 0, { message: 'Beløpet må være større enn 0' })
+          .refine((val) => val.beloep >= 0, { message: 'Beløpet må være større eller lik 0' })
       )
     }),
     inntekt: z.optional(
