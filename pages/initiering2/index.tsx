@@ -17,9 +17,8 @@ import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectA
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
 import initieringSchema from '../../schema/initieringSchema';
-import useSWRImmutable from 'swr/immutable';
 
-import fetcherArbeidsforhold, { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
+import { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
 import environment from '../../config/environment';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
@@ -34,6 +33,7 @@ import isMod11Number from '../../utils/isMod10Number';
 import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import { Periode } from '../../state/state';
 import { useRouter } from 'next/router';
+import useArbeidsforhold from '../../utils/useArbeidsforhold';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -125,35 +125,7 @@ const Initiering2: NextPage = () => {
     formState: { errors }
   } = methods;
 
-  const { data, error } = useSWRImmutable(
-    [environment.initierBlankSkjemaUrl, identitetsnummer],
-    ([url, idToken]) => fetcherArbeidsforhold(url, idToken),
-    {
-      onError: (err) => {
-        console.error('Kunne ikke hente arbeidsforhold', err);
-        if (err.status === 401) {
-          const ingress = window.location.hostname + environment.baseUrl;
-          const currentPath = window.location.href;
-
-          window.location.replace(`https://${ingress}/oauth2/login?redirect=${ingress}/initiering`);
-        }
-
-        if (err.status === 404) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
-          });
-        } else if (err.status !== 200) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Kunne ikke hente arbeidsforhold'
-          });
-        }
-      },
-      refreshInterval: 0,
-      shouldRetryOnError: false
-    }
-  );
+  const { data, error } = useArbeidsforhold(identitetsnummer, backendFeil);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;
