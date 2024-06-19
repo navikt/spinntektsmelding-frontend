@@ -59,7 +59,8 @@ export default function PeriodeVelger({ perioder, perioderSomVises = 3 }: Readon
           fomTekst='Sykmelding fra'
           tomTekst='Sykmelding til'
           name='perioder'
-          toDateTom={new Date()}
+          toDate={new Date()}
+          toDateTomFri={true}
         />
       </>
     );

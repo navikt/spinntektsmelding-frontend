@@ -14,6 +14,7 @@ interface PeriodeListevelgerProps {
   defaultMonth?: Date;
   toDate?: Date;
   toDateTom?: Date;
+  toDateTomFri?: boolean;
   name: string;
 }
 
@@ -21,10 +22,10 @@ export default function PeriodeListevelger({
   defaultRange,
   fomTekst,
   tomTekst,
-
   defaultMonth,
   toDate,
   toDateTom,
+  toDateTomFri,
   name
 }: PeriodeListevelgerProps) {
   const {
@@ -56,7 +57,7 @@ export default function PeriodeListevelger({
     append({});
   };
 
-  if (!toDateTom && toDate) {
+  if (!toDateTom && toDate && !toDateTomFri) {
     toDateTom = toDate;
   }
 
