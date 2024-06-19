@@ -13,6 +13,7 @@ interface PeriodeListevelgerProps {
   tomTekst: string;
   defaultMonth?: Date;
   toDate?: Date;
+  toDateTom?: Date;
   name: string;
 }
 
@@ -23,6 +24,7 @@ export default function PeriodeListevelger({
 
   defaultMonth,
   toDate,
+  toDateTom,
   name
 }: PeriodeListevelgerProps) {
   const {
@@ -54,6 +56,10 @@ export default function PeriodeListevelger({
     append({});
   };
 
+  if (!toDateTom && toDate) {
+    toDateTom = toDate;
+  }
+
   return (
     <>
       {fields.map((range, key) => (
@@ -71,7 +77,7 @@ export default function PeriodeListevelger({
             // fromDate={fromDate}
             label={tomTekst}
             // defaultSelected={defaultRange?.tom}
-            toDate={toDate}
+            toDate={toDateTom}
             defaultMonth={defaultMonth}
           />
           {key > 0 && (

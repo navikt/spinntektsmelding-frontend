@@ -44,6 +44,7 @@ export default function Bruttoinntekt({
   const setEndringAarsakGjelderFra = useBoundStore((state) => state.setEndringAarsakGjelderFra);
   const setEndringAarsakBleKjent = useBoundStore((state) => state.setEndringAarsakBleKjent);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
+  const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
   const endringAarsak: EndringAarsak = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
@@ -206,7 +207,7 @@ export default function Bruttoinntekt({
             setPerioder={addIsDirtyForm(setPerioder)}
             visFeilmeldingsTekst={visFeilmeldingsTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
-            nyInnsending={nyInnsending}
+            nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}
             clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
             kanIkkeTilbakestilles={erBlanktSkjema}
           />

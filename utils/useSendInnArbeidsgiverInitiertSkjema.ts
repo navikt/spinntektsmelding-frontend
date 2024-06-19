@@ -9,6 +9,7 @@ import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
+import { has } from 'cypress/types/lodash';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -17,6 +18,10 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
+  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setKvitteringsdata = useBoundStore((state) => state.setKvitteringsdata);
@@ -59,9 +64,20 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       skjemaData.aarsakInnsending = 'Ny';
     }
     const validerteData = fyllAapenInnsending(skjemaData);
-    const hasErrors = validerteData.success !== true;
+    let hasErrors = validerteData.success !== true;
 
-    if (hasErrors || !opplysningerBekreftet) {
+    if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
+      hasErrors = true;
+    }
+
+    if (
+      hasErrors ||
+      !opplysningerBekreftet ||
+      (!harRefusjonEndringer && lonnISykefravaeret?.status === 'Ja') ||
+      !fullLonnIArbeidsgiverPerioden?.status ||
+      !lonnISykefravaeret?.status ||
+      (!refusjonskravetOpphoerer?.status && lonnISykefravaeret?.status === 'Ja')
+    ) {
       const errors: ValiderTekster[] = hasErrors
         ? validerteData.error.issues.map((issue) => {
             return {
@@ -71,10 +87,45 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
           })
         : [];
 
+      if (!fullLonnIArbeidsgiverPerioden?.status) {
+        errors.push({
+          text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN,
+          felt: 'lia-radio'
+        });
+      }
+
+      if (!lonnISykefravaeret?.status) {
+        errors.push({
+          text: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
+          felt: 'lus-radio'
+        });
+      }
+
+      if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
+        errors.push({
+          text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
+          felt: 'lus-utbetaling-endring-radio'
+        });
+      }
+
+      if (lonnISykefravaeret?.status === 'Ja' && !refusjonskravetOpphoerer) {
+        errors.push({
+          text: 'Vennligst angi om refusjonskravet opphører.',
+          felt: 'lus-sluttdato-velg'
+        });
+      }
+
       if (!opplysningerBekreftet) {
         errors.push({
           text: feiltekster.BEKREFT_OPPLYSNINGER,
           felt: 'bekreft-opplysninger'
+        });
+      }
+
+      if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
+        errors.push({
+          text: feiltekster.BEKREFT_OPPLYSNINGER,
+          felt: 'lus-uua-input'
         });
       }
 

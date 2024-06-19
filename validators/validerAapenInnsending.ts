@@ -3,6 +3,7 @@ import isFnrNumber from '../utils/isFnrNumber';
 import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
+import zodAlwaysRefine from '../utils/zodAlwaysRefine';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -266,58 +267,74 @@ const RefusjonEndringSchema = z.object({
     .min(0, { message: 'Beløpet må være større enn eller lik 0' })
 });
 
-const schema = z.object({
-  sykmeldtFnr: PersonnummerSchema,
-  avsender: z.object({
-    orgnr: OrganisasjonsnummerSchema,
-    tlf: telefonNummerSchema
-  }),
-  sykmeldingsperioder: SykPeriodeListeSchema,
-  agp: z.object({
-    perioder: z.array(SykPeriodeSchema),
-    egenmeldinger: SykPeriodeListeSchema,
-    redusertLoennIAgp: z.nullable(
-      z.object({
-        beloep: z.number({ required_error: 'Angi beløp utbetalt under arbeidsgiverperioden' }).min(0),
-        begrunnelse: BegrunnelseRedusertLoennIAgpEnum
-      })
-    )
-  }),
-  inntekt: z.optional(
-    z
+const schema = z
+  .object({
+    sykmeldtFnr: PersonnummerSchema,
+    avsender: z.object({
+      orgnr: OrganisasjonsnummerSchema,
+      tlf: telefonNummerSchema
+    }),
+    sykmeldingsperioder: SykPeriodeListeSchema,
+    agp: z.object({
+      perioder: z.array(SykPeriodeSchema),
+      egenmeldinger: SykPeriodeListeSchema,
+      redusertLoennIAgp: z.nullable(
+        z
+          .object({
+            beloep: z.number({ required_error: 'Angi beløp utbetalt under arbeidsgiverperioden' }).min(0),
+            begrunnelse: BegrunnelseRedusertLoennIAgpEnum
+          })
+          .refine((val) => val.beloep > 0, { message: 'Beløpet må være større enn 0' })
+      )
+    }),
+    inntekt: z.optional(
+      z
+        .object({
+          beloep: z
+            .number({ required_error: 'Vennligst angi månedsinntekt' })
+            .min(0, 'Månedsinntekt må være større enn eller lik 0'),
+          inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
+          naturalytelser: z.union([
+            z.array(
+              z.object({
+                naturalytelse: NaturalytelseEnum,
+                verdiBeloep: z.number().min(0),
+                sluttdato: z.date().transform((val) => toLocalIso(val))
+              })
+            ),
+            z.tuple([])
+          ]),
+          endringAarsak: EndringAarsakSchema.nullable()
+        })
+        .optional()
+    ),
+    refusjon: z
       .object({
-        beloep: z
-          .number({ required_error: 'Vennligst angi månedsinntekt' })
-          .min(0, 'Månedsinntekt må være større enn eller lik 0'),
-        inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
-        naturalytelser: z.union([
-          z.array(
-            z.object({
-              naturalytelse: NaturalytelseEnum,
-              verdiBeloep: z.number().min(0),
-              sluttdato: z.date().transform((val) => toLocalIso(val))
-            })
-          ),
-          z.tuple([])
-        ]),
-        endringAarsak: EndringAarsakSchema.nullable()
+        beloepPerMaaned: z
+          .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
+          .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
+        endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
+        sluttdato: z
+          .date()
+          .transform((val) => toLocalIso(val))
+          .nullable()
       })
-      .optional()
-  ),
-  refusjon: z
-    .object({
-      beloepPerMaaned: z
-        .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
-        .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-      endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
-      sluttdato: z
-        .date()
-        .transform((val) => toLocalIso(val))
-        .nullable()
-    })
-    .nullable(),
-  aarsakInnsending: z.enum(['Endring', 'Ny'])
-});
+      .nullable(),
+    aarsakInnsending: z.enum(['Endring', 'Ny'])
+  })
+  .superRefine((val, ctx) => {
+    if (
+      val.inntekt?.beloep &&
+      val.agp?.redusertLoennIAgp?.beloep &&
+      val.inntekt?.beloep < val.agp?.redusertLoennIAgp?.beloep
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
+        path: ['refusjon', 'beloepPerMaaned']
+      });
+    }
+  });
 
 export type AapenInnsending = z.infer<typeof schema>;
 
