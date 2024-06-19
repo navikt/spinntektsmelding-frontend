@@ -24,13 +24,13 @@ export default function validerLonnIArbeidsgiverperioden(
     if (!lonnIAP?.begrunnelse || lonnIAP?.begrunnelse?.length === 0) {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE,
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       });
     }
     if (ugyldigEllerNegativtTall(lonnIAP?.utbetalt)) {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
-        felt: 'lus-uua-input'
+        felt: 'agp.redusertLoennIAgp.beloep'
       });
     }
     if (lonnIAP?.status === 'Ja') {
@@ -51,13 +51,13 @@ export default function validerLonnIArbeidsgiverperioden(
     if (lonnIAP.status === 'Nei' && (!lonnIAP.begrunnelse || lonnIAP.begrunnelse?.length === 0)) {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE,
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       });
     }
     if (lonnIAP.status === 'Nei' && ugyldigEllerNegativtTall(lonnIAP.utbetalt)) {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP,
-        felt: 'lus-uua-input'
+        felt: 'agp.redusertLoennIAgp.beloep'
       });
     }
     if (ingenArbeidsgiverperiode && lonnIAP.status === 'Ja') {

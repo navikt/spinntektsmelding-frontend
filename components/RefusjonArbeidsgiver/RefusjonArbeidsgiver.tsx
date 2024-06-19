@@ -124,8 +124,8 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
                     className={localStyles.refusjonsbeloep}
                     label='Utbetalt under arbeidsgiverperiode'
                     onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
-                    id={'lus-uua-input'}
-                    error={visFeilmeldingsTekst('lus-uua-input')}
+                    id={'agp.redusertLoennIAgp.beloep'}
+                    error={visFeilmeldingsTekst('agp.redusertLoennIAgp.beloep')}
                     defaultValue={
                       Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)
                         ? ''
@@ -135,7 +135,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
                   <SelectBegrunnelse
                     onChangeBegrunnelse={addIsDirtyForm(begrunnelseRedusertUtbetaling)}
                     defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
-                    error={visFeilmeldingsTekst('lia-select')}
+                    error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
                   />
                 </div>
                 {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}

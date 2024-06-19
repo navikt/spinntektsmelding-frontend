@@ -16,7 +16,7 @@ export default function SelectBegrunnelse(props: SelectBegrunnelseProps) {
     <Select
       label={label}
       onChange={(event) => props.onChangeBegrunnelse(event.target.value)}
-      id={'lia-select'}
+      id={'agp.redusertLoennIAgp.begrunnelse'}
       className={localStyles.selectbegrunnelse}
       defaultValue={props.defaultValue}
       error={props.error}

@@ -403,8 +403,8 @@ export default function Arbeidsgiverperiode({
               className={lokalStyles.refusjonsbeloep}
               label='Utbetalt under arbeidsgiverperiode'
               onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
-              id={'lus-uua-input'}
-              error={visFeilmeldingsTekst('lus-uua-input')}
+              id={'agp.redusertLoennIAgp.beloep'}
+              error={visFeilmeldingsTekst('agp.redusertLoennIAgp.beloep')}
               defaultValue={
                 !fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
                   ? ''
@@ -414,7 +414,7 @@ export default function Arbeidsgiverperiode({
             <SelectBegrunnelseKortArbeidsgiverperiode
               onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
               defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-              error={visFeilmeldingsTekst('lia-select')}
+              error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
             />
           </div>
           {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
@@ -434,7 +434,7 @@ export default function Arbeidsgiverperiode({
               <SelectBegrunnelse
                 onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
                 defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-                error={visFeilmeldingsTekst('lia-select')}
+                error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
                 label='Velg begrunnelse'
               />
               {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}

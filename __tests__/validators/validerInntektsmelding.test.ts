@@ -74,11 +74,11 @@ describe('validerInntektsmelding', () => {
           text: 'MANGLER_PERIODE'
         },
         {
-          felt: 'lia-select',
+          felt: 'agp.redusertLoennIAgp.begrunnelse',
           text: 'Begrunnelse for redusert utbetaling av lønn i arbeidsgiverperioden mangler.'
         },
         {
-          felt: 'lus-uua-input',
+          felt: 'agp.redusertLoennIAgp.beloep',
           text: 'Angi beløp. Må være høyere enn eller lik 0 og på formatet 1234,50'
         },
         {

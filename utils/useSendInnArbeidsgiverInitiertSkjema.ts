@@ -125,7 +125,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
         errors.push({
           text: feiltekster.BEKREFT_OPPLYSNINGER,
-          felt: 'lus-uua-input'
+          felt: 'agp.redusertLoennIAgp.beloep'
         });
       }
 

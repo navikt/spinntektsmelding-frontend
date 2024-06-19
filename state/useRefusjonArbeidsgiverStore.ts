@@ -52,7 +52,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         } else if (status !== undefined) state.fullLonnIArbeidsgiverPerioden.status = status;
 
         state = slettFeilmeldingFraState(state, 'lia-radio');
-        state = slettFeilmeldingFraState(state, 'lus-uua-input');
+        state = slettFeilmeldingFraState(state, 'agp.redusertLoennIAgp.beloep');
 
         return state;
       })
@@ -89,9 +89,13 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.fullLonnIArbeidsgiverPerioden = { begrunnelse: begrunnelse };
         }
         if (begrunnelse && begrunnelse.length > 0) {
-          state = slettFeilmeldingFraState(state, 'lia-select');
+          state = slettFeilmeldingFraState(state, 'agp.redusertLoennIAgp.begrunnelse');
         } else {
-          state = leggTilFeilmelding(state, 'lia-select', feiltekster.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE);
+          state = leggTilFeilmelding(
+            state,
+            'agp.redusertLoennIAgp.begrunnelse',
+            feiltekster.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE
+          );
         }
         return state;
       })
@@ -127,9 +131,9 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
 
         const nBeloep = stringishToNumber(beloep);
 
-        state = slettFeilmeldingFraState(state, 'lus-uua-input');
+        state = slettFeilmeldingFraState(state, 'agp.redusertLoennIAgp.beloep');
         if (ugyldigEllerNegativtTall(nBeloep)) {
-          state = leggTilFeilmelding(state, 'lus-uua-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
+          state = leggTilFeilmelding(state, 'agp.redusertLoennIAgp.beloep', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
         return state;
       })
@@ -264,7 +268,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         } else state.fullLonnIArbeidsgiverPerioden.status = undefined;
 
         state = slettFeilmeldingFraState(state, 'lia-radio');
-        state = slettFeilmeldingFraState(state, 'lus-uua-input');
+        state = slettFeilmeldingFraState(state, 'agp.redusertLoennIAgp.beloep');
 
         return state;
       })
