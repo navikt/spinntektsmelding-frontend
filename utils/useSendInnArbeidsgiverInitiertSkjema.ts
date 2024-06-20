@@ -229,7 +229,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
               }
             ];
             errorResponse(errors);
-
+            setSkalViseFeilmeldinger(true);
             logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
             logger.error(data);
 
