@@ -220,6 +220,22 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
             break;
           }
 
+          case 400: {
+            const errors: Array<ErrorResponse> = [
+              {
+                value: 'Innsending av skjema feilet',
+                error: 'Mangler arbeidsforhold i perioden',
+                property: 'server'
+              }
+            ];
+            errorResponse(errors);
+
+            logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
+            logger.error(data);
+
+            break;
+          }
+
           default:
             return data.json().then((resultat) => {
               logEvent('skjema innsending feilet', {
