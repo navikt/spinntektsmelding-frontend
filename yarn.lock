@@ -1289,6 +1289,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@navikt/oasis@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "@navikt/oasis@npm:3.3.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Foasis%2F3.3.0%2F0d6116b68e84598184f94a86087eee68d8f929a1"
+  dependencies:
+    jose: "npm:^5.2.3"
+    openid-client: "npm:^5.6.5"
+    prom-client: "npm:^15.1.0"
+  checksum: 10c0/bf0f5fe2268341d9d2e7a5c4c1e6c8151d17dff4ea5aaf07d076236e47e0a3619075b80863a5612af79301544aab76a9db9c3065ace653afa88e9a1cfd0d30ee
+  languageName: node
+  linkType: hard
+
 "@next/env@npm:14.2.3":
   version: 14.2.3
   resolution: "@next/env@npm:14.2.3"
@@ -1481,6 +1492,13 @@ __metadata:
   version: 1.7.0
   resolution: "@opentelemetry/api@npm:1.7.0"
   checksum: 10c0/b5468115d1cec45dd2b86b39210fdc03620a93b9f07c3d20b14081f75e2f7c9b37ceceeb60d5f35c6d4f9819ae07eee0b4874e53e7362376db21db1e00f483f8
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/api@npm:^1.4.0":
+  version: 1.9.0
+  resolution: "@opentelemetry/api@npm:1.9.0"
+  checksum: 10c0/9aae2fe6e8a3a3eeb6c1fdef78e1939cf05a0f37f8a4fae4d6bf2e09eb1e06f966ece85805626e01ba5fab48072b94f19b835449e58b6d26720ee19a58298add
   languageName: node
   linkType: hard
 
@@ -3022,6 +3040,13 @@ __metadata:
   dependencies:
     tweetnacl: "npm:^0.14.3"
   checksum: 10c0/ddfe85230b32df25aeebfdccfbc61d3bc493ace49c884c9c68575de1f5dcf733a5d7de9def3b0f318b786616b8d85bad50a28b1da1750c43e0012c93badcc148
+  languageName: node
+  linkType: hard
+
+"bintrees@npm:1.0.2":
+  version: 1.0.2
+  resolution: "bintrees@npm:1.0.2"
+  checksum: 10c0/132944b20c93c1a8f97bf8aa25980a76c6eb4291b7f2df2dbcd01cb5b417c287d3ee0847c7260c9f05f3d5a4233aaa03dec95114e97f308abe9cc3f72bed4a44
   languageName: node
   linkType: hard
 
@@ -6378,6 +6403,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jose@npm:^5.2.3":
+  version: 5.4.0
+  resolution: "jose@npm:5.4.0"
+  checksum: 10c0/ef880ee7d93d2758f9b9b0883eef2bb10319778142fad8cdea9d4f4322ca4dfae3c1ee87960c7f29c55b9d78460ea3de8dc462987ea23d821596fb5916425bc0
+  languageName: node
+  linkType: hard
+
 "joycon@npm:^3.1.1":
   version: 3.1.1
   resolution: "joycon@npm:3.1.1"
@@ -7575,7 +7607,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openid-client@npm:5.6.5":
+"openid-client@npm:5.6.5, openid-client@npm:^5.6.5":
   version: 5.6.5
   resolution: "openid-client@npm:5.6.5"
   dependencies:
@@ -8010,6 +8042,16 @@ __metadata:
   version: 0.11.10
   resolution: "process@npm:0.11.10"
   checksum: 10c0/40c3ce4b7e6d4b8c3355479df77aeed46f81b279818ccdc500124e6a5ab882c0cc81ff7ea16384873a95a74c4570b01b120f287abbdd4c877931460eca6084b3
+  languageName: node
+  linkType: hard
+
+"prom-client@npm:^15.1.0":
+  version: 15.1.2
+  resolution: "prom-client@npm:15.1.2"
+  dependencies:
+    "@opentelemetry/api": "npm:^1.4.0"
+    tdigest: "npm:^0.1.1"
+  checksum: 10c0/a221db148fa64e29dfd4c6cdcaaae14635495a4272b68917e2b44fcfd988bc57027d275b04489ceeea4d0c4d64d058af842c1300966d2c1ffa255f1fa6af1277
   languageName: node
   linkType: hard
 
@@ -8887,6 +8929,7 @@ __metadata:
     "@navikt/nav-dekoratoren-moduler": "npm:2.1.6"
     "@navikt/next-api-proxy": "npm:3.4.1"
     "@navikt/next-logger": "npm:1.24.0"
+    "@navikt/oasis": "npm:^3.3.0"
     "@testing-library/cypress": "npm:10.0.1"
     "@testing-library/dom": "npm:10.1.0"
     "@testing-library/jest-dom": "npm:6.4.5"
@@ -8936,7 +8979,7 @@ __metadata:
     vitest: "npm:1.6.0"
     vitest-fetch-mock: "npm:0.2.2"
     vitest-sonar-reporter: "npm:2.0.0"
-    zod: "npm:3.23.8"
+    zod: "npm:^3.23.8"
     zustand: "npm:4.5.2"
   languageName: unknown
   linkType: soft
@@ -9348,6 +9391,15 @@ __metadata:
     mkdirp: "npm:^1.0.3"
     yallist: "npm:^4.0.0"
   checksum: 10c0/a5eca3eb50bc11552d453488344e6507156b9193efd7635e98e867fab275d527af53d8866e2370cd09dfe74378a18111622ace35af6a608e5223a7d27fe99537
+  languageName: node
+  linkType: hard
+
+"tdigest@npm:^0.1.1":
+  version: 0.1.2
+  resolution: "tdigest@npm:0.1.2"
+  dependencies:
+    bintrees: "npm:1.0.2"
+  checksum: 10c0/10187b8144b112fcdfd3a5e4e9068efa42c990b1e30cd0d4f35ee8f58f16d1b41bc587e668fa7a6f6ca31308961cbd06cd5d4a4ae1dc388335902ae04f7d57df
   languageName: node
   linkType: hard
 
@@ -10359,17 +10411,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:3.23.8":
-  version: 3.23.8
-  resolution: "zod@npm:3.23.8"
-  checksum: 10c0/8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
-  languageName: node
-  linkType: hard
-
 "zod@npm:^3.22.4":
   version: 3.23.3
   resolution: "zod@npm:3.23.3"
   checksum: 10c0/4ad8b72215f5144d09b359d9aba410ede3ce0d3693f39ed09b932dbb13db439f15c0ca569c479807d4778a3f8b1cc48c2621c1e2aada9624b12a2a6870ef6086
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.23.8":
+  version: 3.23.8
+  resolution: "zod@npm:3.23.8"
+  checksum: 10c0/8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
   languageName: node
   linkType: hard
 

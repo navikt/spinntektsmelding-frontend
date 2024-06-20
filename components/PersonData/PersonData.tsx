@@ -140,7 +140,6 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
                   data-cy='innsendertlf'
                   error={errors.telefon?.message as string}
                   readOnly={!skjemadataErLastet}
-                  id='telefon'
                   {...register('telefon' as const)}
                 />
               )}

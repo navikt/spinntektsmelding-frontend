@@ -1,5 +1,5 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattNaturalytelse, TDateISODate } from './MottattData';
+import { MottattNaturalytelse, MottattPeriode, TDateISODate } from './MottattData';
 import useBoundStore from './useBoundStore';
 import {
   AArsakType,
@@ -65,6 +65,7 @@ export default function useKvitteringInit() {
 
   return async (kvitteringsData: KvitteringInit) => {
     let jsonData: KvitteringSkjema;
+    if (!kvitteringsData) return;
 
     if (kvitteringsData.kvitteringEkstern && kvitteringsData.kvitteringEkstern !== null) {
       setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);
@@ -107,7 +108,7 @@ export default function useKvitteringInit() {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.skjaeringstidspunkt));
     }
 
-    const beregnetInntekt = jsonData.inntekt?.beregnetInntekt ?? jsonData.beregnetInntekt ?? 0;
+    const beregnetInntekt = jsonData.inntekt?.beregnetInntekt ?? jsonData.beregnetInntekt ?? jsonData.beloep ?? 0;
 
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
@@ -175,6 +176,21 @@ export default function useKvitteringInit() {
           break;
         }
       }
+    }
+
+    if (jsonData.inntekt.endringAarsak) {
+      const aarsak = jsonData.inntekt.endringAarsak;
+
+      setEndringsaarsak(aarsak.aarsak);
+      if (aarsak.perioder)
+        setPerioder(
+          aarsak.perioder.map((periode: MottattPeriode) => ({
+            fom: parseIsoDate(periode.fom),
+            tom: parseIsoDate(periode.tom)
+          }))
+        );
+      if (aarsak.gjelderFra) setEndringAarsakGjelderFra(parseIsoDate(aarsak.gjelderFra));
+      if (aarsak.bleKjent) setEndringAarsakBleKjent(parseIsoDate(aarsak.bleKjent));
     }
 
     initLonnISykefravaeret({

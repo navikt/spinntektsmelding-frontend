@@ -21,11 +21,11 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     const expected = [
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
-        felt: 'lus-uua-input'
+        felt: 'agp.redusertLoennIAgp.beloep'
       }
     ];
 
@@ -40,11 +40,11 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     const expected = [
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
-        felt: 'lus-uua-input'
+        felt: 'agp.redusertLoennIAgp.beloep'
       }
     ];
 
@@ -60,11 +60,11 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     const expected = [
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
-        felt: 'lus-uua-input'
+        felt: 'agp.redusertLoennIAgp.beloep'
       }
     ];
 
@@ -80,11 +80,11 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     const expected = [
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
-        felt: 'lus-uua-input'
+        felt: 'agp.redusertLoennIAgp.beloep'
       }
     ];
 
@@ -100,7 +100,7 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     const expected = [
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       }
     ];
 
@@ -127,11 +127,11 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     const expected = [
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
-        felt: 'lus-uua-input'
+        felt: 'agp.redusertLoennIAgp.beloep'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
@@ -150,11 +150,11 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     const expected = [
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
-        felt: 'lus-uua-input'
+        felt: 'agp.redusertLoennIAgp.beloep'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
@@ -173,11 +173,11 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     const expected = [
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
-        felt: 'lia-select'
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
-        felt: 'lus-uua-input'
+        felt: 'agp.redusertLoennIAgp.beloep'
       },
       {
         code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',

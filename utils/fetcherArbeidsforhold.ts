@@ -2,8 +2,9 @@ import { z } from 'zod';
 import { OrganisasjonsnummerSchema } from '../validators/validerAapenInnsending';
 import NetworkError from './NetworkError';
 
-export default function fetcherArbeidsforhold(url: string, identitetsnummer?: string) {
-  if (!identitetsnummer) return Promise.resolve([]);
+export default function fetcherArbeidsforhold(url: string | null, identitetsnummer?: string) {
+  if (!url || !identitetsnummer) return Promise.resolve([]);
+
   return fetch(url, {
     method: 'POST',
     headers: {

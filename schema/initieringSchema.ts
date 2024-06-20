@@ -3,7 +3,9 @@ import { OrganisasjonsnummerSchema, PersonnummerSchema } from '../validators/val
 import { PeriodeSchema } from '../validators/validerFulltSkjema';
 
 export default z.object({
-  organisasjonsnummer: OrganisasjonsnummerSchema,
+  organisasjonsnummer: OrganisasjonsnummerSchema.refine((val) => val.length < 19, {
+    message: 'Organisasjonsnummeret mangler'
+  }),
   fulltNavn: z.string().min(1),
   personnummer: PersonnummerSchema,
   perioder: z.array(PeriodeSchema)

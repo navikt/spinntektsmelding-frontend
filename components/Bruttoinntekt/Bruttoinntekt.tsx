@@ -1,5 +1,5 @@
 import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -13,19 +13,30 @@ import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
-import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
   setIsDirtyForm: (dirty: boolean) => void;
+  sbBruttoinntekt?: number;
+  sbTidligereinntekt?: Array<HistoriskInntekt>;
+  erSelvbestemt?: boolean;
 }
 
-export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }: BruttoinntektProps) {
+export default function Bruttoinntekt({
+  bestemmendeFravaersdag,
+  setIsDirtyForm,
+  sbBruttoinntekt,
+  sbTidligereinntekt,
+  erSelvbestemt
+}: BruttoinntektProps) {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
-  const setNyMaanedsinntektOgRefusjonsbeloep = useBoundStore((state) => state.setNyMaanedsinntektOgRefusjonsbeloep);
+  const [setNyMaanedsinntektOgRefusjonsbeloep, setBareNyMaanedsinntekt] = useBoundStore((state) => [
+    state.setNyMaanedsinntektOgRefusjonsbeloep,
+    state.setBareNyMaanedsinntekt
+  ]);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
@@ -33,9 +44,9 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const setEndringAarsakGjelderFra = useBoundStore((state) => state.setEndringAarsakGjelderFra);
   const setEndringAarsakBleKjent = useBoundStore((state) => state.setEndringAarsakBleKjent);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
+  const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
-  const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const endringAarsak: EndringAarsak = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
@@ -98,14 +109,26 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringAarsak?.aarsak;
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
-  const erFeriemaaneder = sjekkOmFerieMaaneder(tidligereinntekt);
+  const gjennomsnittligInntekt = erSelvbestemt
+    ? sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt
+    : bruttoinntekt?.bruttoInntekt;
+  const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereinntekt : tidligereinntekt;
 
-  const harTidligereInntekt = tidligereinntekt && tidligereinntekt.length > 0;
+  const erFeriemaaneder = sjekkOmFerieMaaneder(sisteTreMndTidligereinntekt);
+
+  const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.length > 0;
 
   const manglendeEller0FraAmeldingen =
-    !tidligereinntekt || tidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
+    !sisteTreMndTidligereinntekt || sisteTreMndTidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
 
-  const erBlanktSkjema = skjemastatus === SkjemaStatus.SELVBESTEMT;
+  const erBlanktSkjema = false; // skjemastatus === SkjemaStatus.SELVBESTEMT;
+
+  useEffect(() => {
+    if (sbBruttoinntekt !== undefined) {
+      setBareNyMaanedsinntekt(sbBruttoinntekt);
+      setEndreMaanedsinntekt(false);
+    }
+  }, [sbBruttoinntekt]);
 
   return (
     <>
@@ -130,7 +153,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
       {harTidligereInntekt && (
         <>
           <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
-          <TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={henterData} />
+          <TidligereInntekt tidligereinntekt={sisteTreMndTidligereinntekt} henterData={henterData} />
         </>
       )}
       {!harTidligereInntekt && (
@@ -164,9 +187,13 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
         {!endringAvBelop && !erBlanktSkjema && (
           <>
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
-              {formatCurrency(bruttoinntekt && bruttoinntekt.bruttoInntekt ? bruttoinntekt.bruttoInntekt : 0)} kr/måned
+              {formatCurrency(gjennomsnittligInntekt ? gjennomsnittligInntekt : 0)} kr/måned
             </TextLabel>
-            <ButtonEndre data-cy='endre-beloep' onClick={setEndreMaanedsinntektHandler} />
+            <ButtonEndre
+              data-cy='endre-beloep'
+              onClick={setEndreMaanedsinntektHandler}
+              className={lokalStyles.endrePadding}
+            />
           </>
         )}
         {(endringAvBelop || erBlanktSkjema) && (
@@ -180,7 +207,7 @@ export default function Bruttoinntekt({ bestemmendeFravaersdag, setIsDirtyForm }
             setPerioder={addIsDirtyForm(setPerioder)}
             visFeilmeldingsTekst={visFeilmeldingsTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
-            nyInnsending={nyInnsending}
+            nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}
             clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
             kanIkkeTilbakestilles={erBlanktSkjema}
           />

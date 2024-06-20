@@ -8,20 +8,20 @@ import lokalStyles from '../../pages/kvittering/Kvittering.module.css';
 import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
 
 interface LonnUnderSykefravaeretProps {
-  lonn: LonnISykefravaeret;
+  loenn: LonnISykefravaeret;
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   harRefusjonEndringer?: YesNo;
   refusjonEndringer?: Array<EndringsBeloep>;
 }
 
 export default function LonnUnderSykefravaeret({
-  lonn,
+  loenn,
   refusjonskravetOpphoerer,
   harRefusjonEndringer,
   refusjonEndringer
 }: Readonly<LonnUnderSykefravaeretProps>) {
-  if (!lonn) return null;
-  if (lonn.status === 'Nei')
+  if (!loenn) return null;
+  if (loenn.status === 'Nei')
     return (
       <>
         <div className={lokalStyles.uthevet}>
@@ -37,10 +37,10 @@ export default function LonnUnderSykefravaeret({
       </div>
       <div>
         <BodyShort>Ja</BodyShort>
-        {lonn && lonn.status === 'Ja' && (
+        {loenn && loenn.status === 'Ja' && (
           <>
             <div className={lokalStyle.uthevet}>Refusjonsbeløp per måned (NAV vil refundere opp til 6G av årslønn)</div>
-            <BodyShort className={lokalStyle.svartekster}>{formatCurrency(lonn.beloep)} kr/måned</BodyShort>
+            <BodyShort className={lokalStyle.svartekster}>{formatCurrency(loenn.beloep)} kr/måned</BodyShort>
           </>
         )}
         {harGyldigeRefusjonEndringer(refusjonEndringer) && (
@@ -52,7 +52,7 @@ export default function LonnUnderSykefravaeret({
               </>
             )}
             {harRefusjonEndringer === 'Ja' && refusjonEndringer!.length > 0 && (
-              <table className={lokalStyle.lonnTabell}>
+              <table className={lokalStyle.loennTabell}>
                 <thead>
                   <tr>
                     <td className={lokalStyle.uthevet}>Dato for endring</td>

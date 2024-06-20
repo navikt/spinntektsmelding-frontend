@@ -67,6 +67,6 @@ describe('PeriodeVelger', () => {
     const perioder = undefined;
     render(<PeriodeVelger />);
 
-    expect(screen.getByText('Angi periode du vil sende inntektsmelding for')).toBeInTheDocument();
+    expect(screen.getByText('Angi sykmeldingsperiode du vil sende inntektsmelding for')).toBeInTheDocument();
   });
 });

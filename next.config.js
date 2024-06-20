@@ -66,6 +66,7 @@ const nextConfig = {
     innsendingInntektsmeldingApi: process.env.INNSENDING_INNTEKTSMELDING_API,
     inntektsmeldingKjenteDataApi: process.env.PREUTFYLT_INNTEKTSMELDING_API,
     tidligereInntekterApi: process.env.INNTEKTSDATA_API,
+    tidligereInntekterSelvbestemtApi: process.env.INNTEKTSDATA_SELVBESTEMT_API,
     logoutServiceUrl: process.env.LOGOUT_SERVICE_URL,
     loginServiceUrl: process.env.LOGIN_SERVICE_URL,
     arbeidsgiverListe: process.env.ARBEIDSGIVERLISTE_API,
@@ -76,7 +77,8 @@ const nextConfig = {
     aktiveOrgnrApi: process.env.AKTIVE_ORGNR_API,
     innsendingSelvbestemtInntektsmeldingApi: process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API,
     version,
-    loggingDisabled: process.env.DISABLE_DECORATOR
+    loggingDisabled: process.env.DISABLE_DECORATOR,
+    saksoversiktUrl: process.env.SAKSOVERSIKT_URL
   }
 };
 

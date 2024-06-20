@@ -93,9 +93,9 @@ export default function RefusjonUtbetalingEndring({
     <>
       <RadioGroup
         legend='Er det endringer i refusjonsbeløpet i perioden?'
-        id={'lus-utbetaling-endring-radio'}
+        id={'refusjon.endringer'}
         className={styles.radiobuttonwrapper}
-        error={visFeilmeldingsTekst('lus-utbetaling-endring-radio')}
+        error={visFeilmeldingsTekst('refusjon.endringer')}
         onChange={changeHarEndringerHandler}
         defaultValue={harRefusjonEndringerDefault}
       >

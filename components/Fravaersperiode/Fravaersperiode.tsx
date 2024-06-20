@@ -11,9 +11,15 @@ interface FravaersperiodeProps {
   lasterData?: boolean;
   setIsDirtyForm: (dirty: boolean) => void;
   skjemastatus?: SkjemaStatus;
+  selvbestemtInnsending?: boolean;
 }
 
-export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyForm }: FravaersperiodeProps) {
+export default function Fravaersperiode({
+  lasterData,
+  skjemastatus,
+  setIsDirtyForm,
+  selvbestemtInnsending
+}: FravaersperiodeProps) {
   const fravaerPerioder = useBoundStore((state) => state.fravaersperioder);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -31,8 +37,18 @@ export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyFo
     <>
       <Heading3>Sykmelding</Heading3>
       <p>
-        I følge sykmeldingen var den ansatte syk i perioden som er ferdig utfylt. Sykmeldingsperioden brukes sammen med
-        eventuelle egenmeldinger til å beregne arbeidsgiverperioden.
+        {!selvbestemtInnsending && (
+          <>
+            I følge sykmeldingen var den ansatte syk i perioden som er ferdig utfylt. Sykmeldingsperioden brukes sammen
+            med eventuelle egenmeldinger til å beregne arbeidsgiverperioden.
+          </>
+        )}
+        {selvbestemtInnsending && (
+          <>
+            Dere har angitt sykmeldingsperiode vist under. Hvis dere har angitt feil periode eller vil legge til flere
+            sykmeldingsperioder, må dere opprette dette skjema igjen.
+          </>
+        )}
       </p>
 
       {lasterData && <EgenmeldingLoader />}

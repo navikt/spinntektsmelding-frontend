@@ -3,19 +3,27 @@ import logEvent from './logEvent';
 import { ValiderTekster } from './validerInntektsmelding';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
+import { SkjemaStatus } from '../state/useSkjemadataStore';
+import isValidUUID from './isValidUUID';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
-  amplitudeComponent: string
+  amplitudeComponent: string,
+  skjemastatus: SkjemaStatus
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
+  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const setKvitteringsdata = useBoundStore((state) => state.setKvitteringsdata);
   const errorResponse = useErrorRespons();
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
@@ -49,13 +57,26 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       return false;
     }
 
+    if (isValidUUID(pathSlug)) {
+      skjemaData.aarsakInnsending = 'Endring';
+    } else {
+      skjemaData.aarsakInnsending = 'Ny';
+    }
     const validerteData = fyllAapenInnsending(skjemaData);
+    let hasErrors = validerteData.success !== true;
 
-    console.log('validerteData', validerteData);
+    if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
+      hasErrors = true;
+    }
 
-    const hasErrors = validerteData.success !== true;
-
-    if (hasErrors || !opplysningerBekreftet) {
+    if (
+      hasErrors ||
+      !opplysningerBekreftet ||
+      (!harRefusjonEndringer && lonnISykefravaeret?.status === 'Ja') ||
+      !fullLonnIArbeidsgiverPerioden?.status ||
+      !lonnISykefravaeret?.status ||
+      (!refusjonskravetOpphoerer?.status && lonnISykefravaeret?.status === 'Ja')
+    ) {
       const errors: ValiderTekster[] = hasErrors
         ? validerteData.error.issues.map((issue) => {
             return {
@@ -65,10 +86,45 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
           })
         : [];
 
+      if (!fullLonnIArbeidsgiverPerioden?.status) {
+        errors.push({
+          text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN,
+          felt: 'lia-radio'
+        });
+      }
+
+      if (!lonnISykefravaeret?.status) {
+        errors.push({
+          text: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
+          felt: 'lus-radio'
+        });
+      }
+
+      if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
+        errors.push({
+          text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
+          felt: 'refusjon.endringer'
+        });
+      }
+
+      if (lonnISykefravaeret?.status === 'Ja' && !refusjonskravetOpphoerer) {
+        errors.push({
+          text: 'Vennligst angi om refusjonskravet opphører.',
+          felt: 'lus-sluttdato-velg'
+        });
+      }
+
       if (!opplysningerBekreftet) {
         errors.push({
           text: feiltekster.BEKREFT_OPPLYSNINGER,
           felt: 'bekreft-opplysninger'
+        });
+      }
+
+      if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
+        errors.push({
+          text: feiltekster.BEKREFT_OPPLYSNINGER,
+          felt: 'agp.redusertLoennIAgp.beloep'
         });
       }
 
@@ -82,13 +138,20 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       // errorResponse(errors);
       setSkalViseFeilmeldinger(true);
     } else {
-      const skjemaData = validerteData.data;
+      setKvitteringsdata(validerteData.data);
 
       fyllFeilmeldinger([]);
 
-      return fetch(`${environment.innsendingAGInitiertUrl}`, {
+      const innsending =
+        pathSlug !== 'arbeidsgiverInitiertInnsending'
+          ? { ...validerteData.data, selvbestemtId: pathSlug }
+          : { ...validerteData.data, selvbestemtId: null };
+
+      const URI = environment.innsendingAGInitiertUrl;
+
+      return fetch(URI, {
         method: 'POST',
-        body: JSON.stringify(skjemaData),
+        body: JSON.stringify(innsending),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -97,13 +160,16 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
           case 200:
           case 201:
             data.json().then((response) => {
-              console.log(response);
               if (response.selvbestemtId) {
                 pathSlug = response.selvbestemtId;
               }
 
               setKvitteringInnsendt(new Date());
-              router.push(`/kvittering/${pathSlug}`, undefined);
+              if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
+                router.push(`/kvittering/agi/${pathSlug}`, undefined, { shallow: true });
+              } else {
+                router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
+              }
             });
             break;
 
@@ -151,6 +217,22 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
             });
 
             innsendingFeiletIngenTilgang(true);
+            break;
+          }
+
+          case 400: {
+            const errors: Array<ErrorResponse> = [
+              {
+                value: 'Innsending av skjema feilet',
+                error: 'Mangler arbeidsforhold i perioden',
+                property: 'server'
+              }
+            ];
+            errorResponse(errors);
+            setSkalViseFeilmeldinger(true);
+            logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
+            logger.error(data);
+
             break;
           }
 

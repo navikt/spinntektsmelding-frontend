@@ -38,6 +38,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
+import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -59,7 +60,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  const skjemastatus = useBoundStore((state) => state.skjemastatus);
+  const [skjemastatus, inngangFraKvittering] = useBoundStore((state) => [
+    state.skjemastatus,
+    state.inngangFraKvittering
+  ]);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
@@ -73,13 +77,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
 
+  const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
+
   const searchParams = useSearchParams();
   const hentKvitteringsdata = useHentKvitteringsdata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
     setIngenTilgangOpen,
-    'HovedskjemaArbeidsgiverInitiert'
+    'HovedskjemaArbeidsgiverInitiert',
+    skjemastatus
   );
 
   const lukkHentingFeiletModal = () => {
@@ -88,16 +95,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const pathSlug = slug || (searchParams.get('slug') as string);
 
+  const selvbestemtInnsending = slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
+    setSenderInn(true);
+
     if (slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm, []).finally(() => {
+      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm, {}).finally(() => {
         setSenderInn(false);
       });
 
       return;
     }
-    setSenderInn(true);
 
     sendInnSkjema(opplysningerBekreftet, false, pathSlug, isDirtyForm).finally(() => {
       setSenderInn(false);
@@ -148,11 +158,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       });
 
       if (bestemmendeFravaersdag) {
-        console.log('Henter inntektsdata for bestemmende fraværsdag', bestemmendeFravaersdag);
         setSisteInntektsdato(parseIsoDate(format(bestemmendeFravaersdag, 'yyyy-MM-01')));
       }
     } else {
-      console.log('Henter inntektsdata for ny måned', sisteInntektsdato, inntektsdato);
       if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
         if (inntektsdato) {
           fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
@@ -177,6 +185,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug, skjemastatus, inntektsdato, fravaersperioder]);
 
+  const { data, error } = useTidligereInntektsdata(
+    identitetsnummer!,
+    orgnrUnderenhet!,
+    inntektsdato!,
+    slug === 'arbeidsgiverInitiertInnsending'
+  );
+
+  const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
+  const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
+
   return (
     <div className={styles.container}>
       <Head>
@@ -193,18 +211,37 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Behandlingsdager />
 
           <Skillelinje />
-          <Egenmelding lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} />
+          <Egenmelding
+            lasterData={lasterData}
+            setIsDirtyForm={setIsDirtyForm}
+            selvbestemtInnsending={selvbestemtInnsending}
+          />
 
           <Skillelinje />
-          <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
+          <Fravaersperiode
+            lasterData={lasterData}
+            setIsDirtyForm={setIsDirtyForm}
+            skjemastatus={skjemastatus}
+            selvbestemtInnsending={selvbestemtInnsending}
+          />
 
           <Skillelinje />
 
-          <Arbeidsgiverperiode arbeidsgiverperioder={arbeidsgiverperioder} setIsDirtyForm={setIsDirtyForm} />
+          <Arbeidsgiverperiode
+            arbeidsgiverperioder={arbeidsgiverperioder}
+            setIsDirtyForm={setIsDirtyForm}
+            skjemastatus={skjemastatus}
+          />
 
           <Skillelinje />
 
-          <Bruttoinntekt bestemmendeFravaersdag={beregnetBestemmendeFraværsdag} setIsDirtyForm={setIsDirtyForm} />
+          <Bruttoinntekt
+            bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
+            setIsDirtyForm={setIsDirtyForm}
+            erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
+            sbBruttoinntekt={sbBruttoinntekt}
+            sbTidligereinntekt={sbTidligerinntekt}
+          />
 
           <Skillelinje />
 

@@ -85,7 +85,7 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('');
-    expect(result.current.feilmeldinger[0].felt).toBe('lia-select');
+    expect(result.current.feilmeldinger[0].felt).toBe('agp.redusertLoennIAgp.begrunnelse');
   });
 
   it('should change the begrunnelse on fullLonnIArbeidsgiverPerioden', () => {
@@ -230,7 +230,7 @@ describe('useBoundStore', () => {
 
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(-56478);
 
-    expect(result.current.feilmeldinger?.[0].felt).toEqual('lus-uua-input');
+    expect(result.current.feilmeldinger?.[0].felt).toEqual('agp.redusertLoennIAgp.beloep');
   });
 
   it('should change the setHarRefusjonEndringer beløp.', () => {

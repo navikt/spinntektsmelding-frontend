@@ -30,9 +30,14 @@ import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerA
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
   setIsDirtyForm: (dirty: boolean) => void;
+  skjemastatus: SkjemaStatus;
 }
 
-export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyForm }: ArbeidsgiverperiodeProps) {
+export default function Arbeidsgiverperiode({
+  arbeidsgiverperioder,
+  setIsDirtyForm,
+  skjemastatus
+}: ArbeidsgiverperiodeProps) {
   const leggTilArbeidsgiverperiode = useBoundStore((state) => state.leggTilArbeidsgiverperiode);
   const slettArbeidsgiverperiode = useBoundStore((state) => state.slettArbeidsgiverperiode);
   const setArbeidsgiverperiodeDato = useBoundStore((state) => state.setArbeidsgiverperiodeDato);
@@ -55,7 +60,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
   const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined = useBoundStore(
     (state) => state.fullLonnIArbeidsgiverPerioden
   );
-  const skjemastatus = useBoundStore((state) => state.skjemastatus);
+
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
   const [advarselOppholdHelg, setAdvarselOppholdHelg] = useState<string>('');
   const amplitudeComponent = 'Arbeidsgiverperiode';
@@ -205,6 +210,23 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
     antallDager < 16
       ? `Du har lagt inn arbeidsgiverperiode på ${antallDager} dager. Angi begrunnelse for kort arbeidsgiverperiode hvis dette er korrekt.`
       : '';
+
+  useEffect(() => {
+    if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
+      setArbeidsgiverperiodeKort(antallDager < 16);
+      if (antallDager < 16) {
+        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
+      } else {
+        slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+      }
+    }
+  }, [
+    antallDager,
+    setArbeidsgiverperiodeKort,
+    skjemastatus,
+    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
+  ]);
 
   useEffect(() => {
     if (!manuellEndring) {
@@ -381,8 +403,8 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
               className={lokalStyles.refusjonsbeloep}
               label='Utbetalt under arbeidsgiverperiode'
               onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
-              id={'lus-uua-input'}
-              error={visFeilmeldingsTekst('lus-uua-input')}
+              id={'agp.redusertLoennIAgp.beloep'}
+              error={visFeilmeldingsTekst('agp.redusertLoennIAgp.beloep')}
               defaultValue={
                 !fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
                   ? ''
@@ -392,7 +414,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
             <SelectBegrunnelseKortArbeidsgiverperiode
               onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
               defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-              error={visFeilmeldingsTekst('lia-select')}
+              error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
             />
           </div>
           {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
@@ -412,7 +434,7 @@ export default function Arbeidsgiverperiode({ arbeidsgiverperioder, setIsDirtyFo
               <SelectBegrunnelse
                 onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
                 defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-                error={visFeilmeldingsTekst('lia-select')}
+                error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
                 label='Velg begrunnelse'
               />
               {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}

@@ -16,7 +16,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
 
   it('should return error when harRefusjonEndringer is undefined and lis.status = Ja', () => {
     expect(valdiderEndringAvMaanedslonn(undefined, undefined, { status: 'Ja' })).toEqual([
-      { code: 'MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN', felt: 'lus-utbetaling-endring-radio' }
+      { code: 'MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN', felt: 'refusjon.endringer' }
     ]);
   });
 

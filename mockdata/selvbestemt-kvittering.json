@@ -1,0 +1,24 @@
+{
+  "selvbestemtInntektsmelding": {
+    "id": "c35671bb-8f0f-40f3-b3cf-725a4dabdf4e",
+    "type": { "type": "Selvbestemt", "id": "0119b180-515b-4316-820c-e1fde52d97e1" },
+    "sykmeldt": { "fnr": "10107400090", "navn": "BERØMT FLYTTELASS" },
+    "avsender": {
+      "orgnr": "810007842",
+      "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+      "fnr": "10107400090",
+      "navn": "BERØMT FLYTTELASS",
+      "tlf": "12345678"
+    },
+    "sykmeldingsperioder": [{ "fom": "2024-06-03", "tom": "2024-06-12" }],
+    "agp": {
+      "perioder": [{ "fom": "2024-06-03", "tom": "2024-06-12" }],
+      "egenmeldinger": [],
+      "redusertLoennIAgp": { "beloep": 5000, "begrunnelse": "ArbeidOpphoert" }
+    },
+    "inntekt": { "beloep": 1230, "inntektsdato": "2024-06-03", "naturalytelser": [], "endringAarsak": null },
+    "refusjon": null,
+    "aarsakInnsending": "Ny",
+    "mottatt": "2024-06-12T12:38:18.337459713+02:00"
+  }
+}

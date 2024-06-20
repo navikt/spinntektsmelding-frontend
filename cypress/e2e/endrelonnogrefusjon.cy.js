@@ -51,8 +51,13 @@ describe('Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.get('#lus-utbetaling-endring-radio [type="radio"]').last().click();
-    cy.get('#lus-sluttdato-velg [type="radio"]').last().click();
+    cy.findByRole('group', { name: /Er det endringer i refusjonsbeløpet i perioden?/ }).within(() => {
+      cy.findByRole('radio', { name: 'Nei' }).click();
+    });
+
+    cy.findByRole('group', { name: /Opphører refusjonkravet i perioden?/ }).within(() => {
+      cy.findByRole('radio', { name: 'Nei' }).click();
+    });
 
     cy.get('[data-cy="endre-beloep"]').click();
 

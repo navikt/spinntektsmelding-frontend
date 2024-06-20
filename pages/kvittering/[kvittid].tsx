@@ -248,7 +248,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 </>
               )}
               <LonnUnderSykefravaeret
-                lonn={lonnISykefravaeret!}
+                loenn={lonnISykefravaeret!}
                 refusjonskravetOpphoerer={refusjonskravetOpphoerer}
                 harRefusjonEndringer={harRefusjonEndringer}
                 refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}

@@ -37,12 +37,20 @@ class Environment {
     return this.publicRuntimeConfig.tidligereInntekterApi;
   }
 
+  get inntektsdataSelvbestemtAPI() {
+    return this.publicRuntimeConfig.tidligereInntekterSelvbestemtApi;
+  }
+
   get hentKvitteringAPI() {
     return this.publicRuntimeConfig.kvitteringDataApi;
   }
 
   get minSideArbeidsgiver() {
     return this.publicRuntimeConfig.minSideArbeidsgiver;
+  }
+
+  get saksoversiktUrl() {
+    return this.publicRuntimeConfig.saksoversiktUrl;
   }
 
   get aktiveOrgnrApi() {
@@ -58,6 +66,7 @@ class Environment {
   public skjemadataUrl = '/im-dialog/api/trenger';
 
   public inntektsdataUrl = '/im-dialog/api/inntektsdata';
+  public inntektsdataSelvbestemtUrl = '/im-dialog/api/inntekt-selvbestemt';
 
   public innsendingUrl = '/im-dialog/api/innsendingInntektsmelding';
 

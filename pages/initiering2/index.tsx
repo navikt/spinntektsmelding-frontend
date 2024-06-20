@@ -1,4 +1,4 @@
-import { Alert, Button } from '@navikt/ds-react';
+import { Alert, Button, Link } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
@@ -17,11 +17,9 @@ import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectA
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
 import initieringSchema from '../../schema/initieringSchema';
-import useSWRImmutable from 'swr/immutable';
 
-import fetcherArbeidsforhold, { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
+import { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
 import environment from '../../config/environment';
-import { useRouter } from 'next/navigation';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import { PersonnummerSchema } from '../../validators/validerAapenInnsending';
@@ -32,6 +30,10 @@ import { MottattPeriode } from '../../state/MottattData';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
+import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
+import { Periode } from '../../state/state';
+import { useRouter } from 'next/router';
+import useArbeidsforhold from '../../utils/useArbeidsforhold';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -39,10 +41,10 @@ const Initiering2: NextPage = () => {
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const router = useRouter();
 
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
   let perioder: { fom: Date; tom: Date; id: string }[] = [];
-  const router = useRouter();
 
   let fulltNavn = '';
   const backendFeil = useRef([] as Feilmelding[]);
@@ -50,7 +52,9 @@ const Initiering2: NextPage = () => {
   const skjemaSchema = z
     .object({
       organisasjonsnummer: z
-        .string()
+        .string({
+          required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+        })
         .transform((val) => val.replace(/\s/g, ''))
         .pipe(
           z
@@ -116,34 +120,12 @@ const Initiering2: NextPage = () => {
 
   const {
     register,
+    watch,
     handleSubmit,
     formState: { errors }
   } = methods;
 
-  const { data, error } = useSWRImmutable(
-    [environment.initierBlankSkjemaUrl, identitetsnummer],
-    ([url, idToken]) => fetcherArbeidsforhold(url, idToken),
-    {
-      onError: (err) => {
-        console.error('Kunne ikke hente arbeidsforhold', err);
-        if (err.status === 401) {
-          const ingress = window.location.hostname + environment.baseUrl;
-          const currentPath = window.location.href;
-
-          window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
-        }
-
-        if (err.status !== 200) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Kunne ikke hente arbeidsforhold'
-          });
-        }
-      },
-      refreshInterval: 0,
-      shouldRetryOnError: false
-    }
-  );
+  const { data, error } = useArbeidsforhold(identitetsnummer, backendFeil);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;
@@ -209,6 +191,15 @@ const Initiering2: NextPage = () => {
       }
     }
   }
+
+  const sykeperioder = watch('perioder');
+
+  const antallSykedager = sykeperioder
+    ? numberOfDaysInRanges(
+        sykeperioder.filter((periode: Periode[]) => periode !== undefined && periode.fom && periode.tom)
+      )
+    : 0;
+
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
   const visFeilmeldingliste =
@@ -221,15 +212,10 @@ const Initiering2: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
-      <PageContent title='Oppdatert informasjon - innsendt inntektsmelding'>
+      <PageContent title='Inntektsmelding'>
         <main className='main-content'>
           <div className={styles.padded}>
             <Heading1>Opprett inntektsmelding ifm. sykmelding</Heading1>
-            <Alert variant='info'>
-              Du vil normalt få et varsel når Nav trenger inntektsmelding. Vi sender ut varsel når arbeidsgiverperioden
-              er ferdig og den sykmeldte har sendt inn søknad om sykepenger. Hvis du ikke fått denne oppgaven og du
-              mener at du skal levere inntektsmelding så er det mulig å opprette den manuelt.
-            </Alert>
             <FormProvider {...methods}>
               <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
                 <div className={lokalStyles.persondata}>
@@ -256,6 +242,15 @@ const Initiering2: NextPage = () => {
                       </div>
                     </div>
                     <PeriodeVelger perioder={perioder} />
+                    {antallSykedager > 16 && (
+                      <Alert variant='info' className={lokalStyles.alertPadding}>
+                        <Heading1>Er du sikker på at du skal opprette inntektsmelding nå?</Heading1>
+                        Vi sender ut varsel når arbeidsgiverperioden er over og den sykmeldte har sendt inn søknad om
+                        sykepenger. Hvis du ikke har fått varsel og en{' '}
+                        <Link href={environment.saksoversiktUrl}>oppgave i saksoversikten</Link> er det mulig å opprette
+                        den manuelt her.
+                      </Alert>
+                    )}
                   </>
                 )}
                 {errors.perioder?.root?.message && (

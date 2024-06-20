@@ -10,6 +10,11 @@
   gap: 2rem;
 }
 
+.sletteknapp {
+  height: fit-content;
+  align-self: end;
+}
+
 @media screen and (max-width: 500px) {
   .endremaaanedsinntekt {
     flex-direction: column;

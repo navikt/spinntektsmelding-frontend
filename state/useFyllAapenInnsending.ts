@@ -24,6 +24,7 @@ export default function useFyllAapenInnsending() {
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
+  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
@@ -41,7 +42,8 @@ export default function useFyllAapenInnsending() {
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
   return (skjemaData: any) => {
-    const endringAarsak: EndringAarsak = bruttoinntekt.endringAarsak;
+    const endringAarsak: EndringAarsak | undefined =
+      bruttoinntekt.endringAarsak !== null ? bruttoinntekt.endringAarsak : undefined;
 
     const innsending = validerAapenInnsending({
       sykmeldtFnr: identitetsnummer,
@@ -85,11 +87,11 @@ export default function useFyllAapenInnsending() {
       refusjon:
         lonnISykefravaeret?.status === 'Ja'
           ? {
-              beloepPerMaaned: bruttoinntekt.bruttoInntekt!,
+              beloepPerMaaned: lonnISykefravaeret.beloep!,
               sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
-          : undefined,
+          : null,
       aarsakInnsending: skjemaData.aarsakInnsending
     });
 
@@ -140,7 +142,7 @@ function konverterRefusjonEndringer(
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
           beloep: endring.beloep!,
-          startDato: endring.dato!
+          startdato: endring.dato!
         }))
       : undefined;
 

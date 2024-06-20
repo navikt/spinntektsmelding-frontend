@@ -21,7 +21,7 @@ export default function valdiderEndringAvMaanedslonn(
   const harLonnISykefravaeret = !!lonnISykefravaeret && lonnISykefravaeret.status === 'Ja';
   if (harLonnISykefravaeret && harRefusjonEndringer === undefined) {
     feilmeldinger.push({
-      felt: 'lus-utbetaling-endring-radio',
+      felt: 'refusjon.endringer',
       code: EndringAvMaanedslonnFeilkode.MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN
     });
     return feilmeldinger;
