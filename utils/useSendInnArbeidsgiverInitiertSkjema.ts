@@ -104,7 +104,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
         errors.push({
           text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
-          felt: 'lus-utbetaling-endring-radio'
+          felt: 'refusjon.endringer'
         });
       }
 

@@ -313,7 +313,18 @@ const schema = z
         beloepPerMaaned: z
           .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
           .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-        endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
+        endringer: z.union([
+          z.array(RefusjonEndringSchema),
+          z.tuple([], {
+            errorMap: (error) => {
+              console.log(error);
+              if (error.code === 'too_big') {
+                return { message: 'Vennligst fyll inn endringer i refusjonsbeløpet i perioden' };
+              }
+              return error;
+            }
+          })
+        ]),
         sluttdato: z
           .date()
           .transform((val) => toLocalIso(val))

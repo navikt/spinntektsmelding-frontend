@@ -36,13 +36,21 @@ describe('Utfylling og innsending av skjema', () => {
     cy.wait('@kvittering');
     cy.wait('@trenger');
 
-    cy.get('#lia-radio [type="radio"]').first().check();
-    cy.get('#lus-radio [type="radio"]').first().check();
-    cy.get('#lus-radio [type="radio"]').last().check();
-    cy.get('#lus-radio [type="radio"]').first().check();
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
 
-    cy.get('#lus-utbetaling-endring-radio [type="radio"]').last().click();
-    cy.get('#lus-sluttdato-velg [type="radio"]').last().click();
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
+
+    cy.findByRole('group', { name: /Er det endringer i refusjonsbeløpet i perioden?/ }).within(() => {
+      cy.findByRole('radio', { name: 'Nei' }).click();
+    });
+
+    cy.findByRole('group', { name: /Opphører refusjonkravet i perioden?/ }).within(() => {
+      cy.findByRole('radio', { name: 'Nei' }).click();
+    });
 
     cy.get('[data-cy="endre-beloep"]').click();
 
