@@ -842,4 +842,33 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
       finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true, '2024-01-05', undefined, true)
     ).toEqual('2024-01-05');
   });
+
+  it('should return correct bfd when agp does not match periodes', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+        fom: parseISO('2024-05-14'),
+        tom: parseISO('2024-05-16')
+      },
+      {
+        id: '2',
+        fom: parseISO('2024-05-21'),
+        tom: parseISO('2024-05-31')
+      },
+      {
+        id: '3',
+        fom: parseISO('2024-06-10'),
+        tom: parseISO('2024-06-12')
+      }
+    ];
+    const arbeidsgiverperiode: Periode[] = [
+      {
+        id: 'a1',
+        fom: parseISO('2024-05-14'),
+        tom: parseISO('2024-05-29')
+      }
+    ];
+
+    expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-06-10')).toEqual('2024-05-14');
+  });
 });

@@ -33,7 +33,7 @@ export default function PeriodeListevelger({
     control
   } = useFormContext();
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name
   });
@@ -48,7 +48,7 @@ export default function PeriodeListevelger({
 
   useEffect(() => {
     if (fields.length === 0) {
-      append({});
+      replace({});
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
