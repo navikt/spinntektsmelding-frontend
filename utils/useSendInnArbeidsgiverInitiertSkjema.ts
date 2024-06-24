@@ -75,7 +75,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       (!harRefusjonEndringer && lonnISykefravaeret?.status === 'Ja') ||
       !fullLonnIArbeidsgiverPerioden?.status ||
       !lonnISykefravaeret?.status ||
-      (!refusjonskravetOpphoerer?.status && lonnISykefravaeret?.status === 'Ja')
+      (!refusjonskravetOpphoerer?.status && lonnISykefravaeret?.status === 'Ja') ||
+      (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphoersdato)
     ) {
       const errors: ValiderTekster[] = hasErrors
         ? validerteData.error.issues.map((issue) => {
