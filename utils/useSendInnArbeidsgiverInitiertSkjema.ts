@@ -114,6 +114,13 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         });
       }
 
+      if (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphoersdato) {
+        errors.push({
+          text: 'Angi siste dato det kreves refusjon for.',
+          felt: 'lus-sluttdato'
+        });
+      }
+
       if (!opplysningerBekreftet) {
         errors.push({
           text: feiltekster.BEKREFT_OPPLYSNINGER,
