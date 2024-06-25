@@ -297,11 +297,11 @@ function formaterOpphørsdato(
   kreverIkkeRefusjon: boolean,
   refusjonskravetOpphoerer: RefusjonskravetOpphoerer | undefined
 ): string | undefined {
-  return !kreverIkkeRefusjon
-    ? refusjonskravetOpphoerer?.opphoersdato
-      ? formatIsoDate(refusjonskravetOpphoerer?.opphoersdato)
-      : undefined
-    : undefined;
+  let opphørsdato;
+  if (!kreverIkkeRefusjon && refusjonskravetOpphoerer?.status === 'Ja' && refusjonskravetOpphoerer?.opphoersdato) {
+    opphørsdato = formatIsoDate(refusjonskravetOpphoerer?.opphoersdato);
+  }
+  return opphørsdato;
 }
 
 function nyEllerEndring(nyInnsending: boolean) {
