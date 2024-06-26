@@ -215,8 +215,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   let loenn: LonnISykefravaeret = { status: undefined, beloep: 0 };
   if (dataFraBackend) {
     loenn = {
-      status: kvitteringDokument.refusjon?.utbetalerHeleEllerDeler ? 'Ja' : 'Nei',
-      beloep: kvitteringDokument.refusjon?.refusjonPrMnd
+      status: kvitteringDokument.refusjon ? 'Ja' : 'Nei',
+      beloep: kvitteringDokument.refusjon?.beloepPerMaaned
     };
   } else {
     loenn = {
@@ -228,8 +228,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   let refusjonskravetOpphoerer: RefusjonskravetOpphoerer = { status: undefined, opphoersdato: undefined };
   if (dataFraBackend) {
     refusjonskravetOpphoerer = {
-      status: kvitteringDokument?.refusjon?.refusjonOpphører ? 'Ja' : ('Nei' as YesNo),
-      opphoersdato: parseIsoDate(kvitteringDokument.refusjon?.refusjonOpphører)
+      status: kvitteringDokument?.refusjon?.sluttdato ? 'Ja' : ('Nei' as YesNo),
+      opphoersdato: parseIsoDate(kvitteringDokument.refusjon?.sluttdato)
     };
   } else {
     refusjonskravetOpphoerer = {
@@ -240,9 +240,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   let refusjonEndringer = [];
   if (dataFraBackend) {
-    refusjonEndringer = kvitteringDokument?.refusjon?.refusjonEndringer?.map((endring) => ({
-      dato: parseIsoDate(endring.dato),
-      beloep: endring.beløp
+    refusjonEndringer = kvitteringDokument?.refusjon?.endringer?.map((endring) => ({
+      dato: parseIsoDate(endring.startdato),
+      beloep: endring.beloep
     }));
   } else {
     refusjonEndringer = kvitteringData?.refusjon?.endringer
@@ -436,10 +436,15 @@ function prepareForInitiering(kvitteringData: any, personData: PersonData) {
   kvittering.beregnetInntekt = kvitteringData.inntekt.beloep;
 
   kvittering.refusjon = {
-    utbetalerHeleEllerDeler: kvitteringData.refusjon?.betalerHeleEllerDeler ? true : false,
+    utbetalerHeleEllerDeler: kvitteringData.refusjon?.beloepPerMaaned ? true : false,
     refusjonPrMnd: kvitteringData.refusjon?.beloepPerMaaned,
     refusjonOpphører: kvitteringData.refusjon?.sluttdato,
-    refusjonEndringer: kvitteringData.refusjon?.endringer ? kvitteringData.refusjon?.endringer : []
+    refusjonEndringer: kvitteringData.refusjon?.endringer
+      ? kvitteringData.refusjon?.endringer.map((endring) => ({
+          dato: endring.startdato,
+          beløp: endring.beloep
+        }))
+      : []
   };
 
   kvittering.fullLønnIArbeidsgiverPerioden = {

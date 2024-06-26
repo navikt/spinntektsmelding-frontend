@@ -75,7 +75,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       (!harRefusjonEndringer && lonnISykefravaeret?.status === 'Ja') ||
       !fullLonnIArbeidsgiverPerioden?.status ||
       !lonnISykefravaeret?.status ||
-      (!refusjonskravetOpphoerer?.status && lonnISykefravaeret?.status === 'Ja')
+      (!refusjonskravetOpphoerer?.status && lonnISykefravaeret?.status === 'Ja') ||
+      (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphoersdato)
     ) {
       const errors: ValiderTekster[] = hasErrors
         ? validerteData.error.issues.map((issue) => {
@@ -111,6 +112,13 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         errors.push({
           text: 'Vennligst angi om refusjonskravet opphører.',
           felt: 'lus-sluttdato-velg'
+        });
+      }
+
+      if (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphoersdato) {
+        errors.push({
+          text: 'Angi siste dato det kreves refusjon for.',
+          felt: 'lus-sluttdato'
         });
       }
 

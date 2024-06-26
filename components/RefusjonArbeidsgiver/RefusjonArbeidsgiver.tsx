@@ -150,7 +150,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
           id={'lus-radio'}
           error={visFeilmeldingsTekst('lus-radio')}
           onChange={addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret)}
-          // defaultValue={lonnISykefravaeret?.status}
+          defaultValue={lonnISykefravaeret?.status}
         >
           <Radio value='Ja'>Ja</Radio>
           <Radio value='Nei'>Nei</Radio>
