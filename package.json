@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@grafana/faro-web-sdk": "1.7.2",
-    "@grafana/faro-web-tracing": "1.7.3",
+    "@grafana/faro-web-tracing": "1.8.1",
     "@hookform/resolvers": "3.4.0",
     "@navikt/aksel-icons": "6.7.0",
     "@navikt/ds-css": "6.7.0",
