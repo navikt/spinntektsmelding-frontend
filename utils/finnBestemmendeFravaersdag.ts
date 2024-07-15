@@ -92,7 +92,7 @@ const finnBestemmendeFravaersdag = (
     }
   }
 
-  if (!fravaersperioder || !fravaersperioder[0] || !fravaersperioder?.[0]?.fom) {
+  if (!fravaersperioder?.[0]?.fom) {
     return undefined;
   }
 
@@ -113,8 +113,8 @@ const finnBestemmendeFravaersdag = (
 
   const aktuelleFravaersperioder = finnAktiveFravaersperioder(sorterteSykemeldingsperioder);
 
-  if (!arbeidsgiverperiode || !arbeidsgiverperiode[0] || !arbeidsgiverperiode?.[0]?.fom) {
-    return formatISO9075(aktuelleFravaersperioder[aktuelleFravaersperioder.length - 1].fom as Date, {
+  if (!arbeidsgiverperiode?.[0]?.fom) {
+    return formatISO9075(aktuelleFravaersperioder[aktuelleFravaersperioder.length - 1]?.fom!, {
       representation: 'date'
     });
   }
@@ -124,24 +124,31 @@ const finnBestemmendeFravaersdag = (
       ? arbeidsgiverperiode
           .toSorted((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
           .filter((periode) => periode.fom && periode.tom)
-      : undefined;
+      : [];
 
   const muligeFravaersperioder = sorterteSykemeldingsperioder.map((periode) => {
-    const tmpPeriode = structuredClone(periode);
-    if (isBefore(tmpPeriode.fom as Date, sortertArbeidsgiverperiode![0].fom as Date)) {
-      tmpPeriode.fom = sortertArbeidsgiverperiode![0].fom;
+    const tmpPeriode = {
+      fom: periode.fom,
+      tom: periode.tom,
+      id: periode.id
+    };
+
+    if (isBefore(tmpPeriode.fom as Date, sortertArbeidsgiverperiode[0].fom as Date)) {
+      tmpPeriode.fom = sortertArbeidsgiverperiode[0].fom;
     }
 
-    if (isBefore(tmpPeriode.tom as Date, sortertArbeidsgiverperiode![0].fom as Date)) {
-      tmpPeriode.fom = sortertArbeidsgiverperiode![0].fom;
+    if (isBefore(tmpPeriode.tom as Date, sortertArbeidsgiverperiode[0].fom as Date)) {
+      tmpPeriode.fom = sortertArbeidsgiverperiode[0].fom;
     }
 
     return tmpPeriode;
   });
 
-  const sortertePerioder = sortertArbeidsgiverperiode
-    .concat(muligeFravaersperioder)
-    .toSorted((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()));
+  const sortertePerioder = finnSorterteUnikePerioder(
+    sortertArbeidsgiverperiode
+      .concat(muligeFravaersperioder)
+      .toSorted((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
+  );
 
   const sammenhengendeAgp = finnAktiveFravaersperioder(finnSammenhengendePeriodeManuellJustering(sortertePerioder));
 
@@ -149,11 +156,7 @@ const finnBestemmendeFravaersdag = (
     arbeidsgiverperiode && aktuelleFravaersperioder
       ? aktuelleFravaersperioder.filter((periode) => {
           if (!periode.fom) return false;
-          if (
-            !sammenhengendeAgp ||
-            !sammenhengendeAgp[sammenhengendeAgp.length - 1] ||
-            !sammenhengendeAgp[sammenhengendeAgp.length - 1].fom
-          ) {
+          if (!sammenhengendeAgp?.[sammenhengendeAgp.length - 1]?.fom) {
             return false;
           }
           return (
@@ -216,8 +219,8 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
     if (index > 0) {
       if (
         perioder[perioderIndex] &&
-        !isEqual(periode.fom, perioder[perioderIndex].fom) &&
-        !isEqual(periode.tom, perioder[perioderIndex].tom)
+        !isEqual(periode.fom!, perioder[perioderIndex].fom!) &&
+        !isEqual(periode.tom!, perioder[perioderIndex].tom!)
       ) {
         perioder.push(periode);
       }
