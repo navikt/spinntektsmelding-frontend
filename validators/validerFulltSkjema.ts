@@ -5,9 +5,9 @@ import {
   EndringAarsakSchema,
   OrganisasjonsnummerSchema,
   PersonnummerSchema,
-  BegrunnelseRedusertLoennIAgpEnum,
   NaturalytelseEnum,
-  toLocalIso
+  toLocalIso,
+  BegrunnelseRedusertLoennIAgp
 } from './validerAapenInnsending';
 
 export const PeriodeSchema = z
@@ -71,7 +71,9 @@ const schema = z.object({
     redusertLoennIAgp: z.optional(
       z.object({
         beloep: z.number().min(0),
-        begrunnelse: BegrunnelseRedusertLoennIAgpEnum
+        begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
+          required_error: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
+        })
       })
     )
   }),
