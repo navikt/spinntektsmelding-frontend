@@ -40,9 +40,6 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
-// import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
-
-import formatIsoAsReadableDate from '../../utils/formatIsoAsReadableDate';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -126,13 +123,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     : foreslaattBestemmendeFravaersdag;
 
   useEffect(() => {
-    if (!fravaersperioder) {
+    if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem) {
       if (!kvitteringSlug || kvitteringSlug === '') return;
       hentKvitteringsdata(kvitteringSlug);
     }
     setNyInnsending(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [kvitteringSlug]);
 
   useEffect(() => {
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
