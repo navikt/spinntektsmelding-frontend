@@ -27,26 +27,23 @@ export const NaturalytelseEnum = z.enum([
   'YRKEBILTJENESTLIGBEHOVLISTEPRIS'
 ]);
 
-export const BegrunnelseRedusertLoennIAgpEnum = z.enum(
-  [
-    'ArbeidOpphoert',
-    'BeskjedGittForSent',
-    'BetvilerArbeidsufoerhet',
-    'FerieEllerAvspasering',
-    'FiskerMedHyre',
-    'FravaerUtenGyldigGrunn',
-    'IkkeFravaer',
-    'IkkeFullStillingsandel',
-    'IkkeLoenn',
-    'LovligFravaer',
-    'ManglerOpptjening',
-    'Permittering',
-    'Saerregler',
-    'StreikEllerLockout',
-    'TidligereVirksomhet'
-  ],
-  { required_error: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.' }
-);
+export const BegrunnelseRedusertLoennIAgp = [
+  'ArbeidOpphoert',
+  'BeskjedGittForSent',
+  'BetvilerArbeidsufoerhet',
+  'FerieEllerAvspasering',
+  'FiskerMedHyre',
+  'FravaerUtenGyldigGrunn',
+  'IkkeFravaer',
+  'IkkeFullStillingsandel',
+  'IkkeLoenn',
+  'LovligFravaer',
+  'ManglerOpptjening',
+  'Permittering',
+  'Saerregler',
+  'StreikEllerLockout',
+  'TidligereVirksomhet'
+] as const;
 
 export const InntektEndringAarsakEnum = z.enum([
   'Bonus',
@@ -282,7 +279,9 @@ const schema = z
         z
           .object({
             beloep: z.number({ required_error: 'Angi beløp utbetalt under arbeidsgiverperioden' }).min(0),
-            begrunnelse: BegrunnelseRedusertLoennIAgpEnum
+            begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
+              required_error: 'Velg begrunnelse for kort arbeidsgiverperiode.'
+            })
           })
           .refine((val) => val.beloep >= 0, { message: 'Beløpet må være større eller lik 0' })
       )
