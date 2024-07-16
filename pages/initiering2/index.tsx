@@ -243,13 +243,14 @@ const Initiering2: NextPage = () => {
                     </div>
                     <PeriodeVelger perioder={perioder} />
                     {antallSykedager > 16 && (
-                      <Alert variant='info' className={lokalStyles.alertPadding}>
-                        <Heading1>Er du sikker på at du skal opprette inntektsmelding manuelt?</Heading1>
-                        Vi sender ut varsel når arbeidsgiverperioden er over og den sykmeldte har sendt inn søknad om
-                        sykepenger. Vi anbefaler at dere venter til dere har fått varselet, og at dere sender inn
-                        inntektsmeldingen via mottatt{' '}
-                        <Link href={environment.saksoversiktUrl}>oppgave i saksoversikten</Link>. Innsending av
-                        inntektsmelding manuelt kan gjøre at behandlingen av saken stopper opp.
+                      <Alert variant='error' className={lokalStyles.alertPadding}>
+                        <Heading1>
+                          Det er ikke mulig å opprette inntektsmelding manuelt med sykmeldinger over 16 dager
+                        </Heading1>
+                        Hvis sykmeldingen er lengre enn 16 dager vil NAV opprette en inntektsmelding. Vi sender ut en
+                        forespørsel om inntektsmelding når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn
+                        søknad om sykepenger. Du finner du forespørselen på{' '}
+                        <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
                       </Alert>
                     )}
                   </>
@@ -272,11 +273,7 @@ const Initiering2: NextPage = () => {
                   <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
                     Tilbake
                   </Button>
-                  <Button
-                    variant='primary'
-                    className={lokalStyles.primaryKnapp}
-                    // disabled={organisasjonsnummer.current === ''}
-                  >
+                  <Button variant='primary' className={lokalStyles.primaryKnapp} disabled={antallSykedager > 16}>
                     Neste
                   </Button>
                 </div>
