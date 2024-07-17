@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import PeriodeVelger from '../../../components/PeriodeVelger/PeriodeVelger';
 import { describe, it, vi } from 'vitest';
+import { replace } from 'cypress/types/lodash';
 
 vi.mock('react-hook-form', () => ({
   useController: () => ({
@@ -10,7 +11,8 @@ vi.mock('react-hook-form', () => ({
   useFieldArray: () => ({
     fields: [],
     append: vi.fn(),
-    remove: vi.fn()
+    remove: vi.fn(),
+    replace: vi.fn()
   }),
   useFormContext: () => ({
     handleSubmit: () => vi.fn(),

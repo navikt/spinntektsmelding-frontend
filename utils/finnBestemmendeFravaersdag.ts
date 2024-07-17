@@ -1,4 +1,4 @@
-import { compareAsc, compareDesc, differenceInDays, formatISO9075, isBefore, isEqual } from 'date-fns';
+import { compareAsc, compareDesc, differenceInDays, formatISO9075, isAfter, isBefore, isEqual } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
@@ -92,7 +92,7 @@ const finnBestemmendeFravaersdag = (
     }
   }
 
-  if (!fravaersperioder || !fravaersperioder[0] || !fravaersperioder?.[0]?.fom) {
+  if (!fravaersperioder?.[0]?.fom) {
     return undefined;
   }
 
@@ -113,8 +113,8 @@ const finnBestemmendeFravaersdag = (
 
   const aktuelleFravaersperioder = finnAktiveFravaersperioder(sorterteSykemeldingsperioder);
 
-  if (!arbeidsgiverperiode || !arbeidsgiverperiode[0] || !arbeidsgiverperiode?.[0]?.fom) {
-    return formatISO9075(aktuelleFravaersperioder[aktuelleFravaersperioder.length - 1].fom as Date, {
+  if (!arbeidsgiverperiode?.[0]?.fom) {
+    return formatISO9075(aktuelleFravaersperioder[aktuelleFravaersperioder.length - 1]?.fom!, {
       representation: 'date'
     });
   }
@@ -124,23 +124,45 @@ const finnBestemmendeFravaersdag = (
       ? arbeidsgiverperiode
           .toSorted((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
           .filter((periode) => periode.fom && periode.tom)
-      : undefined;
+      : [];
 
-  const sammenhengendeAgp = finnSammenhengendePeriodeManuellJustering(sortertArbeidsgiverperiode!);
+  const muligeFravaersperioder = sorterteSykemeldingsperioder.map((periode) => {
+    const tmpPeriode = {
+      fom: periode.fom,
+      tom: periode.tom,
+      id: periode.id
+    };
+
+    if (isBefore(tmpPeriode.fom as Date, sortertArbeidsgiverperiode[0].fom as Date)) {
+      tmpPeriode.fom = sortertArbeidsgiverperiode[0].fom;
+    }
+
+    if (isBefore(tmpPeriode.tom as Date, sortertArbeidsgiverperiode[0].fom as Date)) {
+      tmpPeriode.fom = sortertArbeidsgiverperiode[0].fom;
+    }
+
+    return tmpPeriode;
+  });
+
+  const sortertePerioder = finnSorterteUnikePerioder(
+    sortertArbeidsgiverperiode
+      .concat(muligeFravaersperioder)
+      .toSorted((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))
+  );
+
+  const sammenhengendeAgp = finnAktiveFravaersperioder(finnSammenhengendePeriodeManuellJustering(sortertePerioder));
 
   const overskytendeFravaersperioder =
     arbeidsgiverperiode && aktuelleFravaersperioder
       ? aktuelleFravaersperioder.filter((periode) => {
           if (!periode.fom) return false;
-          if (
-            !sammenhengendeAgp ||
-            !sammenhengendeAgp[sammenhengendeAgp.length - 1] ||
-            !sammenhengendeAgp[sammenhengendeAgp.length - 1].fom
-          ) {
+          if (!sammenhengendeAgp?.[sammenhengendeAgp.length - 1]?.fom) {
             return false;
           }
-
-          return !isBefore(periode.fom, sammenhengendeAgp[sammenhengendeAgp.length - 1].fom);
+          return (
+            isBefore(periode.fom, sammenhengendeAgp[sammenhengendeAgp.length - 1].fom) &&
+            isAfter(periode.tom, sammenhengendeAgp[sammenhengendeAgp.length - 1].tom)
+          );
         })
       : [];
 
@@ -148,7 +170,12 @@ const finnBestemmendeFravaersdag = (
     sammenhengendeAgp.concat(overskytendeFravaersperioder).toSorted((a, b) => compareAsc(a.fom, b.fom))
   );
 
-  const bestemmendeFravaersdag = dagerEtterAgp[dagerEtterAgp.length - 1].fom;
+  let bestemmendeFravaersdag = dagerEtterAgp[dagerEtterAgp.length - 1].fom;
+
+  if (isBefore(bestemmendeFravaersdag as Date, sammenhengendeAgp[0].fom as Date)) {
+    bestemmendeFravaersdag = sammenhengendeAgp[0].fom;
+  }
+
   if (!arbeidsgiverKanFlytteBFD) {
     if (typeof forespurtBestemmendeFraværsdag === 'string') {
       forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
@@ -192,8 +219,8 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
     if (index > 0) {
       if (
         perioder[perioderIndex] &&
-        !isEqual(periode.fom, perioder[perioderIndex].fom) &&
-        !isEqual(periode.tom, perioder[perioderIndex].tom)
+        !isEqual(periode.fom!, perioder[perioderIndex].fom!) &&
+        !isEqual(periode.tom!, perioder[perioderIndex].tom!)
       ) {
         perioder.push(periode);
       }
