@@ -17,8 +17,8 @@ export default function SelectArbeidsgiver({ arbeidsforhold, id, register, error
   if (arbeidsforhold.length === 1) {
     return (
       <>
-        <TextLabel>Organisasjon</TextLabel>
-        <p>{`Org.nr. ${arbeidsforhold[0].orgnrUnderenhet} - ${arbeidsforhold[0].virksomhetsnavn}`}</p>
+        <TextLabel>Arbeidsgiver</TextLabel>
+        <p>{`Orgnr. ${arbeidsforhold[0].orgnrUnderenhet} - ${arbeidsforhold[0].virksomhetsnavn}`}</p>
         <input type='hidden' value={arbeidsforhold[0].orgnrUnderenhet} name='organisasjonsnummer' {...register(id)} />
       </>
     );
@@ -29,7 +29,7 @@ export default function SelectArbeidsgiver({ arbeidsforhold, id, register, error
       <option>Velg organisasjon</option>
       {arbeidsforhold.map((arbeidsgiver) => (
         <option value={arbeidsgiver.orgnrUnderenhet} key={arbeidsgiver.orgnrUnderenhet}>
-          {`Org.nr. ${arbeidsgiver.orgnrUnderenhet} - ${arbeidsgiver.virksomhetsnavn}`}
+          {`Orgnr. ${arbeidsgiver.orgnrUnderenhet} - ${arbeidsgiver.virksomhetsnavn}`}
         </option>
       ))}
     </Select>

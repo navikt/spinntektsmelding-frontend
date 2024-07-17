@@ -114,7 +114,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               </div>
             )}
             <div className={lokalStyles.orgnrNavnWrapper}>
-              <TextLabel>Org.nr. for underenhet</TextLabel>
+              <TextLabel>Orgnr. for underenhet</TextLabel>
               <div data-cy='orgnummer'>{orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}</div>
             </div>
             <div className={lokalStyles.innsenderNavnWrapper}>
