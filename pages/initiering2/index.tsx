@@ -215,7 +215,7 @@ const Initiering2: NextPage = () => {
       <PageContent title='Inntektsmelding'>
         <main className='main-content'>
           <div className={styles.padded}>
-            <Heading1>Opprett inntektsmelding ifm. sykmelding</Heading1>
+            <Heading1>Opprett inntektsmelding for et sykefravær</Heading1>
             <FormProvider {...methods}>
               <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
                 <div className={lokalStyles.persondata}>
@@ -245,11 +245,12 @@ const Initiering2: NextPage = () => {
                     {antallSykedager > 16 && (
                       <Alert variant='error' className={lokalStyles.alertPadding}>
                         <Heading1>
-                          Det er ikke mulig å opprette inntektsmelding manuelt med sykmeldinger over 16 dager
+                          Det er ikke mulig å opprette inntektsmelding manuelt for et sammenhengende sykefravær på over
+                          16 dager
                         </Heading1>
-                        Hvis sykmeldingen er lengre enn 16 dager vil NAV opprette en inntektsmelding. Vi sender ut en
-                        forespørsel om inntektsmelding når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn
-                        søknad om sykepenger. Du finner du forespørselen på{' '}
+                        Hvis et sammenhengende sykefravær er lengre enn 16 dager, vil NAV opprette en inntektsmelding.
+                        Vi sender ut en forespørsel om inntektsmelding når arbeidsgiverperioden er ferdig og den
+                        sykmeldte har sendt inn søknad om sykepenger. Du finner du forespørselen på{' '}
                         <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
                       </Alert>
                     )}

@@ -48,7 +48,7 @@ export default function PersonVisning({
           </div>
 
           <div className={lokalStyles.orgnrNavnWrapper}>
-            <TextLabel>Org.nr. for underenhet</TextLabel>
+            <TextLabel>Orgnr. for underenhet</TextLabel>
             <div data-cy='orgnummer'>{orgnrUnderenhet}</div>
           </div>
           <div className={lokalStyles.innsenderNavnWrapper}>

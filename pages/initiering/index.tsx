@@ -52,7 +52,7 @@ const Initiering: NextPage = () => {
       <PageContent title='Inntektsmelding'>
         <main className='main-content'>
           <div className={styles.padded}>
-            <Heading1>Opprett inntektsmelding ifm. sykmelding</Heading1>
+            <Heading1>Opprett inntektsmelding for et sykefravær</Heading1>
             <Alert variant='info'>
               Du vil normalt få et varsel når Nav trenger inntektsmelding. Vi sender ut varsel når arbeidsgiverperioden
               er ferdig og den sykmeldte har sendt inn søknad om sykepenger. Hvis du ikke fått denne oppgaven og du
