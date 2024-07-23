@@ -109,22 +109,25 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     ),
 
-  setEndringsaarsak: (aarsak: string) =>
+  setEndringsaarsak: (aarsak: string | undefined) =>
     set(
       produce((state) => {
+        if (aarsak === '') {
+          aarsak = undefined;
+        }
         if (!state.bruttoinntekt.endringAarsak?.aarsak || state.bruttoinntekt.endringAarsak?.aarsak !== aarsak) {
           state.bruttoinntekt.endringAarsak = { aarsak: aarsak };
         } else {
           state.bruttoinntekt.endringAarsak.aarsak = aarsak;
         }
 
-        if (aarsak && aarsak !== '') {
+        if (aarsak && aarsak !== undefined) {
           state.bruttoinntekt.manueltKorrigert = true;
         } else {
           state.bruttoinntekt.manueltKorrigert = false;
         }
 
-        if (aarsak && aarsak !== '') {
+        if (aarsak && aarsak !== undefined) {
           state = slettFeilmeldingFraState(state, 'bruttoinntekt-endringsaarsak');
         } else {
           state = leggTilFeilmelding(state, 'bruttoinntekt-endringsaarsak', feiltekster.ENDRINGSAARSAK_MANGLER);
@@ -132,10 +135,28 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setPerioder: (periode) =>
+  setPerioder: (periode) => {
+    const aarsak = get().bruttoinntekt.endringAarsak?.aarsak.toLowerCase();
+
     set(
       produce((state) => {
-        state.bruttoinntekt.endringAarsak.perioder =
+        let aarsakIndex = '';
+        switch (aarsak) {
+          case 'ferie':
+            aarsakIndex = 'ferier';
+            break;
+          case 'permisjon':
+            aarsakIndex = 'permisjoner';
+            break;
+          case 'permittering':
+            aarsakIndex = 'permitteringer';
+            break;
+          default:
+            aarsakIndex = aarsak!;
+            break;
+        }
+
+        state.bruttoinntekt.endringAarsak[aarsakIndex] =
           periode?.map((periode) => ({
             fom: periode.fom,
             tom: periode.tom
@@ -143,7 +164,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
         return state;
       })
-    ),
+    );
+  },
   setEndringAarsakGjelderFra: (endringDato) =>
     set(
       produce((state) => {
@@ -212,17 +234,17 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         };
 
         if (!state.bruttoinntekt.endringAarsak) {
-          state.bruttoinntekt.endringAarsak = { aarsak: '' };
+          state.bruttoinntekt.endringAarsak = { aarsak: undefined };
         }
         if (!state.bruttoinntekt.endringAarsak.aarsak) {
-          state.bruttoinntekt.endringAarsak.aarsak = '';
+          state.bruttoinntekt.endringAarsak.aarsak = undefined;
         }
 
         if (!state.opprinneligbruttoinntekt.endringAarsak) {
-          state.opprinneligbruttoinntekt.endringAarsak = { aarsak: '' };
+          state.opprinneligbruttoinntekt.endringAarsak = { aarsak: undefined };
         }
         if (!state.opprinneligbruttoinntekt.endringAarsak.aarsak) {
-          state.opprinneligbruttoinntekt.endringAarsak.aarsak = '';
+          state.opprinneligbruttoinntekt.endringAarsak.aarsak = undefined;
         }
 
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);

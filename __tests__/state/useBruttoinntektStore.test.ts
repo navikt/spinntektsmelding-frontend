@@ -158,7 +158,7 @@ describe('useBoundStore', () => {
       result.current.setEndringsaarsak('');
     });
 
-    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBe('');
+    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBeUndefined();
     expect(result.current.feilmeldinger).toEqual([
       {
         felt: 'bruttoinntekt-endringsaarsak',
@@ -282,10 +282,14 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
+      result.current.setEndringsaarsak('Ferie');
+    });
+
+    act(() => {
       result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak.ferier).toEqual([
       { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
     ]);
   });
@@ -298,10 +302,14 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
+      result.current.setEndringsaarsak('Ferie');
+    });
+
+    act(() => {
       result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak.ferier).toEqual([
       { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
     ]);
   });
@@ -384,10 +392,14 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
+      result.current.setEndringsaarsak('Ferie');
+    });
+
+    act(() => {
       result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak.perioder).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak.ferier).toEqual([
       { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
     ]);
   });
