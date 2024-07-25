@@ -3,7 +3,6 @@ import isFnrNumber from '../utils/isFnrNumber';
 import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
-import zodAlwaysRefine from '../utils/zodAlwaysRefine';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -64,7 +63,7 @@ const leftPad = (val: number) => {
   return val < 10 ? `0${val}` : val;
 };
 
-export const toLocalIso = (val: Date) => {
+const toLocalIso = (val: Date) => {
   return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
 };
 

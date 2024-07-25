@@ -183,7 +183,7 @@ describe('useBoundStore', () => {
       result.current.tilbakestillMaanedsinntekt();
     });
 
-    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBe('');
+    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBeUndefined();
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(40000);
   });

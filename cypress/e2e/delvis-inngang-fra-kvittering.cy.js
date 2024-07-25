@@ -110,39 +110,19 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        orgnrUnderenhet: '810007842',
-        identitetsnummer: '10486535275',
-        egenmeldingsperioder: [],
-        fraværsperioder: [
-          {
-            fom: '2023-01-02',
-            tom: '2023-01-29'
-          },
-          {
-            fom: '2023-01-31',
-            tom: '2023-02-08'
-          }
-        ],
-        arbeidsgiverperioder: [],
+        agp: {
+          perioder: [],
+          egenmeldingsperioder: [],
+          redusertLoennIAgp: null
+        },
         inntekt: {
-          bekreftet: true,
-          beregnetInntekt: 50000,
-          manueltKorrigert: true,
-          endringÅrsak: {
-            typpe: 'Bonus'
-          }
+          beloep: 50000,
+          inntektsdato: '2023-01-02',
+          naturalytelser: [],
+          endringAarsak: { aarsak: 'Bonus' }
         },
-        bestemmendeFraværsdag: '2023-01-02',
-        refusjon: {
-          utbetalerHeleEllerDeler: true,
-          refusjonPrMnd: 50000,
-          refusjonOpphører: '2023-09-30'
-        },
-        bekreftOpplysninger: true,
-        behandlingsdager: [],
-        årsakInnsending: 'Endring',
-        telefonnummer: '12345678',
-        forespurtData: ['inntekt', 'refusjon']
+        refusjon: { beloepPerMaaned: 50000, sluttdato: '2023-09-30' },
+        avsenderTlf: '12345678'
       });
 
     // cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');

@@ -54,31 +54,27 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        orgnrUnderenhet: '810007842',
-        identitetsnummer: '10486535275',
-        egenmeldingsperioder: [],
-        fraværsperioder: [
-          { fom: '2023-02-02', tom: '2023-02-20' },
-          { fom: '2023-02-24', tom: '2023-02-28' }
-        ],
-        arbeidsgiverperioder: [],
-        inntekt: { bekreftet: true, beregnetInntekt: 46000, manueltKorrigert: false },
-        bestemmendeFraværsdag: '2023-02-25',
+        agp: {
+          perioder: [],
+          egenmeldingsperioder: [],
+          redusertLoennIAgp: null
+        },
+        inntekt: {
+          beloep: 46000,
+          inntektsdato: '2023-02-25',
+          naturalytelser: [],
+          endringAarsak: null
+        },
         refusjon: {
-          utbetalerHeleEllerDeler: true,
-          refusjonPrMnd: 46000,
-          refusjonEndringer: [
+          beloepPerMaaned: 46000,
+          endringer: [
             {
-              beløp: 0,
-              dato: '2023-09-30'
+              beloep: 0,
+              startdato: '2023-09-30'
             }
           ]
         },
-        bekreftOpplysninger: true,
-        behandlingsdager: [],
-        årsakInnsending: 'Ny',
-        telefonnummer: '12345678',
-        forespurtData: ['inntekt', 'refusjon']
+        avsenderTlf: '12345678'
       });
 
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
@@ -146,31 +142,27 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        orgnrUnderenhet: '810007842',
-        identitetsnummer: '10486535275',
-        egenmeldingsperioder: [],
-        fraværsperioder: [
-          { fom: '2023-02-02', tom: '2023-02-20' },
-          { fom: '2023-02-24', tom: '2023-02-28' }
-        ],
-        arbeidsgiverperioder: [],
-        inntekt: { bekreftet: true, beregnetInntekt: 50000, manueltKorrigert: true, endringÅrsak: { typpe: 'Bonus' } },
-        bestemmendeFraværsdag: '2023-02-25',
+        agp: {
+          perioder: [],
+          egenmeldingsperioder: [],
+          redusertLoennIAgp: null
+        },
+        inntekt: {
+          beloep: 50000,
+          inntektsdato: '2023-02-25',
+          naturalytelser: [],
+          endringAarsak: { aarsak: 'Bonus' }
+        },
         refusjon: {
-          utbetalerHeleEllerDeler: true,
-          refusjonPrMnd: 46000,
-          refusjonEndringer: [
+          beloepPerMaaned: 46000,
+          endringer: [
             {
-              beløp: 0,
-              dato: '2023-09-30'
+              beloep: 0,
+              startdato: '2023-09-30'
             }
           ]
         },
-        bekreftOpplysninger: true,
-        behandlingsdager: [],
-        årsakInnsending: 'Ny',
-        telefonnummer: '12345678',
-        forespurtData: ['inntekt', 'refusjon']
+        avsenderTlf: '12345678'
       });
 
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');

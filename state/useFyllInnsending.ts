@@ -9,7 +9,7 @@ import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
-import { EndringAarsak } from '../validators/validerAapenInnsending';
+import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 
@@ -22,11 +22,6 @@ interface FullLonnIArbeidsgiverPerioden {
   utbetalerFullLønn: boolean;
   begrunnelse?: string | null;
   utbetalt?: number | null;
-}
-
-export interface RefusjonEndring {
-  dato: string;
-  beløp: number;
 }
 
 interface Refusjon {
@@ -119,20 +114,6 @@ export default function useFyllInnsending() {
         ? bruttoinntekt.endringAarsak
         : null;
 
-    console.log('endringAarsak', endringAarsak);
-
-    // const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
-    // const RefusjonUtbetalingEndringUtenGammelBFD = gammeltSkjaeringstidspunkt
-    //   ? refusjonEndringer?.filter((endring) => {
-    //       return endring.dato && isAfter(endring.dato, gammeltSkjaeringstidspunkt);
-    //     })
-    //   : refusjonEndringer;
-
-    // const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonEndringer(
-    //   harRefusjonEndringer,
-    //   RefusjonUtbetalingEndringUtenGammelBFD
-    // );
-
     setSkalViseFeilmeldinger(true);
 
     const forespurtData = hentPaakrevdOpplysningstyper();
@@ -219,16 +200,6 @@ export default function useFyllInnsending() {
       avsenderTlf: innsenderTelefonNr || ''
     };
 
-    // const paakrevdeData = forespurtData;
-
-    // if (!paakrevdeData.includes(skjemaVariant.arbeidsgiverperiode)) {
-    //   delete skjemaData.fullLønnIArbeidsgiverPerioden;
-    // }
-
-    // if (!skalSendeNaturalytelser) {
-    //   delete skjemaData.naturalytelser;
-    // }
-
     return skjemaData;
   };
 }
@@ -259,17 +230,6 @@ export function hentBestemmendeFraværsdag(
     : inngangFraKvittering
       ? formatIsoDate(bestemmendeFravaersdag)
       : formatIsoDate(beregnetSkjaeringstidspunkt);
-}
-
-function formaterOpphørsdato(
-  kreverIkkeRefusjon: boolean,
-  refusjonskravetOpphoerer: RefusjonskravetOpphoerer | undefined
-): string | undefined {
-  let opphørsdato;
-  if (!kreverIkkeRefusjon && refusjonskravetOpphoerer?.status === 'Ja' && refusjonskravetOpphoerer?.opphoersdato) {
-    opphørsdato = formatIsoDate(refusjonskravetOpphoerer?.opphoersdato);
-  }
-  return opphørsdato;
 }
 
 function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
@@ -315,7 +275,7 @@ function verdiEllerNull(verdi: number | undefined): number {
   return verdi ?? 0;
 }
 
-function konverterRefusjonEndringer(
+export function konverterRefusjonEndringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBeloep> | undefined
 ): RefusjonEndring[] | undefined {
@@ -332,11 +292,4 @@ function konverterRefusjonEndringer(
   } else {
     return undefined;
   }
-}
-
-function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode> | undefined) {
-  return (
-    egenmeldingsperioder &&
-    (egenmeldingsperioder.length > 1 || (egenmeldingsperioder[0]?.fom && egenmeldingsperioder[0]?.tom))
-  );
 }
