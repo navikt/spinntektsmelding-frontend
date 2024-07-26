@@ -1,9 +1,8 @@
-import { isAfter, isValid, parseISO } from 'date-fns';
-import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import { isValid, parseISO } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Periode, RefusjonskravetOpphoerer, YesNo } from './state';
+import { Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
@@ -119,7 +118,6 @@ export default function useFyllInnsending() {
     const forespurtData = hentPaakrevdOpplysningstyper();
 
     const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
-    // const skalSendeNaturalytelser = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
@@ -153,7 +151,6 @@ export default function useFyllInnsending() {
       beregnetSkjaeringstidspunkt
     );
 
-    // const kreverIkkeRefusjon = lonnISykefravaeret?.status === 'Nei';
     const skjemaData: FullInnsending = {
       forespoerselId,
       agp: {
@@ -242,7 +239,9 @@ function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsper
   return perioder;
 }
 
-function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder: SendtPeriode[] | undefined) {
+export function konverterPerioderFraMottattTilInterntFormat(
+  innsendbarArbeidsgiverperioder: SendtPeriode[] | undefined
+) {
   return innsendbarArbeidsgiverperioder
     ? innsendbarArbeidsgiverperioder?.map((periode) => ({
         fom: parseISO(periode.fom),
@@ -267,11 +266,11 @@ function finnInnsendbareArbeidsgiverperioder(
     : [];
 }
 
-function verdiEllerBlank(verdi: string | undefined): string {
+export function verdiEllerBlank(verdi: string | undefined): string {
   return verdi ?? '';
 }
 
-function verdiEllerNull(verdi: number | undefined): number {
+export function verdiEllerNull(verdi: number | undefined): number {
   return verdi ?? 0;
 }
 

@@ -14,7 +14,12 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { finnFoersteFravaersdag } from '../pages/endring/[slug]';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
-import { konverterRefusjonEndringer } from './useFyllInnsending';
+import {
+  konverterPerioderFraMottattTilInterntFormat,
+  konverterRefusjonEndringer,
+  verdiEllerBlank,
+  verdiEllerNull
+} from './useFyllInnsending';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -85,7 +90,7 @@ export default function useFyllDelvisInnsending() {
     const forespurtData = hentPaakrevdOpplysningstyper();
 
     const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
-    const skalSendeNaturalytelser = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
+    // const skalSendeNaturalytelser = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
@@ -139,7 +144,7 @@ export default function useFyllDelvisInnsending() {
           fullLonnIArbeidsgiverPerioden?.status === 'Nei'
             ? {
                 beloep: fullLonnIArbeidsgiverPerioden.utbetalt!,
-                begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse!
+                begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse! as string
               }
             : null
       },
@@ -149,7 +154,7 @@ export default function useFyllDelvisInnsending() {
         naturalytelser: naturalytelser
           ? naturalytelser?.map((ytelse) => ({
               naturalytelse: verdiEllerBlank(ytelse.type),
-              sluttdato: formatIsoDate(ytelse.bortfallsdato),
+              sluttdato: formatIsoDate(ytelse.bortfallsdato) as string,
               verdiBeloep: verdiEllerNull(ytelse.verdi)
             }))
           : [],
@@ -193,16 +198,6 @@ function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsper
   return perioder;
 }
 
-function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder: SendtPeriode[] | undefined) {
-  return innsendbarArbeidsgiverperioder
-    ? innsendbarArbeidsgiverperioder?.map((periode) => ({
-        fom: parseISO(periode.fom),
-        tom: parseISO(periode.tom),
-        id: 'id'
-      }))
-    : undefined;
-}
-
 function finnInnsendbareArbeidsgiverperioder(
   arbeidsgiverperioder: Periode[] | undefined,
   skalSendeArbeidsgiverperiode: boolean
@@ -216,14 +211,6 @@ function finnInnsendbareArbeidsgiverperioder(
         ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
         .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
     : [];
-}
-
-function verdiEllerBlank(verdi: string | undefined): string {
-  return verdi ?? '';
-}
-
-function verdiEllerNull(verdi: number | undefined): number {
-  return verdi ?? 0;
 }
 
 function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode> | undefined) {

@@ -63,7 +63,7 @@ const fullInnsendingSchema = z.object({
           z.object({
             naturalytelse: NaturalytelseEnum,
             verdiBeloep: z.number().min(0),
-            sluttdato: z.date()
+            sluttdato: z.string().date()
           })
         ),
         z.tuple([])
