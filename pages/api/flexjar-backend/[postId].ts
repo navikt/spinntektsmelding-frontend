@@ -5,7 +5,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
-const basePath = 'http://' + global.process.env.FLEXJAR_URL;
+const basePath = 'http://' + global.process.env.FLEXJAR_URL + '/api/v1/feedback';
 
 export const config = {
   api: {
