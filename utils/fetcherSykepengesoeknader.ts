@@ -1,5 +1,4 @@
 import { z } from 'zod';
-// import { OrganisasjonsnummerSchema } from '../validators/validerAapenInnsending';
 import NetworkError from './NetworkError';
 
 export default function fetcherSykepengesoeknader(
@@ -8,7 +7,7 @@ export default function fetcherSykepengesoeknader(
   orgnummer?: string,
   eldsteFom?: string
 ) {
-  if (!url || !identitetsnummer) return Promise.resolve([]);
+  if (!url || !identitetsnummer || !orgnummer || !eldsteFom) return Promise.resolve([]);
 
   return fetch(url, {
     method: 'POST',

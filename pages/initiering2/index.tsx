@@ -35,6 +35,7 @@ import { Periode } from '../../state/state';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
+import formatIsoDate from '../../utils/formatIsoDate';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -202,7 +203,7 @@ const Initiering2: NextPage = () => {
       )
     : 0;
 
-  const fomDato = formatISO(parseIsoDate(subYears(new Date(), 1)));
+  const fomDato = formatIsoDate(subYears(new Date(), 1));
 
   const { data: spData, error: spError } = useSykepengesoeknader(identitetsnummer, orgnr, fomDato, backendFeil);
 

@@ -9,9 +9,14 @@ export default function useSykepengesoeknader(
   backendFeil: any
 ) {
   return useSWRImmutable(
-    [environment.initierBlankSkjemaUrl, identitetsnummer, orgnummer, eldsteFom],
+    [environment.hentSykepengesoknaderUrl, identitetsnummer, orgnummer, eldsteFom],
     ([url, identitetsnummer, orgnummer, eldsteFom]) =>
-      fetcherSykepengesoeknader(!!identitetsnummer && !!orgnummer ? url : null, identitetsnummer, orgnummer, eldsteFom),
+      fetcherSykepengesoeknader(
+        !!identitetsnummer && !!orgnummer && !!eldsteFom ? url : null,
+        identitetsnummer,
+        orgnummer,
+        eldsteFom
+      ),
     {
       onError: (err) => {
         console.error('Kunne ikke hente arbeidsforhold', err);

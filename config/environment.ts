@@ -82,6 +82,8 @@ class Environment {
 
   public innsendingAGInitiertUrl = '/im-dialog/api/selvbestemt-inntektsmelding';
 
+  public hentSykepengesoknaderUrl = '/im-dialog/api/sp-soeknader';
+
   get environment() {
     return this.publicRuntimeConfig.environment;
   }
