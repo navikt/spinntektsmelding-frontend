@@ -128,26 +128,26 @@ export default function useFyllDelvisInnsending() {
         ? skjema.inntekt.endringAarsak
         : null;
 
-    console.log('skjema', skjema);
-
     const skjemaData: FullInnsending = {
       forespoerselId,
-      agp: {
-        perioder: innsendbarArbeidsgiverperioder,
-        egenmeldinger: harEgenmeldingsdager
-          ? egenmeldingsperioder!.map((periode) => ({
-              fom: formatIsoDate(periode.fom) as TDateISODate,
-              tom: formatIsoDate(periode.tom) as TDateISODate
-            }))
-          : [],
-        redusertLoennIAgp:
-          fullLonnIArbeidsgiverPerioden?.status === 'Nei'
-            ? {
-                beloep: fullLonnIArbeidsgiverPerioden.utbetalt!,
-                begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse! as string
-              }
-            : null
-      },
+      agp: skalSendeArbeidsgiverperiode
+        ? {
+            perioder: innsendbarArbeidsgiverperioder,
+            egenmeldinger: harEgenmeldingsdager
+              ? egenmeldingsperioder!.map((periode) => ({
+                  fom: formatIsoDate(periode.fom) as TDateISODate,
+                  tom: formatIsoDate(periode.tom) as TDateISODate
+                }))
+              : [],
+            redusertLoennIAgp:
+              fullLonnIArbeidsgiverPerioden?.status === 'Nei'
+                ? {
+                    beloep: fullLonnIArbeidsgiverPerioden.utbetalt!,
+                    begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse! as string
+                  }
+                : null
+          }
+        : null,
       inntekt: {
         beloep: skjema.inntekt.beloep!,
         inntektsdato: bestemmendeFraværsdag!,

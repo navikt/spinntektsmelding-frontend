@@ -40,18 +40,20 @@ const fullInnsendingSchema = z.object({
     })
     .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
     .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' }),
-  agp: z.object({
-    perioder: z.array(PeriodeSchema),
-    egenmeldinger: z.union([z.array(PeriodeSchema), z.tuple([])]),
-    redusertLoennIAgp: z.nullable(
-      z.object({
-        beloep: z.number().min(0),
-        begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
-          required_error: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
+  agp: z
+    .object({
+      perioder: z.array(PeriodeSchema),
+      egenmeldinger: z.union([z.array(PeriodeSchema), z.tuple([])]),
+      redusertLoennIAgp: z.nullable(
+        z.object({
+          beloep: z.number().min(0),
+          begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
+            required_error: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
+          })
         })
-      })
-    )
-  }),
+      )
+    })
+    .nullable(),
   inntekt: z.optional(
     z.object({
       beloep: z
