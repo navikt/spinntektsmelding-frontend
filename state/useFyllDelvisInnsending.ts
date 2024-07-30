@@ -171,7 +171,7 @@ export default function useFyllDelvisInnsending() {
 
               endringer: harRefusjonEndringerTilInnsending ? innsendingRefusjonEndringer : undefined
             }
-          : 'null',
+          : null,
       avsenderTlf: skjema.telefon || ''
     };
 
