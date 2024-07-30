@@ -75,6 +75,10 @@ export default function useSendInnDelvisSkjema(
 
     const skjemaData: FullInnsending = fyllInnsending(form, pathSlug);
 
+    const validerteData = fullInnsendingSchema.safeParse(skjemaData);
+    console.log('skjemaData', skjemaData);
+    console.log(validerteData);
+
     fyllFeilmeldinger([]);
 
     if (!isValidUUID(pathSlug)) {

@@ -134,7 +134,7 @@ export default function useFyllDelvisInnsending() {
       forespoerselId,
       agp: {
         perioder: innsendbarArbeidsgiverperioder,
-        egenmeldingsperioder: harEgenmeldingsdager
+        egenmeldinger: harEgenmeldingsdager
           ? egenmeldingsperioder!.map((periode) => ({
               fom: formatIsoDate(periode.fom) as TDateISODate,
               tom: formatIsoDate(periode.tom) as TDateISODate
