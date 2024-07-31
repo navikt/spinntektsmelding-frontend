@@ -55,6 +55,8 @@ spec:
           namespace: personbruker
         - application: im-api
           namespace: helsearbeidsgiver
+        - application: sykepengesoknad-backend
+          namespace: flex
   env:
     - name: API_URL
       value: '{{{api-url}}}'

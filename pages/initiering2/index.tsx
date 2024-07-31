@@ -28,12 +28,14 @@ import PeriodeVelger from '../../components/PeriodeVelger/PeriodeVelger';
 import { PeriodeSchema } from '../../validators/validerFulltSkjema';
 import { MottattPeriode } from '../../state/MottattData';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, formatISO, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import { Periode } from '../../state/state';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
+import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
+import formatIsoDate from '../../utils/formatIsoDate';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -192,6 +194,7 @@ const Initiering2: NextPage = () => {
     }
   }
 
+  const orgnr = watch('organisasjonsnummer');
   const sykeperioder = watch('perioder');
 
   const antallSykedager = sykeperioder
@@ -199,6 +202,13 @@ const Initiering2: NextPage = () => {
         sykeperioder.filter((periode: Periode[]) => periode !== undefined && periode.fom && periode.tom)
       )
     : 0;
+
+  const fomDato = formatIsoDate(subYears(new Date(), 1));
+
+  const { data: spData, error: spError } = useSykepengesoeknader(identitetsnummer, orgnr, fomDato, backendFeil);
+
+  console.log(spData);
+  console.log(spError);
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
