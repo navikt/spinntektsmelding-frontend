@@ -15,6 +15,7 @@ import { finnFoersteFravaersdag } from '../pages/endring/[slug]';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
 import {
+  formaterOpphørsdato,
   konverterPerioderFraMottattTilInterntFormat,
   konverterRefusjonEndringer,
   verdiEllerBlank,
@@ -177,15 +178,6 @@ export default function useFyllDelvisInnsending() {
 
     return skjemaData;
   };
-}
-
-function formaterOpphørsdato(kravetOpphoerer: YesNo, refusjonskravetOpphoerer: Date): TDateISODate | undefined {
-  const formatertDato =
-    kravetOpphoerer === 'Ja' && refusjonskravetOpphoerer ? formatIsoDate(refusjonskravetOpphoerer) : undefined;
-  if (formatertDato) {
-    return formatertDato;
-  }
-  return undefined;
 }
 
 function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {

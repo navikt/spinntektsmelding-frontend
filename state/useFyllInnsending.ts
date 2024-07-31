@@ -190,7 +190,8 @@ export default function useFyllInnsending() {
         lonnISykefravaeret?.status === 'Ja'
           ? {
               beloepPerMaaned: lonnISykefravaeret.beloep!,
-              sluttdato: (formatIsoDate(refusjonskravetOpphoerer?.opphoersdato) as string) ?? null,
+              sluttdato: formaterOpphørsdato(refusjonskravetOpphoerer?.status, refusjonskravetOpphoerer?.opphoersdato),
+
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,
@@ -291,4 +292,16 @@ export function konverterRefusjonEndringer(
   } else {
     return [];
   }
+}
+
+export function formaterOpphørsdato(
+  kravetOpphoerer: YesNo | undefined,
+  refusjonskravetOpphoerer: Date | undefined
+): TDateISODate | null {
+  const formatertDato =
+    kravetOpphoerer === 'Ja' && refusjonskravetOpphoerer ? formatIsoDate(refusjonskravetOpphoerer) : null;
+  if (formatertDato) {
+    return formatertDato;
+  }
+  return null;
 }
