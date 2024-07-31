@@ -277,18 +277,18 @@ export function verdiEllerNull(verdi: number | undefined): number {
 export function konverterRefusjonEndringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBeloep> | undefined
-): RefusjonEndring[] | undefined {
+): RefusjonEndring[] | null {
   const refusjoner =
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
           beloep: endring.beloep!,
           startdato: formatIsoDate(endring.dato)
         }))
-      : undefined;
+      : null;
 
   if (refusjoner && refusjoner.length > 0) {
     return refusjoner;
   } else {
-    return undefined;
+    return null;
   }
 }

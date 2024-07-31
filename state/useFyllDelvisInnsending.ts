@@ -169,7 +169,7 @@ export default function useFyllDelvisInnsending() {
                 skjema.refusjon.refusjonOpphoerer!
               ),
 
-              endringer: harRefusjonEndringerTilInnsending ? innsendingRefusjonEndringer : undefined
+              endringer: harRefusjonEndringerTilInnsending ? innsendingRefusjonEndringer : []
             }
           : null,
       avsenderTlf: skjema.telefon || ''
