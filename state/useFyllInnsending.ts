@@ -197,7 +197,7 @@ export default function useFyllInnsending() {
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,
-      avsenderTlf: innsenderTelefonNr || ''
+      avsenderTlf: innsenderTelefonNr ?? ''
     };
 
     return skjemaData;
