@@ -5,15 +5,7 @@ import begrunnelseEndringBruttoinntekt from '../Bruttoinntekt/begrunnelseEndring
 import PeriodeFraTil from '../PeriodeFraTil/PeriodeFraTil';
 import lokalStyle from './EndringAarsakVisning.module.css';
 
-interface EndringAarsakVisningProps {
-  endringAarsak: EndringAarsak;
-}
-
-export default function EndringAarsakVisning({ endringAarsak }: EndringAarsakVisningProps) {
-  const props = endringAarsak;
-  if (!props) {
-    return null;
-  }
+export default function EndringAarsakVisning(props: EndringAarsak) {
   switch (props.aarsak) {
     case begrunnelseEndringBruttoinntekt.Tariffendring: {
       return (
@@ -23,49 +15,13 @@ export default function EndringAarsakVisning({ endringAarsak }: EndringAarsakVis
         </>
       );
     }
-    case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-      return props.sykefravaer ? (
-        <div>
-          {props.sykefravaer.map((periode, index) => (
-            <PeriodeFraTil
-              fom={enforceDate(periode.fom)}
-              tom={enforceDate(periode.tom)}
-              key={`${props.aarsak.toLowerCase()}periode-${periode.fom}-${periode.tom}`}
-            />
-          ))}{' '}
-        </div>
-      ) : null;
-    }
-    case begrunnelseEndringBruttoinntekt.Permittering: {
-      return props.permitteringer ? (
-        <div>
-          {props.permitteringer.map((periode, index) => (
-            <PeriodeFraTil
-              fom={enforceDate(periode.fom)}
-              tom={enforceDate(periode.tom)}
-              key={`${props.aarsak.toLowerCase()}periode-${periode.fom}-${periode.tom}`}
-            />
-          ))}{' '}
-        </div>
-      ) : null;
-    }
-    case begrunnelseEndringBruttoinntekt.Permisjon: {
-      return props.permisjoner ? (
-        <div>
-          {props.permisjoner.map((periode, index) => (
-            <PeriodeFraTil
-              fom={enforceDate(periode.fom)}
-              tom={enforceDate(periode.tom)}
-              key={`${props.aarsak.toLowerCase()}periode-${periode.fom}-${periode.tom}`}
-            />
-          ))}{' '}
-        </div>
-      ) : null;
-    }
+    case begrunnelseEndringBruttoinntekt.Sykefravaer:
+    case begrunnelseEndringBruttoinntekt.Permittering:
+    case begrunnelseEndringBruttoinntekt.Permisjon:
     case begrunnelseEndringBruttoinntekt.Ferie: {
-      return props.ferier ? (
+      return props.perioder ? (
         <div>
-          {props.ferier.map((periode, index) => (
+          {props.perioder.map((periode, index) => (
             <PeriodeFraTil
               fom={enforceDate(periode.fom)}
               tom={enforceDate(periode.tom)}

@@ -72,13 +72,13 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
             break;
           }
           case begrunnelseEndringBruttoinntekt.Ferie: {
-            if (!endringAarsak.ferier) {
+            if (!endringAarsak.perioder) {
               valideringstatus.push({
                 felt: 'bruttoinntekt-endringsaarsak',
                 code: BruttoinntektFeilkode.FERIE_MANGLER
               });
             } else {
-              const feilkoder = validerPeriode(periodeMapper(endringAarsak.ferier), 'bruttoinntekt-ful');
+              const feilkoder = validerPeriode(periodeMapper(endringAarsak.perioder), 'bruttoinntekt-ful');
               valideringstatus = valideringstatus.concat(feilkoder);
             }
             break;
@@ -110,29 +110,26 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
           }
 
           case begrunnelseEndringBruttoinntekt.Permisjon: {
-            if (!endringAarsak.permisjoner) {
+            if (!endringAarsak.perioder) {
               valideringstatus.push({
                 felt: 'bruttoinntekt-permisjon-fom',
                 code: BruttoinntektFeilkode.PERMISJON_MANGLER
               });
             } else {
-              const feilkoder = validerPeriode(periodeMapper(endringAarsak.permisjoner), 'bruttoinntekt-permisjon');
+              const feilkoder = validerPeriode(periodeMapper(endringAarsak.perioder), 'bruttoinntekt-permisjon');
               valideringstatus = valideringstatus.concat(feilkoder);
             }
             break;
           }
 
           case begrunnelseEndringBruttoinntekt.Permittering: {
-            if (!endringAarsak.permitteringer) {
+            if (!endringAarsak.perioder) {
               valideringstatus.push({
                 felt: 'bruttoinntekt-permittering-fom',
                 code: BruttoinntektFeilkode.PERMITTERING_MANGLER
               });
             } else {
-              const feilkoder = validerPeriode(
-                periodeMapper(endringAarsak.permitteringer),
-                'bruttoinntekt-permittering'
-              );
+              const feilkoder = validerPeriode(periodeMapper(endringAarsak.perioder), 'bruttoinntekt-permittering');
               valideringstatus = valideringstatus.concat(feilkoder);
             }
             break;
@@ -179,18 +176,16 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
           }
 
           case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-            console.log(endringAarsak);
-            if (!endringAarsak.sykefravaer) {
+            if (!endringAarsak.perioder) {
               valideringstatus.push({
                 felt: 'bruttoinntekt-sykefravaerperioder',
                 code: BruttoinntektFeilkode.SYKEFRAVAER_MANGLER
               });
             } else {
               const feilkoder = validerPeriode(
-                periodeMapper(endringAarsak.sykefravaer),
+                periodeMapper(endringAarsak.perioder),
                 'bruttoinntekt-sykefravaerperioder'
               );
-              console.log(feilkoder);
               valideringstatus = valideringstatus.concat(feilkoder);
             }
             break;

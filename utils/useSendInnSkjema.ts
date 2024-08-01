@@ -7,8 +7,6 @@ import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
 import validerInntektsmelding from './validerInntektsmelding';
-import fullInnsendingSchema from '../schema/fullInnsendingSchema';
-import { z } from 'zod';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -68,13 +66,7 @@ export default function useSendInnSkjema(
         component: amplitudeComponent
       });
     } else {
-      type FullInnsending = z.infer<typeof fullInnsendingSchema>;
-
-      const skjemaData: FullInnsending = fyllInnsending(opplysningerBekreftet, pathSlug);
-
-      const validerteData = fullInnsendingSchema.safeParse(skjemaData);
-      console.log('skjemaData', skjemaData);
-      console.log(validerteData);
+      const skjemaData: InnsendingSkjema = fyllInnsending(opplysningerBekreftet);
 
       fyllFeilmeldinger([]);
 

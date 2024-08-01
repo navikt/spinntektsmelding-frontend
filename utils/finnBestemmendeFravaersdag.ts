@@ -128,8 +128,6 @@ const finnBestemmendeFravaersdag = (
 
   const sammenhengendeAgp = finnSammenhengendePeriodeManuellJustering(sortertArbeidsgiverperiode!);
 
-  console.log('aktuelleFravaersperioder', aktuelleFravaersperioder);
-
   const overskytendeFravaersperioder =
     arbeidsgiverperiode && aktuelleFravaersperioder
       ? aktuelleFravaersperioder.filter((periode) => {
