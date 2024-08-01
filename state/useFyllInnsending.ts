@@ -8,7 +8,7 @@ import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
-import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
+import { EndringAarsak, EndringAarsakSchema, RefusjonEndring } from '../validators/validerAapenInnsending';
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 
@@ -151,6 +151,8 @@ export default function useFyllInnsending() {
       beregnetSkjaeringstidspunkt
     );
 
+    const endringAarsakParsed = EndringAarsakSchema.parse(endringAarsak);
+
     const skjemaData: FullInnsending = {
       forespoerselId,
       agp: {
@@ -184,7 +186,7 @@ export default function useFyllInnsending() {
               verdiBeloep: verdiEllerNull(ytelse.verdi)
             }))
           : [],
-        endringAarsak: endringAarsak
+        endringAarsak: endringAarsakParsed
       },
       refusjon:
         lonnISykefravaeret?.status === 'Ja'

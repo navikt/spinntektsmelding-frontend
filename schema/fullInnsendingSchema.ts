@@ -1,11 +1,8 @@
 import { z } from 'zod';
 import { isTlfNumber } from '../utils/isTlfNumber';
 
-import {
-  EndringAarsakSchema,
-  NaturalytelseEnum,
-  BegrunnelseRedusertLoennIAgp
-} from '../validators/validerAapenInnsending';
+import { NaturalytelseEnum, BegrunnelseRedusertLoennIAgp } from '../validators/validerAapenInnsending';
+import { EndringAarsakSchema } from './endringAarsakSchema';
 
 const RefusjonEndringSchema = z.object({
   startdato: z.string({ required_error: 'Vennligst fyll inn dato for endring i refusjon' }).date(),
