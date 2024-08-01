@@ -7955,7 +7955,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-pretty@npm:11.2.2":
+"pino-pretty@npm:^11.2.2":
   version: 11.2.2
   resolution: "pino-pretty@npm:11.2.2"
   dependencies:
@@ -9061,7 +9061,7 @@ __metadata:
     next-http-proxy-middleware: "npm:1.2.6"
     next-router-mock: "npm:0.9.13"
     pino: "npm:9.2.0"
-    pino-pretty: "npm:11.2.2"
+    pino-pretty: "npm:^11.2.2"
     prettier: "npm:^3.3.3"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
