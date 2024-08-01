@@ -63,7 +63,7 @@ const leftPad = (val: number) => {
   return val < 10 ? `0${val}` : val;
 };
 
-const toLocalIso = (val: Date) => {
+export const toLocalIso = (val: Date) => {
   return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
 };
 
