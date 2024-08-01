@@ -47,7 +47,7 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.findAllByRole('button', { name: /Endre/ }).first().click();
 
-    cy.findAllByLabelText('Til').last().clear().type('16.03.23');
+    cy.findAllByLabelText('Til').last().clear().type('116.03.23');
     cy.realPress('Escape');
 
     cy.findByLabelText('Utbetalt under arbeidsgiverperiode').clear().type('50000');
@@ -64,29 +64,48 @@ describe('Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        forespoerselId: '12345678-3456-5678-2457-123456789012',
-        agp: {
-          perioder: [
-            {
-              fom: '2023-02-20',
-              tom: '2023-03-04'
-            },
-            {
-              fom: '2023-03-15',
-              tom: '2023-03-16'
-            }
-          ],
-          egenmeldinger: [],
-          redusertLoennIAgp: { beloep: 50000, begrunnelse: 'ArbeidOpphoert' }
-        },
+        orgnrUnderenhet: '911206722',
+        identitetsnummer: '25087327879',
+        egenmeldingsperioder: [],
+        fraværsperioder: [
+          {
+            fom: '2023-02-20',
+            tom: '2023-03-04'
+          },
+          {
+            fom: '2023-03-15',
+            tom: '2023-03-17'
+          }
+        ],
+        arbeidsgiverperioder: [
+          {
+            fom: '2023-02-20',
+            tom: '2023-03-04'
+          },
+          {
+            fom: '2023-03-15',
+            tom: '2023-03-16'
+          }
+        ],
         inntekt: {
-          beloep: 77000,
-          inntektsdato: '2023-03-15',
-          naturalytelser: [],
-          endringAarsak: null
+          bekreftet: true,
+          beregnetInntekt: 77000,
+          manueltKorrigert: false
         },
-        refusjon: null,
-        avsenderTlf: '12345678'
+        bestemmendeFraværsdag: '2023-03-15',
+        fullLønnIArbeidsgiverPerioden: {
+          utbetalerFullLønn: false,
+          begrunnelse: 'ArbeidOpphoert',
+          utbetalt: 50000
+        },
+        refusjon: {
+          utbetalerHeleEllerDeler: false
+        },
+        bekreftOpplysninger: true,
+        behandlingsdager: [],
+        årsakInnsending: 'Ny',
+        telefonnummer: '12345678',
+        forespurtData: ['arbeidsgiverperiode', 'inntekt', 'refusjon']
       });
 
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');

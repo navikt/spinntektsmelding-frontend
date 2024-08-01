@@ -90,8 +90,8 @@ export default function Aarsaksvelger({
           <PeriodeListevelger
             onRangeListChange={setPerioder}
             defaultRange={
-              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && defaultEndringAarsak?.ferier
-                ? periodeMapper(defaultEndringAarsak.ferier)
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && defaultEndringAarsak?.perioder
+                ? periodeMapper(defaultEndringAarsak.perioder)
                 : blankPeriode
             }
             fomTekst='Fra'
@@ -123,8 +123,8 @@ export default function Aarsaksvelger({
             onRangeListChange={setPerioder}
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon &&
-              defaultEndringAarsak?.permisjoner
-                ? periodeMapper(defaultEndringAarsak.permisjoner)
+              defaultEndringAarsak?.perioder
+                ? periodeMapper(defaultEndringAarsak.perioder)
                 : blankPeriode
             }
             fomTekst='Fra'
@@ -143,8 +143,8 @@ export default function Aarsaksvelger({
             onRangeListChange={setPerioder}
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering &&
-              defaultEndringAarsak?.permitteringer
-                ? periodeMapper(defaultEndringAarsak.permitteringer)
+              defaultEndringAarsak?.perioder
+                ? periodeMapper(defaultEndringAarsak.perioder)
                 : blankPeriode
             }
             fomTekst='Fra'
@@ -187,8 +187,8 @@ export default function Aarsaksvelger({
             onRangeListChange={setPerioder}
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer &&
-              defaultEndringAarsak?.sykefravaer
-                ? periodeMapper(defaultEndringAarsak.sykefravaer)
+              defaultEndringAarsak?.perioder
+                ? periodeMapper(defaultEndringAarsak.perioder)
                 : blankPeriode
             }
             fomTekst='Fra'
@@ -205,23 +205,23 @@ export default function Aarsaksvelger({
   );
 }
 
-export function periodeMapper(perioder: { fom: Date; tom: Date }[] | { fom: string; tom: string }[]): Periode[] {
+export function periodeMapper(perioder: { fom: Date; tom: Date }[]): Periode[] {
   if (!perioder) return [];
   return perioder.map((periode) => {
     const fomId = periode.fom ? isoDate(periode.fom) : 'undefined';
     const tomId = periode.tom ? isoDate(periode.tom) : 'undefined';
 
     return {
-      fom: typeof periode.fom === 'string' ? parseIsoDate(periode.fom) : periode.fom,
-      tom: typeof periode.tom === 'string' ? parseIsoDate(periode.tom) : periode.tom,
+      fom: periode.fom,
+      tom: periode.tom,
       id: fomId + '-' + tomId
     };
   });
 }
 
 function isoDate(date: Date | string): string {
-  if (typeof date !== 'string') {
-    return formatIsoDate(date);
+  if (typeof date === 'string') {
+    return date;
   }
-  return date;
+  return formatIsoDate(date);
 }

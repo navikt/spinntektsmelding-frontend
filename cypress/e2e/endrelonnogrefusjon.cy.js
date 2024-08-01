@@ -96,34 +96,53 @@ describe('Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        forespoerselId: '12345678-3456-5678-2457-123456789012',
-        agp: {
-          perioder: [
-            {
-              fom: '2023-01-30',
-              tom: '2023-02-14'
-            }
-          ],
-          egenmeldinger: [
-            {
-              fom: '2023-02-02',
-              tom: '2023-02-02'
-            },
-            {
-              fom: '2023-01-30',
-              tom: '2023-02-01'
-            }
-          ],
-          redusertLoennIAgp: null
-        },
+        orgnrUnderenhet: '911206722',
+        identitetsnummer: '10486535275',
+        egenmeldingsperioder: [
+          {
+            fom: '2023-02-02',
+            tom: '2023-02-02'
+          },
+          {
+            fom: '2023-01-30',
+            tom: '2023-02-01'
+          }
+        ],
+        fraværsperioder: [
+          {
+            fom: '2023-02-03',
+            tom: '2023-02-24'
+          }
+        ],
+        arbeidsgiverperioder: [
+          {
+            fom: '2023-01-30',
+            tom: '2023-02-14'
+          }
+        ],
         inntekt: {
-          beloep: 75000,
-          inntektsdato: '2023-01-30',
-          naturalytelser: [],
-          endringAarsak: { aarsak: 'Bonus' }
+          bekreftet: true,
+          beregnetInntekt: 75000,
+          manueltKorrigert: true,
+          endringÅrsak: {
+            typpe: 'Bonus'
+          }
         },
-        refusjon: { beloepPerMaaned: 75000, sluttdato: null, endringer: [] },
-        avsenderTlf: '12345678'
+        bestemmendeFraværsdag: '2023-01-30',
+        fullLønnIArbeidsgiverPerioden: {
+          utbetalerFullLønn: true,
+          begrunnelse: null,
+          utbetalt: null
+        },
+        refusjon: {
+          utbetalerHeleEllerDeler: true,
+          refusjonPrMnd: 75000
+        },
+        bekreftOpplysninger: true,
+        behandlingsdager: [],
+        årsakInnsending: 'Ny',
+        telefonnummer: '12345678',
+        forespurtData: ['arbeidsgiverperiode', 'inntekt', 'refusjon']
       });
 
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');

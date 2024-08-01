@@ -195,7 +195,7 @@ describe('Aarsaksvelger', () => {
         visFeilmeldingsTekst={visFeilmeldingsTekst}
         setPerioder={setPerioder}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Ferie', ferier: perioder }}
+        defaultEndringAarsak={{ aarsak: 'Ferie', perioder: perioder }}
       />
     );
 
@@ -264,7 +264,7 @@ describe('Aarsaksvelger', () => {
         visFeilmeldingsTekst={visFeilmeldingsTekst}
         setPerioder={setPerioderMock}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Permisjon', permisjoner: perioder }}
+        defaultEndringAarsak={{ aarsak: 'Permisjon', perioder: perioder }}
       />
     );
 
@@ -294,7 +294,7 @@ describe('Aarsaksvelger', () => {
         visFeilmeldingsTekst={visFeilmeldingsTekst}
         setPerioder={setPerioder}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Permittering', permitteringer: perioder }}
+        defaultEndringAarsak={{ aarsak: 'Permittering', perioder: perioder }}
       />
     );
 
@@ -382,7 +382,7 @@ describe('Aarsaksvelger', () => {
         visFeilmeldingsTekst={visFeilmeldingsTekst}
         setPerioder={setPerioder}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Sykefravaer', sykefravaer: perioder }}
+        defaultEndringAarsak={{ aarsak: 'Sykefravaer', perioder: perioder }}
       />
     );
 

@@ -147,11 +147,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const classNameWrapperSkjaeringstidspunkt = cx({
     infoboks: visArbeidsgiverperiode
   });
-  // const perioder: { fom: string; tom: string }[] = bruttoinntekt.endringAarsak && bruttoinntekt.endringAarsak[bruttoinntekt.endringAarsak.aarsak]:
-  //   ? bruttoinntekt.endringAarsak[bruttoinntekt.endringAarsak.aarsak as string]
-  //   : [];
-  // const gjelderFra = bruttoinntekt.endringAarsak?.gjelderFra ? bruttoinntekt.endringAarsak?.gjelderFra : '';
-  // const bleKjent = bruttoinntekt.endringAarsak?.bleKjent ? bruttoinntekt.endringAarsak?.bleKjent : '';
+  const perioder: { fom: string; tom: string }[] = bruttoinntekt.endringAarsak?.perioder
+    ? bruttoinntekt.endringAarsak?.perioder
+    : [];
+  const gjelderFra = bruttoinntekt.endringAarsak?.gjelderFra ? bruttoinntekt.endringAarsak?.gjelderFra : '';
+  const bleKjent = bruttoinntekt.endringAarsak?.bleKjent ? bruttoinntekt.endringAarsak?.bleKjent : '';
   return (
     <div className={styles.container}>
       <Head>
@@ -226,7 +226,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
                   {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringAarsak.aarsak as string)}
-                  <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
+                  <EndringAarsakVisning
+                    aarsak={bruttoinntekt.endringAarsak.aarsak}
+                    perioder={perioder}
+                    gjelderFra={gjelderFra}
+                    bleKjent={bleKjent}
+                  />
                 </>
               )}
               <Skillelinje />

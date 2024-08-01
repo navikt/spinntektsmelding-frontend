@@ -138,7 +138,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Ferie,
-          ferier: [{}]
+          perioder: [{}]
         }
       }
     };
@@ -163,7 +163,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Ferie,
-          ferier: [{ fom: parseIsoDate('2022-01-01') }]
+          perioder: [{ fom: parseIsoDate('2022-01-01') }]
         }
       }
     };
@@ -185,7 +185,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Ferie,
-          ferier: [{ tom: parseIsoDate('2022-01-01') }]
+          perioder: [{ tom: parseIsoDate('2022-01-01') }]
         }
       }
     };
@@ -284,7 +284,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permisjon, permisjoner: [{}] }
+        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permisjon, perioder: [{}] }
       }
     };
 
@@ -308,7 +308,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
-          permisjoner: [{ fom: parseIsoDate('2022-02-02') }]
+          perioder: [{ fom: parseIsoDate('2022-02-02') }]
         }
       }
     };
@@ -330,7 +330,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
-          permisjoner: [{ tom: parseIsoDate('2022-02-02') }]
+          perioder: [{ tom: parseIsoDate('2022-02-02') }]
         }
       }
     };
@@ -369,7 +369,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permittering, permitteringer: [{}] }
+        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permittering, perioder: [{}] }
       }
     };
 
@@ -393,7 +393,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Permittering,
-          permitteringer: [{ fom: parseIsoDate('2022-02-02') }]
+          perioder: [{ fom: parseIsoDate('2022-02-02') }]
         }
       }
     };
@@ -415,7 +415,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Permittering,
-          permitteringer: [{ tom: '2022-02-02' }]
+          perioder: [{ tom: parseIsoDate('2022-02-02') }]
         }
       }
     };
@@ -579,7 +579,7 @@ it('should return an error when sykefravær fom & tom is missing', () => {
       manueltKorrigert: true,
       endringAarsak: {
         aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
-        sykefravaer: [{}]
+        perioder: [{}]
       }
     }
   };
@@ -604,7 +604,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
       manueltKorrigert: true,
       endringAarsak: {
         aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
-        sykefravaer: [{ tom: '2022-01-02' }]
+        perioder: [{ tom: parseIsoDate('2022-01-02') }]
       }
     }
   };
@@ -626,7 +626,7 @@ it('should return an error when permittering tom is missing, sykefravær', () =>
       manueltKorrigert: true,
       endringAarsak: {
         aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
-        sykefravaer: [{ fom: '2022-01-02' }]
+        perioder: [{ fom: parseIsoDate('2022-01-02') }]
       }
     }
   };

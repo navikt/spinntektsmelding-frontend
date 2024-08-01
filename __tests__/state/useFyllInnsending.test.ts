@@ -60,19 +60,19 @@ describe('useFyllInnsending', () => {
     });
 
     if (innsending) {
-      // expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
-      // expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
+      expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
+      expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
 
-      expect(innsending.agp.egenmeldinger).toEqual([
+      expect(innsending.egenmeldingsperioder).toEqual([
         {
           fom: mottattKvittering.egenmeldingsperioder[0].fom,
           tom: mottattKvittering.egenmeldingsperioder[0].tom
         }
       ]);
-      // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
-      expect(innsending.refusjon.beloepPerMaaned).toBe(80666.66666666667);
-      expect(innsending.inntekt.beloep).toBe(80666.66666666667);
-      // expect(innsending.inntekt.bekreftet).toBeTruthy();
+      expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
+      expect(innsending.refusjon.refusjonPrMnd).toBe(80666.66666666667);
+      expect(innsending.inntekt.beregnetInntekt).toBe(80666.66666666667);
+      expect(innsending.inntekt.bekreftet).toBeTruthy();
     }
   });
 
@@ -94,29 +94,28 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema = {} as InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(false, '8d50ef20-37b5-4829-ad83-56219e70b375');
+      innsending = fyllInnsending(false);
     });
 
     if (innsending) {
-      console.log(innsending);
-      // expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
-      // expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
+      expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
+      expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
 
-      expect(innsending.agp.egenmeldinger).toEqual([
+      expect(innsending.egenmeldingsperioder).toEqual([
         {
           fom: mottattKvittering.egenmeldingsperioder[0].fom,
           tom: mottattKvittering.egenmeldingsperioder[0].tom
         }
       ]);
-      // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
-      expect(innsending.refusjon.beloepPerMaaned).toBe(80666.66666666667);
-      expect(innsending.refusjon.sluttdato).toBe('2023-04-19');
-      expect(innsending.refusjon.endringer).toEqual([
-        { beloep: 1234, startdato: '2023-04-13' },
-        { beloep: 12345, startdato: '2023-04-20' }
+      expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
+      expect(innsending.refusjon.refusjonPrMnd).toBe(80666.66666666667);
+      expect(innsending.refusjon.refusjonOpphører).toBe('2023-04-19');
+      expect(innsending.refusjon.refusjonEndringer).toEqual([
+        { beløp: 1234, dato: '2023-04-13' },
+        { beløp: 12345, dato: '2023-04-20' }
       ]);
-      expect(innsending.inntekt.beloep).toBe(80666.66666666667);
-      // expect(innsending.inntekt.bekreftet).toBeTruthy();
+      expect(innsending.inntekt.beregnetInntekt).toBe(80666.66666666667);
+      expect(innsending.inntekt.bekreftet).toBeTruthy();
     } else {
       expect(innsending).toBeTruthy();
     }

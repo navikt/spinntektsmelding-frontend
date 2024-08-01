@@ -2,16 +2,12 @@ import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { expect } from 'vitest';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
-import parseIsoDate from '../../utils/parseIsoDate';
 
 describe('EndringAarsakVisning', () => {
   it('should show tariffendringsdata.', async () => {
-    const endrinAarsak = {
-      aarsak: 'Tariffendring',
-      gjelderFra: parseIsoDate('2022-11-10'),
-      bleKjent: parseIsoDate('2022-11-15')
-    };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
+    const { container } = render(
+      <EndringAarsakVisning aarsak={'Tariffendring'} gjelderFra={'2022-11-10'} bleKjent={'2022-11-15'} />
+    );
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -27,9 +23,7 @@ describe('EndringAarsakVisning', () => {
       { fom: '2022-11-10', tom: '2022-11-15' },
       { fom: '2022-12-10', tom: '2022-12-15' }
     ];
-    const endrinAarsak = { aarsak: 'Ferie', ferier: perioder };
-
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Ferie'} perioder={perioder} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -43,8 +37,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show VarigLonnsendring data.', async () => {
-    const endrinAarsak = { aarsak: 'VarigLoennsendring', gjelderFra: parseIsoDate('2022-12-15') };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'VarigLoennsendring'} gjelderFra={'2022-12-15'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -58,8 +51,7 @@ describe('EndringAarsakVisning', () => {
       { fom: '2022-11-10', tom: '2022-11-15' },
       { fom: '2022-12-10', tom: '2022-12-15' }
     ];
-    const endrinAarsak = { aarsak: 'Permisjon', permisjoner: perioder };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
+    const { container } = render(<EndringAarsakVisning aarsak={'Permisjon'} perioder={perioder} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -77,9 +69,7 @@ describe('EndringAarsakVisning', () => {
       { fom: '2022-11-10', tom: '2022-11-15' },
       { fom: '2022-12-10', tom: '2022-12-15' }
     ];
-    const endrinAarsak = { aarsak: 'Permittering', permitteringer: perioder };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
-
+    const { container } = render(<EndringAarsakVisning aarsak={'Permittering'} perioder={perioder} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -93,9 +83,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show NyStilling.', async () => {
-    const endrinAarsak = { aarsak: 'NyStilling', gjelderFra: parseIsoDate('2022-11-10') };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
-
+    const { container } = render(<EndringAarsakVisning aarsak={'NyStilling'} gjelderFra={'2022-11-10'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -105,9 +93,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show NyStillingsprosent.', async () => {
-    const endrinAarsak = { aarsak: 'NyStillingsprosent', gjelderFra: parseIsoDate('2022-11-10') };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
-
+    const { container } = render(<EndringAarsakVisning aarsak={'NyStillingsprosent'} gjelderFra={'2022-11-10'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -121,9 +107,7 @@ describe('EndringAarsakVisning', () => {
       { fom: '2022-11-10', tom: '2022-11-15' },
       { fom: '2022-12-10', tom: '2022-12-15' }
     ];
-    const endrinAarsak = { aarsak: 'Sykefravaer', sykefravaer: perioder };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
-
+    const { container } = render(<EndringAarsakVisning aarsak={'Sykefravaer'} perioder={perioder} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -137,9 +121,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Feilregistrert data.', async () => {
-    const endrinAarsak = { aarsak: 'Feilregistrert' };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
-
+    const { container } = render(<EndringAarsakVisning aarsak={'Feilregistrert'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -148,9 +130,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Bonus data.', async () => {
-    const endrinAarsak = { aarsak: 'Bonus' };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
-
+    const { container } = render(<EndringAarsakVisning aarsak={'Bonus'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -159,9 +139,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Nyansatt data.', async () => {
-    const endrinAarsak = { aarsak: 'Nyansatt' };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
-
+    const { container } = render(<EndringAarsakVisning aarsak={'Nyansatt'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -170,9 +148,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show default data.', async () => {
-    const endrinAarsak = { aarsak: 'Ukjent' };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
-
+    const { container } = render(<EndringAarsakVisning aarsak={'Ukjent'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
@@ -181,9 +157,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Ferietrekk data.', async () => {
-    const endrinAarsak = { aarsak: 'Nyansatt' };
-    const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
-
+    const { container } = render(<EndringAarsakVisning aarsak={'Nyansatt'} />);
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
