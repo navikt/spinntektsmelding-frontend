@@ -117,7 +117,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak?.ferier).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-31')
@@ -158,7 +158,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak?.permisjoner).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-31')
@@ -181,7 +181,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak?.permitteringer).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-31')
@@ -240,7 +240,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.perioder).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsak?.sykefravaer).toEqual([
       {
         fom: parseIsoDate('2023-02-06'),
         tom: parseIsoDate('2023-02-10')

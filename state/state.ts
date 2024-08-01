@@ -1,5 +1,6 @@
+import { z } from 'zod';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
-import { EndringAarsak } from '../validators/validerAapenInnsending';
+import { BegrunnelseRedusertLoennIAgp, EndringAarsak } from '../validators/validerAapenInnsending';
 
 export interface Periode {
   fom?: Date;
@@ -25,9 +26,12 @@ export interface LonnISykefravaeret {
   beloep?: number;
 }
 
+const begrunnelseRedusertLoennIAgp = z.enum(BegrunnelseRedusertLoennIAgp);
+type Begrunnelse = z.infer<typeof begrunnelseRedusertLoennIAgp>;
+
 export interface LonnIArbeidsgiverperioden {
   status?: YesNo;
-  begrunnelse?: string;
+  begrunnelse?: Begrunnelse;
   utbetalt?: number | null;
 }
 
