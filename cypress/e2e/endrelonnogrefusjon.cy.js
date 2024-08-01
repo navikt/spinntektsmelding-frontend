@@ -122,7 +122,7 @@ describe('Utfylling og innsending av skjema', () => {
           naturalytelser: [],
           endringAarsak: { aarsak: 'Bonus' }
         },
-        refusjon: { beloepPerMaaned: 75000, sluttdato: '' },
+        refusjon: { beloepPerMaaned: 75000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
       });
 

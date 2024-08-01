@@ -110,18 +110,19 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        agp: {
-          perioder: [],
-          egenmeldingsperioder: [],
-          redusertLoennIAgp: null
-        },
+        forespoerselId: '12345678-3456-5678-2457-123456789012',
+        agp: null,
         inntekt: {
           beloep: 50000,
           inntektsdato: '2023-01-02',
           naturalytelser: [],
           endringAarsak: { aarsak: 'Bonus' }
         },
-        refusjon: { beloepPerMaaned: 50000, sluttdato: '2023-09-30' },
+        refusjon: {
+          beloepPerMaaned: 50000,
+          sluttdato: '2023-09-30',
+          endringer: []
+        },
         avsenderTlf: '12345678'
       });
 

@@ -75,7 +75,7 @@ describe('Utfylling og innsending av skjema', () => {
           naturalytelser: [],
           endringAarsak: null
         },
-        refusjon: { beloepPerMaaned: 77000, sluttdato: '' },
+        refusjon: { beloepPerMaaned: 77000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
       });
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');

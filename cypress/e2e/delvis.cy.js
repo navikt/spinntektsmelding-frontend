@@ -54,11 +54,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        agp: {
-          perioder: [],
-          egenmeldingsperioder: [],
-          redusertLoennIAgp: null
-        },
+        forespoerselId: '12345678-3456-5678-2457-123456789012',
+        agp: null,
         inntekt: {
           beloep: 46000,
           inntektsdato: '2023-02-25',
@@ -67,6 +64,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         },
         refusjon: {
           beloepPerMaaned: 46000,
+          sluttdato: null,
           endringer: [
             {
               beloep: 0,
@@ -142,11 +140,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        agp: {
-          perioder: [],
-          egenmeldingsperioder: [],
-          redusertLoennIAgp: null
-        },
+        forespoerselId: '12345678-3456-5678-2457-123456789012',
+        agp: null,
         inntekt: {
           beloep: 50000,
           inntektsdato: '2023-02-25',
@@ -155,6 +150,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         },
         refusjon: {
           beloepPerMaaned: 46000,
+          sluttdato: null,
           endringer: [
             {
               beloep: 0,
