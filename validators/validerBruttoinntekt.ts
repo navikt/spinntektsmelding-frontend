@@ -179,7 +179,6 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
           }
 
           case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-            console.log(endringAarsak);
             if (!endringAarsak.sykefravaer) {
               valideringstatus.push({
                 felt: 'bruttoinntekt-sykefravaerperioder',
@@ -190,7 +189,6 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                 periodeMapper(endringAarsak.sykefravaer),
                 'bruttoinntekt-sykefravaerperioder'
               );
-              console.log(feilkoder);
               valideringstatus = valideringstatus.concat(feilkoder);
             }
             break;

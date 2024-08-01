@@ -315,7 +315,6 @@ const schema = z
           z.array(RefusjonEndringSchema),
           z.tuple([], {
             errorMap: (error) => {
-              console.log(error);
               if (error.code === 'too_big') {
                 return { message: 'Vennligst fyll inn endringer i refusjonsbeløpet i perioden' };
               }
