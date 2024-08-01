@@ -3,7 +3,6 @@ import isFnrNumber from '../utils/isFnrNumber';
 import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
-import zodAlwaysRefine from '../utils/zodAlwaysRefine';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -174,7 +173,7 @@ const EndringAarsakFeilregistrertSchema = z.object({
 
 const EndringAarsakFerieSchema = z.object({
   aarsak: z.literal('Ferie'),
-  perioder: z.array(PeriodeSchema)
+  ferier: z.array(PeriodeSchema)
 });
 
 const EndringAarsakFerietrekkSchema = z.object({
@@ -201,17 +200,17 @@ const EndringAarsakNyStillingsprosentSchema = z.object({
 
 const EndringAarsakPermisjonSchema = z.object({
   aarsak: z.literal('Permisjon'),
-  perioder: z.array(PeriodeSchema)
+  permisjoner: z.array(PeriodeSchema)
 });
 
 const EndringAarsakPermitteringSchema = z.object({
   aarsak: z.literal('Permittering'),
-  perioder: z.array(PeriodeSchema)
+  permitteringer: z.array(PeriodeSchema)
 });
 
 const EndringAarsakSykefravaerSchema = z.object({
   aarsak: z.literal('Sykefravaer'),
-  perioder: z.array(PeriodeSchema)
+  sykefravaer: z.array(PeriodeSchema)
 });
 
 const EndringAarsakTariffendringSchema = z.object({

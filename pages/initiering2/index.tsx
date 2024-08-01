@@ -25,7 +25,6 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import { PersonnummerSchema } from '../../validators/validerAapenInnsending';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import PeriodeVelger from '../../components/PeriodeVelger/PeriodeVelger';
-import { PeriodeSchema } from '../../validators/validerFulltSkjema';
 import { MottattPeriode } from '../../state/MottattData';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { differenceInDays } from 'date-fns';
@@ -34,6 +33,7 @@ import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import { Periode } from '../../state/state';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
+import { PeriodeSchema } from '../../schema/fullInnsendingSchema';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);

@@ -1,6 +1,5 @@
 import useBoundStore from '../state/useBoundStore';
 import logEvent from './logEvent';
-import { InnsendingSkjema } from '../state/useFyllInnsending';
 import isValidUUID from './isValidUUID';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
@@ -10,6 +9,8 @@ import { logger } from '@navikt/next-logger';
 import useFyllDelvisInnsending from '../state/useFyllDelvisInnsending';
 import { UseFormSetError } from 'react-hook-form';
 import validerDelvisInntektsmelding from './validerDelvisInntektsmelding';
+import { z } from 'zod';
+import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 
 export default function useSendInnDelvisSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -70,7 +71,13 @@ export default function useSendInnDelvisSkjema(
 
       return false;
     }
-    const skjemaData: InnsendingSkjema = fyllInnsending(form);
+    type FullInnsending = z.infer<typeof fullInnsendingSchema>;
+
+    const skjemaData: FullInnsending = fyllInnsending(form, pathSlug);
+
+    const validerteData = fullInnsendingSchema.safeParse(skjemaData);
+    console.log('skjemaData', skjemaData);
+    console.log(validerteData);
 
     fyllFeilmeldinger([]);
 

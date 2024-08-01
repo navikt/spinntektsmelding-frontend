@@ -62,23 +62,21 @@ describe('Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        orgnrUnderenhet: '911206722',
-        identitetsnummer: '25087327879',
-        egenmeldingsperioder: [{ fom: '2023-02-17', tom: '2023-02-19' }],
-        fraværsperioder: [
-          { fom: '2023-02-20', tom: '2023-03-04' },
-          { fom: '2023-03-15', tom: '2023-03-16' }
-        ],
-        arbeidsgiverperioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
-        inntekt: { bekreftet: true, beregnetInntekt: 77000, manueltKorrigert: false },
-        bestemmendeFraværsdag: '2023-03-15',
-        fullLønnIArbeidsgiverPerioden: { utbetalerFullLønn: true, begrunnelse: null, utbetalt: null },
-        refusjon: { utbetalerHeleEllerDeler: true, refusjonPrMnd: 77000 },
-        bekreftOpplysninger: true,
-        behandlingsdager: [],
-        årsakInnsending: 'Ny',
-        telefonnummer: '12345678',
-        forespurtData: ['arbeidsgiverperiode', 'inntekt', 'refusjon']
+        forespoerselId: '12345678-3456-5678-2457-123456789012',
+        agp: {
+          perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
+          egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+          redusertLoennIAgp: null
+        },
+
+        inntekt: {
+          beloep: 77000,
+          inntektsdato: '2023-03-15',
+          naturalytelser: [],
+          endringAarsak: null
+        },
+        refusjon: { beloepPerMaaned: 77000, sluttdato: null, endringer: [] },
+        avsenderTlf: '12345678'
       });
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');

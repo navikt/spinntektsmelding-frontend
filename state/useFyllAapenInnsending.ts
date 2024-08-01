@@ -134,7 +134,7 @@ function finnInnsendbareArbeidsgiverperioder(
     : [];
 }
 
-function konverterRefusjonEndringer(
+export function konverterRefusjonEndringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBeloep> | undefined
 ): RefusjonEndring[] | undefined {

@@ -37,23 +37,21 @@ describe('Utfylling og innsending av skjema', () => {
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
       .should('deep.equal', {
-        orgnrUnderenhet: '810007842',
-        identitetsnummer: '10486535275',
-        egenmeldingsperioder: [],
-        fraværsperioder: [
-          { fom: '2023-09-04', tom: '2023-09-10' },
-          { fom: '2023-09-11', tom: '2023-09-24' }
-        ],
-        arbeidsgiverperioder: [{ fom: '2023-09-04', tom: '2023-09-19' }],
-        inntekt: { bekreftet: true, beregnetInntekt: 45000, manueltKorrigert: false },
-        bestemmendeFraværsdag: '2023-08-23',
-        fullLønnIArbeidsgiverPerioden: { utbetalerFullLønn: true, begrunnelse: null, utbetalt: null },
-        refusjon: { utbetalerHeleEllerDeler: false },
-        bekreftOpplysninger: true,
-        behandlingsdager: [],
-        årsakInnsending: 'Ny',
-        telefonnummer: '12345678',
-        forespurtData: ['arbeidsgiverperiode', 'inntekt', 'refusjon']
+        forespoerselId: '12345678-3456-5678-2457-123456789012',
+        agp: {
+          perioder: [{ fom: '2023-09-04', tom: '2023-09-19' }],
+          egenmeldinger: [],
+          redusertLoennIAgp: null
+        },
+
+        inntekt: {
+          beloep: 45000,
+          inntektsdato: '2023-08-23',
+          naturalytelser: [],
+          endringAarsak: null
+        },
+        refusjon: null,
+        avsenderTlf: '12345678'
       });
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
