@@ -5,7 +5,7 @@ import formatIsoDate from '../utils/formatIsoDate';
 import { Begrunnelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import validerAapenInnsending, { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
-import { SendtPeriode } from './useFyllInnsending';
+import { SendtPeriode, formaterRedusertLoennIAgp } from './useFyllInnsending';
 
 export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
@@ -64,13 +64,7 @@ export default function useFyllAapenInnsending() {
               .filter((periode) => periode.fom && periode.tom)
               .map((periode) => ({ fom: formatDateForSubmit(periode!.fom!), tom: formatDateForSubmit(periode!.tom!) }))
           : [],
-        redusertLoennIAgp:
-          fullLonnIArbeidsgiverPerioden?.status === 'Nei'
-            ? {
-                beloep: fullLonnIArbeidsgiverPerioden?.utbetalt,
-                begrunnelse: fullLonnIArbeidsgiverPerioden?.begrunnelse
-              }
-            : null
+        redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt!,
@@ -88,7 +82,7 @@ export default function useFyllAapenInnsending() {
         lonnISykefravaeret?.status === 'Ja'
           ? {
               beloepPerMaaned: lonnISykefravaeret.beloep!,
-              sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
+              sluttdato: formatDateForSubmit(refusjonskravetOpphoerer?.opphoersdato) ?? null,
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,

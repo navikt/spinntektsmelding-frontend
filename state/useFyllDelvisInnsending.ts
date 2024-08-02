@@ -1,4 +1,4 @@
-import { isAfter, isValid, parseISO } from 'date-fns';
+import { isAfter, isValid } from 'date-fns';
 
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
@@ -19,7 +19,8 @@ import {
   konverterPerioderFraMottattTilInterntFormat,
   konverterRefusjonEndringer,
   verdiEllerBlank,
-  verdiEllerNull
+  verdiEllerNull,
+  formaterRedusertLoennIAgp
 } from './useFyllInnsending';
 
 export interface SendtPeriode {
@@ -140,13 +141,7 @@ export default function useFyllDelvisInnsending() {
                   tom: formatIsoDate(periode.tom) as TDateISODate
                 }))
               : [],
-            redusertLoennIAgp:
-              fullLonnIArbeidsgiverPerioden?.status === 'Nei'
-                ? {
-                    beloep: fullLonnIArbeidsgiverPerioden.utbetalt!,
-                    begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse! as string
-                  }
-                : null
+            redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
           }
         : null,
       inntekt: {

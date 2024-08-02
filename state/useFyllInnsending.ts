@@ -2,13 +2,18 @@ import { isValid, parseISO } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Periode, YesNo } from './state';
+import { LonnIArbeidsgiverperioden, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
-import { EndringAarsak, EndringAarsakSchema, RefusjonEndring } from '../validators/validerAapenInnsending';
+import {
+  BegrunnelseRedusertLoennIAgp,
+  EndringAarsak,
+  EndringAarsakSchema,
+  RefusjonEndring
+} from '../validators/validerAapenInnsending';
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
@@ -153,7 +158,7 @@ export default function useFyllInnsending() {
     );
 
     const endringAarsakParsed = endringAarsak ? EndringAarsakSchema.parse(endringAarsak) : null;
-
+    console.log('fullLonnIArbeidsgiverPerioden', fullLonnIArbeidsgiverPerioden);
     const skjemaData: FullInnsending = {
       forespoerselId,
       agp: {
@@ -170,13 +175,7 @@ export default function useFyllInnsending() {
               .filter((periode) => periode.fom && periode.tom)
               .map((periode) => ({ fom: formatIsoDate(periode!.fom!), tom: formatIsoDate(periode!.tom!) }))
           : [],
-        redusertLoennIAgp:
-          fullLonnIArbeidsgiverPerioden?.status === 'Nei'
-            ? {
-                beloep: fullLonnIArbeidsgiverPerioden.utbetalt!,
-                begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse!
-              }
-            : null
+        redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt!,
@@ -309,4 +308,15 @@ export function formaterOpphørsdato(
     return formatertDato;
   }
   return null;
+}
+
+export function formaterRedusertLoennIAgp(
+  fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined
+): { beloep: number; begrunnelse: string } | null {
+  return fullLonnIArbeidsgiverPerioden?.begrunnelse !== undefined
+    ? {
+        beloep: fullLonnIArbeidsgiverPerioden.utbetalt ?? 0,
+        begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse
+      }
+    : null;
 }
