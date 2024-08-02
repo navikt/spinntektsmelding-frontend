@@ -11,6 +11,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { EndringAarsak, EndringAarsakSchema, RefusjonEndring } from '../validators/validerAapenInnsending';
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
+import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -117,13 +118,13 @@ export default function useFyllInnsending() {
 
     const forespurtData = hentPaakrevdOpplysningstyper();
 
-    const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
+    const harForespurtArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
     const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(
       arbeidsgiverperioder,
-      skalSendeArbeidsgiverperiode
+      harForespurtArbeidsgiverperiode
     );
 
     const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
@@ -141,7 +142,7 @@ export default function useFyllInnsending() {
           );
 
     const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
-      skalSendeArbeidsgiverperiode,
+      harForespurtArbeidsgiverperiode,
       perioder,
       formatertePerioder,
       skjaeringstidspunkt,
@@ -151,17 +152,19 @@ export default function useFyllInnsending() {
       beregnetSkjaeringstidspunkt
     );
 
-    const endringAarsakParsed = EndringAarsakSchema.parse(endringAarsak);
+    const endringAarsakParsed = endringAarsak ? EndringAarsakSchema.parse(endringAarsak) : null;
 
     const skjemaData: FullInnsending = {
       forespoerselId,
       agp: {
-        perioder: arbeidsgiverperioder
-          ? arbeidsgiverperioder.map((periode) => ({
-              fom: formatIsoDate(periode.fom!),
-              tom: formatIsoDate(periode.tom!)
-            }))
-          : [],
+        perioder:
+          skalSendeArbeidsgiverperiode(fullLonnIArbeidsgiverPerioden?.begrunnelse, arbeidsgiverperioder) &&
+          arbeidsgiverperioder
+            ? arbeidsgiverperioder.map((periode) => ({
+                fom: formatIsoDate(periode.fom!),
+                tom: formatIsoDate(periode.tom!)
+              }))
+            : [],
         egenmeldinger: egenmeldingsperioder
           ? egenmeldingsperioder
               .filter((periode) => periode.fom && periode.tom)
@@ -205,7 +208,7 @@ export default function useFyllInnsending() {
 }
 
 export function hentBestemmendeFraværsdag(
-  skalSendeArbeidsgiverperiode: boolean,
+  harForespurtArbeidsgiverperiode: boolean,
   perioder: Periode[] | undefined,
   formatertePerioder: { fom: Date; tom: Date; id: string }[] | undefined,
   skjaeringstidspunkt: Date | undefined,
@@ -220,7 +223,7 @@ export function hentBestemmendeFraværsdag(
     );
   }
 
-  return skalSendeArbeidsgiverperiode
+  return harForespurtArbeidsgiverperiode
     ? finnBestemmendeFravaersdag(
         perioder,
         formatertePerioder,
@@ -256,9 +259,9 @@ export function konverterPerioderFraMottattTilInterntFormat(
 
 function finnInnsendbareArbeidsgiverperioder(
   arbeidsgiverperioder: Periode[] | undefined,
-  skalSendeArbeidsgiverperiode: boolean
+  harForespurtArbeidsgiverperiode: boolean
 ): SendtPeriode[] | [] {
-  if (!skalSendeArbeidsgiverperiode) {
+  if (!harForespurtArbeidsgiverperiode) {
     return [];
   }
 

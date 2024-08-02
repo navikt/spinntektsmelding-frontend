@@ -27,7 +27,7 @@ export interface LonnISykefravaeret {
 }
 
 const begrunnelseRedusertLoennIAgp = z.enum(BegrunnelseRedusertLoennIAgp);
-type Begrunnelse = z.infer<typeof begrunnelseRedusertLoennIAgp>;
+export type Begrunnelse = z.infer<typeof begrunnelseRedusertLoennIAgp>;
 
 export interface LonnIArbeidsgiverperioden {
   status?: YesNo;
