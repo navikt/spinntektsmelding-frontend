@@ -26,14 +26,12 @@ import { PersonnummerSchema } from '../../validators/validerAapenInnsending';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import PeriodeVelger from '../../components/PeriodeVelger/PeriodeVelger';
 import { MottattPeriode } from '../../state/MottattData';
-import parseIsoDate from '../../utils/parseIsoDate';
 import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import { Periode } from '../../state/state';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
-import { PeriodeSchema } from '../../schema/fullInnsendingSchema';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -48,6 +46,19 @@ const Initiering2: NextPage = () => {
 
   let fulltNavn = '';
   const backendFeil = useRef([] as Feilmelding[]);
+
+  const PeriodeSchema = z
+    .object({
+      fom: z.date({
+        required_error: 'Vennligst fyll inn fra dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      }),
+      tom: z.date({
+        required_error: 'Vennligst fyll inn til dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+    })
+    .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
 
   const skjemaSchema = z
     .object({
@@ -98,10 +109,7 @@ const Initiering2: NextPage = () => {
         }
 
         for (let i = 0; i < sortedPerioder.length - 1; i++) {
-          if (
-            Math.abs(differenceInDays(parseIsoDate(sortedPerioder[i].tom), parseIsoDate(sortedPerioder[i + 1].fom))) >
-            16
-          ) {
+          if (Math.abs(differenceInDays(sortedPerioder[i].tom, sortedPerioder[i + 1].fom)) > 16) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: 'Det kan ikke være mer enn 16 dager mellom periodene',
@@ -137,24 +145,26 @@ const Initiering2: NextPage = () => {
           organisasjonsnummer: formData.organisasjonsnummer,
           fulltNavn: mottatteData.data.fulltNavn,
           personnummer: identitetsnummer,
-          perioder: formData.perioder.map((periode) => {
-            return {
-              fom: parseIsoDate(periode.fom),
-              tom: parseIsoDate(periode.tom)
-            };
-          })
+          perioder: formData.perioder
+            ? formData.perioder.map((periode) => {
+                return {
+                  fom: periode.fom,
+                  tom: periode.tom
+                };
+              })
+            : []
         };
 
         const validationResult = skjema.safeParse(skjemaData);
 
         if (validationResult.success) {
-          const validert = validationResult.data;
+          const validerteData = validationResult.data;
           const orgNavn = arbeidsforhold.find(
-            (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validert.organisasjonsnummer
+            (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
           )?.virksomhetsnavn!;
-          initPerson(validert.fulltNavn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
+          initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
           setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-          initFravaersperiode(validert.perioder as MottattPeriode[]);
+          initFravaersperiode(validerteData.perioder as MottattPeriode[]);
           tilbakestillArbeidsgiverperiode();
           router.push('/arbeidsgiverInitiertInnsending');
         }
