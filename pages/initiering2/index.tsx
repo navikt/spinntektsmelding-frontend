@@ -12,7 +12,7 @@ import lokalStyles from './initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
@@ -40,6 +40,7 @@ const Initiering2: NextPage = () => {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
   let perioder: { fom: Date; tom: Date; id: string }[] = [];
@@ -158,6 +159,7 @@ const Initiering2: NextPage = () => {
         const validationResult = skjema.safeParse(skjemaData);
 
         if (validationResult.success) {
+          setIsLoading(true);
           const validerteData = validationResult.data;
           const orgNavn = arbeidsforhold.find(
             (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
@@ -284,7 +286,12 @@ const Initiering2: NextPage = () => {
                   <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
                     Tilbake
                   </Button>
-                  <Button variant='primary' className={lokalStyles.primaryKnapp} disabled={antallSykedager > 16}>
+                  <Button
+                    variant='primary'
+                    className={lokalStyles.primaryKnapp}
+                    disabled={antallSykedager > 16}
+                    loading={isLoading}
+                  >
                     Neste
                   </Button>
                 </div>
