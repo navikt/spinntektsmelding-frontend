@@ -20,9 +20,9 @@ describe('validerAapenInnsending', () => {
         orgnr: '810007842',
         tlf: '12345678'
       },
-      sykmeldingsperioder: [{ fom: new Date(), tom: new Date() }],
+      sykmeldingsperioder: [{ fom: '2002-02-02', tom: '2002-02-02' }],
       agp: {
-        perioder: [{ fom: new Date(), tom: new Date() }],
+        perioder: [{ fom: '2002-02-02', tom: '2002-02-02' }],
         egenmeldinger: [],
         redusertLoennIAgp: {
           beloep: 1000,
@@ -42,7 +42,7 @@ describe('validerAapenInnsending', () => {
       },
       aarsakInnsending: 'Endring'
     };
-
+    // console.log(validerAapenInnsending(data)).toBe(true);
     expect(validerAapenInnsending(data).success).toBe(true);
   });
 });
