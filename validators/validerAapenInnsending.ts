@@ -3,6 +3,7 @@ import isFnrNumber from '../utils/isFnrNumber';
 import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
+import parseIsoDate from '../utils/parseIsoDate';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -75,24 +76,22 @@ const datoManglerFeilmelding = {
 const SykPeriodeSchema = z
   .object({
     fom: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
+      .string({
+        required_error: 'Vennligst fyll inn fra dato'
       })
-      .transform((val) => toLocalIso(val)),
+      .date(),
     tom: z
-      .date({
-        required_error: 'Vennligst fyll inn til dato',
-        invalid_type_error: 'Dette er ikke en dato'
+      .string({
+        required_error: 'Vennligst fyll inn til dato'
       })
-      .transform((val) => toLocalIso(val))
+      .date()
   })
   .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
 
 const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => {
   for (let i = 0; i < val.length - 1; i++) {
-    const tom = new Date(val[i].tom);
-    const fom = new Date(val[i + 1].fom);
+    const tom = parseIsoDate(val[i].tom);
+    const fom = parseIsoDate(val[i + 1].fom);
     const forskjellMs = Number(tom) - Number(fom);
     const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
     if (forskjellDager > 16) {
@@ -108,35 +107,36 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
 const PeriodeSchema = z
   .object({
     fom: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
+      .string({
+        required_error: 'Vennligst fyll inn fra dato'
       })
-      .transform((val) => toLocalIso(val)),
+      .date(),
     tom: z
-      .date({
-        required_error: 'Vennligst fyll inn til dato',
-        invalid_type_error: 'Dette er ikke en dato'
+      .string({
+        required_error: 'Vennligst fyll inn til dato'
       })
-      .transform((val) => toLocalIso(val))
+      .date()
   })
-  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
+  .refine((val) => parseIsoDate(val.fom) <= parseIsoDate(val.tom), {
+    message: 'Fra dato må være før til dato',
+    path: ['fom']
+  });
 
-const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
-  for (let i = 0; i < val.length - 1; i++) {
-    const tom = new Date(val[i].tom);
-    const fom = new Date(val[i + 1].fom);
-    const forskjellMs = Number(tom) - Number(fom);
-    const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
-    if (forskjellDager > 16) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: feiltekster.FOR_MANGE_DAGER_MELLOM
-      });
-    }
-  }
-  return val;
-});
+// const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
+//   for (let i = 0; i < val.length - 1; i++) {
+//     const tom = new Date(val[i].tom);
+//     const fom = new Date(val[i + 1].fom);
+//     const forskjellMs = Number(tom) - Number(fom);
+//     const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
+//     if (forskjellDager > 16) {
+//       ctx.addIssue({
+//         code: z.ZodIssueCode.custom,
+//         message: feiltekster.FOR_MANGE_DAGER_MELLOM
+//       });
+//     }
+//   }
+//   return val;
+// });
 const DatoValideringSchema = z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val));
 
 export const PersonnummerSchema = z
