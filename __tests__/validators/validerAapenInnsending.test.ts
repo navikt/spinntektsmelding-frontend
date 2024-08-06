@@ -42,7 +42,7 @@ describe('validerAapenInnsending', () => {
       },
       aarsakInnsending: 'Endring'
     };
-    // console.log(validerAapenInnsending(data)).toBe(true);
+
     expect(validerAapenInnsending(data).success).toBe(true);
   });
 });
