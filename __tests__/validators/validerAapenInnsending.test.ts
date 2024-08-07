@@ -1,4 +1,4 @@
-import validerAapenInnsending, { PersonnummerSchema } from '../../validators/validerAapenInnsending';
+import validerAapenInnsending, { AapenInnsending, PersonnummerSchema } from '../../validators/validerAapenInnsending';
 
 describe('validerAapenInnsending', () => {
   it('should validate PersonnummerSchema', () => {
@@ -14,7 +14,7 @@ describe('validerAapenInnsending', () => {
   });
 
   it('should validate aapenInnsending', () => {
-    const data = {
+    const data: AapenInnsending = {
       sykmeldtFnr: '10107400090',
       avsender: {
         orgnr: '810007842',
