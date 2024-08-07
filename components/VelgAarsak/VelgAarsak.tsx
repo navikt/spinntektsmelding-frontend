@@ -94,15 +94,15 @@ export default function VelgAarsak({
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
             defaultRange={
-              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && defaultEndringAarsak?.perioder
-                ? defaultEndringAarsak.perioder
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && defaultEndringAarsak?.ferier
+                ? defaultEndringAarsak.ferier
                 : blankPeriode
             }
             fomTekst='Fra'
             tomTekst='Til'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            name='inntekt.endringAarsak.perioder'
+            name='inntekt.endringAarsak.ferier'
           />
         </div>
       )}
@@ -120,11 +120,11 @@ export default function VelgAarsak({
       {endringAarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            name='inntekt.endringAarsak.perioder'
+            name='inntekt.endringAarsak.permisjoner'
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon &&
-              defaultEndringAarsak?.perioder
-                ? defaultEndringAarsak.perioder
+              defaultEndringAarsak?.permisjoner
+                ? defaultEndringAarsak.permisjoner
                 : blankPeriode
             }
             fomTekst='Fra'
@@ -140,13 +140,13 @@ export default function VelgAarsak({
           <PeriodeListevelger
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering &&
-              defaultEndringAarsak?.perioder
-                ? defaultEndringAarsak.perioder
+              defaultEndringAarsak?.permitteringer
+                ? defaultEndringAarsak.permitteringer
                 : blankPeriode
             }
             fomTekst='Fra'
             tomTekst='Til'
-            name='inntekt.endringAarsak.perioder'
+            name='inntekt.endringAarsak.permitteringer'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
           />
@@ -180,15 +180,15 @@ export default function VelgAarsak({
           <PeriodeListevelger
             defaultRange={
               defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer &&
-              defaultEndringAarsak?.perioder
-                ? defaultEndringAarsak.perioder
+              defaultEndringAarsak?.sykefravaer
+                ? defaultEndringAarsak.sykefravaer
                 : blankPeriode
             }
             fomTekst='Fra'
             tomTekst='Til'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            name='inntekt.endringAarsak.perioder'
+            name='inntekt.endringAarsak.sykefravaer'
           />
         </div>
       )}

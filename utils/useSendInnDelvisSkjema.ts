@@ -37,10 +37,6 @@ export default function useSendInnDelvisSkjema(
         component: amplitudeComponent
       });
 
-      logger.info('Innsending uten endringer i skjema');
-
-      // setError('knapp-innsending', { message: 'Innsending feilet, det er ikke gjort endringer i skjema.' });
-
       const errors: Array<ErrorResponse> = [
         {
           value: 'Innsending av skjema feilet',
@@ -71,11 +67,15 @@ export default function useSendInnDelvisSkjema(
 
       return false;
     }
-    type FullInnsending = z.infer<typeof fullInnsendingSchema>;
+    const delvisInnsendingSchema = fullInnsendingSchema.omit({
+      forespoerselId: true
+    });
 
-    const skjemaData: FullInnsending = fyllInnsending(form, pathSlug);
+    type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
 
-    const validerteData = fullInnsendingSchema.safeParse(skjemaData);
+    const skjemaData: DelvisInnsending = fyllInnsending(form, pathSlug);
+
+    const validerteData = delvisInnsendingSchema.safeParse(skjemaData);
 
     if (validerteData.success === false) {
       logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);

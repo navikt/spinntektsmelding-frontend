@@ -33,7 +33,7 @@ import DatoVelger from '../../components/DatoVelger/DatoVelger';
 import PersonData from '../../components/PersonData/PersonData';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
-import { LonnISykefravaeret, Periode, YesNo } from '../../state/state';
+import { LonnISykefravaeret, YesNo } from '../../state/state';
 import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import { TDateISODate } from '../../state/MottattData';
@@ -105,7 +105,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     ]
   );
 
-  const endringAarsak: EndringAarsak = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
+  const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
 
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
@@ -129,11 +129,11 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       : refusjonEndringer;
 
   const refusjonPrMnd = !nyInnsending
-    ? lonnISykefravaeret!.beloep ?? bruttoinntekt?.bruttoInntekt
+    ? (lonnISykefravaeret!.beloep ?? bruttoinntekt?.bruttoInntekt)
     : refusjonEndringer
         ?.filter((endring) => {
           if (!endring.dato) return false;
-          return !isAfter(endring.dato, foersteDatoForRefusjon);
+          return !isAfter(endring.dato, foersteDatoForRefusjon!);
         })
         .map((endring) => {
           return {
@@ -145,11 +145,15 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           return a.dato && b.dato ? (a.dato < b.dato ? 1 : -1) : 0;
         })[0]?.beloep;
 
-  const aktiveRefusjonEndringer = nyInnsending
-    ? refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
-      ? refusjonEndringerUtenSkjaeringstidspunkt
-      : [{ beloep: undefined, dato: undefined }]
-    : refusjonEndringer;
+  let aktiveRefusjonEndringer;
+  if (nyInnsending) {
+    aktiveRefusjonEndringer =
+      refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
+        ? refusjonEndringerUtenSkjaeringstidspunkt
+        : [{ beloep: undefined, dato: undefined }];
+  } else {
+    aktiveRefusjonEndringer = refusjonEndringer;
+  }
 
   const opprinneligRefusjonskravetOpphoererStatus = opprinneligRefusjonskravetOpphoerer?.status;
   const opprinneligRefusjonskravetOpphoererDato = opprinneligRefusjonskravetOpphoerer?.opphoersdato;
@@ -347,7 +351,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       unregister('inntekt.endringAarsak');
       setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
     }
-  }, [harEndringBruttoloenn, unregister, register, setValue, bruttoinntekt.bruttoInntekt]);
+  }, [harEndringBruttoloenn, unregister, setValue, bruttoinntekt.bruttoInntekt]);
 
   return (
     <div className={styles.container}>
@@ -555,14 +559,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 };
 
 export default Endring;
-
-function mapEndringsAarsakPeriodeTilPeriode(skjemaData: z.infer<any>): Periode[] {
-  return skjemaData.inntekt.endringAarsak.perioder.map((periode) => ({
-    fom: parseIsoDate(periode.fom),
-    tom: parseIsoDate(periode.tom),
-    id: periode.fom + '-' + periode.tom
-  }));
-}
 
 export function finnFoersteFravaersdag(
   foreslaattBestemmendeFravaersdag: Date,
