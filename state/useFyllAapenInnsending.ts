@@ -82,7 +82,9 @@ export default function useFyllAapenInnsending() {
         lonnISykefravaeret?.status === 'Ja'
           ? {
               beloepPerMaaned: lonnISykefravaeret.beloep!,
-              sluttdato: formatDateForSubmit(refusjonskravetOpphoerer?.opphoersdato) ?? null,
+              sluttdato: refusjonskravetOpphoerer?.opphoersdato
+                ? formatDateForSubmit(refusjonskravetOpphoerer?.opphoersdato)
+                : null,
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,

@@ -309,20 +309,13 @@ const schema = z
             }
           })
         ]),
-        sluttdato: z
-          .date()
-          .transform((val) => toLocalIso(val))
-          .nullable()
+        sluttdato: z.nullable(z.string().date())
       })
       .nullable(),
     aarsakInnsending: z.enum(['Endring', 'Ny'])
   })
   .superRefine((val, ctx) => {
-    if (
-      val.inntekt?.beloep &&
-      val.agp?.redusertLoennIAgp?.beloep &&
-      val.inntekt?.beloep < val.agp?.redusertLoennIAgp?.beloep
-    ) {
+    if (val.inntekt?.beloep && val.refusjon?.beloepPerMaaned && val.inntekt?.beloep < val.refusjon?.beloepPerMaaned) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',

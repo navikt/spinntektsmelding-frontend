@@ -85,9 +85,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.lonnISykefravaeret.beloep = stringishToNumber(beloep);
         }
 
-        state = slettFeilmeldingFraState(state, 'lus-input');
+        state = slettFeilmeldingFraState(state, 'refusjon.beloepPerMaaned');
         if (!beloep || stringishToNumber(beloep)! < 0) {
-          state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
+          state = leggTilFeilmelding(state, 'refusjon.beloepPerMaaned', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
 
         return state;
