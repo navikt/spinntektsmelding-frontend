@@ -38,7 +38,7 @@ describe('validerAapenInnsending', () => {
       refusjon: {
         beloepPerMaaned: 1000,
         endringer: [],
-        sluttdato: new Date()
+        sluttdato: '2002-02-02'
       },
       aarsakInnsending: 'Endring'
     };
