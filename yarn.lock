@@ -966,13 +966,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/faro-core@npm:^1.8.2":
-  version: 1.8.2
-  resolution: "@grafana/faro-core@npm:1.8.2"
+"@grafana/faro-core@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "@grafana/faro-core@npm:1.9.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.9.0"
     "@opentelemetry/otlp-transformer": "npm:^0.52.0"
-  checksum: 10c0/9f708f8eb0671165da21ac90d39fdcf0a22ae7b00b52534278ffca4026febea2fb5f11e6af23287b499c412e3f42ed754df508b0243770675a373c29cf23c043
+  checksum: 10c0/6de31d808ecb609a3d49fadd76502f500e4c0375771075a2865ae04e9eab98b8d30689f3acc78c7b5e9b2ea323f79924c8b66f6810eba83fe62a2ea12dd61402
   languageName: node
   linkType: hard
 
@@ -987,22 +987,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/faro-web-sdk@npm:^1.8.2":
-  version: 1.8.2
-  resolution: "@grafana/faro-web-sdk@npm:1.8.2"
+"@grafana/faro-web-sdk@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "@grafana/faro-web-sdk@npm:1.9.0"
   dependencies:
-    "@grafana/faro-core": "npm:^1.8.2"
+    "@grafana/faro-core": "npm:^1.9.0"
     ua-parser-js: "npm:^1.0.32"
     web-vitals: "npm:^4.0.1"
-  checksum: 10c0/0a38f43631fe13d2463fb2c7392bc25261bafc623473d25c5c573f525fb8a2dcd9e03d124c7c9a16f3827dc953d19146c3b002c1a1270c564ad5c105f1cd5768
+  checksum: 10c0/4e023415b506b2e8a8eafe7dcb298309949755f1336faaf489ced1db56e8d7e64e58e951bbf519a60ef811c04da74f0ffa2bed9bbc783fee18926cafe6044bc6
   languageName: node
   linkType: hard
 
-"@grafana/faro-web-tracing@npm:1.8.2":
-  version: 1.8.2
-  resolution: "@grafana/faro-web-tracing@npm:1.8.2"
+"@grafana/faro-web-tracing@npm:1.9.0":
+  version: 1.9.0
+  resolution: "@grafana/faro-web-tracing@npm:1.9.0"
   dependencies:
-    "@grafana/faro-web-sdk": "npm:^1.8.2"
+    "@grafana/faro-web-sdk": "npm:^1.9.0"
     "@opentelemetry/api": "npm:^1.9.0"
     "@opentelemetry/context-zone": "npm:1.21.0"
     "@opentelemetry/core": "npm:^1.25.0"
@@ -1014,7 +1014,7 @@ __metadata:
     "@opentelemetry/resources": "npm:^1.25.0"
     "@opentelemetry/sdk-trace-web": "npm:^1.25.0"
     "@opentelemetry/semantic-conventions": "npm:^1.25.0"
-  checksum: 10c0/a522f47181c214f658d7acd31e110f2d48d2362cbdc124c4456e64f40c355cf91d2da22377238ffbbe0894f66f138e6c1a593519dbed33509853b355e484c250
+  checksum: 10c0/537cbe498a6365957608b49448b8a8ae4ffe1e8252220ef7fe0decf46d33e242b264f27e53575e415bd17ab0e088a51536c27d6278a3de3da55c8c4f06287de7
   languageName: node
   linkType: hard
 
@@ -9016,7 +9016,7 @@ __metadata:
   resolution: "spinntektsmelding-frontend@workspace:."
   dependencies:
     "@grafana/faro-web-sdk": "npm:1.7.3"
-    "@grafana/faro-web-tracing": "npm:1.8.2"
+    "@grafana/faro-web-tracing": "npm:1.9.0"
     "@hookform/resolvers": "npm:3.9.0"
     "@navikt/aksel-icons": "npm:6.11.0"
     "@navikt/ds-css": "npm:6.11.0"
