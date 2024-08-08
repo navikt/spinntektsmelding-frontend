@@ -27,7 +27,7 @@ export default function PeriodeListevelger({
   defaultMonth,
   toDate,
   visFeilmeldingsTekst
-}: PeriodeListevelgerProps) {
+}: Readonly<PeriodeListevelgerProps>) {
   const onRangeChange = (datoer: PeriodeParam | undefined, index: string) => {
     const uppdatedRange = defaultRange?.map((periode) => {
       if (periode.id === index) {
@@ -60,28 +60,26 @@ export default function PeriodeListevelger({
       onRangeListChange([{ id: nanoid() }]);
     }
   });
-
   return (
     <>
-      {defaultRange &&
-        defaultRange.map((range, index) => (
-          <Periodevelger
-            key={`${fomIdBase}-${range.id || index}`}
-            onRangeChange={(oppdatertRange) => onRangeChange(oppdatertRange, range.id)}
-            defaultRange={range}
-            fomTekst={fomTekst}
-            fomID={`${fomIdBase}-${range.id}`}
-            tomTekst={tomTekst}
-            tomID={`${tomIdBase}-${range.id}`}
-            kanSlettes={index !== 0}
-            periodeId={range.id}
-            onSlettRad={slettRad}
-            fomError={visFeilmeldingsTekst ? visFeilmeldingsTekst(`${fomIdBase}-${range.id}`) : undefined}
-            tomError={visFeilmeldingsTekst ? visFeilmeldingsTekst(`${tomIdBase}-${range.id}`) : undefined}
-            defaultMonth={defaultMonth}
-            toDate={toDate}
-          />
-        ))}
+      {defaultRange?.map((range, index) => (
+        <Periodevelger
+          key={`${fomIdBase}-${range.id || index}`}
+          onRangeChange={(oppdatertRange) => onRangeChange(oppdatertRange, range.id)}
+          defaultRange={range}
+          fomTekst={fomTekst}
+          fomID={`${fomIdBase}-${range.id}`}
+          tomTekst={tomTekst}
+          tomID={`${tomIdBase}-${range.id}`}
+          kanSlettes={index !== 0}
+          periodeId={range.id}
+          onSlettRad={slettRad}
+          fomError={visFeilmeldingsTekst ? visFeilmeldingsTekst(`${fomIdBase}-${range.id}`) : undefined}
+          tomError={visFeilmeldingsTekst ? visFeilmeldingsTekst(`${tomIdBase}-${range.id}`) : undefined}
+          defaultMonth={defaultMonth}
+          toDate={toDate}
+        />
+      ))}
       <Button variant='secondary' onClick={handleLeggTilPeriode} className={lokalStyles.leggtilperiodeknapp}>
         Legg til periode
       </Button>

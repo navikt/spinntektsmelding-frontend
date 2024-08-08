@@ -39,11 +39,11 @@ export default function Datovelger({
     defaultMonth: defaultMonth
   });
 
-  useEffect(() => {
-    if (typeof defaultSelected === 'undefined') {
-      reset();
-    }
-  }, [defaultSelected]); // eslint-disable-line
+  // useEffect(() => {
+  //   if (typeof defaultSelected === 'undefined') {
+  //     reset();
+  //   }
+  // }, [defaultSelected]); // eslint-disable-line
 
   return (
     <DatePicker {...datepickerProps}>

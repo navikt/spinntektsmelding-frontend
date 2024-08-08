@@ -101,7 +101,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
     const expected = [
       {
         code: 'LONN_UNDER_SYKEFRAVAERET_BELOP',
-        felt: 'lus-input'
+        felt: 'refusjon.beloepPerMaaned'
       }
     ];
 
@@ -117,7 +117,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
     const expected = [
       {
         code: 'BELOP_OVERSTIGER_BRUTTOINNTEKT',
-        felt: 'lus-input'
+        felt: 'refusjon.beloepPerMaaned'
       }
     ];
 

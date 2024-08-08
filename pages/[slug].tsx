@@ -248,7 +248,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <RefusjonArbeidsgiver setIsDirtyForm={setIsDirtyForm} />
 
           <Skillelinje />
-          <Naturalytelser />
+          <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
           <ConfirmationPanel
             className={styles.confirmationpanel}
             checked={opplysningerBekreftet}

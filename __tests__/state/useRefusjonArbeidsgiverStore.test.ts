@@ -122,7 +122,7 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.lonnISykefravaeret?.beloep).toBeUndefined();
-    expect(result.current.feilmeldinger[0].felt).toBe('lus-input');
+    expect(result.current.feilmeldinger[0].felt).toBe('refusjon.beloepPerMaaned');
   });
 
   it('should change the beloep on lonnISykefravaeret', () => {

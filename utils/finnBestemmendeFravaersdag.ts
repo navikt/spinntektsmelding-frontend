@@ -140,12 +140,12 @@ const finnBestemmendeFravaersdag = (
             return false;
           }
 
-          return !isBefore(periode.fom, sammenhengendeAgp[sammenhengendeAgp.length - 1].fom);
+          return !isBefore(periode.fom, sammenhengendeAgp[sammenhengendeAgp.length - 1].fom!);
         })
       : [];
 
   const dagerEtterAgp = finnSammenhengendePeriodeManuellJustering(
-    sammenhengendeAgp.concat(overskytendeFravaersperioder).toSorted((a, b) => compareAsc(a.fom, b.fom))
+    sammenhengendeAgp.concat(overskytendeFravaersperioder).toSorted((a, b) => compareAsc(a.fom!, b.fom!))
   );
 
   const bestemmendeFravaersdag = dagerEtterAgp[dagerEtterAgp.length - 1].fom;

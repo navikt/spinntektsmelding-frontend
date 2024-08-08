@@ -64,6 +64,10 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     }
     const validerteData = fyllAapenInnsending(skjemaData);
     let hasErrors = validerteData.success !== true;
+    if (validerteData.success !== true) {
+      logger.error('Feil ved validering av skjema - Åpen innsending');
+      console.log(validerteData);
+    }
 
     if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
       hasErrors = true;

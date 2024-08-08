@@ -1,6 +1,5 @@
 import useBoundStore from '../state/useBoundStore';
 import logEvent from './logEvent';
-import { InnsendingSkjema } from '../state/useFyllInnsending';
 import isValidUUID from './isValidUUID';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
@@ -10,6 +9,8 @@ import { logger } from '@navikt/next-logger';
 import useFyllDelvisInnsending from '../state/useFyllDelvisInnsending';
 import { UseFormSetError } from 'react-hook-form';
 import validerDelvisInntektsmelding from './validerDelvisInntektsmelding';
+import { z } from 'zod';
+import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 
 export default function useSendInnDelvisSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -35,10 +36,6 @@ export default function useSendInnDelvisSkjema(
         tittel: 'Innsending uten endringer i skjema',
         component: amplitudeComponent
       });
-
-      logger.info('Innsending uten endringer i skjema');
-
-      // setError('knapp-innsending', { message: 'Innsending feilet, det er ikke gjort endringer i skjema.' });
 
       const errors: Array<ErrorResponse> = [
         {
@@ -70,7 +67,20 @@ export default function useSendInnDelvisSkjema(
 
       return false;
     }
-    const skjemaData: InnsendingSkjema = fyllInnsending(form);
+    const delvisInnsendingSchema = fullInnsendingSchema.omit({
+      forespoerselId: true
+    });
+
+    type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
+
+    const skjemaData: DelvisInnsending = fyllInnsending(form, pathSlug);
+
+    const validerteData = delvisInnsendingSchema.safeParse(skjemaData);
+
+    if (validerteData.success === false) {
+      logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
+      console.log(validerteData);
+    }
 
     fyllFeilmeldinger([]);
 

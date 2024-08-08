@@ -9,7 +9,11 @@ import useBoundStore from '../../state/useBoundStore';
 import NaturalytelseBortfallsdato from './NaturalytelseBortfallsdato';
 import formatCurrency from '../../utils/formatCurrency';
 
-export default function Naturalytelser() {
+interface NaturalytelseProps {
+  setIsDirtyForm: (dirty: boolean) => void;
+}
+
+export default function Naturalytelser({ setIsDirtyForm }: Readonly<NaturalytelseProps>) {
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const leggTilNaturalytelse = useBoundStore((state) => state.leggTilNaturalytelse);
   const setNaturalytelseType = useBoundStore((state) => state.setNaturalytelseType);
@@ -21,14 +25,17 @@ export default function Naturalytelser() {
 
   const visNaturalytelser = (event: React.MouseEvent<HTMLInputElement>) => {
     if (event.currentTarget.checked === true) {
+      setIsDirtyForm(true);
       leggTilNaturalytelse();
     } else {
+      setIsDirtyForm(true);
       slettAlleNaturalytelser();
     }
   };
 
   const leggTilNaturalytelseHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    setIsDirtyForm(true);
     leggTilNaturalytelse();
   };
 

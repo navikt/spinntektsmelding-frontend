@@ -112,7 +112,7 @@ export default function validerInntektsmelding(
     state.lonnISykefravaeret,
     state.refusjonskravetOpphoerer,
     state.bruttoinntekt.bruttoInntekt,
-    !state.nyInnsending
+    false // TODO: Hva er dette? Og hvorfor var den satt til !state.nyInnsending?
   );
 
   feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
