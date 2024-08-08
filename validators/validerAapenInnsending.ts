@@ -4,6 +4,7 @@ import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
 import parseIsoDate from '../utils/parseIsoDate';
+import { RefusjonEndringSchema } from '../schema/aapenInnsendingSchema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -60,6 +61,32 @@ export const InntektEndringAarsakEnum = z.enum([
   'VarigLoennsendring'
 ]);
 
+export const PeriodeSchema = z
+  .object({
+    fom: z
+      .date({
+        required_error: 'Vennligst fyll inn fra dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+      .transform((val) => toLocalIso(val)),
+    tom: z
+      .date({
+        required_error: 'Vennligst fyll inn til dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+      .transform((val) => toLocalIso(val))
+  })
+  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
+
+export const RefusjonEndringSchema = z.object({
+  startDato: z
+    .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
+    .transform((val) => toLocalIso(val)),
+  beloep: z
+    .number({ required_error: 'Vennligst fyll inn beløpet for endret refusjon.' })
+    .min(0, { message: 'Beløpet må være større enn eller lik 0' })
+});
+
 const leftPad = (val: number) => {
   return val < 10 ? `0${val}` : val;
 };
@@ -103,26 +130,6 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
   }
   return val;
 });
-
-const PeriodeSchema = z
-  .object({
-    fom: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val)),
-    tom: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val))
-  })
-  .refine((val) => parseIsoDate(val.fom) <= parseIsoDate(val.tom), {
-    message: 'Fra dato må være før til dato',
-    path: ['fom']
-  });
 
 const DatoValideringSchema = z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val));
 
@@ -240,15 +247,6 @@ export const telefonNummerSchema = z
   })
   .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
   .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' });
-
-const RefusjonEndringSchema = z.object({
-  startdato: z
-    .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
-    .transform((val) => toLocalIso(val)),
-  beloep: z
-    .number({ required_error: 'Vennligst fyll inn beløpet for endret refusjon.' })
-    .min(0, { message: 'Beløpet må være større enn eller lik 0' })
-});
 
 const schema = z
   .object({
