@@ -3,7 +3,8 @@ import isFnrNumber from '../utils/isFnrNumber';
 import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
-import zodAlwaysRefine from '../utils/zodAlwaysRefine';
+import parseIsoDate from '../utils/parseIsoDate';
+import { RefusjonEndringSchema } from '../schema/aapenInnsendingSchema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -60,6 +61,32 @@ export const InntektEndringAarsakEnum = z.enum([
   'VarigLoennsendring'
 ]);
 
+export const PeriodeSchema = z
+  .object({
+    fom: z
+      .date({
+        required_error: 'Vennligst fyll inn fra dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+      .transform((val) => toLocalIso(val)),
+    tom: z
+      .date({
+        required_error: 'Vennligst fyll inn til dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+      .transform((val) => toLocalIso(val))
+  })
+  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
+
+export const RefusjonEndringSchema = z.object({
+  startDato: z
+    .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
+    .transform((val) => toLocalIso(val)),
+  beloep: z
+    .number({ required_error: 'Vennligst fyll inn beløpet for endret refusjon.' })
+    .min(0, { message: 'Beløpet må være større enn eller lik 0' })
+});
+
 const leftPad = (val: number) => {
   return val < 10 ? `0${val}` : val;
 };
@@ -76,24 +103,22 @@ const datoManglerFeilmelding = {
 const SykPeriodeSchema = z
   .object({
     fom: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
+      .string({
+        required_error: 'Vennligst fyll inn fra dato'
       })
-      .transform((val) => toLocalIso(val)),
+      .date(),
     tom: z
-      .date({
-        required_error: 'Vennligst fyll inn til dato',
-        invalid_type_error: 'Dette er ikke en dato'
+      .string({
+        required_error: 'Vennligst fyll inn til dato'
       })
-      .transform((val) => toLocalIso(val))
+      .date()
   })
   .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
 
 const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => {
   for (let i = 0; i < val.length - 1; i++) {
-    const tom = new Date(val[i].tom);
-    const fom = new Date(val[i + 1].fom);
+    const tom = parseIsoDate(val[i].tom);
+    const fom = parseIsoDate(val[i + 1].fom);
     const forskjellMs = Number(tom) - Number(fom);
     const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
     if (forskjellDager > 16) {
@@ -106,38 +131,6 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
   return val;
 });
 
-const PeriodeSchema = z
-  .object({
-    fom: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val)),
-    tom: z
-      .date({
-        required_error: 'Vennligst fyll inn til dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val))
-  })
-  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
-
-const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
-  for (let i = 0; i < val.length - 1; i++) {
-    const tom = new Date(val[i].tom);
-    const fom = new Date(val[i + 1].fom);
-    const forskjellMs = Number(tom) - Number(fom);
-    const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
-    if (forskjellDager > 16) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: feiltekster.FOR_MANGE_DAGER_MELLOM
-      });
-    }
-  }
-  return val;
-});
 const DatoValideringSchema = z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val));
 
 export const PersonnummerSchema = z
@@ -174,7 +167,7 @@ const EndringAarsakFeilregistrertSchema = z.object({
 
 const EndringAarsakFerieSchema = z.object({
   aarsak: z.literal('Ferie'),
-  perioder: z.array(PeriodeSchema)
+  ferier: z.array(PeriodeSchema)
 });
 
 const EndringAarsakFerietrekkSchema = z.object({
@@ -201,17 +194,17 @@ const EndringAarsakNyStillingsprosentSchema = z.object({
 
 const EndringAarsakPermisjonSchema = z.object({
   aarsak: z.literal('Permisjon'),
-  perioder: z.array(PeriodeSchema)
+  permisjoner: z.array(PeriodeSchema)
 });
 
 const EndringAarsakPermitteringSchema = z.object({
   aarsak: z.literal('Permittering'),
-  perioder: z.array(PeriodeSchema)
+  permitteringer: z.array(PeriodeSchema)
 });
 
 const EndringAarsakSykefravaerSchema = z.object({
   aarsak: z.literal('Sykefravaer'),
-  perioder: z.array(PeriodeSchema)
+  sykefravaer: z.array(PeriodeSchema)
 });
 
 const EndringAarsakTariffendringSchema = z.object({
@@ -254,15 +247,6 @@ export const telefonNummerSchema = z
   })
   .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
   .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' });
-
-const RefusjonEndringSchema = z.object({
-  startdato: z
-    .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
-    .transform((val) => toLocalIso(val)),
-  beloep: z
-    .number({ required_error: 'Vennligst fyll inn beløpet for endret refusjon.' })
-    .min(0, { message: 'Beløpet må være større enn eller lik 0' })
-});
 
 const schema = z
   .object({
@@ -316,7 +300,6 @@ const schema = z
           z.array(RefusjonEndringSchema),
           z.tuple([], {
             errorMap: (error) => {
-              console.log(error);
               if (error.code === 'too_big') {
                 return { message: 'Vennligst fyll inn endringer i refusjonsbeløpet i perioden' };
               }
@@ -324,20 +307,13 @@ const schema = z
             }
           })
         ]),
-        sluttdato: z
-          .date()
-          .transform((val) => toLocalIso(val))
-          .nullable()
+        sluttdato: z.nullable(z.string().date())
       })
       .nullable(),
     aarsakInnsending: z.enum(['Endring', 'Ny'])
   })
   .superRefine((val, ctx) => {
-    if (
-      val.inntekt?.beloep &&
-      val.agp?.redusertLoennIAgp?.beloep &&
-      val.inntekt?.beloep < val.agp?.redusertLoennIAgp?.beloep
-    ) {
+    if (val.inntekt?.beloep && val.refusjon?.beloepPerMaaned && val.inntekt?.beloep < val.refusjon?.beloepPerMaaned) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',

@@ -109,10 +109,10 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.lonnISykefravaeret.beloep = stringishToNumber(beloep);
         }
 
-        state = slettFeilmeldingFraState(state, 'lus-input');
+        state = slettFeilmeldingFraState(state, 'refusjon.beloepPerMaaned');
         const nBeloep = stringishToNumber(beloep);
         if (ugyldigEllerNegativtTall(nBeloep)) {
-          state = leggTilFeilmelding(state, 'lus-input', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
+          state = leggTilFeilmelding(state, 'refusjon.beloepPerMaaned', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
         }
         return state;
       })

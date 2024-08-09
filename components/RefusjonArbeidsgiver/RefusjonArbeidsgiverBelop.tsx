@@ -54,8 +54,8 @@ export default function RefusjonArbeidsgiverBelop({
           label='Oppgi refusjonsbeløpet per måned'
           value={bruttoinntekt}
           onChange={(event) => onOppdaterBelop(event.target.value)}
-          id={'lus-input'}
-          error={visFeilmeldingsTekst('lus-input')}
+          id={'refusjon.beloepPerMaaned'}
+          error={visFeilmeldingsTekst('refusjon.beloepPerMaaned')}
           data-cy='refusjon-arbeidsgiver-beloep-input'
         />
         <span className={localStyles.alert_span}>

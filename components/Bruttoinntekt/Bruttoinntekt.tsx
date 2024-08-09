@@ -47,7 +47,7 @@ export default function Bruttoinntekt({
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
-  const endringAarsak: EndringAarsak = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
+  const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
   const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -110,7 +110,7 @@ export default function Bruttoinntekt({
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
   const gjennomsnittligInntekt = erSelvbestemt
-    ? sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt
+    ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
     : bruttoinntekt?.bruttoInntekt;
   const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereinntekt : tidligereinntekt;
 
@@ -201,7 +201,7 @@ export default function Bruttoinntekt({
             bruttoinntekt={bruttoinntekt}
             changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
             changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
-            defaultEndringAarsak={endringAarsak}
+            defaultEndringAarsak={endringAarsak!}
             setEndringAarsakGjelderFra={addIsDirtyForm(setEndringAarsakGjelderFra)}
             setEndringAarsakBleKjent={addIsDirtyForm(setEndringAarsakBleKjent)}
             setPerioder={addIsDirtyForm(setPerioder)}
