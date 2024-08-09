@@ -59,7 +59,7 @@ function validerBelop(refusjon: LonnISykefravaeret, errorStatus: ValiderResultat
   if (typeof refusjon.beloep === 'undefined') {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_BELOP,
-      felt: 'lus-input'
+      felt: 'refusjon.beloepPerMaaned'
     });
   }
 }
@@ -72,7 +72,7 @@ function validerMaksimaltBelop(
   if (refusjon.beloep && bruttoInntekt && bruttoInntekt < refusjon.beloep) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT,
-      felt: 'lus-input'
+      felt: 'refusjon.beloepPerMaaned'
     });
   }
 }

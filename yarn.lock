@@ -3391,17 +3391,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001579":
-  version: 1.0.30001584
-  resolution: "caniuse-lite@npm:1.0.30001584"
-  checksum: 10c0/9f353d7b14ea218bf90f9aa908947be1119f3744bb4080aeef59dd2fbca2ca663a6eecad29deba41f7d02ef9f516240353809f31208396a1ec9824b515467d87
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001587":
-  version: 1.0.30001610
-  resolution: "caniuse-lite@npm:1.0.30001610"
-  checksum: 10c0/015956a0bf2e3e233da3dc00c5632bbb4d416bcd6ced2f839e33e45b197a856234f97cb046e7427b83d7e3a3d6df314dfab1c86eb9d970970e00ad85a50b4933
+"caniuse-lite@npm:^1.0.30001579, caniuse-lite@npm:^1.0.30001587":
+  version: 1.0.30001646
+  resolution: "caniuse-lite@npm:1.0.30001646"
+  checksum: 10c0/ecdd87c08cd63fa32e11311dfa3543a52613b0b99498b6fe6f2c66af65cc27e2f7436fa5b2bc2bcf72174448a7670715b284d420de838bcf3e811864371a2465
   languageName: node
   linkType: hard
 
@@ -7955,7 +7948,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-pretty@npm:11.2.2":
+"pino-pretty@npm:^11.2.2":
   version: 11.2.2
   resolution: "pino-pretty@npm:11.2.2"
   dependencies:
@@ -9061,7 +9054,7 @@ __metadata:
     next-http-proxy-middleware: "npm:1.2.6"
     next-router-mock: "npm:0.9.13"
     pino: "npm:9.2.0"
-    pino-pretty: "npm:11.2.2"
+    pino-pretty: "npm:^11.2.2"
     prettier: "npm:^3.3.3"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"

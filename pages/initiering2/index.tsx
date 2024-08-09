@@ -12,7 +12,7 @@ import lokalStyles from './initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
@@ -25,10 +25,8 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import { PersonnummerSchema } from '../../validators/validerAapenInnsending';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import PeriodeVelger from '../../components/PeriodeVelger/PeriodeVelger';
-import { PeriodeSchema } from '../../validators/validerFulltSkjema';
 import { MottattPeriode } from '../../state/MottattData';
-import parseIsoDate from '../../utils/parseIsoDate';
-import { differenceInDays, formatISO, subYears } from 'date-fns';
+import { differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import { Periode } from '../../state/state';
@@ -44,12 +42,26 @@ const Initiering2: NextPage = () => {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
   let perioder: { fom: Date; tom: Date; id: string }[] = [];
 
   let fulltNavn = '';
   const backendFeil = useRef([] as Feilmelding[]);
+
+  const PeriodeSchema = z
+    .object({
+      fom: z.date({
+        required_error: 'Vennligst fyll inn fra dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      }),
+      tom: z.date({
+        required_error: 'Vennligst fyll inn til dato',
+        invalid_type_error: 'Dette er ikke en dato'
+      })
+    })
+    .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
 
   const skjemaSchema = z
     .object({
@@ -100,10 +112,7 @@ const Initiering2: NextPage = () => {
         }
 
         for (let i = 0; i < sortedPerioder.length - 1; i++) {
-          if (
-            Math.abs(differenceInDays(parseIsoDate(sortedPerioder[i].tom), parseIsoDate(sortedPerioder[i + 1].fom))) >
-            16
-          ) {
+          if (Math.abs(differenceInDays(sortedPerioder[i].tom, sortedPerioder[i + 1].fom)) > 16) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: 'Det kan ikke være mer enn 16 dager mellom periodene',
@@ -139,24 +148,27 @@ const Initiering2: NextPage = () => {
           organisasjonsnummer: formData.organisasjonsnummer,
           fulltNavn: mottatteData.data.fulltNavn,
           personnummer: identitetsnummer,
-          perioder: formData.perioder.map((periode) => {
-            return {
-              fom: parseIsoDate(periode.fom),
-              tom: parseIsoDate(periode.tom)
-            };
-          })
+          perioder: formData.perioder
+            ? formData.perioder.map((periode) => {
+                return {
+                  fom: periode.fom,
+                  tom: periode.tom
+                };
+              })
+            : []
         };
 
         const validationResult = skjema.safeParse(skjemaData);
 
         if (validationResult.success) {
-          const validert = validationResult.data;
+          setIsLoading(true);
+          const validerteData = validationResult.data;
           const orgNavn = arbeidsforhold.find(
-            (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validert.organisasjonsnummer
+            (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
           )?.virksomhetsnavn!;
-          initPerson(validert.fulltNavn, validert.personnummer, validert.organisasjonsnummer, orgNavn);
+          initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
           setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-          initFravaersperiode(validert.perioder as MottattPeriode[]);
+          initFravaersperiode(validerteData.perioder as MottattPeriode[]);
           tilbakestillArbeidsgiverperiode();
           router.push('/arbeidsgiverInitiertInnsending');
         }
@@ -284,7 +296,12 @@ const Initiering2: NextPage = () => {
                   <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
                     Tilbake
                   </Button>
-                  <Button variant='primary' className={lokalStyles.primaryKnapp} disabled={antallSykedager > 16}>
+                  <Button
+                    variant='primary'
+                    className={lokalStyles.primaryKnapp}
+                    disabled={antallSykedager > 16}
+                    loading={isLoading}
+                  >
                     Neste
                   </Button>
                 </div>

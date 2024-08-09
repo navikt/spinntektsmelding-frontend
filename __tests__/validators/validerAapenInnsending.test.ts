@@ -1,4 +1,4 @@
-import validerAapenInnsending, { PersonnummerSchema } from '../../validators/validerAapenInnsending';
+import validerAapenInnsending, { AapenInnsending, PersonnummerSchema } from '../../validators/validerAapenInnsending';
 
 describe('validerAapenInnsending', () => {
   it('should validate PersonnummerSchema', () => {
@@ -14,15 +14,15 @@ describe('validerAapenInnsending', () => {
   });
 
   it('should validate aapenInnsending', () => {
-    const data = {
+    const data: AapenInnsending = {
       sykmeldtFnr: '10107400090',
       avsender: {
         orgnr: '810007842',
         tlf: '12345678'
       },
-      sykmeldingsperioder: [{ fom: new Date(), tom: new Date() }],
+      sykmeldingsperioder: [{ fom: '2002-02-02', tom: '2002-02-02' }],
       agp: {
-        perioder: [{ fom: new Date(), tom: new Date() }],
+        perioder: [{ fom: '2002-02-02', tom: '2002-02-02' }],
         egenmeldinger: [],
         redusertLoennIAgp: {
           beloep: 1000,
@@ -38,7 +38,7 @@ describe('validerAapenInnsending', () => {
       refusjon: {
         beloepPerMaaned: 1000,
         endringer: [],
-        sluttdato: new Date()
+        sluttdato: '2002-02-02'
       },
       aarsakInnsending: 'Endring'
     };

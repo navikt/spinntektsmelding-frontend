@@ -2,10 +2,10 @@ import { isValid, parseISO } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Periode, YesNo } from './state';
+import { Begrunnelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import validerAapenInnsending, { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
-import { SendtPeriode } from './useFyllInnsending';
+import { SendtPeriode, formaterRedusertLoennIAgp } from './useFyllInnsending';
 
 export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
@@ -53,24 +53,18 @@ export default function useFyllAapenInnsending() {
       },
       sykmeldingsperioder: fravaersperioder!
         .filter((periode) => periode.fom && periode.tom)
-        .map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! })),
+        .map((periode) => ({ fom: formatDateForSubmit(periode!.fom!), tom: formatDateForSubmit(periode!.tom!) })),
       agp: {
         perioder: arbeidsgiverperioder!.map((periode) => ({
-          fom: periode!.fom!,
-          tom: periode!.tom!
+          fom: formatDateForSubmit(periode!.fom!),
+          tom: formatDateForSubmit(periode!.tom!)
         })),
         egenmeldinger: egenmeldingsperioder
           ? egenmeldingsperioder
               .filter((periode) => periode.fom && periode.tom)
-              .map((periode) => ({ fom: periode!.fom!, tom: periode!.tom! }))
+              .map((periode) => ({ fom: formatDateForSubmit(periode!.fom!), tom: formatDateForSubmit(periode!.tom!) }))
           : [],
-        redusertLoennIAgp:
-          fullLonnIArbeidsgiverPerioden?.status === 'Nei'
-            ? {
-                beloep: fullLonnIArbeidsgiverPerioden?.utbetalt,
-                begrunnelse: fullLonnIArbeidsgiverPerioden?.begrunnelse
-              }
-            : null
+        redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt!,
@@ -79,7 +73,7 @@ export default function useFyllAapenInnsending() {
           ? naturalytelser?.map((ytelse) => ({
               naturalytelse: ytelse.type,
               verdiBeloep: ytelse.verdi,
-              sluttdato: ytelse.bortfallsdato
+              sluttdato: formatDateForSubmit(ytelse.bortfallsdato)
             }))
           : [],
         endringAarsak: endringAarsak ?? null
@@ -88,7 +82,9 @@ export default function useFyllAapenInnsending() {
         lonnISykefravaeret?.status === 'Ja'
           ? {
               beloepPerMaaned: lonnISykefravaeret.beloep!,
-              sluttdato: refusjonskravetOpphoerer?.opphoersdato ?? null,
+              sluttdato: refusjonskravetOpphoerer?.opphoersdato
+                ? formatDateForSubmit(refusjonskravetOpphoerer?.opphoersdato)
+                : null,
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,
@@ -134,15 +130,15 @@ function finnInnsendbareArbeidsgiverperioder(
     : [];
 }
 
-function konverterRefusjonEndringer(
+export function konverterRefusjonEndringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBeloep> | undefined
 ): RefusjonEndring[] | undefined {
-  const refusjoner =
+  const refusjoner: RefusjonEndring[] | undefined =
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
           beloep: endring.beloep!,
-          startdato: endring.dato!
+          startdato: formatDateForSubmit(endring.dato!)
         }))
       : undefined;
 
@@ -151,4 +147,19 @@ function konverterRefusjonEndringer(
   } else {
     return [];
   }
+}
+
+export function skalSendeArbeidsgiverperiode(begrunnelse?: Begrunnelse, perioder?: Periode[]): boolean {
+  if (begrunnelse && (!perioder || perioder.filter((periode) => periode.fom && periode.tom).length === 0)) {
+    return false;
+  }
+  return true;
+}
+
+function formatDateForSubmit(date?: Date | string): string {
+  if (date instanceof Date) {
+    return formatIsoDate(date);
+  }
+
+  return date ?? '';
 }
