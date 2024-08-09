@@ -5,6 +5,7 @@ import feiltekster from '../utils/feiltekster';
 import parseIsoDate from '../utils/parseIsoDate';
 import { PersonnummerSchema } from '../schema/personnummerSchema';
 import { EndringAarsakSchema } from '../schema/endringAarsakSchema';
+import { OrganisasjonsnummerSchema } from '../schema/organisasjonsnummerSchema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -113,19 +114,6 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
   }
   return val;
 });
-
-export const OrganisasjonsnummerSchema = z
-  .string()
-  .transform((val) => val.replace(/\s/g, ''))
-  .pipe(
-    z
-      .string({
-        required_error: 'Organisasjon er ikke valgt'
-      })
-      .min(9, { message: 'Organisasjonsnummeret er for kort, det må være 9 siffer' })
-      .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
-      .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver' })
-  );
 
 export const telefonNummerSchema = z
   .string({
