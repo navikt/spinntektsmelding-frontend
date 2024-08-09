@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import isFnrNumber from '../utils/isFnrNumber';
-import isMod11Number from '../utils/isMod10Number';
-import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
 import parseIsoDate from '../utils/parseIsoDate';
-import { RefusjonEndringSchema } from '../schema/aapenInnsendingSchema';
+import { PersonnummerSchema } from '../schema/personnummerSchema';
+import { EndringAarsakSchema } from '../schema/endringAarsakSchema';
+import { OrganisasjonsnummerSchema } from '../schema/organisasjonsnummerSchema';
+import { TelefonNummerSchema } from '../schema/telefonNummerSchema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -61,23 +61,6 @@ export const InntektEndringAarsakEnum = z.enum([
   'VarigLoennsendring'
 ]);
 
-export const PeriodeSchema = z
-  .object({
-    fom: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val)),
-    tom: z
-      .date({
-        required_error: 'Vennligst fyll inn til dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val))
-  })
-  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
-
 export const RefusjonEndringSchema = z.object({
   startDato: z
     .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
@@ -131,129 +114,12 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
   return val;
 });
 
-const DatoValideringSchema = z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val));
-
-export const PersonnummerSchema = z
-  .string()
-  .transform((val) => val.replace(/\s/g, ''))
-  .pipe(
-    z
-      .string()
-      .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
-      .max(11, { message: 'Personnummeret er for langt, det må være 11 siffer' })
-      .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer' })
-  );
-
-export const OrganisasjonsnummerSchema = z
-  .string()
-  .transform((val) => val.replace(/\s/g, ''))
-  .pipe(
-    z
-      .string({
-        required_error: 'Organisasjon er ikke valgt'
-      })
-      .min(9, { message: 'Organisasjonsnummeret er for kort, det må være 9 siffer' })
-      .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
-      .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver' })
-  );
-
-const EndringAarsakBonusSchema = z.object({
-  aarsak: z.literal('Bonus')
-});
-
-const EndringAarsakFeilregistrertSchema = z.object({
-  aarsak: z.literal('Feilregistrert')
-});
-
-const EndringAarsakFerieSchema = z.object({
-  aarsak: z.literal('Ferie'),
-  ferier: z.array(PeriodeSchema)
-});
-
-const EndringAarsakFerietrekkSchema = z.object({
-  aarsak: z.literal('Ferietrekk')
-});
-
-const EndringAarsakSammeSomSistSchema = z.object({
-  aarsak: z.literal('SammeSomSist')
-});
-
-const EndringAarsakNyansattSchema = z.object({
-  aarsak: z.literal('Nyansatt')
-});
-
-const EndringAarsakNyStillingSchema = z.object({
-  aarsak: z.literal('NyStilling'),
-  gjelderFra: DatoValideringSchema
-});
-
-const EndringAarsakNyStillingsprosentSchema = z.object({
-  aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: DatoValideringSchema
-});
-
-const EndringAarsakPermisjonSchema = z.object({
-  aarsak: z.literal('Permisjon'),
-  permisjoner: z.array(PeriodeSchema)
-});
-
-const EndringAarsakPermitteringSchema = z.object({
-  aarsak: z.literal('Permittering'),
-  permitteringer: z.array(PeriodeSchema)
-});
-
-const EndringAarsakSykefravaerSchema = z.object({
-  aarsak: z.literal('Sykefravaer'),
-  sykefravaer: z.array(PeriodeSchema)
-});
-
-const EndringAarsakTariffendringSchema = z.object({
-  aarsak: z.literal('Tariffendring'),
-  gjelderFra: DatoValideringSchema,
-  bleKjent: DatoValideringSchema
-});
-
-const EndringAarsakVarigLoennsendringSchema = z.object({
-  aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: DatoValideringSchema
-});
-
-export const EndringAarsakSchema = z.discriminatedUnion(
-  'aarsak',
-  [
-    EndringAarsakBonusSchema,
-    EndringAarsakFeilregistrertSchema,
-    EndringAarsakFerieSchema,
-    EndringAarsakFerietrekkSchema,
-    EndringAarsakNyansattSchema,
-    EndringAarsakNyStillingSchema,
-    EndringAarsakNyStillingsprosentSchema,
-    EndringAarsakPermisjonSchema,
-    EndringAarsakPermitteringSchema,
-    EndringAarsakSykefravaerSchema,
-    EndringAarsakTariffendringSchema,
-    EndringAarsakVarigLoennsendringSchema,
-    EndringAarsakSammeSomSistSchema
-  ],
-  {
-    errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak for endringen.' })
-  }
-);
-
-export const telefonNummerSchema = z
-  .string({
-    required_error: 'Vennligst fyll inn telefonnummer',
-    invalid_type_error: 'Dette er ikke et telefonnummer'
-  })
-  .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
-  .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' });
-
 const schema = z
   .object({
     sykmeldtFnr: PersonnummerSchema,
     avsender: z.object({
       orgnr: OrganisasjonsnummerSchema,
-      tlf: telefonNummerSchema
+      tlf: TelefonNummerSchema
     }),
     sykmeldingsperioder: SykPeriodeListeSchema,
     agp: z.object({

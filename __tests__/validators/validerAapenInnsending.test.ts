@@ -1,18 +1,6 @@
-import validerAapenInnsending, { AapenInnsending, PersonnummerSchema } from '../../validators/validerAapenInnsending';
+import validerAapenInnsending, { AapenInnsending } from '../../validators/validerAapenInnsending';
 
 describe('validerAapenInnsending', () => {
-  it('should validate PersonnummerSchema', () => {
-    const data = '10107400090';
-
-    expect(PersonnummerSchema.safeParse(data).success).toBe(true);
-  });
-
-  it('should invalidate PersonnummerSchema', () => {
-    const data = '12345678';
-
-    expect(PersonnummerSchema.safeParse(data).success).toBe(false);
-  });
-
   it('should validate aapenInnsending', () => {
     const data: AapenInnsending = {
       sykmeldtFnr: '10107400090',
