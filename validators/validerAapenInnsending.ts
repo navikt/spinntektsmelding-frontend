@@ -1,11 +1,10 @@
 import { z } from 'zod';
-import isMod11Number from '../utils/isMod10Number';
-import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
 import parseIsoDate from '../utils/parseIsoDate';
 import { PersonnummerSchema } from '../schema/personnummerSchema';
 import { EndringAarsakSchema } from '../schema/endringAarsakSchema';
 import { OrganisasjonsnummerSchema } from '../schema/organisasjonsnummerSchema';
+import { TelefonNummerSchema } from '../schema/telefonNummerSchema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -115,20 +114,12 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
   return val;
 });
 
-export const telefonNummerSchema = z
-  .string({
-    required_error: 'Vennligst fyll inn telefonnummer',
-    invalid_type_error: 'Dette er ikke et telefonnummer'
-  })
-  .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
-  .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' });
-
 const schema = z
   .object({
     sykmeldtFnr: PersonnummerSchema,
     avsender: z.object({
       orgnr: OrganisasjonsnummerSchema,
-      tlf: telefonNummerSchema
+      tlf: TelefonNummerSchema
     }),
     sykmeldingsperioder: SykPeriodeListeSchema,
     agp: z.object({

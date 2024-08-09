@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { telefonNummerSchema } from '../validators/validerAapenInnsending';
 import { EndringAarsakSchema } from './endringAarsakSchema';
+import { TelefonNummerSchema } from './telefonNummerSchema';
 
 const JaNeiSchema = z.enum(['Ja', 'Nei'], {
   errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer.' })
@@ -34,7 +34,7 @@ export default z
           });
         }
       }),
-    telefon: telefonNummerSchema,
+    telefon: TelefonNummerSchema,
     opplysningerBekreftet: z.boolean().refine((value) => value === true, {
       message: 'Vennligst bekreft at opplysningene er riktige og fullstendige.'
     }),
