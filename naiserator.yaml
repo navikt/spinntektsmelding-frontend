@@ -55,6 +55,14 @@ spec:
           namespace: personbruker
         - application: im-api
           namespace: helsearbeidsgiver
+  {{#if inbound-apps}}
+    inbound:
+      rules:
+      {{#each inbound-apps as |app|}}
+        - application: {{app.app}}
+          namespace: '{{{app.namespace}}}'
+      {{/each}}
+  {{/if}}
   env:
     - name: API_URL
       value: '{{{api-url}}}'
