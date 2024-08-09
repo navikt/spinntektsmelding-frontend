@@ -8,12 +8,7 @@ import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
-import {
-  BegrunnelseRedusertLoennIAgp,
-  EndringAarsak,
-  EndringAarsakSchema,
-  RefusjonEndring
-} from '../validators/validerAapenInnsending';
+import { EndringAarsak, EndringAarsakSchema, RefusjonEndring } from '../validators/validerAapenInnsending';
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
@@ -102,7 +97,6 @@ export default function useFyllInnsending() {
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
-  // const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
@@ -158,7 +152,7 @@ export default function useFyllInnsending() {
     );
 
     const endringAarsakParsed = endringAarsak ? EndringAarsakSchema.parse(endringAarsak) : null;
-    console.log('fullLonnIArbeidsgiverPerioden', fullLonnIArbeidsgiverPerioden);
+
     const skjemaData: FullInnsending = {
       forespoerselId,
       agp: {
