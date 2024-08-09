@@ -8,10 +8,11 @@ import skjemaVariant from '../config/skjemavariant';
 import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
-import { EndringAarsak, EndringAarsakSchema, RefusjonEndring } from '../validators/validerAapenInnsending';
+import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
+import { EndringAarsakSchema } from '../schema/endringAarsakSchema';
 
 export interface SendtPeriode {
   fom: TDateISODate;

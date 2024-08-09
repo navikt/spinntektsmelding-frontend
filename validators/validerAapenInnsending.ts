@@ -1,11 +1,10 @@
 import { z } from 'zod';
-import isFnrNumber from '../utils/isFnrNumber';
 import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
 import parseIsoDate from '../utils/parseIsoDate';
-import { PeriodeSchema } from '../schema/periodeSchema';
 import { PersonnummerSchema } from '../schema/personnummerSchema';
+import { EndringAarsakSchema } from '../schema/endringAarsakSchema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -115,8 +114,6 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
   return val;
 });
 
-const DatoValideringSchema = z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val));
-
 export const OrganisasjonsnummerSchema = z
   .string()
   .transform((val) => val.replace(/\s/g, ''))
@@ -129,89 +126,6 @@ export const OrganisasjonsnummerSchema = z
       .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
       .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver' })
   );
-
-const EndringAarsakBonusSchema = z.object({
-  aarsak: z.literal('Bonus')
-});
-
-const EndringAarsakFeilregistrertSchema = z.object({
-  aarsak: z.literal('Feilregistrert')
-});
-
-const EndringAarsakFerieSchema = z.object({
-  aarsak: z.literal('Ferie'),
-  ferier: z.array(PeriodeSchema)
-});
-
-const EndringAarsakFerietrekkSchema = z.object({
-  aarsak: z.literal('Ferietrekk')
-});
-
-const EndringAarsakSammeSomSistSchema = z.object({
-  aarsak: z.literal('SammeSomSist')
-});
-
-const EndringAarsakNyansattSchema = z.object({
-  aarsak: z.literal('Nyansatt')
-});
-
-const EndringAarsakNyStillingSchema = z.object({
-  aarsak: z.literal('NyStilling'),
-  gjelderFra: DatoValideringSchema
-});
-
-const EndringAarsakNyStillingsprosentSchema = z.object({
-  aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: DatoValideringSchema
-});
-
-const EndringAarsakPermisjonSchema = z.object({
-  aarsak: z.literal('Permisjon'),
-  permisjoner: z.array(PeriodeSchema)
-});
-
-const EndringAarsakPermitteringSchema = z.object({
-  aarsak: z.literal('Permittering'),
-  permitteringer: z.array(PeriodeSchema)
-});
-
-const EndringAarsakSykefravaerSchema = z.object({
-  aarsak: z.literal('Sykefravaer'),
-  sykefravaer: z.array(PeriodeSchema)
-});
-
-const EndringAarsakTariffendringSchema = z.object({
-  aarsak: z.literal('Tariffendring'),
-  gjelderFra: DatoValideringSchema,
-  bleKjent: DatoValideringSchema
-});
-
-const EndringAarsakVarigLoennsendringSchema = z.object({
-  aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: DatoValideringSchema
-});
-
-export const EndringAarsakSchema = z.discriminatedUnion(
-  'aarsak',
-  [
-    EndringAarsakBonusSchema,
-    EndringAarsakFeilregistrertSchema,
-    EndringAarsakFerieSchema,
-    EndringAarsakFerietrekkSchema,
-    EndringAarsakNyansattSchema,
-    EndringAarsakNyStillingSchema,
-    EndringAarsakNyStillingsprosentSchema,
-    EndringAarsakPermisjonSchema,
-    EndringAarsakPermitteringSchema,
-    EndringAarsakSykefravaerSchema,
-    EndringAarsakTariffendringSchema,
-    EndringAarsakVarigLoennsendringSchema,
-    EndringAarsakSammeSomSistSchema
-  ],
-  {
-    errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak for endringen.' })
-  }
-);
 
 export const telefonNummerSchema = z
   .string({

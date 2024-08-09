@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { OrganisasjonsnummerSchema } from '../validators/validerAapenInnsending';
 import { PeriodeSchema } from './periodeSchema';
 import { PersonnummerSchema } from './personnummerSchema';
+import { OrganisasjonsnummerSchema } from './organisasjonsnummerSchema';
 
 export default z.object({
   organisasjonsnummer: OrganisasjonsnummerSchema.refine((val) => val.length < 19, {
