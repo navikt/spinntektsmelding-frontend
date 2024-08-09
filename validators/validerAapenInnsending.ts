@@ -4,7 +4,8 @@ import isMod11Number from '../utils/isMod10Number';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
 import parseIsoDate from '../utils/parseIsoDate';
-import { RefusjonEndringSchema } from '../schema/aapenInnsendingSchema';
+import { PeriodeSchema } from '../schema/periodeSchema';
+import { PersonnummerSchema } from '../schema/personnummerSchema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -61,23 +62,6 @@ export const InntektEndringAarsakEnum = z.enum([
   'VarigLoennsendring'
 ]);
 
-export const PeriodeSchema = z
-  .object({
-    fom: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val)),
-    tom: z
-      .date({
-        required_error: 'Vennligst fyll inn til dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val))
-  })
-  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
-
 export const RefusjonEndringSchema = z.object({
   startDato: z
     .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
@@ -132,17 +116,6 @@ const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => 
 });
 
 const DatoValideringSchema = z.date(datoManglerFeilmelding).transform((val) => toLocalIso(val));
-
-export const PersonnummerSchema = z
-  .string()
-  .transform((val) => val.replace(/\s/g, ''))
-  .pipe(
-    z
-      .string()
-      .min(11, { message: 'Personnummeret er for kort, det må være 11 siffer' })
-      .max(11, { message: 'Personnummeret er for langt, det må være 11 siffer' })
-      .refine((val) => isFnrNumber(val), { message: 'Ugyldig personnummer' })
-  );
 
 export const OrganisasjonsnummerSchema = z
   .string()

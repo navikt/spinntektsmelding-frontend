@@ -1,5 +1,7 @@
 import { z } from 'zod';
-import { OrganisasjonsnummerSchema, PersonnummerSchema } from '../validators/validerAapenInnsending';
+import { OrganisasjonsnummerSchema } from '../validators/validerAapenInnsending';
+import { PeriodeSchema } from './apiPeriodeSchema';
+import { PersonnummerSchema } from './personnummerSchema';
 
 export default z.object({
   kvitteringDokument: z.object({

@@ -5,12 +5,12 @@ import feiltekster from '../utils/feiltekster';
 import {
   EndringAarsakSchema,
   OrganisasjonsnummerSchema,
-  PersonnummerSchema,
   NaturalytelseEnum,
   BegrunnelseRedusertLoennIAgp,
-  PeriodeSchema,
   RefusjonEndringSchema
 } from '../validators/validerAapenInnsending';
+import { PeriodeSchema } from './apiPeriodeSchema';
+import { PersonnummerSchema } from './personnummerSchema';
 
 const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
   for (let i = 0; i < val.length - 1; i++) {
