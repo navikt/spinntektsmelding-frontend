@@ -3,30 +3,8 @@ import { isTlfNumber } from '../utils/isTlfNumber';
 
 import { NaturalytelseEnum, BegrunnelseRedusertLoennIAgp } from '../validators/validerAapenInnsending';
 import { EndringAarsakSchema } from './apiEndringAarsakSchema';
-
-const RefusjonEndringSchema = z.object({
-  startdato: z.string({ required_error: 'Vennligst fyll inn dato for endring i refusjon' }).date(),
-  beloep: z
-    .number({ required_error: 'Vennligst fyll inn beløpet for endret refusjon.' })
-    .min(0, { message: 'Beløpet må være større enn eller lik 0' })
-});
-
-const PeriodeSchema = z
-  .object({
-    fom: z
-      .string({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .date(),
-    tom: z
-      .string({
-        required_error: 'Vennligst fyll inn til dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .date()
-  })
-  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
+import { PeriodeSchema } from './apiPeriodeSchema';
+import { RefusjonEndringSchema } from './apiRefusjonEndringSchema';
 
 const fullInnsendingSchema = z.object({
   forespoerselId: z.string().uuid(),

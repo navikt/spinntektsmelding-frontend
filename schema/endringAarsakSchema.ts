@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { PeriodeSchema } from './periodeSchema';
 
-const EndringAarsakBonusSchema = z.object({
+export const EndringAarsakBonusSchema = z.object({
   aarsak: z.literal('Bonus')
 });
 
-const EndringAarsakFeilregistrertSchema = z.object({
+export const EndringAarsakFeilregistrertSchema = z.object({
   aarsak: z.literal('Feilregistrert')
 });
 
@@ -14,15 +14,15 @@ const EndringAarsakFerieSchema = z.object({
   ferier: z.array(PeriodeSchema)
 });
 
-const EndringAarsakFerietrekkSchema = z.object({
+export const EndringAarsakFerietrekkSchema = z.object({
   aarsak: z.literal('Ferietrekk')
 });
 
-const EndringAarsakSammeSomSistSchema = z.object({
+export const EndringAarsakSammeSomSistSchema = z.object({
   aarsak: z.literal('SammeSomSist')
 });
 
-const EndringAarsakNyansattSchema = z.object({
+export const EndringAarsakNyansattSchema = z.object({
   aarsak: z.literal('Nyansatt')
 });
 

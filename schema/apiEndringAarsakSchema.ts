@@ -1,29 +1,16 @@
 import { z } from 'zod';
 import { PeriodeSchema } from './apiPeriodeSchema';
-
-const EndringAarsakBonusSchema = z.object({
-  aarsak: z.literal('Bonus')
-});
-
-const EndringAarsakFeilregistrertSchema = z.object({
-  aarsak: z.literal('Feilregistrert')
-});
+import {
+  EndringAarsakBonusSchema,
+  EndringAarsakFeilregistrertSchema,
+  EndringAarsakFerietrekkSchema,
+  EndringAarsakNyansattSchema,
+  EndringAarsakSammeSomSistSchema
+} from './endringAarsakSchema';
 
 const EndringAarsakFerieSchema = z.object({
   aarsak: z.literal('Ferie'),
   ferier: z.array(PeriodeSchema)
-});
-
-const EndringAarsakFerietrekkSchema = z.object({
-  aarsak: z.literal('Ferietrekk')
-});
-
-const EndringAarsakSammeSomSistSchema = z.object({
-  aarsak: z.literal('SammeSomSist')
-});
-
-const EndringAarsakNyansattSchema = z.object({
-  aarsak: z.literal('Nyansatt')
 });
 
 const EndringAarsakNyStillingSchema = z.object({

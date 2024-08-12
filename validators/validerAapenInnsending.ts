@@ -7,6 +7,7 @@ import { OrganisasjonsnummerSchema } from '../schema/organisasjonsnummerSchema';
 import { TelefonNummerSchema } from '../schema/telefonNummerSchema';
 import { toLocalIso } from '../utils/toLocalIso';
 import { RefusjonEndringSchema } from '../schema/apiRefusjonEndringSchema';
+import { PeriodeSchema } from '../schema/apiPeriodeSchema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -68,22 +69,7 @@ const datoManglerFeilmelding = {
   invalid_type_error: 'Dette er ikke en dato'
 };
 
-const SykPeriodeSchema = z
-  .object({
-    fom: z
-      .string({
-        required_error: 'Vennligst fyll inn fra dato'
-      })
-      .date(),
-    tom: z
-      .string({
-        required_error: 'Vennligst fyll inn til dato'
-      })
-      .date()
-  })
-  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
-
-const SykPeriodeListeSchema = z.array(SykPeriodeSchema).transform((val, ctx) => {
+const SykPeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
   for (let i = 0; i < val.length - 1; i++) {
     const tom = parseIsoDate(val[i].tom);
     const fom = parseIsoDate(val[i + 1].fom);
@@ -108,7 +94,7 @@ const schema = z
     }),
     sykmeldingsperioder: SykPeriodeListeSchema,
     agp: z.object({
-      perioder: z.array(SykPeriodeSchema),
+      perioder: z.array(PeriodeSchema),
       egenmeldinger: SykPeriodeListeSchema,
       redusertLoennIAgp: z.nullable(
         z
