@@ -1,6 +1,6 @@
 import useBoundStore from '../state/useBoundStore';
 import logEvent from './logEvent';
-import useFyllInnsending, { InnsendingSkjema } from '../state/useFyllInnsending';
+import useFyllInnsending from '../state/useFyllInnsending';
 import isValidUUID from './isValidUUID';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';

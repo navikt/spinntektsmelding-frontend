@@ -5,6 +5,8 @@ import { PersonnummerSchema } from '../schema/personnummerSchema';
 import { EndringAarsakSchema } from '../schema/endringAarsakSchema';
 import { OrganisasjonsnummerSchema } from '../schema/organisasjonsnummerSchema';
 import { TelefonNummerSchema } from '../schema/telefonNummerSchema';
+import { toLocalIso } from '../utils/toLocalIso';
+import { RefusjonEndringSchema } from '../schema/apiRefusjonEndringSchema';
 
 export const NaturalytelseEnum = z.enum([
   'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
@@ -60,23 +62,6 @@ export const InntektEndringAarsakEnum = z.enum([
   'Tariffendring',
   'VarigLoennsendring'
 ]);
-
-export const RefusjonEndringSchema = z.object({
-  startDato: z
-    .date({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
-    .transform((val) => toLocalIso(val)),
-  beloep: z
-    .number({ required_error: 'Vennligst fyll inn beløpet for endret refusjon.' })
-    .min(0, { message: 'Beløpet må være større enn eller lik 0' })
-});
-
-const leftPad = (val: number) => {
-  return val < 10 ? `0${val}` : val;
-};
-
-export const toLocalIso = (val: Date) => {
-  return `${val.getFullYear()}-${leftPad(val.getMonth() + 1)}-${leftPad(val.getDate())}`;
-};
 
 const datoManglerFeilmelding = {
   required_error: 'Vennligst fyll inn fra dato',
@@ -162,18 +147,17 @@ const schema = z
         beloepPerMaaned: z
           .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
           .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-        endringer: z.union([
-          z.array(RefusjonEndringSchema),
+        endringer: z.array(RefusjonEndringSchema).or(
           z.tuple([], {
             errorMap: (error) => {
-              if (error.code === 'too_big') {
+              if (error.code === z.ZodIssueCode.too_big) {
                 return { message: 'Vennligst fyll inn endringer i refusjonsbeløpet i perioden' };
               }
-              return error;
+              return { message: error.message ?? 'Ukjent feil' };
             }
           })
-        ]),
-        sluttdato: z.nullable(z.string().date())
+        ),
+        sluttdato: z.string().date().nullable()
       })
       .nullable(),
     aarsakInnsending: z.enum(['Endring', 'Ny'])

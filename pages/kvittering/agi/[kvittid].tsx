@@ -245,9 +245,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       beloep: endring.beloep
     }));
   } else {
+    console.log('kvitteringData:', kvitteringData?.refusjon?.endringer);
     refusjonEndringer = kvitteringData?.refusjon?.endringer
       ? kvitteringData?.refusjon?.endringer.map((endring) => ({
-          dato: parseIsoDate(endring.startDato),
+          dato: parseIsoDate(endring.startdato),
           beloep: endring.beloep
         }))
       : [];

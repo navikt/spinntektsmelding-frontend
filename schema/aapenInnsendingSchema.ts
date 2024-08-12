@@ -2,15 +2,12 @@ import { z } from 'zod';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import feiltekster from '../utils/feiltekster';
 
-import {
-  NaturalytelseEnum,
-  BegrunnelseRedusertLoennIAgp,
-  RefusjonEndringSchema
-} from '../validators/validerAapenInnsending';
+import { NaturalytelseEnum, BegrunnelseRedusertLoennIAgp } from '../validators/validerAapenInnsending';
 import { PeriodeSchema } from './apiPeriodeSchema';
 import { PersonnummerSchema } from './personnummerSchema';
 import { EndringAarsakSchema } from './endringAarsakSchema';
 import { OrganisasjonsnummerSchema } from './organisasjonsnummerSchema';
+import { RefusjonEndringSchema } from './refusjonEndringSchema';
 
 const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
   for (let i = 0; i < val.length - 1; i++) {
