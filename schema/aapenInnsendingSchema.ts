@@ -1,84 +1,87 @@
 import { z } from 'zod';
-import { isTlfNumber } from '../utils/isTlfNumber';
-import feiltekster from '../utils/feiltekster';
 
-import { NaturalytelseEnum, BegrunnelseRedusertLoennIAgp } from '../validators/validerAapenInnsending';
-import { PeriodeSchema } from './apiPeriodeSchema';
+import { apiPeriodeSchema } from './apiPeriodeSchema';
 import { PersonnummerSchema } from './personnummerSchema';
 import { EndringAarsakSchema } from './endringAarsakSchema';
 import { OrganisasjonsnummerSchema } from './organisasjonsnummerSchema';
-import { RefusjonEndringSchema } from './refusjonEndringSchema';
+import { TelefonNummerSchema } from './telefonNummerSchema';
+import { toLocalIso } from '../utils/toLocalIso';
+import { RefusjonEndringSchema } from './apiRefusjonEndringSchema';
+import { PeriodeListeSchema } from './periodeListeSchema';
+import { NaturalytelseEnum } from './NaturalytelseEnum';
+import { BegrunnelseRedusertLoennIAgp } from './begrunnelseRedusertLoennIAgp';
 
-const PeriodeListeSchema = z.array(PeriodeSchema).transform((val, ctx) => {
-  for (let i = 0; i < val.length - 1; i++) {
-    const tom = new Date(val[i].tom);
-    const fom = new Date(val[i + 1].fom);
-    const forskjellMs = Number(tom) - Number(fom);
-    const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
-    if (forskjellDager > 16) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: feiltekster.FOR_MANGE_DAGER_MELLOM
-      });
-    }
-  }
-  return val;
-});
-
-const aapenInnsendingSchema = z.object({
-  sykmeldtFnr: PersonnummerSchema,
-  avsender: z.object({
-    orgnr: OrganisasjonsnummerSchema,
-    tlf: z
-      .string({
-        required_error: 'Vennligst fyll inn telefonnummer',
-        invalid_type_error: 'Dette er ikke et telefonnummer'
-      })
-      .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
-      .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' })
-  }),
-  sykmeldingsperioder: PeriodeListeSchema,
-  agp: z.object({
-    perioder: z.array(PeriodeSchema),
-    egenmeldinger: z.union([z.array(PeriodeSchema), z.tuple([])]),
-    redusertLoennIAgp: z.optional(
-      z.object({
-        beloep: z.number().min(0),
-        begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
-          required_error: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
+const aapenInnsendingSchema = z
+  .object({
+    sykmeldtFnr: PersonnummerSchema,
+    avsender: z.object({
+      orgnr: OrganisasjonsnummerSchema,
+      tlf: TelefonNummerSchema
+    }),
+    sykmeldingsperioder: PeriodeListeSchema,
+    agp: z.object({
+      perioder: z.array(apiPeriodeSchema),
+      egenmeldinger: PeriodeListeSchema,
+      redusertLoennIAgp: z.nullable(
+        z
+          .object({
+            beloep: z.number({ required_error: 'Angi beløp utbetalt under arbeidsgiverperioden' }).min(0),
+            begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
+              required_error: 'Velg begrunnelse for kort arbeidsgiverperiode.'
+            })
+          })
+          .refine((val) => val.beloep >= 0, { message: 'Beløpet må være større eller lik 0' })
+      )
+    }),
+    inntekt: z.optional(
+      z
+        .object({
+          beloep: z
+            .number({ required_error: 'Vennligst angi månedsinntekt' })
+            .min(0, 'Månedsinntekt må være større enn eller lik 0'),
+          inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
+          naturalytelser: z.union([
+            z.array(
+              z.object({
+                naturalytelse: NaturalytelseEnum,
+                verdiBeloep: z.number().min(0),
+                sluttdato: z.date().transform((val) => toLocalIso(val))
+              })
+            ),
+            z.tuple([])
+          ]),
+          endringAarsak: EndringAarsakSchema.nullable()
         })
-      })
-    )
-  }),
-  inntekt: z.optional(
-    z.object({
-      beloep: z
-        .number({ required_error: 'Vennligst angi månedsinntekt' })
-        .min(0, 'Månedsinntekt må være større enn eller lik 0'),
-      inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
-      naturalytelser: z.union([
-        z.array(
-          z.object({
-            naturalytelse: NaturalytelseEnum,
-            verdiBeloep: z.number().min(0),
-            sluttdato: z.date()
+        .optional()
+    ),
+    refusjon: z
+      .object({
+        beloepPerMaaned: z
+          .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
+          .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
+        endringer: z.array(RefusjonEndringSchema).or(
+          z.tuple([], {
+            errorMap: (error) => {
+              if (error.code === z.ZodIssueCode.too_big) {
+                return { message: 'Vennligst fyll inn endringer i refusjonsbeløpet i perioden' };
+              }
+              return { message: error.message ?? 'Ukjent feil' };
+            }
           })
         ),
-        z.tuple([])
-      ]),
-      endringAarsak: z.optional(EndringAarsakSchema)
-    })
-  ),
-  refusjon: z.optional(
-    z.object({
-      beloepPerMaaned: z
-        .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
-        .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-      endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
-      sluttdato: z.date().nullable()
-    })
-  ),
-  aarsakInnsending: z.enum(['Endring', 'Ny'])
-});
+        sluttdato: z.string().date().nullable()
+      })
+      .nullable(),
+    aarsakInnsending: z.enum(['Endring', 'Ny'])
+  })
+  .superRefine((val, ctx) => {
+    if (val.inntekt?.beloep && val.refusjon?.beloepPerMaaned && val.inntekt?.beloep < val.refusjon?.beloepPerMaaned) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
+        path: ['refusjon', 'beloepPerMaaned']
+      });
+    }
+  });
 
 export default aapenInnsendingSchema;

@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { isTlfNumber } from '../utils/isTlfNumber';
 
-import { NaturalytelseEnum, BegrunnelseRedusertLoennIAgp } from '../validators/validerAapenInnsending';
 import { EndringAarsakSchema } from './apiEndringAarsakSchema';
-import { PeriodeSchema } from './apiPeriodeSchema';
+import { apiPeriodeSchema } from './apiPeriodeSchema';
 import { RefusjonEndringSchema } from './apiRefusjonEndringSchema';
+import { NaturalytelseEnum } from './NaturalytelseEnum';
+import { BegrunnelseRedusertLoennIAgp } from './begrunnelseRedusertLoennIAgp';
 
 const fullInnsendingSchema = z.object({
   forespoerselId: z.string().uuid(),
@@ -17,8 +18,8 @@ const fullInnsendingSchema = z.object({
     .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' }),
   agp: z
     .object({
-      perioder: z.array(PeriodeSchema),
-      egenmeldinger: z.union([z.array(PeriodeSchema), z.tuple([])]),
+      perioder: z.array(apiPeriodeSchema),
+      egenmeldinger: z.union([z.array(apiPeriodeSchema), z.tuple([])]),
       redusertLoennIAgp: z.nullable(
         z.object({
           beloep: z.number().min(0),

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PeriodeSchema } from './apiPeriodeSchema';
+import { apiPeriodeSchema } from './apiPeriodeSchema';
 import {
   EndringAarsakBonusSchema,
   EndringAarsakFeilregistrertSchema,
@@ -8,31 +8,37 @@ import {
   EndringAarsakNyansattSchema,
   EndringAarsakNyStillingSchema,
   EndringAarsakNyStillingsprosentSchema,
+  EndringAarsakPermisjonSchema,
+  EndringAarsakPermitteringSchema,
   EndringAarsakSammeSomSistSchema,
+  EndringAarsakSykefravaerSchema,
   EndringAarsakTariffendringSchema,
   EndringAarsakVarigLoennsendringSchema
 } from './endringAarsakSchema';
 
 const apiEndringAarsakFerieSchema = EndringAarsakFerieSchema.merge(
   z.object({
-    ferier: z.array(PeriodeSchema)
+    ferier: z.array(apiPeriodeSchema)
   })
 );
 
-const EndringAarsakPermisjonSchema = z.object({
-  aarsak: z.literal('Permisjon'),
-  permisjoner: z.array(PeriodeSchema)
-});
+const apiEndringAarsakPermisjonSchema = EndringAarsakPermisjonSchema.merge(
+  z.object({
+    permisjoner: z.array(apiPeriodeSchema)
+  })
+);
 
-const EndringAarsakPermitteringSchema = z.object({
-  aarsak: z.literal('Permittering'),
-  permitteringer: z.array(PeriodeSchema)
-});
+const apiEndringAarsakPermitteringSchema = EndringAarsakPermitteringSchema.merge(
+  z.object({
+    permitteringer: z.array(apiPeriodeSchema)
+  })
+);
 
-const EndringAarsakSykefravaerSchema = z.object({
-  aarsak: z.literal('Sykefravaer'),
-  sykefravaer: z.array(PeriodeSchema)
-});
+const apiEndringAarsakSykefravaerSchema = EndringAarsakSykefravaerSchema.merge(
+  z.object({
+    sykefravaer: z.array(apiPeriodeSchema)
+  })
+);
 
 export const EndringAarsakSchema = z.discriminatedUnion(
   'aarsak',
@@ -44,9 +50,9 @@ export const EndringAarsakSchema = z.discriminatedUnion(
     EndringAarsakNyansattSchema,
     EndringAarsakNyStillingSchema,
     EndringAarsakNyStillingsprosentSchema,
-    EndringAarsakPermisjonSchema,
-    EndringAarsakPermitteringSchema,
-    EndringAarsakSykefravaerSchema,
+    apiEndringAarsakPermisjonSchema,
+    apiEndringAarsakPermitteringSchema,
+    apiEndringAarsakSykefravaerSchema,
     EndringAarsakTariffendringSchema,
     EndringAarsakVarigLoennsendringSchema,
     EndringAarsakSammeSomSistSchema
