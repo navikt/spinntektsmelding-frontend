@@ -3,25 +3,21 @@ import { PeriodeSchema } from './apiPeriodeSchema';
 import {
   EndringAarsakBonusSchema,
   EndringAarsakFeilregistrertSchema,
+  EndringAarsakFerieSchema,
   EndringAarsakFerietrekkSchema,
   EndringAarsakNyansattSchema,
-  EndringAarsakSammeSomSistSchema
+  EndringAarsakNyStillingSchema,
+  EndringAarsakNyStillingsprosentSchema,
+  EndringAarsakSammeSomSistSchema,
+  EndringAarsakTariffendringSchema,
+  EndringAarsakVarigLoennsendringSchema
 } from './endringAarsakSchema';
 
-const EndringAarsakFerieSchema = z.object({
-  aarsak: z.literal('Ferie'),
-  ferier: z.array(PeriodeSchema)
-});
-
-const EndringAarsakNyStillingSchema = z.object({
-  aarsak: z.literal('NyStilling'),
-  gjelderFra: z.string().date()
-});
-
-const EndringAarsakNyStillingsprosentSchema = z.object({
-  aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: z.string().date()
-});
+const apiEndringAarsakFerieSchema = EndringAarsakFerieSchema.merge(
+  z.object({
+    ferier: z.array(PeriodeSchema)
+  })
+);
 
 const EndringAarsakPermisjonSchema = z.object({
   aarsak: z.literal('Permisjon'),
@@ -38,23 +34,12 @@ const EndringAarsakSykefravaerSchema = z.object({
   sykefravaer: z.array(PeriodeSchema)
 });
 
-const EndringAarsakTariffendringSchema = z.object({
-  aarsak: z.literal('Tariffendring'),
-  gjelderFra: z.string().date(),
-  bleKjent: z.string().date()
-});
-
-const EndringAarsakVarigLoennsendringSchema = z.object({
-  aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: z.string().date()
-});
-
 export const EndringAarsakSchema = z.discriminatedUnion(
   'aarsak',
   [
     EndringAarsakBonusSchema,
     EndringAarsakFeilregistrertSchema,
-    EndringAarsakFerieSchema,
+    apiEndringAarsakFerieSchema,
     EndringAarsakFerietrekkSchema,
     EndringAarsakNyansattSchema,
     EndringAarsakNyStillingSchema,
