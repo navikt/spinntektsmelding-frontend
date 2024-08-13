@@ -10,7 +10,7 @@ import useFyllDelvisInnsending from '../state/useFyllDelvisInnsending';
 import { UseFormSetError } from 'react-hook-form';
 import validerDelvisInntektsmelding from './validerDelvisInntektsmelding';
 import { z } from 'zod';
-import fullInnsendingSchema from '../schema/fullInnsendingSchema';
+import { delvisInnsendingSchema } from '../schema/delvisInnsendingSchema';
 
 export default function useSendInnDelvisSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -67,9 +67,6 @@ export default function useSendInnDelvisSkjema(
 
       return false;
     }
-    const delvisInnsendingSchema = fullInnsendingSchema.omit({
-      forespoerselId: true
-    });
 
     type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
 
