@@ -3177,13 +3177,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axe-core@npm:4.7.2":
-  version: 4.7.2
-  resolution: "axe-core@npm:4.7.2"
-  checksum: 10c0/8dfc61f038fbd9623ae8a264c8a475d887113a027fb440a2b377b82ffd300e71d1a0bcf042ff13b517a8d548b34c44b4159eff693725c5d7cde240d0aa68feac
-  languageName: node
-  linkType: hard
-
 "axe-core@npm:4.9.1":
   version: 4.9.1
   resolution: "axe-core@npm:4.9.1"
@@ -6447,15 +6440,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-axe@npm:8.0.0":
-  version: 8.0.0
-  resolution: "jest-axe@npm:8.0.0"
+"jest-axe@npm:9.0.0":
+  version: 9.0.0
+  resolution: "jest-axe@npm:9.0.0"
   dependencies:
-    axe-core: "npm:4.7.2"
+    axe-core: "npm:4.9.1"
     chalk: "npm:4.1.2"
     jest-matcher-utils: "npm:29.2.2"
     lodash.merge: "npm:4.6.2"
-  checksum: 10c0/7e7b41324695c26332803937908604e325415a34945526fa20d74a9f3c5a7bb6432e7158d6091f6e8fdd1b09bc6be093c306938c6626119f6ee613453cc913f0
+  checksum: 10c0/5cf60b455b72df6c9defdf542a75a853d26d9dbdefe4e29c7b974b4e72b0127caddbc994d6f39faad3606ea8d5b2bf63f7717352fb918edeb7598612088f97b2
   languageName: node
   linkType: hard
 
@@ -9060,7 +9053,7 @@ __metadata:
     eslint-config-next: "npm:14.2.5"
     husky: "npm:^9.0.11"
     immer: "npm:10.1.1"
-    jest-axe: "npm:8.0.0"
+    jest-axe: "npm:9.0.0"
     jsdom: "npm:24.1.1"
     knip: "npm:5.22.0"
     lint-staged: "npm:15.2.7"
