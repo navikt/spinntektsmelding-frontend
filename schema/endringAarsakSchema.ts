@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PeriodeSchema } from './aapenInnsendingSchema';
+import { PeriodeSchema } from '../validators/validerAapenInnsending';
 
 const EndringAarsakBonusSchema = z.object({
   aarsak: z.literal('Bonus')
