@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { OrganisasjonsnummerSchema } from '../validators/validerAapenInnsending';
 import NetworkError from './NetworkError';
+import { OrganisasjonsnummerSchema } from '../schema/organisasjonsnummerSchema';
 
 export default function fetcherArbeidsforhold(url: string | null, identitetsnummer?: string) {
   if (!url || !identitetsnummer) return Promise.resolve([]);

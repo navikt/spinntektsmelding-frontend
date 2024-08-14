@@ -1,5 +1,7 @@
 import { z } from 'zod';
-import { OrganisasjonsnummerSchema, PersonnummerSchema } from '../validators/validerAapenInnsending';
+import { apiPeriodeSchema } from './apiPeriodeSchema';
+import { PersonnummerSchema } from './personnummerSchema';
+import { OrganisasjonsnummerSchema } from './organisasjonsnummerSchema';
 
 export default z.object({
   kvitteringDokument: z.object({
@@ -9,11 +11,11 @@ export default z.object({
     telefonnummer: z.string().min(1),
     innsenderNavn: z.string().min(1),
     virksomhetNavn: z.string().min(1),
-    behandlingsdager: z.array(PeriodeSchema),
-    egenmeldingsperioder: z.array(PeriodeSchema),
-    arbeidsgiverperioder: z.array(PeriodeSchema),
+    behandlingsdager: z.array(apiPeriodeSchema),
+    egenmeldingsperioder: z.array(apiPeriodeSchema),
+    arbeidsgiverperioder: z.array(apiPeriodeSchema),
     bestemmendeFraværsdag: z.string().min(1),
-    fraværsperioder: z.array(PeriodeSchema),
+    fraværsperioder: z.array(apiPeriodeSchema),
     inntekt: z.object({
       bekreftet: z.boolean(),
       beregnetInntekt: z.number(),

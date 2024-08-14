@@ -24,7 +24,7 @@ import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import useSendInnDelvisSkjema from '../../utils/useSendInnDelvisSkjema';
 import { isAfter, isBefore } from 'date-fns';
 import parseIsoDate from '../../utils/parseIsoDate';
-import delvisInnsendingSchema from '../../schema/delvisInnsendingSchema';
+import valideringDelvisInnsendingSchema from '../../schema/valideringDelvisInnsendingSchema';
 import FancyJaNei from '../../components/FancyJaNei/FancyJaNei';
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
 import RefusjonArbeidsgiverBeloep from '../../components/RefusjonArbeidsgiverBeloep/RefusjonArbeidsgiverBeloep';
@@ -41,7 +41,7 @@ import { TDateISODate } from '../../state/MottattData';
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  type Skjema = z.infer<typeof delvisInnsendingSchema>;
+  type Skjema = z.infer<typeof valideringDelvisInnsendingSchema>;
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const [setEndringerAvRefusjon] = useBoundStore((state) => [state.setEndringerAvRefusjon]);
@@ -159,7 +159,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const opprinneligRefusjonskravetOpphoererDato = opprinneligRefusjonskravetOpphoerer?.opphoersdato;
 
   const methods = useForm<Skjema>({
-    resolver: zodResolver(delvisInnsendingSchema),
+    resolver: zodResolver(valideringDelvisInnsendingSchema),
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt
