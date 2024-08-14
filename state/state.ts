@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
-import { BegrunnelseRedusertLoennIAgp, EndringAarsak } from '../validators/validerAapenInnsending';
+
+import { EndringAarsak } from '../validators/validerAapenInnsending';
+import { BegrunnelseRedusertLoennIAgp } from '../schema/begrunnelseRedusertLoennIAgp';
 
 export interface Periode {
   fom?: Date;

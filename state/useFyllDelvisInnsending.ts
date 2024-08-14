@@ -7,7 +7,7 @@ import useBoundStore from './useBoundStore';
 import skjemaVariant from '../config/skjemavariant';
 
 import { TDateISODate } from './MottattData';
-import delvisInnsendingSchema from '../schema/delvisInnsendingSchema';
+import valideringDelvisInnsendingSchema from '../schema/valideringDelvisInnsendingSchema';
 import { z } from 'zod';
 
 import parseIsoDate from '../utils/parseIsoDate';
@@ -59,7 +59,7 @@ export default function useFyllDelvisInnsending() {
     mottattEksternBestemmendeFravaersdag
   );
 
-  type SkjemaData = z.infer<typeof delvisInnsendingSchema>;
+  type SkjemaData = z.infer<typeof valideringDelvisInnsendingSchema>;
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
 
   return (skjema: SkjemaData, forespoerselId: string): FullInnsending => {

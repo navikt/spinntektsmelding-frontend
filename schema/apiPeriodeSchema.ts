@@ -1,19 +1,18 @@
 import { z } from 'zod';
-import { toLocalIso } from '../utils/toLocalIso';
 
-export const PeriodeSchema = z
+export const apiPeriodeSchema = z
   .object({
     fom: z
-      .date({
+      .string({
         required_error: 'Vennligst fyll inn fra dato',
         invalid_type_error: 'Dette er ikke en dato'
       })
-      .transform((val) => toLocalIso(val)),
+      .date(),
     tom: z
-      .date({
+      .string({
         required_error: 'Vennligst fyll inn til dato',
         invalid_type_error: 'Dette er ikke en dato'
       })
-      .transform((val) => toLocalIso(val))
+      .date()
   })
   .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
