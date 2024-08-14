@@ -22,7 +22,6 @@ import { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold
 import environment from '../../config/environment';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
-import { PersonnummerSchema } from '../../validators/validerAapenInnsending';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import PeriodeVelger from '../../components/PeriodeVelger/PeriodeVelger';
 import { MottattPeriode } from '../../state/MottattData';
@@ -32,6 +31,7 @@ import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import { Periode } from '../../state/state';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
+import { PersonnummerSchema } from '../../schema/personnummerSchema';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -157,6 +157,8 @@ const Initiering2: NextPage = () => {
         };
 
         const validationResult = skjema.safeParse(skjemaData);
+
+        console.log(validationResult);
 
         if (validationResult.success) {
           setIsLoading(true);

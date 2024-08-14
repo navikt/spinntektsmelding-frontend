@@ -20,4 +20,8 @@ describe.concurrent('formatCurrency', () => {
   it('should return a correctly rounded number for undefined', () => {
     expect(formatCurrency(undefined)).toBe('');
   });
+
+  it('should return a correctly rounded number for null', () => {
+    expect(formatCurrency(null)).toBe('');
+  });
 });

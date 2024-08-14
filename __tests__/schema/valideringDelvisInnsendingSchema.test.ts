@@ -1,8 +1,8 @@
-import delvisInnsendingSchema from '../../schema/delvisInnsendingSchema';
+import valideringDelvisInnsendingSchema from '../../schema/valideringDelvisInnsendingSchema';
 import { YesNo } from '../../state/state';
 import { describe, expect, it } from 'vitest';
 
-describe.concurrent('delvisInnsendingSchema', () => {
+describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should validate a valid input', () => {
     const validInput = {
       inntekt: {
@@ -28,7 +28,7 @@ describe.concurrent('delvisInnsendingSchema', () => {
       }
     };
 
-    const result = delvisInnsendingSchema.safeParse(validInput);
+    const result = valideringDelvisInnsendingSchema.safeParse(validInput);
 
     expect(result.success).toBe(true);
     expect(result.data).toEqual(validInput);
@@ -59,7 +59,7 @@ describe.concurrent('delvisInnsendingSchema', () => {
       }
     };
 
-    const result = delvisInnsendingSchema.safeParse(invalidInput);
+    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error.issues[0].message).toBe('Refusjon kan ikke være høyere enn brutto lønn.');
@@ -91,7 +91,7 @@ describe.concurrent('delvisInnsendingSchema', () => {
       }
     };
 
-    const result = delvisInnsendingSchema.safeParse(invalidInput);
+    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error.issues[0].message).toBe('Vennligst angi månedsinntekt.');
@@ -123,7 +123,7 @@ describe.concurrent('delvisInnsendingSchema', () => {
       }
     };
 
-    const result = delvisInnsendingSchema.safeParse(invalidInput);
+    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error.issues[0].message).toBe(
@@ -157,7 +157,7 @@ describe.concurrent('delvisInnsendingSchema', () => {
       }
     };
 
-    const result = delvisInnsendingSchema.safeParse(invalidInput);
+    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error.issues[0].message).toBe('Refusjonsbeløp mangler selv om det kreves refusjon.');
