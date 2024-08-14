@@ -5,11 +5,6 @@ import parseIsoDate from './parseIsoDate';
 import { finnSammenhengendePeriode, finnSammenhengendePeriodeManuellJustering } from './finnArbeidsgiverperiode';
 import { TDateISODate } from '../state/MottattData';
 
-export interface FravaersPeriode {
-  fom: Date;
-  tom: Date;
-}
-
 export const overlappendePeriode = (ene: Periode, andre: Periode) => {
   if (!ene || !andre) return null;
   if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
@@ -181,8 +176,8 @@ function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
     if (index > 0) {
       if (
         perioder[perioderIndex] &&
-        !isEqual(periode.fom, perioder[perioderIndex].fom) &&
-        !isEqual(periode.tom, perioder[perioderIndex].tom)
+        !isEqual(periode.fom!, perioder[perioderIndex].fom!) &&
+        !isEqual(periode.tom!, perioder[perioderIndex].tom!)
       ) {
         perioder.push(periode);
       }
