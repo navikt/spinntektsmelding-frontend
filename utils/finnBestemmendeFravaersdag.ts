@@ -111,7 +111,7 @@ const finnBestemmendeFravaersdag = (
     perioderEtterAgp = sorterteSykmeldingPerioder;
   }
 
-  const agpOgSykPerioder = finnSammenhengendePeriode(
+  const agpOgSykPerioder = finnSammenhengendePeriodeManuellJustering(
     finnSorterteUnikePerioder(
       perioderEtterAgp.concat(arbeidsgiverperiode ?? []).filter((periode) => periode.fom && periode.tom)
     )
