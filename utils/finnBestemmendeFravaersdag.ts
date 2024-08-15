@@ -148,7 +148,7 @@ const finnBestemmendeFravaersdag = (
       forespurtBestemmendeFraværsdag &&
       isBefore(forespurtBestemmendeFraværsdag, parseIsoDate(bestemmendeFravaersdag))
     ) {
-      return formatISO9075(forespurtBestemmendeFraværsdag as Date, {
+      return formatISO9075(forespurtBestemmendeFraværsdag, {
         representation: 'date'
       });
     }
