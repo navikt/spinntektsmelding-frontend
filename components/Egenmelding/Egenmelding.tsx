@@ -32,7 +32,10 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
         ? new Date()
         : fravaersperioder
             .map((periode) => periode.fom)
-            .reduce((prevDate, curDate) => ((curDate || new Date()) <= (prevDate || new Date()) ? curDate : prevDate)),
+            .reduce(
+              (prevDate, curDate) => ((curDate || new Date()) <= (prevDate || new Date()) ? curDate : prevDate),
+              new Date()
+            ),
     [fravaersperioder]
   );
 

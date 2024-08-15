@@ -12,7 +12,7 @@ export default function isMod11Number(number: string) {
       const factor = (index % 6) + 2;
       return digit * factor;
     })
-    .reduce((previousValue, currentValue) => previousValue + currentValue);
+    .reduce((previousValue, currentValue) => previousValue + currentValue, 0);
   const calculatedCheckDigit = 11 - (sum % 11);
   return checkDigit === calculatedCheckDigit;
 }
