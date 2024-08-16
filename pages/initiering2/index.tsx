@@ -41,6 +41,7 @@ type SykepengePeriode = {
   id: string;
   fom: Date;
   tom: Date;
+  antallEgenmeldingsdager: number;
 };
 
 type SykepengePerioder = SykepengePeriode[];
@@ -247,7 +248,8 @@ const Initiering2: NextPage = () => {
       return {
         fom: new Date(periode.fom),
         tom: new Date(periode.tom),
-        id: periode.sykepengesoknadUuid
+        id: periode.sykepengesoknadUuid,
+        antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length
       };
     });
   } else {
@@ -298,7 +300,8 @@ const Initiering2: NextPage = () => {
                     <RadioGroup legend='Velg sykemeldingsperiode.' onChange={alert}>
                       {sykepengePerioder.map((periode) => (
                         <Radio key={periode.id} value={periode.id}>
-                          {formatDate(periode.fom)} - {formatDate(periode.tom)}
+                          {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                          {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
                         </Radio>
                       ))}
                     </RadioGroup>
@@ -357,5 +360,13 @@ const Initiering2: NextPage = () => {
     </div>
   );
 };
+
+function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
+  if (antallEgenmeldingsdager === 0) {
+    return null;
+  }
+
+  return antallEgenmeldingsdager === 1 ? '(1 egenmeldingsdag)' : `(${antallEgenmeldingsdager} egenmeldingsdager)`;
+}
 
 export default Initiering2;
