@@ -1,13 +1,16 @@
 import { z } from 'zod';
 import NetworkError from './NetworkError';
+import { endepunktSykepengesoeknaderSchema } from '../schema/endepunktSykepengesoeknaderSchema';
+
+type EndepunktSykepengesoeknader = z.infer<typeof endepunktSykepengesoeknaderSchema>;
 
 export default function fetcherSykepengesoeknader(
   url: string | null,
   identitetsnummer?: string,
   orgnummer?: string,
   eldsteFom?: string
-) {
-  if (!url || !identitetsnummer || !orgnummer || !eldsteFom) return Promise.resolve([]);
+): Promise<EndepunktSykepengesoeknader> {
+  if (!url || !identitetsnummer || !orgnummer || !eldsteFom || orgnummer === '-') return Promise.resolve([]);
 
   return fetch(url, {
     method: 'POST',
@@ -32,15 +35,3 @@ export default function fetcherSykepengesoeknader(
       throw newError;
     });
 }
-
-const ISO_DATE_REGEX = /\d{4}-[01]\d-[0-3]\d/;
-
-export const endepunktSykepengesoeknaderSchema = z.object({
-  sykepengesoknadUuid: z.string(),
-  fom: z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'),
-  tom: z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'),
-  sykmeldingId: z.string(),
-  status: z.string(),
-  startSykeforlop: z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'),
-  egenmeldingsdagerFraSykmelding: z.array(z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format')).optional()
-});

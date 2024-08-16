@@ -5,6 +5,8 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
+import testdata from '../../mockdata/sp-soeknad.json';
+
 const basePath =
   'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
 
@@ -19,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
     setTimeout(() => {
-      return res.status(200);
+      return res.status(200).json(testdata);
     }, 100);
   } else if (env == 'production') {
     const token = getToken(req);

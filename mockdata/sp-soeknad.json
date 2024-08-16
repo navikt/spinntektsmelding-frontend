@@ -1,0 +1,12 @@
+[
+  {
+    "sykepengesoknadUuid": "c5e5535b-a2fd-4d8f-8755-ac0f1290b8ca",
+    "fom": "2024-08-01",
+    "tom": "2024-08-14",
+    "sykmeldingId": "123456789",
+    "status": "NY",
+    "startSykeforlop": "2024-08-01",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": "123456789"
+  }
+]

@@ -1,4 +1,4 @@
-import { Alert, Button, Link } from '@navikt/ds-react';
+import { Alert, Button, Link, Radio, RadioGroup } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
@@ -34,6 +34,16 @@ import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
 import formatIsoDate from '../../utils/formatIsoDate';
 import { PersonnummerSchema } from '../../schema/personnummerSchema';
+import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
+import formatDate from '../../utils/formatDate';
+
+type SykepengePeriode = {
+  id: string;
+  fom: Date;
+  tom: Date;
+};
+
+type SykepengePerioder = SykepengePeriode[];
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -226,6 +236,23 @@ const Initiering2: NextPage = () => {
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
+  const mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
+
+  let sykepengePerioder: SykepengePerioder = [];
+
+  if (mottatteSykepengesoeknader.success) {
+    sykepengePerioder = mottatteSykepengesoeknader.data.map((periode) => {
+      return {
+        fom: new Date(periode.fom),
+        tom: new Date(periode.tom),
+        id: periode.sykepengesoknadUuid
+      };
+    });
+  } else {
+    console.log('Feil ved henting av sykepengesøknader');
+    console.log(mottatteSykepengesoeknader.error);
+  }
+
   const visFeilmeldingliste =
     (feilmeldinger && feilmeldinger.length > 0) || (backendFeil.current && backendFeil.current.length > 0);
   return (
@@ -265,6 +292,14 @@ const Initiering2: NextPage = () => {
                         />
                       </div>
                     </div>
+                    <RadioGroup legend='Velg sykemeldingsperiode.' onChange={alert}>
+                      {sykepengePerioder.map((periode) => (
+                        <Radio key={periode.id} value={periode.id}>
+                          {formatDate(periode.fom)} - {formatDate(periode.tom)}
+                        </Radio>
+                      ))}
+                    </RadioGroup>
+
                     <PeriodeVelger perioder={perioder} />
                     {antallSykedager > 16 && (
                       <Alert variant='error' className={lokalStyles.alertPadding}>
