@@ -231,6 +231,8 @@ const Initiering2: NextPage = () => {
 
   const { data: spData, error: spError } = useSykepengesoeknader(identitetsnummer, orgnr, fomDato, backendFeil);
 
+  console.log('useSykepengesoeknader', identitetsnummer, orgnr, fomDato, backendFeil);
+
   console.log(spData);
   console.log(spError);
 
@@ -251,6 +253,7 @@ const Initiering2: NextPage = () => {
   } else {
     console.log('Feil ved henting av sykepengesøknader');
     console.log(mottatteSykepengesoeknader.error);
+    console.log('spData', spData);
   }
 
   const visFeilmeldingliste =
