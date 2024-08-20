@@ -308,7 +308,6 @@ export function formaterOpphørsdato(
 export function formaterRedusertLoennIAgp(
   fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined
 ): { beloep: number; begrunnelse: string } | null {
-  console.log('fullLonnIArbeidsgiverPerioden', fullLonnIArbeidsgiverPerioden);
   return fullLonnIArbeidsgiverPerioden?.begrunnelse !== undefined &&
     fullLonnIArbeidsgiverPerioden?.begrunnelse !== '' &&
     fullLonnIArbeidsgiverPerioden?.status === 'Nei'
