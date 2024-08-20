@@ -12,7 +12,7 @@ import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsen
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
-import { EndringAarsakSchema } from '../schema/endringAarsakSchema';
+import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -152,7 +152,7 @@ export default function useFyllInnsending() {
       beregnetSkjaeringstidspunkt
     );
 
-    const endringAarsakParsed = endringAarsak ? EndringAarsakSchema.parse(endringAarsak) : null;
+    const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
 
     const skjemaData: FullInnsending = {
       forespoerselId,
