@@ -1,4 +1,4 @@
-import { Alert, Button, Radio, RadioGroup, Link } from '@navikt/ds-react';
+import { Button, CheckboxGroup, Checkbox } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
@@ -77,10 +77,11 @@ const Initiering2: NextPage = () => {
       ),
     navn: z.string().optional(),
     personnummer: PersonnummerSchema.optional(),
-    sykepengePeriodeId: z.string().optional()
+    sykepengePeriodeId: z.array(z.string().uuid()).optional()
   });
 
   type Skjema = z.infer<typeof skjemaSchema>;
+  type EndepunktArbeidsforhold = z.infer<typeof endepunktArbeidsforholdSchema>;
 
   const methods = useForm({
     resolver: zodResolver(skjemaSchema)
@@ -98,7 +99,7 @@ const Initiering2: NextPage = () => {
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;
-    let mottatteSykepengesoeknader;
+    let mottatteSykepengesoeknader: EndepunktArbeidsforhold | undefined = undefined;
 
     if (spData) {
       mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
@@ -115,9 +116,10 @@ const Initiering2: NextPage = () => {
 
         const validationResult = skjema.safeParse(skjemaData);
 
-        const sykmeldingsperiode = mottatteSykepengesoeknader?.data?.find(
-          (soeknad) => soeknad.sykepengesoknadUuid === formData.sykepengePeriodeId
-        );
+        const sykmeldingsperiode = [];
+        formData.sykepengePeriodeId?.forEach((id) => {
+          const periode = mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
+        });
 
         if (validationResult.success) {
           setIsLoading(true);
@@ -242,19 +244,19 @@ const Initiering2: NextPage = () => {
                         />
                       </div>
                     </div>
-                    <RadioGroup
+                    <CheckboxGroup
                       legend='Velg sykmeldingsperiode.'
                       id='sykepengePeriodeId'
                       error={errors.sykepengePeriodeId?.message as string}
                       onChange={handleSykepengePeriodeIdRadio}
                     >
                       {sykepengePerioder.map((periode) => (
-                        <Radio key={periode.id} value={periode.id}>
+                        <Checkbox key={periode.id} value={periode.id}>
                           {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                           {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                        </Radio>
+                        </Checkbox>
                       ))}
-                    </RadioGroup>
+                    </CheckboxGroup>
                   </>
                 )}
                 <div className={lokalStyles.knapperad}>
