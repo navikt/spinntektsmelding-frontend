@@ -4,17 +4,17 @@ import fetcherSykepengesoeknader from './fetcherSykepengesoeknader';
 
 export default function useSykepengesoeknader(
   identitetsnummer: string | undefined,
-  orgnummer: string,
+  orgNummer: string,
   eldsteFom: string,
   backendFeil: any
 ) {
   return useSWRImmutable(
-    [environment.hentSykepengesoknaderUrl, identitetsnummer, orgnummer, eldsteFom],
-    ([url, identitetsnummer, orgnummer, eldsteFom]) =>
+    [environment.hentSykepengesoknaderUrl, identitetsnummer, orgNummer, eldsteFom],
+    ([url, identitetsnummer, orgNummer, eldsteFom]) =>
       fetcherSykepengesoeknader(
-        !!identitetsnummer && !!orgnummer && !!eldsteFom ? url : null,
+        !!identitetsnummer && !!orgNummer && !!eldsteFom ? url : null,
         identitetsnummer,
-        orgnummer,
+        orgNummer,
         eldsteFom
       ),
     {
