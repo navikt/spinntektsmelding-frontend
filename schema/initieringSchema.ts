@@ -8,6 +8,5 @@ export default z.object({
     message: 'Organisasjonsnummeret mangler'
   }),
   fulltNavn: z.string().min(1),
-  personnummer: PersonnummerSchema,
-  perioder: z.array(PeriodeSchema)
+  personnummer: PersonnummerSchema
 });

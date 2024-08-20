@@ -1,6 +1,6 @@
 import { Button, CheckboxGroup, Checkbox } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -19,11 +19,10 @@ import useBoundStore from '../../state/useBoundStore';
 import initieringSchema from '../../schema/initieringSchema';
 
 import { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
-import environment from '../../config/environment';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { MottattPeriode } from '../../state/MottattData';
+import { MottattPeriode, TDateISODate } from '../../state/MottattData';
 import { differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
@@ -35,6 +34,7 @@ import formatIsoDate from '../../utils/formatIsoDate';
 import { PersonnummerSchema } from '../../schema/personnummerSchema';
 import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
+import { logger } from '@navikt/next-logger';
 
 type SykepengePeriode = {
   id: string;
@@ -82,6 +82,7 @@ const Initiering2: NextPage = () => {
 
   type Skjema = z.infer<typeof skjemaSchema>;
   type EndepunktArbeidsforhold = z.infer<typeof endepunktArbeidsforholdSchema>;
+  type EndepunktSykepengesoeknader = z.infer<typeof endepunktSykepengesoeknaderSchema>;
 
   const methods = useForm({
     resolver: zodResolver(skjemaSchema)
@@ -99,7 +100,10 @@ const Initiering2: NextPage = () => {
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;
-    let mottatteSykepengesoeknader: EndepunktArbeidsforhold | undefined = undefined;
+    let mottatteSykepengesoeknader:
+      | { success: true; data: EndepunktSykepengesoeknader }
+      | { success: false; error: ZodError }
+      | undefined = undefined;
 
     if (spData) {
       mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
@@ -116,10 +120,43 @@ const Initiering2: NextPage = () => {
 
         const validationResult = skjema.safeParse(skjemaData);
 
-        const sykmeldingsperiode = [];
+        const sykmeldingsperiode: EndepunktSykepengesoeknader | [] = [];
         formData.sykepengePeriodeId?.forEach((id) => {
           const periode = mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
+          if (periode) {
+            sykmeldingsperiode.push(periode);
+          }
         });
+
+        const fravaersperioder: MottattPeriode[] = sykmeldingsperiode.map((periode) => ({
+          fom: periode.fom as TDateISODate,
+          tom: periode.tom as TDateISODate
+        }));
+
+        const egenmeldingsperioder: MottattPeriode[] = sykmeldingsperiode
+          .flatMap((periode) => {
+            const egenmeldingsperiode = periode.egenmeldingsdagerFraSykmelding.toSorted().reduce(
+              (accumulator, currentValue) => {
+                const tom = new Date(currentValue);
+                const currentTom = new Date(accumulator[accumulator.length - 1].tom);
+
+                if (differenceInDays(tom, currentTom) <= 1) {
+                  accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
+                } else {
+                  accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
+                }
+                return accumulator;
+              },
+              [
+                {
+                  fom: periode.egenmeldingsdagerFraSykmelding[0] as TDateISODate,
+                  tom: periode.egenmeldingsdagerFraSykmelding[0] as TDateISODate
+                }
+              ]
+            );
+            return egenmeldingsperiode;
+          })
+          .filter((element) => !!element.fom && !!element.tom);
 
         if (validationResult.success) {
           setIsLoading(true);
@@ -129,8 +166,8 @@ const Initiering2: NextPage = () => {
           )?.virksomhetsnavn!;
           initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
           setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-          initFravaersperiode(validerteData.perioder as MottattPeriode[]);
-          initEgenmeldingsperiode([]);
+          initFravaersperiode(fravaersperioder as MottattPeriode[]);
+          initEgenmeldingsperiode(egenmeldingsperioder as MottattPeriode[]);
           tilbakestillArbeidsgiverperiode();
           router.push('/arbeidsgiverInitiertInnsending');
         }
@@ -171,7 +208,6 @@ const Initiering2: NextPage = () => {
   const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
 
   const fomDato = formatIsoDate(subYears(new Date(), 1));
-  console.log('identitetsnummer', identitetsnummer, orgnr, fomDato);
   const { data: spData, error: spError } = useSykepengesoeknader(
     identitetsnummer,
     organisasjonsnummer,
@@ -183,13 +219,10 @@ const Initiering2: NextPage = () => {
 
   let sykepengePerioder: SykepengePeriode[] = [];
 
-  console.log(spError);
-
   if (!!spData) {
     const mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
 
     if (mottatteSykepengesoeknader.success) {
-      console.log('Validering av sykepengesøknader var vellykket', spData, mottatteSykepengesoeknader.data);
       sykepengePerioder =
         mottatteSykepengesoeknader.data.length > 0
           ? mottatteSykepengesoeknader.data.map((periode) => {
@@ -202,7 +235,7 @@ const Initiering2: NextPage = () => {
             })
           : [];
     } else {
-      console.log('Feil ved validering av sykepengesøknader');
+      logger.error('Feil ved validering av sykepengesøknader', mottatteSykepengesoeknader.error.errors);
     }
   }
   const visFeilmeldingliste =

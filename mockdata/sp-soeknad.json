@@ -11,12 +11,22 @@
   },
   {
     "sykepengesoknadUuid": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
-    "fom": "2024-08-09",
-    "tom": "2024-08-15",
+    "fom": "2024-09-11",
+    "tom": "2024-09-15",
     "sykmeldingId": "8396932c-9656-3f65-96b2-3e37eacff584",
     "status": "NY",
-    "startSykeforlop": "2024-08-06",
-    "egenmeldingsdagerFraSykmelding": ["2024-08-06", "2024-08-08", "2024-08-07"],
+    "startSykeforlop": "2024-09-06",
+    "egenmeldingsdagerFraSykmelding": ["2024-09-06", "2024-09-08", "2024-09-07", "2024-09-10"],
+    "vedtaksperiodeId": null
+  },
+  {
+    "sykepengesoknadUuid": "4009c928-d13b-45f9-90e4-1c98a421f464",
+    "fom": "2024-09-16",
+    "tom": "2024-09-17",
+    "sykmeldingId": "8396932c-9656-3f65-96b2-3e37eacff584",
+    "status": "NY",
+    "startSykeforlop": "2024-09-16",
+    "egenmeldingsdagerFraSykmelding": [],
     "vedtaksperiodeId": null
   }
 ]
