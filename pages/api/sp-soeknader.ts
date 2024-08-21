@@ -1,8 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import httpProxyMiddleware from 'next-http-proxy-middleware';
-
-import handleProxyInit from '../../utils/api/handleProxyInit';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
 import testdata from '../../mockdata/sp-soeknad.json';
@@ -15,7 +12,6 @@ const authApi = 'http://' + global.process.env.IM_API_URI + global.process.env.A
 export const config = {
   api: {
     externalResolver: true
-    // bodyParser: false
   }
 };
 
@@ -69,17 +65,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       console.log('OBO-token OK');
     }
 
-    return httpProxyMiddleware(req, res, {
-      target: basePath,
-      onProxyInit: handleProxyInit,
-      headers: { Authorization: `bearer ${obo.token}` },
-      pathRewrite: [
-        {
-          patternStr: '^/api/sp-soeknader',
-          replaceStr: ''
-        }
-      ]
+    const body = {
+      orgnummer: requestBody.orgnummer,
+      fnr: requestBody.fnr,
+      eldsteFom: requestBody.eldsteFom
+    };
+
+    const soeknadResponse = await fetch(basePath, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `bearer ${obo.token}`
+      },
+      body: JSON.stringify(body)
     });
+
+    if (!soeknadResponse.ok) {
+      console.error('Feil ved henting av sykepengesøknader ', soeknadResponse.statusText);
+      console.error('Feilet med URL: ', basePath);
+      console.error('Feilet med requestBody: ', body);
+
+      return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
+    } else {
+      const soeknadData = await soeknadResponse.json();
+      return res.status(soeknadResponse.status).json(soeknadData);
+    }
   }
 };
 

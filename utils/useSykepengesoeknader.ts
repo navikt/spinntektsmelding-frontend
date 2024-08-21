@@ -21,10 +21,10 @@ export default function useSykepengesoeknader(
       onError: (err) => {
         console.error('Kunne ikke hente arbeidsforhold', err);
         if (err.status === 401) {
-          const ingress = window.location.hostname + environment.baseUrl;
-          const currentPath = window.location.href;
-
-          window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
+          backendFeil.current.push({
+            felt: 'Backend',
+            text: 'Mangler tilgang til den aktuelle organisasjonen'
+          });
         }
 
         if (err.status === 404) {
