@@ -39,7 +39,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       return res.status(401);
     }
 
-    const orgnr = req.body.orgnummer;
+    const requestBody = await req.body.json();
+
+    const orgnr = requestBody.orgnummer;
     console.log('Orgnr: ', orgnr);
 
     const tokenResponse = await fetch(authApi + '/' + orgnr, {
