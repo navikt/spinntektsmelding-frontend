@@ -103,7 +103,6 @@ describe('useFyllInnsending', () => {
     });
 
     if (innsending) {
-      console.log(innsending);
       // expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
       // expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
 

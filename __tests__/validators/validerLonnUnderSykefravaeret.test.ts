@@ -145,10 +145,15 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
       beloep: 99999
     };
 
-    const expected: any = [];
+    const expected: any = [
+      {
+        code: 'BELOP_OVERSTIGER_BRUTTOINNTEKT',
+        felt: 'refusjon.beloepPerMaaned'
+      }
+    ];
 
     const bruttoInntekt = 9000;
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt, true)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
   });
 });
