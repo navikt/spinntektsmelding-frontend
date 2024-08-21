@@ -14,8 +14,8 @@ const authApi = 'http://' + global.process.env.IM_API_URI + global.process.env.A
 
 export const config = {
   api: {
-    externalResolver: true,
-    bodyParser: false
+    externalResolver: true
+    // bodyParser: false
   }
 };
 
@@ -39,7 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       return res.status(401);
     }
 
-    const requestBody = await req.body.json();
+    const requestBody = await req.body;
 
     const orgnr = requestBody.orgnummer;
     console.log('Orgnr: ', orgnr);
@@ -55,7 +55,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     if (!tokenResponse.ok) {
       console.error('Feil ved kontroll av tilgang: ', tokenResponse.statusText);
 
-      return res.status(tokenResponse.status);
+      return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
+    } else {
+      console.log('Tilgang OK for orgnr: ', orgnr);
     }
 
     const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
@@ -63,6 +65,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       /* håndter obo-feil */
       console.error('OBO-feil: ', obo.error);
       return res.status(401);
+    } else {
+      console.log('OBO-token OK');
     }
 
     return httpProxyMiddleware(req, res, {
