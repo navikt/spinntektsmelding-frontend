@@ -10,6 +10,8 @@ import testdata from '../../mockdata/sp-soeknad.json';
 const basePath =
   'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
 
+const authApi = 'http://' + global.process.env.IM_API_URI + global.process.env.AUTH_SYKEPENGESOEKNAD_API;
+
 export const config = {
   api: {
     externalResolver: true,
@@ -35,6 +37,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     if (!validation.ok) {
       console.log('Validering feilet: ', validation.error);
       return res.status(401);
+    }
+
+    const orgnr = req.body.orgnummer;
+    console.log('Orgnr: ', orgnr);
+
+    const tokenResponse = await fetch(authApi + '/' + orgnr, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!tokenResponse.ok) {
+      console.error('Feil ved kontroll av tilgang: ', tokenResponse.statusText);
+
+      return res.status(tokenResponse.status);
     }
 
     const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
