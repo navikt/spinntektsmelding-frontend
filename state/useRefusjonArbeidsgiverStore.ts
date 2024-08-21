@@ -251,10 +251,6 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         if (!state.fullLonnIArbeidsgiverPerioden) {
-          state.fullLonnIArbeidsgiverPerioden = {};
-        }
-
-        if (!state.fullLonnIArbeidsgiverPerioden) {
           state.fullLonnIArbeidsgiverPerioden = { status: undefined };
         } else state.fullLonnIArbeidsgiverPerioden.status = undefined;
 

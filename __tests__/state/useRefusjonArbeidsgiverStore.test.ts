@@ -1,6 +1,7 @@
 import { act, cleanup, renderHook } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
+import { LonnIArbeidsgiverperioden, LonnISykefravaeret } from '../../state/state';
 
 const initialState = useBoundStore.getState();
 
@@ -306,5 +307,71 @@ describe('useBoundStore', () => {
     expect(result.current.harRefusjonEndringer).toBe('Ja');
     expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
     expect(result.current.refusjonEndringer).toEqual([{ beloep: 123, dato: new Date(2022, 4, 6) }]);
+  });
+
+  it('should init fullLonnIArbeidsgiverPerioden.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      begrunnelse: 'ArbeidOpphoert',
+      utbetalt: 1234
+    };
+
+    act(() => {
+      result.current.initFullLonnIArbeidsgiverPerioden(input);
+    });
+
+    expect(result.current.fullLonnIArbeidsgiverPerioden?.status).toBe('Nei');
+    expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('ArbeidOpphoert');
+    expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toBe(1234);
+  });
+
+  it('should delete fullLonnIArbeidsgiverPerioden.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      begrunnelse: 'ArbeidOpphoert',
+      utbetalt: 1234
+    };
+
+    act(() => {
+      result.current.initFullLonnIArbeidsgiverPerioden(input);
+    });
+
+    expect(result.current.fullLonnIArbeidsgiverPerioden?.status).toBe('Nei');
+
+    act(() => {
+      result.current.slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+    });
+
+    expect(result.current.fullLonnIArbeidsgiverPerioden?.status).toBeUndefined();
+  });
+
+  it('should delete fullLonnIArbeidsgiverPerioden again.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+    });
+
+    expect(result.current.fullLonnIArbeidsgiverPerioden).toEqual({ status: undefined });
+  });
+
+  it('should init lonnISykefravaeret.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const input: LonnISykefravaeret = {
+      status: 'Nei',
+      beloep: 1234
+    };
+
+    act(() => {
+      result.current.initLonnISykefravaeret(input);
+    });
+
+    expect(result.current.lonnISykefravaeret?.status).toBe('Nei');
+    expect(result.current.lonnISykefravaeret?.beloep).toBe(1234);
   });
 });
