@@ -26,7 +26,6 @@ import {
 } from '../../utils/finnArbeidsgiverperiode';
 import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeopphold';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
-import { debug } from 'console';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
