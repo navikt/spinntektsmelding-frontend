@@ -1,13 +1,18 @@
 import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import useFyllInnsending, { InnsendingSkjema } from '../../state/useFyllInnsending';
+import useFyllInnsending, {
+  formaterOpphørsdato,
+  formaterRedusertLoennIAgp,
+  InnsendingSkjema
+} from '../../state/useFyllInnsending';
 import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 
 import inntektData from '../../mockdata/inntektData.json';
 import delvisRefusjon from '../../mockdata/kvittering-delvis-refusjon.json';
 import useKvitteringInit, { KvitteringInit } from '../../state/useKvitteringInit';
+import { LonnIArbeidsgiverperioden } from '../../state/state';
 
 vi.mock('nanoid');
 
@@ -98,7 +103,6 @@ describe('useFyllInnsending', () => {
     });
 
     if (innsending) {
-      console.log(innsending);
       // expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
       // expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
 
@@ -120,5 +124,91 @@ describe('useFyllInnsending', () => {
     } else {
       expect(innsending).toBeTruthy();
     }
+  });
+});
+
+describe('formaterRedusertLoennIAgp', () => {
+  it('should return a formatted json', async () => {
+    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      begrunnelse: 'ArbeidOpphoert',
+      utbetalt: 1234
+    };
+
+    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toEqual({
+      begrunnelse: 'ArbeidOpphoert',
+      beloep: 1234
+    });
+  });
+
+  it('should return a formatted json, when utbetalt = undefined', async () => {
+    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      begrunnelse: 'ArbeidOpphoert',
+      utbetalt: undefined
+    };
+
+    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toEqual({
+      begrunnelse: 'ArbeidOpphoert',
+      beloep: 0
+    });
+  });
+
+  it('should return null, when status = Ja', async () => {
+    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
+      status: 'Ja',
+      begrunnelse: 'ArbeidOpphoert',
+      utbetalt: undefined
+    };
+
+    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
+  });
+
+  it('should return null, when status = Ja', async () => {
+    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
+      status: 'Ja',
+      begrunnelse: 'ArbeidOpphoert',
+      utbetalt: 1234
+    };
+
+    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
+  });
+
+  it('should return null, when begrunnelse is empty string', async () => {
+    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      begrunnelse: '',
+      utbetalt: 1234
+    };
+
+    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
+  });
+
+  it('should return null, when begrunnelse is undefined', async () => {
+    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      begrunnelse: undefined,
+      utbetalt: 1234
+    };
+
+    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
+  });
+});
+
+describe('formaterOpphørsdato', () => {
+  it('should return a formatted data', async () => {
+    expect(formaterOpphørsdato('Ja', new Date('2024-01-02'))).toBe('2024-01-02');
+  });
+
+  it('should return null when kravetOpphoerer = Nei', async () => {
+    expect(formaterOpphørsdato('Nei', new Date('2024-01-02'))).toBeNull();
+  });
+
+  it('should return null when kravetOpphoerer = undefined', async () => {
+    expect(formaterOpphørsdato(undefined, new Date('2024-01-02'))).toBeNull();
+  });
+
+  it('should return null when kravetOpphoerer = undefined', async () => {
+    expect(formaterOpphørsdato('Ja', undefined)).toBeNull();
   });
 });

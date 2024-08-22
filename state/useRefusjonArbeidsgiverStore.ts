@@ -40,17 +40,14 @@ export interface RefusjonArbeidsgiverState {
 const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], RefusjonArbeidsgiverState> = (set, get) => ({
   fullLonnIArbeidsgiverPerioden: undefined,
   lonnISykefravaeret: undefined,
-  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status) =>
+  arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo | undefined) =>
     set(
       produce((state) => {
         if (!state.fullLonnIArbeidsgiverPerioden) {
-          state.fullLonnIArbeidsgiverPerioden = {};
-        }
-
-        if (!state.fullLonnIArbeidsgiverPerioden) {
           state.fullLonnIArbeidsgiverPerioden = { status: status };
-        } else if (status !== undefined) state.fullLonnIArbeidsgiverPerioden.status = status;
-
+        } else if (status !== undefined) {
+          state.fullLonnIArbeidsgiverPerioden.status = status;
+        }
         state = slettFeilmeldingFraState(state, 'lia-radio');
         state = slettFeilmeldingFraState(state, 'agp.redusertLoennIAgp.beloep');
 
@@ -83,9 +80,6 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         if (state.fullLonnIArbeidsgiverPerioden) {
           state.fullLonnIArbeidsgiverPerioden.begrunnelse = begrunnelse;
         } else {
-          if (!state.fullLonnIArbeidsgiverPerioden) {
-            state.fullLonnIArbeidsgiverPerioden = {};
-          }
           state.fullLonnIArbeidsgiverPerioden = { begrunnelse: begrunnelse };
         }
         if (begrunnelse && begrunnelse.length > 0) {
@@ -120,9 +114,6 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
   setBeloepUtbetaltUnderArbeidsgiverperioden: (beloep: string | undefined) =>
     set(
       produce((state) => {
-        if (!state.fullLonnIArbeidsgiverPerioden) {
-          state.fullLonnIArbeidsgiverPerioden = {};
-        }
         if (!state.fullLonnIArbeidsgiverPerioden) {
           state.fullLonnIArbeidsgiverPerioden = { utbetalt: stringishToNumber(beloep) };
         } else {
@@ -259,10 +250,6 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
   slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden: () =>
     set(
       produce((state) => {
-        if (!state.fullLonnIArbeidsgiverPerioden) {
-          state.fullLonnIArbeidsgiverPerioden = {};
-        }
-
         if (!state.fullLonnIArbeidsgiverPerioden) {
           state.fullLonnIArbeidsgiverPerioden = { status: undefined };
         } else state.fullLonnIArbeidsgiverPerioden.status = undefined;

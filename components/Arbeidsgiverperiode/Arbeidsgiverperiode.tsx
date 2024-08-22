@@ -5,7 +5,7 @@ import { Alert, BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
-import { LonnIArbeidsgiverperioden, Periode } from '../../state/state';
+import { LonnIArbeidsgiverperioden, Periode, YesNo } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
@@ -89,10 +89,16 @@ export default function Arbeidsgiverperiode({
 
     const mergeDatePeriods = finnSammenhengendePeriodeManuellJustering(perioder);
 
-    mergeDatePeriods.forEach((periode) => {
-      const justering = periode.fom === periode.tom ? 0 : 1;
-      dagerTotalt = differenceInDays(periode.tom!, periode.fom!) + dagerTotalt + justering;
-    });
+    if (mergeDatePeriods.length === 0) {
+      return 0;
+    }
+
+    mergeDatePeriods
+      .filter((periode) => periode.fom && periode.tom)
+      .forEach((periode) => {
+        const justering = periode.fom === periode.tom ? 0 : 1;
+        dagerTotalt = differenceInDays(periode.tom!, periode.fom!) + dagerTotalt + justering;
+      });
     return dagerTotalt;
   };
 
@@ -105,10 +111,16 @@ export default function Arbeidsgiverperiode({
 
     const mergeDatePeriods = finnSammenhengendePeriode(perioder);
 
-    mergeDatePeriods.forEach((periode) => {
-      const justering = periode.fom === periode.tom ? 0 : 1;
-      dagerTotalt = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt + justering;
-    });
+    if (mergeDatePeriods.length === 0) {
+      return 0;
+    }
+
+    mergeDatePeriods
+      .filter((periode) => periode.fom && periode.tom)
+      .forEach((periode) => {
+        const justering = periode.fom === periode.tom ? 0 : 1;
+        dagerTotalt = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt + justering;
+      });
     return dagerTotalt;
   };
 
@@ -207,15 +219,15 @@ export default function Arbeidsgiverperiode({
       : '';
 
   const advarselKortPeriode =
-    antallDager < 16
+    antallDager < 16 && !arbeidsgiverperiodeDisabled
       ? `Du har lagt inn arbeidsgiverperiode på ${antallDager} dager. Angi begrunnelse for kort arbeidsgiverperiode hvis dette er korrekt.`
       : '';
 
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      setArbeidsgiverperiodeKort(antallDager < 16);
+      setArbeidsgiverperiodeKort(antallDager < 16 && !arbeidsgiverperiodeDisabled);
       if (antallDager < 16) {
-        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
+        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(YesNo.Nei);
       } else {
         slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       }
@@ -225,7 +237,8 @@ export default function Arbeidsgiverperiode({
     setArbeidsgiverperiodeKort,
     skjemastatus,
     arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
-    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
+    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+    arbeidsgiverperiodeDisabled
   ]);
 
   useEffect(() => {
@@ -234,7 +247,7 @@ export default function Arbeidsgiverperiode({
     }
 
     if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
-      setArbeidsgiverperiodeKort(antallDager < 16);
+      setArbeidsgiverperiodeKort(antallDager < 16 && !arbeidsgiverperiodeDisabled);
       if (antallDager < 16) {
         arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       } else {

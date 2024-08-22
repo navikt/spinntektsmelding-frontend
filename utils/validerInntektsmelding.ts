@@ -111,8 +111,7 @@ export default function validerInntektsmelding(
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
     state.lonnISykefravaeret,
     state.refusjonskravetOpphoerer,
-    state.bruttoinntekt.bruttoInntekt,
-    false // TODO: Hva er dette? Og hvorfor var den satt til !state.nyInnsending?
+    state.bruttoinntekt.bruttoInntekt
   );
 
   feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
