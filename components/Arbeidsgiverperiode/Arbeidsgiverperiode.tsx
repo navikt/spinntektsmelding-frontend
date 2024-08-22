@@ -5,7 +5,7 @@ import { Alert, BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
-import { LonnIArbeidsgiverperioden, Periode, YesNo } from '../../state/state';
+import { LonnIArbeidsgiverperioden, Periode } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
@@ -227,7 +227,7 @@ export default function Arbeidsgiverperiode({
     if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
       setArbeidsgiverperiodeKort(antallDager < 16 && !arbeidsgiverperiodeDisabled);
       if (antallDager < 16) {
-        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(YesNo.Nei);
+        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       } else {
         slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       }

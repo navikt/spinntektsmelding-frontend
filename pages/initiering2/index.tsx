@@ -25,8 +25,6 @@ import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { MottattPeriode, TDateISODate } from '../../state/MottattData';
 import { differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
-import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
-import { Periode } from '../../state/state';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
@@ -42,8 +40,6 @@ type SykepengePeriode = {
   tom: Date;
   antallEgenmeldingsdager: number;
 };
-
-type SykepengePerioder = SykepengePeriode[];
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
