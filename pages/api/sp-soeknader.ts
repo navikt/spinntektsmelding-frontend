@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
 import testdata from '../../mockdata/sp-soeknad.json';
+import isMod11Number from '../../utils/isMod10Number';
 
 const basePath =
   'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
@@ -39,6 +40,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
     const orgnr = requestBody.orgnummer;
     console.log('Orgnr: ', orgnr);
+
+    const erGyldigOrgnr = isMod11Number(orgnr);
+    if (!erGyldigOrgnr) {
+      console.error('Ugyldig orgnr: ', orgnr);
+      return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
+    }
 
     const tokenResponse = await fetch(authApi + '/' + orgnr, {
       method: 'GET',

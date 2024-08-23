@@ -1,4 +1,4 @@
-import { Button, CheckboxGroup, Checkbox } from '@navikt/ds-react';
+import { Button, CheckboxGroup, Checkbox, Alert, Link } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z, ZodError } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
@@ -33,6 +33,10 @@ import { PersonnummerSchema } from '../../schema/personnummerSchema';
 import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
 import { logger } from '@navikt/next-logger';
+import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
+import environment from '../../config/environment';
+import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
+import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
 
 type SykepengePeriode = {
   id: string;
@@ -56,6 +60,9 @@ const Initiering2: NextPage = () => {
   let fulltNavn = '';
   const backendFeil = useRef([] as Feilmelding[]);
   let orgnrUnderenhet: string | undefined = undefined;
+  let antallSykedager = 0;
+  let antallDagerMellomSykmeldingsperioder = 0;
+  let blokkerInnsending = false;
 
   const skjemaSchema = z.object({
     organisasjonsnummer: z
@@ -200,16 +207,16 @@ const Initiering2: NextPage = () => {
   }
 
   const orgnr = watch('organisasjonsnummer');
+  const sykepengePeriodeId: string[] = watch('sykepengePeriodeId');
 
   const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
 
   const fomDato = formatIsoDate(subYears(new Date(), 1));
-  const { data: spData, error: spError } = useSykepengesoeknader(
-    identitetsnummer,
-    organisasjonsnummer,
-    fomDato,
-    backendFeil
-  );
+  const {
+    data: spData,
+    error: spError,
+    isLoading: spIsLoading
+  } = useSykepengesoeknader(identitetsnummer, organisasjonsnummer, fomDato, backendFeil);
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
@@ -234,6 +241,71 @@ const Initiering2: NextPage = () => {
       logger.error('Feil ved validering av sykepengesøknader', mottatteSykepengesoeknader.error.errors);
     }
   }
+  const valgteSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
+    finnSorterteUnikePerioder(
+      sykepengePeriodeId
+        ? sykepengePerioder.filter((periode) => sykepengePeriodeId.includes(periode.id)).toSorted()
+        : []
+    )
+  );
+
+  const mergedSykmeldingsperioder = valgteSykepengePerioder.length > 0 ? [valgteSykepengePerioder[0]] : [];
+
+  valgteSykepengePerioder.forEach((periode) => {
+    const aktivPeriode = mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1];
+    const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
+
+    if (oppdatertPeriode && mergedSykmeldingsperioder.length > 0) {
+      mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = {
+        ...oppdatertPeriode
+      };
+    } else {
+      mergedSykmeldingsperioder.push(periode);
+    }
+  });
+
+  const valgteUnikeSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
+    finnSorterteUnikePerioder(mergedSykmeldingsperioder)
+  );
+
+  console.log('valgteUnikeSykepengePerioder', valgteUnikeSykepengePerioder);
+
+  antallSykedager = valgteUnikeSykepengePerioder
+    ? numberOfDaysInRanges(
+        valgteUnikeSykepengePerioder
+          .filter((periode) => periode !== undefined && periode.fom && periode.tom)
+          .map((periode) => ({
+            fom: periode.fom!,
+            tom: periode.tom!
+          }))
+      )
+    : 0;
+
+  if (antallSykedager > 16) {
+    blokkerInnsending = true;
+  }
+
+  antallDagerMellomSykmeldingsperioder = finnSorterteUnikePerioder(valgteUnikeSykepengePerioder).reduce(
+    (accumulator, currentValue, index, array) => {
+      if (index === 0) {
+        return 0;
+      }
+      const currentFom = currentValue.fom;
+      const previousTom = array[index - 1].tom;
+
+      const dagerMellom = differenceInDays(currentFom!, previousTom!);
+      return accumulator > dagerMellom ? accumulator : dagerMellom;
+    },
+    0
+  );
+
+  if (antallDagerMellomSykmeldingsperioder > 16) {
+    blokkerInnsending = true;
+  }
+
+  console.log('antallSykedager', antallSykedager);
+  console.log('antallDagerMellomSykmeldingsperioder', antallDagerMellomSykmeldingsperioder);
+
   const visFeilmeldingliste =
     (feilmeldinger && feilmeldinger.length > 0) || (backendFeil.current && backendFeil.current.length > 0);
   return (
@@ -273,31 +345,64 @@ const Initiering2: NextPage = () => {
                         />
                       </div>
                     </div>
-                    <CheckboxGroup
-                      legend='Velg sykmeldingsperiode.'
-                      id='sykepengePeriodeId'
-                      error={errors.sykepengePeriodeId?.message as string}
-                      onChange={handleSykepengePeriodeIdRadio}
-                    >
-                      {sykepengePerioder.map((periode) => (
-                        <Checkbox key={periode.id} value={periode.id}>
-                          {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
-                          {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                        </Checkbox>
-                      ))}
-                    </CheckboxGroup>
+                    {spIsLoading && <Loading />}
+                    {spData && organisasjonsnummer && (
+                      <CheckboxGroup
+                        legend='Velg sykmeldingsperiode'
+                        id='sykepengePeriodeId'
+                        error={errors.sykepengePeriodeId?.message as string}
+                        onChange={handleSykepengePeriodeIdRadio}
+                      >
+                        {sykepengePerioder.map((periode) => (
+                          <Checkbox key={periode.id} value={periode.id}>
+                            {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                            {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
+                          </Checkbox>
+                        ))}
+                      </CheckboxGroup>
+                    )}
+                    {(spError || (organisasjonsnummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
+                      <Alert variant='error'>
+                        Finner ingen sykepengesøknader for den valgte personen i den valgte organisasjonen. Sjekk at du
+                        har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om sykepenger
+                        er sendt inn.
+                      </Alert>
+                    )}
                   </>
                 )}
                 <div className={lokalStyles.knapperad}>
                   <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
                     Tilbake
                   </Button>
-                  <Button variant='primary' className={lokalStyles.primaryKnapp} loading={isLoading}>
+                  <Button
+                    variant='primary'
+                    className={lokalStyles.primaryKnapp}
+                    loading={isLoading}
+                    disabled={blokkerInnsending}
+                  >
                     Neste
                   </Button>
                 </div>
               </form>
             </FormProvider>
+            {antallSykedager > 16 && (
+              <Alert variant='error' className={lokalStyles.alertPadding}>
+                <Heading1>
+                  Det er ikke mulig å opprette inntektsmelding manuelt for et sammenhengende sykefravær på over 16 dager
+                </Heading1>
+                Hvis et sammenhengende sykefravær er lengre enn 16 dager, vil NAV opprette en inntektsmelding. Vi sender
+                ut en forespørsel om inntektsmelding når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn
+                søknad om sykepenger. Du finner du forespørselen på{' '}
+                <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+              </Alert>
+            )}
+            {antallDagerMellomSykmeldingsperioder > 16 && (
+              <Alert variant='error' className={lokalStyles.alertPadding}>
+                <Heading1>Oppholdet mellom sykmeldingsperiodene er for langt til å opprette inntektsmelding</Heading1>
+                Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding
+                for hver av periodene.
+              </Alert>
+            )}
             <FeilListe
               skalViseFeilmeldinger={visFeilmeldingliste}
               feilmeldinger={feilmeldinger ? [...feilmeldinger, ...backendFeil.current] : [...backendFeil.current]}

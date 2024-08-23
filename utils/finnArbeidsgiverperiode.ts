@@ -3,6 +3,7 @@ import { Periode } from '../state/state';
 import {
   finnSorterteUnikePerioder,
   overlappendePeriode,
+  tidPeriode,
   tilstoetendePeriode,
   tilstoetendePeriodeManuellJustering
 } from './finnBestemmendeFravaersdag';
@@ -53,7 +54,7 @@ export const finnSammenhengendePeriode = (fravaersperioder: Array<Periode>): Arr
   return tilstotendeSykemeldingsperioder;
 };
 
-export const finnSammenhengendePeriodeManuellJustering = (fravaersperioder: Array<Periode>): Array<Periode> => {
+export function finnSammenhengendePeriodeManuellJustering<T extends tidPeriode>(fravaersperioder: Array<T>): Array<T> {
   const { mergedSykemeldingsperioder, tilstotendeSykemeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
   mergedSykemeldingsperioder.forEach((periode) => {
     const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
@@ -67,11 +68,11 @@ export const finnSammenhengendePeriodeManuellJustering = (fravaersperioder: Arra
   });
 
   return tilstotendeSykemeldingsperioder;
-};
+}
 
 export default finnArbeidsgiverperiode;
 
-function joinPerioderMedOverlapp(fravaersperioder: Periode[]) {
+function joinPerioderMedOverlapp<T extends tidPeriode>(fravaersperioder: T[]) {
   const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
 
   const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
