@@ -398,7 +398,7 @@ const Initiering2: NextPage = () => {
             )}
             {antallDagerMellomSykmeldingsperioder > 16 && (
               <Alert variant='error' className={lokalStyles.alertPadding}>
-                <Heading1>Oppholdet mellom sykmeldingsperiodene er for langt til å opprette inntektsmelding</Heading1>
+                <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
                 Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding
                 for hver av periodene.
               </Alert>
@@ -419,7 +419,9 @@ function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
     return null;
   }
 
-  return antallEgenmeldingsdager === 1 ? '(1 egenmeldingsdag)' : `(${antallEgenmeldingsdager} egenmeldingsdager)`;
+  return antallEgenmeldingsdager === 1
+    ? '(pluss 1 egenmeldingsdag)'
+    : `(pluss ${antallEgenmeldingsdager} egenmeldingsdager)`;
 }
 
 export default Initiering2;
