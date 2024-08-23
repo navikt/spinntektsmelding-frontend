@@ -272,7 +272,8 @@ export default function Arbeidsgiverperiode({
     arbeidsgiverperioder,
     arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
     slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
-    manuellEndring
+    manuellEndring,
+    arbeidsgiverperiodeDisabled
   ]);
 
   useEffect(() => {

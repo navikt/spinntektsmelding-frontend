@@ -128,7 +128,7 @@ export default function Bruttoinntekt({
       setBareNyMaanedsinntekt(sbBruttoinntekt);
       setEndreMaanedsinntekt(false);
     }
-  }, [sbBruttoinntekt]);
+  }, [sbBruttoinntekt, setBareNyMaanedsinntekt]);
 
   return (
     <>
