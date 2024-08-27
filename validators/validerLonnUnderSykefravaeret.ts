@@ -53,7 +53,7 @@ function validerJaStatusMedDato(refusjonskravetOpphoerer: RefusjonskravetOpphoer
 }
 
 function validerBelop(refusjon: LonnISykefravaeret, errorStatus: ValiderResultat[]) {
-  if (typeof refusjon.beloep === 'undefined') {
+  if (typeof refusjon.beloep === 'undefined' || refusjon.beloep === null) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_BELOP,
       felt: 'refusjon.beloepPerMaaned'

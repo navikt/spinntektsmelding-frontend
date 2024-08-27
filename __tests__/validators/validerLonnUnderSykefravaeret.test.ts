@@ -156,4 +156,22 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
 
     expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
   });
+
+  it('should return an error when refusjonsbeløp is null', () => {
+    const inputLUS: LonnISykefravaeret = {
+      status: 'Ja',
+      beloep: null
+    };
+
+    const expected: any = [
+      {
+        code: 'LONN_UNDER_SYKEFRAVAERET_BELOP',
+        felt: 'refusjon.beloepPerMaaned'
+      }
+    ];
+
+    const bruttoInntekt = 9000;
+
+    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
+  });
 });
