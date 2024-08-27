@@ -52,6 +52,7 @@ const Initiering2: NextPage = () => {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -84,7 +85,6 @@ const Initiering2: NextPage = () => {
   });
 
   type Skjema = z.infer<typeof skjemaSchema>;
-  type EndepunktArbeidsforhold = z.infer<typeof endepunktArbeidsforholdSchema>;
   type EndepunktSykepengesoeknader = z.infer<typeof endepunktSykepengesoeknaderSchema>;
 
   const methods = useForm({
@@ -125,8 +125,10 @@ const Initiering2: NextPage = () => {
 
         const sykmeldingsperiode: EndepunktSykepengesoeknader | [] = [];
         formData.sykepengePeriodeId?.forEach((id) => {
-          const periode = mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
-          if (periode) {
+          const periode =
+            mottatteSykepengesoeknader?.success &&
+            mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
+          if (!!periode) {
             sykmeldingsperiode.push(periode);
           }
         });
@@ -172,6 +174,7 @@ const Initiering2: NextPage = () => {
           initFravaersperiode(fravaersperioder as MottattPeriode[]);
           initEgenmeldingsperiode(egenmeldingsperioder as MottattPeriode[]);
           tilbakestillArbeidsgiverperiode();
+          setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
           router.push('/arbeidsgiverInitiertInnsending');
         }
       }

@@ -30,12 +30,12 @@ export default function useSykepengesoeknader(
         if (err.status === 404) {
           backendFeil.current.push({
             felt: 'Backend',
-            text: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+            text: 'Kunne ikke finne sykepengesøknader for personen, sjekk at du har tastet riktig personnummer'
           });
         } else if (err.status !== 200) {
           backendFeil.current.push({
             felt: 'Backend',
-            text: 'Kunne ikke hente arbeidsforhold'
+            text: 'Kunne ikke hente sykepengesøknader'
           });
         }
       },
