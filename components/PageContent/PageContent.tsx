@@ -1,8 +1,7 @@
 import '@navikt/ds-css';
-import { Link } from '@navikt/ds-react';
 import { ReactNode } from 'react';
-import Heading2 from '../Heading2/Heading2';
 import env from '../../config/environment';
+import { setBreadcrumbs } from '@navikt/nav-dekoratoren-moduler';
 
 interface PageContentProps {
   children: ReactNode;
@@ -11,13 +10,23 @@ interface PageContentProps {
 }
 
 export default function PageContent(props: PageContentProps) {
+  setBreadcrumbs([
+    {
+      title: 'Min side - arbeidsgiver',
+      url: `${env.minSideArbeidsgiver}`
+    },
+    {
+      title: 'Saksoversikt',
+      url: `${env.saksoversiktUrl}`
+    },
+    {
+      title: props.title,
+      url: 'https://www.nav.no'
+    }
+  ]);
   return (
     <main role='main' id='maincontent' tabIndex={-1} className='page-content-wrapper main-content'>
-      <div className='page-content-breadcrumb skjul-fra-print'>
-        <Link href={env.minSideArbeidsgiver}>Min side arbeidsgiver</Link> / {props.title}
-      </div>
       <div className='page-content-header'>
-        <Heading2>{props.title}</Heading2>
         {props.jsxItem && <div className='page-content-header-extra'>{props.jsxItem}</div>}
       </div>
       <div className='page-content-body'>{props.children}</div>

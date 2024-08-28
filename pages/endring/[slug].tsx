@@ -216,7 +216,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   }, [bruttoinntekt.bruttoInntekt, setValue]);
 
   const lukkHentingFeiletModal = () => {
-    window.location.href = environment.minSideArbeidsgiver;
+    window.location.href = environment.saksoversiktUrl;
   };
 
   const pathSlug = slug || (searchParams.get('slug') as string);
@@ -360,7 +360,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
+      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <div>
         <PageContent title='Oppdatert informasjon - innsendt inntektsmelding'>
           <main className={`main-content`}>

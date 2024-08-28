@@ -72,13 +72,13 @@ const nextConfig = {
     arbeidsgiverListe: process.env.ARBEIDSGIVERLISTE_API,
     kvitteringDataApi: process.env.KVITTERINGSDATA_API,
     minSideArbeidsgiver: process.env.MIN_SIDE_ARBEIDSGIVER,
+    saksoversiktUrl: process.env.SAKSOVERSIKT_URL,
     telemetryUrl: process.env.TELEMETRY_URL,
     flexJarUrl: process.env.FLEXJAR_URL,
     aktiveOrgnrApi: process.env.AKTIVE_ORGNR_API,
     innsendingSelvbestemtInntektsmeldingApi: process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API,
     version,
-    loggingDisabled: process.env.DISABLE_DECORATOR,
-    saksoversiktUrl: process.env.SAKSOVERSIKT_URL
+    loggingDisabled: process.env.DISABLE_DECORATOR
   }
 };
 

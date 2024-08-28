@@ -5,11 +5,11 @@
 }
 
 .page-content-header {
-  background-color: #cce1ff;
-  padding: 2rem 2rem 1rem;
+  background-color: #fff;
+  padding: 2rem 2rem 0;
   display: flex;
   justify-content: space-between;
-  --ac-button-secondary-bg: var(--a-bg-default);
+  margin-top: 1rem;
 }
 
 .page-content-body {
@@ -22,4 +22,15 @@
 
 .page-content-header-extra {
   margin-top: -0.375rem;
+}
+
+.page-content-title {
+  margin-bottom: 0 !important;
+}
+
+.page-kvittering-header {
+  background-color: #fff;
+  padding: 0 0 1rem 0;
+  display: flex;
+  justify-content: space-between;
 }
