@@ -10,20 +10,22 @@ interface PageContentProps {
 }
 
 export default function PageContent(props: PageContentProps) {
-  setBreadcrumbs([
-    {
-      title: 'Min side - arbeidsgiver',
-      url: `${env.minSideArbeidsgiver}`
-    },
-    {
-      title: 'Saksoversikt',
-      url: `${env.saksoversiktUrl}`
-    },
-    {
-      title: props.title,
-      url: 'https://www.nav.no'
-    }
-  ]);
+  if (typeof window !== 'undefined') {
+    setBreadcrumbs([
+      {
+        title: 'Min side - arbeidsgiver',
+        url: `${env.minSideArbeidsgiver}`
+      },
+      {
+        title: 'Saksoversikt',
+        url: `${env.saksoversiktUrl}`
+      },
+      {
+        title: props.title,
+        url: 'https://www.nav.no'
+      }
+    ]);
+  }
   return (
     <main role='main' id='maincontent' tabIndex={-1} className='page-content-wrapper main-content'>
       <div className='page-content-header'>
