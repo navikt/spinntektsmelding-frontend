@@ -296,9 +296,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
+      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
 
-      <PageContent title='Kvittering - innsendt inntektsmelding' jsxItem={<ButtonEndre onClick={clickEndre} />}>
+      <PageContent title='Kvittering - innsendt inntektsmelding'>
         <div className={`main-content ${styles.padded}`}>
           {kvitteringEksterntSystem?.avsenderSystem && (
             <KvitteringAnnetSystem
@@ -309,6 +309,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           )}
           {!kvitteringEksterntSystem?.avsenderSystem && (
             <>
+              <div className='page-kvittering-header'>
+                <Heading2>Kvittering - innsendt inntektsmelding</Heading2>
+                <div className='page-content-header-extra'>
+                  <ButtonEndre onClick={clickEndre} />
+                </div>
+              </div>
+
               <PersonVisning {...personData} />
               <Skillelinje />
               <div className={classNameWrapperFravaer}>
