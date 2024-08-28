@@ -6,7 +6,7 @@
 
 .page-content-header {
   background-color: #fff;
-  padding: 2rem 2rem 0;
+  padding: 1rem 2rem 0;
   display: flex;
   justify-content: space-between;
   margin-top: 1rem;
@@ -14,10 +14,6 @@
 
 .page-content-body {
   background-color: #fff;
-}
-
-.page-content-breadcrumb {
-  margin: 2rem 2.5rem 1rem;
 }
 
 .page-content-header-extra {

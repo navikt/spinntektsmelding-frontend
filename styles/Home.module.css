@@ -4,7 +4,6 @@
 
 .padded {
   padding: 1rem 2.5rem;
-  margin-bottom: 2rem;
 }
 
 .tddatepickernatural {
@@ -162,4 +161,9 @@
   .datepickerescape {
     width: 100%;
   }
+}
+
+.container {
+  background-color: #efefef;
+  padding-bottom: 1rem;
 }
