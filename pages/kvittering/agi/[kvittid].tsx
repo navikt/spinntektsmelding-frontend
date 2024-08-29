@@ -414,7 +414,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}
-              <Link className={lokalStyles.lukkelenke} href={environment.minSideArbeidsgiver}>
+              <Link className={lokalStyles.lukkelenke} href={environment.saksoversiktUrl}>
                 Lukk
               </Link>
             </div>

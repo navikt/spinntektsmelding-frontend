@@ -542,7 +542,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       Send
                     </Button>
 
-                    <Link className={styles.lukkelenke} href={environment.minSideArbeidsgiver}>
+                    <Link className={styles.lukkelenke} href={environment.saksoversiktUrl}>
                       Lukk
                     </Link>
                   </div>
