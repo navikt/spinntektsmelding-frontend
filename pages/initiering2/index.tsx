@@ -225,8 +225,8 @@ const Initiering2: NextPage = () => {
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
-      <PageContent title='Inntektsmelding'>
+      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding'} />
+      <PageContent title='Inntektsmelding sykepenger'>
         <main className='main-content'>
           <div className={styles.padded}>
             <Heading1>Opprett inntektsmelding for et sykefravær</Heading1>

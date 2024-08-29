@@ -5,7 +5,7 @@ import { Alert, BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
-import { LonnIArbeidsgiverperioden, Periode, YesNo } from '../../state/state';
+import { LonnIArbeidsgiverperioden, Periode } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
@@ -37,7 +37,7 @@ export default function Arbeidsgiverperiode({
   arbeidsgiverperioder,
   setIsDirtyForm,
   skjemastatus
-}: ArbeidsgiverperiodeProps) {
+}: Readonly<ArbeidsgiverperiodeProps>) {
   const leggTilArbeidsgiverperiode = useBoundStore((state) => state.leggTilArbeidsgiverperiode);
   const slettArbeidsgiverperiode = useBoundStore((state) => state.slettArbeidsgiverperiode);
   const setArbeidsgiverperiodeDato = useBoundStore((state) => state.setArbeidsgiverperiodeDato);
@@ -227,7 +227,7 @@ export default function Arbeidsgiverperiode({
     if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
       setArbeidsgiverperiodeKort(antallDager < 16 && !arbeidsgiverperiodeDisabled);
       if (antallDager < 16) {
-        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(YesNo.Nei);
+        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       } else {
         slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       }
@@ -272,7 +272,8 @@ export default function Arbeidsgiverperiode({
     arbeidsgiverperioder,
     arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
     slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
-    manuellEndring
+    manuellEndring,
+    arbeidsgiverperiodeDisabled
   ]);
 
   useEffect(() => {

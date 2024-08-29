@@ -159,9 +159,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
+      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
 
-      <PageContent title='Kvittering - innsendt inntektsmelding' jsxItem={<ButtonEndre onClick={clickEndre} />}>
+      <PageContent title='Kvittering - innsendt inntektsmelding'>
         <div className={`main-content ${styles.padded}`}>
           {kvitteringEksterntSystem?.avsenderSystem && (
             <KvitteringAnnetSystem
@@ -172,6 +172,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           )}
           {!kvitteringEksterntSystem?.avsenderSystem && (
             <>
+              <div className='page-kvittering-header'>
+                <Heading2>Kvittering - innsendt inntektsmelding</Heading2>
+                <div className='page-content-header-extra'>
+                  <ButtonEndre onClick={clickEndre} />
+                </div>
+              </div>
+
               <Person erKvittering={true} />
               <Skillelinje />
               <div className={classNameWrapperFravaer}>
@@ -259,7 +266,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}
-              <Link className={lokalStyles.lukkelenke} href={env.minSideArbeidsgiver}>
+              <Link className={lokalStyles.lukkelenke} href={env.saksoversiktUrl}>
                 Lukk
               </Link>
             </div>

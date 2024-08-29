@@ -63,18 +63,15 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       skjemaData.aarsakInnsending = 'Ny';
     }
     const validerteData = fyllAapenInnsending(skjemaData);
-    let hasErrors = validerteData.success !== true;
+
     if (validerteData.success !== true) {
       logger.error('Feil ved validering av skjema - Åpen innsending');
+      logger.error(validerteData.error);
       console.log(validerteData);
     }
 
-    if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
-      hasErrors = true;
-    }
-
     if (
-      hasErrors ||
+      validerteData.success === false ||
       !opplysningerBekreftet ||
       (!harRefusjonEndringer && lonnISykefravaeret?.status === 'Ja') ||
       !fullLonnIArbeidsgiverPerioden?.status ||
@@ -82,14 +79,15 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       (!refusjonskravetOpphoerer?.status && lonnISykefravaeret?.status === 'Ja') ||
       (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphoersdato)
     ) {
-      const errors: ValiderTekster[] = hasErrors
-        ? validerteData.error.issues.map((issue) => {
-            return {
-              text: issue.message,
-              felt: issue.path.join('.')
-            };
-          })
-        : [];
+      const errors: ValiderTekster[] =
+        validerteData.success === false
+          ? validerteData.error.issues.map((issue) => {
+              return {
+                text: issue.message,
+                felt: issue.path.join('.')
+              };
+            })
+          : [];
 
       if (!fullLonnIArbeidsgiverPerioden?.status) {
         errors.push({
@@ -135,7 +133,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
       if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
         errors.push({
-          text: feiltekster.BEKREFT_OPPLYSNINGER,
+          text: feiltekster.INNTEKT_UNDER_REFUSJON,
           felt: 'agp.redusertLoennIAgp.beloep'
         });
       }

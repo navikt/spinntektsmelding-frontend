@@ -76,6 +76,7 @@ export default function useSendInnDelvisSkjema(
 
     if (validerteData.success === false) {
       logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
+      logger.error(validerteData.error);
       console.log(validerteData);
     }
 

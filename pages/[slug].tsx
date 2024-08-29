@@ -90,7 +90,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   );
 
   const lukkHentingFeiletModal = () => {
-    window.location.href = environment.minSideArbeidsgiver;
+    window.location.href = environment.saksoversiktUrl;
   };
 
   const pathSlug = slug || (searchParams.get('slug') as string);
@@ -194,7 +194,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
   const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
-
   return (
     <div className={styles.container}>
       <Head>
@@ -203,7 +202,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
+      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <PageContent title='Inntektsmelding'>
         <form className={styles.padded} onSubmit={submitForm}>
           <Person />
@@ -264,7 +263,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 Send
               </Button>
 
-              <Link className={styles.lukkelenke} href={environment.minSideArbeidsgiver}>
+              <Link className={styles.lukkelenke} href={environment.saksoversiktUrl}>
                 Lukk
               </Link>
             </div>
