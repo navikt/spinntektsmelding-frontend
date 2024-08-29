@@ -66,6 +66,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
     if (validerteData.success !== true) {
       logger.error('Feil ved validering av skjema - Åpen innsending');
+      logger.error(validerteData.error);
       console.log(validerteData);
     }
 
