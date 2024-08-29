@@ -56,7 +56,8 @@ const feiltekster = {
   ENDRINGER_AV_REFUSJON: 'Du må velge om det har vært endringer i refusjon',
   UGYLDIG_TELEFON: 'Telefonnummer er ugyldig. Et telefonnummer består av 8-siffer',
   TELEFON_MANGLER: 'Telefonnummer mangler',
-  PERIODE_OVERLAPPER: 'Arbeidsgiverperiodene kan ikke overlappe'
+  PERIODE_OVERLAPPER: 'Arbeidsgiverperiodene kan ikke overlappe',
+  INNTEKT_UNDER_REFUSJON: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.'
 };
 
 export default feiltekster;
