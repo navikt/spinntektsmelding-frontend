@@ -172,13 +172,15 @@ export default function useSendInnDelvisSkjema(
               component: amplitudeComponent
             });
 
-            if (resultat.errors) {
-              const errors: Array<ErrorResponse> = resultat.errors;
+            debugger;
 
-              resultat.errors.forEach((error: ErrorResponse) => {
-                setError(error.property, { message: error.error });
-              });
+            if (resultat.error) {
+              const errors: Array<ErrorResponse> = resultat.valideringsfeil.map((error: any) => ({
+                error: error
+              }));
+
               errorResponse(errors);
+              setSkalViseFeilmeldinger(true);
             }
           });
       }

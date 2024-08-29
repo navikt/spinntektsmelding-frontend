@@ -4,6 +4,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../../config/environment';
 
 import org from '../../../mockdata/testOrganisasjoner';
+import feilRespons from '../../../mockdata/respons-backendfeil.json';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 
 const basePath = 'http://' + global.process.env.IM_API_URI + environment.innsendingInntektsmeldingAPI;
@@ -20,11 +21,8 @@ export const config = {
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
-    const innsendteData = {
-      errors: [{ property: 'refusjon.refusjonPrMnd', error: 'Must be less than or equal to 40 000', value: '45000.0' }]
-    };
     setTimeout(() => {
-      return res.status(201).json(innsendteData);
+      return res.status(400).json(feilRespons);
     }, 100);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {

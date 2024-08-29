@@ -63,7 +63,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
     <>
       {!erKvittering && (
         <>
-          <Heading2>Inntektsmelding</Heading2>
+          <Heading2 size='large'>Inntektsmelding</Heading2>
           <p>
             For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
             opplysningene vi har om den ansatte og sykefraværet. Vi gjør dere oppmerksom på at den ansatte vil få

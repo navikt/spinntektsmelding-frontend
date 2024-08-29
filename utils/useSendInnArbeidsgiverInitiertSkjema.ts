@@ -231,19 +231,23 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
           }
 
           case 400: {
-            const errors: Array<ErrorResponse> = [
-              {
-                value: 'Innsending av skjema feilet',
-                error: 'Mangler arbeidsforhold i perioden',
-                property: 'server'
-              }
-            ];
-            errorResponse(errors);
-            setSkalViseFeilmeldinger(true);
-            logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
-            logger.error(data);
+            return data.json().then((resultat) => {
+              logEvent('skjema innsending feilet', {
+                tittel: 'Innsending feilet',
+                component: amplitudeComponent
+              });
 
-            break;
+              if (resultat.error) {
+                const errors: Array<ErrorResponse> = resultat.valideringsfeil.map((error: any) => ({
+                  error: error
+                }));
+
+                errorResponse(errors);
+
+                logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
+                logger.error(data);
+              }
+            });
           }
 
           default:
