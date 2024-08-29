@@ -27,8 +27,7 @@ describe('validerAapenInnsending', () => {
         beloepPerMaaned: 1000,
         endringer: [],
         sluttdato: '2002-02-02'
-      },
-      aarsakInnsending: 'Endring'
+      }
     };
 
     expect(validerAapenInnsending(data).success).toBe(true);

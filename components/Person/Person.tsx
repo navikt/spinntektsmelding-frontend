@@ -5,6 +5,7 @@ import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
 import { Alert, Skeleton, TextField } from '@navikt/ds-react';
 import Heading2 from '../Heading2/Heading2';
+import Skillelinje from '../Skillelinje/Skillelinje';
 
 interface PersonProps {
   erKvittering?: boolean;
@@ -67,10 +68,11 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
             opplysningene vi har om den ansatte og sykefraværet. Vi gjør dere oppmerksom på at den ansatte vil få
             tilgang til å se innsendt informasjon etter personopplysningslovens artikkel 15 og forvaltningsloven § 18.
-            {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
-              <Alert variant='info'>{feilmeldingTekst}</Alert>
-            )}
           </p>
+          <Skillelinje />
+          {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
+            <Alert variant='info'>{feilmeldingTekst}</Alert>
+          )}
         </>
       )}
       {erDelvisInnsending && (
