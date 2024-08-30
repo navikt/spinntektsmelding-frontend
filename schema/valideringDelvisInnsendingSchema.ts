@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { EndringAarsakSchema } from './endringAarsakSchema';
 import { TelefonNummerSchema } from './telefonNummerSchema';
+import { SkjemavalideringEndringAarsakSchema } from './skjemavalideringEndringAarsakSchema';
 
 const JaNeiSchema = z.enum(['Ja', 'Nei'], {
   errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer.' })
@@ -23,7 +24,7 @@ export default z
           errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer i beregnet månedslønn.' })
         }),
         beloep: z.number().gte(0).optional(),
-        endringAarsak: EndringAarsakSchema.optional()
+        endringAarsak: SkjemavalideringEndringAarsakSchema.optional()
       })
       .superRefine((value, ctx) => {
         if (value.endringBruttoloenn === 'Ja' && value.beloep === undefined) {
