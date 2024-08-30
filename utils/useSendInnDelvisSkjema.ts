@@ -172,8 +172,6 @@ export default function useSendInnDelvisSkjema(
               component: amplitudeComponent
             });
 
-            debugger;
-
             if (resultat.error) {
               const errors: Array<ErrorResponse> = resultat.valideringsfeil.map((error: any) => ({
                 error: error
