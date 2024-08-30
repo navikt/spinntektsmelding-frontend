@@ -33,22 +33,26 @@ export default function PeriodeListevelger({
     control
   } = useFormContext();
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name
   });
 
   useEffect(() => {
-    if (defaultRange) {
-      defaultRange.forEach((range) => {
-        append({ fom: parseIsoDate(range.fom), tom: parseIsoDate(range.tom) });
+    if (defaultRange && defaultRange.length > 0) {
+      defaultRange.forEach((range, index) => {
+        if (index === 0) {
+          replace({ fom: parseIsoDate(range.fom), tom: parseIsoDate(range.tom) });
+        } else {
+          append({ fom: parseIsoDate(range.fom), tom: parseIsoDate(range.tom) });
+        }
       });
     }
-  }, [append, defaultRange]);
+  }, [append, defaultRange, replace]);
 
   useEffect(() => {
     if (fields.length === 0) {
-      append({});
+      replace({});
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

@@ -32,6 +32,7 @@ import { Periode } from '../../state/state';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import { PersonnummerSchema } from '../../schema/personnummerSchema';
+import formatIsoDate from '../../utils/formatIsoDate';
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
@@ -168,7 +169,12 @@ const Initiering2: NextPage = () => {
           )?.virksomhetsnavn!;
           initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
           setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-          initFravaersperiode(validerteData.perioder as MottattPeriode[]);
+          initFravaersperiode(
+            validerteData.perioder.map((periode) => ({
+              fom: formatIsoDate(periode.fom),
+              tom: formatIsoDate(periode.tom)
+            })) as MottattPeriode[]
+          );
           tilbakestillArbeidsgiverperiode();
           router.push('/arbeidsgiverInitiertInnsending');
         }

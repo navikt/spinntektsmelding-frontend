@@ -125,13 +125,15 @@ export default function useFyllDelvisInnsending() {
     const bestemmendeFraværsdag = formatIsoDate(bestemmendeFraværsdagTilInnsending);
 
     setForeslaattBestemmendeFravaersdag(bestemmendeFraværsdagTilInnsending);
-
+    console.log('skjema.inntekt.endringAarsak', skjema.inntekt.endringAarsak);
     const endringAarsak: EndringAarsak | null =
       skjema.inntekt.endringAarsak?.aarsak && skjema.inntekt.endringAarsak?.aarsak !== 'SammeSomSist'
         ? skjema.inntekt.endringAarsak
         : null;
-
+    console.log('endringAarsak', endringAarsak);
     const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
+
+    console.log('endringAarsakParsed', endringAarsakParsed);
 
     const skjemaData: FullInnsending = {
       forespoerselId,

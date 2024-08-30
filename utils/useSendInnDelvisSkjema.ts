@@ -73,7 +73,7 @@ export default function useSendInnDelvisSkjema(
     const skjemaData: DelvisInnsending = fyllInnsending(form, pathSlug);
 
     const validerteData = delvisInnsendingSchema.safeParse(skjemaData);
-
+    console.log(validerteData);
     if (validerteData.success === false) {
       logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
       logger.error(validerteData.error);
