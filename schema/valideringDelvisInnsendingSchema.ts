@@ -1,20 +1,6 @@
 import { z } from 'zod';
-import { EndringAarsakSchema } from './endringAarsakSchema';
 import { TelefonNummerSchema } from './telefonNummerSchema';
 import { SkjemavalideringEndringAarsakSchema } from './skjemavalideringEndringAarsakSchema';
-
-const JaNeiSchema = z.enum(['Ja', 'Nei'], {
-  errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer.' })
-});
-
-const PositiveNumberSchema = z
-  .string()
-  .transform((value) => (value === '' ? null : value))
-  .nullable()
-  .refine((value) => value === null || !isNaN(Number(value)), {
-    message: 'Ugyldig tallformat'
-  })
-  .transform((value) => (value === null ? null : Number(value)));
 
 export default z
   .object({
