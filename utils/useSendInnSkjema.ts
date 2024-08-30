@@ -167,8 +167,11 @@ export default function useSendInnSkjema(
                 component: amplitudeComponent
               });
 
-              if (resultat.errors) {
-                const errors: Array<ErrorResponse> = resultat.errors;
+              if (resultat.error) {
+                const errors: Array<ErrorResponse> = resultat.valideringsfeil.map((error: any) => ({
+                  error: error
+                }));
+
                 errorResponse(errors);
               }
             });
