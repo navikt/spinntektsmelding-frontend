@@ -125,7 +125,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByRole('button', { name: 'Send' }).click();
 
     cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
-    cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
+    cy.findAllByLabelText('Velg endringsårsak').select('Varig lønnsendring');
+
+    cy.findAllByLabelText('Lønnsendring gjelder fra').clear().type('30.06.23');
 
     cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
@@ -140,7 +142,10 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 50000,
           inntektsdato: '2023-08-08',
           naturalytelser: [],
-          endringAarsak: { aarsak: 'Bonus' }
+          endringAarsak: {
+            aarsak: 'VarigLoennsendring',
+            gjelderFra: '2023-06-30'
+          }
         },
         refusjon: { beloepPerMaaned: 10000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
@@ -150,7 +155,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
 
     cy.findByText('12345678').should('be.visible');
-    cy.findByText(/Bonus/).should('be.visible');
+    cy.findByText(/Varig lønnsendringsdato/).should('be.visible');
+    cy.findByText(/30.06.2023/).should('be.visible');
     cy.findByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
     cy.findAllByText('24.01.2023').should('not.exist');
 
