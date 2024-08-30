@@ -1,19 +1,6 @@
 import { z } from 'zod';
-import { EndringAarsakSchema } from './endringAarsakSchema';
 import { TelefonNummerSchema } from './telefonNummerSchema';
-
-const JaNeiSchema = z.enum(['Ja', 'Nei'], {
-  errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer.' })
-});
-
-const PositiveNumberSchema = z
-  .string()
-  .transform((value) => (value === '' ? null : value))
-  .nullable()
-  .refine((value) => value === null || !isNaN(Number(value)), {
-    message: 'Ugyldig tallformat'
-  })
-  .transform((value) => (value === null ? null : Number(value)));
+import { SkjemavalideringEndringAarsakSchema } from './skjemavalideringEndringAarsakSchema';
 
 export default z
   .object({
@@ -23,7 +10,7 @@ export default z
           errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer i beregnet månedslønn.' })
         }),
         beloep: z.number().gte(0).optional(),
-        endringAarsak: EndringAarsakSchema.optional()
+        endringAarsak: SkjemavalideringEndringAarsakSchema.optional()
       })
       .superRefine((value, ctx) => {
         if (value.endringBruttoloenn === 'Ja' && value.beloep === undefined) {
