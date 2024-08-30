@@ -22,6 +22,7 @@ import {
   verdiEllerNull,
   formaterRedusertLoennIAgp
 } from './useFyllInnsending';
+import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -130,6 +131,8 @@ export default function useFyllDelvisInnsending() {
         ? skjema.inntekt.endringAarsak
         : null;
 
+    const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
+
     const skjemaData: FullInnsending = {
       forespoerselId,
       agp: skalSendeArbeidsgiverperiode
@@ -154,7 +157,7 @@ export default function useFyllDelvisInnsending() {
               verdiBeloep: verdiEllerNull(ytelse.verdi)
             }))
           : [],
-        endringAarsak: endringAarsak
+        endringAarsak: endringAarsakParsed
       },
       refusjon:
         skjema.refusjon.kreverRefusjon === 'Ja'
