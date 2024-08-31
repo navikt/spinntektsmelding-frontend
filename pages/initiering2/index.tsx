@@ -159,8 +159,6 @@ const Initiering2: NextPage = () => {
 
         const validationResult = skjema.safeParse(skjemaData);
 
-        console.log(validationResult);
-
         if (validationResult.success) {
           setIsLoading(true);
           const validerteData = validationResult.data;
