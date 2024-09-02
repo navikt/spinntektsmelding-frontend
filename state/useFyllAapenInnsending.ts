@@ -6,6 +6,7 @@ import { Begrunnelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import validerAapenInnsending, { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
 import { SendtPeriode, formaterRedusertLoennIAgp } from './useFyllInnsending';
+import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 
 export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
@@ -41,9 +42,12 @@ export default function useFyllAapenInnsending() {
     skjaeringstidspunkt,
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
+
   return (skjemaData: any) => {
     const endringAarsak: EndringAarsak | undefined =
       bruttoinntekt.endringAarsak !== null ? bruttoinntekt.endringAarsak : undefined;
+
+    const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
 
     const innsending = validerAapenInnsending({
       sykmeldtFnr: identitetsnummer,
@@ -76,7 +80,7 @@ export default function useFyllAapenInnsending() {
               sluttdato: formatDateForSubmit(ytelse.bortfallsdato)
             }))
           : [],
-        endringAarsak: endringAarsak ?? null
+        endringAarsak: endringAarsakParsed ?? null
       },
       refusjon:
         lonnISykefravaeret?.status === 'Ja'

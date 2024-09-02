@@ -22,7 +22,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
     setTimeout(() => {
-      return res.status(400).json(feilRespons);
+      return res.status(201).json(feilRespons);
     }, 100);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {

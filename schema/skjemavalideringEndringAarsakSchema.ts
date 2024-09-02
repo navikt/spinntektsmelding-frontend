@@ -28,12 +28,18 @@ const EndringAarsakNyansattSchema = z.object({
 
 const EndringAarsakNyStillingSchema = z.object({
   aarsak: z.literal('NyStilling'),
-  gjelderFra: z.date()
+  gjelderFra: z.date({
+    required_error: 'Vennligst fyll inn fra dato',
+    invalid_type_error: 'Dette er ikke en dato'
+  })
 });
 
 const EndringAarsakNyStillingsprosentSchema = z.object({
   aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: z.date()
+  gjelderFra: z.date({
+    required_error: 'Vennligst fyll inn fra dato',
+    invalid_type_error: 'Dette er ikke en dato'
+  })
 });
 
 const EndringAarsakPermisjonSchema = z.object({
@@ -53,13 +59,22 @@ const EndringAarsakSykefravaerSchema = z.object({
 
 const EndringAarsakTariffendringSchema = z.object({
   aarsak: z.literal('Tariffendring'),
-  gjelderFra: z.date(),
-  bleKjent: z.date()
+  gjelderFra: z.date({
+    required_error: 'Vennligst fyll inn fra dato',
+    invalid_type_error: 'Dette er ikke en dato'
+  }),
+  bleKjent: z.date({
+    required_error: 'Vennligst fyll inn fra dato',
+    invalid_type_error: 'Dette er ikke en dato'
+  })
 });
 
 const EndringAarsakVarigLoennsendringSchema = z.object({
   aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: z.date()
+  gjelderFra: z.date({
+    required_error: 'Vennligst fyll inn fra dato',
+    invalid_type_error: 'Dette er ikke en dato'
+  })
 });
 
 export const SkjemavalideringEndringAarsakSchema = z.discriminatedUnion(

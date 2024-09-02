@@ -125,7 +125,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByRole('button', { name: 'Send' }).click();
 
     cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
-    cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
+    cy.findAllByLabelText('Velg endringsårsak').select('Varig lønnsendring');
+
+    cy.findAllByLabelText('Lønnsendring gjelder fra').clear().type('30.06.23');
 
     cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
@@ -140,7 +142,10 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 50000,
           inntektsdato: '2023-08-08',
           naturalytelser: [],
-          endringAarsak: { aarsak: 'Bonus' }
+          endringAarsak: {
+            aarsak: 'VarigLoennsendring',
+            gjelderFra: '2023-06-30'
+          }
         },
         refusjon: { beloepPerMaaned: 10000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
@@ -150,7 +155,101 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
 
     cy.findByText('12345678').should('be.visible');
-    cy.findByText(/Bonus/).should('be.visible');
+    cy.findByText(/Varig lønnsendringsdato/).should('be.visible');
+    cy.findByText(/30.06.2023/).should('be.visible');
+    cy.findByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
+    cy.findAllByText('24.01.2023').should('not.exist');
+
+    cy.get('[data-cy="bestemmendefravaersdag"]')
+      .invoke('text')
+      .should('match', /08.08.2023/);
+  });
+
+  it('Changes to ferie and submit', () => {
+    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-delvis-refusjon.json' }).as('trenger');
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', {
+      statusCode: 201,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('innsendingInntektsmelding');
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
+    cy.intercept('http://localhost:12347/collect', {
+      statusCode: 202,
+      body: 'OK'
+    });
+    cy.wait('@kvittering');
+    cy.wait('@trenger');
+
+    cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
+
+    cy.findByRole('group', {
+      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 01.07.2023 og 08.08.2023 (start av nytt sykefravær)?'
+    })
+      .findByLabelText('Ja')
+      .check();
+
+    cy.findByLabelText('Månedsinntekt 08.08.2023').invoke('val').should('equal', '26000');
+    cy.findByLabelText('Månedsinntekt 08.08.2023').clear().type('50000');
+
+    cy.findByRole('group', {
+      name: 'Er det endringer i refusjonskravet etter 08.08.2023 (start av nytt sykefravær)?'
+    })
+      .findByLabelText('Ja')
+      .check();
+
+    cy.findAllByLabelText('Telefon innsender').type('12345678');
+
+    cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+
+    cy.findByRole('button', { name: 'Send' }).click();
+
+    cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
+    cy.findAllByLabelText('Velg endringsårsak').select('Ferie');
+
+    cy.findAllByLabelText('Fra').clear().type('30.06.23');
+    cy.findAllByLabelText('Til').clear().type('05.07.23');
+
+    cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
+
+    cy.findByRole('button', { name: 'Send' }).click();
+
+    cy.wait('@innsendingInntektsmelding')
+      .its('request.body')
+      .should('deep.equal', {
+        forespoerselId: '12345678-3456-5678-2457-123456789012',
+        agp: null,
+        inntekt: {
+          beloep: 50000,
+          inntektsdato: '2023-08-08',
+          naturalytelser: [],
+          endringAarsak: {
+            aarsak: 'Ferie',
+            ferier: [
+              {
+                fom: '2023-06-30',
+                tom: '2023-07-05'
+              }
+            ]
+          }
+        },
+        refusjon: { beloepPerMaaned: 10000, sluttdato: null, endringer: [] },
+        avsenderTlf: '12345678'
+      });
+
+    cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
+
+    cy.findByText('12345678').should('be.visible');
+    cy.findByText(/Ferie/).should('be.visible');
+    cy.findByText(/30.06.2023/).should('be.visible');
+    cy.findByText(/05.07.2023/).should('be.visible');
     cy.findByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
     cy.findAllByText('24.01.2023').should('not.exist');
 

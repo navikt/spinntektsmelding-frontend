@@ -75,7 +75,6 @@ export default function useSendInnSkjema(
       const validerteData = fullInnsendingSchema.safeParse(skjemaData);
 
       if (validerteData.success === false) {
-        console.log(validerteData);
         logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
         logger.error(validerteData.error);
       }

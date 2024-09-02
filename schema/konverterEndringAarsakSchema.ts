@@ -1,70 +1,92 @@
 import { z } from 'zod';
+import { PeriodeSchema } from './konverterPeriodeSchema';
 import { toLocalIso } from '../utils/toLocalIso';
-import {
-  EndringAarsakBonusSchema,
-  EndringAarsakFeilregistrertSchema,
-  EndringAarsakFerieSchema,
-  EndringAarsakFerietrekkSchema,
-  EndringAarsakNyansattSchema,
-  EndringAarsakNyStillingSchema,
-  EndringAarsakNyStillingsprosentSchema,
-  EndringAarsakPermisjonSchema,
-  EndringAarsakPermitteringSchema,
-  EndringAarsakSammeSomSistSchema,
-  EndringAarsakSykefravaerSchema,
-  EndringAarsakTariffendringSchema,
-  EndringAarsakVarigLoennsendringSchema
-} from './endringAarsakSchema';
 
-const kEndringAarsakNyStillingSchema = EndringAarsakNyStillingSchema.merge(
-  z.object({
-    gjelderFra: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val))
-  })
-);
+export const EndringAarsakBonusSchema = z.object({
+  aarsak: z.literal('Bonus')
+});
 
-const kEndringAarsakNyStillingsprosentSchema = EndringAarsakNyStillingsprosentSchema.merge(
-  z.object({
-    gjelderFra: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val))
-  })
-);
+export const EndringAarsakFeilregistrertSchema = z.object({
+  aarsak: z.literal('Feilregistrert')
+});
 
-const kEndringAarsakTariffendringSchema = EndringAarsakTariffendringSchema.merge(
-  z.object({
-    gjelderFra: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val)),
-    bleKjent: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val))
-  })
-);
+export const EndringAarsakFerieSchema = z.object({
+  aarsak: z.literal('Ferie'),
+  ferier: z.array(PeriodeSchema)
+});
 
-const kEndringAarsakVarigLoennsendringSchema = EndringAarsakVarigLoennsendringSchema.merge(
-  z.object({
-    gjelderFra: z
-      .date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      })
-      .transform((val) => toLocalIso(val))
-  })
-);
+export const EndringAarsakFerietrekkSchema = z.object({
+  aarsak: z.literal('Ferietrekk')
+});
+
+export const EndringAarsakSammeSomSistSchema = z.object({
+  aarsak: z.literal('SammeSomSist')
+});
+
+export const EndringAarsakNyansattSchema = z.object({
+  aarsak: z.literal('Nyansatt')
+});
+
+export const EndringAarsakNyStillingSchema = z.object({
+  aarsak: z.literal('NyStilling'),
+  gjelderFra: z
+    .date({
+      required_error: 'Vennligst fyll inn fra dato',
+      invalid_type_error: 'Dette er ikke en dato'
+    })
+    .transform((val) => toLocalIso(val))
+});
+
+export const EndringAarsakNyStillingsprosentSchema = z.object({
+  aarsak: z.literal('NyStillingsprosent'),
+  gjelderFra: z
+    .date({
+      required_error: 'Vennligst fyll inn fra dato',
+      invalid_type_error: 'Dette er ikke en dato'
+    })
+    .transform((val) => toLocalIso(val))
+});
+
+export const EndringAarsakPermisjonSchema = z.object({
+  aarsak: z.literal('Permisjon'),
+  permisjoner: z.array(PeriodeSchema)
+});
+
+export const EndringAarsakPermitteringSchema = z.object({
+  aarsak: z.literal('Permittering'),
+  permitteringer: z.array(PeriodeSchema)
+});
+
+export const EndringAarsakSykefravaerSchema = z.object({
+  aarsak: z.literal('Sykefravaer'),
+  sykefravaer: z.array(PeriodeSchema)
+});
+
+export const EndringAarsakTariffendringSchema = z.object({
+  aarsak: z.literal('Tariffendring'),
+  gjelderFra: z
+    .date({
+      required_error: 'Vennligst fyll inn fra dato',
+      invalid_type_error: 'Dette er ikke en dato'
+    })
+    .transform((val) => toLocalIso(val)),
+  bleKjent: z
+    .date({
+      required_error: 'Vennligst fyll inn fra dato',
+      invalid_type_error: 'Dette er ikke en dato'
+    })
+    .transform((val) => toLocalIso(val))
+});
+
+export const EndringAarsakVarigLoennsendringSchema = z.object({
+  aarsak: z.literal('VarigLoennsendring'),
+  gjelderFra: z
+    .date({
+      required_error: 'Vennligst fyll inn fra dato',
+      invalid_type_error: 'Dette er ikke en dato'
+    })
+    .transform((val) => toLocalIso(val))
+});
 
 export const konverterEndringAarsakSchema = z.discriminatedUnion(
   'aarsak',
@@ -74,13 +96,13 @@ export const konverterEndringAarsakSchema = z.discriminatedUnion(
     EndringAarsakFerieSchema,
     EndringAarsakFerietrekkSchema,
     EndringAarsakNyansattSchema,
-    kEndringAarsakNyStillingSchema,
-    kEndringAarsakNyStillingsprosentSchema,
+    EndringAarsakNyStillingSchema,
+    EndringAarsakNyStillingsprosentSchema,
     EndringAarsakPermisjonSchema,
     EndringAarsakPermitteringSchema,
     EndringAarsakSykefravaerSchema,
-    kEndringAarsakTariffendringSchema,
-    kEndringAarsakVarigLoennsendringSchema,
+    EndringAarsakTariffendringSchema,
+    EndringAarsakVarigLoennsendringSchema,
     EndringAarsakSammeSomSistSchema
   ],
   {
