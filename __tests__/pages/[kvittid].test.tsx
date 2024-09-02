@@ -24,7 +24,7 @@ const initialState = useBoundStore.getState();
 describe('kvittering', () => {
   beforeEach(() => {
     const spy = vi.spyOn(window, 'print');
-    vi.spyOn(env, 'minSideArbeidsgiver', 'get').mockReturnValue('https://mocked.nav.no');
+    vi.spyOn(env, 'saksoversiktUrl', 'get').mockReturnValue('https://mocked.nav.no');
 
     spy.mockImplementation(vi.fn());
 

@@ -10,7 +10,8 @@ vi.mock('react-hook-form', () => ({
   useFieldArray: () => ({
     fields: [],
     append: vi.fn(),
-    remove: vi.fn()
+    remove: vi.fn(),
+    replace: vi.fn()
   }),
   useFormContext: () => ({
     handleSubmit: () => vi.fn(),

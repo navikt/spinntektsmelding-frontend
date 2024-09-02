@@ -37,7 +37,7 @@ export default function Arbeidsgiverperiode({
   arbeidsgiverperioder,
   setIsDirtyForm,
   skjemastatus
-}: ArbeidsgiverperiodeProps) {
+}: Readonly<ArbeidsgiverperiodeProps>) {
   const leggTilArbeidsgiverperiode = useBoundStore((state) => state.leggTilArbeidsgiverperiode);
   const slettArbeidsgiverperiode = useBoundStore((state) => state.slettArbeidsgiverperiode);
   const setArbeidsgiverperiodeDato = useBoundStore((state) => state.setArbeidsgiverperiodeDato);

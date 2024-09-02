@@ -75,8 +75,8 @@ export default function useSendInnSkjema(
       const validerteData = fullInnsendingSchema.safeParse(skjemaData);
 
       if (validerteData.success === false) {
-        console.log(validerteData);
         logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
+        logger.error(validerteData.error);
       }
 
       fyllFeilmeldinger([]);
@@ -166,8 +166,11 @@ export default function useSendInnSkjema(
                 component: amplitudeComponent
               });
 
-              if (resultat.errors) {
-                const errors: Array<ErrorResponse> = resultat.errors;
+              if (resultat.error) {
+                const errors: Array<ErrorResponse> = resultat.valideringsfeil.map((error: any) => ({
+                  error: error
+                }));
+
                 errorResponse(errors);
               }
             });

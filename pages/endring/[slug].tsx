@@ -65,7 +65,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     refusjonskravetOpphoererDato,
     refusjonskravetOpphoererStatus,
     setHarRefusjonEndringer,
-    initRefusjonskravetOpphoerer
+    initRefusjonskravetOpphoerer,
+    feilmeldinger
   ] = useBoundStore((state) => [
     state.initLonnISykefravaeret,
     state.initRefusjonEndringer,
@@ -73,7 +74,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     state.refusjonskravetOpphoererDato,
     state.refusjonskravetOpphoererStatus,
     state.setHarRefusjonEndringer,
-    state.initRefusjonskravetOpphoerer
+    state.initRefusjonskravetOpphoerer,
+    state.feilmeldinger
   ]);
 
   const searchParams = useSearchParams();
@@ -216,7 +218,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   }, [bruttoinntekt.bruttoInntekt, setValue]);
 
   const lukkHentingFeiletModal = () => {
-    window.location.href = environment.minSideArbeidsgiver;
+    window.location.href = environment.saksoversiktUrl;
   };
 
   const pathSlug = slug || (searchParams.get('slug') as string);
@@ -345,7 +347,12 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     refusjonBeloep = 0;
   }
 
-  const feilmeldinger = mapErrorsObjectToFeilmeldinger(errors);
+  const mappedeFeilmeldinger = mapErrorsObjectToFeilmeldinger(errors);
+
+  feilmeldinger.forEach((feil) => {
+    mappedeFeilmeldinger.push(feil);
+  });
+
   useEffect(() => {
     if (harEndringBruttoloenn === 'Nei') {
       unregister('inntekt.endringAarsak');
@@ -360,7 +367,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         <meta name='description' content='Innsending av inntektsmelding' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Sykepenger'} />
+      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <div>
         <PageContent title='Oppdatert informasjon - innsendt inntektsmelding'>
           <main className={`main-content`}>
@@ -535,14 +542,17 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   error={errors.opplysningerBekreftet?.message as string}
                   {...register('opplysningerBekreftet')}
                 ></ConfirmationPanel>
-                <FeilListe skalViseFeilmeldinger={feilmeldinger.length > 0} feilmeldinger={feilmeldinger ?? []} />
+                <FeilListe
+                  skalViseFeilmeldinger={mappedeFeilmeldinger.length > 0}
+                  feilmeldinger={mappedeFeilmeldinger ?? []}
+                />
                 <div className={styles.outerbuttonwrapper}>
                   <div className={styles.buttonwrapper}>
                     <Button className={styles.sendbutton} loading={senderInn}>
                       Send
                     </Button>
 
-                    <Link className={styles.lukkelenke} href={environment.minSideArbeidsgiver}>
+                    <Link className={styles.lukkelenke} href={environment.saksoversiktUrl}>
                       Lukk
                     </Link>
                   </div>

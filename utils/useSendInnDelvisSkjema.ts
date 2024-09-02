@@ -76,7 +76,7 @@ export default function useSendInnDelvisSkjema(
 
     if (validerteData.success === false) {
       logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
-      console.log(validerteData);
+      logger.error(validerteData.error);
     }
 
     fyllFeilmeldinger([]);
@@ -171,13 +171,13 @@ export default function useSendInnDelvisSkjema(
               component: amplitudeComponent
             });
 
-            if (resultat.errors) {
-              const errors: Array<ErrorResponse> = resultat.errors;
+            if (resultat.error) {
+              const errors: Array<ErrorResponse> = resultat.valideringsfeil.map((error: any) => ({
+                error: error
+              }));
 
-              resultat.errors.forEach((error: ErrorResponse) => {
-                setError(error.property, { message: error.error });
-              });
               errorResponse(errors);
+              setSkalViseFeilmeldinger(true);
             }
           });
       }

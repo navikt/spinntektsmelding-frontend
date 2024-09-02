@@ -14,10 +14,7 @@ const Document = ({ Decorator }: DocumentProps) => {
 
   return (
     <Html lang='no'>
-      <Head>
-        {viseDekoratoren ? <Decorator.Styles /> : null}
-        <meta property='og:test' content={env.environment} key='test' />
-      </Head>
+      <Head>{viseDekoratoren ? <Decorator.Styles /> : null}</Head>
       <body id='body'>
         {viseDekoratoren ? <Decorator.Header /> : null}
         <Main />

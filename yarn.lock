@@ -1218,21 +1218,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/aksel-icons@npm:6.11.0, @navikt/aksel-icons@npm:^6.11.0":
-  version: 6.11.0
-  resolution: "@navikt/aksel-icons@npm:6.11.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Faksel-icons%2F6.11.0%2F77b15cf3dd8cd4240862b8bb212a3e94c7b507f8"
-  checksum: 10c0/3554e780c682eed8e6688ce23a27417fb09441dd86ee4970bef6cc84c1fc1d20b4e1f923fd5a42b97880e5a235d9c31b5fce339316bdf237e6e49ad1258451f7
+"@navikt/aksel-icons@npm:^6.16.2":
+  version: 6.16.2
+  resolution: "@navikt/aksel-icons@npm:6.16.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Faksel-icons%2F6.16.2%2F9ee0592457a1e1bc8c1990d1aa3a3cf6c9cc4522"
+  checksum: 10c0/25a25752eaae22a5a6e90ab6eb11a92fb329fbd7046706e39fe5a9fea19ad5355acb11e249971cd94970fc8847a3c88c91f62975c06d0fe4eebcd2f71d1bf048
   languageName: node
   linkType: hard
 
-"@navikt/ds-css@npm:6.11.0":
-  version: 6.11.0
-  resolution: "@navikt/ds-css@npm:6.11.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-css%2F6.11.0%2Fd71f2ada5c3376a5bba21d876604f7b9f946fff3"
-  checksum: 10c0/be46daa005d28b06fc3f325a7d38cb7f01ca1dcc4f6194298829e0e885e624a7cc2ea53151eb9079c459afd9308e4a86eec2f3fc7664c8544b691aa2e5933627
+"@navikt/ds-css@npm:^6.16.2":
+  version: 6.16.2
+  resolution: "@navikt/ds-css@npm:6.16.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-css%2F6.16.2%2F6504d11c7905723a585a2c9ba2555fb5a8a159e1"
+  checksum: 10c0/b37bc945abe2d9809c573021c2f381c0a95a936b2cfbcedaa59e7cf9a0cd860fb3beb557221d4ef7dea99d8d8b2cb57a2602e250883f762516f6f8969066c595
   languageName: node
   linkType: hard
 
-"@navikt/ds-icons@npm:3.4.3":
+"@navikt/ds-icons@npm:^3.4.3":
   version: 3.4.3
   resolution: "@navikt/ds-icons@npm:3.4.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-icons%2F3.4.3%2Feaa8fc38f6d184806d3405a5efbc9d137c2b8d27"
   peerDependencies:
@@ -1242,28 +1242,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/ds-react@npm:6.11.0":
-  version: 6.11.0
-  resolution: "@navikt/ds-react@npm:6.11.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-react%2F6.11.0%2Fd5570c1f831bbf7dfbbd005693f59fe74f67d1ee"
+"@navikt/ds-react@npm:^6.16.2":
+  version: 6.16.2
+  resolution: "@navikt/ds-react@npm:6.16.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-react%2F6.16.2%2Fb16cba0f95df6b9e4035099c0dc5b239dcbd5392"
   dependencies:
     "@floating-ui/react": "npm:0.25.4"
     "@floating-ui/react-dom": "npm:^2.0.9"
-    "@navikt/aksel-icons": "npm:^6.11.0"
-    "@navikt/ds-tokens": "npm:^6.11.0"
+    "@navikt/aksel-icons": "npm:^6.16.2"
+    "@navikt/ds-tokens": "npm:^6.16.2"
     clsx: "npm:^2.1.0"
     date-fns: "npm:^3.0.0"
     react-day-picker: "npm:8.10.0"
   peerDependencies:
     "@types/react": ^17.0.30 || ^18.0.0
     react: ^17.0.0 || ^18.0.0
-  checksum: 10c0/f2ab020a5cf5939680407082eb82b9f1357d24462865e4379d4a3e2eef66ba9ac872dc6216095701b9b20ace2682ce9d97aafb4f89e4f0a404ada143a413cd99
+  checksum: 10c0/79b7cc5b950bcfc3557877670e942326edb9bfc4075121bae3f8b06e9c7049da5b3d4b454c9796031de78438c3ffa1f224c72643f238c0cb2b89dc35a5519172
   languageName: node
   linkType: hard
 
-"@navikt/ds-tokens@npm:^6.11.0":
-  version: 6.11.0
-  resolution: "@navikt/ds-tokens@npm:6.11.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-tokens%2F6.11.0%2Fad1fc80e0934e1576e1c1f88a74eb52e40771e9b"
-  checksum: 10c0/025f103247046ec2eea69a3e2a31c1ac5c56a18ea7594a85ba38e0ce2748f502def24e599d7017e4942c0b0ae658a0aacb373e9d01e30ed8414d1a03ee356307
+"@navikt/ds-tokens@npm:^6.16.2":
+  version: 6.16.2
+  resolution: "@navikt/ds-tokens@npm:6.16.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-tokens%2F6.16.2%2Fe2f8b1ee8b5125a4497d1baca3b19ac4bd6716e4"
+  checksum: 10c0/8577fb20f522623354f836a80b385657f351f21643d3eca91159117b7881db052225ee03b5ee4320c84fb78507c2d8e29eda4921e3cda466dd2f1127fd4593f1
   languageName: node
   linkType: hard
 
@@ -1274,7 +1274,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/nav-dekoratoren-moduler@npm:2.1.6":
+"@navikt/nav-dekoratoren-moduler@npm:^2.1.6":
   version: 2.1.6
   resolution: "@navikt/nav-dekoratoren-moduler@npm:2.1.6::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fnav-dekoratoren-moduler%2F2.1.6%2F049e1daeecff43519e41e387f21fd7e3634c2bd3"
   dependencies:
@@ -8698,12 +8698,12 @@ __metadata:
     "@grafana/faro-web-sdk": "npm:1.9.0"
     "@grafana/faro-web-tracing": "npm:1.9.0"
     "@hookform/resolvers": "npm:3.9.0"
-    "@navikt/aksel-icons": "npm:6.11.0"
-    "@navikt/ds-css": "npm:6.11.0"
-    "@navikt/ds-icons": "npm:3.4.3"
-    "@navikt/ds-react": "npm:6.11.0"
+    "@navikt/aksel-icons": "npm:^6.16.2"
+    "@navikt/ds-css": "npm:^6.16.2"
+    "@navikt/ds-icons": "npm:^3.4.3"
+    "@navikt/ds-react": "npm:^6.16.2"
     "@navikt/fnrvalidator": "npm:2.1.0"
-    "@navikt/nav-dekoratoren-moduler": "npm:2.1.6"
+    "@navikt/nav-dekoratoren-moduler": "npm:^2.1.6"
     "@navikt/next-logger": "npm:1.25.0"
     "@navikt/oasis": "npm:^3.3.0"
     "@testing-library/cypress": "npm:10.0.2"
