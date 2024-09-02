@@ -37,6 +37,7 @@ import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import environment from '../../config/environment';
 import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
+import { periodeMapper } from '../../components/Bruttoinntekt/Aarsaksvelger';
 
 type SykepengePeriode = {
   id: string;
@@ -171,12 +172,7 @@ const Initiering2: NextPage = () => {
           )?.virksomhetsnavn!;
           initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
           setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-          initFravaersperiode(
-            validerteData.perioder.map((periode) => ({
-              fom: formatIsoDate(periode.fom),
-              tom: formatIsoDate(periode.tom)
-            })) as MottattPeriode[]
-          );
+          initFravaersperiode(fravaersperioder as MottattPeriode[]);
           initEgenmeldingsperiode(egenmeldingsperioder as MottattPeriode[]);
           tilbakestillArbeidsgiverperiode();
           setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
