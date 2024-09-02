@@ -272,8 +272,6 @@ const Initiering2: NextPage = () => {
     finnSorterteUnikePerioder(mergedSykmeldingsperioder)
   );
 
-  console.log('valgteUnikeSykepengePerioder', valgteUnikeSykepengePerioder);
-
   antallSykedager = valgteUnikeSykepengePerioder
     ? numberOfDaysInRanges(
         valgteUnikeSykepengePerioder
@@ -306,9 +304,6 @@ const Initiering2: NextPage = () => {
   if (antallDagerMellomSykmeldingsperioder > 16) {
     blokkerInnsending = true;
   }
-
-  console.log('antallSykedager', antallSykedager);
-  console.log('antallDagerMellomSykmeldingsperioder', antallDagerMellomSykmeldingsperioder);
 
   const visFeilmeldingliste =
     (feilmeldinger && feilmeldinger.length > 0) || (backendFeil.current && backendFeil.current.length > 0);

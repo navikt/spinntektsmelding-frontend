@@ -39,6 +39,42 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
       }
     }).as('aktiveorgnr');
 
+    cy.intercept('/im-dialog/api/sp-soeknader', {
+      statusCode: 200,
+      body: [
+        {
+          sykepengesoknadUuid: '8396932c-9656-3f65-96b2-3e37eacff584',
+          fom: '2024-08-09',
+          tom: '2024-08-15',
+          sykmeldingId: '399a6090-1ec9-48e5-b53c-df60d9e95e0e',
+          status: 'NY',
+          startSykeforlop: '2024-08-06',
+          egenmeldingsdagerFraSykmelding: ['2024-08-06', '2024-08-08', '2024-08-07'],
+          vedtaksperiodeId: '399a6090-1ec9-48e5-b53c-df60d9e95e0e'
+        },
+        {
+          sykepengesoknadUuid: '399a6090-1ec9-48e5-b53c-df60d9e95e0e',
+          fom: '2024-09-11',
+          tom: '2024-09-15',
+          sykmeldingId: '8396932c-9656-3f65-96b2-3e37eacff584',
+          status: 'NY',
+          startSykeforlop: '2024-09-06',
+          egenmeldingsdagerFraSykmelding: ['2024-09-06', '2024-09-08', '2024-09-07', '2024-09-10'],
+          vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+        },
+        {
+          sykepengesoknadUuid: '4009c928-d13b-45f9-90e4-1c98a421f464',
+          fom: '2024-09-16',
+          tom: '2024-09-17',
+          sykmeldingId: '8396932c-9656-3f65-96b2-3e37eacff584',
+          status: 'NY',
+          startSykeforlop: '2024-09-16',
+          egenmeldingsdagerFraSykmelding: [],
+          vedtaksperiodeId: '4009c928-d13b-45f9-90e4-1c98a421f464'
+        }
+      ]
+    }).as('sykepengeSoeknader');
+
     // cy.wait('@kvittering');
     // cy.wait('@trenger');
 
@@ -47,10 +83,11 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.location('pathname').should('equal', '/im-dialog/initiering2');
 
-    cy.findAllByLabelText('Sykmelding fra').last().clear().type('26.08.24');
-    cy.realPress('Escape');
-    cy.findAllByLabelText('Sykmelding til').last().clear().type('30.08.24');
-    cy.realPress('Escape');
+    // cy.findAllByLabelText('Sykmelding fra').last().clear().type('26.08.24');
+    // cy.realPress('Escape');
+    // cy.findAllByLabelText('Sykmelding til').last().clear().type('30.08.24');
+    // cy.realPress('Escape');
+    cy.findByLabelText('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
 
     cy.contains('Neste').click();
 
@@ -91,11 +128,24 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         agp: {
           perioder: [
             {
-              fom: '2024-08-26',
-              tom: '2024-08-30'
+              fom: '2024-09-06',
+              tom: '2024-09-08'
+            },
+            {
+              fom: '2024-09-10',
+              tom: '2024-09-15'
             }
           ],
-          egenmeldinger: [],
+          egenmeldinger: [
+            {
+              fom: '2024-09-06',
+              tom: '2024-09-08'
+            },
+            {
+              fom: '2024-09-10',
+              tom: '2024-09-10'
+            }
+          ],
           redusertLoennIAgp: {
             beloep: 5000,
             begrunnelse: 'ManglerOpptjening'
@@ -103,7 +153,7 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         },
         inntekt: {
           beloep: 7500,
-          inntektsdato: '2024-08-26',
+          inntektsdato: '2024-09-10',
           naturalytelser: [],
           endringAarsak: {
             aarsak: 'Ferie',
@@ -123,11 +173,12 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         },
         sykmeldingsperioder: [
           {
-            fom: '2024-08-26',
-            tom: '2024-08-30'
+            fom: '2024-09-11',
+            tom: '2024-09-15'
           }
         ],
-        selvbestemtId: null
+        selvbestemtId: null,
+        vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       });
   });
 
@@ -162,10 +213,13 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.location('pathname').should('equal', '/im-dialog/initiering2');
 
-    cy.findAllByLabelText('Sykmelding fra').last().clear().type('26.08.24');
-    cy.realPress('Escape');
-    cy.findAllByLabelText('Sykmelding til').last().clear().type('30.08.24');
-    cy.realPress('Escape');
+    // cy.findAllByLabelText('Sykmelding fra').last().clear().type('26.08.24');
+    // cy.realPress('Escape');
+    // cy.findAllByLabelText('Sykmelding til').last().clear().type('30.08.24');
+    // cy.realPress('Escape');
+
+    cy.findByLabelText('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
+    cy.findByLabelText('16.09.2024 - 17.09.2024').check();
 
     cy.contains('Neste').click();
 
@@ -203,11 +257,24 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         agp: {
           perioder: [
             {
-              fom: '2024-08-26',
-              tom: '2024-08-30'
+              fom: '2024-09-06',
+              tom: '2024-09-08'
+            },
+            {
+              fom: '2024-09-10',
+              tom: '2024-09-17'
             }
           ],
-          egenmeldinger: [],
+          egenmeldinger: [
+            {
+              fom: '2024-09-06',
+              tom: '2024-09-08'
+            },
+            {
+              fom: '2024-09-10',
+              tom: '2024-09-10'
+            }
+          ],
           redusertLoennIAgp: {
             beloep: 5000,
             begrunnelse: 'ManglerOpptjening'
@@ -215,7 +282,7 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         },
         inntekt: {
           beloep: 7500,
-          inntektsdato: '2024-08-26',
+          inntektsdato: '2024-09-10',
           naturalytelser: [],
           endringAarsak: {
             aarsak: 'VarigLoennsendring',
@@ -230,11 +297,16 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         },
         sykmeldingsperioder: [
           {
-            fom: '2024-08-26',
-            tom: '2024-08-30'
+            fom: '2024-09-11',
+            tom: '2024-09-15'
+          },
+          {
+            fom: '2024-09-16',
+            tom: '2024-09-17'
           }
         ],
-        selvbestemtId: null
+        selvbestemtId: null,
+        vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       });
   });
 });
