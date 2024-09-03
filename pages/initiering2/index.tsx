@@ -23,7 +23,7 @@ import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { MottattPeriode, TDateISODate } from '../../state/MottattData';
-import { differenceInDays, subYears } from 'date-fns';
+import { compareAsc, differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
@@ -37,7 +37,6 @@ import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import environment from '../../config/environment';
 import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
-import { periodeMapper } from '../../components/Bruttoinntekt/Aarsaksvelger';
 
 type SykepengePeriode = {
   id: string;
@@ -248,7 +247,9 @@ const Initiering2: NextPage = () => {
   const valgteSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
     finnSorterteUnikePerioder(
       sykepengePeriodeId
-        ? sykepengePerioder.filter((periode) => sykepengePeriodeId.includes(periode.id)).toSorted()
+        ? sykepengePerioder
+            .filter((periode) => sykepengePeriodeId.includes(periode.id))
+            .toSorted((a, b) => compareAsc(a.fom, b.fom))
         : []
     )
   );
