@@ -16,6 +16,9 @@ import skjemaVariant from '../config/skjemavariant';
 import { nanoid } from 'nanoid';
 import { SkjemaKvitteringEksterntSystem } from './useSkjemadataStore';
 import { konverterBegrunnelseFullLonnIArbeidsgiverperiode } from '../utils/konverterBegrunnelseFullLonnIArbeidsgiverperiode';
+import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
+import { finnFravaersperioder } from './useEgenmeldingStore';
+import { isBefore } from 'date-fns';
 
 export interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
@@ -62,6 +65,7 @@ export default function useKvitteringInit() {
   const setSkjemaKvitteringEksterntSystem = useBoundStore((state) => state.setSkjemaKvitteringEksterntSystem);
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
   const initRefusjonskravetOpphoerer = useBoundStore((state) => state.initRefusjonskravetOpphoerer);
+  const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
 
   return async (kvitteringsData: KvitteringInit) => {
     let jsonData: KvitteringSkjema;
@@ -258,6 +262,39 @@ export default function useKvitteringInit() {
       skjæringstidspunkt: jsonData.bestemmendeFraværsdag as TDateISODate,
       kilde: 'INNTEKTSMELDING'
     });
+
+    const sykmeldingPerioder = jsonData.fraværsperioder.map((periode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom)
+    }));
+    const egenmeldingPerioder = jsonData.egenmeldingsperioder
+      ? jsonData.egenmeldingsperioder.map((periode) => ({
+          fom: parseIsoDate(periode.fom),
+          tom: parseIsoDate(periode.tom)
+        }))
+      : [];
+
+    const fravaerPerioder = finnFravaersperioder(sykmeldingPerioder, egenmeldingPerioder);
+
+    const arbeidsgiverperioder = jsonData.arbeidsgiverperioder
+      ? jsonData.arbeidsgiverperioder.map((periode) => ({
+          fom: parseIsoDate(periode.fom),
+          tom: parseIsoDate(periode.tom)
+        }))
+      : [];
+
+    const beregnetBestemmeFravaersdag = finnBestemmendeFravaersdag(fravaerPerioder, arbeidsgiverperioder);
+
+    if (
+      beregnetBestemmeFravaersdag &&
+      isBefore(parseIsoDate(bestemmendeFravaersdag), parseIsoDate(beregnetBestemmeFravaersdag))
+    ) {
+      console.log('beregnetBestemmeFravaersdag', beregnetBestemmeFravaersdag, bestemmendeFravaersdag);
+      setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
+      setSkjaeringstidspunkt(bestemmendeFravaersdag as TDateISODate);
+    } else {
+      console.log('Ikke beregnetBestemmeFravaersdag', beregnetBestemmeFravaersdag, bestemmendeFravaersdag);
+    }
   };
 }
 

@@ -5,6 +5,11 @@ import parseIsoDate from './parseIsoDate';
 import { finnSammenhengendePeriode, finnSammenhengendePeriodeManuellJustering } from './finnArbeidsgiverperiode';
 import { TDateISODate } from '../state/MottattData';
 
+export type tidPeriode = {
+  fom?: Date;
+  tom?: Date;
+};
+
 export const overlappendePeriode = (ene: Periode, andre: Periode) => {
   if (!ene || !andre) return null;
   if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
@@ -69,15 +74,15 @@ export const tilstoetendePeriodeManuellJustering = (ene: Periode, andre: Periode
  * Perioder som starter etter arbeidsgiverperioden (16 første dagene) vil ikke bli tatt med i beregningen,
  * med mindre de ikke stater etter dag 17
  */
-const finnBestemmendeFravaersdag = (
-  fravaersperioder?: Array<Periode>,
-  arbeidsgiverperiode?: Array<Periode>,
+function finnBestemmendeFravaersdag<T extends tidPeriode>(
+  fravaersperioder?: Array<T>,
+  arbeidsgiverperiode?: Array<T>,
   forespurtBestemmendeFraværsdag?: string | Date,
   arbeidsgiverKanFlytteBFD?: boolean,
   mottattBestemmendeFravaersdag?: TDateISODate,
   mottattEksternBestemmendeFravaersdag?: TDateISODate,
   laastTilMottattPeriode?: boolean
-): string | undefined => {
+): string | undefined {
   if (laastTilMottattPeriode && mottattBestemmendeFravaersdag) {
     if (!mottattEksternBestemmendeFravaersdag) return mottattBestemmendeFravaersdag;
     if (isBefore(parseIsoDate(mottattBestemmendeFravaersdag), parseIsoDate(mottattEksternBestemmendeFravaersdag))) {
@@ -155,7 +160,7 @@ const finnBestemmendeFravaersdag = (
   }
 
   return bestemmendeFravaersdag;
-};
+}
 
 export default finnBestemmendeFravaersdag;
 
