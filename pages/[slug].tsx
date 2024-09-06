@@ -39,6 +39,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
+import isValidUUID from '../utils/isValidUUID';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -150,6 +151,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
+      return;
+    }
+    if (!isValidUUID(pathSlug)) {
       return;
     }
     if (!fravaersperioder) {
