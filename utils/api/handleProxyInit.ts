@@ -11,9 +11,9 @@ const handleProxyInit = (proxy: any) => {
     res.end('Something went wrong. ' + JSON.stringify(err));
   });
 
-  proxy.on('proxyRes', function (proxyRes: any, _req: any, _res: any) {
-    console.log('RAW Response from the target', JSON.stringify(proxyRes.headers));
-  });
+  // proxy.on('proxyRes', function (proxyRes: any, _req: any, _res: any) {
+  //   console.log('RAW Response from the target', JSON.stringify(proxyRes.headers));
+  // });
 
   proxy.on('proxyReq', function (proxyReq: any, _req: any, _res: any, _options: any) {
     proxyReq.setHeader('cookie', '');
