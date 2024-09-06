@@ -79,6 +79,15 @@ const nextConfig = {
     innsendingSelvbestemtInntektsmeldingApi: process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API,
     version,
     loggingDisabled: process.env.DISABLE_DECORATOR
+  },
+  rewrites: async () => {
+    return [
+      {
+        source: '/api/trenger/:path*',
+        destination:
+          'http://' + global.process.env.IM_API_URI + global.process.env.PREUTFYLT_INNTEKTSMELDING_API + '/:path*'
+      }
+    ];
   }
 };
 

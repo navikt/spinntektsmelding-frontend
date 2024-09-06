@@ -1,4 +1,4 @@
-// import testdata from '../../../mockdata/selvbestemt-kvittering.json';
+import testdata from '../../../mockdata/selvbestemt-kvittering.json';
 
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
@@ -466,14 +466,16 @@ function prepareForInitiering(kvitteringData: any, personData: PersonData) {
 }
 
 export async function getServerSideProps(context: any) {
-  // return {
-  //   props: {
-  //     kvittid: context.query.kvittid,
-  //     kvittering: testdata,
-  //     kvitteringStatus: 200,
-  //     dataFraBackend: true
-  //   }
-  // };
+  if (process.env.NODE_ENV == 'development') {
+    return {
+      props: {
+        kvittid: context.query.kvittid,
+        kvittering: testdata,
+        kvitteringStatus: 200,
+        dataFraBackend: true
+      }
+    };
+  }
   const kvittid = context.query.kvittid;
 
   let kvittering: { status: number; data: { success: any } };
