@@ -7,7 +7,7 @@ import { MottattPeriode } from './MottattData';
 import { CompleteState } from './useBoundStore';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
-import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
+import finnBestemmendeFravaersdag, { tidPeriode } from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
 import { compareAsc } from 'date-fns';
@@ -198,7 +198,10 @@ function updateDateValue(egenmeldingsperioder?: Periode[], periodeId?: string, d
   return oppdatertEgenmeldingsperioder;
 }
 
-export function finnFravaersperioder(fravaersperioder: Array<Periode>, egenmeldingsperioder?: Array<Periode>) {
+export function finnFravaersperioder<T extends tidPeriode>(
+  fravaersperioder: Array<T>,
+  egenmeldingsperioder?: Array<T>
+) {
   const perioder =
     fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
 

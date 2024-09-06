@@ -39,6 +39,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
+import isValidUUID from '../utils/isValidUUID';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -152,6 +153,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
       return;
     }
+    if (!isValidUUID(pathSlug)) {
+      return;
+    }
     if (!fravaersperioder) {
       setLasterData(true);
       hentKvitteringsdata(pathSlug)?.finally(() => {
@@ -163,7 +167,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       }
     } else {
       if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-        if (inntektsdato) {
+        if (inntektsdato && isValidUUID(pathSlug)) {
           fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
             .then((inntektSisteTreMnd) => {
               setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
