@@ -10,7 +10,7 @@
   ],
   "arbeidsgiverperioder": [{ "fom": "2023-02-17", "tom": "2023-03-04" }],
   "inntekt": { "bekreftet": true, "beregnetInntekt": 80666.66666666667, "manueltKorrigert": false },
-  "bestemmendeFraværsdag": "2023-02-17",
+  "bestemmendeFraværsdag": "2023-02-14",
   "fullLønnIArbeidsgiverPerioden": {
     "utbetalerFullLønn": false,
     "begrunnelse": "StreikEllerLockout",
