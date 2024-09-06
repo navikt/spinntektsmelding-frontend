@@ -10,6 +10,10 @@ import '../components/PageContent/PageContent.css';
 import { configureLogger } from '@navikt/next-logger';
 import env from '../config/environment';
 
+if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+  require('../__mocks__');
+}
+
 initInstrumentation();
 configureLogger({
   basePath: env.baseUrl,
