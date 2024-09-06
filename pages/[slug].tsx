@@ -167,7 +167,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       }
     } else {
       if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-        if (inntektsdato) {
+        if (inntektsdato && isValidUUID(pathSlug)) {
           fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
             .then((inntektSisteTreMnd) => {
               setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
