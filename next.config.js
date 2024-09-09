@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const { buildCspHeader } = require('@navikt/nav-dekoratoren-moduler/ssr');
 const { version } = require('./package.json');
+const { source } = require('axe-core');
+const { destination } = require('pino');
 
 const appDirectives = {
   'connect-src': ["'self'", process.env.TELEMETRY_URL],
@@ -31,6 +33,17 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'private, no-cache, no-store, max-age=0, must-revalidate'
+          }
+        ]
+      },
+      {
+        // Append the "Service-Worker-Allowed" header
+        // to each response, overriding the default worker's scope.
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Service-Worker-Allowed',
+            value: '/'
           }
         ]
       }
@@ -86,6 +99,10 @@ const nextConfig = {
         source: '/api/trenger/:path*',
         destination:
           'http://' + global.process.env.IM_API_URI + global.process.env.PREUTFYLT_INNTEKTSMELDING_API + '/:path*'
+      },
+      {
+        source: '/api/hentKvittering/:path*',
+        destination: 'http://' + global.process.env.IM_API_URI + global.process.env.KVITTERINGSDATA_API + ':path*'
       }
     ];
   }

@@ -116,11 +116,13 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
   },
 
   initFravaersperiode: (mottattFravaerPerioder: Array<MottattPeriode>) => {
-    const fravaerPerioder: Array<Periode> = mottattFravaerPerioder.map((periode) => ({
-      fom: parseISO(periode.fom),
-      tom: parseISO(periode.tom),
-      id: nanoid()
-    }));
+    const fravaerPerioder: Array<Periode> = mottattFravaerPerioder
+      ? mottattFravaerPerioder.map((periode) => ({
+          fom: parseISO(periode.fom),
+          tom: parseISO(periode.tom),
+          id: nanoid()
+        }))
+      : [];
 
     return set(
       produce((state) => {

@@ -33,7 +33,7 @@
     "core-js-pure": "3.37.1",
     "date-fns": "2.30.0",
     "immer": "10.1.1",
-    "msw": "2.4.1",
+    "msw": "^2.4.4",
     "nanoid": "5.0.7",
     "next": "^14.2.5",
     "next-http-proxy-middleware": "1.2.6",
@@ -50,6 +50,7 @@
     "@testing-library/jest-dom": "6.4.8",
     "@testing-library/react": "16.0.0",
     "@testing-library/user-event": "14.5.2",
+    "@types/jest": "^29.5.12",
     "@types/jest-axe": "3.5.9",
     "@types/node": "^22.5.0",
     "@types/react": "18.3.3",
@@ -80,5 +81,11 @@
     "vitest-fetch-mock": "0.3.0",
     "vitest-sonar-reporter": "^2.0.0"
   },
-  "packageManager": "yarn@4.4.1"
+  "packageManager": "yarn@4.4.1",
+  "msw": {
+    "workerDirectory": [
+      "public",
+      "__mocks__"
+    ]
+  }
 }

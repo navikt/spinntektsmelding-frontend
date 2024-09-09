@@ -1207,17 +1207,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mswjs/interceptors@npm:^0.29.0":
-  version: 0.29.1
-  resolution: "@mswjs/interceptors@npm:0.29.1"
+"@mswjs/interceptors@npm:^0.35.0":
+  version: 0.35.0
+  resolution: "@mswjs/interceptors@npm:0.35.0"
   dependencies:
     "@open-draft/deferred-promise": "npm:^2.2.0"
     "@open-draft/logger": "npm:^0.3.0"
     "@open-draft/until": "npm:^2.0.0"
     is-node-process: "npm:^1.2.0"
-    outvariant: "npm:^1.2.1"
+    outvariant: "npm:^1.4.3"
     strict-event-emitter: "npm:^0.5.1"
-  checksum: 10c0/816660a17b0e89e6e6955072b96882b5807c8c9faa316eab27104e8ba80e8e7d78b1862af42e1044156a5ae3ae2071289dc9211ecdc8fd5f7078d8c8a8a7caa3
+  checksum: 10c0/7e1a03a32afb9dafd6bdd8a77b838d4c6cff61a9d0aecf76a898ca2715c9068a8dfd3a40869dfaf42c834bc833fc057ccc096c2819c8f9a3212469fddc543b66
   languageName: node
   linkType: hard
 
@@ -2246,6 +2246,16 @@ __metadata:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
   checksum: 10c0/b992f309b18b919aa25a74e7d5f9ec3d4712d5a5251ec7cb4b393ac586ca675e046cbbdff6612defc1177052150dab371777a18f208b236676d2994375315049
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^29.5.12":
+  version: 29.5.12
+  resolution: "@types/jest@npm:29.5.12"
+  dependencies:
+    expect: "npm:^29.0.0"
+    pretty-format: "npm:^29.0.0"
+  checksum: 10c0/25fc8e4c611fa6c4421e631432e9f0a6865a8cb07c9815ec9ac90d630271cad773b2ee5fe08066f7b95bebd18bb967f8ce05d018ee9ab0430f9dfd1d84665b6f
   languageName: node
   linkType: hard
 
@@ -5364,6 +5374,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"graphql@npm:^16.8.1":
+  version: 16.9.0
+  resolution: "graphql@npm:16.9.0"
+  checksum: 10c0/a8850f077ff767377237d1f8b1da2ec70aeb7623cdf1dfc9e1c7ae93accc0c8149c85abe68923be9871a2934b1bce5a2496f846d4d56e1cfb03eaaa7ddba9b6a
+  languageName: node
+  linkType: hard
+
 "has-bigints@npm:^1.0.1, has-bigints@npm:^1.0.2":
   version: 1.0.2
   resolution: "has-bigints@npm:1.0.2"
@@ -7003,19 +7020,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:2.4.1":
-  version: 2.4.1
-  resolution: "msw@npm:2.4.1"
+"msw@npm:^2.4.4":
+  version: 2.4.4
+  resolution: "msw@npm:2.4.4"
   dependencies:
     "@bundled-es-modules/cookie": "npm:^2.0.0"
     "@bundled-es-modules/statuses": "npm:^1.0.1"
     "@bundled-es-modules/tough-cookie": "npm:^0.1.6"
     "@inquirer/confirm": "npm:^3.0.0"
-    "@mswjs/interceptors": "npm:^0.29.0"
+    "@mswjs/interceptors": "npm:^0.35.0"
     "@open-draft/until": "npm:^2.1.0"
     "@types/cookie": "npm:^0.6.0"
     "@types/statuses": "npm:^2.0.4"
     chalk: "npm:^4.1.2"
+    graphql: "npm:^16.8.1"
     headers-polyfill: "npm:^4.0.2"
     is-node-process: "npm:^1.2.0"
     outvariant: "npm:^1.4.2"
@@ -7024,16 +7042,13 @@ __metadata:
     type-fest: "npm:^4.9.0"
     yargs: "npm:^17.7.2"
   peerDependencies:
-    graphql: ">= 16.8.x"
-    typescript: ">= 4.7.x"
+    typescript: ">= 4.8.x"
   peerDependenciesMeta:
-    graphql:
-      optional: true
     typescript:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 10c0/9952dd89c289ddb1f9eac36065364b7143d40535a28d1f8eb6b947dc54cdd0e9cb38d656551c886e413baaddcae3e4e1ca80f8613c55729c8fcd3dbc8488cbde
+  checksum: 10c0/0be51fbd6ef1b4fd8906353b6e40473f9466ea7ef9cc805e49c5937886721db20801b2322535b456d523040c012afb34e0e76a5beaa4891cbdde2408d2652094
   languageName: node
   linkType: hard
 
@@ -7427,10 +7442,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"outvariant@npm:^1.2.1, outvariant@npm:^1.4.0, outvariant@npm:^1.4.2":
+"outvariant@npm:^1.4.0, outvariant@npm:^1.4.2":
   version: 1.4.2
   resolution: "outvariant@npm:1.4.2"
   checksum: 10c0/48041425a4cb725ff8871b7d9889bfc2eaded867b9b35b6c2450a36fb3632543173098654990caa6c9e9f67d902b2a01f4402c301835e9ecaf4b4695d3161853
+  languageName: node
+  linkType: hard
+
+"outvariant@npm:^1.4.3":
+  version: 1.4.3
+  resolution: "outvariant@npm:1.4.3"
+  checksum: 10c0/5976ca7740349cb8c71bd3382e2a762b1aeca6f33dc984d9d896acdf3c61f78c3afcf1bfe9cc633a7b3c4b295ec94d292048f83ea2b2594fae4496656eba992c
   languageName: node
   linkType: hard
 
@@ -8716,6 +8738,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:6.4.8"
     "@testing-library/react": "npm:16.0.0"
     "@testing-library/user-event": "npm:14.5.2"
+    "@types/jest": "npm:^29.5.12"
     "@types/jest-axe": "npm:3.5.9"
     "@types/node": "npm:^22.5.0"
     "@types/react": "npm:18.3.3"
@@ -8740,7 +8763,7 @@ __metadata:
     jsdom: "npm:24.1.1"
     knip: "npm:5.27.4"
     lint-staged: "npm:15.2.7"
-    msw: "npm:2.4.1"
+    msw: "npm:^2.4.4"
     nanoid: "npm:5.0.7"
     next: "npm:^14.2.5"
     next-http-proxy-middleware: "npm:1.2.6"

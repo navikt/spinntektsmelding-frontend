@@ -4,7 +4,7 @@ async function initMocks() {
     server.listen();
   } else {
     const { worker } = await import('./browser');
-    worker.start();
+    // worker.start();
   }
 }
 

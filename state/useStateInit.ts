@@ -75,7 +75,8 @@ export default function useStateInit() {
     }
 
     if (jsonData.skjaeringstidspunkt) setSkjaeringstidspunkt(jsonData.skjaeringstidspunkt);
-
+    if (!jsonData.fravaersperioder) jsonData.fravaersperioder = [];
+    if (!jsonData.egenmeldingsperioder) jsonData.egenmeldingsperioder = [];
     const perioder = jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
