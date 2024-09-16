@@ -140,7 +140,8 @@ const Initiering2: NextPage = () => {
 
         const egenmeldingsperioder: MottattPeriode[] = sykmeldingsperiode
           .flatMap((periode) => {
-            const egenmeldingsperiode = periode.egenmeldingsdagerFraSykmelding.toSorted().reduce(
+            const sorterteEgenmeldingsdager = periode.egenmeldingsdagerFraSykmelding.toSorted();
+            const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
               (accumulator, currentValue) => {
                 const tom = new Date(currentValue);
                 const currentTom = new Date(accumulator[accumulator.length - 1].tom);
@@ -154,8 +155,8 @@ const Initiering2: NextPage = () => {
               },
               [
                 {
-                  fom: periode.egenmeldingsdagerFraSykmelding[0] as TDateISODate,
-                  tom: periode.egenmeldingsdagerFraSykmelding[0] as TDateISODate
+                  fom: sorterteEgenmeldingsdager[0] as TDateISODate,
+                  tom: sorterteEgenmeldingsdager[0] as TDateISODate
                 }
               ]
             );
