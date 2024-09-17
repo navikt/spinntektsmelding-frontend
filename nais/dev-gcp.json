@@ -6,5 +6,10 @@
   "api-url": "https://helsearbeidsgiver-im-api.intern.dev.nav.no/api",
   "outbound-external-host": "helsearbeidsgiver-im-api.intern.dev.nav.no",
   "api-basepath": "",
-  "amplitude-enabled": true
+  "amplitude-enabled": true,
+  "inbound-apps": [{
+    "app": "tokenx-token-generator",
+    "namespace": "aura"
+  }
+]
 }
