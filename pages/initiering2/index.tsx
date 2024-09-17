@@ -164,6 +164,11 @@ const Initiering2: NextPage = () => {
           })
           .filter((element) => !!element.fom && !!element.tom);
 
+        if (!sykmeldingsperiode || sykmeldingsperiode.length === 0) {
+          backendFeil.current.push({ text: 'Ingen sykmeldingsperioder valgt', felt: 'sykepengePeriodeId' });
+          return;
+        }
+
         if (validationResult.success) {
           setIsLoading(true);
           const validerteData = validationResult.data;
