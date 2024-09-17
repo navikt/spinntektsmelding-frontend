@@ -1,4 +1,4 @@
-import { isValid, parseISO } from 'date-fns';
+import { isValid } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
@@ -7,6 +7,7 @@ import useBoundStore from './useBoundStore';
 import validerAapenInnsending, { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
 import { SendtPeriode, formaterRedusertLoennIAgp } from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
+import parseIsoDate from '../utils/parseIsoDate';
 
 export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
@@ -115,8 +116,8 @@ function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsper
 function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder: SendtPeriode[] | undefined) {
   return innsendbarArbeidsgiverperioder
     ? innsendbarArbeidsgiverperioder?.map((periode) => ({
-        fom: parseISO(periode.fom),
-        tom: parseISO(periode.tom),
+        fom: parseIsoDate(periode.fom),
+        tom: parseIsoDate(periode.tom),
         id: 'id'
       }))
     : undefined;
