@@ -237,7 +237,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
               });
 
               if (resultat.error) {
-                console.log(resultat);
                 let errors: Array<ErrorResponse> = [];
 
                 if (resultat.valideringsfeil) {
