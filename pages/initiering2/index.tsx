@@ -266,10 +266,9 @@ const Initiering2: NextPage = () => {
                           Det er ikke mulig å opprette inntektsmelding manuelt for et sammenhengende sykefravær på over
                           16 dager
                         </Heading1>
-                        Hvis et sammenhengende sykefravær er lengre enn 16 dager, vil NAV opprette en inntektsmelding.
-                        Vi sender ut en forespørsel om inntektsmelding når arbeidsgiverperioden er ferdig og den
-                        sykmeldte har sendt inn søknad om sykepenger. Du finner du forespørselen på{' '}
-                        <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+                        Hvis et sammenhengende sykefravær er lengre enn 16 dager, vil NAV be om inntektsmelding. Dette
+                        gjøres når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn søknad om sykepenger.
+                        Du finner forespørselen på <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
                       </Alert>
                     )}
                   </>
