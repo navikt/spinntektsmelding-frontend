@@ -5,7 +5,7 @@ import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
-import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
+import useFyllAapenInnsending, { skalSendeArbeidsgiverperiode } from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
@@ -237,11 +237,25 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
               });
 
               if (resultat.error) {
-                const errors: Array<ErrorResponse> = resultat.valideringsfeil.map((error: any) => ({
-                  error: error
-                }));
+                console.log(resultat);
+                let errors: Array<ErrorResponse> = [];
+
+                if (resultat.valideringsfeil) {
+                  errors = resultat.valideringsfeil.map((error: any) => ({
+                    error: error
+                  }));
+                } else {
+                  errors = [
+                    {
+                      value: 'Innsending av skjema feilet',
+                      error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+                      property: 'server'
+                    }
+                  ];
+                }
 
                 errorResponse(errors);
+                setSkalViseFeilmeldinger(true);
 
                 logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
                 logger.error(data);
