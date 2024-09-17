@@ -1,6 +1,6 @@
-import { Alert, Button, Link } from '@navikt/ds-react';
+import { Button, CheckboxGroup, Checkbox, Alert, Link } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -19,110 +19,73 @@ import useBoundStore from '../../state/useBoundStore';
 import initieringSchema from '../../schema/initieringSchema';
 
 import { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
-import environment from '../../config/environment';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import PeriodeVelger from '../../components/PeriodeVelger/PeriodeVelger';
-import { MottattPeriode } from '../../state/MottattData';
-import { differenceInDays } from 'date-fns';
+import { MottattPeriode, TDateISODate } from '../../state/MottattData';
+import { compareAsc, differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
-import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
-import { Periode } from '../../state/state';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
-import { PersonnummerSchema } from '../../schema/personnummerSchema';
+import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
 import formatIsoDate from '../../utils/formatIsoDate';
+import { PersonnummerSchema } from '../../schema/personnummerSchema';
+import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
+import formatDate from '../../utils/formatDate';
+import { logger } from '@navikt/next-logger';
+import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
+import environment from '../../config/environment';
+import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
+import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
+
+type SykepengePeriode = {
+  id: string;
+  fom: Date;
+  tom: Date;
+  antallEgenmeldingsdager: number;
+};
 
 const Initiering2: NextPage = () => {
   const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
   const initPerson = useBoundStore((state) => state.initPerson);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
+  const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
-  let perioder: { fom: Date; tom: Date; id: string }[] = [];
 
   let fulltNavn = '';
   const backendFeil = useRef([] as Feilmelding[]);
+  let orgnrUnderenhet: string | undefined = undefined;
+  let antallSykedager = 0;
+  let antallDagerMellomSykmeldingsperioder = 0;
+  let blokkerInnsending = false;
 
-  const PeriodeSchema = z
-    .object({
-      fom: z.date({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
-      }),
-      tom: z.date({
-        required_error: 'Vennligst fyll inn til dato',
-        invalid_type_error: 'Dette er ikke en dato'
+  const skjemaSchema = z.object({
+    organisasjonsnummer: z
+      .string({
+        required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
       })
-    })
-    .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
+      .transform((val) => val.replace(/\s/g, ''))
+      .pipe(
+        z
+          .string({
+            required_error: 'Organisasjon er ikke valgt'
+          })
 
-  const skjemaSchema = z
-    .object({
-      organisasjonsnummer: z
-        .string({
-          required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
-        })
-        .transform((val) => val.replace(/\s/g, ''))
-        .pipe(
-          z
-            .string({
-              required_error: 'Organisasjon er ikke valgt'
-            })
-
-            .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
-        ),
-      navn: z.string().optional(),
-      personnummer: PersonnummerSchema.optional(),
-      perioder: z.array(PeriodeSchema, { required_error: 'Vennligst velg en periode' }).optional()
-    })
-    .superRefine((value, ctx) => {
-      if (!value.perioder || value.perioder.length === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Vennligst velg en periode',
-          path: ['perioder']
-        });
-      }
-
-      if (value.perioder && value.perioder.length > 0) {
-        const sortedPerioder = value.perioder.toSorted((a, b) => {
-          if (a.fom < b.fom) {
-            return -1;
-          } else if (a.fom > b.fom) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-        for (let i = 0; i < sortedPerioder.length - 1; i++) {
-          if (sortedPerioder[i].tom >= sortedPerioder[i + 1].fom) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: 'Periodene kan ikke overlappe',
-              path: ['perioder']
-            });
-          }
-        }
-
-        for (let i = 0; i < sortedPerioder.length - 1; i++) {
-          if (Math.abs(differenceInDays(sortedPerioder[i].tom, sortedPerioder[i + 1].fom)) > 16) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: 'Det kan ikke være mer enn 16 dager mellom periodene',
-              path: ['perioder', i, 'fom']
-            });
-          }
-        }
-      }
-    });
+          .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
+      ),
+    navn: z.string().optional(),
+    personnummer: PersonnummerSchema.optional(),
+    sykepengePeriodeId: z.array(z.string().uuid()).optional()
+  });
 
   type Skjema = z.infer<typeof skjemaSchema>;
+  type EndepunktSykepengesoeknader = z.infer<typeof endepunktSykepengesoeknaderSchema>;
 
   const methods = useForm({
     resolver: zodResolver(skjemaSchema)
@@ -131,6 +94,7 @@ const Initiering2: NextPage = () => {
   const {
     register,
     watch,
+    setValue,
     handleSubmit,
     formState: { errors }
   } = methods;
@@ -139,6 +103,14 @@ const Initiering2: NextPage = () => {
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const skjema = initieringSchema;
+    let mottatteSykepengesoeknader:
+      | { success: true; data: EndepunktSykepengesoeknader }
+      | { success: false; error: ZodError }
+      | undefined = undefined;
+
+    if (spData) {
+      mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
+    }
 
     if (data) {
       const mottatteData = endepunktArbeidsforholdSchema.safeParse(data);
@@ -146,18 +118,56 @@ const Initiering2: NextPage = () => {
         const skjemaData = {
           organisasjonsnummer: formData.organisasjonsnummer,
           fulltNavn: mottatteData.data.fulltNavn,
-          personnummer: identitetsnummer,
-          perioder: formData.perioder
-            ? formData.perioder.map((periode) => {
-                return {
-                  fom: periode.fom,
-                  tom: periode.tom
-                };
-              })
-            : []
+          personnummer: identitetsnummer
         };
 
         const validationResult = skjema.safeParse(skjemaData);
+
+        const sykmeldingsperiode: EndepunktSykepengesoeknader | [] = [];
+        formData.sykepengePeriodeId?.forEach((id) => {
+          const periode =
+            mottatteSykepengesoeknader?.success &&
+            mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
+          if (!!periode) {
+            sykmeldingsperiode.push(periode);
+          }
+        });
+
+        const fravaersperioder: MottattPeriode[] = sykmeldingsperiode.map((periode) => ({
+          fom: periode.fom as TDateISODate,
+          tom: periode.tom as TDateISODate
+        }));
+
+        const egenmeldingsperioder: MottattPeriode[] = sykmeldingsperiode
+          .flatMap((periode) => {
+            const sorterteEgenmeldingsdager = periode.egenmeldingsdagerFraSykmelding.toSorted();
+            const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
+              (accumulator, currentValue) => {
+                const tom = new Date(currentValue);
+                const currentTom = new Date(accumulator[accumulator.length - 1].tom);
+
+                if (differenceInDays(tom, currentTom) <= 1) {
+                  accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
+                } else {
+                  accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
+                }
+                return accumulator;
+              },
+              [
+                {
+                  fom: sorterteEgenmeldingsdager[0] as TDateISODate,
+                  tom: sorterteEgenmeldingsdager[0] as TDateISODate
+                }
+              ]
+            );
+            return egenmeldingsperiode;
+          })
+          .filter((element) => !!element.fom && !!element.tom);
+
+        if (!sykmeldingsperiode || sykmeldingsperiode.length === 0) {
+          backendFeil.current.push({ text: 'Ingen sykmeldingsperioder valgt', felt: 'sykepengePeriodeId' });
+          return;
+        }
 
         if (validationResult.success) {
           setIsLoading(true);
@@ -167,17 +177,18 @@ const Initiering2: NextPage = () => {
           )?.virksomhetsnavn!;
           initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
           setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-          initFravaersperiode(
-            validerteData.perioder.map((periode) => ({
-              fom: formatIsoDate(periode.fom),
-              tom: formatIsoDate(periode.tom)
-            })) as MottattPeriode[]
-          );
+          initFravaersperiode(fravaersperioder as MottattPeriode[]);
+          initEgenmeldingsperiode(egenmeldingsperioder as MottattPeriode[]);
           tilbakestillArbeidsgiverperiode();
+          setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
           router.push('/arbeidsgiverInitiertInnsending');
         }
       }
     }
+  };
+
+  const handleSykepengePeriodeIdRadio = (value: any) => {
+    setValue('sykepengePeriodeId', value);
   };
 
   if (data) {
@@ -197,28 +208,109 @@ const Initiering2: NextPage = () => {
               })
             : [];
 
-        perioder = mottatteData?.data?.perioder
-          ? mottatteData?.data?.perioder.map((periode: any) => {
-              return {
-                fom: new Date(periode.fom),
-                tom: new Date(periode.tom),
-                id: periode.id
-              };
-            })
-          : [];
+        if (mottatteData?.data?.underenheter && mottatteData.data.underenheter.length === 1) {
+          orgnrUnderenhet = mottatteData?.data?.underenheter[0]?.orgnrUnderenhet;
+        }
       }
     }
   }
 
-  const sykeperioder = watch('perioder');
+  const orgnr = watch('organisasjonsnummer');
+  const sykepengePeriodeId: string[] = watch('sykepengePeriodeId');
 
-  const antallSykedager = sykeperioder
+  const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
+
+  const fomDato = formatIsoDate(subYears(new Date(), 1));
+  const {
+    data: spData,
+    error: spError,
+    isLoading: spIsLoading
+  } = useSykepengesoeknader(identitetsnummer, organisasjonsnummer, fomDato, backendFeil);
+
+  const feilmeldinger = formatRHFFeilmeldinger(errors);
+
+  let sykepengePerioder: SykepengePeriode[] = [];
+
+  if (!!spData) {
+    const mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
+
+    if (mottatteSykepengesoeknader.success) {
+      sykepengePerioder =
+        mottatteSykepengesoeknader.data.length > 0
+          ? mottatteSykepengesoeknader.data.map((periode) => {
+              return {
+                fom: new Date(periode.fom),
+                tom: new Date(periode.tom),
+                id: periode.sykepengesoknadUuid,
+                antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length
+              };
+            })
+          : [];
+    } else {
+      logger.error('Feil ved validering av sykepengesøknader', mottatteSykepengesoeknader.error.errors);
+    }
+  }
+  const valgteSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
+    finnSorterteUnikePerioder(
+      sykepengePeriodeId
+        ? sykepengePerioder
+            .filter((periode) => sykepengePeriodeId.includes(periode.id))
+            .toSorted((a, b) => compareAsc(a.fom, b.fom))
+        : []
+    )
+  );
+
+  const mergedSykmeldingsperioder = valgteSykepengePerioder.length > 0 ? [valgteSykepengePerioder[0]] : [];
+
+  valgteSykepengePerioder.forEach((periode) => {
+    const aktivPeriode = mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1];
+    const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
+
+    if (oppdatertPeriode && mergedSykmeldingsperioder.length > 0) {
+      mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = {
+        ...oppdatertPeriode
+      };
+    } else {
+      mergedSykmeldingsperioder.push(periode);
+    }
+  });
+
+  const valgteUnikeSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
+    finnSorterteUnikePerioder(mergedSykmeldingsperioder)
+  );
+
+  antallSykedager = valgteUnikeSykepengePerioder
     ? numberOfDaysInRanges(
-        sykeperioder.filter((periode: Periode[]) => periode !== undefined && periode.fom && periode.tom)
+        valgteUnikeSykepengePerioder
+          .filter((periode) => periode !== undefined && periode.fom && periode.tom)
+          .map((periode) => ({
+            fom: periode.fom!,
+            tom: periode.tom!
+          }))
       )
     : 0;
 
-  const feilmeldinger = formatRHFFeilmeldinger(errors);
+  if (antallSykedager > 16) {
+    blokkerInnsending = true;
+  }
+
+  antallDagerMellomSykmeldingsperioder = finnSorterteUnikePerioder(valgteUnikeSykepengePerioder).reduce(
+    (accumulator, currentValue, index, array) => {
+      if (index === 0) {
+        return 0;
+      }
+      const currentFom = currentValue.fom;
+      const previousTom = array[index - 1].tom;
+
+      const dagerMellom = differenceInDays(currentFom!, previousTom!);
+      return accumulator > dagerMellom ? accumulator : dagerMellom;
+    },
+    0
+  );
+
+  if (antallDagerMellomSykmeldingsperioder > 16) {
+    blokkerInnsending = true;
+  }
 
   const visFeilmeldingliste =
     (feilmeldinger && feilmeldinger.length > 0) || (backendFeil.current && backendFeil.current.length > 0);
@@ -259,34 +351,30 @@ const Initiering2: NextPage = () => {
                         />
                       </div>
                     </div>
-                    <PeriodeVelger perioder={perioder} />
-                    {antallSykedager > 16 && (
-                      <Alert variant='error' className={lokalStyles.alertPadding}>
-                        <Heading1>
-                          Det er ikke mulig å opprette inntektsmelding manuelt for et sammenhengende sykefravær på over
-                          16 dager
-                        </Heading1>
-                        Hvis et sammenhengende sykefravær er lengre enn 16 dager, vil NAV opprette en inntektsmelding.
-                        Vi sender ut en forespørsel om inntektsmelding når arbeidsgiverperioden er ferdig og den
-                        sykmeldte har sendt inn søknad om sykepenger. Du finner du forespørselen på{' '}
-                        <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+                    {spIsLoading && <Loading />}
+                    {spData && organisasjonsnummer && (
+                      <CheckboxGroup
+                        legend='Velg sykmeldingsperiode'
+                        id='sykepengePeriodeId'
+                        error={errors.sykepengePeriodeId?.message as string}
+                        onChange={handleSykepengePeriodeIdRadio}
+                      >
+                        {sykepengePerioder.map((periode) => (
+                          <Checkbox key={periode.id} value={periode.id}>
+                            {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                            {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
+                          </Checkbox>
+                        ))}
+                      </CheckboxGroup>
+                    )}
+                    {(spError || (organisasjonsnummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
+                      <Alert variant='error'>
+                        Finner ingen sykepengesøknader for den valgte personen i den valgte organisasjonen. Sjekk at du
+                        har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om sykepenger
+                        er sendt inn.
                       </Alert>
                     )}
                   </>
-                )}
-                {errors.perioder?.root?.message && (
-                  <div className='navds-form-field navds-form-field--medium navds-text-field--error endring-error-bottom-padded'>
-                    <div
-                      className='navds-form-field__error'
-                      id='textField-error-refusjon-refusjonPrMnd'
-                      aria-relevant='additions removals'
-                      aria-live='polite'
-                    >
-                      <p className='navds-error-message navds-label' id='#perioder'>
-                        {errors.perioder?.root?.message}
-                      </p>
-                    </div>
-                  </div>
                 )}
                 <div className={lokalStyles.knapperad}>
                   <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
@@ -295,14 +383,32 @@ const Initiering2: NextPage = () => {
                   <Button
                     variant='primary'
                     className={lokalStyles.primaryKnapp}
-                    disabled={antallSykedager > 16}
                     loading={isLoading}
+                    disabled={blokkerInnsending}
                   >
                     Neste
                   </Button>
                 </div>
               </form>
             </FormProvider>
+            {antallSykedager > 16 && (
+              <Alert variant='error' className={lokalStyles.alertPadding}>
+                <Heading1>
+                  Det er ikke mulig å opprette inntektsmelding manuelt for et sammenhengende sykefravær på over 16 dager
+                </Heading1>
+                Hvis et sammenhengende sykefravær er lengre enn 16 dager, vil NAV opprette en inntektsmelding. Vi sender
+                ut en forespørsel om inntektsmelding når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn
+                søknad om sykepenger. Du finner du forespørselen på{' '}
+                <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+              </Alert>
+            )}
+            {antallDagerMellomSykmeldingsperioder > 16 && (
+              <Alert variant='error' className={lokalStyles.alertPadding}>
+                <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
+                Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding
+                for hver av periodene.
+              </Alert>
+            )}
             <FeilListe
               skalViseFeilmeldinger={visFeilmeldingliste}
               feilmeldinger={feilmeldinger ? [...feilmeldinger, ...backendFeil.current] : [...backendFeil.current]}
@@ -313,5 +419,15 @@ const Initiering2: NextPage = () => {
     </div>
   );
 };
+
+function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
+  if (antallEgenmeldingsdager === 0) {
+    return null;
+  }
+
+  return antallEgenmeldingsdager === 1
+    ? '(pluss 1 egenmeldingsdag)'
+    : `(pluss ${antallEgenmeldingsdager} egenmeldingsdager)`;
+}
 
 export default Initiering2;

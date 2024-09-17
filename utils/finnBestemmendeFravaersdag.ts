@@ -10,21 +10,21 @@ export type tidPeriode = {
   tom?: Date;
 };
 
-export const overlappendePeriode = (ene: Periode, andre: Periode) => {
+export function overlappendePeriode<T extends tidPeriode>(ene: T, andre: T): T | null {
   if (!ene || !andre) return null;
   if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
   if (ene.tom < andre.fom || ene.fom > andre.tom) {
     return null;
   }
 
-  const obj: Periode = {
+  const obj: T = {
+    ...ene,
     fom: ene.fom > andre.fom ? andre.fom : ene.fom,
-    tom: ene.tom > andre.tom ? ene.tom : andre.tom,
-    id: ene.id
+    tom: ene.tom > andre.tom ? ene.tom : andre.tom
   };
 
   return obj;
-};
+}
 
 export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
   if (!ene || !andre) return null;
@@ -47,7 +47,7 @@ export const tilstoetendePeriode = (ene: Periode, andre: Periode) => {
   return null;
 };
 
-export const tilstoetendePeriodeManuellJustering = (ene: Periode, andre: Periode) => {
+export function tilstoetendePeriodeManuellJustering<T extends tidPeriode>(ene: T, andre: T): T | null {
   if (!ene || !andre) return null;
   if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
@@ -56,17 +56,17 @@ export const tilstoetendePeriodeManuellJustering = (ene: Periode, andre: Periode
   if (!ene.fom || !ene.tom || !andre.fom || !andre.tom) return null;
 
   if (differenceInDays(andre.fom, ene.tom) <= 1) {
-    const obj: Periode = {
+    const obj: T = {
+      ...ene,
       fom: ene.fom,
-      tom: andre.tom,
-      id: ene.id
+      tom: andre.tom
     };
 
     return obj;
   }
 
   return null;
-};
+}
 
 /******
  * Funksjonen finner bestemmende fraværsdag for gitte fraværsperiode.
@@ -164,17 +164,17 @@ function finnBestemmendeFravaersdag<T extends tidPeriode>(
 
 export default finnBestemmendeFravaersdag;
 
-export function finnSorterteUnikePerioder(fravaersperioder: Periode[]) {
+export function finnSorterteUnikePerioder<T extends tidPeriode>(fravaersperioder: Array<T>): Array<T> {
   const sorterteSykmeldingPerioder = fravaersperioder.toSorted((a, b) => {
     return compareAsc(a.fom || new Date(), b.fom || new Date());
   });
 
-  const unikeSykmeldingsperioder: Array<Periode> = finnUnikePerioder(sorterteSykmeldingPerioder);
+  const unikeSykmeldingsperioder: Array<T> = finnUnikePerioder(sorterteSykmeldingPerioder);
   return unikeSykmeldingsperioder;
 }
 
-function finnUnikePerioder(aktivePerioder: Array<Periode>): Array<Periode> {
-  const perioder: Array<Periode> = [aktivePerioder[0]];
+function finnUnikePerioder<T extends tidPeriode>(aktivePerioder: Array<T>): Array<T> {
+  const perioder: Array<T> = [aktivePerioder[0]];
 
   aktivePerioder.forEach((periode, index) => {
     const perioderIndex = perioder.length - 1;

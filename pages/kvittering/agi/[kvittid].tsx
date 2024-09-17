@@ -1,4 +1,4 @@
-// import testdata from '../../../mockdata/selvbestemt-kvittering.json';
+import testdata from '../../../mockdata/selvbestemt-kvittering.json';
 
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
@@ -72,6 +72,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
+  const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
 
   const [navn, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
     state.navn,
@@ -205,6 +206,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     fullLoennIArbeidsgiverPerioden.status = !!kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringDokument.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
     fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringDokument?.agp?.redusertLoennIAgp?.beloep;
     fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringDokument?.agp.redusertLoennIAgp?.begrunnelse;
+    if (kvitteringDokument?.vedtaksperiodeId) {
+      setVedtaksperiodeId(kvitteringDokument?.vedtaksperiodeId);
+    }
   } else {
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
     fullLoennIArbeidsgiverPerioden.status = !!kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringData.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
@@ -466,14 +470,17 @@ function prepareForInitiering(kvitteringData: any, personData: PersonData) {
 }
 
 export async function getServerSideProps(context: any) {
-  // return {
-  //   props: {
-  //     kvittid: context.query.kvittid,
-  //     kvittering: testdata,
-  //     kvitteringStatus: 200,
-  //     dataFraBackend: true
-  //   }
-  // };
+  const env = process.env.NODE_ENV;
+  if (env == 'development') {
+    return {
+      props: {
+        kvittid: context.query.kvittid,
+        kvittering: testdata,
+        kvitteringStatus: 200,
+        dataFraBackend: true
+      }
+    };
+  }
   const kvittid = context.query.kvittid;
 
   let kvittering: { status: number; data: { success: any } };

@@ -25,6 +25,7 @@ export interface SkjemadataState {
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: SkjemaKvitteringEksterntSystem) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setKvitteringsdata: (data: any) => void;
+  setVedtaksperiodeId: (id: string) => void;
   tracker: string;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
@@ -36,6 +37,7 @@ export interface SkjemadataState {
   kvitteringEksterntSystem?: SkjemaKvitteringEksterntSystem;
   skjemastatus: SkjemaStatus;
   kvitteringData?: AapenInnsending;
+  vedtaksperiodeId?: string;
 }
 
 export interface SkjemaKvitteringEksterntSystem {
@@ -128,6 +130,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.kvitteringData = data;
+      })
+    );
+  },
+  setVedtaksperiodeId: (id: string) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.vedtaksperiodeId = id;
       })
     );
   }

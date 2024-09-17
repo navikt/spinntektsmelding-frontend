@@ -26,6 +26,8 @@ export default function useFyllAapenInnsending() {
   const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
+  const vedtaksperiodeId = useBoundStore((state) => state.vedtaksperiodeId);
+
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
@@ -50,6 +52,7 @@ export default function useFyllAapenInnsending() {
     const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
 
     const innsending = validerAapenInnsending({
+      vedtaksperiodeId: vedtaksperiodeId,
       sykmeldtFnr: identitetsnummer,
       avsender: {
         orgnr: orgnrUnderenhet!,
