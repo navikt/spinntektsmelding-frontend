@@ -39,7 +39,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     const requestBody = await req.body;
 
     const orgnr = requestBody.orgnummer;
-    console.log('Orgnr: ', orgnr);
 
     const erGyldigOrgnr = isMod11Number(orgnr);
     if (!erGyldigOrgnr) {
@@ -59,8 +58,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       console.error('Feil ved kontroll av tilgang: ', tokenResponse.statusText);
 
       return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
-    } else {
-      console.log('Tilgang OK for orgnr: ', orgnr);
     }
 
     const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
@@ -68,8 +65,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       /* håndter obo-feil */
       console.error('OBO-feil: ', obo.error);
       return res.status(401);
-    } else {
-      console.log('OBO-token OK');
     }
 
     const body = {
