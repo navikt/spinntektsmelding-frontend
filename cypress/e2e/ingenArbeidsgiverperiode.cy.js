@@ -18,7 +18,9 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
       }
     }).as('kvittering');
 
-    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen.json' }).as('trenger');
+    cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-originalen.json' }).as(
+      'hent-forespoersel'
+    );
   });
 
   it('can check the "Det er ikke arbeidsgiverperiode" and verify that everithing is OK', () => {

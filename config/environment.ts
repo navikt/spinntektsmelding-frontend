@@ -63,7 +63,7 @@ class Environment {
 
   public baseUrl = '/im-dialog';
 
-  public skjemadataUrl = '/im-dialog/api/trenger';
+  public skjemadataUrl = '/im-dialog/api/hent-forespoersel';
 
   public inntektsdataUrl = '/im-dialog/api/inntektsdata';
   public inntektsdataSelvbestemtUrl = '/im-dialog/api/inntekt-selvbestemt';

@@ -34,7 +34,9 @@ describe('Utfylling og innsending av skjema', () => {
   // });
 
   it('should display information on the person and the submitter', () => {
-    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-forhaandsutfyll.json' }).as('trenger');
+    cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-forhaandsutfyll.json' }).as(
+      'hent-forespoersel'
+    );
 
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
       statusCode: 404,

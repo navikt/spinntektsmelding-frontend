@@ -4,7 +4,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../../config/environment';
 
 import org from '../../../mockdata/respons-selvbestemt.json';
-import feilRespons from '../../../mockdata/respons-backendfeil.json';
+import feilRespons from '../../../mockdata/respons-selvbestemt.json';
 
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 
