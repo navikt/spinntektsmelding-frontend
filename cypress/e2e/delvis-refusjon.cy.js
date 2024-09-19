@@ -34,7 +34,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       body: 'OK'
     });
     cy.wait('@kvittering');
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     // cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
@@ -103,7 +103,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       body: 'OK'
     });
     cy.wait('@kvittering');
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
@@ -191,7 +191,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       body: 'OK'
     });
     cy.wait('@kvittering');
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 

@@ -24,7 +24,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.injectAxe();
 
     // cy.wait('@kvittering');
-    // cy.wait('@trenger');
+    // cy.wait('@hent-forespoersel');
   });
 
   // it('Has no detectable a11y violations on load', () => {
@@ -62,7 +62,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@kvittering');
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     cy.get('[data-cy="navn"]').should('have.text', 'Test Navn Testesen-Navnesen Jr.');
     cy.get('[data-cy="identitetsnummer"]').should('have.text', '10486535275');

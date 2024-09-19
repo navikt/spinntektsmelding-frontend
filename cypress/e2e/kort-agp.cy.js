@@ -43,7 +43,7 @@ describe('Utfylling og innsending av skjema', () => {
       }
     }).as('kvittering');
 
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 

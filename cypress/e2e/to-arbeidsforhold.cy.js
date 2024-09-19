@@ -21,7 +21,7 @@ describe('Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('kvittering');
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');
 

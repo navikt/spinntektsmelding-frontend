@@ -76,7 +76,7 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
     }).as('sykepengeSoeknader');
 
     // cy.wait('@kvittering');
-    // cy.wait('@trenger');
+    // cy.wait('@hent-forespoersel');
 
     cy.findByLabelText('Angi personnummer for den ansatte').type('25087327879');
     cy.contains('Neste').click();
@@ -206,7 +206,7 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
     }).as('aktiveorgnr');
 
     // cy.wait('@kvittering');
-    // cy.wait('@trenger');
+    // cy.wait('@hent-forespoersel');
 
     cy.findByLabelText('Angi personnummer for den ansatte').type('25087327879');
     cy.contains('Neste').click();

@@ -36,7 +36,7 @@ describe('Utfylling og innsending av skjema', () => {
     }).as('kvittering');
 
     cy.wait('@kvittering');
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .findByLabelText('Ja')

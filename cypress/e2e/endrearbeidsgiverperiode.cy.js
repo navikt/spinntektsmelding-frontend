@@ -25,7 +25,7 @@ describe('Utfylling og innsending av skjema', () => {
     }).as('kvittering');
 
     cy.wait('@kvittering');
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     cy.get('[data-cy="endre-arbeidsgiverperiode"]').click();
     cy.get('.navds-alert--info .navds-alert__wrapper')
