@@ -10,9 +10,17 @@ import Skillelinje from '../Skillelinje/Skillelinje';
 interface PersonProps {
   erKvittering?: boolean;
   erDelvisInnsending?: boolean;
+  personInfo?: {
+    navn: string;
+    identitetsnummer: string;
+    orgnrUnderenhet: string;
+    virksomhetsnavn: string;
+    innsenderTelefonNr: string;
+    innsenderNavn: string;
+  };
 }
 
-export default function Person({ erKvittering, erDelvisInnsending }: PersonProps) {
+export default function Person({ erKvittering, erDelvisInnsending, personInfo }: PersonProps) {
   const [
     navn,
     identitetsnummer,
@@ -88,14 +96,12 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             {!hentingAvPersondataFeilet && (
               <div className={lokalStyles.ansattWrapper}>
                 <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, navn)}</div>
+                <div data-cy='navn'>{personInfo?.navn || navn}</div>
               </div>
             )}
             <div className={lokalStyles.ansattWrapper}>
               <TextLabel>Personnummer</TextLabel>
-              <div data-cy='identitetsnummer'>
-                {identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
-              </div>
+              <div data-cy='identitetsnummer'>{personInfo?.identitetsnummer || identitetsnummer}</div>
             </div>
           </div>
         </div>
@@ -107,7 +113,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
+                  {personInfo?.virksomhetsnavn || virksomhetsnavn}
                 </div>
               </div>
             )}
@@ -121,12 +127,12 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             )}
             <div className={lokalStyles.orgnrNavnWrapper}>
               <TextLabel>Orgnr. for underenhet</TextLabel>
-              <div data-cy='orgnummer'>{orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}</div>
+              <div data-cy='orgnummer'>{personInfo?.orgnrUnderenhet ?? orgnrUnderenhet}</div>
             </div>
             <div className={lokalStyles.innsenderNavnWrapper}>
               <TextLabel>Innsender</TextLabel>
               <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {skeletonLoader(skjemadataErLastet, innsenderNavn)}
+                {personInfo?.innsenderNavn ?? innsenderNavn}
               </div>
             </div>
             <div className={lokalStyles.telefonWrapper}>
@@ -134,7 +140,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
                 <>
                   <TextLabel>Telefon innsender</TextLabel>
                   <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
-                    {innsenderTelefonNr}
+                    {personInfo?.innsenderTelefonNr ?? innsenderTelefonNr}
                   </div>
                 </>
               )}
@@ -143,7 +149,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
                   label='Telefon innsender'
                   type='tel'
                   autoComplete='tel'
-                  defaultValue={innsenderTelefonNr}
+                  defaultValue={personInfo?.innsenderTelefonNr ?? innsenderTelefonNr}
                   onChange={changeTlfNr}
                   data-cy='innsendertlf'
                   error={visFeilmeldingsTekst('telefon')}
@@ -157,8 +163,4 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
       </div>
     </>
   );
-}
-
-function skeletonLoader(laster: boolean, tekst?: string) {
-  return laster ? tekst : <Skeleton variant='text' width='90%' height={28} />;
 }

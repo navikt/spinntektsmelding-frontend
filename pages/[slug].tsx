@@ -27,7 +27,6 @@ import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import environment from '../config/environment';
 
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
-import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
@@ -42,7 +41,6 @@ import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
-import useEksisterendeForespoersel from '../utils/useEksisterendeForespoersel';
 import { SWRConfig, unstable_serialize } from 'swr';
 import hentEksisterendeForespoersel from '../utils/hentEksisterendeForespoersel';
 import useStateInit from '../state/useStateInit';
@@ -91,7 +89,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
 
   const searchParams = useSearchParams();
-  // const hentKvitteringsdata = useHentKvitteringsdata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
@@ -202,8 +199,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug, skjemastatus, inntektsdato, fravaersperioder]);
 
-  const { data: forespoerselDataRefetch, error: forespoerselError } = useEksisterendeForespoersel(pathSlug, false);
-
   const { data: tidligereInntektData, error: tidligereInntektError } = useTidligereInntektsdata(
     identitetsnummer!,
     orgnrUnderenhet!,
@@ -211,16 +206,18 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     slug === 'arbeidsgiverInitiertInnsending'
   );
 
-  if (!forespoerselError && forespoerselData) {
-    console.log('pathSlug', pathSlug);
-    console.log('forespoerselDataRefetch', forespoerselDataRefetch);
-    console.log(fallback);
-    console.log('forespoerselData', forespoerselData);
-  }
-
   const sbBruttoinntekt =
     !tidligereInntektError && !inngangFraKvittering ? tidligereInntektData?.bruttoinntekt : undefined;
   const sbTidligerinntekt = !tidligereInntektError ? tidligereInntektData?.tidligereInntekter : undefined;
+
+  const personInfo = {
+    navn: forespoerselData.navn,
+    identitetsnummer: forespoerselData.identitetsnummer,
+    virksomhetsnavn: forespoerselData.virksomhetsnavn,
+    orgnrUnderenhet: forespoerselData.orgnrUnderenhet,
+    innsenderNavn: forespoerselData.innsenderNavn,
+    innsenderTelefonNr: forespoerselData.innsenderTelefonNr
+  };
   return (
     <SWRConfig value={{ fallback, refreshInterval: 0, revalidateIfStale: false }}>
       <div className={styles.container}>
