@@ -218,6 +218,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     innsenderNavn: forespoerselData.innsenderNavn,
     innsenderTelefonNr: forespoerselData.innsenderTelefonNr
   };
+
   return (
     <SWRConfig value={{ fallback, refreshInterval: 0, revalidateIfStale: false }}>
       <div className={styles.container}>
@@ -230,7 +231,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
         <PageContent title='Inntektsmelding'>
           <form className={styles.padded} onSubmit={submitForm}>
-            <Person />
+            <Person personInfo={personInfo} />
 
             <Behandlingsdager />
 
@@ -307,20 +308,20 @@ export default Home;
 export async function getServerSideProps(context: any) {
   const slug = context.query.slug;
 
-  const env = process.env.NODE_ENV;
-  // if (env == 'development') {
-  //   return {
-  //     props: {
-  //       slug: context.query.slug,
-  //       forespoerselData: testdata,
-  //       forespoerselStatus: 200,
-  //       dataFraBackend: true,
-  //       fallback: {
-  //         [unstable_serialize([environment.inntektsmeldingUuidAPI, slug])]: testdata
-  //       }
-  //     }
-  //   };
-  // }
+  const env = process.env.DISABLE_DECOR;
+  if (env === 'true') {
+    return {
+      props: {
+        slug: context.query.slug,
+        forespoerselData: testdata,
+        forespoerselStatus: 200,
+        dataFraBackend: true,
+        fallback: {
+          [unstable_serialize([environment.inntektsmeldingUuidAPI, slug])]: testdata
+        }
+      }
+    };
+  }
   let response;
   let forespoerselStatus = 200;
 
