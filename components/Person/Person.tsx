@@ -67,6 +67,11 @@ export default function Person({ erKvittering, erDelvisInnsending, personInfo }:
 
   const skjemadataErLastet = !!identitetsnummer;
 
+  let visningVirksomhetsnavn = virksomhetsnavn;
+  if (hentingAvArbeidsgiverdataFeilet) {
+    visningVirksomhetsnavn = '&nbsp;';
+  }
+
   return (
     <>
       {!erKvittering && (
@@ -109,22 +114,13 @@ export default function Person({ erKvittering, erDelvisInnsending, personInfo }:
           <Heading3>Arbeidsgiveren</Heading3>
 
           <div className={lokalStyles.arbeidsgiverWrapper}>
-            {!hentingAvArbeidsgiverdataFeilet && (
-              <div className={lokalStyles.virksomhetsnavnWrapper}>
-                <TextLabel>Virksomhetsnavn</TextLabel>
-                <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {personInfo?.virksomhetsnavn || virksomhetsnavn}
-                </div>
+            <div className={lokalStyles.virksomhetsnavnWrapper}>
+              <TextLabel>Virksomhetsnavn</TextLabel>
+              <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
+                {personInfo?.virksomhetsnavn || visningVirksomhetsnavn}
               </div>
-            )}
-            {hentingAvArbeidsgiverdataFeilet && (
-              <div className={lokalStyles.virksomhetsnavnWrapper}>
-                <TextLabel>&nbsp;</TextLabel>
-                <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  &nbsp;
-                </div>
-              </div>
-            )}
+            </div>
+
             <div className={lokalStyles.orgnrNavnWrapper}>
               <TextLabel>Orgnr. for underenhet</TextLabel>
               <div data-cy='orgnummer'>{personInfo?.orgnrUnderenhet ?? orgnrUnderenhet}</div>
