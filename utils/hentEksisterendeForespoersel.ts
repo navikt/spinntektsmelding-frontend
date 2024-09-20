@@ -1,6 +1,7 @@
 import { getToken, validateToken } from '@navikt/oasis';
 import fetchEksisterendeForespoersel from './fetchEksisterendeForespoersel';
 import environment from '../config/environment';
+import NetworkError from './NetworkError';
 
 export default async function hentEksisterendeForespoersel(pathSlug?: string | Array<string>, context?: any) {
   if (Array.isArray(pathSlug)) {
@@ -17,23 +18,26 @@ export default async function hentEksisterendeForespoersel(pathSlug?: string | A
   if (!validation.ok) {
     /* håndter valideringsfeil */
     console.error('Valideringsfeil');
-    const ingress = context.req.headers.host + environment.baseUrl;
-    const currentPath = `https://${ingress}${context.resolvedUrl}`;
 
-    const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
-    return {
-      redirect: {
-        destination: destination,
-        permanent: false
-      }
-    };
+    const error = new NetworkError('Ingen tilgang');
+    error.status = 401;
+    throw error;
   }
 
   if (pathSlug) {
+    console.log(
+      'Henter eksisterende forespørsel fra http://' + process.env.IM_API_URI + process.env.PREUTFYLT_INNTEKTSMELDING_API
+    );
     return fetchEksisterendeForespoersel(
-      'http://' + global.process.env.IM_API_URI + process.env.PREUTFYLT_INNTEKTSMELDING_API,
+      'http://' + process.env.IM_API_URI + process.env.PREUTFYLT_INNTEKTSMELDING_API,
       pathSlug,
       token
     );
   }
+
+  console.error('Forespørsel ID mangler');
+
+  const error = new NetworkError('Forespørsel ID mangler');
+  error.status = 400;
+  throw error;
 }

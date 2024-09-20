@@ -6,15 +6,17 @@ const fetchEksisterendeForespoersel = async (url: string, forespoerselId: string
     return Promise.resolve({ status: 404, data: {} });
   }
 
-  return fetch(`${url}/${forespoerselId}`, {
+  console.log('fetchEksisterendeForespoersel', url, forespoerselId, token);
+
+  return fetch(`${url}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-      body: JSON.stringify({
-        uuid: forespoerselId
-      })
-    }
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      uuid: forespoerselId
+    })
   })
     .then((res) => {
       if (!res.ok) {

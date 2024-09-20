@@ -307,22 +307,24 @@ export async function getServerSideProps(context: any) {
   const slug = context.query.slug;
 
   const env = process.env.NODE_ENV;
-  if (env == 'development') {
-    return {
-      props: {
-        slug: context.query.slug,
-        forespoerselData: testdata,
-        forespoerselStatus: 200,
-        dataFraBackend: true,
-        fallback: {
-          [unstable_serialize([environment.inntektsmeldingUuidAPI, slug])]: testdata
-        }
-      }
-    };
-  }
+  // if (env == 'development') {
+  //   return {
+  //     props: {
+  //       slug: context.query.slug,
+  //       forespoerselData: testdata,
+  //       forespoerselStatus: 200,
+  //       dataFraBackend: true,
+  //       fallback: {
+  //         [unstable_serialize([environment.inntektsmeldingUuidAPI, slug])]: testdata
+  //       }
+  //     }
+  //   };
+  // }
+  let response;
+  let forespoerselStatus = 200;
 
   try {
-    const response = hentEksisterendeForespoersel(environment.inntektsmeldingUuidAPI, context);
+    response = await hentEksisterendeForespoersel(slug, context);
   } catch (error) {
     if (error instanceof Error && 'status' in error && (error as any).status === 401) {
       console.error('Error in getServerSideProps', error);
@@ -337,16 +339,19 @@ export async function getServerSideProps(context: any) {
         }
       };
     }
+
+    console.error('Error in getServerSideProps', error);
+    forespoerselStatus = error.status;
   }
 
   return {
     props: {
       slug: context.query.slug,
-      forespoerselData: testdata,
-      forespoerselStatus: 200,
+      forespoerselData: response,
+      forespoerselStatus,
       dataFraBackend: true,
       fallback: {
-        [unstable_serialize([environment.inntektsmeldingUuidAPI, slug])]: testdata
+        [unstable_serialize([environment.inntektsmeldingUuidAPI, slug])]: response
       }
     }
   };
