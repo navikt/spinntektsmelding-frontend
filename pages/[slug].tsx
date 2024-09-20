@@ -1,3 +1,5 @@
+import testdata from '../mockdata/trenger-originalen-16dager.json';
+
 import React, { useEffect, useMemo, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
@@ -40,9 +42,15 @@ import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
+import useEksisterendeForespoersel from '../utils/useEksisterendeForespoersel';
+import { SWRConfig, unstable_serialize } from 'swr';
+import fetcherEksisterendeForespoersel from '../utils/fetcherEksisterendeForespoersel';
+import hentEksisterendeForespoersel from '../utils/hentEksisterendeForespoersel';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  slug
+  slug,
+  fallback,
+  forespoerselData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [lasterData, setLasterData] = useState<boolean>(false);
@@ -190,94 +198,106 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug, skjemastatus, inntektsdato, fravaersperioder]);
 
-  const { data, error } = useTidligereInntektsdata(
+  const { data: forespoerselDataRefetch, error: forespoerselError } = useEksisterendeForespoersel(pathSlug, false);
+
+  const { data: tidligereInntektData, error: tidligereInntektError } = useTidligereInntektsdata(
     identitetsnummer!,
     orgnrUnderenhet!,
     inntektsdato!,
     slug === 'arbeidsgiverInitiertInnsending'
   );
 
-  const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
-  const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
+  if (!forespoerselError && forespoerselData) {
+    console.log('pathSlug', pathSlug);
+    console.log('forespoerselDataRefetch', forespoerselDataRefetch);
+    console.log(fallback);
+    console.log('forespoerselData', forespoerselData);
+  }
+
+  const sbBruttoinntekt =
+    !tidligereInntektError && !inngangFraKvittering ? tidligereInntektData?.bruttoinntekt : undefined;
+  const sbTidligerinntekt = !tidligereInntektError ? tidligereInntektData?.tidligereInntekter : undefined;
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Innsending av inntektsmelding - nav.no</title>
-        <meta name='description' content='Innsending av inntektsmelding' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
+    <SWRConfig value={{ fallback, refreshInterval: 0, revalidateIfStale: false }}>
+      <div className={styles.container}>
+        <Head>
+          <title>Innsending av inntektsmelding - nav.no</title>
+          <meta name='description' content='Innsending av inntektsmelding' />
+          <link rel='icon' href='/favicon.ico' />
+        </Head>
 
-      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
-      <PageContent title='Inntektsmelding'>
-        <form className={styles.padded} onSubmit={submitForm}>
-          <Person />
+        <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
+        <PageContent title='Inntektsmelding'>
+          <form className={styles.padded} onSubmit={submitForm}>
+            <Person />
 
-          <Behandlingsdager />
+            <Behandlingsdager />
 
-          <Skillelinje />
-          <Egenmelding
-            lasterData={lasterData}
-            setIsDirtyForm={setIsDirtyForm}
-            selvbestemtInnsending={selvbestemtInnsending}
-          />
+            <Skillelinje />
+            <Egenmelding
+              lasterData={lasterData}
+              setIsDirtyForm={setIsDirtyForm}
+              selvbestemtInnsending={selvbestemtInnsending}
+            />
 
-          <Skillelinje />
-          <Fravaersperiode
-            lasterData={lasterData}
-            setIsDirtyForm={setIsDirtyForm}
-            skjemastatus={skjemastatus}
-            selvbestemtInnsending={selvbestemtInnsending}
-          />
+            <Skillelinje />
+            <Fravaersperiode
+              lasterData={lasterData}
+              setIsDirtyForm={setIsDirtyForm}
+              skjemastatus={skjemastatus}
+              selvbestemtInnsending={selvbestemtInnsending}
+            />
 
-          <Skillelinje />
+            <Skillelinje />
 
-          <Arbeidsgiverperiode
-            arbeidsgiverperioder={arbeidsgiverperioder}
-            setIsDirtyForm={setIsDirtyForm}
-            skjemastatus={skjemastatus}
-          />
+            <Arbeidsgiverperiode
+              arbeidsgiverperioder={arbeidsgiverperioder}
+              setIsDirtyForm={setIsDirtyForm}
+              skjemastatus={skjemastatus}
+            />
 
-          <Skillelinje />
+            <Skillelinje />
 
-          <Bruttoinntekt
-            bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
-            setIsDirtyForm={setIsDirtyForm}
-            erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
-            sbBruttoinntekt={sbBruttoinntekt}
-            sbTidligereinntekt={sbTidligerinntekt}
-          />
+            <Bruttoinntekt
+              bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
+              setIsDirtyForm={setIsDirtyForm}
+              erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
+              sbBruttoinntekt={sbBruttoinntekt}
+              sbTidligereinntekt={sbTidligerinntekt}
+            />
 
-          <Skillelinje />
+            <Skillelinje />
 
-          <RefusjonArbeidsgiver setIsDirtyForm={setIsDirtyForm} />
+            <RefusjonArbeidsgiver setIsDirtyForm={setIsDirtyForm} />
 
-          <Skillelinje />
-          <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
-          <ConfirmationPanel
-            className={styles.confirmationpanel}
-            checked={opplysningerBekreftet}
-            onClick={clickOpplysningerBekreftet}
-            label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
-            id='bekreft-opplysninger'
-            error={visFeilmeldingsTekst('bekreft-opplysninger')}
-          ></ConfirmationPanel>
-          <Feilsammendrag />
-          <div className={styles.outerbuttonwrapper}>
-            <div className={styles.buttonwrapper}>
-              <Button className={styles.sendbutton} loading={senderInn} id='knapp-innsending'>
-                Send
-              </Button>
+            <Skillelinje />
+            <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
+            <ConfirmationPanel
+              className={styles.confirmationpanel}
+              checked={opplysningerBekreftet}
+              onClick={clickOpplysningerBekreftet}
+              label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+              id='bekreft-opplysninger'
+              error={visFeilmeldingsTekst('bekreft-opplysninger')}
+            ></ConfirmationPanel>
+            <Feilsammendrag />
+            <div className={styles.outerbuttonwrapper}>
+              <div className={styles.buttonwrapper}>
+                <Button className={styles.sendbutton} loading={senderInn} id='knapp-innsending'>
+                  Send
+                </Button>
 
-              <Link className={styles.lukkelenke} href={environment.saksoversiktUrl}>
-                Lukk
-              </Link>
+                <Link className={styles.lukkelenke} href={environment.saksoversiktUrl}>
+                  Lukk
+                </Link>
+              </div>
             </div>
-          </div>
-        </form>
-        <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
-        <HentingAvDataFeilet open={skjemaFeilet} handleCloseModal={lukkHentingFeiletModal} />
-      </PageContent>
-    </div>
+          </form>
+          <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
+          <HentingAvDataFeilet open={skjemaFeilet} handleCloseModal={lukkHentingFeiletModal} />
+        </PageContent>
+      </div>
+    </SWRConfig>
   );
 };
 
@@ -286,9 +306,48 @@ export default Home;
 export async function getServerSideProps(context: any) {
   const slug = context.query.slug;
 
+  const env = process.env.NODE_ENV;
+  if (env == 'development') {
+    return {
+      props: {
+        slug: context.query.slug,
+        forespoerselData: testdata,
+        forespoerselStatus: 200,
+        dataFraBackend: true,
+        fallback: {
+          [unstable_serialize([environment.inntektsmeldingUuidAPI, slug])]: testdata
+        }
+      }
+    };
+  }
+
+  try {
+    const response = hentEksisterendeForespoersel(environment.inntektsmeldingUuidAPI, context);
+  } catch (error) {
+    if (error instanceof Error && 'status' in error && (error as any).status === 401) {
+      console.error('Error in getServerSideProps', error);
+      const ingress = context.req.headers.host + environment.baseUrl;
+      const currentPath = `https://${ingress}${context.resolvedUrl}`;
+      const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
+
+      return {
+        redirect: {
+          destination: destination,
+          permanent: false
+        }
+      };
+    }
+  }
+
   return {
     props: {
-      slug
+      slug: context.query.slug,
+      forespoerselData: testdata,
+      forespoerselStatus: 200,
+      dataFraBackend: true,
+      fallback: {
+        [unstable_serialize([environment.inntektsmeldingUuidAPI, slug])]: testdata
+      }
     }
   };
 }
