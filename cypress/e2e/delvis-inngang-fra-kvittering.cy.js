@@ -9,11 +9,13 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // const now = new Date(2021, 3, 14); // month is 0-indexed
     // cy.clock(now);
     // cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    // cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-delvis.json' }).as('trenger');
+    // cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-delvis.json' }).as('hent-forespoersel');
   });
 
   it('Changes and submit', () => {
-    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-delvis.json' }).as('trenger');
+    cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-delvis.json' }).as(
+      'hent-forespoersel'
+    );
     cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', {
       statusCode: 201,
       body: {

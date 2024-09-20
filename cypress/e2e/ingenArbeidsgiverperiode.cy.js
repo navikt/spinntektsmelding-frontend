@@ -18,12 +18,14 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
       }
     }).as('kvittering');
 
-    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen.json' }).as('trenger');
+    cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-originalen.json' }).as(
+      'hent-forespoersel'
+    );
   });
 
   it('can check the "Det er ikke arbeidsgiverperiode" and verify that everithing is OK', () => {
     cy.wait('@kvittering');
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon i sykefraværet/ }).should('not.exist');
     cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden/ }).should(

@@ -29,7 +29,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
       onProxyInit: handleProxyInit,
       pathRewrite: [
         {
-          patternStr: '^/api/trenger',
+          patternStr: '^/api/hent-forespoersel',
           replaceStr: ''
         }
       ]

@@ -24,7 +24,9 @@ describe('Utfylling og innsending av skjema', () => {
   });
 
   it('can check the radioboxes for refusjon and submit', () => {
-    cy.intercept('/im-dialog/api/trenger', { fixture: '../../mockdata/trenger-originalen-16dager.json' }).as('trenger');
+    cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-originalen-16dager.json' }).as(
+      'hent-forespoersel'
+    );
     cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', {
       statusCode: 201,
       body: {
@@ -41,7 +43,7 @@ describe('Utfylling og innsending av skjema', () => {
       }
     }).as('kvittering');
 
-    cy.wait('@trenger');
+    cy.wait('@hent-forespoersel');
 
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
