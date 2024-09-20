@@ -351,7 +351,7 @@ export async function getServerSideProps(context: any) {
   if (response.data.erBesvart === true) {
     return {
       redirect: {
-        destination: `${environment.baseUrl}/kvittering/${slug}`,
+        destination: `/kvittering/${slug}`,
         permanent: false
       }
     };
