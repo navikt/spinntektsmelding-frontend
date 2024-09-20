@@ -44,8 +44,8 @@ import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import useEksisterendeForespoersel from '../utils/useEksisterendeForespoersel';
 import { SWRConfig, unstable_serialize } from 'swr';
-import fetcherEksisterendeForespoersel from '../utils/fetcherEksisterendeForespoersel';
 import hentEksisterendeForespoersel from '../utils/hentEksisterendeForespoersel';
+import useStateInit from '../state/useStateInit';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -86,10 +86,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
 
+  const initState = useStateInit();
+
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
 
   const searchParams = useSearchParams();
-  const hentKvitteringsdata = useHentKvitteringsdata();
+  // const hentKvitteringsdata = useHentKvitteringsdata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
@@ -165,10 +167,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       return;
     }
     if (!fravaersperioder) {
-      setLasterData(true);
-      hentKvitteringsdata(pathSlug)?.finally(() => {
-        setLasterData(false);
-      });
+      // setLasterData(true);
+      // hentKvitteringsdata(pathSlug)?.finally(() => {
+      //   setLasterData(false);
+      // });
+
+      initState(forespoerselData);
 
       if (bestemmendeFravaersdag) {
         setSisteInntektsdato(parseIsoDate(format(bestemmendeFravaersdag, 'yyyy-MM-01')));
@@ -344,10 +348,18 @@ export async function getServerSideProps(context: any) {
     forespoerselStatus = error.status;
   }
 
+  if (response.data.erBesvart === true) {
+    return {
+      redirect: {
+        destination: `${environment.baseUrl}/kvittering/${slug}`,
+        permanent: false
+      }
+    };
+  }
   return {
     props: {
       slug: context.query.slug,
-      forespoerselData: response,
+      forespoerselData: response.data,
       forespoerselStatus,
       dataFraBackend: true,
       fallback: {
