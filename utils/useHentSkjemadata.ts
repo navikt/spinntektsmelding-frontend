@@ -27,6 +27,10 @@ export default function useHentSkjemadata() {
     if (pathSlug) {
       return fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, pathSlug)
         .then((skjemadata) => {
+          if (skjemadata.erBesvart === true) {
+            router.replace(`/kvittering/${pathSlug}`, undefined);
+          }
+
           initState(skjemadata);
           const opplysningstyper = hentPaakrevdOpplysningstyper();
 

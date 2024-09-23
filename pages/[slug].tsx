@@ -25,7 +25,6 @@ import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import environment from '../config/environment';
 
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
-import useHentKvitteringsdata from '../utils/useHentKvitteringsdata';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
@@ -40,6 +39,7 @@ import { format, isEqual } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
+import useHentSkjemadata from '../utils/useHentSkjemadata';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -81,7 +81,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
 
   const searchParams = useSearchParams();
-  const hentKvitteringsdata = useHentKvitteringsdata();
+  const hentSkjemadata = useHentSkjemadata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
@@ -158,7 +158,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
     if (!fravaersperioder) {
       setLasterData(true);
-      hentKvitteringsdata(pathSlug)?.finally(() => {
+      hentSkjemadata(pathSlug)?.finally(() => {
         setLasterData(false);
       });
 
