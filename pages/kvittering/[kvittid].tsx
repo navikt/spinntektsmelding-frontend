@@ -93,12 +93,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
     if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
       if (isValidUUID(kvitteringSlug)) {
-        router.push(`/${kvitteringSlug}`, { shallow: true });
+        router.push(`/${kvitteringSlug}`, undefined, { shallow: true });
       }
-    } else {
-      if (isValidUUID(kvitteringSlug)) {
-        router.push(`/endring/${kvitteringSlug}`, { shallow: true });
-      }
+    } else if (isValidUUID(kvitteringSlug)) {
+      router.push(`/endring/${kvitteringSlug}`, undefined, { shallow: true });
     }
   };
 
