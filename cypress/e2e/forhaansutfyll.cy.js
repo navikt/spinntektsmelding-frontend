@@ -1,15 +1,6 @@
 /// <reference types="cypress" />
 
-// Welcome to Cypress!
-//
-// This spec file contains a variety of sample tests
-// for a todo list app that are designed to demonstrate
-// the power of writing tests in Cypress.
-//
-// To learn more about how Cypress works and
-// what makes it such an awesome testing tool,
-// please read our getting started guide:
-// https://on.cypress.io/introduction-to-cypress
+import body from '../../mockdata/trenger-forhaandsutfyll.json';
 
 describe('Utfylling og innsending av skjema', () => {
   beforeEach(() => {
@@ -34,6 +25,19 @@ describe('Utfylling og innsending av skjema', () => {
   // });
 
   it('should display information on the person and the submitter', () => {
+    cy.mockBackendRequest({
+      port: 3001,
+      routeMock: {
+        path: 'http://im-api.helsearbeidsgiver/api/v1/hent-forespoersel',
+        method: 'GET',
+        response: {
+          statusCode: 200,
+          body
+        }
+      },
+      fixturePath: 'my_fixture_file_path'
+    });
+
     cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-forhaandsutfyll.json' }).as(
       'hent-forespoersel'
     );

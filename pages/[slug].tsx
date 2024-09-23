@@ -44,6 +44,7 @@ import isValidUUID from '../utils/isValidUUID';
 import { SWRConfig, unstable_serialize } from 'swr';
 import hentEksisterendeForespoersel from '../utils/hentEksisterendeForespoersel';
 import useStateInit from '../state/useStateInit';
+import NetworkError from '../utils/NetworkError';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -327,9 +328,9 @@ export async function getServerSideProps(context: any) {
 
   try {
     response = await hentEksisterendeForespoersel(slug, context);
-  } catch (error) {
-    if (error instanceof Error && 'status' in error && (error as any).status === 401) {
-      console.error('Error in getServerSideProps', error);
+  } catch (error: any) {
+    if (error.status === 401) {
+      console.error('Error in getServerSideProps 401', error);
       const ingress = context.req.headers.host + environment.baseUrl;
       const currentPath = `https://${ingress}${context.resolvedUrl}`;
       const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
@@ -344,9 +345,18 @@ export async function getServerSideProps(context: any) {
 
     console.error('Error in getServerSideProps', error);
     forespoerselStatus = error.status;
+
+    return {
+      props: {
+        slug: context.query.slug,
+        forespoerselData: {},
+        forespoerselStatus,
+        dataFraBackend: false
+      }
+    };
   }
 
-  if (response.data.erBesvart === true) {
+  if (response?.data?.erBesvart === true) {
     return {
       redirect: {
         destination: `/kvittering/${slug}`,

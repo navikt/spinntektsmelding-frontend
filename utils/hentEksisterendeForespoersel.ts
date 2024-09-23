@@ -1,6 +1,5 @@
 import { getToken, validateToken } from '@navikt/oasis';
 import fetchEksisterendeForespoersel from './fetchEksisterendeForespoersel';
-import environment from '../config/environment';
 import NetworkError from './NetworkError';
 
 export default async function hentEksisterendeForespoersel(pathSlug?: string | Array<string>, context?: any) {
@@ -17,7 +16,7 @@ export default async function hentEksisterendeForespoersel(pathSlug?: string | A
   const validation = await validateToken(token);
   if (!validation.ok) {
     /* håndter valideringsfeil */
-    console.error('Valideringsfeil');
+    console.error('Validering av token feilet');
 
     const error = new NetworkError('Ingen tilgang');
     error.status = 401;

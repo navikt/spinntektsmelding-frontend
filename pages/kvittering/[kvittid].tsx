@@ -15,7 +15,8 @@ import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
 import PeriodeFraTil from '../../components/PeriodeFraTil/PeriodeFraTil';
 import formatCurrency from '../../utils/formatCurrency';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import BortfallNaturalytelser from '../../components/BortfallNaturalytelser/BortfallNaturalytelser';
 import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
@@ -92,11 +93,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
     if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
       if (isValidUUID(kvitteringSlug)) {
-        router.push(`/${kvitteringSlug}`);
+        router.push(`/${kvitteringSlug}`, { shallow: true });
       }
     } else {
       if (isValidUUID(kvitteringSlug)) {
-        router.push(`/endring/${kvitteringSlug}`);
+        router.push(`/endring/${kvitteringSlug}`, { shallow: true });
       }
     }
   };
