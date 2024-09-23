@@ -88,7 +88,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           })
       : refusjonEndringer;
 
-  const clickEndre = () => {
+  const clickEndre = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
     if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
