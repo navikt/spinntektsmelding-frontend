@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+import trengerDelvis from '../../mockdata/trenger-delvis.json';
+
 describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   beforeEach(() => {
     // Cypress starts out with a blank slate for each test
@@ -13,9 +15,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   });
 
   it('Changes and submit', () => {
-    cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-delvis.json' }).as(
-      'hent-forespoersel'
-    );
+    trengerDelvis.erBesvart = true;
+    cy.intercept('/im-dialog/api/hent-forespoersel', trengerDelvis).as('hent-forespoersel');
     cy.intercept('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', {
       statusCode: 201,
       body: {
@@ -98,12 +99,12 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .check();
 
     cy.findByLabelText('Angi siste dag dere krever refusjon for').clear().type('30.09.23');
-    cy.realPress('Escape');
+    // cy.realPress('Escape');
 
     cy.findByRole('button', { name: 'Endre' }).click();
 
     cy.findByLabelText('Oppgi refusjonsbeløpet per måned').clear().type('50000');
-    cy.realPress('Escape');
+    // cy.realPress('Escape');
 
     cy.wait(1000);
 

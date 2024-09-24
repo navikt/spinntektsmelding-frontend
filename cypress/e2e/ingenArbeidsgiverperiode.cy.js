@@ -24,7 +24,6 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
   });
 
   it('can check the "Det er ikke arbeidsgiverperiode" and verify that everithing is OK', () => {
-    cy.wait('@kvittering');
     cy.wait('@hent-forespoersel');
 
     cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon i sykefraværet/ }).should('not.exist');

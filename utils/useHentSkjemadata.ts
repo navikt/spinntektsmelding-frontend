@@ -27,11 +27,15 @@ export default function useHentSkjemadata() {
     if (pathSlug) {
       return fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, pathSlug)
         .then((skjemadata) => {
-          initState(skjemadata);
-          const opplysningstyper = hentPaakrevdOpplysningstyper();
+          if (skjemadata.erBesvart === true) {
+            router.replace(`/kvittering/${pathSlug}`, undefined);
+          } else {
+            initState(skjemadata);
+            const opplysningstyper = hentPaakrevdOpplysningstyper();
 
-          if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
-            router.replace(`/endring/${pathSlug}`, undefined);
+            if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
+              router.replace(`/endring/${pathSlug}`, undefined);
+            }
           }
         })
         .catch((error: any) => {
