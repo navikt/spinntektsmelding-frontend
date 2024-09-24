@@ -36,7 +36,7 @@ function requiredArgs(required: number, args: IArguments): void {
   }
 }
 
-export type DifferenceInBusinessDaysOptions = {
+type DifferenceInBusinessDaysOptions = {
   includeEndDate?: boolean;
   includeStartDate?: boolean;
 };

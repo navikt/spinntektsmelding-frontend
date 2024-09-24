@@ -2,32 +2,32 @@ import { z } from 'zod';
 import { PeriodeSchema } from './konverterPeriodeSchema';
 import { toLocalIso } from '../utils/toLocalIso';
 
-export const EndringAarsakBonusSchema = z.object({
+const EndringAarsakBonusSchema = z.object({
   aarsak: z.literal('Bonus')
 });
 
-export const EndringAarsakFeilregistrertSchema = z.object({
+const EndringAarsakFeilregistrertSchema = z.object({
   aarsak: z.literal('Feilregistrert')
 });
 
-export const EndringAarsakFerieSchema = z.object({
+const EndringAarsakFerieSchema = z.object({
   aarsak: z.literal('Ferie'),
   ferier: z.array(PeriodeSchema)
 });
 
-export const EndringAarsakFerietrekkSchema = z.object({
+const EndringAarsakFerietrekkSchema = z.object({
   aarsak: z.literal('Ferietrekk')
 });
 
-export const EndringAarsakSammeSomSistSchema = z.object({
+const EndringAarsakSammeSomSistSchema = z.object({
   aarsak: z.literal('SammeSomSist')
 });
 
-export const EndringAarsakNyansattSchema = z.object({
+const EndringAarsakNyansattSchema = z.object({
   aarsak: z.literal('Nyansatt')
 });
 
-export const EndringAarsakNyStillingSchema = z.object({
+const EndringAarsakNyStillingSchema = z.object({
   aarsak: z.literal('NyStilling'),
   gjelderFra: z
     .date({
@@ -37,7 +37,7 @@ export const EndringAarsakNyStillingSchema = z.object({
     .transform((val) => toLocalIso(val))
 });
 
-export const EndringAarsakNyStillingsprosentSchema = z.object({
+const EndringAarsakNyStillingsprosentSchema = z.object({
   aarsak: z.literal('NyStillingsprosent'),
   gjelderFra: z
     .date({
@@ -47,22 +47,22 @@ export const EndringAarsakNyStillingsprosentSchema = z.object({
     .transform((val) => toLocalIso(val))
 });
 
-export const EndringAarsakPermisjonSchema = z.object({
+const EndringAarsakPermisjonSchema = z.object({
   aarsak: z.literal('Permisjon'),
   permisjoner: z.array(PeriodeSchema)
 });
 
-export const EndringAarsakPermitteringSchema = z.object({
+const EndringAarsakPermitteringSchema = z.object({
   aarsak: z.literal('Permittering'),
   permitteringer: z.array(PeriodeSchema)
 });
 
-export const EndringAarsakSykefravaerSchema = z.object({
+const EndringAarsakSykefravaerSchema = z.object({
   aarsak: z.literal('Sykefravaer'),
   sykefravaer: z.array(PeriodeSchema)
 });
 
-export const EndringAarsakTariffendringSchema = z.object({
+const EndringAarsakTariffendringSchema = z.object({
   aarsak: z.literal('Tariffendring'),
   gjelderFra: z
     .date({
@@ -78,7 +78,7 @@ export const EndringAarsakTariffendringSchema = z.object({
     .transform((val) => toLocalIso(val))
 });
 
-export const EndringAarsakVarigLoennsendringSchema = z.object({
+const EndringAarsakVarigLoennsendringSchema = z.object({
   aarsak: z.literal('VarigLoennsendring'),
   gjelderFra: z
     .date({
