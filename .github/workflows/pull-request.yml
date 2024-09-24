@@ -63,4 +63,9 @@ jobs:
       pull-requests: write
 
     steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.6'
+          registry-url: 'https://npm.pkg.github.com'
       - uses: codex-/knip-reporter@v2
