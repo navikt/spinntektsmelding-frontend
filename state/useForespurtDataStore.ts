@@ -1,7 +1,6 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { isEqual, parseISO } from 'date-fns';
 import { YesNo } from './state';
 import { MottattPeriodeRefusjon, TDateISODate } from './MottattData';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
@@ -147,7 +146,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
             if (typeof fastsattInntekt === 'number') {
               state.fastsattInntekt = fastsattInntekt;
-              state.gammeltSkjaeringstidspunkt = parseISO(inntekt.forrigeInntekt.skjæringstidspunkt);
+              state.gammeltSkjaeringstidspunkt = parseIsoDate(inntekt.forrigeInntekt.skjæringstidspunkt);
               state.ukjentInntekt = false;
             }
           } else {
@@ -202,7 +201,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     set(
       produce((state: ForespurtDataState) => {
         state.fastsattInntekt = inntekt.beløp;
-        state.gammeltSkjaeringstidspunkt = parseISO(inntekt.skjæringstidspunkt);
+        state.gammeltSkjaeringstidspunkt = parseIsoDate(inntekt.skjæringstidspunkt);
 
         return state;
       })
@@ -286,7 +285,7 @@ function perioderEksklBestemmendeFravaersdag(
 function refusjonPerioderTilRefusjonEndringer(perioder: MottattPeriodeRefusjon[]): EndringsBeloep[] {
   return perioder.map((periode: MottattPeriodeRefusjon) => {
     return {
-      dato: periode.fom ? parseISO(periode.fom) : undefined,
+      dato: periode.fom ? parseIsoDate(periode.fom) : undefined,
       beloep: ugyldigEllerNegativtTall(periode.beloep) ? undefined : periode.beloep
     };
   });

@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid';
 import { StateCreator } from 'zustand';
-import { parseISO } from 'date-fns';
 import { MottattPeriode } from './MottattData';
 import { Periode } from './state';
 import { produce } from 'immer';
@@ -117,8 +116,8 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
 
   initFravaersperiode: (mottattFravaerPerioder: Array<MottattPeriode>) => {
     const fravaerPerioder: Array<Periode> = mottattFravaerPerioder.map((periode) => ({
-      fom: parseISO(periode.fom),
-      tom: parseISO(periode.tom),
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
       id: nanoid()
     }));
 

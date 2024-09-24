@@ -1,4 +1,4 @@
-import { isValid, parseISO } from 'date-fns';
+import { isValid } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
@@ -244,8 +244,8 @@ export function konverterPerioderFraMottattTilInterntFormat(
 ) {
   return innsendbarArbeidsgiverperioder
     ? innsendbarArbeidsgiverperioder?.map((periode) => ({
-        fom: parseISO(periode.fom),
-        tom: parseISO(periode.tom),
+        fom: parseIsoDate(periode.fom),
+        tom: parseIsoDate(periode.tom),
         id: 'id'
       }))
     : undefined;

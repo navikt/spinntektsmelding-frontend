@@ -35,7 +35,7 @@ import { SkjemaStatus } from '../state/useSkjemadataStore';
 import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
-import { format, isEqual } from 'date-fns';
+import { format, isEqual, startOfMonth } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
@@ -144,9 +144,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   ]);
 
   const inntektsdato = useMemo(() => {
-    return beregnetBestemmendeFraværsdag
-      ? parseIsoDate(format(beregnetBestemmendeFraværsdag, 'yyyy-MM-01'))
-      : undefined;
+    return beregnetBestemmendeFraværsdag ? startOfMonth(beregnetBestemmendeFraværsdag) : undefined;
   }, [beregnetBestemmendeFraværsdag]);
 
   useEffect(() => {
@@ -163,7 +161,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       });
 
       if (bestemmendeFravaersdag) {
-        setSisteInntektsdato(parseIsoDate(format(bestemmendeFravaersdag, 'yyyy-MM-01')));
+        setSisteInntektsdato(startOfMonth(bestemmendeFravaersdag));
       }
     } else {
       if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
