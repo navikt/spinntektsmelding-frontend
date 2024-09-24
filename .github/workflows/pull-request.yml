@@ -54,3 +54,13 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --immutable
       - run: yarn lint
+
+  Knip:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: codex-/knip-reporter@v2
