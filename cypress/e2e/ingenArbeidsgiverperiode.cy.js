@@ -9,9 +9,9 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
     // const now = new Date(2021, 3, 14); // month is 0-indexed
     // cy.clock(now);
 
-    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    cy.visit('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
 
-    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+    cy.intercept('/im-dialog/api/hentKvittering/8d50ef20-37b5-4829-ad83-56219e70b375', {
       statusCode: 404,
       body: {
         name: 'Nothing'

@@ -19,7 +19,7 @@ export const config = {
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
-    return res.status(200).json(org);
+    return res.status(404).json(org);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {
       target: basePath,
