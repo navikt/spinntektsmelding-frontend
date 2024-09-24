@@ -80,5 +80,5 @@
     "vitest-fetch-mock": "0.3.0",
     "vitest-sonar-reporter": "^2.0.0"
   },
-  "packageManager": "yarn@4.4.1"
+  "packageManager": "yarn@4.5.0"
 }
