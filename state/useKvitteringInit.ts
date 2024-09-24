@@ -289,11 +289,8 @@ export default function useKvitteringInit() {
       beregnetBestemmeFravaersdag &&
       isBefore(parseIsoDate(bestemmendeFravaersdag), parseIsoDate(beregnetBestemmeFravaersdag))
     ) {
-      console.log('beregnetBestemmeFravaersdag', beregnetBestemmeFravaersdag, bestemmendeFravaersdag);
       setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
       setSkjaeringstidspunkt(bestemmendeFravaersdag as TDateISODate);
-    } else {
-      console.log('Ikke beregnetBestemmeFravaersdag', beregnetBestemmeFravaersdag, bestemmendeFravaersdag);
     }
   };
 }
