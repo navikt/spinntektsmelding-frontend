@@ -105,9 +105,11 @@ export default function validerInntektsmelding(
   if (!kunInntektOgRefusjon) {
     feilkoderLonnIArbeidsgiverperioden = validerLonnIArbeidsgiverPerioden(
       state.fullLonnIArbeidsgiverPerioden,
-      state.arbeidsgiverperioder
+      state.arbeidsgiverperioder,
+      state.bruttoinntekt.bruttoInntekt
     );
   }
+
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
     state.lonnISykefravaeret,
     state.refusjonskravetOpphoerer,
@@ -118,7 +120,8 @@ export default function validerInntektsmelding(
     state.harRefusjonEndringer,
     state.refusjonEndringer,
     state.lonnISykefravaeret,
-    state.bruttoinntekt.bruttoInntekt
+    state.bruttoinntekt.bruttoInntekt,
+    state.refusjonskravetOpphoerer?.opphoersdato
   );
 
   feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);

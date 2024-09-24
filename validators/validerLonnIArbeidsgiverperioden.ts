@@ -6,12 +6,14 @@ export enum LonnIArbeidsgiverperiodenFeilkode {
   LONN_I_ARBEIDSGIVERPERIODEN_MANGLER = 'LONN_I_ARBEIDSGIVERPERIODEN_MANGLER',
   LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE = 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
   LONN_I_ARBEIDSGIVERPERIODEN_BELOP = 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
-  LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE = 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE'
+  LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE = 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
+  LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT = 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT'
 }
 
 export default function validerLonnIArbeidsgiverperioden(
   lonnIAP?: LonnIArbeidsgiverperioden,
-  arbeidsgiverperioder?: Periode[]
+  arbeidsgiverperioder?: Periode[],
+  bruttoInntekt?: number
 ): Array<ValiderResultat> {
   let errorStatus: Array<ValiderResultat> = [];
 
@@ -33,6 +35,7 @@ export default function validerLonnIArbeidsgiverperioden(
         felt: 'agp.redusertLoennIAgp.beloep'
       });
     }
+
     if (lonnIAP?.status === 'Ja') {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,
@@ -60,6 +63,14 @@ export default function validerLonnIArbeidsgiverperioden(
         felt: 'agp.redusertLoennIAgp.beloep'
       });
     }
+
+    if (lonnIAP.status === 'Nei' && lonnIAP?.utbetalt && bruttoInntekt && lonnIAP?.utbetalt > bruttoInntekt) {
+      errorStatus.push({
+        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT,
+        felt: 'agp.redusertLoennIAgp.beloep'
+      });
+    }
+
     if (ingenArbeidsgiverperiode && lonnIAP.status === 'Ja') {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,

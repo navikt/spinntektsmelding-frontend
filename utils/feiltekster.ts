@@ -30,6 +30,7 @@ const feiltekster = {
   MANGLER_BORTFALLSDATO: 'Angi dato naturalytelsen bortfaller.',
   MANGLER_VERDI: 'Angi verdien på naturalytelsen.',
   LONN_I_ARBEIDSGIVERPERIODEN_BELOP: 'Angi beløp. Må være høyere enn eller lik 0 og på formatet 1234,50',
+  LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT: 'Beløpet kan ikke overstige beregnet månedslønn.',
   MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN: 'Angi om det har vært endring i månedslønn i perioden',
   MANGLER_BELOP: 'Angi ny lønn. Må være høyere enn eller lik 0 og på formatet 1234,50',
   MANGLER_DATO: 'Angi dato for lønnsendring',
@@ -55,7 +56,8 @@ const feiltekster = {
   UGYLDIG_TELEFON: 'Telefonnummer er ugyldig. Et telefonnummer består av 8-siffer',
   TELEFON_MANGLER: 'Telefonnummer mangler',
   PERIODE_OVERLAPPER: 'Arbeidsgiverperiodene kan ikke overlappe',
-  INNTEKT_UNDER_REFUSJON: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.'
+  INNTEKT_UNDER_REFUSJON: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+  ENDRING_DATO_ETTER_SLUTTDATO: 'Dato er etter siste dag det kreves refusjon for'
 };
 
 export default feiltekster;
