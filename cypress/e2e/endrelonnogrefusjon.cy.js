@@ -21,6 +21,13 @@ describe('Utfylling og innsending av skjema', () => {
     // cy.clock(now);
 
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
   });
 
   it('can check the radioboxes for refusjon and submit', () => {
@@ -35,13 +42,6 @@ describe('Utfylling og innsending av skjema', () => {
     }).as('innsendingInntektsmelding');
 
     cy.intercept('/im-dialog/api/inntektsdata', { fixture: '../../mockdata/inntektData.json' }).as('inntektsdata');
-
-    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      statusCode: 404,
-      body: {
-        name: 'Nothing'
-      }
-    }).as('kvittering');
 
     cy.wait('@hent-forespoersel');
 
@@ -84,9 +84,9 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findByRole('button', { name: /Legg til periode/ }).click();
 
     cy.findAllByLabelText('Fra').last().clear().type('30.01.23');
-    cy.realPress('Escape');
+    // cy.realPress('Escape');
     cy.findAllByLabelText('Til').last().clear().type('01.02.23');
-    cy.realPress('Escape');
+    // cy.realPress('Escape');
 
     cy.wait('@inntektsdata').its('request.body').should('deep.equal', {
       forespoerselId: '12345678-3456-5678-2457-123456789012',
@@ -144,13 +144,6 @@ describe('Utfylling og innsending av skjema', () => {
     }).as('innsendingInntektsmelding');
 
     cy.intercept('/im-dialog/api/inntektsdata', { fixture: '../../mockdata/inntektData.json' }).as('inntektsdata');
-
-    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      statusCode: 404,
-      body: {
-        name: 'Nothing'
-      }
-    }).as('kvittering');
 
     cy.wait('@hent-forespoersel');
 
@@ -295,14 +288,14 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findByRole('button', { name: /Legg til periode/ }).click();
 
     cy.findAllByLabelText('Fra').last().clear().type('30.01.23');
-    cy.realPress('Escape');
+    // cy.realPress('Escape');
     cy.findAllByLabelText('Til').last().clear().type('01.02.23');
-    cy.realPress('Escape');
+    // cy.realPress('Escape');
 
     cy.findAllByLabelText('Velg endringsårsak').select('Varig lønnsendring');
 
     cy.findAllByLabelText('Lønnsendring gjelder fra').clear().type('30.12.22');
-    cy.realPress('Tab');
+    // cy.realPress('Tab');
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
     cy.contains('Send').click();

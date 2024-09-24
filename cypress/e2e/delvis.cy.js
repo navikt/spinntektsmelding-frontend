@@ -10,6 +10,12 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // cy.clock(now);
     // cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
     // cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-delvis.json' }).as('hent-forespoersel');
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
   });
 
   it('No changes and submit', () => {
@@ -23,14 +29,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('innsendingInntektsmelding');
-    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      statusCode: 404,
-      body: {
-        name: 'Nothing'
-      }
-    }).as('kvittering');
 
-    cy.wait('@kvittering');
     cy.wait('@hent-forespoersel');
     cy.wait(1000);
     cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
@@ -98,13 +97,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('innsendingInntektsmelding');
-    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      statusCode: 404,
-      body: {
-        name: 'Nothing'
-      }
-    }).as('kvittering');
-    cy.wait('@kvittering');
+
     cy.wait('@hent-forespoersel');
 
     cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');

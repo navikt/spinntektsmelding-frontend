@@ -9,6 +9,13 @@
 
 describe('Utfylling og innsending av skjema', () => {
   beforeEach(() => {
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
+
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
   });
 
@@ -17,14 +24,6 @@ describe('Utfylling og innsending av skjema', () => {
       'hent-forespoersel'
     );
 
-    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      statusCode: 404,
-      body: {
-        name: 'Nothing'
-      }
-    }).as('kvittering');
-
-    cy.wait('@kvittering');
     cy.wait('@hent-forespoersel');
 
     cy.get('[data-cy="endre-arbeidsgiverperiode"]').click();

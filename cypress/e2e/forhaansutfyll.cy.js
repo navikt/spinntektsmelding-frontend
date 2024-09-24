@@ -20,11 +20,15 @@ describe('Utfylling og innsending av skjema', () => {
     // const now = new Date(2021, 3, 14); // month is 0-indexed
     // cy.clock(now);
 
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
+
     // cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
     cy.injectAxe();
-
-    // cy.wait('@kvittering');
-    // cy.wait('@hent-forespoersel');
   });
 
   // it('Has no detectable a11y violations on load', () => {
@@ -37,13 +41,6 @@ describe('Utfylling og innsending av skjema', () => {
     cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-forhaandsutfyll.json' }).as(
       'hent-forespoersel'
     );
-
-    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      statusCode: 404,
-      body: {
-        name: 'Nothing'
-      }
-    }).as('kvittering');
 
     cy.intercept('/im-dialog/api/inntektsdata', {
       statusCode: 404,
@@ -61,7 +58,6 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    cy.wait('@kvittering');
     cy.wait('@hent-forespoersel');
 
     cy.get('[data-cy="navn"]').should('have.text', 'Test Navn Testesen-Navnesen Jr.');

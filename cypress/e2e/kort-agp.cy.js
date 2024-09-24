@@ -19,6 +19,12 @@ describe('Utfylling og innsending av skjema', () => {
     // we include it in our beforeEach function so that it runs before each test
     // const now = new Date(2021, 3, 14); // month is 0-indexed
     // cy.clock(now);
+    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('kvittering');
 
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
   });
@@ -36,24 +42,15 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.intercept('/im-dialog/api/inntektsdata', { fixture: '../../mockdata/inntektData.json' }).as('inntektsdata');
 
-    cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      statusCode: 404,
-      body: {
-        name: 'Nothing'
-      }
-    }).as('kvittering');
-
     cy.wait('@hent-forespoersel');
-
-    cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
     cy.findAllByRole('button', { name: /Endre/ }).first().click();
 
     cy.findAllByLabelText('Til').last().clear().type('16.03.23');
-    cy.realPress('Escape');
+    // cy.realPress('Escape');
 
-    cy.findByLabelText('Utbetalt under arbeidsgiverperiode').clear().type('50000');
-    cy.realPress('Escape');
+    cy.findByLabelText('Utbetalt under arbeidsgiverperiode').type('50000');
+    // cy.realPress('Escape');
 
     cy.findAllByLabelText('Velg begrunnelse for kort arbeidsgiverperiode').select('Arbeidsforholdet er avsluttet');
 
@@ -61,7 +58,9 @@ describe('Utfylling og innsending av skjema', () => {
       .findByLabelText('Nei')
       .check();
 
-    cy.contains('Send').click();
+    cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+
+    cy.findAllByRole('button', { name: /Send/ }).click();
 
     cy.wait('@innsendingInntektsmelding')
       .its('request.body')
