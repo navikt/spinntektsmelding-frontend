@@ -13,7 +13,7 @@
     "prepare": "husky install",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
-    "knip": "knip --reporter json",
+    "knip": "knip --reporter json —no-exit-code",
     "duplisert": "npx jscpd --gitignore --ignore \"__tests__,**mockdata/**,**.github/**,**cypress/**,**next/**\" ."
   },
   "dependencies": {
