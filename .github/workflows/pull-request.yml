@@ -19,6 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.6'
+          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --immutable
       - run: yarn build
@@ -34,6 +35,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.6'
+          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --immutable
       - run: yarn test
@@ -51,6 +53,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.6'
+          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --immutable
       - run: yarn lint
@@ -67,6 +70,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.6'
+          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --immutable
       - uses: codex-/knip-reporter@v2
