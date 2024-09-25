@@ -69,5 +69,4 @@ jobs:
           node-version: '22.6'
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --immutable
-      - run: yarn knip
       - uses: codex-/knip-reporter@v2
