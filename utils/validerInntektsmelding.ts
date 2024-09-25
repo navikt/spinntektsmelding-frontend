@@ -18,17 +18,17 @@ import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 import validerPeriodeOverlapp, { PeriodeOverlappFeilkode } from '../validators/validerPeriodeOverlapp';
 
-export interface SubmitInntektsmeldingReturnvalues {
+interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
   errorTexts?: Array<ValiderTekster>;
 }
 
-export interface ValiderTekster {
+interface ValiderTekster {
   felt: string;
   text: string;
 }
 
-export enum ErrorCodes {
+enum ErrorCodes {
   INGEN_ARBEIDSFORHOLD = 'INGEN_ARBEIDSFORHOLD',
   INGEN_FRAVAERSPERIODER = 'INGEN_FRAVAERSPERIODER',
   INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN = 'INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN',
@@ -105,9 +105,11 @@ export default function validerInntektsmelding(
   if (!kunInntektOgRefusjon) {
     feilkoderLonnIArbeidsgiverperioden = validerLonnIArbeidsgiverPerioden(
       state.fullLonnIArbeidsgiverPerioden,
-      state.arbeidsgiverperioder
+      state.arbeidsgiverperioder,
+      state.bruttoinntekt.bruttoInntekt
     );
   }
+
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
     state.lonnISykefravaeret,
     state.refusjonskravetOpphoerer,
@@ -118,7 +120,8 @@ export default function validerInntektsmelding(
     state.harRefusjonEndringer,
     state.refusjonEndringer,
     state.lonnISykefravaeret,
-    state.bruttoinntekt.bruttoInntekt
+    state.bruttoinntekt.bruttoInntekt,
+    state.refusjonskravetOpphoerer?.opphoersdato
   );
 
   feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);

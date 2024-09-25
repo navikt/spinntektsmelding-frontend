@@ -8,7 +8,6 @@ import { AapenInnsending } from '../validators/validerAapenInnsending';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
-  BLANK = 'BLANK',
   SELVBESTEMT = 'SELVBESTEMT'
 }
 

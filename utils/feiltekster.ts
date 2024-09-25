@@ -5,7 +5,6 @@ const feiltekster = {
   INGEN_LONN_I_SYKEFRAVAERET: 'Det er ikke registrert lønn.',
   MANGLER_FRA: 'Vennligst angi fra dato.',
   MANGLER_TIL: 'Vennligst angi til dato.',
-  IKKE_BEKREFTET: 'Bruttoinntekt er ikke bekreftet.',
   BRUTTOINNTEKT_MANGLER: 'Vennligst angi bruttoinntekt på formatet 1234,50',
   LONN_I_ARBEIDSGIVERPERIODEN_MANGLER:
     'Angi om arbeidsgiver betaler ut full lønn til arbeidstaker i arbeidsgiverperioden.',
@@ -21,7 +20,6 @@ const feiltekster = {
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO: 'Angi siste dato det kreves refusjon for.',
   BEKREFT_OPPLYSNINGER: 'Bekreft at opplysningene gitt er riktig og fullstendige.',
   ENDRINGSAARSAK_MANGLER: 'Vennligst angi årsak for endringen.',
-  SUM_LAVERE_ENN_INNTEKT: 'Summen av inntektene for de enkelte arbeidsforholdene er høyere enn bruttoinntekten.',
   SERVERFEIL_ARBEIDSGIVER: 'Kunne ikke hente ut arbeidsgiverdata.',
   SERVERFEIL_IM: 'Kunne ikke hente ut inntektsmeldingdata.',
   SERVERFEIL_INNTEKT: 'Kunne ikke hente ut inntektsdata.',
@@ -32,6 +30,7 @@ const feiltekster = {
   MANGLER_BORTFALLSDATO: 'Angi dato naturalytelsen bortfaller.',
   MANGLER_VERDI: 'Angi verdien på naturalytelsen.',
   LONN_I_ARBEIDSGIVERPERIODEN_BELOP: 'Angi beløp. Må være høyere enn eller lik 0 og på formatet 1234,50',
+  LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT: 'Beløpet kan ikke overstige beregnet månedslønn.',
   MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN: 'Angi om det har vært endring i månedslønn i perioden',
   MANGLER_BELOP: 'Angi ny lønn. Må være høyere enn eller lik 0 og på formatet 1234,50',
   MANGLER_DATO: 'Angi dato for lønnsendring',
@@ -57,7 +56,8 @@ const feiltekster = {
   UGYLDIG_TELEFON: 'Telefonnummer er ugyldig. Et telefonnummer består av 8-siffer',
   TELEFON_MANGLER: 'Telefonnummer mangler',
   PERIODE_OVERLAPPER: 'Arbeidsgiverperiodene kan ikke overlappe',
-  INNTEKT_UNDER_REFUSJON: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.'
+  INNTEKT_UNDER_REFUSJON: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+  ENDRING_DATO_ETTER_SLUTTDATO: 'Dato er etter siste dag det kreves refusjon for'
 };
 
 export default feiltekster;

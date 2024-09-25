@@ -21,12 +21,12 @@ export interface SubmitInntektsmeldingReturnvalues {
   errorTexts?: Array<ValiderTekster>;
 }
 
-export interface ValiderTekster {
+interface ValiderTekster {
   felt: string;
   text: string;
 }
 
-export enum ErrorCodes {
+enum ErrorCodes {
   INGEN_ARBEIDSFORHOLD = 'INGEN_ARBEIDSFORHOLD',
   INGEN_FRAVAERSPERIODER = 'INGEN_FRAVAERSPERIODER',
   INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN = 'INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN',
@@ -46,7 +46,7 @@ type codeUnion =
   | PeriodeEgenmeldingFeilkode
   | PeriodeFravaerFeilkode;
 
-export interface ValiderResultat {
+interface ValiderResultat {
   felt: string;
   code: codeUnion;
 }
