@@ -181,10 +181,10 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findAllByLabelText('Velg endringsårsak').select('Ferie');
 
     // Jeg er ikke sikker på hvorfor det må være denne frem og tilbakde dansen
-    cy.findAllByLabelText('Til').last().clear().type('30.12.22');
+    cy.findAllByLabelText('Ferie til').last().clear().type('30.12.22');
 
-    cy.findAllByLabelText('Fra').last().clear().type('25.12.22');
-    cy.findAllByLabelText('Til').last().clear().type('30.12.22');
+    cy.findAllByLabelText('Ferie fra').last().clear().type('25.12.22');
+    cy.findAllByLabelText('Ferie til').last().clear().type('30.12.22');
 
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 

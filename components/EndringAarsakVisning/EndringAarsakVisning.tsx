@@ -28,6 +28,8 @@ export default function EndringAarsakVisning({ endringAarsak }: EndringAarsakVis
         <div>
           {props.sykefravaer.map((periode, index) => (
             <PeriodeFraTil
+              fomTekst='Sykefravær fra'
+              tomTekst='Sykefravær til'
               fom={enforceDate(periode.fom)}
               tom={enforceDate(periode.tom)}
               key={`${props.aarsak.toLowerCase()}periode-${periode.fom}-${periode.tom}`}
@@ -41,6 +43,8 @@ export default function EndringAarsakVisning({ endringAarsak }: EndringAarsakVis
         <div>
           {props.permitteringer.map((periode, index) => (
             <PeriodeFraTil
+              fomTekst='Permittering fra'
+              tomTekst='Permittering til'
               fom={enforceDate(periode.fom)}
               tom={enforceDate(periode.tom)}
               key={`${props.aarsak.toLowerCase()}periode-${periode.fom}-${periode.tom}`}
@@ -54,6 +58,8 @@ export default function EndringAarsakVisning({ endringAarsak }: EndringAarsakVis
         <div>
           {props.permisjoner.map((periode, index) => (
             <PeriodeFraTil
+              fomTekst='Permisjon fra'
+              tomTekst='Permisjon til'
               fom={enforceDate(periode.fom)}
               tom={enforceDate(periode.tom)}
               key={`${props.aarsak.toLowerCase()}periode-${periode.fom}-${periode.tom}`}
@@ -67,6 +73,8 @@ export default function EndringAarsakVisning({ endringAarsak }: EndringAarsakVis
         <div>
           {props.ferier.map((periode, index) => (
             <PeriodeFraTil
+              fomTekst='Ferie fra'
+              tomTekst='Ferie til'
               fom={enforceDate(periode.fom)}
               tom={enforceDate(periode.tom)}
               key={`${props.aarsak.toLowerCase()}periode-${periode.fom}-${periode.tom}`}

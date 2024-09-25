@@ -98,8 +98,8 @@ export default function VelgAarsak({
                 ? defaultEndringAarsak.ferier
                 : blankPeriode
             }
-            fomTekst='Fra'
-            tomTekst='Til'
+            fomTekst='Ferie fra'
+            tomTekst='Ferie til'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
             name='inntekt.endringAarsak.ferier'
@@ -127,8 +127,8 @@ export default function VelgAarsak({
                 ? defaultEndringAarsak.permisjoner
                 : blankPeriode
             }
-            fomTekst='Fra'
-            tomTekst='Til'
+            fomTekst='Permisjon fra'
+            tomTekst='Permisjon til'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
           />
@@ -144,8 +144,8 @@ export default function VelgAarsak({
                 ? defaultEndringAarsak.permitteringer
                 : blankPeriode
             }
-            fomTekst='Fra'
-            tomTekst='Til'
+            fomTekst='Permittering fra'
+            tomTekst='Permittering til'
             name='inntekt.endringAarsak.permitteringer'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
@@ -184,8 +184,8 @@ export default function VelgAarsak({
                 ? defaultEndringAarsak.sykefravaer
                 : blankPeriode
             }
-            fomTekst='Fra'
-            tomTekst='Til'
+            fomTekst='Sykefravær fra'
+            tomTekst='Sykefravær til'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
             name='inntekt.endringAarsak.sykefravaer'

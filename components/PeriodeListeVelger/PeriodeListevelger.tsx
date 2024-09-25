@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import parseIsoDate from '../../utils/parseIsoDate';
 
 interface PeriodeListevelgerProps {
-  defaultRange?: Array<{ fom: string; tom: string }>;
+  defaultRange?: Array<{ fom: string | Date; tom: string | Date }>;
   fomTekst: string;
   tomTekst: string;
   defaultMonth?: Date;

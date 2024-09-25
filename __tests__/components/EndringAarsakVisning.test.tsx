@@ -34,9 +34,9 @@ describe('EndringAarsakVisning', () => {
 
     expect(results).toHaveNoViolations();
 
-    expect(await screen.findAllByText(/Fra/)).toHaveLength(2);
+    expect(await screen.findAllByText(/Ferie fra/)).toHaveLength(2);
     expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
-    expect(await screen.findAllByText(/Til/)).toHaveLength(2);
+    expect(await screen.findAllByText(/Ferie til/)).toHaveLength(2);
     expect(await screen.findByText(/15.11.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/10.12.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/15.12.2022/)).toBeInTheDocument();
@@ -64,9 +64,9 @@ describe('EndringAarsakVisning', () => {
 
     expect(results).toHaveNoViolations();
 
-    expect(await screen.findAllByText(/Fra/)).toHaveLength(2);
+    expect(await screen.findAllByText(/Permisjon fra/)).toHaveLength(2);
     expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
-    expect(await screen.findAllByText(/Til/)).toHaveLength(2);
+    expect(await screen.findAllByText(/Permisjon til/)).toHaveLength(2);
     expect(await screen.findByText(/15.11.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/10.12.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/15.12.2022/)).toBeInTheDocument();
@@ -84,9 +84,9 @@ describe('EndringAarsakVisning', () => {
 
     expect(results).toHaveNoViolations();
 
-    expect(await screen.findAllByText(/Fra/)).toHaveLength(2);
+    expect(await screen.findAllByText(/Permittering fra/)).toHaveLength(2);
     expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
-    expect(await screen.findAllByText(/Til/)).toHaveLength(2);
+    expect(await screen.findAllByText(/Permittering til/)).toHaveLength(2);
     expect(await screen.findByText(/15.11.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/10.12.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/15.12.2022/)).toBeInTheDocument();
@@ -128,9 +128,9 @@ describe('EndringAarsakVisning', () => {
 
     expect(results).toHaveNoViolations();
 
-    expect(await screen.findAllByText(/Fra/)).toHaveLength(2);
+    expect(await screen.findAllByText(/Sykefravær fra/)).toHaveLength(2);
     expect(await screen.findByText(/10.11.2022/)).toBeInTheDocument();
-    expect(await screen.findAllByText(/Til/)).toHaveLength(2);
+    expect(await screen.findAllByText(/Sykefravær til/)).toHaveLength(2);
     expect(await screen.findByText(/15.11.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/10.12.2022/)).toBeInTheDocument();
     expect(await screen.findByText(/15.12.2022/)).toBeInTheDocument();
