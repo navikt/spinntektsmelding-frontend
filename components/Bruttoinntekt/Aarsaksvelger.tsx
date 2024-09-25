@@ -94,8 +94,8 @@ export default function Aarsaksvelger({
                 ? periodeMapper(defaultEndringAarsak.ferier)
                 : blankPeriode
             }
-            fomTekst='Fra'
-            tomTekst='Til'
+            fomTekst='Ferie fra'
+            tomTekst='Ferie til'
             fomIdBase='bruttoinntekt-ful-fom'
             tomIdBase='bruttoinntekt-ful-tom'
             visFeilmeldingsTekst={visFeilmeldingsTekst}
@@ -127,8 +127,8 @@ export default function Aarsaksvelger({
                 ? periodeMapper(defaultEndringAarsak.permisjoner)
                 : blankPeriode
             }
-            fomTekst='Fra'
-            tomTekst='Til'
+            fomTekst='Permisjon fra'
+            tomTekst='Permisjon til'
             fomIdBase='bruttoinntekt-permisjon-fom'
             tomIdBase='bruttoinntekt-permisjon-tom'
             defaultMonth={bestemmendeFravaersdag}
@@ -147,8 +147,8 @@ export default function Aarsaksvelger({
                 ? periodeMapper(defaultEndringAarsak.permitteringer)
                 : blankPeriode
             }
-            fomTekst='Fra'
-            tomTekst='Til'
+            fomTekst='Permittering fra'
+            tomTekst='Permittering til'
             fomIdBase='bruttoinntekt-permittering-fom'
             tomIdBase='bruttoinntekt-permittering-tom'
             defaultMonth={bestemmendeFravaersdag}
@@ -191,8 +191,8 @@ export default function Aarsaksvelger({
                 ? periodeMapper(defaultEndringAarsak.sykefravaer)
                 : blankPeriode
             }
-            fomTekst='Fra'
-            tomTekst='Til'
+            fomTekst='Sykefravær fra'
+            tomTekst='Sykefravær til'
             fomIdBase='bruttoinntekt-sykefravaerperioder-fom'
             tomIdBase='bruttoinntekt-sykefravaerperioder-tom'
             defaultMonth={bestemmendeFravaersdag}

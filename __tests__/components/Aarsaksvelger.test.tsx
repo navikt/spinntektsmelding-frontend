@@ -184,7 +184,7 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'Ferie', perioder: perioder },
+          endringAarsak: { aarsak: 'Ferie', ferier: perioder },
           manueltKorrigert: false
         }}
         changeMaanedsintektHandler={changeMaanedsintektHandler}
@@ -199,11 +199,11 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const input = screen.getByLabelText('Fra');
+    const input = screen.getByLabelText('Ferie fra');
     await user.clear(input);
     await user.type(input, '02.01.2022');
 
-    const input2 = screen.getByLabelText('Fra');
+    const input2 = screen.getByLabelText('Ferie fra');
     await user.clear(input2);
     await user.type(input2, '05.01.2022');
 
@@ -253,7 +253,7 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'Permisjon', perioder: perioder },
+          endringAarsak: { aarsak: 'Permisjon', permisjoner: perioder },
           manueltKorrigert: false
         }}
         changeMaanedsintektHandler={changeMaanedsintektHandler}
@@ -268,7 +268,7 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const input = screen.getByLabelText('Fra');
+    const input = screen.getByLabelText('Permisjon fra');
     await user.clear(input);
     await user.type(input, '02.01.2022');
     expect(setPerioderMock).toHaveBeenCalledWith([
@@ -298,7 +298,7 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const input = screen.getByLabelText('Fra');
+    const input = screen.getByLabelText('Permittering fra');
     await user.clear(input);
     await user.type(input, '02.01.2022');
     expect(setPerioder).toHaveBeenCalledWith([
@@ -373,7 +373,11 @@ describe('Aarsaksvelger', () => {
 
     render(
       <Aarsaksvelger
-        bruttoinntekt={{ bruttoInntekt: 1000, endringsaarsak: 'Sykefravaer', manueltKorrigert: false }}
+        bruttoinntekt={{
+          bruttoInntekt: 1000,
+          endringAarsak: { aarsak: 'Sykefravaer', sykefravaer: perioder },
+          manueltKorrigert: false
+        }}
         changeMaanedsintektHandler={changeMaanedsintektHandler}
         changeBegrunnelseHandler={changeBegrunnelseHandler}
         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
@@ -386,7 +390,7 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const input = screen.getByLabelText('Fra');
+    const input = screen.getByLabelText('Sykefravær fra');
     await user.clear(input);
     await user.type(input, '02.01.2022');
     expect(setPerioder).toHaveBeenCalledWith([

@@ -212,8 +212,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
     cy.findAllByLabelText('Velg endringsårsak').select('Ferie');
 
-    cy.findAllByLabelText('Fra').clear().type('30.06.23');
-    cy.findAllByLabelText('Til').clear().type('05.07.23');
+    cy.findAllByLabelText('Ferie fra').clear().type('30.06.23');
+    cy.findAllByLabelText('Ferie til').clear().type('05.07.23');
 
     cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
@@ -246,7 +246,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
 
     cy.findByText('12345678').should('be.visible');
-    cy.findByText(/Ferie/).should('be.visible');
+    cy.findAllByText(/Ferie/).should('exist');
     cy.findByText(/30.06.2023/).should('be.visible');
     cy.findByText(/05.07.2023/).should('be.visible');
     cy.findByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
