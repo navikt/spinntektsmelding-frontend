@@ -19,7 +19,6 @@ export default function useSykepengesoeknader(
       ),
     {
       onError: (err) => {
-        console.error('Kunne ikke hente arbeidsforhold', err);
         if (err.status === 401) {
           backendFeil.current.push({
             felt: 'Backend',
