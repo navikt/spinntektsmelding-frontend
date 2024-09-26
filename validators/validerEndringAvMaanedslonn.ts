@@ -28,7 +28,6 @@ export default function valdiderEndringAvMaanedslonn(
     });
     return feilmeldinger;
   }
-  console.log('validerEndringAvMaanedslonn', harRefusjonEndringer, refusjonEndringer, lonnISykefravaeret, sluttdato);
   if (harRefusjonEndringer === 'Ja' && refusjonEndringer) {
     refusjonEndringer.forEach((endring, index) => {
       if (ugyldigEllerNegativtTall(endring.beloep)) {
