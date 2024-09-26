@@ -4,6 +4,7 @@ import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
 import testdata from '../../mockdata/sp-soeknad.json';
 import isMod11Number from '../../utils/isMod10Number';
+import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
 
 const basePath =
   'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
@@ -15,6 +16,8 @@ export const config = {
     externalResolver: true
   }
 };
+
+type Sykepengesoeknader = Z.infer<typeof endepunktSykepengesoeknaderSchema>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
@@ -89,8 +92,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
       return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
     } else {
-      const soeknadData = await soeknadResponse.json();
-      return res.status(soeknadResponse.status).json(soeknadData);
+      const soeknadData: Sykepengesoeknader = await soeknadResponse.json();
+
+      const soeknadResponseData = soeknadData.filter(
+        (soeknad) => soeknad.vedtaksperiodeId && soeknad.vedtaksperiodeId !== null
+      );
+
+      return res.status(soeknadResponse.status).json(soeknadResponseData);
     }
   }
 };
