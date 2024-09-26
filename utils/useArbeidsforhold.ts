@@ -8,7 +8,6 @@ export default function useArbeidsforhold(identitetsnummer: string | undefined, 
     ([url, idToken]) => fetcherArbeidsforhold(!!identitetsnummer ? url : null, idToken),
     {
       onError: (err) => {
-        console.error('Kunne ikke hente arbeidsforhold', err);
         if (err.status === 401) {
           const ingress = window.location.hostname + environment.baseUrl;
           const currentPath = window.location.href;
