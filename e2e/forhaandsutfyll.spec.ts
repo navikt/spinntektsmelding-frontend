@@ -3,14 +3,19 @@ import forhaandsutfyllt from '../mockdata/trenger-forhaandsutfyll.json';
 
 test.describe('Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', (route) => {
+    await page.route('*/**/api/hentKvittering/12345678-3456-5678-2457-123456789012', (route) => {
       route.fulfill({
         status: 404,
         body: JSON.stringify({ name: 'Nothing' })
       });
     });
 
-    await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    await page.route('/collect', async (route) => {
+      await route.fulfill({
+        status: 202,
+        body: 'OK'
+      });
+    });
   });
 
   test('should display information on the person and the submitter', async ({ page }) => {
@@ -34,7 +39,8 @@ test.describe('Utfylling og innsending av skjema', () => {
       });
     });
 
-    // await page.waitForResponse('/im-dialog/api/hent-forespoersel');
+    await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    // await page.waitForResponse('*/**/api/hent-forespoersel');
 
     await expect(page.locator('[data-cy="navn"]')).toHaveText('Test Navn Testesen-Navnesen Jr.');
     await expect(page.locator('[data-cy="identitetsnummer"]')).toHaveText('10486535275');
@@ -90,7 +96,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       .check();
 
     await page.locator('role=button[name="Send"]').click();
-    // await page.waitForResponse('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012');
+    // await page.waitForResponse('*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012');
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 });
