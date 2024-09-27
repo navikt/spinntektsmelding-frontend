@@ -29,6 +29,7 @@ export default defineConfig({
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    baseURL: 'http://127.0.0.1:3000/im-dialog',
     trace: 'on-first-retry'
   },
 
@@ -73,7 +74,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'yarn dev:decoratorless',
-    url: 'http://127.0.0.1:3000/im-dialog',
-    reuseExistingServer: !process.env.CI
+    url: 'http://127.0.0.1:3000/im-dialog'
+    // reuseExistingServer: !process.env.CI
   }
 });
