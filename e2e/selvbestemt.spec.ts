@@ -87,7 +87,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     await page
       .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
-      .filter({ hasText: 'Nei' })
+      .getByLabel('Nei')
       .check();
 
     // await page.check(
@@ -97,9 +97,10 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
     // await page.check('label:has-text("Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.")');
-    await page.click('text=Send');
+    const requestPromise = page.waitForRequest('*/**/api/selvbestemt-inntektsmelding');
+    await page.getByRole('button', { name: 'Send' }).click();
 
-    const request = await page.waitForRequest('/im-dialog/api/selvbestemt-inntektsmelding');
+    const request = await requestPromise;
     const requestBody = JSON.parse(request.postData());
 
     expect(requestBody).toEqual({
@@ -168,7 +169,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       });
     });
 
-    await page.route('/im-dialog/api/selvbestemt-inntektsmelding', (route) => {
+    await page.route('*/**/api/selvbestemt-inntektsmelding', (route) => {
       route.fulfill({
         status: 201,
         body: JSON.stringify({
@@ -177,7 +178,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       });
     });
 
-    await page.route('/im-dialog/api/aktiveorgnr', (route) => {
+    await page.route('*/**/api/aktiveorgnr', (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify({
@@ -196,23 +197,30 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.check('label:has-text("16.09.2024 - 17.09.2024")');
     await page.click('text=Neste');
 
-    await page.fill('label:has-text("Telefon innsender")', '12345678');
+    await page.getByLabel('Telefon innsender').fill('12345678');
     await page.fill('label:has-text("Utbetalt under arbeidsgiverperiode")', '5000');
     await page.selectOption(
       'label:has-text("Velg begrunnelse for kort arbeidsgiverperiode")',
       'Det er ikke fire ukers opptjeningstid'
     );
-    await page.click('role=button[name="Endre"]:last-of-type');
+    // await page.click('role=button[name="Endre"]:last-of-type');
+    await page.getByRole('button', { name: 'Endre' }).last().click();
     await page.fill('[data-cy="inntekt-beloep-input"]', '7500');
     await page.selectOption('label:has-text("Velg endringsårsak")', 'Varig lønnsendring');
     await page.fill('label:has-text("Lønnsendring gjelder fra")', '30.06.24');
-    await page.check(
-      'role=group[name="Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?"] >> label:has-text("Nei")'
-    );
+    await page
+      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+      .getByLabel('Nei')
+      .check();
     await page.check('label:has-text("Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.")');
-    await page.click('text=Send');
+    // await page.click('text=Send');
 
-    const request = await page.waitForRequest('/im-dialog/api/selvbestemt-inntektsmelding');
+    const requestPromise = page.waitForRequest('*/**/api/selvbestemt-inntektsmelding');
+
+    await page.getByRole('button', { name: 'Send' }).click();
+
+    const request = await requestPromise;
+
     const requestBody = JSON.parse(request.postData());
 
     expect(requestBody).toEqual({
