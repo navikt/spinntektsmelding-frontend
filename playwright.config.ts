@@ -74,7 +74,8 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'yarn dev:decoratorless',
-    url: 'http://127.0.0.1:3000/im-dialog'
-    // reuseExistingServer: !process.env.CI
+    url: 'http://127.0.0.1:3000/im-dialog',
+    timeout: 120000,
+    reuseExistingServer: !process.env.CI
   }
 });
