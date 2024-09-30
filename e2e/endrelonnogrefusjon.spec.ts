@@ -75,6 +75,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     await page.waitForResponse('*/**/api/inntektsdata');
 
     // await page.check('text=Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
+    // await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
     const requestPromise = page.waitForRequest(
