@@ -70,11 +70,10 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await page.getByLabel('Fra').nth(1).fill('30.01.23');
     // await page.fill('text=Fra >> nth=1', '30.01.23');
-    await page.fill('label:has-text("Til") >> nth=1', '01.02.23', { force: true });
-    // await page.getByLabel('Til').nth(1).fill('01.02.23');
-    // await page.fill('text=Til >> nth=1', '01.02.23');
+    // await page.fill('label:has-text("Til") >> nth=1', '01.02.23', { force: true });
+    await page.getByRole('textbox', { name: 'Til' }).nth(1).fill('01.02.23');
 
-    await page.waitForResponse('*/**/api/inntektsdata');
+    // await page.waitForResponse('*/**/api/inntektsdata');
 
     await checkBekreftelse(page);
 
@@ -283,12 +282,8 @@ test.describe('Utfylling og innsending av skjema', () => {
     await page.getByRole('button', { name: 'Endre' }).first().click();
     await page.click('text=Legg til periode');
 
-    // await page.fill('text=Fra >> nth=1', '30.01.23');
     await page.getByLabel('Fra').nth(1).fill('30.01.23');
-    // await page.fill('label:has-text("Fra") >> nth=1', '30.01.23');
-    // await page.fill('text=Til >> nth=1', '01.02.23');
-    // await page.fill('label:has-text("Til") >> nth=1', '01.02.23');
-    await page.getByLabel('Til').nth(1).fill('01.02.23', { force: true });
+    await page.getByRole('textbox', { name: 'Til' }).nth(1).fill('01.02.23');
 
     await page.selectOption('label:text("Velg endringsårsak")', 'Varig lønnsendring');
     await page.fill('text=Lønnsendring gjelder fra', '30.12.22', { force: true });

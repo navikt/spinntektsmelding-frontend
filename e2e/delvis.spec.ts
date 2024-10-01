@@ -28,7 +28,11 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test('No changes and submit', async ({ page }) => {
     await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    await checkRadiobox(page, 'Har det vært endringer i beregnet månedslønn for den ansatte?', 'Nei');
+    await checkRadiobox(
+      page,
+      'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 25.02.2023 (start av nytt sykefravær)?',
+      'Nei'
+    );
     // await page
     //   .getByRole('group', {
     //     name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 25.02.2023 (start av nytt sykefravær)?'

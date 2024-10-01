@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import checkRadiobox from './helpers/checkRadiobox';
 import clickSubmit from './helpers/clickSubmit';
+import checkBekreftelse from './helpers/checkBekreftelse';
 
 test.describe('Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {});
@@ -35,7 +36,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     await checkRadiobox(page, 'Opphører refusjonkravet i perioden?', 'Nei');
     // await page.locator('role=group[name=/Opphører refusjonkravet i perioden?/]').locator('role=radio[name="Nei"]').click();
 
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await checkBekreftelse(page);
 
     const requestPromise = page.waitForRequest(
       '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
