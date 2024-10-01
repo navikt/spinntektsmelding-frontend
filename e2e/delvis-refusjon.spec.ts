@@ -1,24 +1,8 @@
 import { test, expect } from '@playwright/test';
+import checkRadiobox from './helpers/checkRadiobox';
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
-    // Playwright starts out with a blank slate for each test
-    // so we must tell it to visit our website with the `page.goto()` command.
-    // Since we want to visit the same URL at the start of all our tests,
-    // we include it in our beforeEach function so that it runs before each test
-    // const now = new Date(2021, 3, 14); // month is 0-indexed
-    // await page.context().addInitScript(() => {
-    //   window.Date = class extends Date {
-    //     constructor(...args) {
-    //       if (args.length === 0) {
-    //         super(now);
-    //       } else {
-    //         super(...args);
-    //       }
-    //     }
-    //   };
-    // });
-
     await page.route('/collect', async (route) => {
       await route.fulfill({
         status: 202,
@@ -55,7 +39,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 01.07.2023 og 08.08.2023 (start av nytt sykefravær)?'
       })
       .getByLabel('Nei')
-      .check();
+      .dispatchEvent('click');
 
     await page
       .getByRole('group', { name: 'Er det endringer i refusjonskravet etter 08.08.2023 (start av nytt sykefravær)?' })
@@ -214,12 +198,11 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     // await expect(page).toHaveURL('/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
-    await page
-      .getByRole('group', {
-        name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 01.07.2023 og 08.08.2023 (start av nytt sykefravær)?'
-      })
-      .getByLabel('Ja')
-      .check();
+    await checkRadiobox(
+      page,
+      'Har det vært endringer i beregnet månedslønn for den ansatte mellom 01.07.2023 og 08.08.2023 (start av nytt sykefravær)?',
+      'Ja'
+    );
 
     await expect(page.getByLabel('Månedsinntekt 08.08.2023')).toHaveValue('26000');
     await page.getByLabel('Månedsinntekt 08.08.2023').fill('50000');

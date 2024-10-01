@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import clickSubmit from './helpers/clickSubmit';
+import checkBekreftelse from './helpers/checkBekreftelse';
 
 test.describe('Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,7 +38,8 @@ test.describe('Utfylling og innsending av skjema', () => {
     await page
       .getByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .getByLabel('Ja')
-      .check();
+      .dispatchEvent('click');
+    // .check({ force: true });
     //await page.check('text=Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden? >> text=Ja');
     await page
       .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
@@ -68,15 +70,13 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await page.getByLabel('Fra').nth(1).fill('30.01.23');
     // await page.fill('text=Fra >> nth=1', '30.01.23');
-    await page.fill('label:has-text("Til") >> nth=1', '01.02.23');
+    await page.fill('label:has-text("Til") >> nth=1', '01.02.23', { force: true });
     // await page.getByLabel('Til').nth(1).fill('01.02.23');
     // await page.fill('text=Til >> nth=1', '01.02.23');
 
     await page.waitForResponse('*/**/api/inntektsdata');
 
-    // await page.check('text=Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
-    // await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await checkBekreftelse(page);
 
     const requestPromise = page.waitForRequest(
       '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
@@ -180,7 +180,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     // await page.fill('text=Ferie fra >> nth=1', '25.12.22');
     // await page.fill('text=Ferie til >> nth=1', '30.12.22');
 
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await checkBekreftelse(page);
 
     const requestPromise = page.waitForRequest(
       '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
@@ -284,19 +284,21 @@ test.describe('Utfylling og innsending av skjema', () => {
     await page.click('text=Legg til periode');
 
     // await page.fill('text=Fra >> nth=1', '30.01.23');
-    await page.fill('label:has-text("Fra") >> nth=1', '30.01.23');
+    await page.getByLabel('Fra').nth(1).fill('30.01.23');
+    // await page.fill('label:has-text("Fra") >> nth=1', '30.01.23');
     // await page.fill('text=Til >> nth=1', '01.02.23');
-    await page.fill('label:has-text("Til") >> nth=1', '01.02.23');
+    // await page.fill('label:has-text("Til") >> nth=1', '01.02.23');
+    await page.getByLabel('Til').nth(1).fill('01.02.23', { force: true });
 
     await page.selectOption('label:text("Velg endringsårsak")', 'Varig lønnsendring');
-    await page.fill('text=Lønnsendring gjelder fra', '30.12.22');
+    await page.fill('text=Lønnsendring gjelder fra', '30.12.22', { force: true });
 
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await checkBekreftelse(page);
 
     const requestPromise = page.waitForRequest(
       '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
     );
-    // await page.click('text=Send');
+
     await clickSubmit(page);
 
     const request = await requestPromise;

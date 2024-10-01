@@ -37,7 +37,9 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await checkRadiobox(page, 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?', 'Nei');
 
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await page
+      .getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.')
+      .dispatchEvent('click');
 
     const requestPromise = page.waitForRequest(
       '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'

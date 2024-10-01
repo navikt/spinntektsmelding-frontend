@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import checkRadiobox from './helpers/checkRadiobox';
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,17 +28,19 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test('No changes and submit', async ({ page }) => {
     await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    await page
-      .getByRole('group', {
-        name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 25.02.2023 (start av nytt sykefravær)?'
-      })
-      .getByLabel('Nei')
-      .check();
+    await checkRadiobox(page, 'Har det vært endringer i beregnet månedslønn for den ansatte?', 'Nei');
+    // await page
+    //   .getByRole('group', {
+    //     name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 25.02.2023 (start av nytt sykefravær)?'
+    //   })
+    //   .getByLabel('Nei')
+    //   .check();
 
-    await page
-      .getByRole('group', { name: 'Er det endringer i refusjonskravet etter 25.02.2023 (start av nytt sykefravær)?' })
-      .getByLabel('Nei')
-      .check();
+    await checkRadiobox(page, 'Er det endringer i refusjonskravet etter 25.02.2023 (start av nytt sykefravær)?', 'Nei');
+    // await page
+    //   .getByRole('group', { name: 'Er det endringer i refusjonskravet etter 25.02.2023 (start av nytt sykefravær)?' })
+    //   .getByLabel('Nei')
+    //   .check();
 
     await page.getByLabel('Telefon innsender').fill('12345678');
 
@@ -82,12 +85,17 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test('Changes and submit', async ({ page }) => {
     await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    await page
-      .getByRole('group', {
-        name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 25.02.2023 (start av nytt sykefravær)?'
-      })
-      .getByLabel('Ja')
-      .check();
+    // await page
+    //   .getByRole('group', {
+    //     name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 25.02.2023 (start av nytt sykefravær)?'
+    //   })
+    //   .getByLabel('Ja')
+    //   .check();
+    await checkRadiobox(
+      page,
+      'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 25.02.2023 (start av nytt sykefravær)?',
+      'Ja'
+    );
 
     await expect(page.getByLabel('Månedsinntekt 25.02.2023')).toHaveValue('46000');
     await page.getByLabel('Månedsinntekt 25.02.2023').fill('50000');
