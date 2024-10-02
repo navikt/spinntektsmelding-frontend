@@ -169,24 +169,24 @@ export function finnSorterteUnikePerioder<T extends tidPeriode>(fravaersperioder
     return compareAsc(a.fom || new Date(), b.fom || new Date());
   });
 
-  const unikeSykmeldingsperioder: Array<T> = finnUnikePerioder(sorterteSykmeldingPerioder);
-  return unikeSykmeldingsperioder;
+  // const unikeSykmeldingsperioder: Array<T> = finnUnikePerioder(sorterteSykmeldingPerioder);
+  return sorterteSykmeldingPerioder;
 }
 
-function finnUnikePerioder<T extends tidPeriode>(aktivePerioder: Array<T>): Array<T> {
-  const perioder: Array<T> = [aktivePerioder[0]];
+// function finnUnikePerioder<T extends tidPeriode>(aktivePerioder: Array<T>): Array<T> {
+//   const perioder: Array<T> = [aktivePerioder[0]];
 
-  aktivePerioder.forEach((periode, index) => {
-    const perioderIndex = perioder.length - 1;
-    if (index > 0) {
-      if (
-        perioder[perioderIndex] &&
-        !isEqual(periode.fom!, perioder[perioderIndex].fom!) &&
-        !isEqual(periode.tom!, perioder[perioderIndex].tom!)
-      ) {
-        perioder.push(periode);
-      }
-    }
-  });
-  return perioder;
-}
+//   aktivePerioder.forEach((periode, index) => {
+//     const perioderIndex = perioder.length - 1;
+//     if (index > 0) {
+//       if (
+//         perioder[perioderIndex] &&
+//         !isEqual(periode.fom!, perioder[perioderIndex].fom!) &&
+//         !isEqual(periode.tom!, perioder[perioderIndex].tom!)
+//       ) {
+//         perioder.push(periode);
+//       }
+//     }
+//   });
+//   return perioder;
+// }
