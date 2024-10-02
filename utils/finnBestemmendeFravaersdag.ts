@@ -1,4 +1,4 @@
-import { compareAsc, compareDesc, differenceInDays, formatISO9075, isBefore, isEqual } from 'date-fns';
+import { compareAsc, compareDesc, differenceInDays, formatISO9075, isBefore } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';

@@ -299,7 +299,7 @@ const Initiering2: NextPage = () => {
         if (index === 0) {
           return 0;
         }
-        if (!currentValue || !currentValue.fom || !currentValue.tom) {
+        if (!currentValue?.fom || !currentValue?.tom) {
           return accumulator;
         }
         const currentFom = currentValue.fom;
