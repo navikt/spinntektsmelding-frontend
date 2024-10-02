@@ -99,7 +99,7 @@ export default function useSendInnDelvisSkjema(
       return false;
     }
 
-    return fetch(`${environment.innsendingUrl}/${pathSlug}`, {
+    return fetch(`${environment.innsendingUrl}`, {
       method: 'POST',
       body: JSON.stringify(skjemaData),
       headers: {
