@@ -16,6 +16,7 @@ env:
   NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 jobs:
   install:
+    name: Install an run Cypress tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,19 +36,3 @@ jobs:
           build: yarn build
           start: yarn dev:decoratorless
           wait-on: 'http://localhost:3000/im-dialog/cypress-test'
-
-  # Kodekvalitet:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: '22.6'
-  #         registry-url: "https://npm.pkg.github.com"
-  #     - run: yarn install --immutable
-  #     - run: yarn test
-  #     - name: SonarCloud Scan
-  #       uses: sonarsource/sonarcloud-github-action@master
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
