@@ -1011,4 +1011,114 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
       finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, undefined, true, undefined, undefined, false)
     ).toEqual('2023-09-25');
   });
+
+  it('should return correct bfd when 2bananer and loads of perioder, uten agp', () => {
+    const periode1: tidPeriode[] = [
+      {
+        fom: parseISO('2023-09-01'),
+        tom: parseISO('2023-09-05')
+      },
+      {
+        fom: parseISO('2023-09-06'),
+        tom: parseISO('2023-09-08')
+      },
+      {
+        fom: parseISO('2023-09-09'),
+        tom: parseISO('2023-09-15')
+      },
+      {
+        fom: parseISO('2023-09-25'),
+        tom: parseISO('2023-10-01')
+      },
+      {
+        fom: parseISO('2023-10-02'),
+        tom: parseISO('2023-10-09')
+      },
+      {
+        fom: parseISO('2023-10-10'),
+        tom: parseISO('2023-10-23')
+      },
+      {
+        fom: parseISO('2023-10-24'),
+        tom: parseISO('2023-11-07')
+      },
+      {
+        fom: parseISO('2023-11-08'),
+        tom: parseISO('2023-11-30')
+      },
+      {
+        fom: parseISO('2023-12-01'),
+        tom: parseISO('2023-12-22')
+      },
+      {
+        fom: parseISO('2023-12-23'),
+        tom: parseISO('2024-01-10')
+      },
+      {
+        fom: parseISO('2024-01-11'),
+        tom: parseISO('2024-02-02')
+      },
+      {
+        fom: parseISO('2024-02-03'),
+        tom: parseISO('2024-02-23')
+      },
+      {
+        fom: parseISO('2024-02-24'),
+        tom: parseISO('2024-03-15')
+      },
+      {
+        fom: parseISO('2024-03-16'),
+        tom: parseISO('2024-04-08')
+      },
+      {
+        fom: parseISO('2024-04-09'),
+        tom: parseISO('2024-04-29')
+      },
+      {
+        fom: parseISO('2024-04-30'),
+        tom: parseISO('2024-05-15')
+      },
+      {
+        fom: parseISO('2024-05-16'),
+        tom: parseISO('2024-05-31')
+      },
+      {
+        fom: parseISO('2024-06-01'),
+        tom: parseISO('2024-06-23')
+      },
+      {
+        fom: parseISO('2024-06-24'),
+        tom: parseISO('2024-07-15')
+      },
+      {
+        fom: parseISO('2024-07-16'),
+        tom: parseISO('2024-08-06')
+      },
+      {
+        fom: parseISO('2024-08-07'),
+        tom: parseISO('2024-08-28')
+      },
+      {
+        fom: parseISO('2024-09-09'),
+        tom: parseISO('2024-09-11')
+      }
+    ];
+
+    const arbeidsgiverperiode: Periode[] = [
+      {
+        id: 'a1',
+        fom: parseISO('2023-09-01'),
+        tom: parseISO('2023-09-15')
+      },
+      {
+        id: 'a2',
+        fom: parseISO('2023-09-25'),
+        tom: parseISO('2023-09-25')
+      }
+    ];
+
+    expect(finnBestemmendeFravaersdag(periode1, [], undefined, true, undefined, undefined, false)).toEqual(
+      '2023-09-25'
+    );
+  });
 });
