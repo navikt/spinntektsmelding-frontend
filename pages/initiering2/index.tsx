@@ -43,6 +43,7 @@ type SykepengePeriode = {
   fom: Date;
   tom: Date;
   antallEgenmeldingsdager: number;
+  forespurt: boolean;
 };
 
 const Initiering2: NextPage = () => {
@@ -242,7 +243,8 @@ const Initiering2: NextPage = () => {
                 fom: new Date(periode.fom),
                 tom: new Date(periode.tom),
                 id: periode.sykepengesoknadUuid,
-                antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length
+                antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length,
+                forespurt: periode.forespoerselId ? true : false
               };
             })
           : [];
@@ -363,6 +365,7 @@ const Initiering2: NextPage = () => {
                           <Checkbox key={periode.id} value={periode.id}>
                             {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                             {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
+                            {periode.forespurt && ' (forespurt)'}
                           </Checkbox>
                         ))}
                       </CheckboxGroup>
