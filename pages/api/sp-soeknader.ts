@@ -126,12 +126,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
         return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
       } else {
-        console.log('ForespørselIder hentet');
-        console.log('Request body:', JSON.stringify(body));
-
         const forespoerselIdListeData: forespoerselIdListeEnhet[] = await forespoerselIdListe.json();
-
-        console.log('ForespørselIder:', forespoerselIdListeData);
 
         const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
           const forespoerselMedId = forespoerselIdListeData.find(
