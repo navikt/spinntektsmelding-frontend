@@ -86,7 +86,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `bearer ${obo.token}`
+        Authorization: `Bearer ${obo.token}`
       },
       body: JSON.stringify(body)
     });
@@ -104,15 +104,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
         (soeknad) => soeknad.vedtaksperiodeId && soeknad.vedtaksperiodeId !== null
       );
 
-      const vedtaksperiodeIdListe = aktiveSoeknader.map((soeknad) => soeknad.vedtaksperiodeId);
+      const idListe: string[] = aktiveSoeknader
+        .map((soeknad) => soeknad.vedtaksperiodeId)
+        .filter((element) => element !== null);
 
-      const body = { vedtaksperiodeIdListe };
+      const body = { vedtaksperiodeIdListe: idListe };
 
       const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(body)
       });
@@ -120,24 +122,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       if (!forespoerselIdListe.ok) {
         console.error('Feil ved henting av forespørselIder ', forespoerselIdListe.statusText);
         console.error('Feilet med URL: ', forespoerselIdListeApi);
-        console.error('Feilet med requestBody: ', body);
+        console.error('Feilet med requestBody: ', JSON.stringify(body));
 
         return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
+      } else {
+        console.log('ForespørselIder hentet');
+        console.log('Request body:', JSON.stringify(body));
+
+        const forespoerselIdListeData: forespoerselIdListeEnhet[] = await forespoerselIdListe.json();
+
+        console.log('ForespørselIder:', forespoerselIdListeData);
+
+        const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
+          const forespoerselMedId = forespoerselIdListeData.find(
+            (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
+          );
+          return {
+            ...soeknad,
+            forespoerselId: forespoerselMedId?.forespoerselId
+          };
+        });
+
+        return res.status(soeknadResponse.status).json(soeknadResponseData);
       }
-
-      const forespoerselIdListeData: forespoerselIdListeEnhet[] = await forespoerselIdListe.json();
-
-      const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
-        const forespoerselMedId = forespoerselIdListeData.find(
-          (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
-        );
-        return {
-          ...soeknad,
-          forespoerselId: forespoerselMedId?.forespoerselId
-        };
-      });
-
-      return res.status(soeknadResponse.status).json(soeknadResponseData);
     }
   }
 };
