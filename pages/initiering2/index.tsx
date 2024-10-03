@@ -43,7 +43,7 @@ type SykepengePeriode = {
   fom: Date;
   tom: Date;
   antallEgenmeldingsdager: number;
-  forespurt: boolean;
+  forespoerselId?: string;
 };
 
 const Initiering2: NextPage = () => {
@@ -62,7 +62,7 @@ const Initiering2: NextPage = () => {
   let fulltNavn = '';
   const backendFeil = useRef([] as Feilmelding[]);
   let orgnrUnderenhet: string | undefined = undefined;
-  let antallSykedager = 0;
+  // let antallSykedager = 0;
   let antallDagerMellomSykmeldingsperioder = 0;
   let blokkerInnsending = false;
 
@@ -133,6 +133,16 @@ const Initiering2: NextPage = () => {
             sykmeldingsperiode.push(periode);
           }
         });
+
+        const forespoerselIdListe = sykmeldingsperiode
+          .filter((periode) => !!periode.forespoerselId)
+          .map((periode) => periode.forespoerselId!);
+
+        if (forespoerselIdListe.length > 0) {
+          router.push(`/${forespoerselIdListe[0]}`);
+
+          return;
+        }
 
         const fravaersperioder: MottattPeriode[] = sykmeldingsperiode.map((periode) => ({
           fom: periode.fom as TDateISODate,
@@ -244,7 +254,7 @@ const Initiering2: NextPage = () => {
                 tom: new Date(periode.tom),
                 id: periode.sykepengesoknadUuid,
                 antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length,
-                forespurt: periode.forespoerselId ? true : false
+                forespoerselId: periode.forespoerselId
               };
             })
           : [];
@@ -281,20 +291,20 @@ const Initiering2: NextPage = () => {
     finnSorterteUnikePerioder(mergedSykmeldingsperioder)
   );
 
-  antallSykedager = valgteUnikeSykepengePerioder
-    ? numberOfDaysInRanges(
-        valgteUnikeSykepengePerioder
-          .filter((periode) => periode !== undefined && periode.fom && periode.tom)
-          .map((periode) => ({
-            fom: periode.fom!,
-            tom: periode.tom!
-          }))
-      )
-    : 0;
+  // antallSykedager = valgteUnikeSykepengePerioder
+  //   ? numberOfDaysInRanges(
+  //       valgteUnikeSykepengePerioder
+  //         .filter((periode) => periode !== undefined && periode.fom && periode.tom)
+  //         .map((periode) => ({
+  //           fom: periode.fom!,
+  //           tom: periode.tom!
+  //         }))
+  //     )
+  //   : 0;
 
-  if (antallSykedager > 16) {
-    blokkerInnsending = true;
-  }
+  // if (antallSykedager > 16) {
+  //   blokkerInnsending = true;
+  // }
 
   antallDagerMellomSykmeldingsperioder = finnSorterteUnikePerioder(valgteUnikeSykepengePerioder).reduce(
     (accumulator, currentValue, index, array) => {
@@ -365,7 +375,7 @@ const Initiering2: NextPage = () => {
                           <Checkbox key={periode.id} value={periode.id}>
                             {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                             {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                            {periode.forespurt && ' (forespurt)'}
+                            {!!periode.forespoerselId && ' (forespurt)'}
                           </Checkbox>
                         ))}
                       </CheckboxGroup>
@@ -394,7 +404,7 @@ const Initiering2: NextPage = () => {
                 </div>
               </form>
             </FormProvider>
-            {antallSykedager > 16 && (
+            {/* {antallSykedager > 16 && (
               <Alert variant='error' className={lokalStyles.alertPadding}>
                 <Heading1>
                   Det er ikke mulig å opprette inntektsmelding manuelt for et sammenhengende sykefravær på over 16 dager
@@ -404,7 +414,7 @@ const Initiering2: NextPage = () => {
                 søknad om sykepenger. Du finner du forespørselen på{' '}
                 <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
               </Alert>
-            )}
+            )} */}
             {antallDagerMellomSykmeldingsperioder > 16 && (
               <Alert variant='error' className={lokalStyles.alertPadding}>
                 <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
