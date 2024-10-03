@@ -110,7 +110,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `bearer ${obo.token}`
+          Authorization: `bearer ${token}`
         },
         body: JSON.stringify({ vedtaksperiodeIdListe })
       });
