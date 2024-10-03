@@ -106,19 +106,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
       const vedtaksperiodeIdListe = aktiveSoeknader.map((soeknad) => soeknad.vedtaksperiodeId);
 
+      const body = { vedtaksperiodeIdListe };
+
       const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `bearer ${token}`
         },
-        body: JSON.stringify({ vedtaksperiodeIdListe })
+        body: JSON.stringify(body)
       });
 
       if (!forespoerselIdListe.ok) {
         console.error('Feil ved henting av forespørselIder ', forespoerselIdListe.statusText);
         console.error('Feilet med URL: ', forespoerselIdListeApi);
-        console.error('Feilet med requestBody: ', { vedtaksperiodeIdListe });
+        console.error('Feilet med requestBody: ', body);
 
         return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
       }
