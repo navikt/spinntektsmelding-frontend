@@ -1,4 +1,4 @@
-import { compareAsc, compareDesc, differenceInDays, formatISO9075, isBefore, isEqual } from 'date-fns';
+import { compareAsc, compareDesc, differenceInDays, formatISO9075, isBefore } from 'date-fns';
 import { Periode } from '../state/state';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
@@ -169,24 +169,5 @@ export function finnSorterteUnikePerioder<T extends tidPeriode>(fravaersperioder
     return compareAsc(a.fom || new Date(), b.fom || new Date());
   });
 
-  const unikeSykmeldingsperioder: Array<T> = finnUnikePerioder(sorterteSykmeldingPerioder);
-  return unikeSykmeldingsperioder;
-}
-
-function finnUnikePerioder<T extends tidPeriode>(aktivePerioder: Array<T>): Array<T> {
-  const perioder: Array<T> = [aktivePerioder[0]];
-
-  aktivePerioder.forEach((periode, index) => {
-    const perioderIndex = perioder.length - 1;
-    if (index > 0) {
-      if (
-        perioder[perioderIndex] &&
-        !isEqual(periode.fom!, perioder[perioderIndex].fom!) &&
-        !isEqual(periode.tom!, perioder[perioderIndex].tom!)
-      ) {
-        perioder.push(periode);
-      }
-    }
-  });
-  return perioder;
+  return sorterteSykmeldingPerioder;
 }
