@@ -66,8 +66,6 @@ interface InntektsmeldingSkjema {
   opplysningerBekreftet: boolean;
   refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   refusjonskravOpphoersdato?: Date;
-  behandlingsdager?: Array<Date>;
-  behandlingsperiode?: Periode;
   sammeFravaersperiode: boolean;
   aarsakInnsending: string;
   innsenderNavn?: string;
