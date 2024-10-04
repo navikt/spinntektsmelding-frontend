@@ -36,7 +36,7 @@
   "innsenderNavn": "Test Testesen",
   "telefonnummer": "12345678",
   "behandlingsperiode": null,
-  "behandlingsdager": [],
+
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": true },
     "inntekt": {
