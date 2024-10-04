@@ -13,7 +13,6 @@
     { "maaned": "2023-10", "inntekt": 54300.0 },
     { "maaned": "2023-11", "inntekt": 54300.0 }
   ],
-  "behandlingsperiode": null,
 
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": false },
