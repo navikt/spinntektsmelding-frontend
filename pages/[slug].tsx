@@ -10,7 +10,6 @@ import Skillelinje from '../components/Skillelinje/Skillelinje';
 
 import styles from '../styles/Home.module.css';
 
-import Behandlingsdager from '../components/Behandlingsdager';
 import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
 import Egenmelding from '../components/Egenmelding';
 import Bruttoinntekt from '../components/Bruttoinntekt/Bruttoinntekt';
@@ -35,7 +34,7 @@ import { SkjemaStatus } from '../state/useSkjemadataStore';
 import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
-import { format, isEqual, startOfMonth } from 'date-fns';
+import { isEqual, startOfMonth } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
@@ -209,8 +208,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       <PageContent title='Inntektsmelding'>
         <form className={styles.padded} onSubmit={submitForm}>
           <Person />
-
-          <Behandlingsdager />
 
           <Skillelinje />
           <Egenmelding

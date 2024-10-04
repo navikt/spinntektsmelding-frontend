@@ -19,7 +19,7 @@
     { "maaned": "2023-08", "inntekt": 33492.48 }
   ],
   "behandlingsperiode": null,
-  "behandlingsdager": [],
+
   "skjaeringstidspunkt": "2023-08-23",
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": false },
