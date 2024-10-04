@@ -16,7 +16,6 @@
     { "maaned": "2022-12", "inntekt": 45000.0 }
   ],
   "skjaeringstidspunkt": "2023-01-01",
-  "behandlingsperiode": null,
 
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": false },
