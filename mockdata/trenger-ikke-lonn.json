@@ -17,8 +17,6 @@
     { "maaned": "2023-07", "inntekt": 17659.88 }
   ],
   "eksternBestemmendeFravaersdag": "2023-08-23",
-  "behandlingsperiode": null,
-
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": true },
     "inntekt": {
