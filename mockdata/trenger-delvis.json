@@ -19,7 +19,7 @@
   "bestemmendeFravaersdag": "2023-02-25",
   "eksternBestemmendeFravaersdag": "2023-02-25",
   "behandlingsperiode": null,
-  "behandlingsdager": [],
+
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": false },
     "inntekt": {

@@ -11,7 +11,6 @@ export default z.object({
     telefonnummer: z.string().min(1),
     innsenderNavn: z.string().min(1),
     virksomhetNavn: z.string().min(1),
-    behandlingsdager: z.array(apiPeriodeSchema),
     egenmeldingsperioder: z.array(apiPeriodeSchema),
     arbeidsgiverperioder: z.array(apiPeriodeSchema),
     bestemmendeFraværsdag: z.string().min(1),

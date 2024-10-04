@@ -33,7 +33,6 @@ export default function useStateInit() {
   const initBruttoinntekt = useBoundStore((state) => state.initBruttoinntekt);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
-  const initBehandlingsdager = useBoundStore((state) => state.initBehandlingsdager);
   const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
   const initForespurtData = useBoundStore((state) => state.initForespurtData);
   const [setForeslaattBestemmendeFravaersdag, setSkjaeringstidspunkt] = useBoundStore((state) => [
@@ -69,10 +68,6 @@ export default function useStateInit() {
       jsonData.telefonnummer,
       feilVedLasting
     );
-
-    if (jsonData.behandlingsperiode) {
-      initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
-    }
 
     if (jsonData.skjaeringstidspunkt) setSkjaeringstidspunkt(jsonData.skjaeringstidspunkt);
 

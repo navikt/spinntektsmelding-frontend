@@ -74,7 +74,6 @@ export interface InnsendingSkjema {
   refusjon: Refusjon;
   naturalytelser?: Array<SendtNaturalytelse>;
   bekreftOpplysninger: boolean;
-  behandlingsdager?: Array<string>;
   årsakInnsending: string;
   forespurtData: Array<Opplysningstype>;
   telefonnummer: string;
