@@ -4,7 +4,7 @@
   "innsenderNavn": "",
   "identitetsnummer": "19496806711",
   "orgnrUnderenhet": "810007842",
-  "skjaeringstidspunkt": null,
+  "eksternBestemmendeFravaersdag": null,
   "fravaersperioder": [
     {
       "fom": "2024-01-07",

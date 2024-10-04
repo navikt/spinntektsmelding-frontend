@@ -16,7 +16,7 @@
     { "maaned": "2023-06", "inntekt": 11730.69 },
     { "maaned": "2023-07", "inntekt": 17659.88 }
   ],
-  "skjaeringstidspunkt": "2023-08-23",
+  "eksternBestemmendeFravaersdag": "2023-08-23",
   "behandlingsperiode": null,
   "behandlingsdager": [],
   "forespurtData": {

@@ -74,7 +74,7 @@ export default function useStateInit() {
       initBehandlingsdager(jsonData.behandlingsperiode, jsonData.behandlingsdager);
     }
 
-    if (jsonData.skjaeringstidspunkt) setSkjaeringstidspunkt(jsonData.skjaeringstidspunkt);
+    if (jsonData.eksternBestemmendeFravaersdag) setSkjaeringstidspunkt(jsonData.eksternBestemmendeFravaersdag);
 
     const perioder = jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
       fom: parseIsoDate(periode.fom),
@@ -82,7 +82,6 @@ export default function useStateInit() {
       id: nanoid()
     }));
 
-    const skjaeringstidspunkt = jsonData.skjaeringstidspunkt;
     setMottattBestemmendeFravaersdag(jsonData.bestemmendeFravaersdag);
     setMottattEksternBestemmendeFravaersdag(jsonData.eksternBestemmendeFravaersdag);
 
@@ -91,13 +90,13 @@ export default function useStateInit() {
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
       perioder,
       arbeidsgiverperiode,
-      skjaeringstidspunkt,
+      jsonData.eksternBestemmendeFravaersdag,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
     if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
-    if (skjaeringstidspunkt) {
-      setForeslaattBestemmendeFravaersdag(parseIsoDate(skjaeringstidspunkt));
+    if (jsonData.eksternBestemmendeFravaersdag) {
+      setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.eksternBestemmendeFravaersdag));
     } else if (bestemmendeFravaersdag) setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
@@ -105,7 +104,7 @@ export default function useStateInit() {
     initBruttoinntekt(
       jsonData.bruttoinntekt,
       jsonData.tidligereinntekter,
-      parseIsoDate(bestemmendeFravaersdag!),
+      parseIsoDate(bestemmendeFravaersdag!)!,
       feilVedLasting.inntekt
     );
 
