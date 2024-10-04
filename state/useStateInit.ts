@@ -99,7 +99,7 @@ export default function useStateInit() {
     initBruttoinntekt(
       jsonData.bruttoinntekt,
       jsonData.tidligereinntekter,
-      parseIsoDate(bestemmendeFravaersdag!)!,
+      parseIsoDate(bestemmendeFravaersdag)!,
       feilVedLasting.inntekt
     );
 
