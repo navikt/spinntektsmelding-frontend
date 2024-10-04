@@ -16,8 +16,6 @@
     { "maaned": "2022-12", "inntekt": 45000.0 }
   ],
   "eksternBestemmendeFravaersdag": "2023-01-01",
-  "behandlingsperiode": null,
-  "behandlingsdager": [],
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": false },
     "inntekt": {

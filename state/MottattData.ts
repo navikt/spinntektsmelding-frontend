@@ -58,8 +58,6 @@ interface MottattData {
   egenmeldingsperioder: Array<MottattPeriode>;
   bruttoinntekt: number;
   tidligereinntekter: Array<HistoriskInntekt>;
-  behandlingsdager: Array<string>;
-  behandlingsperiode: MottattPeriode | null;
   innsenderNavn: string;
   telefonnummer?: string;
   feilReport?: FeilReportFeilListe;

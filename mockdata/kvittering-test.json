@@ -5,7 +5,7 @@
   "telefonnummer": "12345678",
   "innsenderNavn": "Muskuløs Vals",
   "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
-  "behandlingsdager": [],
+
   "egenmeldingsperioder": [{ "fom": "2022-12-27", "tom": "2022-12-29" }],
   "arbeidsgiverperioder": [
     { "fom": "2022-12-27", "tom": "2022-12-29" },

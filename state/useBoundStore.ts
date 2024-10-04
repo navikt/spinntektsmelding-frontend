@@ -1,5 +1,4 @@
 import { createWithEqualityFn } from 'zustand/traditional';
-import useBehandlingsdagerStore, { BehandlingsdagerState } from './useBehandlingsdagerStore';
 import useBruttoinntektStore, { BruttoinntektState } from './useBruttoinntektStore';
 import useEgenmeldingStore, { EgenmeldingState } from './useEgenmeldingStore';
 import useFeilmeldingerStore, { FeilmeldingerState } from './useFeilmeldingerStore';
@@ -17,7 +16,6 @@ export interface CompleteState
     PersonState,
     NaturalytelserState,
     FeilmeldingerState,
-    BehandlingsdagerState,
     BruttoinntektState,
     ArbeidsgiverperiodeState,
     SkjemadataState,
@@ -25,7 +23,6 @@ export interface CompleteState
     ForespurtDataState {}
 
 const useBoundStore = createWithEqualityFn<CompleteState>()((...a) => ({
-  ...useBehandlingsdagerStore(...a),
   ...useBruttoinntektStore(...a),
   ...useEgenmeldingStore(...a),
   ...useFeilmeldingerStore(...a),
