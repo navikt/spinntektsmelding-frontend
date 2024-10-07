@@ -377,7 +377,7 @@ const Initiering2: NextPage = () => {
                           <Checkbox key={periode.id} value={periode.id} disabled={!!periode.forespoerselId}>
                             {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                             {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                            {!!periode.forespoerselId && ' (Allerede forespurt periode)'}
+                            {!!periode.forespoerselId && ' (Inntektsmelding er allerede forespurt)'}
                           </Checkbox>
                         ))}
                       </CheckboxGroup>
@@ -424,7 +424,8 @@ const Initiering2: NextPage = () => {
                 for hver av periodene.
               </Alert>
             )}
-            Allerede forespurte perioder kan finnes i <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+            Inntektsmelding som allerede er forespurt, kan finnes i{' '}
+            <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
             <FeilListe
               skalViseFeilmeldinger={visFeilmeldingliste}
               feilmeldinger={feilmeldinger ? [...feilmeldinger, ...backendFeil.current] : [...backendFeil.current]}
