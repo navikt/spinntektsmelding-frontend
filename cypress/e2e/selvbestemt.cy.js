@@ -9,36 +9,6 @@
 
 describe('Utfylling og innsending av selvbestemt skjema', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3000/im-dialog/initiering');
-  });
-
-  it('selvbestemt med ferie', () => {
-    // cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-originalen.json' }).as('hent-forespoersel');
-
-    // cy.intercept('/im-dialog/api/hentKvittering/8d50ef20-37b5-4829-ad83-56219e70b375', {
-    //   statusCode: 404,
-    //   body: {
-    //     name: 'Nothing'
-    //   }
-    // }).as('kvittering');
-
-    //localhost:3000/im-dialog/kvittering/agi/arbeidsgiverInitiertInnsending
-
-    cy.intercept('/im-dialog/api/selvbestemt-inntektsmelding', {
-      statusCode: 201,
-      body: {
-        selvbestemtId: '1234-5678-1234-5678-123456789012'
-      }
-    }).as('innsendingInntektsmelding');
-
-    cy.intercept('/im-dialog/api/aktiveorgnr', {
-      statusCode: 200,
-      body: {
-        fulltNavn: 'MUSKULØS VALS',
-        underenheter: [{ orgnrUnderenhet: '810007842', virksomhetsnavn: 'ANSTENDIG PIGGSVIN BARNEHAGE' }]
-      }
-    }).as('aktiveorgnr');
-
     cy.intercept('/im-dialog/api/sp-soeknader', {
       statusCode: 200,
       body: [
@@ -74,6 +44,25 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         }
       ]
     }).as('sykepengeSoeknader');
+
+    cy.visit('http://localhost:3000/im-dialog/initiering');
+  });
+
+  it('selvbestemt med ferie', () => {
+    cy.intercept('/im-dialog/api/selvbestemt-inntektsmelding', {
+      statusCode: 201,
+      body: {
+        selvbestemtId: '1234-5678-1234-5678-123456789012'
+      }
+    }).as('innsendingInntektsmelding');
+
+    cy.intercept('/im-dialog/api/aktiveorgnr', {
+      statusCode: 200,
+      body: {
+        fulltNavn: 'MUSKULØS VALS',
+        underenheter: [{ orgnrUnderenhet: '810007842', virksomhetsnavn: 'ANSTENDIG PIGGSVIN BARNEHAGE' }]
+      }
+    }).as('aktiveorgnr');
 
     // cy.wait('@kvittering');
     // cy.wait('@hent-forespoersel');

@@ -25,7 +25,8 @@ export const endepunktSykepengesoeknaderSchema = z
       egenmeldingsdagerFraSykmelding: z
         .array(z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'))
         .or(z.tuple([])),
-      vedtaksperiodeId: z.string().uuid().nullable()
+      vedtaksperiodeId: z.string().uuid().nullable(),
+      forespoerselId: z.string().uuid().optional()
     })
   )
   .or(z.tuple([]));
