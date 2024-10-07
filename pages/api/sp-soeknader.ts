@@ -7,10 +7,15 @@ import isMod11Number from '../../utils/isMod10Number';
 import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 
+type forespoerselIdListeEnhet = {
+  vedtaksperiodeId: string;
+  forespoerselId: string;
+};
+
 const basePath =
   'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
-
 const authApi = 'http://' + global.process.env.IM_API_URI + global.process.env.AUTH_SYKEPENGESOEKNAD_API;
+const forespoerselIdListeApi = 'http://' + global.process.env.IM_API_URI + global.process.env.FORESPOERSEL_ID_LISTE_API;
 
 export const config = {
   api: {
@@ -81,7 +86,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `bearer ${obo.token}`
+        Authorization: `Bearer ${obo.token}`
       },
       body: JSON.stringify(body)
     });
@@ -95,11 +100,46 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     } else {
       const soeknadData: Sykepengesoeknader = await soeknadResponse.json();
 
-      const soeknadResponseData = soeknadData.filter(
+      const aktiveSoeknader = soeknadData.filter(
         (soeknad) => soeknad.vedtaksperiodeId && soeknad.vedtaksperiodeId !== null
       );
 
-      return res.status(soeknadResponse.status).json(soeknadResponseData);
+      const idListe: string[] = aktiveSoeknader
+        .map((soeknad) => soeknad.vedtaksperiodeId)
+        .filter((element) => element !== null);
+
+      const body = { vedtaksperiodeIdListe: idListe };
+
+      const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (!forespoerselIdListe.ok) {
+        console.error('Feil ved henting av forespørselIder ', forespoerselIdListe.statusText);
+        console.error('Feilet med URL: ', forespoerselIdListeApi);
+        console.error('Feilet med requestBody: ', JSON.stringify(body));
+
+        return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
+      } else {
+        const forespoerselIdListeData: forespoerselIdListeEnhet[] = await forespoerselIdListe.json();
+
+        const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
+          const forespoerselMedId = forespoerselIdListeData.find(
+            (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
+          );
+          return {
+            ...soeknad,
+            forespoerselId: forespoerselMedId?.forespoerselId
+          };
+        });
+
+        return res.status(soeknadResponse.status).json(soeknadResponseData);
+      }
     }
   }
 };
