@@ -424,7 +424,7 @@ const Initiering2: NextPage = () => {
                 for hver av periodene.
               </Alert>
             )}
-            Inntektsmelding som allerede er forespurt, kan finnes i{' '}
+            Inntektsmeldinger som allerede er forespurt, kan finnes i{' '}
             <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
             <FeilListe
               skalViseFeilmeldinger={visFeilmeldingliste}
