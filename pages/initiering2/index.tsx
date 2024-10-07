@@ -33,7 +33,7 @@ import { PersonnummerSchema } from '../../schema/personnummerSchema';
 import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
 import { logger } from '@navikt/next-logger';
-import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
+// import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import environment from '../../config/environment';
 import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
@@ -424,6 +424,7 @@ const Initiering2: NextPage = () => {
                 for hver av periodene.
               </Alert>
             )}
+            Allerede forespurte perioder kan finnes i <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
             <FeilListe
               skalViseFeilmeldinger={visFeilmeldingliste}
               feilmeldinger={feilmeldinger ? [...feilmeldinger, ...backendFeil.current] : [...backendFeil.current]}
