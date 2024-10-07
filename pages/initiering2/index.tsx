@@ -374,10 +374,10 @@ const Initiering2: NextPage = () => {
                         onChange={handleSykepengePeriodeIdRadio}
                       >
                         {sykepengePerioder.map((periode) => (
-                          <Checkbox key={periode.id} value={periode.id}>
+                          <Checkbox key={periode.id} value={periode.id} disabled={!!periode.forespoerselId}>
                             {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                             {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                            {!!periode.forespoerselId && ' (forespurt)'}
+                            {!!periode.forespoerselId && ' (Allerede forespurt periode)'}
                           </Checkbox>
                         ))}
                       </CheckboxGroup>
