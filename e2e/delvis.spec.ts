@@ -27,7 +27,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
   test('No changes and submit', async ({ page }) => {
     await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-
+    await page.waitForTimeout(50);
     await checkRadiobox(
       page,
       'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 25.02.2023 (start av nytt sykefravær)?',
@@ -50,7 +50,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
-    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding', { timeout: 10000 });
     await page.getByRole('button', { name: 'Send' }).click();
     const request = await requestPromise;
 
@@ -124,7 +124,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await page.getByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).getByLabel('Nei').check();
     // URL: http://localhost:3000/im-dialog/api/innsendingInntektsmelding
 
-    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding', { timeout: 10000 });
 
     await page.getByRole('button', { name: 'Send' }).click();
 

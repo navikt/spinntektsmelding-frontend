@@ -8,27 +8,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         body: 'OK'
       });
     });
-  });
-
-  test('selvbestemt med ferie', async ({ page }) => {
-    await page.route('*/**/api/selvbestemt-inntektsmelding', (route) => {
-      route.fulfill({
-        status: 201,
-        body: JSON.stringify({
-          selvbestemtId: '1234-5678-1234-5678-123456789012'
-        })
-      });
-    });
-
-    await page.route('*/**/api/aktiveorgnr', (route) => {
-      route.fulfill({
-        status: 200,
-        body: JSON.stringify({
-          fulltNavn: 'MUSKULØS VALS',
-          underenheter: [{ orgnrUnderenhet: '810007842', virksomhetsnavn: 'ANSTENDIG PIGGSVIN BARNEHAGE' }]
-        })
-      });
-    });
 
     await page.route('*/**/api/sp-soeknader', (route) => {
       route.fulfill({
@@ -65,6 +44,27 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
             vedtaksperiodeId: '4009c928-d13b-45f9-90e4-1c98a421f464'
           }
         ])
+      });
+    });
+  });
+
+  test('selvbestemt med ferie', async ({ page }) => {
+    await page.route('*/**/api/selvbestemt-inntektsmelding', (route) => {
+      route.fulfill({
+        status: 201,
+        body: JSON.stringify({
+          selvbestemtId: '1234-5678-1234-5678-123456789012'
+        })
+      });
+    });
+
+    await page.route('*/**/api/aktiveorgnr', (route) => {
+      route.fulfill({
+        status: 200,
+        body: JSON.stringify({
+          fulltNavn: 'MUSKULØS VALS',
+          underenheter: [{ orgnrUnderenhet: '810007842', virksomhetsnavn: 'ANSTENDIG PIGGSVIN BARNEHAGE' }]
+        })
       });
     });
 

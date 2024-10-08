@@ -125,7 +125,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .getByLabel('Ja')
       .check();
 
-    await page.locator('label:text("Telefon innsender")').type('12345678');
+    await page.locator('label:text("Telefon innsender")').fill('12345678');
 
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 

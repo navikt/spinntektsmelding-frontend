@@ -1,4 +1,5 @@
+import { strict } from 'assert';
+
 export default async function checkRadiobox(page: any, label: string, status: string) {
-  return page.getByRole('group', { name: label }).getByLabel(status).dispatchEvent('click');
-  //.check({ force: true });
+  return page.getByRole('group', { name: label }).getByLabel(status).check();
 }

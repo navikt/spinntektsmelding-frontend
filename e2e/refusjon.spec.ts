@@ -4,7 +4,7 @@ import clickSubmit from './helpers/clickSubmit';
 import checkBekreftelse from './helpers/checkBekreftelse';
 
 test.describe('Utfylling og innsending av skjema', () => {
-  test.beforeEach(async ({ page }) => {});
+  // test.beforeEach(async ({ page }) => {});
 
   test('can check the radioboxes for refusjon and submit', async ({ page }) => {
     await page.route('*/**/api/hent-forespoersel', (route) =>
