@@ -4,14 +4,10 @@ import trengerDelvis from '../../mockdata/trenger-delvis.json';
 
 describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   beforeEach(() => {
-    // Cypress starts out with a blank slate for each test
-    // so we must tell it to visit our website with the `cy.visit()` command.
-    // Since we want to visit the same URL at the start of all our tests,
-    // we include it in our beforeEach function so that it runs before each test
-    // const now = new Date(2021, 3, 14); // month is 0-indexed
-    // cy.clock(now);
-    // cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    // cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-delvis.json' }).as('hent-forespoersel');
+    cy.intercept('/collect', {
+      statusCode: 202,
+      body: 'OK'
+    }).as('collect');
   });
 
   it('Changes and submit', () => {

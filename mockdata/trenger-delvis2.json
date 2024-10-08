@@ -18,8 +18,7 @@
     { "maaned": "2023-07", "inntekt": 28019.75 },
     { "maaned": "2023-08", "inntekt": 33492.48 }
   ],
-
-  "skjaeringstidspunkt": "2023-08-23",
+  "eksternBestemmendeFravaersdag": "2023-08-23",
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": false },
     "inntekt": {
