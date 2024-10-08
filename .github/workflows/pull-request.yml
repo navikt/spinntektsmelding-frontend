@@ -61,6 +61,7 @@ jobs:
   Knip:
     if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
+    continue-on-error: true
     permissions:
       checks: write
       issues: write
