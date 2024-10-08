@@ -19,7 +19,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       })
     );
 
-    await page.route('*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', (route) =>
+    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         body: JSON.stringify({ name: 'Nothing' })
@@ -77,9 +77,7 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await checkBekreftelse(page);
 
-    const requestPromise = page.waitForRequest(
-      '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
-    );
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
 
     await clickSubmit(page);
 
@@ -128,7 +126,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       })
     );
 
-    await page.route('*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', (route) =>
+    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         body: JSON.stringify({ name: 'Nothing' })
@@ -181,9 +179,7 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await checkBekreftelse(page);
 
-    const requestPromise = page.waitForRequest(
-      '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
-    );
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
     await clickSubmit(page);
     const request = await requestPromise;
 
@@ -234,7 +230,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       })
     );
 
-    await page.route('*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', (route) =>
+    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         body: JSON.stringify({ name: 'Nothing' })
@@ -290,9 +286,7 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await checkBekreftelse(page);
 
-    const requestPromise = page.waitForRequest(
-      '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
-    );
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
 
     await clickSubmit(page);
 

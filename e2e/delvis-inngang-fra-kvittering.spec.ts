@@ -27,7 +27,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test('Changes and submit', async ({ page }) => {
     trengerDelvis.erBesvart = true;
     await page.route('*/**/api/hent-forespoersel', (route) => route.fulfill({ json: trengerDelvis }));
-    await page.route('*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', (route) =>
+    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         body: JSON.stringify({
@@ -119,9 +119,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     await page.waitForTimeout(1000);
 
-    const requestPromise = page.waitForRequest(
-      '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
-    );
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
 
     await page.getByRole('button', { name: 'Send' }).click();
 

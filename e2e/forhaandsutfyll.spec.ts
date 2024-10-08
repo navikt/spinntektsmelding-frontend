@@ -32,7 +32,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       });
     });
 
-    await page.route('*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', async (route) => {
+    await page.route('*/**/api/innsendingInntektsmelding', async (route) => {
       route.fulfill({
         status: 201,
         body: JSON.stringify({ name: 'Nothing' })
@@ -96,7 +96,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       .check();
 
     await page.locator('role=button[name="Send"]').click();
-    // await page.waitForResponse('*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012');
+    // await page.waitForResponse('*/**/api/innsendingInntektsmelding');
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 });

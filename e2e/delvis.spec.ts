@@ -17,7 +17,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       })
     );
 
-    await page.route('*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', (route) =>
+    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         body: JSON.stringify({ name: 'Nothing' })
@@ -50,9 +50,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
-    const requestPromise = page.waitForRequest(
-      '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
-    );
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
     await page.getByRole('button', { name: 'Send' }).click();
     const request = await requestPromise;
 
@@ -124,11 +122,9 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .check();
 
     await page.getByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).getByLabel('Nei').check();
-    // URL: http://localhost:3000/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012
+    // URL: http://localhost:3000/im-dialog/api/innsendingInntektsmelding
 
-    const requestPromise = page.waitForRequest(
-      '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
-    );
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
 
     await page.getByRole('button', { name: 'Send' }).click();
 

@@ -11,7 +11,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       route.fulfill({ body: JSON.stringify(require('../mockdata/trenger-originalen.json')) })
     );
 
-    await page.route('*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', (route) =>
+    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         body: JSON.stringify({ name: 'Nothing' })
@@ -38,9 +38,7 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await checkBekreftelse(page);
 
-    const requestPromise = page.waitForRequest(
-      '*/**/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
-    );
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
 
     await clickSubmit(page);
 

@@ -21,7 +21,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       })
     );
 
-    await page.route('/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012', (route) =>
+    await page.route('/im-dialog/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         body: JSON.stringify({ name: 'Nothing' })
@@ -50,9 +50,7 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
-    const requestPromise = page.waitForRequest(
-      '/im-dialog/api/innsendingInntektsmelding/12345678-3456-5678-2457-123456789012'
-    );
+    const requestPromise = page.waitForRequest('/im-dialog/api/innsendingInntektsmelding');
 
     clickSubmit(page);
 
