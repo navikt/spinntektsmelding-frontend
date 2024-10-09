@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import clickSubmit from './helpers/clickSubmit';
 import checkBekreftelse from './helpers/checkBekreftelse';
 import checkRadiobox from './helpers/checkRadiobox';
+import mockLoggerRoute from './helpers/mockLoggerRoute';
 
 test.describe('Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
@@ -12,12 +13,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       })
     );
 
-    await page.route('*/**/api/logger', (route) =>
-      route.fulfill({
-        status: 200,
-        body: JSON.stringify({ name: 'Nothing' })
-      })
-    );
+    await mockLoggerRoute(page);
   });
 
   test('can check the radioboxes for refusjon and submit', async ({ page }) => {
@@ -68,8 +64,6 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await page.getByRole('textbox', { name: 'Til' }).nth(1).fill('01.02.23');
 
-    // await page.waitForResponse('*/**/api/inntektsdata');
-
     await checkBekreftelse(page);
 
     const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
@@ -110,7 +104,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     });
 
     await expect(page).toHaveURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012', { timeout: 10000 });
-    // await expect(page.locator('text=Kvittering - innsendt inntektsmelding')).toBeVisible();
+
     await expect(page.getByRole('heading', { name: 'Kvittering - innsendt inntektsmelding' })).toBeVisible();
   });
 
@@ -136,41 +130,27 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    // await page.check('text=Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden? >> text=Ja');
-    await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
-      .getByLabel('Ja')
-      .check();
-    // await page.check('text=Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden? >> text=Ja');
-    await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
-      .getByLabel('Ja')
-      .check();
+    await checkRadiobox(page, 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
-    // await page.click('text=Er det endringer i refusjonsbeløpet i perioden? >> text=Nei');
-    await page
-      .getByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' })
-      .getByLabel('Nei')
-      .check();
+    await checkRadiobox(page, 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?', 'Ja');
 
-    // await page.click('text=Opphører refusjonkravet i perioden? >> text=Nei');
-    await page.getByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).getByLabel('Nei').check();
+    await checkRadiobox(page, 'Er det endringer i refusjonsbeløpet i perioden?', 'Nei');
 
-    await page.click('[data-cy="endre-beloep"]');
-    await page.fill('[data-cy="inntekt-beloep-input"]', '70000');
+    await checkRadiobox(page, 'Opphører refusjonkravet i perioden?', 'Nei');
+
+    await page.getByRole('button', { name: 'Endre' }).nth(2).click();
+    await page.getByLabel('Månedsinntekt 02.02.2023').fill('70000');
+
     await expect(page.locator('[data-cy="refusjon-arbeidsgiver-beloep"]')).toHaveText('70 000,00 kr');
 
-    await page.click('[data-cy="endre-refusjon-arbeidsgiver-beloep"]');
-    await page.fill('[data-cy="inntekt-beloep-input"]', '75000');
-    await expect(page.locator('[data-cy="refusjon-arbeidsgiver-beloep-input"]')).toHaveValue('75000');
+    await page.getByRole('button', { name: 'Endre' }).nth(2).click();
+    await page.getByLabel('Månedsinntekt 02.02.2023').fill('75000');
+    await expect(page.getByLabel('Oppgi refusjonsbeløpet per måned')).toHaveValue('75000');
 
     await page.selectOption('label:text("Velg endringsårsak")', 'Ferie');
 
     await page.getByLabel('Ferie fra').fill('25.12.22');
     await page.getByLabel('Ferie til').fill('30.12.22');
-    // await page.fill('text=Ferie til >> nth=1', '30.12.22');
-    // await page.fill('text=Ferie fra >> nth=1', '25.12.22');
-    // await page.fill('text=Ferie til >> nth=1', '30.12.22');
 
     await checkBekreftelse(page);
 
@@ -247,37 +227,32 @@ test.describe('Utfylling og innsending av skjema', () => {
 
     await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
-      .getByLabel('Ja')
-      .check();
-    await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
-      .getByLabel('Ja')
-      .check();
-    await page
-      .getByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' })
-      .getByLabel('Nei')
-      .check();
-    await page.getByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).getByLabel('Nei').check();
+    await checkRadiobox(page, 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
-    await page.click('[data-cy="endre-beloep"]');
-    await page.fill('[data-cy="inntekt-beloep-input"]', '70000');
+    await checkRadiobox(page, 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?', 'Ja');
+
+    await checkRadiobox(page, 'Er det endringer i refusjonsbeløpet i perioden?', 'Nei');
+
+    await checkRadiobox(page, 'Opphører refusjonkravet i perioden?', 'Nei');
+
+    await page.getByRole('button', { name: 'Endre' }).nth(2).click();
+    await page.getByLabel('Månedsinntekt 02.02.2023').fill('70000');
+
     await expect(page.locator('[data-cy="refusjon-arbeidsgiver-beloep"]')).toHaveText('70 000,00 kr');
 
-    await page.click('[data-cy="endre-refusjon-arbeidsgiver-beloep"]');
-    await page.fill('[data-cy="inntekt-beloep-input"]', '75000');
-    await expect(page.locator('[data-cy="refusjon-arbeidsgiver-beloep-input"]')).toHaveValue('75000');
+    await page.getByRole('button', { name: 'Endre' }).nth(2).click();
+    await page.getByLabel('Månedsinntekt 02.02.2023').fill('75000');
+    await expect(page.getByLabel('Oppgi refusjonsbeløpet per måned')).toHaveValue('75000');
 
-    // await page.click('text=Endre');
     await page.getByRole('button', { name: 'Endre' }).first().click();
-    await page.click('text=Legg til periode');
+    await page.getByRole('button', { name: 'Legg til periode' }).first().click();
 
     await page.getByLabel('Fra').nth(1).fill('30.01.23');
     await page.getByRole('textbox', { name: 'Til' }).nth(1).fill('01.02.23');
 
-    await page.selectOption('label:text("Velg endringsårsak")', 'Varig lønnsendring');
-    await page.fill('text=Lønnsendring gjelder fra', '30.12.22', { force: true });
+    await page.getByLabel('Velg endringsårsak').selectOption('Varig lønnsendring');
+
+    await page.getByLabel('Lønnsendring gjelder fra').fill('30.12.22');
 
     await checkBekreftelse(page);
 
