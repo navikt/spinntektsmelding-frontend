@@ -45,6 +45,7 @@
     "zustand": "4.5.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
     "@playwright/test": "^1.47.2",
     "@testing-library/cypress": "10.0.2",
     "@testing-library/jest-dom": "6.4.8",
