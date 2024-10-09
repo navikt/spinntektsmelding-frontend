@@ -119,7 +119,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     await page.waitForTimeout(1000);
 
-    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
+    const requestPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding', { timeout: 10000 });
 
     await page.getByRole('button', { name: 'Send' }).click();
 
