@@ -15,11 +15,11 @@ const Utgatt = () => {
               <BodyShort>NAV har ikke lenger behov for at du sender inn opplysninger i akkurat denne saken.</BodyShort>
               <List>
                 <List.Item>
-                  <Link href={environment.saksoversiktUrl}>Gå til saksoversikten for å finne dine uløste saker.</Link>
+                  <Link href={environment.saksoversiktUrl}>Gå til saksoversikten for å finne dine saker.</Link>
                 </List.Item>
               </List>
             </div>
-            <Button as='a' href='#'>
+            <Button as='a' href={environment.minSideArbeidsgiver}>
               Gå til Min side
             </Button>
           </VStack>
