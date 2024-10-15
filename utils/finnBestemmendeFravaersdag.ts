@@ -124,7 +124,7 @@ function finnBestemmendeFravaersdag<T extends tidPeriode>(
 
   const agpOgSykPerioder = finnSammenhengendePeriode(
     finnSorterteUnikePerioder(
-      perioderEtterAgp.concat(arbeidsgiverperiode ?? []).filter((periode) => periode.fom && periode.tom)
+      perioderEtterAgp.concat(arbeidsgiverperiode ?? []).filter((periode) => periode && periode.fom && periode.tom)
     )
   ).filter((periode) => periode?.fom && periode?.tom);
 
@@ -171,6 +171,10 @@ function finnBestemmendeFravaersdag<T extends tidPeriode>(
 export default finnBestemmendeFravaersdag;
 
 export function finnSorterteUnikePerioder<T extends tidPeriode>(fravaerPerioder: Array<T>): Array<T> {
+  if (!fravaerPerioder) {
+    return [];
+  }
+
   const sorterteSykmeldingPerioder = fravaerPerioder.toSorted((a, b) => {
     return compareAsc(a.fom || new Date(), b.fom || new Date());
   });

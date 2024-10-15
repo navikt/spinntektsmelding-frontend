@@ -24,9 +24,25 @@ import {
   SendtPeriode
 } from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
+import isValidUUID from '../utils/isValidUUID';
+import useSkjemadataForespurt from '../utils/useSkjemadataForespurt';
+import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
+import paakrevdOpplysningstyper from '../utils/paakrevdeOpplysninger';
 
-export default function useFyllDelvisInnsending() {
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+export default function useFyllDelvisInnsending(forespoerselId: string) {
+  if (!isValidUUID(forespoerselId)) {
+    throw new Error('Ugyldig forespørselId');
+  }
+
+  const {
+    data: forespurtDataData,
+    error: forespurtDataError,
+    isLoading: forespurtDataIsLoading
+  } = useSkjemadataForespurt(forespoerselId, true) as {
+    data: ForespurtData;
+    error: any;
+    isLoading: boolean;
+  };
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [fullLonnIArbeidsgiverPerioden] = useBoundStore((state) => [state.fullLonnIArbeidsgiverPerioden]);
@@ -61,6 +77,13 @@ export default function useFyllDelvisInnsending() {
 
   return (skjema: SkjemaData, forespoerselId: string): FullInnsending => {
     const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
+    const fravaersperioder = forespurtDataData.fravaersperioder.map((periode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: periode.fom + periode.tom
+    }));
+
+    console.log('useFyllDelvisInnsending', fravaersperioder);
 
     const RefusjonUtbetalingEndringUtenGammelBFD = skjema.refusjon.refusjonEndringer
       ? skjema.refusjon.refusjonEndringer.filter((endring) => {
@@ -86,7 +109,7 @@ export default function useFyllDelvisInnsending() {
 
     setSkalViseFeilmeldinger(true);
 
-    const forespurtData = hentPaakrevdOpplysningstyper();
+    const forespurtData = paakrevdOpplysningstyper(forespurtDataData?.forespurtData);
 
     const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
     // const skalSendeNaturalytelser = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);

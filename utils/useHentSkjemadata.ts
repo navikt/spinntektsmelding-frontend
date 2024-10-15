@@ -5,7 +5,7 @@ import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
 import { useRouter } from 'next/navigation';
 import { Opplysningstype } from '../state/useForespurtDataStore';
-import foresporselType from '../config/foresporseltype';
+import forespoerselType from '../config/forespoerselType';
 import { logger } from '@navikt/next-logger';
 
 export default function useHentSkjemadata() {
@@ -33,7 +33,7 @@ export default function useHentSkjemadata() {
             initState(skjemadata);
             const opplysningstyper = hentPaakrevdOpplysningstyper();
 
-            if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
+            if (!isOpplysningstype(forespoerselType.arbeidsgiverperiode, opplysningstyper)) {
               router.replace(`/endring/${pathSlug}`, undefined);
             }
           }

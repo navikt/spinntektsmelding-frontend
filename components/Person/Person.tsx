@@ -7,38 +7,32 @@ import { Alert, Skeleton, TextField } from '@navikt/ds-react';
 import Heading2 from '../Heading2/Heading2';
 import Skillelinje from '../Skillelinje/Skillelinje';
 
+type PersonData = {
+  navn: string;
+  identitetsnummer: string;
+  virksomhetsnavn: string;
+  orgnrUnderenhet: string;
+  innsenderNavn: string;
+  innsenderTelefonNr?: string;
+};
+
 interface PersonProps {
   erKvittering?: boolean;
   erDelvisInnsending?: boolean;
+  personData?: PersonData;
 }
 
-export default function Person({ erKvittering, erDelvisInnsending }: PersonProps) {
-  const [
-    navn,
-    identitetsnummer,
-    orgnrUnderenhet,
-    virksomhetsnavn,
-    innsenderTelefonNr,
-    innsenderNavn,
-    setInnsenderTelefon,
-    feilHentingAvPersondata,
-    feilHentingAvArbeidsgiverdata,
-    visFeilmeldingsTekst
-  ] = useBoundStore(
-    (state) => [
-      state.navn,
-      state.identitetsnummer,
-      state.orgnrUnderenhet,
-      state.virksomhetsnavn,
-      state.innsenderTelefonNr,
-      state.innsenderNavn,
-      state.setInnsenderTelefon,
-      state.feilHentingAvPersondata,
-      state.feilHentingAvArbeidsgiverdata,
-      state.visFeilmeldingsTekst
-    ],
-    shallow
-  );
+export default function Person({ erKvittering, erDelvisInnsending, personData }: PersonProps) {
+  const [setInnsenderTelefon, feilHentingAvPersondata, feilHentingAvArbeidsgiverdata, visFeilmeldingsTekst] =
+    useBoundStore(
+      (state) => [
+        state.setInnsenderTelefon,
+        state.feilHentingAvPersondata,
+        state.feilHentingAvArbeidsgiverdata,
+        state.visFeilmeldingsTekst
+      ],
+      shallow
+    );
 
   const changeTlfNr = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInnsenderTelefon(event.target.value);
@@ -57,7 +51,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
 
   const feilmeldingTekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
 
-  const skjemadataErLastet = !!identitetsnummer;
+  const skjemadataErLastet = !!personData?.identitetsnummer;
 
   return (
     <>
@@ -88,13 +82,13 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             {!hentingAvPersondataFeilet && (
               <div className={lokalStyles.ansattWrapper}>
                 <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, navn)}</div>
+                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, personData?.navn)}</div>
               </div>
             )}
             <div className={lokalStyles.ansattWrapper}>
               <TextLabel>Personnummer</TextLabel>
               <div data-cy='identitetsnummer'>
-                {identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
+                {personData?.identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
               </div>
             </div>
           </div>
@@ -107,7 +101,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
+                  {personData?.virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
                 </div>
               </div>
             )}
@@ -121,12 +115,14 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             )}
             <div className={lokalStyles.orgnrNavnWrapper}>
               <TextLabel>Orgnr. for underenhet</TextLabel>
-              <div data-cy='orgnummer'>{orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}</div>
+              <div data-cy='orgnummer'>
+                {personData?.orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}
+              </div>
             </div>
             <div className={lokalStyles.innsenderNavnWrapper}>
               <TextLabel>Innsender</TextLabel>
               <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {skeletonLoader(skjemadataErLastet, innsenderNavn)}
+                {skeletonLoader(skjemadataErLastet, personData?.innsenderNavn)}
               </div>
             </div>
             <div className={lokalStyles.telefonWrapper}>
@@ -134,7 +130,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
                 <>
                   <TextLabel>Telefon innsender</TextLabel>
                   <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
-                    {innsenderTelefonNr}
+                    {personData?.innsenderTelefonNr}
                   </div>
                 </>
               )}
@@ -143,7 +139,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
                   label='Telefon innsender'
                   type='tel'
                   autoComplete='tel'
-                  defaultValue={innsenderTelefonNr}
+                  defaultValue={personData?.innsenderTelefonNr}
                   onChange={changeTlfNr}
                   data-cy='innsendertlf'
                   error={visFeilmeldingsTekst('telefon')}

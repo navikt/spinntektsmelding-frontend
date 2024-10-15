@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { use, useEffect, useMemo, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -29,7 +29,7 @@ import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
@@ -39,6 +39,14 @@ import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
+import useSkjemadataForespurt from '../utils/useSkjemadataForespurt';
+import useStateInit from '../state/useStateInit';
+import { Opplysningstype } from '../state/useForespurtDataStore';
+import skjemaVariant from '../config/skjemavariant';
+import forespoerselType from '../config/forespoerselType';
+import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
+import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
+import paakrevdOpplysningstyper from '../utils/paakrevdeOpplysninger';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -49,38 +57,55 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
+  const [skjemastatus, inngangFraKvittering] = useBoundStore((state) => [
+    state.skjemastatus,
+    state.inngangFraKvittering
+  ]);
+
+  const {
+    data: forespurtData,
+    error: forespurtDataError,
+    isLoading: forespurtDataIsLoading
+  } = useSkjemadataForespurt(slug, skjemastatus !== SkjemaStatus.SELVBESTEMT) as {
+    data: ForespurtData;
+    error: any;
+    isLoading: boolean;
+  };
+
   const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.visFeilmeldingsTekst,
     state.slettFeilmelding,
     state.leggTilFeilmelding
   ]);
 
-  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
-  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  // const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const bestemmendeFravaersdag = !forespurtDataIsLoading
+    ? parseIsoDate(forespurtData.bestemmendeFravaersdag)
+    : undefined;
+  const foreslaattBestemmendeFravaersdag =
+    !forespurtDataIsLoading && forespurtData.eksternBestemmendeFravaersdag
+      ? parseIsoDate(forespurtData.eksternBestemmendeFravaersdag)
+      : undefined;
+  // const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  const [skjemastatus, inngangFraKvittering] = useBoundStore((state) => [
-    state.skjemastatus,
-    state.inngangFraKvittering
-  ]);
-  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
+  // const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  // const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
+
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
-  const [hentPaakrevdOpplysningstyper, arbeidsgiverKanFlytteSkjæringstidspunkt, initBruttoinntekt] = useBoundStore(
-    (state) => [
-      state.hentPaakrevdOpplysningstyper,
-      state.arbeidsgiverKanFlytteSkjæringstidspunkt,
-      state.initBruttoinntekt
-    ]
-  );
+  const [arbeidsgiverKanFlytteSkjæringstidspunkt, initBruttoinntekt] = useBoundStore((state) => [
+    state.arbeidsgiverKanFlytteSkjæringstidspunkt,
+    state.initBruttoinntekt
+  ]);
+  // const initState = useStateInit();
+  const router = useRouter();
+
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
-  const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
 
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
 
   const searchParams = useSearchParams();
-  const hentSkjemadata = useHentSkjemadata();
+  // const hentSkjemadata = useHentSkjemadata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
@@ -124,8 +149,18 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   };
 
+  const fravaersperioder = forespurtData?.fravaersperioder.map((periode) => ({
+    fom: parseIsoDate(periode.fom),
+    tom: parseIsoDate(periode.tom),
+    id: periode.fom + periode.tom
+  }));
+
+  const arbeidsgiverperioder = finnArbeidsgiverperiode(fravaersperioder);
+
   const beregnetBestemmendeFraværsdag = useMemo(() => {
-    const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
+    if (forespurtDataIsLoading) return undefined;
+
+    const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder ?? []);
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
       altFravaer,
       arbeidsgiverperioder,
@@ -139,63 +174,59 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     foreslaattBestemmendeFravaersdag,
     fravaersperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
-    bestemmendeFravaersdag
+    bestemmendeFravaersdag,
+    forespurtDataIsLoading
   ]);
 
   const inntektsdato = useMemo(() => {
-    return beregnetBestemmendeFraværsdag ? startOfMonth(beregnetBestemmendeFraværsdag) : undefined;
-  }, [beregnetBestemmendeFraværsdag]);
+    return beregnetBestemmendeFraværsdag && !forespurtDataIsLoading
+      ? startOfMonth(beregnetBestemmendeFraværsdag)
+      : undefined;
+  }, [beregnetBestemmendeFraværsdag, forespurtDataIsLoading]);
 
-  useEffect(() => {
-    if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      return;
-    }
-    if (!isValidUUID(pathSlug)) {
-      return;
-    }
-    if (!fravaersperioder) {
-      setLasterData(true);
-      hentSkjemadata(pathSlug)?.finally(() => {
-        setLasterData(false);
-      });
-
-      if (bestemmendeFravaersdag) {
-        setSisteInntektsdato(startOfMonth(bestemmendeFravaersdag));
-      }
-    } else {
-      if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-        if (inntektsdato && isValidUUID(pathSlug)) {
-          fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
-            .then((inntektSisteTreMnd) => {
-              setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
-              initBruttoinntekt(
-                inntektSisteTreMnd.beregnetInntekt,
-                inntektSisteTreMnd.tidligereInntekter,
-                inntektsdato
-              );
-            })
-            .catch((error) => {
-              logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
-              logger.warn(error);
-            });
-        }
-        setSisteInntektsdato(inntektsdato);
-      }
-    }
-
-    setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug, skjemastatus, inntektsdato, fravaersperioder]);
+  const skalHenteInntektsdata =
+    (!forespurtDataIsLoading &&
+      forespurtData.bestemmendeFravaersdag &&
+      startOfMonth(parseIsoDate(forespurtData.bestemmendeFravaersdag)!) === inntektsdato) ||
+    slug === 'arbeidsgiverInitiertInnsending';
 
   const { data, error } = useTidligereInntektsdata(
     identitetsnummer!,
     orgnrUnderenhet!,
-    inntektsdato!,
-    slug === 'arbeidsgiverInitiertInnsending'
+    startOfMonth(inntektsdato!),
+    slug,
+    skalHenteInntektsdata
   );
+
+  console.log(forespurtData, forespurtDataError);
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
   const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
+  const opplysningstyper = !forespurtDataIsLoading
+    ? paakrevdOpplysningstyper(forespurtData.forespurtData)
+    : (Object.keys(skjemaVariant) as Array<Opplysningstype>);
+
+  useEffect(() => {
+    if (!forespurtDataIsLoading && forespurtData && !inngangFraKvittering) {
+      // initState(forespurtData);
+
+      // setPaakrevdeOpplysninger(opplysningstyper);
+
+      if (!isOpplysningstype(forespoerselType.arbeidsgiverperiode, opplysningstyper)) {
+        router.replace(`/endring/${pathSlug}`, undefined);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [forespurtData, inngangFraKvittering, router, forespurtDataIsLoading, opplysningstyper]);
+
+  const personData = {
+    navn: forespurtData?.navn,
+    identitetsnummer: forespurtData?.identitetsnummer,
+    virksomhetsnavn: forespurtData?.orgNavn,
+    orgnrUnderenhet: forespurtData?.orgnrUnderenhet,
+    innsenderNavn: forespurtData?.innsenderNavn,
+    innsenderTelefonNr: forespurtData?.telefonnummer ?? ''
+  };
   return (
     <div className={styles.container}>
       <Head>
@@ -207,7 +238,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <PageContent title='Inntektsmelding'>
         <form className={styles.padded} onSubmit={submitForm}>
-          <Person />
+          <Person personData={personData} />
 
           <Skillelinje />
           <Egenmelding
@@ -222,6 +253,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             setIsDirtyForm={setIsDirtyForm}
             skjemastatus={skjemastatus}
             selvbestemtInnsending={selvbestemtInnsending}
+            perioder={forespurtData?.fravaersperioder}
           />
 
           <Skillelinje />
@@ -286,4 +318,8 @@ export async function getServerSideProps(context: any) {
       slug
     }
   };
+}
+
+function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | undefined)[]): boolean {
+  return opplysningstyper.includes(value as Opplysningstype);
 }

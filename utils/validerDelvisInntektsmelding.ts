@@ -15,6 +15,7 @@ import { CompleteState } from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
 // import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
+import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -54,11 +55,12 @@ interface ValiderResultat {
 export default function validerDelvisInntektsmelding(
   state: CompleteState,
   opplysningerBekreftet: boolean,
-  kunInntektOgRefusjon?: boolean
+  kunInntektOgRefusjon?: boolean,
+  forespurtData: ForespurtData
 ): SubmitInntektsmeldingReturnvalues {
   let errorTexts: Array<ValiderTekster> = [];
   let errorCodes: Array<ValiderResultat> = [];
-  let feilkoderFravaersperioder: Array<ValiderResultat> = [];
+  // let feilkoderFravaersperioder: Array<ValiderResultat> = [];
   let feilkoderEgenmeldingsperioder: Array<ValiderResultat> = [];
   let feilkoderBruttoinntekt: Array<ValiderResultat> = [];
   let feilkoderNaturalytelser: Array<ValiderResultat> = [];
@@ -70,21 +72,21 @@ export default function validerDelvisInntektsmelding(
 
   state.setSkalViseFeilmeldinger(true);
 
-  if (state.fravaersperioder) {
-    if (state.fravaersperioder.length < 1) {
-      errorCodes.push({
-        felt: '',
-        code: ErrorCodes.INGEN_FRAVAERSPERIODER
-      });
-    }
+  // if (state.fravaersperioder) {
+  //   if (state.fravaersperioder.length < 1) {
+  //     errorCodes.push({
+  //       felt: '',
+  //       code: ErrorCodes.INGEN_FRAVAERSPERIODER
+  //     });
+  //   }
 
-    feilkoderFravaersperioder = validerPeriode(state.fravaersperioder);
-  } else {
-    errorCodes.push({
-      felt: '',
-      code: ErrorCodes.INGEN_FRAVAERSPERIODER
-    });
-  }
+  //   feilkoderFravaersperioder = validerPeriode(state.fravaersperioder);
+  // } else {
+  //   errorCodes.push({
+  //     felt: '',
+  //     code: ErrorCodes.INGEN_FRAVAERSPERIODER
+  //   });
+  // }
 
   if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && !kunInntektOgRefusjon) {
     feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
@@ -100,10 +102,17 @@ export default function validerDelvisInntektsmelding(
       state.arbeidsgiverperioder
     );
   }
+  console.log(
+    'validering',
+    state.lonnISykefravaeret,
+    state.refusjonskravetOpphoerer,
+    state.bruttoinntekt.bruttoInntekt ?? forespurtData.bruttoinntekt
+  );
+
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
     state.lonnISykefravaeret,
     state.refusjonskravetOpphoerer,
-    state.bruttoinntekt.bruttoInntekt
+    state.bruttoinntekt.bruttoInntekt ?? forespurtData.bruttoinntekt
   );
 
   feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
@@ -121,7 +130,7 @@ export default function validerDelvisInntektsmelding(
 
   errorCodes = [
     ...errorCodes,
-    ...feilkoderFravaersperioder,
+    // ...feilkoderFravaersperioder,
     ...feilkoderEgenmeldingsperioder,
     ...feilkoderBruttoinntekt,
     ...feilkoderNaturalytelser,

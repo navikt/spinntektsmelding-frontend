@@ -116,7 +116,7 @@ export default function Arbeidsgiverperiode({
     }
 
     mergeDatePeriods
-      .filter((periode) => periode.fom && periode.tom)
+      .filter((periode) => periode && periode.fom && periode.tom)
       .forEach((periode) => {
         const justering = periode.fom === periode.tom ? 0 : 1;
         dagerTotalt = differenceInCalendarDays(periode.tom!, periode.fom!) + dagerTotalt + justering;
