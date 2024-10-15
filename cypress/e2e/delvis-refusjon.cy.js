@@ -34,10 +34,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('innsendingInntektsmelding');
-    cy.intercept('http://localhost:12347/collect', {
-      statusCode: 202,
-      body: 'OK'
-    });
 
     cy.wait('@hent-forespoersel');
 
@@ -97,10 +93,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('innsendingInntektsmelding');
-    cy.intercept('http://localhost:12347/collect', {
-      statusCode: 202,
-      body: 'OK'
-    });
 
     cy.wait('@hent-forespoersel');
 
@@ -179,10 +171,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('innsendingInntektsmelding');
-    cy.intercept('http://localhost:12347/collect', {
-      statusCode: 202,
-      body: 'OK'
-    });
 
     cy.wait('@hent-forespoersel');
 

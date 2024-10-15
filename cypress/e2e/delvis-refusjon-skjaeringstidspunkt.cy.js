@@ -10,6 +10,11 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // cy.clock(now);
     // cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
     // cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-delvis.json' }).as('hent-forespoersel');
+    cy.intercept('/collect', {
+      statusCode: 202,
+      body: 'OK'
+    }).as('collect');
+
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
       statusCode: 404,
       body: {
@@ -29,10 +34,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('innsendingInntektsmelding');
-    cy.intercept('http://localhost:12347/collect', {
-      statusCode: 202,
-      body: 'OK'
-    });
 
     cy.wait('@hent-forespoersel');
 
