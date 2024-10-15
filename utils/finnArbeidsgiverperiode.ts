@@ -1,5 +1,5 @@
 import { addDays, differenceInCalendarDays } from 'date-fns';
-import { Periode } from '../state/state';
+
 import {
   finnSorterteUnikePerioder,
   overlappendePeriode,
@@ -8,9 +8,9 @@ import {
   tilstoetendePeriodeManuellJustering
 } from './finnBestemmendeFravaersdag';
 
-export const finnPeriodeMedAntallDager = (perioder: Array<Periode>, antallDager: number) => {
+export function finnPeriodeMedAntallDager<T extends tidPeriode>(perioder: Array<T>, antallDager: number) {
   let dagerTotalt = 0;
-  const arbPeriode: Array<Periode> = [];
+  const arbPeriode: Array<T> = [];
 
   perioder.forEach((periode) => {
     if (dagerTotalt < antallDager && periode?.fom && periode?.tom) {
@@ -19,9 +19,9 @@ export const finnPeriodeMedAntallDager = (perioder: Array<Periode>, antallDager:
         arbPeriode.push(periode);
       } else {
         arbPeriode.push({
+          ...periode,
           fom: periode.fom,
-          tom: addDays(periode.fom, antallDager - 1 - dagerTotalt),
-          id: periode.id
+          tom: addDays(periode.fom, antallDager - 1 - dagerTotalt)
         });
       }
       dagerTotalt = dagerTilNaa;
@@ -30,64 +30,64 @@ export const finnPeriodeMedAntallDager = (perioder: Array<Periode>, antallDager:
     return arbPeriode;
   });
   return arbPeriode;
-};
+}
 
-const finnArbeidsgiverperiode = (fravaerPerioder: Array<Periode>): Array<Periode> => {
-  const tilstotendePerioder = finnSammenhengendePeriode(fravaerPerioder);
+function finnArbeidsgiverperiode<T extends tidPeriode>(fravaerPerioder: Array<T>): Array<T> {
+  const tilstoetendePerioder = finnSammenhengendePeriode(fravaerPerioder);
 
-  return finnPeriodeMedAntallDager(tilstotendePerioder, 16);
-};
+  return finnPeriodeMedAntallDager(tilstoetendePerioder, 16);
+}
 
-export const finnSammenhengendePeriode = (fravaersperioder: Array<Periode>): Array<Periode> => {
-  const { mergedSykemeldingsperioder, tilstotendeSykemeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
-  mergedSykemeldingsperioder.forEach((periode) => {
-    const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
+export function finnSammenhengendePeriode<T extends tidPeriode>(fravaersperioder: Array<T>): Array<T> {
+  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
+  mergedSykmeldingsperioder.forEach((periode) => {
+    const aktivPeriode = tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1];
     const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
 
     if (oppdatertPeriode) {
-      tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
+      tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1] = oppdatertPeriode;
     } else {
-      tilstotendeSykemeldingsperioder.push(periode);
+      tilstoetendeSykmeldingsperioder.push(periode);
     }
   });
 
-  return tilstotendeSykemeldingsperioder;
-};
+  return tilstoetendeSykmeldingsperioder;
+}
 
 export function finnSammenhengendePeriodeManuellJustering<T extends tidPeriode>(fravaersperioder: Array<T>): Array<T> {
-  const { mergedSykemeldingsperioder, tilstotendeSykemeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
-  mergedSykemeldingsperioder.forEach((periode) => {
-    const aktivPeriode = tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1];
+  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
+  mergedSykmeldingsperioder.forEach((periode) => {
+    const aktivPeriode = tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1];
     const oppdatertPeriode = tilstoetendePeriodeManuellJustering(aktivPeriode, periode);
 
     if (oppdatertPeriode) {
-      tilstotendeSykemeldingsperioder[tilstotendeSykemeldingsperioder.length - 1] = oppdatertPeriode;
+      tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1] = oppdatertPeriode;
     } else {
-      tilstotendeSykemeldingsperioder.push(periode);
+      tilstoetendeSykmeldingsperioder.push(periode);
     }
   });
 
-  return tilstotendeSykemeldingsperioder;
+  return tilstoetendeSykmeldingsperioder;
 }
 
 export default finnArbeidsgiverperiode;
 
 function joinPerioderMedOverlapp<T extends tidPeriode>(fravaersperioder: T[]) {
-  const sorterteSykemeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
+  const sorterteSykmeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
 
-  const mergedSykemeldingsperioder = [sorterteSykemeldingsperioder[0]];
+  const mergedSykmeldingsperioder = [sorterteSykmeldingsperioder[0]];
 
-  sorterteSykemeldingsperioder.forEach((periode) => {
-    const aktivPeriode = mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1];
+  sorterteSykmeldingsperioder.forEach((periode) => {
+    const aktivPeriode = mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1];
     const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
 
     if (oppdatertPeriode) {
-      mergedSykemeldingsperioder[mergedSykemeldingsperioder.length - 1] = oppdatertPeriode;
+      mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = oppdatertPeriode;
     } else {
-      mergedSykemeldingsperioder.push(periode);
+      mergedSykmeldingsperioder.push(periode);
     }
   });
 
-  const tilstotendeSykemeldingsperioder = [mergedSykemeldingsperioder[0]];
-  return { mergedSykemeldingsperioder, tilstotendeSykemeldingsperioder };
+  const tilstoetendeSykmeldingsperioder = [mergedSykmeldingsperioder[0]];
+  return { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder };
 }
