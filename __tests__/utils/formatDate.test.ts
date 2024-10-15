@@ -1,4 +1,5 @@
 import formatDate from '../../utils/formatDate';
+import { describe } from 'vitest';
 
 describe.concurrent('formatDate', () => {
   it('shold return a nicely formated date', () => {
