@@ -40,6 +40,13 @@ export default function Fravaersperiode({
   const perioderTilBruk = finnAktiveFravaersperioder(sykOgEgenmeldingPerioder);
   const sisteAktivePeriode = perioderTilBruk?.[perioderTilBruk.length - 1];
 
+  console.log('Fravaersperiode.tsx', {
+    lasterData,
+    skjemastatus,
+    setIsDirtyForm,
+    selvbestemtInnsending,
+    sykOgEgenmeldingPerioder
+  });
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.SELVBESTEMT && (!fravaerPerioder || fravaerPerioder.length < 1)) {
       leggTilFravaersperiode();

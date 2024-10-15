@@ -27,8 +27,32 @@ import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSc
 import isValidUUID from '../utils/isValidUUID';
 import useSkjemadataForespurt from '../utils/useSkjemadataForespurt';
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
+<<<<<<< HEAD
 
 // import paakrevdOpplysningstyper from '../utils/paakrevdeOpplysninger';
+=======
+import paakrevdOpplysningstyper from '../utils/paakrevdeOpplysninger';
+
+export interface SendtPeriode {
+  fom: TDateISODate;
+  tom: TDateISODate;
+}
+
+export default function useFyllDelvisInnsending(forespoerselId: string) {
+  if (!isValidUUID(forespoerselId)) {
+    throw new Error('Ugyldig forespørselId');
+  }
+
+  const {
+    data: forespurtDataData,
+    error: forespurtDataError,
+    isLoading: forespurtDataIsLoading
+  } = useSkjemadataForespurt(forespoerselId, true) as {
+    data: ForespurtData;
+    error: any;
+    isLoading: boolean;
+  };
+>>>>>>> 43a7ae66 (Bruke SWR)
 
 export default function useFyllDelvisInnsending(forespoerselId: string) {
   // if (!isValidUUID(forespoerselId)) {
@@ -73,6 +97,7 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
 
   return (skjema: SkjemaData, forespoerselId: string): FullInnsending => {
+<<<<<<< HEAD
     const foersteDag = forespurtDataData.fravaersperioder.toSorted((periodeA, periodeB) =>
       periodeA.fom > periodeB.fom ? 1 : -1
     )[0].fom;
@@ -87,6 +112,9 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
     )!;
 
     // const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
+=======
+    const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
+>>>>>>> 43a7ae66 (Bruke SWR)
     const fravaersperioder = forespurtDataData.fravaersperioder.map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
@@ -122,7 +150,11 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
 
     setSkalViseFeilmeldinger(true);
 
+<<<<<<< HEAD
     // const forespurtData = paakrevdOpplysningstyper(forespurtDataData?.forespurtData);
+=======
+    const forespurtData = paakrevdOpplysningstyper(forespurtDataData?.forespurtData);
+>>>>>>> 43a7ae66 (Bruke SWR)
 
     // const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
     // const skalSendeNaturalytelser = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);

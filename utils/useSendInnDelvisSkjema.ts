@@ -12,20 +12,32 @@ import validerDelvisInntektsmelding from './validerDelvisInntektsmelding';
 import { z } from 'zod';
 import { delvisInnsendingSchema } from '../schema/delvisInnsendingSchema';
 import useSkjemadataForespurt from './useSkjemadataForespurt';
+<<<<<<< HEAD
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
 import valideringDelvisInnsendingSchema from '../schema/valideringDelvisInnsendingSchema';
 
 type Skjema = z.infer<typeof valideringDelvisInnsendingSchema>;
+=======
+import { endepunktHentForespoerselSchema, ForespurtData } from '../schema/endepunktHentForespoerselSchema';
+>>>>>>> 43a7ae66 (Bruke SWR)
 
 export default function useSendInnDelvisSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
   amplitudeComponent: string,
   setError: UseFormSetError<any>,
+<<<<<<< HEAD
   forespoerselId: string
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllDelvisInnsending(forespoerselId);
+=======
+  forespoerselId?: string
+) {
+  const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
+  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const fyllInnsending = useFyllDelvisInnsending(forespoerselId!);
+>>>>>>> 43a7ae66 (Bruke SWR)
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const state = useBoundStore((state) => state);
   const errorResponse = useErrorRespons();
@@ -42,7 +54,11 @@ export default function useSendInnDelvisSkjema(
     isLoading: boolean;
   };
 
+<<<<<<< HEAD
   return async (kunInntektOgRefusjon: boolean, pathSlug: string, isDirtyForm: boolean, form: Skjema) => {
+=======
+  return async (kunInntektOgRefusjon: boolean, pathSlug: string, isDirtyForm: boolean, form: any) => {
+>>>>>>> 43a7ae66 (Bruke SWR)
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
       component: amplitudeComponent
@@ -72,7 +88,11 @@ export default function useSendInnDelvisSkjema(
       return false;
     }
 
+<<<<<<< HEAD
     const errorStatus = validerDelvisInntektsmelding(state, true, kunInntektOgRefusjon, forespurtData, form);
+=======
+    const errorStatus = validerDelvisInntektsmelding(state, true, kunInntektOgRefusjon, forespurtData);
+>>>>>>> 43a7ae66 (Bruke SWR)
 
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
