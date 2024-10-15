@@ -20,6 +20,16 @@ describe('Utfylling og innsending av skjema', () => {
     // const now = new Date(2021, 3, 14); // month is 0-indexed
     // cy.clock(now);
 
+    cy.intercept('/collect', {
+      statusCode: 202,
+      body: 'OK'
+    }).as('collect');
+
+    cy.intercept('/im-dialog/api/logger', {
+      statusCode: 200,
+      body: 'OK'
+    }).as('logger');
+
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {

@@ -9,6 +9,11 @@
 
 describe('Utfylling og innsending av selvbestemt skjema', () => {
   beforeEach(() => {
+    cy.intercept('/im-dialog/api/logger', {
+      statusCode: 200,
+      body: 'OK'
+    }).as('logger');
+
     cy.intercept('/im-dialog/api/sp-soeknader', {
       statusCode: 200,
       body: [
@@ -64,18 +69,11 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
       }
     }).as('aktiveorgnr');
 
-    // cy.wait('@kvittering');
-    // cy.wait('@hent-forespoersel');
-
     cy.findByLabelText('Angi personnummer for den ansatte').type('25087327879');
     cy.contains('Neste').click();
 
     cy.location('pathname').should('equal', '/im-dialog/initiering2');
 
-    // cy.findAllByLabelText('Sykmelding fra').last().clear().type('26.08.24');
-    // cy.realPress('Escape');
-    // cy.findAllByLabelText('Sykmelding til').last().clear().type('30.08.24');
-    // cy.realPress('Escape');
     cy.findByLabelText('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
 
     cy.contains('Neste').click();
@@ -91,8 +89,6 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
     cy.findAllByRole('button', { name: 'Endre' }).last().click();
 
     cy.get('[data-cy="inntekt-beloep-input"]').clear().type('7500');
-
-    // cy.get('[data-cy="refusjon-arbeidsgiver-beloep-input"]').should('have.value', '7500');
 
     cy.findAllByLabelText('Velg endringsårsak').select('Ferie');
 
@@ -172,8 +168,6 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
   });
 
   it('selvbestemt med varig lønnsendring', () => {
-    // cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-originalen.json' }).as('hent-forespoersel');
-
     cy.intercept('/im-dialog/kvittering/agi/1234-5678-1234-5678-123456789012', {
       statusCode: 200,
       body: 'OK'
@@ -194,18 +188,10 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
       }
     }).as('aktiveorgnr');
 
-    // cy.wait('@kvittering');
-    // cy.wait('@hent-forespoersel');
-
     cy.findByLabelText('Angi personnummer for den ansatte').type('25087327879');
     cy.contains('Neste').click();
 
     cy.location('pathname').should('equal', '/im-dialog/initiering2');
-
-    // cy.findAllByLabelText('Sykmelding fra').last().clear().type('26.08.24');
-    // cy.realPress('Escape');
-    // cy.findAllByLabelText('Sykmelding til').last().clear().type('30.08.24');
-    // cy.realPress('Escape');
 
     cy.findByLabelText('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
     cy.findByLabelText('16.09.2024 - 17.09.2024').check();
@@ -223,8 +209,6 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
     cy.findAllByRole('button', { name: 'Endre' }).last().click();
 
     cy.get('[data-cy="inntekt-beloep-input"]').clear().type('7500');
-
-    // cy.get('[data-cy="refusjon-arbeidsgiver-beloep-input"]').should('have.value', '7500');
 
     cy.findAllByLabelText('Velg endringsårsak').select('Varig lønnsendring');
 
