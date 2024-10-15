@@ -1,4 +1,3 @@
-import { BugIcon } from '@navikt/aksel-icons';
 import { BodyShort, Box, Button, Heading, Link, List, Page, VStack } from '@navikt/ds-react';
 import environment from '../../config/environment';
 
