@@ -87,7 +87,7 @@ export default function Periodevelger({
         defaultSelected={defaultRange?.tom}
         toDate={toDate}
         disabled={disabled}
-        defaultMonth={defaultMonth || defaultRange?.fom}
+        defaultMonth={defaultRange?.fom ?? defaultMonth}
         error={tomError}
       />
       {kanSlettes && (
