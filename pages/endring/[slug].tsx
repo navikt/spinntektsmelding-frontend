@@ -22,13 +22,13 @@ import environment from '../../config/environment';
 import IngenTilgang from '../../components/IngenTilgang';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import useSendInnDelvisSkjema from '../../utils/useSendInnDelvisSkjema';
-import { isAfter, isBefore } from 'date-fns';
+import { addDays, isAfter, isBefore } from 'date-fns';
 import parseIsoDate from '../../utils/parseIsoDate';
 import valideringDelvisInnsendingSchema from '../../schema/valideringDelvisInnsendingSchema';
 import FancyJaNei from '../../components/FancyJaNei/FancyJaNei';
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
 import RefusjonArbeidsgiverBeloep from '../../components/RefusjonArbeidsgiverBeloep/RefusjonArbeidsgiverBeloep';
-import EndringRefusjon from '../../components/EndringRefusjon/EndringRefusjon';
+import EndringRefusjon, { EndringsBeloep } from '../../components/EndringRefusjon/EndringRefusjon';
 import DatoVelger from '../../components/DatoVelger/DatoVelger';
 import PersonData from '../../components/PersonData/PersonData';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
@@ -199,6 +199,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const arbeidsgiverKreverRefusjon = watch('refusjon.kreverRefusjon');
 
+  const nyeRefusjonEndringer = watch('refusjon.refusjonEndringer');
+
   useEffect(() => {
     if (refusjonPrMnd) {
       setValue('refusjon.refusjonPrMnd', refusjonPrMnd);
@@ -249,7 +251,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathSlug]);
 
-  const forsteFravaersdag = finnFoersteFravaersdag(
+  const foersteFravaersdag = finnFoersteFravaersdag(
     foreslaattBestemmendeFravaersdag,
     mottattBestemmendeFravaersdag,
     mottattEksternBestemmendeFravaersdag
@@ -353,6 +355,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     mappedeFeilmeldinger.push(feil);
   });
 
+  const sisteMuligeSluttdatoRefusjon = finnTidligsteRefusjonOpphoersdato(
+    foreslaattBestemmendeFravaersdag,
+    mottattBestemmendeFravaersdag,
+    mottattEksternBestemmendeFravaersdag,
+    nyeRefusjonEndringer
+  );
+
   useEffect(() => {
     if (harEndringBruttoloenn === 'Nei') {
       unregister('inntekt.endringAarsak');
@@ -389,7 +398,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     </BodyLong>
                     <FancyJaNei
                       legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
-                        forsteFravaersdag
+                        foersteFravaersdag
                       )} (start av nytt sykefravær)?`}
                       name='inntekt.endringBruttoloenn'
                     />
@@ -397,14 +406,14 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 )}
                 {((harEndringBruttoloenn === 'Ja' && !ukjentInntekt) || ukjentInntekt) && (
                   <div>
-                    <BodyLong>Angi ny beregnet månedslønn per {formatDate(forsteFravaersdag)}</BodyLong>
+                    <BodyLong>Angi ny beregnet månedslønn per {formatDate(foersteFravaersdag)}</BodyLong>
 
                     <div className={lokalStyles.beloepwrapper}>
                       <VelgAarsak
                         changeMaanedsintektHandler={changeMaanedsintektHandler}
                         changeBegrunnelseHandler={changeBegrunnelseHandler}
                         defaultEndringAarsak={endringAarsak}
-                        bestemmendeFravaersdag={forsteFravaersdag}
+                        bestemmendeFravaersdag={foersteFravaersdag}
                         nyInnsending={nyInnsending}
                         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
                         kanIkkeTilbakestilles={true}
@@ -499,7 +508,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
                 <FancyJaNei
                   legend={`Er det endringer i refusjonskravet etter ${formatDate(
-                    forsteFravaersdag
+                    foersteFravaersdag
                   )} (start av nytt sykefravær)?`}
                   name='refusjon.erDetEndringRefusjon'
                 />
@@ -518,7 +527,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
                         <EndringRefusjon
                           maxDate={refusjonskravetOpphoerer?.opphoersdato}
-                          // minDate={arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom}
+                          minDate={foersteFravaersdag}
                         />
                         <OrdinaryJaNei legend='Opphører refusjonkravet i perioden?' name='refusjon.kravetOpphoerer' />
                         {skalRefusjonskravetOpphoere === 'Ja' && (
@@ -527,6 +536,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                               label='Angi siste dag dere krever refusjon for'
                               defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
                               name='refusjon.refusjonOpphoerer'
+                              fromDate={sisteMuligeSluttdatoRefusjon}
                             />
                           </div>
                         )}
@@ -578,13 +588,36 @@ export function finnFoersteFravaersdag(
   if (mottattBestemmendeFravaersdag) {
     if (
       mottattEksternBestemmendeFravaersdag &&
-      isBefore(parseIsoDate(mottattEksternBestemmendeFravaersdag), parseIsoDate(mottattBestemmendeFravaersdag))
+      isBefore(parseIsoDate(mottattEksternBestemmendeFravaersdag)!, parseIsoDate(mottattBestemmendeFravaersdag)!)
     ) {
-      return parseIsoDate(mottattEksternBestemmendeFravaersdag);
+      return parseIsoDate(mottattEksternBestemmendeFravaersdag)!;
     }
-    return parseIsoDate(mottattBestemmendeFravaersdag);
+    return parseIsoDate(mottattBestemmendeFravaersdag)!;
   }
   return foreslaattBestemmendeFravaersdag;
+}
+
+function finnTidligsteRefusjonOpphoersdato(
+  foreslaattBestemmendeFravaersdag: Date,
+  mottattBestemmendeFravaersdag?: TDateISODate,
+  mottattEksternBestemmendeFravaersdag?: TDateISODate,
+  refusjonEndringer?: EndringsBeloep[]
+): Date {
+  let tidligsteOpphoersdato: Date = finnFoersteFravaersdag(
+    foreslaattBestemmendeFravaersdag,
+    mottattBestemmendeFravaersdag,
+    mottattEksternBestemmendeFravaersdag
+  );
+
+  const refusjonEndringDatoer = refusjonEndringer?.map((endring) => endring.dato);
+  const sisteEndringDato = refusjonEndringDatoer?.sort((a, b) => (a && b ? (a > b ? 1 : -1) : 0))[0];
+  const tidligsteMuligeEndringDato = sisteEndringDato ? addDays(sisteEndringDato, 1) : undefined;
+
+  return tidligsteMuligeEndringDato
+    ? tidligsteOpphoersdato > tidligsteMuligeEndringDato
+      ? tidligsteOpphoersdato
+      : tidligsteMuligeEndringDato
+    : tidligsteOpphoersdato;
 }
 
 export async function getServerSideProps(context: any) {
