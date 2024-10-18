@@ -40,6 +40,14 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+import useSkjemadataForespurt from '../../utils/useSkjemadataForespurt';
+import { ForespurtData } from '../../schema/endepunktHentForespoerselSchema';
+import parseIsoDate from '../../utils/parseIsoDate';
+import { identity } from 'cypress/types/lodash';
+import { z } from 'zod';
+import { delvisInnsendingSchema } from '../../schema/delvisInnsendingSchema';
+import paakrevdOpplysningstyper from '../../utils/paakrevdeOpplysninger';
+import forespoerselType from '../../config/forespoerselType';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -71,6 +79,18 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
+  const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
+
+  const {
+    data: forespurtSkjemaData,
+    error: forespurtSkjemaError,
+    isLoading: forespurtSkjemaIsLoading
+  } = useSkjemadataForespurt(kvittid, !!kvitteringData) as {
+    data: ForespurtData;
+    error: any;
+    isLoading: boolean;
+  };
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     gammeltSkjaeringstidspunkt && refusjonEndringer
@@ -114,16 +134,22 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
 
-  const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
+  const opplysningstyper = paakrevdOpplysningstyper(forespurtSkjemaData?.forespurtData);
+  const paakrevdeOpplysninger = forespurtSkjemaData ? opplysningstyper : hentPaakrevdOpplysningstyper();
 
-  const trengerArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const trengerArbeidsgiverperiode = !!forespurtSkjemaData
+    ? forespurtSkjemaData?.forespurtData.arbeidsgiverperiode.paakrevd
+    : paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+
+  console.log('kvitteringData.inntekt?.inntektsdato', kvitteringData.inntekt?.inntektsdato);
 
   const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
     ? bestemmendeFravaersdag
-    : foreslaattBestemmendeFravaersdag;
+    : (parseIsoDate(kvitteringData?.inntekt?.inntektsdato) ?? foreslaattBestemmendeFravaersdag);
 
+  console.log('visningBestemmendeFravaersdag', visningBestemmendeFravaersdag);
   useEffect(() => {
-    if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem) {
+    if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem && !kvitteringData) {
       if (!kvitteringSlug || kvitteringSlug === '') return;
       hentKvitteringsdata(kvitteringSlug);
     }
@@ -147,6 +173,29 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const classNameWrapperSkjaeringstidspunkt = cx({
     infoboks: visArbeidsgiverperiode
   });
+
+  const personData = {
+    navn: forespurtSkjemaData?.navn,
+    identitetsnummer: forespurtSkjemaData?.identitetsnummer,
+    virksomhetsnavn: forespurtSkjemaData?.orgNavn,
+    orgnrUnderenhet: forespurtSkjemaData?.orgnrUnderenhet,
+    innsenderNavn: forespurtSkjemaData?.innsenderNavn,
+    innsenderTelefonNr: kvitteringData?.avsenderTlf ?? ''
+  };
+
+  const visningFravaersperioder =
+    forespurtSkjemaData?.fravaersperioder.map((periode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: periode.fom + periode.tom
+    })) ?? fravaersperioder;
+
+  const visningEgenmeldingsperioder =
+    kvitteringData?.agp?.egenmeldinger.map((periode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: periode.fom + periode.tom
+    })) ?? egenmeldingsperioder;
   // const perioder: { fom: string; tom: string }[] = bruttoinntekt.endringAarsak && bruttoinntekt.endringAarsak[bruttoinntekt.endringAarsak.aarsak]:
   //   ? bruttoinntekt.endringAarsak[bruttoinntekt.endringAarsak.aarsak as string]
   //   : [];
@@ -179,13 +228,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 </div>
               </div>
 
-              <Person erKvittering={true} />
+              <Person erKvittering={true} personData={personData} />
               <Skillelinje />
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (
                   <Fravaersperiode
-                    fravaersperioder={fravaersperioder}
-                    egenmeldingsperioder={egenmeldingsperioder}
+                    fravaersperioder={visningFravaersperioder}
+                    egenmeldingsperioder={visningEgenmeldingsperioder}
                     paakrevdeOpplysninger={paakrevdeOpplysninger}
                   />
                 )}

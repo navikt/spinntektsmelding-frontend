@@ -86,7 +86,8 @@ export default z
     if ((value.inntekt.beloep ?? 0) < (value.refusjon.refusjonPrMnd ?? 0)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Refusjon kan ikke være høyere enn brutto lønn.',
+        message:
+          'Refusjon kan ikke være høyere enn brutto lønn.' + value.inntekt.beloep + ' ' + value.refusjon.refusjonPrMnd,
         path: ['refusjon', 'refusjonPrMnd']
       });
     }

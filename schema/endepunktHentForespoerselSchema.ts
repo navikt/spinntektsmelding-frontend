@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { number, z } from 'zod';
 
 export const endepunktHentForespoerselSchema = z.object({
   navn: z.string(),
@@ -9,14 +9,14 @@ export const endepunktHentForespoerselSchema = z.object({
   orgnrUnderenhet: z.string(),
   fravaersperioder: z.array(
     z.object({
-      fom: z.string(),
-      tom: z.string()
+      fom: z.string().date(),
+      tom: z.string().date()
     })
   ),
   egenmeldingsperioder: z.array(
     z.object({
-      fom: z.string(),
-      tom: z.string()
+      fom: z.string().date(),
+      tom: z.string().date()
     })
   ),
   bestemmendeFravaersdag: z.string().date(),
@@ -36,13 +36,19 @@ export const endepunktHentForespoerselSchema = z.object({
       paakrevd: z.boolean(),
       forslag: z.object({
         type: z.enum(['ForslagInntektGrunnlag']),
-        forrigeInntekt: z.number().nullable()
+        beregningsmaaneder: z.array(z.string()),
+        forrigeInntekt: z.object({ skjæringstidspunkt: z.string().date(), kilde: z.string(), beløp: z.number() })
       })
     }),
     refusjon: z.object({
       paakrevd: z.boolean(),
       forslag: z.object({
-        perioder: z.array(z.object({})),
+        perioder: z.array(
+          z.object({
+            beloep: number(),
+            fom: z.string().date()
+          })
+        ),
         opphoersdato: z.string().nullable()
       })
     })

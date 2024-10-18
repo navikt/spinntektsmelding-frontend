@@ -30,9 +30,9 @@ import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
 import paakrevdOpplysningstyper from '../utils/paakrevdeOpplysninger';
 
 export default function useFyllDelvisInnsending(forespoerselId: string) {
-  if (!isValidUUID(forespoerselId)) {
-    throw new Error('Ugyldig forespørselId');
-  }
+  // if (!isValidUUID(forespoerselId)) {
+  //   throw new Error('Ugyldig forespørselId -' + forespoerselId + '-');
+  // }
 
   const {
     data: forespurtDataData,

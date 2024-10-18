@@ -320,6 +320,6 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | undefined)[]): boolean {
+export function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | undefined)[]): boolean {
   return opplysningstyper.includes(value as Opplysningstype);
 }

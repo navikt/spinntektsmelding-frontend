@@ -16,6 +16,8 @@ import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../v
 // import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
+import valideringDelvisInnsendingSchema from '../schema/valideringDelvisInnsendingSchema';
+import { z } from 'zod';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -52,11 +54,14 @@ interface ValiderResultat {
   code: codeUnion;
 }
 
+type Skjema = z.infer<typeof valideringDelvisInnsendingSchema>;
+
 export default function validerDelvisInntektsmelding(
   state: CompleteState,
   opplysningerBekreftet: boolean,
-  kunInntektOgRefusjon?: boolean,
-  forespurtData: ForespurtData
+  kunInntektOgRefusjon: boolean,
+  forespurtData: ForespurtData,
+  form: Skjema
 ): SubmitInntektsmeldingReturnvalues {
   let errorTexts: Array<ValiderTekster> = [];
   let errorCodes: Array<ValiderResultat> = [];
@@ -104,15 +109,15 @@ export default function validerDelvisInntektsmelding(
   }
   console.log(
     'validering',
-    state.lonnISykefravaeret,
-    state.refusjonskravetOpphoerer,
-    state.bruttoinntekt.bruttoInntekt ?? forespurtData.bruttoinntekt
+    { beloep: form.refusjon.refusjonPrMnd, status: form.refusjon.kreverRefusjon },
+    { status: form.refusjon.kravetOpphoerer, opphoersdato: form.refusjon.refusjonOpphoerer },
+    form.bruttoInntekt ?? forespurtData.bruttoinntekt
   );
 
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
-    state.lonnISykefravaeret,
-    state.refusjonskravetOpphoerer,
-    state.bruttoinntekt.bruttoInntekt ?? forespurtData.bruttoinntekt
+    { beloep: form.refusjon.refusjonPrMnd, status: form.refusjon.kreverRefusjon },
+    { status: form.refusjon.kravetOpphoerer, opphoersdato: form.refusjon.refusjonOpphoerer },
+    form.bruttoInntekt ?? forespurtData.bruttoinntekt
   );
 
   feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
