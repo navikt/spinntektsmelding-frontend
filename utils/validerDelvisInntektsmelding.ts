@@ -111,13 +111,13 @@ export default function validerDelvisInntektsmelding(
     'validering',
     { beloep: form.refusjon.refusjonPrMnd, status: form.refusjon.kreverRefusjon },
     { status: form.refusjon.kravetOpphoerer, opphoersdato: form.refusjon.refusjonOpphoerer },
-    form.bruttoInntekt ?? forespurtData.bruttoinntekt
+    form.inntekt.beloep ?? forespurtData.bruttoinntekt
   );
 
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
     { beloep: form.refusjon.refusjonPrMnd, status: form.refusjon.kreverRefusjon },
     { status: form.refusjon.kravetOpphoerer, opphoersdato: form.refusjon.refusjonOpphoerer },
-    form.bruttoInntekt ?? forespurtData.bruttoinntekt
+    form.inntekt.beloep ?? forespurtData.bruttoinntekt
   );
 
   feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(

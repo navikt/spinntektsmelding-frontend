@@ -95,13 +95,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const forespurtData = !forespurtSkjemaIsLoading ? forespurtSkjemaData.forespurtData : undefined;
   const refusjonEndringer = forespurtData?.refusjon?.forslag?.perioder;
 
-  const ukjentInntekt = useBoundStore((state) => state.ukjentInntekt);
+  const ukjentInntekt = !forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
 
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
 
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
-  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
+  // const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   // const forespurtData = useBoundStore((state) => state.forespurtData);
   const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer] = useBoundStore((state) => [
     state.opprinneligRefusjonEndringer,
@@ -127,6 +127,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const foersteDatoForRefusjon = forespurtSkjemaData?.bestemmendeFravaersdag;
 
+  console.log('foersteDatoForRefusjon', foersteDatoForRefusjon);
+
   const refusjonEndringerUtenSkjaeringstidspunkt =
     foersteDatoForRefusjon && refusjonEndringer
       ? refusjonEndringer?.filter((endring) => {
@@ -140,7 +142,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     : refusjonEndringer
         ?.filter((endring) => {
           if (!endring.fom) return false;
-          return !isAfter(parseIsoDate(endring.fom)!, parseIsoDate(foersteDatoForRefusjon!)!);
+          return !isAfter(parseIsoDate(endring.fom)!, parseIsoDate(foersteDatoForRefusjon)!);
         })
         .map((endring) => {
           return {
@@ -172,6 +174,12 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const inntektBeloep = forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
 
+  console.log(
+    'harEndringer',
+    refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0 ? 'Ja' : 'Nei',
+    refusjonEndringerUtenSkjaeringstidspunkt
+  );
+
   const methods = useForm<Skjema>({
     resolver: zodResolver(valideringDelvisInnsendingSchema),
     defaultValues: {
@@ -189,7 +197,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
             : 'Nei',
         refusjonOpphoerer: opprinneligRefusjonskravetOpphoerer?.opphoersdato,
         kravetOpphoerer: !!forespurtSkjemaData?.forespurtData?.refusjon?.forslag?.opphoersdato ? 'Ja' : 'Nei',
-        kreverRefusjon: refusjonPrMnd !== 0 && typeof refusjonPrMnd !== 'undefined' ? 'Nei' : 'Ja'
+        kreverRefusjon: refusjonPrMnd !== 0 && typeof refusjonPrMnd !== 'undefined' ? 'Ja' : 'Nei'
       }
     }
   });
@@ -252,9 +260,9 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   );
 
   const foersteFravaersdag = finnFoersteFravaersdag(
-    foreslaattBestemmendeFravaersdag,
-    mottattBestemmendeFravaersdag,
-    mottattEksternBestemmendeFravaersdag
+    undefined,
+    mottattBestemmendeFravaersdag as TDateISODate,
+    mottattEksternBestemmendeFravaersdag as TDateISODate
   );
 
   const sendInnDelvisSkjema = useSendInnDelvisSkjema(setIngenTilgangOpen, amplitudeComponent, setError, pathSlug);
@@ -300,7 +308,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
       }
 
-      setEndringAarsak(skjemaData.inntekt.endringAarsak);
+      setEndringAarsak(skjemaData?.inntekt?.endringAarsak);
 
       setSenderInn(false);
     });
@@ -356,9 +364,9 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   });
 
   const sisteMuligeSluttdatoRefusjon = finnTidligsteRefusjonOpphoersdato(
-    foreslaattBestemmendeFravaersdag,
-    mottattBestemmendeFravaersdag,
-    mottattEksternBestemmendeFravaersdag,
+    undefined,
+    mottattBestemmendeFravaersdag as TDateISODate,
+    mottattEksternBestemmendeFravaersdag as TDateISODate,
     nyeRefusjonEndringer
   );
 
@@ -590,10 +598,10 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 export default Endring;
 
 export function finnFoersteFravaersdag(
-  foreslaattBestemmendeFravaersdag: Date,
+  foreslaattBestemmendeFravaersdag?: Date | undefined,
   mottattBestemmendeFravaersdag?: TDateISODate,
   mottattEksternBestemmendeFravaersdag?: TDateISODate
-): Date {
+): Date | undefined {
   if (mottattBestemmendeFravaersdag) {
     if (
       mottattEksternBestemmendeFravaersdag &&
@@ -607,7 +615,7 @@ export function finnFoersteFravaersdag(
 }
 
 function finnTidligsteRefusjonOpphoersdato(
-  foreslaattBestemmendeFravaersdag: Date,
+  foreslaattBestemmendeFravaersdag?: Date,
   mottattBestemmendeFravaersdag?: TDateISODate,
   mottattEksternBestemmendeFravaersdag?: TDateISODate,
   refusjonEndringer?: EndringsBeloep[]
@@ -616,7 +624,7 @@ function finnTidligsteRefusjonOpphoersdato(
     foreslaattBestemmendeFravaersdag,
     mottattBestemmendeFravaersdag,
     mottattEksternBestemmendeFravaersdag
-  );
+  )!;
 
   const refusjonEndringDatoer = refusjonEndringer?.map((endring) => endring.dato);
   const sisteEndringDato = refusjonEndringDatoer?.sort((a, b) => (a && b ? (a > b ? 1 : -1) : 0))[0];

@@ -31,7 +31,7 @@
       "paakrevd": true,
       "forslag": {
         "perioder": [
-          { "fom": "2023-01-02", "beloep": 0 },
+          { "fom": "2023-01-02", "beloep": 46000 },
           { "fom": "2023-09-30", "beloep": 0.0 }
         ],
         "opphoersdato": null

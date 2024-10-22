@@ -27,7 +27,7 @@ import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSc
 import isValidUUID from '../utils/isValidUUID';
 import useSkjemadataForespurt from '../utils/useSkjemadataForespurt';
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
-import paakrevdOpplysningstyper from '../utils/paakrevdeOpplysninger';
+// import paakrevdOpplysningstyper from '../utils/paakrevdeOpplysninger';
 
 export default function useFyllDelvisInnsending(forespoerselId: string) {
   // if (!isValidUUID(forespoerselId)) {
@@ -44,39 +44,39 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
     isLoading: boolean;
   };
 
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const [fullLonnIArbeidsgiverPerioden] = useBoundStore((state) => [state.fullLonnIArbeidsgiverPerioden]);
+  // const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  // const [fullLonnIArbeidsgiverPerioden] = useBoundStore((state) => [state.fullLonnIArbeidsgiverPerioden]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
-  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  // const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  // const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
-  const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
+  // const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
+  // const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
-  const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
-    (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
-  );
-  const [bestemmendeFravaersdag, mottattBestemmendeFravaersdag, mottattEksternBestemmendeFravaersdag] = useBoundStore(
-    (state) => [
-      state.bestemmendeFravaersdag,
-      state.mottattBestemmendeFravaersdag,
-      state.mottattEksternBestemmendeFravaersdag
-    ]
-  );
+  // const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
+  //   (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
+  // );
+  // const [bestemmendeFravaersdag, mottattBestemmendeFravaersdag, mottattEksternBestemmendeFravaersdag] = useBoundStore(
+  //   (state) => [
+  //     state.bestemmendeFravaersdag,
+  //     state.mottattBestemmendeFravaersdag,
+  //     state.mottattEksternBestemmendeFravaersdag
+  //   ]
+  // );
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
 
   const beregnetBestemmendeFravaersdag = finnFoersteFravaersdag(
-    bestemmendeFravaersdag,
-    mottattBestemmendeFravaersdag,
-    mottattEksternBestemmendeFravaersdag
-  );
+    undefined,
+    forespurtDataData.bestemmendeFravaersdag as TDateISODate,
+    forespurtDataData.eksternBestemmendeFravaersdag as TDateISODate
+  )!;
 
   type SkjemaData = z.infer<typeof valideringDelvisInnsendingSchema>;
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
 
   return (skjema: SkjemaData, forespoerselId: string): FullInnsending => {
-    const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
+    // const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
     const fravaersperioder = forespurtDataData.fravaersperioder.map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
@@ -97,9 +97,12 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
           })
         : refusjonEndringer;
 
+    const harRefusjonEndringer =
+      RefusjonUtbetalingEndringUtenGammelBFD && RefusjonUtbetalingEndringUtenGammelBFD.length > 0;
+
     const harRefusjonEndringerTilInnsending =
       skjema.refusjon.erDetEndringRefusjon === 'Nei'
-        ? harRefusjonEndringer === 'Ja'
+        ? harRefusjonEndringer
         : skjema.refusjon.erDetEndringRefusjon === 'Ja';
 
     const innsendingRefusjonEndringer: Array<RefusjonEndring> | undefined = konverterRefusjonEndringer(
@@ -109,36 +112,36 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
 
     setSkalViseFeilmeldinger(true);
 
-    const forespurtData = paakrevdOpplysningstyper(forespurtDataData?.forespurtData);
+    // const forespurtData = paakrevdOpplysningstyper(forespurtDataData?.forespurtData);
 
-    const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
+    // const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
     // const skalSendeNaturalytelser = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
 
-    const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
+    // const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
-    const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(
-      arbeidsgiverperioder,
-      skalSendeArbeidsgiverperiode
-    );
+    // const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(
+    //   arbeidsgiverperioder,
+    //   skalSendeArbeidsgiverperiode
+    // );
 
-    const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
+    // const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
-    const beregnetSkjaeringstidspunkt =
-      skjaeringstidspunkt && isValid(skjaeringstidspunkt)
-        ? skjaeringstidspunkt
-        : parseIsoDate(
-            finnBestemmendeFravaersdag(
-              perioder,
-              formatertePerioder,
-              skjaeringstidspunkt,
-              arbeidsgiverKanFlytteSkjæringstidspunkt()
-            )!
-          );
+    const beregnetSkjaeringstidspunkt = undefined;
+    // skjaeringstidspunkt && isValid(skjaeringstidspunkt)
+    //   ? skjaeringstidspunkt
+    //   : parseIsoDate(
+    //       finnBestemmendeFravaersdag(
+    //         perioder,
+    //         formatertePerioder,
+    //         skjaeringstidspunkt,
+    //         arbeidsgiverKanFlytteSkjæringstidspunkt()
+    //       )!
+    //     );
 
     const bestemmendeFraværsdagTilInnsending = finnFoersteFravaersdag(
       beregnetSkjaeringstidspunkt,
-      mottattBestemmendeFravaersdag,
-      mottattEksternBestemmendeFravaersdag
+      forespurtDataData.bestemmendeFravaersdag,
+      forespurtDataData.eksternBestemmendeFravaersdag
     );
 
     const bestemmendeFraværsdag = formatIsoDate(bestemmendeFraværsdagTilInnsending);
@@ -154,18 +157,7 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
 
     const skjemaData: FullInnsending = {
       forespoerselId,
-      agp: skalSendeArbeidsgiverperiode
-        ? {
-            perioder: innsendbarArbeidsgiverperioder,
-            egenmeldinger: harEgenmeldingsdager
-              ? egenmeldingsperioder!.map((periode) => ({
-                  fom: formatIsoDate(periode.fom) as TDateISODate,
-                  tom: formatIsoDate(periode.tom) as TDateISODate
-                }))
-              : [],
-            redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
-          }
-        : null,
+      agp: null,
       inntekt: {
         beloep: skjema.inntekt.beloep!,
         inntektsdato: bestemmendeFraværsdag!,
@@ -184,7 +176,7 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
               beloepPerMaaned: skjema.refusjon.refusjonPrMnd ?? 0,
               sluttdato: formaterOpphørsdato(
                 skjema.refusjon.kravetOpphoerer as YesNo,
-                skjema.refusjon.refusjonOpphoerer!
+                skjema.refusjon.refusjonOpphoerer
               ),
 
               endringer: harRefusjonEndringerTilInnsending ? innsendingRefusjonEndringer : []
@@ -197,34 +189,34 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
   };
 }
 
-function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
-  let perioder;
-  if (fravaersperioder) {
-    perioder = fravaersperioder.concat(egenmeldingsperioder ?? []);
-  } else {
-    perioder = egenmeldingsperioder;
-  }
-  return perioder;
-}
+// function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
+//   let perioder;
+//   if (fravaersperioder) {
+//     perioder = fravaersperioder.concat(egenmeldingsperioder ?? []);
+//   } else {
+//     perioder = egenmeldingsperioder;
+//   }
+//   return perioder;
+// }
 
-function finnInnsendbareArbeidsgiverperioder(
-  arbeidsgiverperioder: Periode[] | undefined,
-  skalSendeArbeidsgiverperiode: boolean
-): SendtPeriode[] | [] {
-  if (!skalSendeArbeidsgiverperiode) {
-    return [];
-  }
+// function finnInnsendbareArbeidsgiverperioder(
+//   arbeidsgiverperioder: Periode[] | undefined,
+//   skalSendeArbeidsgiverperiode: boolean
+// ): SendtPeriode[] | [] {
+//   if (!skalSendeArbeidsgiverperiode) {
+//     return [];
+//   }
 
-  return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
-    ? arbeidsgiverperioder
-        ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
-        .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
-    : [];
-}
+//   return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
+//     ? arbeidsgiverperioder
+//         ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
+//         .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
+//     : [];
+// }
 
-function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode> | undefined) {
-  return (
-    egenmeldingsperioder &&
-    (egenmeldingsperioder.length > 1 || (egenmeldingsperioder[0]?.fom && egenmeldingsperioder[0]?.tom))
-  );
-}
+// function sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder: Array<Periode> | undefined) {
+//   return (
+//     egenmeldingsperioder &&
+//     (egenmeldingsperioder.length > 1 || (egenmeldingsperioder[0]?.fom && egenmeldingsperioder[0]?.tom))
+//   );
+// }

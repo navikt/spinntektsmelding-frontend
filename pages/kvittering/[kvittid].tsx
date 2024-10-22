@@ -141,7 +141,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? forespurtSkjemaData?.forespurtData.arbeidsgiverperiode.paakrevd
     : paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
-  console.log('kvitteringData.inntekt?.inntektsdato', kvitteringData.inntekt?.inntektsdato);
+  console.log('kvitteringData.inntekt?.inntektsdato', kvitteringData?.inntekt?.inntektsdato);
 
   const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
     ? bestemmendeFravaersdag
