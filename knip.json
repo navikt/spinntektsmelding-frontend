@@ -1,0 +1,3 @@
+{
+  "ignore": ["next-logger.config.js", "__mocks__/**", "cypress/**"]
+}
