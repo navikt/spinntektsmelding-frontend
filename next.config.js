@@ -79,7 +79,14 @@ const nextConfig = {
     innsendingSelvbestemtInntektsmeldingApi: process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API,
     version,
     loggingDisabled: process.env.DISABLE_DECORATOR
+  },
+  experimental: {
+    optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-icons']
   }
 };
 
-module.exports = nextConfig;
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true'
+});
+
+module.exports = withBundleAnalyzer(nextConfig);
