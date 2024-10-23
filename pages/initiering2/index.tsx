@@ -33,7 +33,6 @@ import { PersonnummerSchema } from '../../schema/personnummerSchema';
 import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
 import { logger } from '@navikt/next-logger';
-// import numberOfDaysInRanges from '../../utils/numberOfDaysInRanges';
 import environment from '../../config/environment';
 import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
@@ -62,7 +61,6 @@ const Initiering2: NextPage = () => {
   let fulltNavn = '';
   const backendFeil = useRef([] as Feilmelding[]);
   let orgnrUnderenhet: string | undefined = undefined;
-  // let antallSykedager = 0;
   let antallDagerMellomSykmeldingsperioder = 0;
   let blokkerInnsending = false;
 
@@ -291,21 +289,6 @@ const Initiering2: NextPage = () => {
     finnSorterteUnikePerioder(mergedSykmeldingsperioder)
   );
 
-  // antallSykedager = valgteUnikeSykepengePerioder
-  //   ? numberOfDaysInRanges(
-  //       valgteUnikeSykepengePerioder
-  //         .filter((periode) => periode !== undefined && periode.fom && periode.tom)
-  //         .map((periode) => ({
-  //           fom: periode.fom!,
-  //           tom: periode.tom!
-  //         }))
-  //     )
-  //   : 0;
-
-  // if (antallSykedager > 16) {
-  //   blokkerInnsending = true;
-  // }
-
   antallDagerMellomSykmeldingsperioder = valgteUnikeSykepengePerioder
     ? finnSorterteUnikePerioder(valgteUnikeSykepengePerioder).reduce((accumulator, currentValue, index, array) => {
         if (index === 0) {
@@ -406,17 +389,6 @@ const Initiering2: NextPage = () => {
                 </div>
               </form>
             </FormProvider>
-            {/* {antallSykedager > 16 && (
-              <Alert variant='error' className={lokalStyles.alertPadding}>
-                <Heading1>
-                  Det er ikke mulig å opprette inntektsmelding manuelt for et sammenhengende sykefravær på over 16 dager
-                </Heading1>
-                Hvis et sammenhengende sykefravær er lengre enn 16 dager, vil NAV opprette en inntektsmelding. Vi sender
-                ut en forespørsel om inntektsmelding når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn
-                søknad om sykepenger. Du finner du forespørselen på{' '}
-                <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
-              </Alert>
-            )} */}
             {antallDagerMellomSykmeldingsperioder > 16 && (
               <Alert variant='error' className={lokalStyles.alertPadding}>
                 <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>

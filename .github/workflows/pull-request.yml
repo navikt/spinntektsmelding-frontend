@@ -74,5 +74,6 @@ jobs:
           node-version: '22.6'
           cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
-      - run: yarn install --immutable
+      - name: Install dependencies
+        run: yarn install --immutable
       - uses: codex-/knip-reporter@v2

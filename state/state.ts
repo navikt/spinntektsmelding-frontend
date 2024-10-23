@@ -47,29 +47,3 @@ export interface RefusjonskravetOpphoerer {
   status?: YesNo;
   opphoersdato?: Date;
 }
-
-interface InntektsmeldingSkjema {
-  navn?: string;
-  identitetsnummer?: string;
-  virksomhetsnavn?: string;
-  orgnrUnderenhet?: string;
-  fravaersperioder?: Array<Periode>;
-  opprinneligfravaersperioder?: Array<Periode>;
-  egenmeldingsperioder: Array<Periode>;
-  bruttoinntekt?: Inntekt;
-  opprinneligbruttoinntekt?: Inntekt;
-  tidligereinntekt?: Array<HistoriskInntekt>;
-  fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
-  lonnISykefravaeret?: LonnISykefravaeret;
-  naturalytelser?: Array<Naturalytelse>;
-  hasBortfallAvNaturalytelser?: YesNo;
-  opplysningerBekreftet: boolean;
-  refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
-  refusjonskravOpphoersdato?: Date;
-  sammeFravaersperiode: boolean;
-  aarsakInnsending: string;
-  innsenderNavn?: string;
-  innsenderTelefonNr?: string;
-}
-
-export default InntektsmeldingSkjema;

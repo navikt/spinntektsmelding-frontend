@@ -1,6 +1,5 @@
 import { Button } from '@navikt/ds-react';
 import lokalStyles from './PeriodeListevelger.module.css';
-import { Periode } from '../../state/state';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import DatoVelger from '../DatoVelger/DatoVelger';
 import ButtonSlette from '../ButtonSlette';
