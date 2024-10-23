@@ -76,5 +76,4 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Run knip
-        run: yarn knip
+      - uses: codex-/knip-reporter@v2
