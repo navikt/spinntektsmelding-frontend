@@ -11,12 +11,7 @@ import {
 } from './validerPeriodeFravaer';
 
 export enum PeriodeEgenmeldingFeilkode {
-  MANGLER_PERIODE = 'MANGLER_PERIODE',
-  MANGLER_TIL = 'MANGLER_TIL',
-  MANGLER_FRA = 'MANGLER_FRA',
-  TIL_FOR_FRA = 'TIL_FOR_FRA',
-  FOR_MANGE_DAGER_MELLOM = 'FOR_MANGE_DAGER_MELLOM',
-  FOR_MANGE_DAGER_I_PERIODE = 'FOR_MANGE_DAGER_I_PERIODE'
+  MANGLER_PERIODE = 'MANGLER_PERIODE'
 }
 
 export default function validerPeriodeEgenmelding(perioder: Array<Periode>, prefix: string): Array<ValiderResultat> {
