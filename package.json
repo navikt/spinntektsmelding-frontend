@@ -14,7 +14,8 @@
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "knip": "knip --no-exit-code --reporter json",
-    "duplisert": "npx jscpd --gitignore --ignore \"__tests__,**mockdata/**,**.github/**,**cypress/**,**next/**\" ."
+    "duplisert": "npx jscpd --gitignore --ignore \"__tests__,**mockdata/**,**.github/**,**cypress/**,**next/**\" .",
+    "bundleanalyze": "ANALYZE=true yarn build"
   },
   "dependencies": {
     "@grafana/faro-web-sdk": "1.10.2",
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^6.0.0",
+    "@next/bundle-analyzer": "^15.0.1",
     "@testing-library/cypress": "10.0.2",
     "@testing-library/jest-dom": "6.4.8",
     "@testing-library/react": "16.0.1",
