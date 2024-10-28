@@ -53,7 +53,17 @@ export const endepunktHentForespoerselSchema = z.object({
       })
     })
   }),
-  erBesvart: z.boolean()
+  erBesvart: z.boolean(),
+  feilReport: z
+    .object({
+      feil: z.array(
+        z.object({
+          datafelt: z.string(),
+          melding: z.string()
+        })
+      )
+    })
+    .optional()
 });
 
 export type ForespurtData = z.infer<typeof endepunktHentForespoerselSchema>;

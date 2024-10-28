@@ -1,8 +1,14 @@
 import NetworkError from './NetworkError';
 import isValidUUID from './isValidUUID';
+import { endepunktHentForespoerselSchema } from '../schema/endepunktHentForespoerselSchema';
+import { z } from 'zod';
 
-export default function fetcherSkjemadataForespurt(url: string | null, forespoerselId: string): Promise<any> {
-  // TODO: Fix any med riktig type for mottatte data
+type EndepunktHentForespoerselSchema = z.infer<typeof endepunktHentForespoerselSchema>;
+
+export default function fetcherSkjemadataForespurt(
+  url: string | null,
+  forespoerselId: string
+): Promise<EndepunktHentForespoerselSchema | []> {
   if (!url) return Promise.resolve([]);
   if (!isValidUUID(forespoerselId)) return Promise.resolve([]);
   return fetch(url, {

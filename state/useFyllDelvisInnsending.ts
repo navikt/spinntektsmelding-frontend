@@ -66,16 +66,16 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
   // );
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
 
-  const beregnetBestemmendeFravaersdag = finnFoersteFravaersdag(
-    undefined,
-    forespurtDataData.bestemmendeFravaersdag as TDateISODate,
-    forespurtDataData.eksternBestemmendeFravaersdag as TDateISODate
-  )!;
-
   type SkjemaData = z.infer<typeof valideringDelvisInnsendingSchema>;
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
 
   return (skjema: SkjemaData, forespoerselId: string): FullInnsending => {
+    const beregnetBestemmendeFravaersdag = finnFoersteFravaersdag(
+      undefined,
+      forespurtDataData.bestemmendeFravaersdag as TDateISODate,
+      forespurtDataData.eksternBestemmendeFravaersdag as TDateISODate
+    )!;
+
     // const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
     const fravaersperioder = forespurtDataData.fravaersperioder.map((periode) => ({
       fom: parseIsoDate(periode.fom),

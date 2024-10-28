@@ -1,4 +1,4 @@
-import React, { use, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -26,19 +26,19 @@ import environment from '../config/environment';
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
-import fetchInntektsdata from '../utils/fetchInntektsdata';
-import { logger } from '@navikt/next-logger';
+// import fetchInntektsdata from '../utils/fetchInntektsdata';
+// import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
-import { isEqual, startOfMonth } from 'date-fns';
+import { startOfMonth } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
-import isValidUUID from '../utils/isValidUUID';
-import useHentSkjemadata from '../utils/useHentSkjemadata';
+// import isValidUUID from '../utils/isValidUUID';
+// import useHentSkjemadata from '../utils/useHentSkjemadata';
 import useSkjemadataForespurt from '../utils/useSkjemadataForespurt';
 import useStateInit from '../state/useStateInit';
 import { Opplysningstype } from '../state/useForespurtDataStore';
@@ -86,18 +86,18 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     !forespurtDataIsLoading && forespurtData.eksternBestemmendeFravaersdag
       ? parseIsoDate(forespurtData.eksternBestemmendeFravaersdag)
       : undefined;
-  // const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const stateFravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   // const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   // const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
 
-  const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
+  // const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const [arbeidsgiverKanFlytteSkjæringstidspunkt, initBruttoinntekt] = useBoundStore((state) => [
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
     state.initBruttoinntekt
   ]);
-  // const initState = useStateInit();
+  const initState = useStateInit();
   const router = useRouter();
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
@@ -148,19 +148,24 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       leggTilFeilmelding('bekreft-opplysninger', feiltekster.BEKREFT_OPPLYSNINGER);
     }
   };
+  const dummy = [{ fom: '', tom: '' }];
+  const perioder = selvbestemtInnsending
+    ? (stateFravaersperioder ?? dummy)
+    : (forespurtData?.fravaersperioder ?? dummy);
 
-  const fravaersperioder = forespurtData?.fravaersperioder.map((periode) => ({
+  const fravaersperioder = perioder.map((periode) => ({
     fom: parseIsoDate(periode.fom),
     tom: parseIsoDate(periode.tom),
-    id: periode.fom + periode.tom
+    id: toIsoDate(periode.fom) + toIsoDate(periode.tom)
   }));
 
-  const arbeidsgiverperioder = finnArbeidsgiverperiode(fravaersperioder);
+  const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder ?? []);
+
+  const arbeidsgiverperioder = finnArbeidsgiverperiode(altFravaer);
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     if (forespurtDataIsLoading) return undefined;
 
-    const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder ?? []);
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
       altFravaer,
       arbeidsgiverperioder,
@@ -208,16 +213,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   useEffect(() => {
     if (!forespurtDataIsLoading && forespurtData && !inngangFraKvittering) {
-      // initState(forespurtData);
+      initState(forespurtData);
 
       // setPaakrevdeOpplysninger(opplysningstyper);
-
-      if (!isOpplysningstype(forespoerselType.arbeidsgiverperiode, opplysningstyper)) {
+      if (forespurtData.erBesvart) {
+        router.replace(`/kvittering/${pathSlug}`, undefined);
+      } else if (!isOpplysningstype(forespoerselType.arbeidsgiverperiode, opplysningstyper)) {
         router.replace(`/endring/${pathSlug}`, undefined);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [forespurtData, inngangFraKvittering, router, forespurtDataIsLoading, opplysningstyper]);
+  }, [forespurtData, inngangFraKvittering, router, forespurtDataIsLoading]);
 
   const personData = {
     navn: forespurtData?.navn,
@@ -253,7 +259,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             setIsDirtyForm={setIsDirtyForm}
             skjemastatus={skjemastatus}
             selvbestemtInnsending={selvbestemtInnsending}
-            perioder={forespurtData?.fravaersperioder}
+            perioder={fravaersperioder}
           />
 
           <Skillelinje />
@@ -322,4 +328,14 @@ export async function getServerSideProps(context: any) {
 
 export function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | undefined)[]): boolean {
   return opplysningstyper.includes(value as Opplysningstype);
+}
+
+function toIsoDate(date?: string | Date): string {
+  if (!date) {
+    return 'dummy';
+  }
+  if (typeof date === 'string') {
+    return new Date(date).toISOString();
+  }
+  return date.toISOString();
 }

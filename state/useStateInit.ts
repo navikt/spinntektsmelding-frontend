@@ -4,6 +4,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import MottattData from './MottattData';
 import useBoundStore from './useBoundStore';
+import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
 
 type Datafelt = 'virksomhet' | 'arbeidstaker-informasjon' | 'forespoersel-svar' | 'inntekt';
 
@@ -49,7 +50,7 @@ export default function useStateInit() {
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
 
-  return (jsonData: MottattData) => {
+  return (jsonData: MottattData | ForespurtData) => {
     const feilRapporter = feilRapportMapper(jsonData.feilReport?.feil);
 
     initFravaersperiode(jsonData.fravaersperioder);

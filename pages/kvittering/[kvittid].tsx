@@ -43,17 +43,23 @@ import classNames from 'classnames/bind';
 import useSkjemadataForespurt from '../../utils/useSkjemadataForespurt';
 import { ForespurtData } from '../../schema/endepunktHentForespoerselSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { identity } from 'cypress/types/lodash';
 import { z } from 'zod';
 import { delvisInnsendingSchema } from '../../schema/delvisInnsendingSchema';
 import paakrevdOpplysningstyper from '../../utils/paakrevdeOpplysninger';
-import forespoerselType from '../../config/forespoerselType';
+
+import useKvitteringInit from '../../state/useKvitteringInit';
+import useKvitteringdata from '../../utils/useKvitteringdata';
+import mottattKvitteringSchema from '../../schema/mottattKvitteringSchema';
+
+type MottattKvitteringSchema = z.infer<typeof mottattKvitteringSchema>;
+type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const initState = useKvitteringInit();
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
@@ -69,6 +75,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+  const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
 
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
 
@@ -79,11 +86,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
   const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
+  const setKvitteringsdata = useBoundStore((state) => state.setKvitteringsdata);
 
   const {
-    data: forespurtSkjemaData,
+    data: forespurtSkjema,
     error: forespurtSkjemaError,
     isLoading: forespurtSkjemaIsLoading
   } = useSkjemadataForespurt(kvittid, !!kvitteringData) as {
@@ -91,6 +98,20 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     error: any;
     isLoading: boolean;
   };
+
+  const {
+    data: forespurtKvittering,
+    error: forespurtKvitteringError,
+    isLoading: forespurtKvitteringIsLoading
+  } = useKvitteringdata(kvittid, !kvitteringData) as {
+    data: MottattKvitteringSchema;
+    error: any;
+    isLoading: boolean;
+  };
+
+  const visningsdata = mapForespurtData(!!kvitteringData, forespurtKvittering, forespurtSkjema, kvitteringData);
+
+  const forespurtSkjemaData = forespurtSkjema?.kvitteringDokument;
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     gammeltSkjaeringstidspunkt && refusjonEndringer
@@ -110,12 +131,15 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
-    if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
-      if (isValidUUID(kvitteringSlug)) {
+    if (!kvitteringData) {
+      setKvitteringsdata({
+        ...visningsdata
+      });
+    }
+    if (isValidUUID(kvitteringSlug)) {
+      if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
         router.push(`/${kvitteringSlug}`);
-      }
-    } else {
-      if (isValidUUID(kvitteringSlug)) {
+      } else {
         router.push(`/endring/${kvitteringSlug}`);
       }
     }
@@ -161,6 +185,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!forespurtSkjemaIsLoading) initState(forespurtSkjema);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [forespurtSkjemaIsLoading]);
+
   const visNaturalytelser = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
   const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
   const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
@@ -175,13 +205,15 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   });
 
   const personData = {
-    navn: forespurtSkjemaData?.navn,
-    identitetsnummer: forespurtSkjemaData?.identitetsnummer,
-    virksomhetsnavn: forespurtSkjemaData?.orgNavn,
-    orgnrUnderenhet: forespurtSkjemaData?.orgnrUnderenhet,
-    innsenderNavn: forespurtSkjemaData?.innsenderNavn,
-    innsenderTelefonNr: kvitteringData?.avsenderTlf ?? ''
+    navn: visningsdata?.navn,
+    identitetsnummer: visningsdata?.identitetsnummer,
+    virksomhetsnavn: visningsdata?.orgNavn,
+    orgnrUnderenhet: visningsdata?.orgnrUnderenhet,
+    innsenderNavn: visningsdata?.innsenderNavn,
+    innsenderTelefonNr: visningsdata?.telefonnummer ?? ''
   };
+
+  console.log('personData', personData, kvitteringData, forespurtKvittering);
 
   const visningFravaersperioder =
     forespurtSkjemaData?.fravaersperioder.map((periode) => ({
@@ -345,4 +377,46 @@ export async function getServerSideProps(context: any) {
       kvittid
     }
   };
+}
+
+function mapForespurtData(
+  brukForespurtKvittering: boolean,
+  forespurtKvittering: MottattKvitteringSchema,
+  forespurtSkjema: ForespurtData,
+  kvitteringData: DelvisInnsending
+): ForespurtData | undefined {
+  if (!brukForespurtKvittering) {
+    const data = forespurtKvittering?.kvitteringDokument;
+    if (!data) return undefined;
+    return {
+      navn: data.fulltNavn,
+      identitetsnummer: data.identitetsnummer,
+      orgnrUnderenhet: data.orgnrUnderenhet,
+      orgNavn: data.virksomhetNavn,
+      innsenderNavn: data.innsenderNavn,
+      telefonnummer: data.telefonnummer,
+      egenmeldingsperioder: data.egenmeldingsperioder,
+      arbeidsgiverperioder: data.arbeidsgiverperioder,
+      bestemmendeFravaersdag: data.bestemmendeFraværsdag,
+      fravaersperioder: data.fraværsperioder,
+      inntekt: {
+        bekreftet: data.inntekt.bekreftet,
+        beregnetInntekt: data.inntekt.beregnetInntekt,
+        manueltKorrigert: data.inntekt.manueltKorrigert
+      },
+      fullLønnIArbeidsgiverPerioden: {
+        utbetalerFullLønn: data.fullLønnIArbeidsgiverPerioden?.utbetalerFullLønn
+      },
+      refusjon: {
+        utbetalerHeleEllerDeler: data.refusjon?.utbetalerHeleEllerDeler
+      },
+      forespurtData: data.forespurtData
+    };
+  } else {
+    return {
+      ...forespurtSkjema,
+      telefonnummer: kvitteringData?.avsenderTlf,
+      refusjon: kvitteringData?.refusjon
+    };
+  }
 }

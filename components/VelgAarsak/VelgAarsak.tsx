@@ -18,7 +18,7 @@ interface VelgAarsakProps {
   changeMaanedsintektHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   changeBegrunnelseHandler: (verdi: string) => void;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  defaultEndringAarsak: EndringAarsak;
+  defaultEndringAarsak?: EndringAarsak;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
   kanIkkeTilbakestilles?: boolean;
@@ -45,6 +45,8 @@ export default function VelgAarsak({
   const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
 
   const blankPeriode = undefined;
+
+  console.log('defaultEndringAarsak', defaultEndringAarsak);
 
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>

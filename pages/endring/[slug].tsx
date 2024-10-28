@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { BodyLong, Button, ConfirmationPanel, Link } from '@navikt/ds-react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import PageContent from '../../components/PageContent/PageContent';
 import styles from '../../styles/Home.module.css';
@@ -34,18 +34,19 @@ import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 import { LonnISykefravaeret, YesNo } from '../../state/state';
 import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
-import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import { TDateISODate } from '../../state/MottattData';
 import useSkjemadataForespurt from '../../utils/useSkjemadataForespurt';
 import { endepunktHentForespoerselSchema } from '../../schema/endepunktHentForespoerselSchema';
+import { delvisInnsendingSchema } from '../../schema/delvisInnsendingSchema';
+import { ImportEndringAarsakSchema } from '../../schema/importEndringAarsakSchema';
 
 type ForespurtData = z.infer<typeof endepunktHentForespoerselSchema>;
+type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   type Skjema = z.infer<typeof valideringDelvisInnsendingSchema>;
-  // const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const [setEndringerAvRefusjon] = useBoundStore((state) => [state.setEndringerAvRefusjon]);
 
@@ -89,7 +90,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     isLoading: boolean;
   };
 
-  // const inntektBeloep = forespurtSkjemaData?.bruttoinntekt;
   const searchParams = useSearchParams();
 
   const forespurtData = !forespurtSkjemaIsLoading ? forespurtSkjemaData.forespurtData : undefined;
@@ -101,33 +101,27 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
-  // const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  // const forespurtData = useBoundStore((state) => state.forespurtData);
+
   const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer] = useBoundStore((state) => [
     state.opprinneligRefusjonEndringer,
     state.opprinneligRefusjonskravetOpphoerer
-    // state.harRefusjonEndringer
   ]);
+
+  const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
 
   const harRefusjonEndringer = forespurtSkjemaData?.forespurtData?.refusjon?.forslag?.perioder?.length > 0;
 
   const mottattBestemmendeFravaersdag = forespurtSkjemaData?.bestemmendeFravaersdag;
   const mottattEksternBestemmendeFravaersdag = forespurtSkjemaData?.eksternBestemmendeFravaersdag;
 
-  const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
-
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
   const aapentManglendeData = inngangFraKvittering || ukjentInntekt;
 
-  // const [innsenderTelefonNr] = useBoundStore((state) => [state.innsenderTelefonNr]);
-
   const amplitudeComponent = 'DelvisInnsending';
 
   const foersteDatoForRefusjon = forespurtSkjemaData?.bestemmendeFravaersdag;
-
-  console.log('foersteDatoForRefusjon', foersteDatoForRefusjon);
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     foersteDatoForRefusjon && refusjonEndringer
@@ -154,39 +148,37 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           return a.dato && b.dato ? (a.dato < b.dato ? 1 : -1) : 0;
         })[0]?.beloep;
 
-  let aktiveRefusjonEndringer;
-  if (nyInnsending) {
-    aktiveRefusjonEndringer =
-      refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
-        ? refusjonEndringerUtenSkjaeringstidspunkt.map((endring) => ({
-            beloep: endring.beloep,
-            dato: parseIsoDate(endring.fom)
-          }))
-        : [{ beloep: undefined, dato: undefined }];
-  } else {
-    aktiveRefusjonEndringer = refusjonEndringer
-      ? refusjonEndringer.map((endring) => ({
+  const aktiveRefusjonEndringer =
+    refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
+      ? refusjonEndringerUtenSkjaeringstidspunkt.map((endring) => ({
           beloep: endring.beloep,
           dato: parseIsoDate(endring.fom)
         }))
-      : refusjonEndringer;
-  }
+      : [{ beloep: undefined, dato: undefined }];
 
-  const inntektBeloep = forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
+  const inntektBeloep = nyInnsending
+    ? forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp
+    : kvitteringData?.inntekt?.beloep;
+  const visningInntektBeloep = forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
 
-  console.log(
-    'harEndringer',
-    refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0 ? 'Ja' : 'Nei',
-    refusjonEndringerUtenSkjaeringstidspunkt
-  );
+  const defaultEndringAarsak = useMemo(() => {
+    const aktivEndringAarsak = nyInnsending ? undefined : kvitteringData?.inntekt?.endringAarsak;
+    return aktivEndringAarsak ? ImportEndringAarsakSchema.parse(aktivEndringAarsak) : undefined;
+  }, [kvitteringData?.inntekt?.endringAarsak, nyInnsending]);
 
   const methods = useForm<Skjema>({
     resolver: zodResolver(valideringDelvisInnsendingSchema),
     defaultValues: {
       inntekt: {
-        beloep: inntektBeloep
+        endringBruttoloenn: nyInnsending
+          ? undefined
+          : !!kvitteringData?.inntekt?.endringAarsak?.aarsak
+            ? 'Ja'
+            : undefined,
+        beloep: inntektBeloep,
+        endringAarsak: defaultEndringAarsak
       },
-      telefon: forespurtSkjemaData?.telefonnummer,
+      telefon: nyInnsending ? (forespurtSkjemaData?.telefonnummer ?? '') : kvitteringData.avsenderTlf,
       opplysningerBekreftet: false,
       refusjon: {
         refusjonPrMnd: refusjonPrMnd,
@@ -220,24 +212,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const arbeidsgiverKreverRefusjon = watch('refusjon.kreverRefusjon');
 
   const nyeRefusjonEndringer = watch('refusjon.refusjonEndringer');
-
-  useEffect(() => {
-    if (refusjonPrMnd) {
-      setValue('refusjon.refusjonPrMnd', refusjonPrMnd);
-    }
-  }, [refusjonPrMnd, setValue]);
-
-  useEffect(() => {
-    if (ukjentInntekt) {
-      setValue('inntekt.endringBruttoloenn', 'Ja');
-    }
-  }, [ukjentInntekt, setValue]);
-
-  useEffect(() => {
-    if (inntektBeloep) {
-      setValue('inntekt.beloep', inntektBeloep);
-    }
-  }, [inntektBeloep, setValue]);
 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.saksoversiktUrl;
@@ -383,7 +357,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     virksomhetsnavn: forespurtSkjemaData?.orgNavn,
     orgnrUnderenhet: forespurtSkjemaData?.orgnrUnderenhet,
     innsenderNavn: forespurtSkjemaData?.innsenderNavn,
-    innsenderTelefonNr: forespurtSkjemaData?.telefonnummer ?? ''
+    innsenderTelefonNr: nyInnsending ? (forespurtSkjemaData?.telefonnummer ?? '') : kvitteringData.avsenderTlf
   };
 
   return (
@@ -411,7 +385,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   <>
                     <BodyLong>
                       I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
-                      <strong>{formatCurrency(inntektBeloep ?? 0)}</strong>&nbsp;kr
+                      <strong>{formatCurrency(visningInntektBeloep ?? 0)}</strong>&nbsp;kr
                     </BodyLong>
                     <FancyJaNei
                       legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
@@ -429,7 +403,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       <VelgAarsak
                         changeMaanedsintektHandler={changeMaanedsintektHandler}
                         changeBegrunnelseHandler={changeBegrunnelseHandler}
-                        defaultEndringAarsak={endringAarsak}
+                        defaultEndringAarsak={defaultEndringAarsak}
                         bestemmendeFravaersdag={foersteFravaersdag}
                         nyInnsending={nyInnsending}
                         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
