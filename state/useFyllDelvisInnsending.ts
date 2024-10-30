@@ -27,6 +27,7 @@ import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSc
 import isValidUUID from '../utils/isValidUUID';
 import useSkjemadataForespurt from '../utils/useSkjemadataForespurt';
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
+import { parse } from 'path';
 // import paakrevdOpplysningstyper from '../utils/paakrevdeOpplysninger';
 
 export default function useFyllDelvisInnsending(forespoerselId: string) {
@@ -70,8 +71,9 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
 
   return (skjema: SkjemaData, forespoerselId: string): FullInnsending => {
+    const foersteDag = forespurtDataData.fravaersperioder[0].fom;
     const beregnetBestemmendeFravaersdag = finnFoersteFravaersdag(
-      undefined,
+      parseIsoDate(foersteDag),
       forespurtDataData.bestemmendeFravaersdag as TDateISODate,
       forespurtDataData.eksternBestemmendeFravaersdag as TDateISODate
     )!;
@@ -126,7 +128,7 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
 
     // const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
-    const beregnetSkjaeringstidspunkt = undefined;
+    const beregnetSkjaeringstidspunkt = parseIsoDate(foersteDag);
     // skjaeringstidspunkt && isValid(skjaeringstidspunkt)
     //   ? skjaeringstidspunkt
     //   : parseIsoDate(

@@ -8,11 +8,11 @@ import Heading2 from '../Heading2/Heading2';
 import Skillelinje from '../Skillelinje/Skillelinje';
 
 type PersonData = {
-  navn: string;
-  identitetsnummer: string;
-  virksomhetsnavn: string;
-  orgnrUnderenhet: string;
-  innsenderNavn: string;
+  navn?: string;
+  identitetsnummer?: string;
+  virksomhetsnavn?: string;
+  orgnrUnderenhet?: string;
+  innsenderNavn?: string;
   innsenderTelefonNr?: string;
 };
 

@@ -89,8 +89,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const stateFravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  // const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  const stateArbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   // const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
+  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
 
   // const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const [arbeidsgiverKanFlytteSkjæringstidspunkt, initBruttoinntekt] = useBoundStore((state) => [
@@ -102,7 +103,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
 
-  const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
+  const [navn, identitetsnummer, orgnrUnderenhet, virksomhetsnavn, innsenderNavn, innsenderTelefonNr] = useBoundStore(
+    (state) => [
+      state.navn,
+      state.identitetsnummer,
+      state.orgnrUnderenhet,
+      state.virksomhetsnavn,
+      state.innsenderNavn,
+      state.innsenderTelefonNr
+    ]
+  );
 
   const searchParams = useSearchParams();
   // const hentSkjemadata = useHentSkjemadata();
@@ -161,7 +171,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder ?? []);
 
-  const arbeidsgiverperioder = finnArbeidsgiverperiode(altFravaer);
+  const arbeidsgiverperioder = endretArbeidsgiverperiode
+    ? stateArbeidsgiverperioder
+    : finnArbeidsgiverperiode(altFravaer);
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     if (forespurtDataIsLoading) return undefined;
@@ -175,9 +187,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     return beregnetBestemmendeFraværsdagISO ? parseIsoDate(beregnetBestemmendeFraværsdagISO) : bestemmendeFravaersdag;
   }, [
     arbeidsgiverperioder,
-    egenmeldingsperioder,
+    altFravaer,
     foreslaattBestemmendeFravaersdag,
-    fravaersperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     bestemmendeFravaersdag,
     forespurtDataIsLoading
@@ -211,9 +222,37 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     ? paakrevdOpplysningstyper(forespurtData.forespurtData)
     : (Object.keys(skjemaVariant) as Array<Opplysningstype>);
 
+  const personData = {
+    navn: selvbestemtInnsending ? navn : forespurtData?.navn,
+    identitetsnummer: selvbestemtInnsending ? identitetsnummer : forespurtData?.identitetsnummer,
+    virksomhetsnavn: selvbestemtInnsending ? virksomhetsnavn : forespurtData?.orgNavn,
+    orgnrUnderenhet: selvbestemtInnsending ? orgnrUnderenhet : forespurtData?.orgnrUnderenhet,
+    innsenderNavn: selvbestemtInnsending ? innsenderNavn : forespurtData?.innsenderNavn,
+    innsenderTelefonNr: selvbestemtInnsending ? innsenderTelefonNr : (forespurtData?.telefonnummer ?? '')
+  };
+
   useEffect(() => {
     if (!forespurtDataIsLoading && forespurtData && !inngangFraKvittering) {
-      initState(forespurtData);
+      console.log('forespurtData', forespurtData);
+      let maserteForespurteData = { ...forespurtData };
+
+      if (selvbestemtInnsending) {
+        forespurtData.fravaersperioder =
+          stateFravaersperioder?.map((periode) => ({
+            fom: periode.fom,
+            tom: periode.tom,
+            id: toIsoDate(periode.fom) + toIsoDate(periode.tom)
+          })) ?? [];
+
+        forespurtData.egenmeldingsperioder =
+          egenmeldingsperioder?.map((periode) => ({
+            fom: periode.fom,
+            tom: periode.tom,
+            id: toIsoDate(periode.fom) + toIsoDate(periode.tom)
+          })) ?? [];
+        maserteForespurteData = { ...forespurtData, ...personData };
+      }
+      initState(maserteForespurteData);
 
       // setPaakrevdeOpplysninger(opplysningstyper);
       if (forespurtData.erBesvart) {
@@ -225,14 +264,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [forespurtData, inngangFraKvittering, router, forespurtDataIsLoading]);
 
-  const personData = {
-    navn: forespurtData?.navn,
-    identitetsnummer: forespurtData?.identitetsnummer,
-    virksomhetsnavn: forespurtData?.orgNavn,
-    orgnrUnderenhet: forespurtData?.orgnrUnderenhet,
-    innsenderNavn: forespurtData?.innsenderNavn,
-    innsenderTelefonNr: forespurtData?.telefonnummer ?? ''
-  };
   return (
     <div className={styles.container}>
       <Head>

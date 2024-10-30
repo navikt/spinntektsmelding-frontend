@@ -111,8 +111,14 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const harRefusjonEndringer = forespurtSkjemaData?.forespurtData?.refusjon?.forslag?.perioder?.length > 0;
 
-  const mottattBestemmendeFravaersdag = forespurtSkjemaData?.bestemmendeFravaersdag;
-  const mottattEksternBestemmendeFravaersdag = forespurtSkjemaData?.eksternBestemmendeFravaersdag;
+  const mottattBestemmendeFravaersdag = nyInnsending
+    ? forespurtSkjemaData?.bestemmendeFravaersdag
+    : kvitteringData?.inntekt?.inntektsdato;
+  const mottattEksternBestemmendeFravaersdag = nyInnsending
+    ? forespurtSkjemaData?.eksternBestemmendeFravaersdag
+    : kvitteringData?.eksternBestemmendeFravaersdag;
+
+  console.log('mottattBestemmendeFravaersdag', mottattBestemmendeFravaersdag, mottattEksternBestemmendeFravaersdag);
 
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
@@ -165,6 +171,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     const aktivEndringAarsak = nyInnsending ? undefined : kvitteringData?.inntekt?.endringAarsak;
     return aktivEndringAarsak ? ImportEndringAarsakSchema.parse(aktivEndringAarsak) : undefined;
   }, [kvitteringData?.inntekt?.endringAarsak, nyInnsending]);
+  const forsteDag = forespurtSkjemaData?.fravaersperioder?.[0]?.fom;
 
   const methods = useForm<Skjema>({
     resolver: zodResolver(valideringDelvisInnsendingSchema),
@@ -176,7 +183,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
             ? 'Ja'
             : undefined,
         beloep: inntektBeloep,
-        endringAarsak: defaultEndringAarsak
+        endringAarsak: defaultEndringAarsak,
+        inntektsdato: nyInnsending ? parseIsoDate(forsteDag) : kvitteringData?.inntekt?.inntektsdato
       },
       telefon: nyInnsending ? (forespurtSkjemaData?.telefonnummer ?? '') : kvitteringData.avsenderTlf,
       opplysningerBekreftet: false,
@@ -234,7 +242,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   );
 
   const foersteFravaersdag = finnFoersteFravaersdag(
-    undefined,
+    parseIsoDate(forsteDag),
     mottattBestemmendeFravaersdag as TDateISODate,
     mottattEksternBestemmendeFravaersdag as TDateISODate
   );
@@ -338,7 +346,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   });
 
   const sisteMuligeSluttdatoRefusjon = finnTidligsteRefusjonOpphoersdato(
-    undefined,
+    parseIsoDate(forsteDag),
     mottattBestemmendeFravaersdag as TDateISODate,
     mottattEksternBestemmendeFravaersdag as TDateISODate,
     nyeRefusjonEndringer
