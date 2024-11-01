@@ -114,16 +114,15 @@ function finnBestemmendeFravaersdag<T extends tidPeriode>(
   } else {
     perioderEtterAgp = sorterteSykmeldingPerioder;
   }
-
   if (
     arbeidsgiverperiode &&
     arbeidsgiverperiode.length > 0 &&
-    differenceInBusinessDays(perioderEtterAgp[0].fom!, arbeidsgiverperiode[arbeidsgiverperiode.length - 1].tom!) <= 0
+    differenceInBusinessDays(perioderEtterAgp[0].fom!, arbeidsgiverperiode[arbeidsgiverperiode.length - 1].tom!) <= 1
   ) {
     perioderEtterAgp[0].fom = arbeidsgiverperiode[arbeidsgiverperiode.length - 1].tom;
   }
 
-  const agpOgSykPerioder = finnSammenhengendePeriodeManuellJustering(
+  const agpOgSykPerioder = finnSammenhengendePeriode(
     finnSorterteUnikePerioder(
       perioderEtterAgp.concat(arbeidsgiverperiode ?? []).filter((periode) => periode.fom && periode.tom)
     )
