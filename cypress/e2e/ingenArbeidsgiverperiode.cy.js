@@ -87,7 +87,8 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
       cy.findByRole('radio', { name: 'Nei' }).should('not.be.checked');
     });
 
-    cy.get('[data-cy="arbeidsgiverperiode-0-fra-dato"]').should('have.text', '17.02.2023');
+    cy.findByRole('textbox', { name: /Fra/i }).contains('17.02.2023');
+    // cy.get('#arbeidsgiverperioder[0].fom').should('have.text', '17.02.2023');
     cy.get('[data-cy="arbeidsgiverperiode-0-til-dato"]').should('have.text', '04.03.2023');
   });
 });

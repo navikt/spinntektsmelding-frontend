@@ -109,7 +109,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     isLoading: boolean;
   };
 
-  const visningsdata = mapForespurtData(!!kvitteringData, forespurtKvittering, forespurtSkjema, kvitteringData);
+  const visningsdata = mapForespurtData(!!forespurtKvittering, forespurtKvittering, forespurtSkjema, kvitteringData);
 
   const forespurtSkjemaData = forespurtSkjema?.kvitteringDokument;
 
@@ -136,6 +136,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         ...visningsdata
       });
     }
+    setInngangFraKvittering();
     if (isValidUUID(kvitteringSlug)) {
       if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
         router.push(`/${kvitteringSlug}`);
@@ -165,23 +166,20 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? forespurtSkjemaData?.forespurtData.arbeidsgiverperiode.paakrevd
     : paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
-  console.log('kvitteringData.inntekt?.inntektsdato', kvitteringData?.inntekt?.inntektsdato);
-
   const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
     ? bestemmendeFravaersdag
     : (parseIsoDate(kvitteringData?.inntekt?.inntektsdato) ?? foreslaattBestemmendeFravaersdag);
 
-  console.log('visningBestemmendeFravaersdag', visningBestemmendeFravaersdag);
-  useEffect(() => {
-    if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem && !kvitteringData) {
-      if (!kvitteringSlug || kvitteringSlug === '') return;
-      hentKvitteringsdata(kvitteringSlug);
-    }
-    setNyInnsending(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kvitteringSlug]);
+  // useEffect(() => {
+  //   if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem && !kvitteringData) {
+  //     if (!kvitteringSlug || kvitteringSlug === '') return;
+  //     hentKvitteringsdata(kvitteringSlug);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [kvitteringSlug]);
 
   useEffect(() => {
+    setNyInnsending(false);
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -212,8 +210,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     innsenderNavn: visningsdata?.innsenderNavn,
     innsenderTelefonNr: visningsdata?.telefonnummer ?? ''
   };
-
-  console.log('personData', personData, kvitteringData, forespurtKvittering);
 
   const visningFravaersperioder =
     forespurtSkjemaData?.fravaersperioder.map((periode) => ({
@@ -385,7 +381,8 @@ function mapForespurtData(
   forespurtSkjema: ForespurtData,
   kvitteringData: DelvisInnsending
 ): ForespurtData | undefined {
-  if (!brukForespurtKvittering) {
+  if (brukForespurtKvittering) {
+    console.log('forespurtKvittering', forespurtKvittering);
     const data = forespurtKvittering?.kvitteringDokument;
     if (!data) return undefined;
     return {
@@ -413,6 +410,7 @@ function mapForespurtData(
       forespurtData: data.forespurtData
     };
   } else {
+    console.log('forespurtSkjema', forespurtSkjema);
     return {
       ...forespurtSkjema,
       telefonnummer: kvitteringData?.avsenderTlf,

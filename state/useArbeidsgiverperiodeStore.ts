@@ -227,11 +227,11 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           );
 
           if (bestemmendeFravaersdag) {
-            state.rekalkulerBruttoinntekt(parseIsoDate(bestemmendeFravaersdag));
+            // state.rekalkulerBruttoinntekt(parseIsoDate(bestemmendeFravaersdag));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
             state.tidligereInntekt = finnAktuelleInntekter(
               state.opprinneligeInntekt,
-              parseIsoDate(bestemmendeFravaersdag)
+              parseIsoDate(bestemmendeFravaersdag!)
             );
           }
 

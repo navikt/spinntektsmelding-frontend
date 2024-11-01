@@ -110,13 +110,14 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
 
   const harRefusjonEndringer = forespurtSkjemaData?.forespurtData?.refusjon?.forslag?.perioder?.length > 0;
+  console.log('saker', nyInnsending && !inngangFraKvittering, kvitteringData);
+  const mottattBestemmendeFravaersdag =
+    nyInnsending && !inngangFraKvittering
+      ? forespurtSkjemaData?.bestemmendeFravaersdag
+      : (kvitteringData?.inntekt?.inntektsdato ?? kvitteringData?.bestemmendeFraværsdag);
 
-  const mottattBestemmendeFravaersdag = nyInnsending
-    ? forespurtSkjemaData?.bestemmendeFravaersdag
-    : kvitteringData?.inntekt?.inntektsdato;
-  const mottattEksternBestemmendeFravaersdag = nyInnsending
-    ? forespurtSkjemaData?.eksternBestemmendeFravaersdag
-    : kvitteringData?.eksternBestemmendeFravaersdag;
+  const mottattEksternBestemmendeFravaersdag =
+    nyInnsending && !inngangFraKvittering ? forespurtSkjemaData?.eksternBestemmendeFravaersdag : undefined;
 
   console.log('mottattBestemmendeFravaersdag', mottattBestemmendeFravaersdag, mottattEksternBestemmendeFravaersdag);
 
@@ -318,7 +319,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     }
   }, [aapentManglendeData]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrige innsending';
+  const sisteInnsending =
+    gammeltSkjaeringstidspunkt && !inngangFraKvittering ? formatDate(gammeltSkjaeringstidspunkt) : 'forrige innsending';
 
   const harEndringer = harRefusjonEndringer;
 

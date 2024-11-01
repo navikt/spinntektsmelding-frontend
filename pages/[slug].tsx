@@ -171,9 +171,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder ?? []);
 
-  const arbeidsgiverperioder = endretArbeidsgiverperiode
-    ? stateArbeidsgiverperioder
-    : finnArbeidsgiverperiode(altFravaer);
+  const arbeidsgiverperioder =
+    endretArbeidsgiverperiode || inngangFraKvittering ? stateArbeidsgiverperioder : finnArbeidsgiverperiode(altFravaer);
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     if (forespurtDataIsLoading) return undefined;
@@ -214,8 +213,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skalHenteInntektsdata
   );
 
-  console.log(forespurtData, forespurtDataError);
-
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
   const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
   const opplysningstyper = !forespurtDataIsLoading
@@ -233,8 +230,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   useEffect(() => {
     if (!forespurtDataIsLoading && forespurtData && !inngangFraKvittering) {
-      console.log('forespurtData', forespurtData);
-      let maserteForespurteData = { ...forespurtData };
+      let masserteForespurteData = { ...forespurtData };
 
       if (selvbestemtInnsending) {
         forespurtData.fravaersperioder =
@@ -250,9 +246,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             tom: periode.tom,
             id: toIsoDate(periode.fom) + toIsoDate(periode.tom)
           })) ?? [];
-        maserteForespurteData = { ...forespurtData, ...personData };
+        masserteForespurteData = { ...forespurtData, ...personData };
       }
-      initState(maserteForespurteData);
+      initState(masserteForespurteData);
 
       // setPaakrevdeOpplysninger(opplysningstyper);
       if (forespurtData.erBesvart) {
@@ -299,6 +295,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             arbeidsgiverperioder={arbeidsgiverperioder}
             setIsDirtyForm={setIsDirtyForm}
             skjemastatus={skjemastatus}
+            altFravaer={altFravaer}
           />
 
           <Skillelinje />

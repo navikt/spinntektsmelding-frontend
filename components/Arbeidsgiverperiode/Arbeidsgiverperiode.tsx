@@ -20,7 +20,7 @@ import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
 import formatCurrency from '../../utils/formatCurrency';
-import {
+import finnArbeidsgiverperiode, {
   finnSammenhengendePeriode,
   finnSammenhengendePeriodeManuellJustering
 } from '../../utils/finnArbeidsgiverperiode';
@@ -29,12 +29,14 @@ import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerA
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
+  altFravaer: Array<Periode> | undefined;
   setIsDirtyForm: (dirty: boolean) => void;
   skjemastatus: SkjemaStatus;
 }
 
 export default function Arbeidsgiverperiode({
   arbeidsgiverperioder,
+  altFravaer,
   setIsDirtyForm,
   skjemastatus
 }: Readonly<ArbeidsgiverperiodeProps>) {
@@ -45,7 +47,7 @@ export default function Arbeidsgiverperiode({
   const setEndreArbeidsgiverperiode = useBoundStore((state) => state.setEndreArbeidsgiverperiode);
   const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
-  const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
   const slettAlleArbeidsgiverperioder = useBoundStore((state) => state.slettAlleArbeidsgiverperioder);
   const setBeloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
     (state) => state.setBeloepUtbetaltUnderArbeidsgiverperioden
@@ -164,7 +166,8 @@ export default function Arbeidsgiverperiode({
       component: amplitudeComponent
     });
     setArbeidsgiverperiodeDisabled(false);
-    tilbakestillArbeidsgiverperiode();
+    const arbeidsgiverperioder = finnArbeidsgiverperiode(altFravaer!);
+    setArbeidsgiverperioder(arbeidsgiverperioder);
   };
 
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
@@ -184,6 +187,7 @@ export default function Arbeidsgiverperiode({
   };
 
   const handleIngenArbeidsgiverperiodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleIngenArbeidsgiverperiodeChange', event.target.checked, arbeidsgiverperioder);
     setArbeidsgiverperiodeDisabled(event.target.checked);
 
     if (event.target.checked === true) {
@@ -193,12 +197,19 @@ export default function Arbeidsgiverperiode({
     } else {
       setBeloepUtbetaltUnderArbeidsgiverperioden(undefined);
       slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
-      setArbeidsgiverperiodeDisabled(false);
-      if (skjemastatus !== SkjemaStatus.SELVBESTEMT) tilbakestillArbeidsgiverperiode();
+      // setArbeidsgiverperiodeDisabled(false);
+      if (skjemastatus !== SkjemaStatus.SELVBESTEMT) {
+        const arbeidsgiverperioder = finnArbeidsgiverperiode(altFravaer!);
+        setArbeidsgiverperioder(arbeidsgiverperioder);
+      }
       begrunnelseRedusertUtbetaling(undefined);
     }
     setIsDirtyForm(true);
   };
+
+  const agp = finnArbeidsgiverperiode(altFravaer!);
+
+  console.log('agp', agp, altFravaer);
 
   const setBegrunnelseRedusertUtbetaling = (begrunnelse: string | undefined) => {
     begrunnelseRedusertUtbetaling(begrunnelse);
