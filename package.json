@@ -14,7 +14,6 @@
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "knip": "knip --no-exit-code --reporter json",
-    "duplisert": "npx jscpd --gitignore --ignore \"__tests__,**mockdata/**,**.github/**,**cypress/**,**next/**\" .",
     "bundleanalyze": "ANALYZE=true yarn build"
   },
   "dependencies": {

@@ -20,7 +20,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from './useEgenmeldingStore';
 import { isBefore } from 'date-fns';
 
-export interface KvitteringSkjema extends InnsendingSkjema {
+interface KvitteringSkjema extends InnsendingSkjema {
   fulltNavn: string;
   virksomhetNavn: string;
   innsenderNavn: string;

@@ -20,14 +20,10 @@ import {
   konverterRefusjonEndringer,
   verdiEllerBlank,
   verdiEllerNull,
-  formaterRedusertLoennIAgp
+  formaterRedusertLoennIAgp,
+  SendtPeriode
 } from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
-
-export interface SendtPeriode {
-  fom: TDateISODate;
-  tom: TDateISODate;
-}
 
 export default function useFyllDelvisInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
