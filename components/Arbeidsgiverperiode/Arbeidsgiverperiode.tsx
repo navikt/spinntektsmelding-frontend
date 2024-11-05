@@ -187,7 +187,6 @@ export default function Arbeidsgiverperiode({
   };
 
   const handleIngenArbeidsgiverperiodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('handleIngenArbeidsgiverperiodeChange', event.target.checked, arbeidsgiverperioder);
     setArbeidsgiverperiodeDisabled(event.target.checked);
 
     if (event.target.checked === true) {
@@ -208,8 +207,6 @@ export default function Arbeidsgiverperiode({
   };
 
   const agp = finnArbeidsgiverperiode(altFravaer!);
-
-  console.log('agp', agp, altFravaer);
 
   const setBegrunnelseRedusertUtbetaling = (begrunnelse: string | undefined) => {
     begrunnelseRedusertUtbetaling(begrunnelse);

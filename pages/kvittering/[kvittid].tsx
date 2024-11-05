@@ -109,9 +109,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     isLoading: boolean;
   };
 
-  const visningsdata = mapForespurtData(!!forespurtKvittering, forespurtKvittering, forespurtSkjema, kvitteringData);
+  const visningsdata = mapForespurtData(forespurtKvittering, forespurtSkjema, kvitteringData);
 
-  const forespurtSkjemaData = forespurtSkjema?.kvitteringDokument;
+  const forespurtSkjemaData = forespurtKvittering?.kvitteringDokument;
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     gammeltSkjaeringstidspunkt && refusjonEndringer
@@ -131,12 +131,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
+    setInngangFraKvittering();
+
     if (!kvitteringData) {
       setKvitteringsdata({
         ...visningsdata
       });
     }
-    setInngangFraKvittering();
     if (isValidUUID(kvitteringSlug)) {
       if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
         router.push(`/${kvitteringSlug}`);
@@ -162,9 +163,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const opplysningstyper = paakrevdOpplysningstyper(forespurtSkjemaData?.forespurtData);
   const paakrevdeOpplysninger = forespurtSkjemaData ? opplysningstyper : hentPaakrevdOpplysningstyper();
 
-  const trengerArbeidsgiverperiode = !!forespurtSkjemaData
-    ? forespurtSkjemaData?.forespurtData.arbeidsgiverperiode.paakrevd
-    : paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const trengerArbeidsgiverperiode =
+    forespurtSkjemaData?.forespurtData?.arbeidsgiverperiode?.paakrevd ??
+    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
   const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
     ? bestemmendeFravaersdag
@@ -212,7 +213,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   };
 
   const visningFravaersperioder =
-    forespurtSkjemaData?.fravaersperioder.map((periode) => ({
+    forespurtSkjemaData?.fravaersperioder?.map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
       id: periode.fom + periode.tom
@@ -376,16 +377,15 @@ export async function getServerSideProps(context: any) {
 }
 
 function mapForespurtData(
-  brukForespurtKvittering: boolean,
   forespurtKvittering: MottattKvitteringSchema,
   forespurtSkjema: ForespurtData,
   kvitteringData: DelvisInnsending
 ): ForespurtData | undefined {
-  if (brukForespurtKvittering) {
-    console.log('forespurtKvittering', forespurtKvittering);
+  if (forespurtKvittering?.kvitteringDokument) {
     const data = forespurtKvittering?.kvitteringDokument;
     if (!data) return undefined;
     return {
+      ...data,
       navn: data.fulltNavn,
       identitetsnummer: data.identitetsnummer,
       orgnrUnderenhet: data.orgnrUnderenhet,
@@ -410,7 +410,6 @@ function mapForespurtData(
       forespurtData: data.forespurtData
     };
   } else {
-    console.log('forespurtSkjema', forespurtSkjema);
     return {
       ...forespurtSkjema,
       telefonnummer: kvitteringData?.avsenderTlf,

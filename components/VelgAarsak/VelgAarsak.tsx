@@ -46,8 +46,6 @@ export default function VelgAarsak({
 
   const blankPeriode = undefined;
 
-  console.log('defaultEndringAarsak', defaultEndringAarsak);
-
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       <div className={lokalStyles.endremaaanedsinntekt}>

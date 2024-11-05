@@ -83,7 +83,6 @@ export default function useKvitteringInit() {
     } else {
       jsonData = kvitteringsData as unknown as KvitteringSkjema;
     }
-    console.log(jsonData);
     if (jsonData.fraværsperioder) initFravaersperiode(jsonData.fraværsperioder);
     if (jsonData.egenmeldingsperioder) initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
 

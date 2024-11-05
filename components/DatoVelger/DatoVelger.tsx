@@ -49,7 +49,11 @@ export default function DatoVelger({
   const { datepickerProps, inputProps, reset } = useDatepicker({
     toDate: toDate,
     fromDate: fromDate,
-    onDateChange: field.onChange,
+    onDateChange: (val) => {
+      console.log('datovelger val', val);
+      field.onChange(val);
+    },
+    // field.onChange,
     defaultSelected: defaultSelected,
     defaultMonth: defaultMonth
   });
@@ -69,6 +73,7 @@ export default function DatoVelger({
         hideLabel={hideLabel}
         disabled={disabled}
         error={error}
+        ref={field.ref}
       />
     </DatePicker>
   );

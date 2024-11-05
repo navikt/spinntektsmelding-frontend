@@ -79,12 +79,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     state.initRefusjonskravetOpphoerer,
     state.feilmeldinger
   ]);
+  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
 
   const {
     data: forespurtSkjemaData,
     error: forespurtSkjemaError,
     isLoading: forespurtSkjemaIsLoading
-  } = useSkjemadataForespurt(slug, true) as {
+  } = useSkjemadataForespurt(slug, !inngangFraKvittering) as {
     data: ForespurtData;
     error: any;
     isLoading: boolean;
@@ -97,8 +98,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const ukjentInntekt = !forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
 
-  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
-
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
 
@@ -110,16 +109,15 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
 
   const harRefusjonEndringer = forespurtSkjemaData?.forespurtData?.refusjon?.forslag?.perioder?.length > 0;
-  console.log('saker', nyInnsending && !inngangFraKvittering, kvitteringData);
+
   const mottattBestemmendeFravaersdag =
     nyInnsending && !inngangFraKvittering
       ? forespurtSkjemaData?.bestemmendeFravaersdag
-      : (kvitteringData?.inntekt?.inntektsdato ?? kvitteringData?.bestemmendeFraværsdag);
+      : (kvitteringData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ??
+        kvitteringData?.bestemmendeFravaersdag);
 
   const mottattEksternBestemmendeFravaersdag =
     nyInnsending && !inngangFraKvittering ? forespurtSkjemaData?.eksternBestemmendeFravaersdag : undefined;
-
-  console.log('mottattBestemmendeFravaersdag', mottattBestemmendeFravaersdag, mottattEksternBestemmendeFravaersdag);
 
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
@@ -163,9 +161,9 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         }))
       : [{ beloep: undefined, dato: undefined }];
 
-  const inntektBeloep = nyInnsending
+  const inntektBeloep = !inngangFraKvittering
     ? forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp
-    : kvitteringData?.inntekt?.beloep;
+    : (kvitteringData?.inntekt?.beloep ?? kvitteringData?.inntekt?.beregnetInntekt);
   const visningInntektBeloep = forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
 
   const defaultEndringAarsak = useMemo(() => {
@@ -243,6 +241,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   );
 
   const foersteFravaersdag = finnFoersteFravaersdag(
+    parseIsoDate(forsteDag),
+    mottattBestemmendeFravaersdag as TDateISODate,
+    mottattEksternBestemmendeFravaersdag as TDateISODate
+  );
+
+  console.log(
+    'foersteFravaersdag',
     parseIsoDate(forsteDag),
     mottattBestemmendeFravaersdag as TDateISODate,
     mottattEksternBestemmendeFravaersdag as TDateISODate
