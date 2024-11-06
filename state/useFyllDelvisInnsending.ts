@@ -27,7 +27,7 @@ import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSc
 import isValidUUID from '../utils/isValidUUID';
 import useSkjemadataForespurt from '../utils/useSkjemadataForespurt';
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
-import { parse } from 'path';
+
 // import paakrevdOpplysningstyper from '../utils/paakrevdeOpplysninger';
 
 export default function useFyllDelvisInnsending(forespoerselId: string) {
@@ -55,6 +55,8 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
   // const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   // const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const kvitteringData = useBoundStore((state) => state.kvitteringData);
+  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   // const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
   //   (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   // );
@@ -71,11 +73,17 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
 
   return (skjema: SkjemaData, forespoerselId: string): FullInnsending => {
-    const foersteDag = forespurtDataData.fravaersperioder[0].fom;
+    const foersteDag = forespurtDataData.fravaersperioder.toSorted((periodeA, periodeB) =>
+      periodeA.fom > periodeB.fom ? 1 : -1
+    )[0].fom;
     const beregnetBestemmendeFravaersdag = finnFoersteFravaersdag(
       parseIsoDate(foersteDag),
-      forespurtDataData.bestemmendeFravaersdag as TDateISODate,
-      forespurtDataData.eksternBestemmendeFravaersdag as TDateISODate
+      inngangFraKvittering
+        ? (forespurtDataData.bestemmendeFravaersdag as TDateISODate)
+        : kvitteringData?.bestemmendeFravaersdag,
+      inngangFraKvittering
+        ? (forespurtDataData.eksternBestemmendeFravaersdag as TDateISODate)
+        : kvitteringData?.eksternBestemmendeFravaersdag
     )!;
 
     // const harEgenmeldingsdager = sjekkOmViHarEgenmeldingsdager(egenmeldingsperioder);
@@ -128,7 +136,7 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
 
     // const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
-    const beregnetSkjaeringstidspunkt = parseIsoDate(foersteDag);
+    // const beregnetSkjaeringstidspunkt = parseIsoDate(foersteDag);
     // skjaeringstidspunkt && isValid(skjaeringstidspunkt)
     //   ? skjaeringstidspunkt
     //   : parseIsoDate(
@@ -140,13 +148,24 @@ export default function useFyllDelvisInnsending(forespoerselId: string) {
     //       )!
     //     );
 
-    const bestemmendeFraværsdagTilInnsending = finnFoersteFravaersdag(
-      beregnetSkjaeringstidspunkt,
-      forespurtDataData.bestemmendeFravaersdag,
-      forespurtDataData.eksternBestemmendeFravaersdag
-    );
+    // const bestemmendeFraværsdagTilInnsending = finnFoersteFravaersdag(
+    //   beregnetSkjaeringstidspunkt,
+    //   inngangFraKvittering
+    //     ? (forespurtDataData.bestemmendeFravaersdag as TDateISODate)
+    //     : (kvitteringData?.bestemmendeFraværsdag ?? kvitteringData?.inntekt?.inntektsdato),
+    //   inngangFraKvittering
+    //     ? (forespurtDataData.eksternBestemmendeFravaersdag as TDateISODate)
+    //     : kvitteringData?.eksternBestemmendeFravaersdag
+    // );
 
-    const bestemmendeFraværsdag = formatIsoDate(bestemmendeFraværsdagTilInnsending);
+    console.log('kvitteringData', kvitteringData);
+
+    const bestemmendeFraværsdagTilInnsending = inngangFraKvittering
+      ? ((kvitteringData?.bestemmendeFraværsdag ?? kvitteringData?.inntekt?.inntektsdato) as TDateISODate)
+      : ((forespurtDataData.bestemmendeFravaersdag as TDateISODate) ?? foersteDag);
+
+    // const bestemmendeFraværsdag = formatIsoDate(bestemmendeFraværsdagTilInnsending);
+    const bestemmendeFraværsdag = bestemmendeFraværsdagTilInnsending;
 
     setForeslaattBestemmendeFravaersdag(bestemmendeFraværsdagTilInnsending);
 

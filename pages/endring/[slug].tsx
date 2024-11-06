@@ -92,9 +92,12 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   };
 
   const searchParams = useSearchParams();
+  const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
 
   const forespurtData = !forespurtSkjemaIsLoading ? forespurtSkjemaData.forespurtData : undefined;
-  const refusjonEndringer = forespurtData?.refusjon?.forslag?.perioder;
+  const refusjonEndringer = !inngangFraKvittering
+    ? forespurtData?.refusjon?.forslag?.perioder
+    : kvitteringData?.refusjon?.refusjonEndringer;
 
   const ukjentInntekt = !forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
 
@@ -105,8 +108,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     state.opprinneligRefusjonEndringer,
     state.opprinneligRefusjonskravetOpphoerer
   ]);
-
-  const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
 
   const harRefusjonEndringer = forespurtSkjemaData?.forespurtData?.refusjon?.forslag?.perioder?.length > 0;
 
@@ -241,13 +242,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   );
 
   const foersteFravaersdag = finnFoersteFravaersdag(
-    parseIsoDate(forsteDag),
-    mottattBestemmendeFravaersdag as TDateISODate,
-    mottattEksternBestemmendeFravaersdag as TDateISODate
-  );
-
-  console.log(
-    'foersteFravaersdag',
     parseIsoDate(forsteDag),
     mottattBestemmendeFravaersdag as TDateISODate,
     mottattEksternBestemmendeFravaersdag as TDateISODate

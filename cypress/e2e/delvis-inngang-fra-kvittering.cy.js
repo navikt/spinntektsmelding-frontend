@@ -107,17 +107,11 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByLabelText('Angi siste dag dere krever refusjon for')
       .click()
       .type('{selectAll}30.09.23{esc}', { force: true, delay: 100 });
-    cy.realPress('Escape');
-    cy.wait(1000);
+    // cy.realPress('Escape');
+    // cy.wait(1000);
 
     cy.findByLabelText('Oppgi refusjonsbeløpet per måned').click();
     cy.findByLabelText('Angi siste dag dere krever refusjon for').should('have.value', '30.09.2023');
-
-    cy.findByRole('group', {
-      name: 'Opphører refusjonkravet i perioden?'
-    })
-      .findByLabelText('Nei')
-      .check();
 
     cy.findByRole('button', { name: 'Send' }).click();
 
