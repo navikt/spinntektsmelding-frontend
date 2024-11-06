@@ -9,7 +9,7 @@ import localStyles from './RefusjonArbeidsgiver.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import Datovelger from '../Datovelger';
-import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
+import LenkeEksternt from '../LenkeEksternt';
 import { useState } from 'react';
 import LesMer from '../LesMer';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';

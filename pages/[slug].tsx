@@ -23,7 +23,7 @@ import Feilsammendrag from '../components/Feilsammendrag';
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
 import environment from '../config/environment';
 
-import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode/Arbeidsgiverperiode';
+import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
 // import fetchInntektsdata from '../utils/fetchInntektsdata';

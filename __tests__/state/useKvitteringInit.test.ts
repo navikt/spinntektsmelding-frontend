@@ -59,17 +59,17 @@ describe('useKvitteringInit', () => {
       kvitteringInit(mottattKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.navn).toEqual(mottattKvittering.fulltNavn);
-    expect(result.current.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
-    expect(result.current.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
-    expect(result.current.virksomhetsnavn).toEqual(mottattKvittering.virksomhetNavn);
+    expect(result.current.navn).toEqual(mottattKvittering.kvitteringDokument.fulltNavn);
+    expect(result.current.identitetsnummer).toEqual(mottattKvittering.kvitteringDokument.identitetsnummer);
+    expect(result.current.orgnrUnderenhet).toEqual(mottattKvittering.kvitteringDokument.orgnrUnderenhet);
+    expect(result.current.virksomhetsnavn).toEqual(mottattKvittering.kvitteringDokument.virksomhetNavn);
 
     expect(result.current.harRefusjonEndringer).toBe('Ja');
     expect(result.current.egenmeldingsperioder).toEqual([
       {
-        fom: parseIsoDate(mottattKvittering.egenmeldingsperioder[0].fom),
+        fom: parseIsoDate(mottattKvittering.kvitteringDokument.egenmeldingsperioder[0].fom),
         id: 'uuid',
-        tom: parseIsoDate(mottattKvittering.egenmeldingsperioder[0].tom)
+        tom: parseIsoDate(mottattKvittering.kvitteringDokument.egenmeldingsperioder[0].tom)
       }
     ]);
   });
@@ -85,10 +85,10 @@ describe('useKvitteringInit', () => {
       kvitteringInit(annenMottattKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.navn).toEqual(annenMottattKvittering.fulltNavn);
-    expect(result.current.identitetsnummer).toEqual(annenMottattKvittering.identitetsnummer);
-    expect(result.current.orgnrUnderenhet).toEqual(annenMottattKvittering.orgnrUnderenhet);
-    expect(result.current.virksomhetsnavn).toEqual(annenMottattKvittering.virksomhetNavn);
+    expect(result.current.navn).toEqual(annenMottattKvittering.kvitteringDokument.fulltNavn);
+    expect(result.current.identitetsnummer).toEqual(annenMottattKvittering.kvitteringDokument.identitetsnummer);
+    expect(result.current.orgnrUnderenhet).toEqual(annenMottattKvittering.kvitteringDokument.orgnrUnderenhet);
+    expect(result.current.virksomhetsnavn).toEqual(annenMottattKvittering.kvitteringDokument.virksomhetNavn);
 
     expect(result.current.fullLonnIArbeidsgiverPerioden?.status).toBe('Nei');
     expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('LovligFravaer');
