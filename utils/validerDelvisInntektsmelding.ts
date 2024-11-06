@@ -16,11 +16,8 @@ import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../v
 // import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
-<<<<<<< HEAD
 import valideringDelvisInnsendingSchema from '../schema/valideringDelvisInnsendingSchema';
 import { z } from 'zod';
-=======
->>>>>>> 43a7ae66 (Bruke SWR)
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -62,14 +59,9 @@ type Skjema = z.infer<typeof valideringDelvisInnsendingSchema>;
 export default function validerDelvisInntektsmelding(
   state: CompleteState,
   opplysningerBekreftet: boolean,
-<<<<<<< HEAD
   kunInntektOgRefusjon: boolean,
   forespurtData: ForespurtData,
   form: Skjema
-=======
-  kunInntektOgRefusjon?: boolean,
-  forespurtData: ForespurtData
->>>>>>> 43a7ae66 (Bruke SWR)
 ): SubmitInntektsmeldingReturnvalues {
   let errorTexts: Array<ValiderTekster> = [];
   let errorCodes: Array<ValiderResultat> = [];
@@ -115,25 +107,11 @@ export default function validerDelvisInntektsmelding(
       state.arbeidsgiverperioder
     );
   }
-<<<<<<< HEAD
 
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
     { beloep: form.refusjon?.refusjonPrMnd, status: form.refusjon?.kreverRefusjon },
     { status: form.refusjon?.kravetOpphoerer, opphoersdato: form.refusjon?.refusjonOpphoerer },
     form.inntekt.beloep ?? forespurtData.bruttoinntekt
-=======
-  console.log(
-    'validering',
-    state.lonnISykefravaeret,
-    state.refusjonskravetOpphoerer,
-    state.bruttoinntekt.bruttoInntekt ?? forespurtData.bruttoinntekt
-  );
-
-  feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
-    state.lonnISykefravaeret,
-    state.refusjonskravetOpphoerer,
-    state.bruttoinntekt.bruttoInntekt ?? forespurtData.bruttoinntekt
->>>>>>> 43a7ae66 (Bruke SWR)
   );
 
   feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
