@@ -1,6 +1,5 @@
 import NetworkError from './NetworkError';
 import isValidUUID from './isValidUUID';
-<<<<<<< HEAD
 import { endepunktHentForespoerselSchema } from '../schema/endepunktHentForespoerselSchema';
 import { z } from 'zod';
 
@@ -10,11 +9,6 @@ export default function fetcherSkjemadataForespurt(
   url: string | null,
   forespoerselId: string
 ): Promise<EndepunktHentForespoerselSchema | []> {
-=======
-
-export default function fetcherSkjemadataForespurt(url: string | null, forespoerselId: string): Promise<any> {
-  // TODO: Fix any med riktig type for mottatte data
->>>>>>> 43a7ae66 (Bruke SWR)
   if (!url) return Promise.resolve([]);
   if (!isValidUUID(forespoerselId)) return Promise.resolve([]);
   return fetch(url, {

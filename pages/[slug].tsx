@@ -1,4 +1,4 @@
-import React, { use, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -37,13 +37,8 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { startOfMonth } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
-<<<<<<< HEAD
 // import isValidUUID from '../utils/isValidUUID';
 // import useHentSkjemadata from '../utils/useHentSkjemadata';
-=======
-import isValidUUID from '../utils/isValidUUID';
-import useHentSkjemadata from '../utils/useHentSkjemadata';
->>>>>>> 43a7ae66 (Bruke SWR)
 import useSkjemadataForespurt from '../utils/useSkjemadataForespurt';
 import useStateInit from '../state/useStateInit';
 import { Opplysningstype } from '../state/useForespurtDataStore';
@@ -66,6 +61,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.skjemastatus,
     state.inngangFraKvittering
   ]);
+
+  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
 
   const {
     data: forespurtData,
@@ -91,38 +88,18 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     !forespurtDataIsLoading && forespurtData.eksternBestemmendeFravaersdag
       ? parseIsoDate(forespurtData.eksternBestemmendeFravaersdag)
       : undefined;
-<<<<<<< HEAD
   const stateFravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const stateArbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   // const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
-  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
-
-  // const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
-=======
-  // const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  // const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  // const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
 
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
->>>>>>> 43a7ae66 (Bruke SWR)
   const [arbeidsgiverKanFlytteSkjæringstidspunkt, initBruttoinntekt] = useBoundStore((state) => [
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
     state.initBruttoinntekt
   ]);
-<<<<<<< HEAD
-  const initState = useStateInit();
-=======
-  // const initState = useStateInit();
->>>>>>> 43a7ae66 (Bruke SWR)
-  const router = useRouter();
 
-  const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
-
-<<<<<<< HEAD
   const [navn, identitetsnummer, orgnrUnderenhet, virksomhetsnavn, innsenderNavn, innsenderTelefonNr] = useBoundStore(
     (state) => [
       state.navn,
@@ -133,9 +110,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       state.innsenderTelefonNr
     ]
   );
-=======
-  const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
->>>>>>> 43a7ae66 (Bruke SWR)
+
+  const initState = useStateInit();
+  const router = useRouter();
+
+  const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
+
+  // const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
 
   const searchParams = useSearchParams();
   // const hentSkjemadata = useHentSkjemadata();
@@ -192,26 +173,23 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     id: toIsoDate(periode.fom) + toIsoDate(periode.tom)
   }));
 
+  // const fravaersperioder = forespurtData?.fravaersperioder.map((periode) => ({
+  //   fom: parseIsoDate(periode.fom),
+  //   tom: parseIsoDate(periode.tom),
+  //   id: periode.fom + periode.tom
+  // }));
+
   const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder ?? []);
 
   const arbeidsgiverperioder =
     endretArbeidsgiverperiode || inngangFraKvittering ? stateArbeidsgiverperioder : finnArbeidsgiverperiode(altFravaer);
 
-  const fravaersperioder = forespurtData?.fravaersperioder.map((periode) => ({
-    fom: parseIsoDate(periode.fom),
-    tom: parseIsoDate(periode.tom),
-    id: periode.fom + periode.tom
-  }));
-
-  const arbeidsgiverperioder = finnArbeidsgiverperiode(fravaersperioder);
+  // const arbeidsgiverperioder = finnArbeidsgiverperiode(fravaersperioder);
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     if (forespurtDataIsLoading) return undefined;
 
-<<<<<<< HEAD
-=======
     const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder ?? []);
->>>>>>> 43a7ae66 (Bruke SWR)
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
       altFravaer,
       arbeidsgiverperioder,
@@ -220,12 +198,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     );
     return beregnetBestemmendeFraværsdagISO ? parseIsoDate(beregnetBestemmendeFraværsdagISO) : bestemmendeFravaersdag;
   }, [
+    forespurtDataIsLoading,
+    fravaersperioder,
+    egenmeldingsperioder,
     arbeidsgiverperioder,
-    altFravaer,
     foreslaattBestemmendeFravaersdag,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
-    bestemmendeFravaersdag,
-    forespurtDataIsLoading
+    bestemmendeFravaersdag
   ]);
 
   const inntektsdato = useMemo(() => {
@@ -256,16 +235,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     ? paakrevdOpplysningstyper(forespurtData.forespurtData)
     : (Object.keys(skjemaVariant) as Array<Opplysningstype>);
 
-<<<<<<< HEAD
-  const personData = {
-    navn: selvbestemtInnsending ? navn : forespurtData?.navn,
-    identitetsnummer: selvbestemtInnsending ? identitetsnummer : forespurtData?.identitetsnummer,
-    virksomhetsnavn: selvbestemtInnsending ? virksomhetsnavn : forespurtData?.orgNavn,
-    orgnrUnderenhet: selvbestemtInnsending ? orgnrUnderenhet : forespurtData?.orgnrUnderenhet,
-    innsenderNavn: selvbestemtInnsending ? innsenderNavn : forespurtData?.innsenderNavn,
-    innsenderTelefonNr: selvbestemtInnsending ? innsenderTelefonNr : (forespurtData?.telefonnummer ?? '')
-  };
-
   useEffect(() => {
     if (!forespurtDataIsLoading && forespurtData && !inngangFraKvittering) {
       let masserteForespurteData = { ...forespurtData };
@@ -288,38 +257,26 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       }
       initState(masserteForespurteData);
 
-      // setPaakrevdeOpplysninger(opplysningstyper);
+      console.log('erBesvart', forespurtData.erBesvart);
       if (forespurtData.erBesvart) {
         router.replace(`/kvittering/${pathSlug}`, undefined);
-      } else if (!isOpplysningstype(forespoerselType.arbeidsgiverperiode, opplysningstyper)) {
-=======
-  useEffect(() => {
-    if (!forespurtDataIsLoading && forespurtData && !inngangFraKvittering) {
-      // initState(forespurtData);
-
-      // setPaakrevdeOpplysninger(opplysningstyper);
-
+      }
       if (!isOpplysningstype(forespoerselType.arbeidsgiverperiode, opplysningstyper)) {
->>>>>>> 43a7ae66 (Bruke SWR)
         router.replace(`/endring/${pathSlug}`, undefined);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-<<<<<<< HEAD
   }, [forespurtData, inngangFraKvittering, router, forespurtDataIsLoading]);
 
-=======
-  }, [forespurtData, inngangFraKvittering, router, forespurtDataIsLoading, opplysningstyper]);
-
   const personData = {
-    navn: forespurtData?.navn,
-    identitetsnummer: forespurtData?.identitetsnummer,
-    virksomhetsnavn: forespurtData?.orgNavn,
-    orgnrUnderenhet: forespurtData?.orgnrUnderenhet,
-    innsenderNavn: forespurtData?.innsenderNavn,
-    innsenderTelefonNr: forespurtData?.telefonnummer ?? ''
+    navn: selvbestemtInnsending ? navn : forespurtData?.navn,
+    identitetsnummer: selvbestemtInnsending ? identitetsnummer : forespurtData?.identitetsnummer,
+    virksomhetsnavn: selvbestemtInnsending ? virksomhetsnavn : forespurtData?.orgNavn,
+    orgnrUnderenhet: selvbestemtInnsending ? orgnrUnderenhet : forespurtData?.orgnrUnderenhet,
+    innsenderNavn: selvbestemtInnsending ? innsenderNavn : forespurtData?.innsenderNavn,
+    innsenderTelefonNr: selvbestemtInnsending ? innsenderTelefonNr : (forespurtData?.telefonnummer ?? '')
   };
->>>>>>> 43a7ae66 (Bruke SWR)
+
   return (
     <div className={styles.container}>
       <Head>
@@ -346,11 +303,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             setIsDirtyForm={setIsDirtyForm}
             skjemastatus={skjemastatus}
             selvbestemtInnsending={selvbestemtInnsending}
-<<<<<<< HEAD
-            perioder={fravaersperioder}
-=======
             perioder={forespurtData?.fravaersperioder}
->>>>>>> 43a7ae66 (Bruke SWR)
           />
 
           <Skillelinje />
@@ -418,7 +371,6 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-<<<<<<< HEAD
 export function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | undefined)[]): boolean {
   return opplysningstyper.includes(value as Opplysningstype);
 }
@@ -432,8 +384,3 @@ function toIsoDate(date?: string | Date): string {
   }
   return date.toISOString();
 }
-=======
-function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | undefined)[]): boolean {
-  return opplysningstyper.includes(value as Opplysningstype);
-}
->>>>>>> 43a7ae66 (Bruke SWR)

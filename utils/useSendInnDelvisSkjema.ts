@@ -12,32 +12,20 @@ import validerDelvisInntektsmelding from './validerDelvisInntektsmelding';
 import { z } from 'zod';
 import { delvisInnsendingSchema } from '../schema/delvisInnsendingSchema';
 import useSkjemadataForespurt from './useSkjemadataForespurt';
-<<<<<<< HEAD
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
 import valideringDelvisInnsendingSchema from '../schema/valideringDelvisInnsendingSchema';
 
 type Skjema = z.infer<typeof valideringDelvisInnsendingSchema>;
-=======
-import { endepunktHentForespoerselSchema, ForespurtData } from '../schema/endepunktHentForespoerselSchema';
->>>>>>> 43a7ae66 (Bruke SWR)
 
 export default function useSendInnDelvisSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
   amplitudeComponent: string,
   setError: UseFormSetError<any>,
-<<<<<<< HEAD
-  forespoerselId: string
-) {
-  const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
-  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
-  const fyllInnsending = useFyllDelvisInnsending(forespoerselId);
-=======
   forespoerselId?: string
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllDelvisInnsending(forespoerselId!);
->>>>>>> 43a7ae66 (Bruke SWR)
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const state = useBoundStore((state) => state);
   const errorResponse = useErrorRespons();
@@ -54,16 +42,11 @@ export default function useSendInnDelvisSkjema(
     isLoading: boolean;
   };
 
-<<<<<<< HEAD
   return async (kunInntektOgRefusjon: boolean, pathSlug: string, isDirtyForm: boolean, form: Skjema) => {
-=======
-  return async (kunInntektOgRefusjon: boolean, pathSlug: string, isDirtyForm: boolean, form: any) => {
->>>>>>> 43a7ae66 (Bruke SWR)
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
       component: amplitudeComponent
     });
-    console.log('useSendInnDelvisSkjema', kunInntektOgRefusjon, pathSlug, isDirtyForm, form);
 
     if (!isDirtyForm) {
       console.log('useSendInnDelvisSkjema', 'Innsending uten endringer i skjema');
@@ -88,11 +71,7 @@ export default function useSendInnDelvisSkjema(
       return false;
     }
 
-<<<<<<< HEAD
     const errorStatus = validerDelvisInntektsmelding(state, true, kunInntektOgRefusjon, forespurtData, form);
-=======
-    const errorStatus = validerDelvisInntektsmelding(state, true, kunInntektOgRefusjon, forespurtData);
->>>>>>> 43a7ae66 (Bruke SWR)
 
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
@@ -108,7 +87,7 @@ export default function useSendInnDelvisSkjema(
     }
 
     type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
-    console.log('useSendInnDelvisSkjema', form, pathSlug);
+
     const skjemaData: DelvisInnsending = fyllInnsending(form, pathSlug);
 
     const validerteData = delvisInnsendingSchema.safeParse(skjemaData);
@@ -117,6 +96,7 @@ export default function useSendInnDelvisSkjema(
       logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
       logger.error(validerteData.error);
     } else {
+      console.log('validerteData.data', validerteData.data);
       setKvitteringsdata(validerteData.data);
     }
 

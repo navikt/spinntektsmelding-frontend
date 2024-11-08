@@ -67,7 +67,7 @@ export default function useKvitteringInit() {
   const initRefusjonskravetOpphoerer = useBoundStore((state) => state.initRefusjonskravetOpphoerer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
 
-  return async (kvitteringsData: KvitteringInit | []) => {
+  return async (kvitteringsData: KvitteringInit) => {
     let jsonData: KvitteringSkjema;
     if (!kvitteringsData || (Array.isArray(kvitteringsData) && kvitteringsData.length === 0)) return;
 

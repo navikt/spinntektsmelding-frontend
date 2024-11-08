@@ -77,12 +77,12 @@ export default function VelgAarsak({
         <div className={lokalStyles.endremaaanedsinntekt}>
           <TariffendringDato
             defaultEndringsdato={
-              defaultEndringAarsak.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
                 ? parseIsoDate(defaultEndringAarsak.gjelderFra)
                 : undefined
             }
             defaultKjentDato={
-              defaultEndringAarsak.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
                 ? parseIsoDate(defaultEndringAarsak.bleKjent)
                 : undefined
             }
