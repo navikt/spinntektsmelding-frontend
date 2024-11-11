@@ -165,7 +165,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
   const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
-    ? bestemmendeFravaersdag
+    ? (bestemmendeFravaersdag ?? kvitteringData?.bestemmendeFraværsdag)
     : (parseIsoDate(kvitteringData?.inntekt?.inntektsdato) ?? foreslaattBestemmendeFravaersdag);
 
   useEffect(() => {
