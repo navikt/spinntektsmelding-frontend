@@ -1,0 +1,23 @@
+{
+  "selvbestemtInntektsmelding": {
+    "id": "743fcb36-d30c-4ec6-866c-ede069c3453f",
+    "type": { "type": "Selvbestemt", "id": "35f30157-36b7-4739-8334-0b711c751572" },
+    "sykmeldt": { "fnr": "01447842099", "navn": "KONKURRANSEDYKTIG HANDLINGSROM" },
+    "avsender": {
+      "orgnr": "810007982",
+      "orgNavn": "ANSTENDIG PIGGSVIN SYKEHJEM",
+      "navn": "BERØMT FLYTTELASS",
+      "tlf": "11223344"
+    },
+    "sykmeldingsperioder": [{ "fom": "2024-04-01", "tom": "2024-04-10" }],
+    "agp": {
+      "perioder": [{ "fom": "2024-04-01", "tom": "2024-04-10" }],
+      "egenmeldinger": [],
+      "redusertLoennIAgp": { "beloep": 5005, "begrunnelse": "Permittering" }
+    },
+    "inntekt": { "beloep": 74002, "inntektsdato": "2024-04-01", "naturalytelser": [], "endringAarsak": null },
+    "refusjon": null,
+    "aarsakInnsending": "Ny",
+    "mottatt": "2024-06-13T16:39:28.810737597+02:00"
+  }
+}

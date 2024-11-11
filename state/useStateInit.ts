@@ -5,6 +5,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import MottattData from './MottattData';
 import useBoundStore from './useBoundStore';
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
+import { json } from 'stream/consumers';
 
 type Datafelt = 'virksomhet' | 'arbeidstaker-informasjon' | 'forespoersel-svar' | 'inntekt';
 
@@ -64,7 +65,7 @@ export default function useStateInit() {
       jsonData.navn,
       jsonData.identitetsnummer,
       jsonData.orgnrUnderenhet,
-      jsonData.orgNavn,
+      jsonData.orgNavn ?? jsonData.virksomhetsnavn,
       jsonData.innsenderNavn,
       jsonData.telefonnummer,
       feilVedLasting

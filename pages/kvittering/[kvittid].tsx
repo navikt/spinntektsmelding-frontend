@@ -107,7 +107,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   };
 
   const visningsdata = mapForespurtData(forespurtKvittering, forespurtSkjema, kvitteringData);
-  console.log('visningsdata', visningsdata);
+
   const forespurtKvitteringDokument = forespurtKvittering?.kvitteringDokument;
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
@@ -387,7 +387,6 @@ function mapForespurtData(
   forespurtSkjema: ForespurtData,
   kvitteringData: DelvisInnsending
 ): ForespurtData | undefined {
-  console.log('mapForespurtData', forespurtKvittering, forespurtSkjema, kvitteringData);
   if (!kvitteringData && forespurtKvittering?.kvitteringDokument) {
     const data = forespurtKvittering?.kvitteringDokument;
     if (!data) return undefined;

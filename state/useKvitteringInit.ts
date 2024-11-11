@@ -104,6 +104,7 @@ export default function useKvitteringInit() {
     );
 
     const bestemmendeFravaersdag = jsonData.bestemmendeFraværsdag;
+
     if (bestemmendeFravaersdag) {
       setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
       setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));

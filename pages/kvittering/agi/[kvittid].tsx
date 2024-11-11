@@ -1,4 +1,4 @@
-import testdata from '../../../mockdata/selvbestemt-kvittering.json';
+import testdata from '../../../mockdata/feil/kvittering-agi.json';
 
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
@@ -73,6 +73,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
+  const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
 
   const [navn, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
     state.navn,
@@ -120,8 +121,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input, personData);
-    kvitteringInit(kvittering);
+    kvitteringInit({ kvitteringDokument: kvittering });
     // Må lagre data som kan endres i hovedskjema - Slutt
+
+    setInngangFraKvittering();
 
     if (isValidUUID(kvitteringSlug)) {
       router.push(`/${kvitteringSlug}`);
@@ -145,11 +148,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const visningBestemmendeFravaersdag = dataFraBackend
     ? parseIsoDate(kvitteringDokument.inntekt.inntektsdato)
     : parseIsoDate(kvitteringData?.inntekt?.inntektsdato);
-
-  useEffect(() => {
-    setNyInnsending(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   const visNaturalytelser = true;
   const visArbeidsgiverperiode = true;
@@ -466,6 +464,7 @@ function prepareForInitiering(kvitteringData: any, personData: PersonData) {
 
   kvittering.arbeidsgiverperioder = kvitteringData.agp?.perioder;
 
+  kvittering.bestemmendeFraværsdag = kvitteringData.inntekt.inntektsdato;
   return kvittering;
 }
 

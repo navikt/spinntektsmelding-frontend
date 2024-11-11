@@ -47,9 +47,10 @@ export default function useFyllAapenInnsending() {
   );
 
   return (skjemaData: any) => {
-    const endringAarsak: EndringAarsak | undefined =
-      bruttoinntekt.endringAarsak !== null ? bruttoinntekt.endringAarsak : undefined;
-
+    const endringAarsak: EndringAarsak | undefined = bruttoinntekt.endringAarsak?.aarsak
+      ? bruttoinntekt.endringAarsak
+      : undefined;
+    console.log('endringAarsak', endringAarsak);
     const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
 
     const innsending = validerAapenInnsending({

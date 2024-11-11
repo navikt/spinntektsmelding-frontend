@@ -80,10 +80,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.leggTilFeilmelding
   ]);
 
-  // const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const bestemmendeFravaersdagState = useBoundStore((state) => state.bestemmendeFravaersdag);
   const bestemmendeFravaersdag = !forespurtDataIsLoading
     ? parseIsoDate(forespurtData.bestemmendeFravaersdag)
-    : undefined;
+    : bestemmendeFravaersdagState;
+
   const foreslaattBestemmendeFravaersdag =
     !forespurtDataIsLoading && forespurtData.eksternBestemmendeFravaersdag
       ? parseIsoDate(forespurtData.eksternBestemmendeFravaersdag)
@@ -173,18 +174,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     id: toIsoDate(periode.fom) + toIsoDate(periode.tom)
   }));
 
-  // const fravaersperioder = forespurtData?.fravaersperioder.map((periode) => ({
-  //   fom: parseIsoDate(periode.fom),
-  //   tom: parseIsoDate(periode.tom),
-  //   id: periode.fom + periode.tom
-  // }));
-
   const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder ?? []);
 
   const arbeidsgiverperioder =
     endretArbeidsgiverperiode || inngangFraKvittering ? stateArbeidsgiverperioder : finnArbeidsgiverperiode(altFravaer);
-
-  // const arbeidsgiverperioder = finnArbeidsgiverperiode(fravaersperioder);
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     if (forespurtDataIsLoading) return undefined;
@@ -227,16 +220,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skalHenteInntektsdata
   );
 
-  console.log(forespurtData, forespurtDataError);
-
-  const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
+  const sbBruttoinntekt = !error ? data?.bruttoinntekt : undefined;
   const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
   const opplysningstyper = !forespurtDataIsLoading
     ? paakrevdOpplysningstyper(forespurtData.forespurtData)
     : (Object.keys(skjemaVariant) as Array<Opplysningstype>);
 
   useEffect(() => {
-    if (!forespurtDataIsLoading && forespurtData && !inngangFraKvittering) {
+    if (!forespurtDataIsLoading && forespurtData) {
       let masserteForespurteData = { ...forespurtData };
 
       if (selvbestemtInnsending) {
@@ -255,9 +246,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           })) ?? [];
         masserteForespurteData = { ...forespurtData, ...personData };
       }
+
       initState(masserteForespurteData);
 
-      console.log('erBesvart', forespurtData.erBesvart);
       if (forespurtData.erBesvart) {
         router.replace(`/kvittering/${pathSlug}`, undefined);
       }

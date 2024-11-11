@@ -62,6 +62,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     } else {
       skjemaData.aarsakInnsending = 'Ny';
     }
+
     const validerteData = fyllAapenInnsending(skjemaData);
 
     if (validerteData.success !== true) {
