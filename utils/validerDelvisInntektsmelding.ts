@@ -18,15 +18,11 @@ import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/val
 import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
 import valideringDelvisInnsendingSchema from '../schema/valideringDelvisInnsendingSchema';
 import { z } from 'zod';
+import { ValiderTekster } from './validerInntektsmelding';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
   errorTexts?: Array<ValiderTekster>;
-}
-
-interface ValiderTekster {
-  felt: string;
-  text: string;
 }
 
 enum ErrorCodes {

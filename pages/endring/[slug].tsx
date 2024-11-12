@@ -58,7 +58,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  // const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
 
   const [
     initLonnISykefravaeret,
@@ -91,21 +90,22 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     isLoading: boolean;
   };
 
-  // const inntektBeloep = forespurtSkjemaData?.bruttoinntekt;
   const searchParams = useSearchParams();
   const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
 
   const forespurtData = !forespurtSkjemaIsLoading ? forespurtSkjemaData.forespurtData : undefined;
   const refusjonEndringer = !inngangFraKvittering
     ? forespurtData?.refusjon?.forslag?.perioder
-    : kvitteringData?.refusjon?.refusjonEndringer;
+    : kvitteringData?.refusjon?.endringer?.map((endring) => ({
+        beloep: endring.beloep,
+        fom: endring.startdato
+      }));
 
   const ukjentInntekt = !forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
 
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
-  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  // const forespurtData = useBoundStore((state) => state.forespurtData);
+
   const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer, harRefusjonEndringer] = useBoundStore(
     (state) => [
       state.opprinneligRefusjonEndringer,
@@ -113,23 +113,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       state.harRefusjonEndringer
     ]
   );
-  // const [bestemmendeFravaersdag, mottattBestemmendeFravaersdag, mottattEksternBestemmendeFravaersdag] = useBoundStore(
-  //   (state) => [
-  //     state.bestemmendeFravaersdag,
-  //     state.mottattBestemmendeFravaersdag,
-  //     state.mottattEksternBestemmendeFravaersdag
-  //   ]
-  // );
 
-  // const mottattBestemmendeFravaersdag = forespurtSkjemaData?.bestemmendeFravaersdag;
-  // const mottattEksternBestemmendeFravaersdag = forespurtSkjemaData?.eksternBestemmendeFravaersdag;
-
-  // const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer] = useBoundStore((state) => [
-  //   state.opprinneligRefusjonEndringer,
-  //   state.opprinneligRefusjonskravetOpphoerer
-  // ]);
-
-  // const harRefusjonEndringer = forespurtSkjemaData?.forespurtData?.refusjon?.forslag?.perioder?.length > 0;
   const gammeltSkjaeringstidspunkt = parseIsoDate(
     forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
   );
@@ -195,9 +179,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     return aktivEndringAarsak ? ImportEndringAarsakSchema.parse(aktivEndringAarsak) : undefined;
   }, [kvitteringData?.inntekt?.endringAarsak, nyInnsending]);
   const forsteDag = forespurtSkjemaData?.fravaersperioder?.[0]?.fom;
-
-  // const opprinneligRefusjonskravetOpphoererStatus = opprinneligRefusjonskravetOpphoerer?.status;
-  // const opprinneligRefusjonskravetOpphoererDato = opprinneligRefusjonskravetOpphoerer?.opphoersdato;
 
   const methods = useForm<Skjema>({
     resolver: zodResolver(valideringDelvisInnsendingSchema),

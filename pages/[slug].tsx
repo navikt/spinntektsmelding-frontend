@@ -26,7 +26,7 @@ import environment from '../config/environment';
 import Arbeidsgiverperiode from '../components/Arbeidsgiverperiode';
 import IngenTilgang from '../components/IngenTilgang/IngenTilgang';
 import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
-// import fetchInntektsdata from '../utils/fetchInntektsdata';
+
 // import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -37,8 +37,6 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { startOfMonth } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
-// import isValidUUID from '../utils/isValidUUID';
-// import useHentSkjemadata from '../utils/useHentSkjemadata';
 import useSkjemadataForespurt from '../utils/useSkjemadataForespurt';
 import useStateInit from '../state/useStateInit';
 import { Opplysningstype } from '../state/useForespurtDataStore';
@@ -93,12 +91,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const stateArbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  // const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
 
-  const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
-  const [arbeidsgiverKanFlytteSkjæringstidspunkt, initBruttoinntekt] = useBoundStore((state) => [
-    state.arbeidsgiverKanFlytteSkjæringstidspunkt,
-    state.initBruttoinntekt
+  const [arbeidsgiverKanFlytteSkjæringstidspunkt] = useBoundStore((state) => [
+    state.arbeidsgiverKanFlytteSkjæringstidspunkt
   ]);
 
   const [navn, identitetsnummer, orgnrUnderenhet, virksomhetsnavn, innsenderNavn, innsenderTelefonNr] = useBoundStore(
@@ -116,11 +111,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const router = useRouter();
 
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
-
-  // const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
-
   const searchParams = useSearchParams();
-  // const hentSkjemadata = useHentSkjemadata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(

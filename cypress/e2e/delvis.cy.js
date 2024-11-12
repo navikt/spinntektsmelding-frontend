@@ -84,6 +84,20 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.get('[data-cy="bestemmendefravaersdag"]')
       .invoke('text')
       .should('match', /25.02.2023/);
+
+    cy.contains('table thead tr td', 'Dato for endring')
+      .invoke('index')
+      .should('equal', 0)
+      .then((index) => {
+        cy.contains(`tbody tr td:nth-child(${index + 1})`, '30.09.2023');
+      });
+
+    cy.contains('table thead tr td', 'Endret refusjonsbeløp')
+      .invoke('index')
+      .should('equal', 1)
+      .then((index) => {
+        cy.contains(`tbody tr td:nth-child(${index + 1})`, '0,00');
+      });
   });
 
   it('Changes and submit', () => {
