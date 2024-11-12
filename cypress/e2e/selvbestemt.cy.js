@@ -165,6 +165,9 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         selvbestemtId: null,
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       });
+
+    cy.location('pathname').should('equal', '/im-dialog/kvittering/agi/1234-5678-1234-5678-123456789012');
+    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
   });
 
   it('selvbestemt med varig lønnsendring', () => {
@@ -281,6 +284,9 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         selvbestemtId: null,
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       });
+
+    cy.location('pathname').should('equal', '/im-dialog/kvittering/agi/1234-5678-1234-5678-123456789012');
+    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
   });
 
   it('selvbestemt. Enklest mulig innsending', () => {
@@ -386,5 +392,9 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         selvbestemtId: null,
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       });
+
+    cy.location('pathname').should('equal', '/im-dialog/kvittering/agi/1234-5678-1234-5678-123456789012');
+    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
+    cy.findAllByText('Ansatt er helt eller delvis permittert').should('be.visible');
   });
 });

@@ -48,6 +48,7 @@ import useKvitteringInit from '../../../state/useKvitteringInit';
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 import { getToken, validateToken } from '@navikt/oasis';
 import environment from '../../../config/environment';
+import { ImportEndringAarsakSchema } from '../../../schema/importEndringAarsakSchema';
 
 type PersonData = {
   navn: string;
@@ -283,7 +284,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const endringAarsak = dataFraBackend
     ? kvitteringDokument.inntekt.endringAarsak
-    : kvitteringData?.inntekt.endringAarsak;
+    : ImportEndringAarsakSchema.parse(kvitteringData?.inntekt?.endringAarsak);
 
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
