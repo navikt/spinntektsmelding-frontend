@@ -282,4 +282,109 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       });
   });
+
+  it('selvbestemt. Enklest mulig innsending', () => {
+    cy.intercept('/im-dialog/kvittering/agi/1234-5678-1234-5678-123456789012', {
+      statusCode: 200,
+      body: 'OK'
+    }).as('loginRedirect');
+
+    cy.intercept('/im-dialog/api/selvbestemt-inntektsmelding', {
+      statusCode: 201,
+      body: {
+        selvbestemtId: '1234-5678-1234-5678-123456789012'
+      }
+    }).as('innsendingSelvbestemtInntektsmelding');
+
+    cy.intercept('/im-dialog/api/aktiveorgnr', {
+      statusCode: 200,
+      body: {
+        fulltNavn: 'MUSKULØS VALS',
+        underenheter: [{ orgnrUnderenhet: '810007842', virksomhetsnavn: 'ANSTENDIG PIGGSVIN BARNEHAGE' }]
+      }
+    }).as('aktiveorgnr');
+
+    cy.findByLabelText('Angi personnummer for den ansatte').type('25087327879');
+    cy.contains('Neste').click();
+
+    cy.location('pathname').should('equal', '/im-dialog/initiering2');
+
+    cy.findByLabelText('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
+    cy.findByLabelText('16.09.2024 - 17.09.2024').check();
+
+    cy.contains('Neste').click();
+
+    cy.findByLabelText('Telefon innsender').type('12345678');
+
+    cy.findByLabelText('Utbetalt under arbeidsgiverperiode').type('5000');
+
+    cy.findAllByLabelText('Velg begrunnelse for kort arbeidsgiverperiode').select(
+      'Det er ikke fire ukers opptjeningstid'
+    );
+
+    cy.findByRole('group', {
+      name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+    })
+      .findByLabelText('Nei')
+      .check();
+
+    cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+
+    cy.contains('Send').click();
+
+    cy.wait('@innsendingSelvbestemtInntektsmelding')
+      .its('request.body')
+      .should('deep.equal', {
+        agp: {
+          perioder: [
+            {
+              fom: '2024-09-06',
+              tom: '2024-09-08'
+            },
+            {
+              fom: '2024-09-10',
+              tom: '2024-09-17'
+            }
+          ],
+          egenmeldinger: [
+            {
+              fom: '2024-09-06',
+              tom: '2024-09-08'
+            },
+            {
+              fom: '2024-09-10',
+              tom: '2024-09-10'
+            }
+          ],
+          redusertLoennIAgp: {
+            beloep: 5000,
+            begrunnelse: 'ManglerOpptjening'
+          }
+        },
+        inntekt: {
+          beloep: 84333.33,
+          inntektsdato: '2024-09-10',
+          naturalytelser: [],
+          endringAarsak: null
+        },
+        refusjon: null,
+        sykmeldtFnr: '25087327879',
+        avsender: {
+          orgnr: '810007842',
+          tlf: '12345678'
+        },
+        sykmeldingsperioder: [
+          {
+            fom: '2024-09-11',
+            tom: '2024-09-15'
+          },
+          {
+            fom: '2024-09-16',
+            tom: '2024-09-17'
+          }
+        ],
+        selvbestemtId: null,
+        vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      });
+  });
 });
