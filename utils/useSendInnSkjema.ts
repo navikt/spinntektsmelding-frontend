@@ -9,6 +9,7 @@ import { logger } from '@navikt/next-logger';
 import validerInntektsmelding from './validerInntektsmelding';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { z } from 'zod';
+import responseBackendError from '../schema/responseBackendError';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -167,27 +168,35 @@ export default function useSendInnSkjema(
               });
 
               if (resultat.error) {
-                let errors: Array<ErrorResponse> = [];
+                const feilResultat = responseBackendError.safeParse(resultat);
 
-                if (resultat.valideringsfeil) {
-                  errors = resultat.valideringsfeil.map((error: any) => ({
-                    error: error
-                  }));
-                } else {
-                  errors = [
-                    {
+                if (feilResultat.success === true) {
+                  const feil = feilResultat.data;
+
+                  let errors: Array<ErrorResponse> = [];
+
+                  if (feil.valideringsfeil) {
+                    errors = feil.valideringsfeil.map((error: any) => ({
                       value: 'Innsending av skjema feilet',
-                      error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+                      error: error,
                       property: 'server'
-                    }
-                  ];
+                    }));
+                  } else {
+                    errors = [
+                      {
+                        value: 'Innsending av skjema feilet',
+                        error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+                        property: 'server'
+                      }
+                    ];
+                  }
+
+                  errorResponse(errors);
+                  setSkalViseFeilmeldinger(true);
+
+                  logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
+                  logger.error(data);
                 }
-
-                errorResponse(errors);
-                setSkalViseFeilmeldinger(true);
-
-                logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
-                logger.error(data);
               }
             });
         }
