@@ -15,15 +15,14 @@ import { CompleteState } from '../state/useBoundStore';
 import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
 // import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
+import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
+import valideringDelvisInnsendingSchema from '../schema/valideringDelvisInnsendingSchema';
+import { z } from 'zod';
+import { ValiderTekster } from './validerInntektsmelding';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
   errorTexts?: Array<ValiderTekster>;
-}
-
-interface ValiderTekster {
-  felt: string;
-  text: string;
 }
 
 enum ErrorCodes {
@@ -51,14 +50,18 @@ interface ValiderResultat {
   code: codeUnion;
 }
 
+type Skjema = z.infer<typeof valideringDelvisInnsendingSchema>;
+
 export default function validerDelvisInntektsmelding(
   state: CompleteState,
   opplysningerBekreftet: boolean,
-  kunInntektOgRefusjon?: boolean
+  kunInntektOgRefusjon: boolean,
+  forespurtData: ForespurtData,
+  form: Skjema
 ): SubmitInntektsmeldingReturnvalues {
   let errorTexts: Array<ValiderTekster> = [];
   let errorCodes: Array<ValiderResultat> = [];
-  let feilkoderFravaersperioder: Array<ValiderResultat> = [];
+  // let feilkoderFravaersperioder: Array<ValiderResultat> = [];
   let feilkoderEgenmeldingsperioder: Array<ValiderResultat> = [];
   let feilkoderBruttoinntekt: Array<ValiderResultat> = [];
   let feilkoderNaturalytelser: Array<ValiderResultat> = [];
@@ -70,21 +73,21 @@ export default function validerDelvisInntektsmelding(
 
   state.setSkalViseFeilmeldinger(true);
 
-  if (state.fravaersperioder) {
-    if (state.fravaersperioder.length < 1) {
-      errorCodes.push({
-        felt: '',
-        code: ErrorCodes.INGEN_FRAVAERSPERIODER
-      });
-    }
+  // if (state.fravaersperioder) {
+  //   if (state.fravaersperioder.length < 1) {
+  //     errorCodes.push({
+  //       felt: '',
+  //       code: ErrorCodes.INGEN_FRAVAERSPERIODER
+  //     });
+  //   }
 
-    feilkoderFravaersperioder = validerPeriode(state.fravaersperioder);
-  } else {
-    errorCodes.push({
-      felt: '',
-      code: ErrorCodes.INGEN_FRAVAERSPERIODER
-    });
-  }
+  //   feilkoderFravaersperioder = validerPeriode(state.fravaersperioder);
+  // } else {
+  //   errorCodes.push({
+  //     felt: '',
+  //     code: ErrorCodes.INGEN_FRAVAERSPERIODER
+  //   });
+  // }
 
   if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && !kunInntektOgRefusjon) {
     feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
@@ -100,10 +103,11 @@ export default function validerDelvisInntektsmelding(
       state.arbeidsgiverperioder
     );
   }
+
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
-    state.lonnISykefravaeret,
-    state.refusjonskravetOpphoerer,
-    state.bruttoinntekt.bruttoInntekt
+    { beloep: form.refusjon?.refusjonPrMnd, status: form.refusjon?.kreverRefusjon },
+    { status: form.refusjon?.kravetOpphoerer, opphoersdato: form.refusjon?.refusjonOpphoerer },
+    form.inntekt.beloep ?? forespurtData.bruttoinntekt
   );
 
   feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
@@ -121,7 +125,7 @@ export default function validerDelvisInntektsmelding(
 
   errorCodes = [
     ...errorCodes,
-    ...feilkoderFravaersperioder,
+    // ...feilkoderFravaersperioder,
     ...feilkoderEgenmeldingsperioder,
     ...feilkoderBruttoinntekt,
     ...feilkoderNaturalytelser,

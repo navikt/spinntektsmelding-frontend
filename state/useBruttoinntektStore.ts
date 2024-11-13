@@ -49,7 +49,7 @@ export interface BruttoinntektState {
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
-  setEndringAarsak: (endringAarsak: EndringAarsak) => void;
+  setEndringAarsak: (endringAarsak: EndringAarsak | undefined) => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({

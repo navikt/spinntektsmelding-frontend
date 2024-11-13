@@ -11,27 +11,45 @@ import { UseFormSetError } from 'react-hook-form';
 import validerDelvisInntektsmelding from './validerDelvisInntektsmelding';
 import { z } from 'zod';
 import { delvisInnsendingSchema } from '../schema/delvisInnsendingSchema';
+import useSkjemadataForespurt from './useSkjemadataForespurt';
+import { ForespurtData } from '../schema/endepunktHentForespoerselSchema';
+import valideringDelvisInnsendingSchema from '../schema/valideringDelvisInnsendingSchema';
+
+type Skjema = z.infer<typeof valideringDelvisInnsendingSchema>;
 
 export default function useSendInnDelvisSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
   amplitudeComponent: string,
-  setError: UseFormSetError<any>
+  setError: UseFormSetError<any>,
+  forespoerselId?: string
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
-  const fyllInnsending = useFyllDelvisInnsending();
+  const fyllInnsending = useFyllDelvisInnsending(forespoerselId!);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const state = useBoundStore((state) => state);
   const errorResponse = useErrorRespons();
   const router = useRouter();
+  const setKvitteringsdata = useBoundStore((state) => state.setKvitteringsdata);
 
-  return async (kunInntektOgRefusjon: boolean, pathSlug: string, isDirtyForm: boolean, form: any) => {
+  const {
+    data: forespurtData,
+    error: forespurtDataError,
+    isLoading: forespurtDataIsLoading
+  } = useSkjemadataForespurt(forespoerselId!, true) as {
+    data: ForespurtData;
+    error: any;
+    isLoading: boolean;
+  };
+
+  return async (kunInntektOgRefusjon: boolean, pathSlug: string, isDirtyForm: boolean, form: Skjema) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
       component: amplitudeComponent
     });
 
     if (!isDirtyForm) {
+      console.log('useSendInnDelvisSkjema', 'Innsending uten endringer i skjema');
       logEvent('skjema fullført', {
         tittel: 'Innsending uten endringer i skjema',
         component: amplitudeComponent
@@ -53,7 +71,7 @@ export default function useSendInnDelvisSkjema(
       return false;
     }
 
-    const errorStatus = validerDelvisInntektsmelding(state, true, kunInntektOgRefusjon);
+    const errorStatus = validerDelvisInntektsmelding(state, true, kunInntektOgRefusjon, forespurtData, form);
 
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
@@ -77,6 +95,9 @@ export default function useSendInnDelvisSkjema(
     if (validerteData.success === false) {
       logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
       logger.error(validerteData.error);
+    } else {
+      console.log('validerteData.data', validerteData.data);
+      setKvitteringsdata(validerteData.data);
     }
 
     fyllFeilmeldinger([]);

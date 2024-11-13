@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { BodyLong, Button, ConfirmationPanel, Link } from '@navikt/ds-react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import PageContent from '../../components/PageContent/PageContent';
 import styles from '../../styles/Home.module.css';
@@ -16,7 +16,6 @@ import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Heading2 from '../../components/Heading2/Heading2';
 import H3Label from '../../components/H3Label';
 import { useSearchParams } from 'next/navigation';
-import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 import logEvent from '../../utils/logEvent';
 import environment from '../../config/environment';
 import IngenTilgang from '../../components/IngenTilgang';
@@ -35,18 +34,22 @@ import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 import { LonnISykefravaeret, YesNo } from '../../state/state';
 import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
-import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import { TDateISODate } from '../../state/MottattData';
+import useSkjemadataForespurt from '../../utils/useSkjemadataForespurt';
+import { endepunktHentForespoerselSchema } from '../../schema/endepunktHentForespoerselSchema';
+import { delvisInnsendingSchema } from '../../schema/delvisInnsendingSchema';
+import { ImportEndringAarsakSchema } from '../../schema/importEndringAarsakSchema';
+
+type ForespurtData = z.infer<typeof endepunktHentForespoerselSchema>;
+type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   type Skjema = z.infer<typeof valideringDelvisInnsendingSchema>;
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const [setEndringerAvRefusjon] = useBoundStore((state) => [state.setEndringerAvRefusjon]);
 
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
   const setEndringAarsak = useBoundStore((state) => state.setEndringAarsak);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
@@ -55,8 +58,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
-  const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
 
   const [
     initLonnISykefravaeret,
@@ -77,21 +78,34 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     state.initRefusjonskravetOpphoerer,
     state.feilmeldinger
   ]);
+  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
+
+  const {
+    data: forespurtSkjemaData,
+    error: forespurtSkjemaError,
+    isLoading: forespurtSkjemaIsLoading
+  } = useSkjemadataForespurt(slug, !inngangFraKvittering) as {
+    data: ForespurtData;
+    error: any;
+    isLoading: boolean;
+  };
 
   const searchParams = useSearchParams();
+  const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
 
-  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+  const forespurtData = !forespurtSkjemaIsLoading ? forespurtSkjemaData.forespurtData : undefined;
+  const refusjonEndringer = !inngangFraKvittering
+    ? forespurtData?.refusjon?.forslag?.perioder
+    : kvitteringData?.refusjon?.endringer?.map((endring) => ({
+        beloep: endring.beloep,
+        fom: endring.startdato
+      }));
 
-  const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
-  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
-  const ukjentInntekt = useBoundStore((state) => state.ukjentInntekt);
-
-  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
+  const ukjentInntekt = !forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
 
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
-  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  const forespurtData = useBoundStore((state) => state.forespurtData);
+
   const [opprinneligRefusjonEndringer, opprinneligRefusjonskravetOpphoerer, harRefusjonEndringer] = useBoundStore(
     (state) => [
       state.opprinneligRefusjonEndringer,
@@ -99,74 +113,87 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       state.harRefusjonEndringer
     ]
   );
-  const [bestemmendeFravaersdag, mottattBestemmendeFravaersdag, mottattEksternBestemmendeFravaersdag] = useBoundStore(
-    (state) => [
-      state.bestemmendeFravaersdag,
-      state.mottattBestemmendeFravaersdag,
-      state.mottattEksternBestemmendeFravaersdag
-    ]
+
+  const gammeltSkjaeringstidspunkt = parseIsoDate(
+    forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
   );
 
-  const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
+  const mottattBestemmendeFravaersdag =
+    nyInnsending && !inngangFraKvittering
+      ? forespurtSkjemaData?.bestemmendeFravaersdag
+      : (forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ??
+        kvitteringData?.bestemmendeFravaersdag);
+
+  const mottattEksternBestemmendeFravaersdag =
+    nyInnsending && !inngangFraKvittering ? forespurtSkjemaData?.eksternBestemmendeFravaersdag : undefined;
 
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
   const aapentManglendeData = inngangFraKvittering || ukjentInntekt;
 
-  const [innsenderTelefonNr] = useBoundStore((state) => [state.innsenderTelefonNr]);
-
   const amplitudeComponent = 'DelvisInnsending';
 
-  const hentKvitteringsdata = useHentKvitteringsdata();
-
-  const foersteDatoForRefusjon = skjaeringstidspunkt ?? bestemmendeFravaersdag;
+  const foersteDatoForRefusjon = forespurtSkjemaData?.bestemmendeFravaersdag;
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     foersteDatoForRefusjon && refusjonEndringer
       ? refusjonEndringer?.filter((endring) => {
-          if (!endring.dato) return false;
-          return isAfter(endring.dato, foersteDatoForRefusjon);
+          if (!endring.fom) return false;
+          return isAfter(parseIsoDate(endring.fom)!, parseIsoDate(foersteDatoForRefusjon)!);
         })
       : refusjonEndringer;
 
   const refusjonPrMnd = !nyInnsending
-    ? (lonnISykefravaeret!.beloep ?? bruttoinntekt?.bruttoInntekt)
+    ? (lonnISykefravaeret?.beloep ?? forespurtSkjemaData?.bruttoinntekt)
     : refusjonEndringer
         ?.filter((endring) => {
-          if (!endring.dato) return false;
-          return !isAfter(endring.dato, foersteDatoForRefusjon!);
+          if (!endring.fom) return false;
+          return !isAfter(parseIsoDate(endring.fom)!, parseIsoDate(foersteDatoForRefusjon)!);
         })
         .map((endring) => {
           return {
             beloep: endring.beloep,
-            dato: endring.dato
+            dato: parseIsoDate(endring.fom)
           };
         })
         .sort((a, b) => {
           return a.dato && b.dato ? (a.dato < b.dato ? 1 : -1) : 0;
         })[0]?.beloep;
 
-  let aktiveRefusjonEndringer;
-  if (nyInnsending) {
-    aktiveRefusjonEndringer =
-      refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
-        ? refusjonEndringerUtenSkjaeringstidspunkt
-        : [{ beloep: undefined, dato: undefined }];
-  } else {
-    aktiveRefusjonEndringer = refusjonEndringer;
-  }
+  const aktiveRefusjonEndringer =
+    refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
+      ? refusjonEndringerUtenSkjaeringstidspunkt.map((endring) => ({
+          beloep: endring.beloep,
+          dato: parseIsoDate(endring.fom)
+        }))
+      : [{ beloep: undefined, dato: undefined }];
 
-  const opprinneligRefusjonskravetOpphoererStatus = opprinneligRefusjonskravetOpphoerer?.status;
-  const opprinneligRefusjonskravetOpphoererDato = opprinneligRefusjonskravetOpphoerer?.opphoersdato;
+  const inntektBeloep = !inngangFraKvittering
+    ? forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp
+    : (kvitteringData?.inntekt?.beloep ?? kvitteringData?.inntekt?.beregnetInntekt);
+  const visningInntektBeloep = forespurtSkjemaData?.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
+
+  const defaultEndringAarsak = useMemo(() => {
+    const aktivEndringAarsak = nyInnsending ? undefined : kvitteringData?.inntekt?.endringAarsak;
+    return aktivEndringAarsak ? ImportEndringAarsakSchema.parse(aktivEndringAarsak) : undefined;
+  }, [kvitteringData?.inntekt?.endringAarsak, nyInnsending]);
+  const forsteDag = forespurtSkjemaData?.fravaersperioder?.[0]?.fom;
 
   const methods = useForm<Skjema>({
     resolver: zodResolver(valideringDelvisInnsendingSchema),
     defaultValues: {
       inntekt: {
-        beloep: bruttoinntekt.bruttoInntekt
+        endringBruttoloenn: nyInnsending
+          ? undefined
+          : !!kvitteringData?.inntekt?.endringAarsak?.aarsak
+            ? 'Ja'
+            : undefined,
+        beloep: inntektBeloep,
+        endringAarsak: defaultEndringAarsak,
+        inntektsdato: nyInnsending ? parseIsoDate(forsteDag) : kvitteringData?.inntekt?.inntektsdato
       },
-      telefon: innsenderTelefonNr,
+      telefon: nyInnsending ? (forespurtSkjemaData?.telefonnummer ?? '') : (kvitteringData?.avsenderTlf ?? ''),
       opplysningerBekreftet: false,
       refusjon: {
         refusjonPrMnd: refusjonPrMnd,
@@ -175,8 +202,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           refusjonEndringerUtenSkjaeringstidspunkt && refusjonEndringerUtenSkjaeringstidspunkt.length > 0
             ? 'Ja'
             : 'Nei',
-        refusjonOpphoerer: opprinneligRefusjonskravetOpphoererDato,
-        kravetOpphoerer: opprinneligRefusjonskravetOpphoererStatus,
+        refusjonOpphoerer: opprinneligRefusjonskravetOpphoerer?.opphoersdato,
+        kravetOpphoerer: !!forespurtSkjemaData?.forespurtData?.refusjon?.forslag?.opphoersdato ? 'Ja' : 'Nei',
         kreverRefusjon: refusjonPrMnd !== 0 && typeof refusjonPrMnd !== 'undefined' ? 'Ja' : 'Nei'
       }
     }
@@ -201,24 +228,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   const nyeRefusjonEndringer = watch('refusjon.refusjonEndringer');
 
-  useEffect(() => {
-    if (refusjonPrMnd) {
-      setValue('refusjon.refusjonPrMnd', refusjonPrMnd);
-    }
-  }, [refusjonPrMnd, setValue]);
-
-  useEffect(() => {
-    if (ukjentInntekt) {
-      setValue('inntekt.endringBruttoloenn', 'Ja');
-    }
-  }, [ukjentInntekt, setValue]);
-
-  useEffect(() => {
-    if (bruttoinntekt.bruttoInntekt) {
-      setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
-    }
-  }, [bruttoinntekt.bruttoInntekt, setValue]);
-
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.saksoversiktUrl;
   };
@@ -239,25 +248,13 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     [tilbakestillMaanedsinntekt]
   );
 
-  useEffect(() => {
-    if (!fravaersperioder && pathSlug) {
-      const slug = pathSlug as string;
-      hentKvitteringsdata(slug);
-      setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
-    }
-    if (pathSlug) {
-      setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug]);
-
   const foersteFravaersdag = finnFoersteFravaersdag(
-    foreslaattBestemmendeFravaersdag,
-    mottattBestemmendeFravaersdag,
-    mottattEksternBestemmendeFravaersdag
+    parseIsoDate(forsteDag),
+    mottattBestemmendeFravaersdag as TDateISODate,
+    mottattEksternBestemmendeFravaersdag as TDateISODate
   );
 
-  const sendInnDelvisSkjema = useSendInnDelvisSkjema(setIngenTilgangOpen, amplitudeComponent, setError);
+  const sendInnDelvisSkjema = useSendInnDelvisSkjema(setIngenTilgangOpen, amplitudeComponent, setError, slug);
 
   const submitForm: SubmitHandler<Skjema> = (skjemaData: Skjema) => {
     setSenderInn(true);
@@ -300,7 +297,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
         setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
       }
 
-      setEndringAarsak(skjemaData.inntekt.endringAarsak);
+      setEndringAarsak(skjemaData?.inntekt?.endringAarsak);
 
       setSenderInn(false);
     });
@@ -328,7 +325,8 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     }
   }, [aapentManglendeData]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrige innsending';
+  const sisteInnsending =
+    gammeltSkjaeringstidspunkt && !inngangFraKvittering ? formatDate(gammeltSkjaeringstidspunkt) : 'forrige innsending';
 
   const harEndringer = harRefusjonEndringer;
 
@@ -344,7 +342,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   if (
     refusjonOpphoerer &&
-    isBefore(parseIsoDate(forespurtData?.refusjon.forslag?.opphoersdato!), gammeltSkjaeringstidspunkt!)
+    isBefore(parseIsoDate(forespurtData?.refusjon.forslag?.opphoersdato!)!, gammeltSkjaeringstidspunkt!)
   ) {
     refusjonBeloep = 0;
   }
@@ -356,18 +354,27 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   });
 
   const sisteMuligeSluttdatoRefusjon = finnTidligsteRefusjonOpphoersdato(
-    foreslaattBestemmendeFravaersdag,
-    mottattBestemmendeFravaersdag,
-    mottattEksternBestemmendeFravaersdag,
+    parseIsoDate(forsteDag),
+    mottattBestemmendeFravaersdag as TDateISODate,
+    mottattEksternBestemmendeFravaersdag as TDateISODate,
     nyeRefusjonEndringer
   );
 
   useEffect(() => {
     if (harEndringBruttoloenn === 'Nei') {
       unregister('inntekt.endringAarsak');
-      setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+      setValue('inntekt.beloep', inntektBeloep);
     }
-  }, [harEndringBruttoloenn, unregister, setValue, bruttoinntekt.bruttoInntekt]);
+  }, [harEndringBruttoloenn, unregister, setValue, inntektBeloep]);
+
+  const personData = {
+    navn: forespurtSkjemaData?.navn,
+    identitetsnummer: forespurtSkjemaData?.identitetsnummer,
+    virksomhetsnavn: forespurtSkjemaData?.orgNavn,
+    orgnrUnderenhet: forespurtSkjemaData?.orgnrUnderenhet,
+    innsenderNavn: forespurtSkjemaData?.innsenderNavn,
+    innsenderTelefonNr: nyInnsending ? (forespurtSkjemaData?.telefonnummer ?? '') : (kvitteringData?.avsenderTlf ?? '')
+  };
 
   return (
     <div className={styles.container}>
@@ -382,7 +389,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           <main className={`main-content`}>
             <FormProvider {...methods}>
               <form className={styles.padded} onSubmit={methods.handleSubmit(submitForm)}>
-                <PersonData erDelvisInnsending />
+                <PersonData erDelvisInnsending personData={personData} />
                 <Skillelinje />
                 <Heading2>Beregnet månedslønn</Heading2>
                 {ukjentInntekt && (
@@ -394,7 +401,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   <>
                     <BodyLong>
                       I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
-                      <strong>{formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)}</strong>&nbsp;kr
+                      <strong>{formatCurrency(visningInntektBeloep ?? 0)}</strong>&nbsp;kr
                     </BodyLong>
                     <FancyJaNei
                       legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
@@ -412,7 +419,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       <VelgAarsak
                         changeMaanedsintektHandler={changeMaanedsintektHandler}
                         changeBegrunnelseHandler={changeBegrunnelseHandler}
-                        defaultEndringAarsak={endringAarsak}
+                        defaultEndringAarsak={defaultEndringAarsak}
                         bestemmendeFravaersdag={foersteFravaersdag}
                         nyInnsending={nyInnsending}
                         clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
@@ -581,10 +588,10 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 export default Endring;
 
 export function finnFoersteFravaersdag(
-  foreslaattBestemmendeFravaersdag: Date,
+  foreslaattBestemmendeFravaersdag?: Date | undefined,
   mottattBestemmendeFravaersdag?: TDateISODate,
   mottattEksternBestemmendeFravaersdag?: TDateISODate
-): Date {
+): Date | undefined {
   if (mottattBestemmendeFravaersdag) {
     if (
       mottattEksternBestemmendeFravaersdag &&
@@ -598,7 +605,7 @@ export function finnFoersteFravaersdag(
 }
 
 function finnTidligsteRefusjonOpphoersdato(
-  foreslaattBestemmendeFravaersdag: Date,
+  foreslaattBestemmendeFravaersdag?: Date,
   mottattBestemmendeFravaersdag?: TDateISODate,
   mottattEksternBestemmendeFravaersdag?: TDateISODate,
   refusjonEndringer?: EndringsBeloep[]
@@ -607,7 +614,7 @@ function finnTidligsteRefusjonOpphoersdato(
     foreslaattBestemmendeFravaersdag,
     mottattBestemmendeFravaersdag,
     mottattEksternBestemmendeFravaersdag
-  );
+  )!;
 
   const refusjonEndringDatoer = refusjonEndringer?.map((endring) => endring.dato);
   const sisteEndringDato = refusjonEndringDatoer?.sort((a, b) => (a && b ? (a > b ? 1 : -1) : 0))[0];
@@ -621,7 +628,7 @@ function finnTidligsteRefusjonOpphoersdato(
 }
 
 export async function getServerSideProps(context: any) {
-  const slug = context.query.slug;
+  const slug = context.query.slug as string;
 
   return {
     props: {

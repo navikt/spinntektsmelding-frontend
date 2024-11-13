@@ -1,0 +1,31 @@
+{
+  "kvitteringDokument": {
+    "orgnrUnderenhet": "810007842",
+    "identitetsnummer": "22518249472",
+    "fulltNavn": "OVERFØLSOM GRAVEMASKIN",
+    "telefonnummer": "22222222",
+    "innsenderNavn": "BERØMT FLYTTELASS",
+    "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "behandlingsdager": [],
+    "egenmeldingsperioder": [],
+    "arbeidsgiverperioder": [{ "fom": "2024-08-01", "tom": "2024-08-16" }],
+    "bestemmendeFraværsdag": "2024-08-01",
+    "fraværsperioder": [
+      { "fom": "2024-08-01", "tom": "2024-08-31" },
+      { "fom": "2024-08-14", "tom": "2024-09-11" }
+    ],
+    "inntekt": {
+      "bekreftet": true,
+      "beregnetInntekt": 60000.0,
+      "endringÅrsak": { "typpe": "Ferie", "liste": [{ "fom": "2024-06-01", "tom": "2024-07-31" }] },
+      "manueltKorrigert": true
+    },
+    "fullLønnIArbeidsgiverPerioden": { "utbetalerFullLønn": true },
+    "refusjon": { "utbetalerHeleEllerDeler": false },
+    "naturalytelser": [],
+    "årsakInnsending": "NY",
+    "bekreftOpplysninger": true,
+    "tidspunkt": "2024-11-07T15:49:01.124517151+01:00",
+    "forespurtData": ["arbeidsgiverperiode", "inntekt"]
+  }
+}

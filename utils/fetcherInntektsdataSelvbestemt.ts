@@ -3,22 +3,34 @@ import formatIsoDate from './formatIsoDate';
 
 export default function fetcherInntektsdataSelvbestemt(
   url: string | null,
-  identitetsnummer?: string,
-  orgnrUnderenhet?: string,
-  inntektsdato?: Date
+  identitetsnummer: string,
+  orgnrUnderenhet: string,
+  inntektsdato: Date,
+  forespoerselId: string
 ) {
   if (!url) return Promise.resolve([]);
   if (!identitetsnummer) return Promise.resolve([]);
+  let requestBody = {};
+
+  if (forespoerselId === 'arbeidsgiverInitiertInnsending') {
+    requestBody = JSON.stringify({
+      sykmeldtFnr: identitetsnummer,
+      orgnr: orgnrUnderenhet,
+      inntektsdato: formatIsoDate(inntektsdato)
+    });
+  } else {
+    requestBody = JSON.stringify({
+      forespoerselId: forespoerselId,
+      skjaeringstidspunkt: formatIsoDate(inntektsdato)
+    });
+  }
+
   return fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      sykmeldtFnr: identitetsnummer,
-      orgnr: orgnrUnderenhet,
-      inntektsdato: formatIsoDate(inntektsdato)
-    })
+    body: requestBody
   })
     .then((res) => {
       if (!res.ok) {

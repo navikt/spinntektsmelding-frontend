@@ -16,7 +16,7 @@ export default function validerLonnUnderSykefravaeret(
 ): Array<ValiderResultat> {
   let errorStatus: Array<ValiderResultat> = [];
 
-  if (!refusjon) {
+  if (!refusjon || (!refusjon.status && !refusjon.beloep)) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_MANGLER,
       felt: 'lus-radio'

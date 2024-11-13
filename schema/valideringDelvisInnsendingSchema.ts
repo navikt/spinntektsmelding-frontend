@@ -68,7 +68,12 @@ export default z
         if (value.refusjonOpphoerer === undefined && value.kravetOpphoerer === 'Ja') {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Vennligst angi sluttdato for refusjonskravet.',
+            message:
+              'Vennligst angi sluttdato for refusjonskravet.' +
+              value.kravetOpphoerer +
+              ' -' +
+              value.refusjonOpphoerer +
+              '-',
             path: ['refusjonOpphoerer']
           });
         }

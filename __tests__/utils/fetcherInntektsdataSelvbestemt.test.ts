@@ -26,7 +26,7 @@ describe('fetcherInntektsdataSelvbestemt', () => {
     expect(result).toEqual([]);
   });
 
-  it('should make a POST request with the correct parameters', async () => {
+  it('should make a POST request with the correct parameters for selvbestemt', async () => {
     const expectedRequestBody = JSON.stringify({
       sykmeldtFnr: identitetsnummer,
       orgnr: orgnrUnderenhet,
@@ -40,7 +40,43 @@ describe('fetcherInntektsdataSelvbestemt', () => {
 
     global.fetch.mockResolvedValueOnce(mockResponse);
 
-    await fetcherInntektsdataSelvbestemt(url, identitetsnummer, orgnrUnderenhet, inntektsdato);
+    await fetcherInntektsdataSelvbestemt(
+      url,
+      identitetsnummer,
+      orgnrUnderenhet,
+      inntektsdato,
+      'arbeidsgiverInitiertInnsending'
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: expectedRequestBody
+    });
+  });
+
+  it('should make a POST request with the correct parameters for not selvbestemt', async () => {
+    const expectedRequestBody = JSON.stringify({
+      forespoerselId: 'ikke-arbeidsgiver-initiert-innsending',
+      skjaeringstidspunkt: '2025-04-07'
+    });
+
+    const mockResponse = {
+      ok: true,
+      json: vi.fn().mockResolvedValueOnce({ data: 'mocked data' })
+    };
+
+    global.fetch.mockResolvedValueOnce(mockResponse);
+
+    await fetcherInntektsdataSelvbestemt(
+      url,
+      identitetsnummer,
+      orgnrUnderenhet,
+      inntektsdato,
+      'ikke-arbeidsgiver-initiert-innsending'
+    );
 
     expect(global.fetch).toHaveBeenCalledWith(url, {
       method: 'POST',

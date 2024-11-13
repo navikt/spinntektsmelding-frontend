@@ -61,7 +61,7 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(false);
+      innsending = fyllInnsending(false, '8d50ef20-37b5-4829-ad83-56219e70b375');
     });
 
     if (innsending) {
@@ -70,8 +70,8 @@ describe('useFyllInnsending', () => {
 
       expect(innsending.agp.egenmeldinger).toEqual([
         {
-          fom: mottattKvittering.egenmeldingsperioder[0].fom,
-          tom: mottattKvittering.egenmeldingsperioder[0].tom
+          fom: mottattKvittering.kvitteringDokument.egenmeldingsperioder[0].fom,
+          tom: mottattKvittering.kvitteringDokument.egenmeldingsperioder[0].tom
         }
       ]);
       // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
@@ -108,8 +108,8 @@ describe('useFyllInnsending', () => {
 
       expect(innsending.agp.egenmeldinger).toEqual([
         {
-          fom: mottattKvittering.egenmeldingsperioder[0].fom,
-          tom: mottattKvittering.egenmeldingsperioder[0].tom
+          fom: mottattKvittering.kvitteringDokument.egenmeldingsperioder[0].fom,
+          tom: mottattKvittering.kvitteringDokument.egenmeldingsperioder[0].tom
         }
       ]);
       // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
@@ -154,7 +154,7 @@ describe('formaterRedusertLoennIAgp', () => {
     });
   });
 
-  it('should return null, when status = Ja', async () => {
+  it('should return null, when status = Ja and utbetalt is undefined', async () => {
     const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
       status: 'Ja',
       begrunnelse: 'ArbeidOpphoert',

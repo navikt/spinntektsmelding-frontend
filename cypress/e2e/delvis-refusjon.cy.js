@@ -238,6 +238,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByText(/30.06.2023/).should('be.visible');
     cy.findByText(/05.07.2023/).should('be.visible');
     cy.findByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
+    cy.findByText(/10\s?000,00\s?kr\/måned/).should('be.visible');
     cy.findAllByText('24.01.2023').should('not.exist');
 
     cy.get('[data-cy="bestemmendefravaersdag"]')

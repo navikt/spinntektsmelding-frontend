@@ -8,34 +8,24 @@ import { useFormContext } from 'react-hook-form';
 import Heading2 from '../Heading2/Heading2';
 import Skillelinje from '../Skillelinje/Skillelinje';
 
+type PersonData = {
+  navn: string;
+  identitetsnummer: string;
+  virksomhetsnavn: string;
+  orgnrUnderenhet: string;
+  innsenderNavn: string;
+  innsenderTelefonNr?: string;
+};
+
 interface PersonDataProps {
   erKvittering?: boolean;
   erDelvisInnsending?: boolean;
+  personData?: PersonData;
 }
 
-export default function PersonData({ erKvittering, erDelvisInnsending }: PersonDataProps) {
-  const [
-    navn,
-    identitetsnummer,
-    orgnrUnderenhet,
-    virksomhetsnavn,
-    innsenderTelefonNr,
-    innsenderNavn,
-
-    feilHentingAvPersondata,
-    feilHentingAvArbeidsgiverdata
-  ] = useBoundStore(
-    (state) => [
-      state.navn,
-      state.identitetsnummer,
-      state.orgnrUnderenhet,
-      state.virksomhetsnavn,
-      state.innsenderTelefonNr,
-      state.innsenderNavn,
-
-      state.feilHentingAvPersondata,
-      state.feilHentingAvArbeidsgiverdata
-    ],
+export default function PersonData({ erKvittering, erDelvisInnsending, personData }: PersonDataProps) {
+  const [feilHentingAvPersondata, feilHentingAvArbeidsgiverdata] = useBoundStore(
+    (state) => [state.feilHentingAvPersondata, state.feilHentingAvArbeidsgiverdata],
     shallow
   );
 
@@ -57,7 +47,7 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
 
   const feilmeldingTekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
 
-  const skjemadataErLastet = !!identitetsnummer;
+  const skjemadataErLastet = !!personData?.identitetsnummer;
 
   return (
     <>
@@ -88,13 +78,13 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
             {!hentingAvPersondataFeilet && (
               <div className={lokalStyles.ansattWrapper}>
                 <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, navn)}</div>
+                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, personData?.navn)}</div>
               </div>
             )}
             <div className={lokalStyles.ansattWrapper}>
               <TextLabel>Personnummer</TextLabel>
               <div data-cy='identitetsnummer'>
-                {identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
+                {personData?.identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
               </div>
             </div>
           </div>
@@ -107,7 +97,7 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
               <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
+                  {personData?.virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
                 </div>
               </div>
             )}
@@ -121,12 +111,14 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
             )}
             <div className={lokalStyles.orgnrNavnWrapper}>
               <TextLabel>Orgnr. for underenhet</TextLabel>
-              <div data-cy='orgnummer'>{orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}</div>
+              <div data-cy='orgnummer'>
+                {personData?.orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}
+              </div>
             </div>
             <div className={lokalStyles.innsenderNavnWrapper}>
               <TextLabel>Innsender</TextLabel>
               <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {skeletonLoader(skjemadataErLastet, innsenderNavn)}
+                {skeletonLoader(skjemadataErLastet, personData?.innsenderNavn)}
               </div>
             </div>
             <div className={lokalStyles.telefonWrapper}>
@@ -134,7 +126,7 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
                 <>
                   <TextLabel>Telefon innsender</TextLabel>
                   <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
-                    {innsenderTelefonNr}
+                    {personData?.innsenderTelefonNr}
                   </div>
                 </>
               )}

@@ -32,7 +32,7 @@
   ],
   "innsenderNavn": "Test Testesen",
   "telefonnummer": "12345678",
-
+  "bestemmendeFravaersdag": "2023-03-15",
   "forespurtData": {
     "arbeidsgiverperiode": {
       "paakrevd": true

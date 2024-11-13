@@ -21,7 +21,6 @@ import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgive
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../state/useBoundStore';
-import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 
 import ButtonPrint from '../../components/ButtonPrint';
 
@@ -33,34 +32,47 @@ import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isBefore, isValid } from 'date-fns';
 import env from '../../config/environment';
-import { Periode } from '../../state/state';
+import { LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode, RefusjonskravetOpphoerer } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
 
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+import useSkjemadataForespurt from '../../utils/useSkjemadataForespurt';
+import { ForespurtData } from '../../schema/endepunktHentForespoerselSchema';
+import parseIsoDate from '../../utils/parseIsoDate';
+import { z } from 'zod';
+import { delvisInnsendingSchema } from '../../schema/delvisInnsendingSchema';
+import paakrevdOpplysningstyper from '../../utils/paakrevdeOpplysninger';
+
+import useKvitteringInit from '../../state/useKvitteringInit';
+import useKvitteringdata from '../../utils/useKvitteringdata';
+import mottattKvitteringSchema from '../../schema/mottattKvitteringSchema';
+
+type MottattKvitteringSchema = z.infer<typeof mottattKvitteringSchema>;
+type DelvisInnsending = z.infer<typeof delvisInnsendingSchema>;
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const hentKvitteringsdata = useHentKvitteringsdata();
+  const initKvittering = useKvitteringInit();
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
-  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  // const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
+  // const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
+  // const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+  const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
 
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
 
@@ -71,6 +83,32 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  const kvitteringData = useBoundStore((state) => state.kvitteringData) as unknown as DelvisInnsending;
+  const setKvitteringsdata = useBoundStore((state) => state.setKvitteringsdata);
+
+  const {
+    data: forespurtSkjema,
+    error: forespurtSkjemaError,
+    isLoading: forespurtSkjemaIsLoading
+  } = useSkjemadataForespurt(kvittid, !!kvitteringData) as {
+    data: ForespurtData;
+    error: any;
+    isLoading: boolean;
+  };
+
+  const {
+    data: forespurtKvittering,
+    error: forespurtKvitteringError,
+    isLoading: forespurtKvitteringIsLoading
+  } = useKvitteringdata(kvittid, !kvitteringData) as {
+    data: MottattKvitteringSchema;
+    error: any;
+    isLoading: boolean;
+  };
+
+  const visningsdata = mapForespurtData(forespurtKvittering, forespurtSkjema, kvitteringData);
+
+  const forespurtKvitteringDokument = forespurtKvittering?.kvitteringDokument;
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     gammeltSkjaeringstidspunkt && refusjonEndringer
@@ -90,12 +128,17 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const clickEndre = () => {
     const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
 
-    if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
-      if (isValidUUID(kvitteringSlug)) {
+    setInngangFraKvittering();
+
+    if (!kvitteringData) {
+      setKvitteringsdata({
+        ...visningsdata
+      });
+    }
+    if (isValidUUID(kvitteringSlug)) {
+      if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
         router.push(`/${kvitteringSlug}`);
-      }
-    } else {
-      if (isValidUUID(kvitteringSlug)) {
+      } else {
         router.push(`/endring/${kvitteringSlug}`);
       }
     }
@@ -114,26 +157,27 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
 
-  const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
+  const opplysningstyper = paakrevdOpplysningstyper(forespurtKvitteringDokument?.forespurtData);
+  const paakrevdeOpplysninger = forespurtKvitteringDokument ? opplysningstyper : hentPaakrevdOpplysningstyper();
 
-  const trengerArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const trengerArbeidsgiverperiode =
+    forespurtSkjema?.forespurtData?.arbeidsgiverperiode?.paakrevd ??
+    paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
   const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
-    ? bestemmendeFravaersdag
-    : foreslaattBestemmendeFravaersdag;
+    ? (bestemmendeFravaersdag ?? kvitteringData?.bestemmendeFraværsdag)
+    : (parseIsoDate(kvitteringData?.inntekt?.inntektsdato) ?? foreslaattBestemmendeFravaersdag);
 
   useEffect(() => {
-    if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem) {
-      if (!kvitteringSlug || kvitteringSlug === '') return;
-      hentKvitteringsdata(kvitteringSlug);
-    }
     setNyInnsending(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kvitteringSlug]);
-
-  useEffect(() => {
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!forespurtSkjemaIsLoading) initKvittering(forespurtKvittering);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [forespurtSkjemaIsLoading]);
 
   const visNaturalytelser = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
   const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
@@ -147,11 +191,51 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const classNameWrapperSkjaeringstidspunkt = cx({
     infoboks: visArbeidsgiverperiode
   });
+
+  const personData = {
+    navn: visningsdata?.navn,
+    identitetsnummer: visningsdata?.identitetsnummer,
+    virksomhetsnavn: visningsdata?.orgNavn,
+    orgnrUnderenhet: visningsdata?.orgnrUnderenhet,
+    innsenderNavn: visningsdata?.innsenderNavn,
+    innsenderTelefonNr: visningsdata?.telefonnummer ?? ''
+  };
+
+  const visningFravaersperioder =
+    visningsdata?.fravaersperioder?.map((periode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: periode.fom + periode.tom
+    })) ?? fravaersperioder;
+
+  const visningEgenmeldingsperioder =
+    kvitteringData?.agp?.egenmeldinger.map((periode) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: periode.fom + periode.tom
+    })) ?? egenmeldingsperioder;
   // const perioder: { fom: string; tom: string }[] = bruttoinntekt.endringAarsak && bruttoinntekt.endringAarsak[bruttoinntekt.endringAarsak.aarsak]:
   //   ? bruttoinntekt.endringAarsak[bruttoinntekt.endringAarsak.aarsak as string]
   //   : [];
   // const gjelderFra = bruttoinntekt.endringAarsak?.gjelderFra ? bruttoinntekt.endringAarsak?.gjelderFra : '';
   // const bleKjent = bruttoinntekt.endringAarsak?.bleKjent ? bruttoinntekt.endringAarsak?.bleKjent : '';
+
+  const lonnISykefravaeret: LonnISykefravaeret = {
+    beloep: visningsdata?.refusjon?.beloepPerMaaned,
+    status: visningsdata?.refusjon?.beloepPerMaaned ? 'Ja' : 'Nei'
+  };
+
+  const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
+    status: visningsdata?.refusjon?.opphoersdato ? 'Ja' : 'Nei',
+    opphoersdato: visningsdata?.refusjon?.opphoersdato ? parseIsoDate(visningsdata?.refusjon?.opphoersdato) : undefined
+  };
+
+  const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
+    status: visningsdata?.refusjon?.opphoersdato ? 'Ja' : 'Nei',
+    utbetalt: visningsdata?.refusjon?.beloepPerMaaned,
+    begrunnelse: visningsdata?.refusjon?.opphoersdato ? 'Ja' : 'Nei'
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -179,13 +263,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 </div>
               </div>
 
-              <Person erKvittering={true} />
+              <Person erKvittering={true} personData={personData} />
               <Skillelinje />
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (
                   <Fravaersperiode
-                    fravaersperioder={fravaersperioder}
-                    egenmeldingsperioder={egenmeldingsperioder}
+                    fravaersperioder={visningFravaersperioder}
+                    egenmeldingsperioder={visningEgenmeldingsperioder}
                     paakrevdeOpplysninger={paakrevdeOpplysninger}
                   />
                 )}
@@ -227,13 +311,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <Skillelinje />
               <Heading2>Beregnet månedslønn</Heading2>
               <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
-              <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
-              {bruttoinntekt.endringAarsak?.aarsak && (
+              <BodyShort>{formatCurrency(visningsdata?.inntekt?.beregnetInntekt)} kr/måned</BodyShort>
+              {visningsdata?.inntekt?.endringAarsak?.aarsak && (
                 <>
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
-                  {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringAarsak.aarsak as string)}
-                  <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
+                  {formatBegrunnelseEndringBruttoinntekt(visningsdata?.inntekt?.endringAarsak.aarsak as string)}
+                  <EndringAarsakVisning endringAarsak={visningsdata?.inntekt?.endringAarsak} />
                 </>
               )}
               <Skillelinje />
@@ -296,4 +380,48 @@ export async function getServerSideProps(context: any) {
       kvittid
     }
   };
+}
+
+function mapForespurtData(
+  forespurtKvittering: MottattKvitteringSchema,
+  forespurtSkjema: ForespurtData,
+  kvitteringData: DelvisInnsending
+): ForespurtData | undefined {
+  if (!kvitteringData && forespurtKvittering?.kvitteringDokument) {
+    const data = forespurtKvittering?.kvitteringDokument;
+    if (!data) return undefined;
+    return {
+      ...data,
+      navn: data.fulltNavn,
+      identitetsnummer: data.identitetsnummer,
+      orgnrUnderenhet: data.orgnrUnderenhet,
+      orgNavn: data.virksomhetNavn,
+      innsenderNavn: data.innsenderNavn,
+      telefonnummer: data.telefonnummer,
+      egenmeldingsperioder: data.egenmeldingsperioder,
+      arbeidsgiverperioder: data.arbeidsgiverperioder,
+      bestemmendeFravaersdag: data?.bestemmendeFraværsdag,
+      fravaersperioder: data.fraværsperioder,
+      inntekt: {
+        ...data?.inntekt,
+        bekreftet: !!data?.inntekt?.beloep ? 'Ja' : 'Nei',
+        beloep: kvitteringData?.inntekt?.beregnetInntekt,
+        manueltKorrigert: kvitteringData?.inntekt?.manueltKorrigert
+      },
+      fullLønnIArbeidsgiverPerioden: {
+        utbetalerFullLønn: data.fullLønnIArbeidsgiverPerioden?.utbetalerFullLønn
+      },
+      refusjon: {
+        ...data.refusjon?.utbetalerHeleEllerDeler
+      }
+      // forespurtData: data.forespurtData
+    };
+  } else {
+    return {
+      ...forespurtSkjema,
+      telefonnummer: kvitteringData?.avsenderTlf,
+      refusjon: kvitteringData?.refusjon,
+      inntekt: { ...kvitteringData?.inntekt, beregnetInntekt: kvitteringData?.inntekt?.beloep }
+    };
+  }
 }

@@ -69,7 +69,9 @@ export default function useKvitteringInit() {
 
   return async (kvitteringsData: KvitteringInit) => {
     let jsonData: KvitteringSkjema;
-    if (!kvitteringsData) return;
+    if (!kvitteringsData || (Array.isArray(kvitteringsData) && kvitteringsData.length === 0)) return;
+
+    if (!kvitteringsData.kvitteringDokument && !kvitteringsData.kvitteringEkstern) return;
 
     if (kvitteringsData.kvitteringEkstern && kvitteringsData.kvitteringEkstern !== null) {
       setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);
@@ -81,8 +83,7 @@ export default function useKvitteringInit() {
     } else {
       jsonData = kvitteringsData as unknown as KvitteringSkjema;
     }
-
-    initFravaersperiode(jsonData.fraværsperioder);
+    if (jsonData.fraværsperioder) initFravaersperiode(jsonData.fraværsperioder);
     if (jsonData.egenmeldingsperioder) initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
 
     const paakrevdeOpplysninger = jsonData.forespurtData;
@@ -103,6 +104,7 @@ export default function useKvitteringInit() {
     );
 
     const bestemmendeFravaersdag = jsonData.bestemmendeFraværsdag;
+
     if (bestemmendeFravaersdag) {
       setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
       setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
@@ -117,7 +119,7 @@ export default function useKvitteringInit() {
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
 
-    if (jsonData.inntekt.endringÅrsak) {
+    if (jsonData.inntekt?.endringÅrsak) {
       const aarsak: Tariffendring | PeriodeListe | StillingsEndring | AArsakType | undefined =
         jsonData.inntekt.endringÅrsak;
       if (aarsak.typpe === 'VarigLonnsendring') {
@@ -182,7 +184,7 @@ export default function useKvitteringInit() {
       }
     }
 
-    if (jsonData.inntekt.endringAarsak) {
+    if (jsonData.inntekt?.endringAarsak) {
       const aarsak = jsonData.inntekt.endringAarsak;
 
       setEndringsaarsak(aarsak.aarsak);

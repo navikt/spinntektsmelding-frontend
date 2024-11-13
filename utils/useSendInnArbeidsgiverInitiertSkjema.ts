@@ -5,7 +5,7 @@ import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
-import useFyllAapenInnsending, { skalSendeArbeidsgiverperiode } from '../state/useFyllAapenInnsending';
+import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
@@ -62,6 +62,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     } else {
       skjemaData.aarsakInnsending = 'Ny';
     }
+
     const validerteData = fyllAapenInnsending(skjemaData);
 
     if (validerteData.success !== true) {

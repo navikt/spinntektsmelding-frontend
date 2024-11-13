@@ -4,6 +4,8 @@ import validerDelvisInntektsmelding, {
 import parseIsoDate from '../../utils/parseIsoDate';
 import { vi, describe } from 'vitest';
 
+import forespurtData from '../../mockdata/trenger-originalen.json';
+
 describe.concurrent('validerDelvisInntektsmelding', () => {
   let opplysningerBekreftet: boolean;
   let kunInntektOgRefusjon: boolean | undefined;
@@ -37,10 +39,23 @@ describe.concurrent('validerDelvisInntektsmelding', () => {
       innsenderTelefonNr: '12345678',
       setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger
     };
+    const formData = {
+      inntekt: {
+        beloep: '0'
+      },
+      refusjon: {
+        refusjonPrMnd: '0',
+        kreverRefusjon: 'Nei',
+        kravetOpphoerer: 'Nei',
+        refusjonOpphoerer: ''
+      }
+    };
     const result: SubmitInntektsmeldingReturnvalues = validerDelvisInntektsmelding(
       state,
       opplysningerBekreftet,
-      kunInntektOgRefusjon
+      kunInntektOgRefusjon,
+      forespurtData,
+      formData
     );
 
     expect(result.valideringOK).toBe(true);
@@ -66,23 +81,31 @@ describe.concurrent('validerDelvisInntektsmelding', () => {
       setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger
     };
 
+    const formData = {
+      inntekt: {
+        beloep: '0'
+      }
+    };
+
     const result: SubmitInntektsmeldingReturnvalues = validerDelvisInntektsmelding(
       state,
       opplysningerBekreftet,
-      kunInntektOgRefusjon
+      kunInntektOgRefusjon,
+      forespurtData,
+      formData
     );
 
     expect(result).toEqual({
       valideringOK: false,
       errorTexts: [
-        {
-          felt: '',
-          text: 'Mangler fraværsperiode.'
-        },
-        {
-          felt: 'backend',
-          text: 'MANGLER_PERIODE'
-        },
+        // {
+        //   felt: '',
+        //   text: 'Mangler fraværsperiode.'
+        // },
+        // {
+        //   felt: 'backend',
+        //   text: 'MANGLER_PERIODE'
+        // },
         {
           felt: 'lus-radio',
           text: 'Angi om arbeidsgiver betaler lønn under hele eller deler av sykefraværet.'
@@ -111,19 +134,37 @@ describe.concurrent('validerDelvisInntektsmelding', () => {
       setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger
     };
 
-    const result: SubmitInntektsmeldingReturnvalues = validerDelvisInntektsmelding(state, opplysningerBekreftet, false);
+    const formData = {
+      refusjon: {
+        // refusjonPrMnd: '0',
+        // kreverRefusjon: 'Nei',
+        // kravetOpphoerer: 'Nei',
+        // refusjonOpphoerer: ''
+      },
+      inntekt: {
+        beloep: '0'
+      }
+    };
+
+    const result: SubmitInntektsmeldingReturnvalues = validerDelvisInntektsmelding(
+      state,
+      opplysningerBekreftet,
+      false,
+      forespurtData,
+      formData
+    );
 
     expect(result).toEqual({
       valideringOK: false,
       errorTexts: [
-        {
-          felt: '',
-          text: 'Mangler fraværsperiode.'
-        },
-        {
-          felt: 'backend',
-          text: 'MANGLER_PERIODE'
-        },
+        // {
+        //   felt: '',
+        //   text: 'Mangler fraværsperiode.'
+        // },
+        // {
+        //   felt: 'backend',
+        //   text: 'MANGLER_PERIODE'
+        // },
         {
           felt: 'agp.redusertLoennIAgp.begrunnelse',
           text: 'Begrunnelse for redusert utbetaling av lønn i arbeidsgiverperioden mangler.'

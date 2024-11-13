@@ -23,7 +23,7 @@ interface SubmitInntektsmeldingReturnvalues {
   errorTexts?: Array<ValiderTekster>;
 }
 
-interface ValiderTekster {
+export interface ValiderTekster {
   felt: string;
   text: string;
 }
@@ -35,7 +35,7 @@ enum ErrorCodes {
   INGEN_LONN_I_SYKEFRAVAERET = 'INGEN_LONN_I_SYKEFRAVAERET'
 }
 
-type codeUnion =
+type alleFeilkoder =
   | PeriodeFeilkode
   | BruttoinntektFeilkode
   | ErrorCodes
@@ -53,7 +53,7 @@ type codeUnion =
 
 export interface ValiderResultat {
   felt: string;
-  code: codeUnion;
+  code: alleFeilkoder;
 }
 
 export default function validerInntektsmelding(
@@ -156,7 +156,7 @@ export default function validerInntektsmelding(
       felt: error.felt,
       // eslint-disable-next-line
       // @ts-ignore
-      text: error.code && feiltekster[[error.code]] ? (feiltekster[[error.code]] as string) : error.code
+      text: error.code && feiltekster[[error.code]] ? (feiltekster[[error.code]] as string) : (error.code as string)
     }));
   }
 

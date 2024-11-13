@@ -18,7 +18,7 @@ interface VelgAarsakProps {
   changeMaanedsintektHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   changeBegrunnelseHandler: (verdi: string) => void;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  defaultEndringAarsak: EndringAarsak;
+  defaultEndringAarsak?: EndringAarsak;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
   kanIkkeTilbakestilles?: boolean;
@@ -77,12 +77,12 @@ export default function VelgAarsak({
         <div className={lokalStyles.endremaaanedsinntekt}>
           <TariffendringDato
             defaultEndringsdato={
-              defaultEndringAarsak.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
                 ? parseIsoDate(defaultEndringAarsak.gjelderFra)
                 : undefined
             }
             defaultKjentDato={
-              defaultEndringAarsak.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
+              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring
                 ? parseIsoDate(defaultEndringAarsak.bleKjent)
                 : undefined
             }
