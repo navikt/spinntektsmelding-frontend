@@ -50,7 +50,7 @@ export default function Aarsaksvelger({
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       <div className={lokalStyles.endremaaanedsinntekt}>
         <TextField
-          label={`Månedsinntekt ${formatDate(bestemmendeFravaersdag)}`}
+          label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
           onChange={changeMaanedsintektHandler}
           defaultValue={bruttoinntekt && bruttoinntekt.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
           id='inntekt.beregnetInntekt'
