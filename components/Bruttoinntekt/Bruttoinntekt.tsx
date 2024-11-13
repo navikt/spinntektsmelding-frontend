@@ -145,8 +145,8 @@ export default function Bruttoinntekt({
       </LesMer>
       {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
         <Alert variant='info'>
-          Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedsinntekt selv
-          eller forsøke igjen senere.
+          Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedslønn selv eller
+          forsøke igjen senere.
         </Alert>
       )}
 
@@ -165,16 +165,15 @@ export default function Bruttoinntekt({
       )}
       {harTidligereInntekt && manglendeEller0FraAmeldingen && (
         <Alert variant='warning' className={lokalStyles.feriealert}>
-          Lønnsopplysningene innholder måneder uten rapportert inntekt. Vi estimerer beregnet månedslønn til et snitt av
-          innrapportert inntekt for de tre siste månedene. Hvis dere ser at det skal være en annen beregnet månedslønn
-          må dere endre dette manuelt.
+          Lønnsopplysningene inneholder måneder uten rapportert inntekt. Vi estimerer beregnet månedslønn til et snitt
+          av innrapportert inntekt for de tre siste månedene. Hvis dere ser at det skal være en annen beregnet
+          månedslønn må dere endre dette manuelt.
         </Alert>
       )}
       {erFeriemaaneder && (
         <Alert variant='warning' className={lokalStyles.feriealert}>
-          Lønnsopplysningene kan innholde måneder der det er utbetalt feriepenger. Hvis det i beregningsperioden er
-          utbetalt feriepenger i stedet for lønn, eller det er avviklet ferie uten lønn, skal beregningsgrunnlaget
-          settes lik den ordinære lønnen personen ville hatt hvis det ikke hadde blitt avviklet ferie.
+          Lønnsopplysningene kan inneholde feriepenger. Hvis det er utbetalt feriepenger eller avviklet ferie uten lønn,
+          skal beregnet månedslønn settes til den ordinære lønnen.
         </Alert>
       )}
       {!endringAvBelop && !erBlanktSkjema && (
