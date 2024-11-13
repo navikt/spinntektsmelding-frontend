@@ -145,8 +145,8 @@ export default function Bruttoinntekt({
       </LesMer>
       {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
         <Alert variant='info'>
-          Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedsinntekt selv
-          eller forsøke igjen senere.
+          Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedslønn selv eller
+          forsøke igjen senere.
         </Alert>
       )}
 

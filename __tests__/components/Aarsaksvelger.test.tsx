@@ -54,7 +54,7 @@ describe('Aarsaksvelger', () => {
         nyInnsending={false}
       />
     );
-    expect(screen.getByLabelText('Månedsinntekt')).toBeInTheDocument();
+    expect(screen.getByLabelText('Månedslønn')).toBeInTheDocument();
     expect(
       screen.getByRole('button', {
         name: /Tilbakestill/i
@@ -77,7 +77,7 @@ describe('Aarsaksvelger', () => {
       />
     );
 
-    const input = screen.getByLabelText(/edsinntekt/);
+    const input = screen.getByLabelText(/edslønn/);
     await user.type(input, '20000');
     expect(changeMaanedsintektHandler).toHaveBeenCalledTimes(5);
   });
