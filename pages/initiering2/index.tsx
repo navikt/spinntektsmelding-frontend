@@ -1,4 +1,4 @@
-import { Button, CheckboxGroup, Checkbox, Alert, Link } from '@navikt/ds-react';
+import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z, ZodError } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
@@ -23,7 +23,7 @@ import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { MottattPeriode, TDateISODate } from '../../state/MottattData';
-import { compareAsc, differenceInDays, subYears } from 'date-fns';
+import { compareAsc, differenceInCalendarDays, differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
@@ -36,6 +36,8 @@ import { logger } from '@navikt/next-logger';
 import environment from '../../config/environment';
 import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
+import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 type SykepengePeriode = {
   id: string;
@@ -43,6 +45,7 @@ type SykepengePeriode = {
   tom: Date;
   antallEgenmeldingsdager: number;
   forespoerselId?: string;
+  forlengelseAv?: string;
 };
 
 const Initiering2: NextPage = () => {
@@ -226,6 +229,8 @@ const Initiering2: NextPage = () => {
 
   const orgnr = watch('organisasjonsnummer');
   const sykepengePeriodeId: string[] = watch('sykepengePeriodeId');
+  const arbeidetMellomPerioder: string = watch('arbeidet-mellom-perioder');
+  const endreRefusjon: string = watch('endre-refusjon');
 
   const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
 
@@ -256,6 +261,23 @@ const Initiering2: NextPage = () => {
               };
             })
           : [];
+
+      sykepengePerioder = sykepengePerioder.reduce((acc, current) => {
+        if (acc.length === 0) {
+          console.log('første', current);
+          acc.push(current);
+          return acc;
+        }
+        if (acc[acc.length - 1].forespoerselId && differenceInCalendarDays(current.fom, acc[acc.length - 1].tom) >= 1) {
+          acc.push({ ...current, forlengelseAv: acc[acc.length - 1].forespoerselId });
+          console.log('forlengelse', current);
+          return acc;
+        } else {
+          console.log('ikke forlengelse', current);
+          acc.push({ ...current, forlengelseAv: undefined });
+          return acc;
+        }
+      }, [] as SykepengePeriode[]);
     } else {
       logger.error('Feil ved validering av sykepengesøknader', mottatteSykepengesoeknader.error.errors);
     }
@@ -287,7 +309,7 @@ const Initiering2: NextPage = () => {
 
   const valgteUnikeSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
     finnSorterteUnikePerioder(mergedSykmeldingsperioder)
-  );
+  ).filter((periode) => !!periode);
 
   antallDagerMellomSykmeldingsperioder = valgteUnikeSykepengePerioder
     ? finnSorterteUnikePerioder(valgteUnikeSykepengePerioder).reduce((accumulator, currentValue, index, array) => {
@@ -308,6 +330,11 @@ const Initiering2: NextPage = () => {
   if (antallDagerMellomSykmeldingsperioder > 16) {
     blokkerInnsending = true;
   }
+
+  const harValgtPeriodeMedForlengelse =
+    !!valgteUnikeSykepengePerioder &&
+    valgteUnikeSykepengePerioder.length > 0 &&
+    valgteUnikeSykepengePerioder.some((periode) => !!periode.forlengelseAv);
 
   const visFeilmeldingliste =
     (feilmeldinger && feilmeldinger.length > 0) || (backendFeil.current && backendFeil.current.length > 0);
@@ -361,6 +388,7 @@ const Initiering2: NextPage = () => {
                             {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                             {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
                             {!!periode.forespoerselId && ' (Inntektsmelding er allerede forespurt)'}
+                            {periode.forlengelseAv && ' (forlengelse)'}
                           </Checkbox>
                         ))}
                       </CheckboxGroup>
@@ -371,6 +399,41 @@ const Initiering2: NextPage = () => {
                         har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om sykepenger
                         er sendt inn.
                       </Alert>
+                    )}
+                  </>
+                )}
+                {harValgtPeriodeMedForlengelse && (
+                  <OrdinaryJaNei
+                    legend='Har den ansatte arbeidet mellom den forrige og denne sykmeldingsperioden?'
+                    name='arbeidet-mellom-perioder'
+                  />
+                )}
+                {arbeidetMellomPerioder === 'Nei' && (
+                  <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte? ' name='endre-refusjon' />
+                )}
+                {endreRefusjon === 'Ja' && (
+                  <>
+                    <Alert variant='info'>
+                      <Heading spacing size='small' level='3'>
+                        Du må korrigere tidligere innsendt inntektsmeldingen
+                      </Heading>
+                      Gå inn på den tidligere innsendte inntektsmeldingen nedenfor for å gjøre endringer på eventuelle
+                      refusjontidspunkter og beløp.
+                    </Alert>
+                    {valgteSykepengePerioder.map(
+                      (periode) =>
+                        periode.forlengelseAv && (
+                          <Box paddingBlock='4' borderWidth='1' paddingInline='4' key={periode.id}>
+                            <OrganisasjonInfo orgNr={organisasjonsnummer as string} arbeidsforhold={arbeidsforhold} />
+                            <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
+                              <PersonInfo navn={fulltNavn} fnr={identitetsnummer} />
+                            </Link>
+                            <p>
+                              Sykmeldingsperiode {visFomDato(periode.forlengelseAv, sykepengePerioder)} -{' '}
+                              {visTomDato(periode.forlengelseAv, sykepengePerioder)}
+                            </p>
+                          </Box>
+                        )
                     )}
                   </>
                 )}
@@ -417,6 +480,61 @@ function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
   return antallEgenmeldingsdager === 1
     ? '(pluss 1 egenmeldingsdag)'
     : `(pluss ${antallEgenmeldingsdager} egenmeldingsdager)`;
+}
+
+function OrganisasjonInfo({ orgNr, arbeidsforhold }: { orgNr: string; arbeidsforhold: ArbeidsgiverSelect[] }) {
+  if (!arbeidsforhold || arbeidsforhold.length === 0 || !orgNr) {
+    return null;
+  }
+
+  const virksomhetsnavn = arbeidsforhold.find(
+    (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === orgNr
+  )?.virksomhetsnavn;
+  return (
+    <div>
+      <p>{virksomhetsnavn}</p>
+    </div>
+  );
+}
+
+function PersonInfo({ navn, fnr }: { navn?: string; fnr?: string }) {
+  if (!navn || !fnr) {
+    return null;
+  }
+
+  const fDatoSiffer = fnr.substring(0, 6).split('');
+  const fDato = `${startFDato(fDatoSiffer[0])}${fDatoSiffer[1]}.${fDatoSiffer[2]}${
+    fDatoSiffer[3]
+  }.${fDatoSiffer[4]}${fDatoSiffer[5]}`;
+
+  return (
+    <>
+      Inntektsmelding {navn} f.{fDato}
+    </>
+  );
+}
+
+function startFDato(siffer: string): string {
+  if (Number(siffer) > 3) {
+    return (Number(siffer) - 4).toString();
+  }
+  return siffer;
+}
+
+function visFomDato(id: string, mottatteSykepengesoeknader: SykepengePeriode[]) {
+  const periode = mottatteSykepengesoeknader.find((soeknad: SykepengePeriode) => soeknad.forespoerselId === id);
+  if (!periode) {
+    return '';
+  }
+  return formatDate(parseIsoDate(periode.fom));
+}
+
+function visTomDato(id: string, mottatteSykepengesoeknader: SykepengePeriode[]) {
+  const periode = mottatteSykepengesoeknader.find((soeknad: SykepengePeriode) => soeknad.forespoerselId === id);
+  if (!periode) {
+    return '';
+  }
+  return formatDate(parseIsoDate(periode.tom));
 }
 
 export default Initiering2;
