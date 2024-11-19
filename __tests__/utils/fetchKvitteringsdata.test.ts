@@ -21,7 +21,7 @@ describe('fetchKvitteringsdata', () => {
 
     const response = await fetchKvitteringsdata(url, forespoerselId);
 
-    expect(response).toEqual({ status: 404, data: {} });
+    expect(response).toEqual({ status: 404, data: undefined });
   });
 
   it('throws a NetworkError when the request fails', async () => {

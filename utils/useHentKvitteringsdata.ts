@@ -24,7 +24,9 @@ export default function useHentKvitteringsdata() {
               logger.warn(error);
             });
           }
-          initState(skjemadata.data);
+          if (skjemadata.data !== undefined) {
+            initState(skjemadata.data);
+          }
           router.replace(`/kvittering/${pathSlug}`, undefined, { shallow: true });
         })
         .catch((error: any) => {
