@@ -100,7 +100,7 @@ describe('LonnUnderSykefravaeret', () => {
   });
 
   it('renders a title text and refusjon endringer with an end date', async () => {
-    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Nei' };
+    const loenn: LonnISykefravaeret = { beloep: 2345, status: 'Nei' };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
       status: 'Ja',
       opphoersdato: parseIsoDate('2022-04-04')
@@ -130,7 +130,7 @@ describe('LonnUnderSykefravaeret', () => {
   });
 
   it('renders a title text without refusjon endringer', async () => {
-    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Ja' };
+    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345 };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
       status: 'Ja',
       opphoersdato: parseIsoDate('2022-04-04')
@@ -160,7 +160,7 @@ describe('LonnUnderSykefravaeret', () => {
   });
 
   it('dont render a title text without refusjon endringer', async () => {
-    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345, status: 'Ja' };
+    const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345 };
     const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
       status: 'Ja',
       opphoersdato: parseIsoDate('2022-04-04')
