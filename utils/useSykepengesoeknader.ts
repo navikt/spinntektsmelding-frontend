@@ -6,7 +6,7 @@ export default function useSykepengesoeknader(
   identitetsnummer: string | undefined,
   orgNummer: string,
   eldsteFom: string,
-  backendFeil: any
+  setError: any
 ) {
   return useSWRImmutable(
     [environment.hentSykepengesoknaderUrl, identitetsnummer, orgNummer, eldsteFom],
@@ -20,21 +20,21 @@ export default function useSykepengesoeknader(
     {
       onError: (err) => {
         if (err.status === 401) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Mangler tilgang til den aktuelle organisasjonen'
+          setError('sykepengePeriodeId', {
+            type: 'manual',
+            message: 'Mangler tilgang til den aktuelle organisasjonen'
           });
         }
 
         if (err.status === 404) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Kunne ikke finne sykepengesøknader for personen, sjekk at du har tastet riktig personnummer'
+          setError('sykepengePeriodeId', {
+            type: 'manual',
+            message: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
           });
         } else if (err.status !== 200) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Kunne ikke hente sykepengesøknader'
+          setError('sykepengePeriodeId', {
+            type: 'manual',
+            message: 'Kunne ikke hente sykepengesøknader'
           });
         }
       },

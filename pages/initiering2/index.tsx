@@ -62,29 +62,57 @@ const Initiering2: NextPage = () => {
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
 
   let fulltNavn = '';
-  const backendFeil = useRef([] as Feilmelding[]);
   let orgnrUnderenhet: string | undefined = undefined;
   let antallDagerMellomSykmeldingsperioder = 0;
   let blokkerInnsending = false;
 
-  const skjemaSchema = z.object({
-    organisasjonsnummer: z
-      .string({
-        required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
-      })
-      .transform((val) => val.replace(/\s/g, ''))
-      .pipe(
-        z
-          .string({
-            required_error: 'Organisasjon er ikke valgt'
-          })
+  const skjemaSchema = z
+    .object({
+      organisasjonsnummer: z
+        .string({
+          required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+        })
+        .transform((val) => val.replace(/\s/g, ''))
+        .pipe(
+          z
+            .string({
+              required_error: 'Organisasjon er ikke valgt'
+            })
 
-          .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
-      ),
-    navn: z.string().optional(),
-    personnummer: PersonnummerSchema.optional(),
-    sykepengePeriodeId: z.array(z.string().uuid()).optional()
-  });
+            .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
+        ),
+      navn: z.string().optional(),
+      personnummer: PersonnummerSchema.optional(),
+      sykepengePeriodeId: z.array(z.string().uuid()).optional(),
+      arbeidetMellomPerioder: z.string().optional(),
+      endreRefusjon: z.string().optional()
+    })
+    .superRefine((value, ctx) => {
+      if (value.arbeidetMellomPerioder === 'Nei' && !value.endreRefusjon) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Vennligst angi om refusjonen skal endres',
+          path: ['endreRefusjon']
+        });
+      }
+
+      if (value.arbeidetMellomPerioder === 'Nei' && value.endreRefusjon === 'Ja') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'En forlengelse av sykmeldingsperioden må endres ved å endre perioden den forlenger.',
+          path: ['endreRefusjon']
+        });
+      }
+
+      if (value.arbeidetMellomPerioder === 'Nei' && value.endreRefusjon === 'Nei') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            'Det er ikke mulig å sende inn en inntektsmelding som er en forlengelse av en tidligere sykepengesøknad',
+          path: ['endreRefusjon']
+        });
+      }
+    });
 
   type Skjema = z.infer<typeof skjemaSchema>;
   type EndepunktSykepengesoeknader = z.infer<typeof endepunktSykepengesoeknaderSchema>;
@@ -97,107 +125,17 @@ const Initiering2: NextPage = () => {
     register,
     watch,
     setValue,
+    setError,
     handleSubmit,
     formState: { errors }
   } = methods;
 
-  const { data, error } = useArbeidsforhold(identitetsnummer, backendFeil);
+  const orgnr = watch('organisasjonsnummer');
+  const sykepengePeriodeId: string[] = watch('sykepengePeriodeId');
+  const arbeidetMellomPerioder: string = watch('arbeidetMellomPerioder');
+  const endreRefusjon: string = watch('endreRefusjon');
 
-  const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
-    const skjema = initieringSchema;
-    let mottatteSykepengesoeknader:
-      | { success: true; data: EndepunktSykepengesoeknader }
-      | { success: false; error: ZodError }
-      | undefined = undefined;
-
-    if (spData) {
-      mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
-    }
-
-    if (data) {
-      const mottatteData = endepunktArbeidsforholdSchema.safeParse(data);
-      if (mottatteData.success && !mottatteData.data.feilReport) {
-        const skjemaData = {
-          organisasjonsnummer: formData.organisasjonsnummer,
-          fulltNavn: mottatteData.data.fulltNavn,
-          personnummer: identitetsnummer
-        };
-
-        const validationResult = skjema.safeParse(skjemaData);
-
-        const sykmeldingsperiode: EndepunktSykepengesoeknader | [] = [];
-        formData.sykepengePeriodeId?.forEach((id) => {
-          const periode =
-            mottatteSykepengesoeknader?.success &&
-            mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
-          if (!!periode) {
-            sykmeldingsperiode.push(periode);
-          }
-        });
-
-        const forespoerselIdListe = sykmeldingsperiode
-          .filter((periode) => !!periode.forespoerselId)
-          .map((periode) => periode.forespoerselId!);
-
-        if (forespoerselIdListe.length > 0) {
-          router.push(`/${forespoerselIdListe[0]}`);
-
-          return;
-        }
-
-        const fravaersperioder: MottattPeriode[] = sykmeldingsperiode.map((periode) => ({
-          fom: periode.fom as TDateISODate,
-          tom: periode.tom as TDateISODate
-        }));
-
-        const egenmeldingsperioder: MottattPeriode[] = sykmeldingsperiode
-          .flatMap((periode) => {
-            const sorterteEgenmeldingsdager = periode.egenmeldingsdagerFraSykmelding.toSorted();
-            const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
-              (accumulator, currentValue) => {
-                const tom = new Date(currentValue);
-                const currentTom = new Date(accumulator[accumulator.length - 1].tom);
-
-                if (differenceInDays(tom, currentTom) <= 1) {
-                  accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
-                } else {
-                  accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
-                }
-                return accumulator;
-              },
-              [
-                {
-                  fom: sorterteEgenmeldingsdager[0] as TDateISODate,
-                  tom: sorterteEgenmeldingsdager[0] as TDateISODate
-                }
-              ]
-            );
-            return egenmeldingsperiode;
-          })
-          .filter((element) => !!element.fom && !!element.tom);
-
-        if (!sykmeldingsperiode || sykmeldingsperiode.length === 0) {
-          backendFeil.current.push({ text: 'Ingen sykmeldingsperioder valgt', felt: 'sykepengePeriodeId' });
-          return;
-        }
-
-        if (validationResult.success) {
-          setIsLoading(true);
-          const validerteData = validationResult.data;
-          const orgNavn = arbeidsforhold.find(
-            (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
-          )?.virksomhetsnavn!;
-          initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
-          setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-          initFravaersperiode(fravaersperioder as MottattPeriode[]);
-          initEgenmeldingsperiode(egenmeldingsperioder as MottattPeriode[]);
-          tilbakestillArbeidsgiverperiode();
-          setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
-          router.push('/arbeidsgiverInitiertInnsending');
-        }
-      }
-    }
-  };
+  const { data, error } = useArbeidsforhold(identitetsnummer, setError);
 
   const handleSykepengePeriodeIdRadio = (value: any) => {
     setValue('sykepengePeriodeId', value);
@@ -227,11 +165,6 @@ const Initiering2: NextPage = () => {
     }
   }
 
-  const orgnr = watch('organisasjonsnummer');
-  const sykepengePeriodeId: string[] = watch('sykepengePeriodeId');
-  const arbeidetMellomPerioder: string = watch('arbeidet-mellom-perioder');
-  const endreRefusjon: string = watch('endre-refusjon');
-
   const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
 
   const fomDato = formatIsoDate(subYears(new Date(), 1));
@@ -239,7 +172,7 @@ const Initiering2: NextPage = () => {
     data: spData,
     error: spError,
     isLoading: spIsLoading
-  } = useSykepengesoeknader(identitetsnummer, organisasjonsnummer, fomDato, backendFeil);
+  } = useSykepengesoeknader(identitetsnummer, organisasjonsnummer, fomDato, setError);
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
@@ -336,8 +269,114 @@ const Initiering2: NextPage = () => {
     valgteUnikeSykepengePerioder.length > 0 &&
     valgteUnikeSykepengePerioder.some((periode) => !!periode.forlengelseAv);
 
-  const visFeilmeldingliste =
-    (feilmeldinger && feilmeldinger.length > 0) || (backendFeil.current && backendFeil.current.length > 0);
+  const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
+
+  const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
+    const skjema = initieringSchema;
+    let mottatteSykepengesoeknader:
+      | { success: true; data: EndepunktSykepengesoeknader }
+      | { success: false; error: ZodError }
+      | undefined = undefined;
+
+    if (harValgtPeriodeMedForlengelse && !arbeidetMellomPerioder && !endreRefusjon) {
+      setError('arbeidetMellomPerioder', {
+        message: 'Angi om den sykmeldte har arbeidet mellom sykmeldingsperioden.',
+        type: 'manual'
+      });
+      return;
+    }
+
+    if (spData) {
+      mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
+    }
+
+    if (data) {
+      const mottatteData = endepunktArbeidsforholdSchema.safeParse(data);
+      if (mottatteData.success && !mottatteData.data.feilReport) {
+        const skjemaData = {
+          organisasjonsnummer: formData.organisasjonsnummer,
+          fulltNavn: mottatteData.data.fulltNavn,
+          personnummer: identitetsnummer
+        };
+
+        const validationResult = skjema.safeParse(skjemaData);
+
+        const sykmeldingsperiode: EndepunktSykepengesoeknader | [] = [];
+        formData.sykepengePeriodeId?.forEach((id) => {
+          const periode =
+            mottatteSykepengesoeknader?.success &&
+            mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
+          if (!!periode) {
+            sykmeldingsperiode.push(periode);
+          }
+        });
+
+        const forespoerselIdListe = sykmeldingsperiode
+          .filter((periode) => !!periode.forespoerselId)
+          .map((periode) => periode.forespoerselId!);
+
+        if (forespoerselIdListe.length > 0) {
+          router.push(`/${forespoerselIdListe[0]}`);
+
+          return;
+        }
+
+        const fravaersperioder: MottattPeriode[] = sykmeldingsperiode.map((periode) => ({
+          fom: periode.fom as TDateISODate,
+          tom: periode.tom as TDateISODate
+        }));
+
+        const egenmeldingsperioder: MottattPeriode[] = sykmeldingsperiode
+          .flatMap((periode) => {
+            const sorterteEgenmeldingsdager = periode.egenmeldingsdagerFraSykmelding.toSorted();
+            const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
+              (accumulator, currentValue) => {
+                const tom = new Date(currentValue);
+                const currentTom = new Date(accumulator[accumulator.length - 1].tom);
+
+                if (differenceInDays(tom, currentTom) <= 1) {
+                  accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
+                } else {
+                  accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
+                }
+                return accumulator;
+              },
+              [
+                {
+                  fom: sorterteEgenmeldingsdager[0] as TDateISODate,
+                  tom: sorterteEgenmeldingsdager[0] as TDateISODate
+                }
+              ]
+            );
+            return egenmeldingsperiode;
+          })
+          .filter((element) => !!element.fom && !!element.tom);
+
+        if (!sykmeldingsperiode || sykmeldingsperiode.length === 0) {
+          setError('sykepengePeriodeId', {
+            message: 'Ingen sykmeldingsperioder valgt',
+            type: 'manual'
+          });
+          return;
+        }
+
+        if (validationResult.success) {
+          setIsLoading(true);
+          const validerteData = validationResult.data;
+          const orgNavn = arbeidsforhold.find(
+            (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
+          )?.virksomhetsnavn!;
+          initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
+          setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
+          initFravaersperiode(fravaersperioder as MottattPeriode[]);
+          initEgenmeldingsperiode(egenmeldingsperioder as MottattPeriode[]);
+          tilbakestillArbeidsgiverperiode();
+          setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
+          router.push('/arbeidsgiverInitiertInnsending');
+        }
+      }
+    }
+  };
   return (
     <div className={styles.container}>
       <Head>
@@ -405,13 +444,13 @@ const Initiering2: NextPage = () => {
                 {harValgtPeriodeMedForlengelse && (
                   <OrdinaryJaNei
                     legend='Har den ansatte arbeidet mellom den forrige og denne sykmeldingsperioden?'
-                    name='arbeidet-mellom-perioder'
+                    name='arbeidetMellomPerioder'
                   />
                 )}
                 {arbeidetMellomPerioder === 'Nei' && (
-                  <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte? ' name='endre-refusjon' />
+                  <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte? ' name='endreRefusjon' />
                 )}
-                {endreRefusjon === 'Ja' && (
+                {endreRefusjon === 'Ja' && arbeidetMellomPerioder === 'Nei' && (
                   <>
                     <Alert variant='info'>
                       <Heading spacing size='small' level='3'>
@@ -461,10 +500,7 @@ const Initiering2: NextPage = () => {
             )}
             Inntektsmeldinger som allerede er forespurt, kan finnes i{' '}
             <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
-            <FeilListe
-              skalViseFeilmeldinger={visFeilmeldingliste}
-              feilmeldinger={feilmeldinger ? [...feilmeldinger, ...backendFeil.current] : [...backendFeil.current]}
-            />
+            <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
           </div>
         </main>
       </PageContent>

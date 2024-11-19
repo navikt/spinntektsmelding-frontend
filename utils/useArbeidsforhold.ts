@@ -2,7 +2,7 @@ import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherArbeidsforhold from './fetcherArbeidsforhold';
 
-export default function useArbeidsforhold(identitetsnummer: string | undefined, backendFeil: any) {
+export default function useArbeidsforhold(identitetsnummer: string | undefined, setError: any) {
   return useSWRImmutable(
     [environment.initierBlankSkjemaUrl, identitetsnummer],
     ([url, idToken]) => fetcherArbeidsforhold(!!identitetsnummer ? url : null, idToken),
@@ -16,14 +16,14 @@ export default function useArbeidsforhold(identitetsnummer: string | undefined, 
         }
 
         if (err.status === 404) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+          setError('sykepengePeriodeId', {
+            type: 'manual',
+            message: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
           });
         } else if (err.status !== 200) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Kunne ikke hente arbeidsforhold'
+          setError('sykepengePeriodeId', {
+            type: 'manual',
+            message: 'Kunne ikke hente arbeidsforhold'
           });
         }
       },
