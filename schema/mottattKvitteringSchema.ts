@@ -6,7 +6,7 @@ import { OrganisasjonsnummerSchema } from './organisasjonsnummerSchema';
 export default z.object({
   kvitteringDokument: z
     .object({
-      organisasjonsnummer: OrganisasjonsnummerSchema,
+      orgnrUnderenhet: OrganisasjonsnummerSchema,
       identitetsnummer: PersonnummerSchema,
       fulltNavn: z.string().min(1),
       telefonnummer: z.string().min(1),
@@ -29,7 +29,7 @@ export default z.object({
       }),
       årsakInnsending: z.enum(['NY', 'ENDRING']),
       bekreftOpplysninger: z.boolean(),
-      tidspunkt: z.date(),
+      tidspunkt: z.string(),
       forespurtData: z.array(z.string())
     })
     .optional(),
