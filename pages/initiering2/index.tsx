@@ -12,9 +12,9 @@ import lokalStyles from './initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
-import FeilListe, { Feilmelding } from '../../components/Feilsammendrag/FeilListe';
+import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
 import initieringSchema from '../../schema/initieringSchema';
 
@@ -99,7 +99,7 @@ const Initiering2: NextPage = () => {
       if (value.arbeidetMellomPerioder === 'Nei' && value.endreRefusjon === 'Ja') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'En forlengelse av sykmeldingsperioden må endres ved å endre perioden den forlenger.',
+          message: 'En forlengelse av inntektsmelding må sendes ved å endre inntektsmeldingen den forlenger.',
           path: ['endreRefusjon']
         });
       }
@@ -108,7 +108,7 @@ const Initiering2: NextPage = () => {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message:
-            'Det er ikke mulig å sende inn en inntektsmelding som er en forlengelse av en tidligere sykepengesøknad',
+            'Det er ikke mulig å sende inn en inntektsmelding som en forlengelse av en tidligere innsendt inntektsmelding',
           path: ['endreRefusjon']
         });
       }
