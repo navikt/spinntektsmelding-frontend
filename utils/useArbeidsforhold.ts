@@ -1,8 +1,12 @@
 import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherArbeidsforhold from './fetcherArbeidsforhold';
+import { FieldError } from 'react-hook-form';
 
-export default function useArbeidsforhold(identitetsnummer: string | undefined, setError: any) {
+export default function useArbeidsforhold(
+  identitetsnummer: string | undefined,
+  setError: (name: string, error: FieldError, options?: { shouldFocus?: boolean }) => void
+) {
   return useSWRImmutable(
     [environment.initierBlankSkjemaUrl, identitetsnummer],
     ([url, idToken]) => fetcherArbeidsforhold(!!identitetsnummer ? url : null, idToken),
@@ -10,7 +14,6 @@ export default function useArbeidsforhold(identitetsnummer: string | undefined, 
       onError: (err) => {
         if (err.status === 401) {
           const ingress = window.location.hostname + environment.baseUrl;
-          const currentPath = window.location.href;
 
           window.location.replace(`https://${ingress}/oauth2/login?redirect=${ingress}/initiering`);
         }

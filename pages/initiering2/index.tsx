@@ -476,6 +476,15 @@ const Initiering2: NextPage = () => {
                     )}
                   </>
                 )}
+                {endreRefusjon === 'Nei' && arbeidetMellomPerioder === 'Nei' && (
+                  <Alert variant='info'>
+                    <Heading spacing size='small' level='3'>
+                      Du trenger ikke sende inn en ny inntektsmelding for denne perioden.
+                    </Heading>
+                    Så lenge sykepengesøknaden er en forlengelse med en tidligere innsendt inntektsmelding trenger du
+                    ikke sende inn ny inntektsmelding.
+                  </Alert>
+                )}
                 <div className={lokalStyles.knapperad}>
                   <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
                     Tilbake
