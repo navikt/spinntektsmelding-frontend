@@ -6,7 +6,7 @@ describe('validerLonnIArbeidsgiverperioden', () => {
   it('should return an empty array when everything is OK', () => {
     const input: LonnIArbeidsgiverperioden = {
       status: 'Ja',
-      begrunnelse: 'test',
+      begrunnelse: 'IkkeFullStillingsandel',
       utbetalt: 1234
     };
 
@@ -54,6 +54,7 @@ describe('validerLonnIArbeidsgiverperioden', () => {
   it('should return an error when status is Nei and begrunnelse is empty', () => {
     const input: LonnIArbeidsgiverperioden = {
       status: 'Nei',
+      // @ts-ignore
       begrunnelse: ''
     };
 
@@ -111,10 +112,10 @@ describe('validerLonnIArbeidsgiverperioden', () => {
     const input: LonnIArbeidsgiverperioden = {
       status: 'Nei',
       utbetalt: 1234,
-      begrunnelse: 'test'
+      begrunnelse: 'FiskerMedHyre'
     };
 
-    const expected = [];
+    const expected: any = [];
 
     expect(validerLonnIArbeidsgiverperioden(input)).toEqual(expected);
   });
@@ -216,7 +217,7 @@ describe('validerLonnIArbeidsgiverperioden', () => {
 
     const arbeidsgiverperioder = [{ fom: parseIsoDate('2020-01-01'), tom: parseIsoDate('2020-01-01'), id: '1' }];
 
-    const expected = [];
+    const expected: any = [];
 
     expect(validerLonnIArbeidsgiverperioden(input, arbeidsgiverperioder, 1010)).toEqual(expected);
   });
@@ -280,6 +281,7 @@ describe('validerLonnIArbeidsgiverperioden', () => {
   it('should return an error when status is Nei and begrunnelse is missing', () => {
     const input: LonnIArbeidsgiverperioden = {
       status: 'Nei',
+      // @ts-ignore
       begrunnelse: '',
       utbetalt: 500
     };
