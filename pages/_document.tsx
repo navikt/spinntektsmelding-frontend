@@ -14,7 +14,7 @@ const Document = ({ Decorator }: DocumentProps) => {
 
   return (
     <Html lang='no'>
-      <Head>{viseDekoratoren ? <Decorator.Styles /> : null}</Head>
+      <Head>{viseDekoratoren ? <Decorator.HeadAssets /> : null}</Head>
       <body id='body'>
         {viseDekoratoren ? <Decorator.Header /> : null}
         <Main />
@@ -33,8 +33,7 @@ Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> 
     params: {
       context: 'arbeidsgiver',
       chatbot: false,
-      feedback: false,
-      urlLookupTable: false
+      feedback: false
     }
   });
 
