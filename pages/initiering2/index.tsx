@@ -59,6 +59,8 @@ const Initiering2: NextPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
+  const fullState = useBoundStore((state) => state);
+
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
 
   let fulltNavn = '';
@@ -197,16 +199,19 @@ const Initiering2: NextPage = () => {
 
       sykepengePerioder = sykepengePerioder.reduce((acc, current) => {
         if (acc.length === 0) {
-          console.log('første', current);
           acc.push(current);
           return acc;
         }
-        if (acc[acc.length - 1].forespoerselId && differenceInCalendarDays(current.fom, acc[acc.length - 1].tom) >= 1) {
-          acc.push({ ...current, forlengelseAv: acc[acc.length - 1].forespoerselId });
-          console.log('forlengelse', current);
+        if (
+          (acc[acc.length - 1].forespoerselId || acc[acc.length - 1].forlengelseAv) &&
+          differenceInCalendarDays(current.fom, acc[acc.length - 1].tom) >= 1
+        ) {
+          acc.push({
+            ...current,
+            forlengelseAv: acc[acc.length - 1].forespoerselId ?? acc[acc.length - 1].forlengelseAv
+          });
           return acc;
         } else {
-          console.log('ikke forlengelse', current);
           acc.push({ ...current, forlengelseAv: undefined });
           return acc;
         }
@@ -386,132 +391,130 @@ const Initiering2: NextPage = () => {
       </Head>
       <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding'} />
       <PageContent title='Inntektsmelding sykepenger'>
-        <main className='main-content'>
-          <div className={styles.padded}>
-            <Heading1>Opprett inntektsmelding for et sykefravær</Heading1>
-            <FormProvider {...methods}>
-              <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
-                <div className={lokalStyles.persondata}>
-                  <div className={lokalStyles.navn}>
-                    <TextLabel>Navn</TextLabel>
-                    <p>{fulltNavn}</p>
-                  </div>
-                  <div>
-                    <TextLabel>Personnummer</TextLabel>
-                    <p>{identitetsnummer}</p>
-                  </div>
+        <div className={styles.padded}>
+          <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
+          <FormProvider {...methods}>
+            <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
+              <div className={lokalStyles.persondata}>
+                <div className={lokalStyles.navn}>
+                  <TextLabel>Navn</TextLabel>
+                  <p>{fulltNavn}</p>
                 </div>
-                {!data && !error && <Loading />}
-                {data && (
-                  <>
+                <div>
+                  <TextLabel>Personnummer</TextLabel>
+                  <p>{identitetsnummer}</p>
+                </div>
+              </div>
+              {!data && !error && <Loading />}
+              {data && (
+                <>
+                  <div>
                     <div>
-                      <div>
-                        <SelectArbeidsgiver
-                          arbeidsforhold={arbeidsforhold}
-                          id='organisasjonsnummer'
-                          register={register}
-                          error={errors.organisasjonsnummer?.message as string}
-                        />
-                      </div>
+                      <SelectArbeidsgiver
+                        arbeidsforhold={arbeidsforhold}
+                        id='organisasjonsnummer'
+                        register={register}
+                        error={errors.organisasjonsnummer?.message as string}
+                      />
                     </div>
-                    {spIsLoading && <Loading />}
-                    {spData && organisasjonsnummer && (
-                      <CheckboxGroup
-                        legend='Velg sykmeldingsperiode'
-                        id='sykepengePeriodeId'
-                        error={errors.sykepengePeriodeId?.message as string}
-                        onChange={handleSykepengePeriodeIdRadio}
-                      >
-                        {sykepengePerioder.map((periode) => (
-                          <Checkbox key={periode.id} value={periode.id} disabled={!!periode.forespoerselId}>
-                            {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
-                            {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                            {!!periode.forespoerselId && ' (Inntektsmelding er allerede forespurt)'}
-                            {periode.forlengelseAv && ' (forlengelse)'}
-                          </Checkbox>
-                        ))}
-                      </CheckboxGroup>
-                    )}
-                    {(spError || (organisasjonsnummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
-                      <Alert variant='error'>
-                        Finner ingen sykepengesøknader for den valgte personen i den valgte organisasjonen. Sjekk at du
-                        har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om sykepenger
-                        er sendt inn.
-                      </Alert>
-                    )}
-                  </>
-                )}
-                {harValgtPeriodeMedForlengelse && (
-                  <OrdinaryJaNei
-                    legend='Har den ansatte arbeidet mellom den forrige og denne sykmeldingsperioden?'
-                    name='arbeidetMellomPerioder'
-                  />
-                )}
-                {arbeidetMellomPerioder === 'Nei' && (
-                  <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte? ' name='endreRefusjon' />
-                )}
-                {endreRefusjon === 'Ja' && arbeidetMellomPerioder === 'Nei' && (
-                  <>
-                    <Alert variant='info'>
-                      <Heading spacing size='small' level='3'>
-                        Du må korrigere tidligere innsendt inntektsmeldingen
-                      </Heading>
-                      Gå inn på den tidligere innsendte inntektsmeldingen nedenfor for å gjøre endringer på eventuelle
-                      refusjontidspunkter og beløp.
+                  </div>
+                  {spIsLoading && <Loading />}
+                  {spData && organisasjonsnummer && (
+                    <CheckboxGroup
+                      legend='Velg sykmeldingsperiode'
+                      id='sykepengePeriodeId'
+                      error={errors.sykepengePeriodeId?.message as string}
+                      onChange={handleSykepengePeriodeIdRadio}
+                    >
+                      {sykepengePerioder.map((periode) => (
+                        <Checkbox key={periode.id} value={periode.id} disabled={!!periode.forespoerselId}>
+                          {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                          {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
+                          {!!periode.forespoerselId && ' (Inntektsmelding er allerede forespurt)'}
+                          {periode.forlengelseAv && ' (forlengelse)'}
+                        </Checkbox>
+                      ))}
+                    </CheckboxGroup>
+                  )}
+                  {(spError || (organisasjonsnummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
+                    <Alert variant='error'>
+                      Finner ingen sykepengesøknader for den valgte personen i den valgte organisasjonen. Sjekk at du
+                      har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om sykepenger er
+                      sendt inn.
                     </Alert>
-                    {valgteSykepengePerioder.map(
-                      (periode) =>
-                        periode.forlengelseAv && (
-                          <Box paddingBlock='4' borderWidth='1' paddingInline='4' key={periode.id}>
-                            <OrganisasjonInfo orgNr={organisasjonsnummer as string} arbeidsforhold={arbeidsforhold} />
-                            <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
-                              <PersonInfo navn={fulltNavn} fnr={identitetsnummer} />
-                            </Link>
-                            <p>
-                              Sykmeldingsperiode {visFomDato(periode.forlengelseAv, sykepengePerioder)} -{' '}
-                              {visTomDato(periode.forlengelseAv, sykepengePerioder)}
-                            </p>
-                          </Box>
-                        )
-                    )}
-                  </>
-                )}
-                {endreRefusjon === 'Nei' && arbeidetMellomPerioder === 'Nei' && (
+                  )}
+                </>
+              )}
+              {harValgtPeriodeMedForlengelse && (
+                <OrdinaryJaNei
+                  legend='Har den ansatte arbeidet mellom den forrige og denne sykmeldingsperioden?'
+                  name='arbeidetMellomPerioder'
+                />
+              )}
+              {arbeidetMellomPerioder === 'Nei' && (
+                <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte? ' name='endreRefusjon' />
+              )}
+              {endreRefusjon === 'Ja' && arbeidetMellomPerioder === 'Nei' && (
+                <>
                   <Alert variant='info'>
                     <Heading spacing size='small' level='3'>
-                      Du trenger ikke sende inn en ny inntektsmelding for denne perioden.
+                      Du må korrigere tidligere innsendt inntektsmeldingen
                     </Heading>
-                    Så lenge sykepengesøknaden er en forlengelse med en tidligere innsendt inntektsmelding trenger du
-                    ikke sende inn ny inntektsmelding.
+                    Gå inn på den tidligere innsendte inntektsmeldingen nedenfor for å gjøre endringer på eventuelle
+                    refusjontidspunkter og beløp.
                   </Alert>
-                )}
-                <div className={lokalStyles.knapperad}>
-                  <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
-                    Tilbake
-                  </Button>
-                  <Button
-                    variant='primary'
-                    className={lokalStyles.primaryKnapp}
-                    loading={isLoading}
-                    disabled={blokkerInnsending}
-                  >
-                    Neste
-                  </Button>
-                </div>
-              </form>
-            </FormProvider>
-            {antallDagerMellomSykmeldingsperioder > 16 && (
-              <Alert variant='error' className={lokalStyles.alertPadding}>
-                <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
-                Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding
-                for hver av periodene.
-              </Alert>
-            )}
-            Inntektsmeldinger som allerede er forespurt, kan finnes i{' '}
-            <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
-            <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
-          </div>
-        </main>
+                  {valgteSykepengePerioder.map(
+                    (periode) =>
+                      periode.forlengelseAv && (
+                        <Box paddingBlock='4' borderWidth='1' paddingInline='4' key={periode.id}>
+                          <OrganisasjonInfo orgNr={organisasjonsnummer as string} arbeidsforhold={arbeidsforhold} />
+                          <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
+                            <PersonInfo navn={fulltNavn} fnr={identitetsnummer} />
+                          </Link>
+                          <p>
+                            Sykmeldingsperiode {visFomDato(periode.forlengelseAv, sykepengePerioder)} -{' '}
+                            {visTomDato(periode.forlengelseAv, sykepengePerioder)}
+                          </p>
+                        </Box>
+                      )
+                  )}
+                </>
+              )}
+              {endreRefusjon === 'Nei' && arbeidetMellomPerioder === 'Nei' && (
+                <Alert variant='info'>
+                  <Heading spacing size='small' level='3'>
+                    Du trenger ikke sende inn en ny inntektsmelding for denne perioden.
+                  </Heading>
+                  Så lenge sykepengesøknaden er en forlengelse med en tidligere innsendt inntektsmelding trenger du ikke
+                  sende inn ny inntektsmelding.
+                </Alert>
+              )}
+              <div className={lokalStyles.knapperad}>
+                <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
+                  Tilbake
+                </Button>
+                <Button
+                  variant='primary'
+                  className={lokalStyles.primaryKnapp}
+                  loading={isLoading}
+                  disabled={blokkerInnsending}
+                >
+                  Neste
+                </Button>
+              </div>
+            </form>
+          </FormProvider>
+          {antallDagerMellomSykmeldingsperioder > 16 && (
+            <Alert variant='error' className={lokalStyles.alertPadding}>
+              <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
+              Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding for
+              hver av periodene.
+            </Alert>
+          )}
+          Inntektsmeldinger som allerede er forespurt, kan finnes i{' '}
+          <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+          <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
+        </div>
       </PageContent>
     </div>
   );
