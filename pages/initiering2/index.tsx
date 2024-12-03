@@ -12,7 +12,7 @@ import lokalStyles from './initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
@@ -59,8 +59,6 @@ const Initiering2: NextPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const fullState = useBoundStore((state) => state);
-
   let arbeidsforhold: ArbeidsgiverSelect[] = [];
 
   let fulltNavn = '';
@@ -86,27 +84,18 @@ const Initiering2: NextPage = () => {
       navn: z.string().optional(),
       personnummer: PersonnummerSchema.optional(),
       sykepengePeriodeId: z.array(z.string().uuid()).optional(),
-      arbeidetMellomPerioder: z.string().optional(),
       endreRefusjon: z.string().optional()
     })
     .superRefine((value, ctx) => {
-      if (value.arbeidetMellomPerioder === 'Nei' && !value.endreRefusjon) {
+      if (value.endreRefusjon === 'Ja') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Vennligst angi om refusjonen skal endres',
+          message: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
           path: ['endreRefusjon']
         });
       }
 
-      if (value.arbeidetMellomPerioder === 'Nei' && value.endreRefusjon === 'Ja') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'En forlengelse av inntektsmelding må sendes ved å endre inntektsmeldingen den forlenger.',
-          path: ['endreRefusjon']
-        });
-      }
-
-      if (value.arbeidetMellomPerioder === 'Nei' && value.endreRefusjon === 'Nei') {
+      if (value.endreRefusjon === 'Nei') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message:
@@ -127,6 +116,7 @@ const Initiering2: NextPage = () => {
     register,
     watch,
     setValue,
+    resetField,
     setError,
     handleSubmit,
     formState: { errors }
@@ -134,7 +124,6 @@ const Initiering2: NextPage = () => {
 
   const orgnr = watch('organisasjonsnummer');
   const sykepengePeriodeId: string[] = watch('sykepengePeriodeId');
-  const arbeidetMellomPerioder: string = watch('arbeidetMellomPerioder');
   const endreRefusjon: string = watch('endreRefusjon');
 
   const { data, error } = useArbeidsforhold(identitetsnummer, setError);
@@ -283,9 +272,9 @@ const Initiering2: NextPage = () => {
       | { success: false; error: ZodError }
       | undefined = undefined;
 
-    if (harValgtPeriodeMedForlengelse && !arbeidetMellomPerioder && !endreRefusjon) {
-      setError('arbeidetMellomPerioder', {
-        message: 'Angi om den sykmeldte har arbeidet mellom sykmeldingsperioden.',
+    if (harValgtPeriodeMedForlengelse && !endreRefusjon) {
+      setError('endreRefusjon', {
+        message: 'Angi om det skal endres refusjon for den ansatte.',
         type: 'manual'
       });
       return;
@@ -382,6 +371,16 @@ const Initiering2: NextPage = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const forlengelser = sykepengePerioder
+      ?.filter((periode) => periode.forlengelseAv)
+      .filter((periode) => sykepengePeriodeId?.includes(periode.id));
+    if (!forlengelser || (forlengelser.length === 0 && !!endreRefusjon)) {
+      resetField('endreRefusjon');
+    }
+  }, [resetField, sykepengePeriodeId, sykepengePerioder]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -446,15 +445,9 @@ const Initiering2: NextPage = () => {
                 </>
               )}
               {harValgtPeriodeMedForlengelse && (
-                <OrdinaryJaNei
-                  legend='Har den ansatte arbeidet mellom den forrige og denne sykmeldingsperioden?'
-                  name='arbeidetMellomPerioder'
-                />
-              )}
-              {arbeidetMellomPerioder === 'Nei' && (
                 <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte? ' name='endreRefusjon' />
               )}
-              {endreRefusjon === 'Ja' && arbeidetMellomPerioder === 'Nei' && (
+              {endreRefusjon === 'Ja' && (
                 <>
                   <Alert variant='info'>
                     <Heading spacing size='small' level='3'>
@@ -465,7 +458,7 @@ const Initiering2: NextPage = () => {
                   </Alert>
                   {valgteSykepengePerioder.map(
                     (periode) =>
-                      periode.forlengelseAv && (
+                      periode?.forlengelseAv && (
                         <Box paddingBlock='4' borderWidth='1' paddingInline='4' key={periode.id}>
                           <OrganisasjonInfo orgNr={organisasjonsnummer as string} arbeidsforhold={arbeidsforhold} />
                           <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
@@ -480,7 +473,7 @@ const Initiering2: NextPage = () => {
                   )}
                 </>
               )}
-              {endreRefusjon === 'Nei' && arbeidetMellomPerioder === 'Nei' && (
+              {endreRefusjon === 'Nei' && (
                 <Alert variant='info'>
                   <Heading spacing size='small' level='3'>
                     Du trenger ikke sende inn en ny inntektsmelding for denne perioden.
