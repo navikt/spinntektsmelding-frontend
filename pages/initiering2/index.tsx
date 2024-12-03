@@ -98,8 +98,7 @@ const Initiering2: NextPage = () => {
       if (value.endreRefusjon === 'Nei') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message:
-            'Det er ikke mulig å sende inn en inntektsmelding som en forlengelse av en tidligere innsendt inntektsmelding',
+          message: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
           path: ['endreRefusjon']
         });
       }
