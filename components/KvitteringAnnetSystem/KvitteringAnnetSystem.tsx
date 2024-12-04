@@ -3,6 +3,7 @@ import { BodyLong, BodyShort, Link } from '@navikt/ds-react';
 import Heading1 from '../Heading1/Heading1';
 import Heading2 from '../Heading2/Heading2';
 import lokalStyles from './KvitteringAnnetSystem.module.css';
+import environment from '../../config/environment';
 
 interface KvitteringAnnetSystemProps {
   arkivreferanse?: string;
@@ -10,7 +11,10 @@ interface KvitteringAnnetSystemProps {
   lenkeTilKvitteringHref?: string;
   eksterntSystem: string;
   mottattDato?: string;
+  kvitteringId: string;
 }
+
+const basePath = environment.baseUrl;
 
 export default function KvitteringAnnetSystem(props: KvitteringAnnetSystemProps) {
   return (
@@ -19,12 +23,16 @@ export default function KvitteringAnnetSystem(props: KvitteringAnnetSystemProps)
       <div className={lokalStyles.hovedinnhold}>
         <Heading2>Denne inntektsmeldingen er mottatt fra et eksternt system</Heading2>
         <BodyLong>
-          Vi har mottatt denne inntektsmeldingen fra {props.eksterntSystem}. Hvis du vil se innsendt informasjon eller
-          gjøre endringer må du bruke samme system som dere sendte inn denne inntektsmeldingen med.
+          Vi har mottatt denne inntektsmeldingen fra {props.eksterntSystem}. Det er ikke mulig å gjøre endringer på
+          denne innsendingen.
         </BodyLong>
+        <BodyShort className={lokalStyles.luftOver}>
+          Du kan <Link href={`${basePath}/${props.kvitteringId}/overskriv`}>sende den inn på nytt.</Link> Skjemaet er da
+          ikke fylt med data fra siste innsending.
+        </BodyShort>
 
         {props.arkivreferanse && (
-          <BodyShort className={lokalStyles.arkivreferanse}>Arkivreferanse: [{props.arkivreferanse}]</BodyShort>
+          <BodyShort className={lokalStyles.luftOver}>Arkivreferanse: [{props.arkivreferanse}]</BodyShort>
         )}
 
         {props.lenkeTilKvittering && (
