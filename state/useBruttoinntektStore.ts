@@ -283,12 +283,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       isValidUUID(forespoerselId)
     ) {
       henterData = true;
-      set(
-        produce((state) => {
-          state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
-          state.henterData = henterData;
-        })
-      );
+
       const oppdaterteInntekter = await fetchInntektsdata(
         environment.inntektsdataUrl,
         forespoerselId,
