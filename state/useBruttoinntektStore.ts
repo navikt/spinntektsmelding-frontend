@@ -269,6 +269,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     const bruttoinntekt = get().bruttoinntekt;
 
     const slug = Router.query.slug as string;
+
+    const forespoerselId = Array.isArray(slug) ? (slug[0] as string) : (slug as string);
+
     let henterData = get().henterData;
     const sisteLonnshentedato = get().sisteLonnshentedato;
 
@@ -277,7 +280,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     if (
       !(henterData || !sisteLonnshentedato || !bestemmendeFravaersdag) &&
       startOfMonth(sisteLonnshentedato).getMonth() !== startOfMonth(bestemmendeFravaersdag).getMonth() &&
-      isValidUUID(slug)
+      isValidUUID(forespoerselId)
     ) {
       henterData = true;
       set(
@@ -286,7 +289,11 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.henterData = henterData;
         })
       );
-      const oppdaterteInntekter = await fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag);
+      const oppdaterteInntekter = await fetchInntektsdata(
+        environment.inntektsdataUrl,
+        forespoerselId,
+        bestemmendeFravaersdag
+      );
 
       oppdaterteInntekter.tidligereInntekter.forEach((inntekt: HistoriskInntekt) => {
         if (!tidligereInntekt.find((element) => element.maaned === inntekt.maaned)) {

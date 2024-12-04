@@ -29,7 +29,7 @@ import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
-import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'next/navigation';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
@@ -41,7 +41,8 @@ import isValidUUID from '../utils/isValidUUID';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  slug
+  slug,
+  erEndring
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [lasterData, setLasterData] = useState<boolean>(false);
@@ -79,7 +80,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
 
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   const hentSkjemadata = useHentSkjemadata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
@@ -93,7 +94,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     window.location.href = environment.saksoversiktUrl;
   };
 
-  const pathSlug = slug || (searchParams.get('slug') as string);
+  const pathSlug = slug; // || (searchParams.get('slug') as string);
 
   const selvbestemtInnsending =
     pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
@@ -155,7 +156,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
     if (!fravaersperioder) {
       setLasterData(true);
-      hentSkjemadata(pathSlug)?.finally(() => {
+      hentSkjemadata(pathSlug, erEndring)?.finally(() => {
         setLasterData(false);
       });
 
@@ -165,6 +166,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     } else {
       if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
         if (inntektsdato && isValidUUID(pathSlug)) {
+          console.log('fetching inntektsdata', pathSlug);
           fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
             .then((inntektSisteTreMnd) => {
               setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
@@ -281,9 +283,12 @@ export default Home;
 export async function getServerSideProps(context: any) {
   const slug = context.query.slug;
 
+  console.log('slug', slug, slug[0], slug[1]);
+
   return {
     props: {
-      slug
+      slug: slug[0],
+      erEndring: slug[1] && slug[1] === 'overskriv' ? true : false
     }
   };
 }
