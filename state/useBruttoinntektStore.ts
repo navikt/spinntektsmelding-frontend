@@ -280,12 +280,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       isValidUUID(slug)
     ) {
       henterData = true;
-      set(
-        produce((state) => {
-          state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
-          state.henterData = henterData;
-        })
-      );
+
       const oppdaterteInntekter = await fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag);
 
       oppdaterteInntekter.tidligereInntekter.forEach((inntekt: HistoriskInntekt) => {
