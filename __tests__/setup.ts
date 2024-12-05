@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import * as matchers from '@testing-library/jest-dom/matchers';
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 
 expect.extend(matchers);
 
@@ -8,6 +8,10 @@ expect.extend(matchers);
 import { toHaveNoViolations } from 'jest-axe';
 import { setConfig } from 'next/config';
 // import { setConfig } from 'next/config';
+
+vi.mock('next/router', () => require('next-router-mock'));
+
+vi.mock('zustand');
 
 // Extend the functionality to support axe
 expect.extend(toHaveNoViolations);

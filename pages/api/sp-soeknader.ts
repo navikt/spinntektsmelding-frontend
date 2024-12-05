@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
-import testdata from '../../mockdata/sp-soeknad.json';
+import testdata from '../../mockdata/sp-soeknad-2.json';
 import isMod11Number from '../../utils/isMod10Number';
 import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
