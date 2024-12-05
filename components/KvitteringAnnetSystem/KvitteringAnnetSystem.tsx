@@ -9,10 +9,9 @@ interface KvitteringAnnetSystemProps {
   lenkeTilKvittering?: string;
   lenkeTilKvitteringHref?: string;
   eksterntSystem: string;
-  mottattDato?: string;
 }
 
-export default function KvitteringAnnetSystem(props: KvitteringAnnetSystemProps) {
+export default function KvitteringAnnetSystem(props: Readonly<KvitteringAnnetSystemProps>) {
   return (
     <>
       <Heading1>Mottatt inntektsmelding</Heading1>

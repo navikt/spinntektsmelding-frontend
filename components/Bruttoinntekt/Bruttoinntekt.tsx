@@ -29,7 +29,7 @@ export default function Bruttoinntekt({
   sbBruttoinntekt,
   sbTidligereinntekt,
   erSelvbestemt
-}: BruttoinntektProps) {
+}: Readonly<BruttoinntektProps>) {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
@@ -121,7 +121,7 @@ export default function Bruttoinntekt({
   const manglendeEller0FraAmeldingen =
     !sisteTreMndTidligereinntekt || sisteTreMndTidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
 
-  const erBlanktSkjema = false; // skjemastatus === SkjemaStatus.SELVBESTEMT;
+  const erBlanktSkjema = false;
 
   useEffect(() => {
     if (sbBruttoinntekt !== undefined) {
@@ -186,7 +186,7 @@ export default function Bruttoinntekt({
         {!endringAvBelop && !erBlanktSkjema && (
           <>
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
-              {formatCurrency(gjennomsnittligInntekt ? gjennomsnittligInntekt : 0)} kr/måned
+              {formatCurrency(gjennomsnittligInntekt ?? 0)} kr/måned
             </TextLabel>
             <ButtonEndre
               data-cy='endre-beloep'

@@ -8,7 +8,7 @@ import ButtonEndre from '../ButtonEndre';
 import { useMemo } from 'react';
 import Feilmelding from '../Feilmelding';
 import logEvent from '../../utils/logEvent';
-import { addDays, differenceInCalendarDays, isAfter, isBefore, isValid, subDays } from 'date-fns';
+import { addDays, differenceInCalendarDays, isBefore, isValid, subDays } from 'date-fns';
 import ButtonTilbakestill from '../ButtonTilbakestill';
 import EgenmeldingLoader from './EgenmeldingLoader';
 import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
@@ -106,7 +106,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
 
         const dagerIPeriode = differenceInCalendarDays(periode.tom, periode.fom) + 1;
         return acc + dagerIPeriode;
-      }, 0) || 0;
+      }, 0) ?? 0;
 
     let egenmeldingDag =
       egenmeldingsperioder
@@ -126,10 +126,9 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
     const sortertArbeidsgiverperiode = arbeidsgiverperioder
       ? [...arbeidsgiverperioder].sort((a, b) => ((a.fom || new Date()) > (b.fom || new Date()) ? -1 : 1))
       : [];
-    const agpDag =
-      sortertArbeidsgiverperiode && sortertArbeidsgiverperiode?.[sortertArbeidsgiverperiode.length - 1]?.tom
-        ? sortertArbeidsgiverperiode?.[0]?.tom
-        : new Date();
+    const agpDag = sortertArbeidsgiverperiode?.[sortertArbeidsgiverperiode.length - 1]?.tom
+      ? sortertArbeidsgiverperiode?.[0]?.tom
+      : new Date();
 
     return isBefore(agpDag, egenmeldingDag) ? agpDag : egenmeldingDag;
   }, [arbeidsgiverperioder, egenmeldingsperioder]);

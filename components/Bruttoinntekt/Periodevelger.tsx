@@ -42,7 +42,7 @@ export default function Periodevelger({
   defaultMonth,
   fomError,
   tomError
-}: PeriodevelgerProps) {
+}: Readonly<PeriodevelgerProps>) {
   const onSlettClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     onSlettRad(periodeId);

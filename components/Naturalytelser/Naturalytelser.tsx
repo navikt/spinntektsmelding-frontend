@@ -39,7 +39,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
     leggTilNaturalytelse();
   };
 
-  const checkedNaturalytelser = naturalytelser && naturalytelser.length > 0 ? true : false;
+  const checkedNaturalytelser = naturalytelser && naturalytelser.length > 0;
 
   return (
     <>

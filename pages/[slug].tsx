@@ -162,25 +162,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       if (bestemmendeFravaersdag) {
         setSisteInntektsdato(startOfMonth(bestemmendeFravaersdag));
       }
-    } else {
-      if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-        if (inntektsdato && isValidUUID(pathSlug)) {
-          fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
-            .then((inntektSisteTreMnd) => {
-              setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
-              initBruttoinntekt(
-                inntektSisteTreMnd.beregnetInntekt,
-                inntektSisteTreMnd.tidligereInntekter,
-                inntektsdato
-              );
-            })
-            .catch((error) => {
-              logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
-              logger.warn(error);
-            });
-        }
-        setSisteInntektsdato(inntektsdato);
+    } else if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
+      if (inntektsdato && isValidUUID(pathSlug)) {
+        fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
+          .then((inntektSisteTreMnd) => {
+            setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
+            initBruttoinntekt(inntektSisteTreMnd.beregnetInntekt, inntektSisteTreMnd.tidligereInntekter, inntektsdato);
+          })
+          .catch((error) => {
+            logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
+            logger.warn(error);
+          });
       }
+      setSisteInntektsdato(inntektsdato);
     }
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());

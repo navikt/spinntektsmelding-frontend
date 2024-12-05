@@ -277,12 +277,12 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       initRefusjonEndringer(
         refusjonEndringer
           ? refusjonEndringer
-              ?.filter((endring) => endring && endring.beloep !== undefined)
+              ?.filter((endring) => endring?.beloep !== undefined)
               .map((endring) => ({ beloep: endring.beloep, dato: endring.dato }))
           : []
       );
 
-      if (!!skjemaData.refusjon.kravetOpphoerer) {
+      if (skjemaData.refusjon.kravetOpphoerer) {
         initRefusjonskravetOpphoerer(
           skjemaData.refusjon.kravetOpphoerer as YesNo,
           skjemaData.refusjon.refusjonOpphoerer,
@@ -436,7 +436,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     {!harEndringer && <BodyLong>Vi har ikke mottatt refusjonskrav for denne perioden.</BodyLong>}
                     {harEndringer && (
                       <>
-                        {formatCurrency(refusjonBeloep || 0)} kr
+                        {formatCurrency(refusjonBeloep ?? 0)} kr
                         {errors.refusjon?.refusjonPrMnd?.message && (
                           <div className='navds-form-field navds-form-field--medium navds-text-field--error endring-error-bottom-padded'>
                             <div
@@ -610,14 +610,21 @@ function finnTidligsteRefusjonOpphoersdato(
   );
 
   const refusjonEndringDatoer = refusjonEndringer?.map((endring) => endring.dato);
-  const sisteEndringDato = refusjonEndringDatoer?.sort((a, b) => (a && b ? (a > b ? 1 : -1) : 0))[0];
+  const sisteEndringDato = refusjonEndringDatoer
+    ?.filter((date): date is Date => date !== undefined)
+    .sort((a, b) => b.getTime() - a.getTime())[0];
+
   const tidligsteMuligeEndringDato = sisteEndringDato ? addDays(sisteEndringDato, 1) : undefined;
 
-  return tidligsteMuligeEndringDato
-    ? tidligsteOpphoersdato > tidligsteMuligeEndringDato
-      ? tidligsteOpphoersdato
-      : tidligsteMuligeEndringDato
-    : tidligsteOpphoersdato;
+  if (tidligsteMuligeEndringDato) {
+    if (tidligsteOpphoersdato > tidligsteMuligeEndringDato) {
+      return tidligsteOpphoersdato;
+    } else {
+      return tidligsteMuligeEndringDato;
+    }
+  } else {
+    return tidligsteOpphoersdato;
+  }
 }
 
 export async function getServerSideProps(context: any) {

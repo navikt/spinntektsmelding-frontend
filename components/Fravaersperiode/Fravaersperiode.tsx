@@ -19,7 +19,7 @@ export default function Fravaersperiode({
   skjemastatus,
   setIsDirtyForm,
   selvbestemtInnsending
-}: FravaersperiodeProps) {
+}: Readonly<FravaersperiodeProps>) {
   const fravaerPerioder = useBoundStore((state) => state.fravaersperioder);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);

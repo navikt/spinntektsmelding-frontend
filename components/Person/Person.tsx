@@ -12,7 +12,7 @@ interface PersonProps {
   erDelvisInnsending?: boolean;
 }
 
-export default function Person({ erKvittering, erDelvisInnsending }: PersonProps) {
+export default function Person({ erKvittering, erDelvisInnsending }: Readonly<PersonProps>) {
   const [
     navn,
     identitetsnummer,
@@ -94,7 +94,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
             <div className={lokalStyles.ansattWrapper}>
               <TextLabel>Personnummer</TextLabel>
               <div data-cy='identitetsnummer'>
-                {identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
+                {identitetsnummer ?? <Skeleton variant='text' width='90%' height={28} />}
               </div>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: PersonProps
               <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
+                  {virksomhetsnavn ?? <Skeleton variant='text' width='90%' height={28} />}
                 </div>
               </div>
             )}
