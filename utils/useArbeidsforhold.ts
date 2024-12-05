@@ -1,8 +1,12 @@
 import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherArbeidsforhold from './fetcherArbeidsforhold';
+import { FieldError } from 'react-hook-form';
 
-export default function useArbeidsforhold(identitetsnummer: string | undefined, backendFeil: any) {
+export default function useArbeidsforhold(
+  identitetsnummer: string | undefined,
+  setError: (name: string, error: FieldError, options?: { shouldFocus?: boolean | undefined }) => void
+) {
   return useSWRImmutable(
     [environment.initierBlankSkjemaUrl, identitetsnummer],
     ([url, idToken]) => fetcherArbeidsforhold(!!identitetsnummer ? url : null, idToken),
@@ -10,20 +14,19 @@ export default function useArbeidsforhold(identitetsnummer: string | undefined, 
       onError: (err) => {
         if (err.status === 401) {
           const ingress = window.location.hostname + environment.baseUrl;
-          const currentPath = window.location.href;
 
           window.location.replace(`https://${ingress}/oauth2/login?redirect=${ingress}/initiering`);
         }
 
         if (err.status === 404) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+          setError('sykepengePeriodeId', {
+            type: 'manual',
+            message: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
           });
         } else if (err.status !== 200) {
-          backendFeil.current.push({
-            felt: 'Backend',
-            text: 'Kunne ikke hente arbeidsforhold'
+          setError('sykepengePeriodeId', {
+            type: 'manual',
+            message: 'Kunne ikke hente arbeidsforhold'
           });
         }
       },
