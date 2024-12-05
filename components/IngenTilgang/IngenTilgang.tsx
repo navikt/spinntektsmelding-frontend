@@ -7,13 +7,11 @@ interface IngenTilgangProps {
   open: boolean;
 }
 
-export default function IngenTilgang({ handleCloseModal, open }: IngenTilgangProps) {
+export default function IngenTilgang({ handleCloseModal, open }: Readonly<IngenTilgangProps>) {
   return (
     <Modal
       open={open}
-      aria-label='Du er blitt logget ut, følg instruksjonene for ikke å miste data'
       onClose={handleCloseModal}
-      aria-labelledby='modal-heading'
       header={{
         heading: 'Du er blitt logget ut, følg instruksjonene for ikke å miste data',
         size: 'medium',

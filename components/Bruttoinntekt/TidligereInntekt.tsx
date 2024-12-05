@@ -38,7 +38,7 @@ const lasterDataPlaceholder = [
   }
 ];
 
-export default function TidligereInntekt({ tidligereinntekt, henterData }: TidligereInntektProps) {
+export default function TidligereInntekt({ tidligereinntekt, henterData }: Readonly<TidligereInntektProps>) {
   const [sortertInntekt, setSortertInntekt] = useState<Array<HistoriskInntekt>>([]);
   useEffect(() => {
     const inntekter: Array<HistoriskInntekt> = [...tidligereinntekt].sort(sorterInntekter);
@@ -81,7 +81,7 @@ export default function TidligereInntekt({ tidligereinntekt, henterData }: Tidli
                 <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt.maaned)}:</td>
                 <td className={lokalStyles.maanedsinntekt}>
                   {ugyldigEllerNegativtTall(inntekt.inntekt) && '-'}
-                  {!ugyldigEllerNegativtTall(inntekt.inntekt) && <>{formatCurrency(inntekt.inntekt!)} kr</>}
+                  {!ugyldigEllerNegativtTall(inntekt.inntekt) && <>{formatCurrency(inntekt.inntekt)} kr</>}
                 </td>
               </tr>
             ))}
