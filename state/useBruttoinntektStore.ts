@@ -281,7 +281,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     ) {
       henterData = true;
 
-      const oppdaterteInntekter = await fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag);
+      const inntektsdata = await fetchInntektsdata(environment.inntektsdataUrl, slug, bestemmendeFravaersdag);
+      const oppdaterteInntekter = inntektsdata.data;
 
       oppdaterteInntekter.tidligereInntekter.forEach((inntekt: HistoriskInntekt) => {
         if (!tidligereInntekt.find((element) => element.maaned === inntekt.maaned)) {
