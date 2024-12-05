@@ -15,12 +15,21 @@ describe('fetchInntektsdata', () => {
   });
 
   it('should fetch data successfully', async () => {
-    const data = { foo: 'bar' };
+    const data = {
+      foo: 'bar'
+    };
+
+    const resultat = {
+      data: {
+        foo: 'bar'
+      },
+      status: 200
+    };
     fetch.mockResponseOnce(JSON.stringify(data));
 
     const result = await fetchInntektsdata(url, forespoerselId, skjaeringstidspunkt);
 
-    expect(result).toEqual(data);
+    expect(result).toEqual(resultat);
     expect(fetch.mock.calls.length).toEqual(1);
     expect(fetch.mock.calls[0][0]).toEqual(url);
     expect(fetch.mock.calls[0][1].method).toEqual('POST');
@@ -47,7 +56,7 @@ describe('fetchInntektsdata', () => {
     fetch.mockResponseOnce('invalid json', { status: 200 });
 
     await expect(() => fetchInntektsdata(url, forespoerselId, skjaeringstidspunkt)).rejects.toThrow(
-      'An error occurred while decoding the data.'
+      'An error occurred while fetching the data.'
     );
   });
 

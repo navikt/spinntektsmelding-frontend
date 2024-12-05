@@ -7,7 +7,7 @@ const fetchInntektsdata = async (url: string, forespoerselId: string, skjaerings
   }
 
   const tidspunkt = formatIsoDate(skjaeringstidspunkt);
-  const res = await fetch(url, {
+  return fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -16,29 +16,31 @@ const fetchInntektsdata = async (url: string, forespoerselId: string, skjaerings
       forespoerselId: forespoerselId,
       skjaeringstidspunkt: tidspunkt
     })
-  });
+  })
+    .then((res) => {
+      if (!res.ok) {
+        const error = new NetworkError('An error occurred while fetching the data.');
 
-  if (!res.ok) {
-    const error = new NetworkError('An error occurred while fetching the data.');
-    // Attach extra info to the error object.
-    try {
-      error.info = res;
-    } catch (errorStatus) {
-      error.info = { errorStatus };
-    }
-    error.status = res.status;
-    throw error;
-  }
+        try {
+          error.info = res;
+        } catch (errorStatus) {
+          error.info = { errorStatus };
+        }
+        error.status = res.status;
+        throw error;
+      }
 
-  try {
-    return await res.json();
-  } catch (error) {
-    const jsonError = new NetworkError('An error occurred while decoding the data.');
-    // Attach extra info to the error object.
-    jsonError.info = (error as Error).message;
-    jsonError.status = res.status;
-    throw jsonError;
-  }
+      return res.json().then((data) => {
+        return { status: res.status, data };
+      });
+    })
+    .catch((error) => {
+      const networkError = new NetworkError('An error occurred while fetching the data.');
+
+      networkError.info = (error as Error).message;
+      networkError.status = error.status;
+      throw networkError;
+    });
 };
 
 export default fetchInntektsdata;
