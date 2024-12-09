@@ -89,7 +89,6 @@ export default function useFyllDelvisInnsending() {
     const forespurtData = hentPaakrevdOpplysningstyper();
 
     const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
-    // const skalSendeNaturalytelser = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
@@ -109,7 +108,7 @@ export default function useFyllDelvisInnsending() {
               formatertePerioder,
               skjaeringstidspunkt,
               arbeidsgiverKanFlytteSkjæringstidspunkt()
-            )!
+            )
           );
 
     const bestemmendeFraværsdagTilInnsending = finnFoersteFravaersdag(
@@ -145,7 +144,7 @@ export default function useFyllDelvisInnsending() {
         : null,
       inntekt: {
         beloep: skjema.inntekt.beloep!,
-        inntektsdato: bestemmendeFraværsdag!,
+        inntektsdato: bestemmendeFraværsdag,
         naturalytelser: naturalytelser
           ? naturalytelser?.map((ytelse) => ({
               naturalytelse: verdiEllerBlank(ytelse.type),
@@ -161,7 +160,7 @@ export default function useFyllDelvisInnsending() {
               beloepPerMaaned: skjema.refusjon.refusjonPrMnd ?? 0,
               sluttdato: formaterOpphørsdato(
                 skjema.refusjon.kravetOpphoerer as YesNo,
-                skjema.refusjon.refusjonOpphoerer!
+                skjema.refusjon.refusjonOpphoerer
               ),
 
               endringer: harRefusjonEndringerTilInnsending ? innsendingRefusjonEndringer : []

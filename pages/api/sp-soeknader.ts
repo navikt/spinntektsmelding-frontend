@@ -31,115 +31,115 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     setTimeout(() => {
       return res.status(200).json(testdata);
     }, 100);
-  } else if (env == 'production') {
-    const token = getToken(req);
-    if (!token) {
-      /* håndter manglende token */
-      console.error('Mangler token i header');
-      return res.status(401);
+  }
+
+  const token = getToken(req);
+  if (!token) {
+    /* håndter manglende token */
+    console.error('Mangler token i header');
+    return res.status(401);
+  }
+
+  const validation = await validateToken(token);
+  if (!validation.ok) {
+    console.log('Validering feilet: ', validation.error);
+    return res.status(401);
+  }
+
+  const requestBody = await req.body;
+
+  const orgnr = requestBody.orgnummer;
+
+  const erGyldigOrgnr = isMod11Number(orgnr);
+  if (!erGyldigOrgnr) {
+    console.error('Ugyldig orgnr: ', orgnr);
+    return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
+  }
+
+  const tokenResponse = await fetch(authApi + '/' + orgnr, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
     }
+  });
 
-    const validation = await validateToken(token);
-    if (!validation.ok) {
-      console.log('Validering feilet: ', validation.error);
-      return res.status(401);
-    }
+  if (!tokenResponse.ok) {
+    console.error('Feil ved kontroll av tilgang: ', tokenResponse.statusText);
 
-    const requestBody = await req.body;
+    return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
+  }
 
-    const orgnr = requestBody.orgnummer;
+  const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
+  if (!obo.ok) {
+    /* håndter obo-feil */
+    console.error('OBO-feil: ', obo.error);
+    return res.status(401);
+  }
 
-    const erGyldigOrgnr = isMod11Number(orgnr);
-    if (!erGyldigOrgnr) {
-      console.error('Ugyldig orgnr: ', orgnr);
-      return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
-    }
+  const body = {
+    orgnummer: requestBody.orgnummer,
+    fnr: requestBody.fnr,
+    eldsteFom: requestBody.eldsteFom
+  };
 
-    const tokenResponse = await fetch(authApi + '/' + orgnr, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      }
-    });
+  const soeknadResponse = await fetch(basePath, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${obo.token}`
+    },
+    body: JSON.stringify(body)
+  });
 
-    if (!tokenResponse.ok) {
-      console.error('Feil ved kontroll av tilgang: ', tokenResponse.statusText);
+  if (!soeknadResponse.ok) {
+    console.error('Feil ved henting av sykepengesøknader ', soeknadResponse.statusText);
+    console.error('Feilet med URL: ', basePath);
+    console.error('Feilet med requestBody: ', body);
 
-      return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
-    }
+    return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
+  } else {
+    const soeknadData: Sykepengesoeknader = await soeknadResponse.json();
 
-    const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
-    if (!obo.ok) {
-      /* håndter obo-feil */
-      console.error('OBO-feil: ', obo.error);
-      return res.status(401);
-    }
+    const aktiveSoeknader = soeknadData.filter(
+      (soeknad) => soeknad.vedtaksperiodeId && soeknad.vedtaksperiodeId !== null
+    );
 
-    const body = {
-      orgnummer: requestBody.orgnummer,
-      fnr: requestBody.fnr,
-      eldsteFom: requestBody.eldsteFom
-    };
+    const idListe: string[] = aktiveSoeknader
+      .map((soeknad) => soeknad.vedtaksperiodeId)
+      .filter((element) => element !== null);
 
-    const soeknadResponse = await fetch(basePath, {
+    const body = { vedtaksperiodeIdListe: idListe };
+
+    const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${obo.token}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(body)
     });
 
-    if (!soeknadResponse.ok) {
-      console.error('Feil ved henting av sykepengesøknader ', soeknadResponse.statusText);
-      console.error('Feilet med URL: ', basePath);
-      console.error('Feilet med requestBody: ', body);
+    if (!forespoerselIdListe.ok) {
+      console.error('Feil ved henting av forespørselIder ', forespoerselIdListe.statusText);
+      console.error('Feilet med URL: ', forespoerselIdListeApi);
+      console.error('Feilet med requestBody: ', JSON.stringify(body));
 
-      return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
+      return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
     } else {
-      const soeknadData: Sykepengesoeknader = await soeknadResponse.json();
+      const forespoerselIdListeData: forespoerselIdListeEnhet[] = await forespoerselIdListe.json();
 
-      const aktiveSoeknader = soeknadData.filter(
-        (soeknad) => soeknad.vedtaksperiodeId && soeknad.vedtaksperiodeId !== null
-      );
-
-      const idListe: string[] = aktiveSoeknader
-        .map((soeknad) => soeknad.vedtaksperiodeId)
-        .filter((element) => element !== null);
-
-      const body = { vedtaksperiodeIdListe: idListe };
-
-      const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(body)
+      const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
+        const forespoerselMedId = forespoerselIdListeData.find(
+          (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
+        );
+        return {
+          ...soeknad,
+          forespoerselId: forespoerselMedId?.forespoerselId
+        };
       });
 
-      if (!forespoerselIdListe.ok) {
-        console.error('Feil ved henting av forespørselIder ', forespoerselIdListe.statusText);
-        console.error('Feilet med URL: ', forespoerselIdListeApi);
-        console.error('Feilet med requestBody: ', JSON.stringify(body));
-
-        return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
-      } else {
-        const forespoerselIdListeData: forespoerselIdListeEnhet[] = await forespoerselIdListe.json();
-
-        const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
-          const forespoerselMedId = forespoerselIdListeData.find(
-            (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
-          );
-          return {
-            ...soeknad,
-            forespoerselId: forespoerselMedId?.forespoerselId
-          };
-        });
-
-        return res.status(soeknadResponse.status).json(soeknadResponseData);
-      }
+      return res.status(soeknadResponse.status).json(soeknadResponseData);
     }
   }
 };

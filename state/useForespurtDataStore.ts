@@ -106,11 +106,11 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       settRefusjonsbeloep(refusjonsbeloep, harEndringer);
 
       const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
-      const opphoersdatoRefusjon = refusjon?.opphoersdato || null;
+      const opphoersdatoRefusjon = refusjon?.opphoersdato ?? null;
 
       const refusjonskravetOpphoererStatus: YesNo | undefined = opphoersdatoRefusjon ? 'Ja' : 'Nei';
 
-      refusjonerUtenOpprinneligBfd = refusjonerUtenOpprinneligBfd ? refusjonerUtenOpprinneligBfd : [];
+      refusjonerUtenOpprinneligBfd = refusjonerUtenOpprinneligBfd ?? [];
       initRefusjonskravetOpphoerer(
         refusjonskravetOpphoererStatus,
         opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
@@ -307,5 +307,5 @@ function finnRefusjonIArbeidsgiverperioden(
     return periode.fom === skjaeringstidspunkt;
   });
 
-  return refusjonIAGP?.beloep || 0;
+  return refusjonIAGP?.beloep ?? 0;
 }

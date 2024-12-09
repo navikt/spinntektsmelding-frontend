@@ -1,12 +1,11 @@
 import NextDocument, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
-import { DecoratorComponents, fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr';
+import { DecoratorComponentsReact, fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr';
 import getConfig from 'next/config';
-import env from '../config/environment';
 
 const { serverRuntimeConfig } = getConfig();
 
 interface DocumentProps {
-  Decorator: DecoratorComponents;
+  Decorator: DecoratorComponentsReact;
 }
 
 const Document = ({ Decorator }: DocumentProps) => {

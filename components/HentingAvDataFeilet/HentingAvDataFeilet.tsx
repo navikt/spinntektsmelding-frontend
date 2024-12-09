@@ -6,7 +6,7 @@ interface HentingAvDataFeiletProps {
   open: boolean;
 }
 
-export default function HentingAvDataFeilet({ handleCloseModal, open }: HentingAvDataFeiletProps) {
+export default function HentingAvDataFeilet({ handleCloseModal, open }: Readonly<HentingAvDataFeiletProps>) {
   return (
     <Modal
       open={open}

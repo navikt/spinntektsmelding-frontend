@@ -17,7 +17,7 @@ export default function TariffendringDato({
   defaultKjentDato,
   defaultMonth,
   visFeilmeldingsTekst
-}: TariffendringDatoProps) {
+}: Readonly<TariffendringDatoProps>) {
   const tilDato = new Date();
   return (
     <div className={lokalStyles.endremaaanedsinntekt}>

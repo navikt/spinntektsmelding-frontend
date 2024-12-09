@@ -12,7 +12,7 @@ export default function NaturalytelseBortfallsdato({
   setNaturalytelseBortfallsdato,
   defaultValue,
   error
-}: NaturalytelseBortfallsdatoInterface) {
+}: Readonly<NaturalytelseBortfallsdatoInterface>) {
   const setBortfallsdato = (bortfallsdato: Date | undefined) => {
     setNaturalytelseBortfallsdato(naturalytelseId, bortfallsdato);
   };

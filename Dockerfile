@@ -7,20 +7,15 @@ WORKDIR /app
 # COPY .npmrc.docker .npmrc 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc ./
-RUN corepack enable
-RUN yarn set version berry
+RUN corepack enable && yarn set version berry
+
 COPY .yarnrc.yml yarn.lock ./
 COPY .yarn ./.yarn
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
-    echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc
-
-# RUN npm config set always-auth true   # Er ikke støttet lengre, men kan den bare slettes?
-
-RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
+    echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc && \
     export NPM_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) && \
     yarn install --immutable
-
 
 # Rebuild the source code only when needed
 FROM node:22.9-alpine AS builder
@@ -43,11 +38,7 @@ RUN echo "BUILDMODE" ${BUILDMODE}
 
 COPY ${BUILDMODE}.env .env
 
-RUN yarn build
-
-# If using npm comment out above and use below instead
-# RUN npm run build
-RUN rm -f .npmrc
+RUN yarn build && rm -f .npmrc
 
 # Production image, copy all the files and run next
 FROM node:22.9-alpine AS runner
@@ -57,8 +48,7 @@ ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 

@@ -61,16 +61,16 @@ export default function useFyllAapenInnsending() {
       },
       sykmeldingsperioder: fravaersperioder!
         .filter((periode) => periode.fom && periode.tom)
-        .map((periode) => ({ fom: formatDateForSubmit(periode!.fom!), tom: formatDateForSubmit(periode!.tom!) })),
+        .map((periode) => ({ fom: formatDateForSubmit(periode.fom), tom: formatDateForSubmit(periode.tom) })),
       agp: {
         perioder: arbeidsgiverperioder!.map((periode) => ({
-          fom: formatDateForSubmit(periode!.fom!),
-          tom: formatDateForSubmit(periode!.tom!)
+          fom: formatDateForSubmit(periode.fom),
+          tom: formatDateForSubmit(periode.tom)
         })),
         egenmeldinger: egenmeldingsperioder
           ? egenmeldingsperioder
               .filter((periode) => periode.fom && periode.tom)
-              .map((periode) => ({ fom: formatDateForSubmit(periode!.fom!), tom: formatDateForSubmit(periode!.tom!) }))
+              .map((periode) => ({ fom: formatDateForSubmit(periode.fom), tom: formatDateForSubmit(periode.tom) }))
           : [],
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
