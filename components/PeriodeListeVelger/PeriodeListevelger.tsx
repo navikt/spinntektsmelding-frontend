@@ -26,11 +26,8 @@ export default function PeriodeListevelger({
   toDateTom,
   toDateTomFri,
   name
-}: PeriodeListevelgerProps) {
-  const {
-    formState: { errors },
-    control
-  } = useFormContext();
+}: Readonly<PeriodeListevelgerProps>) {
+  const { control } = useFormContext();
 
   const { fields, append, remove, replace } = useFieldArray({
     control,

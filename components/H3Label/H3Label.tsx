@@ -9,7 +9,7 @@ interface H3LabelProps extends Partial<HeadingProps> {
 
 const cx = classNames.bind(styles);
 
-export default function H3Label(props: H3LabelProps) {
+export default function H3Label(props: Readonly<H3LabelProps>) {
   const className = cx({ heading: !props.unPadded, heading_top: props.topPadded }, props.className);
 
   return (

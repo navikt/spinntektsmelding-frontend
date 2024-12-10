@@ -9,8 +9,8 @@ interface Heading2Props {
 }
 
 export default function Heading2(props: Heading2Props) {
-  const classes = !!props.className ? `${styles.heading} ${props.className}` : styles.heading;
-  const size = props.size || 'medium';
+  const classes = props.className ? `${styles.heading} ${props.className}` : styles.heading;
+  const size = props.size ?? 'medium';
 
   return (
     <Heading size={size} level='2' className={classes}>

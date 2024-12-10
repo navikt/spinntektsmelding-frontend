@@ -29,7 +29,7 @@ export default function EgenmeldingPeriode({
   disabled,
   rad,
   visFeilmeldingsTekst
-}: EgenmeldingPeriodeInterface) {
+}: Readonly<EgenmeldingPeriodeInterface>) {
   const rangeChangeHandler = (dateRange: PeriodeParam | undefined) => {
     setEgenmeldingDato(dateRange, periodeId);
   };
