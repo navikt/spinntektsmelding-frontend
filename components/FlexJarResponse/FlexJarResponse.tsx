@@ -30,7 +30,8 @@ export default function FlexJarResponse(props: FlexJarResponseProps) {
       svar: svarSporsmaal,
       feedbackId: props.feedbackId,
       sporsmal: props.sporsmaal || '',
-      sporsmalFeedback: svarSporsmaal === 'JA' ? props.sporsmaalFeedback : props.sporsmaalFeedbackNei,
+      sporsmalFeedback:
+        svarSporsmaal === 'JA' ? reactToString(props.sporsmaalFeedback) : reactToString(props.sporsmaalFeedbackNei),
       feedback: respons,
       app: 'spinntektsmelding-frontend'
     });
@@ -96,4 +97,17 @@ export default function FlexJarResponse(props: FlexJarResponseProps) {
       </div>
     </div>
   );
+}
+
+function reactToString(node: React.ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') {
+    return node.toString();
+  }
+  if (React.isValidElement(node)) {
+    return reactToString(node.props.children);
+  }
+  if (Array.isArray(node)) {
+    return node.map(reactToString).join('');
+  }
+  return '';
 }
