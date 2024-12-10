@@ -288,7 +288,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 <>
                   <BodyLong weight='semibold'>Vi jobber med å forbedre inntektsmeldingen.</BodyLong>
                   <BodyLong weight='semibold'>
-                    Kan du beskrive hvorfor har du ventet med å sende inn inntektsmeldingen?
+                    Kan du beskrive hvorfor har du har ventet med å sende inn inntektsmeldingen?
                   </BodyLong>
                 </>
               }
