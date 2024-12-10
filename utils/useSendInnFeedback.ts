@@ -7,6 +7,7 @@ interface Feedback {
   svar: string;
   app: string;
   sporsmal: string;
+  sporsmalFeedback?: string;
 }
 
 export default function useSendInnFeedback() {

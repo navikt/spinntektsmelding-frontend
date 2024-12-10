@@ -40,6 +40,7 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -272,6 +273,26 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             </div>
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </div>
+          <FlexJarResponse
+            feedbackId='kvittering'
+            sporsmaal='Sendte du inn denne inntektsmeldingen fordi du fikk en påminnelse?'
+            sporsmaalFeedback={
+              <>
+                <BodyLong weight='semibold'>Vi jobber med å forbedre varslingen for inntektsmeldingen.</BodyLong>
+                <BodyLong weight='semibold'>
+                  Kan du beskrive hvorfor du ikke sendte inn inntektsmeldingen før du fikk påminnelse?
+                </BodyLong>
+              </>
+            }
+            sporsmaalFeedbackNei={
+              <>
+                <BodyLong weight='semibold'>Vi jobber med å forbedre inntektsmeldingen.</BodyLong>
+                <BodyLong weight='semibold'>
+                  Kan du beskrive hvorfor har du ventet med å sende inn inntektsmeldingen?
+                </BodyLong>
+              </>
+            }
+          />
         </div>
       </PageContent>
     </div>
