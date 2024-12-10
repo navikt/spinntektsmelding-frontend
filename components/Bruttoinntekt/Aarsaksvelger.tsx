@@ -52,7 +52,7 @@ export default function Aarsaksvelger({
         <TextField
           label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
           onChange={changeMaanedsintektHandler}
-          defaultValue={bruttoinntekt && bruttoinntekt.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
+          defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
           id='inntekt.beregnetInntekt'
           error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
           className={lokalStyles.bruttoinntektendringsbeloep}

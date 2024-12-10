@@ -2,7 +2,7 @@ interface VisMerProps {
   onClick?: () => void;
 }
 
-export default function VisMer(props: VisMerProps) {
+export default function VisMer(props: Readonly<VisMerProps>) {
   const clickHandler = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     if (props.onClick) props.onClick();

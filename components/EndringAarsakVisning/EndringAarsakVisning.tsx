@@ -9,7 +9,7 @@ interface EndringAarsakVisningProps {
   endringAarsak: EndringAarsak;
 }
 
-export default function EndringAarsakVisning({ endringAarsak }: EndringAarsakVisningProps) {
+export default function EndringAarsakVisning({ endringAarsak }: Readonly<EndringAarsakVisningProps>) {
   const props = endringAarsak;
   if (!props) {
     return null;

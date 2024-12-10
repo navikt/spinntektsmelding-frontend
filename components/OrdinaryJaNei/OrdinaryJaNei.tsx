@@ -14,7 +14,6 @@ export default function OrdinaryJaNei({ legend, name }: Readonly<OrdinaryJaNeiPr
     formState: { errors }
   } = useFormContext();
 
-  const errorKey = name.split('.');
   const error = findErrorInRHFErrors(name, errors);
 
   return (

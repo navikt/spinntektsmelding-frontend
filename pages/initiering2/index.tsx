@@ -375,10 +375,11 @@ const Initiering2: NextPage = () => {
     const forlengelser = sykepengePerioder
       ?.filter((periode) => periode.forlengelseAv)
       .filter((periode) => sykepengePeriodeId?.includes(periode.id));
+
     if (!forlengelser || (forlengelser.length === 0 && !!endreRefusjon)) {
       resetField('endreRefusjon');
     }
-  }, [resetField, sykepengePeriodeId, sykepengePerioder]);
+  }, [endreRefusjon, resetField, sykepengePeriodeId, sykepengePerioder]);
 
   return (
     <div className={styles.container}>

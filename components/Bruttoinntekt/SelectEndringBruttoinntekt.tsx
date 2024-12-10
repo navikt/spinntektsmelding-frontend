@@ -22,21 +22,19 @@ export default function SelectEndringBruttoinntekt(props: SelectEndringBruttoinn
   );
 
   return (
-    <>
-      <Select
-        label={props.label || 'Velg endringsårsak'}
-        onChange={changeHandler}
-        id={props.id}
-        error={props.error}
-        value={props.value}
-      >
-        <option value=''>Velg begrunnelse</option>
-        {begrunnelseKeys.map((begrunnelseKey) => (
-          <option value={begrunnelseKey} key={begrunnelseKey}>
-            {begrunnelseEndringBruttoinntektTekster[begrunnelseKey]}
-          </option>
-        ))}
-      </Select>
-    </>
+    <Select
+      label={props.label || 'Velg endringsårsak'}
+      onChange={changeHandler}
+      id={props.id}
+      error={props.error}
+      value={props.value}
+    >
+      <option value=''>Velg begrunnelse</option>
+      {begrunnelseKeys.map((begrunnelseKey) => (
+        <option value={begrunnelseKey} key={begrunnelseKey}>
+          {begrunnelseEndringBruttoinntektTekster[begrunnelseKey]}
+        </option>
+      ))}
+    </Select>
   );
 }

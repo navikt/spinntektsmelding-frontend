@@ -4,7 +4,7 @@ interface LenkeEksterntProps extends React.AnchorHTMLAttributes<HTMLAnchorElemen
   isHidden?: boolean;
 }
 
-export default function LenkeEksternt(props: LenkeEksterntProps) {
+export default function LenkeEksternt(props: Readonly<LenkeEksterntProps>) {
   const tabIndex = props.isHidden ? -1 : 0;
   const { isHidden, ...restProps } = props;
 

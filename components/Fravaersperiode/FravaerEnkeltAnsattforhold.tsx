@@ -125,10 +125,7 @@ export default function FravaerEnkeltAnsattforhold({
         </div>
       ))}
       {skjemastatus !== SkjemaStatus.SELVBESTEMT && endreSykemelding && (
-        <ButtonEndre
-          onClick={(event) => clickEndreFravaersperiodeHandler(event)}
-          className={localStyles.endrePadding}
-        />
+        <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />
       )}
       {endreSykemelding && (
         <div className={styles.endresykemeldingknapper}>

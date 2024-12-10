@@ -8,8 +8,8 @@ interface Heading1Props {
   id?: string;
 }
 
-export default function Heading1(props: Heading1Props) {
-  const classes = !!props.className ? `${styles.heading} ${props.className}` : styles.heading;
+export default function Heading1(props: Readonly<Heading1Props>) {
+  const classes = props.className ? `${styles.heading} ${props.className}` : styles.heading;
 
   return (
     <Heading size='medium' level='1' className={classes} id={props.id}>

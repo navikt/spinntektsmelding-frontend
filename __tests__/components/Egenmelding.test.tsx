@@ -40,9 +40,9 @@ describe('Egenmelding', () => {
     const mockFn = vi.fn();
 
     // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
-    vi.mock('../../components/Datovelger', () => ({
-      default: () => <div>Datovelger</div>
-    }));
+    // vi.mock('../../components/Datovelger', () => ({
+    //   default: () => <div>Datovelger</div>
+    // }));
 
     const { container } = render(<Egenmelding setIsDirtyForm={mockFn} />);
 
