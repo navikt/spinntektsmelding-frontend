@@ -80,7 +80,11 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
   if ((val.inntekt?.beloep ?? 0) < (val.agp?.redusertLoennIAgp?.beloep ?? 0)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+      message:
+        'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.' +
+        val.inntekt?.beloep +
+        ' ' +
+        val.agp?.redusertLoennIAgp?.beloep,
       path: ['agp', 'redusertLoennIAgp', 'beloep']
     });
   }
