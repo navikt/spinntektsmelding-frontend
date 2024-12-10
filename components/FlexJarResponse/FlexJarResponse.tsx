@@ -31,7 +31,7 @@ export default function FlexJarResponse(props: FlexJarResponseProps) {
       feedbackId: props.feedbackId,
       sporsmal: props.sporsmaal || '',
       sporsmalFeedback:
-        svarSporsmaal === 'JA' ? reactToString(props.sporsmaalFeedback) : reactToString(props.sporsmaalFeedbackNei),
+        svarSporsmaal === 'Ja' ? reactToString(props.sporsmaalFeedback) : reactToString(props.sporsmaalFeedbackNei),
       feedback: respons,
       app: 'spinntektsmelding-frontend'
     });

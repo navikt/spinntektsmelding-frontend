@@ -6,7 +6,6 @@ import { Opplysningstype } from './useForespurtDataStore';
 import { YesNo } from './state';
 import { AapenInnsending } from '../validators/validerAapenInnsending';
 import parseIsoDate from '../utils/parseIsoDate';
-import { isValid } from 'date-fns';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
