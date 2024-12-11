@@ -13,14 +13,16 @@ interface FlexJarResponseProps {
   sporsmaalFeedbackNei?: React.ReactNode;
 }
 
-export default function FlexJarResponse(props: FlexJarResponseProps) {
+export default function FlexJarResponse(props: Readonly<FlexJarResponseProps>) {
   const [respons, setRespons] = useState<string>('');
   const [sendt, setSendt] = useState<boolean>(false);
   const [visFeedback, setVisFeedback] = useState<boolean>(props.kunFeedback || false);
   const [svarSporsmaal, setSvarSporsmaal] = useState<string>('');
 
+  let sporsmaalFeedbackNei = props.sporsmaalFeedbackNei;
+
   if (!props.sporsmaalFeedbackNei) {
-    props.sporsmaalFeedbackNei = props.sporsmaalFeedback;
+    sporsmaalFeedbackNei = props.sporsmaalFeedback;
   }
 
   const sendInnFeedback = useSendInnFeedback();
@@ -29,9 +31,9 @@ export default function FlexJarResponse(props: FlexJarResponseProps) {
     sendInnFeedback({
       svar: svarSporsmaal,
       feedbackId: props.feedbackId,
-      sporsmal: props.sporsmaal || '',
+      sporsmal: props.sporsmaal ?? '',
       sporsmalFeedback:
-        svarSporsmaal === 'Ja' ? reactToString(props.sporsmaalFeedback) : reactToString(props.sporsmaalFeedbackNei),
+        svarSporsmaal === 'Ja' ? reactToString(props.sporsmaalFeedback) : reactToString(sporsmaalFeedbackNei),
       feedback: respons,
       app: 'spinntektsmelding-frontend'
     });
@@ -69,7 +71,7 @@ export default function FlexJarResponse(props: FlexJarResponseProps) {
           {visFeedback && (
             <>
               {svarSporsmaal === 'Nei' && (
-                <Textarea label={props.sporsmaalFeedbackNei} onChange={(event) => setRespons(event.target.value)} />
+                <Textarea label={sporsmaalFeedbackNei} onChange={(event) => setRespons(event.target.value)} />
               )}
               {svarSporsmaal === 'Ja' && (
                 <Textarea label={props.sporsmaalFeedback} onChange={(event) => setRespons(event.target.value)} />

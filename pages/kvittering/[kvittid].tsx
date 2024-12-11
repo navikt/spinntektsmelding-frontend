@@ -150,7 +150,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     infoboks: visArbeidsgiverperiode
   });
 
-  const skalViseFlexJar = forespoerselSistOppdatert && addDays(new Date(), -28) < forespoerselSistOppdatert;
+  const skalViseFlexJar = forespoerselSistOppdatert && addDays(new Date(), -28) > forespoerselSistOppdatert;
 
   return (
     <div className={styles.container}>
