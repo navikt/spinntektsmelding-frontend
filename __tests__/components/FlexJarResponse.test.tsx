@@ -41,16 +41,32 @@ describe('FlexJarResponse', () => {
     expect(screen.getByLabelText('Hva kan vi forbedre?')).toBeInTheDocument();
   });
 
+  it('shows feedback textarea when "Nei" is clicked', () => {
+    render(<FlexJarResponse {...defaultProps} sporsmaalFeedbackNei={undefined} />);
+    fireEvent.click(screen.getByText('Nei'));
+    expect(screen.getByLabelText('Hva likte du?')).toBeInTheDocument();
+  });
+
   it('sends feedback when "Send tilbakemelding" is clicked', () => {
-    render(<FlexJarResponse {...defaultProps} sporsmaalFeedback={<strong>Hva likte du?</strong>} />);
+    render(
+      <FlexJarResponse
+        {...defaultProps}
+        sporsmaalFeedback={
+          <>
+            <strong>Hva likte du?</strong>
+            <i>Aller best!</i>
+          </>
+        }
+      />
+    );
     fireEvent.click(screen.getByText('Ja'));
-    fireEvent.change(screen.getByLabelText('Hva likte du?'), { target: { value: 'Great service!' } });
+    fireEvent.change(screen.getByLabelText(/Hva likte du?/), { target: { value: 'Great service!' } });
     fireEvent.click(screen.getByText('Send tilbakemelding'));
     expect(mockSendInnFeedback).toHaveBeenCalledWith({
       svar: 'Ja',
       feedbackId: 'test-feedback-id',
       sporsmal: 'Er du fornøyd med tjenesten?',
-      sporsmalFeedback: 'Hva likte du?',
+      sporsmalFeedback: 'Hva likte du?Aller best!',
       feedback: 'Great service!',
       app: 'spinntektsmelding-frontend'
     });
