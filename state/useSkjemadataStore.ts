@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid';
 import { Opplysningstype } from './useForespurtDataStore';
 import { YesNo } from './state';
 import { AapenInnsending } from '../validators/validerAapenInnsending';
+import parseIsoDate from '../utils/parseIsoDate';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
@@ -25,6 +26,7 @@ export interface SkjemadataState {
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setKvitteringsdata: (data: any) => void;
   setVedtaksperiodeId: (id: string) => void;
+  setForespoerselSistOppdatert: (tidspunkt: string | Date) => void;
   tracker: string;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
@@ -37,6 +39,7 @@ export interface SkjemadataState {
   skjemastatus: SkjemaStatus;
   kvitteringData?: AapenInnsending;
   vedtaksperiodeId?: string;
+  forespoerselSistOppdatert?: Date;
 }
 
 export interface SkjemaKvitteringEksterntSystem {
@@ -136,6 +139,27 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.vedtaksperiodeId = id;
+      })
+    );
+  },
+  setForespoerselSistOppdatert: (tidspunkt: string | Date) => {
+    let oppdatert: Date | undefined = undefined;
+
+    if (typeof tidspunkt === 'string') {
+      oppdatert = parseIsoDate(tidspunkt);
+    } else {
+      oppdatert = tidspunkt;
+    }
+
+    if (!oppdatert) {
+      return;
+    }
+
+    set(
+      produce((state: SkjemadataState) => {
+        if (oppdatert !== undefined) {
+          state.forespoerselSistOppdatert = oppdatert;
+        }
       })
     );
   }

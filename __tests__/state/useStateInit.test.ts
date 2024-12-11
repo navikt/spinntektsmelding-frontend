@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 import { act, cleanup, renderHook } from '@testing-library/react';
 
 import mottattData from '../../mockdata/mottatData.json';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 const initialState = useBoundStore.getState();
 
@@ -38,5 +39,7 @@ describe('useStateInit', () => {
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(77000);
 
     expect(result.current.orgnrUnderenhet).toBe('911206722');
+
+    expect(result.current.forespoerselSistOppdatert).toEqual(parseIsoDate('2023-02-20'));
   });
 });

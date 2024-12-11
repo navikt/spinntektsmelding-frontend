@@ -31,7 +31,7 @@ import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
-import { isBefore, isValid } from 'date-fns';
+import { addDays, isBefore, isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import skjemaVariant from '../../config/skjemavariant';
@@ -40,6 +40,7 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
+import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -63,6 +64,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
+  const forespoerselSistOppdatert = useBoundStore((state) => state.forespoerselSistOppdatert);
 
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
@@ -147,11 +149,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const classNameWrapperSkjaeringstidspunkt = cx({
     infoboks: visArbeidsgiverperiode
   });
-  // const perioder: { fom: string; tom: string }[] = bruttoinntekt.endringAarsak && bruttoinntekt.endringAarsak[bruttoinntekt.endringAarsak.aarsak]:
-  //   ? bruttoinntekt.endringAarsak[bruttoinntekt.endringAarsak.aarsak as string]
-  //   : [];
-  // const gjelderFra = bruttoinntekt.endringAarsak?.gjelderFra ? bruttoinntekt.endringAarsak?.gjelderFra : '';
-  // const bleKjent = bruttoinntekt.endringAarsak?.bleKjent ? bruttoinntekt.endringAarsak?.bleKjent : '';
+
+  const skalViseFlexJar = forespoerselSistOppdatert && addDays(new Date(), -28) > forespoerselSistOppdatert;
+
   return (
     <div className={styles.container}>
       <Head>
@@ -273,6 +273,28 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             </div>
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </div>
+          {skalViseFlexJar && (
+            <FlexJarResponse
+              feedbackId='kvittering'
+              sporsmaal='Sendte du inn denne inntektsmeldingen fordi du fikk en påminnelse?'
+              sporsmaalFeedback={
+                <>
+                  <BodyLong weight='semibold'>Vi jobber med å forbedre varslingen for inntektsmeldingen.</BodyLong>
+                  <BodyLong weight='semibold'>
+                    Kan du beskrive hvorfor du ikke sendte inn inntektsmeldingen før du fikk påminnelse?
+                  </BodyLong>
+                </>
+              }
+              sporsmaalFeedbackNei={
+                <>
+                  <BodyLong weight='semibold'>Vi jobber med å forbedre inntektsmeldingen.</BodyLong>
+                  <BodyLong weight='semibold'>
+                    Kan du beskrive hvorfor har du har ventet med å sende inn inntektsmeldingen?
+                  </BodyLong>
+                </>
+              }
+            />
+          )}
         </div>
       </PageContent>
     </div>

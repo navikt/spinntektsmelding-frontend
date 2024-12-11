@@ -44,6 +44,8 @@ export default function useStateInit() {
     state.setMottattEksternBestemmendeFravaersdag
   ]);
 
+  const setForespoerselSistOppdatert = useBoundStore((state) => state.setForespoerselSistOppdatert);
+
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
@@ -105,6 +107,10 @@ export default function useStateInit() {
 
     if (jsonData.forespurtData) {
       initForespurtData(jsonData.forespurtData);
+    }
+
+    if (jsonData.opprettetUpresisIkkeBruk) {
+      setForespoerselSistOppdatert(jsonData.opprettetUpresisIkkeBruk);
     }
   };
 }
