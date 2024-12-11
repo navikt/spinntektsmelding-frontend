@@ -65,6 +65,7 @@ interface MottattData {
   skjaeringstidspunkt: TDateISODate;
   eksternBestemmendeFravaersdag: TDateISODate;
   bestemmendeFravaersdag: TDateISODate;
+  opprettetUpresisIkkeBruk?: TDateISODate;
 }
 
 export default MottattData;
