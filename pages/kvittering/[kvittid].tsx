@@ -168,6 +168,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               arkivreferanse={kvitteringEksterntSystem.referanse}
               eksterntSystem={kvitteringEksterntSystem.avsenderSystem}
               mottattDato={innsendingstidspunkt}
+              kvitteringId={kvitteringSlug}
             />
           )}
           {!kvitteringEksterntSystem?.avsenderSystem && (

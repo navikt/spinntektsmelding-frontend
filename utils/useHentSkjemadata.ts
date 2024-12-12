@@ -19,22 +19,22 @@ export default function useHentSkjemadata() {
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const router = useRouter();
 
-  return (pathSlug: string | Array<string>) => {
-    if (Array.isArray(pathSlug)) {
+  return (forespoerselID: string | Array<string>, erEndring: boolean) => {
+    if (Array.isArray(forespoerselID)) {
       return Promise.resolve({});
     }
 
-    if (pathSlug) {
-      return fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, pathSlug)
+    if (forespoerselID) {
+      return fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, forespoerselID)
         .then((skjemadata) => {
-          if (skjemadata.erBesvart === true) {
-            router.replace(`/kvittering/${pathSlug}`, undefined);
+          if (skjemadata.erBesvart === true && !erEndring) {
+            router.replace(`/kvittering/${forespoerselID}`, undefined);
           } else {
             initState(skjemadata);
             const opplysningstyper = hentPaakrevdOpplysningstyper();
 
             if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
-              router.replace(`/endring/${pathSlug}`, undefined);
+              router.replace(`/endring/${forespoerselID}`, undefined);
             }
           }
         })
