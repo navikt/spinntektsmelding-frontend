@@ -61,7 +61,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  // const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
