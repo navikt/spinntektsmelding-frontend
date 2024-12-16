@@ -44,7 +44,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           const oppdatertEgenmeldingsperiode = updateDateValue(egenmeldingsperioder, periodeId, dateValue);
 
           state.egenmeldingsperioder = oppdatertEgenmeldingsperiode;
-          oppdaterOgRekalkulerInntektOgBfd(
+          oppdaterOgRekalkulerInntekt(
             state,
             skjaeringstidspunkt,
             arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -70,7 +70,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
         const oppdatertePerioder = nyePerioder.length === 0 ? tomPeriode : nyePerioder;
         state.egenmeldingsperioder = oppdatertePerioder;
 
-        oppdaterOgRekalkulerInntektOgBfd(
+        oppdaterOgRekalkulerInntekt(
           state,
           skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -118,7 +118,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           state.kanEndreEgenmeldingPeriode = false;
         }
 
-        oppdaterOgRekalkulerInntektOgBfd(
+        oppdaterOgRekalkulerInntekt(
           state,
           skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -155,7 +155,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
 
 export default useEgenmeldingStore;
 
-function oppdaterOgRekalkulerInntektOgBfd(
+function oppdaterOgRekalkulerInntekt(
   state: any,
   skjaeringstidspunkt: Date | undefined,
   arbeidsgiverKanFlytteSkjæringstidspunkt: () => boolean,
