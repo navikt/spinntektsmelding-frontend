@@ -1172,16 +1172,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/ds-icons@npm:^3.4.3":
-  version: 3.4.3
-  resolution: "@navikt/ds-icons@npm:3.4.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-icons%2F3.4.3%2Feaa8fc38f6d184806d3405a5efbc9d137c2b8d27"
-  peerDependencies:
-    "@types/react": ^17.0.30 || ^18.0.0
-    react: ^17.0.0 || ^18.0.0
-  checksum: 10c0/959b68c3f2947aa6a8ddba1827d22e7071934790b001f24833823150f90cde6e6eaf08ca2215427a99b6e52a81ac9e82ecc3bb50dda36eefe6d1cd10d41436f1
-  languageName: node
-  linkType: hard
-
 "@navikt/ds-react@npm:^7.6.0":
   version: 7.6.0
   resolution: "@navikt/ds-react@npm:7.6.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-react%2F7.6.0%2Faffcdb539be6ae0510dc2b4e3cfd667a6edee95a"
@@ -9320,7 +9310,6 @@ __metadata:
     "@hookform/resolvers": "npm:3.9.1"
     "@navikt/aksel-icons": "npm:^7.6.0"
     "@navikt/ds-css": "npm:^7.6.0"
-    "@navikt/ds-icons": "npm:^3.4.3"
     "@navikt/ds-react": "npm:^7.6.0"
     "@navikt/fnrvalidator": "npm:2.1.5"
     "@navikt/nav-dekoratoren-moduler": "npm:^3.1.1"

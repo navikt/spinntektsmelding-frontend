@@ -81,7 +81,8 @@ const nextConfig = {
     loggingDisabled: process.env.DISABLE_DECORATOR
   },
   experimental: {
-    optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-icons']
+    optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-react'],
+    esmExternals: 'loose'
   }
 };
 
