@@ -12,7 +12,7 @@ import lokalStyles from './initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
@@ -166,48 +166,48 @@ const Initiering2: NextPage = () => {
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
-  let sykepengePerioder: SykepengePeriode[] = [];
+  const sykepengePerioder: SykepengePeriode[] = useMemo(() => {
+    if (!spData) return [];
 
-  if (!!spData) {
-    const mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
+    const mottatteSykepengesoknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
 
-    if (mottatteSykepengesoeknader.success) {
-      sykepengePerioder =
-        mottatteSykepengesoeknader.data.length > 0
-          ? mottatteSykepengesoeknader.data.map((periode) => {
-              return {
-                fom: new Date(periode.fom),
-                tom: new Date(periode.tom),
-                id: periode.sykepengesoknadUuid,
-                antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length,
-                forespoerselId: periode.forespoerselId
-              };
-            })
-          : [];
-
-      sykepengePerioder = sykepengePerioder.reduce((acc, current) => {
-        if (acc.length === 0) {
-          acc.push(current);
-          return acc;
-        }
-        if (
-          (acc[acc.length - 1].forespoerselId || acc[acc.length - 1].forlengelseAv) &&
-          differenceInCalendarDays(current.fom, acc[acc.length - 1].tom) >= 1
-        ) {
-          acc.push({
-            ...current,
-            forlengelseAv: acc[acc.length - 1].forespoerselId ?? acc[acc.length - 1].forlengelseAv
-          });
-          return acc;
-        } else {
-          acc.push({ ...current, forlengelseAv: undefined });
-          return acc;
-        }
-      }, [] as SykepengePeriode[]);
-    } else {
-      logger.error('Feil ved validering av sykepengesøknader', mottatteSykepengesoeknader.error.errors);
+    if (!mottatteSykepengesoknader.success) {
+      logger.error('Feil ved validering av sykepengesøknader', mottatteSykepengesoknader.error.errors);
+      return [];
     }
-  }
+
+    let perioder =
+      mottatteSykepengesoknader.data.length > 0
+        ? mottatteSykepengesoknader.data.map((periode) => ({
+            fom: new Date(periode.fom),
+            tom: new Date(periode.tom),
+            id: periode.sykepengesoknadUuid,
+            antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length,
+            forespoerselId: periode.forespoerselId
+          }))
+        : [];
+
+    return perioder.reduce((acc, current) => {
+      if (acc.length === 0) {
+        acc.push(current);
+        return acc;
+      }
+      if (
+        (acc[acc.length - 1].forespoerselId || acc[acc.length - 1].forlengelseAv) &&
+        differenceInCalendarDays(current.fom, acc[acc.length - 1].tom) >= 1
+      ) {
+        acc.push({
+          ...current,
+          forlengelseAv: acc[acc.length - 1].forespoerselId ?? acc[acc.length - 1].forlengelseAv
+        });
+        return acc;
+      } else {
+        acc.push({ ...current, forlengelseAv: undefined });
+        return acc;
+      }
+    }, [] as SykepengePeriode[]);
+  }, [spData]);
+
   const valgteSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
     finnSorterteUnikePerioder(
       sykepengePeriodeId
