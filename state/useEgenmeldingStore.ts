@@ -176,8 +176,7 @@ function oppdaterOgRekalkulerInntektOgBfd(
     );
     if (bestemmende) {
       state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
-      state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-      state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+      state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende)!);
     }
   }
 }

@@ -41,6 +41,8 @@ import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
 import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
+import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -59,7 +61,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  // const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
@@ -120,9 +122,22 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const trengerArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
 
+  const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
+    fravaersperioder,
+    arbeidsgiverperioder,
+    foreslaattBestemmendeFravaersdag,
+    !trengerArbeidsgiverperiode
+  );
   const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
-    ? bestemmendeFravaersdag
+    ? parseIsoDate(bestemmendeFravaersdag)
     : foreslaattBestemmendeFravaersdag;
+
+  console.log(
+    'bestemmendeFravaersdag',
+    bestemmendeFravaersdag,
+    foreslaattBestemmendeFravaersdag,
+    visningBestemmendeFravaersdag
+  );
 
   useEffect(() => {
     if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem) {

@@ -39,7 +39,7 @@ export default function useKvitteringInit() {
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
 
-  const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
+  // const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
   const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
   const initFullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.initFullLonnIArbeidsgiverPerioden);
 
@@ -104,7 +104,7 @@ export default function useKvitteringInit() {
 
     const bestemmendeFravaersdag = jsonData.bestemmendeFraværsdag;
     if (bestemmendeFravaersdag) {
-      setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
+      // setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
       setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
     }
 

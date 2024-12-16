@@ -37,16 +37,6 @@ describe('useBoundStore', () => {
     vi.resetAllMocks();
   });
 
-  it('should set bestemmende fraværsdag.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.setBestemmendeFravaersdag(new Date(2022, 5, 5));
-    });
-
-    expect(result.current.bestemmendeFravaersdag).toEqual(new Date(2022, 5, 5));
-  });
-
   it('should set the arbeidsgiver periode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -1451,10 +1441,6 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(mottattFravaersperiode);
     });
 
-    act(() => {
-      result.current.setBestemmendeFravaersdag(parseIsoDate('2021-10-01'));
-    });
-
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
         id: '1',
@@ -1462,8 +1448,6 @@ describe('useBoundStore', () => {
         tom: parseIsoDate('2021-10-05')
       }
     ]);
-
-    expect(result.current.bestemmendeFravaersdag).toEqual(parseIsoDate('2021-10-01'));
 
     act(() => {
       result.current.tilbakestillArbeidsgiverperiode();

@@ -33,7 +33,7 @@ export default function useStateInit() {
   const initBruttoinntekt = useBoundStore((state) => state.initBruttoinntekt);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
-  const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
+  // const setBestemmendeFravaersdag = useBoundStore((state) => state.setBestemmendeFravaersdag);
   const initForespurtData = useBoundStore((state) => state.initForespurtData);
   const [setForeslaattBestemmendeFravaersdag, setSkjaeringstidspunkt] = useBoundStore((state) => [
     state.setForeslaattBestemmendeFravaersdag,
@@ -90,7 +90,7 @@ export default function useStateInit() {
       jsonData.eksternBestemmendeFravaersdag,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
-    if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
+    // if (bestemmendeFravaersdag) setBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     if (jsonData.eksternBestemmendeFravaersdag) {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.eksternBestemmendeFravaersdag));

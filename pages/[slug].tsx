@@ -55,7 +55,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.leggTilFeilmelding
   ]);
 
-  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  // const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -132,14 +132,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       foreslaattBestemmendeFravaersdag,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
-    return beregnetBestemmendeFraværsdagISO ? parseIsoDate(beregnetBestemmendeFraværsdagISO) : bestemmendeFravaersdag;
+    return parseIsoDate(beregnetBestemmendeFraværsdagISO);
   }, [
     arbeidsgiverperioder,
     egenmeldingsperioder,
     foreslaattBestemmendeFravaersdag,
     fravaersperioder,
-    arbeidsgiverKanFlytteSkjæringstidspunkt,
-    bestemmendeFravaersdag
+    arbeidsgiverKanFlytteSkjæringstidspunkt
   ]);
 
   const inntektsdato = useMemo(() => {
@@ -159,9 +158,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         setLasterData(false);
       });
 
-      if (bestemmendeFravaersdag) {
-        setSisteInntektsdato(startOfMonth(bestemmendeFravaersdag));
-      }
+      // if (bestemmendeFravaersdag) {
+      //   setSisteInntektsdato(startOfMonth(bestemmendeFravaersdag));
+      // }
     } else if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
       if (inntektsdato && isValidUUID(pathSlug)) {
         fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
