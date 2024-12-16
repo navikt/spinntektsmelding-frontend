@@ -198,21 +198,11 @@ describe('useEgenmeldingStore', () => {
     const id = result.current.egenmeldingsperioder![0].id;
 
     act(() => {
-      result.current.setBestemmendeFravaersdag(new Date(2023, 3, 6));
-    });
-
-    expect(result.current.bestemmendeFravaersdag).toEqual(new Date(2023, 3, 6));
-
-    act(() => {
       result.current.setEgenmeldingDato({ fom: new Date(2023, 3, 7), tom: new Date(2023, 4, 7) }, id);
     });
-
-    expect(result.current.bestemmendeFravaersdag).toEqual(new Date(2022, 11, 6));
 
     act(() => {
       result.current.tilbakestillEgenmelding();
     });
-
-    expect(result.current.bestemmendeFravaersdag).toEqual(new Date(2022, 11, 6));
   });
 });

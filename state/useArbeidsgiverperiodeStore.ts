@@ -15,7 +15,6 @@ import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
 
 export interface ArbeidsgiverperiodeState {
-  bestemmendeFravaersdag?: Date;
   skjaeringstidspunkt?: Date;
   foreslaattBestemmendeFravaersdag?: Date;
   arbeidsgiverperioder?: Array<Periode>;
@@ -26,7 +25,6 @@ export interface ArbeidsgiverperiodeState {
   arbeidsgiverperiodeKort: boolean;
   mottattBestemmendeFravaersdag?: TDateISODate;
   mottattEksternBestemmendeFravaersdag?: TDateISODate;
-  setBestemmendeFravaersdag: (bestemmendeFravaersdag: Date | undefined) => void;
   setArbeidsgiverperioder: (arbeidsgiverperioder: Array<Periode> | undefined) => void;
   initArbeidsgiverperioder: (arbeidsgiverperioder: Array<MottattPeriode> | undefined) => void;
   setEndringsbegrunnelse: (begrunnelse: string) => void;
@@ -54,15 +52,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     arbeidsgiverperioder: undefined,
     endretArbeidsgiverperiode: false,
     arbeidsgiverperiodeKort: false,
-    setBestemmendeFravaersdag: (bestemmendeFravaersdag) => {
-      set(
-        produce((state) => {
-          state.bestemmendeFravaersdag = bestemmendeFravaersdag;
-
-          return state;
-        })
-      );
-    },
     setArbeidsgiverperioder: (arbeidsgiverperioder) =>
       set(
         produce((state) => {
