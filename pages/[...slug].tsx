@@ -270,8 +270,6 @@ export default Home;
 export async function getServerSideProps(context: any) {
   const slug = context.query.slug;
 
-  console.log('slug', slug, slug[0], slug[1]);
-
   return {
     props: {
       slug: slug[0],

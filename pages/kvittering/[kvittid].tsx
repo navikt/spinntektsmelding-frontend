@@ -131,13 +131,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? parseIsoDate(bestemmendeFravaersdag)
     : foreslaattBestemmendeFravaersdag;
 
-  console.log(
-    'bestemmendeFravaersdag',
-    bestemmendeFravaersdag,
-    foreslaattBestemmendeFravaersdag,
-    visningBestemmendeFravaersdag
-  );
-
   useEffect(() => {
     if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem) {
       if (!kvitteringSlug || kvitteringSlug === '') return;
