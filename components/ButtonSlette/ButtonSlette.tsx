@@ -1,5 +1,5 @@
 import { Button } from '@navikt/ds-react';
-import { Delete } from '@navikt/ds-icons';
+import { TrashIcon } from '@navikt/aksel-icons';
 
 interface ButtonSletteProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -12,7 +12,7 @@ export default function ButtonSlette(props: ButtonSletteProps) {
       className={props.className}
       onClick={props.onClick}
       variant='tertiary'
-      icon={<Delete title={props.title} />}
+      icon={<TrashIcon title={props.title} />}
       disabled={props.disabled}
     />
   );
