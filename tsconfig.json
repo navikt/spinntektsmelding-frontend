@@ -27,5 +27,5 @@
     "vitest.config.mts"
   ],
   "exclude": ["node_modules", "cypress.config.ts"],
-  "types": ["node", "vitest/globals", "cypress", "@types/jest", "cypress-real-events"]
+  "types": ["node", "vitest/globals", "cypress", "cypress-real-events", "vitest/jsdom"]
 }
