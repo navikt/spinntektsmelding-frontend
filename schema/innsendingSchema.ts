@@ -77,6 +77,16 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
     });
   }
 
+  const refusjonInnsendingsdatoer = val.refusjon?.endringer.map((endring) => endring.startdato);
+
+  if (refusjonInnsendingsdatoer && new Set(refusjonInnsendingsdatoer).size !== refusjonInnsendingsdatoer.length) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Det er lagt inn flere refusjonsendringer på samme dato.',
+      path: ['refusjon', 'endringer']
+    });
+  }
+
   if ((val.inntekt?.beloep ?? 0) < (val.agp?.redusertLoennIAgp?.beloep ?? 0)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,

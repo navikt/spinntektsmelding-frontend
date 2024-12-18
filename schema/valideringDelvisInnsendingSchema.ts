@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TelefonNummerSchema } from './telefonNummerSchema';
 import { SkjemavalideringEndringAarsakSchema } from './skjemavalideringEndringAarsakSchema';
+import formatIsoDate from '../utils/formatIsoDate';
 
 export default z
   .object({
@@ -80,6 +81,16 @@ export default z
         code: z.ZodIssueCode.custom,
         message: 'Refusjonsbeløp mangler selv om det kreves refusjon.',
         path: ['refusjon', 'refusjonPrMnd']
+      });
+    }
+
+    const refusjonInnsendingsdatoer = value.refusjon?.refusjonEndringer?.map((endring) => formatIsoDate(endring.dato));
+
+    if (refusjonInnsendingsdatoer && new Set(refusjonInnsendingsdatoer).size !== refusjonInnsendingsdatoer.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Det er lagt inn flere refusjonsendringer på samme dato.',
+        path: ['refusjon', 'harEndringer']
       });
     }
 
