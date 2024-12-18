@@ -1,6 +1,6 @@
 import { Periode } from '../state/state';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
-import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
+import { differenceInCalendarDays } from 'date-fns/differenceInCalendarDays';
 
 export enum PeriodeFravaerFeilkode {
   MANGLER_PERIODE = 'MANGLER_PERIODE',

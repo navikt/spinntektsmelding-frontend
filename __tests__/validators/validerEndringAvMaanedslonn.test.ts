@@ -92,4 +92,66 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
       )
     ).toEqual([]);
   });
+
+  it('should return error when harRefusjonEndringer is Ja and duplicated refusjonEndringer', () => {
+    const tid = new Date(2024, 5, 5);
+    expect(
+      valdiderEndringAvMaanedslonn(
+        'Ja',
+        [
+          { dato: tid, beloep: 12345 },
+          { dato: tid, beloep: 12345 }
+        ],
+        undefined,
+        55500
+      )
+    ).toEqual([
+      {
+        code: 'DUPLISERT_VALG_ENDRING_MAANEDSLONN_I_PERIODEN',
+        felt: 'refusjon.endringer'
+      }
+    ]);
+  });
+
+  it('should return error when harRefusjonEndringer is Ja and duplicated refusjonEndringer dates', () => {
+    const tid = new Date(2024, 5, 5);
+    expect(
+      valdiderEndringAvMaanedslonn(
+        'Ja',
+        [
+          { dato: tid, beloep: 12345 },
+          { dato: tid, beloep: 1234 }
+        ],
+        undefined,
+        55500
+      )
+    ).toEqual([
+      {
+        code: 'DUPLISERT_DATO_VALG_ENDRING_MAANEDSLONN_I_PERIODEN',
+        felt: 'refusjon.endringer'
+      }
+    ]);
+  });
+
+  it('should return error when harRefusjonEndringer is Ja and duplicated refusjonEndringer dates, even with a unique date in the mix', () => {
+    const tid = new Date(2024, 5, 5);
+    const tid2 = new Date(2024, 5, 6);
+    expect(
+      valdiderEndringAvMaanedslonn(
+        'Ja',
+        [
+          { dato: tid, beloep: 12345 },
+          { dato: tid, beloep: 1234 },
+          { dato: tid2, beloep: 1234 }
+        ],
+        undefined,
+        55500
+      )
+    ).toEqual([
+      {
+        code: 'DUPLISERT_DATO_VALG_ENDRING_MAANEDSLONN_I_PERIODEN',
+        felt: 'refusjon.endringer'
+      }
+    ]);
+  });
 });
