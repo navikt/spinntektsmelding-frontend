@@ -32,6 +32,8 @@ const feiltekster = {
   LONN_I_ARBEIDSGIVERPERIODEN_BELOP: 'Angi beløp. Må være høyere enn eller lik 0 og på formatet 1234,50',
   LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT: 'Beløpet kan ikke overstige beregnet månedslønn.',
   MANGLER_VALG_ENDRING_MAANEDSLONN_I_PERIODEN: 'Angi om det har vært endring i månedslønn i perioden',
+  DUPLISERT_VALG_ENDRING_MAANEDSLONN_I_PERIODEN: 'En eller flere perioder er lagt inn flere ganger',
+  DUPLISERT_DATO_VALG_ENDRING_MAANEDSLONN_I_PERIODEN: 'Det er lagt inn flere refusjonsendringer på samme dato',
   MANGLER_BELOP: 'Angi ny lønn. Må være høyere enn eller lik 0 og på formatet 1234,50',
   MANGLER_DATO: 'Angi dato for lønnsendring',
   FERIE_FOM: 'Angi fra dato',
