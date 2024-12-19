@@ -15,7 +15,6 @@ import { useEffect, useMemo, useState } from 'react';
 import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import { differenceInCalendarDays, differenceInDays } from 'date-fns';
-import SelectBegrunnelse from '../RefusjonArbeidsgiver/SelectBegrunnelse';
 import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
@@ -445,7 +444,7 @@ export default function Arbeidsgiverperiode({
           </Checkbox>
           {arbeidsgiverperiodeDisabled && (
             <>
-              <SelectBegrunnelse
+              <SelectBegrunnelseKortArbeidsgiverperiode
                 onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
                 defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
                 error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
