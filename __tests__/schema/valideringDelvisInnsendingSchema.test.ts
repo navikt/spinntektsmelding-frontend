@@ -164,5 +164,35 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
     expect(result.error.issues[0].path).toEqual(['refusjon', 'refusjonPrMnd']);
   });
 
+  it('should return OK if kreverRefusjon is Ja and refusjonPrMnd higher than inntekt, and inntekt is 0', () => {
+    const invalidInput = {
+      inntekt: {
+        endringBruttoloenn: 'Ja',
+        beloep: 0,
+        endringAarsak: { aarsak: 'Feilregistrert' }
+      },
+      telefon: '+4712345678',
+      opplysningerBekreftet: true,
+      refusjon: {
+        erDetEndringRefusjon: 'Ja',
+        kreverRefusjon: 'Ja',
+        harEndringer: 'Ja',
+        refusjonPrMnd: 4000,
+        refusjonEndringer: [
+          {
+            beloep: 2000,
+            dato: new Date('2022-01-01')
+          }
+        ],
+        kravetOpphoerer: 'Ja',
+        refusjonOpphoerer: new Date('2022-12-31')
+      }
+    };
+
+    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+
+    expect(result.success).toBe(true);
+  });
+
   // Add more test cases as needed
 });

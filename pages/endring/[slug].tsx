@@ -262,7 +262,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const submitForm: SubmitHandler<Skjema> = (skjemaData: Skjema) => {
     setSenderInn(true);
 
-    if (skjemaData.inntekt.beloep) {
+    if (skjemaData.inntekt.beloep !== undefined) {
       setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
     }
 
