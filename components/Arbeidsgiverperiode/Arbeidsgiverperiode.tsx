@@ -445,7 +445,7 @@ export default function Arbeidsgiverperiode({
           </Checkbox>
           {arbeidsgiverperiodeDisabled && (
             <>
-              <SelectBegrunnelse
+              <SelectBegrunnelseKortArbeidsgiverperiode
                 onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
                 defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
                 error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
