@@ -93,7 +93,7 @@ export default z
 
     if (value.refusjon.harEndringer === 'Ja') {
       value.refusjon.refusjonEndringer?.map((endring, index) => {
-        if ((endring.beloep ?? 0) > (value.inntekt?.beloep ?? 0) && value.inntekt.beloep !== 0) {
+        if ((endring.beloep ?? 0) > (value.inntekt?.beloep ?? 0)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Refusjon kan ikke være høyere enn brutto lønn.',
