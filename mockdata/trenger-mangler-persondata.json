@@ -1,0 +1,50 @@
+{
+  "navn": "Ukjent navn",
+  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "innsenderNavn": "Ukjent navn",
+  "identitetsnummer": "22518249472",
+  "orgnrUnderenhet": "810007842",
+  "fravaersperioder": [{ "fom": "2024-09-01", "tom": "2024-09-30" }],
+  "egenmeldingsperioder": [],
+  "bestemmendeFravaersdag": "2024-09-01",
+  "eksternBestemmendeFravaersdag": null,
+  "bruttoinntekt": 0.0,
+  "tidligereinntekter": [
+    { "maaned": "2024-06", "inntekt": null },
+    { "maaned": "2024-07", "inntekt": null },
+    { "maaned": "2024-08", "inntekt": null }
+  ],
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": true },
+    "inntekt": { "paakrevd": true, "forslag": { "type": "ForslagInntektGrunnlag", "forrigeInntekt": null } },
+    "refusjon": { "paakrevd": true, "forslag": { "perioder": [], "opphoersdato": null } }
+  },
+  "opprettetUpresisIkkeBruk": "2024-12-18",
+  "erBesvart": false,
+  "feilReport": { "feil": [{ "melding": "Vi klarte ikke å hente navn på personer.", "datafelt": "personer" }] },
+  "success": {
+    "navn": "Ukjent navn",
+    "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "innsenderNavn": "Ukjent navn",
+    "identitetsnummer": "22518249472",
+    "orgnrUnderenhet": "810007842",
+    "fravaersperioder": [{ "fom": "2024-09-01", "tom": "2024-09-30" }],
+    "egenmeldingsperioder": [],
+    "bestemmendeFravaersdag": "2024-09-01",
+    "eksternBestemmendeFravaersdag": null,
+    "bruttoinntekt": 0.0,
+    "tidligereinntekter": [
+      { "maaned": "2024-06", "inntekt": null },
+      { "maaned": "2024-07", "inntekt": null },
+      { "maaned": "2024-08", "inntekt": null }
+    ],
+    "forespurtData": {
+      "arbeidsgiverperiode": { "paakrevd": true },
+      "inntekt": { "paakrevd": true, "forslag": { "type": "ForslagInntektGrunnlag", "forrigeInntekt": null } },
+      "refusjon": { "paakrevd": true, "forslag": { "perioder": [], "opphoersdato": null } }
+    },
+    "opprettetUpresisIkkeBruk": "2024-12-18",
+    "erBesvart": false,
+    "feilReport": { "feil": [{ "melding": "Vi klarte ikke å hente navn på personer.", "datafelt": "personer" }] }
+  }
+}
