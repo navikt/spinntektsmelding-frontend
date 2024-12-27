@@ -5,7 +5,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import MottattData from './MottattData';
 import useBoundStore from './useBoundStore';
 
-type Datafelt = 'virksomhet' | 'arbeidstaker-informasjon' | 'forespoersel-svar' | 'inntekt';
+type Datafelt = 'virksomhet' | 'arbeidstaker-informasjon' | 'forespoersel-svar' | 'inntekt' | 'personer';
 
 export type FeilReportElement = {
   melding: string;
@@ -17,14 +17,17 @@ function feilRapportMapper(feilReport?: Array<FeilReportElement>) {
 
   const virksomhetFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'virksomhet');
   const arbeidstakerFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'arbeidstaker-informasjon');
+
   const forespoerselFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'forespoersel-svar');
   const inntektFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'inntekt');
+  const personopplysningerFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'personer');
 
   return {
     virksomhetFeil,
     arbeidstakerFeil,
     forespoerselFeil,
-    inntektFeil
+    inntektFeil,
+    personopplysningerFeil
   };
 }
 
@@ -56,10 +59,11 @@ export default function useStateInit() {
     initFravaersperiode(jsonData.fravaersperioder);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
     const feilVedLasting = {
-      persondata: feilRapporter.arbeidstakerFeil,
+      persondata: feilRapporter.arbeidstakerFeil?.concat(feilRapporter.personopplysningerFeil),
       arbeidsgiverdata: feilRapporter.virksomhetFeil,
       inntekt: feilRapporter.inntektFeil
     };
+
     initPerson(
       jsonData.navn,
       jsonData.identitetsnummer,
