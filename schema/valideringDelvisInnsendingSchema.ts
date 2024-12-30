@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TelefonNummerSchema } from './telefonNummerSchema';
 import { SkjemavalideringEndringAarsakSchema } from './skjemavalideringEndringAarsakSchema';
+import { isEqual } from 'date-fns/isEqual';
 
 export default z
   .object({
@@ -92,6 +93,31 @@ export default z
     }
 
     if (value.refusjon.harEndringer === 'Ja') {
+      const sorterteEndringer = value.refusjon.refusjonEndringer
+        ? value.refusjon.refusjonEndringer.toSorted((a, b) => (a.dato && b.dato ? (a.dato > b.dato ? 1 : -1) : -1))
+        : [];
+      const unikeEndringer = sorterteEndringer.reduce(
+        (acc: Array<{ beloep?: number; dato?: Date }>, endring, index) => {
+          if (index === 0) {
+            acc.push(endring);
+            return acc;
+          }
+          if (!isEqual(endring.dato as Date, acc[acc.length - 1].dato as Date)) {
+            acc.push(endring);
+          }
+          return acc;
+        },
+        []
+      );
+
+      if (unikeEndringer.length !== value.refusjon.refusjonEndringer?.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Det kan ikke være flere endringer av refusjon samme dag.',
+          path: ['refusjon', 'harEndringer']
+        });
+      }
+
       value.refusjon.refusjonEndringer?.map((endring, index) => {
         if ((endring.beloep ?? 0) > (value.inntekt?.beloep ?? 0)) {
           ctx.addIssue({
