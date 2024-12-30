@@ -94,7 +94,12 @@ export default z
 
     if (value.refusjon.harEndringer === 'Ja') {
       const sorterteEndringer = value.refusjon.refusjonEndringer
-        ? value.refusjon.refusjonEndringer.toSorted((a, b) => (a.dato && b.dato ? (a.dato > b.dato ? 1 : -1) : -1))
+        ? value.refusjon.refusjonEndringer.toSorted((a, b) => {
+            if (a.dato && b.dato) {
+              return a.dato > b.dato ? 1 : -1;
+            }
+            return -1;
+          })
         : [];
       const unikeEndringer = sorterteEndringer.reduce(
         (acc: Array<{ beloep?: number; dato?: Date }>, endring, index) => {
