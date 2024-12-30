@@ -160,9 +160,148 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
     const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
-    expect(result.error.issues[0].message).toBe('Refusjonsbeløp mangler selv om det kreves refusjon.');
-    expect(result.error.issues[0].path).toEqual(['refusjon', 'refusjonPrMnd']);
+    expect(result.error?.issues[0].message).toBe('Refusjonsbeløp mangler selv om det kreves refusjon.');
+    expect(result.error?.issues[0].path).toEqual(['refusjon', 'refusjonPrMnd']);
   });
 
+  it('should return an error if kreverRefusjon is Ja and refusjonEndringer has entries with identical dates.', () => {
+    const invalidInput = {
+      inntekt: {
+        endringBruttoloenn: 'Ja',
+        beloep: 50000,
+        endringAarsak: { aarsak: 'Bonus' }
+      },
+      telefon: '+4712345678',
+      opplysningerBekreftet: true,
+      refusjon: {
+        erDetEndringRefusjon: 'Ja',
+        kreverRefusjon: 'Ja',
+        harEndringer: 'Ja',
+        refusjonPrMnd: 20000,
+        refusjonEndringer: [
+          {
+            beloep: 2000,
+            dato: new Date('2022-01-01')
+          },
+          {
+            beloep: 2500,
+            dato: new Date('2022-01-01')
+          }
+        ],
+        kravetOpphoerer: 'Ja',
+        refusjonOpphoerer: new Date('2022-12-31')
+      }
+    };
+
+    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('Det kan ikke være flere endringer av refusjon samme dag.');
+    expect(result.error?.issues[0].path).toEqual(['refusjon', 'harEndringer']);
+  });
+
+  it('should not return an error if kreverRefusjon is Ja and refusjonEndringer has entries without identical dates.', () => {
+    const invalidInput = {
+      inntekt: {
+        endringBruttoloenn: 'Ja',
+        beloep: 50000,
+        endringAarsak: { aarsak: 'Bonus' }
+      },
+      telefon: '+4712345678',
+      opplysningerBekreftet: true,
+      refusjon: {
+        erDetEndringRefusjon: 'Ja',
+        kreverRefusjon: 'Ja',
+        harEndringer: 'Ja',
+        refusjonPrMnd: 20000,
+        refusjonEndringer: [
+          {
+            beloep: 2000,
+            dato: new Date('2022-01-01')
+          },
+          {
+            beloep: 2500,
+            dato: new Date('2022-01-02')
+          }
+        ],
+        kravetOpphoerer: 'Ja',
+        refusjonOpphoerer: new Date('2022-12-31')
+      }
+    };
+
+    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should return an error if kreverRefusjon is Ja and refusjonOpphoerer is undefined', () => {
+    const invalidInput = {
+      inntekt: {
+        endringBruttoloenn: 'Ja',
+        beloep: 50000,
+        endringAarsak: { aarsak: 'Bonus' }
+      },
+      telefon: '+4712345678',
+      opplysningerBekreftet: true,
+      refusjon: {
+        erDetEndringRefusjon: 'Ja',
+        kreverRefusjon: 'Ja',
+        harEndringer: 'Ja',
+        refusjonPrMnd: 20000,
+        refusjonEndringer: [
+          {
+            beloep: 2000,
+            dato: new Date('2022-01-01')
+          },
+          {
+            beloep: 2500,
+            dato: new Date('2022-01-02')
+          }
+        ],
+        kravetOpphoerer: 'Ja',
+        refusjonOpphoerer: undefined
+      }
+    };
+
+    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('Vennligst angi sluttdato for refusjonskravet.');
+    expect(result.error?.issues[0].path).toEqual(['refusjon', 'refusjonOpphoerer']);
+  });
+
+  it('should not return an error if erDetEndringRefusjon is Nei and refusjonOpphoerer is undefined', () => {
+    const invalidInput = {
+      inntekt: {
+        endringBruttoloenn: 'Ja',
+        beloep: 50000,
+        endringAarsak: { aarsak: 'Bonus' }
+      },
+      telefon: '+4712345678',
+      opplysningerBekreftet: true,
+      refusjon: {
+        erDetEndringRefusjon: 'Nei',
+        kreverRefusjon: 'Ja',
+        harEndringer: 'Ja',
+        refusjonPrMnd: 20000,
+        refusjonEndringer: [
+          {
+            beloep: 2000,
+            dato: new Date('2022-01-01')
+          },
+          {
+            beloep: 2500,
+            dato: new Date('2022-01-02')
+          }
+        ],
+        kravetOpphoerer: 'Ja',
+        refusjonOpphoerer: undefined
+      }
+    };
+
+    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+
+    expect(result.success).toBe(true);
+  });
   // Add more test cases as needed
 });
