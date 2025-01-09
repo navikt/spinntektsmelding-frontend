@@ -1,58 +1,66 @@
 {
-  "orgnrUnderenhet": "810007842",
-  "identitetsnummer": "10486535275",
-  "fulltNavn": "Ultrafiolett Damesykkel",
-  "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
-
-  "egenmeldingsperioder": [],
-  "arbeidsgiverperioder": [
-    {
-      "fom": "2023-02-06",
-      "tom": "2023-02-10"
+  "kvitteringNavNo": {
+    "sykmeldt": {
+      "fnr": "10486535275",
+      "navn": "Ultrafiolett Damesykkel"
     },
-    {
-      "fom": "2023-02-24",
-      "tom": "2023-03-06"
-    }
-  ],
-  "bestemmendeFraværsdag": "2023-02-24",
-  "fraværsperioder": [
-    {
-      "fom": "2023-02-06",
-      "tom": "2023-02-10"
+    "avsender": {
+      "orgnr": "810007842",
+      "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+      "navn": "Test Navn Testesen-Navnesen Jr.",
+      "tlf": "12345678"
     },
-    {
-      "fom": "2023-02-24",
-      "tom": "2023-03-31"
-    }
-  ],
-  "inntekt": {
-    "bekreftet": true,
-    "beregnetInntekt": 46000,
-    "endringÅrsak": {
-      "typpe": "VarigLonnsendring",
-      "gjelderFra": "2023-02-24"
-    },
-    "manueltKorrigert": false
-  },
-  "fullLønnIArbeidsgiverPerioden": {
-    "utbetalerFullLønn": false,
-    "begrunnelse": "LovligFravaer",
-    "utbetalt": 30000
-  },
-  "refusjon": {
-    "utbetalerHeleEllerDeler": true,
-    "refusjonPrMnd": 43000,
-    "refusjonOpphører": "2023-08-31",
-    "refusjonEndringer": [
+    "sykmeldingsperioder": [
       {
-        "beløp": 40000,
-        "dato": "2023-06-22"
+        "fom": "2023-02-06",
+        "tom": "2023-02-10"
+      },
+      {
+        "fom": "2023-02-24",
+        "tom": "2023-03-31"
       }
-    ]
+    ],
+    "skjema": {
+      "avsenderTlf": "12345678",
+      "agp": {
+        "perioder": [
+          {
+            "fom": "2023-02-06",
+            "tom": "2023-02-10"
+          },
+          {
+            "fom": "2023-02-24",
+            "tom": "2023-03-06"
+          }
+        ],
+        "egenmeldinger": [],
+        "redusertLoennIAgp": {
+          "beloep": 30000,
+          "begrunnelse": "LovligFravaer"
+        }
+      },
+      "inntekt": {
+        "beloep": 46000,
+        "inntektsdato": "2023-02-24",
+        "naturalytelser": null,
+        "endringAarsak": {
+          "aarsak": "VarigLoennsendring",
+          "gjelderFra": "2023-02-24"
+        }
+      },
+      "refusjon": {
+        "beloepPerMaaned": 43000,
+        "endringer": [
+          {
+            "beloep": 40000,
+            "startdato": "2023-06-22"
+          }
+        ],
+        "sluttdato": "2023-08-31"
+      },
+      "mottatt": "2023-04-26T08:01:31.170336157+02:00"
+    }
   },
-  "naturalytelser": null,
-  "årsakInnsending": "Ny",
-  "bekreftOpplysninger": true,
-  "tidspunkt": "2023-04-26T08:01:31.170336157+02:00"
+  "kvitteringEkstern": null,
+  "kvitteringDokument": null
 }

@@ -14,6 +14,9 @@ import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import Router from 'next/router';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 import isValidUUID from '../utils/isValidUUID';
+import { EndringAarsakSchema } from '../schema/apiEndringAarsakSchema';
+import { z } from 'zod';
+import parseIsoDate from '../utils/parseIsoDate';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {
@@ -24,6 +27,8 @@ export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
 
   return 0;
 };
+
+type ApiEndringAarsak = z.infer<typeof EndringAarsakSchema>;
 
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
@@ -49,7 +54,7 @@ export interface BruttoinntektState {
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
-  setEndringAarsak: (endringAarsak: EndringAarsak) => void;
+  setEndringAarsak: (endringAarsak: EndringAarsak | ApiEndringAarsak) => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
@@ -349,14 +354,83 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     );
   },
-  setEndringAarsak: (endringAarsak: EndringAarsak) =>
+  setEndringAarsak: (endringAarsak: EndringAarsak | ApiEndringAarsak) => {
+    if (endringAarsak?.aarsak) {
+      switch (endringAarsak.aarsak) {
+        case 'Ferie': {
+          endringAarsak.ferier =
+            typeof endringAarsak.ferier[0].fom !== 'string'
+              ? endringAarsak.ferier
+              : endringAarsak.ferier.map((ferie) => ({
+                  fom: parseIsoDate(ferie.fom)!,
+                  tom: parseIsoDate(ferie.tom)!
+                }));
+          break;
+        }
+
+        case 'Permisjon': {
+          endringAarsak.permisjoner =
+            typeof endringAarsak.permisjoner[0].fom !== 'string'
+              ? endringAarsak.permisjoner
+              : endringAarsak.permisjoner.map((permisjon) => ({
+                  fom: parseIsoDate(permisjon.fom)!,
+                  tom: parseIsoDate(permisjon.tom)!
+                }));
+          break;
+        }
+
+        case 'Permittering': {
+          endringAarsak.permitteringer =
+            typeof endringAarsak.permitteringer[0].fom !== 'string'
+              ? endringAarsak.permitteringer
+              : endringAarsak.permitteringer.map((permitering) => ({
+                  fom: parseIsoDate(permitering.fom)!,
+                  tom: parseIsoDate(permitering.tom)!
+                }));
+          break;
+        }
+
+        case 'Sykefravaer': {
+          endringAarsak.sykefravaer =
+            typeof endringAarsak.sykefravaer[0].fom !== 'string'
+              ? endringAarsak.sykefravaer
+              : endringAarsak.sykefravaer.map((syk) => ({
+                  fom: parseIsoDate(syk.fom)!,
+                  tom: parseIsoDate(syk.tom)!
+                }));
+          break;
+        }
+
+        case 'Tariffendring': {
+          endringAarsak.gjelderFra =
+            typeof endringAarsak.gjelderFra !== 'string'
+              ? endringAarsak.gjelderFra
+              : parseIsoDate(endringAarsak.gjelderFra);
+          endringAarsak.bleKjent =
+            typeof endringAarsak.bleKjent !== 'string' ? endringAarsak.bleKjent : parseIsoDate(endringAarsak.bleKjent);
+
+          break;
+        }
+        case 'NyStilling':
+        case 'NyStillingsprosent':
+        case 'VarigLoennsendring': {
+          endringAarsak.gjelderFra =
+            typeof endringAarsak.gjelderFra !== 'string'
+              ? endringAarsak.gjelderFra
+              : parseIsoDate(endringAarsak.gjelderFra);
+
+          break;
+        }
+      }
+    }
     set(
       produce((state) => {
         state.bruttoinntekt.endringAarsak = endringAarsak;
         state.opprinneligbruttoinntekt.endringAarsak = endringAarsak;
         return state;
       })
-    )
+    );
+  }
 });
 
 export default useBruttoinntektStore;

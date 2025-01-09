@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid';
 import { StateCreator } from 'zustand';
-import { MottattPeriode } from './MottattData';
 import { Periode } from './state';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
@@ -10,6 +9,10 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
+import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
+import { z } from 'zod';
+
+type ApiPeriodeSchema = z.infer<typeof apiPeriodeSchema>;
 
 export interface FravaersperiodeState {
   fravaersperioder?: Array<Periode>;
@@ -18,7 +21,7 @@ export interface FravaersperiodeState {
   slettFravaersperiode: (periodeId: string) => void;
   setFravaersperiodeDato: (periodeId: string, oppdatertPeriode: PeriodeParam | undefined) => void;
   tilbakestillFravaersperiode: () => void;
-  initFravaersperiode: (mottatFravaersperiode: Array<MottattPeriode>) => void;
+  initFravaersperiode: (mottatFravaersperiode: Array<ApiPeriodeSchema>) => void;
 }
 
 const useFravaersperiodeStore: StateCreator<CompleteState, [], [], FravaersperiodeState> = (set, get) => ({
@@ -114,7 +117,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
     );
   },
 
-  initFravaersperiode: (mottattFravaerPerioder: Array<MottattPeriode>) => {
+  initFravaersperiode: (mottattFravaerPerioder: Array<ApiPeriodeSchema>) => {
     const fravaerPerioder: Array<Periode> = mottattFravaerPerioder.map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),

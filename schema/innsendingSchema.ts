@@ -5,6 +5,7 @@ import { apiPeriodeSchema } from './apiPeriodeSchema';
 import { RefusjonEndringSchema } from './apiRefusjonEndringSchema';
 import { NaturalytelseEnum } from './NaturalytelseEnum';
 import { BegrunnelseRedusertLoennIAgp } from './begrunnelseRedusertLoennIAgp';
+import { apiNaturalytelserSchema } from './apiNaturalytelserSchema';
 
 export const InnsendingSchema = z.object({
   agp: z
@@ -27,16 +28,7 @@ export const InnsendingSchema = z.object({
         .number({ required_error: 'Vennligst angi månedsinntekt' })
         .min(0, 'Månedsinntekt må være større enn eller lik 0'),
       inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
-      naturalytelser: z.union([
-        z.array(
-          z.object({
-            naturalytelse: NaturalytelseEnum,
-            verdiBeloep: z.number().min(0),
-            sluttdato: z.string().date()
-          })
-        ),
-        z.tuple([])
-      ]),
+      naturalytelser: apiNaturalytelserSchema,
       endringAarsak: z.nullable(EndringAarsakSchema)
     })
   ),
