@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { EndringAarsakSchema } from './apiEndringAarsakSchema';
 import { apiPeriodeSchema } from './apiPeriodeSchema';
 import { RefusjonEndringSchema } from './apiRefusjonEndringSchema';
-import { NaturalytelseEnum } from './NaturalytelseEnum';
 import { BegrunnelseRedusertLoennIAgp } from './begrunnelseRedusertLoennIAgp';
 import { apiNaturalytelserSchema } from './apiNaturalytelserSchema';
 

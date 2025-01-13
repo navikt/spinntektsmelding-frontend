@@ -402,14 +402,10 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         }
 
         case 'Tariffendring': {
-          endringAarsak.gjelderFra =
-            typeof endringAarsak.gjelderFra !== 'string'
-              ? endringAarsak.gjelderFra
-              : parseIsoDate(endringAarsak.gjelderFra);
           endringAarsak.bleKjent =
             typeof endringAarsak.bleKjent !== 'string' ? endringAarsak.bleKjent : parseIsoDate(endringAarsak.bleKjent);
 
-          break;
+          // Faller gjennom til neste case for å sette gjelderFra
         }
         case 'NyStilling':
         case 'NyStillingsprosent':
