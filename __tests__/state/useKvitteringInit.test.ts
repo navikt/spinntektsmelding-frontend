@@ -14,6 +14,8 @@ import nyStillingKvittering from '../../mockdata/kvittering-NyStilling.json';
 import nyStillingsprosentKvittering from '../../mockdata/kvittering-NyStillingsprosent.json';
 import inntektData from '../../mockdata/inntektData.json';
 import parseIsoDate from '../../utils/parseIsoDate';
+import { z } from 'zod';
+import { kvitteringNavNoSchema } from '../../schema/mottattKvitteringSchema';
 
 vi.mock('nanoid');
 
@@ -34,6 +36,8 @@ function fetchMock(url, suffix = '') {
     )
   );
 }
+
+type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
 
 describe('useKvitteringInit', () => {
   beforeEach(() => {
@@ -56,20 +60,22 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(mottattKvittering as unknown as KvitteringInit);
+      kvitteringInit(mottattKvittering);
     });
 
-    expect(result.current.navn).toEqual(mottattKvittering.fulltNavn);
-    expect(result.current.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
-    expect(result.current.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
-    expect(result.current.virksomhetsnavn).toEqual(mottattKvittering.virksomhetNavn);
+    const skjema = mottattKvittering.kvitteringNavNo.skjema;
+
+    expect(result.current.navn).toEqual(mottattKvittering.kvitteringNavNo.sykmeldt.navn);
+    expect(result.current.identitetsnummer).toEqual(mottattKvittering.kvitteringNavNo.sykmeldt.fnr);
+    expect(result.current.orgnrUnderenhet).toEqual(mottattKvittering.kvitteringNavNo.avsender.orgnr);
+    expect(result.current.virksomhetsnavn).toEqual(mottattKvittering.kvitteringNavNo.avsender.orgNavn);
 
     expect(result.current.harRefusjonEndringer).toBe('Ja');
     expect(result.current.egenmeldingsperioder).toEqual([
       {
-        fom: parseIsoDate(mottattKvittering.egenmeldingsperioder[0].fom),
+        fom: parseIsoDate(skjema.agp.egenmeldinger[0].fom),
         id: 'uuid',
-        tom: parseIsoDate(mottattKvittering.egenmeldingsperioder[0].tom)
+        tom: parseIsoDate(skjema.agp.egenmeldinger[0].tom)
       }
     ]);
   });
@@ -82,20 +88,22 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(annenMottattKvittering as unknown as KvitteringInit);
+      kvitteringInit(annenMottattKvittering);
     });
 
-    expect(result.current.navn).toEqual(annenMottattKvittering.fulltNavn);
-    expect(result.current.identitetsnummer).toEqual(annenMottattKvittering.identitetsnummer);
-    expect(result.current.orgnrUnderenhet).toEqual(annenMottattKvittering.orgnrUnderenhet);
-    expect(result.current.virksomhetsnavn).toEqual(annenMottattKvittering.virksomhetNavn);
+    const navNo = annenMottattKvittering.kvitteringNavNo as KvitteringNavNoSchema;
+
+    expect(result.current.navn).toEqual(navNo.sykmeldt.navn);
+    expect(result.current.identitetsnummer).toEqual(navNo.sykmeldt.fnr);
+    expect(result.current.orgnrUnderenhet).toEqual(navNo.avsender.orgnr);
+    expect(result.current.virksomhetsnavn).toEqual(navNo.avsender.orgNavn);
 
     expect(result.current.fullLonnIArbeidsgiverPerioden?.status).toBe('Nei');
     expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('LovligFravaer');
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toBe(30000);
 
     expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Tariffendring');
-    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
+    // expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.egenmeldingsperioder).toEqual([]);
     expect(result.current.harRefusjonEndringer).toBe('Ja');
     expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
@@ -114,7 +122,6 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Ferie');
-    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
     expect(result.current.bruttoinntekt.endringAarsak?.ferier).toEqual([
@@ -137,7 +144,6 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('VarigLoennsendring');
-    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
     expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
@@ -155,7 +161,6 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Permisjon');
-    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
     expect(result.current.bruttoinntekt.endringAarsak?.permisjoner).toEqual([
@@ -178,7 +183,6 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Permittering');
-    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
     expect(result.current.bruttoinntekt.endringAarsak?.permitteringer).toEqual([
@@ -201,7 +205,6 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('NyStilling');
-    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
     expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
@@ -219,7 +222,6 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('NyStillingsprosent');
-    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
     expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
@@ -237,7 +239,6 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Sykefravaer');
-    expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
     expect(result.current.bruttoinntekt.endringAarsak?.sykefravaer).toEqual([

@@ -97,10 +97,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       if (isValidUUID(kvitteringSlug)) {
         router.push(`/${kvitteringSlug}`);
       }
-    } else {
-      if (isValidUUID(kvitteringSlug)) {
-        router.push(`/endring/${kvitteringSlug}`);
-      }
+    } else if (isValidUUID(kvitteringSlug)) {
+      router.push(`/endring/${kvitteringSlug}`);
     }
   };
 
@@ -147,6 +145,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const visNaturalytelser = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
   const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
   const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const visRefusjon = paakrevdeOpplysninger?.includes(skjemaVariant.refusjon);
 
   const cx = classNames.bind(lokalStyles);
   const classNameWrapperFravaer = cx({
@@ -244,22 +243,26 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
                 </>
               )}
-              <Skillelinje />
-              <Heading2>Refusjon</Heading2>
-              {visFullLonnIArbeidsgiverperioden && (
+              {visRefusjon && (
                 <>
-                  <div className={lokalStyles.uthevet}>
-                    Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
-                  </div>
-                  <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden} />
+                  <Skillelinje />
+                  <Heading2>Refusjon</Heading2>
+                  {visFullLonnIArbeidsgiverperioden && (
+                    <>
+                      <div className={lokalStyles.uthevet}>
+                        Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
+                      </div>
+                      <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden} />
+                    </>
+                  )}
+                  <LonnUnderSykefravaeret
+                    loenn={lonnISykefravaeret!}
+                    refusjonskravetOpphoerer={refusjonskravetOpphoerer}
+                    harRefusjonEndringer={harRefusjonEndringer}
+                    refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
+                  />
                 </>
               )}
-              <LonnUnderSykefravaeret
-                loenn={lonnISykefravaeret!}
-                refusjonskravetOpphoerer={refusjonskravetOpphoerer}
-                harRefusjonEndringer={harRefusjonEndringer}
-                refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
-              />
               {visNaturalytelser && (
                 <>
                   <Skillelinje />

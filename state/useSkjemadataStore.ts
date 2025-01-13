@@ -6,11 +6,14 @@ import { Opplysningstype } from './useForespurtDataStore';
 import { YesNo } from './state';
 import { AapenInnsending } from '../validators/validerAapenInnsending';
 import parseIsoDate from '../utils/parseIsoDate';
+import { kvitteringEksternSchema } from '../schema/mottattKvitteringSchema';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
   SELVBESTEMT = 'SELVBESTEMT'
 }
+
+type KvitteringEksternSchema = z.infer<typeof kvitteringEksternSchema>;
 
 export interface SkjemadataState {
   nyInnsending: boolean;
@@ -22,7 +25,7 @@ export interface SkjemadataState {
   setInngangFraKvittering: () => void;
   setDirekteInngangKvittering: () => void;
   setEndringerAvRefusjon: (endring: YesNo) => void;
-  setSkjemaKvitteringEksterntSystem: (eksterntSystem: SkjemaKvitteringEksterntSystem) => void;
+  setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEksternSchema) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setKvitteringsdata: (data: any) => void;
   setVedtaksperiodeId: (id: string) => void;
@@ -35,17 +38,11 @@ export interface SkjemadataState {
   inngangFraKvittering: boolean;
   direkteInngangKvittering: boolean;
   endringerAvRefusjon?: YesNo;
-  kvitteringEksterntSystem?: SkjemaKvitteringEksterntSystem;
+  kvitteringEksterntSystem?: KvitteringEksternSchema;
   skjemastatus: SkjemaStatus;
   kvitteringData?: AapenInnsending;
   vedtaksperiodeId?: string;
   forespoerselSistOppdatert?: Date;
-}
-
-export interface SkjemaKvitteringEksterntSystem {
-  avsenderSystem: string;
-  referanse: string;
-  tidspunkt: string;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -114,7 +111,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setSkjemaKvitteringEksterntSystem: (eksterntSystem: SkjemaKvitteringEksterntSystem) => {
+  setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEksternSchema) => {
     set(
       produce((state: SkjemadataState) => {
         state.kvitteringEksterntSystem = eksterntSystem;

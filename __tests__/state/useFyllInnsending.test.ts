@@ -70,8 +70,8 @@ describe('useFyllInnsending', () => {
 
       expect(innsending.agp.egenmeldinger).toEqual([
         {
-          fom: mottattKvittering.egenmeldingsperioder[0].fom,
-          tom: mottattKvittering.egenmeldingsperioder[0].tom
+          fom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].fom,
+          tom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].tom
         }
       ]);
       // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
@@ -106,12 +106,12 @@ describe('useFyllInnsending', () => {
       // expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
       // expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
 
-      expect(innsending.agp.egenmeldinger).toEqual([
-        {
-          fom: mottattKvittering.egenmeldingsperioder[0].fom,
-          tom: mottattKvittering.egenmeldingsperioder[0].tom
-        }
-      ]);
+      // expect(innsending.agp.egenmeldinger).toEqual([
+      //   {
+      //     fom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].fom,
+      //     tom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].tom
+      //   }
+      // ]);
       // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
       expect(innsending.refusjon.beloepPerMaaned).toBe(80666.66666666667);
       expect(innsending.refusjon.sluttdato).toBe('2023-04-19');

@@ -1,36 +1,43 @@
 {
-  "virksomhetNavn": "Veldig ampert piggsvin barnehage",
-  "fulltNavn": "Test Navn Testesen-Navnesen Jr.",
-  "orgnrUnderenhet": "911206722",
-  "identitetsnummer": "25087327879",
-  "egenmeldingsperioder": [{ "fom": "2023-02-17", "tom": "2023-02-19" }],
-  "fraværsperioder": [
-    { "fom": "2023-02-20", "tom": "2023-03-03" },
-    { "fom": "2023-03-05", "tom": "2023-03-06" }
-  ],
-  "arbeidsgiverperioder": [{ "fom": "2023-02-17", "tom": "2023-03-04" }],
-  "inntekt": { "bekreftet": true, "beregnetInntekt": 80666.66666666667, "manueltKorrigert": false },
-  "bestemmendeFraværsdag": "2023-02-14",
-  "fullLønnIArbeidsgiverPerioden": {
-    "utbetalerFullLønn": false,
-    "begrunnelse": "StreikEllerLockout",
-    "utbetalt": 99999
+  "kvitteringNavNo": {
+    "sykmeldt": { "fnr": "25087327879", "navn": "Test Navn Testesen-Navnesen Jr." },
+    "avsender": {
+      "orgnr": "911206722",
+      "orgNavn": "Veldig ampert piggsvin barnehage",
+      "navn": "Ikke Test Navn Testesen-Navnesen Jr.",
+      "tlf": "12345678"
+    },
+    "sykmeldingsperioder": [
+      { "fom": "2023-02-20", "tom": "2023-03-03" },
+      { "fom": "2023-03-05", "tom": "2023-03-06" }
+    ],
+    "skjema": {
+      "avsenderTlf": "12345678",
+      "agp": {
+        "perioder": [{ "fom": "2023-02-17", "tom": "2023-03-04" }],
+        "egenmeldinger": [{ "fom": "2023-02-17", "tom": "2023-02-19" }],
+        "redusertLoennIAgp": { "beloep": 99999.0, "begrunnelse": "StreikEllerLockout" }
+      },
+      "inntekt": {
+        "beloep": 80666.66666666667,
+        "inntektsdato": "2023-02-14",
+        "naturalytelser": [
+          { "naturalytelse": "Bil", "dato": "2023-04-04", "beloep": 1234.0 },
+          { "naturalytelse": "FriTransport", "dato": "2023-04-19", "beloep": 4321.0 }
+        ],
+        "endringAarsak": null
+      },
+      "refusjon": {
+        "beloepPerMaaned": 80666.66666666667,
+        "endringer": [
+          { "beloep": 1234.0, "startdato": "2023-04-13" },
+          { "beloep": 12345.0, "startdato": "2023-04-20" }
+        ],
+        "sluttdato": "2023-04-19"
+      },
+      "mottatt": "2023-04-13T15:27:59.504446905+02:00"
+    }
   },
-  "refusjon": {
-    "utbetalerHeleEllerDeler": true,
-    "refusjonPrMnd": 80666.66666666667,
-    "refusjonOpphører": "2023-04-19",
-    "refusjonEndringer": [
-      { "beløp": 1234, "dato": "2023-04-13" },
-      { "beløp": 12345, "dato": "2023-04-20" }
-    ]
-  },
-  "naturalytelser": [
-    { "naturalytelse": "Bil", "dato": "2023-04-04", "beløp": 1234 },
-    { "naturalytelse": "FriTransport", "dato": "2023-04-19", "beløp": 4321 }
-  ],
-  "bekreftOpplysninger": true,
-
-  "årsakInnsending": "Endring",
-  "tidspunkt": "2023-04-13T15:27:59.504446905+02:00"
+  "kvitteringEkstern": null,
+  "kvitteringDokument": null
 }

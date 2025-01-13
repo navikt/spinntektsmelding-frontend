@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../../config/environment';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
-import org from '../../../mockdata/kvittering.json';
+import org from '../../../mockdata/kvittering-nytt-format-refusjon.json';
 
 const basePath = 'http://' + global.process.env.IM_API_URI + environment.hentKvitteringAPI;
 
@@ -19,7 +19,7 @@ export const config = {
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
-    return res.status(404).json(org);
+    return res.status(200).json(org);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {
       target: basePath,
