@@ -1,0 +1,46 @@
+{
+  "kvitteringNavNo": {
+    "sykmeldt": { "fnr": "01447842099", "navn": "KONKURRANSEDYKTIG HANDLINGSROM" },
+    "avsender": {
+      "orgnr": "810007982",
+      "orgNavn": "ANSTENDIG PIGGSVIN SYKEHJEM",
+      "navn": "BERØMT FLYTTELASS",
+      "tlf": "11223344"
+    },
+    "sykmeldingsperioder": [{ "fom": "2024-09-01", "tom": "2024-09-30" }],
+    "skjema": {
+      "forespoerselId": "ebe3c5e1-3340-47b1-a4f4-199f1e5210c3",
+      "avsenderTlf": "11223344",
+      "agp": {
+        "perioder": [{ "fom": "2024-05-21", "tom": "2024-06-05" }],
+        "egenmeldinger": [{ "fom": "2024-08-29", "tom": "2024-08-31" }],
+        "redusertLoennIAgp": null
+      },
+      "inntekt": { "beloep": 24667.33, "inntektsdato": "2024-08-29", "naturalytelser": [], "endringAarsak": null },
+      "refusjon": null,
+      "mottatt": "2025-01-03T11:23:56.422732762+01:00"
+    }
+  },
+  "kvitteringDokument": {
+    "orgnrUnderenhet": "810007982",
+    "identitetsnummer": "01447842099",
+    "fulltNavn": "KONKURRANSEDYKTIG HANDLINGSROM",
+    "telefonnummer": "11223344",
+    "innsenderNavn": "BERØMT FLYTTELASS",
+    "virksomhetNavn": "ANSTENDIG PIGGSVIN SYKEHJEM",
+    "behandlingsdager": [],
+    "egenmeldingsperioder": [{ "fom": "2024-08-29", "tom": "2024-08-31" }],
+    "arbeidsgiverperioder": [{ "fom": "2024-05-21", "tom": "2024-06-05" }],
+    "bestemmendeFraværsdag": "2024-08-29",
+    "fraværsperioder": [{ "fom": "2024-09-01", "tom": "2024-09-30" }],
+    "inntekt": { "bekreftet": true, "beregnetInntekt": 24667.33, "manueltKorrigert": false },
+    "fullLønnIArbeidsgiverPerioden": { "utbetalerFullLønn": true },
+    "refusjon": { "utbetalerHeleEllerDeler": false },
+    "naturalytelser": [],
+    "årsakInnsending": "ENDRING",
+    "bekreftOpplysninger": true,
+    "tidspunkt": "2025-01-03T11:23:56.422732762+01:00",
+    "forespurtData": ["arbeidsgiverperiode", "inntekt"]
+  },
+  "kvitteringEkstern": null
+}

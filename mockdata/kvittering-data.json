@@ -36,5 +36,7 @@
     "bekreftOpplysninger": true,
     "tidspunkt": "2024-02-27T14:44:54.781813686+01:00",
     "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
-  }
+  },
+  "kvitteringEkstern": null,
+  "kvitteringNavNo": null
 }
