@@ -243,27 +243,26 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
                 </>
               )}
-              {visRefusjon ||
-                (visFullLonnIArbeidsgiverperioden && (
-                  <>
-                    <Skillelinje />
-                    <Heading2>Refusjon</Heading2>
-                    {visFullLonnIArbeidsgiverperioden && (
-                      <>
-                        <div className={lokalStyles.uthevet}>
-                          Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
-                        </div>
-                        <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden} />
-                      </>
-                    )}
-                    <LonnUnderSykefravaeret
-                      loenn={lonnISykefravaeret!}
-                      refusjonskravetOpphoerer={refusjonskravetOpphoerer}
-                      harRefusjonEndringer={harRefusjonEndringer}
-                      refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
-                    />
-                  </>
-                ))}
+              {(visRefusjon || visFullLonnIArbeidsgiverperioden) && (
+                <>
+                  <Skillelinje />
+                  <Heading2>Refusjon</Heading2>
+                  {visFullLonnIArbeidsgiverperioden && (
+                    <>
+                      <div className={lokalStyles.uthevet}>
+                        Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
+                      </div>
+                      <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden} />
+                    </>
+                  )}
+                  <LonnUnderSykefravaeret
+                    loenn={lonnISykefravaeret!}
+                    refusjonskravetOpphoerer={refusjonskravetOpphoerer}
+                    harRefusjonEndringer={harRefusjonEndringer}
+                    refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
+                  />
+                </>
+              )}
               {visNaturalytelser && (
                 <>
                   <Skillelinje />
