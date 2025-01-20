@@ -29,12 +29,6 @@ interface KvitteringSkjema extends InnsendingSkjema {
   tidspunkt?: string;
 }
 
-export interface KvitteringInit {
-  kvitteringEkstern: KvitteringEksternSchema | null;
-  kvitteringDokument: KvitteringSkjema | null;
-  kvitteringNavNo: KvitteringNavNoSchema | null;
-}
-
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
