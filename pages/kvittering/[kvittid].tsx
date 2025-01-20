@@ -243,7 +243,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
                 </>
               )}
-              {visRefusjon && (
+              {(visRefusjon || visFullLonnIArbeidsgiverperioden) && (
                 <>
                   <Skillelinje />
                   <Heading2>Refusjon</Heading2>

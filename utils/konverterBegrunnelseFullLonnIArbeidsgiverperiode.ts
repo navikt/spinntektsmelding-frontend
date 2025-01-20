@@ -1,3 +1,5 @@
+import { Begrunnelse } from '../state/state';
+
 const oversettelse: Record<string, string> = {
   ARBEID_OPPHOERT: 'ArbeidOpphoert',
   BESKJED_GITT_FOR_SENT: 'BeskjedGittForSent',
@@ -16,6 +18,6 @@ const oversettelse: Record<string, string> = {
   TIDLIGERE_VIRKSOMHET: 'TidligereVirksomhet'
 };
 
-export const konverterBegrunnelseFullLonnIArbeidsgiverperiode = (begrunnelse: string) => {
-  return oversettelse[begrunnelse] ? oversettelse[begrunnelse] : begrunnelse;
+export const konverterBegrunnelseFullLonnIArbeidsgiverperiode = (begrunnelse: string): Begrunnelse => {
+  return oversettelse[begrunnelse] ? (oversettelse[begrunnelse] as Begrunnelse) : (begrunnelse as Begrunnelse);
 };
