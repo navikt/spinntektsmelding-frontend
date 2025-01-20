@@ -1,7 +1,6 @@
 import parseIsoDate from '../utils/parseIsoDate';
 import { MottattNaturalytelse, MottattPeriode, TDateISODate } from './MottattData';
 import useBoundStore from './useBoundStore';
-import { InnsendingSkjema } from './useFyllInnsending';
 
 import MottattKvitteringSchema, {
   kvitteringEksternSchema,
@@ -19,15 +18,6 @@ import { Opplysningstype } from './useForespurtDataStore';
 type KvitteringEksternSchema = z.infer<typeof kvitteringEksternSchema>;
 type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
-
-interface KvitteringSkjema extends InnsendingSkjema {
-  fulltNavn: string;
-  virksomhetNavn: string;
-  innsenderNavn: string;
-  innsenderTelefonNr: string;
-  beregnetInntekt?: number;
-  tidspunkt?: string;
-}
 
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
