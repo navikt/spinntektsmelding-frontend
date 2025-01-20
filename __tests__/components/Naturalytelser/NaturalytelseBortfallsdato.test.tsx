@@ -4,12 +4,17 @@ import NaturalytelseBortfallsdato from '../../../components/Naturalytelser/Natur
 import userEvent from '@testing-library/user-event';
 import { act } from 'react';
 import timezone_mock from 'timezone-mock';
+import { afterAll } from 'vitest';
 
 describe('NaturalytelseBortfallsdato', () => {
   const user = userEvent.setup();
 
   beforeEach(() => {
     vi.resetAllMocks();
+  });
+
+  afterAll(() => {
+    timezone_mock.unregister();
   });
 
   it('renders a title text', () => {

@@ -5,7 +5,6 @@ import formatIsoDate from '../utils/formatIsoDate';
 import { LonnIArbeidsgiverperioden, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import skjemaVariant from '../config/skjemavariant';
-import { Opplysningstype } from './useForespurtDataStore';
 import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
 import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
@@ -17,66 +16,6 @@ import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSc
 export interface SendtPeriode {
   fom: TDateISODate;
   tom: TDateISODate;
-}
-
-interface FullLonnIArbeidsgiverPerioden {
-  utbetalerFullLønn: boolean;
-  begrunnelse?: string | null;
-  utbetalt?: number | null;
-}
-
-interface Refusjon {
-  utbetalerHeleEllerDeler: boolean;
-  refusjonPrMnd?: number;
-  refusjonOpphører?: string;
-  refusjonEndringer?: Array<RefusjonEndring>;
-}
-
-interface SendtNaturalytelse {
-  naturalytelse: string;
-  dato: string;
-  beløp: number;
-}
-
-export interface AArsakType {
-  typpe: string;
-}
-
-export interface Tariffendring extends AArsakType {
-  gjelderFra: string;
-  bleKjent: string;
-}
-
-export interface PeriodeListe extends AArsakType {
-  liste: Array<SendtPeriode>;
-}
-
-export interface StillingsEndring extends AArsakType {
-  gjelderFra: string;
-}
-
-interface Bruttoinntekt {
-  bekreftet: boolean;
-  beregnetInntekt: number;
-  endringÅrsak?: AArsakType | Tariffendring | PeriodeListe | StillingsEndring;
-  manueltKorrigert: boolean;
-}
-
-export interface InnsendingSkjema {
-  identitetsnummer: string;
-  orgnrUnderenhet: string;
-  egenmeldingsperioder?: Array<SendtPeriode>;
-  arbeidsgiverperioder: Array<SendtPeriode> | undefined;
-  bestemmendeFraværsdag: string;
-  fraværsperioder: Array<SendtPeriode>;
-  inntekt: Bruttoinntekt;
-  fullLønnIArbeidsgiverPerioden?: FullLonnIArbeidsgiverPerioden;
-  refusjon: Refusjon;
-  naturalytelser?: Array<SendtNaturalytelse>;
-  bekreftOpplysninger: boolean;
-  årsakInnsending: string;
-  forespurtData: Array<Opplysningstype>;
-  telefonnummer: string;
 }
 
 export default function useFyllInnsending() {

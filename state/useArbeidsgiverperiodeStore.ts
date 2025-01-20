@@ -9,10 +9,14 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import validerPeriodeFravaer from '../validators/validerPeriodeFravaer';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
-import { MottattPeriode, TDateISODate } from './MottattData';
+import { TDateISODate } from './MottattData';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
+import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
+import { z } from 'zod';
+
+type ApiPeriodeSchema = z.infer<typeof apiPeriodeSchema>;
 
 export interface ArbeidsgiverperiodeState {
   skjaeringstidspunkt?: Date;
@@ -26,7 +30,7 @@ export interface ArbeidsgiverperiodeState {
   mottattBestemmendeFravaersdag?: TDateISODate;
   mottattEksternBestemmendeFravaersdag?: TDateISODate;
   setArbeidsgiverperioder: (arbeidsgiverperioder: Array<Periode> | undefined) => void;
-  initArbeidsgiverperioder: (arbeidsgiverperioder: Array<MottattPeriode> | undefined) => void;
+  initArbeidsgiverperioder: (arbeidsgiverperioder: Array<ApiPeriodeSchema> | undefined) => void;
   setEndringsbegrunnelse: (begrunnelse: string) => void;
   leggTilArbeidsgiverperiode: () => void;
   slettArbeidsgiverperiode: (periodeId: string) => void;

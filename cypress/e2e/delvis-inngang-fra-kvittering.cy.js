@@ -67,7 +67,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findAllByLabelText('Telefon innsender').type('12345678');
+    cy.findAllByLabelText('Telefon innsender').should('have.value', '12345678');
 
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 

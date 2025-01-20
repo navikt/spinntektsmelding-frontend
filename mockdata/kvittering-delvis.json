@@ -1,29 +1,32 @@
 {
-  "kvitteringDokument": {
-    "orgnrUnderenhet": "810007842",
-    "identitetsnummer": "10486535275",
-    "fulltNavn": "ULTRAFIOLETT DAMESYKKEL",
-    "virksomhetNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
-
-    "egenmeldingsperioder": [],
-    "arbeidsgiverperioder": [],
-    "bestemmendeFraværsdag": "2023-01-02",
-    "fraværsperioder": [
+  "kvitteringNavNo": {
+    "sykmeldt": { "fnr": "10486535275", "navn": "ULTRAFIOLETT DAMESYKKEL" },
+    "avsender": {
+      "orgnr": "810007842",
+      "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+      "navn": "BERØMT FLYTTELASS",
+      "tlf": "12345678"
+    },
+    "sykmeldingsperioder": [
       { "fom": "2023-01-02", "tom": "2023-01-29" },
       { "fom": "2023-01-31", "tom": "2023-02-08" }
     ],
-    "inntekt": { "bekreftet": true, "beregnetInntekt": 65000, "endringÅrsak": null, "manueltKorrigert": false },
-    "fullLønnIArbeidsgiverPerioden": null,
-    "refusjon": {
-      "utbetalerHeleEllerDeler": false,
-      "refusjonPrMnd": null,
-      "refusjonOpphører": null,
-      "refusjonEndringer": null
+    "skjema": {
+      "forespoerselId": "52ad58fb-a3cc-4c43-a20d-53fe74db31f9",
+      "avsenderTlf": "12345678",
+      "agp": null,
+      "inntekt": {
+        "beloep": 65000.0,
+        "inntektsdato": "2023-01-02",
+        "naturalytelser": [],
+        "endringAarsak": null
+      },
+      "refusjon": {
+        "beloepPerMaaned": null,
+        "endringer": [],
+        "sluttdato": null
+      }
     },
-    "naturalytelser": null,
-    "årsakInnsending": "Ny",
-    "bekreftOpplysninger": true,
-    "tidspunkt": "2023-08-23T13:04:51.580106881+02:00",
-    "forespurtData": ["inntekt", "refusjon"]
+    "mottatt": "2023-08-23T13:04:51.580106881+02:00"
   }
 }
