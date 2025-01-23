@@ -156,15 +156,14 @@ export default function useKvitteringInit() {
   }
 
   function handleArbeidsgiverperioder(jsonData: KvitteringNavNoSchema) {
-    if (jsonData.skjema.agp?.redusertLoennIAgp) {
-      initFullLonnIArbeidsgiverPerioden({
-        status: jsonData.skjema.agp.redusertLoennIAgp ? 'Nei' : 'Ja',
-        begrunnelse: jsonData.skjema.agp.redusertLoennIAgp.begrunnelse
-          ? konverterBegrunnelseFullLonnIArbeidsgiverperiode(jsonData.skjema.agp.redusertLoennIAgp.begrunnelse)
-          : undefined,
-        utbetalt: jsonData.skjema.agp.redusertLoennIAgp.beloep ?? undefined
-      });
-    }
+    initFullLonnIArbeidsgiverPerioden({
+      status: jsonData.skjema.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
+      begrunnelse: jsonData.skjema.agp?.redusertLoennIAgp?.begrunnelse
+        ? konverterBegrunnelseFullLonnIArbeidsgiverperiode(jsonData.skjema.agp.redusertLoennIAgp.begrunnelse)
+        : undefined,
+      utbetalt: jsonData.skjema.agp?.redusertLoennIAgp?.beloep ?? undefined
+    });
+
     initArbeidsgiverperioder(jsonData.skjema.agp?.perioder);
     harArbeidsgiverperiodenBlittEndret();
   }
