@@ -44,7 +44,6 @@ import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../../utils/parseIsoDate';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
-import environment from '../../config/environment';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -106,7 +105,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   };
 
   const lukkHentingFeiletModal = () => {
-    window.location.href = environment.saksoversiktUrl;
+    window.location.href = env.saksoversiktUrl;
   };
 
   let innsendingstidspunkt =
