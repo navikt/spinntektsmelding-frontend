@@ -38,5 +38,6 @@ export default function useHentKvitteringsdata() {
           }
         });
     }
+    return Promise.resolve();
   };
 }
