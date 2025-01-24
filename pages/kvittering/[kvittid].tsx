@@ -43,6 +43,8 @@ import classNames from 'classnames/bind';
 import FlexJarResponse from '../../components/FlexJarResponse/FlexJarResponse';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../../utils/parseIsoDate';
+import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
+import environment from '../../config/environment';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -53,6 +55,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const hentKvitteringsdata = useHentKvitteringsdata();
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
+  const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
@@ -100,6 +103,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     } else if (isValidUUID(kvitteringSlug)) {
       router.push(`/endring/${kvitteringSlug}`);
     }
+  };
+
+  const lukkHentingFeiletModal = () => {
+    window.location.href = environment.saksoversiktUrl;
   };
 
   let innsendingstidspunkt =
@@ -306,6 +313,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             />
           )}
         </div>
+        <HentingAvDataFeilet
+          open={skjemaFeilet}
+          handleCloseModal={lukkHentingFeiletModal}
+          title='Henting av kvitteringen feilet'
+          ariaLabel='Henting av kvittering feilet'
+        />
       </PageContent>
     </div>
   );
