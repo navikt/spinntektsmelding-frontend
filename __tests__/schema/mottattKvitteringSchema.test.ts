@@ -15,15 +15,19 @@ describe('mottattKvitteringSchema', () => {
     };
     data.kvitteringDokument.identitetsnummer = '12345678901';
 
-    expect(mottattKvitteringSchema.safeParse(data).success).toBe(false);
-    expect(mottattKvitteringSchema.safeParse(data).error).toEqual(
-      new z.ZodError([
-        {
-          code: 'custom',
-          message: 'Ugyldig personnummer',
-          path: ['kvitteringDokument', 'identitetsnummer']
-        }
-      ])
+    const result = mottattKvitteringSchema.safeParse(data);
+
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toEqual(
+      JSON.stringify(
+        new z.ZodError([
+          {
+            code: 'custom',
+            message: 'Ugyldig personnummer',
+            path: ['kvitteringDokument', 'identitetsnummer']
+          }
+        ])
+      )
     );
   });
 });

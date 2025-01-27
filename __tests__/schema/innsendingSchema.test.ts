@@ -42,48 +42,52 @@ describe('InnsendingSchema', () => {
       ]
     };
 
-    expect(InnsendingSchema.safeParse(data).success).toBe(false);
-    expect(InnsendingSchema.safeParse(data).error).toEqual(
-      new z.ZodError([
-        {
-          code: 'invalid_union',
-          unionErrors: [
-            {
-              issues: [
-                {
-                  code: 'invalid_type',
-                  expected: 'array',
-                  received: 'undefined',
-                  path: ['refusjon', 'endringer'],
-                  message: 'Required'
-                }
-              ],
-              name: 'ZodError'
-            },
-            {
-              issues: [
-                {
-                  code: 'invalid_type',
-                  expected: 'array',
-                  received: 'undefined',
-                  path: ['refusjon', 'endringer'],
-                  message: 'Required'
-                }
-              ],
-              name: 'ZodError'
-            }
-          ],
-          path: ['refusjon', 'endringer'],
-          message: 'Invalid input'
-        },
-        {
-          code: 'invalid_type',
-          expected: 'string',
-          received: 'undefined',
-          path: ['refusjon', 'sluttdato'],
-          message: 'Vennligst fyll inn til dato'
-        }
-      ])
+    const result = InnsendingSchema.safeParse(data);
+
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toEqual(
+      JSON.stringify(
+        new z.ZodError([
+          {
+            code: 'invalid_union',
+            unionErrors: [
+              {
+                issues: [
+                  {
+                    code: 'invalid_type',
+                    expected: 'array',
+                    received: 'undefined',
+                    path: ['refusjon', 'endringer'],
+                    message: 'Required'
+                  }
+                ],
+                name: 'ZodError'
+              },
+              {
+                issues: [
+                  {
+                    code: 'invalid_type',
+                    expected: 'array',
+                    received: 'undefined',
+                    path: ['refusjon', 'endringer'],
+                    message: 'Required'
+                  }
+                ],
+                name: 'ZodError'
+              }
+            ],
+            path: ['refusjon', 'endringer'],
+            message: 'Invalid input'
+          },
+          {
+            code: 'invalid_type',
+            expected: 'string',
+            received: 'undefined',
+            path: ['refusjon', 'sluttdato'],
+            message: 'Vennligst fyll inn til dato'
+          }
+        ])
+      )
     );
   });
 });

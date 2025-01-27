@@ -42,17 +42,20 @@ describe('aapenInnsendingSchema', () => {
       ]
     };
 
-    expect(aapenInnsendingSchema.safeParse(data).success).toBe(false);
-    expect(aapenInnsendingSchema.safeParse(data).error).toEqual(
-      new z.ZodError([
-        {
-          code: 'invalid_type',
-          expected: 'string',
-          received: 'undefined',
-          path: ['avsender', 'tlf'],
-          message: 'Vennligst fyll inn telefonnummer'
-        }
-      ])
+    const result = aapenInnsendingSchema.safeParse(data);
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toEqual(
+      JSON.stringify(
+        new z.ZodError([
+          {
+            code: 'invalid_type',
+            expected: 'string',
+            received: 'undefined',
+            path: ['avsender', 'tlf'],
+            message: 'Vennligst fyll inn telefonnummer'
+          }
+        ])
+      )
     );
   });
 
@@ -73,16 +76,18 @@ describe('aapenInnsendingSchema', () => {
         { fom: '2023-03-05', tom: '2023-03-06' }
       ]
     };
-
-    expect(aapenInnsendingSchema.safeParse(data).success).toBe(false);
-    expect(aapenInnsendingSchema.safeParse(data).error).toEqual(
-      new z.ZodError([
-        {
-          code: 'custom',
-          message: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
-          path: ['agp', 'redusertLoennIAgp', 'beloep']
-        }
-      ])
+    const result = aapenInnsendingSchema.safeParse(data);
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toEqual(
+      JSON.stringify(
+        new z.ZodError([
+          {
+            code: 'custom',
+            message: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+            path: ['agp', 'redusertLoennIAgp', 'beloep']
+          }
+        ])
+      )
     );
   });
 });
