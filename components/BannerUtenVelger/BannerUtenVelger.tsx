@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type JSX } from 'react';
 import Heading1 from '../Heading1/Heading1';
 
 interface Props {
