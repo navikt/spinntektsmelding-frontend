@@ -29,7 +29,7 @@ import HentingAvDataFeilet from '../components/HentingAvDataFeilet';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import { logger } from '@navikt/next-logger';
 import useSendInnSkjema from '../utils/useSendInnSkjema';
-// import { useSearchParams } from 'next/navigation';
+
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
@@ -79,7 +79,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
 
-  // const searchParams = useSearchParams();
   const hentSkjemadata = useHentSkjemadata();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
@@ -93,7 +92,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     window.location.href = environment.saksoversiktUrl;
   };
 
-  const pathSlug = slug; // || (searchParams.get('slug') as string);
+  const pathSlug = slug;
 
   const selvbestemtInnsending =
     pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
@@ -273,7 +272,7 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       slug: slug[0],
-      erEndring: slug[1] && slug[1] === 'overskriv' ? true : false
+      erEndring: slug[1] && slug[1] === 'overskriv'
     }
   };
 }
