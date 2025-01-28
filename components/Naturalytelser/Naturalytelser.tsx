@@ -39,6 +39,12 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
     leggTilNaturalytelse();
   };
 
+  const slettNaturalytelseHandler = (event: React.MouseEvent<HTMLButtonElement>, elementId: string) => {
+    event.preventDefault();
+    setIsDirtyForm(true);
+    slettNaturalytelse(elementId);
+  };
+
   const checkedNaturalytelser = naturalytelser && naturalytelser.length > 0;
 
   return (
@@ -92,7 +98,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
                     ></TextField>
                   </td>
                   <td>
-                    <ButtonSlette onClick={() => slettNaturalytelse(element.id)} title='Slett ytelse' />
+                    <ButtonSlette onClick={(e) => slettNaturalytelseHandler(e, element.id)} title='Slett ytelse' />
                   </td>
                 </tr>
               );
