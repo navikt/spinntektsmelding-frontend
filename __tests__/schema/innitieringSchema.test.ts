@@ -22,15 +22,19 @@ describe('InitieringSchema', () => {
       personnummer: testFnr.Ugyldige.UgyldigKontrollSiffer
     };
 
-    expect(InitieringSchema.safeParse(data).success).toBe(false);
-    expect(InitieringSchema.safeParse(data).error).toEqual(
-      new z.ZodError([
-        {
-          code: 'custom',
-          message: 'Ugyldig personnummer',
-          path: ['personnummer']
-        }
-      ])
+    const result = InitieringSchema.safeParse(data);
+
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toEqual(
+      JSON.stringify(
+        new z.ZodError([
+          {
+            code: 'custom',
+            message: 'Ugyldig personnummer',
+            path: ['personnummer']
+          }
+        ])
+      )
     );
   });
 
@@ -41,24 +45,27 @@ describe('InitieringSchema', () => {
       personnummer: testFnr.GyldigeFraDolly.TestPerson3
     };
 
-    expect(InitieringSchema.safeParse(data).success).toBe(false);
-    expect(InitieringSchema.safeParse(data).error).toEqual(
-      new z.ZodError([
-        {
-          code: 'too_big',
-          maximum: 9,
-          type: 'string',
-          inclusive: true,
-          exact: false,
-          message: 'Organisasjonsnummeret er for langt, det må være 9 siffer',
-          path: ['organisasjonsnummer']
-        },
-        {
-          code: 'custom',
-          message: 'Velg arbeidsgiver',
-          path: ['organisasjonsnummer']
-        }
-      ])
+    const result = InitieringSchema.safeParse(data);
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toEqual(
+      JSON.stringify(
+        new z.ZodError([
+          {
+            code: 'too_big',
+            maximum: 9,
+            type: 'string',
+            inclusive: true,
+            exact: false,
+            message: 'Organisasjonsnummeret er for langt, det må være 9 siffer',
+            path: ['organisasjonsnummer']
+          },
+          {
+            code: 'custom',
+            message: 'Velg arbeidsgiver',
+            path: ['organisasjonsnummer']
+          }
+        ])
+      )
     );
   });
 
@@ -68,20 +75,22 @@ describe('InitieringSchema', () => {
       fulltNavn: '',
       personnummer: testFnr.GyldigeFraDolly.TestPerson2
     };
-
-    expect(InitieringSchema.safeParse(data).success).toBe(false);
-    expect(InitieringSchema.safeParse(data).error).toEqual(
-      new z.ZodError([
-        {
-          code: 'too_small',
-          minimum: 1,
-          type: 'string',
-          inclusive: true,
-          exact: false,
-          message: 'String must contain at least 1 character(s)',
-          path: ['fulltNavn']
-        }
-      ])
+    const result = InitieringSchema.safeParse(data);
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toEqual(
+      JSON.stringify(
+        new z.ZodError([
+          {
+            code: 'too_small',
+            minimum: 1,
+            type: 'string',
+            inclusive: true,
+            exact: false,
+            message: 'String must contain at least 1 character(s)',
+            path: ['fulltNavn']
+          }
+        ])
+      )
     );
   });
 });
