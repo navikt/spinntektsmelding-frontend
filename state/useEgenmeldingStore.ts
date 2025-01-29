@@ -198,11 +198,15 @@ function updateDateValue(egenmeldingsperioder?: Periode[], periodeId?: string, d
 }
 
 export function finnFravaersperioder<T extends tidPeriode>(
-  fravaersperioder: Array<T>,
+  fravaersperioder?: Array<T>,
   egenmeldingsperioder?: Array<T>
 ) {
   const perioder =
     fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
+
+  if (!perioder) {
+    return [];
+  }
 
   const fPerioder = perioder
     ?.filter((periode) => periode.fom && periode.tom)
