@@ -108,7 +108,12 @@ export default function useStateInit() {
     );
 
     if (jsonData.forespurtData) {
-      initForespurtData(jsonData.forespurtData);
+      initForespurtData(
+        jsonData.forespurtData,
+        jsonData.bestemmendeFravaersdag,
+        jsonData.bruttoinntekt,
+        jsonData.tidligereinntekter
+      );
     }
 
     if (jsonData.opprettetUpresisIkkeBruk) {

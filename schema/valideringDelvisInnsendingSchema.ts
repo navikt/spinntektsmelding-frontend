@@ -14,7 +14,7 @@ export default z
         endringAarsak: SkjemavalideringEndringAarsakSchema.optional()
       })
       .superRefine((value, ctx) => {
-        if (value.endringBruttoloenn === 'Ja' && value.beloep === undefined) {
+        if (value.endringBruttoloenn === 'Nei' && value.beloep === undefined) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Vennligst angi månedsinntekt.',

@@ -33,10 +33,11 @@ import DatoVelger from '../../components/DatoVelger/DatoVelger';
 import PersonData from '../../components/PersonData/PersonData';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
-import { LonnISykefravaeret, YesNo } from '../../state/state';
+import { HistoriskInntekt, LonnISykefravaeret, YesNo } from '../../state/state';
 import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import { TDateISODate } from '../../state/MottattData';
+import TidligereInntekt from '../../components/Bruttoinntekt/TidligereInntekt';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -106,6 +107,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       state.mottattEksternBestemmendeFravaersdag
     ]
   );
+  const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
 
   const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
 
@@ -393,19 +395,26 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 {!ukjentInntekt && (
                   <>
                     <BodyLong>
-                      I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
+                      Med utgangspunkt i inntekt rapportert i A-meldingen, hadde den ansatte en estimert beregnet
+                      månedslønn per {formatDate(foersteFravaersdag)} på{' '}
                       <strong>{formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)}</strong>&nbsp;kr
                     </BodyLong>
                     <FancyJaNei
-                      legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
+                      legend={`Stemmer dette med inntekten ved ${formatDate(
                         foersteFravaersdag
                       )} (start av nytt sykefravær)?`}
                       name='inntekt.endringBruttoloenn'
                     />
                   </>
                 )}
-                {((harEndringBruttoloenn === 'Ja' && !ukjentInntekt) || ukjentInntekt) && (
+                {(harEndringBruttoloenn === 'Nei' || ukjentInntekt) && (
                   <div>
+                    {tidligereinntekt && (
+                      <>
+                        <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
+                        <TidligereInntekt tidligereinntekt={tidligereinntekt!} henterData={false} />
+                      </>
+                    )}
                     <BodyLong>Angi ny beregnet månedslønn per {formatDate(foersteFravaersdag)}</BodyLong>
 
                     <div className={lokalStyles.beloepwrapper}>
