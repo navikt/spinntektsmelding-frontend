@@ -160,8 +160,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       if (inntektsdato && isValidUUID(pathSlug)) {
         fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
           .then((inntektSisteTreMnd) => {
-            setTidligereInntekter(inntektSisteTreMnd.tidligereInntekter);
-            initBruttoinntekt(inntektSisteTreMnd.beregnetInntekt, inntektSisteTreMnd.tidligereInntekter, inntektsdato);
+            setTidligereInntekter(inntektSisteTreMnd.data.tidligereInntekter);
+            initBruttoinntekt(
+              inntektSisteTreMnd.data.beregnetInntekt,
+              inntektSisteTreMnd.data.tidligereInntekter,
+              inntektsdato
+            );
           })
           .catch((error) => {
             logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
@@ -272,7 +276,7 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       slug: slug[0],
-      erEndring: slug[1] && slug[1] === 'overskriv'
+      erEndring: Boolean(slug[1] && slug[1] === 'overskriv')
     }
   };
 }
