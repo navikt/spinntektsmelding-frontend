@@ -48,6 +48,8 @@ import useKvitteringInit from '../../../state/useKvitteringInit';
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 import { getToken, validateToken } from '@navikt/oasis';
 import environment from '../../../config/environment';
+import { z } from 'zod';
+import { kvitteringNavNoSchema } from '../../../schema/mottattKvitteringSchema';
 
 type PersonData = {
   navn: string;
@@ -120,7 +122,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input, personData);
-    kvitteringInit(kvittering);
+    kvitteringInit({ kvitteringNavNo: kvittering });
     // Må lagre data som kan endres i hovedskjema - Slutt
 
     if (isValidUUID(kvitteringSlug)) {
@@ -431,40 +433,20 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
 export default Kvittering;
 
-function prepareForInitiering(kvitteringData: any, personData: PersonData) {
-  const kvittering: any = {
-    fulltNavn: personData.navn,
-    identitetsnummer: personData.identitetsnummer,
-    orgnrUnderenhet: personData.orgnrUnderenhet,
-    virksomhetNavn: personData.virksomhetNavn,
-    innsenderNavn: personData.innsenderNavn,
-    telefonnummer: personData.innsenderTelefonNr
+type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
+
+function prepareForInitiering(kvitteringData: any, personData: PersonData): KvitteringNavNoSchema {
+  const kvittering: KvitteringNavNoSchema = {
+    sykmeldt: kvitteringData.sykmeldt,
+    avsender: kvitteringData.avsender,
+    sykmeldingsperioder: kvitteringData.sykmeldingsperioder ?? [],
+    skjema: {
+      agp: kvitteringData.agp ?? null,
+      inntekt: { ...kvitteringData.inntekt },
+      refusjon: kvitteringData.refusjon ?? null
+    },
+    mottatt: kvitteringData.tidspunkt
   };
-
-  kvittering.fraværsperioder = kvitteringData.sykmeldingsperioder;
-  kvittering.egenmeldingsperioder = kvitteringData.agp?.egenmeldinger;
-  kvittering.inntekt = { ...kvitteringData.inntekt };
-  kvittering.beregnetInntekt = kvitteringData.inntekt.beloep;
-
-  kvittering.refusjon = {
-    utbetalerHeleEllerDeler: kvitteringData.refusjon?.beloepPerMaaned ? true : false,
-    refusjonPrMnd: kvitteringData.refusjon?.beloepPerMaaned,
-    refusjonOpphører: kvitteringData.refusjon?.sluttdato,
-    refusjonEndringer: kvitteringData.refusjon?.endringer
-      ? kvitteringData.refusjon?.endringer.map((endring) => ({
-          dato: endring.startdato,
-          beløp: endring.beloep
-        }))
-      : []
-  };
-
-  kvittering.fullLønnIArbeidsgiverPerioden = {
-    status: !!kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
-    utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep,
-    begrunnelse: kvitteringData?.agp.redusertLoennIAgp?.begrunnelse
-  };
-
-  kvittering.arbeidsgiverperioder = kvitteringData.agp?.perioder;
 
   return kvittering;
 }
