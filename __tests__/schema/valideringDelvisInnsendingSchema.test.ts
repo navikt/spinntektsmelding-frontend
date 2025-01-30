@@ -69,7 +69,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should return an error if endringBruttoloenn is Ja and inntekt.beloep is not set', () => {
     const invalidInput = {
       inntekt: {
-        endringBruttoloenn: 'Ja',
+        endringBruttoloenn: 'Nei',
         beloep: undefined,
         endringAarsak: { aarsak: 'Bonus' }
       },

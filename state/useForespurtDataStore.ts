@@ -133,25 +133,25 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       produce((state: ForespurtDataState) => {
         state.forespurtData = forespurtData;
 
-        settInntektsdataForrigeInnsending();
-
+        // settInntektsdataForrigeInnsending();
+        state.gammeltSkjaeringstidspunkt = parseIsoDate(mottattBestemmendeFravaersdag);
         return state;
 
-        function settInntektsdataForrigeInnsending() {
-          if (inntekt?.forrigeInntekt) {
-            const fastsattInntekt = inntekt.forrigeInntekt.beløp;
+        // function settInntektsdataForrigeInnsending() {
+        //   if (inntekt?.forrigeInntekt) {
+        //     const fastsattInntekt = inntekt.forrigeInntekt.beløp;
 
-            if (typeof fastsattInntekt === 'number') {
-              state.fastsattInntekt = fastsattInntekt;
-              state.gammeltSkjaeringstidspunkt = parseIsoDate(inntekt.forrigeInntekt.skjæringstidspunkt);
-              state.ukjentInntekt = false;
-            }
-          } else {
-            state.fastsattInntekt = undefined;
-            state.gammeltSkjaeringstidspunkt = undefined;
-            state.ukjentInntekt = true;
-          }
-        }
+        //     if (typeof fastsattInntekt === 'number') {
+        //       state.fastsattInntekt = fastsattInntekt;
+        //       state.gammeltSkjaeringstidspunkt = parseIsoDate(inntekt.forrigeInntekt.skjæringstidspunkt);
+        //       state.ukjentInntekt = false;
+        //     }
+        //   } else {
+        //     state.fastsattInntekt = undefined;
+        //     state.gammeltSkjaeringstidspunkt = undefined;
+        //     state.ukjentInntekt = true;
+        //   }
+        // }
       })
     );
 

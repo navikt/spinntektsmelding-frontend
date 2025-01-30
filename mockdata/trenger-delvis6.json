@@ -1,0 +1,48 @@
+{
+  "navn": "BERØMT FLYTTELASS",
+  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "innsenderNavn": "BERØMT FLYTTELASS",
+  "identitetsnummer": "10107400090",
+  "orgnrUnderenhet": "810007842",
+  "fravaersperioder": [{ "fom": "2024-11-04", "tom": "2024-11-27" }],
+  "egenmeldingsperioder": [],
+  "bestemmendeFravaersdag": "2024-11-04",
+  "eksternBestemmendeFravaersdag": null,
+  "bruttoinntekt": 54000.0,
+  "tidligereinntekter": [
+    { "maaned": "2024-08", "inntekt": 54000.0 },
+    { "maaned": "2024-09", "inntekt": 54000.0 },
+    { "maaned": "2024-10", "inntekt": 54000.0 }
+  ],
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": false },
+    "inntekt": { "paakrevd": true, "forslag": null },
+    "refusjon": { "paakrevd": true, "forslag": { "perioder": [], "opphoersdato": null } }
+  },
+  "opprettetUpresisIkkeBruk": "2025-01-30",
+  "erBesvart": false,
+  "success": {
+    "navn": "BERØMT FLYTTELASS",
+    "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "innsenderNavn": "BERØMT FLYTTELASS",
+    "identitetsnummer": "10107400090",
+    "orgnrUnderenhet": "810007842",
+    "fravaersperioder": [{ "fom": "2024-11-04", "tom": "2024-11-27" }],
+    "egenmeldingsperioder": [],
+    "bestemmendeFravaersdag": "2024-11-04",
+    "eksternBestemmendeFravaersdag": null,
+    "bruttoinntekt": 54000.0,
+    "tidligereinntekter": [
+      { "maaned": "2024-08", "inntekt": 54000.0 },
+      { "maaned": "2024-09", "inntekt": 54000.0 },
+      { "maaned": "2024-10", "inntekt": 54000.0 }
+    ],
+    "forespurtData": {
+      "arbeidsgiverperiode": { "paakrevd": false },
+      "inntekt": { "paakrevd": true, "forslag": null },
+      "refusjon": { "paakrevd": true, "forslag": { "perioder": [], "opphoersdato": null } }
+    },
+    "opprettetUpresisIkkeBruk": "2025-01-30",
+    "erBesvart": false
+  }
+}
