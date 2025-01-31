@@ -121,7 +121,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       const refusjonEndringer: Array<EndringsBeloep> = refusjonPerioderTilRefusjonEndringer(refusjonPerioder);
 
       initRefusjonEndringer(refusjonEndringer);
-      console.log('bruttoinntekt', bestemmendeFravaersdag);
+
       initBruttoinntekt(bruttoinntekt, tidligereinntekter, bestemmendeFravaersdag!, undefined);
 
       slettAlleArbeidsgiverperioder();
