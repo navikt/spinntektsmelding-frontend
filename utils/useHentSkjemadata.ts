@@ -30,6 +30,7 @@ export default function useHentSkjemadata() {
           if (skjemadata.erBesvart === true && !erEndring) {
             router.replace(`/kvittering/${forespoerselID}`, undefined);
           } else {
+            console.log('skjemadata', skjemadata);
             initState(skjemadata);
             const opplysningstyper = hentPaakrevdOpplysningstyper();
 

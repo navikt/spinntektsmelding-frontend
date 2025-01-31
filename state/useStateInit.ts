@@ -110,7 +110,7 @@ export default function useStateInit() {
     if (jsonData.forespurtData) {
       initForespurtData(
         jsonData.forespurtData,
-        jsonData.bestemmendeFravaersdag,
+        jsonData.bestemmendeFravaersdag ?? parseIsoDate(bestemmendeFravaersdag)!,
         jsonData.bruttoinntekt,
         jsonData.tidligereinntekter
       );

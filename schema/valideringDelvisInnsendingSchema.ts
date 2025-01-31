@@ -7,14 +7,14 @@ export default z
   .object({
     inntekt: z
       .object({
-        endringBruttoloenn: z.enum(['Ja', 'Nei'], {
+        ingenEndringBruttoloenn: z.enum(['Ja', 'Nei'], {
           errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer i beregnet månedslønn.' })
         }),
         beloep: z.number().gte(0).optional(),
         endringAarsak: SkjemavalideringEndringAarsakSchema.optional()
       })
       .superRefine((value, ctx) => {
-        if (value.endringBruttoloenn === 'Nei' && value.beloep === undefined) {
+        if (value.ingenEndringBruttoloenn === 'Nei' && value.beloep === undefined) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Vennligst angi månedsinntekt.',

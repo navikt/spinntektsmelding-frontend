@@ -282,6 +282,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
     let snittInntekter = 0;
 
+    console.log('sisteLonnshentedato', sisteLonnshentedato);
+
     if (
       !(henterData || !sisteLonnshentedato || !bestemmendeFravaersdag) &&
       startOfMonth(sisteLonnshentedato).getMonth() !== startOfMonth(bestemmendeFravaersdag).getMonth() &&
@@ -437,6 +439,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 export default useBruttoinntektStore;
 
 export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[], bestemmendeFravaersdag: Date) {
+  console.log('tidligereInntekt', tidligereInntekt, bestemmendeFravaersdag);
+
   const bestMnd = `00${bestemmendeFravaersdag.getMonth() + 1}`.slice(-2);
   const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
   const sisteMnd = `00${subMonths(bestemmendeFravaersdag, 3).getMonth() + 1}`.slice(-2);

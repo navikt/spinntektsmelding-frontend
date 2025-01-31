@@ -6,7 +6,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should validate a valid input', () => {
     const validInput = {
       inntekt: {
-        endringBruttoloenn: 'Ja' as YesNo,
+        ingenEndringBruttoloenn: 'Ja' as YesNo,
         beloep: 10000,
         endringAarsak: { aarsak: 'Bonus' }
       },
@@ -37,7 +37,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should return an error if refusjonPrMnd is higher than inntekt.beloep', () => {
     const invalidInput = {
       inntekt: {
-        endringBruttoloenn: 'Ja',
+        ingenEndringBruttoloenn: 'Ja',
         beloep: 5000,
         endringAarsak: { aarsak: 'Bonus' }
       },
@@ -66,10 +66,10 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
     expect(result.error.issues[0].path).toEqual(['refusjon', 'refusjonPrMnd']);
   });
 
-  it('should return an error if endringBruttoloenn is Ja and inntekt.beloep is not set', () => {
+  it('should return an error if ingenEndringBruttoloenn is Ja and inntekt.beloep is not set', () => {
     const invalidInput = {
       inntekt: {
-        endringBruttoloenn: 'Nei',
+        ingenEndringBruttoloenn: 'Nei',
         beloep: undefined,
         endringAarsak: { aarsak: 'Bonus' }
       },
@@ -101,7 +101,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should return an error if kreverRefusjon is not Ja or Nei', () => {
     const invalidInput = {
       inntekt: {
-        endringBruttoloenn: 'Ja',
+        ingenEndringBruttoloenn: 'Ja',
         beloep: 50000,
         endringAarsak: { aarsak: 'Bonus' }
       },
@@ -135,7 +135,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should return an error if kreverRefusjon is Ja and refusjonPrMnd is undefined', () => {
     const invalidInput = {
       inntekt: {
-        endringBruttoloenn: 'Ja',
+        ingenEndringBruttoloenn: 'Ja',
         beloep: 50000,
         endringAarsak: { aarsak: 'Bonus' }
       },
@@ -167,7 +167,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should return an error if kreverRefusjon is Ja and refusjonEndringer has entries with identical dates.', () => {
     const invalidInput = {
       inntekt: {
-        endringBruttoloenn: 'Ja',
+        ingenEndringBruttoloenn: 'Ja',
         beloep: 50000,
         endringAarsak: { aarsak: 'Bonus' }
       },
@@ -203,7 +203,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should not return an error if kreverRefusjon is Ja and refusjonEndringer has entries without identical dates.', () => {
     const invalidInput = {
       inntekt: {
-        endringBruttoloenn: 'Ja',
+        ingenEndringBruttoloenn: 'Ja',
         beloep: 50000,
         endringAarsak: { aarsak: 'Bonus' }
       },
@@ -237,7 +237,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should return an error if kreverRefusjon is Ja and refusjonOpphoerer is undefined', () => {
     const invalidInput = {
       inntekt: {
-        endringBruttoloenn: 'Ja',
+        ingenEndringBruttoloenn: 'Ja',
         beloep: 50000,
         endringAarsak: { aarsak: 'Bonus' }
       },
@@ -273,7 +273,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
   it('should not return an error if erDetEndringRefusjon is Nei and refusjonOpphoerer is undefined', () => {
     const invalidInput = {
       inntekt: {
-        endringBruttoloenn: 'Ja',
+        ingenEndringBruttoloenn: 'Ja',
         beloep: 50000,
         endringAarsak: { aarsak: 'Bonus' }
       },

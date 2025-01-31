@@ -31,7 +31,6 @@ describe('useForespurtDataStore', () => {
       result.current.setTidligereInntektsdata(input);
     });
 
-    expect(result.current.fastsattInntekt).toBe(1000);
     expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2020-01-01'));
   });
 

@@ -193,7 +193,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     formState: { isDirty, errors }
   } = methods;
 
-  const harEndringBruttoloenn = watch('inntekt.endringBruttoloenn');
+  const harIngenEndringBruttoloenn = watch('inntekt.ingenEndringBruttoloenn');
 
   const harEndringRefusjon = watch('refusjon.erDetEndringRefusjon');
 
@@ -211,7 +211,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   useEffect(() => {
     if (ukjentInntekt) {
-      setValue('inntekt.endringBruttoloenn', 'Ja');
+      setValue('inntekt.ingenEndringBruttoloenn', 'Ja');
     }
   }, [ukjentInntekt, setValue]);
 
@@ -365,11 +365,11 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   );
 
   useEffect(() => {
-    if (harEndringBruttoloenn === 'Nei') {
+    if (harIngenEndringBruttoloenn === 'Nei') {
       unregister('inntekt.endringAarsak');
       setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
     }
-  }, [harEndringBruttoloenn, unregister, setValue, bruttoinntekt.bruttoInntekt]);
+  }, [harIngenEndringBruttoloenn, unregister, setValue, bruttoinntekt.bruttoInntekt]);
 
   return (
     <div className={styles.container}>
@@ -403,11 +403,11 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                       legend={`Stemmer dette med inntekten ved ${formatDate(
                         foersteFravaersdag
                       )} (start av nytt sykefravær)?`}
-                      name='inntekt.endringBruttoloenn'
+                      name='inntekt.ingenEndringBruttoloenn'
                     />
                   </>
                 )}
-                {(harEndringBruttoloenn === 'Nei' || ukjentInntekt) && (
+                {(harIngenEndringBruttoloenn === 'Nei' || ukjentInntekt) && (
                   <div>
                     {tidligereinntekt && (
                       <>
