@@ -225,8 +225,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     window.location.href = environment.saksoversiktUrl;
   };
 
-  const pathSlug = slug || (searchParams.get('slug') as string);
-
   const clickTilbakestillMaanedsinntekt = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -242,16 +240,15 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   );
 
   useEffect(() => {
-    if (!fravaersperioder && pathSlug) {
-      const slug = pathSlug as string;
+    if (!fravaersperioder && slug) {
       hentKvitteringsdata(slug);
       setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
-    if (pathSlug) {
+    if (slug) {
       setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug]);
+  }, [slug]);
 
   const foersteFravaersdag = finnFoersteFravaersdag(
     foreslaattBestemmendeFravaersdag,
@@ -268,7 +265,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
     }
 
-    sendInnDelvisSkjema(true, pathSlug, isDirty, skjemaData).finally(() => {
+    sendInnDelvisSkjema(true, slug, isDirty, skjemaData).finally(() => {
       const lonnISykefravaeretGreier: LonnISykefravaeret = {
         beloep: skjemaData.refusjon.refusjonPrMnd,
         status: skjemaData.refusjon.kreverRefusjon
