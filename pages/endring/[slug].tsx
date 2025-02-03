@@ -15,7 +15,6 @@ import lokalStyles from './Endring.module.css';
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Heading2 from '../../components/Heading2/Heading2';
 import H3Label from '../../components/H3Label';
-import { useSearchParams } from 'next/navigation';
 import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 import logEvent from '../../utils/logEvent';
 import environment from '../../config/environment';
@@ -78,8 +77,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     state.initRefusjonskravetOpphoerer,
     state.feilmeldinger
   ]);
-
-  const searchParams = useSearchParams();
 
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
@@ -326,8 +323,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       setEndringerAvRefusjon('Ja');
     }
   }, [aapentManglendeData]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrige innsending';
 
   const harEndringer = harRefusjonEndringer;
 

@@ -14,7 +14,6 @@ import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
-import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
 import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
 
 interface BruttoinntektProps {
@@ -116,12 +115,7 @@ export default function Bruttoinntekt({
     : bruttoinntekt?.bruttoInntekt;
   const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereinntekt : tidligereinntekt;
 
-  const erFeriemaaneder = sjekkOmFerieMaaneder(sisteTreMndTidligereinntekt);
-
   const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.length > 0;
-
-  const manglendeEller0FraAmeldingen =
-    !sisteTreMndTidligereinntekt || sisteTreMndTidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
 
   const erBlanktSkjema = false;
 
