@@ -15,7 +15,7 @@ import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
-import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt/AvvikAdvarselInntekt';
+import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
