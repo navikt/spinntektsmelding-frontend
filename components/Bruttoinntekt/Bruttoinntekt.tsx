@@ -15,7 +15,7 @@ import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
-import AvvikAdvarselInntekt from '../AvvvikAdvarselInntekt/AvvvikAdvarselInntekt';
+import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt/AvvikAdvarselInntekt';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -159,26 +159,6 @@ export default function Bruttoinntekt({
         </>
       )}
       <AvvikAdvarselInntekt tidligereInntekter={sisteTreMndTidligereinntekt} />
-      {!harTidligereInntekt && (
-        <BodyLong>
-          Angi bruttoinntekt som snitt av gjennomsnitt tre måneders lønn. Dersom inntekten har gått opp pga. varig -
-          lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes
-          høyere enn gjennomsnitt av siste tre måneder.
-        </BodyLong>
-      )}
-      {harTidligereInntekt && manglendeEller0FraAmeldingen && (
-        <Alert variant='warning' className={lokalStyles.feriealert}>
-          Lønnsopplysningene inneholder måneder uten rapportert inntekt. Vi estimerer beregnet månedslønn til et snitt
-          av innrapportert inntekt for de tre siste månedene. Hvis dere ser at det skal være en annen beregnet
-          månedslønn må dere endre dette manuelt.
-        </Alert>
-      )}
-      {erFeriemaaneder && (
-        <Alert variant='warning' className={lokalStyles.feriealert}>
-          Lønnsopplysningene kan inneholde feriepenger. Hvis det er utbetalt feriepenger eller avviklet ferie uten lønn,
-          skal beregnet månedslønn settes til den ordinære lønnen.
-        </Alert>
-      )}
       {!endringAvBelop && !erBlanktSkjema && (
         <TextLabel className={lokalStyles.tbmargin}>
           Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
