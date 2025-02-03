@@ -14,6 +14,8 @@ import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
+import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
+import AvvikAdvarselInntekt from '../AvvvikAdvarselInntekt/AvvvikAdvarselInntekt';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -156,6 +158,7 @@ export default function Bruttoinntekt({
           <TidligereInntekt tidligereinntekt={sisteTreMndTidligereinntekt} henterData={henterData} />
         </>
       )}
+      <AvvikAdvarselInntekt tidligereInntekter={sisteTreMndTidligereinntekt} />
       {!harTidligereInntekt && (
         <BodyLong>
           Angi bruttoinntekt som snitt av gjennomsnitt tre måneders lønn. Dersom inntekten har gått opp pga. varig -
@@ -224,12 +227,4 @@ export default function Bruttoinntekt({
       </BodyLong>
     </>
   );
-}
-
-function sjekkOmFerieMaaneder(tidligereinntekt: Array<HistoriskInntekt> | undefined): boolean {
-  const ferieMnd = tidligereinntekt
-    ?.map((inntekt) => inntekt.maaned.split('-')[1])
-    .filter((mnd) => Number(mnd) >= 5 && Number(mnd) <= 8);
-
-  return ferieMnd !== undefined && ferieMnd.length > 0;
 }
