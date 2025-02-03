@@ -13,6 +13,7 @@ import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useState } from 'react';
 import LesMer from '../LesMer';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
+import { addDays } from 'date-fns';
 
 interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -69,6 +70,9 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
   };
   const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
+  const foerseMuligeRefusjonOpphoer = sisteDagIArbeidsgiverperioden
+    ? addDays(sisteDagIArbeidsgiverperioden, 1)
+    : new Date();
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
   const betalerArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
@@ -167,11 +171,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
             <RefusjonUtbetalingEndring
               endringer={refusjonEndringer || []}
               maxDate={refusjonskravetOpphoerer?.opphoersdato}
-              minDate={
-                arbeidsgiverperioder?.length && arbeidsgiverperioder?.length > 0
-                  ? arbeidsgiverperioder?.[arbeidsgiverperioder.length - 1].tom
-                  : undefined
-              }
+              minDate={foerseMuligeRefusjonOpphoer}
               onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
               onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
               harRefusjonEndringer={harRefusjonEndringer}
@@ -192,7 +192,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
             {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
               <div className={styles.datepickerescape}>
                 <Datovelger
-                  fromDate={sisteDagIArbeidsgiverperioden}
+                  fromDate={foerseMuligeRefusjonOpphoer}
                   onDateChange={addIsDirtyForm(refusjonskravetOpphoererDato)}
                   id={'lus-sluttdato'}
                   label='Angi siste dag dere krever refusjon for'
