@@ -14,6 +14,7 @@ import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
+import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -114,12 +115,7 @@ export default function Bruttoinntekt({
     : bruttoinntekt?.bruttoInntekt;
   const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereinntekt : tidligereinntekt;
 
-  const erFeriemaaneder = sjekkOmFerieMaaneder(sisteTreMndTidligereinntekt);
-
   const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.length > 0;
-
-  const manglendeEller0FraAmeldingen =
-    !sisteTreMndTidligereinntekt || sisteTreMndTidligereinntekt?.filter((inntekt) => !inntekt.inntekt).length > 0;
 
   const erBlanktSkjema = false;
 
@@ -156,26 +152,7 @@ export default function Bruttoinntekt({
           <TidligereInntekt tidligereinntekt={sisteTreMndTidligereinntekt} henterData={henterData} />
         </>
       )}
-      {!harTidligereInntekt && (
-        <BodyLong>
-          Angi bruttoinntekt som snitt av gjennomsnitt tre måneders lønn. Dersom inntekten har gått opp pga. varig -
-          lønnsforhøyelse, og ikke for eksempel representerer uforutsett overtid kan dette gjøre at inntekten settes
-          høyere enn gjennomsnitt av siste tre måneder.
-        </BodyLong>
-      )}
-      {harTidligereInntekt && manglendeEller0FraAmeldingen && (
-        <Alert variant='warning' className={lokalStyles.feriealert}>
-          Lønnsopplysningene inneholder måneder uten rapportert inntekt. Vi estimerer beregnet månedslønn til et snitt
-          av innrapportert inntekt for de tre siste månedene. Hvis dere ser at det skal være en annen beregnet
-          månedslønn må dere endre dette manuelt.
-        </Alert>
-      )}
-      {erFeriemaaneder && (
-        <Alert variant='warning' className={lokalStyles.feriealert}>
-          Lønnsopplysningene kan inneholde feriepenger. Hvis det er utbetalt feriepenger eller avviklet ferie uten lønn,
-          skal beregnet månedslønn settes til den ordinære lønnen.
-        </Alert>
-      )}
+      <AvvikAdvarselInntekt tidligereInntekter={sisteTreMndTidligereinntekt} />
       {!endringAvBelop && !erBlanktSkjema && (
         <TextLabel className={lokalStyles.tbmargin}>
           Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
@@ -224,12 +201,4 @@ export default function Bruttoinntekt({
       </BodyLong>
     </>
   );
-}
-
-function sjekkOmFerieMaaneder(tidligereinntekt: Array<HistoriskInntekt> | undefined): boolean {
-  const ferieMnd = tidligereinntekt
-    ?.map((inntekt) => inntekt.maaned.split('-')[1])
-    .filter((mnd) => Number(mnd) >= 5 && Number(mnd) <= 8);
-
-  return ferieMnd !== undefined && ferieMnd.length > 0;
 }

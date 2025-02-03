@@ -15,7 +15,6 @@ import lokalStyles from './Endring.module.css';
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Heading2 from '../../components/Heading2/Heading2';
 import H3Label from '../../components/H3Label';
-import { useSearchParams } from 'next/navigation';
 import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 import logEvent from '../../utils/logEvent';
 import environment from '../../config/environment';
@@ -33,10 +32,11 @@ import DatoVelger from '../../components/DatoVelger/DatoVelger';
 import PersonData from '../../components/PersonData/PersonData';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
-import { LonnISykefravaeret, YesNo } from '../../state/state';
+import { HistoriskInntekt, LonnISykefravaeret, YesNo } from '../../state/state';
 import mapErrorsObjectToFeilmeldinger from '../../utils/mapErrorsObjectToFeilmeldinger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import { TDateISODate } from '../../state/MottattData';
+import TidligereInntekt from '../../components/Bruttoinntekt/TidligereInntekt';
 
 const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug
@@ -78,8 +78,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     state.feilmeldinger
   ]);
 
-  const searchParams = useSearchParams();
-
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
@@ -106,6 +104,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       state.mottattEksternBestemmendeFravaersdag
     ]
   );
+  const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
 
   const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
 
@@ -191,7 +190,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     formState: { isDirty, errors }
   } = methods;
 
-  const harEndringBruttoloenn = watch('inntekt.endringBruttoloenn');
+  const harIngenEndringBruttoloenn = watch('inntekt.ingenEndringBruttoloenn');
 
   const harEndringRefusjon = watch('refusjon.erDetEndringRefusjon');
 
@@ -209,7 +208,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   useEffect(() => {
     if (ukjentInntekt) {
-      setValue('inntekt.endringBruttoloenn', 'Ja');
+      setValue('inntekt.ingenEndringBruttoloenn', 'Ja');
     }
   }, [ukjentInntekt, setValue]);
 
@@ -222,8 +221,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.saksoversiktUrl;
   };
-
-  const pathSlug = slug || (searchParams.get('slug') as string);
 
   const clickTilbakestillMaanedsinntekt = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -240,16 +237,15 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   );
 
   useEffect(() => {
-    if (!fravaersperioder && pathSlug) {
-      const slug = pathSlug as string;
+    if (!fravaersperioder && slug) {
       hentKvitteringsdata(slug);
       setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
-    if (pathSlug) {
+    if (slug) {
       setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug]);
+  }, [slug]);
 
   const foersteFravaersdag = finnFoersteFravaersdag(
     foreslaattBestemmendeFravaersdag,
@@ -266,7 +262,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
       setBareNyMaanedsinntekt(skjemaData.inntekt.beloep.toString());
     }
 
-    sendInnDelvisSkjema(true, pathSlug, isDirty, skjemaData).finally(() => {
+    sendInnDelvisSkjema(true, slug, isDirty, skjemaData).finally(() => {
       const lonnISykefravaeretGreier: LonnISykefravaeret = {
         beloep: skjemaData.refusjon.refusjonPrMnd,
         status: skjemaData.refusjon.kreverRefusjon
@@ -328,8 +324,6 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     }
   }, [aapentManglendeData]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const sisteInnsending = gammeltSkjaeringstidspunkt ? formatDate(gammeltSkjaeringstidspunkt) : 'forrige innsending';
-
   const harEndringer = harRefusjonEndringer;
 
   const kreverIkkeRefusjon = nyInnsending
@@ -363,11 +357,11 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
   );
 
   useEffect(() => {
-    if (harEndringBruttoloenn === 'Nei') {
+    if (harIngenEndringBruttoloenn === 'Nei') {
       unregister('inntekt.endringAarsak');
       setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
     }
-  }, [harEndringBruttoloenn, unregister, setValue, bruttoinntekt.bruttoInntekt]);
+  }, [harIngenEndringBruttoloenn, unregister, setValue, bruttoinntekt.bruttoInntekt]);
 
   return (
     <div className={styles.container}>
@@ -393,19 +387,26 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 {!ukjentInntekt && (
                   <>
                     <BodyLong>
-                      I henhold til siste inntektsmelding hadde den ansatte beregnet månedslønn på{' '}
+                      Med utgangspunkt i inntekt rapportert i A-meldingen, hadde den ansatte en estimert beregnet
+                      månedslønn per {formatDate(foersteFravaersdag)} på{' '}
                       <strong>{formatCurrency(bruttoinntekt?.bruttoInntekt ?? 0)}</strong>&nbsp;kr
                     </BodyLong>
                     <FancyJaNei
-                      legend={`Har det vært endringer i beregnet månedslønn for den ansatte mellom ${sisteInnsending} og ${formatDate(
+                      legend={`Stemmer dette med inntekten ved ${formatDate(
                         foersteFravaersdag
                       )} (start av nytt sykefravær)?`}
-                      name='inntekt.endringBruttoloenn'
+                      name='inntekt.ingenEndringBruttoloenn'
                     />
                   </>
                 )}
-                {((harEndringBruttoloenn === 'Ja' && !ukjentInntekt) || ukjentInntekt) && (
+                {(harIngenEndringBruttoloenn === 'Nei' || ukjentInntekt) && (
                   <div>
+                    {tidligereinntekt && (
+                      <>
+                        <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
+                        <TidligereInntekt tidligereinntekt={tidligereinntekt!} henterData={false} />
+                      </>
+                    )}
                     <BodyLong>Angi ny beregnet månedslønn per {formatDate(foersteFravaersdag)}</BodyLong>
 
                     <div className={lokalStyles.beloepwrapper}>

@@ -1,11 +1,10 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { YesNo } from './state';
+import { HistoriskInntekt, YesNo } from './state';
 import { MottattPeriodeRefusjon, TDateISODate } from './MottattData';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import skjemaVariant from '../config/skjemavariant';
-import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import parseIsoDate from '../utils/parseIsoDate';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 
@@ -63,11 +62,15 @@ export type MottattForespurtData = {
 export interface ForespurtDataState {
   forespurtData?: MottattForespurtData;
   refusjonTilArbeidsgiver?: number;
-  fastsattInntekt?: number;
   ukjentInntekt: boolean;
   gammeltSkjaeringstidspunkt?: Date;
   paakrevdeOpplysninger?: Array<Opplysningstype>;
-  initForespurtData: (forespurtData: MottattForespurtData) => void;
+  initForespurtData: (
+    forespurtData: MottattForespurtData,
+    mottattBestemmendeFravaersdag: string,
+    bruttoinntekt: number,
+    tidligereinntekter: HistoriskInntekt[]
+  ) => void;
   hentOpplysningstyper: () => Array<Opplysningstype>;
   hentPaakrevdOpplysningstyper: () => Array<Opplysningstype>;
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
@@ -80,16 +83,14 @@ export interface ForespurtDataState {
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
   ukjentInntekt: false,
   forespurtData: undefined,
-  initForespurtData: (forespurtData) => {
+  initForespurtData: (forespurtData, mottattBestemmendeFravaersdag, bruttoinntekt, tidligereinntekter) => {
     const initRefusjonEndringer = get().initRefusjonEndringer;
     const initLonnISykefravaeret = get().initLonnISykefravaeret;
-    const setBareNyMaanedsinntekt = get().setBareNyMaanedsinntekt;
     const slettAlleArbeidsgiverperioder = get().slettAlleArbeidsgiverperioder;
-    const slettBruttoinntekt = get().slettBruttoinntekt;
-    const setEndringsaarsak = get().setEndringsaarsak;
-    const setOpprinneligNyMaanedsinntekt = get().setOpprinneligNyMaanedsinntekt;
     const initRefusjonskravetOpphoerer = get().initRefusjonskravetOpphoerer;
-    const bestemmendeFravaersdag = get().bestemmendeFravaersdag;
+    const initBruttoinntekt = get().initBruttoinntekt;
+
+    const bestemmendeFravaersdag = parseIsoDate(mottattBestemmendeFravaersdag);
 
     const refusjon = forespurtData?.refusjon?.forslag;
     const inntekt = forespurtData?.inntekt?.forslag;
@@ -121,13 +122,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
       initRefusjonEndringer(refusjonEndringer);
 
-      if (typeof inntekt?.forrigeInntekt?.beløp === 'number') {
-        setBareNyMaanedsinntekt(inntekt.forrigeInntekt.beløp);
-        setOpprinneligNyMaanedsinntekt();
-      } else {
-        slettBruttoinntekt();
-        setEndringsaarsak(begrunnelseEndringBruttoinntekt.Feilregistrert);
-      }
+      initBruttoinntekt(bruttoinntekt, tidligereinntekter, bestemmendeFravaersdag!, undefined);
 
       slettAlleArbeidsgiverperioder();
     }
@@ -136,25 +131,8 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       produce((state: ForespurtDataState) => {
         state.forespurtData = forespurtData;
 
-        settInntektsdataForrigeInnsending();
-
+        state.gammeltSkjaeringstidspunkt = parseIsoDate(mottattBestemmendeFravaersdag);
         return state;
-
-        function settInntektsdataForrigeInnsending() {
-          if (inntekt?.forrigeInntekt) {
-            const fastsattInntekt = inntekt.forrigeInntekt.beløp;
-
-            if (typeof fastsattInntekt === 'number') {
-              state.fastsattInntekt = fastsattInntekt;
-              state.gammeltSkjaeringstidspunkt = parseIsoDate(inntekt.forrigeInntekt.skjæringstidspunkt);
-              state.ukjentInntekt = false;
-            }
-          } else {
-            state.fastsattInntekt = undefined;
-            state.gammeltSkjaeringstidspunkt = undefined;
-            state.ukjentInntekt = true;
-          }
-        }
       })
     );
 
@@ -200,7 +178,6 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
   setTidligereInntektsdata: (inntekt: ForrigeInntekt) => {
     set(
       produce((state: ForespurtDataState) => {
-        state.fastsattInntekt = inntekt.beløp;
         state.gammeltSkjaeringstidspunkt = parseIsoDate(inntekt.skjæringstidspunkt);
 
         return state;

@@ -31,7 +31,6 @@ describe('useForespurtDataStore', () => {
       result.current.setTidligereInntektsdata(input);
     });
 
-    expect(result.current.fastsattInntekt).toBe(1000);
     expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2020-01-01'));
   });
 
@@ -92,7 +91,7 @@ describe('useForespurtDataStore', () => {
     const input: Opplysningstype[] = ['inntekt', 'refusjon'];
 
     act(() => {
-      result.current.initForespurtData(forespurtData);
+      result.current.initForespurtData(forespurtData, '2022-01-02', 48000, undefined);
     });
     let typer;
     act(() => {
@@ -100,7 +99,7 @@ describe('useForespurtDataStore', () => {
     });
 
     expect(typer).toEqual(input);
-    expect(result.current.fastsattInntekt).toBe(48000);
+    // expect(result.current.bruttoinntekt.bruttoInntekt).toBe(48000);
     expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2022-01-02'));
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(48000);
   });
@@ -133,7 +132,7 @@ describe('useForespurtDataStore', () => {
     const input: Opplysningstype[] = ['inntekt', 'refusjon'];
 
     act(() => {
-      result.current.initForespurtData(forespurtData);
+      result.current.initForespurtData(forespurtData, '2022-01-02', 0, undefined);
     });
     let typer;
     act(() => {
@@ -141,7 +140,7 @@ describe('useForespurtDataStore', () => {
     });
 
     expect(typer).toEqual(input);
-    expect(result.current.fastsattInntekt).toBe(0);
+
     expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2022-01-02'));
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(0);
   });
@@ -149,24 +148,29 @@ describe('useForespurtDataStore', () => {
   it('should set the refusjonsbeloep', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
     act(() => {
-      result.current.initForespurtData({
-        arbeidsgiverperiode: { paakrevd: false },
-        inntekt: {
-          paakrevd: true,
-          forslag: {
-            type: 'ForslagInntektGrunnlag',
-            beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
-            forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
+      result.current.initForespurtData(
+        {
+          arbeidsgiverperiode: { paakrevd: false },
+          inntekt: {
+            paakrevd: true,
+            forslag: {
+              type: 'ForslagInntektGrunnlag',
+              beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
+              forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
+            }
+          },
+          refusjon: {
+            paakrevd: true,
+            forslag: {
+              perioder: [],
+              opphoersdato: null
+            }
           }
         },
-        refusjon: {
-          paakrevd: true,
-          forslag: {
-            perioder: [],
-            opphoersdato: null
-          }
-        }
-      });
+        '2023-08-28',
+        33750.0,
+        undefined
+      );
     });
 
     expect(result.current.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp).toBe(33750);
@@ -181,24 +185,29 @@ describe('useForespurtDataStore', () => {
   it('should verify that bruttoinntekt can be reset', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
     act(() => {
-      result.current.initForespurtData({
-        arbeidsgiverperiode: { paakrevd: false },
-        inntekt: {
-          paakrevd: true,
-          forslag: {
-            type: 'ForslagInntektGrunnlag',
-            beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
-            forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
+      result.current.initForespurtData(
+        {
+          arbeidsgiverperiode: { paakrevd: false },
+          inntekt: {
+            paakrevd: true,
+            forslag: {
+              type: 'ForslagInntektGrunnlag',
+              beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
+              forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
+            }
+          },
+          refusjon: {
+            paakrevd: true,
+            forslag: {
+              perioder: [],
+              opphoersdato: null
+            }
           }
         },
-        refusjon: {
-          paakrevd: true,
-          forslag: {
-            perioder: [],
-            opphoersdato: null
-          }
-        }
-      });
+        '2023-08-28',
+        33750.0,
+        undefined
+      );
     });
 
     expect(result.current.kanBruttoinntektTilbakebestilles()).toBeTruthy();
@@ -207,23 +216,28 @@ describe('useForespurtDataStore', () => {
   it('should verify that bruttoinntekt can not be reset', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
     act(() => {
-      result.current.initForespurtData({
-        arbeidsgiverperiode: { paakrevd: false },
-        inntekt: {
-          paakrevd: true,
-          forslag: {
-            type: 'ForslagInntektGrunnlag',
-            beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
+      result.current.initForespurtData(
+        {
+          arbeidsgiverperiode: { paakrevd: false },
+          inntekt: {
+            paakrevd: true,
+            forslag: {
+              type: 'ForslagInntektGrunnlag',
+              beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
+            }
+          },
+          refusjon: {
+            paakrevd: true,
+            forslag: {
+              perioder: [],
+              opphoersdato: null
+            }
           }
         },
-        refusjon: {
-          paakrevd: true,
-          forslag: {
-            perioder: [],
-            opphoersdato: null
-          }
-        }
-      });
+        '2023-08-28',
+        33750.0,
+        undefined
+      );
     });
 
     expect(result.current.kanBruttoinntektTilbakebestilles()).toBeFalsy();
@@ -235,7 +249,7 @@ describe('useForespurtDataStore', () => {
     const input: Opplysningstype[] = ['arbeidsgiverperiode', 'inntekt', 'refusjon'];
 
     act(() => {
-      result.current.initForespurtData(trengerDelvis.forespurtData);
+      result.current.initForespurtData(trengerDelvis.forespurtData, '2023-08-28', 33750.0, undefined);
     });
 
     let typer;
@@ -272,23 +286,28 @@ describe('useForespurtDataStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initForespurtData({
-        arbeidsgiverperiode: { paakrevd: false },
-        inntekt: {
-          paakrevd: true,
-          forslag: {
-            type: 'ForslagInntektGrunnlag',
-            beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
+      result.current.initForespurtData(
+        {
+          arbeidsgiverperiode: { paakrevd: false },
+          inntekt: {
+            paakrevd: true,
+            forslag: {
+              type: 'ForslagInntektGrunnlag',
+              beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
+            }
+          },
+          refusjon: {
+            paakrevd: true,
+            forslag: {
+              perioder: [{ fom: '2023-01-02', tom: '2023-01-02', beloep: 46000.0 }],
+              opphoersdato: '2023-09-30'
+            }
           }
         },
-        refusjon: {
-          paakrevd: true,
-          forslag: {
-            perioder: [{ fom: '2023-01-02', tom: '2023-01-02', beloep: 46000.0 }],
-            opphoersdato: '2023-09-30'
-          }
-        }
-      });
+        '2023-01-02',
+        46000.0,
+        undefined
+      );
     });
 
     let typer;
@@ -302,23 +321,28 @@ describe('useForespurtDataStore', () => {
   it('should return if arbeidsgiverRefusjonskravOpphører', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
     act(() => {
-      result.current.initForespurtData({
-        arbeidsgiverperiode: { paakrevd: false },
-        inntekt: {
-          paakrevd: true,
-          forslag: {
-            type: 'ForslagInntektGrunnlag',
-            beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
+      result.current.initForespurtData(
+        {
+          arbeidsgiverperiode: { paakrevd: false },
+          inntekt: {
+            paakrevd: true,
+            forslag: {
+              type: 'ForslagInntektGrunnlag',
+              beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
+            }
+          },
+          refusjon: {
+            paakrevd: true,
+            forslag: {
+              perioder: [{ fom: '2023-01-02', tom: '2023-01-02', beloep: 46000.0 }],
+              opphoersdato: '2023-09-30'
+            }
           }
         },
-        refusjon: {
-          paakrevd: true,
-          forslag: {
-            perioder: [{ fom: '2023-01-02', tom: '2023-01-02', beloep: 46000.0 }],
-            opphoersdato: '2023-09-30'
-          }
-        }
-      });
+        '2023-01-02',
+        46000.0,
+        undefined
+      );
     });
 
     let typer;

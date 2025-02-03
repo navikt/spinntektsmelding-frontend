@@ -40,9 +40,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 18.09.2023 og 07.01.2024 (start av nytt sykefravær)?'
+      name: 'Stemmer dette med inntekten ved 07.01.2024 (start av nytt sykefravær)?'
     })
-      .findByLabelText('Nei')
+      .findByLabelText('Ja')
       .check();
 
     cy.findByRole('group', {
@@ -109,9 +109,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 18.09.2023 og 07.01.2024 (start av nytt sykefravær)?'
+      name: 'Stemmer dette med inntekten ved 07.01.2024 (start av nytt sykefravær)?'
     })
-      .findByLabelText('Ja')
+      .findByLabelText('Nei')
       .check();
 
     cy.findByLabelText('Månedsinntekt 07.01.2024').invoke('val').should('equal', '55000');

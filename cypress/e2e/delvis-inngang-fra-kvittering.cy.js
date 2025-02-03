@@ -46,9 +46,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     );
 
     cy.findByRole('group', {
-      name: 'Har det vært endringer i beregnet månedslønn for den ansatte mellom 02.01.2023 og 02.01.2023 (start av nytt sykefravær)?'
+      name: 'Stemmer dette med inntekten ved 02.01.2023 (start av nytt sykefravær)?'
     })
-      .findByLabelText('Ja')
+      .findByLabelText('Nei')
       .check();
     // cy.findByRole('button', { name: 'Endre' }).click();
 
