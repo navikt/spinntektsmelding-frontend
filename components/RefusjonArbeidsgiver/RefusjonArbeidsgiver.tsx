@@ -73,7 +73,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
   };
   const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
-  const foerseMuligeRefusjonOpphoer = sisteDagIArbeidsgiverperioden
+  const foersteMuligeRefusjonOpphoer = sisteDagIArbeidsgiverperioden
     ? addDays(sisteDagIArbeidsgiverperioden, 1)
     : new Date();
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
@@ -174,7 +174,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
             <RefusjonUtbetalingEndring
               endringer={refusjonEndringer || []}
               maxDate={refusjonskravetOpphoerer?.opphoersdato}
-              minDate={foerseMuligeRefusjonOpphoer}
+              minDate={foersteMuligeRefusjonOpphoer}
               onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
               onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
               harRefusjonEndringer={harRefusjonEndringer}
@@ -195,7 +195,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
             {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
               <div className={styles.datepickerescape}>
                 <Datovelger
-                  fromDate={foerseMuligeRefusjonOpphoer}
+                  fromDate={foersteMuligeRefusjonOpphoer}
                   onDateChange={addIsDirtyForm(refusjonskravetOpphoererDato)}
                   id={'lus-sluttdato'}
                   label='Angi siste dag dere krever refusjon for'
