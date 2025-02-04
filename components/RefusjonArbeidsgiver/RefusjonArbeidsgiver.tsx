@@ -49,18 +49,21 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const mutableArbeidsgiverperioder = structuredClone(arbeidsgiverperioder);
-  const sisteArbeidsgiverperiode = mutableArbeidsgiverperioder?.sort((a, b) => {
-    if (!a.fom || !b.fom) {
-      return 0;
-    }
-    if (a.fom > b.fom) {
-      return -1;
-    } else if (a.fom < b.fom) {
-      return 1;
-    }
-    return 0;
-  });
+
+  const sisteArbeidsgiverperiode =
+    arbeidsgiverperioder && arbeidsgiverperioder.length > 0
+      ? arbeidsgiverperioder?.toSorted((a, b) => {
+          if (!a.fom || !b.fom) {
+            return 0;
+          }
+          if (a.fom > b.fom) {
+            return -1;
+          } else if (a.fom < b.fom) {
+            return 1;
+          }
+          return 0;
+        })
+      : arbeidsgiverperioder;
 
   const addIsDirtyForm = (fn: (param: any) => void) => {
     return (param: any) => {
