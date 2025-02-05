@@ -13,7 +13,7 @@ interface PersonDataProps {
   erDelvisInnsending?: boolean;
 }
 
-export default function PersonData({ erKvittering, erDelvisInnsending }: PersonDataProps) {
+export default function PersonData({ erKvittering, erDelvisInnsending }: Readonly<PersonDataProps>) {
   const [
     navn,
     identitetsnummer,
@@ -88,13 +88,15 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
             {!hentingAvPersondataFeilet && (
               <div className={lokalStyles.ansattWrapper}>
                 <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, navn)}</div>
+                <div data-cy='navn'>
+                  {skjemadataErLastet ? navn : <Skeleton variant='text' width='90%' height={28} />}
+                </div>
               </div>
             )}
             <div className={lokalStyles.ansattWrapper}>
               <TextLabel>Personnummer</TextLabel>
               <div data-cy='identitetsnummer'>
-                {identitetsnummer || <Skeleton variant='text' width='90%' height={28} />}
+                {identitetsnummer ?? <Skeleton variant='text' width='90%' height={28} />}
               </div>
             </div>
           </div>
@@ -107,7 +109,7 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
               <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn || <Skeleton variant='text' width='90%' height={28} />}
+                  {virksomhetsnavn ?? <Skeleton variant='text' width='90%' height={28} />}
                 </div>
               </div>
             )}
@@ -126,7 +128,7 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
             <div className={lokalStyles.innsenderNavnWrapper}>
               <TextLabel>Innsender</TextLabel>
               <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {skeletonLoader(skjemadataErLastet, innsenderNavn)}
+                {skjemadataErLastet ? innsenderNavn : <Skeleton variant='text' width='90%' height={28} />}
               </div>
             </div>
             <div className={lokalStyles.telefonWrapper}>
@@ -155,8 +157,4 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: PersonD
       </div>
     </>
   );
-}
-
-function skeletonLoader(laster: boolean, tekst?: string) {
-  return laster ? tekst : <Skeleton variant='text' width='90%' height={28} />;
 }

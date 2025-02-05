@@ -108,7 +108,7 @@ export default function RefusjonUtbetalingEndring({
             <TextField
               label='Endret refusjon/måned'
               onChange={(event) => changeBelopHandler(event, key)}
-              defaultValue={endring.beloep !== undefined ? endring.beloep : ''}
+              defaultValue={endring.beloep ?? ''}
               id={`refusjon.refusjonEndringer[${key}].beløp`}
               error={visFeilmeldingsTekst(`refusjon.refusjonEndringer[${key}].beløp`)}
               className={lokalStyles.endringsboks}

@@ -16,7 +16,7 @@ export default function Fravaersperiode({
   fravaersperioder,
   egenmeldingsperioder,
   paakrevdeOpplysninger
-}: FravaersperiodeProps) {
+}: Readonly<FravaersperiodeProps>) {
   const cx = classNames.bind(lokalStyles);
   const classNameHeadingSykmelding = cx({
     sykfravaerstyper: paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode)

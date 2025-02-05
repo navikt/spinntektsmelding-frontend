@@ -21,12 +21,10 @@ export default function validerLonnUnderSykefravaeret(
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_MANGLER,
       felt: 'lus-radio'
     });
-  } else {
-    if (refusjon.status === 'Ja') {
-      validerBelop(refusjon, errorStatus);
-      validerStatus(refusjonskravetOpphoerer, errorStatus);
-      validerMaksimaltBelop(refusjon, bruttoInntekt, errorStatus);
-    }
+  } else if (refusjon.status === 'Ja') {
+    validerBelop(refusjon, errorStatus);
+    validerStatus(refusjonskravetOpphoerer, errorStatus);
+    validerMaksimaltBelop(refusjon, bruttoInntekt, errorStatus);
   }
 
   return errorStatus;
