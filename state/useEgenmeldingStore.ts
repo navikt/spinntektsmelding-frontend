@@ -184,7 +184,7 @@ function oppdaterOgRekalkulerInntekt(
 function updateDateValue(egenmeldingsperioder?: Periode[], periodeId?: string, dateValue?: PeriodeParam | undefined) {
   if (!egenmeldingsperioder) return [];
   if (!periodeId || !dateValue) return egenmeldingsperioder;
-  const oppdatertEgenmeldingsperioder = (egenmeldingsperioder = egenmeldingsperioder.map((periode: Periode) => {
+  const oppdatertEgenmeldingPerioder = egenmeldingsperioder.map((periode: Periode) => {
     if (periode.id === periodeId) {
       const nyPeriode = { ...periode };
       nyPeriode.tom = dateValue?.tom;
@@ -192,9 +192,9 @@ function updateDateValue(egenmeldingsperioder?: Periode[], periodeId?: string, d
       return nyPeriode;
     }
     return periode;
-  }));
+  });
 
-  return oppdatertEgenmeldingsperioder;
+  return oppdatertEgenmeldingPerioder;
 }
 
 export function finnFravaersperioder<T extends tidPeriode>(

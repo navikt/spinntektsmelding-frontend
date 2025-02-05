@@ -146,7 +146,7 @@ function konverterRefusjonEndringer(
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
           beloep: endring.beloep!,
-          startdato: formatDateForSubmit(endring.dato!)
+          startdato: formatDateForSubmit(endring.dato)
         }))
       : undefined;
 

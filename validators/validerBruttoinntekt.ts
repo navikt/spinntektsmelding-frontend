@@ -92,7 +92,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
               let gjelderFra: Date;
 
               if (typeof endringAarsak.gjelderFra === 'string') {
-                gjelderFra = parseIsoDate(endringAarsak.gjelderFra);
+                gjelderFra = parseIsoDate(endringAarsak.gjelderFra)!;
               } else {
                 gjelderFra = endringAarsak.gjelderFra;
               }
@@ -142,16 +142,14 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                 felt: 'bruttoinntekt-nystilling-fom',
                 code: BruttoinntektFeilkode.NYSTILLING_FOM_MANGLER
               });
-            } else {
-              if (
-                state.bestemmendeFravaersdag &&
-                parseIsoDate(endringAarsak.gjelderFra) > state.bestemmendeFravaersdag
-              ) {
-                valideringstatus.push({
-                  felt: 'bruttoinntekt-nystilling-fom',
-                  code: BruttoinntektFeilkode.NYSTILLING_FOM_ETTER_BFD
-                });
-              }
+            } else if (
+              state.bestemmendeFravaersdag &&
+              parseIsoDate(endringAarsak.gjelderFra) > state.bestemmendeFravaersdag
+            ) {
+              valideringstatus.push({
+                felt: 'bruttoinntekt-nystilling-fom',
+                code: BruttoinntektFeilkode.NYSTILLING_FOM_ETTER_BFD
+              });
             }
             break;
           }
@@ -162,16 +160,14 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
                 felt: 'bruttoinntekt-nystillingsprosent-fom',
                 code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_MANGLER
               });
-            } else {
-              if (
-                state.bestemmendeFravaersdag &&
-                parseIsoDate(endringAarsak.gjelderFra) > state.bestemmendeFravaersdag
-              ) {
-                valideringstatus.push({
-                  felt: 'bruttoinntekt-nystillingsprosent-fom',
-                  code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_ETTER_BFD
-                });
-              }
+            } else if (
+              state.bestemmendeFravaersdag &&
+              parseIsoDate(endringAarsak.gjelderFra) > state.bestemmendeFravaersdag
+            ) {
+              valideringstatus.push({
+                felt: 'bruttoinntekt-nystillingsprosent-fom',
+                code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_ETTER_BFD
+              });
             }
             break;
           }

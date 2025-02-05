@@ -275,7 +275,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
     const slug = Router.query.slug as string;
 
-    const forespoerselId = Array.isArray(slug) ? (slug[0] as string) : (slug as string);
+    const forespoerselId = Array.isArray(slug) ? (slug[0] as string) : slug;
 
     let henterData = get().henterData;
     const sisteLonnshentedato = get().sisteLonnshentedato;

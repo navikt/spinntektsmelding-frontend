@@ -208,7 +208,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             : egenmeldingsperioder;
 
           const arbeidsgiverperiode = perioder ? finnArbeidsgiverperiode(perioder) : undefined;
-          const nyArbeidsgiverperiode = arbeidsgiverperiode ? arbeidsgiverperiode : structuredClone(opprinnelig);
+          const nyArbeidsgiverperiode = arbeidsgiverperiode || structuredClone(opprinnelig);
 
           state.arbeidsgiverperioder = nyArbeidsgiverperiode;
 

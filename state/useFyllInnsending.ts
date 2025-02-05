@@ -76,7 +76,7 @@ export default function useFyllInnsending() {
               formatertePerioder,
               skjaeringstidspunkt,
               arbeidsgiverKanFlytteSkjæringstidspunkt()
-            )!
+            )
           );
 
     const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
@@ -99,14 +99,14 @@ export default function useFyllInnsending() {
           skalSendeArbeidsgiverperiode(fullLonnIArbeidsgiverPerioden?.begrunnelse, arbeidsgiverperioder) &&
           arbeidsgiverperioder
             ? arbeidsgiverperioder.map((periode) => ({
-                fom: formatIsoDate(periode.fom!),
-                tom: formatIsoDate(periode.tom!)
+                fom: formatIsoDate(periode.fom),
+                tom: formatIsoDate(periode.tom)
               }))
             : [],
         egenmeldinger: egenmeldingsperioder
           ? egenmeldingsperioder
               .filter((periode) => periode.fom && periode.tom)
-              .map((periode) => ({ fom: formatIsoDate(periode!.fom!), tom: formatIsoDate(periode!.tom!) }))
+              .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
           : [],
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
@@ -151,7 +151,7 @@ function hentBestemmendeFraværsdag(
 ) {
   if (!isValid(beregnetSkjaeringstidspunkt)) {
     beregnetSkjaeringstidspunkt = parseIsoDate(
-      finnBestemmendeFravaersdag(perioder, undefined, undefined, arbeidsgiverKanFlytteSkjæringstidspunkt)!
+      finnBestemmendeFravaersdag(perioder, undefined, undefined, arbeidsgiverKanFlytteSkjæringstidspunkt)
     );
   }
 
@@ -162,9 +162,11 @@ function hentBestemmendeFraværsdag(
         skjaeringstidspunkt,
         arbeidsgiverKanFlytteSkjæringstidspunkt
       )
-    : inngangFraKvittering
-      ? formatIsoDate(bestemmendeFravaersdag)
-      : formatIsoDate(beregnetSkjaeringstidspunkt);
+    : setRiktigBestemmendeFravaersdag(inngangFraKvittering, bestemmendeFravaersdag, beregnetSkjaeringstidspunkt);
+}
+
+function setRiktigBestemmendeFravaersdag(inngangFraKvittering, bestemmendeFravaersdag, beregnetSkjaeringstidspunkt) {
+  return inngangFraKvittering ? formatIsoDate(bestemmendeFravaersdag) : formatIsoDate(beregnetSkjaeringstidspunkt);
 }
 
 function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
