@@ -24,7 +24,7 @@ export default function validerLonnIArbeidsgiverperioden(
     return errorStatus;
   }
 
-  errorStatus = validateLonnIAPStatus(lonnIAP, bruttoInntekt, ingenArbeidsgiverperiode, errorStatus);
+  errorStatus = validateLonnIAgpStatus(lonnIAP, bruttoInntekt, ingenArbeidsgiverperiode, errorStatus);
 
   return errorStatus;
 }
@@ -66,7 +66,7 @@ function validateIngenArbeidsgiverperiode(
   return errorStatus;
 }
 
-function validateLonnIAPStatus(
+function validateLonnIAgpStatus(
   lonnIAP?: LonnIArbeidsgiverperioden,
   bruttoInntekt?: number,
   ingenArbeidsgiverperiode?: boolean,

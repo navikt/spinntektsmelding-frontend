@@ -1,29 +1,18 @@
-import validerPeriode, { PeriodeFeilkode } from '../validators/validerPeriode';
-import { FullLonnIArbeidsgiverPerioden } from '../validators/validerFullLonnIArbeidsgiverPerioden';
-import { FullLonnISykefravaeret } from '../validators/validerLonnISykefravaeret';
-import validerNaturalytelser, { NaturalytelserFeilkoder } from '../validators/validerNaturalytelser';
+import validerPeriode from '../validators/validerPeriode';
+import validerNaturalytelser from '../validators/validerNaturalytelser';
 import feiltekster from './feiltekster';
-import validerLonnIArbeidsgiverPerioden, {
-  LonnIArbeidsgiverperiodenFeilkode
-} from '../validators/validerLonnIArbeidsgiverperioden';
-import validerLonnUnderSykefravaeret, {
-  LonnUnderSykefravaeretFeilkode
-} from '../validators/validerLonnUnderSykefravaeret';
-import validerPeriodeEgenmelding, { PeriodeEgenmeldingFeilkode } from '../validators/validerPeriodeEgenmelding';
-import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
+import validerLonnIArbeidsgiverPerioden from '../validators/validerLonnIArbeidsgiverperioden';
+import validerLonnUnderSykefravaeret from '../validators/validerLonnUnderSykefravaeret';
+import validerPeriodeEgenmelding from '../validators/validerPeriodeEgenmelding';
+import validerBekreftOpplysninger from '../validators/validerBekreftOpplysninger';
 import { CompleteState } from '../state/useBoundStore';
-import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
-// import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
-import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
+import valdiderEndringAvMaanedslonn from '../validators/validerEndringAvMaanedslonn';
+import validerPeriodeFravaer from '../validators/validerPeriodeFravaer';
+import { ValiderResultat, ValiderTekster } from './validerInntektsmelding';
 
 export interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
   errorTexts?: Array<ValiderTekster>;
-}
-
-interface ValiderTekster {
-  felt: string;
-  text: string;
 }
 
 enum ErrorCodes {
@@ -31,24 +20,6 @@ enum ErrorCodes {
   INGEN_FRAVAERSPERIODER = 'INGEN_FRAVAERSPERIODER',
   INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN = 'INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN',
   INGEN_LONN_I_SYKEFRAVAERET = 'INGEN_LONN_I_SYKEFRAVAERET'
-}
-
-type codeUnion =
-  | PeriodeFeilkode
-  | ErrorCodes
-  | FullLonnIArbeidsgiverPerioden
-  | FullLonnISykefravaeret
-  | NaturalytelserFeilkoder
-  | LonnIArbeidsgiverperiodenFeilkode
-  | LonnUnderSykefravaeretFeilkode
-  | BekreftOpplysningerFeilkoder
-  | EndringAvMaanedslonnFeilkode
-  | PeriodeEgenmeldingFeilkode
-  | PeriodeFravaerFeilkode;
-
-interface ValiderResultat {
-  felt: string;
-  code: codeUnion;
 }
 
 export default function validerDelvisInntektsmelding(

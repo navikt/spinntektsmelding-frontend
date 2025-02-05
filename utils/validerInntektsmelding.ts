@@ -23,9 +23,14 @@ interface SubmitInntektsmeldingReturnvalues {
   errorTexts?: Array<ValiderTekster>;
 }
 
-interface ValiderTekster {
+export interface ValiderTekster {
   felt: string;
   text: string;
+}
+
+export interface ValiderResultat {
+  felt: string;
+  code: codeUnion;
 }
 
 enum ErrorCodes {
@@ -50,11 +55,6 @@ type codeUnion =
   | PeriodeFravaerFeilkode
   | TelefonFeilkode
   | PeriodeOverlappFeilkode;
-
-export interface ValiderResultat {
-  felt: string;
-  code: codeUnion;
-}
 
 export default function validerInntektsmelding(
   state: CompleteState,
