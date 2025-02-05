@@ -1,7 +1,7 @@
 import { compareAsc, compareDesc, differenceInDays, formatISO9075, isBefore } from 'date-fns';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
-import { finnSammenhengendePeriode, finnSammenhengendePeriodeManuellJustering } from './finnArbeidsgiverperiode';
+import { finnSammenhengendePeriode } from './finnArbeidsgiverperiode';
 import { TDateISODate } from '../state/MottattData';
 
 export type tidPeriode = {

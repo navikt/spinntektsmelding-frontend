@@ -155,18 +155,16 @@ function hentBestemmendeFraværsdag(
     );
   }
 
-  return harForespurtArbeidsgiverperiode
-    ? finnBestemmendeFravaersdag(
-        perioder,
-        formatertePerioder,
-        skjaeringstidspunkt,
-        arbeidsgiverKanFlytteSkjæringstidspunkt
-      )
-    : setRiktigBestemmendeFravaersdag(inngangFraKvittering, bestemmendeFravaersdag, beregnetSkjaeringstidspunkt);
-}
-
-function setRiktigBestemmendeFravaersdag(inngangFraKvittering, bestemmendeFravaersdag, beregnetSkjaeringstidspunkt) {
-  return inngangFraKvittering ? formatIsoDate(bestemmendeFravaersdag) : formatIsoDate(beregnetSkjaeringstidspunkt);
+  if (harForespurtArbeidsgiverperiode) {
+    return finnBestemmendeFravaersdag(
+      perioder,
+      formatertePerioder,
+      skjaeringstidspunkt,
+      arbeidsgiverKanFlytteSkjæringstidspunkt
+    );
+  } else {
+    return inngangFraKvittering ? formatIsoDate(bestemmendeFravaersdag) : formatIsoDate(beregnetSkjaeringstidspunkt);
+  }
 }
 
 function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
