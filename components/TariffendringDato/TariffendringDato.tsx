@@ -11,7 +11,7 @@ export default function TariffendringDato({
   defaultEndringsdato,
   defaultKjentDato,
   defaultMonth
-}: TariffendringDatoProps) {
+}: Readonly<TariffendringDatoProps>) {
   const tilDato = new Date();
   return (
     <div className={lokalStyles.endremaaanedsinntekt}>

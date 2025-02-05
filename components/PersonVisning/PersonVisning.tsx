@@ -19,7 +19,7 @@ export default function PersonVisning({
   virksomhetNavn,
   innsenderNavn,
   innsenderTelefonNr
-}: PersonProps) {
+}: Readonly<PersonProps>) {
   return (
     <div className={lokalStyles.personInfoWrapper}>
       <div className={lokalStyles.denAnsatte}>

@@ -248,7 +248,7 @@ const Initiering2: NextPage = () => {
         const currentFom = currentValue.fom;
         const previousTom = array[index - 1].tom;
 
-        const dagerMellom = differenceInDays(currentFom!, previousTom!);
+        const dagerMellom = differenceInDays(currentFom, previousTom);
         return accumulator > dagerMellom ? accumulator : dagerMellom;
       }, 0)
     : 0;
@@ -299,7 +299,7 @@ const Initiering2: NextPage = () => {
           const periode =
             mottatteSykepengesoeknader?.success &&
             mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
-          if (!!periode) {
+          if (periode) {
             sykmeldingsperiode.push(periode);
           }
         });
@@ -361,8 +361,8 @@ const Initiering2: NextPage = () => {
           )?.virksomhetsnavn!;
           initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
           setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-          initFravaersperiode(fravaersperioder as MottattPeriode[]);
-          initEgenmeldingsperiode(egenmeldingsperioder as MottattPeriode[]);
+          initFravaersperiode(fravaersperioder);
+          initEgenmeldingsperiode(egenmeldingsperioder);
           tilbakestillArbeidsgiverperiode();
           setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
           router.push('/arbeidsgiverInitiertInnsending');
@@ -523,7 +523,10 @@ function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
     : `(pluss ${antallEgenmeldingsdager} egenmeldingsdager)`;
 }
 
-function OrganisasjonInfo({ orgNr, arbeidsforhold }: { orgNr: string; arbeidsforhold: ArbeidsgiverSelect[] }) {
+function OrganisasjonInfo({
+  orgNr,
+  arbeidsforhold
+}: Readonly<{ orgNr: string; arbeidsforhold: ArbeidsgiverSelect[] }>) {
   if (!arbeidsforhold || arbeidsforhold.length === 0 || !orgNr) {
     return null;
   }
@@ -538,7 +541,7 @@ function OrganisasjonInfo({ orgNr, arbeidsforhold }: { orgNr: string; arbeidsfor
   );
 }
 
-function PersonInfo({ navn, fnr }: { navn?: string; fnr?: string }) {
+function PersonInfo({ navn, fnr }: Readonly<{ navn?: string; fnr?: string }>) {
   if (!navn || !fnr) {
     return null;
   }

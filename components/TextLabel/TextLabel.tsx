@@ -5,9 +5,9 @@ interface TextLabelProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
-export default function TextLabel(props: TextLabelProps) {
-  const size = props.size || 'medium';
-  const theClassName = props.className || '';
+export default function TextLabel(props: Readonly<TextLabelProps>) {
+  const size = props.size ?? 'medium';
+  const theClassName = props.className ?? '';
 
   return (
     <div

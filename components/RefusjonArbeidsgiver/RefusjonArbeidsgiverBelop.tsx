@@ -18,13 +18,13 @@ export default function RefusjonArbeidsgiverBelop({
   visFeilmeldingsTekst,
   arbeidsgiverperiodeDisabled = false
 }: Readonly<RefusjonArbeidsgiverBelopProps>) {
-  const [erEditerbar, setEditerbar] = useState<boolean>(false);
+  const [editerbar, setEditerbar] = useState<boolean>(false);
 
   const refusjonTilArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
     ? 'Refusjon til arbeidsgiver i sykefraværet'
     : 'Refusjon til arbeidsgiver etter arbeidsgiverperiode';
 
-  if (!erEditerbar) {
+  if (!editerbar) {
     return (
       <>
         <TextLabel>{refusjonTilArbeidsgiverEtterAgpLegend}</TextLabel>

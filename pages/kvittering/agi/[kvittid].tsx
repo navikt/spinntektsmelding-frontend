@@ -202,10 +202,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   let fullLoennIArbeidsgiverPerioden;
 
   if (dataFraBackend) {
-    // fullLoennIArbeidsgiverPerioden = kvitteringDokument.fullLønnIArbeidsgiverPerioden ?? {};
-    // fullLoennIArbeidsgiverPerioden.status = fullLoennIArbeidsgiverPerioden?.redusertLoennIAgp ? 'Nei' : 'Ja';
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
-    fullLoennIArbeidsgiverPerioden.status = !!kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringDokument.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
+    fullLoennIArbeidsgiverPerioden.status = kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
     fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringDokument?.agp?.redusertLoennIAgp?.beloep;
     fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringDokument?.agp.redusertLoennIAgp?.begrunnelse;
     if (kvitteringDokument?.vedtaksperiodeId) {
@@ -213,9 +211,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     }
   } else {
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
-    fullLoennIArbeidsgiverPerioden.status = !!kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja'; // kvitteringData.agp.redusertLoennIAgp?.beloep ? 'Ja' : 'Nei';
+    fullLoennIArbeidsgiverPerioden.status = kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
     fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData?.agp?.redusertLoennIAgp?.beloep;
-    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData?.agp.redusertLoennIAgp?.begrunnelse;
+    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse;
   }
 
   let loenn: LonnISykefravaeret = { status: undefined, beloep: 0 };
@@ -231,7 +229,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     };
   }
 
-  let refusjonskravetOpphoerer: RefusjonskravetOpphoerer = { status: undefined, opphoersdato: undefined };
+  let refusjonskravetOpphoerer: RefusjonskravetOpphoerer;
+
   if (dataFraBackend) {
     refusjonskravetOpphoerer = {
       status: kvitteringDokument?.refusjon?.sluttdato ? 'Ja' : ('Nei' as YesNo),
@@ -488,12 +487,6 @@ export async function getServerSideProps(context: any) {
       }
     };
   }
-
-  // const obo = await requestOboToken(token, 'dev-gcp:helsearbeidsgiver:im-api');
-  // if (!obo.ok) {
-  //   /* håndter obo-feil */
-  //   console.error('OBO-feil:', obo.error);
-  // }
 
   try {
     kvittering = await hentKvitteringsdataSSR(kvittid, token);

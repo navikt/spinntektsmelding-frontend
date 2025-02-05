@@ -134,7 +134,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
     : refusjonEndringer
         ?.filter((endring) => {
           if (!endring.dato) return false;
-          return !isAfter(endring.dato, foersteDatoForRefusjon!);
+          return !isAfter(endring.dato, foersteDatoForRefusjon);
         })
         .map((endring) => {
           return {
@@ -143,7 +143,10 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
           };
         })
         .sort((a, b) => {
-          return a.dato && b.dato ? (a.dato < b.dato ? 1 : -1) : 0;
+          if (a.dato && b.dato) {
+            return a.dato < b.dato ? 1 : -1;
+          }
+          return 0;
         })[0]?.beloep;
 
   let aktiveRefusjonEndringer;
@@ -404,7 +407,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                     {tidligereinntekt && (
                       <>
                         <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
-                        <TidligereInntekt tidligereinntekt={tidligereinntekt!} henterData={false} />
+                        <TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={false} />
                       </>
                     )}
                     <BodyLong>Angi ny beregnet månedslønn per {formatDate(foersteFravaersdag)}</BodyLong>

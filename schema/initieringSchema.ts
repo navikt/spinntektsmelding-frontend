@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { PeriodeSchema } from './periodeSchema';
 import { PersonnummerSchema } from './personnummerSchema';
 import { OrganisasjonsnummerSchema } from './organisasjonsnummerSchema';
 

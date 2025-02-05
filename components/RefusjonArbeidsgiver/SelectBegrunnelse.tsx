@@ -9,7 +9,7 @@ interface SelectBegrunnelseProps {
   label?: string;
 }
 
-export default function SelectBegrunnelse(props: SelectBegrunnelseProps) {
+export default function SelectBegrunnelse(props: Readonly<SelectBegrunnelseProps>) {
   const begrunnelseKeys = Object.keys(begrunnelseIngenEllerRedusertUtbetalingListe);
   const label = props.label ? props.label : 'Velg begrunnelse for ingen eller redusert utbetaling';
   return (

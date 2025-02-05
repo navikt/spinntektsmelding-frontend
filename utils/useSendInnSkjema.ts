@@ -62,7 +62,7 @@ export default function useSendInnSkjema(
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
     if (hasErrors) {
-      fyllFeilmeldinger(errorStatus.errorTexts!!);
+      fyllFeilmeldinger(errorStatus.errorTexts!);
 
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',
@@ -173,19 +173,7 @@ export default function useSendInnSkjema(
                   const feil = feilResultat.data;
                   let errors: Array<ErrorResponse> = [];
 
-                  if (feil.valideringsfeil) {
-                    errors = resultat.valideringsfeil.map((error: any) => ({
-                      error: error
-                    }));
-                  } else {
-                    errors = [
-                      {
-                        value: 'Innsending av skjema feilet',
-                        error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-                        property: 'server'
-                      }
-                    ];
-                  }
+                  errors = mapValidationErrors(feil, errors, resultat);
 
                   errorResponse(errors);
                   setSkalViseFeilmeldinger(true);
@@ -199,4 +187,25 @@ export default function useSendInnSkjema(
       });
     }
   };
+}
+
+function mapValidationErrors(
+  feil: { error: string; valideringsfeil: string[] },
+  errors: ErrorResponse[],
+  resultat: any
+) {
+  if (feil.valideringsfeil) {
+    errors = resultat.valideringsfeil.map((error: any) => ({
+      error: error
+    }));
+  } else {
+    errors = [
+      {
+        value: 'Innsending av skjema feilet',
+        error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+        property: 'server'
+      }
+    ];
+  }
+  return errors;
 }

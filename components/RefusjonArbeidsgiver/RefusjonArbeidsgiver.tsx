@@ -19,7 +19,7 @@ interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
 }
 
-export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeidsgiverProps) {
+export default function RefusjonArbeidsgiver({ setIsDirtyForm }: Readonly<RefusjonArbeidsgiverProps>) {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
@@ -112,7 +112,7 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: RefusjonArbeids
           id={'lia-radio'}
           error={visFeilmeldingsTekst('lia-radio')}
           onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
-          value={fullLonnIArbeidsgiverPerioden?.status || null}
+          value={fullLonnIArbeidsgiverPerioden?.status ?? null}
           disabled={arbeidsgiverperiodeDisabled || arbeidsgiverperiodeKort}
         >
           <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>

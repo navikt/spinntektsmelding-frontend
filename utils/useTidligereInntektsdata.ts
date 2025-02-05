@@ -15,19 +15,6 @@ function useTidligereInntektsdata(
     {
       onError: (err) => {
         console.error('Kunne ikke hente arbeidsforhold', err);
-        // if (err.status === 401) {
-        //   const ingress = window.location.hostname + environment.baseUrl;
-        //   const currentPath = window.location.href;
-
-        //   window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
-        // }
-
-        // if (err.status !== 200) {
-        //   backendFeil.current.push({
-        //     felt: 'Backend',
-        //     text: 'Kunne ikke hente arbeidsforhold'
-        //   });
-        // }
       },
       refreshInterval: 0,
       shouldRetryOnError: false
