@@ -1,11 +1,11 @@
-import { render, screen, fireEvent, within } from '@testing-library/react';
-import { vi } from 'vitest';
-// import RefusjonArbeidsgiver from './RefusjonArbeidsgiver';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { vi, Mock } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import RefusjonArbeidsgiver from '../../components/RefusjonArbeidsgiver';
 import parseIsoDate from '../../utils/parseIsoDate';
 
 vi.mock('../../state/useBoundStore', () => ({
+  __esModule: true,
   default: vi.fn(),
   useBoundStore: vi.fn()
 }));
@@ -14,8 +14,7 @@ describe('RefusjonArbeidsgiver', () => {
   const mockSetIsDirtyForm = vi.fn();
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    useBoundStore.mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         lonnISykefravaeret: {
           status: 'Ja'
@@ -77,7 +76,7 @@ describe('RefusjonArbeidsgiver', () => {
 
   it('should show a warning when sykefravaer betviles', () => {
     vi.clearAllMocks();
-    useBoundStore.mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         lonnISykefravaeret: {
           status: 'Ja'

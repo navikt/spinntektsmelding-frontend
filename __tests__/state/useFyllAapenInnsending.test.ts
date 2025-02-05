@@ -6,8 +6,7 @@ import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 
 import inntektData from '../../mockdata/inntektData.json';
-import delvisRefusjon from '../../mockdata/kvittering-delvis-refusjon.json';
-import useKvitteringInit, { KvitteringInit } from '../../state/useKvitteringInit';
+import useKvitteringInit from '../../state/useKvitteringInit';
 import parseIsoDate from '../../utils/parseIsoDate';
 
 vi.mock('nanoid');
