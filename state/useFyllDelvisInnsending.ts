@@ -183,7 +183,7 @@ function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsper
   return perioder;
 }
 
-function finnInnsendbareArbeidsgiverperioder(
+export function finnInnsendbareArbeidsgiverperioder(
   arbeidsgiverperioder: Periode[] | undefined,
   skalSendeArbeidsgiverperiode: boolean
 ): SendtPeriode[] | [] {
