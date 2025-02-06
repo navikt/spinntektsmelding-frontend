@@ -143,4 +143,50 @@ describe('sp-soeknader', () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(mockJson).toHaveBeenCalledWith([]);
   });
+
+  it('should return 200 when we have a token and vedtaksperiodeliste', async () => {
+    getToken.mockReturnValue('token');
+    validateToken.mockResolvedValue({ ok: true });
+    requestOboToken.mockResolvedValue({ ok: true });
+
+    const req = {
+      headers: {
+        authorization: 'Bearer token'
+      },
+      body: {
+        fnr: testFnr.GyldigeFraDolly.TestPerson1,
+        orgnummer: testOrganisasjoner[0].organizationNumber,
+        eldsteFom: '2021-01-01'
+      },
+      json: () => ({
+        fnr: testFnr.GyldigeFraDolly.TestPerson1,
+        orgnummer: testOrganisasjoner[0].organizationNumber,
+        eldsteFom: '2021-01-01'
+      })
+    } as unknown as NextApiRequest;
+    const mockJson = vi.fn();
+    const res = {
+      status: vi.fn(() => ({
+        json: mockJson
+      })),
+
+      json: vi.fn()
+    } as unknown as NextApiResponse<unknown>;
+
+    fetchMocker.mockResponses(
+      [JSON.stringify(['token OK']), { status: 200 }],
+      [JSON.stringify([{ vedtaksperiodeId: '12345' }]), { status: 200 }],
+      [JSON.stringify([{ vedtaksperiodeId: '12345', forespoerselId: '54321' }]), { status: 200 }]
+    );
+
+    await handler(req, res);
+    // expect(fetch.requests().length).toEqual(2);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(mockJson).toHaveBeenCalledWith([
+      {
+        forespoerselId: '54321',
+        vedtaksperiodeId: '12345'
+      }
+    ]);
+  });
 });

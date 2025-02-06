@@ -131,19 +131,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
       return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
     } else {
-      const forespoerselIdListeData: forespoerselIdListeEnhet[] = await forespoerselIdListe.json();
+      try {
+        const forespoerselIdListeData: forespoerselIdListeEnhet[] = await forespoerselIdListe.json();
 
-      const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
-        const forespoerselMedId = forespoerselIdListeData.find(
-          (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
-        );
-        return {
-          ...soeknad,
-          forespoerselId: forespoerselMedId?.forespoerselId
-        };
-      });
-
-      return res.status(soeknadResponse.status).json(soeknadResponseData);
+        const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
+          const forespoerselMedId = forespoerselIdListeData.find(
+            (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
+          );
+          return {
+            ...soeknad,
+            forespoerselId: forespoerselMedId?.forespoerselId
+          };
+        });
+        return res.status(soeknadResponse.status).json(soeknadResponseData);
+      } catch (error) {
+        console.error('Feil ved parsing av forespørselIder ', error);
+        return res.status(500).json({ error: 'Feil ved parsing av forespørselIder' });
+      }
     }
   }
 };
