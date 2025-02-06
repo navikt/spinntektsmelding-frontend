@@ -109,6 +109,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       .map((soeknad) => soeknad.vedtaksperiodeId)
       .filter((element) => element !== null);
 
+    if (idListe.length === 0) {
+      return res.status(200).json([]);
+    }
+
     const body = { vedtaksperiodeIdListe: idListe };
 
     const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
