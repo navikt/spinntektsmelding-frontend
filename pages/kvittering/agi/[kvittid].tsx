@@ -216,7 +216,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse;
   }
 
-  let loenn: LonnISykefravaeret = { status: undefined, beloep: 0 };
+  let loenn: LonnISykefravaeret;
   if (dataFraBackend) {
     loenn = {
       status: kvitteringDokument.refusjon ? 'Ja' : 'Nei',
@@ -264,7 +264,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         !endring.dato ||
         !bestemmendeFravaersdag ||
         !gammeltSkjaeringstidspunkt ||
-        (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato!, gammeltSkjaeringstidspunkt))
+        (!isEqual(endring.dato, bestemmendeFravaersdag) && !isEqual(endring.dato, gammeltSkjaeringstidspunkt))
       );
     });
   } else {

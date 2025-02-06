@@ -24,7 +24,6 @@ export default function fetcherInntektsdataSelvbestemt(
       if (!res.ok) {
         const error = new NetworkError('Kunne ikke hente arbeidsforhold, vennligst prøv igjen senere');
         error.status = res.status;
-        // error.info = res.json();
         return Promise.reject(error);
       }
       return res.json();

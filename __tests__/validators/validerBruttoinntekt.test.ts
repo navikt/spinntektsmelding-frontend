@@ -259,6 +259,25 @@ describe.concurrent('validerBruttoinntekt', () => {
 
     expect(validerBruttoinntekt(input)).toEqual(expected);
   });
+
+  it('should no return an error when lønnsendring date is ok and gjelderFra is a string', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringAarsak: {
+          aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
+          gjelderFra: '2002-01-02'
+        }
+      },
+      bestemmendeFravaersdag: new Date(2002, 1, 3)
+    };
+
+    const expected = [];
+
+    expect(validerBruttoinntekt(input)).toEqual(expected);
+  });
+
   /********** */
   it('should return an error when permisjon property is missing', () => {
     const input: CompleteState = {

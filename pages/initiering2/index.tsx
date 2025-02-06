@@ -1,6 +1,6 @@
 import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -22,7 +22,7 @@ import { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { MottattPeriode, TDateISODate } from '../../state/MottattData';
+import { TDateISODate } from '../../state/MottattData';
 import { compareAsc, differenceInCalendarDays, differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/router';
@@ -265,12 +265,6 @@ const Initiering2: NextPage = () => {
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
-    const skjema = initieringSchema;
-    let mottatteSykepengesoeknader:
-      | { success: true; data: EndepunktSykepengesoeknader }
-      | { success: false; error: ZodError }
-      | undefined = undefined;
-
     if (harValgtPeriodeMedForlengelse && !endreRefusjon) {
       setError('endreRefusjon', {
         message: 'Angi om det skal endres refusjon for den ansatte.',
@@ -279,96 +273,106 @@ const Initiering2: NextPage = () => {
       return;
     }
 
-    if (spData) {
-      mottatteSykepengesoeknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
+    const mottatteSykepengesoeknader = spData ? endepunktSykepengesoeknaderSchema.safeParse(spData) : undefined;
+    const mottatteData = data ? endepunktArbeidsforholdSchema.safeParse(data) : undefined;
+
+    if (mottatteData?.success && !mottatteData.data.feilReport) {
+      handleValidData(formData, mottatteData.data, mottatteSykepengesoeknader);
+    }
+  };
+
+  const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any) => {
+    const skjemaData = {
+      organisasjonsnummer: formData.organisasjonsnummer,
+      fulltNavn: mottatteData.fulltNavn,
+      personnummer: identitetsnummer
+    };
+
+    const validationResult = initieringSchema.safeParse(skjemaData);
+    const sykmeldingsperiode = getSykmeldingsperiode(formData, mottatteSykepengesoeknader);
+
+    if (sykmeldingsperiode.length === 0) {
+      setError('sykepengePeriodeId', {
+        message: 'Ingen sykmeldingsperioder valgt',
+        type: 'manual'
+      });
+      return;
     }
 
-    if (data) {
-      const mottatteData = endepunktArbeidsforholdSchema.safeParse(data);
-      if (mottatteData.success && !mottatteData.data.feilReport) {
-        const skjemaData = {
-          organisasjonsnummer: formData.organisasjonsnummer,
-          fulltNavn: mottatteData.data.fulltNavn,
-          personnummer: identitetsnummer
-        };
+    if (validationResult.success) {
+      setIsLoading(true);
+      handleValidFormData(validationResult.data, sykmeldingsperiode);
+    }
+  };
 
-        const validationResult = skjema.safeParse(skjemaData);
-
-        const sykmeldingsperiode: EndepunktSykepengesoeknader | [] = [];
-        formData.sykepengePeriodeId?.forEach((id) => {
-          const periode =
-            mottatteSykepengesoeknader?.success &&
-            mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
-          if (periode) {
-            sykmeldingsperiode.push(periode);
-          }
-        });
-
-        const forespoerselIdListe = sykmeldingsperiode
-          .filter((periode) => !!periode.forespoerselId)
-          .map((periode) => periode.forespoerselId!);
-
-        if (forespoerselIdListe.length > 0) {
-          router.push(`/${forespoerselIdListe[0]}`);
-
-          return;
-        }
-
-        const fravaersperioder: MottattPeriode[] = sykmeldingsperiode.map((periode) => ({
-          fom: periode.fom as TDateISODate,
-          tom: periode.tom as TDateISODate
-        }));
-
-        const egenmeldingsperioder: MottattPeriode[] = sykmeldingsperiode
-          .flatMap((periode) => {
-            const sorterteEgenmeldingsdager = periode.egenmeldingsdagerFraSykmelding.toSorted();
-            const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
-              (accumulator, currentValue) => {
-                const tom = new Date(currentValue);
-                const currentTom = new Date(accumulator[accumulator.length - 1].tom);
-
-                if (differenceInDays(tom, currentTom) <= 1) {
-                  accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
-                } else {
-                  accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
-                }
-                return accumulator;
-              },
-              [
-                {
-                  fom: sorterteEgenmeldingsdager[0] as TDateISODate,
-                  tom: sorterteEgenmeldingsdager[0] as TDateISODate
-                }
-              ]
-            );
-            return egenmeldingsperiode;
-          })
-          .filter((element) => !!element.fom && !!element.tom);
-
-        if (!sykmeldingsperiode || sykmeldingsperiode.length === 0) {
-          setError('sykepengePeriodeId', {
-            message: 'Ingen sykmeldingsperioder valgt',
-            type: 'manual'
-          });
-          return;
-        }
-
-        if (validationResult.success) {
-          setIsLoading(true);
-          const validerteData = validationResult.data;
-          const orgNavn = arbeidsforhold.find(
-            (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
-          )?.virksomhetsnavn!;
-          initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
-          setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-          initFravaersperiode(fravaersperioder);
-          initEgenmeldingsperiode(egenmeldingsperioder);
-          tilbakestillArbeidsgiverperiode();
-          setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
-          router.push('/arbeidsgiverInitiertInnsending');
-        }
+  const getSykmeldingsperiode = (formData: Skjema, mottatteSykepengesoeknader: any) => {
+    const sykmeldingsperiode: EndepunktSykepengesoeknader | [] = [];
+    formData.sykepengePeriodeId?.forEach((id) => {
+      const periode =
+        mottatteSykepengesoeknader?.success &&
+        mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
+      if (periode) {
+        sykmeldingsperiode.push(periode);
       }
+    });
+
+    const forespoerselIdListe = sykmeldingsperiode
+      .filter((periode) => !!periode.forespoerselId)
+      .map((periode) => periode.forespoerselId!);
+
+    if (forespoerselIdListe.length > 0) {
+      router.push(`/${forespoerselIdListe[0]}`);
     }
+
+    return sykmeldingsperiode;
+  };
+
+  const handleValidFormData = (validerteData: any, sykmeldingsperiode: any) => {
+    const orgNavn = arbeidsforhold.find(
+      (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
+    )?.virksomhetsnavn!;
+    initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
+    setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
+    initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
+    initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
+    tilbakestillArbeidsgiverperiode();
+    setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
+    router.push('/arbeidsgiverInitiertInnsending');
+  };
+
+  const getFravaersperioder = (sykmeldingsperiode: any) => {
+    return sykmeldingsperiode.map((periode: any) => ({
+      fom: periode.fom as TDateISODate,
+      tom: periode.tom as TDateISODate
+    }));
+  };
+
+  const getEgenmeldingsperioder = (sykmeldingsperiode: any) => {
+    return sykmeldingsperiode
+      .flatMap((periode: any) => {
+        const sorterteEgenmeldingsdager = periode.egenmeldingsdagerFraSykmelding.toSorted();
+        const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
+          (accumulator: any, currentValue: any) => {
+            const tom = new Date(currentValue);
+            const currentTom = new Date(accumulator[accumulator.length - 1].tom);
+
+            if (differenceInDays(tom, currentTom) <= 1) {
+              accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
+            } else {
+              accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
+            }
+            return accumulator;
+          },
+          [
+            {
+              fom: sorterteEgenmeldingsdager[0] as TDateISODate,
+              tom: sorterteEgenmeldingsdager[0] as TDateISODate
+            }
+          ]
+        );
+        return egenmeldingsperiode;
+      })
+      .filter((element: any) => !!element.fom && !!element.tom);
   };
 
   useEffect(() => {

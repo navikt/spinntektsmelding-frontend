@@ -1,4 +1,3 @@
-import { isValid } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
@@ -8,6 +7,7 @@ import validerAapenInnsending, { EndringAarsak, RefusjonEndring } from '../valid
 import { SendtPeriode, formaterRedusertLoennIAgp } from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 import parseIsoDate from '../utils/parseIsoDate';
+import { finnInnsendbareArbeidsgiverperioder } from './useFyllDelvisInnsending';
 
 export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
@@ -123,21 +123,6 @@ function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperio
     : undefined;
 }
 
-function finnInnsendbareArbeidsgiverperioder(
-  arbeidsgiverperioder: Periode[] | undefined,
-  skalSendeArbeidsgiverperiode: boolean
-): SendtPeriode[] | [] {
-  if (!skalSendeArbeidsgiverperiode) {
-    return [];
-  }
-
-  return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
-    ? arbeidsgiverperioder
-        ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
-        .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
-    : [];
-}
-
 function konverterRefusjonEndringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBeloep> | undefined
@@ -146,7 +131,7 @@ function konverterRefusjonEndringer(
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
           beloep: endring.beloep!,
-          startdato: formatDateForSubmit(endring.dato!)
+          startdato: formatDateForSubmit(endring.dato)
         }))
       : undefined;
 
