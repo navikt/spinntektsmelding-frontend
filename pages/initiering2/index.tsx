@@ -336,7 +336,7 @@ const Initiering2: NextPage = () => {
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
     initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
-    setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
+    setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
     router.push('/arbeidsgiverInitiertInnsending');
   };
 
