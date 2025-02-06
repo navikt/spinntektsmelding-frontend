@@ -1,18 +1,21 @@
 import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import useFyllInnsending, {
-  formaterOpphørsdato,
-  formaterRedusertLoennIAgp,
-  InnsendingSkjema
-} from '../../state/useFyllInnsending';
+import useFyllInnsending, { formaterOpphørsdato, formaterRedusertLoennIAgp } from '../../state/useFyllInnsending';
 import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 
 import inntektData from '../../mockdata/inntektData.json';
 import delvisRefusjon from '../../mockdata/kvittering-delvis-refusjon.json';
-import useKvitteringInit, { KvitteringInit } from '../../state/useKvitteringInit';
+import useKvitteringInit from '../../state/useKvitteringInit';
 import { LonnIArbeidsgiverperioden } from '../../state/state';
+import fullInnsendingSchema from '../../schema/fullInnsendingSchema';
+import { z } from 'zod';
+
+import MottattKvitteringSchema from '../../schema/mottattKvitteringSchema';
+
+type InnsendingSkjema = z.infer<typeof fullInnsendingSchema>;
+type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 
 vi.mock('nanoid');
 
@@ -51,7 +54,7 @@ describe('useFyllInnsending', () => {
     const kvitteringInit = kvittInit.current;
 
     act(() => {
-      kvitteringInit(mottattKvittering as unknown as KvitteringInit);
+      kvitteringInit(mottattKvittering as unknown as KvitteringData);
     });
 
     const { result: fyller } = renderHook(() => useFyllInnsending());
@@ -68,15 +71,15 @@ describe('useFyllInnsending', () => {
       // expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
       // expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
 
-      expect(innsending.agp.egenmeldinger).toEqual([
+      expect(innsending.agp?.egenmeldinger).toEqual([
         {
           fom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].fom,
           tom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].tom
         }
       ]);
       // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
-      expect(innsending.refusjon.beloepPerMaaned).toBe(80666.66666666667);
-      expect(innsending.inntekt.beloep).toBe(80666.66666666667);
+      expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
+      expect(innsending.inntekt?.beloep).toBe(80666.66666666667);
       // expect(innsending.inntekt.bekreftet).toBeTruthy();
     }
   });
@@ -89,7 +92,7 @@ describe('useFyllInnsending', () => {
     const kvitteringInit = kvittInit.current;
 
     act(() => {
-      kvitteringInit(delvisRefusjon as unknown as KvitteringInit);
+      kvitteringInit(delvisRefusjon as unknown as KvitteringData);
     });
 
     const { result: fyller } = renderHook(() => useFyllInnsending());
@@ -113,13 +116,13 @@ describe('useFyllInnsending', () => {
       //   }
       // ]);
       // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
-      expect(innsending.refusjon.beloepPerMaaned).toBe(80666.66666666667);
-      expect(innsending.refusjon.sluttdato).toBe('2023-04-19');
-      expect(innsending.refusjon.endringer).toEqual([
+      expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
+      expect(innsending.refusjon?.sluttdato).toBe('2023-04-19');
+      expect(innsending.refusjon?.endringer).toEqual([
         { beloep: 1234, startdato: '2023-04-13' },
         { beloep: 12345, startdato: '2023-04-20' }
       ]);
-      expect(innsending.inntekt.beloep).toBe(80666.66666666667);
+      expect(innsending.inntekt?.beloep).toBe(80666.66666666667);
       // expect(innsending.inntekt.bekreftet).toBeTruthy();
     } else {
       expect(innsending).toBeTruthy();
