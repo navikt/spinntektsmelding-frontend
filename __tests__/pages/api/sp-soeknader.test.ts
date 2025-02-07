@@ -1,15 +1,13 @@
-// require('dotenv').config();
 import { vi, expect, beforeAll } from 'vitest';
 import handler from '../../../pages/api/sp-soeknader';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
-import testdata from '../../../mockdata/sp-soeknad.json';
-import isMod11Number from '../../../utils/isMod10Number';
-import { endepunktSykepengesoeknaderSchema } from '../../../schema/endepunktSykepengesoeknaderSchema';
-import { z } from 'zod';
 import testFnr from '../../../mockdata/testFnr';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
-import { http, HttpResponse } from 'msw';
+import createFetchMock from 'vitest-fetch-mock';
+
+const fetchMocker = createFetchMock(vi);
+fetchMocker.enableMocks();
 
 vi.mock('@navikt/oasis', () => ({
   getToken: vi.fn(),
@@ -18,7 +16,9 @@ vi.mock('@navikt/oasis', () => ({
 }));
 
 describe('sp-soeknader', () => {
-  beforeAll(() => {});
+  beforeAll(() => {
+    fetchMocker.doMock();
+  });
 
   beforeEach(() => {
     vi.stubEnv('NODE_ENV', 'production');
@@ -27,6 +27,7 @@ describe('sp-soeknader', () => {
     vi.stubEnv('FORESPOERSEL_ID_LISTE_API', '/forespoersel/id/liste');
     vi.stubEnv('FLEX_SYKEPENGESOEKNAD_INGRESS', 'flex-sykepengesoknad.ingress');
     vi.stubEnv('FLEX_SYKEPENGESOEKNAD_URL', '/flex/sykepengesoknad/url');
+    fetchMocker.resetMocks();
   });
 
   afterEach(() => {
@@ -105,5 +106,87 @@ describe('sp-soeknader', () => {
 
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
+  });
+
+  it('should return 200 when we have a token', async () => {
+    getToken.mockReturnValue('token');
+    validateToken.mockResolvedValue({ ok: true });
+    requestOboToken.mockResolvedValue({ ok: true });
+
+    const req = {
+      headers: {
+        authorization: 'Bearer token'
+      },
+      body: {
+        fnr: testFnr.GyldigeFraDolly.TestPerson1,
+        orgnummer: testOrganisasjoner[0].organizationNumber,
+        eldsteFom: '2021-01-01'
+      },
+      json: () => ({
+        fnr: testFnr.GyldigeFraDolly.TestPerson1,
+        orgnummer: testOrganisasjoner[0].organizationNumber,
+        eldsteFom: '2021-01-01'
+      })
+    } as unknown as NextApiRequest;
+    const mockJson = vi.fn();
+    const res = {
+      status: vi.fn(() => ({
+        json: mockJson
+      })),
+
+      json: vi.fn()
+    } as unknown as NextApiResponse<unknown>;
+
+    fetchMocker.mockResponse(JSON.stringify([]), { status: 200 });
+
+    await handler(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(mockJson).toHaveBeenCalledWith([]);
+  });
+
+  it('should return 200 when we have a token and vedtaksperiodeliste', async () => {
+    getToken.mockReturnValue('token');
+    validateToken.mockResolvedValue({ ok: true });
+    requestOboToken.mockResolvedValue({ ok: true });
+
+    const req = {
+      headers: {
+        authorization: 'Bearer token'
+      },
+      body: {
+        fnr: testFnr.GyldigeFraDolly.TestPerson1,
+        orgnummer: testOrganisasjoner[0].organizationNumber,
+        eldsteFom: '2021-01-01'
+      },
+      json: () => ({
+        fnr: testFnr.GyldigeFraDolly.TestPerson1,
+        orgnummer: testOrganisasjoner[0].organizationNumber,
+        eldsteFom: '2021-01-01'
+      })
+    } as unknown as NextApiRequest;
+    const mockJson = vi.fn();
+    const res = {
+      status: vi.fn(() => ({
+        json: mockJson
+      })),
+
+      json: vi.fn()
+    } as unknown as NextApiResponse<unknown>;
+
+    fetchMocker.mockResponses(
+      [JSON.stringify(['token OK']), { status: 200 }],
+      [JSON.stringify([{ vedtaksperiodeId: '12345' }]), { status: 200 }],
+      [JSON.stringify([{ vedtaksperiodeId: '12345', forespoerselId: '54321' }]), { status: 200 }]
+    );
+
+    await handler(req, res);
+    // expect(fetch.requests().length).toEqual(2);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(mockJson).toHaveBeenCalledWith([
+      {
+        forespoerselId: '54321',
+        vedtaksperiodeId: '12345'
+      }
+    ]);
   });
 });
