@@ -6,6 +6,7 @@ import testdata from '../../mockdata/sp-soeknad.json';
 import isMod11Number from '../../utils/isMod10Number';
 import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
+import safelyParseJSON from '../../utils/safelyParseJson';
 
 type forespoerselIdListeEnhet = {
   vedtaksperiodeId: string;
@@ -99,7 +100,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
     return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
   } else {
-    const soeknadData: Sykepengesoeknader = await soeknadResponse.json();
+    const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
 
     const aktiveSoeknader = soeknadData.filter(
       (soeknad) => soeknad.vedtaksperiodeId && soeknad.vedtaksperiodeId !== null
@@ -131,23 +132,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
       return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
     } else {
-      try {
-        const forespoerselIdListeData: forespoerselIdListeEnhet[] = await forespoerselIdListe.json();
+      const forespoerselIdListeData: forespoerselIdListeEnhet[] = (await safelyParseJSON(
+        forespoerselIdListe
+      )) as forespoerselIdListeEnhet[];
 
-        const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
-          const forespoerselMedId = forespoerselIdListeData.find(
-            (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
-          );
-          return {
-            ...soeknad,
-            forespoerselId: forespoerselMedId?.forespoerselId
-          };
-        });
-        return res.status(soeknadResponse.status).json(soeknadResponseData);
-      } catch (error) {
-        console.error('Feil ved parsing av forespørselIder ', error);
-        return res.status(500).json({ error: 'Feil ved parsing av forespørselIder' });
-      }
+      const soeknadResponseData = aktiveSoeknader.map((soeknad) => {
+        const forespoerselMedId = forespoerselIdListeData.find(
+          (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
+        );
+        return {
+          ...soeknad,
+          forespoerselId: forespoerselMedId?.forespoerselId
+        };
+      });
+      return res.status(soeknadResponse.status).json(soeknadResponseData);
     }
   }
 };
