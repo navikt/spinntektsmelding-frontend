@@ -30,8 +30,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
     setTimeout(() => {
-      return res.status(200).json(testdata);
+      res.status(200).json(testdata);
     }, 100);
+    return;
   }
 
   const token = getToken(req);
