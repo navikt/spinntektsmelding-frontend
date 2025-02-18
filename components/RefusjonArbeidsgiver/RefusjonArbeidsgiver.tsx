@@ -17,9 +17,13 @@ import { addDays } from 'date-fns';
 
 interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
+  skalViseArbeidsgiverperiode?: boolean;
 }
 
-export default function RefusjonArbeidsgiver({ setIsDirtyForm }: Readonly<RefusjonArbeidsgiverProps>) {
+export default function RefusjonArbeidsgiver({
+  setIsDirtyForm,
+  skalViseArbeidsgiverperiode
+}: Readonly<RefusjonArbeidsgiverProps>) {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
@@ -106,46 +110,52 @@ export default function RefusjonArbeidsgiver({ setIsDirtyForm }: Readonly<Refusj
         sykepenger til den ansatte eller bedriften etter arbeidsgiverperioden.{' '}
       </BodyLong>
       <div>
-        <RadioGroup
-          legend={betalerArbeidsgiverFullLonnLegend}
-          className={styles.radiobuttonwrapper}
-          id={'lia-radio'}
-          error={visFeilmeldingsTekst('lia-radio')}
-          onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
-          value={fullLonnIArbeidsgiverPerioden?.status ?? null}
-          disabled={arbeidsgiverperiodeDisabled || arbeidsgiverperiodeKort}
-        >
-          <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
-            Ja
-          </Radio>
-          <Radio value='Nei' name='fullLonnIArbeidsgiverPerioden'>
-            Nei
-          </Radio>
-        </RadioGroup>
-        {!arbeidsgiverperiodeDisabled && !arbeidsgiverperiodeKort && (
+        {skalViseArbeidsgiverperiode && (
           <>
-            {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
+            <RadioGroup
+              legend={betalerArbeidsgiverFullLonnLegend}
+              className={styles.radiobuttonwrapper}
+              id={'lia-radio'}
+              error={visFeilmeldingsTekst('lia-radio')}
+              onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
+              value={fullLonnIArbeidsgiverPerioden?.status ?? null}
+              disabled={arbeidsgiverperiodeDisabled || arbeidsgiverperiodeKort}
+            >
+              <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
+                Ja
+              </Radio>
+              <Radio value='Nei' name='fullLonnIArbeidsgiverPerioden'>
+                Nei
+              </Radio>
+            </RadioGroup>
+            {!arbeidsgiverperiodeDisabled && !arbeidsgiverperiodeKort && (
               <>
-                <div className={localStyles.wraputbetaling}>
-                  <TextField
-                    className={localStyles.refusjonsbeloep}
-                    label='Utbetalt under arbeidsgiverperiode'
-                    onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
-                    id={'agp.redusertLoennIAgp.beloep'}
-                    error={visFeilmeldingsTekst('agp.redusertLoennIAgp.beloep')}
-                    defaultValue={
-                      Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)
-                        ? ''
-                        : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
-                    }
-                  />
-                  <SelectBegrunnelse
-                    onChangeBegrunnelse={addIsDirtyForm(begrunnelseRedusertUtbetaling)}
-                    defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
-                    error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
-                  />
-                </div>
-                {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
+                {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
+                  <>
+                    <div className={localStyles.wraputbetaling}>
+                      <TextField
+                        className={localStyles.refusjonsbeloep}
+                        label='Utbetalt under arbeidsgiverperiode'
+                        onChange={addIsDirtyForm((event) =>
+                          setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value)
+                        )}
+                        id={'agp.redusertLoennIAgp.beloep'}
+                        error={visFeilmeldingsTekst('agp.redusertLoennIAgp.beloep')}
+                        defaultValue={
+                          Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)
+                            ? ''
+                            : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
+                        }
+                      />
+                      <SelectBegrunnelse
+                        onChangeBegrunnelse={addIsDirtyForm(begrunnelseRedusertUtbetaling)}
+                        defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
+                        error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
+                      />
+                    </div>
+                    {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
+                  </>
+                )}
               </>
             )}
           </>

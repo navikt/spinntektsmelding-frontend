@@ -192,14 +192,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding = opplysningstyper.includes('arbeidsgiverperiode');
-  const skalViseArbeidsgiverperiode = opplysningstyper.includes('arbeidsgiverperiode');
+  const trengerArbeidsgiverperiode = opplysningstyper.includes('arbeidsgiverperiode');
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
-  // useEffect(() => {
-  //   console.log('opplysningstyper', opplysningstyper.includes('arbeidsgiverperiode'));
-  //   if (skalViseArbeidsgiverperiode !== opplysningstyper.includes('arbeidsgiverperiode'))
-  //     setSkalViseArbeidsgiverperiode(opplysningstyper.includes('arbeidsgiverperiode'));
-  // }, [opplysningstyper]);
+
+  const skalViseArbeidsgiverperiode = trengerArbeidsgiverperiode || overstyrSkalViseAgp;
 
   return (
     <div className={styles.container}>
@@ -241,14 +238,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           )}
 
           <Skillelinje />
-          {(skalViseArbeidsgiverperiode || overstyrSkalViseAgp) && (
+          {skalViseArbeidsgiverperiode && (
             <Arbeidsgiverperiode
               arbeidsgiverperioder={arbeidsgiverperioder}
               setIsDirtyForm={setIsDirtyForm}
               skjemastatus={skjemastatus}
             />
           )}
-          {!skalViseArbeidsgiverperiode && !overstyrSkalViseAgp && (
+          {!skalViseArbeidsgiverperiode && (
             <>
               <Heading3>Arbeidsgiverperiode</Heading3>
               <BodyLong>
@@ -274,7 +271,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
           <Skillelinje />
 
-          <RefusjonArbeidsgiver setIsDirtyForm={setIsDirtyForm} />
+          <RefusjonArbeidsgiver
+            setIsDirtyForm={setIsDirtyForm}
+            skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
+          />
 
           <Skillelinje />
           <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
