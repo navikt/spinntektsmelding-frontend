@@ -192,13 +192,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding = opplysningstyper.includes('arbeidsgiverperiode');
-  const [skalViseArbeidsgiverperiode, setSkalViseArbeidsgiverperiode] = useState<boolean>(
-    opplysningstyper.includes('arbeidsgiverperiode')
-  );
+  const skalViseArbeidsgiverperiode = opplysningstyper.includes('arbeidsgiverperiode');
 
-  useEffect(() => {
-    if (opplysningstyper.includes('arbeidsgiverperiode')) setSkalViseArbeidsgiverperiode(true);
-  }, [opplysningstyper]);
+  const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
+  // useEffect(() => {
+  //   console.log('opplysningstyper', opplysningstyper.includes('arbeidsgiverperiode'));
+  //   if (skalViseArbeidsgiverperiode !== opplysningstyper.includes('arbeidsgiverperiode'))
+  //     setSkalViseArbeidsgiverperiode(opplysningstyper.includes('arbeidsgiverperiode'));
+  // }, [opplysningstyper]);
 
   return (
     <div className={styles.container}>
@@ -240,14 +241,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           )}
 
           <Skillelinje />
-          {skalViseArbeidsgiverperiode && (
+          {(skalViseArbeidsgiverperiode || overstyrSkalViseAgp) && (
             <Arbeidsgiverperiode
               arbeidsgiverperioder={arbeidsgiverperioder}
               setIsDirtyForm={setIsDirtyForm}
               skjemastatus={skjemastatus}
             />
           )}
-          {!skalViseArbeidsgiverperiode && (
+          {!skalViseArbeidsgiverperiode && !overstyrSkalViseAgp && (
             <>
               <Heading3>Arbeidsgiverperiode</Heading3>
               <BodyLong>
@@ -255,7 +256,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 en tidligere sykeperiode. Skulle deres opplysninger ikke stemme med være opplysninger er det fortsatt
                 mulig å gjøre endringer.
               </BodyLong>
-              <Button variant='tertiary' onClick={() => setSkalViseArbeidsgiverperiode(true)}>
+              <Button variant='tertiary' onClick={() => setOverstyrSkalViseAgp(true)}>
                 Endre
               </Button>
             </>
