@@ -243,6 +243,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
               arbeidsgiverperioder={arbeidsgiverperioder}
               setIsDirtyForm={setIsDirtyForm}
               skjemastatus={skjemastatus}
+              skalViseArbeidsgiverperiode={overstyrSkalViseAgp}
+              onTilbakestillArbeidsgiverperiode={() => setOverstyrSkalViseAgp(false)}
             />
           )}
           {!skalViseArbeidsgiverperiode && (

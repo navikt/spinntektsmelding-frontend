@@ -25,17 +25,22 @@ import {
 } from '../../utils/finnArbeidsgiverperiode';
 import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeopphold';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
+import { on } from 'events';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
   setIsDirtyForm: (dirty: boolean) => void;
   skjemastatus: SkjemaStatus;
+  onTilbakestillArbeidsgiverperiode: () => void;
+  skalViseArbeidsgiverperiode: boolean;
 }
 
 export default function Arbeidsgiverperiode({
   arbeidsgiverperioder,
   setIsDirtyForm,
-  skjemastatus
+  skjemastatus,
+  onTilbakestillArbeidsgiverperiode,
+  skalViseArbeidsgiverperiode
 }: Readonly<ArbeidsgiverperiodeProps>) {
   const leggTilArbeidsgiverperiode = useBoundStore((state) => state.leggTilArbeidsgiverperiode);
   const slettArbeidsgiverperiode = useBoundStore((state) => state.slettArbeidsgiverperiode);
@@ -162,8 +167,12 @@ export default function Arbeidsgiverperiode({
       tittel: 'Tilbakestill arbeidsgiverperiode',
       component: amplitudeComponent
     });
-    setArbeidsgiverperiodeDisabled(false);
-    tilbakestillArbeidsgiverperiode();
+    if (!skalViseArbeidsgiverperiode) {
+      setArbeidsgiverperiodeDisabled(false);
+      tilbakestillArbeidsgiverperiode();
+    } else {
+      onTilbakestillArbeidsgiverperiode();
+    }
   };
 
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
