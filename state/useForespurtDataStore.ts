@@ -97,30 +97,30 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const arbeidsgiverperiodePaakrevd = forespurtData?.arbeidsgiverperiode?.paakrevd;
 
     if (!arbeidsgiverperiodePaakrevd) {
-      let refusjonerUtenOpprinneligBfd = refusjon?.perioder
-        ? perioderEksklBestemmendeFravaersdag(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt)
-        : refusjon?.perioder;
+      // let refusjonerUtenOpprinneligBfd = refusjon?.perioder
+      //   ? perioderEksklBestemmendeFravaersdag(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt)
+      //   : refusjon?.perioder;
 
-      const harEndringer = sjekkHarEndring(refusjon, bestemmendeFravaersdag);
-      const refusjonsbeloep = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
+      // const harEndringer = sjekkHarEndring(refusjon, bestemmendeFravaersdag);
+      // const refusjonsbeloep = finnRefusjonIArbeidsgiverperioden(refusjon, inntekt?.forrigeInntekt?.skjæringstidspunkt);
 
-      settRefusjonsbeloep(refusjonsbeloep, harEndringer);
+      // settRefusjonsbeloep(refusjonsbeloep, harEndringer);
 
-      const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
-      const opphoersdatoRefusjon = refusjon?.opphoersdato ?? null;
+      // const refusjonPerioder = refusjon ? [...refusjon.perioder] : [];
+      // const opphoersdatoRefusjon = refusjon?.opphoersdato ?? null;
 
-      const refusjonskravetOpphoererStatus: YesNo | undefined = opphoersdatoRefusjon ? 'Ja' : 'Nei';
+      // const refusjonskravetOpphoererStatus: YesNo | undefined = opphoersdatoRefusjon ? 'Ja' : 'Nei';
 
-      refusjonerUtenOpprinneligBfd = refusjonerUtenOpprinneligBfd ?? [];
-      initRefusjonskravetOpphoerer(
-        refusjonskravetOpphoererStatus,
-        opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
-        refusjonerUtenOpprinneligBfd.length > 0 ? 'Ja' : 'Nei'
-      );
+      // refusjonerUtenOpprinneligBfd = refusjonerUtenOpprinneligBfd ?? [];
+      // initRefusjonskravetOpphoerer(
+      //   refusjonskravetOpphoererStatus,
+      //   opphoersdatoRefusjon ? parseIsoDate(opphoersdatoRefusjon) : undefined,
+      //   refusjonerUtenOpprinneligBfd.length > 0 ? 'Ja' : 'Nei'
+      // );
 
-      const refusjonEndringer: Array<EndringsBeloep> = refusjonPerioderTilRefusjonEndringer(refusjonPerioder);
+      // const refusjonEndringer: Array<EndringsBeloep> = refusjonPerioderTilRefusjonEndringer(refusjonPerioder);
 
-      initRefusjonEndringer(refusjonEndringer);
+      // initRefusjonEndringer(refusjonEndringer);
 
       initBruttoinntekt(bruttoinntekt, tidligereinntekter, bestemmendeFravaersdag!, undefined);
 
