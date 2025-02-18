@@ -48,7 +48,7 @@ describe('RefusjonArbeidsgiver', () => {
   });
 
   it('should call setIsDirtyForm when radio button is changed', () => {
-    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} />);
 
     const radioButton = screen.getAllByLabelText('Ja');
     fireEvent.click(radioButton[0]);
@@ -57,7 +57,7 @@ describe('RefusjonArbeidsgiver', () => {
   });
 
   it('should call setIsDirtyForm when text field is changed', () => {
-    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} />);
 
     const textField = screen.getByLabelText('Utbetalt under arbeidsgiverperiode');
     fireEvent.change(textField, { target: { value: '1000' } });
@@ -66,7 +66,7 @@ describe('RefusjonArbeidsgiver', () => {
   });
 
   it('should call setIsDirtyForm when date is changed', () => {
-    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} />);
 
     const datePicker = screen.getByLabelText('Angi siste dag dere krever refusjon for');
     fireEvent.change(datePicker, { target: { value: '2023-10-10' } });
@@ -108,7 +108,7 @@ describe('RefusjonArbeidsgiver', () => {
         harRefusjonEndringer: false
       })
     );
-    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} />);
 
     const datePicker = screen.getByLabelText('Angi siste dag dere krever refusjon for');
     fireEvent.change(datePicker, { target: { value: '2023-10-10' } });
