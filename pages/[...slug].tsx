@@ -202,17 +202,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Person />
 
           <Skillelinje />
-          <Egenmelding
-            lasterData={lasterData}
-            setIsDirtyForm={setIsDirtyForm}
-            selvbestemtInnsending={selvbestemtInnsending}
-          />
-
-          <Skillelinje />
           <Fravaersperiode
             lasterData={lasterData}
             setIsDirtyForm={setIsDirtyForm}
             skjemastatus={skjemastatus}
+            selvbestemtInnsending={selvbestemtInnsending}
+          />
+
+          <Skillelinje />
+          <Egenmelding
+            lasterData={lasterData}
+            setIsDirtyForm={setIsDirtyForm}
             selvbestemtInnsending={selvbestemtInnsending}
           />
 
