@@ -195,6 +195,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [skalViseArbeidsgiverperiode, setSkalViseArbeidsgiverperiode] = useState<boolean>(
     opplysningstyper.includes('arbeidsgiverperiode')
   );
+
+  useEffect(() => {
+    if (opplysningstyper.includes('arbeidsgiverperiode')) setSkalViseArbeidsgiverperiode(true);
+  }, [opplysningstyper]);
+
   return (
     <div className={styles.container}>
       <Head>
