@@ -31,11 +31,11 @@ export default function useHentSkjemadata() {
             router.replace(`/kvittering/${forespoerselID}`, undefined);
           } else {
             initState(skjemadata);
-            const opplysningstyper = hentPaakrevdOpplysningstyper();
+            // const opplysningstyper = hentPaakrevdOpplysningstyper();
 
-            if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
-              router.replace(`/endring/${forespoerselID}`, undefined);
-            }
+            // if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
+            //   router.replace(`/endring/${forespoerselID}`, undefined);
+            // }
           }
         })
         .catch((error: any) => {

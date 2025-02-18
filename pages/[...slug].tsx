@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
-import { Button, ConfirmationPanel, Link } from '@navikt/ds-react';
+import { BodyLong, Button, ConfirmationPanel, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 
@@ -39,6 +39,7 @@ import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
+import Heading3 from '../components/Heading3';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -188,6 +189,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
   const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
+
+  const opplysningstyper = hentPaakrevdOpplysningstyper();
+  const skalViseEgenmelding = opplysningstyper.includes('arbeidsgiverperiode');
+  const [skalViseArbeidsgiverperiode, setSkalViseArbeidsgiverperiode] = useState<boolean>(
+    opplysningstyper.includes('arbeidsgiverperiode')
+  );
   return (
     <div className={styles.container}>
       <Head>
@@ -210,19 +217,44 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           />
 
           <Skillelinje />
-          <Egenmelding
-            lasterData={lasterData}
-            setIsDirtyForm={setIsDirtyForm}
-            selvbestemtInnsending={selvbestemtInnsending}
-          />
+          {skalViseEgenmelding && (
+            <Egenmelding
+              lasterData={lasterData}
+              setIsDirtyForm={setIsDirtyForm}
+              selvbestemtInnsending={selvbestemtInnsending}
+            />
+          )}
+          {!skalViseEgenmelding && (
+            <>
+              <Heading3>Egenmelding</Heading3>
+              <BodyLong>
+                Vi trenger ikke opplysninger om arbeidsgiverperioden for denne sykmeldingen. Det er derfor ikke mulig å
+                legge til egenmeldingsperioder.
+              </BodyLong>
+            </>
+          )}
 
           <Skillelinje />
-
-          <Arbeidsgiverperiode
-            arbeidsgiverperioder={arbeidsgiverperioder}
-            setIsDirtyForm={setIsDirtyForm}
-            skjemastatus={skjemastatus}
-          />
+          {skalViseArbeidsgiverperiode && (
+            <Arbeidsgiverperiode
+              arbeidsgiverperioder={arbeidsgiverperioder}
+              setIsDirtyForm={setIsDirtyForm}
+              skjemastatus={skjemastatus}
+            />
+          )}
+          {!skalViseArbeidsgiverperiode && (
+            <>
+              <Heading3>Arbeidsgiverperiode</Heading3>
+              <BodyLong>
+                Vi trenger ikke opplysninger om arbeidsgiverperioden for denne sykmeldingen da den er en forlengelse av
+                en tidligere sykeperiode. Skulle deres opplysninger ikke stemme med være opplysninger er det fortsatt
+                mulig å gjøre endringer.
+              </BodyLong>
+              <Button variant='tertiary' onClick={() => setSkalViseArbeidsgiverperiode(true)}>
+                Endre
+              </Button>
+            </>
+          )}
 
           <Skillelinje />
 
