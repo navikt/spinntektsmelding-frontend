@@ -1,5 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
-import { cleanup } from '@testing-library/react';
+import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
 import { ValiderTekster } from '../../utils/validerInntektsmelding';
@@ -123,7 +122,7 @@ describe('useFeilmeldingerStore', () => {
       result.current.setSkalViseFeilmeldinger(true);
     });
 
-    resultat = result.current.visFeilmeldingsTekst('felt2');
+    resultat = result.current.visFeilmeldingTekst('felt2');
 
     expect(resultat).toBe('text2');
   });
@@ -136,7 +135,7 @@ describe('useFeilmeldingerStore', () => {
       result.current.fyllFeilmeldinger(inputFeil);
     });
 
-    resultat = result.current.visFeilmeldingsTekst('felt2');
+    resultat = result.current.visFeilmeldingTekst('felt2');
 
     expect(resultat).toBe('');
   });
@@ -149,7 +148,7 @@ describe('useFeilmeldingerStore', () => {
       result.current.setSkalViseFeilmeldinger(true);
     });
 
-    resultat = result.current.visFeilmeldingsTekst('felt2');
+    resultat = result.current.visFeilmeldingTekst('felt2');
 
     expect(resultat).toBe('');
   });

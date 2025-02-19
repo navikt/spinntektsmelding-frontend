@@ -25,7 +25,6 @@ import {
 } from '../../utils/finnArbeidsgiverperiode';
 import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeopphold';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
-import { on } from 'events';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -47,7 +46,7 @@ export default function Arbeidsgiverperiode({
   const setArbeidsgiverperiodeDato = useBoundStore((state) => state.setArbeidsgiverperiodeDato);
   const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
   const setEndreArbeidsgiverperiode = useBoundStore((state) => state.setEndreArbeidsgiverperiode);
-  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const slettAlleArbeidsgiverperioder = useBoundStore((state) => state.slettAlleArbeidsgiverperioder);
@@ -313,10 +312,10 @@ export default function Arbeidsgiverperiode({
         betaling av sykepenger etter arbeidsgiverperiodens utløp.{' '}
       </BodyLong>
       {arbeidsgiverperioder?.map((periode, periodeIndex) => (
-        <div key={periode.id} className={lokalStyles.datewrapper}>
+        <div key={periode.id} className={lokalStyles.dateWrapper}>
           {!endretArbeidsgiverperiode && (
             <div className={lokalStyles.endrearbeidsgiverperiode}>
-              <div className={lokalStyles.datepickerescape}>
+              <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-fra`}>Fra</TextLabel>
                 <div
                   data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}
@@ -325,7 +324,7 @@ export default function Arbeidsgiverperiode({
                   {formatDate(periode.fom)}
                 </div>
               </div>
-              <div className={lokalStyles.datepickerescape}>
+              <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-til`}>Til</TextLabel>
                 <div
                   data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}
@@ -340,10 +339,10 @@ export default function Arbeidsgiverperiode({
             <Periodevelger
               fomTekst='Fra'
               fomID={`arbeidsgiverperioder[${periodeIndex}].fom`}
-              fomError={visFeilmeldingsTekst(`arbeidsgiverperioder[${periodeIndex}].fom`)}
+              fomError={visFeilmeldingTekst(`arbeidsgiverperioder[${periodeIndex}].fom`)}
               tomTekst='Til'
               tomID={`arbeidsgiverperioder[${periodeIndex}].tom`}
-              tomError={visFeilmeldingsTekst(`arbeidsgiverperioder[${periodeIndex}].tom`)}
+              tomError={visFeilmeldingTekst(`arbeidsgiverperioder[${periodeIndex}].tom`)}
               onRangeChange={(oppdatertPeriode) => setArbeidsgiverperiodeDatofelt(oppdatertPeriode, periode.id)}
               defaultRange={periode}
               kanSlettes={periodeIndex > 0}
@@ -360,13 +359,13 @@ export default function Arbeidsgiverperiode({
         <>
           {!endretArbeidsgiverperiode && (
             <div className={lokalStyles.endrearbeidsgiverperiode}>
-              <div className={lokalStyles.datepickerescape}>
+              <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-1-fra`}>Fra</TextLabel>
                 <div data-cy={`arbeidsgiverperiode-1-fra-dato`} id={`arbeidsgiverperioder[1].fom`}>
                   -
                 </div>
               </div>
-              <div className={lokalStyles.datepickerescape}>
+              <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-1-til`}>Til</TextLabel>
                 <div data-cy={`arbeidsgiverperiode-1-til-dato`} id={`arbeidsgiverperioder[1].tom`}>
                   -
@@ -378,10 +377,10 @@ export default function Arbeidsgiverperiode({
             <Periodevelger
               fomTekst='Fra'
               fomID={`arbeidsgiverperioder[ny].fom`}
-              fomError={visFeilmeldingsTekst(`arbeidsgiverperioder[ny].fom`)}
+              fomError={visFeilmeldingTekst(`arbeidsgiverperioder[ny].fom`)}
               tomTekst='Til'
               tomID={`arbeidsgiverperioder[ny].tom`}
-              tomError={visFeilmeldingsTekst(`arbeidsgiverperioder[ny].tom`)}
+              tomError={visFeilmeldingTekst(`arbeidsgiverperioder[ny].tom`)}
               onRangeChange={(oppdatertPeriode) =>
                 setArbeidsgiverperiodeDatofelt(oppdatertPeriode, PeriodeType.NY_PERIODE)
               }
@@ -403,7 +402,7 @@ export default function Arbeidsgiverperiode({
         </div>
       )}
       {visFeilmelding('arbeidsgiverperioder-feil') && (
-        <Feilmelding id='arbeidsgiverperioder-feil'>{visFeilmeldingsTekst('arbeidsgiverperioder-feil')}</Feilmelding>
+        <Feilmelding id='arbeidsgiverperioder-feil'>{visFeilmeldingTekst('arbeidsgiverperioder-feil')}</Feilmelding>
       )}
       {advarselOppholdHelg.length > 0 && (
         <Alert variant='info' id='arbeidsgiverperioder-helg'>
@@ -420,13 +419,13 @@ export default function Arbeidsgiverperiode({
       )}
       {advarselKortPeriode.length > 0 && (
         <>
-          <div className={lokalStyles.wraputbetaling}>
+          <div className={lokalStyles.wrapperUtbetaling}>
             <TextField
-              className={lokalStyles.refusjonsbeloep}
+              className={lokalStyles.refusjonBeloep}
               label='Utbetalt under arbeidsgiverperiode'
               onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
               id={'agp.redusertLoennIAgp.beloep'}
-              error={visFeilmeldingsTekst('agp.redusertLoennIAgp.beloep')}
+              error={visFeilmeldingTekst('agp.redusertLoennIAgp.beloep')}
               defaultValue={
                 !fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
                   ? ''
@@ -436,7 +435,7 @@ export default function Arbeidsgiverperiode({
             <SelectBegrunnelseKortArbeidsgiverperiode
               onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
               defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-              error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
+              error={visFeilmeldingTekst('agp.redusertLoennIAgp.begrunnelse')}
             />
           </div>
           {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
@@ -456,7 +455,7 @@ export default function Arbeidsgiverperiode({
               <SelectBegrunnelseKortArbeidsgiverperiode
                 onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
                 defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-                error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
+                error={visFeilmeldingTekst('agp.redusertLoennIAgp.begrunnelse')}
                 label='Velg begrunnelse'
               />
               {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
@@ -469,7 +468,7 @@ export default function Arbeidsgiverperiode({
         <div className={lokalStyles.endreknapper}>
           <Button
             variant='secondary'
-            className={lokalStyles.leggtilknapp}
+            className={lokalStyles.leggTilKnapp}
             onClick={(event) => clickLeggTilArbeidsgiverperiodeHandler(event)}
             disabled={arbeidsgiverperiodeDisabled}
           >

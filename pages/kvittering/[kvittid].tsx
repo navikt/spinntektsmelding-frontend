@@ -93,14 +93,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       : refusjonEndringer;
 
   const clickEndre = () => {
-    const paakrevdeOpplysningstyper = hentPaakrevdOpplysningstyper();
-
-    if (paakrevdeOpplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
-      if (isValidUUID(kvitteringSlug)) {
-        router.push(`/${kvitteringSlug}`);
-      }
-    } else if (isValidUUID(kvitteringSlug)) {
-      router.push(`/endring/${kvitteringSlug}`);
+    if (isValidUUID(kvitteringSlug)) {
+      router.push(`/${kvitteringSlug}`);
     }
   };
 
@@ -280,7 +274,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             </>
           )}
           <BodyShort>Kvittering - innsendt inntektsmelding{innsendingstidspunkt}</BodyShort>
-          <div className={lokalStyles.buttonwrapper + ' skjul-fra-print'}>
+          <div className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}
               <Link className={lokalStyles.lukkelenke} href={env.saksoversiktUrl}>

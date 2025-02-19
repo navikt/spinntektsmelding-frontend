@@ -5,7 +5,7 @@ import { vi, expect } from 'vitest';
 describe('RefusjonArbeidsgiverBelop', () => {
   const bruttoinntekt = 500000;
   const onOppdaterBelop = vi.fn();
-  const visFeilmeldingsTekst = vi.fn();
+  const visFeilmeldingTekst = vi.fn();
   const arbeidsgiverperiodeDisabled = false;
 
   it('should render the component with the correct props', () => {
@@ -13,7 +13,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
       />
     );
@@ -32,7 +32,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={true}
       />
     );
@@ -51,7 +51,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
       />
     );
@@ -64,7 +64,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
       />
     );
@@ -79,7 +79,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
       />
     );

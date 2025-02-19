@@ -21,7 +21,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
   const setNaturalytelseVerdi = useBoundStore((state) => state.setNaturalytelseVerdi);
   const slettNaturalytelse = useBoundStore((state) => state.slettNaturalytelse);
   const slettAlleNaturalytelser = useBoundStore((state) => state.slettAlleNaturalytelser);
-  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
 
   const visNaturalytelser = (event: React.MouseEvent<HTMLInputElement>) => {
     if (event.currentTarget.checked === true) {
@@ -76,7 +76,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
                       onChangeYtelse={(event) => setNaturalytelseType(element.id, event.target.value)}
                       elementId={element.id}
                       defaultValue={element.type}
-                      error={visFeilmeldingsTekst('naturalytelse-type-' + element.id)}
+                      error={visFeilmeldingTekst('naturalytelse-type-' + element.id)}
                     />
                   </td>
 
@@ -85,7 +85,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
                       naturalytelseId={element.id}
                       setNaturalytelseBortfallsdato={setNaturalytelseBortfallsdato}
                       defaultValue={element.bortfallsdato}
-                      error={visFeilmeldingsTekst('naturalytelse-dato-' + element.id)}
+                      error={visFeilmeldingTekst('naturalytelse-dato-' + element.id)}
                     />
                   </td>
                   <td>
@@ -94,7 +94,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
                       className={styles.fnr}
                       onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
                       defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
-                      error={visFeilmeldingsTekst('naturalytelse-beloep-' + element.id)}
+                      error={visFeilmeldingTekst('naturalytelse-beloep-' + element.id)}
                     ></TextField>
                   </td>
                   <td>

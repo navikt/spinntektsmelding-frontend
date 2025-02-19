@@ -550,7 +550,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 )}
 
                 <ConfirmationPanel
-                  className={styles.confirmationpanel}
+                  className={styles.confirmationPanel}
                   label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
                   id='bekreft-opplysninger'
                   error={errors.opplysningerBekreftet?.message as string}
@@ -560,9 +560,9 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   skalViseFeilmeldinger={mappedeFeilmeldinger.length > 0}
                   feilmeldinger={mappedeFeilmeldinger ?? []}
                 />
-                <div className={styles.outerbuttonwrapper}>
-                  <div className={styles.buttonwrapper}>
-                    <Button className={styles.sendbutton} loading={senderInn}>
+                <div className={styles.outerButtonWrapper}>
+                  <div className={styles.buttonWrapper}>
+                    <Button className={styles.sendButton} loading={senderInn}>
                       Send
                     </Button>
 

@@ -20,7 +20,7 @@ interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
   setIsDirtyForm: (dirty: boolean) => void;
   sbBruttoinntekt?: number;
-  sbTidligereinntekt?: Array<HistoriskInntekt>;
+  sbTidligereInntekt?: Array<HistoriskInntekt>;
   erSelvbestemt?: boolean;
 }
 
@@ -28,7 +28,7 @@ export default function Bruttoinntekt({
   bestemmendeFravaersdag,
   setIsDirtyForm,
   sbBruttoinntekt,
-  sbTidligereinntekt,
+  sbTidligereInntekt,
   erSelvbestemt
 }: Readonly<BruttoinntektProps>) {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -40,7 +40,7 @@ export default function Bruttoinntekt({
   ]);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
-  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
   const setPerioder = useBoundStore((state) => state.setPerioder);
   const setEndringAarsakGjelderFra = useBoundStore((state) => state.setEndringAarsakGjelderFra);
   const setEndringAarsakBleKjent = useBoundStore((state) => state.setEndringAarsakBleKjent);
@@ -113,7 +113,7 @@ export default function Bruttoinntekt({
   const gjennomsnittligInntekt = erSelvbestemt
     ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
     : bruttoinntekt?.bruttoInntekt;
-  const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereinntekt : tidligereinntekt;
+  const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereInntekt : tidligereinntekt;
 
   const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.length > 0;
 
@@ -181,7 +181,7 @@ export default function Bruttoinntekt({
             setEndringAarsakGjelderFra={addIsDirtyForm(setEndringAarsakGjelderFra)}
             setEndringAarsakBleKjent={addIsDirtyForm(setEndringAarsakBleKjent)}
             setPerioder={addIsDirtyForm(setPerioder)}
-            visFeilmeldingsTekst={visFeilmeldingsTekst}
+            visFeilmeldingTekst={visFeilmeldingTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}
             clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}

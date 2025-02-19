@@ -52,7 +52,7 @@ export default function FlexJarResponse(props: Readonly<FlexJarResponseProps>) {
           {!props.kunFeedback && (
             <>
               <TextLabel>{props.sporsmaal}</TextLabel>
-              <div className={lokalStyles.buttonwrapper}>
+              <div className={lokalStyles.buttonWrapper}>
                 <Button
                   variant={svarSporsmaal === 'Ja' ? 'primary-neutral' : 'secondary-neutral'}
                   onClick={() => svarPaaSporsmaal('Ja')}

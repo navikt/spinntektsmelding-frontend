@@ -8,14 +8,14 @@ import ButtonEndre from '../ButtonEndre';
 interface RefusjonArbeidsgiverBelopProps {
   bruttoinntekt: number;
   onOppdaterBelop: (beloep: string) => void;
-  visFeilmeldingsTekst: (feilmelding: string) => string;
+  visFeilmeldingTekst: (feilmelding: string) => string;
   arbeidsgiverperiodeDisabled?: boolean;
 }
 
 export default function RefusjonArbeidsgiverBelop({
   bruttoinntekt,
   onOppdaterBelop,
-  visFeilmeldingsTekst,
+  visFeilmeldingTekst,
   arbeidsgiverperiodeDisabled = false
 }: Readonly<RefusjonArbeidsgiverBelopProps>) {
   const [editerbar, setEditerbar] = useState<boolean>(false);
@@ -50,12 +50,12 @@ export default function RefusjonArbeidsgiverBelop({
     <>
       <div className={localStyles.beloepswrapper}>
         <TextField
-          className={localStyles.refusjonsbeloep}
+          className={localStyles.refusjonBeloep}
           label='Oppgi refusjonsbeløpet per måned'
           value={bruttoinntekt}
           onChange={(event) => onOppdaterBelop(event.target.value)}
           id={'refusjon.beloepPerMaaned'}
-          error={visFeilmeldingsTekst('refusjon.beloepPerMaaned')}
+          error={visFeilmeldingTekst('refusjon.beloepPerMaaned')}
           data-cy='refusjon-arbeidsgiver-beloep-input'
         />
         <span className={localStyles.alert_span}>

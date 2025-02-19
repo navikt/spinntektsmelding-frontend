@@ -29,7 +29,7 @@ export default function RefusjonArbeidsgiver({
   const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
 
-  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
 
   const arbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useBoundStore(
     (state) => state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden
@@ -114,9 +114,9 @@ export default function RefusjonArbeidsgiver({
           <>
             <RadioGroup
               legend={betalerArbeidsgiverFullLonnLegend}
-              className={styles.radiobuttonwrapper}
+              className={styles.radiobuttonWrapper}
               id={'lia-radio'}
-              error={visFeilmeldingsTekst('lia-radio')}
+              error={visFeilmeldingTekst('lia-radio')}
               onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
               value={fullLonnIArbeidsgiverPerioden?.status ?? null}
               disabled={arbeidsgiverperiodeDisabled || arbeidsgiverperiodeKort}
@@ -132,15 +132,15 @@ export default function RefusjonArbeidsgiver({
               <>
                 {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
                   <>
-                    <div className={localStyles.wraputbetaling}>
+                    <div className={localStyles.wrapperUtbetaling}>
                       <TextField
-                        className={localStyles.refusjonsbeloep}
+                        className={localStyles.refusjonBeloep}
                         label='Utbetalt under arbeidsgiverperiode'
                         onChange={addIsDirtyForm((event) =>
                           setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value)
                         )}
                         id={'agp.redusertLoennIAgp.beloep'}
-                        error={visFeilmeldingsTekst('agp.redusertLoennIAgp.beloep')}
+                        error={visFeilmeldingTekst('agp.redusertLoennIAgp.beloep')}
                         defaultValue={
                           Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)
                             ? ''
@@ -150,7 +150,7 @@ export default function RefusjonArbeidsgiver({
                       <SelectBegrunnelse
                         onChangeBegrunnelse={addIsDirtyForm(begrunnelseRedusertUtbetaling)}
                         defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
-                        error={visFeilmeldingsTekst('agp.redusertLoennIAgp.begrunnelse')}
+                        error={visFeilmeldingTekst('agp.redusertLoennIAgp.begrunnelse')}
                       />
                     </div>
                     {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
@@ -163,9 +163,9 @@ export default function RefusjonArbeidsgiver({
 
         <RadioGroup
           legend={betalerArbeidsgiverEtterAgpLegend}
-          className={styles.radiobuttonwrapper}
+          className={styles.radiobuttonWrapper}
           id={'lus-radio'}
-          error={visFeilmeldingsTekst('lus-radio')}
+          error={visFeilmeldingTekst('lus-radio')}
           onChange={addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret)}
           defaultValue={lonnISykefravaeret?.status}
         >
@@ -177,7 +177,7 @@ export default function RefusjonArbeidsgiver({
             <RefusjonArbeidsgiverBelop
               bruttoinntekt={lonnISykefravaeret.beloep! || 0}
               onOppdaterBelop={addIsDirtyForm(beloepArbeidsgiverBetalerISykefravaeret)}
-              visFeilmeldingsTekst={visFeilmeldingsTekst}
+              visFeilmeldingTekst={visFeilmeldingTekst}
               arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
             />
 
@@ -193,9 +193,9 @@ export default function RefusjonArbeidsgiver({
 
             <RadioGroup
               legend='Opphører refusjonkravet i perioden?'
-              className={styles.radiobuttonwrapper}
+              className={styles.radiobuttonWrapper}
               id={'lus-sluttdato-velg'}
-              error={visFeilmeldingsTekst('lus-sluttdato-velg')}
+              error={visFeilmeldingTekst('lus-sluttdato-velg')}
               onChange={addIsDirtyForm(refusjonskravetOpphoererStatus)}
               defaultValue={refusjonskravetOpphoerer?.status}
             >
@@ -203,13 +203,13 @@ export default function RefusjonArbeidsgiver({
               <Radio value='Nei'>Nei</Radio>
             </RadioGroup>
             {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
-              <div className={styles.datepickerescape}>
+              <div className={styles.datepickerEscape}>
                 <Datovelger
                   fromDate={foersteMuligeRefusjonOpphoer}
                   onDateChange={addIsDirtyForm(refusjonskravetOpphoererDato)}
                   id={'lus-sluttdato'}
                   label='Angi siste dag dere krever refusjon for'
-                  error={visFeilmeldingsTekst('lus-sluttdato')}
+                  error={visFeilmeldingTekst('lus-sluttdato')}
                   defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
                 />
               </div>

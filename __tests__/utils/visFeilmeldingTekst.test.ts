@@ -1,18 +1,18 @@
-import visFeilmeldingsTekst from '../../utils/visFeilmeldingsTekst';
+import visFeilmeldingTekst from '../../utils/visFeilmeldingTekst';
 
-describe('visFeilmeldingsTekst', () => {
+describe('visFeilmeldingTekst', () => {
   it('should return an empty string when skalViseFeilmeldinger is false', () => {
-    const result = visFeilmeldingsTekst('id', false, []);
+    const result = visFeilmeldingTekst('id', false, []);
     expect(result).toBe('');
   });
 
   it('should return an empty string when feilmeldinger is undefined', () => {
-    const result = visFeilmeldingsTekst('id', true, undefined);
+    const result = visFeilmeldingTekst('id', true, undefined);
     expect(result).toBe('');
   });
 
   it('should return an empty string when feilmeldinger is empty', () => {
-    const result = visFeilmeldingsTekst('id', true, []);
+    const result = visFeilmeldingTekst('id', true, []);
     expect(result).toBe('');
   });
 
@@ -22,7 +22,7 @@ describe('visFeilmeldingsTekst', () => {
       { felt: 'field2', text: 'Error 2' },
       { felt: 'field3', text: 'Error 3' }
     ];
-    const result = visFeilmeldingsTekst('id', true, feilmeldinger);
+    const result = visFeilmeldingTekst('id', true, feilmeldinger);
     expect(result).toBe('');
   });
 
@@ -32,7 +32,7 @@ describe('visFeilmeldingsTekst', () => {
       { felt: 'id', text: 'Error 2' },
       { felt: 'field3', text: 'Error 3' }
     ];
-    const result = visFeilmeldingsTekst('id', true, feilmeldinger);
+    const result = visFeilmeldingTekst('id', true, feilmeldinger);
     expect(result).toBe('Error 2');
   });
 });

@@ -62,7 +62,7 @@ export default function RefusjonArbeidsgiverBeloep({
     <>
       <div className={localStyles.beloepswrapper}>
         <TextField
-          className={localStyles.refusjonsbeloep}
+          className={localStyles.refusjonBeloep}
           label='Oppgi refusjonsbeløpet per måned'
           error={beloepError}
           data-cy='refusjon-arbeidsgiver-beloep-input'

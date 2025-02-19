@@ -29,7 +29,7 @@ describe('RefusjonArbeidsgiver', () => {
           { fom: parseIsoDate('2023-10-11'), tom: parseIsoDate('2023-10-16') },
           { fom: parseIsoDate('2023-10-01'), tom: parseIsoDate('2023-10-10') }
         ],
-        visFeilmeldingsTekst: vi.fn(),
+        visFeilmeldingTekst: vi.fn(),
         arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: vi.fn(),
         arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: vi.fn(),
         begrunnelseRedusertUtbetaling: vi.fn(),
@@ -92,7 +92,7 @@ describe('RefusjonArbeidsgiver', () => {
           { fom: parseIsoDate('2023-10-11'), tom: parseIsoDate('2023-10-16') },
           { fom: parseIsoDate('2023-10-01'), tom: parseIsoDate('2023-10-10') }
         ],
-        visFeilmeldingsTekst: vi.fn(),
+        visFeilmeldingTekst: vi.fn(),
         arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: vi.fn(),
         arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: vi.fn(),
         begrunnelseRedusertUtbetaling: vi.fn(),

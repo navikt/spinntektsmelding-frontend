@@ -23,7 +23,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
     setInnsenderTelefon,
     feilHentingAvPersondata,
     feilHentingAvArbeidsgiverdata,
-    visFeilmeldingsTekst
+    visFeilmeldingTekst
   ] = useBoundStore(
     (state) => [
       state.navn,
@@ -35,7 +35,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
       state.setInnsenderTelefon,
       state.feilHentingAvPersondata,
       state.feilHentingAvArbeidsgiverdata,
-      state.visFeilmeldingsTekst
+      state.visFeilmeldingTekst
     ],
     shallow
   );
@@ -146,7 +146,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
                   defaultValue={innsenderTelefonNr}
                   onChange={changeTlfNr}
                   data-cy='innsendertlf'
-                  error={visFeilmeldingsTekst('telefon')}
+                  error={visFeilmeldingTekst('telefon')}
                   id='telefon'
                   readOnly={!skjemadataErLastet}
                 />

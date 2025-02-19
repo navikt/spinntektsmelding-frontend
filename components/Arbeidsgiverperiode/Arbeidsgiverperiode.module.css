@@ -9,7 +9,7 @@
   padding-top: 1rem;
 }
 
-.leggtilknapp {
+.leggTilKnapp {
   height: 3rem;
   display: inline-block;
   min-width: 10rem;
@@ -27,12 +27,12 @@
   gap: 2rem;
 }
 
-.datepickerescape {
+.datepickerEscape {
   display: inline-block;
   margin-right: 2rem;
 }
 
-.datewrapper {
+.dateWrapper {
   margin: 1rem 0;
 }
 
@@ -47,7 +47,7 @@
   margin-top: 1rem;
 }
 
-.wraputbetaling {
+.wrapperUtbetaling {
   display: flex;
   flex-direction: row;
   gap: 2rem;

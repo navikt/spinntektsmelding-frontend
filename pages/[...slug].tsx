@@ -51,8 +51,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
-  const [visFeilmeldingsTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
-    state.visFeilmeldingsTekst,
+  const [visFeilmeldingTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
+    state.visFeilmeldingTekst,
     state.slettFeilmelding,
     state.leggTilFeilmelding
   ]);
@@ -188,7 +188,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   );
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
-  const sbTidligerinntekt = !error ? data?.tidligereInntekter : undefined;
+  const sbTidligereInntekt = !error ? data?.tidligereInntekter : undefined;
 
   const opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding = opplysningstyper.includes('arbeidsgiverperiode');
@@ -221,23 +221,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
           <Skillelinje />
           {skalViseEgenmelding && (
-            <Egenmelding
-              lasterData={lasterData}
-              setIsDirtyForm={setIsDirtyForm}
-              selvbestemtInnsending={selvbestemtInnsending}
-            />
-          )}
-          {!skalViseEgenmelding && (
             <>
-              <Heading3>Egenmelding</Heading3>
-              <BodyLong>
-                Vi trenger ikke opplysninger om arbeidsgiverperioden for denne sykmeldingen. Det er derfor ikke mulig å
-                legge til egenmeldingsperioder.
-              </BodyLong>
+              <Egenmelding
+                lasterData={lasterData}
+                setIsDirtyForm={setIsDirtyForm}
+                selvbestemtInnsending={selvbestemtInnsending}
+              />
+              <Skillelinje />
             </>
           )}
 
-          <Skillelinje />
           {skalViseArbeidsgiverperiode && (
             <Arbeidsgiverperiode
               arbeidsgiverperioder={arbeidsgiverperioder}
@@ -268,7 +261,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             setIsDirtyForm={setIsDirtyForm}
             erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
             sbBruttoinntekt={sbBruttoinntekt}
-            sbTidligereinntekt={sbTidligerinntekt}
+            sbTidligereInntekt={sbTidligereInntekt}
           />
 
           <Skillelinje />
@@ -281,17 +274,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           <Skillelinje />
           <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
           <ConfirmationPanel
-            className={styles.confirmationpanel}
+            className={styles.confirmationPanel}
             checked={opplysningerBekreftet}
             onClick={clickOpplysningerBekreftet}
             label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
             id='bekreft-opplysninger'
-            error={visFeilmeldingsTekst('bekreft-opplysninger')}
+            error={visFeilmeldingTekst('bekreft-opplysninger')}
           ></ConfirmationPanel>
           <Feilsammendrag />
-          <div className={styles.outerbuttonwrapper}>
-            <div className={styles.buttonwrapper}>
-              <Button className={styles.sendbutton} loading={senderInn} id='knapp-innsending'>
+          <div className={styles.outerButtonWrapper}>
+            <div className={styles.buttonWrapper}>
+              <Button className={styles.sendButton} loading={senderInn} id='knapp-innsending'>
                 Send
               </Button>
 

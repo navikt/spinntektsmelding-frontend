@@ -71,7 +71,7 @@ export default function FravaerEnkeltAnsattforhold({
         <div className={styles.periodewrapper} key={periode.id}>
           {!endreSykemelding && (
             <div>
-              <div className={styles.datepickerescape}>
+              <div className={styles.datepickerEscape}>
                 <TextLabel
                   data-cy={`sykmelding-${periodeIndex}-fra`}
                   className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
@@ -85,7 +85,7 @@ export default function FravaerEnkeltAnsattforhold({
                   {formatDate?.(periode.fom)}
                 </div>
               </div>
-              <div className={styles.datepickerescape}>
+              <div className={styles.datepickerEscape}>
                 <TextLabel
                   data-cy={`sykmelding-${periodeIndex}-til`}
                   className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
