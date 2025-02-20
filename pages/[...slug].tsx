@@ -101,6 +101,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const selvbestemtInnsending =
     pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
 
+  const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
+  const skalViseArbeidsgiverperiode = trengerArbeidsgiverperiode || overstyrSkalViseAgp;
+
   const submitForm = (event: React.FormEvent) => {
     event.preventDefault();
     setSenderInn(true);
@@ -111,6 +114,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       });
 
       return;
+    }
+
+    if (skalViseArbeidsgiverperiode) {
+      opplysningstyper.push('arbeidsgiverperiode');
+    } else {
+      opplysningstyper.splice(opplysningstyper.indexOf('arbeidsgiverperiode'), 1);
     }
 
     sendInnSkjema(opplysningerBekreftet, opplysningstyper, pathSlug, isDirtyForm).finally(() => {
@@ -192,10 +201,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
   const sbTidligereInntekt = !error ? data?.tidligereInntekter : undefined;
-
-  const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
-
-  const skalViseArbeidsgiverperiode = trengerArbeidsgiverperiode || overstyrSkalViseAgp;
 
   return (
     <div className={styles.container}>
