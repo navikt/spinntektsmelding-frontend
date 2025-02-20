@@ -24,6 +24,11 @@ export default function RefusjonArbeidsgiverBelop({
     ? 'Refusjon til arbeidsgiver i sykefraværet'
     : 'Refusjon til arbeidsgiver etter arbeidsgiverperiode';
 
+  const handleButtonEndreBeloepClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    e.preventDefault();
+    setEditerbar(true);
+  };
+
   if (!editerbar) {
     return (
       <>
@@ -34,7 +39,7 @@ export default function RefusjonArbeidsgiverBelop({
           </div>
           <ButtonEndre
             className={localStyles.endre_knapp}
-            onClick={() => setEditerbar(true)}
+            onClick={handleButtonEndreBeloepClick}
             data-cy='endre-refusjon-arbeidsgiver-beloep'
           />
           <span>

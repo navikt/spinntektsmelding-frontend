@@ -1,15 +1,7 @@
 /// <reference types="cypress" />
 
-describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
+describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   beforeEach(() => {
-    // Cypress starts out with a blank slate for each test
-    // so we must tell it to visit our website with the `cy.visit()` command.
-    // Since we want to visit the same URL at the start of all our tests,
-    // we include it in our beforeEach function so that it runs before each test
-    // const now = new Date(2021, 3, 14); // month is 0-indexed
-    // cy.clock(now);
-    // cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    // cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-delvis.json' }).as('hent-forespoersel');
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
       statusCode: 404,
       body: {
@@ -20,9 +12,9 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
 
   it('No changes and submit', () => {
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-delvis.json' }).as(
-      'hent-forespoersel'
-    );
+    cy.intercept('/im-dialog/api/hent-forespoersel', {
+      fixture: '../../mockdata/trenger-delvis-enkel-variant.json'
+    }).as('hent-forespoersel');
     cy.intercept('/im-dialog/api/innsendingInntektsmelding', {
       statusCode: 201,
       body: {
@@ -31,18 +23,8 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
     }).as('innsendingInntektsmelding');
 
     cy.wait('@hent-forespoersel');
-    cy.wait(1000);
-    cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
 
-    cy.findByRole('group', {
-      name: 'Stemmer dette med inntekten ved 25.02.2023 (start av nytt sykefravær)?'
-    })
-      .findByLabelText('Ja')
-      .check();
-
-    cy.findByRole('group', {
-      name: 'Er det endringer i refusjonskravet etter 25.02.2023 (start av nytt sykefravær)?'
-    })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
       .findByLabelText('Nei')
       .check();
 
@@ -58,21 +40,12 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
         forespoerselId: '12345678-3456-5678-2457-123456789012',
         agp: null,
         inntekt: {
-          beloep: 46000,
-          inntektsdato: '2023-02-25',
+          beloep: 36000,
+          inntektsdato: '2024-12-05',
           naturalytelser: [],
           endringAarsak: null
         },
-        refusjon: {
-          beloepPerMaaned: 46000,
-          sluttdato: null,
-          endringer: [
-            {
-              beloep: 0,
-              startdato: '2023-09-30'
-            }
-          ]
-        },
+        refusjon: null,
         avsenderTlf: '12345678'
       });
 
@@ -83,14 +56,14 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.get('[data-cy="bestemmendefravaersdag"]')
       .invoke('text')
-      .should('match', /25.02.2023/);
+      .should('match', /05.12.2024/);
   });
 
   it('Changes and submit', () => {
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    cy.intercept('/im-dialog/api/hent-forespoersel', { fixture: '../../mockdata/trenger-delvis.json' }).as(
-      'hent-forespoersel'
-    );
+    cy.intercept('/im-dialog/api/hent-forespoersel', {
+      fixture: '../../mockdata/trenger-delvis-enkel-variant.json'
+    }).as('hent-forespoersel');
     cy.intercept('/im-dialog/api/innsendingInntektsmelding', {
       statusCode: 201,
       body: {
@@ -100,19 +73,20 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.wait('@hent-forespoersel');
 
-    cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
-
-    cy.findByRole('group', {
-      name: 'Stemmer dette med inntekten ved 25.02.2023 (start av nytt sykefravær)?'
+    cy.findAllByRole('button', {
+      name: 'Endre'
     })
-      .findByLabelText('Nei')
-      .check();
+      .eq(1)
+      .click();
 
-    cy.findByLabelText('Månedsinntekt 25.02.2023').invoke('val').should('equal', '46000');
-    cy.findByLabelText('Månedsinntekt 25.02.2023').clear().type('50000');
+    cy.findByLabelText('Månedslønn 05.12.2024')
+      .invoke('val')
+      .then((str) => str.normalize('NFKC').replace(/ /g, ''))
+      .should('equal', '36000,00');
+    cy.findByLabelText('Månedslønn 05.12.2024').clear().type('50000');
 
     cy.findByRole('group', {
-      name: 'Er det endringer i refusjonskravet etter 25.02.2023 (start av nytt sykefravær)?'
+      name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
     })
       .findByLabelText('Ja')
       .check();
@@ -126,9 +100,11 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
     cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
 
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
-      .findByLabelText('Ja')
-      .check();
+    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Ja').check();
+
+    cy.findByLabelText('Endret refusjon/måned').type('45000');
+
+    cy.findByLabelText('Dato for endring').type('30.09.2025');
 
     cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
@@ -141,17 +117,17 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
         agp: null,
         inntekt: {
           beloep: 50000,
-          inntektsdato: '2023-02-25',
+          inntektsdato: '2024-12-05',
           naturalytelser: [],
           endringAarsak: { aarsak: 'Bonus' }
         },
         refusjon: {
-          beloepPerMaaned: 46000,
+          beloepPerMaaned: 50000,
           sluttdato: null,
           endringer: [
             {
-              beloep: 0,
-              startdato: '2023-09-30'
+              beloep: 45000,
+              startdato: '2025-09-30'
             }
           ]
         },
@@ -163,12 +139,11 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByText('12345678').should('be.visible');
     cy.findByText(/Bonus/).should('be.visible');
-    cy.findByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
-    cy.findByText(/46\s?000,00\s?kr\/måned/).should('be.visible');
-    cy.findAllByText('24.01.2023').should('not.exist');
+    cy.findAllByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
+    cy.findByText(/45\s?000,00/).should('be.visible');
 
     cy.get('[data-cy="bestemmendefravaersdag"]')
       .invoke('text')
-      .should('match', /25.02.2023/);
+      .should('match', /05.12.2024/);
   });
 });

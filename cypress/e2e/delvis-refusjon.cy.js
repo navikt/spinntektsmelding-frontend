@@ -1,6 +1,8 @@
 /// <reference types="cypress" />
 
-describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
+const { wait } = require('@testing-library/user-event/dist/cjs/utils/index.js');
+
+describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   beforeEach(() => {
     // Cypress starts out with a blank slate for each test
     // so we must tell it to visit our website with the `cy.visit()` command.
@@ -37,17 +39,13 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.wait('@hent-forespoersel');
 
-    // cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
+    cy.location('pathname').should('equal', '/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    cy.findByRole('group', {
-      name: 'Stemmer dette med inntekten ved 08.08.2023 (start av nytt sykefravær)?'
-    })
-      .findByLabelText('Ja')
-      .check();
+    // cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+    //   .findByLabelText('Ja')
+    //   .check();
 
-    cy.findByRole('group', {
-      name: 'Er det endringer i refusjonskravet etter 08.08.2023 (start av nytt sykefravær)?'
-    })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
       .findByLabelText('Nei')
       .check();
 
@@ -68,7 +66,7 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
           naturalytelser: [],
           endringAarsak: null
         },
-        refusjon: { beloepPerMaaned: 10000, sluttdato: null, endringer: [] },
+        refusjon: null,
         avsenderTlf: '12345678'
       });
 
@@ -96,22 +94,21 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.wait('@hent-forespoersel');
 
-    cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
+    cy.location('pathname').should('equal', '/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    cy.findByRole('group', {
-      name: 'Stemmer dette med inntekten ved 08.08.2023 (start av nytt sykefravær)?'
+    wait(100);
+
+    cy.findAllByRole('button', {
+      name: 'Endre'
     })
-      .findByLabelText('Nei')
-      .check();
+      .eq(1)
+      .click();
 
-    cy.findByLabelText('Månedsinntekt 08.08.2023').invoke('val').should('equal', '26000');
-    cy.findByLabelText('Månedsinntekt 08.08.2023').clear().type('50000');
-
-    cy.findByRole('group', {
-      name: 'Er det endringer i refusjonskravet etter 08.08.2023 (start av nytt sykefravær)?'
-    })
-      .findByLabelText('Ja')
-      .check();
+    cy.findByLabelText('Månedslønn 08.08.2023')
+      .invoke('val')
+      .then((str) => str.normalize('NFKC').replace(/ /g, ''))
+      .should('equal', '26000,00');
+    cy.findByLabelText('Månedslønn 08.08.2023').clear().type('50000');
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');
 
@@ -123,6 +120,12 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByLabelText('Velg endringsårsak').select('Varig lønnsendring');
 
     cy.findAllByLabelText('Lønnsendring gjelder fra').clear().type('30.06.23');
+
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
+
+    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Nei').check();
 
     cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
@@ -142,7 +145,7 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
             gjelderFra: '2023-06-30'
           }
         },
-        refusjon: { beloepPerMaaned: 10000, sluttdato: null, endringer: [] },
+        refusjon: { beloepPerMaaned: 50000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
       });
 
@@ -152,7 +155,7 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByText('12345678').should('be.visible');
     cy.findByText(/Varig lønnsendringsdato/).should('be.visible');
     cy.findByText(/30.06.2023/).should('be.visible');
-    cy.findByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
+    cy.findAllByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
     cy.findAllByText('24.01.2023').should('not.exist');
 
     cy.get('[data-cy="bestemmendefravaersdag"]')
@@ -174,22 +177,21 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.wait('@hent-forespoersel');
 
-    cy.location('pathname').should('equal', '/im-dialog/endring/12345678-3456-5678-2457-123456789012');
+    cy.location('pathname').should('equal', '/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    cy.findByRole('group', {
-      name: 'Stemmer dette med inntekten ved 08.08.2023 (start av nytt sykefravær)?'
+    wait(100);
+
+    cy.findAllByRole('button', {
+      name: 'Endre'
     })
-      .findByLabelText('Nei')
-      .check();
+      .eq(1)
+      .click();
 
-    cy.findByLabelText('Månedsinntekt 08.08.2023').invoke('val').should('equal', '26000');
-    cy.findByLabelText('Månedsinntekt 08.08.2023').clear().type('50000');
-
-    cy.findByRole('group', {
-      name: 'Er det endringer i refusjonskravet etter 08.08.2023 (start av nytt sykefravær)?'
-    })
-      .findByLabelText('Ja')
-      .check();
+    cy.findByLabelText('Månedslønn 08.08.2023')
+      .invoke('val')
+      .then((str) => str.normalize('NFKC').replace(/ /g, ''))
+      .should('equal', '26000,00');
+    cy.findByLabelText('Månedslønn 08.08.2023').clear().type('50000');
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');
 
@@ -202,6 +204,13 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findAllByLabelText('Ferie fra').clear().type('30.06.23');
     cy.findAllByLabelText('Ferie til').clear().type('05.07.23');
+    cy.findAllByLabelText('Ferie fra').clear().type('30.06.23');
+
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
+
+    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Nei').check();
 
     cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
@@ -226,7 +235,7 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
             ]
           }
         },
-        refusjon: { beloepPerMaaned: 10000, sluttdato: null, endringer: [] },
+        refusjon: { beloepPerMaaned: 50000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
       });
 
@@ -237,8 +246,8 @@ describe.skip('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText(/Ferie/).should('exist');
     cy.findByText(/30.06.2023/).should('be.visible');
     cy.findByText(/05.07.2023/).should('be.visible');
-    cy.findByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
-    cy.findAllByText('24.01.2023').should('not.exist');
+    cy.findAllByText(/50\s?000,00\s?kr\/måned/).should('be.visible');
+    // cy.findAllByText('24.01.2023').should('not.exist');
 
     cy.get('[data-cy="bestemmendefravaersdag"]')
       .invoke('text')

@@ -89,11 +89,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
+  const opplysningstyper = hentPaakrevdOpplysningstyper();
+  const skalViseEgenmelding = opplysningstyper.includes('arbeidsgiverperiode');
+  const trengerArbeidsgiverperiode = opplysningstyper.includes('arbeidsgiverperiode');
+  const pathSlug = slug;
+
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.saksoversiktUrl;
   };
-
-  const pathSlug = slug;
 
   const selvbestemtInnsending =
     pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
@@ -110,7 +113,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       return;
     }
 
-    sendInnSkjema(opplysningerBekreftet, false, pathSlug, isDirtyForm).finally(() => {
+    sendInnSkjema(opplysningerBekreftet, opplysningstyper, pathSlug, isDirtyForm).finally(() => {
       setSenderInn(false);
     });
   };
@@ -189,10 +192,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
   const sbTidligereInntekt = !error ? data?.tidligereInntekter : undefined;
-
-  const opplysningstyper = hentPaakrevdOpplysningstyper();
-  const skalViseEgenmelding = opplysningstyper.includes('arbeidsgiverperiode');
-  const trengerArbeidsgiverperiode = opplysningstyper.includes('arbeidsgiverperiode');
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
 
