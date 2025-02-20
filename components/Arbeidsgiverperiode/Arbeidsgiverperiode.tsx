@@ -296,20 +296,12 @@ export default function Arbeidsgiverperiode({
       <Heading3 unPadded id='arbeidsgiverperioder'>
         Arbeidsgiverperiode
       </Heading3>
-      <LesMer header='Informasjon om arbeidsgiverperioden' open={readMoreOpen} onClick={clickLesMerOpenHandler}>
-        Arbeidsgiveren skal vanligvis betale sykepenger i en periode på opptil 16 kalenderdager, også kalt
-        arbeidsgiverperioden.{' '}
-        <LenkeEksternt
-          href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'
-          isHidden={!readMoreOpen}
-        >
-          Les mer om hvordan arbeidsgiverperioden beregnes.
-        </LenkeEksternt>
-      </LesMer>
       <BodyLong>
-        Vi har brukt eventuell egenmelding og sykmeldingsperiode til å estimere et forslag til arbeidsgiverperiode. Hvis
-        du mener dette er feil må dere korrigere perioden. Informasjonen brukes til å avgjøre når Nav skal overta
-        betaling av sykepenger etter arbeidsgiverperiodens utløp.{' '}
+        Vi har brukt egenmeldinger og sykmeldingsperiode til foreslå en arbeidsgiverperiode. Du kan bruke forslaget
+        eller endre til det du mener er riktig periode.
+        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
+          Les mer om arbeidsgiverperiode.
+        </LenkeEksternt>
       </BodyLong>
       {arbeidsgiverperioder?.map((periode, periodeIndex) => (
         <div key={periode.id} className={lokalStyles.dateWrapper}>

@@ -66,8 +66,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
           <Heading2 size='large'>Inntektsmelding</Heading2>
           <p>
             For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
-            opplysningene vi har om den ansatte og sykefraværet. Vi gjør dere oppmerksom på at den ansatte vil få
-            tilgang til å se innsendt informasjon etter personopplysningslovens artikkel 15 og forvaltningsloven § 18.
+            opplysningene vi har om den ansatte og sykefraværet. Den ansatte kan se inntektsmeldinger som er sendt inn.
           </p>
           <Skillelinje />
           {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (

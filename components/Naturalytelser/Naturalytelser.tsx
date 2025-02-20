@@ -49,11 +49,8 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
 
   return (
     <>
-      <Heading3>Eventuelle naturalytelser</Heading3>
-      <BodyLong>
-        Har den ansatte naturalytelser som faller bort ved sykmelding, skal disse oppgis her. Hvis den ansatte beholder
-        eventuelle naturalytelser, så trenger dere ikke oppgi noe.
-      </BodyLong>
+      <Heading3>Naturalytelser</Heading3>
+      <BodyLong>Har den ansatte naturalytelser som faller bort under sykefraværet?</BodyLong>
       <Checkbox value='Naturalytelser' onClick={visNaturalytelser} checked={checkedNaturalytelser}>
         Den ansatte har naturalytelser som faller bort ved sykmeldingen.
       </Checkbox>

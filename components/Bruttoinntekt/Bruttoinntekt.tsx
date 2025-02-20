@@ -10,11 +10,11 @@ import TidligereInntekt from './TidligereInntekt';
 import ButtonEndre from '../ButtonEndre';
 import formatDate from '../../utils/formatDate';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
-import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
+import { InformationSquareIcon } from '@navikt/aksel-icons';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -129,35 +129,33 @@ export default function Bruttoinntekt({
   return (
     <>
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
-      <LesMer header='Informasjon om beregnet månedslønn' open={readMoreOpen} onClick={clickLesMerBeregnetMaanedslonn}>
+      <BodyLong spacing={true}>
         Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert til
-        a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
-        <LenkeEksternt
-          href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'
-          isHidden={!readMoreOpen}
-        >
-          Les mer om beregning av månedslønn.
+        a-ordningen i de tre siste kalendermånedene før sykefraværet startet, eller datoen Nav etterspør månedslønn for.
+        Beregningen skal følge{' '}
+        <LenkeEksternt href='https://lovdata.no/nav/folketrygdloven/kap8/%C2%A78-28'>
+          folketrygdloven $8-28
         </LenkeEksternt>
-      </LesMer>
+        .
+      </BodyLong>
       {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
         <Alert variant='info'>
           Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedslønn selv eller
           forsøke igjen senere.
         </Alert>
       )}
-
       {harTidligereInntekt && (
         <>
-          <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
+          <BodyLong>
+            Vi må vite beregnet månedslønn for {formatDate(bestemmendeFravaersdag)}. Følgende lønnsopplysninger er
+            hentet fra A-ordningen:
+          </BodyLong>
           <TidligereInntekt tidligereinntekt={sisteTreMndTidligereinntekt} henterData={henterData} />
         </>
       )}
       <AvvikAdvarselInntekt tidligereInntekter={sisteTreMndTidligereinntekt} />
       {!endringAvBelop && !erBlanktSkjema && (
-        <TextLabel className={lokalStyles.tbmargin}>
-          Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
-          månedslønn på
-        </TextLabel>
+        <TextLabel className={lokalStyles.tbmargin}>Dette gir en beregnet månedslønn på:</TextLabel>
       )}
       <div className={lokalStyles.beloepwrapper}>
         {!endringAvBelop && !erBlanktSkjema && (
@@ -191,13 +189,9 @@ export default function Bruttoinntekt({
       </div>
       <BodyShort className={lokalStyles.bruttoinntektBelopBeskrivelse}>Stemmer dette?</BodyShort>
       <BodyLong>
-        Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i arbeidstid,
-        hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke inkluderes i beregnet
-        månedslønn. Beregningen er gjort etter{' '}
-        <LenkeEksternt href='https://lovdata.no/nav/folketrygdloven/kap8/%C2%A78-28'>
-          folketrygdloven $8-28
-        </LenkeEksternt>
-        .
+        <InformationSquareIcon /> Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått
+        lønnsøkning, endring i arbeidstid, hatt ubetalt fri eller har andre endringer i lønn må dette regnes med.
+        Overtid skal ikke inkluderes i beregnet månedslønn.
       </BodyLong>
     </>
   );

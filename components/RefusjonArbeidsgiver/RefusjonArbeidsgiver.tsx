@@ -9,9 +9,6 @@ import localStyles from './RefusjonArbeidsgiver.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import Datovelger from '../Datovelger';
-import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
-import { useState } from 'react';
-import LesMer from '../LesMer';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { addDays } from 'date-fns';
 
@@ -80,10 +77,9 @@ export default function RefusjonArbeidsgiver({
   const foersteMuligeRefusjonOpphoer = sisteDagIArbeidsgiverperioden
     ? addDays(sisteDagIArbeidsgiverperioden, 1)
     : new Date();
-  const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
   const betalerArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
-    ? 'Betaler arbeidsgiver lønn og krever refusjon i sykefraværet?'
+    ? 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
     : 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?';
 
   const betalerArbeidsgiverFullLonnLegend = arbeidsgiverperiodeKort
@@ -92,7 +88,7 @@ export default function RefusjonArbeidsgiver({
   return (
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
-      <LesMer
+      {/* <LesMer
         header='Informasjon om refusjon'
         open={readMoreOpen}
         onClick={() => {
@@ -104,11 +100,11 @@ export default function RefusjonArbeidsgiver({
         <LenkeEksternt href='https://www.nav.no/arbeidsgiver/forskuttere-sykepenger' isHidden={!readMoreOpen}>
           Les om de ulike refusjonsreglene.
         </LenkeEksternt>
-      </LesMer>
-      <BodyLong>
+      </LesMer> */}
+      {/* <BodyLong>
         Vi må vite om arbeidsgiver betaler lønn til den ansatte under sykmeldingsperioden og om NAV skal betale ut
         sykepenger til den ansatte eller bedriften etter arbeidsgiverperioden.{' '}
-      </BodyLong>
+      </BodyLong> */}
       <div>
         {skalViseArbeidsgiverperiode && (
           <>

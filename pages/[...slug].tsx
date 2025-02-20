@@ -248,9 +248,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <>
               <Heading3>Arbeidsgiverperiode</Heading3>
               <BodyLong>
-                Vi trenger ikke opplysninger om arbeidsgiverperioden for denne sykmeldingen da den er en forlengelse av
-                en tidligere sykeperiode. Skulle deres opplysninger ikke stemme med være opplysninger er det fortsatt
-                mulig å gjøre endringer.
+                Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen. Sykemeldingen er en
+                forlengelse av en tidligere sykeperiode. Hvis dere mener at det skal være arbeidsgiverperiode kan dere
+                endre dette.
               </BodyLong>
               <Button variant='tertiary' onClick={() => setOverstyrSkalViseAgp(true)}>
                 Endre
