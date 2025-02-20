@@ -189,9 +189,9 @@ export default function Bruttoinntekt({
       </div>
       <BodyShort className={lokalStyles.bruttoinntektBelopBeskrivelse}>Stemmer dette?</BodyShort>
       <BodyLong>
-        <InformationSquareIcon /> Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått
-        lønnsøkning, endring i arbeidstid, hatt ubetalt fri eller har andre endringer i lønn må dette regnes med.
-        Overtid skal ikke inkluderes i beregnet månedslønn.
+        <InformationSquareIcon title='Til informasjon' /> Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte
+        nylig har fått lønnsøkning, endring i arbeidstid, hatt ubetalt fri eller har andre endringer i lønn må dette
+        regnes med. Overtid skal ikke inkluderes i beregnet månedslønn.
       </BodyLong>
     </>
   );

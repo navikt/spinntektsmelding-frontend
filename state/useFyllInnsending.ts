@@ -82,12 +82,6 @@ export default function useFyllInnsending() {
               arbeidsgiverKanFlytteSkjæringstidspunkt()
             )
           );
-    console.log(
-      'beregnetSkjaeringstidspunkt',
-      beregnetSkjaeringstidspunkt,
-      skjaeringstidspunkt,
-      innsendbarArbeidsgiverperioder
-    );
     const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
       harForespurtArbeidsgiverperiode,
       perioder,
@@ -98,7 +92,6 @@ export default function useFyllInnsending() {
       bestemmendeFravaersdag,
       beregnetSkjaeringstidspunkt
     );
-    console.log('bestemmendeFraværsdag', bestemmendeFraværsdag, bestemmendeFravaersdag);
     const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
 
     const skjemaData: FullInnsending = {

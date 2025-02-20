@@ -118,7 +118,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     if (skalViseArbeidsgiverperiode) {
       opplysningstyper.push('arbeidsgiverperiode');
-    } else {
+    } else if (opplysningstyper.includes('arbeidsgiverperiode')) {
       opplysningstyper.splice(opplysningstyper.indexOf('arbeidsgiverperiode'), 1);
     }
 

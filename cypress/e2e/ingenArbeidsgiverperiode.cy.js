@@ -26,7 +26,9 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
   it('can check the "Det er ikke arbeidsgiverperiode" and verify that everithing is OK', () => {
     cy.wait('@hent-forespoersel');
 
-    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon i sykefraværet/ }).should('not.exist');
+    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon under sykefraværet/ }).should(
+      'not.exist'
+    );
     cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden/ }).should(
       'exist'
     );
@@ -51,12 +53,12 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
       cy.findByRole('radio', { name: 'Ja' }).should('be.disabled');
     });
 
-    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon i sykefraværet/ }).should('exist');
+    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon under sykefraværet/ }).should('exist');
     cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden/ }).should(
       'not.exist'
     );
 
-    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon i sykefraværet?/ }).within(() => {
+    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?/ }).within(() => {
       cy.findByRole('radio', { name: 'Ja' }).click();
     });
 
@@ -75,7 +77,9 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
       cy.findByRole('radio', { name: 'Ja' }).should('be.enabled');
     });
 
-    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon i sykefraværet/ }).should('not.exist');
+    cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon under sykefraværet/ }).should(
+      'not.exist'
+    );
     cy.findByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden/ }).should(
       'exist'
     );
