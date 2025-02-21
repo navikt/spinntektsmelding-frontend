@@ -251,7 +251,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           )}
           {!skalViseArbeidsgiverperiode && (
             <>
-              <Heading3>Arbeidsgiverperiode</Heading3>
+              <Heading3 unPadded>Arbeidsgiverperiode</Heading3>
               <BodyLong>
                 Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen. Sykemeldingen er en
                 forlengelse av en tidligere sykeperiode. Hvis dere mener at det skal være arbeidsgiverperiode kan dere

@@ -12,7 +12,6 @@ import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useEffect, useMemo, useState } from 'react';
-import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import { differenceInCalendarDays, differenceInDays } from 'date-fns';
 import PeriodeType from '../../config/PeriodeType';
@@ -285,13 +284,21 @@ export default function Arbeidsgiverperiode({
       <Heading3 unPadded id='arbeidsgiverperioder'>
         Arbeidsgiverperiode
       </Heading3>
-      <BodyLong>
-        Vi har brukt egenmeldinger og sykmeldingsperiode til foreslå en arbeidsgiverperiode. Du kan bruke forslaget
-        eller endre til det du mener er riktig periode.
-        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
-          Les mer om arbeidsgiverperiode.
-        </LenkeEksternt>
-      </BodyLong>
+      {!skalViseArbeidsgiverperiode && (
+        <BodyLong>
+          Vi har brukt egenmeldinger og sykmeldingsperiode til foreslå en arbeidsgiverperiode. Du kan bruke forslaget
+          eller endre til det du mener er riktig periode.
+          <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
+            Les mer om arbeidsgiverperiode.
+          </LenkeEksternt>
+        </BodyLong>
+      )}
+      {skalViseArbeidsgiverperiode && (
+        <BodyLong>
+          Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen. Sykemeldingen er en forlengelse av
+          en tidligere sykeperiode. Hvis dere mener at det skal være arbeidsgiverperiode kan dere endre dette.
+        </BodyLong>
+      )}
       {arbeidsgiverperioder?.map((periode, periodeIndex) => (
         <div key={periode.id} className={lokalStyles.dateWrapper}>
           {!endretArbeidsgiverperiode && (
