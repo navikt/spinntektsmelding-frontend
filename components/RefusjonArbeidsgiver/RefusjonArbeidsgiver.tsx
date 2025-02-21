@@ -1,4 +1,4 @@
-import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
 import styles from '../../styles/Home.module.css';
 
@@ -88,23 +88,6 @@ export default function RefusjonArbeidsgiver({
   return (
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
-      {/* <LesMer
-        header='Informasjon om refusjon'
-        open={readMoreOpen}
-        onClick={() => {
-          setReadMoreOpen(!readMoreOpen);
-        }}
-      >
-        Arbeidsgiveren kan forskuttere sykepenger til den sykmeldte eller velge at NAV skal betale sykepenger direkte
-        til den sykmeldte etter arbeidsgiverperioden.{' '}
-        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/forskuttere-sykepenger' isHidden={!readMoreOpen}>
-          Les om de ulike refusjonsreglene.
-        </LenkeEksternt>
-      </LesMer> */}
-      {/* <BodyLong>
-        Vi må vite om arbeidsgiver betaler lønn til den ansatte under sykmeldingsperioden og om NAV skal betale ut
-        sykepenger til den ansatte eller bedriften etter arbeidsgiverperioden.{' '}
-      </BodyLong> */}
       <div>
         {skalViseArbeidsgiverperiode && (
           <>

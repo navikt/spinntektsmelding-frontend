@@ -96,17 +96,6 @@ export default function Bruttoinntekt({
     setEndreMaanedsinntekt(true);
   };
 
-  const clickLesMerBeregnetMaanedslonn = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    logEvent(readMoreOpen ? 'readmore lukket' : 'readmore åpnet', {
-      tittel: 'Les mer beregnet månedsinntekt',
-      component: amplitudeComponent
-    });
-
-    setReadMoreOpen(!readMoreOpen);
-  };
-
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringAarsak?.aarsak;
   const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
