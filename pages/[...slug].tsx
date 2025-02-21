@@ -40,7 +40,7 @@ import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
 import Heading3 from '../components/Heading3';
-import skjemaVariant from '../config/skjemavariant';
+import forespoerselType from '../config/forespoerselType';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -91,8 +91,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   );
 
   let opplysningstyper = hentPaakrevdOpplysningstyper();
-  const skalViseEgenmelding = opplysningstyper.includes(skjemaVariant.arbeidsgiverperiode);
-  const trengerArbeidsgiverperiode = opplysningstyper.includes(skjemaVariant.arbeidsgiverperiode);
+  const skalViseEgenmelding = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
+  const trengerArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const pathSlug = slug;
 
   const lukkHentingFeiletModal = () => {
@@ -118,11 +118,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
 
     if (skalViseArbeidsgiverperiode) {
-      opplysningstyper = [...opplysningstyper, skjemaVariant.arbeidsgiverperiode];
+      opplysningstyper = [...opplysningstyper, forespoerselType.arbeidsgiverperiode];
 
       setPaakrevdeOpplysninger(opplysningstyper);
-    } else if (opplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
-      opplysningstyper.splice(opplysningstyper.indexOf(skjemaVariant.arbeidsgiverperiode), 1);
+    } else if (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode)) {
+      opplysningstyper.splice(opplysningstyper.indexOf(forespoerselType.arbeidsgiverperiode), 1);
 
       setPaakrevdeOpplysninger(opplysningstyper);
     }

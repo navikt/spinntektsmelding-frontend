@@ -4,7 +4,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
-import skjemaVariant from '../config/skjemavariant';
+import forespoerselType from '../config/forespoerselType';
 
 import { TDateISODate } from './MottattData';
 import valideringDelvisInnsendingSchema from '../schema/valideringDelvisInnsendingSchema';
@@ -88,7 +88,7 @@ export default function useFyllDelvisInnsending() {
 
     const forespurtData = hentPaakrevdOpplysningstyper();
 
-    const skalSendeArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
+    const skalSendeArbeidsgiverperiode = forespurtData.includes(forespoerselType.arbeidsgiverperiode);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 

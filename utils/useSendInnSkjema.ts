@@ -11,6 +11,7 @@ import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { z } from 'zod';
 import responseBackendError from '../schema/responseBackendError';
 import { Opplysningstype } from '../state/useForespurtDataStore';
+import forespoerselType from '../config/forespoerselType';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -34,7 +35,7 @@ export default function useSendInnSkjema(
       tittel: 'Har trykket send',
       component: amplitudeComponent
     });
-    const kunInntektOgRefusjon = !forespurteOpplysningstyper.includes('arbeidsgiverperiode');
+    const kunInntektOgRefusjon = !forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     if (!isDirtyForm) {
       logEvent('skjema fullført', {
         tittel: 'Innsending uten endringer i skjema',

@@ -3,10 +3,10 @@ import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { HistoriskInntekt } from './state';
 import { MottattPeriodeRefusjon, TDateISODate } from './MottattData';
-import skjemaVariant from '../config/skjemavariant';
 import parseIsoDate from '../utils/parseIsoDate';
+import forespoerselType from '../config/forespoerselType';
 
-export type Opplysningstype = (typeof skjemaVariant)[keyof typeof skjemaVariant];
+export type Opplysningstype = (typeof forespoerselType)[keyof typeof forespoerselType];
 
 type FourDigitString = string & { length: 4 } & { [Symbol.match](string: string): RegExpMatchArray | null };
 
@@ -125,7 +125,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       ) as Array<Opplysningstype>;
     }
 
-    return Object.keys(skjemaVariant) as Array<Opplysningstype>;
+    return Object.keys(forespoerselType) as Array<Opplysningstype>;
   },
 
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger) => {

@@ -4,7 +4,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { LonnIArbeidsgiverperioden, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
-import skjemaVariant from '../config/skjemavariant';
+import forespoerselType from '../config/forespoerselType';
 import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
 import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
@@ -60,7 +60,7 @@ export default function useFyllInnsending() {
 
     const forespurtData = forespurteOpplysningstyper;
 
-    const harForespurtArbeidsgiverperiode = forespurtData.includes(skjemaVariant.arbeidsgiverperiode);
+    const harForespurtArbeidsgiverperiode = forespurtData.includes(forespoerselType.arbeidsgiverperiode);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 

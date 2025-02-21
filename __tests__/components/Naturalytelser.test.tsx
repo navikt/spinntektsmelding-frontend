@@ -26,10 +26,6 @@ describe('Naturalytelser', () => {
       visFeilmeldingTekst: vi.fn()
     };
 
-    // beforeEach(() => {
-    //   useBoundStore.mockReturnValue(mockStore);
-    // });
-
     beforeEach(() => {
       (useBoundStore as unknown as Mock).mockImplementation((stateFn) => stateFn(mockStore));
     });

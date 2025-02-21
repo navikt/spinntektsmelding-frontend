@@ -34,7 +34,7 @@ import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringA
 import { addDays, isBefore, isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
-import skjemaVariant from '../../config/skjemavariant';
+import forespoerselType from '../../config/forespoerselType';
 
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
@@ -117,7 +117,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
-  const trengerArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
+  const trengerArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
 
   const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
     fravaersperioder,
@@ -142,10 +142,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const visNaturalytelser = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
-  const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
-  const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode);
-  const visRefusjon = paakrevdeOpplysninger?.includes(skjemaVariant.refusjon);
+  const visNaturalytelser = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
+  const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
+  const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
+  const visRefusjon = paakrevdeOpplysninger?.includes(forespoerselType.refusjon);
 
   const cx = classNames.bind(lokalStyles);
   const classNameWrapperFravaer = cx({
