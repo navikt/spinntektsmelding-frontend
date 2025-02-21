@@ -174,17 +174,6 @@ export default function Arbeidsgiverperiode({
     }
   };
 
-  const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
-
-  const clickLesMerOpenHandler = () => {
-    logEvent(readMoreOpen ? 'readmore lukket' : 'readmore åpnet', {
-      tittel: 'Informasjon om arbeidsgiverperioden',
-      component: amplitudeComponent
-    });
-
-    setReadMoreOpen(!readMoreOpen);
-  };
-
   const setArbeidsgiverperiodeDatofelt = (periode: PeriodeParam | undefined, periodeIndex: string) => {
     setIsDirtyForm(true);
     setArbeidsgiverperiodeDato(periode, periodeIndex);
@@ -433,7 +422,7 @@ export default function Arbeidsgiverperiode({
           {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
         </>
       )}
-      {endretArbeidsgiverperiode && (
+      {endretArbeidsgiverperiode && !skalViseArbeidsgiverperiode && (
         <>
           <Checkbox
             value='IngenPeriode'
