@@ -40,6 +40,7 @@ import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
 import Heading3 from '../components/Heading3';
+import skjemaVariant from '../config/skjemavariant';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -89,9 +90,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
-  const opplysningstyper = hentPaakrevdOpplysningstyper();
-  const skalViseEgenmelding = opplysningstyper.includes('arbeidsgiverperiode');
-  const trengerArbeidsgiverperiode = opplysningstyper.includes('arbeidsgiverperiode');
+  let opplysningstyper = hentPaakrevdOpplysningstyper();
+  const skalViseEgenmelding = opplysningstyper.includes(skjemaVariant.arbeidsgiverperiode);
+  const trengerArbeidsgiverperiode = opplysningstyper.includes(skjemaVariant.arbeidsgiverperiode);
   const pathSlug = slug;
 
   const lukkHentingFeiletModal = () => {
@@ -117,9 +118,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
 
     if (skalViseArbeidsgiverperiode) {
-      opplysningstyper.push('arbeidsgiverperiode');
-    } else if (opplysningstyper.includes('arbeidsgiverperiode')) {
-      opplysningstyper.splice(opplysningstyper.indexOf('arbeidsgiverperiode'), 1);
+      opplysningstyper = [...opplysningstyper, skjemaVariant.arbeidsgiverperiode];
+
+      setPaakrevdeOpplysninger(opplysningstyper);
+    } else if (opplysningstyper.includes(skjemaVariant.arbeidsgiverperiode)) {
+      opplysningstyper.splice(opplysningstyper.indexOf(skjemaVariant.arbeidsgiverperiode), 1);
+
+      setPaakrevdeOpplysninger(opplysningstyper);
     }
 
     sendInnSkjema(opplysningerBekreftet, opplysningstyper, pathSlug, isDirtyForm).finally(() => {

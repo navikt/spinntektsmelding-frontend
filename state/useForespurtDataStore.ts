@@ -130,18 +130,21 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     set(
       produce((state: ForespurtDataState) => {
         state.forespurtData = forespurtData;
+        state.paakrevdeOpplysninger = Object.keys(forespurtData).filter(
+          (key) => forespurtData[key as keyof typeof forespurtData].paakrevd === true
+        ) as Array<Opplysningstype>;
 
         state.gammeltSkjaeringstidspunkt = parseIsoDate(mottattBestemmendeFravaersdag);
         return state;
       })
     );
 
-    function settRefusjonsbeloep(beloep: number, harEndringer: YesNo | undefined) {
-      initLonnISykefravaeret({
-        status: harEndringer,
-        beloep: beloep ?? 0
-      });
-    }
+    // function settRefusjonsbeloep(beloep: number, harEndringer: YesNo | undefined) {
+    //   initLonnISykefravaeret({
+    //     status: harEndringer,
+    //     beloep: beloep ?? 0
+    //   });
+    // }
   },
   hentOpplysningstyper: () => {
     const forespurtData = get().forespurtData;
@@ -155,18 +158,27 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const forespurtData = get().forespurtData;
     const paakrevdeOpplysninger = get().paakrevdeOpplysninger;
 
-    if (forespurtData) {
+    console.log('hentPaakrevdOpplysningstyper', forespurtData, paakrevdeOpplysninger);
+
+    if (paakrevdeOpplysninger && paakrevdeOpplysninger.length > 0) {
+      console.log('paakrevdeOpplysninger hentPaakrevdOpplysningstyper', paakrevdeOpplysninger);
+      return paakrevdeOpplysninger;
+    } else if (forespurtData) {
+      console.log(
+        'forespurt hentPaakrevdOpplysningstyper',
+        Object.keys(forespurtData).filter((key) => forespurtData[key as keyof typeof forespurtData].paakrevd === true)
+      );
       return Object.keys(forespurtData).filter(
         (key) => forespurtData[key as keyof typeof forespurtData].paakrevd === true
       ) as Array<Opplysningstype>;
-    } else if (paakrevdeOpplysninger) {
-      return paakrevdeOpplysninger;
     }
 
+    console.log('tom hentPaakrevdOpplysningstyper', Object.keys(skjemaVariant));
     return Object.keys(skjemaVariant) as Array<Opplysningstype>;
   },
 
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger) => {
+    console.log('setPaakrevdeOpplysninger', paakrevdeOpplysninger);
     set(
       produce((state: ForespurtDataState) => {
         state.paakrevdeOpplysninger = paakrevdeOpplysninger;
