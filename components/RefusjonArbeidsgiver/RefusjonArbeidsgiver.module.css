@@ -61,6 +61,31 @@
   margin-bottom: auto;
 }
 
+.radiobuttonDescriptionWrapper {
+  display: block;
+}
+
+.radiobuttonInnerWrapper > div,
+.radiobuttonWrapper > div {
+  display: flex;
+  gap: 1rem;
+}
+
+.radiobuttonInnerWrapper,
+.radiobuttonWrapper {
+  margin: var(--a-spacing-5) 0;
+}
+
+.radiobuttonButtonWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.radiobuttonInnerWrapper > div {
+  flex-direction: column;
+}
+
 @media screen and (max-width: 500px) {
   .beloepswrapper,
   .beloepperiode,

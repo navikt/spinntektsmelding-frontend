@@ -1,4 +1,4 @@
-import { Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { BodyLong, Box, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
 import styles from '../../styles/Home.module.css';
 
@@ -93,7 +93,7 @@ export default function RefusjonArbeidsgiver({
           <>
             <RadioGroup
               legend={betalerArbeidsgiverFullLonnLegend}
-              className={styles.radiobuttonWrapper}
+              className={localStyles.radiobuttonWrapper}
               id={'lia-radio'}
               error={visFeilmeldingTekst('lia-radio')}
               onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
@@ -142,14 +142,20 @@ export default function RefusjonArbeidsgiver({
 
         <RadioGroup
           legend={betalerArbeidsgiverEtterAgpLegend}
-          className={styles.radiobuttonWrapper}
+          className={localStyles.radiobuttonInnerWrapper}
           id={'lus-radio'}
           error={visFeilmeldingTekst('lus-radio')}
           onChange={addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret)}
           defaultValue={lonnISykefravaeret?.status}
         >
-          <Radio value='Ja'>Ja</Radio>
-          <Radio value='Nei'>Nei</Radio>
+          <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>
+            Etter arbeidsgiverperioden kan arbeidsgiver velge mellom to alternativer. Betale lønn til den sykemeldte og
+            få dette refundert fra Nav, eller at Nav betaler sykepengene direkte til den sykemeldte.
+          </BodyLong>
+          <div className={localStyles.radiobuttonButtonWrapper}>
+            <Radio value='Ja'>Ja</Radio>
+            <Radio value='Nei'>Nei</Radio>
+          </div>
         </RadioGroup>
         {lonnISykefravaeret?.status === 'Ja' && (
           <>
@@ -172,7 +178,7 @@ export default function RefusjonArbeidsgiver({
 
             <RadioGroup
               legend='Opphører refusjonkravet i perioden?'
-              className={styles.radiobuttonWrapper}
+              className={localStyles.radiobuttonWrapper}
               id={'lus-sluttdato-velg'}
               error={visFeilmeldingTekst('lus-sluttdato-velg')}
               onChange={addIsDirtyForm(refusjonskravetOpphoererStatus)}
