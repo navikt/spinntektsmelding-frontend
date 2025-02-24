@@ -144,14 +144,14 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
         {!selvbestemtInnsending && (
           <>
             Hvis den ansatte har oppgitt egenmeldingsdager i forkant av sykmeldingen, er disse forhåndsutfylt og må
-            kontrolleres av dere. Alle egenmeldingsperioder som har mindre enn 16 dagers mellomrom før sykmeldingen skal
+            kontrolleres av deg. Alle egenmeldingsperioder som har mindre enn 16 dagers mellomrom før sykmeldingen skal
             inkluderes.
           </>
         )}
         {selvbestemtInnsending && (
           <>
             Oppgi om den ansatte har brukt egenmeldingsdager i forkant til sykmeldingen. Alle egenmeldingsperioder med
-            mindre enn 16 dagers mellomrom før sykmeldingen skal inkluderes. Dere kan endre og legge til
+            mindre enn 16 dagers mellomrom før sykmeldingen skal inkluderes. Du kan endre og legge til
             egenmeldingsperioder.
           </>
         )}

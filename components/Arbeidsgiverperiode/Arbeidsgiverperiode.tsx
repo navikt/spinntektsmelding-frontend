@@ -253,7 +253,7 @@ export default function Arbeidsgiverperiode({
     if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 1) {
       if (perioderInneholderHelgeopphold(arbeidsgiverperioder)) {
         setAdvarselOppholdHelg(
-          'Normalt inkluderes lørdag og søndag i arbeidsgiverperioden uansett om arbeid  i helgen har vært planlagt eller ikke. Dere skal kun legge inn opphold i arbeidsgiverperioden i helgen de dagene den ansatte har vært på jobb.'
+          'Normalt inkluderes lørdag og søndag i arbeidsgiverperioden uansett om arbeid  i helgen har vært planlagt eller ikke. Du skal kun legge inn opphold i arbeidsgiverperioden i helgen de dagene den ansatte har vært på jobb.'
         );
       } else {
         setAdvarselOppholdHelg('');
@@ -286,17 +286,17 @@ export default function Arbeidsgiverperiode({
       </Heading3>
       {!skalViseArbeidsgiverperiode && (
         <BodyLong>
-          Vi har brukt egenmeldinger og sykmeldingsperiode til foreslå en arbeidsgiverperiode. Du kan bruke forslaget
+          Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode. Du kan bruke forslaget
           eller endre til det du mener er riktig periode.{''}
           <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
-            Les mer om arbeidsgiverperiode.
+            Les mer om arbeidsgiverperiode og hvordan denne beregnes.
           </LenkeEksternt>
         </BodyLong>
       )}
       {skalViseArbeidsgiverperiode && (
         <BodyLong>
           Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen. Sykemeldingen er en forlengelse av
-          en tidligere sykeperiode. Hvis dere mener at det skal være arbeidsgiverperiode kan dere endre dette.
+          en tidligere sykeperiode. Hvis du mener at det skal være arbeidsgiverperiode kan du endre dette.
         </BodyLong>
       )}
       {arbeidsgiverperioder?.map((periode, periodeIndex) => (
