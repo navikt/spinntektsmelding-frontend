@@ -37,10 +37,8 @@ export default function useHentSkjemadata() {
             logger.info('Mangler tilgang til å hente skjemadata i useHentSkjemadata', error.status);
             logger.info(error.status, error.message, error.info);
 
-            logger.info('Mangler tilgang til å hente skjemadata i useHentSkjemadata', error.status);
-            logger.info(error.status, error.message, error.info);
-
             window.location.replace(`https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`);
+            return Promise.resolve({});
           }
 
           setSkjemaFeilet();
