@@ -102,7 +102,7 @@ export default function FravaerEnkeltAnsattforhold({
               {!isNotDisabled?.(periode, sisteAktivePeriode) && (
                 <div className={localStyles.alertEscape}>
                   <Alert variant='info'>
-                    Dere vil motta en separat forespørsel om inntektsmelding for denne perioden.
+                    Du vil motta en separat forespørsel om inntektsmelding for denne perioden.
                   </Alert>
                 </div>
               )}
