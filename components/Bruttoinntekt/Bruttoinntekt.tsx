@@ -119,9 +119,9 @@ export default function Bruttoinntekt({
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
       <BodyLong spacing={true}>
         Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert til
-        a-ordningen i de tre siste kalendermånedene før sykefraværet startet. Beregningen skal følge{' '}
-        <LenkeEksternt href='https://lovdata.no/nav/folketrygdloven/kap8/%C2%A78-28'>
-          folketrygdloven §8-28
+        a-ordningen i de tre siste kalendermånedene før sykefraværet startet. Les mer om{' '}
+        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
+          beregning av månedslønn
         </LenkeEksternt>
         .
       </BodyLong>

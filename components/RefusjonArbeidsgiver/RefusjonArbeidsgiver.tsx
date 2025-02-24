@@ -11,6 +11,7 @@ import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import Datovelger from '../Datovelger';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { addDays } from 'date-fns';
+import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 
 interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -150,7 +151,11 @@ export default function RefusjonArbeidsgiver({
         >
           <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>
             Etter arbeidsgiverperioden kan arbeidsgiver velge mellom to alternativer. Betale lønn til den sykemeldte og
-            få dette refundert fra Nav, eller at Nav betaler sykepengene direkte til den sykemeldte.
+            få dette refundert fra Nav, eller at Nav betaler sykepengene direkte til den sykemeldte.{' '}
+            <LenkeEksternt href='https://www.nav.no/arbeidsgiver/forskuttere-sykepenger'>
+              Les mer om refusjon
+            </LenkeEksternt>
+            .
           </BodyLong>
           <div className={localStyles.radiobuttonButtonWrapper}>
             <Radio value='Ja'>Ja</Radio>

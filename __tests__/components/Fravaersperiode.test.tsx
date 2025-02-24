@@ -19,7 +19,7 @@ describe('Fravaersperiode', () => {
 
   it.skip('renders the correct text when selvbestemtInnsending is true', () => {
     render(<Fravaersperiode selvbestemtInnsending setIsDirtyForm={setIsDirtyMock} />);
-    const text = screen.getByText(/Dere har angitt sykmeldingsperiode vist under/i);
+    const text = screen.getByText(/Du har angitt sykmeldingsperiode vist under/i);
     expect(text).toBeInTheDocument();
   });
 

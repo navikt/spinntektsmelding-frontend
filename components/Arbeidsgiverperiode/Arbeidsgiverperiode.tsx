@@ -286,8 +286,8 @@ export default function Arbeidsgiverperiode({
       </Heading3>
       {!skalViseArbeidsgiverperiode && (
         <BodyLong>
-          Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode. Du kan bruke forslaget
-          eller endre til det du mener er riktig periode.{''}
+          Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode. Hvis dette er feil må
+          du endre perioden.{''}
           <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
             Les mer om arbeidsgiverperiode og hvordan denne beregnes.
           </LenkeEksternt>
@@ -296,7 +296,8 @@ export default function Arbeidsgiverperiode({
       {skalViseArbeidsgiverperiode && (
         <BodyLong>
           Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen. Sykemeldingen er en forlengelse av
-          en tidligere sykeperiode. Hvis du mener at det skal være arbeidsgiverperiode kan du endre dette.
+          en tidligere sykeperiode. Hvis du mener dette er feil og at det skal være arbeidsgiverperiode kan du endre
+          dette.
         </BodyLong>
       )}
       {arbeidsgiverperioder?.map((periode, periodeIndex) => (
