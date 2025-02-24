@@ -193,7 +193,7 @@ export default function RefusjonArbeidsgiver({
                   fromDate={foersteMuligeRefusjonOpphoer}
                   onDateChange={addIsDirtyForm(refusjonskravetOpphoererDato)}
                   id={'lus-sluttdato'}
-                  label='Angi siste dag dere krever refusjon for'
+                  label='Angi siste dag du krever refusjon for'
                   error={visFeilmeldingTekst('lus-sluttdato')}
                   defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
                 />

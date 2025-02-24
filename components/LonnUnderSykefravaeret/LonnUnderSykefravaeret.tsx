@@ -84,7 +84,7 @@ export default function LonnUnderSykefravaeret({
         )}
       </div>
       <Alert variant='info'>
-        Husk å kontroller at dere har rapportert inn korrekt kontonummer til Altinn for å motta refusjon fra NAV. Dere
+        Husk å kontroller at du har rapportert inn korrekt kontonummer til Altinn for å motta refusjon fra NAV. Dere
         finner{' '}
         <Link
           href='https://info.altinn.no/skjemaoversikt/arbeids--og-velferdsetaten-nav/bankkontonummer-for-refusjoner-fra-nav-til-arbeidsgiver/'

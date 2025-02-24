@@ -69,7 +69,7 @@ export default function RefusjonArbeidsgiverBelop({
         </span>
       </div>
       <Alert variant='info' className={localStyles.alert_box}>
-        Hvis den ansatt er delvis sykmeldt, skal dere ikke redusere refusjonsbeløpet. NAV baserer seg på full utbetalt
+        Hvis den ansatt er delvis sykmeldt, skal du ikke redusere refusjonsbeløpet. NAV baserer seg på full utbetalt
         lønn og tar hensyn til sykmeldingsgraden i utbetalingen.
       </Alert>
     </>

@@ -384,7 +384,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 <Heading2>Beregnet månedslønn</Heading2>
                 {ukjentInntekt && (
                   <BodyLong>
-                    Vi har ikke data fra den siste inntektsmeldingen, derfor må dere angi beregnet månedslønn manuelt.
+                    Vi har ikke data fra den siste inntektsmeldingen, derfor må du angi beregnet månedslønn manuelt.
                   </BodyLong>
                 )}
                 {!ukjentInntekt && (
@@ -429,7 +429,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 <Skillelinje />
                 <Heading2>Refusjon</Heading2>
                 {kreverIkkeRefusjon && (
-                  <BodyLong>I henhold til siste inntektsmelding hadde dere ikke refusjonskrav.</BodyLong>
+                  <BodyLong>I henhold til siste inntektsmelding hadde du ikke refusjonskrav.</BodyLong>
                 )}
 
                 {!kreverIkkeRefusjon && (
@@ -500,7 +500,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
                           <>
                             <H3Label unPadded topPadded>
-                              Siste dag dere krever refusjon for
+                              Siste dag du krever refusjon for
                             </H3Label>
                             {formatDate(opprinneligRefusjonskravetOpphoerer.opphoersdato)}
                           </>
@@ -537,7 +537,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         {skalRefusjonskravetOpphoere === 'Ja' && (
                           <div className={lokalStyles.beloepperiode}>
                             <DatoVelger
-                              label='Angi siste dag dere krever refusjon for'
+                              label='Angi siste dag du krever refusjon for'
                               defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
                               name='refusjon.refusjonOpphoerer'
                               fromDate={sisteMuligeSluttdatoRefusjon}

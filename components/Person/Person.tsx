@@ -65,7 +65,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
         <>
           <Heading2 size='large'>Inntektsmelding</Heading2>
           <p>
-            For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
+            For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må du bekrefte eller oppdatere
             opplysningene vi har om den ansatte og sykefraværet. Den ansatte kan se inntektsmeldinger som er sendt inn.
           </p>
           <Skillelinje />
