@@ -50,9 +50,8 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
   return (
     <>
       <Heading3>Naturalytelser</Heading3>
-      <BodyLong>Har den ansatte naturalytelser som faller bort under sykefraværet?</BodyLong>
       <Checkbox value='Naturalytelser' onClick={visNaturalytelser} checked={checkedNaturalytelser}>
-        Den ansatte har naturalytelser som faller bort ved sykmeldingen.
+        Har den ansatte naturalytelser som faller bort under sykefraværet?
       </Checkbox>
       {naturalytelser && naturalytelser.length > 0 && (
         <table className={lokalStyles.tablenaturalytelse}>

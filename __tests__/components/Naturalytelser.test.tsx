@@ -38,13 +38,13 @@ describe('Naturalytelser', () => {
       render(<Naturalytelser setIsDirtyForm={setIsDirtyForm} />);
       expect(screen.getByText('Naturalytelser')).toBeInTheDocument();
       expect(
-        screen.getByText('Har den ansatte naturalytelser som faller bort under sykefraværet?')
+        screen.getByLabelText('Har den ansatte naturalytelser som faller bort under sykefraværet?')
       ).toBeInTheDocument();
     });
 
     it('adds a naturalytelse when checkbox is checked', () => {
       render(<Naturalytelser setIsDirtyForm={setIsDirtyForm} />);
-      const checkbox = screen.getByLabelText('Den ansatte har naturalytelser som faller bort ved sykmeldingen.');
+      const checkbox = screen.getByLabelText('Har den ansatte naturalytelser som faller bort under sykefraværet?');
       fireEvent.click(checkbox);
       expect(setIsDirtyForm).toHaveBeenCalledWith(true);
       expect(mockStore.leggTilNaturalytelse).toHaveBeenCalled();
@@ -53,7 +53,7 @@ describe('Naturalytelser', () => {
     it('removes all naturalytelser when checkbox is unchecked', () => {
       mockStore.naturalytelser = [{ id: '1', type: '', bortfallsdato: '', verdi: '' }];
       render(<Naturalytelser setIsDirtyForm={setIsDirtyForm} />);
-      const checkbox = screen.getByLabelText('Den ansatte har naturalytelser som faller bort ved sykmeldingen.');
+      const checkbox = screen.getByLabelText('Har den ansatte naturalytelser som faller bort under sykefraværet?');
       fireEvent.click(checkbox);
       expect(setIsDirtyForm).toHaveBeenCalledWith(true);
       expect(mockStore.slettAlleNaturalytelser).toHaveBeenCalled();
