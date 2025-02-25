@@ -55,7 +55,18 @@
   margin-bottom: 1rem;
 }
 
-.refusjonsbelop > input {
+.refusjonBeloep {
+  min-width: fit-content;
+  align-content: baseline;
+  max-width: 18rem;
+}
+
+.refusjonBeloep > input {
+  max-width: 18rem;
+  max-height: 3rem;
+}
+
+.refusjonBeloep > div {
   max-width: 18rem;
 }
 
