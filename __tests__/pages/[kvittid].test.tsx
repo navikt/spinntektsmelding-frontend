@@ -6,7 +6,7 @@ import Kvittering from '../../pages/kvittering/[kvittid]';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
-import skjemaVariant from '../../config/skjemavariant';
+import forespoerselType from '../../config/forespoerselType';
 import { Opplysningstype } from '../../state/useForespurtDataStore';
 
 // vi.mock('next/router', () => require('next-router-mock'));
@@ -66,7 +66,7 @@ describe('kvittering', () => {
     ];
 
     act(() => {
-      result.current.setPaakrevdeOpplysninger(Object.keys(skjemaVariant) as Array<Opplysningstype>);
+      result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
@@ -90,7 +90,7 @@ describe('kvittering', () => {
     ];
 
     act(() => {
-      result.current.setPaakrevdeOpplysninger([skjemaVariant.inntekt, skjemaVariant.refusjon]);
+      result.current.setPaakrevdeOpplysninger([forespoerselType.inntekt, forespoerselType.refusjon]);
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 

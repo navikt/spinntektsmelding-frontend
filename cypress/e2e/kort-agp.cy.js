@@ -54,7 +54,7 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.findAllByLabelText('Velg begrunnelse for kort arbeidsgiverperiode').select('Arbeidsforholdet er avsluttet');
 
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .findByLabelText('Nei')
       .check();
 

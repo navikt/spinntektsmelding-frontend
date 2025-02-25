@@ -1,7 +1,7 @@
-const skjemaVariant = {
+const forespoerselType = {
   arbeidsgiverperiode: 'arbeidsgiverperiode',
   inntekt: 'inntekt',
   refusjon: 'refusjon'
 } as const;
 
-export default skjemaVariant;
+export default forespoerselType;

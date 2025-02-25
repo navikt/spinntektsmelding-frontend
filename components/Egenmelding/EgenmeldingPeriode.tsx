@@ -15,7 +15,7 @@ interface EgenmeldingPeriodeInterface {
   onSlettRad: () => void;
   disabled?: boolean;
   rad: number;
-  visFeilmeldingsTekst: (feilmelding: string) => string;
+  visFeilmeldingTekst: (feilmelding: string) => string;
 }
 
 export default function EgenmeldingPeriode({
@@ -28,7 +28,7 @@ export default function EgenmeldingPeriode({
   onSlettRad,
   disabled,
   rad,
-  visFeilmeldingsTekst
+  visFeilmeldingTekst
 }: Readonly<EgenmeldingPeriodeInterface>) {
   const rangeChangeHandler = (dateRange: PeriodeParam | undefined) => {
     setEgenmeldingDato(dateRange, periodeId);
@@ -37,13 +37,13 @@ export default function EgenmeldingPeriode({
   if (!kanEndreEgenmeldingPeriode) {
     return (
       <div data-cy='egenmelding'>
-        <div className={styles.datepickerescape}>
+        <div className={styles.datepickerEscape}>
           <TextLabel>Fra</TextLabel>
           <div id={`egenmeldingsperioder[${rad}].fom`} data-cy='egenmelding-fra'>
             {formatDate(egenmeldingsperiode.fom)}
           </div>
         </div>
-        <div className={styles.datepickerescape}>
+        <div className={styles.datepickerEscape}>
           <TextLabel>Til</TextLabel>
           <div id={`egenmeldingsperioder[${rad}].tom`} data-cy='egenmelding-til'>
             {formatDate(egenmeldingsperiode.tom)}
@@ -70,8 +70,8 @@ export default function EgenmeldingPeriode({
         toDate={toDate}
         disabled={disabled}
         defaultMonth={defaultMnd}
-        fomError={visFeilmeldingsTekst(`egenmeldingsperioder[${rad}].fom`)}
-        tomError={visFeilmeldingsTekst(`egenmeldingsperioder[${rad}].tom`)}
+        fomError={visFeilmeldingTekst(`egenmeldingsperioder[${rad}].fom`)}
+        tomError={visFeilmeldingTekst(`egenmeldingsperioder[${rad}].tom`)}
       />
     </div>
   );

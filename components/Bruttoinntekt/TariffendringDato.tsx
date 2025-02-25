@@ -7,7 +7,7 @@ interface TariffendringDatoProps {
   defaultEndringsdato?: Date;
   defaultKjentDato?: Date;
   defaultMonth?: Date;
-  visFeilmeldingsTekst?: (feilmelding: string) => string;
+  visFeilmeldingTekst?: (feilmelding: string) => string;
 }
 
 export default function TariffendringDato({
@@ -16,7 +16,7 @@ export default function TariffendringDato({
   defaultEndringsdato,
   defaultKjentDato,
   defaultMonth,
-  visFeilmeldingsTekst
+  visFeilmeldingTekst
 }: Readonly<TariffendringDatoProps>) {
   const tilDato = new Date();
   return (
@@ -27,7 +27,7 @@ export default function TariffendringDato({
         id='bruttoinntekt-tariffendring-fom'
         defaultSelected={defaultEndringsdato}
         toDate={tilDato}
-        error={visFeilmeldingsTekst ? visFeilmeldingsTekst('bruttoinntekt-tariffendring-fom') : undefined}
+        error={visFeilmeldingTekst ? visFeilmeldingTekst('bruttoinntekt-tariffendring-fom') : undefined}
         defaultMonth={defaultMonth}
       />
 
@@ -37,7 +37,7 @@ export default function TariffendringDato({
         id='bruttoinntekt-tariffendring-kjent'
         defaultSelected={defaultKjentDato}
         toDate={tilDato}
-        error={visFeilmeldingsTekst ? visFeilmeldingsTekst('bruttoinntekt-tariffendring-kjent') : undefined}
+        error={visFeilmeldingTekst ? visFeilmeldingTekst('bruttoinntekt-tariffendring-kjent') : undefined}
         defaultMonth={defaultMonth}
       />
     </div>

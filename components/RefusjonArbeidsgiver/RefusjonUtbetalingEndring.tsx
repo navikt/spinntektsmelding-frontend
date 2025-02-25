@@ -1,4 +1,4 @@
-import { Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { Alert, Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import { ChangeEvent, MouseEvent } from 'react';
 import lokalStyles from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
@@ -31,7 +31,7 @@ export default function RefusjonUtbetalingEndring({
   harRefusjonEndringer,
   harRefusjonEndringerDefault
 }: Readonly<RefusjonUtbetalingEndringProps>) {
-  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
   const oppdaterEndringer = (endringer?: Array<EndringsBeloep>): void => {
     if (onOppdaterEndringer) {
       onOppdaterEndringer(endringer ?? []);
@@ -94,8 +94,8 @@ export default function RefusjonUtbetalingEndring({
       <RadioGroup
         legend='Er det endringer i refusjonsbeløpet i perioden?'
         id={'refusjon.endringer'}
-        className={styles.radiobuttonwrapper}
-        error={visFeilmeldingsTekst('refusjon.endringer')}
+        className={styles.radiobuttonWrapper}
+        error={visFeilmeldingTekst('refusjon.endringer')}
         onChange={changeHarEndringerHandler}
         defaultValue={harRefusjonEndringerDefault}
       >
@@ -110,7 +110,7 @@ export default function RefusjonUtbetalingEndring({
               onChange={(event) => changeBelopHandler(event, key)}
               defaultValue={endring.beloep ?? ''}
               id={`refusjon.refusjonEndringer[${key}].beløp`}
-              error={visFeilmeldingsTekst(`refusjon.refusjonEndringer[${key}].beløp`)}
+              error={visFeilmeldingTekst(`refusjon.refusjonEndringer[${key}].beløp`)}
               className={lokalStyles.endringsboks}
             />
             <Datovelger
@@ -119,7 +119,7 @@ export default function RefusjonUtbetalingEndring({
               onDateChange={(val: Date | undefined) => changeDatoHandler(val, key)}
               id={`refusjon.refusjonEndringer[${key}].dato`}
               label='Dato for endring'
-              error={visFeilmeldingsTekst(`refusjon.refusjonEndringer[${key}].dato`)}
+              error={visFeilmeldingTekst(`refusjon.refusjonEndringer[${key}].dato`)}
               defaultSelected={endring.dato}
             />
             <ButtonSlette
@@ -139,6 +139,10 @@ export default function RefusjonUtbetalingEndring({
           Legg til periode
         </Button>
       )}
+      <Alert variant='info'>
+        Skal arbeidsgiver slutte å forskuttere lønn så kan du sette refusjonen til 0 kr fra den datoen Nav skal ta over
+        utbetalingen til den ansatte.
+      </Alert>
     </>
   );
 }

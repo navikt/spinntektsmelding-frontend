@@ -36,33 +36,44 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
 
+    cy.wait(1000);
+
     cy.findAllByRole('button', { name: 'Endre' }).first().click();
 
-    cy.wait(5000);
+    cy.wait(1000);
 
-    cy.location('pathname', { timeout: 60000 }).should(
-      'equal',
-      '/im-dialog/endring/12345678-3456-5678-2457-123456789012'
-    );
+    cy.location('pathname', { timeout: 60000 }).should('equal', '/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    cy.findByRole('group', {
-      name: 'Stemmer dette med inntekten ved 02.01.2023 (start av nytt sykefravær)?'
-    })
-      .findByLabelText('Nei')
-      .check();
+    // cy.findByRole('group', {
+    //   name: 'Stemmer dette med inntekten ved 02.01.2023 (start av nytt sykefravær)?'
+    // })
+    //   .findByLabelText('Nei')
+    //   .check();
     // cy.findByRole('button', { name: 'Endre' }).click();
 
-    cy.findByLabelText('Månedsinntekt 02.01.2023').invoke('val').should('equal', '65000');
-    cy.findByLabelText('Månedsinntekt 02.01.2023').clear().type('50000');
-
-    cy.findByRole('group', {
-      name: 'Er det endringer i refusjonskravet etter 02.01.2023 (start av nytt sykefravær)?'
+    cy.findAllByRole('button', {
+      name: 'Endre'
     })
-      .findByLabelText('Ja')
-      .check();
+      .eq(1)
+      .click();
+
+    cy.findByLabelText('Månedslønn 02.01.2023')
+      .invoke('val')
+      .then((str) => str.normalize('NFKC').replace(/ /g, ''))
+      .should('equal', '65000,00');
+    cy.findByLabelText('Månedslønn 02.01.2023').clear().type('50000');
+
+    // cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
+    cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
+
+    // cy.findByRole('group', {
+    //   name: 'Er det endringer i refusjonskravet etter 02.01.2023 (start av nytt sykefravær)?'
+    // })
+    //   .findByLabelText('Ja')
+    //   .check();
 
     cy.findByRole('group', {
-      name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+      name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
     })
       .findByLabelText('Ja')
       .check();
@@ -71,10 +82,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
-    cy.findByRole('button', { name: 'Send' }).click();
-
-    cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
-    cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
+    // cy.findByRole('button', { name: 'Send' }).click();
 
     cy.findByRole('group', {
       name: 'Er det endringer i refusjonsbeløpet i perioden?'
@@ -83,23 +91,24 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .check();
 
     // cy.findByRole('group', {
-    //   name: 'Er det endringer i refusjonsbeløpet i perioden?'
+    //   name: 'Opphører refusjonkravet i perioden?'
     // })
     //   .findByLabelText('Nei')
     //   .check();
 
-    cy.findByRole('group', {
-      name: 'Opphører refusjonkravet i perioden?'
-    })
-      .findByLabelText('Ja')
-      .check();
-
-    cy.findByLabelText('Angi siste dag dere krever refusjon for').clear().type('30.09.23');
+    // cy.findByLabelText('Angi siste dag dere krever refusjon for').clear().type('30.09.2023');
+    // cy.findByRole('group', {
+    //   name: 'Er det endringer i refusjonsbeløpet i perioden?'
+    // })
+    //   .findByLabelText('Nei')
+    //   .check();
+    // cy.findByLabelText('Angi siste dag dere krever refusjon for').clear().type('30.09.2023');
     // cy.realPress('Escape');
 
-    cy.findByRole('button', { name: 'Endre' }).click();
+    cy.findAllByRole('button', { name: 'Endre' }).eq(1).click();
 
-    cy.findByLabelText('Oppgi refusjonsbeløpet per måned').clear().type('50000');
+    cy.findByLabelText('Oppgi refusjonsbeløpet per måned').clear();
+    cy.findByLabelText('Oppgi refusjonsbeløpet per måned').type('50000');
     // cy.realPress('Escape');
 
     cy.wait(1000);
@@ -117,11 +126,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           naturalytelser: [],
           endringAarsak: { aarsak: 'Bonus' }
         },
-        refusjon: {
-          beloepPerMaaned: 50000,
-          sluttdato: '2023-09-30',
-          endringer: []
-        },
+        refusjon: { beloepPerMaaned: 50000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
       });
 

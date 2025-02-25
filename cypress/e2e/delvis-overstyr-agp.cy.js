@@ -10,55 +10,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     }).as('kvittering');
   });
 
-  it('No changes and submit', () => {
-    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    cy.intercept('/im-dialog/api/hent-forespoersel', {
-      fixture: '../../mockdata/trenger-delvis-enkel-variant.json'
-    }).as('hent-forespoersel');
-    cy.intercept('/im-dialog/api/innsendingInntektsmelding', {
-      statusCode: 201,
-      body: {
-        name: 'Nothing'
-      }
-    }).as('innsendingInntektsmelding');
-
-    cy.wait('@hent-forespoersel');
-
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .findByLabelText('Nei')
-      .check();
-
-    cy.findAllByLabelText('Telefon innsender').type('12345678');
-
-    cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
-
-    cy.findByRole('button', { name: 'Send' }).click();
-
-    cy.wait('@innsendingInntektsmelding')
-      .its('request.body')
-      .should('deep.equal', {
-        forespoerselId: '12345678-3456-5678-2457-123456789012',
-        agp: null,
-        inntekt: {
-          beloep: 36000,
-          inntektsdato: '2024-12-05',
-          naturalytelser: [],
-          endringAarsak: null
-        },
-        refusjon: null,
-        avsenderTlf: '12345678'
-      });
-
-    cy.location('pathname').should('equal', '/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
-    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
-
-    cy.findAllByText('24.01.2023').should('not.exist');
-
-    cy.get('[data-cy="bestemmendefravaersdag"]')
-      .invoke('text')
-      .should('match', /05.12.2024/);
-  });
-
   it('Changes and submit', () => {
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
     cy.intercept('/im-dialog/api/hent-forespoersel', {
@@ -76,7 +27,16 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByRole('button', {
       name: 'Endre'
     })
-      .eq(1)
+      .eq(0)
+      .click();
+
+    cy.findByLabelText('Fra').type('01.02.2023');
+    cy.findByLabelText('Til').type('16.02.2023');
+
+    cy.findAllByRole('button', {
+      name: 'Endre'
+    })
+      .eq(0)
       .click();
 
     cy.findByLabelText('Månedslønn 05.12.2024')
@@ -84,6 +44,12 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .then((str) => str.normalize('NFKC').replace(/ /g, ''))
       .should('equal', '36000,00');
     cy.findByLabelText('Månedslønn 05.12.2024').clear().type('50000');
+
+    cy.findByRole('group', {
+      name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?'
+    })
+      .findByLabelText('Ja')
+      .check();
 
     cy.findByRole('group', {
       name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
@@ -114,7 +80,16 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .its('request.body')
       .should('deep.equal', {
         forespoerselId: '12345678-3456-5678-2457-123456789012',
-        agp: null,
+        agp: {
+          egenmeldinger: [],
+          perioder: [
+            {
+              fom: '2023-02-01',
+              tom: '2023-02-16'
+            }
+          ],
+          redusertLoennIAgp: null
+        },
         inntekt: {
           beloep: 50000,
           inntektsdato: '2024-12-05',

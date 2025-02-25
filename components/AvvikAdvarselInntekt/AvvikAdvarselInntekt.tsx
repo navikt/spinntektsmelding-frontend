@@ -31,8 +31,8 @@ const AvvikAdvarselInntekt: React.FunctionComponent<AvvikAdvarselInntektProps> =
       {harTidligereInntekt && manglendeEller0FraAmeldingen && (
         <Alert variant='warning' className={lokalStyles.feriealert}>
           Lønnsopplysningene inneholder måneder uten rapportert inntekt. Vi estimerer beregnet månedslønn til et snitt
-          av innrapportert inntekt for de tre siste månedene. Hvis dere ser at det skal være en annen beregnet
-          månedslønn må dere endre dette manuelt.
+          av innrapportert inntekt for de tre siste månedene. Hvis du ser at det skal være en annen beregnet månedslønn
+          må du endre dette manuelt.
         </Alert>
       )}
       {erFeriemaaneder && (

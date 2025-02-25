@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { logger } from '@navikt/next-logger';
 import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 import fetchKvitteringsdata from '../../utils/fetchKvitteringsdata';
@@ -17,8 +17,8 @@ describe('useHentKvitteringsdata', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useKvitteringInit as vi.Mock).mockReturnValue(mockInitState);
-    (useBoundStore as vi.Mock).mockReturnValue({
+    (useKvitteringInit as Mock).mockReturnValue(mockInitState);
+    (useBoundStore as Mock).mockReturnValue({
       __esModule: true,
       default: vi.fn(),
       setSkjemaFeilet: mockSetSkjemaFeilet
@@ -32,14 +32,14 @@ describe('useHentKvitteringsdata', () => {
   });
 
   it('should call fetchKvitteringsdata with correct arguments', async () => {
-    (fetchKvitteringsdata as vi.Mock).mockResolvedValue({ status: 200, data: {} });
+    (fetchKvitteringsdata as Mock).mockResolvedValue({ status: 200, data: {} });
     const hentKvitteringsdata = useHentKvitteringsdata();
     await hentKvitteringsdata('some-path');
     expect(fetchKvitteringsdata).toHaveBeenCalledWith(environment.hentKvitteringUrl, 'some-path');
   });
 
   it.skip('should handle 404 status by setting skjemaFeilet and logging a warning', async () => {
-    (fetchKvitteringsdata as vi.Mock).mockResolvedValue({ status: 404 });
+    (fetchKvitteringsdata as Mock).mockResolvedValue({ status: 404 });
     const hentKvitteringsdata = useHentKvitteringsdata();
     await hentKvitteringsdata('some-path');
     expect(mockSetSkjemaFeilet).toHaveBeenCalled();
@@ -48,7 +48,7 @@ describe('useHentKvitteringsdata', () => {
 
   it('should initialize state with data if skjemadata is defined', async () => {
     const mockData = { some: 'data' };
-    (fetchKvitteringsdata as vi.Mock).mockResolvedValue({ status: 200, data: mockData });
+    (fetchKvitteringsdata as Mock).mockResolvedValue({ status: 200, data: mockData });
     const hentKvitteringsdata = useHentKvitteringsdata();
     await hentKvitteringsdata('some-path');
     expect(mockInitState).toHaveBeenCalledWith(mockData);
@@ -56,7 +56,7 @@ describe('useHentKvitteringsdata', () => {
 
   it.skip('should handle 401 error by redirecting to login page', async () => {
     const mockError = { status: 401 };
-    (fetchKvitteringsdata as vi.Mock).mockRejectedValue(mockError);
+    (fetchKvitteringsdata as Mock).mockRejectedValue(mockError);
     const mockLocationReplace = vi.fn();
     Object.defineProperty(window, 'location', {
       value: { hostname: 'some-hostname', href: 'some-href', replace: mockLocationReplace },
@@ -71,7 +71,7 @@ describe('useHentKvitteringsdata', () => {
 
   it.skip('should handle other errors by setting skjemaFeilet and showing error message', async () => {
     const mockError = { status: 500 };
-    (fetchKvitteringsdata as vi.Mock).mockRejectedValue(mockError);
+    (fetchKvitteringsdata as Mock).mockRejectedValue(mockError);
 
     const hentKvitteringsdata = useHentKvitteringsdata();
     await hentKvitteringsdata('some-path');

@@ -34,7 +34,7 @@ export const InnsendingSchema = z.object({
   refusjon: z.nullable(
     z.object({
       beloepPerMaaned: z
-        .number({ required_error: 'Vennligst angi hvor mye dere refundere per måned' })
+        .number({ required_error: 'Vennligst angi hvor mye du refundere per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
       endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
       sluttdato: z

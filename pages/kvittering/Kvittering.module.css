@@ -27,7 +27,7 @@
   flex-direction: column;
 }
 
-.buttonwrapper {
+.buttonWrapper {
   margin-top: 2rem;
   display: flex;
   justify-content: space-between;
@@ -38,7 +38,7 @@
   gap: 4rem;
 }
 
-.buttonwrapper button {
+.buttonWrapper button {
   min-width: 10rem;
 }
 

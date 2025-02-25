@@ -98,7 +98,7 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
     cy.findAllByLabelText('Ferie til').last().clear().type('07.07.24');
 
     cy.findByRole('group', {
-      name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+      name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
     })
       .findByLabelText('Nei')
       .check();
@@ -215,7 +215,7 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
     cy.findAllByLabelText('Lønnsendring gjelder fra').clear().type('30.06.24');
 
     cy.findByRole('group', {
-      name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+      name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
     })
       .findByLabelText('Nei')
       .check();

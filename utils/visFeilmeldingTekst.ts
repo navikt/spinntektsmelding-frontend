@@ -1,6 +1,6 @@
 import { Feilmelding } from '../components/Feilsammendrag/FeilListe';
 
-export default function visFeilmeldingsTekst(
+export default function visFeilmeldingTekst(
   id: string,
   skalViseFeilmeldinger: boolean,
   feilmeldinger: Feilmelding[] | undefined

@@ -4,8 +4,6 @@ import fetchInntektskjemaForNotifikasjon from '../state/fetchInntektskjemaForNot
 import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
 import { useRouter } from 'next/navigation';
-import { Opplysningstype } from '../state/useForespurtDataStore';
-import foresporselType from '../config/foresporseltype';
 import { logger } from '@navikt/next-logger';
 
 export default function useHentSkjemadata() {
@@ -16,7 +14,6 @@ export default function useHentSkjemadata() {
   ]);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
-  const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const router = useRouter();
 
   return (forespoerselID: string | Array<string>, erEndring: boolean) => {
@@ -31,11 +28,6 @@ export default function useHentSkjemadata() {
             router.replace(`/kvittering/${forespoerselID}`, undefined);
           } else {
             initState(skjemadata);
-            const opplysningstyper = hentPaakrevdOpplysningstyper();
-
-            if (!isOpplysningstype(foresporselType.arbeidsgiverperiode, opplysningstyper)) {
-              router.replace(`/endring/${forespoerselID}`, undefined);
-            }
           }
         })
         .catch((error: any) => {
@@ -45,10 +37,8 @@ export default function useHentSkjemadata() {
             logger.info('Mangler tilgang til å hente skjemadata i useHentSkjemadata', error.status);
             logger.info(error.status, error.message, error.info);
 
-            logger.info('Mangler tilgang til å hente skjemadata i useHentSkjemadata', error.status);
-            logger.info(error.status, error.message, error.info);
-
             window.location.replace(`https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`);
+            return Promise.resolve({});
           }
 
           setSkjemaFeilet();
@@ -64,8 +54,4 @@ export default function useHentSkjemadata() {
       return Promise.resolve({});
     }
   };
-}
-
-function isOpplysningstype(value: string, opplysningstyper: (Opplysningstype | undefined)[]): value is Opplysningstype {
-  return opplysningstyper.includes(value as Opplysningstype);
 }

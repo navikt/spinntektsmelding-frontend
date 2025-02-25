@@ -41,7 +41,7 @@ describe('Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .findByLabelText('Ja')
       .check();
 
@@ -49,9 +49,9 @@ describe('Utfylling og innsending av skjema', () => {
       cy.findByRole('radio', { name: 'Nei' }).click();
     });
 
-    cy.findByRole('group', { name: /Opphører refusjonkravet i perioden?/ }).within(() => {
-      cy.findByRole('radio', { name: 'Nei' }).click();
-    });
+    // cy.findByRole('group', { name: /Opphører refusjonkravet i perioden?/ }).within(() => {
+    //   cy.findByRole('radio', { name: 'Nei' }).click();
+    // });
 
     cy.get('[data-cy="endre-beloep"]').click();
 

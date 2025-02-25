@@ -51,7 +51,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .check();
 
     cy.findByRole('group', {
-      name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+      name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
     })
       .findByLabelText('Nei')
       .check();

@@ -28,7 +28,7 @@ describe('FravaerEnkeltAnsattforhold', () => {
     const tom2 = screen.getByText('15.02.2002');
     expect(tom2).toBeInTheDocument();
 
-    const varsel = screen.getByText('Dere vil motta en separat forespørsel om inntektsmelding for denne perioden.');
+    const varsel = screen.getByText('Du vil motta en separat forespørsel om inntektsmelding for denne perioden.');
     expect(varsel).toBeInTheDocument();
   });
 
@@ -57,7 +57,7 @@ describe('FravaerEnkeltAnsattforhold', () => {
     const tom2 = screen.getByText('15.02.2002');
     expect(tom2).toBeInTheDocument();
 
-    const varsel = screen.queryByText('Dere vil motta en separat forespørsel om inntektsmelding for denne perioden.');
+    const varsel = screen.queryByText('Du vil motta en separat forespørsel om inntektsmelding for denne perioden.');
     expect(varsel).not.toBeInTheDocument();
   });
 });

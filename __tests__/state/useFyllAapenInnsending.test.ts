@@ -12,7 +12,7 @@ import { z } from 'zod';
 import fullInnsendingSchema from '../../schema/fullInnsendingSchema';
 import MottattKvitteringSchema from '../../schema/mottattKvitteringSchema';
 import { Opplysningstype } from '../../state/useForespurtDataStore';
-import skjemaVariant from '../../config/skjemavariant';
+import forespoerselType from '../../config/forespoerselType';
 
 type InnsendingSkjema = z.infer<typeof fullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
@@ -163,7 +163,7 @@ describe('useFyllAapenInnsending', () => {
 
       result.current.refusjonskravetOpphoererStatus('Ja');
       result.current.refusjonskravetOpphoererDato(parseIsoDate('2023-05-20'));
-      result.current.setPaakrevdeOpplysninger(Object.keys(skjemaVariant) as Array<Opplysningstype>);
+      result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
     });
 
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());

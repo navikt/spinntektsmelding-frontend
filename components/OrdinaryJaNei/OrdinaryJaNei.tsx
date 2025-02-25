@@ -22,7 +22,7 @@ export default function OrdinaryJaNei({ legend, name }: Readonly<OrdinaryJaNeiPr
       defaultValue={''}
       rules={{ required: 'Du må svare på dette spørsmålet' }}
       render={({ field }) => (
-        <RadioGroup {...field} legend={legend} error={error} className={styles.radiobuttonwrapper} id={name}>
+        <RadioGroup {...field} legend={legend} error={error} className={styles.radiobuttonWrapper} id={name}>
           <Radio value='Ja' id={field.name + '_ja'}>
             Ja
           </Radio>

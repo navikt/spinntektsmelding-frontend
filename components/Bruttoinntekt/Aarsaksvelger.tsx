@@ -24,7 +24,7 @@ interface AarsaksvelgerProps {
   setEndringAarsakGjelderFra: (dato?: Date) => void;
   setEndringAarsakBleKjent: (dato?: Date) => void;
   setPerioder: (periode?: Array<Periode>) => void;
-  visFeilmeldingsTekst: (feilmelding: string) => string;
+  visFeilmeldingTekst: (feilmelding: string) => string;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
   kanIkkeTilbakestilles?: boolean;
@@ -39,7 +39,7 @@ export default function Aarsaksvelger({
   setEndringAarsakGjelderFra,
   setEndringAarsakBleKjent,
   setPerioder,
-  visFeilmeldingsTekst,
+  visFeilmeldingTekst,
   bestemmendeFravaersdag,
   nyInnsending,
   kanIkkeTilbakestilles
@@ -54,14 +54,14 @@ export default function Aarsaksvelger({
           onChange={changeMaanedsintektHandler}
           defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
           id='inntekt.beregnetInntekt'
-          error={visFeilmeldingsTekst('inntekt.beregnetInntekt')}
+          error={visFeilmeldingTekst('inntekt.beregnetInntekt')}
           className={lokalStyles.bruttoinntektendringsbeloep}
           data-cy='inntekt-beloep-input'
         />
         <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
           <SelectEndringBruttoinntekt
             onChangeBegrunnelse={changeBegrunnelseHandler}
-            error={visFeilmeldingsTekst('bruttoinntekt-endringsaarsak')}
+            error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
             id='bruttoinntekt-endringsaarsak'
             nyInnsending={nyInnsending}
             value={defaultEndringAarsak?.aarsak as string}
@@ -80,7 +80,7 @@ export default function Aarsaksvelger({
             changeTariffKjentDato={setEndringAarsakBleKjent}
             defaultEndringsdato={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             defaultKjentDato={parseIsoDate(defaultEndringAarsak?.bleKjent)}
-            visFeilmeldingsTekst={visFeilmeldingsTekst}
+            visFeilmeldingTekst={visFeilmeldingTekst}
             defaultMonth={bestemmendeFravaersdag}
           />
         </div>
@@ -98,7 +98,7 @@ export default function Aarsaksvelger({
             tomTekst='Ferie til'
             fomIdBase='bruttoinntekt-ful-fom'
             tomIdBase='bruttoinntekt-ful-tom'
-            visFeilmeldingsTekst={visFeilmeldingsTekst}
+            visFeilmeldingTekst={visFeilmeldingTekst}
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
           />
@@ -112,7 +112,7 @@ export default function Aarsaksvelger({
             id='bruttoinntekt-lonnsendring-fom'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
-            error={visFeilmeldingsTekst('bruttoinntekt-lonnsendring-fom')}
+            error={visFeilmeldingTekst('bruttoinntekt-lonnsendring-fom')}
             defaultMonth={bestemmendeFravaersdag}
           />
         </div>
@@ -133,7 +133,7 @@ export default function Aarsaksvelger({
             tomIdBase='bruttoinntekt-permisjon-tom'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            visFeilmeldingsTekst={visFeilmeldingsTekst}
+            visFeilmeldingTekst={visFeilmeldingTekst}
           />
         </div>
       )}
@@ -153,7 +153,7 @@ export default function Aarsaksvelger({
             tomIdBase='bruttoinntekt-permittering-tom'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            visFeilmeldingsTekst={visFeilmeldingsTekst}
+            visFeilmeldingTekst={visFeilmeldingTekst}
           />
         </div>
       )}
@@ -197,7 +197,7 @@ export default function Aarsaksvelger({
             tomIdBase='bruttoinntekt-sykefravaerperioder-tom'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            visFeilmeldingsTekst={visFeilmeldingsTekst}
+            visFeilmeldingTekst={visFeilmeldingTekst}
           />
         </div>
       )}
