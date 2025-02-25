@@ -1,4 +1,4 @@
-import { BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
+import { Button, Checkbox, TextField } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
