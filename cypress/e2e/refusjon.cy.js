@@ -46,7 +46,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .findByLabelText('Ja')
       .check();
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .findByLabelText('Ja')
       .check();
 
@@ -54,9 +54,9 @@ describe('Utfylling og innsending av skjema', () => {
       cy.findByRole('radio', { name: 'Nei' }).click();
     });
 
-    cy.findByRole('group', { name: /Opphører refusjonkravet i perioden?/ }).within(() => {
-      cy.findByRole('radio', { name: 'Nei' }).click();
-    });
+    // cy.findByRole('group', { name: /Opphører refusjonkravet i perioden?/ }).within(() => {
+    //   cy.findByRole('radio', { name: 'Nei' }).click();
+    // });
 
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 

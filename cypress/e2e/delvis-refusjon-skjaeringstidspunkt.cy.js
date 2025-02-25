@@ -39,7 +39,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.wait('@hent-forespoersel');
 
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .findByLabelText('Nei')
       .check();
 
@@ -123,7 +123,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
     cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
 
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .findByLabelText('Ja')
       .check();
 
@@ -137,7 +137,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Nei').check();
 
-    cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
+    // cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
     cy.findByRole('button', { name: 'Send' }).click();
 

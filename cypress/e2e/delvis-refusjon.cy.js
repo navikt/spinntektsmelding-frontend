@@ -45,7 +45,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     //   .findByLabelText('Ja')
     //   .check();
 
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .findByLabelText('Nei')
       .check();
 
@@ -121,13 +121,13 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findAllByLabelText('Lønnsendring gjelder fra').clear().type('30.06.23');
 
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .findByLabelText('Ja')
       .check();
 
     cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Nei').check();
 
-    cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
+    // cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
     cy.findByRole('button', { name: 'Send' }).click();
 
@@ -206,13 +206,13 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByLabelText('Ferie til').clear().type('05.07.23');
     cy.findAllByLabelText('Ferie fra').clear().type('30.06.23');
 
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .findByLabelText('Ja')
       .check();
 
     cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Nei').check();
 
-    cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
+    // cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
     cy.findByRole('button', { name: 'Send' }).click();
 
