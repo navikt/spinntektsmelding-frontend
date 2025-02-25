@@ -1,6 +1,6 @@
 import useErrorRespons, { ErrorResponse } from '../../utils/useErrorResponse';
 import useBoundStore from '../../state/useBoundStore';
-import { vi, Mock } from 'vitest';
+import { vi } from 'vitest';
 
 vi.mock('../../state/useBoundStore');
 

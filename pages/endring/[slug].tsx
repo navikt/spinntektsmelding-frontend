@@ -521,7 +521,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   <>
                     {!aapentManglendeData && <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>}
                     <OrdinaryJaNei
-                      legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+                      legend='Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
                       name='refusjon.kreverRefusjon'
                     />
 

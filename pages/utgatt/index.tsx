@@ -11,7 +11,7 @@ const Utgatt = () => {
               <Heading level='1' size='large' spacing>
                 Saken er utgått
               </Heading>
-              <BodyShort>NAV har ikke lenger behov for at du sender inn opplysninger i akkurat denne saken.</BodyShort>
+              <BodyShort>Nav har ikke lenger behov for at du sender inn opplysninger i akkurat denne saken.</BodyShort>
               <List>
                 <List.Item>
                   <Link href={environment.saksoversiktUrl}>Gå til saksoversikten for å finne dine saker.</Link>

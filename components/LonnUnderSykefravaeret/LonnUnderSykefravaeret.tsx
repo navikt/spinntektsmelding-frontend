@@ -16,7 +16,6 @@ interface LonnUnderSykefravaeretProps {
 
 export default function LonnUnderSykefravaeret({
   loenn,
-  refusjonskravetOpphoerer,
   harRefusjonEndringer,
   refusjonEndringer
 }: Readonly<LonnUnderSykefravaeretProps>) {
@@ -24,22 +23,18 @@ export default function LonnUnderSykefravaeret({
   if (loenn.status === 'Nei')
     return (
       <>
-        <div className={lokalStyles.uthevet}>
-          Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?
-        </div>
+        <div className={lokalStyles.uthevet}>Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?</div>
         <div className={lokalStyle.wrapper}>Nei</div>
       </>
     );
   return (
     <>
-      <div className={lokalStyles.uthevet}>
-        Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?
-      </div>
-      <div>
+      <div className={lokalStyles.uthevet}>Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?</div>
+      <div className={lokalStyle.oppsummering}>
         <BodyShort>Ja</BodyShort>
         {loenn && loenn.status === 'Ja' && (
           <>
-            <div className={lokalStyle.uthevet}>Refusjonsbeløp per måned (NAV vil refundere opp til 6G av årslønn)</div>
+            <div className={lokalStyle.uthevet}>Refusjonsbeløp per måned (Nav vil refundere opp til 6G av årslønn)</div>
             <BodyShort className={lokalStyle.svartekster}>{formatCurrency(loenn.beloep)} kr/måned</BodyShort>
           </>
         )}
@@ -71,20 +66,9 @@ export default function LonnUnderSykefravaeret({
             )}
           </>
         )}
-        <div className={lokalStyle.uthevet}>Opphører refusjonkravet i perioden</div>
-        <BodyShort className={lokalStyle.svartekster}>{refusjonskravetOpphoerer.status}</BodyShort>
-
-        {refusjonskravetOpphoerer && refusjonskravetOpphoerer.status === 'Ja' && (
-          <>
-            <div className={lokalStyle.uthevet}>Opphørsdato</div>
-            <BodyShort className={lokalStyle.svartekster}>
-              {formatDate(refusjonskravetOpphoerer.opphoersdato)}
-            </BodyShort>
-          </>
-        )}
       </div>
       <Alert variant='info'>
-        Husk å kontroller at du har rapportert inn korrekt kontonummer til Altinn for å motta refusjon fra NAV. Dere
+        Husk å kontroller at du har rapportert inn korrekt kontonummer til Altinn for å motta refusjon fra Nav. Dere
         finner{' '}
         <Link
           href='https://info.altinn.no/skjemaoversikt/arbeids--og-velferdsetaten-nav/bankkontonummer-for-refusjoner-fra-nav-til-arbeidsgiver/'

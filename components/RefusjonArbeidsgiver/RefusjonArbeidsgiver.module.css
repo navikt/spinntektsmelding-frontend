@@ -38,6 +38,7 @@
 
 .legtilbutton {
   margin-top: 1rem;
+  margin-bottom: 2rem;
 }
 
 .sletteknapp {
@@ -65,10 +66,17 @@
   display: block;
 }
 
+.radiobuttonWrapper > div {
+  gap: 1rem;
+}
+
 .radiobuttonInnerWrapper > div,
 .radiobuttonWrapper > div {
   display: flex;
-  gap: 1rem;
+}
+
+.radiobuttonInnerWrapper > div {
+  margin-top: var(--a-spacing-2) !important;
 }
 
 .radiobuttonInnerWrapper,

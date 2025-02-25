@@ -1,6 +1,5 @@
-import { BodyLong, Box, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
-import styles from '../../styles/Home.module.css';
 
 import useBoundStore from '../../state/useBoundStore';
 import SelectBegrunnelse from './SelectBegrunnelse';
@@ -8,7 +7,6 @@ import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
-import Datovelger from '../Datovelger';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { addDays } from 'date-fns';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
@@ -24,7 +22,6 @@ export default function RefusjonArbeidsgiver({
 }: Readonly<RefusjonArbeidsgiverProps>) {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
-  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
 
   const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
@@ -39,18 +36,34 @@ export default function RefusjonArbeidsgiver({
   const beloepArbeidsgiverBetalerISykefravaeret = useBoundStore(
     (state) => state.beloepArbeidsgiverBetalerISykefravaeret
   );
-  const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
 
   const setBeloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
     (state) => state.setBeloepUtbetaltUnderArbeidsgiverperioden
   );
   const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
   const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
-  const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+
+  const fravaer = fravaersperioder ? fravaersperioder.concat(egenmeldingsperioder ?? []) : [];
+
+  const fravaerSortert = fravaer.toSorted((a, b) => {
+    if (!a.fom || !b.fom) {
+      return 0;
+    }
+    if (a.fom > b.fom) {
+      return 1;
+    } else if (a.fom < b.fom) {
+      return -1;
+    }
+    return 0;
+  });
+
+  const foersteFravaersdag = fravaerSortert[0]?.fom;
 
   const sisteArbeidsgiverperiode =
     arbeidsgiverperioder && arbeidsgiverperioder.length > 0
@@ -75,13 +88,14 @@ export default function RefusjonArbeidsgiver({
   };
   const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
+
   const foersteMuligeRefusjonOpphoer = sisteDagIArbeidsgiverperioden
     ? addDays(sisteDagIArbeidsgiverperioden, 1)
-    : new Date();
+    : foersteFravaersdag;
 
   const betalerArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
     ? 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
-    : 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?';
+    : 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?';
 
   const betalerArbeidsgiverFullLonnLegend = arbeidsgiverperiodeKort
     ? 'Betaler arbeidsgiver ut full lønn de første 16 dagene?'
@@ -150,8 +164,8 @@ export default function RefusjonArbeidsgiver({
           defaultValue={lonnISykefravaeret?.status}
         >
           <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>
-            Etter arbeidsgiverperioden kan arbeidsgiver velge mellom to alternativer. Betale lønn til den sykemeldte og
-            få dette refundert fra Nav, eller at Nav betaler sykepengene direkte til den sykemeldte.{' '}
+            Arbeidsgiver kan velge mellom to alternativer. Betale lønn til den sykemeldte og få dette refundert fra Nav,
+            eller at Nav betaler sykepengene direkte til den sykemeldte. Dette gjelder ikke under arbeidsgiverperiode.{' '}
             <LenkeEksternt href='https://www.nav.no/arbeidsgiver/forskuttere-sykepenger'>
               Les mer om refusjon
             </LenkeEksternt>
@@ -173,37 +187,13 @@ export default function RefusjonArbeidsgiver({
 
             <RefusjonUtbetalingEndring
               endringer={refusjonEndringer || []}
-              maxDate={refusjonskravetOpphoerer?.opphoersdato}
+              // maxDate={refusjonskravetOpphoerer?.opphoersdato}
               minDate={foersteMuligeRefusjonOpphoer}
               onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
               onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
               harRefusjonEndringer={harRefusjonEndringer}
               harRefusjonEndringerDefault={harRefusjonEndringer}
             />
-
-            <RadioGroup
-              legend='Opphører refusjonkravet i perioden?'
-              className={localStyles.radiobuttonWrapper}
-              id={'lus-sluttdato-velg'}
-              error={visFeilmeldingTekst('lus-sluttdato-velg')}
-              onChange={addIsDirtyForm(refusjonskravetOpphoererStatus)}
-              defaultValue={refusjonskravetOpphoerer?.status}
-            >
-              <Radio value='Ja'>Ja</Radio>
-              <Radio value='Nei'>Nei</Radio>
-            </RadioGroup>
-            {refusjonskravetOpphoerer?.status && refusjonskravetOpphoerer?.status === 'Ja' && (
-              <div className={styles.datepickerEscape}>
-                <Datovelger
-                  fromDate={foersteMuligeRefusjonOpphoer}
-                  onDateChange={addIsDirtyForm(refusjonskravetOpphoererDato)}
-                  id={'lus-sluttdato'}
-                  label='Angi siste dag du krever refusjon for'
-                  error={visFeilmeldingTekst('lus-sluttdato')}
-                  defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
-                />
-              </div>
-            )}
           </>
         )}
       </div>

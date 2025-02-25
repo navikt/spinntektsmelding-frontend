@@ -1,4 +1,4 @@
-import { Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { Alert, Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import { ChangeEvent, MouseEvent } from 'react';
 import lokalStyles from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
@@ -139,6 +139,10 @@ export default function RefusjonUtbetalingEndring({
           Legg til periode
         </Button>
       )}
+      <Alert variant='info'>
+        Skal arbeidsgiver slutte å forskuttere lønn så kan du sette refusjonen til 0 kr fra den datoen Nav skal ta over
+        utbetalingen til den ansatte.
+      </Alert>
     </>
   );
 }
