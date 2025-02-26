@@ -74,9 +74,7 @@ export default function RefusjonArbeidsgiver({
     ? addDays(sisteDagIArbeidsgiverperioden, 1)
     : foersteFravaersdag;
 
-  const betalerArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
-    ? 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
-    : 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?';
+  const betalerArbeidsgiverEtterAgpLegend = 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?';
 
   const betalerArbeidsgiverFullLonnLegend = arbeidsgiverperiodeKort
     ? 'Betaler arbeidsgiver ut full lønn de første 16 dagene?'
