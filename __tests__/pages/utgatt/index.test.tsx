@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Utgatt from '../../../pages/utgatt';
 import environment from '../../../config/environment';
-import _ from 'cypress/types/lodash';
 
 vi.spyOn(environment, 'saksoversiktUrl', 'get').mockReturnValue('https://mocked.nav.no');
 vi.spyOn(environment, 'minSideArbeidsgiver', 'get').mockReturnValue('https://mocked.nav.no');
