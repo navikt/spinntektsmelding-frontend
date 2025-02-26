@@ -119,6 +119,10 @@
   max-width: 18rem;
 }
 
+.alertBox {
+  margin-bottom: 1.5rem;
+}
+
 @media screen and (max-width: 500px) {
   .beloepswrapper,
   .beloepperiode,
