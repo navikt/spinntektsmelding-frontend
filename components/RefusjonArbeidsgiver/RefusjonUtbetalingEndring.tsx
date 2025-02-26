@@ -111,7 +111,7 @@ export default function RefusjonUtbetalingEndring({
           {endringer.map((endring, key) => (
             <div key={endring.dato ? endring.dato.toUTCString() : key} className={lokalStyles.beloepperiode}>
               <TextField
-                label='Endret refusjon/måned'
+                label='Endret beløp/måned'
                 onChange={(event) => changeBelopHandler(event, key)}
                 defaultValue={endring.beloep ?? ''}
                 id={`refusjon.refusjonEndringer[${key}].beløp`}

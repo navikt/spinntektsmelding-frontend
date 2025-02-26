@@ -39,7 +39,7 @@ export default function RefusjonArbeidsgiverBelop({
         </BodyLong>
         <div className={localStyles.beloepswrapper}>
           <div className={localStyles.beloep} data-cy='refusjon-arbeidsgiver-beloep'>
-            {formatCurrency(bruttoinntekt)}&nbsp;kr
+            {formatCurrency(bruttoinntekt)}&nbsp;kr/måned
           </div>
           <ButtonEndre
             className={localStyles.endre_knapp}

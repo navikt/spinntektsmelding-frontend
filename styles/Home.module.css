@@ -155,7 +155,7 @@
     background-color: var(--a-bg-subtle);
     padding: 0.5rem;
     box-shadow: 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
-    margin: 0.25rem 0;
+    margin: 1rem 0;
   }
 
   .datepickerEscape {

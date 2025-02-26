@@ -42,7 +42,7 @@ export default function RefusjonArbeidsgiverBeloep({
         <TextLabel>{refusjonTilArbeidsgiverEtterAgpLegend}</TextLabel>
         <div className={localStyles.beloepswrapper}>
           <div className={localStyles.beloep} data-cy='refusjon-arbeidsgiver-beloep'>
-            {formatCurrency(refusjonPrMnd)}&nbsp;kr
+            {formatCurrency(refusjonPrMnd)}&nbsp;kr/måned
           </div>
           <ButtonEndre
             className={localStyles.endre_knapp}
