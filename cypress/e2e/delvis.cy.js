@@ -102,7 +102,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Ja').check();
 
-    cy.findByLabelText('Endret refusjon/måned').type('45000');
+    cy.findByLabelText('Endret beløp/måned').type('45000');
 
     cy.findByLabelText('Dato for endring').type('30.09.2025');
 

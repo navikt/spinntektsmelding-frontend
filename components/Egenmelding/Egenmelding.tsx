@@ -230,7 +230,3 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
     </div>
   );
 }
-
-function daysBetween(fom: Date | undefined, tom: Date | undefined) {
-  throw new Error('Function not implemented.');
-}
