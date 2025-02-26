@@ -10,6 +10,7 @@ import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { addDays } from 'date-fns';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
+import sorterFomStigende from '../../utils/sorterFomStigende';
 
 interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -51,33 +52,13 @@ export default function RefusjonArbeidsgiver({
 
   const fravaer = fravaersperioder ? fravaersperioder.concat(egenmeldingsperioder ?? []) : [];
 
-  const fravaerSortert = fravaer.toSorted((a, b) => {
-    if (!a.fom || !b.fom) {
-      return 0;
-    }
-    if (a.fom > b.fom) {
-      return 1;
-    } else if (a.fom < b.fom) {
-      return -1;
-    }
-    return 0;
-  });
+  const fravaerSortert = fravaer.toSorted(sorterFomStigende);
 
   const foersteFravaersdag = fravaerSortert[0]?.fom;
 
   const sisteArbeidsgiverperiode =
     arbeidsgiverperioder && arbeidsgiverperioder.length > 0
-      ? arbeidsgiverperioder?.toSorted((a, b) => {
-          if (!a.fom || !b.fom) {
-            return 0;
-          }
-          if (a.fom > b.fom) {
-            return -1;
-          } else if (a.fom < b.fom) {
-            return 1;
-          }
-          return 0;
-        })
+      ? arbeidsgiverperioder?.toSorted(sorterFomStigende)
       : arbeidsgiverperioder;
 
   const addIsDirtyForm = (fn: (param: any) => void) => {

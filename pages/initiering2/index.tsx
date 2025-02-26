@@ -38,6 +38,7 @@ import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbei
 import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
 import parseIsoDate from '../../utils/parseIsoDate';
+import sorterFomStigende from '../../utils/sorterFomStigende';
 
 type SykepengePeriode = {
   id: string;
@@ -211,9 +212,7 @@ const Initiering2: NextPage = () => {
   const valgteSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
     finnSorterteUnikePerioder(
       sykepengePeriodeId
-        ? sykepengePerioder
-            .filter((periode) => sykepengePeriodeId.includes(periode.id))
-            .toSorted((a, b) => compareAsc(a.fom, b.fom))
+        ? sykepengePerioder.filter((periode) => sykepengePeriodeId.includes(periode.id)).toSorted(sorterFomStigende)
         : []
     )
   );

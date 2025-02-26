@@ -10,7 +10,7 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag, { tidPeriode } from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
-import { compareAsc } from 'date-fns';
+import sorterFomStigende from '../utils/sorterFomStigende';
 
 export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;
@@ -164,9 +164,7 @@ function oppdaterOgRekalkulerInntekt(
 ) {
   const fPerioder = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
   if (fPerioder) {
-    const agp = finnArbeidsgiverperiode(
-      fPerioder.toSorted((a, b) => compareAsc(a.fom || new Date(), b.fom || new Date()))
-    );
+    const agp = finnArbeidsgiverperiode(fPerioder.toSorted(sorterFomStigende));
     state.arbeidsgiverperioder = agp;
     const bestemmende = finnBestemmendeFravaersdag(
       fPerioder,
@@ -208,8 +206,6 @@ export function finnFravaersperioder<T extends tidPeriode>(
     return [];
   }
 
-  const fPerioder = perioder
-    ?.filter((periode) => periode.fom && periode.tom)
-    .toSorted((a, b) => compareAsc(a.fom || new Date(), b.fom || new Date()));
+  const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom).toSorted(sorterFomStigende);
   return fPerioder;
 }

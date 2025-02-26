@@ -1,9 +1,10 @@
-import { compareDesc, differenceInDays, formatISO9075, isBefore } from 'date-fns';
+import { differenceInDays, formatISO9075, isBefore } from 'date-fns';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
 import { finnSammenhengendePeriode } from './finnArbeidsgiverperiode';
 import { TDateISODate } from '../state/MottattData';
 import sorterFomStigende from './sorterFomStigende';
+import sorterFomSynkende from './sorterFomSynkende';
 
 export type tidPeriode = {
   fom?: Date;
@@ -102,7 +103,7 @@ function finnBestemmendeFravaersdag<T extends tidPeriode>(
 
   const sisteDagArbeidsgiverperiode =
     arbeidsgiverperiode && arbeidsgiverperiode.length > 0
-      ? arbeidsgiverperiode?.toSorted((a, b) => compareDesc(a.fom || new Date(), b.fom || new Date()))[0].tom
+      ? arbeidsgiverperiode?.toSorted(sorterFomSynkende)[0].tom
       : undefined;
 
   let perioderEtterAgp = [];

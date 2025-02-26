@@ -14,6 +14,7 @@ import EgenmeldingLoader from './EgenmeldingLoader';
 import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import PeriodeType from '../../config/PeriodeType';
+import sorterFomStigende from '../../utils/sorterFomStigende';
 
 interface EgenmeldingProps {
   lasterData?: boolean;
@@ -109,9 +110,8 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
       }, 0) ?? 0;
 
     let egenmeldingDag =
-      egenmeldingsperioder
-        ?.filter((periode) => periode.fom && periode.tom)
-        .toSorted((a, b) => (isBefore(a.fom || new Date(), b.fom || new Date()) ? 1 : -1))?.[0]?.tom || new Date();
+      egenmeldingsperioder?.filter((periode) => periode.fom && periode.tom).toSorted(sorterFomStigende)?.[0]?.tom ||
+      new Date();
     egenmeldingDag = addDays(
       egenmeldingDag,
       totaltAntallEgenmeldingsdagerDager < 16 ? 17 - totaltAntallEgenmeldingsdagerDager : 16
