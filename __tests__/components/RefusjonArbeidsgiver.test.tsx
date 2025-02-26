@@ -65,15 +65,6 @@ describe('RefusjonArbeidsgiver', () => {
     expect(mockSetIsDirtyForm).toHaveBeenCalledWith(true);
   });
 
-  it('should call setIsDirtyForm when date is changed', () => {
-    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} />);
-
-    const datePicker = screen.getByLabelText('Angi siste dag du krever refusjon for');
-    fireEvent.change(datePicker, { target: { value: '2023-10-10' } });
-
-    expect(mockSetIsDirtyForm).toHaveBeenCalledWith(true);
-  });
-
   it('should show a warning when sykefravaer betviles', () => {
     vi.clearAllMocks();
     (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
@@ -110,11 +101,6 @@ describe('RefusjonArbeidsgiver', () => {
     );
     render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} />);
 
-    const datePicker = screen.getByLabelText('Angi siste dag du krever refusjon for');
-    fireEvent.change(datePicker, { target: { value: '2023-10-10' } });
-
-    expect(screen.getByText(/Innen 14 dager må du sende et brev til NAV/)).toBeInTheDocument();
-
-    expect(mockSetIsDirtyForm).toHaveBeenCalledWith(true);
+    expect(screen.getByText(/Innen 14 dager må du sende et brev til Nav/)).toBeInTheDocument();
   });
 });

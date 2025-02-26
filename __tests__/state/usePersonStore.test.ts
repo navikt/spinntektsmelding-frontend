@@ -72,10 +72,10 @@ describe('usePersonStore', () => {
     });
 
     act(() => {
-      result.current.setInnsenderNavn('NAV eksempelnavn');
+      result.current.setInnsenderNavn('Nav eksempelnavn');
     });
 
-    expect(result.current.innsenderNavn).toBe('NAV eksempelnavn');
+    expect(result.current.innsenderNavn).toBe('Nav eksempelnavn');
   });
 
   it('should set the innsender telefon.', () => {

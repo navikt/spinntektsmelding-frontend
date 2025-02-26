@@ -22,7 +22,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
     expect(screen.getByText(/500 000,00/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        /Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør NAV. NAV vil refundere opp til 6G av årslønn./
+        /Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør Nav. Nav vil refundere opp til 6G av årslønn./
       )
     ).toBeInTheDocument();
   });
@@ -41,7 +41,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
     expect(screen.getByText(/500 000,00/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør NAV. NAV vil refundere opp til 6G av årslønn.'
+        'Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør Nav. Nav vil refundere opp til 6G av årslønn.'
       )
     ).toBeInTheDocument();
   });

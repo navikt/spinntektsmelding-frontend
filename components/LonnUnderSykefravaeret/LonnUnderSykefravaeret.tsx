@@ -16,6 +16,7 @@ interface LonnUnderSykefravaeretProps {
 
 export default function LonnUnderSykefravaeret({
   loenn,
+  refusjonskravetOpphoerer,
   harRefusjonEndringer,
   refusjonEndringer
 }: Readonly<LonnUnderSykefravaeretProps>) {
@@ -64,6 +65,16 @@ export default function LonnUnderSykefravaeret({
                 </tbody>
               </table>
             )}
+          </>
+        )}
+        {refusjonskravetOpphoerer && refusjonskravetOpphoerer.status === 'Ja' && (
+          <>
+            <div className={lokalStyle.uthevet}>Opphører refusjonkravet i perioden</div>
+            <BodyShort className={lokalStyle.svartekster}>{refusjonskravetOpphoerer.status}</BodyShort>
+            <div className={lokalStyle.uthevet}>Opphørsdato</div>
+            <BodyShort className={lokalStyle.svartekster}>
+              {formatDate(refusjonskravetOpphoerer.opphoersdato)}
+            </BodyShort>
           </>
         )}
       </div>
