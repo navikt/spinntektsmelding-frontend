@@ -126,7 +126,8 @@ export default function useFyllInnsending() {
               verdiBeloep: verdiEllerNull(ytelse.verdi)
             }))
           : [],
-        endringAarsak: endringAarsakParsed
+        endringAarsak: endringAarsakParsed,
+        endringsaarsaker: [endringAarsakParsed]
       },
       refusjon:
         lonnISykefravaeret?.status === 'Ja'
