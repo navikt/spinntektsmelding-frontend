@@ -52,7 +52,7 @@ export default function EndringRefusjon({ minDate, maxDate }: Readonly<EndringRe
         fields.map((endring, key) => (
           <div key={endring.id} className={lokalStyles.beloepperiode}>
             <TextField
-              label='Endret refusjon/måned'
+              label='Endret beløp/måned'
               error={errors.refusjon?.refusjonEndringer?.[key]?.beloep?.message as string}
               className={lokalStyles.endringsboks}
               {...register(`refusjon.refusjonEndringer.${key}.beloep` as const, {

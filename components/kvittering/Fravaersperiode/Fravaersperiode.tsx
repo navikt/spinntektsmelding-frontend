@@ -1,4 +1,4 @@
-import skjemaVariant from '../../../config/skjemavariant';
+import forespoerselType from '../../../config/forespoerselType';
 import { Periode } from '../../../state/state';
 import Heading2 from '../../Heading2/Heading2';
 import Heading3 from '../../Heading3';
@@ -19,7 +19,7 @@ export default function Fravaersperiode({
 }: Readonly<FravaersperiodeProps>) {
   const cx = classNames.bind(lokalStyles);
   const classNameHeadingSykmelding = cx({
-    sykfravaerstyper: paakrevdeOpplysninger?.includes(skjemaVariant.arbeidsgiverperiode)
+    sykfravaerstyper: paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode)
   });
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder

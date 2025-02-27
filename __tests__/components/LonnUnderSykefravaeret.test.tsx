@@ -25,7 +25,7 @@ describe('LonnUnderSykefravaeret', () => {
     // const { container } = render(<LonnUnderSykefravaeret loenn={loenn} refusjonEndringer={refusjonEndringer} />);
     // { dato: parseIsoDate('2022-03-03'), beloep: 432 } />);
 
-    const HeadingTitle = screen.getByText(/NAV vil refundere opp/);
+    const HeadingTitle = screen.getByText(/Nav vil refundere opp/);
 
     expect(HeadingTitle).toBeInTheDocument();
 
@@ -52,7 +52,7 @@ describe('LonnUnderSykefravaeret', () => {
       />
     );
 
-    const HeadingTitle = screen.getByText(/NAV vil refundere opp/);
+    const HeadingTitle = screen.getByText(/Nav vil refundere opp/);
 
     expect(HeadingTitle).toBeInTheDocument();
 

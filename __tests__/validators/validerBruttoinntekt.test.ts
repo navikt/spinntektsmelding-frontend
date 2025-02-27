@@ -3,6 +3,7 @@ import { CompleteState } from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import validerBruttoinntekt from '../../validators/validerBruttoinntekt';
 import timezone_mock from 'timezone-mock';
+import { describe } from 'vitest';
 
 timezone_mock.register('UTC');
 

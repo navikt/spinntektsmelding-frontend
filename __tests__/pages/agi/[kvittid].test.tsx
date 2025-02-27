@@ -37,7 +37,12 @@ describe('Kvittering', () => {
 
   it('renders a title text', () => {
     render(
-      <Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvittering={kvitteringsdata} dataFraBackend={true} />
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={kvitteringsdata}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
     );
 
     const buttonTitle = screen.getByRole('button', {

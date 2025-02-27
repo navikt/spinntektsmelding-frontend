@@ -14,6 +14,7 @@ import EgenmeldingLoader from './EgenmeldingLoader';
 import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import PeriodeType from '../../config/PeriodeType';
+import sorterFomStigende from '../../utils/sorterFomStigende';
 
 interface EgenmeldingProps {
   lasterData?: boolean;
@@ -26,7 +27,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
 
-  const forsteFravaersdag = useMemo(
+  const foersteFravaersdag = useMemo(
     () =>
       !fravaersperioder
         ? new Date()
@@ -46,7 +47,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
   const setEndreEgenmelding = useBoundStore((state) => state.setEndreEgenmelding);
   const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
   const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
-  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
   const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
 
@@ -104,14 +105,13 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
           return acc;
         }
 
-        const dagerIPeriode = differenceInCalendarDays(periode.tom, periode.fom) + 1;
+        const dagerIPeriode = differenceInCalendarDays(periode.tom!, periode.fom!) + 1;
         return acc + dagerIPeriode;
       }, 0) ?? 0;
 
     let egenmeldingDag =
-      egenmeldingsperioder
-        ?.filter((periode) => periode.fom && periode.tom)
-        .toSorted((a, b) => (isBefore(a.fom || new Date(), b.fom || new Date()) ? 1 : -1))?.[0]?.tom || new Date();
+      egenmeldingsperioder?.filter((periode) => periode.fom && periode.tom).toSorted(sorterFomStigende)?.[0]?.tom ||
+      new Date();
     egenmeldingDag = addDays(
       egenmeldingDag,
       totaltAntallEgenmeldingsdagerDager < 16 ? 17 - totaltAntallEgenmeldingsdagerDager : 16
@@ -120,7 +120,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
     const bareFomPeriode = egenmeldingsperioder?.find((periode) => periode.fom && !periode.tom);
 
     if (bareFomPeriode) {
-      egenmeldingDag = addDays(bareFomPeriode.fom, 15 - totaltAntallEgenmeldingsdagerDager);
+      egenmeldingDag = addDays(bareFomPeriode.fom!, 15 - totaltAntallEgenmeldingsdagerDager);
     }
 
     const sortertArbeidsgiverperiode = arbeidsgiverperioder
@@ -130,7 +130,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
       ? sortertArbeidsgiverperiode?.[0]?.tom
       : new Date();
 
-    return isBefore(agpDag, egenmeldingDag) ? agpDag : egenmeldingDag;
+    return isBefore(agpDag!, egenmeldingDag) ? agpDag : egenmeldingDag;
   }, [arbeidsgiverperioder, egenmeldingsperioder]);
 
   const ikkeEgenmeldingPerioder = !egenmeldingsperioder || egenmeldingsperioder.length === 0;
@@ -143,15 +143,15 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
       <BodyLong>
         {!selvbestemtInnsending && (
           <>
-            Hvis den ansatte har oppgitt at egenmeldingsdager ble benyttet i forkant av sykmeldingen, er disse
-            forhåndsutfylt her og må kontrolleres av dere. Alle egenmeldingsperioder som har mindre enn 16 dagers
-            mellomrom før sykmeldingen skal inkluderes. Dere kan endre og legge til egenmeldingsperioder.
+            Hvis den ansatte har oppgitt egenmeldingsdager i forkant av sykmeldingen, er disse forhåndsutfylt og må
+            kontrolleres av deg. Alle egenmeldingsperioder som har mindre enn 16 dagers mellomrom før sykmeldingen skal
+            inkluderes.
           </>
         )}
         {selvbestemtInnsending && (
           <>
-            Angi om den ansatte har brukt egenmeldingsdager i forkant til sykmeldingen. Alle egenmeldingsperioder med
-            mindre enn 16 dagers mellomrom før sykmeldingen skal inkluderes. Dere kan endre og legge til
+            Oppgi om den ansatte har brukt egenmeldingsdager i forkant til sykmeldingen. Alle egenmeldingsperioder med
+            mindre enn 16 dagers mellomrom før sykmeldingen skal inkluderes. Du kan endre og legge til
             egenmeldingsperioder.
           </>
         )}
@@ -174,13 +174,13 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
                 egenmeldingsperiode={egenmeldingPeriode}
                 kanEndreEgenmeldingPeriode={periodeKanEndres}
                 setEgenmeldingDato={setEgenmeldingDatofelt}
-                // toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
-                toDate={sisteGyldigeEgenmeldingDato}
+                // toDate={foersteFravaersdag ? subDays(foersteFravaersdag, 1) : new Date()}
+                toDate={sisteGyldigeEgenmeldingDato!}
                 kanSlettes={!!(egenmeldingPeriode.fom || egenmeldingPeriode.tom || index !== 0)}
                 onSlettRad={() => clickSlettEgenmeldingsperiode(egenmeldingPeriode.id)}
                 disabled={endretArbeidsgiverperiode}
                 rad={index}
-                visFeilmeldingsTekst={visFeilmeldingsTekst}
+                visFeilmeldingTekst={visFeilmeldingTekst}
               />
             ))}
           {!lasterData && ikkeEgenmeldingPerioder && (
@@ -190,18 +190,18 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
               egenmeldingsperiode={{ id: PeriodeType.NY_PERIODE }}
               kanEndreEgenmeldingPeriode={true}
               setEgenmeldingDato={setEgenmeldingDatofelt}
-              toDate={forsteFravaersdag ? subDays(forsteFravaersdag, 1) : new Date()}
+              toDate={foersteFravaersdag ? subDays(foersteFravaersdag, 1) : new Date()}
               kanSlettes={false}
               onSlettRad={() => {}}
               disabled={endretArbeidsgiverperiode}
               rad={0}
-              visFeilmeldingsTekst={visFeilmeldingsTekst}
+              visFeilmeldingTekst={visFeilmeldingTekst}
             />
           )}
         </div>
 
         {visFeilmelding('egenmeldingsperioder-feil') && (
-          <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingsTekst('egenmeldingsperioder-feil')}</Feilmelding>
+          <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}
         {!kanEndreEgenmeldingPeriode && skjemastatus !== SkjemaStatus.SELVBESTEMT && (
           <div className={localStyles.endresykemeldingknapper}>
@@ -229,8 +229,4 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
       </div>
     </div>
   );
-}
-
-function daysBetween(fom: Date | undefined, tom: Date | undefined) {
-  throw new Error('Function not implemented.');
 }

@@ -26,7 +26,7 @@
   justify-content: space-between;
 }
 
-.datepickerescape {
+.datepickerEscape {
   display: inline-block;
   margin-right: 2rem;
 }
@@ -36,7 +36,7 @@
   margin-bottom: var(--a-spacing-2);
 }
 
-.datepickerescape input {
+.datepickerEscape input {
   margin-top: 0 !important;
 }
 
@@ -66,7 +66,7 @@
   display: inline-block;
 }
 
-.sendbutton {
+.sendButton {
   min-width: 10rem;
 }
 
@@ -94,12 +94,12 @@
   margin: 1rem 0;
 }
 
-.radiobuttonwrapper > div {
+.radiobuttonWrapper > div {
   display: flex;
   gap: 2rem;
 }
 
-.radiobuttonwrapper {
+.radiobuttonWrapper {
   margin: var(--a-spacing-5) 0;
 }
 
@@ -113,7 +113,7 @@
   margin-bottom: var(--a-spacing-2);
 }
 
-.confirmationpanel {
+.confirmationPanel {
   margin-top: 1.5rem;
 }
 
@@ -122,11 +122,11 @@
   margin-bottom: auto;
 }
 
-.outerbuttonwrapper {
+.outerButtonWrapper {
   margin-top: 2rem;
 }
 
-.buttonwrapper {
+.buttonWrapper {
   display: flex;
   gap: 4rem;
 }
@@ -142,7 +142,7 @@
     flex-direction: column;
   }
 
-  .datepickerescape {
+  .datepickerEscape {
     width: 50%;
   }
 }
@@ -155,10 +155,10 @@
     background-color: var(--a-bg-subtle);
     padding: 0.5rem;
     box-shadow: 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
-    margin: 0.25rem 0;
+    margin: 1rem 0;
   }
 
-  .datepickerescape {
+  .datepickerEscape {
     width: 100%;
   }
 }

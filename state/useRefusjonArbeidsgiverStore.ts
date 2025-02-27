@@ -40,6 +40,7 @@ export interface RefusjonArbeidsgiverState {
 const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], RefusjonArbeidsgiverState> = (set, get) => ({
   fullLonnIArbeidsgiverPerioden: undefined,
   lonnISykefravaeret: undefined,
+  refusjonskravetOpphoerer: { status: 'Nei' },
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo | undefined) =>
     set(
       produce((state) => {

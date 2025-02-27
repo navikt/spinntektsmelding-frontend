@@ -22,7 +22,7 @@ export function leggTilFeilmelding(state: any, felt: string, melding: string) {
 export interface FeilmeldingerState {
   skalViseFeilmeldinger: boolean;
   feilmeldinger: Array<ValiderTekster> | [];
-  visFeilmeldingsTekst: (feilmelding: string) => string;
+  visFeilmeldingTekst: (feilmelding: string) => string;
   visFeilmelding: (feilmelding: string | undefined) => boolean;
   leggTilFeilmelding: (felt: string, melding: string) => void;
   slettFeilmelding: (felt: string) => void;
@@ -34,7 +34,7 @@ export interface FeilmeldingerState {
 const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerState> = (set, get) => ({
   skalViseFeilmeldinger: false,
   feilmeldinger: [],
-  visFeilmeldingsTekst: (feltnavn: string) => {
+  visFeilmeldingTekst: (feltnavn: string) => {
     if (!get().skalViseFeilmeldinger) {
       return '';
     }

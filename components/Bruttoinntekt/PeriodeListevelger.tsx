@@ -14,7 +14,7 @@ interface PeriodeListevelgerProps {
   tomIdBase: string;
   defaultMonth?: Date;
   toDate?: Date;
-  visFeilmeldingsTekst?: (feilmelding: string) => string;
+  visFeilmeldingTekst?: (feilmelding: string) => string;
 }
 
 export default function PeriodeListevelger({
@@ -26,7 +26,7 @@ export default function PeriodeListevelger({
   tomIdBase,
   defaultMonth,
   toDate,
-  visFeilmeldingsTekst
+  visFeilmeldingTekst
 }: Readonly<PeriodeListevelgerProps>) {
   const onRangeChange = (datoer: PeriodeParam | undefined, index: string) => {
     const uppdatedRange = defaultRange?.map((periode) => {
@@ -74,8 +74,8 @@ export default function PeriodeListevelger({
           kanSlettes={index !== 0}
           periodeId={range.id}
           onSlettRad={slettRad}
-          fomError={visFeilmeldingsTekst ? visFeilmeldingsTekst(`${fomIdBase}-${range.id}`) : undefined}
-          tomError={visFeilmeldingsTekst ? visFeilmeldingsTekst(`${tomIdBase}-${range.id}`) : undefined}
+          fomError={visFeilmeldingTekst ? visFeilmeldingTekst(`${fomIdBase}-${range.id}`) : undefined}
+          tomError={visFeilmeldingTekst ? visFeilmeldingTekst(`${tomIdBase}-${range.id}`) : undefined}
           defaultMonth={defaultMonth}
           toDate={toDate}
         />

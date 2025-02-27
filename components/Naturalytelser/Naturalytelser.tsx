@@ -1,4 +1,4 @@
-import { BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
+import { Button, Checkbox, TextField } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
@@ -21,7 +21,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
   const setNaturalytelseVerdi = useBoundStore((state) => state.setNaturalytelseVerdi);
   const slettNaturalytelse = useBoundStore((state) => state.slettNaturalytelse);
   const slettAlleNaturalytelser = useBoundStore((state) => state.slettAlleNaturalytelser);
-  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
 
   const visNaturalytelser = (event: React.MouseEvent<HTMLInputElement>) => {
     if (event.currentTarget.checked === true) {
@@ -49,13 +49,9 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
 
   return (
     <>
-      <Heading3>Eventuelle naturalytelser</Heading3>
-      <BodyLong>
-        Har den ansatte naturalytelser som faller bort ved sykmelding, skal disse oppgis her. Hvis den ansatte beholder
-        eventuelle naturalytelser, så trenger dere ikke oppgi noe.
-      </BodyLong>
+      <Heading3>Naturalytelser</Heading3>
       <Checkbox value='Naturalytelser' onClick={visNaturalytelser} checked={checkedNaturalytelser}>
-        Den ansatte har naturalytelser som faller bort ved sykmeldingen.
+        Har den ansatte naturalytelser som faller bort under sykefraværet?
       </Checkbox>
       {naturalytelser && naturalytelser.length > 0 && (
         <table className={lokalStyles.tablenaturalytelse}>
@@ -76,7 +72,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
                       onChangeYtelse={(event) => setNaturalytelseType(element.id, event.target.value)}
                       elementId={element.id}
                       defaultValue={element.type}
-                      error={visFeilmeldingsTekst('naturalytelse-type-' + element.id)}
+                      error={visFeilmeldingTekst('naturalytelse-type-' + element.id)}
                     />
                   </td>
 
@@ -85,7 +81,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
                       naturalytelseId={element.id}
                       setNaturalytelseBortfallsdato={setNaturalytelseBortfallsdato}
                       defaultValue={element.bortfallsdato}
-                      error={visFeilmeldingsTekst('naturalytelse-dato-' + element.id)}
+                      error={visFeilmeldingTekst('naturalytelse-dato-' + element.id)}
                     />
                   </td>
                   <td>
@@ -94,7 +90,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
                       className={styles.fnr}
                       onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
                       defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
-                      error={visFeilmeldingsTekst('naturalytelse-beloep-' + element.id)}
+                      error={visFeilmeldingTekst('naturalytelse-beloep-' + element.id)}
                     ></TextField>
                   </td>
                   <td>

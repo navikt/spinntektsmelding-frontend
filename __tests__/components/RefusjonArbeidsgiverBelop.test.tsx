@@ -5,7 +5,7 @@ import { vi, expect } from 'vitest';
 describe('RefusjonArbeidsgiverBelop', () => {
   const bruttoinntekt = 500000;
   const onOppdaterBelop = vi.fn();
-  const visFeilmeldingsTekst = vi.fn();
+  const visFeilmeldingTekst = vi.fn();
   const arbeidsgiverperiodeDisabled = false;
 
   it('should render the component with the correct props', () => {
@@ -13,7 +13,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
       />
     );
@@ -22,7 +22,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
     expect(screen.getByText(/500 000,00/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        /Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør NAV. NAV vil refundere opp til 6G av årslønn./
+        /Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør Nav. Nav vil refundere opp til 6G av årslønn./
       )
     ).toBeInTheDocument();
   });
@@ -32,7 +32,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={true}
       />
     );
@@ -41,7 +41,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
     expect(screen.getByText(/500 000,00/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør NAV. NAV vil refundere opp til 6G av årslønn.'
+        'Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør Nav. Nav vil refundere opp til 6G av årslønn.'
       )
     ).toBeInTheDocument();
   });
@@ -51,7 +51,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
       />
     );
@@ -64,7 +64,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
       />
     );
@@ -79,7 +79,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingsTekst={visFeilmeldingsTekst}
+        visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
       />
     );

@@ -384,7 +384,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 <Heading2>Beregnet månedslønn</Heading2>
                 {ukjentInntekt && (
                   <BodyLong>
-                    Vi har ikke data fra den siste inntektsmeldingen, derfor må dere angi beregnet månedslønn manuelt.
+                    Vi har ikke data fra den siste inntektsmeldingen, derfor må du angi beregnet månedslønn manuelt.
                   </BodyLong>
                 )}
                 {!ukjentInntekt && (
@@ -429,7 +429,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 <Skillelinje />
                 <Heading2>Refusjon</Heading2>
                 {kreverIkkeRefusjon && (
-                  <BodyLong>I henhold til siste inntektsmelding hadde dere ikke refusjonskrav.</BodyLong>
+                  <BodyLong>I henhold til siste inntektsmelding hadde du ikke refusjonskrav.</BodyLong>
                 )}
 
                 {!kreverIkkeRefusjon && (
@@ -500,7 +500,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         {opprinneligRefusjonskravetOpphoerer?.status === 'Ja' && (
                           <>
                             <H3Label unPadded topPadded>
-                              Siste dag dere krever refusjon for
+                              Siste dag du krever refusjon for
                             </H3Label>
                             {formatDate(opprinneligRefusjonskravetOpphoerer.opphoersdato)}
                           </>
@@ -521,7 +521,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   <>
                     {!aapentManglendeData && <Heading2>Angi de refusjonskravene som har blitt endret.</Heading2>}
                     <OrdinaryJaNei
-                      legend='Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?'
+                      legend='Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'
                       name='refusjon.kreverRefusjon'
                     />
 
@@ -537,7 +537,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                         {skalRefusjonskravetOpphoere === 'Ja' && (
                           <div className={lokalStyles.beloepperiode}>
                             <DatoVelger
-                              label='Angi siste dag dere krever refusjon for'
+                              label='Angi siste dag du krever refusjon for'
                               defaultSelected={refusjonskravetOpphoerer?.opphoersdato}
                               name='refusjon.refusjonOpphoerer'
                               fromDate={sisteMuligeSluttdatoRefusjon}
@@ -550,7 +550,7 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                 )}
 
                 <ConfirmationPanel
-                  className={styles.confirmationpanel}
+                  className={styles.confirmationPanel}
                   label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
                   id='bekreft-opplysninger'
                   error={errors.opplysningerBekreftet?.message as string}
@@ -560,9 +560,9 @@ const Endring: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> 
                   skalViseFeilmeldinger={mappedeFeilmeldinger.length > 0}
                   feilmeldinger={mappedeFeilmeldinger ?? []}
                 />
-                <div className={styles.outerbuttonwrapper}>
-                  <div className={styles.buttonwrapper}>
-                    <Button className={styles.sendbutton} loading={senderInn}>
+                <div className={styles.outerButtonWrapper}>
+                  <div className={styles.buttonWrapper}>
+                    <Button className={styles.sendButton} loading={senderInn}>
                       Send
                     </Button>
 

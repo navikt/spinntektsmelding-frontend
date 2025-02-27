@@ -93,7 +93,7 @@ describe('RefusjonUtbetalingEndring', () => {
       ></RefusjonUtbetalingEndring>
     );
 
-    const Input = screen.getByLabelText(/Endret refusjon/i);
+    const Input = screen.getByLabelText(/Endret beløp\/måned/i);
 
     fireEvent.change(Input, {
       target: { value: '1234' }

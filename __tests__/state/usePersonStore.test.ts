@@ -1,5 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
-import { cleanup } from '@testing-library/react';
+import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
 import testFnr from '../../mockdata/testFnr';
@@ -72,10 +71,10 @@ describe('usePersonStore', () => {
     });
 
     act(() => {
-      result.current.setInnsenderNavn('NAV eksempelnavn');
+      result.current.setInnsenderNavn('Nav eksempelnavn');
     });
 
-    expect(result.current.innsenderNavn).toBe('NAV eksempelnavn');
+    expect(result.current.innsenderNavn).toBe('Nav eksempelnavn');
   });
 
   it('should set the innsender telefon.', () => {

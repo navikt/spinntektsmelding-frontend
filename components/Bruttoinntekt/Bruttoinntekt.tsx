@@ -10,7 +10,6 @@ import TidligereInntekt from './TidligereInntekt';
 import ButtonEndre from '../ButtonEndre';
 import formatDate from '../../utils/formatDate';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
-import LesMer from '../LesMer';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
@@ -20,7 +19,7 @@ interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
   setIsDirtyForm: (dirty: boolean) => void;
   sbBruttoinntekt?: number;
-  sbTidligereinntekt?: Array<HistoriskInntekt>;
+  sbTidligereInntekt?: Array<HistoriskInntekt>;
   erSelvbestemt?: boolean;
 }
 
@@ -28,7 +27,7 @@ export default function Bruttoinntekt({
   bestemmendeFravaersdag,
   setIsDirtyForm,
   sbBruttoinntekt,
-  sbTidligereinntekt,
+  sbTidligereInntekt,
   erSelvbestemt
 }: Readonly<BruttoinntektProps>) {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
@@ -40,7 +39,7 @@ export default function Bruttoinntekt({
   ]);
   const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
-  const visFeilmeldingsTekst = useBoundStore((state) => state.visFeilmeldingsTekst);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
   const setPerioder = useBoundStore((state) => state.setPerioder);
   const setEndringAarsakGjelderFra = useBoundStore((state) => state.setEndringAarsakGjelderFra);
   const setEndringAarsakBleKjent = useBoundStore((state) => state.setEndringAarsakBleKjent);
@@ -96,24 +95,12 @@ export default function Bruttoinntekt({
     setEndreMaanedsinntekt(true);
   };
 
-  const clickLesMerBeregnetMaanedslonn = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    logEvent(readMoreOpen ? 'readmore lukket' : 'readmore åpnet', {
-      tittel: 'Les mer beregnet månedsinntekt',
-      component: amplitudeComponent
-    });
-
-    setReadMoreOpen(!readMoreOpen);
-  };
-
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringAarsak?.aarsak;
-  const [readMoreOpen, setReadMoreOpen] = useState<boolean>(false);
 
   const gjennomsnittligInntekt = erSelvbestemt
     ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
     : bruttoinntekt?.bruttoInntekt;
-  const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereinntekt : tidligereinntekt;
+  const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereInntekt : tidligereinntekt;
 
   const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.length > 0;
 
@@ -129,35 +116,32 @@ export default function Bruttoinntekt({
   return (
     <>
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
-      <LesMer header='Informasjon om beregnet månedslønn' open={readMoreOpen} onClick={clickLesMerBeregnetMaanedslonn}>
+      <BodyLong spacing={true}>
         Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert til
-        a-ordningen i de 3 siste kalendermånedene før sykefraværet startet.{' '}
-        <LenkeEksternt
-          href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'
-          isHidden={!readMoreOpen}
-        >
-          Les mer om beregning av månedslønn.
+        a-ordningen i de tre siste kalendermånedene før sykefraværet startet. Les mer om{' '}
+        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
+          beregning av månedslønn
         </LenkeEksternt>
-      </LesMer>
+        .
+      </BodyLong>
       {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
         <Alert variant='info'>
           Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedslønn selv eller
           forsøke igjen senere.
         </Alert>
       )}
-
       {harTidligereInntekt && (
         <>
-          <BodyLong>Følgende lønnsopplysninger er hentet fra A-meldingen:</BodyLong>
+          <BodyLong>
+            Vi må vite beregnet månedslønn for {formatDate(bestemmendeFravaersdag)}. Følgende lønnsopplysninger er
+            hentet fra A-ordningen:
+          </BodyLong>
           <TidligereInntekt tidligereinntekt={sisteTreMndTidligereinntekt} henterData={henterData} />
         </>
       )}
       <AvvikAdvarselInntekt tidligereInntekter={sisteTreMndTidligereinntekt} />
       {!endringAvBelop && !erBlanktSkjema && (
-        <TextLabel className={lokalStyles.tbmargin}>
-          Med utgangspunkt i {formatDate(bestemmendeFravaersdag)} gir disse lønnsopplysningene en estimert beregnet
-          månedslønn på
-        </TextLabel>
+        <TextLabel className={lokalStyles.tbmargin}>Dette gir en beregnet månedslønn på:</TextLabel>
       )}
       <div className={lokalStyles.beloepwrapper}>
         {!endringAvBelop && !erBlanktSkjema && (
@@ -181,7 +165,7 @@ export default function Bruttoinntekt({
             setEndringAarsakGjelderFra={addIsDirtyForm(setEndringAarsakGjelderFra)}
             setEndringAarsakBleKjent={addIsDirtyForm(setEndringAarsakBleKjent)}
             setPerioder={addIsDirtyForm(setPerioder)}
-            visFeilmeldingsTekst={visFeilmeldingsTekst}
+            visFeilmeldingTekst={visFeilmeldingTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}
             clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
@@ -192,12 +176,8 @@ export default function Bruttoinntekt({
       <BodyShort className={lokalStyles.bruttoinntektBelopBeskrivelse}>Stemmer dette?</BodyShort>
       <BodyLong>
         Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i arbeidstid,
-        hatt ubetalt fri eller har andre endringer i lønn må dette korrigeres. Overtid skal ikke inkluderes i beregnet
-        månedslønn. Beregningen er gjort etter{' '}
-        <LenkeEksternt href='https://lovdata.no/nav/folketrygdloven/kap8/%C2%A78-28'>
-          folketrygdloven $8-28
-        </LenkeEksternt>
-        .
+        hatt ubetalt fri eller har andre endringer i lønn må dette regnes med. Overtid skal ikke inkluderes i beregnet
+        månedslønn.
       </BodyLong>
     </>
   );

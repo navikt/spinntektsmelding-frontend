@@ -7,7 +7,7 @@ import MottattKvitteringSchema, {
   kvitteringNavNoSchema
 } from '../schema/mottattKvitteringSchema';
 
-import skjemaVariant from '../config/skjemavariant';
+import forespoerselType from '../config/forespoerselType';
 import { konverterBegrunnelseFullLonnIArbeidsgiverperiode } from '../utils/konverterBegrunnelseFullLonnIArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from './useEgenmeldingStore';
@@ -216,8 +216,8 @@ export default function useKvitteringInit() {
 function finnPakrevdeOpplysninger(jsonData: KvitteringNavNoSchema) {
   const paakrevdeOpplysninger: Array<Opplysningstype> = [];
 
-  if (jsonData.skjema.agp) paakrevdeOpplysninger.push(skjemaVariant.arbeidsgiverperiode as Opplysningstype);
-  if (jsonData.skjema.inntekt) paakrevdeOpplysninger.push(skjemaVariant.inntekt as Opplysningstype);
-  if (jsonData.skjema.refusjon) paakrevdeOpplysninger.push(skjemaVariant.refusjon as Opplysningstype);
+  if (jsonData.skjema.agp) paakrevdeOpplysninger.push(forespoerselType.arbeidsgiverperiode as Opplysningstype);
+  if (jsonData.skjema.inntekt) paakrevdeOpplysninger.push(forespoerselType.inntekt as Opplysningstype);
+  if (jsonData.skjema.refusjon) paakrevdeOpplysninger.push(forespoerselType.refusjon as Opplysningstype);
   return paakrevdeOpplysninger;
 }

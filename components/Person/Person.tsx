@@ -23,7 +23,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
     setInnsenderTelefon,
     feilHentingAvPersondata,
     feilHentingAvArbeidsgiverdata,
-    visFeilmeldingsTekst
+    visFeilmeldingTekst
   ] = useBoundStore(
     (state) => [
       state.navn,
@@ -35,7 +35,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
       state.setInnsenderTelefon,
       state.feilHentingAvPersondata,
       state.feilHentingAvArbeidsgiverdata,
-      state.visFeilmeldingsTekst
+      state.visFeilmeldingTekst
     ],
     shallow
   );
@@ -65,9 +65,8 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
         <>
           <Heading2 size='large'>Inntektsmelding</Heading2>
           <p>
-            For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må dere bekrefte eller oppdatere
-            opplysningene vi har om den ansatte og sykefraværet. Vi gjør dere oppmerksom på at den ansatte vil få
-            tilgang til å se innsendt informasjon etter personopplysningslovens artikkel 15 og forvaltningsloven § 18.
+            For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må du bekrefte eller oppdatere
+            opplysningene vi har om den ansatte og sykefraværet. Den ansatte kan se inntektsmeldinger som er sendt inn.
           </p>
           <Skillelinje />
           {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
@@ -146,7 +145,7 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
                   defaultValue={innsenderTelefonNr}
                   onChange={changeTlfNr}
                   data-cy='innsendertlf'
-                  error={visFeilmeldingsTekst('telefon')}
+                  error={visFeilmeldingTekst('telefon')}
                   id='telefon'
                   readOnly={!skjemadataErLastet}
                 />

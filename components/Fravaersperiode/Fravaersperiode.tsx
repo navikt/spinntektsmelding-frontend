@@ -35,21 +35,7 @@ export default function Fravaersperiode({
 
   return (
     <>
-      <Heading3>Sykmelding</Heading3>
-      <p>
-        {!selvbestemtInnsending && (
-          <>
-            I følge sykmeldingen var den ansatte syk i perioden som er ferdig utfylt. Sykmeldingsperioden brukes sammen
-            med eventuelle egenmeldinger til å beregne arbeidsgiverperioden.
-          </>
-        )}
-        {selvbestemtInnsending && (
-          <>
-            Dere har angitt sykmeldingsperiode vist under. Hvis dere har angitt feil periode eller vil legge til flere
-            sykmeldingsperioder, må dere opprette dette skjema igjen.
-          </>
-        )}
-      </p>
+      <Heading3>Sykmeldingsperiode</Heading3>
 
       {lasterData && <EgenmeldingLoader />}
       {!lasterData && (

@@ -111,14 +111,12 @@ describe('Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden?' })
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .findByLabelText('Nei')
       .check();
 
     // It should display an alert about the sykemelding that is not covered by the inntektsmelding
-    cy.findAllByText('Dere vil motta en separat forespørsel om inntektsmelding for denne perioden.').should(
-      'be.visible'
-    );
+    cy.findAllByText('Du vil motta en separat forespørsel om inntektsmelding for denne perioden.').should('be.visible');
 
     cy.findByRole('checkbox', {
       name: 'Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'

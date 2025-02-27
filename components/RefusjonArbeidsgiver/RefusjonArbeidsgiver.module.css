@@ -13,20 +13,12 @@
   margin-bottom: auto;
 }
 
-.refusjonsbeloep > input {
-  max-width: 18rem;
-}
-
 .selectbegrunnelse > div {
   height: 48px;
 }
 
-.selectbegrunnelse > label {
-  height: 48px;
-}
-
 .beloepperiode,
-.wraputbetaling {
+.wrapperUtbetaling {
   display: flex;
   flex-direction: row;
   gap: 2rem;
@@ -36,16 +28,27 @@
   margin-bottom: 1rem;
 }
 
+.beloepperiode > :nth-child(2) {
+  max-width: 10rem;
+}
+
+.beloepperiode input {
+  max-height: 3rem;
+}
+
 .legtilbutton {
   margin-top: 1rem;
+  margin-bottom: 2rem;
 }
 
 .sletteknapp {
   margin-top: 1.5rem;
+  max-height: 4rem;
 }
 
 .endringsboks {
   max-width: 12rem;
+  align-content: baseline;
 }
 
 .alert_box {
@@ -61,10 +64,69 @@
   margin-bottom: auto;
 }
 
+.radiobuttonDescriptionWrapper {
+  display: block;
+}
+
+.radiobuttonWrapper > div {
+  gap: 1rem;
+}
+
+.radiobuttonInnerWrapper {
+  margin-top: 0;
+}
+
+.radiobuttonInnerWrapper > div,
+.radiobuttonWrapper > div {
+  display: flex;
+}
+
+.radiobuttonInnerWrapper > div {
+  margin-top: var(--a-spacing-2) !important;
+  flex-direction: column;
+}
+
+.radiobuttonWrapper {
+  margin: var(--a-spacing-5) 0;
+}
+
+.radiobuttonButtonWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.wrapperUtbetaling {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.refusjonBeloep {
+  min-width: fit-content;
+  align-content: baseline;
+  max-width: 18rem;
+}
+
+.refusjonBeloep > input {
+  max-width: 18rem;
+  max-height: 3rem;
+}
+
+.refusjonBeloep > div {
+  max-width: 18rem;
+}
+
+.alertBox {
+  margin-bottom: 1.5rem;
+}
+
 @media screen and (max-width: 500px) {
   .beloepswrapper,
   .beloepperiode,
-  .wraputbetaling {
+  .wrapperUtbetaling {
     flex-direction: column;
   }
 

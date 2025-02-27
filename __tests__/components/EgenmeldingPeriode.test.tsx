@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import userEvent from '@testing-library/user-event';
 
 import EgenmeldingPeriode from '../../components/Egenmelding/EgenmeldingPeriode';
 import { vi } from 'vitest';
@@ -19,7 +18,7 @@ describe('EgenmeldingPeriode', () => {
         onSlettRad={vi.fn()}
         disabled={false}
         rad={1}
-        visFeilmeldingsTekst={mockFn}
+        visFeilmeldingTekst={mockFn}
       />
     );
 
@@ -47,7 +46,7 @@ describe('EgenmeldingPeriode', () => {
         onSlettRad={vi.fn()}
         disabled={false}
         rad={1}
-        visFeilmeldingsTekst={mockFn}
+        visFeilmeldingTekst={mockFn}
       />
     );
 

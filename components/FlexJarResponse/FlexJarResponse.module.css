@@ -25,7 +25,7 @@
   line-height: 2.5rem;
 }
 
-.buttonwrapper {
+.buttonWrapper {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;

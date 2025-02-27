@@ -10,6 +10,8 @@ import validerInntektsmelding from './validerInntektsmelding';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { z } from 'zod';
 import responseBackendError from '../schema/responseBackendError';
+import { Opplysningstype } from '../state/useForespurtDataStore';
+import forespoerselType from '../config/forespoerselType';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -25,7 +27,7 @@ export default function useSendInnSkjema(
 
   return async (
     opplysningerBekreftet: boolean,
-    kunInntektOgRefusjon: boolean,
+    forespurteOpplysningstyper: Opplysningstype[],
     pathSlug: string,
     isDirtyForm: boolean
   ) => {
@@ -33,7 +35,7 @@ export default function useSendInnSkjema(
       tittel: 'Har trykket send',
       component: amplitudeComponent
     });
-
+    const kunInntektOgRefusjon = !forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     if (!isDirtyForm) {
       logEvent('skjema fullført', {
         tittel: 'Innsending uten endringer i skjema',
@@ -71,7 +73,7 @@ export default function useSendInnSkjema(
     } else {
       type FullInnsending = z.infer<typeof fullInnsendingSchema>;
 
-      const skjemaData: FullInnsending = fyllInnsending(opplysningerBekreftet, pathSlug);
+      const skjemaData: FullInnsending = fyllInnsending(opplysningerBekreftet, pathSlug, forespurteOpplysningstyper);
 
       const validerteData = fullInnsendingSchema.safeParse(skjemaData);
 

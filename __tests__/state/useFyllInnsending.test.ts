@@ -64,7 +64,11 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(false);
+      innsending = fyllInnsending(false, '8d50ef20-37b5-4829-ad83-56219e70b375', [
+        'arbeidsgiverperiode',
+        'inntekt',
+        'refusjon'
+      ]);
     });
 
     if (innsending) {
@@ -102,7 +106,11 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema = {} as InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(false, '8d50ef20-37b5-4829-ad83-56219e70b375');
+      innsending = fyllInnsending(false, '8d50ef20-37b5-4829-ad83-56219e70b375', [
+        'arbeidsgiverperiode',
+        'inntekt',
+        'refusjon'
+      ]);
     });
 
     if (innsending) {
