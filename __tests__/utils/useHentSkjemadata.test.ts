@@ -1,53 +1,57 @@
 import useHentSkjemadata from '../../utils/useHentSkjemadata';
-// import { vi.mocked } from 'ts-vi/utils';
 import fetchInntektskjemaForNotifikasjon from '../../state/fetchInntektskjemaForNotifikasjon';
-import useStateInit from '../../state/useStateInit';
-import { useRouter } from 'next/router';
 import { vi, Mock } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
+import { useRouter } from 'next/navigation';
 
 vi.mock('../../state/fetchInntektskjemaForNotifikasjon');
 vi.mock('../../state/useStateInit');
-vi.mock('next/router', () => vi.importActual('next-router-mock'));
-vi.mock('../../state/useBoundStore');
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn()
+}));
+vi.mock('../../state/useBoundStore', () => ({
+  __esModule: true,
+  default: vi.fn(),
+  useBoundStore: vi.fn()
+}));
 
-const mockUseBoundStore = vi.mocked(useBoundStore);
+const mockInitState = vi.fn();
+vi.mock('../../state/useStateInit', () => ({
+  default: () => mockInitState,
+  __esModule: true,
+  useStateInit: () => mockInitState
+}));
 
-describe.skip('useHentSkjemadata', () => {
-  const mockInitState = vi.fn();
+describe('useHentSkjemadata', () => {
   const mockLeggTilFeilmelding = vi.fn();
   const mockSetSkalViseFeilmeldinger = vi.fn();
   const mockSetSkjemaFeilet = vi.fn();
   const mockHentPaakrevdOpplysningstyper = vi.fn(() => ['Arbeidsgiverperiode']);
   const mockSlettFeilmelding = vi.fn();
+  const mockRouterReplace = vi.fn();
+
+  const mockStore = {
+    leggTilFeilmelding: mockLeggTilFeilmelding,
+    slettFeilmelding: mockSlettFeilmelding,
+    setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger,
+    setSkjemaFeilet: mockSetSkjemaFeilet,
+    hentPaakrevdOpplysningstyper: mockHentPaakrevdOpplysningstyper
+  };
 
   beforeEach(() => {
-    (useStateInit as Mock).mockReturnValue(mockInitState);
-    // useHentSkjemadata.mockReturnValue(async (pathSlug: string | string[]) => {
-    //   return {
-    //     hentPaakrevdOpplysningstyper: mockHentPaakrevdOpplysningstyper,
-    //     setSkjemaFeilet: mockSetSkjemaFeilet,
-    //     setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger
-    //   };
-    // });
-    mockUseBoundStore.mockReturnValue({
-      __esModule: true,
-      default: vi.fn(),
-      leggTilFeilmelding: mockLeggTilFeilmelding,
-      slettFeilmelding: mockSlettFeilmelding,
-      setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger,
-      setSkjemaFeilet: mockSetSkjemaFeilet,
-      hentPaakrevdOpplysningstyper: mockHentPaakrevdOpplysningstyper,
-      initState: mockInitState
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) => stateFn(mockStore));
+    (useRouter as Mock).mockReturnValue({
+      replace: mockRouterReplace
     });
   });
 
   afterEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should fetch skjemadata and initialize state when pathSlug is provided', async () => {
     const mockSkjemadata = { some: 'data' };
+
     vi.mocked(fetchInntektskjemaForNotifikasjon).mockResolvedValue(mockSkjemadata);
 
     const useHentSkjemadataFn = useHentSkjemadata();
@@ -55,24 +59,6 @@ describe.skip('useHentSkjemadata', () => {
 
     expect(fetchInntektskjemaForNotifikasjon).toHaveBeenCalledWith(expect.any(String), 'some-path-slug');
     expect(mockInitState).toHaveBeenCalledWith(mockSkjemadata);
-    expect(mockHentPaakrevdOpplysningstyper).toHaveBeenCalled();
-    expect(mockSetSkjemaFeilet).not.toHaveBeenCalled();
-    expect(mockLeggTilFeilmelding).not.toHaveBeenCalled();
-    expect(mockSetSkalViseFeilmeldinger).not.toHaveBeenCalled();
-  });
-
-  it('should redirect to /endring when Arbeidsgiverperiode is not a required opplysningstype', async () => {
-    vi.mocked(fetchInntektskjemaForNotifikasjon).mockResolvedValue({ some: 'data' });
-    (useRouter as Mock).mockReturnValue({ push: vi.fn() });
-
-    const useHentSkjemadataFn = useHentSkjemadata();
-    await useHentSkjemadataFn('some-path-slug', true);
-
-    expect(mockHentPaakrevdOpplysningstyper).toHaveBeenCalled();
-    expect(mockSetSkjemaFeilet).not.toHaveBeenCalled();
-    expect(mockLeggTilFeilmelding).not.toHaveBeenCalled();
-    expect(mockSetSkalViseFeilmeldinger).not.toHaveBeenCalled();
-    expect(useRouter().push).toHaveBeenCalledWith('/endring/some-path-slug', undefined, { shallow: true });
   });
 
   it('should handle 401 error by redirecting to login page', async () => {
@@ -87,10 +73,8 @@ describe.skip('useHentSkjemadata', () => {
     const useHentSkjemadataFn = useHentSkjemadata();
     await useHentSkjemadataFn('some-path-slug', true);
 
-    expect(mockSetSkjemaFeilet).not.toHaveBeenCalled();
-    expect(mockLeggTilFeilmelding).toHaveBeenCalledWith('ukjent', expect.any(String));
-    expect(mockSetSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
-    expect(mockLocationReplace).toHaveBeenCalledWith('https://some-hostname/oauth2/login?redirect=some-href');
+    expect(mockInitState).not.toHaveBeenCalled();
+    expect(mockLocationReplace).toHaveBeenCalledWith('https://some-hostname/im-dialog/oauth2/login?redirect=some-href');
   });
 
   it('should handle 503 and 500 errors by setting skjemaFeilet', async () => {
@@ -115,5 +99,36 @@ describe.skip('useHentSkjemadata', () => {
     expect(mockSetSkjemaFeilet).toHaveBeenCalled();
     expect(mockLeggTilFeilmelding).toHaveBeenCalledWith('ukjent', expect.any(String));
     expect(mockSetSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
+  });
+
+  it('should resolve a promise to {} if forespoerselID is an array', async () => {
+    const mockError = { status: 400 };
+    vi.mocked(fetchInntektskjemaForNotifikasjon).mockRejectedValue(mockError);
+
+    const useHentSkjemadataFn = useHentSkjemadata();
+    const data = await useHentSkjemadataFn(['some-path-slug', 'hei'], true);
+
+    expect(data).toEqual({});
+  });
+
+  it('should fetch skjemadata and redirect when erBesvart=true and erEndring=false', async () => {
+    const mockSkjemadata = { erBesvart: true };
+
+    vi.mocked(fetchInntektskjemaForNotifikasjon).mockResolvedValue(mockSkjemadata);
+
+    const useHentSkjemadataFn = useHentSkjemadata();
+    await useHentSkjemadataFn('some-path-slug', false);
+
+    expect(mockRouterReplace).toHaveBeenCalledWith('/kvittering/some-path-slug', undefined);
+  });
+
+  it('should resolve a promise to {} if forespoerselID is undefined', async () => {
+    const mockError = { status: 400 };
+    vi.mocked(fetchInntektskjemaForNotifikasjon).mockRejectedValue(mockError);
+
+    const useHentSkjemadataFn = useHentSkjemadata();
+    const data = await useHentSkjemadataFn(undefined, true);
+
+    expect(data).toEqual({});
   });
 });
