@@ -69,7 +69,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
     cy.findByRole('group', {
-      name: 'Er det endringer i refusjonsbeløpet i perioden?'
+      name: 'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?'
     })
       .findByLabelText('Ja')
       .check();

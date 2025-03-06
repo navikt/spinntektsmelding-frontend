@@ -226,7 +226,7 @@ describe('Utfylling og innsending av skjema', () => {
           redusertLoennIAgp: null
         },
         inntekt: {
-          beloep: 84333.33,
+          beloep: 75000,
           inntektsdato: '2023-02-02',
           naturalytelser: [],
           endringAarsak: null,
@@ -242,7 +242,7 @@ describe('Utfylling og innsending av skjema', () => {
             }
           ]
         },
-        refusjon: { beloepPerMaaned: 84333.33, sluttdato: null, endringer: [] },
+        refusjon: { beloepPerMaaned: 75000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
       });
 
