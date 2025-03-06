@@ -28,18 +28,12 @@ export const EndringAarsakNyansattSchema = z.object({
 
 export const EndringAarsakNyStillingSchema = z.object({
   aarsak: z.literal('NyStilling'),
-  gjelderFra: z.date({
-    required_error: 'Dato mangler',
-    invalid_type_error: 'Ugyldig dato'
-  })
+  gjelderFra: z.string().date()
 });
 
 export const EndringAarsakNyStillingsprosentSchema = z.object({
   aarsak: z.literal('NyStillingsprosent'),
-  gjelderFra: z.date({
-    required_error: 'Dato mangler',
-    invalid_type_error: 'Ugyldig dato'
-  })
+  gjelderFra: z.string().date()
 });
 
 export const EndringAarsakPermisjonSchema = z.object({
@@ -59,22 +53,13 @@ export const EndringAarsakSykefravaerSchema = z.object({
 
 export const EndringAarsakTariffendringSchema = z.object({
   aarsak: z.literal('Tariffendring'),
-  gjelderFra: z.date({
-    required_error: 'Dato mangler',
-    invalid_type_error: 'Ugyldig dato'
-  }),
-  bleKjent: z.date({
-    required_error: 'Dato mangler',
-    invalid_type_error: 'Ugyldig dato'
-  })
+  gjelderFra: z.string().date(),
+  bleKjent: z.string().date()
 });
 
 export const EndringAarsakVarigLoennsendringSchema = z.object({
   aarsak: z.literal('VarigLoennsendring'),
-  gjelderFra: z.date({
-    required_error: 'Dato mangler',
-    invalid_type_error: 'Ugyldig dato'
-  })
+  gjelderFra: z.string().date()
 });
 
 export const EndringAarsakSchema = z.discriminatedUnion(

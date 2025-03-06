@@ -140,15 +140,18 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
           beloep: 7500,
           inntektsdato: '2024-09-10',
           naturalytelser: [],
-          endringAarsak: {
-            aarsak: 'Ferie',
-            ferier: [
-              {
-                fom: '2024-07-01',
-                tom: '2024-07-07'
-              }
-            ]
-          }
+          endringAarsak: null,
+          endringsaarsaker: [
+            {
+              aarsak: 'Ferie',
+              ferier: [
+                {
+                  fom: '2024-07-01',
+                  tom: '2024-07-07'
+                }
+              ]
+            }
+          ]
         },
         refusjon: null,
         sykmeldtFnr: '25087327879',
@@ -257,10 +260,13 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
           beloep: 7500,
           inntektsdato: '2024-09-10',
           naturalytelser: [],
-          endringAarsak: {
-            aarsak: 'VarigLoennsendring',
-            gjelderFra: '2024-06-30'
-          }
+          endringAarsak: null,
+          endringsaarsaker: [
+            {
+              aarsak: 'VarigLoennsendring',
+              gjelderFra: '2024-06-30'
+            }
+          ]
         },
         refusjon: null,
         sykmeldtFnr: '25087327879',

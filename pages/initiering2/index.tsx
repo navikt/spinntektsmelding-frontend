@@ -108,7 +108,7 @@ const Initiering2: NextPage = () => {
   type Skjema = z.infer<typeof skjemaSchema>;
   type EndepunktSykepengesoeknader = z.infer<typeof endepunktSykepengesoeknaderSchema>;
 
-  const methods = useForm({
+  const methods = useForm<Skjema>({
     resolver: zodResolver(skjemaSchema)
   });
 

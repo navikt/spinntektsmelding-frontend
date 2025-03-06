@@ -43,7 +43,8 @@ describe('useFyllDelvisInnsending', () => {
     },
     inntekt: {
       beloep: 1000,
-      endringAarsak: null
+      endringAarsak: null,
+      endringsaarsaker: null
     },
     telefon: '12345678'
   };

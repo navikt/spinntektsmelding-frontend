@@ -22,7 +22,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.intercept('/im-dialog/api/inntektsdata', { fixture: '../../mockdata/inntektData.json' }).as('inntektsdata');
 
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      fixture: '../../mockdata/kvittering-delvis.json'
+      fixture: '../../mockdata/kvittering-delvis-endret-inntekt.json'
     }).as('kvittering');
 
     cy.intercept('/collect', {

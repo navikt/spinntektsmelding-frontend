@@ -13,7 +13,9 @@ import fullInnsendingSchema from '../../schema/fullInnsendingSchema';
 import { z } from 'zod';
 
 import MottattKvitteringSchema from '../../schema/mottattKvitteringSchema';
+import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
 
+type Skjema = z.infer<typeof hovedskjemaSchema>;
 type InnsendingSkjema = z.infer<typeof fullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 
@@ -33,6 +35,17 @@ function fetchMock(url, suffix = '') {
     }, 20)
   );
 }
+
+const skjemaData: Skjema = {
+  bekreft_opplysninger: true,
+  inntekt: {
+    beloep: 12345,
+    endringsaarsaker: null,
+    endringAarsak: null,
+    inntektsdato: '2021-01-01',
+    naturalytelser: []
+  }
+};
 
 describe('useFyllInnsending', () => {
   beforeEach(() => {
@@ -64,11 +77,12 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(false, '8d50ef20-37b5-4829-ad83-56219e70b375', [
-        'arbeidsgiverperiode',
-        'inntekt',
-        'refusjon'
-      ]);
+      innsending = fyllInnsending(
+        false,
+        '8d50ef20-37b5-4829-ad83-56219e70b375',
+        ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
+        skjemaData
+      );
     });
 
     if (innsending) {
@@ -83,7 +97,7 @@ describe('useFyllInnsending', () => {
       ]);
       // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
-      expect(innsending.inntekt?.beloep).toBe(80666.66666666667);
+      expect(innsending.inntekt?.beloep).toBe(12345);
       // expect(innsending.inntekt.bekreftet).toBeTruthy();
     }
   });
@@ -106,11 +120,12 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema = {} as InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(false, '8d50ef20-37b5-4829-ad83-56219e70b375', [
-        'arbeidsgiverperiode',
-        'inntekt',
-        'refusjon'
-      ]);
+      innsending = fyllInnsending(
+        false,
+        '8d50ef20-37b5-4829-ad83-56219e70b375',
+        ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
+        skjemaData
+      );
     });
 
     if (innsending) {
@@ -130,7 +145,7 @@ describe('useFyllInnsending', () => {
         { beloep: 1234, startdato: '2023-04-13' },
         { beloep: 12345, startdato: '2023-04-20' }
       ]);
-      expect(innsending.inntekt?.beloep).toBe(80666.66666666667);
+      expect(innsending.inntekt?.beloep).toBe(12345);
       // expect(innsending.inntekt.bekreftet).toBeTruthy();
     } else {
       expect(innsending).toBeTruthy();

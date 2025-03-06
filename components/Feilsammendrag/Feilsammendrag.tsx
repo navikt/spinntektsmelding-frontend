@@ -1,11 +1,27 @@
+import { FieldError, UseControllerProps, FieldErrors, FieldValues } from 'react-hook-form';
 import useBoundStore from '../../state/useBoundStore';
-import FeilListe, { Feilmelding } from './FeilListe';
+import FeilListe from './FeilListe';
+import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 
-export default function Feilsammendrag() {
+interface FeilsammendragProps<T> extends UseControllerProps<T> {
+  skjemafeil: FieldError[] | undefined;
+}
+
+export default function Feilsammendrag({ skjemafeil }: Readonly<FeilsammendragProps<any>>) {
+  const feil = formatRHFFeilmeldinger(skjemafeil);
+
   const feilmeldinger = useBoundStore((state) => state.feilmeldinger);
   const skalViseFeilmeldinger = useBoundStore((state) => state.skalViseFeilmeldinger);
-  const harFeilmeldinger = feilmeldinger && feilmeldinger.length > 0;
+
+  const combinedFeilmeldinger = [...feilmeldinger, ...feil];
+
+  const harFeilmeldinger = combinedFeilmeldinger && combinedFeilmeldinger.length > 0;
   if (!harFeilmeldinger) return null;
 
-  return <FeilListe feilmeldinger={feilmeldinger as Feilmelding[]} skalViseFeilmeldinger={skalViseFeilmeldinger} />;
+  return (
+    <FeilListe
+      feilmeldinger={combinedFeilmeldinger}
+      skalViseFeilmeldinger={skalViseFeilmeldinger || combinedFeilmeldinger.length > 0}
+    />
+  );
 }

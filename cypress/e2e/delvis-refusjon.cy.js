@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 
-const { wait } = require('@testing-library/user-event/dist/cjs/utils/index.js');
-
 describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   beforeEach(() => {
     // Cypress starts out with a blank slate for each test
@@ -64,7 +62,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 26000,
           inntektsdato: '2023-08-08',
           naturalytelser: [],
-          endringAarsak: null
+          endringAarsak: null,
+          endringsaarsaker: null
         },
         refusjon: null,
         avsenderTlf: '12345678'
@@ -96,7 +95,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.location('pathname').should('equal', '/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    wait(100);
+    cy.wait(100);
 
     cy.findAllByRole('button', {
       name: 'Endre'
@@ -107,7 +106,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByLabelText('Månedslønn 08.08.2023')
       .invoke('val')
       .then((str) => str.normalize('NFKC').replace(/ /g, ''))
-      .should('equal', '26000,00');
+      .should('equal', '26000');
     cy.findByLabelText('Månedslønn 08.08.2023').clear().type('50000');
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');
@@ -140,10 +139,13 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 50000,
           inntektsdato: '2023-08-08',
           naturalytelser: [],
-          endringAarsak: {
-            aarsak: 'VarigLoennsendring',
-            gjelderFra: '2023-06-30'
-          }
+          endringAarsak: null,
+          endringsaarsaker: [
+            {
+              aarsak: 'VarigLoennsendring',
+              gjelderFra: '2023-06-30'
+            }
+          ]
         },
         refusjon: { beloepPerMaaned: 50000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
@@ -179,7 +181,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.location('pathname').should('equal', '/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    wait(100);
+    cy.wait(100);
 
     cy.findAllByRole('button', {
       name: 'Endre'
@@ -190,7 +192,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByLabelText('Månedslønn 08.08.2023')
       .invoke('val')
       .then((str) => str.normalize('NFKC').replace(/ /g, ''))
-      .should('equal', '26000,00');
+      .should('equal', '26000');
     cy.findByLabelText('Månedslønn 08.08.2023').clear().type('50000');
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');
@@ -225,15 +227,18 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 50000,
           inntektsdato: '2023-08-08',
           naturalytelser: [],
-          endringAarsak: {
-            aarsak: 'Ferie',
-            ferier: [
-              {
-                fom: '2023-06-30',
-                tom: '2023-07-05'
-              }
-            ]
-          }
+          endringAarsak: null,
+          endringsaarsaker: [
+            {
+              aarsak: 'Ferie',
+              ferier: [
+                {
+                  fom: '2023-06-30',
+                  tom: '2023-07-05'
+                }
+              ]
+            }
+          ]
         },
         refusjon: { beloepPerMaaned: 50000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'

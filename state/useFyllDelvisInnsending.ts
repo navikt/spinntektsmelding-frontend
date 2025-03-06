@@ -127,7 +127,11 @@ export default function useFyllDelvisInnsending() {
         : null;
 
     const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
-
+    const endringsaarsakerParsed = skjema.inntekt?.endringsaarsaker
+      ? skjema.inntekt?.endringsaarsaker.map((endringAarsak) => {
+          return konverterEndringAarsakSchema.parse(endringAarsak);
+        })
+      : null;
     const skjemaData: FullInnsending = {
       forespoerselId,
       agp: skalSendeArbeidsgiverperiode
@@ -152,7 +156,8 @@ export default function useFyllDelvisInnsending() {
               verdiBeloep: verdiEllerNull(ytelse.verdi)
             }))
           : [],
-        endringAarsak: endringAarsakParsed
+        endringAarsak: endringAarsakParsed,
+        endringsaarsaker: endringsaarsakerParsed
       },
       refusjon:
         skjema.refusjon.kreverRefusjon === 'Ja'

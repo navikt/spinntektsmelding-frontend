@@ -27,7 +27,7 @@ import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
@@ -239,6 +239,14 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
                 </>
               )}
+              {bruttoinntekt.endringsaarsaker?.map((endring, endringIndex) => (
+                <Fragment key={endringIndex}>
+                  <div className={lokalStyles.uthevet}>Endret med årsak</div>
+
+                  {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
+                  <EndringAarsakVisning endringAarsak={endring} />
+                </Fragment>
+              ))}
               {(visRefusjon || visFullLonnIArbeidsgiverperioden) && (
                 <>
                   <Skillelinje />

@@ -8,6 +8,8 @@ import { SendtPeriode, formaterRedusertLoennIAgp } from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 import parseIsoDate from '../utils/parseIsoDate';
 import { finnInnsendbareArbeidsgiverperioder } from './useFyllDelvisInnsending';
+import { z } from 'zod';
+import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 
 export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
@@ -28,6 +30,10 @@ export default function useFyllAapenInnsending() {
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const vedtaksperiodeId = useBoundStore((state) => state.vedtaksperiodeId);
+  const [setEndringsaarsaker, setBareNyMaanedsinntekt] = useBoundStore((state) => [
+    state.setEndringsaarsaker,
+    state.setBareNyMaanedsinntekt
+  ]);
 
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
@@ -46,11 +52,16 @@ export default function useFyllAapenInnsending() {
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
 
-  return (skjemaData: any) => {
-    const endringAarsak: EndringAarsak | undefined =
-      bruttoinntekt.endringAarsak !== null ? bruttoinntekt.endringAarsak : undefined;
+  type SkjemaData = z.infer<typeof hovedskjemaSchema>;
 
-    const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
+  return (skjemaData: SkjemaData) => {
+    const endringsaarsakerParsed = skjemaData.inntekt?.endringsaarsaker
+      ? skjemaData.inntekt.endringsaarsaker.map((endringAarsak) => konverterEndringAarsakSchema.parse(endringAarsak))
+      : null;
+
+    setEndringsaarsaker(skjemaData.inntekt?.endringsaarsaker);
+
+    setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
 
     const innsending = validerAapenInnsending({
       vedtaksperiodeId: vedtaksperiodeId,
@@ -75,7 +86,7 @@ export default function useFyllAapenInnsending() {
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
       inntekt: {
-        beloep: bruttoinntekt.bruttoInntekt!,
+        beloep: skjemaData.inntekt.beloep!,
         inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
         naturalytelser: naturalytelser
           ? naturalytelser?.map((ytelse) => ({
@@ -84,7 +95,8 @@ export default function useFyllAapenInnsending() {
               sluttdato: formatDateForSubmit(ytelse.bortfallsdato)
             }))
           : [],
-        endringAarsak: endringAarsakParsed ?? null
+        endringAarsak: null,
+        endringsaarsaker: endringsaarsakerParsed ?? null
       },
       refusjon:
         lonnISykefravaeret?.status === 'Ja'

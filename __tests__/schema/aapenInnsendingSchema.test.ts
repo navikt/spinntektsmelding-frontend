@@ -10,7 +10,13 @@ describe('aapenInnsendingSchema', () => {
         egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
         redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
       },
-      inntekt: { beloep: 500000, inntektsdato: '2023-02-14', naturalytelser: [], endringAarsak: { aarsak: 'Bonus' } },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringsaarsaker: [{ aarsak: 'Bonus' }]
+      },
       refusjon: null,
       vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       sykmeldtFnr: '25087327879',
@@ -31,7 +37,13 @@ describe('aapenInnsendingSchema', () => {
         egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
         redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
       },
-      inntekt: { beloep: 500000, inntektsdato: '2023-02-14', naturalytelser: [], endringAarsak: { aarsak: 'Bonus' } },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringsaarsaker: [{ aarsak: 'Bonus' }]
+      },
       refusjon: null,
       vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       sykmeldtFnr: '25087327879',
@@ -66,7 +78,13 @@ describe('aapenInnsendingSchema', () => {
         egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
         redusertLoennIAgp: { beloep: 50001, begrunnelse: 'StreikEllerLockout' }
       },
-      inntekt: { beloep: 50000, inntektsdato: '2023-02-14', naturalytelser: [], endringAarsak: { aarsak: 'Bonus' } },
+      inntekt: {
+        beloep: 50000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringsaarsaker: [{ aarsak: 'Bonus' }]
+      },
       refusjon: null,
       vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       sykmeldtFnr: '25087327879',

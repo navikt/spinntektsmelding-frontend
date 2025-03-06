@@ -82,7 +82,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 77000,
           inntektsdato: '2023-03-15',
           naturalytelser: [],
-          endringAarsak: null
+          endringAarsak: null,
+          endringsaarsaker: null
         },
         refusjon: null,
         avsenderTlf: '12345678'

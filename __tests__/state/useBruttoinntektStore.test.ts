@@ -449,4 +449,274 @@ describe('useBoundStore', () => {
 
     expect(retval).toBe(1);
   });
+
+  it('should setEndringAarsak', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setEndringAarsak({
+        aarsak: 'Ferie',
+        ferier: [{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11) }]
+      });
+    });
+
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Ferie');
+    expect(result.current.bruttoinntekt.endringAarsak?.ferier).toEqual([
+      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
+    ]);
+  });
+
+  it('should setEndringAarsak with date as strings', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setEndringAarsak({
+        aarsak: 'Ferie',
+        ferier: [{ fom: '2002-11-11', tom: '2002-11-11' }]
+      });
+    });
+
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Ferie');
+    expect(result.current.bruttoinntekt.endringAarsak?.ferier).toEqual([
+      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
+    ]);
+  });
+
+  it('should setEndringAarsak', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setEndringAarsak({
+        aarsak: 'Ferie',
+        ferier: [{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11) }]
+      });
+    });
+
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Ferie');
+    expect(result.current.bruttoinntekt.endringAarsak?.ferier).toEqual([
+      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
+    ]);
+  });
+
+  it('should setEndringAarsak with date as strings', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setEndringAarsak({
+        aarsak: 'Ferie',
+        ferier: [{ fom: '2002-11-11', tom: '2002-11-11' }]
+      });
+    });
+
+    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Ferie');
+    expect(result.current.bruttoinntekt.endringAarsak?.ferier).toEqual([
+      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
+    ]);
+  });
+
+  it('should setEndringsaarsaker', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setEndringsaarsaker([
+        {
+          aarsak: 'Ferie',
+          ferier: [{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11) }]
+        },
+        {
+          aarsak: 'NyStilling',
+          gjelderFra: new Date(2002, 10, 11)
+        },
+        {
+          aarsak: 'Tariffendring',
+          bleKjent: new Date(2002, 10, 11),
+          gjelderFra: new Date(2002, 10, 11)
+        },
+        {
+          aarsak: 'Sykefravaer',
+          sykefravaer: [{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11) }]
+        },
+        {
+          aarsak: 'Permittering',
+          permitteringer: [{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11) }]
+        },
+        {
+          aarsak: 'Permisjon',
+          permisjoner: [{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11) }]
+        }
+      ]);
+    });
+    expect(result.current.bruttoinntekt.endringsaarsaker).toEqual([
+      {
+        aarsak: 'Ferie',
+        ferier: [
+          {
+            fom: parseIsoDate('2002-11-11'),
+            tom: parseIsoDate('2002-11-11')
+          }
+        ]
+      },
+      {
+        aarsak: 'NyStilling',
+        gjelderFra: parseIsoDate('2002-11-11')
+      },
+      {
+        aarsak: 'Tariffendring',
+        bleKjent: parseIsoDate('2002-11-11'),
+        gjelderFra: parseIsoDate('2002-11-11')
+      },
+      {
+        aarsak: 'Sykefravaer',
+        sykefravaer: [
+          {
+            fom: parseIsoDate('2002-11-11'),
+            tom: parseIsoDate('2002-11-11')
+          }
+        ]
+      },
+      {
+        aarsak: 'Permittering',
+        permitteringer: [
+          {
+            fom: parseIsoDate('2002-11-11'),
+            tom: parseIsoDate('2002-11-11')
+          }
+        ]
+      },
+      {
+        aarsak: 'Permisjon',
+        permisjoner: [
+          {
+            fom: parseIsoDate('2002-11-11'),
+            tom: parseIsoDate('2002-11-11')
+          }
+        ]
+      }
+    ]);
+  });
+
+  it('should setEndringsaarsaker with date as strings', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    act(() => {
+      result.current.setEndringsaarsaker([
+        {
+          aarsak: 'Ferie',
+          ferier: [{ fom: '2002-11-11', tom: '2002-11-11' }]
+        },
+        {
+          aarsak: 'NyStilling',
+          gjelderFra: '2002-11-11'
+        },
+        {
+          aarsak: 'Tariffendring',
+          bleKjent: '2002-11-11',
+          gjelderFra: '2002-11-11'
+        },
+        {
+          aarsak: 'Sykefravaer',
+          sykefravaer: [{ fom: '2002-11-11', tom: '2002-11-11' }]
+        },
+        {
+          aarsak: 'Permittering',
+          permitteringer: [{ fom: '2002-11-11', tom: '2002-11-11' }]
+        },
+        {
+          aarsak: 'Permisjon',
+          permisjoner: [{ fom: '2002-11-11', tom: '2002-11-11' }]
+        }
+      ]);
+    });
+    expect(result.current.bruttoinntekt.endringsaarsaker).toEqual([
+      {
+        aarsak: 'Ferie',
+        ferier: [
+          {
+            fom: parseIsoDate('2002-11-11'),
+            tom: parseIsoDate('2002-11-11')
+          }
+        ]
+      },
+      {
+        aarsak: 'NyStilling',
+        gjelderFra: parseIsoDate('2002-11-11')
+      },
+      {
+        aarsak: 'Tariffendring',
+        bleKjent: parseIsoDate('2002-11-11'),
+        gjelderFra: parseIsoDate('2002-11-11')
+      },
+      {
+        aarsak: 'Sykefravaer',
+        sykefravaer: [
+          {
+            fom: parseIsoDate('2002-11-11'),
+            tom: parseIsoDate('2002-11-11')
+          }
+        ]
+      },
+      {
+        aarsak: 'Permittering',
+        permitteringer: [
+          {
+            fom: parseIsoDate('2002-11-11'),
+            tom: parseIsoDate('2002-11-11')
+          }
+        ]
+      },
+      {
+        aarsak: 'Permisjon',
+        permisjoner: [
+          {
+            fom: parseIsoDate('2002-11-11'),
+            tom: parseIsoDate('2002-11-11')
+          }
+        ]
+      }
+    ]);
+  });
+
+  it('should slettBruttoinntekt.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
+    });
+
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(40000);
+    expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
+    expect(result.current.tidligereInntekt?.length).toBe(3);
+
+    act(() => {
+      result.current.slettBruttoinntekt();
+    });
+
+    expect(result.current.bruttoinntekt?.bruttoInntekt).toBeUndefined();
+    expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
+    expect(result.current.bruttoinntekt?.endringAarsak).toBeUndefined();
+  });
 });

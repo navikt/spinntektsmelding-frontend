@@ -43,7 +43,6 @@ export default function DatoVelger({
 
     // rules: { required: true },
   });
-
   const error = findErrorInRHFErrors(name, errors);
 
   const { datepickerProps, inputProps, reset } = useDatepicker({

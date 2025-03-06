@@ -13,6 +13,7 @@ import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 import { Opplysningstype } from './useForespurtDataStore';
+import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -42,12 +43,19 @@ export default function useFyllInnsending() {
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
+  const [setEndringsaarsaker, setBareNyMaanedsinntekt] = useBoundStore((state) => [
+    state.setEndringsaarsaker,
+    state.setBareNyMaanedsinntekt
+  ]);
+
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
+  type Skjema = z.infer<typeof hovedskjemaSchema>;
 
   return (
     opplysningerBekreftet: boolean,
     forespoerselId: string,
-    forespurteOpplysningstyper: Opplysningstype[]
+    forespurteOpplysningstyper: Opplysningstype[],
+    skjemaData: Skjema
   ): FullInnsending => {
     const endringAarsak: EndringAarsak | null =
       bruttoinntekt.endringAarsak !== null &&
@@ -94,7 +102,17 @@ export default function useFyllInnsending() {
     );
     const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
 
-    const skjemaData: FullInnsending = {
+    const endringsaarsakerParsed = skjemaData.inntekt?.endringsaarsaker
+      ? skjemaData.inntekt?.endringsaarsaker.map((endringAarsak) => {
+          return konverterEndringAarsakSchema.parse(endringAarsak);
+        })
+      : null;
+
+    setEndringsaarsaker(skjemaData.inntekt?.endringsaarsaker);
+
+    setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
+
+    const innsendingSkjema: FullInnsending = {
       forespoerselId,
       agp: {
         perioder:
@@ -113,7 +131,7 @@ export default function useFyllInnsending() {
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
       inntekt: {
-        beloep: bruttoinntekt.bruttoInntekt!,
+        beloep: skjemaData.inntekt?.beloep ?? 0,
         inntektsdato:
           bestemmendeFraværsdag && bestemmendeFraværsdag.length > 0
             ? bestemmendeFraværsdag
@@ -127,7 +145,7 @@ export default function useFyllInnsending() {
             }))
           : [],
         endringAarsak: endringAarsakParsed,
-        endringsaarsaker: [endringAarsakParsed]
+        endringsaarsaker: endringsaarsakerParsed
       },
       refusjon:
         lonnISykefravaeret?.status === 'Ja'
@@ -142,10 +160,10 @@ export default function useFyllInnsending() {
     };
 
     if (!harForespurtArbeidsgiverperiode) {
-      skjemaData.agp = null;
+      innsendingSkjema.agp = null;
     }
 
-    return skjemaData;
+    return innsendingSkjema;
   };
 }
 

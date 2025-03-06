@@ -5,153 +5,156 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 
 import { Periode } from '../../state/state';
-import PeriodeListevelger from './PeriodeListevelger';
-import Datovelger from '../Datovelger';
-import { periodeMapper, blankPeriode } from '../../utils/periodeMapper';
+import { useFormContext } from 'react-hook-form';
+import DatoVelger from '../DatoVelger/DatoVelger';
+import PeriodeListevelger from '../PeriodeListeVelger/PeriodeListevelger';
 
 interface AarsakDetaljerProps {
   endringAarsak: EndringAarsak;
   bestemmendeFravaersdag?: Date;
-  setEndringAarsakGjelderFra: (dato?: Date) => void;
-  setEndringAarsakBleKjent: (dato?: Date) => void;
-  setPerioder: (periode?: Array<Periode>) => void;
-  visFeilmeldingTekst: (feilmelding: string) => string;
+  id: string;
 }
-export default function AarsakDetaljer({
-  endringAarsak,
-  bestemmendeFravaersdag,
-  setEndringAarsakGjelderFra,
-  setEndringAarsakBleKjent,
-  setPerioder,
-  visFeilmeldingTekst
-}: Readonly<AarsakDetaljerProps>) {
-  const defaultEndringAarsak = endringAarsak;
+export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, id }: Readonly<AarsakDetaljerProps>) {
+  // const defaultEndringAarsak = endringAarsak;
 
-  console.log('defaultEndringAarsak', defaultEndringAarsak);
+  const {
+    formState: { errors },
+    watch,
+    register,
+    control
+  } = useFormContext();
+
+  const defaultEndringAarsak = watch('inntekt.endringsaarsaker[' + id + ']');
 
   return (
     <>
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
         <div className={lokalStyles.endremaaanedsinntekt}>
           <TariffendringDato
-            changeTariffEndretDato={setEndringAarsakGjelderFra}
-            changeTariffKjentDato={setEndringAarsakBleKjent}
             defaultEndringsdato={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             defaultKjentDato={parseIsoDate(defaultEndringAarsak?.bleKjent)}
-            visFeilmeldingTekst={visFeilmeldingTekst}
             defaultMonth={bestemmendeFravaersdag}
+            name={`inntekt.endringsaarsaker[${id}]`}
           />
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            onRangeListChange={setPerioder}
-            defaultRange={periodeMapper(defaultEndringAarsak.ferier)}
+            // onRangeListChange={setPerioder}
+            // defaultRange={periodeMapper(defaultEndringAarsak.ferier)}
             fomTekst='Ferie fra'
             tomTekst='Ferie til'
-            fomIdBase='bruttoinntekt-ful-fom'
-            tomIdBase='bruttoinntekt-ful-tom'
-            visFeilmeldingTekst={visFeilmeldingTekst}
+            // fomIdBase='bruttoinntekt-ful-fom'
+            // tomIdBase='bruttoinntekt-ful-tom'
+            // visFeilmeldingTekst={visFeilmeldingTekst}
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
+            name={`inntekt.endringsaarsaker[${id}].ferier`}
           />
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.VarigLoennsendring && (
         <div className={lokalStyles.endremaaanedsinntekt}>
-          <Datovelger
-            onDateChange={setEndringAarsakGjelderFra}
+          <DatoVelger
+            // onDateChange={setEndringAarsakGjelderFra}
             label='Lønnsendring gjelder fra'
-            id='bruttoinntekt-lonnsendring-fom'
+            // id='bruttoinntekt-lonnsendring-fom'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
-            error={visFeilmeldingTekst('bruttoinntekt-lonnsendring-fom')}
+            // error={visFeilmeldingTekst('bruttoinntekt-lonnsendring-fom')}
+
             defaultMonth={bestemmendeFravaersdag}
+            name={`inntekt.endringsaarsaker[${id}].gjelderFra`}
           />
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            onRangeListChange={setPerioder}
-            defaultRange={
-              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon &&
-              defaultEndringAarsak?.permisjoner
-                ? periodeMapper(defaultEndringAarsak.permisjoner)
-                : blankPeriode
-            }
+            // onRangeListChange={setPerioder}
+            // defaultRange={
+            //   defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon &&
+            //   defaultEndringAarsak?.permisjoner
+            //     ? periodeMapper(defaultEndringAarsak.permisjoner)
+            //     : blankPeriode
+            // }
             fomTekst='Permisjon fra'
             tomTekst='Permisjon til'
-            fomIdBase='bruttoinntekt-permisjon-fom'
-            tomIdBase='bruttoinntekt-permisjon-tom'
+            // fomIdBase='bruttoinntekt-permisjon-fom'
+            // tomIdBase='bruttoinntekt-permisjon-tom'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            visFeilmeldingTekst={visFeilmeldingTekst}
+            // visFeilmeldingTekst={visFeilmeldingTekst}
+            name={`inntekt.endringsaarsaker[${id}].permisjoner`}
           />
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            onRangeListChange={setPerioder}
-            defaultRange={
-              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering &&
-              defaultEndringAarsak?.permitteringer
-                ? periodeMapper(defaultEndringAarsak.permitteringer)
-                : blankPeriode
-            }
+            // onRangeListChange={setPerioder}
+            // defaultRange={
+            //   defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering &&
+            //   defaultEndringAarsak?.permitteringer
+            //     ? periodeMapper(defaultEndringAarsak.permitteringer)
+            //     : blankPeriode
+            // }
             fomTekst='Permittering fra'
             tomTekst='Permittering til'
-            fomIdBase='bruttoinntekt-permittering-fom'
-            tomIdBase='bruttoinntekt-permittering-tom'
+            // fomIdBase='bruttoinntekt-permittering-fom'
+            // tomIdBase='bruttoinntekt-permittering-tom'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            visFeilmeldingTekst={visFeilmeldingTekst}
+            // visFeilmeldingTekst={visFeilmeldingTekst}
+            name={`inntekt.endringsaarsaker[${id}].permitteringer`}
           />
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
         <div className={lokalStyles.endremaaanedsinntekt}>
-          <Datovelger
-            onDateChange={setEndringAarsakGjelderFra}
+          <DatoVelger
+            // onDateChange={setEndringAarsakGjelderFra}
             label='Ny stilling fra'
-            id='bruttoinntekt-nystilling-fom'
+            // id='bruttoinntekt-nystilling-fom'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
+            name={`inntekt.endringsaarsaker[${id}].gjelderFra`}
           />
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
         <div className={lokalStyles.endremaaanedsinntekt}>
-          <Datovelger
-            onDateChange={setEndringAarsakGjelderFra}
+          <DatoVelger
+            // onDateChange={setEndringAarsakGjelderFra}
             label='Ny stillingsprosent fra'
-            id='bruttoinntekt-nystillingsprosent-fom'
+            // id='bruttoinntekt-nystillingsprosent-fom'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
+            name={`inntekt.endringsaarsaker[${id}].gjelderFra`}
           />
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer && (
         <div className={lokalStyles.endreperiodeliste}>
           <PeriodeListevelger
-            onRangeListChange={setPerioder}
-            defaultRange={
-              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer &&
-              defaultEndringAarsak?.sykefravaer
-                ? periodeMapper(defaultEndringAarsak.sykefravaer)
-                : blankPeriode
-            }
+            // onRangeListChange={setPerioder}
+            // defaultRange={
+            //   defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer &&
+            //   defaultEndringAarsak?.sykefravaer
+            //     ? periodeMapper(defaultEndringAarsak.sykefravaer)
+            //     : blankPeriode
+            // }
             fomTekst='Sykefravær fra'
             tomTekst='Sykefravær til'
-            fomIdBase='bruttoinntekt-sykefravaerperioder-fom'
-            tomIdBase='bruttoinntekt-sykefravaerperioder-tom'
+            // fomIdBase='bruttoinntekt-sykefravaerperioder-fom'
+            // tomIdBase='bruttoinntekt-sykefravaerperioder-tom'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            visFeilmeldingTekst={visFeilmeldingTekst}
+            // visFeilmeldingTekst={visFeilmeldingTekst}
+            name={`inntekt.endringsaarsaker[${id}].sykefravaer`}
           />
         </div>
       )}

@@ -4,20 +4,19 @@ import formatDate from '../../utils/formatDate';
 import { Button, TextField } from '@navikt/ds-react';
 import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
-import { Inntekt, Periode } from '../../state/state';
-import React from 'react';
+import { Inntekt } from '../../state/state';
+import React, { Fragment, useEffect } from 'react';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import AarsakDetaljer from './AarsakDetaljer';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import stringishToNumber from '../../utils/stringishToNumber';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import ButtonSlette from '../ButtonSlette';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
-  changeMaanedsintektHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  changeBegrunnelseHandler: (verdi: string) => void;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
   defaultEndringAarsak: EndringAarsak;
-  setEndringAarsakGjelderFra: (dato?: Date) => void;
-  setEndringAarsakBleKjent: (dato?: Date) => void;
-  setPerioder: (periode?: Array<Periode>) => void;
   visFeilmeldingTekst: (feilmelding: string) => string;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
@@ -26,65 +25,84 @@ interface AarsaksvelgerProps {
 
 export default function Aarsaksvelger({
   bruttoinntekt,
-  changeMaanedsintektHandler,
-  changeBegrunnelseHandler,
   clickTilbakestillMaanedsinntekt,
   defaultEndringAarsak,
-  setEndringAarsakGjelderFra,
-  setEndringAarsakBleKjent,
-  setPerioder,
   visFeilmeldingTekst,
   bestemmendeFravaersdag,
   nyInnsending,
   kanIkkeTilbakestilles
 }: Readonly<AarsaksvelgerProps>) {
-  const [aarsaker, setAarsaker] = React.useState([1]);
-
-  const handleLeggTilEndringAarsak = (e) => {
-    e.preventDefault();
-    aarsaker.push(aarsaker.length + 1);
-    setAarsaker([...aarsaker]);
+  const handleLeggTilEndringAarsak = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    append({});
   };
+
+  const {
+    formState: { errors },
+    watch,
+    register,
+    control
+  } = useFormContext();
+
+  const { fields, append, remove, replace } = useFieldArray({
+    control, // control props comes from useForm (optional: if you are using FormContext)
+    name: 'inntekt.endringsaarsaker' // unique name for your Field Array
+  });
+  const beloepFeltnavn = 'inntekt.beloep';
+  const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
+
+  useEffect(() => {
+    if (fields.length === 0) {
+      replace({});
+    }
+  }, [fields, replace]);
+
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
-      {aarsaker.map((aarsak, index) => (
-        <>
-          <div className={lokalStyles.endremaaanedsinntekt} key={aarsak}>
-            {index === 0 && (
+      {fields.map((aarsak, key) => (
+        <Fragment key={key}>
+          <div className={lokalStyles.endremaaanedsinntekt} key={key}>
+            {key === 0 && (
               <TextField
                 label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
-                onChange={changeMaanedsintektHandler}
                 defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
                 id='inntekt.beregnetInntekt'
-                error={visFeilmeldingTekst('inntekt.beregnetInntekt')}
+                error={beloepError}
                 className={lokalStyles.bruttoinntektendringsbeloep}
                 data-cy='inntekt-beloep-input'
+                {...register('inntekt.beloep', {
+                  setValueAs: (value) => stringishToNumber(value)
+                })}
               />
             )}
             <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
               <SelectEndringBruttoinntekt
-                onChangeBegrunnelse={changeBegrunnelseHandler}
+                // onChangeBegrunnelse={changeBegrunnelseHandler}
                 error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
-                id='bruttoinntekt-endringsaarsak'
+                id={`inntekt.endringsaarsaker[${key}].aarsak`}
                 nyInnsending={nyInnsending}
-                value={defaultEndringAarsak?.aarsak as string}
+                register={register}
+                name={`inntekt.endringsaarsaker.${key}.aarsak`}
+                // value={defaultEndringAarsak?.aarsak as string}
               />
             </div>
-            {!kanIkkeTilbakestilles && (
+            {!kanIkkeTilbakestilles && key === 0 && (
               <div>
                 <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={clickTilbakestillMaanedsinntekt} />
+              </div>
+            )}
+            {key > 0 && (
+              <div>
+                <ButtonSlette className={lokalStyles.kontrollerknapp} onClick={() => remove(key)} title={'Slett'} />
               </div>
             )}
           </div>
           <AarsakDetaljer
             endringAarsak={defaultEndringAarsak}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
-            setEndringAarsakGjelderFra={setEndringAarsakGjelderFra}
-            setEndringAarsakBleKjent={setEndringAarsakBleKjent}
-            setPerioder={setPerioder}
-            visFeilmeldingTekst={visFeilmeldingTekst}
+            id={key.toString()}
           />
-        </>
+        </Fragment>
       ))}
       <Button variant='secondary' onClick={handleLeggTilEndringAarsak} className={lokalStyles.leggTilAarsak}>
         Legg til annen endringsårsak

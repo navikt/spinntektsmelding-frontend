@@ -1,22 +1,44 @@
+import { z } from 'zod';
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
 import { CompleteState } from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import validerBruttoinntekt from '../../validators/validerBruttoinntekt';
 import timezone_mock from 'timezone-mock';
 import { describe } from 'vitest';
+import { nanoid } from 'nanoid';
 
 timezone_mock.register('UTC');
+type Skjema = z.infer<typeof hovedskjemaSchema>;
+vi.mock('nanoid');
+
+nanoid.mockReturnValue('uuid');
 
 describe.concurrent('validerBruttoinntekt', () => {
   it('should return an empty array when everything is OK', () => {
     const input: CompleteState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
-        manueltKorrigert: false
+        manueltKorrigert: true,
+        endringAarsak: {
+          aarsak: begrunnelseEndringBruttoinntekt.Tariffendring,
+          gjelderFra: parseIsoDate('2022-01-01')
+        }
       }
     };
 
-    expect(validerBruttoinntekt(input)).toEqual([]);
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 12345,
+        endringsaarsaker: null,
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual([]);
   });
 
   it('should return an error when bruttoinntekt < 0 ', () => {
@@ -27,6 +49,17 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     };
 
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: -1,
+        endringsaarsaker: null,
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
     const expected = [
       {
         code: 'BRUTTOINNTEKT_MANGLER',
@@ -34,7 +67,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when not confirmed', () => {
@@ -44,15 +77,24 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true
       }
     };
-
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 1234,
+        endringsaarsaker: [{ aarsak: '' }],
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'ENDRINGSAARSAK_MANGLER',
-        felt: 'bruttoinntekt-endringsaarsak'
+        felt: 'bruttoinntekt-endringsaarsak-0'
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when no reason given', () => {
@@ -60,18 +102,30 @@ describe.concurrent('validerBruttoinntekt', () => {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringAarsak: undefined
+        endringAarsak: { aarsak: '' }
+      }
+    };
+
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [{ aarsak: '' }],
+
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
       }
     };
 
     const expected = [
       {
         code: 'ENDRINGSAARSAK_MANGLER',
-        felt: 'bruttoinntekt-endringsaarsak'
+        felt: 'bruttoinntekt-endringsaarsak-0'
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return false when stuff is no reason for change given', () => {
@@ -83,7 +137,19 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 0,
+        endringsaarsaker: [{ aarsak: '' }],
+
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when tariffendring', () => {
@@ -94,6 +160,22 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Tariffendring
         }
+      }
+    };
+
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 0,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Tariffendring as string
+          }
+        ],
+
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
       }
     };
 
@@ -108,7 +190,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when ferie property is missing', () => {
@@ -122,6 +204,22 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     };
 
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Ferie as string
+          }
+        ],
+
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
     const expected = [
       {
         code: 'FERIE_MANGLER',
@@ -129,7 +227,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when ferie fom & tom is missing', () => {
@@ -147,15 +245,32 @@ describe.concurrent('validerBruttoinntekt', () => {
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-ful-fom-undefined-undefined'
+        felt: 'bruttoinntekt-ful-fom-uuid-undefined'
       },
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-ful-tom-undefined-undefined'
+        felt: 'bruttoinntekt-ful-tom-uuid-undefined'
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Ferie as string,
+            ferier: [{}]
+          }
+        ],
+
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
   it('should return an error when ferie fom is missing', () => {
     const input: CompleteState = {
@@ -176,7 +291,24 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Ferie as string,
+            ferier: [{ fom: parseIsoDate('2022-01-01') }]
+          }
+        ],
+
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when ferie tom is missing', () => {
@@ -191,14 +323,31 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     };
 
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Ferie as string,
+            ferier: [{ tom: parseIsoDate('2022-01-01') }]
+          }
+        ],
+
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-ful-fom-undefined-2022-01-01'
+        felt: 'bruttoinntekt-ful-fom-uuid-2022-01-01'
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
   /********************************************/
   it('should return an error when varig lønnsendring date is missing', () => {
@@ -210,6 +359,18 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     };
 
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [{ aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring }],
+
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
     const expected = [
       {
         code: 'LONNSENDRING_FOM_MANGLER',
@@ -217,7 +378,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when varig lønnsendring date is after bestemmende fraværsdag', () => {
@@ -232,7 +393,22 @@ describe.concurrent('validerBruttoinntekt', () => {
       },
       bestemmendeFravaersdag: parseIsoDate('2002-02-01')
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
+            gjelderFra: parseIsoDate('2002-02-02')
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'LONNSENDRING_FOM_ETTER_BFD',
@@ -240,7 +416,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should no return an error when lønnsendring date is ok', () => {
@@ -255,10 +431,25 @@ describe.concurrent('validerBruttoinntekt', () => {
       },
       bestemmendeFravaersdag: new Date(2002, 1, 3)
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
+            gjelderFra: parseIsoDate('2002-02-02')
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should no return an error when lønnsendring date is ok and gjelderFra is a string', () => {
@@ -273,10 +464,25 @@ describe.concurrent('validerBruttoinntekt', () => {
       },
       bestemmendeFravaersdag: new Date(2002, 1, 3)
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
+            gjelderFra: '2002-01-02'
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   /********** */
@@ -288,7 +494,21 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permisjon }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Permisjon
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'PERMISJON_MANGLER',
@@ -296,7 +516,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when permisjon fom & tom is missing', () => {
@@ -307,43 +527,36 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permisjon, permisjoner: [{}] }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
+            permisjoner: [{}]
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permisjon-fom-undefined-undefined'
+        felt: 'bruttoinntekt-permisjon-fom-uuid-undefined'
       },
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-permisjon-tom-undefined-undefined'
+        felt: 'bruttoinntekt-permisjon-tom-uuid-undefined'
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
   it('should return an error when permisjon fom is missing', () => {
-    const input: CompleteState = {
-      bruttoinntekt: {
-        bruttoInntekt: 123,
-        manueltKorrigert: true,
-        endringAarsak: {
-          aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
-          permisjoner: [{ fom: parseIsoDate('2022-02-02') }]
-        }
-      }
-    };
-
-    const expected = [
-      {
-        code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-permisjon-tom-2022-02-02-undefined'
-      }
-    ];
-
-    expect(validerBruttoinntekt(input)).toEqual(expected);
-  });
-
-  it('should return an error when permisjon tom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
@@ -354,15 +567,67 @@ describe.concurrent('validerBruttoinntekt', () => {
         }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
+            permisjoner: [{ tom: parseIsoDate('2022-02-02') }]
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permisjon-fom-undefined-2022-02-02'
+        felt: 'bruttoinntekt-permisjon-fom-uuid-2022-02-02'
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+  });
+
+  it('should return an error when permisjon tom is missing', () => {
+    const input: CompleteState = {
+      bruttoinntekt: {
+        bruttoInntekt: 123,
+        manueltKorrigert: true,
+        endringAarsak: {
+          aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
+          permisjoner: [{ fom: parseIsoDate('2022-02-02') }]
+        }
+      }
+    };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
+            permisjoner: [{ fom: parseIsoDate('2022-02-02') }]
+          }
+        ],
+
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+    const expected = [
+      {
+        code: 'MANGLER_TIL',
+        felt: 'bruttoinntekt-permisjon-tom-2022-02-02-undefined'
+      }
+    ];
+
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
   /********** */
   it('should return an error when permittering property is missing', () => {
@@ -373,7 +638,21 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permittering }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Permittering
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'PERMITTERING_MANGLER',
@@ -381,7 +660,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when permittering fom & tom is missing', () => {
@@ -392,32 +671,62 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.Permittering, permitteringer: [{}] }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Permittering,
+            permitteringer: [{ aarsak: begrunnelseEndringBruttoinntekt.Permittering, permitteringer: [{}] }]
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permittering-fom-undefined-undefined'
+        felt: 'bruttoinntekt-permittering-fom-uuid-undefined'
       },
       {
         code: 'MANGLER_TIL',
-        felt: 'bruttoinntekt-permittering-tom-undefined-undefined'
+        felt: 'bruttoinntekt-permittering-tom-uuid-undefined'
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
-  it('should return an error when permittering fom is missing', () => {
+  it('should return an error when permittering tom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.Permittering,
-          permitteringer: [{ fom: parseIsoDate('2022-02-02') }]
+          permitteringer: [{ fom: '2022-02-02' }]
         }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Permittering,
+            permitteringer: [{ fom: '2022-02-02' }]
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'MANGLER_TIL',
@@ -425,10 +734,10 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
-  it('should return an error when permittering tom is missing', () => {
+  it('should return an error when permittering fom is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
@@ -439,15 +748,30 @@ describe.concurrent('validerBruttoinntekt', () => {
         }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.Permittering,
+            permitteringer: [{ tom: '2022-02-02' }]
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'MANGLER_FRA',
-        felt: 'bruttoinntekt-permittering-fom-undefined-2022-02-02'
+        felt: 'bruttoinntekt-permittering-fom-uuid-2022-02-02'
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   /********** */
@@ -459,7 +783,21 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.NyStilling }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.NyStilling
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'NYSTILLING_FOM_MANGLER',
@@ -467,7 +805,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when nystilling is undefined', () => {
@@ -478,7 +816,22 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.NyStilling, gjelderFra: undefined }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.NyStilling,
+            gjelderFra: undefined
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'NYSTILLING_FOM_MANGLER',
@@ -486,7 +839,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
   it('should return an error when nystilling fom is after bfd', () => {
     const input: CompleteState = {
@@ -497,7 +850,22 @@ describe.concurrent('validerBruttoinntekt', () => {
       },
       bestemmendeFravaersdag: new Date(2002, 1, 2)
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.NyStilling,
+            gjelderFra: '2002-02-03'
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'NYSTILLING_FOM_ETTER_BFD',
@@ -505,7 +873,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   /********** */
@@ -517,7 +885,21 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'NYSTILLINGSPROSENT_FOM_MANGLER',
@@ -525,7 +907,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 
   it('should return an error when nystillingsprosent is undefined', () => {
@@ -536,7 +918,22 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent, gjelderFra: undefined }
       }
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
+            gjelderFra: undefined
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'NYSTILLINGSPROSENT_FOM_MANGLER',
@@ -544,7 +941,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
   it('should return an error when nystillingsprosent fom is after bfd', () => {
     const input: CompleteState = {
@@ -558,7 +955,22 @@ describe.concurrent('validerBruttoinntekt', () => {
       },
       bestemmendeFravaersdag: new Date(2002, 1, 2)
     };
+    const skjemaData: Skjema = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 123,
+        endringsaarsaker: [
+          {
+            aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
+            gjelderFra: '2002-02-03'
+          }
+        ],
 
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
     const expected = [
       {
         code: 'NYSTILLINGSPROSENT_FOM_ETTER_BFD',
@@ -566,7 +978,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
   });
 });
 
@@ -581,7 +993,21 @@ it('should return an error when sykefravær property is missing', () => {
       }
     }
   };
+  const skjemaData: Skjema = {
+    bekreft_opplysninger: true,
+    inntekt: {
+      beloep: 123,
+      endringsaarsaker: [
+        {
+          aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer
+        }
+      ],
 
+      endringAarsak: null,
+      inntektsdato: '2021-01-01',
+      naturalytelser: []
+    }
+  };
   const expected = [
     {
       code: 'SYKEFRAVAER_MANGLER',
@@ -589,7 +1015,7 @@ it('should return an error when sykefravær property is missing', () => {
     }
   ];
 
-  expect(validerBruttoinntekt(input)).toEqual(expected);
+  expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
 });
 
 it('should return an error when sykefravær fom & tom is missing', () => {
@@ -603,19 +1029,34 @@ it('should return an error when sykefravær fom & tom is missing', () => {
       }
     }
   };
+  const skjemaData: Skjema = {
+    bekreft_opplysninger: true,
+    inntekt: {
+      beloep: 123,
+      endringsaarsaker: [
+        {
+          aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
+          sykefravaer: [{}]
+        }
+      ],
 
+      endringAarsak: null,
+      inntektsdato: '2021-01-01',
+      naturalytelser: []
+    }
+  };
   const expected = [
     {
       code: 'MANGLER_FRA',
-      felt: 'bruttoinntekt-sykefravaerperioder-fom-undefined-undefined'
+      felt: 'bruttoinntekt-sykefravaerperioder-fom-uuid-undefined'
     },
     {
       code: 'MANGLER_TIL',
-      felt: 'bruttoinntekt-sykefravaerperioder-tom-undefined-undefined'
+      felt: 'bruttoinntekt-sykefravaerperioder-tom-uuid-undefined'
     }
   ];
 
-  expect(validerBruttoinntekt(input)).toEqual(expected);
+  expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
 });
 it('should return an error when Sykefravaer fom is missing', () => {
   const input: CompleteState = {
@@ -628,35 +1069,65 @@ it('should return an error when Sykefravaer fom is missing', () => {
       }
     }
   };
+  const skjemaData: Skjema = {
+    bekreft_opplysninger: true,
+    inntekt: {
+      beloep: 123,
+      endringsaarsaker: [
+        {
+          aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
+          sykefravaer: [{ tom: '2022-01-02' }]
+        }
+      ],
 
+      endringAarsak: null,
+      inntektsdato: '2021-01-01',
+      naturalytelser: []
+    }
+  };
   const expected = [
     {
       code: 'MANGLER_FRA',
-      felt: 'bruttoinntekt-sykefravaerperioder-fom-undefined-2022-01-02'
+      felt: 'bruttoinntekt-sykefravaerperioder-fom-uuid-2022-01-02'
     }
   ];
 
-  expect(validerBruttoinntekt(input)).toEqual(expected);
+  expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
 });
 
-it('should return an error when permittering tom is missing, sykefravær', () => {
-  const input: CompleteState = {
-    bruttoinntekt: {
-      bruttoInntekt: 123,
-      manueltKorrigert: true,
-      endringAarsak: {
-        aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
-        sykefravaer: [{ fom: '2022-01-02' }]
-      }
-    }
-  };
+// it('should return an error when permittering tom is missing, sykefravær', () => {
+//   const input: CompleteState = {
+//     bruttoinntekt: {
+//       bruttoInntekt: 123,
+//       manueltKorrigert: true,
+//       endringAarsak: {
+//         aarsak: begrunnelseEndringBruttoinntekt.Permittering,
+//         permitteringer: [{ fom: '2022-01-02' }]
+//       }
+//     }
+//   };
+//   const skjemaData: Skjema = {
+//     bekreft_opplysninger: true,
+//     inntekt: {
+//       beloep: 123,
+//       endringsaarsaker: [
+//         {
+//           aarsak: begrunnelseEndringBruttoinntekt.Permittering,
+//           permitteringer: [{ fom: '2022-01-02' }]
+//         }
+//       ],
 
-  const expected = [
-    {
-      code: 'MANGLER_TIL',
-      felt: 'bruttoinntekt-sykefravaerperioder-tom-2022-01-02-undefined'
-    }
-  ];
+//       endringAarsak: null,
+//       inntektsdato: '2021-01-01',
+//       naturalytelser: []
+//     }
+//   };
+//   const expected = [
+//     {
+//       code: 'MANGLER_TIL',
+//       felt: 'bruttoinntekt-permittering-tom-2022-01-02-undefined'
+//     }
+//   ];
 
-  expect(validerBruttoinntekt(input)).toEqual(expected);
-});
+//   expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+// });

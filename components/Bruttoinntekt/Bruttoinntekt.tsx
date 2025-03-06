@@ -1,5 +1,5 @@
 import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HistoriskInntekt } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -17,7 +17,6 @@ import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
-  setIsDirtyForm: (dirty: boolean) => void;
   sbBruttoinntekt?: number;
   sbTidligereInntekt?: Array<HistoriskInntekt>;
   erSelvbestemt?: boolean;
@@ -25,7 +24,6 @@ interface BruttoinntektProps {
 
 export default function Bruttoinntekt({
   bestemmendeFravaersdag,
-  setIsDirtyForm,
   sbBruttoinntekt,
   sbTidligereInntekt,
   erSelvbestemt
@@ -33,16 +31,9 @@ export default function Bruttoinntekt({
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
-  const [setNyMaanedsinntektOgRefusjonsbeloep, setBareNyMaanedsinntekt] = useBoundStore((state) => [
-    state.setNyMaanedsinntektOgRefusjonsbeloep,
-    state.setBareNyMaanedsinntekt
-  ]);
-  const setEndringsaarsak = useBoundStore((state) => state.setEndringsaarsak);
+  const [setBareNyMaanedsinntekt] = useBoundStore((state) => [state.setBareNyMaanedsinntekt]);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
-  const setPerioder = useBoundStore((state) => state.setPerioder);
-  const setEndringAarsakGjelderFra = useBoundStore((state) => state.setEndringAarsakGjelderFra);
-  const setEndringAarsakBleKjent = useBoundStore((state) => state.setEndringAarsakBleKjent);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const henterData = useBoundStore((state) => state.henterData);
@@ -60,28 +51,6 @@ export default function Bruttoinntekt({
 
     setEndreMaanedsinntekt(false);
     tilbakestillMaanedsinntekt();
-  };
-
-  const changeMaanedsintektHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setNyMaanedsinntektOgRefusjonsbeloep(event.target.value);
-  };
-
-  const changeBegrunnelseHandler = (aarsak: string) => {
-    logEvent('filtervalg', {
-      tittel: 'Endringsårsak beregnet månedsinntekt',
-      component: amplitudeComponent,
-      kategori: aarsak,
-      filternavn: 'Endringsårsak beregnet månedsinntekt'
-    });
-
-    setEndringsaarsak(aarsak);
-  };
-
-  const addIsDirtyForm = (fn: (param: any) => void) => {
-    return (param: any) => {
-      setIsDirtyForm(true);
-      fn(param);
-    };
   };
 
   const setEndreMaanedsinntektHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -159,12 +128,7 @@ export default function Bruttoinntekt({
         {(endringAvBelop || erBlanktSkjema) && (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
-            changeMaanedsintektHandler={addIsDirtyForm(changeMaanedsintektHandler)}
-            changeBegrunnelseHandler={addIsDirtyForm(changeBegrunnelseHandler)}
             defaultEndringAarsak={endringAarsak!}
-            setEndringAarsakGjelderFra={addIsDirtyForm(setEndringAarsakGjelderFra)}
-            setEndringAarsakBleKjent={addIsDirtyForm(setEndringAarsakBleKjent)}
-            setPerioder={addIsDirtyForm(setPerioder)}
             visFeilmeldingTekst={visFeilmeldingTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}

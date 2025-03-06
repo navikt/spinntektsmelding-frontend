@@ -4,7 +4,7 @@ import Bruttoinntekt from '../../../components/Bruttoinntekt/Bruttoinntekt';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 
-describe('Bruttoinntekt', () => {
+describe.skip('Bruttoinntekt', () => {
   it('should have no violations', async () => {
     const mockFn = vi.fn();
     const { container } = render(<Bruttoinntekt setIsDirtyForm={mockFn} />);

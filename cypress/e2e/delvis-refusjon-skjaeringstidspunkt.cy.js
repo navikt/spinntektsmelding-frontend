@@ -58,7 +58,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 55000,
           inntektsdato: '2024-01-07',
           naturalytelser: [],
-          endringAarsak: null
+          endringAarsak: null,
+          endringsaarsaker: null
         },
         refusjon: null,
         avsenderTlf: '12345678'
@@ -111,7 +112,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findByLabelText('Månedslønn 07.01.2024')
       .invoke('val')
       .then((str) => str.normalize('NFKC').replace(/ /g, ''))
-      .should('equal', '55000,00');
+      .should('equal', '55000');
     cy.findByLabelText('Månedslønn 07.01.2024').clear().type('60000');
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');
@@ -150,7 +151,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 60000,
           inntektsdato: '2024-01-07',
           naturalytelser: [],
-          endringAarsak: { aarsak: 'Bonus' }
+          endringAarsak: null,
+          endringsaarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: { beloepPerMaaned: 55000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'

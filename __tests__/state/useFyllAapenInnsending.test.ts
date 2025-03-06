@@ -13,11 +13,23 @@ import fullInnsendingSchema from '../../schema/fullInnsendingSchema';
 import MottattKvitteringSchema from '../../schema/mottattKvitteringSchema';
 import { Opplysningstype } from '../../state/useForespurtDataStore';
 import forespoerselType from '../../config/forespoerselType';
+import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
 
 type InnsendingSkjema = z.infer<typeof fullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
+type SkjemaData = z.infer<typeof hovedskjemaSchema>;
 
 vi.mock('nanoid');
+
+const mockSkjema: SkjemaData = {
+  bekreft_opplysninger: true,
+  inntekt: {
+    beloep: 500000,
+    endringAarsak: null,
+    endringsaarsaker: [{ aarsak: 'Bonus' }]
+  },
+  telefon: '12345678'
+};
 
 const initialState = useBoundStore.getState();
 
@@ -93,7 +105,7 @@ describe('useFyllAapenInnsending', () => {
     let innsending: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(false);
+      innsending = fyllInnsending(mockSkjema);
     });
 
     if (innsending) {
@@ -103,7 +115,13 @@ describe('useFyllAapenInnsending', () => {
           egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
           redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
         },
-        inntekt: { beloep: 500000, inntektsdato: '2023-02-14', naturalytelser: [], endringAarsak: { aarsak: 'Bonus' } },
+        inntekt: {
+          beloep: 500000,
+          inntektsdato: '2023-02-14',
+          naturalytelser: [],
+          endringAarsak: null,
+          endringsaarsaker: [{ aarsak: 'Bonus' }]
+        },
         refusjon: null,
         vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
         sykmeldtFnr: '25087327879',
@@ -173,7 +191,7 @@ describe('useFyllAapenInnsending', () => {
     let innsending: { data: InnsendingSkjema };
 
     act(() => {
-      innsending = fyllInnsending(false);
+      innsending = fyllInnsending(mockSkjema);
     });
 
     if (innsending) {
@@ -183,7 +201,13 @@ describe('useFyllAapenInnsending', () => {
           egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
           redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
         },
-        inntekt: { beloep: 500000, inntektsdato: '2023-02-14', naturalytelser: [], endringAarsak: { aarsak: 'Bonus' } },
+        inntekt: {
+          beloep: 500000,
+          inntektsdato: '2023-02-14',
+          naturalytelser: [],
+          endringAarsak: null,
+          endringsaarsaker: [{ aarsak: 'Bonus' }]
+        },
         refusjon: {
           beloepPerMaaned: 5000,
           endringer: [
