@@ -45,7 +45,9 @@ describe('Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findByRole('group', { name: /Er det endringer i refusjonsbeløpet i perioden?/ }).within(() => {
+    cy.findByRole('group', {
+      name: /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/
+    }).within(() => {
       cy.findByRole('radio', { name: 'Nei' }).click();
     });
 

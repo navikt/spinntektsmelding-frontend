@@ -11,7 +11,9 @@ describe('RefusjonUtbetalingEndring', () => {
     const endringer = [{}];
     const { container } = render(<RefusjonUtbetalingEndring endringer={endringer}></RefusjonUtbetalingEndring>);
 
-    const HeadingTitle = screen.getByText(/Er det endringer i refusjonsbeløpet i perioden?/i);
+    const HeadingTitle = screen.getByText(
+      /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/i
+    );
 
     expect(HeadingTitle).toBeInTheDocument();
 

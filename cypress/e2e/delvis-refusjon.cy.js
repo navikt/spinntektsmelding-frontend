@@ -125,7 +125,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Nei').check();
+    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?' })
+      .findByLabelText('Nei')
+      .check();
 
     // cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
@@ -210,7 +212,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .findByLabelText('Ja')
       .check();
 
-    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Nei').check();
+    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?' })
+      .findByLabelText('Nei')
+      .check();
 
     // cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 

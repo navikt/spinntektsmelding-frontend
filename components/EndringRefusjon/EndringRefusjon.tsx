@@ -46,7 +46,10 @@ export default function EndringRefusjon({ minDate, maxDate }: Readonly<EndringRe
 
   return (
     <>
-      <OrdinaryJaNei legend='Er det endringer i refusjonsbeløpet i perioden?' name={'refusjon.harEndringer'} />
+      <OrdinaryJaNei
+        legend='Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?'
+        name={'refusjon.harEndringer'}
+      />
 
       {harEndringRefusjon === 'Ja' &&
         fields.map((endring, key) => (
