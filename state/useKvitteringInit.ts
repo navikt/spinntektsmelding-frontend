@@ -118,7 +118,6 @@ export default function useKvitteringInit() {
       setEndringsaarsaker([jsonData.skjema.inntekt.endringAarsak]);
     }
     if (jsonData.skjema.inntekt?.endringsaarsaker) {
-      console.log('Setter endringsårsaker', jsonData.skjema.inntekt?.endringsaarsaker);
       setEndringsaarsaker(jsonData.skjema.inntekt?.endringsaarsaker);
     }
   }

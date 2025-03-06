@@ -14,6 +14,7 @@ import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
+import { useFormContext } from 'react-hook-form';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -41,6 +42,12 @@ export default function Bruttoinntekt({
   const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
+  const {
+    formState: { errors },
+    watch,
+    register
+  } = useFormContext();
+
   const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
@@ -63,6 +70,14 @@ export default function Bruttoinntekt({
 
     setEndreMaanedsinntekt(true);
   };
+
+  const endringAarsaker = watch('inntekt.endringsaarsaker');
+
+  useEffect(() => {
+    if (endringAarsaker && endringAarsaker.length > 0) {
+      setEndreMaanedsinntekt(true);
+    }
+  }, [endringAarsaker]);
 
   const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringAarsak?.aarsak;
 

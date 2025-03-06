@@ -130,9 +130,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const {
     register,
-    watch,
     setValue,
-    resetField,
     control,
     handleSubmit,
     formState: { errors, isDirty }
@@ -145,7 +143,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [bruttoinntekt.bruttoInntekt, setValue]);
 
   useEffect(() => {
-    console.log('bruttoinntekt.endringsaarsaker', bruttoinntekt.endringsaarsaker);
     setValue('inntekt.endringsaarsaker', bruttoinntekt.endringsaarsaker ?? null);
   }, [bruttoinntekt.endringsaarsaker, setValue]);
 
