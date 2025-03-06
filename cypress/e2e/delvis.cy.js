@@ -101,7 +101,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
     cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
 
-    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Ja').check();
+    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?' })
+      .findByLabelText('Ja')
+      .check();
 
     cy.findByLabelText('Endret beløp/måned').type('45000');
 

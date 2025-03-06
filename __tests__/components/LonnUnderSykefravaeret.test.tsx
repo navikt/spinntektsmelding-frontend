@@ -150,7 +150,7 @@ describe('LonnUnderSykefravaeret', () => {
       />
     );
 
-    const littTekst = screen.getByText(/Er det endringer i refusjonsbeløpet i perioden/);
+    const littTekst = screen.getByText(/Er det endringer i refusjonsbeløpet eller/);
 
     expect(littTekst).toBeInTheDocument();
 
@@ -180,7 +180,7 @@ describe('LonnUnderSykefravaeret', () => {
       />
     );
 
-    const littTekst = screen.queryByText(/Er det endringer i refusjonsbeløpet i perioden/);
+    const littTekst = screen.queryByText(/Er det endringer i refusjonsbeløpet eller/);
 
     expect(littTekst).not.toBeInTheDocument();
 

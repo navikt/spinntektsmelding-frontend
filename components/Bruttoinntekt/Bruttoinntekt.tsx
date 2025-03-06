@@ -86,12 +86,8 @@ export default function Bruttoinntekt({
     <>
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
       <BodyLong spacing={true}>
-        Beregnet månedslønn skal som hovedregel fastsettes ut fra et gjennomsnitt av den inntekten som er rapportert til
-        a-ordningen i de tre siste kalendermånedene før sykefraværet startet. Les mer om{' '}
-        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
-          beregning av månedslønn
-        </LenkeEksternt>
-        .
+        Beregnet månedslønn skal som hovedregel være et gjennomsnitt av den inntekten som er rapportert til a-ordningen
+        i de tre siste kalendermånedene før sykefraværet startet.
       </BodyLong>
       {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
         <Alert variant='info'>
@@ -102,8 +98,8 @@ export default function Bruttoinntekt({
       {harTidligereInntekt && (
         <>
           <BodyLong>
-            Vi må vite beregnet månedslønn for {formatDate(bestemmendeFravaersdag)}. Følgende lønnsopplysninger er
-            hentet fra A-ordningen:
+            Vi må vite beregnet månedslønn per {formatDate(bestemmendeFravaersdag)}. Følgende lønnsopplysninger er
+            hentet fra a-ordningen:
           </BodyLong>
           <TidligereInntekt tidligereinntekt={sisteTreMndTidligereinntekt} henterData={henterData} />
         </>
@@ -139,9 +135,14 @@ export default function Bruttoinntekt({
       </div>
       <BodyShort className={lokalStyles.bruttoinntektBelopBeskrivelse}>Stemmer dette?</BodyShort>
       <BodyLong>
-        Sjekk nøye at beregnet månedslønn er korrekt. Hvis den ansatte nylig har fått lønnsøkning, endring i arbeidstid,
-        hatt ubetalt fri eller har andre endringer i lønn må dette regnes med. Overtid skal ikke inkluderes i beregnet
-        månedslønn.
+        Månedinntekten du oppgir i inntektsmeldingen skal reflektere den ansatte sitt inntektstap i sykefraværsperioden.
+        Du må derfor sjekke at vårt forslag stemmer. Hvis den ansatte i løpet av beregningsperioden har fått en varig
+        lønnsøkning, endring i arbeidstid, hatt ubetalt fri som permisjon, ferie, sykefravær eller permittering, må vårt
+        forslag til månedsinntekt endres. Les mer om{' '}
+        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
+          beregning av månedslønn
+        </LenkeEksternt>
+        .
       </BodyLong>
     </>
   );
