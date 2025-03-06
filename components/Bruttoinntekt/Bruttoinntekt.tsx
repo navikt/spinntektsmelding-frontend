@@ -118,12 +118,7 @@ export default function Bruttoinntekt({
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
       <BodyLong spacing={true}>
         Beregnet månedslønn skal som hovedregel være et gjennomsnitt av den inntekten som er rapportert til a-ordningen
-        i de tre siste kalendermånedene før sykefraværet startet. a-ordningen i de tre siste kalendermånedene før
-        sykefraværet startet. Les mer om{' '}
-        <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
-          beregning av månedslønn
-        </LenkeEksternt>
-        .
+        i de tre siste kalendermånedene før sykefraværet startet.
       </BodyLong>
       {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
         <Alert variant='info'>
@@ -178,8 +173,8 @@ export default function Bruttoinntekt({
       <BodyLong>
         Månedinntekten du oppgir i inntektsmeldingen skal reflektere den ansatte sitt inntektstap i sykefraværsperioden.
         Du må derfor sjekke at vårt forslag stemmer. Hvis den ansatte i løpet av beregningsperioden har fått en varig
-        lønnsøkning, endring i arbeidstid, hatt utbetalt fri som permisjon, ferie, sykefravær eller permittering, må
-        vårt forslag til månedsinntekt endres. Les mer om{' '}
+        lønnsøkning, endring i arbeidstid, hatt ubetalt fri som permisjon, ferie, sykefravær eller permittering, må vårt
+        forslag til månedsinntekt endres. Les mer om{' '}
         <LenkeEksternt href='https://www.nav.no/arbeidsgiver/inntektsmelding#beregningsregler-for-sykepenger'>
           beregning av månedslønn
         </LenkeEksternt>
