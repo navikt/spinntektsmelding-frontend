@@ -43,7 +43,9 @@ export default function LonnUnderSykefravaeret({
           <>
             {harRefusjonEndringer === 'Nei' && (
               <>
-                <div className={lokalStyle.uthevet}>Er det endringer i refusjonsbeløpet i perioden?</div>
+                <div className={lokalStyle.uthevet}>
+                  Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?
+                </div>
                 <BodyShort>{harRefusjonEndringer}</BodyShort>
               </>
             )}

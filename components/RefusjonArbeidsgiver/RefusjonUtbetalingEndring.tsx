@@ -92,7 +92,7 @@ export default function RefusjonUtbetalingEndring({
   return (
     <>
       <RadioGroup
-        legend='Er det endringer i refusjonsbeløpet i perioden?'
+        legend='Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?'
         id={'refusjon.endringer'}
         className={styles.radiobuttonWrapper}
         error={visFeilmeldingTekst('refusjon.endringer')}

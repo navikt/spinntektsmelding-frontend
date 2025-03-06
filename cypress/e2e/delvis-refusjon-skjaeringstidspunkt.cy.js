@@ -135,7 +135,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByLabelText('Oppgi refusjonsbeløpet per måned').clear().type('55000');
 
-    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet i perioden?' }).findByLabelText('Nei').check();
+    cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?' })
+      .findByLabelText('Nei')
+      .check();
 
     // cy.findByRole('group', { name: 'Opphører refusjonkravet i perioden?' }).findByLabelText('Nei').check();
 
