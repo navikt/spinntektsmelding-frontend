@@ -75,6 +75,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
+  const lagretEndringsaarsaker = useBoundStore((state) => state.endringsaarsaker);
 
   const [navn, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
     state.navn,
@@ -290,14 +291,15 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const endringsaarsaker = dataFraBackend
     ? kvitteringDokument.inntekt.endringsaarsaker
-    : kvitteringData?.inntekt.endringsaarsaker;
+    : (kvitteringData?.inntekt?.endringsaarsaker ?? lagretEndringsaarsaker);
 
   console.log(
     'endringsaarsaker',
     endringsaarsaker,
     kvitteringData?.inntekt.endringsaarsaker,
     dataFraBackend,
-    kvitteringDokument.inntekt
+    kvitteringDokument.inntekt,
+    lagretEndringsaarsaker
   );
 
   useEffect(() => {
