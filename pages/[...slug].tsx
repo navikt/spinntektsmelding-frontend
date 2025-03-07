@@ -160,9 +160,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setSenderInn(true);
 
     if (pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm, formData).finally(() => {
-        setSenderInn(false);
-      });
+      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm || isDirty, formData).finally(
+        () => {
+          setSenderInn(false);
+        }
+      );
 
       return;
     }
