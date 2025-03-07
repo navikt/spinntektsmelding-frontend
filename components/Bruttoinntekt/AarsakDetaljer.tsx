@@ -4,7 +4,6 @@ import lokalStyles from './Bruttoinntekt.module.css';
 import parseIsoDate from '../../utils/parseIsoDate';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 
-import { Periode } from '../../state/state';
 import { useFormContext } from 'react-hook-form';
 import DatoVelger from '../DatoVelger/DatoVelger';
 import PeriodeListevelger from '../PeriodeListeVelger/PeriodeListevelger';
@@ -15,16 +14,9 @@ interface AarsakDetaljerProps {
   id: string;
 }
 export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, id }: Readonly<AarsakDetaljerProps>) {
-  // const defaultEndringAarsak = endringAarsak;
+  const { watch } = useFormContext();
 
-  const {
-    formState: { errors },
-    watch,
-    register,
-    control
-  } = useFormContext();
-
-  const defaultEndringAarsak = watch('inntekt.endringsaarsaker[' + id + ']');
+  const defaultEndringAarsak = watch('inntekt.endringsaarsaker.' + id);
 
   return (
     <>
@@ -34,7 +26,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultEndringsdato={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             defaultKjentDato={parseIsoDate(defaultEndringAarsak?.bleKjent)}
             defaultMonth={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker[${id}]`}
+            name={`inntekt.endringsaarsaker.${id}`}
           />
         </div>
       )}
@@ -50,7 +42,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             // visFeilmeldingTekst={visFeilmeldingTekst}
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker[${id}].ferier`}
+            name={`inntekt.endringsaarsaker.${id}.ferier`}
           />
         </div>
       )}
@@ -65,7 +57,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             // error={visFeilmeldingTekst('bruttoinntekt-lonnsendring-fom')}
 
             defaultMonth={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker[${id}].gjelderFra`}
+            name={`inntekt.endringsaarsaker.${id}.gjelderFra`}
           />
         </div>
       )}
@@ -86,7 +78,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
             // visFeilmeldingTekst={visFeilmeldingTekst}
-            name={`inntekt.endringsaarsaker[${id}].permisjoner`}
+            name={`inntekt.endringsaarsaker.${id}.permisjoner`}
           />
         </div>
       )}
@@ -107,7 +99,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
             // visFeilmeldingTekst={visFeilmeldingTekst}
-            name={`inntekt.endringsaarsaker[${id}].permitteringer`}
+            name={`inntekt.endringsaarsaker.${id}.permitteringer`}
           />
         </div>
       )}
@@ -120,7 +112,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker[${id}].gjelderFra`}
+            name={`inntekt.endringsaarsaker.${id}.gjelderFra`}
           />
         </div>
       )}
@@ -133,7 +125,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker[${id}].gjelderFra`}
+            name={`inntekt.endringsaarsaker.${id}.gjelderFra`}
           />
         </div>
       )}
@@ -154,7 +146,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
             // visFeilmeldingTekst={visFeilmeldingTekst}
-            name={`inntekt.endringsaarsaker[${id}].sykefravaer`}
+            name={`inntekt.endringsaarsaker.${id}.sykefravaer`}
           />
         </div>
       )}

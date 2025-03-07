@@ -77,13 +77,10 @@ export default function Aarsaksvelger({
             )}
             <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
               <SelectEndringBruttoinntekt
-                // onChangeBegrunnelse={changeBegrunnelseHandler}
                 error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
-                id={`inntekt.endringsaarsaker[${key}].aarsak`}
+                id={`inntekt.endringsaarsaker.${key}.aarsak`}
                 nyInnsending={nyInnsending}
                 register={register}
-                name={`inntekt.endringsaarsaker.${key}.aarsak`}
-                // value={defaultEndringAarsak?.aarsak as string}
               />
             </div>
             {!kanIkkeTilbakestilles && key === 0 && (
