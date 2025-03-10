@@ -40,8 +40,6 @@ export interface BruttoinntektState {
   setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => void;
   setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
-  setEndringAarsakGjelderFra: (endringsdato?: Date) => void;
-  setEndringAarsakBleKjent: (kjentFraDato?: Date) => void;
   tilbakestillMaanedsinntekt: () => void;
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
@@ -114,20 +112,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     ),
 
-  setEndringAarsakGjelderFra: (endringDato) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.gjelderFra = endringDato;
-        return state;
-      })
-    ),
-  setEndringAarsakBleKjent: (kjentFraDato?: Date) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.bleKjent = kjentFraDato;
-        return state;
-      })
-    ),
   tilbakestillMaanedsinntekt: () =>
     set(
       produce((state) => {
