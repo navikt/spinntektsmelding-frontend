@@ -59,7 +59,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           inntektsdato: '2024-01-07',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: null
+          endringAarsaker: null
         },
         refusjon: null,
         avsenderTlf: '12345678'
@@ -154,7 +154,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           inntektsdato: '2024-01-07',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: [{ aarsak: 'Bonus' }]
+          endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: { beloepPerMaaned: 55000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'

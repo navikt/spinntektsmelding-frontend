@@ -32,8 +32,8 @@ export default function useFyllAapenInnsending() {
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const vedtaksperiodeId = useBoundStore((state) => state.vedtaksperiodeId);
-  const [setEndringsaarsaker, setBareNyMaanedsinntekt] = useBoundStore((state) => [
-    state.setEndringsaarsaker,
+  const [setEndringAarsaker, setBareNyMaanedsinntekt] = useBoundStore((state) => [
+    state.setEndringAarsaker,
     state.setBareNyMaanedsinntekt
   ]);
 
@@ -57,11 +57,11 @@ export default function useFyllAapenInnsending() {
   type SkjemaData = z.infer<typeof hovedskjemaSchema>;
 
   return (skjemaData: SkjemaData) => {
-    const endringsaarsakerParsed = skjemaData.inntekt?.endringsaarsaker
-      ? skjemaData.inntekt.endringsaarsaker.map((endringAarsak) => konverterEndringAarsakSchema.parse(endringAarsak))
+    const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
+      ? skjemaData.inntekt.endringAarsaker.map((endringAarsak) => konverterEndringAarsakSchema.parse(endringAarsak))
       : null;
 
-    setEndringsaarsaker(skjemaData.inntekt?.endringsaarsaker);
+    setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
 
     setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
 
@@ -98,7 +98,7 @@ export default function useFyllAapenInnsending() {
             }))
           : [],
         endringAarsak: null,
-        endringsaarsaker: endringsaarsakerParsed ?? null
+        endringAarsaker: endringAarsakerParsed ?? null
       },
       refusjon:
         lonnISykefravaeret?.status === 'Ja'

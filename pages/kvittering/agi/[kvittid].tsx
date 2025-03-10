@@ -75,7 +75,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
-  const lagretEndringsaarsaker = useBoundStore((state) => state.endringsaarsaker);
+  const lagretEndringsaarsaker = useBoundStore((state) => state.endringAarsaker);
 
   const [navn, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
     state.navn,
@@ -289,9 +289,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? kvitteringDokument.inntekt.endringAarsak
     : kvitteringData?.inntekt.endringAarsak;
 
-  const endringsaarsaker = dataFraBackend
-    ? kvitteringDokument.inntekt.endringsaarsaker
-    : (kvitteringData?.inntekt?.endringsaarsaker ?? lagretEndringsaarsaker);
+  const endringAarsaker = dataFraBackend
+    ? kvitteringDokument.inntekt.endringAarsaker
+    : (kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringsaarsaker);
 
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
@@ -392,7 +392,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   />
                 </>
               )}
-              {endringsaarsaker?.map((endring, endringIndex) => (
+              {endringAarsaker?.map((endring, endringIndex) => (
                 <Fragment key={endringIndex}>
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 

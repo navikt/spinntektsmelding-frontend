@@ -22,7 +22,7 @@ describe('validerAapenInnsending', () => {
         inntektsdato: '2002-02-02',
         naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
-        endringsaarsaker: [{ aarsak: 'Bonus' }]
+        endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: {
         beloepPerMaaned: 1000,
@@ -56,7 +56,7 @@ describe('validerAapenInnsending', () => {
         inntektsdato: '2002-02-02',
         naturalytelser: [],
         endringAarsak: null,
-        endringsaarsaker: [{ aarsak: 'Bonus' }]
+        endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: {
         beloepPerMaaned: 1000,

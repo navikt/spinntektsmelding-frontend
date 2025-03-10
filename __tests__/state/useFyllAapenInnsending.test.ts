@@ -26,7 +26,7 @@ const mockSkjema: SkjemaData = {
   inntekt: {
     beloep: 500000,
     endringAarsak: null,
-    endringsaarsaker: [{ aarsak: 'Bonus' }]
+    endringAarsaker: [{ aarsak: 'Bonus' }]
   },
   telefon: '12345678'
 };
@@ -120,7 +120,7 @@ describe('useFyllAapenInnsending', () => {
           inntektsdato: '2023-02-14',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: [{ aarsak: 'Bonus' }]
+          endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: null,
         vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
@@ -206,7 +206,7 @@ describe('useFyllAapenInnsending', () => {
           inntektsdato: '2023-02-14',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: [{ aarsak: 'Bonus' }]
+          endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: {
           beloepPerMaaned: 5000,

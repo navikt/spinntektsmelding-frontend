@@ -40,7 +40,7 @@ const skjemaData: Skjema = {
   bekreft_opplysninger: true,
   inntekt: {
     beloep: 12345,
-    endringsaarsaker: null,
+    endringAarsaker: null,
     endringAarsak: null,
     inntektsdato: '2021-01-01',
     naturalytelser: []

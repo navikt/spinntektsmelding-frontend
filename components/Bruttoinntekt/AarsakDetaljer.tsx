@@ -16,7 +16,7 @@ interface AarsakDetaljerProps {
 export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, id }: Readonly<AarsakDetaljerProps>) {
   const { watch } = useFormContext();
 
-  const defaultEndringAarsak = watch('inntekt.endringsaarsaker.' + id);
+  const defaultEndringAarsak = watch('inntekt.endringAarsaker.' + id);
 
   return (
     <>
@@ -26,7 +26,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultEndringsdato={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             defaultKjentDato={parseIsoDate(defaultEndringAarsak?.bleKjent)}
             defaultMonth={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker.${id}`}
+            name={`inntekt.endringAarsaker.${id}`}
           />
         </div>
       )}
@@ -37,7 +37,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             tomTekst='Ferie til'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker.${id}.ferier`}
+            name={`inntekt.endringAarsaker.${id}.ferier`}
           />
         </div>
       )}
@@ -48,7 +48,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker.${id}.gjelderFra`}
+            name={`inntekt.endringAarsaker.${id}.gjelderFra`}
           />
         </div>
       )}
@@ -59,7 +59,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             tomTekst='Permisjon til'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker.${id}.permisjoner`}
+            name={`inntekt.endringAarsaker.${id}.permisjoner`}
           />
         </div>
       )}
@@ -70,7 +70,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             tomTekst='Permittering til'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker.${id}.permitteringer`}
+            name={`inntekt.endringAarsaker.${id}.permitteringer`}
           />
         </div>
       )}
@@ -81,7 +81,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker.${id}.gjelderFra`}
+            name={`inntekt.endringAarsaker.${id}.gjelderFra`}
           />
         </div>
       )}
@@ -92,7 +92,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             toDate={bestemmendeFravaersdag}
             defaultMonth={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker.${id}.gjelderFra`}
+            name={`inntekt.endringAarsaker.${id}.gjelderFra`}
           />
         </div>
       )}
@@ -103,7 +103,7 @@ export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, 
             tomTekst='Sykefravær til'
             defaultMonth={bestemmendeFravaersdag}
             toDate={bestemmendeFravaersdag}
-            name={`inntekt.endringsaarsaker.${id}.sykefravaer`}
+            name={`inntekt.endringAarsaker.${id}.sykefravaer`}
           />
         </div>
       )}

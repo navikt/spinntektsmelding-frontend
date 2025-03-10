@@ -36,9 +36,9 @@ export default function useKvitteringInit() {
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
-  const [setEndringAarsak, setEndringsaarsaker] = useBoundStore((state) => [
+  const [setEndringAarsak, setEndringAarsaker] = useBoundStore((state) => [
     state.setEndringAarsak,
-    state.setEndringsaarsaker
+    state.setEndringAarsaker
   ]);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
 
@@ -115,10 +115,10 @@ export default function useKvitteringInit() {
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
     if (jsonData.skjema.inntekt?.endringAarsak) {
-      setEndringsaarsaker([jsonData.skjema.inntekt.endringAarsak]);
+      setEndringAarsaker([jsonData.skjema.inntekt.endringAarsak]);
     }
-    if (jsonData.skjema.inntekt?.endringsaarsaker) {
-      setEndringsaarsaker(jsonData.skjema.inntekt?.endringsaarsaker);
+    if (jsonData.skjema.inntekt?.endringAarsaker) {
+      setEndringAarsaker(jsonData.skjema.inntekt?.endringAarsaker);
     }
   }
 

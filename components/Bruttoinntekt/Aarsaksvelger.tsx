@@ -46,7 +46,7 @@ export default function Aarsaksvelger({
 
   const { fields, append, remove, replace } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
-    name: 'inntekt.endringsaarsaker' // unique name for your Field Array
+    name: 'inntekt.endringAarsaker' // unique name for your Field Array
   });
   const beloepFeltnavn = 'inntekt.beloep';
   const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
@@ -78,7 +78,7 @@ export default function Aarsaksvelger({
             <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
               <SelectEndringBruttoinntekt
                 error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
-                id={`inntekt.endringsaarsaker.${key}.aarsak`}
+                id={`inntekt.endringAarsaker.${key}.aarsak`}
                 nyInnsending={nyInnsending}
                 register={register}
               />

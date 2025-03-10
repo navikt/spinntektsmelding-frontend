@@ -141,7 +141,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setEndringsaarsaker([{ aarsak: 'Bonus' }]);
+      result.current.setEndringAarsaker([{ aarsak: 'Bonus' }]);
       result.current.setNyMaanedsinntektOgRefusjonsbeloep('56000,23');
     });
 
@@ -366,7 +366,7 @@ describe('useBoundStore', () => {
     ]);
   });
 
-  it('should setEndringsaarsaker', () => {
+  it('should setEndringAarsaker', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -374,7 +374,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setEndringsaarsaker([
+      result.current.setEndringAarsaker([
         {
           aarsak: 'Ferie',
           ferier: [{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11) }]
@@ -402,7 +402,7 @@ describe('useBoundStore', () => {
         }
       ]);
     });
-    expect(result.current.bruttoinntekt.endringsaarsaker).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsaker).toEqual([
       {
         aarsak: 'Ferie',
         ferier: [
@@ -451,7 +451,7 @@ describe('useBoundStore', () => {
     ]);
   });
 
-  it('should setEndringsaarsaker with date as strings', () => {
+  it('should setEndringAarsaker with date as strings', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -459,7 +459,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setEndringsaarsaker([
+      result.current.setEndringAarsaker([
         {
           aarsak: 'Ferie',
           ferier: [{ fom: '2002-11-11', tom: '2002-11-11' }]
@@ -487,7 +487,7 @@ describe('useBoundStore', () => {
         }
       ]);
     });
-    expect(result.current.bruttoinntekt.endringsaarsaker).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsaker).toEqual([
       {
         aarsak: 'Ferie',
         ferier: [

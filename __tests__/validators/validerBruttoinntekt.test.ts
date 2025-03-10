@@ -31,7 +31,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 12345,
-        endringsaarsaker: null,
+        endringAarsaker: null,
         endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
@@ -53,7 +53,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: -1,
-        endringsaarsaker: null,
+        endringAarsaker: null,
         endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
@@ -81,7 +81,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 1234,
-        endringsaarsaker: [{ aarsak: '' }],
+        endringAarsaker: [{ aarsak: '' }],
         endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
@@ -110,7 +110,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [{ aarsak: '' }],
+        endringAarsaker: [{ aarsak: '' }],
 
         endringAarsak: null,
         inntektsdato: '2021-01-01',
@@ -141,7 +141,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 0,
-        endringsaarsaker: [{ aarsak: '' }],
+        endringAarsaker: [{ aarsak: '' }],
 
         endringAarsak: null,
         inntektsdato: '2021-01-01',
@@ -167,7 +167,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 0,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Tariffendring as string
           }
@@ -208,7 +208,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Ferie as string
           }
@@ -257,7 +257,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Ferie as string,
             ferier: [{}]
@@ -295,7 +295,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Ferie as string,
             ferier: [{ fom: parseIsoDate('2022-01-01') }]
@@ -327,7 +327,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Ferie as string,
             ferier: [{ tom: parseIsoDate('2022-01-01') }]
@@ -363,7 +363,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [{ aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring }],
+        endringAarsaker: [{ aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring }],
 
         endringAarsak: null,
         inntektsdato: '2021-01-01',
@@ -397,7 +397,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
             gjelderFra: parseIsoDate('2002-02-02')
@@ -435,7 +435,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
             gjelderFra: parseIsoDate('2002-02-02')
@@ -468,7 +468,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
             gjelderFra: '2002-01-02'
@@ -498,7 +498,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Permisjon
           }
@@ -531,7 +531,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
             permisjoner: [{}]
@@ -571,7 +571,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
             permisjoner: [{ tom: parseIsoDate('2022-02-02') }]
@@ -608,7 +608,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Permisjon,
             permisjoner: [{ fom: parseIsoDate('2022-02-02') }]
@@ -642,7 +642,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Permittering
           }
@@ -675,7 +675,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Permittering,
             permitteringer: [{ aarsak: begrunnelseEndringBruttoinntekt.Permittering, permitteringer: [{}] }]
@@ -715,7 +715,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Permittering,
             permitteringer: [{ fom: '2022-02-02' }]
@@ -752,7 +752,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.Permittering,
             permitteringer: [{ tom: '2022-02-02' }]
@@ -787,7 +787,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.NyStilling
           }
@@ -820,7 +820,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.NyStilling,
             gjelderFra: undefined
@@ -854,7 +854,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.NyStilling,
             gjelderFra: '2002-02-03'
@@ -889,7 +889,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent
           }
@@ -922,7 +922,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
             gjelderFra: undefined
@@ -959,7 +959,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 123,
-        endringsaarsaker: [
+        endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
             gjelderFra: '2002-02-03'
@@ -997,7 +997,7 @@ it('should return an error when sykefravær property is missing', () => {
     bekreft_opplysninger: true,
     inntekt: {
       beloep: 123,
-      endringsaarsaker: [
+      endringAarsaker: [
         {
           aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer
         }
@@ -1033,7 +1033,7 @@ it('should return an error when sykefravær fom & tom is missing', () => {
     bekreft_opplysninger: true,
     inntekt: {
       beloep: 123,
-      endringsaarsaker: [
+      endringAarsaker: [
         {
           aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
           sykefravaer: [{}]
@@ -1073,7 +1073,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
     bekreft_opplysninger: true,
     inntekt: {
       beloep: 123,
-      endringsaarsaker: [
+      endringAarsaker: [
         {
           aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer,
           sykefravaer: [{ tom: '2022-01-02' }]
@@ -1110,7 +1110,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
 //     bekreft_opplysninger: true,
 //     inntekt: {
 //       beloep: 123,
-//       endringsaarsaker: [
+//       endringAarsaker: [
 //         {
 //           aarsak: begrunnelseEndringBruttoinntekt.Permittering,
 //           permitteringer: [{ fom: '2022-01-02' }]

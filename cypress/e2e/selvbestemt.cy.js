@@ -141,7 +141,7 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
           inntektsdato: '2024-09-10',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: [
+          endringAarsaker: [
             {
               aarsak: 'Ferie',
               ferier: [
@@ -261,7 +261,7 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
           inntektsdato: '2024-09-10',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: [
+          endringAarsaker: [
             {
               aarsak: 'VarigLoennsendring',
               gjelderFra: '2024-06-30'

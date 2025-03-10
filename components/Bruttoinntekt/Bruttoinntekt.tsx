@@ -71,7 +71,7 @@ export default function Bruttoinntekt({
     setEndreMaanedsinntekt(true);
   };
 
-  const endringAarsaker = watch('inntekt.endringsaarsaker');
+  const endringAarsaker = watch('inntekt.endringAarsaker');
 
   useEffect(() => {
     if (endringAarsaker && endringAarsaker.length > 0) {

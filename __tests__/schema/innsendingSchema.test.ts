@@ -15,7 +15,7 @@ describe('InnsendingSchema', () => {
         inntektsdato: '2023-02-14',
         naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
-        endringsaarsaker: [{ aarsak: 'Bonus' }]
+        endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: null,
       vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
@@ -42,7 +42,7 @@ describe('InnsendingSchema', () => {
         inntektsdato: '2023-02-14',
         naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
-        endringsaarsaker: [{ aarsak: 'Bonus' }]
+        endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: { beloepPerMaaned: 999999 },
       vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',

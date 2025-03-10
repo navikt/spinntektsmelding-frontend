@@ -55,7 +55,7 @@ export default function validerBruttoinntekt(state: CompleteState, skjemaData: S
       //   });
       // } else {
 
-      const endringAarsaker = skjemaData.inntekt?.endringsaarsaker;
+      const endringAarsaker = skjemaData.inntekt?.endringAarsaker;
       endringAarsaker?.forEach((endringAarsak, index) => {
         if (!endringAarsak?.aarsak || endringAarsak.aarsak === '') {
           valideringstatus.push({

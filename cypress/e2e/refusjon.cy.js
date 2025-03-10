@@ -78,7 +78,7 @@ describe('Utfylling og innsending av skjema', () => {
           inntektsdato: '2023-03-15',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: null
+          endringAarsaker: null
         },
         refusjon: { beloepPerMaaned: 77000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'

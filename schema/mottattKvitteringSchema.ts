@@ -37,7 +37,7 @@ export const kvitteringNavNoSchema = z.object({
       endringAarsak: EndringAarsakSchema,
       inntektsdato: z.string().date(),
       naturalytelser: apiNaturalytelserSchema,
-      endringsaarsaker: z.array(EndringAarsakSchema)
+      endringAarsaker: z.array(EndringAarsakSchema)
     }),
     refusjon: z
       .object({

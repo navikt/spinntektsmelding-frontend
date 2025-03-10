@@ -13,7 +13,7 @@ export const hovedskjemaSchema = z.object({
           invalid_type_error: 'Vennligst angi bruttoinntekt på formatet 1234,50'
         })
         .min(0),
-      endringsaarsaker: z.nullable(z.array(EndringAarsakSchema))
+      endringAarsaker: z.nullable(z.array(EndringAarsakSchema))
     })
   )
 });

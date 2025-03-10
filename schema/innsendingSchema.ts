@@ -29,7 +29,7 @@ export const InnsendingSchema = z.object({
       inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
       naturalytelser: apiNaturalytelserSchema,
       endringAarsak: z.nullable(EndringAarsakSchema),
-      endringsaarsaker: z.nullable(z.array(EndringAarsakSchema))
+      endringAarsaker: z.nullable(z.array(EndringAarsakSchema))
     })
   ),
   refusjon: z.nullable(

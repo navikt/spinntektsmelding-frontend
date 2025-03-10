@@ -43,8 +43,8 @@ export default function useFyllInnsending() {
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
-  const [setEndringsaarsaker, setBareNyMaanedsinntekt] = useBoundStore((state) => [
-    state.setEndringsaarsaker,
+  const [setEndringAarsaker, setBareNyMaanedsinntekt] = useBoundStore((state) => [
+    state.setEndringAarsaker,
     state.setBareNyMaanedsinntekt
   ]);
 
@@ -102,13 +102,13 @@ export default function useFyllInnsending() {
     );
     const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
 
-    const endringsaarsakerParsed = skjemaData.inntekt?.endringsaarsaker
-      ? skjemaData.inntekt?.endringsaarsaker.map((endringAarsak) => {
+    const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
+      ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
           return konverterEndringAarsakSchema.parse(endringAarsak);
         })
       : null;
 
-    setEndringsaarsaker(skjemaData.inntekt?.endringsaarsaker);
+    setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
 
     setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
 
@@ -145,7 +145,7 @@ export default function useFyllInnsending() {
             }))
           : [],
         endringAarsak: endringAarsakParsed,
-        endringsaarsaker: endringsaarsakerParsed
+        endringAarsaker: endringAarsakerParsed
       },
       refusjon:
         lonnISykefravaeret?.status === 'Ja'

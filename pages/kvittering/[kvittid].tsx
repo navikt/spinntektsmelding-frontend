@@ -239,7 +239,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
                 </>
               )}
-              {bruttoinntekt.endringsaarsaker?.map((endring, endringIndex) => (
+              {bruttoinntekt.endringAarsaker?.map((endring, endringIndex) => (
                 <Fragment key={endringIndex}>
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 

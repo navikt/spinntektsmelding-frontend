@@ -136,7 +136,7 @@ describe('Utfylling og innsending av skjema', () => {
           inntektsdato: '2023-01-30',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: [
+          endringAarsaker: [
             {
               aarsak: 'Bonus'
             }
@@ -230,7 +230,7 @@ describe('Utfylling og innsending av skjema', () => {
           inntektsdato: '2023-02-02',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: [
+          endringAarsaker: [
             {
               aarsak: 'Ferie',
               ferier: [
@@ -349,7 +349,7 @@ describe('Utfylling og innsending av skjema', () => {
           inntektsdato: '2023-01-30',
           naturalytelser: [],
           endringAarsak: null,
-          endringsaarsaker: [
+          endringAarsaker: [
             {
               aarsak: 'VarigLoennsendring',
               gjelderFra: '2022-12-30'

@@ -123,7 +123,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
-        endringsaarsaker: bruttoinntekt.endringsaarsaker
+        endringAarsaker: bruttoinntekt.endringAarsaker
       }
     }
   });
@@ -143,8 +143,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [bruttoinntekt.bruttoInntekt, setValue]);
 
   useEffect(() => {
-    setValue('inntekt.endringsaarsaker', bruttoinntekt.endringsaarsaker ?? null);
-  }, [bruttoinntekt.endringsaarsaker, setValue]);
+    setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
+  }, [bruttoinntekt.endringAarsaker, setValue]);
 
   const inntektBeloep = useWatch({
     control: control,
