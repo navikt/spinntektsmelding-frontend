@@ -293,15 +293,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? kvitteringDokument.inntekt.endringsaarsaker
     : (kvitteringData?.inntekt?.endringsaarsaker ?? lagretEndringsaarsaker);
 
-  console.log(
-    'endringsaarsaker',
-    endringsaarsaker,
-    kvitteringData?.inntekt.endringsaarsaker,
-    dataFraBackend,
-    kvitteringDokument.inntekt,
-    lagretEndringsaarsaker
-  );
-
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     // eslint-disable-next-line react-hooks/exhaustive-deps

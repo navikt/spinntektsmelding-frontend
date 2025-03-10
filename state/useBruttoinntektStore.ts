@@ -40,8 +40,6 @@ export interface BruttoinntektState {
   setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => void;
   setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
-  setEndringsaarsak: (aarsak: string) => void;
-  setPerioder: (periode: Array<Periode> | undefined) => void;
   setEndringAarsakGjelderFra: (endringsdato?: Date) => void;
   setEndringAarsakBleKjent: (kjentFraDato?: Date) => void;
   tilbakestillMaanedsinntekt: () => void;
@@ -116,63 +114,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     ),
 
-  setEndringsaarsak: (aarsak: string | undefined) =>
-    set(
-      produce((state) => {
-        if (aarsak === '') {
-          aarsak = undefined;
-        }
-        if (!state.bruttoinntekt.endringAarsak?.aarsak || state.bruttoinntekt.endringAarsak?.aarsak !== aarsak) {
-          state.bruttoinntekt.endringAarsak = { aarsak: aarsak };
-        } else {
-          state.bruttoinntekt.endringAarsak.aarsak = aarsak;
-        }
-
-        if (aarsak && aarsak !== undefined) {
-          state.bruttoinntekt.manueltKorrigert = true;
-        } else {
-          state.bruttoinntekt.manueltKorrigert = false;
-        }
-
-        if (aarsak && aarsak !== undefined) {
-          state = slettFeilmeldingFraState(state, 'bruttoinntekt-endringsaarsak');
-        } else {
-          state = leggTilFeilmelding(state, 'bruttoinntekt-endringsaarsak', feiltekster.ENDRINGSAARSAK_MANGLER);
-        }
-        return state;
-      })
-    ),
-  setPerioder: (periode) => {
-    const aarsak = get().bruttoinntekt.endringAarsak?.aarsak.toLowerCase();
-
-    set(
-      produce((state) => {
-        let aarsakIndex = '';
-        switch (aarsak) {
-          case 'ferie':
-            aarsakIndex = 'ferier';
-            break;
-          case 'permisjon':
-            aarsakIndex = 'permisjoner';
-            break;
-          case 'permittering':
-            aarsakIndex = 'permitteringer';
-            break;
-          default:
-            aarsakIndex = aarsak!;
-            break;
-        }
-
-        state.bruttoinntekt.endringAarsak[aarsakIndex] =
-          periode?.map((periode) => ({
-            fom: periode.fom,
-            tom: periode.tom
-          })) || [];
-
-        return state;
-      })
-    );
-  },
   setEndringAarsakGjelderFra: (endringDato) =>
     set(
       produce((state) => {

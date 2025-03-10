@@ -133,40 +133,6 @@ describe('useBoundStore', () => {
     expect(result.current.feilmeldinger.length).toBe(0);
   });
 
-  it('should set ny endringsaarsak.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    act(() => {
-      result.current.setEndringsaarsak('AARSAK');
-    });
-
-    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBe('AARSAK');
-  });
-
-  it('should set empty endringsaarsak and give an error.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    act(() => {
-      result.current.setEndringsaarsak('');
-    });
-
-    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBeUndefined();
-    expect(result.current.feilmeldinger).toEqual([
-      {
-        felt: 'bruttoinntekt-endringsaarsak',
-        text: 'Vennligst angi årsak for endringen.'
-      }
-    ]);
-  });
-
   it('should tilbakestille endringsaarsak', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -175,7 +141,7 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
-      result.current.setEndringsaarsak('AARSAK');
+      result.current.setEndringsaarsaker([{ aarsak: 'Bonus' }]);
       result.current.setNyMaanedsinntektOgRefusjonsbeloep('56000,23');
     });
 
@@ -274,46 +240,6 @@ describe('useBoundStore', () => {
     ]);
   });
 
-  it('should setPerioder', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    act(() => {
-      result.current.setEndringsaarsak('Ferie');
-    });
-
-    act(() => {
-      result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
-    });
-
-    expect(result.current.bruttoinntekt.endringAarsak.ferier).toEqual([
-      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
-    ]);
-  });
-
-  it('should setPerioder, some other data', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    act(() => {
-      result.current.setEndringsaarsak('Ferie');
-    });
-
-    act(() => {
-      result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
-    });
-
-    expect(result.current.bruttoinntekt.endringAarsak.ferier).toEqual([
-      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
-    ]);
-  });
-
   it('should setEndringAarsakGjelderFra', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -382,26 +308,6 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsak.gjelderFra).toEqual(parseIsoDate('2002-11-11'));
-  });
-
-  it('should setPerioder', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    act(() => {
-      result.current.setEndringsaarsak('Ferie');
-    });
-
-    act(() => {
-      result.current.setPerioder([{ fom: new Date(2002, 10, 11), tom: new Date(2002, 10, 11), id: '1' }]);
-    });
-
-    expect(result.current.bruttoinntekt.endringAarsak.ferier).toEqual([
-      { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
-    ]);
   });
 
   it('should setTidligereInntekter', () => {

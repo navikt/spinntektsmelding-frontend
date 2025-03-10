@@ -3,17 +3,16 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Begrunnelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
-import validerAapenInnsending, { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
+import validerAapenInnsending, { RefusjonEndring } from '../validators/validerAapenInnsending';
 import { SendtPeriode, formaterRedusertLoennIAgp } from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 import parseIsoDate from '../utils/parseIsoDate';
-import { finnInnsendbareArbeidsgiverperioder } from './useFyllDelvisInnsending';
 import { z } from 'zod';
 import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { isValid } from 'date-fns/isValid';
 
 export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
@@ -167,4 +166,19 @@ function formatDateForSubmit(date?: Date | string): string {
   }
 
   return date ?? '';
+}
+
+function finnInnsendbareArbeidsgiverperioder(
+  arbeidsgiverperioder: Periode[] | undefined,
+  skalSendeArbeidsgiverperiode: boolean
+): SendtPeriode[] | [] {
+  if (!skalSendeArbeidsgiverperiode) {
+    return [];
+  }
+
+  return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
+    ? arbeidsgiverperioder
+        ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
+        .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
+    : [];
 }

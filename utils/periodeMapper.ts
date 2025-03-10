@@ -3,7 +3,7 @@ import { Periode } from '../state/state';
 import formatIsoDate from './formatIsoDate';
 import parseIsoDate from './parseIsoDate';
 
-export const blankPeriode: Periode[] = [{ fom: undefined, tom: undefined, id: nanoid() }];
+const blankPeriode: Periode[] = [{ fom: undefined, tom: undefined, id: nanoid() }];
 
 export function periodeMapper(perioder: { fom: Date; tom: Date }[] | { fom: string; tom: string }[]): Periode[] {
   if (!perioder || perioder.length == 0) return blankPeriode;
