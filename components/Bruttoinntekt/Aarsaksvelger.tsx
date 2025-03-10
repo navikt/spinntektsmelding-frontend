@@ -39,7 +39,6 @@ export default function Aarsaksvelger({
 
   const {
     formState: { errors },
-    watch,
     register,
     control
   } = useFormContext();
@@ -61,7 +60,7 @@ export default function Aarsaksvelger({
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       {fields.map((aarsak, key) => (
         <Fragment key={key}>
-          <div className={lokalStyles.endremaaanedsinntekt} key={key}>
+          <div className={lokalStyles.endremaaanedsinntekt}>
             {key === 0 && (
               <TextField
                 label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}

@@ -36,10 +36,7 @@ export default function useKvitteringInit() {
   const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
-  const [setEndringAarsak, setEndringAarsaker] = useBoundStore((state) => [
-    state.setEndringAarsak,
-    state.setEndringAarsaker
-  ]);
+  const [setEndringAarsaker] = useBoundStore((state) => [state.setEndringAarsaker]);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
 
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);

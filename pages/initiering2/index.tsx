@@ -463,7 +463,7 @@ const Initiering2: NextPage = () => {
                     (periode) =>
                       periode?.forlengelseAv && (
                         <Box paddingBlock='4' borderWidth='1' paddingInline='4' key={periode.id}>
-                          <OrganisasjonInfo orgNr={organisasjonsnummer as string} arbeidsforhold={arbeidsforhold} />
+                          <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
                           <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
                             <PersonInfo navn={fulltNavn} fnr={identitetsnummer} />
                           </Link>

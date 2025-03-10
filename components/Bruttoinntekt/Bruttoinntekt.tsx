@@ -42,11 +42,7 @@ export default function Bruttoinntekt({
   const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
-  const {
-    formState: { errors },
-    watch,
-    register
-  } = useFormContext();
+  const { watch } = useFormContext();
 
   const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();

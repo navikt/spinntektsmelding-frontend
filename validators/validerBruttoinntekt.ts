@@ -1,5 +1,4 @@
 import { isAfter } from 'date-fns';
-// import { periodeMapper } from '../components/Bruttoinntekt/Aarsaksvelger';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { CompleteState } from '../state/useBoundStore';
 import parseIsoDate from '../utils/parseIsoDate';
@@ -48,13 +47,6 @@ export default function validerBruttoinntekt(state: CompleteState, skjemaData: S
     }
 
     if (bruttoinntekt.manueltKorrigert) {
-      // if (!bruttoinntekt.endringAarsak?.aarsak || bruttoinntekt.endringAarsak.aarsak === '') {
-      //   valideringstatus.push({
-      //     felt: 'bruttoinntekt-endringsaarsak',
-      //     code: BruttoinntektFeilkode.ENDRINGSAARSAK_MANGLER
-      //   });
-      // } else {
-
       const endringAarsaker = skjemaData.inntekt?.endringAarsaker;
       endringAarsaker?.forEach((endringAarsak, index) => {
         if (!endringAarsak?.aarsak || endringAarsak.aarsak === '') {

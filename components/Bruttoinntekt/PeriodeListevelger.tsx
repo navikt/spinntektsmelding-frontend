@@ -47,7 +47,6 @@ export default function PeriodeListevelger({
   };
 
   const slettRad = (periodeId: string | number) => {
-    // const updatedRange = defaultRange?.slice(periodeId as number, 1);
     const updatedRange = defaultRange?.filter((periode) => periode.id !== periodeId);
     onRangeListChange(updatedRange);
   };

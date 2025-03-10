@@ -57,8 +57,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
-  const [visFeilmeldingTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
-    state.visFeilmeldingTekst,
+  const [slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.slettFeilmelding,
     state.leggTilFeilmelding
   ]);
