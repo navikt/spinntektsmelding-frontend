@@ -1,5 +1,5 @@
-import testdata from '../../../mockdata/selvbestemt-kvittering.json';
-import { Fragment } from 'react';
+// import testdata from '../../../mockdata/selvbestemt-kvittering.json';
+import { Fragment, useEffect } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -27,7 +27,6 @@ import ButtonPrint from '../../../components/ButtonPrint';
 
 import ButtonEndre from '../../../components/ButtonEndre';
 import formatDate from '../../../utils/formatDate';
-import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
