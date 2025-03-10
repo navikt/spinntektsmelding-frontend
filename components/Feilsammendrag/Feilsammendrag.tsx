@@ -1,9 +1,9 @@
-import { FieldError, UseControllerProps } from 'react-hook-form';
+import { FieldError, UseControllerProps, FieldValues } from 'react-hook-form';
 import useBoundStore from '../../state/useBoundStore';
 import FeilListe from './FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 
-interface FeilsammendragProps<T> extends UseControllerProps<T> {
+interface FeilsammendragProps<T extends FieldValues> extends UseControllerProps<T> {
   skjemafeil: FieldError[] | undefined;
 }
 
