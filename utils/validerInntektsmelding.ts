@@ -17,6 +17,8 @@ import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../v
 import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 import validerPeriodeOverlapp, { PeriodeOverlappFeilkode } from '../validators/validerPeriodeOverlapp';
+import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { z } from 'zod';
 
 interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -56,10 +58,13 @@ type codeUnion =
   | TelefonFeilkode
   | PeriodeOverlappFeilkode;
 
+type Skjema = z.infer<typeof hovedskjemaSchema>;
+
 export default function validerInntektsmelding(
   state: CompleteState,
   opplysningerBekreftet: boolean,
-  kunInntektOgRefusjon?: boolean
+  kunInntektOgRefusjon: boolean,
+  formData: Skjema
 ): SubmitInntektsmeldingReturnvalues {
   let errorTexts: Array<ValiderTekster> = [];
   let errorCodes: Array<ValiderResultat> = [];
@@ -96,7 +101,7 @@ export default function validerInntektsmelding(
     feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
   }
 
-  feilkoderBruttoinntekt = validerBruttoinntekt(state);
+  feilkoderBruttoinntekt = validerBruttoinntekt(state, formData);
 
   if (state.naturalytelser) {
     feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);
@@ -106,21 +111,21 @@ export default function validerInntektsmelding(
     feilkoderLonnIArbeidsgiverperioden = validerLonnIArbeidsgiverPerioden(
       state.fullLonnIArbeidsgiverPerioden,
       state.arbeidsgiverperioder,
-      state.bruttoinntekt.bruttoInntekt
+      formData.inntekt?.beloep
     );
   }
 
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
     state.lonnISykefravaeret,
     state.refusjonskravetOpphoerer,
-    state.bruttoinntekt.bruttoInntekt
+    formData.inntekt?.beloep
   );
 
   feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
     state.harRefusjonEndringer,
     state.refusjonEndringer,
     state.lonnISykefravaeret,
-    state.bruttoinntekt.bruttoInntekt,
+    formData.inntekt?.beloep,
     state.refusjonskravetOpphoerer?.opphoersdato
   );
 

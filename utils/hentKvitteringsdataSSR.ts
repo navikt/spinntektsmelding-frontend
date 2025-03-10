@@ -1,4 +1,3 @@
-import environment from '../config/environment';
 import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
 
 export default function hentKvitteringsdataSSR(pathSlug?: string | Array<string>, token?: string) {

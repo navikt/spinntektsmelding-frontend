@@ -25,9 +25,20 @@ describe('validerInntektsmelding', () => {
       setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger
     };
 
+    const formData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 12345,
+        endringAarsaker: null,
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
     // Call the validerInntektsmelding function
 
-    const result = validerInntektsmelding(state, true);
+    const result = validerInntektsmelding(state, true, false, formData);
 
     // Assert the result
     expect(mockSetSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
@@ -58,8 +69,19 @@ describe('validerInntektsmelding', () => {
       setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger
     };
 
+    const formData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 12345,
+        endringAarsaker: null,
+        endringAarsak: null,
+        inntektsdato: '2021-01-01',
+        naturalytelser: []
+      }
+    };
+
     // Call the validerInntektsmelding function with invalid data
-    const result = validerInntektsmelding(state, false);
+    const result = validerInntektsmelding(state, false, false, formData);
 
     // Assert the result
     expect(result).toEqual({

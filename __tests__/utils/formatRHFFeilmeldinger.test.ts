@@ -29,11 +29,11 @@ describe('formatRHFFeilmeldinger', () => {
 
     expect(result).toEqual([
       {
-        felt: 'errorTexts.0.field1.message',
+        felt: 'errorTexts.0.field1',
         text: 'Error 1'
       },
       {
-        felt: 'errorTexts.1.field2.message',
+        felt: 'errorTexts.1.field2',
         text: 'Error 2'
       }
     ]);

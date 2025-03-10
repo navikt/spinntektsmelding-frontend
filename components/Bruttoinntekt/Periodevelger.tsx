@@ -11,8 +11,8 @@ interface PeriodevelgerProps {
   fomID: string;
   tomID: string;
   kanSlettes: boolean;
-  onSlettRad: (index: string) => void;
-  periodeId: string;
+  onSlettRad: (index: string | number) => void;
+  periodeId: string | number;
   toDate?: Date;
   fromDate?: Date;
   disabled?: boolean;

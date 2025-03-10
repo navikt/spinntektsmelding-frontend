@@ -12,6 +12,7 @@ import { z } from 'zod';
 import responseBackendError from '../schema/responseBackendError';
 import { Opplysningstype } from '../state/useForespurtDataStore';
 import forespoerselType from '../config/forespoerselType';
+import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -25,11 +26,14 @@ export default function useSendInnSkjema(
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
+  type Skjema = z.infer<typeof hovedskjemaSchema>;
+
   return async (
     opplysningerBekreftet: boolean,
     forespurteOpplysningstyper: Opplysningstype[],
     pathSlug: string,
-    isDirtyForm: boolean
+    isDirtyForm: boolean,
+    formData: Skjema
   ) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
@@ -59,7 +63,7 @@ export default function useSendInnSkjema(
       return false;
     }
 
-    const errorStatus = validerInntektsmelding(state, opplysningerBekreftet, kunInntektOgRefusjon);
+    const errorStatus = validerInntektsmelding(state, opplysningerBekreftet, kunInntektOgRefusjon, formData);
 
     const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
 
@@ -73,7 +77,12 @@ export default function useSendInnSkjema(
     } else {
       type FullInnsending = z.infer<typeof fullInnsendingSchema>;
 
-      const skjemaData: FullInnsending = fyllInnsending(opplysningerBekreftet, pathSlug, forespurteOpplysningstyper);
+      const skjemaData: FullInnsending = fyllInnsending(
+        opplysningerBekreftet,
+        pathSlug,
+        forespurteOpplysningstyper,
+        formData
+      );
 
       const validerteData = fullInnsendingSchema.safeParse(skjemaData);
 

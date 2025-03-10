@@ -15,11 +15,13 @@ import sorterFomStigende from '../../utils/sorterFomStigende';
 interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
   skalViseArbeidsgiverperiode?: boolean;
+  inntekt: number;
 }
 
 export default function RefusjonArbeidsgiver({
   setIsDirtyForm,
-  skalViseArbeidsgiverperiode
+  skalViseArbeidsgiverperiode,
+  inntekt
 }: Readonly<RefusjonArbeidsgiverProps>) {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
@@ -139,7 +141,7 @@ export default function RefusjonArbeidsgiver({
           className={localStyles.radiobuttonInnerWrapper}
           id={'lus-radio'}
           error={visFeilmeldingTekst('lus-radio')}
-          onChange={addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret)}
+          onChange={(status) => addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt))}
           defaultValue={lonnISykefravaeret?.status}
         >
           <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>

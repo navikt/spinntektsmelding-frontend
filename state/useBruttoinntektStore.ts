@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
-import { HistoriskInntekt, Inntekt, Periode } from './state';
+import { HistoriskInntekt, Inntekt } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldingerStore';
@@ -40,10 +40,6 @@ export interface BruttoinntektState {
   setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => void;
   setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
-  setEndringsaarsak: (aarsak: string) => void;
-  setPerioder: (periode: Array<Periode> | undefined) => void;
-  setEndringAarsakGjelderFra: (endringsdato?: Date) => void;
-  setEndringAarsakBleKjent: (kjentFraDato?: Date) => void;
   tilbakestillMaanedsinntekt: () => void;
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
@@ -55,13 +51,15 @@ export interface BruttoinntektState {
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
   setEndringAarsak: (endringAarsak: EndringAarsak | ApiEndringAarsak) => void;
+  setEndringAarsaker: (endringAarsaker: Array<EndringAarsak | ApiEndringAarsak>) => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
   bruttoinntekt: {
     bruttoInntekt: undefined,
     manueltKorrigert: false,
-    endringAarsak: undefined
+    endringAarsak: undefined,
+    endringAarsaker: undefined
   },
   opprinneligbruttoinntekt: {
     bruttoInntekt: undefined,
@@ -114,77 +112,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     ),
 
-  setEndringsaarsak: (aarsak: string | undefined) =>
-    set(
-      produce((state) => {
-        if (aarsak === '') {
-          aarsak = undefined;
-        }
-        if (!state.bruttoinntekt.endringAarsak?.aarsak || state.bruttoinntekt.endringAarsak?.aarsak !== aarsak) {
-          state.bruttoinntekt.endringAarsak = { aarsak: aarsak };
-        } else {
-          state.bruttoinntekt.endringAarsak.aarsak = aarsak;
-        }
-
-        if (aarsak && aarsak !== undefined) {
-          state.bruttoinntekt.manueltKorrigert = true;
-        } else {
-          state.bruttoinntekt.manueltKorrigert = false;
-        }
-
-        if (aarsak && aarsak !== undefined) {
-          state = slettFeilmeldingFraState(state, 'bruttoinntekt-endringsaarsak');
-        } else {
-          state = leggTilFeilmelding(state, 'bruttoinntekt-endringsaarsak', feiltekster.ENDRINGSAARSAK_MANGLER);
-        }
-        return state;
-      })
-    ),
-  setPerioder: (periode) => {
-    const aarsak = get().bruttoinntekt.endringAarsak?.aarsak.toLowerCase();
-
-    set(
-      produce((state) => {
-        let aarsakIndex = '';
-        switch (aarsak) {
-          case 'ferie':
-            aarsakIndex = 'ferier';
-            break;
-          case 'permisjon':
-            aarsakIndex = 'permisjoner';
-            break;
-          case 'permittering':
-            aarsakIndex = 'permitteringer';
-            break;
-          default:
-            aarsakIndex = aarsak!;
-            break;
-        }
-
-        state.bruttoinntekt.endringAarsak[aarsakIndex] =
-          periode?.map((periode) => ({
-            fom: periode.fom,
-            tom: periode.tom
-          })) || [];
-
-        return state;
-      })
-    );
-  },
-  setEndringAarsakGjelderFra: (endringDato) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.gjelderFra = endringDato;
-        return state;
-      })
-    ),
-  setEndringAarsakBleKjent: (kjentFraDato?: Date) =>
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak.bleKjent = kjentFraDato;
-        return state;
-      })
-    ),
   tilbakestillMaanedsinntekt: () =>
     set(
       produce((state) => {
@@ -355,79 +282,22 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     );
   },
   setEndringAarsak: (endringAarsak: EndringAarsak | ApiEndringAarsak) => {
-    if (endringAarsak?.aarsak) {
-      switch (endringAarsak.aarsak) {
-        case 'Ferie': {
-          endringAarsak.ferier =
-            typeof endringAarsak.ferier[0].fom !== 'string'
-              ? endringAarsak.ferier
-              : endringAarsak.ferier.map((ferie) => ({
-                  fom: parseIsoDate(ferie.fom)!,
-                  tom: parseIsoDate(ferie.tom)!
-                }));
-          break;
-        }
+    endringAarsak = normaliserEndringAarsak(endringAarsak);
 
-        case 'Permisjon': {
-          endringAarsak.permisjoner =
-            typeof endringAarsak.permisjoner[0].fom !== 'string'
-              ? endringAarsak.permisjoner
-              : endringAarsak.permisjoner.map((permisjon) => ({
-                  fom: parseIsoDate(permisjon.fom)!,
-                  tom: parseIsoDate(permisjon.tom)!
-                }));
-          break;
-        }
-
-        case 'Permittering': {
-          endringAarsak.permitteringer =
-            typeof endringAarsak.permitteringer[0].fom !== 'string'
-              ? endringAarsak.permitteringer
-              : endringAarsak.permitteringer.map((permitering) => ({
-                  fom: parseIsoDate(permitering.fom)!,
-                  tom: parseIsoDate(permitering.tom)!
-                }));
-          break;
-        }
-
-        case 'Sykefravaer': {
-          endringAarsak.sykefravaer =
-            typeof endringAarsak.sykefravaer[0].fom !== 'string'
-              ? endringAarsak.sykefravaer
-              : endringAarsak.sykefravaer.map((syk) => ({
-                  fom: parseIsoDate(syk.fom)!,
-                  tom: parseIsoDate(syk.tom)!
-                }));
-          break;
-        }
-
-        case 'Tariffendring': {
-          endringAarsak.bleKjent =
-            typeof endringAarsak.bleKjent !== 'string' ? endringAarsak.bleKjent : parseIsoDate(endringAarsak.bleKjent);
-
-          endringAarsak.gjelderFra =
-            typeof endringAarsak.gjelderFra !== 'string'
-              ? endringAarsak.gjelderFra
-              : parseIsoDate(endringAarsak.gjelderFra);
-
-          break;
-        }
-        case 'NyStilling':
-        case 'NyStillingsprosent':
-        case 'VarigLoennsendring': {
-          endringAarsak.gjelderFra =
-            typeof endringAarsak.gjelderFra !== 'string'
-              ? endringAarsak.gjelderFra
-              : parseIsoDate(endringAarsak.gjelderFra);
-
-          break;
-        }
-      }
-    }
     set(
       produce((state) => {
         state.bruttoinntekt.endringAarsak = endringAarsak;
         state.opprinneligbruttoinntekt.endringAarsak = endringAarsak;
+        return state;
+      })
+    );
+  },
+  setEndringAarsaker: (endringAarsaker: Array<EndringAarsak | ApiEndringAarsak>) => {
+    const normalisertEndringAarsaker = endringAarsaker?.map(normaliserEndringAarsak);
+    set(
+      produce((state) => {
+        state.bruttoinntekt.endringAarsaker = normalisertEndringAarsaker;
+        state.opprinneligbruttoinntekt.endringAarsaker = normalisertEndringAarsaker;
         return state;
       })
     );
@@ -448,4 +318,73 @@ export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[], best
     .slice(0, 3);
 
   return aktuelleInntekter || [];
+}
+
+function normaliserEndringAarsak(endringAarsak: EndringAarsak | ApiEndringAarsak): EndringAarsak {
+  if (endringAarsak?.aarsak) {
+    switch (endringAarsak.aarsak) {
+      case 'Ferie': {
+        endringAarsak.ferier =
+          typeof endringAarsak.ferier[0].fom !== 'string'
+            ? endringAarsak.ferier
+            : endringAarsak.ferier.map((ferie) => ({
+                fom: parseIsoDate(ferie.fom)!,
+                tom: parseIsoDate(ferie.tom)!
+              }));
+        break;
+      }
+
+      case 'Permisjon': {
+        endringAarsak.permisjoner =
+          typeof endringAarsak.permisjoner[0].fom !== 'string'
+            ? endringAarsak.permisjoner
+            : endringAarsak.permisjoner.map((permisjon) => ({
+                fom: parseIsoDate(permisjon.fom)!,
+                tom: parseIsoDate(permisjon.tom)!
+              }));
+        break;
+      }
+
+      case 'Permittering': {
+        endringAarsak.permitteringer =
+          typeof endringAarsak.permitteringer[0].fom !== 'string'
+            ? endringAarsak.permitteringer
+            : endringAarsak.permitteringer.map((permitering) => ({
+                fom: parseIsoDate(permitering.fom)!,
+                tom: parseIsoDate(permitering.tom)!
+              }));
+        break;
+      }
+
+      case 'Sykefravaer': {
+        endringAarsak.sykefravaer =
+          typeof endringAarsak.sykefravaer[0].fom !== 'string'
+            ? endringAarsak.sykefravaer
+            : endringAarsak.sykefravaer.map((syk) => ({
+                fom: parseIsoDate(syk.fom)!,
+                tom: parseIsoDate(syk.tom)!
+              }));
+        break;
+      }
+
+      case 'Tariffendring': {
+        endringAarsak.bleKjent = konverterTilDate(endringAarsak.bleKjent);
+        endringAarsak.gjelderFra = konverterTilDate(endringAarsak.gjelderFra);
+
+        break;
+      }
+      case 'NyStilling':
+      case 'NyStillingsprosent':
+      case 'VarigLoennsendring': {
+        endringAarsak.gjelderFra = konverterTilDate(endringAarsak.gjelderFra);
+
+        break;
+      }
+    }
+  }
+  return endringAarsak as EndringAarsak;
+}
+
+function konverterTilDate(dato: string | Date) {
+  return typeof dato === 'string' ? parseIsoDate(dato) : dato;
 }

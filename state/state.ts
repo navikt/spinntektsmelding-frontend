@@ -15,6 +15,7 @@ export interface Inntekt {
   bruttoInntekt?: number;
   manueltKorrigert: boolean;
   endringAarsak?: EndringAarsak;
+  endringAarsaker?: Array<EndringAarsak>;
 }
 
 export interface HistoriskInntekt {

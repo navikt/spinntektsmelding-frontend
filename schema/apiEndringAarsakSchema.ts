@@ -40,6 +40,57 @@ const apiEndringAarsakSykefravaerSchema = EndringAarsakSykefravaerSchema.merge(
   })
 );
 
+const apiEndringAarsakNyStillingSchema = EndringAarsakNyStillingSchema.merge(
+  z.object({
+    gjelderFra: z
+      .string({
+        required_error: 'Dato mangler',
+        invalid_type_error: 'Ugyldig dato'
+      })
+      .date()
+  })
+);
+
+const apiEndringAarsakNyStillingsprosentSchema = EndringAarsakNyStillingsprosentSchema.merge(
+  z.object({
+    gjelderFra: z
+      .string({
+        required_error: 'Dato mangler',
+        invalid_type_error: 'Ugyldig dato'
+      })
+      .date()
+  })
+);
+
+const apiEndringAarsakTariffendringSchema = EndringAarsakTariffendringSchema.merge(
+  z.object({
+    gjelderFra: z
+      .string({
+        required_error: 'Dato mangler',
+        invalid_type_error: 'Ugyldig dato'
+      })
+      .date(),
+    bleKjent: z
+      .string({
+        required_error: 'Dato mangler',
+        invalid_type_error: 'Ugyldig dato'
+      })
+      .date()
+  })
+);
+
+const apiEndringAarsakVarigLoennsendringSchema = EndringAarsakVarigLoennsendringSchema.merge(
+  z.object({
+    aarsak: z.literal('VarigLoennsendring'),
+    gjelderFra: z
+      .string({
+        required_error: 'Dato mangler',
+        invalid_type_error: 'Ugyldig dato'
+      })
+      .date()
+  })
+);
+
 export const EndringAarsakSchema = z.discriminatedUnion(
   'aarsak',
   [
@@ -48,13 +99,13 @@ export const EndringAarsakSchema = z.discriminatedUnion(
     apiEndringAarsakFerieSchema,
     EndringAarsakFerietrekkSchema,
     EndringAarsakNyansattSchema,
-    EndringAarsakNyStillingSchema,
-    EndringAarsakNyStillingsprosentSchema,
+    apiEndringAarsakNyStillingSchema,
+    apiEndringAarsakNyStillingsprosentSchema,
     apiEndringAarsakPermisjonSchema,
     apiEndringAarsakPermitteringSchema,
     apiEndringAarsakSykefravaerSchema,
-    EndringAarsakTariffendringSchema,
-    EndringAarsakVarigLoennsendringSchema,
+    apiEndringAarsakTariffendringSchema,
+    apiEndringAarsakVarigLoennsendringSchema,
     EndringAarsakSammeSomSistSchema
   ],
   {

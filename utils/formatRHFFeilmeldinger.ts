@@ -27,7 +27,7 @@ function traverseAndFindMessages(obj: any, path: string[] = []): Feilmelding[] {
       } else if (key === 'message') {
         messages.push({
           text: obj[key],
-          felt: newPath.join('.')
+          felt: path.join('.')
         } as Feilmelding);
       }
     }

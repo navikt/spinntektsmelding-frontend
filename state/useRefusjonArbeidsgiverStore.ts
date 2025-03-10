@@ -21,9 +21,9 @@ export interface RefusjonArbeidsgiverState {
   refusjonEndringer?: Array<EndringsBeloep>;
   opprinneligRefusjonEndringer?: Array<EndringsBeloep>;
   arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: (status: YesNo | undefined) => void;
-  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => void;
+  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo, bruttoinntekt: number) => void;
   begrunnelseRedusertUtbetaling: (begrunnelse?: string) => void;
-  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | undefined) => void;
+  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | number | undefined) => void;
   setBeloepUtbetaltUnderArbeidsgiverperioden: (beloep: string | undefined) => void;
   refusjonskravetOpphoererStatus: (status: YesNo) => void;
   refusjonskravetOpphoererDato: (opphoersdato?: Date) => void;
@@ -55,16 +55,14 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo) => {
-    const bruttoinntekt = get().bruttoinntekt;
-
+  arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: (status: YesNo, bruttoinntekt: number) => {
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {
           state.lonnISykefravaeret = { status: status };
         } else state.lonnISykefravaeret.status = status;
         if (status === 'Ja') {
-          state.lonnISykefravaeret.beloep = bruttoinntekt.bruttoInntekt;
+          state.lonnISykefravaeret.beloep = bruttoinntekt;
         } else {
           delete state.lonnISykefravaeret.beloep;
         }
@@ -95,7 +93,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         return state;
       })
     ),
-  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | undefined) =>
+  beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | number | undefined) =>
     set(
       produce((state) => {
         if (!state.lonnISykefravaeret) {

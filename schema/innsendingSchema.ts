@@ -28,7 +28,8 @@ export const InnsendingSchema = z.object({
         .min(0, 'Månedsinntekt må være større enn eller lik 0'),
       inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
       naturalytelser: apiNaturalytelserSchema,
-      endringAarsak: z.nullable(EndringAarsakSchema)
+      endringAarsak: z.nullable(EndringAarsakSchema),
+      endringAarsaker: z.nullable(z.array(EndringAarsakSchema))
     })
   ),
   refusjon: z.nullable(

@@ -34,4 +34,54 @@ describe('findErrorInRHFErrors', () => {
     const error = findErrorInRHFErrors('field', errors);
     expect(error).toBeUndefined();
   });
+
+  it('should return the error message for a nested field involving arrays', () => {
+    const errors = {
+      nested: {
+        field: [
+          {
+            first: [
+              {
+                cheese: {
+                  message: 'Nested field error'
+                }
+              },
+              {
+                last: {
+                  message: 'Last nested field error'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    };
+    const error = findErrorInRHFErrors('nested.field.0.first.1.last', errors);
+    expect(error).toBe('Last nested field error');
+  });
+
+  it('should return the error message for a nested field involving arrays and a badly named key', () => {
+    const errors = {
+      nested: {
+        field: [
+          {
+            first: [
+              {
+                cheese: {
+                  message: 'Nested field error'
+                }
+              },
+              {
+                last: {
+                  message: 'Last nested field error'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    };
+    const error = findErrorInRHFErrors('nested.field[0].first[1].last', errors);
+    expect(error).toBe('Last nested field error');
+  });
 });
