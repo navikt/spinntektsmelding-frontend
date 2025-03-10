@@ -88,7 +88,7 @@ export default function useFyllAapenInnsending() {
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
       inntekt: {
-        beloep: skjemaData.inntekt.beloep!,
+        beloep: skjemaData.inntekt?.beloep ?? 0,
         inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
         naturalytelser: naturalytelser
           ? naturalytelser?.map((ytelse) => ({
