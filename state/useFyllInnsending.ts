@@ -232,15 +232,15 @@ function finnInnsendbareArbeidsgiverperioder(
     : [];
 }
 
-export function verdiEllerBlank(verdi: string | undefined): string {
+function verdiEllerBlank(verdi: string | undefined): string {
   return verdi ?? '';
 }
 
-export function verdiEllerNull(verdi: number | undefined): number {
+function verdiEllerNull(verdi: number | undefined): number {
   return verdi ?? 0;
 }
 
-export function konverterRefusjonEndringer(
+function konverterRefusjonEndringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBeloep> | undefined
 ): RefusjonEndring[] | [] {

@@ -4,9 +4,12 @@ import formatIsoDate from '../utils/formatIsoDate';
 import { Begrunnelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import validerAapenInnsending, { RefusjonEndring } from '../validators/validerAapenInnsending';
-import { SendtPeriode, formaterRedusertLoennIAgp } from './useFyllInnsending';
+import {
+  SendtPeriode,
+  formaterRedusertLoennIAgp,
+  konverterPerioderFraMottattTilInterntFormat
+} from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
-import parseIsoDate from '../utils/parseIsoDate';
 import { z } from 'zod';
 import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 import { isValid } from 'date-fns/isValid';
@@ -122,16 +125,6 @@ function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsper
     perioder = egenmeldingsperioder;
   }
   return perioder;
-}
-
-function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder: SendtPeriode[] | undefined) {
-  return innsendbarArbeidsgiverperioder
-    ? innsendbarArbeidsgiverperioder?.map((periode) => ({
-        fom: parseIsoDate(periode.fom),
-        tom: parseIsoDate(periode.tom),
-        id: 'id'
-      }))
-    : undefined;
 }
 
 function konverterRefusjonEndringer(
