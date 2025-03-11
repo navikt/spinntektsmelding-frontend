@@ -38,7 +38,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     };
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual([]);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual([]);
   });
 
   it('should return an error when bruttoinntekt < 0 ', () => {
@@ -67,7 +67,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when not confirmed', () => {
@@ -94,7 +94,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when no reason given', () => {
@@ -125,7 +125,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return false when stuff is no reason for change given', () => {
@@ -149,7 +149,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     };
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when tariffendring', () => {
@@ -190,7 +190,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when ferie property is missing', () => {
@@ -227,7 +227,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when ferie fom & tom is missing', () => {
@@ -270,7 +270,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     };
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when ferie fom is missing', () => {
     const input: CompleteState = {
@@ -308,7 +308,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     };
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when ferie tom is missing', () => {
@@ -347,15 +347,14 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   /********************************************/
   it('should return an error when varig lønnsendring date is missing', () => {
     const input: CompleteState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
-        manueltKorrigert: true,
-        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring }
+        manueltKorrigert: true
       }
     };
 
@@ -378,7 +377,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when varig lønnsendring date is after bestemmende fraværsdag', () => {
@@ -388,10 +387,9 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
-          gjelderFra: parseIsoDate('2002-02-02')
+          gjelderFra: parseIsoDate('2022-02-02')!
         }
-      },
-      bestemmendeFravaersdag: parseIsoDate('2002-02-01')
+      }
     };
     const skjemaData: Skjema = {
       bekreft_opplysninger: true,
@@ -400,13 +398,11 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
-            gjelderFra: parseIsoDate('2002-02-02')
+            gjelderFra: parseIsoDate('2022-02-02')!
           }
-        ],
-
-        endringAarsak: null,
-        inntektsdato: '2021-01-01',
-        naturalytelser: []
+        ]
+        // inntektsdato: '2021-01-01',
+        // naturalytelser: []
       }
     };
     const expected = [
@@ -416,7 +412,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should no return an error when lønnsendring date is ok', () => {
@@ -438,18 +434,16 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
-            gjelderFra: parseIsoDate('2002-02-02')
+            gjelderFra: parseIsoDate('2002-02-02')!
           }
         ],
-
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
     };
     const expected = [];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should no return an error when lønnsendring date is ok and gjelderFra is a string', () => {
@@ -471,18 +465,16 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
-            gjelderFra: '2002-01-02'
+            gjelderFra: parseIsoDate('2002-01-02')!
           }
-        ],
-
-        endringAarsak: null,
-        inntektsdato: '2021-01-01',
-        naturalytelser: []
+        ]
+        // inntektsdato: '2021-01-01',
+        // naturalytelser: []
       }
     };
     const expected = [];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   /********** */
@@ -516,7 +508,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when permisjon fom & tom is missing', () => {
@@ -554,7 +546,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when permisjon fom is missing', () => {
     const input: CompleteState = {
@@ -590,7 +582,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when permisjon tom is missing', () => {
@@ -627,7 +619,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   /********** */
   it('should return an error when permittering property is missing', () => {
@@ -660,7 +652,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when permittering fom & tom is missing', () => {
@@ -698,7 +690,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when permittering tom is missing', () => {
     const input: CompleteState = {
@@ -734,7 +726,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when permittering fom is missing', () => {
@@ -771,7 +763,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   /********** */
@@ -805,7 +797,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when nystilling is undefined', () => {
@@ -839,14 +831,14 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when nystilling fom is after bfd', () => {
     const input: CompleteState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
-        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.NyStilling, gjelderFra: '2002-02-03' }
+        endringAarsak: { aarsak: begrunnelseEndringBruttoinntekt.NyStilling, gjelderFra: new Date('2022-02-03') }
       },
       bestemmendeFravaersdag: new Date(2002, 1, 2)
     };
@@ -857,7 +849,7 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.NyStilling,
-            gjelderFra: '2002-02-03'
+            gjelderFra: '2022-02-03'
           }
         ],
 
@@ -873,7 +865,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   /********** */
@@ -907,7 +899,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should return an error when nystillingsprosent is undefined', () => {
@@ -941,7 +933,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when nystillingsprosent fom is after bfd', () => {
     const input: CompleteState = {
@@ -950,10 +942,10 @@ describe.concurrent('validerBruttoinntekt', () => {
         manueltKorrigert: true,
         endringAarsak: {
           aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
-          gjelderFra: '2002-02-03'
+          gjelderFra: new Date('2022-02-03')
         }
-      },
-      bestemmendeFravaersdag: new Date(2002, 1, 2)
+      }
+      // bestemmendeFravaersdag: new Date(2002, 1, 2)
     };
     const skjemaData: Skjema = {
       bekreft_opplysninger: true,
@@ -962,13 +954,11 @@ describe.concurrent('validerBruttoinntekt', () => {
         endringAarsaker: [
           {
             aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
-            gjelderFra: '2002-02-03'
+            gjelderFra: new Date('2022-02-03')
           }
-        ],
-
-        endringAarsak: null,
-        inntektsdato: '2021-01-01',
-        naturalytelser: []
+        ]
+        // inntektsdato: '2021-01-01',
+        // naturalytelser: []
       }
     };
     const expected = [
@@ -978,7 +968,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       }
     ];
 
-    expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+    expect(validerBruttoinntekt(input, skjemaData, new Date('2022-02-02'))).toEqual(expected);
   });
 });
 
@@ -1015,7 +1005,7 @@ it('should return an error when sykefravær property is missing', () => {
     }
   ];
 
-  expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+  expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
 });
 
 it('should return an error when sykefravær fom & tom is missing', () => {
@@ -1056,7 +1046,7 @@ it('should return an error when sykefravær fom & tom is missing', () => {
     }
   ];
 
-  expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+  expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
 });
 it('should return an error when Sykefravaer fom is missing', () => {
   const input: CompleteState = {
@@ -1092,7 +1082,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
     }
   ];
 
-  expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+  expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
 });
 
 // it('should return an error when permittering tom is missing, sykefravær', () => {
@@ -1129,5 +1119,5 @@ it('should return an error when Sykefravaer fom is missing', () => {
 //     }
 //   ];
 
-//   expect(validerBruttoinntekt(input, skjemaData)).toEqual(expected);
+//   expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
 // });

@@ -319,7 +319,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
             <Bruttoinntekt
               bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
-              setIsDirtyForm={setIsDirtyForm}
               erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
               sbBruttoinntekt={sbBruttoinntekt}
               sbTidligereInntekt={sbTidligereInntekt}

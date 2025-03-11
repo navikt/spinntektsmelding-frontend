@@ -19,6 +19,9 @@ import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/val
 import validerPeriodeOverlapp, { PeriodeOverlappFeilkode } from '../validators/validerPeriodeOverlapp';
 import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 import { z } from 'zod';
+import finnBestemmendeFravaersdag from './finnBestemmendeFravaersdag';
+import { finnFravaersperioder } from '../state/useEgenmeldingStore';
+import parseIsoDate from './parseIsoDate';
 
 interface SubmitInntektsmeldingReturnvalues {
   valideringOK: boolean;
@@ -97,11 +100,22 @@ export default function validerInntektsmelding(
     });
   }
 
+  const fravaersperioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
+
+  const bestemmendeFravaersdag = parseIsoDate(
+    finnBestemmendeFravaersdag(
+      fravaersperioder,
+      state.arbeidsgiverperioder,
+      state.foreslaattBestemmendeFravaersdag,
+      !state.skjaeringstidspunkt
+    )
+  );
+
   if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && !kunInntektOgRefusjon) {
     feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
   }
 
-  feilkoderBruttoinntekt = validerBruttoinntekt(state, formData);
+  feilkoderBruttoinntekt = validerBruttoinntekt(state, formData, bestemmendeFravaersdag!);
 
   if (state.naturalytelser) {
     feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);

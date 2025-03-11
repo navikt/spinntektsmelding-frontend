@@ -29,7 +29,11 @@ export enum BruttoinntektFeilkode {
 
 type Skjema = z.infer<typeof hovedskjemaSchema>;
 
-export default function validerBruttoinntekt(state: CompleteState, skjemaData: Skjema): Array<ValiderResultat> {
+export default function validerBruttoinntekt(
+  state: CompleteState,
+  skjemaData: Skjema,
+  bestemmendeFravaersdag: Date
+): Array<ValiderResultat> {
   let valideringstatus: Array<ValiderResultat> = [];
 
   if (!state.bruttoinntekt) {
@@ -92,15 +96,9 @@ export default function validerBruttoinntekt(state: CompleteState, skjemaData: S
                   code: BruttoinntektFeilkode.LONNSENDRING_FOM_MANGLER
                 });
               } else {
-                let gjelderFra: Date;
+                const gjelderFra: Date = parseIsoDate(endringAarsak.gjelderFra)!;
 
-                if (typeof endringAarsak.gjelderFra === 'string') {
-                  gjelderFra = parseIsoDate(endringAarsak.gjelderFra)!;
-                } else {
-                  gjelderFra = endringAarsak.gjelderFra;
-                }
-
-                if (state.bestemmendeFravaersdag && isAfter(gjelderFra, state.bestemmendeFravaersdag)) {
+                if (bestemmendeFravaersdag && isAfter(gjelderFra, bestemmendeFravaersdag)) {
                   valideringstatus.push({
                     felt: 'bruttoinntekt-lonnsendring-fom',
                     code: BruttoinntektFeilkode.LONNSENDRING_FOM_ETTER_BFD
@@ -145,10 +143,7 @@ export default function validerBruttoinntekt(state: CompleteState, skjemaData: S
                   felt: 'bruttoinntekt-nystilling-fom',
                   code: BruttoinntektFeilkode.NYSTILLING_FOM_MANGLER
                 });
-              } else if (
-                state.bestemmendeFravaersdag &&
-                parseIsoDate(endringAarsak.gjelderFra) > state.bestemmendeFravaersdag
-              ) {
+              } else if (bestemmendeFravaersdag && parseIsoDate(endringAarsak.gjelderFra)! > bestemmendeFravaersdag) {
                 valideringstatus.push({
                   felt: 'bruttoinntekt-nystilling-fom',
                   code: BruttoinntektFeilkode.NYSTILLING_FOM_ETTER_BFD
@@ -163,10 +158,7 @@ export default function validerBruttoinntekt(state: CompleteState, skjemaData: S
                   felt: 'bruttoinntekt-nystillingsprosent-fom',
                   code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_MANGLER
                 });
-              } else if (
-                state.bestemmendeFravaersdag &&
-                parseIsoDate(endringAarsak.gjelderFra) > state.bestemmendeFravaersdag
-              ) {
+              } else if (bestemmendeFravaersdag && parseIsoDate(endringAarsak.gjelderFra)! > bestemmendeFravaersdag) {
                 valideringstatus.push({
                   felt: 'bruttoinntekt-nystillingsprosent-fom',
                   code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_ETTER_BFD
