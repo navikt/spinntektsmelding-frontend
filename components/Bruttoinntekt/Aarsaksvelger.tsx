@@ -59,7 +59,7 @@ export default function Aarsaksvelger({
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       {fields.map((aarsak, key) => (
-        <Fragment key={key}>
+        <Fragment key={aarsak.id}>
           <div className={lokalStyles.endremaaanedsinntekt}>
             {key === 0 && (
               <TextField

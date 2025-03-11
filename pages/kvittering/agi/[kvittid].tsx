@@ -49,6 +49,7 @@ import { getToken, validateToken } from '@navikt/oasis';
 import environment from '../../../config/environment';
 import { z } from 'zod';
 import { kvitteringNavNoSchema } from '../../../schema/mottattKvitteringSchema';
+import { EndringAarsak } from '../../../validators/validerAapenInnsending';
 
 type PersonData = {
   navn: string;
@@ -391,8 +392,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   />
                 </>
               )}
-              {endringAarsaker?.map((endring, endringIndex) => (
-                <Fragment key={endringIndex}>
+              {endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
+                <Fragment key={endring.aarsak + endringIndex}>
                   <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
                   {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
