@@ -75,7 +75,7 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.get('[data-cy="refusjon-arbeidsgiver-beloep"]')
       .invoke('text')
-      .should('match', /70\s000,00\skr/);
+      .should('match', /70\s000,00\skr\/måned/s);
 
     cy.get('[data-cy="endre-refusjon-arbeidsgiver-beloep"]').click();
 

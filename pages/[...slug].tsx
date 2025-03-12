@@ -2,6 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
+import { z } from 'zod';
+import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import { BodyLong, Button, ConfirmationPanel, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
@@ -41,6 +45,7 @@ import isValidUUID from '../utils/isValidUUID';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
 import Heading3 from '../components/Heading3';
 import forespoerselType from '../config/forespoerselType';
+import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -52,8 +57,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
-  const [visFeilmeldingTekst, slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
-    state.visFeilmeldingTekst,
+  const [slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
     state.slettFeilmelding,
     state.leggTilFeilmelding
   ]);
@@ -69,13 +73,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
-  const [hentPaakrevdOpplysningstyper, arbeidsgiverKanFlytteSkjæringstidspunkt, initBruttoinntekt] = useBoundStore(
-    (state) => [
-      state.hentPaakrevdOpplysningstyper,
-      state.arbeidsgiverKanFlytteSkjæringstidspunkt,
-      state.initBruttoinntekt
-    ]
-  );
+  const [
+    hentPaakrevdOpplysningstyper,
+    arbeidsgiverKanFlytteSkjæringstidspunkt,
+    initBruttoinntekt,
+    bruttoinntekt,
+    beloepArbeidsgiverBetalerISykefravaeret
+  ] = useBoundStore((state) => [
+    state.hentPaakrevdOpplysningstyper,
+    state.arbeidsgiverKanFlytteSkjæringstidspunkt,
+    state.initBruttoinntekt,
+    state.bruttoinntekt,
+    state.beloepArbeidsgiverBetalerISykefravaeret
+  ]);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
 
@@ -105,14 +115,55 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = trengerArbeidsgiverperiode || overstyrSkalViseAgp;
 
-  const submitForm = (event: React.FormEvent) => {
-    event.preventDefault();
+  type Skjema = z.infer<typeof hovedskjemaSchema>;
+
+  const methods = useForm<Skjema>({
+    resolver: zodResolver(hovedskjemaSchema),
+    defaultValues: {
+      inntekt: {
+        beloep: bruttoinntekt.bruttoInntekt,
+        endringAarsaker: bruttoinntekt.endringAarsaker
+      }
+    }
+  });
+
+  const {
+    register,
+    setValue,
+    control,
+    handleSubmit,
+    formState: { errors, isDirty }
+  } = methods;
+
+  useEffect(() => {
+    if (bruttoinntekt.bruttoInntekt) {
+      setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+    }
+  }, [bruttoinntekt.bruttoInntekt, setValue]);
+
+  useEffect(() => {
+    setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
+  }, [bruttoinntekt.endringAarsaker, setValue]);
+
+  const inntektBeloep = useWatch({
+    control: control,
+    name: 'inntekt.beloep'
+  });
+
+  useEffect(() => {
+    beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
+  }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep]);
+
+  const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
+    console.log('formData', formData);
     setSenderInn(true);
 
     if (pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm, {}).finally(() => {
-        setSenderInn(false);
-      });
+      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm || isDirty, formData).finally(
+        () => {
+          setSenderInn(false);
+        }
+      );
 
       return;
     }
@@ -127,7 +178,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       setPaakrevdeOpplysninger(opplysningstyper);
     }
 
-    sendInnSkjema(opplysningerBekreftet, opplysningstyper, pathSlug, isDirtyForm).finally(() => {
+    sendInnSkjema(opplysningerBekreftet, opplysningstyper, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
       setSenderInn(false);
     });
   };
@@ -217,92 +268,95 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
       <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <PageContent title='Inntektsmelding'>
-        <form className={styles.padded} onSubmit={submitForm}>
-          <Person />
+        <FormProvider {...methods}>
+          <form className={styles.padded} onSubmit={handleSubmit(submitForm)}>
+            <Person />
 
-          <Skillelinje />
-          <Fravaersperiode
-            lasterData={lasterData}
-            setIsDirtyForm={setIsDirtyForm}
-            skjemastatus={skjemastatus}
-            selvbestemtInnsending={selvbestemtInnsending}
-          />
-
-          <Skillelinje />
-          {skalViseEgenmelding && (
-            <>
-              <Egenmelding
-                lasterData={lasterData}
-                setIsDirtyForm={setIsDirtyForm}
-                selvbestemtInnsending={selvbestemtInnsending}
-              />
-              <Skillelinje />
-            </>
-          )}
-
-          {skalViseArbeidsgiverperiode && (
-            <Arbeidsgiverperiode
-              arbeidsgiverperioder={arbeidsgiverperioder}
+            <Skillelinje />
+            <Fravaersperiode
+              lasterData={lasterData}
               setIsDirtyForm={setIsDirtyForm}
               skjemastatus={skjemastatus}
-              skalViseArbeidsgiverperiode={overstyrSkalViseAgp}
-              onTilbakestillArbeidsgiverperiode={() => setOverstyrSkalViseAgp(false)}
+              selvbestemtInnsending={selvbestemtInnsending}
             />
-          )}
-          {!skalViseArbeidsgiverperiode && (
-            <>
-              <Heading3 unPadded>Arbeidsgiverperiode</Heading3>
-              <BodyLong>
-                Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen. Sykemeldingen er en
-                forlengelse av en tidligere sykefraværsperiode. Hvis du mener at det skal være arbeidsgiverperiode kan
-                du endre dette.
-              </BodyLong>
-              <Button variant='tertiary' onClick={() => setOverstyrSkalViseAgp(true)}>
-                Endre
-              </Button>
-            </>
-          )}
 
-          <Skillelinje />
+            <Skillelinje />
+            {skalViseEgenmelding && (
+              <>
+                <Egenmelding
+                  lasterData={lasterData}
+                  setIsDirtyForm={setIsDirtyForm}
+                  selvbestemtInnsending={selvbestemtInnsending}
+                />
+                <Skillelinje />
+              </>
+            )}
 
-          <Bruttoinntekt
-            bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
-            setIsDirtyForm={setIsDirtyForm}
-            erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
-            sbBruttoinntekt={sbBruttoinntekt}
-            sbTidligereInntekt={sbTidligereInntekt}
-          />
+            {skalViseArbeidsgiverperiode && (
+              <Arbeidsgiverperiode
+                arbeidsgiverperioder={arbeidsgiverperioder}
+                setIsDirtyForm={setIsDirtyForm}
+                skjemastatus={skjemastatus}
+                skalViseArbeidsgiverperiode={overstyrSkalViseAgp}
+                onTilbakestillArbeidsgiverperiode={() => setOverstyrSkalViseAgp(false)}
+              />
+            )}
+            {!skalViseArbeidsgiverperiode && (
+              <>
+                <Heading3 unPadded>Arbeidsgiverperiode</Heading3>
+                <BodyLong>
+                  Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen. Sykemeldingen er en
+                  forlengelse av en tidligere sykefraværsperiode. Hvis du mener at det skal være arbeidsgiverperiode kan
+                  du endre dette.
+                </BodyLong>
+                <Button variant='tertiary' onClick={() => setOverstyrSkalViseAgp(true)}>
+                  Endre
+                </Button>
+              </>
+            )}
 
-          <Skillelinje />
+            <Skillelinje />
 
-          <RefusjonArbeidsgiver
-            setIsDirtyForm={setIsDirtyForm}
-            skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
-          />
+            <Bruttoinntekt
+              bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
+              erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
+              sbBruttoinntekt={sbBruttoinntekt}
+              sbTidligereInntekt={sbTidligereInntekt}
+            />
 
-          <Skillelinje />
-          <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
-          <ConfirmationPanel
-            className={styles.confirmationPanel}
-            checked={opplysningerBekreftet}
-            onClick={clickOpplysningerBekreftet}
-            label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
-            id='bekreft-opplysninger'
-            error={visFeilmeldingTekst('bekreft-opplysninger')}
-          ></ConfirmationPanel>
-          <Feilsammendrag />
-          <div className={styles.outerButtonWrapper}>
-            <div className={styles.buttonWrapper}>
-              <Button className={styles.sendButton} loading={senderInn} id='knapp-innsending'>
-                Send
-              </Button>
+            <Skillelinje />
 
-              <Link className={styles.lukkelenke} href={environment.saksoversiktUrl}>
-                Lukk
-              </Link>
+            <RefusjonArbeidsgiver
+              setIsDirtyForm={setIsDirtyForm}
+              skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
+              inntekt={inntektBeloep}
+            />
+
+            <Skillelinje />
+            <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
+            <ConfirmationPanel
+              className={styles.confirmationPanel}
+              checked={opplysningerBekreftet}
+              onClick={clickOpplysningerBekreftet}
+              label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+              id='bekreft-opplysninger'
+              error={errors.bekreft_opplysninger?.message}
+              {...register('bekreft_opplysninger')}
+            ></ConfirmationPanel>
+            <Feilsammendrag skjemafeil={errors} />
+            <div className={styles.outerButtonWrapper}>
+              <div className={styles.buttonWrapper}>
+                <Button className={styles.sendButton} loading={senderInn} id='knapp-innsending'>
+                  Send
+                </Button>
+
+                <Link className={styles.lukkelenke} href={environment.saksoversiktUrl}>
+                  Lukk
+                </Link>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </FormProvider>
         <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
         <HentingAvDataFeilet open={skjemaFeilet} handleCloseModal={lukkHentingFeiletModal} />
       </PageContent>

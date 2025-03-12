@@ -3,15 +3,19 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { Begrunnelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
-import validerAapenInnsending, { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
-import { SendtPeriode, formaterRedusertLoennIAgp } from './useFyllInnsending';
+import validerAapenInnsending, { RefusjonEndring } from '../validators/validerAapenInnsending';
+import {
+  SendtPeriode,
+  formaterRedusertLoennIAgp,
+  konverterPerioderFraMottattTilInterntFormat
+} from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
-import parseIsoDate from '../utils/parseIsoDate';
-import { finnInnsendbareArbeidsgiverperioder } from './useFyllDelvisInnsending';
+import { z } from 'zod';
+import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { isValid } from 'date-fns/isValid';
 
 export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
@@ -28,6 +32,10 @@ export default function useFyllAapenInnsending() {
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const vedtaksperiodeId = useBoundStore((state) => state.vedtaksperiodeId);
+  const [setEndringAarsaker, setBareNyMaanedsinntekt] = useBoundStore((state) => [
+    state.setEndringAarsaker,
+    state.setBareNyMaanedsinntekt
+  ]);
 
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
@@ -46,11 +54,16 @@ export default function useFyllAapenInnsending() {
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
 
-  return (skjemaData: any) => {
-    const endringAarsak: EndringAarsak | undefined =
-      bruttoinntekt.endringAarsak !== null ? bruttoinntekt.endringAarsak : undefined;
+  type SkjemaData = z.infer<typeof hovedskjemaSchema>;
 
-    const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
+  return (skjemaData: SkjemaData) => {
+    const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
+      ? skjemaData.inntekt.endringAarsaker.map((endringAarsak) => konverterEndringAarsakSchema.parse(endringAarsak))
+      : null;
+
+    setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
+
+    setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
 
     const innsending = validerAapenInnsending({
       vedtaksperiodeId: vedtaksperiodeId,
@@ -75,7 +88,7 @@ export default function useFyllAapenInnsending() {
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
       inntekt: {
-        beloep: bruttoinntekt.bruttoInntekt!,
+        beloep: skjemaData.inntekt?.beloep ?? 0,
         inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
         naturalytelser: naturalytelser
           ? naturalytelser?.map((ytelse) => ({
@@ -84,7 +97,8 @@ export default function useFyllAapenInnsending() {
               sluttdato: formatDateForSubmit(ytelse.bortfallsdato)
             }))
           : [],
-        endringAarsak: endringAarsakParsed ?? null
+        endringAarsak: null,
+        endringAarsaker: endringAarsakerParsed ?? null
       },
       refusjon:
         lonnISykefravaeret?.status === 'Ja'
@@ -111,16 +125,6 @@ function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsper
     perioder = egenmeldingsperioder;
   }
   return perioder;
-}
-
-function konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder: SendtPeriode[] | undefined) {
-  return innsendbarArbeidsgiverperioder
-    ? innsendbarArbeidsgiverperioder?.map((periode) => ({
-        fom: parseIsoDate(periode.fom),
-        tom: parseIsoDate(periode.tom),
-        id: 'id'
-      }))
-    : undefined;
 }
 
 function konverterRefusjonEndringer(
@@ -155,4 +159,19 @@ function formatDateForSubmit(date?: Date | string): string {
   }
 
   return date ?? '';
+}
+
+function finnInnsendbareArbeidsgiverperioder(
+  arbeidsgiverperioder: Periode[] | undefined,
+  skalSendeArbeidsgiverperiode: boolean
+): SendtPeriode[] | [] {
+  if (!skalSendeArbeidsgiverperiode) {
+    return [];
+  }
+
+  return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
+    ? arbeidsgiverperioder
+        ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
+        .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
+    : [];
 }

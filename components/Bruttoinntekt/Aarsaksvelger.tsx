@@ -1,29 +1,22 @@
 import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
-import { TextField } from '@navikt/ds-react';
+import { Button, TextField } from '@navikt/ds-react';
 import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
-import { Inntekt, Periode } from '../../state/state';
-import React from 'react';
-import Datovelger from '../Datovelger';
-import PeriodeListevelger from './PeriodeListevelger';
-import TariffendringDato from './TariffendringDato';
-import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
+import { Inntekt } from '../../state/state';
+import React, { Fragment, useEffect } from 'react';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
-import parseIsoDate from '../../utils/parseIsoDate';
-import { nanoid } from 'nanoid';
-import formatIsoDate from '../../utils/formatIsoDate';
+import AarsakDetaljer from './AarsakDetaljer';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import stringishToNumber from '../../utils/stringishToNumber';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import ButtonSlette from '../ButtonSlette';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
-  changeMaanedsintektHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  changeBegrunnelseHandler: (verdi: string) => void;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
   defaultEndringAarsak: EndringAarsak;
-  setEndringAarsakGjelderFra: (dato?: Date) => void;
-  setEndringAarsakBleKjent: (dato?: Date) => void;
-  setPerioder: (periode?: Array<Periode>) => void;
   visFeilmeldingTekst: (feilmelding: string) => string;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
@@ -32,196 +25,80 @@ interface AarsaksvelgerProps {
 
 export default function Aarsaksvelger({
   bruttoinntekt,
-  changeMaanedsintektHandler,
-  changeBegrunnelseHandler,
   clickTilbakestillMaanedsinntekt,
   defaultEndringAarsak,
-  setEndringAarsakGjelderFra,
-  setEndringAarsakBleKjent,
-  setPerioder,
   visFeilmeldingTekst,
   bestemmendeFravaersdag,
   nyInnsending,
   kanIkkeTilbakestilles
 }: Readonly<AarsaksvelgerProps>) {
-  const blankPeriode: Periode[] = [{ fom: undefined, tom: undefined, id: nanoid() }];
+  const handleLeggTilEndringAarsak = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    append({});
+  };
+
+  const {
+    formState: { errors },
+    register,
+    control
+  } = useFormContext();
+
+  const { fields, append, remove, replace } = useFieldArray({
+    control, // control props comes from useForm (optional: if you are using FormContext)
+    name: 'inntekt.endringAarsaker' // unique name for your Field Array
+  });
+  const beloepFeltnavn = 'inntekt.beloep';
+  const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
+
+  useEffect(() => {
+    if (fields.length === 0) {
+      replace({});
+    }
+  }, [fields, replace]);
 
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
-      <div className={lokalStyles.endremaaanedsinntekt}>
-        <TextField
-          label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
-          onChange={changeMaanedsintektHandler}
-          defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
-          id='inntekt.beregnetInntekt'
-          error={visFeilmeldingTekst('inntekt.beregnetInntekt')}
-          className={lokalStyles.bruttoinntektendringsbeloep}
-          data-cy='inntekt-beloep-input'
-        />
-        <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
-          <SelectEndringBruttoinntekt
-            onChangeBegrunnelse={changeBegrunnelseHandler}
-            error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
-            id='bruttoinntekt-endringsaarsak'
-            nyInnsending={nyInnsending}
-            value={defaultEndringAarsak?.aarsak as string}
-          />
-        </div>
-        {!kanIkkeTilbakestilles && (
-          <div>
-            <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={clickTilbakestillMaanedsinntekt} />
+      {fields.map((aarsak, key) => (
+        <Fragment key={aarsak.id}>
+          <div className={lokalStyles.endremaaanedsinntekt}>
+            {key === 0 && (
+              <TextField
+                label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
+                defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
+                id='inntekt.beregnetInntekt'
+                error={beloepError}
+                className={lokalStyles.bruttoinntektendringsbeloep}
+                data-cy='inntekt-beloep-input'
+                {...register('inntekt.beloep', {
+                  setValueAs: (value) => stringishToNumber(value)
+                })}
+              />
+            )}
+            <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
+              <SelectEndringBruttoinntekt
+                error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
+                id={`inntekt.endringAarsaker.${key}.aarsak`}
+                nyInnsending={nyInnsending}
+                register={register}
+              />
+            </div>
+            {!kanIkkeTilbakestilles && key === 0 && (
+              <div>
+                <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={clickTilbakestillMaanedsinntekt} />
+              </div>
+            )}
+            {key > 0 && (
+              <div>
+                <ButtonSlette className={lokalStyles.kontrollerknapp} onClick={() => remove(key)} title={'Slett'} />
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
-        <div className={lokalStyles.endremaaanedsinntekt}>
-          <TariffendringDato
-            changeTariffEndretDato={setEndringAarsakGjelderFra}
-            changeTariffKjentDato={setEndringAarsakBleKjent}
-            defaultEndringsdato={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
-            defaultKjentDato={parseIsoDate(defaultEndringAarsak?.bleKjent)}
-            visFeilmeldingTekst={visFeilmeldingTekst}
-            defaultMonth={bestemmendeFravaersdag}
-          />
-        </div>
-      )}
-      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && (
-        <div className={lokalStyles.endreperiodeliste}>
-          <PeriodeListevelger
-            onRangeListChange={setPerioder}
-            defaultRange={
-              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && defaultEndringAarsak?.ferier
-                ? periodeMapper(defaultEndringAarsak.ferier)
-                : blankPeriode
-            }
-            fomTekst='Ferie fra'
-            tomTekst='Ferie til'
-            fomIdBase='bruttoinntekt-ful-fom'
-            tomIdBase='bruttoinntekt-ful-tom'
-            visFeilmeldingTekst={visFeilmeldingTekst}
-            defaultMonth={bestemmendeFravaersdag}
-            toDate={bestemmendeFravaersdag}
-          />
-        </div>
-      )}
-      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.VarigLoennsendring && (
-        <div className={lokalStyles.endremaaanedsinntekt}>
-          <Datovelger
-            onDateChange={setEndringAarsakGjelderFra}
-            label='Lønnsendring gjelder fra'
-            id='bruttoinntekt-lonnsendring-fom'
-            defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
-            toDate={bestemmendeFravaersdag}
-            error={visFeilmeldingTekst('bruttoinntekt-lonnsendring-fom')}
-            defaultMonth={bestemmendeFravaersdag}
-          />
-        </div>
-      )}
-      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
-        <div className={lokalStyles.endreperiodeliste}>
-          <PeriodeListevelger
-            onRangeListChange={setPerioder}
-            defaultRange={
-              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon &&
-              defaultEndringAarsak?.permisjoner
-                ? periodeMapper(defaultEndringAarsak.permisjoner)
-                : blankPeriode
-            }
-            fomTekst='Permisjon fra'
-            tomTekst='Permisjon til'
-            fomIdBase='bruttoinntekt-permisjon-fom'
-            tomIdBase='bruttoinntekt-permisjon-tom'
-            defaultMonth={bestemmendeFravaersdag}
-            toDate={bestemmendeFravaersdag}
-            visFeilmeldingTekst={visFeilmeldingTekst}
-          />
-        </div>
-      )}
-      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering && (
-        <div className={lokalStyles.endreperiodeliste}>
-          <PeriodeListevelger
-            onRangeListChange={setPerioder}
-            defaultRange={
-              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering &&
-              defaultEndringAarsak?.permitteringer
-                ? periodeMapper(defaultEndringAarsak.permitteringer)
-                : blankPeriode
-            }
-            fomTekst='Permittering fra'
-            tomTekst='Permittering til'
-            fomIdBase='bruttoinntekt-permittering-fom'
-            tomIdBase='bruttoinntekt-permittering-tom'
-            defaultMonth={bestemmendeFravaersdag}
-            toDate={bestemmendeFravaersdag}
-            visFeilmeldingTekst={visFeilmeldingTekst}
-          />
-        </div>
-      )}
-      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
-        <div className={lokalStyles.endremaaanedsinntekt}>
-          <Datovelger
-            onDateChange={setEndringAarsakGjelderFra}
-            label='Ny stilling fra'
-            id='bruttoinntekt-nystilling-fom'
-            defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
-            toDate={bestemmendeFravaersdag}
-            defaultMonth={bestemmendeFravaersdag}
-          />
-        </div>
-      )}
-      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
-        <div className={lokalStyles.endremaaanedsinntekt}>
-          <Datovelger
-            onDateChange={setEndringAarsakGjelderFra}
-            label='Ny stillingsprosent fra'
-            id='bruttoinntekt-nystillingsprosent-fom'
-            defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
-            toDate={bestemmendeFravaersdag}
-            defaultMonth={bestemmendeFravaersdag}
-          />
-        </div>
-      )}
-      {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer && (
-        <div className={lokalStyles.endreperiodeliste}>
-          <PeriodeListevelger
-            onRangeListChange={setPerioder}
-            defaultRange={
-              defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer &&
-              defaultEndringAarsak?.sykefravaer
-                ? periodeMapper(defaultEndringAarsak.sykefravaer)
-                : blankPeriode
-            }
-            fomTekst='Sykefravær fra'
-            tomTekst='Sykefravær til'
-            fomIdBase='bruttoinntekt-sykefravaerperioder-fom'
-            tomIdBase='bruttoinntekt-sykefravaerperioder-tom'
-            defaultMonth={bestemmendeFravaersdag}
-            toDate={bestemmendeFravaersdag}
-            visFeilmeldingTekst={visFeilmeldingTekst}
-          />
-        </div>
-      )}
+          <AarsakDetaljer bestemmendeFravaersdag={bestemmendeFravaersdag} id={key.toString()} />
+        </Fragment>
+      ))}
+      <Button variant='secondary' onClick={handleLeggTilEndringAarsak} className={lokalStyles.leggTilAarsak}>
+        Legg til annen endringsårsak
+      </Button>
     </div>
   );
-}
-
-export function periodeMapper(perioder: { fom: Date; tom: Date }[] | { fom: string; tom: string }[]): Periode[] {
-  if (!perioder) return [];
-  return perioder.map((periode) => {
-    const fomId = periode.fom ? isoDate(periode.fom) : 'undefined';
-    const tomId = periode.tom ? isoDate(periode.tom) : 'undefined';
-
-    return {
-      fom: typeof periode.fom === 'string' ? parseIsoDate(periode.fom) : periode.fom,
-      tom: typeof periode.tom === 'string' ? parseIsoDate(periode.tom) : periode.tom,
-      id: fomId + '-' + tomId
-    };
-  });
-}
-
-function isoDate(date: Date | string): string {
-  if (typeof date !== 'string') {
-    return formatIsoDate(date);
-  }
-  return date;
 }

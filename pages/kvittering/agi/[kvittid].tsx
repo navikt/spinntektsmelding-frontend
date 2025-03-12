@@ -1,5 +1,5 @@
-import testdata from '../../../mockdata/selvbestemt-kvittering.json';
-
+// import testdata from '../../../mockdata/selvbestemt-kvittering.json';
+import { Fragment, useEffect } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -27,7 +27,6 @@ import ButtonPrint from '../../../components/ButtonPrint';
 
 import ButtonEndre from '../../../components/ButtonEndre';
 import formatDate from '../../../utils/formatDate';
-import { useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
@@ -50,6 +49,7 @@ import { getToken, validateToken } from '@navikt/oasis';
 import environment from '../../../config/environment';
 import { z } from 'zod';
 import { kvitteringNavNoSchema } from '../../../schema/mottattKvitteringSchema';
+import { EndringAarsak } from '../../../validators/validerAapenInnsending';
 
 type PersonData = {
   navn: string;
@@ -75,6 +75,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
+  const lagretEndringsaarsaker = useBoundStore((state) => state.endringAarsaker);
 
   const [navn, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
     state.navn,
@@ -88,7 +89,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
 
   const kvitteringInit = useKvitteringInit();
-
+  console.log('kvittering', kvittering);
   const kvitteringDokument = kvittering?.selvbestemtInntektsmelding
     ? kvittering?.selvbestemtInntektsmelding
     : kvitteringData;
@@ -121,7 +122,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
 
     // Må lagre data som kan endres i hovedskjema - Start
-    const kvittering = prepareForInitiering(input, personData);
+    const kvittering = prepareForInitiering(input);
     kvitteringInit({ kvitteringNavNo: kvittering });
     // Må lagre data som kan endres i hovedskjema - Slutt
 
@@ -288,6 +289,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? kvitteringDokument.inntekt.endringAarsak
     : kvitteringData?.inntekt.endringAarsak;
 
+  const endringAarsaker = dataFraBackend
+    ? kvitteringDokument.inntekt.endringAarsaker
+    : (kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringsaarsaker);
+
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -309,6 +314,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               arkivreferanse={kvitteringEksterntSystem.referanse}
               eksterntSystem={kvitteringEksterntSystem.avsenderSystem}
               mottattDato={innsendingstidspunkt}
+              kvitteringId={kvittid}
             />
           )}
           {!kvitteringEksterntSystem?.avsenderSystem && (
@@ -386,6 +392,14 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   />
                 </>
               )}
+              {endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
+                <Fragment key={endring.aarsak + endringIndex}>
+                  <div className={lokalStyles.uthevet}>Endret med årsak</div>
+
+                  {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
+                  <EndringAarsakVisning endringAarsak={endring} />
+                </Fragment>
+              ))}
               <Skillelinje />
               <Heading2>Refusjon</Heading2>
               {visFullLonnIArbeidsgiverperioden && (
@@ -434,7 +448,7 @@ export default Kvittering;
 
 type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
 
-function prepareForInitiering(kvitteringData: any, personData: PersonData): KvitteringNavNoSchema {
+function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
   const kvittering: KvitteringNavNoSchema = {
     sykmeldt: kvitteringData.sykmeldt,
     avsender: kvitteringData.avsender,
@@ -456,9 +470,9 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         kvittid: context.query.kvittid,
-        kvittering: testdata,
-        kvitteringStatus: 200,
-        dataFraBackend: true
+        kvittering: {},
+        kvitteringStatus: 404,
+        dataFraBackend: false
       }
     };
   }

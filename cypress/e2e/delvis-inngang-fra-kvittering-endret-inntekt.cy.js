@@ -22,7 +22,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.intercept('/im-dialog/api/inntektsdata', { fixture: '../../mockdata/inntektData.json' }).as('inntektsdata');
 
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
-      fixture: '../../mockdata/kvittering-delvis.json'
+      fixture: '../../mockdata/kvittering-delvis-endret-inntekt.json'
     }).as('kvittering');
 
     cy.intercept('/collect', {
@@ -30,7 +30,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       body: 'OK'
     }).as('collect');
 
-    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    cy.visit('http://localhost:3000/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@kvittering');
 
@@ -43,12 +43,13 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.wait(1000);
 
     cy.location('pathname', { timeout: 60000 }).should('equal', '/im-dialog/12345678-3456-5678-2457-123456789012');
+    cy.wait(1000);
 
-    cy.findAllByRole('button', {
-      name: 'Endre'
-    })
-      .eq(1)
-      .click();
+    // cy.findAllByRole('button', {
+    //   name: 'Endre'
+    // })
+    //   .eq(1)
+    //   .click();
 
     cy.findByLabelText('Månedslønn 02.01.2023')
       .invoke('val')
@@ -56,7 +57,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .should('equal', '65000');
     cy.findByLabelText('Månedslønn 02.01.2023').clear().type('50000');
 
-    cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
+    // cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
 
     cy.findByRole('group', {
       name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'

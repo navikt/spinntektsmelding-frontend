@@ -1,11 +1,13 @@
 import { isAfter } from 'date-fns';
-import { periodeMapper } from '../components/Bruttoinntekt/Aarsaksvelger';
 import begrunnelseEndringBruttoinntekt from '../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { CompleteState } from '../state/useBoundStore';
 import parseIsoDate from '../utils/parseIsoDate';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 import validerPeriode from './validerPeriode';
+import { z } from 'zod';
+import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { periodeMapper } from '../utils/periodeMapper';
 
 export enum BruttoinntektFeilkode {
   BRUTTOINNTEKT_MANGLER = 'BRUTTOINNTEKT_MANGLER',
@@ -25,7 +27,13 @@ export enum BruttoinntektFeilkode {
   SYKEFRAVAER_MANGLER = 'SYKEFRAVAER_MANGLER'
 }
 
-export default function validerBruttoinntekt(state: CompleteState): Array<ValiderResultat> {
+type Skjema = z.infer<typeof hovedskjemaSchema>;
+
+export default function validerBruttoinntekt(
+  state: CompleteState,
+  skjemaData: Skjema,
+  bestemmendeFravaersdag: Date
+): Array<ValiderResultat> {
   let valideringstatus: Array<ValiderResultat> = [];
 
   if (!state.bruttoinntekt) {
@@ -35,7 +43,7 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
     });
   } else {
     const bruttoinntekt = state.bruttoinntekt;
-    if (ugyldigEllerNegativtTall(bruttoinntekt.bruttoInntekt)) {
+    if (ugyldigEllerNegativtTall(skjemaData.inntekt?.beloep)) {
       valideringstatus.push({
         felt: 'inntekt.beregnetInntekt',
         code: BruttoinntektFeilkode.BRUTTOINNTEKT_MANGLER
@@ -43,150 +51,140 @@ export default function validerBruttoinntekt(state: CompleteState): Array<Valide
     }
 
     if (bruttoinntekt.manueltKorrigert) {
-      if (!bruttoinntekt.endringAarsak?.aarsak || bruttoinntekt.endringAarsak.aarsak === '') {
-        valideringstatus.push({
-          felt: 'bruttoinntekt-endringsaarsak',
-          code: BruttoinntektFeilkode.ENDRINGSAARSAK_MANGLER
-        });
-      } else {
-        const endringAarsak = bruttoinntekt.endringAarsak;
-        switch (endringAarsak?.aarsak) {
-          case begrunnelseEndringBruttoinntekt.Tariffendring: {
-            if (!endringAarsak.gjelderFra) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-tariffendring-fom',
-                code: BruttoinntektFeilkode.TARIFFENDRING_FOM
-              });
-            }
-
-            if (!endringAarsak.bleKjent) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-tariffendring-kjent',
-                code: BruttoinntektFeilkode.TARIFFENDRING_KJENT
-              });
-            }
-            break;
-          }
-          case begrunnelseEndringBruttoinntekt.Ferie: {
-            if (!endringAarsak.ferier) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-endringsaarsak',
-                code: BruttoinntektFeilkode.FERIE_MANGLER
-              });
-            } else {
-              const feilkoder = validerPeriode(periodeMapper(endringAarsak.ferier), 'bruttoinntekt-ful');
-              valideringstatus = valideringstatus.concat(feilkoder);
-            }
-            break;
-          }
-
-          case begrunnelseEndringBruttoinntekt.VarigLoennsendring: {
-            if (!endringAarsak.gjelderFra) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-lonnsendring-fom',
-                code: BruttoinntektFeilkode.LONNSENDRING_FOM_MANGLER
-              });
-            } else {
-              let gjelderFra: Date;
-
-              if (typeof endringAarsak.gjelderFra === 'string') {
-                gjelderFra = parseIsoDate(endringAarsak.gjelderFra)!;
-              } else {
-                gjelderFra = endringAarsak.gjelderFra;
-              }
-
-              if (state.bestemmendeFravaersdag && isAfter(gjelderFra, state.bestemmendeFravaersdag)) {
+      const endringAarsaker = skjemaData.inntekt?.endringAarsaker;
+      endringAarsaker?.forEach((endringAarsak, index) => {
+        if (!endringAarsak?.aarsak || endringAarsak.aarsak === '') {
+          valideringstatus.push({
+            felt: `bruttoinntekt-endringsaarsak-${index}`,
+            code: BruttoinntektFeilkode.ENDRINGSAARSAK_MANGLER
+          });
+        } else {
+          switch (endringAarsak?.aarsak) {
+            case begrunnelseEndringBruttoinntekt.Tariffendring: {
+              if (!endringAarsak.gjelderFra) {
                 valideringstatus.push({
-                  felt: 'bruttoinntekt-lonnsendring-fom',
-                  code: BruttoinntektFeilkode.LONNSENDRING_FOM_ETTER_BFD
+                  felt: 'bruttoinntekt-tariffendring-fom',
+                  code: BruttoinntektFeilkode.TARIFFENDRING_FOM
                 });
               }
-            }
-            break;
-          }
 
-          case begrunnelseEndringBruttoinntekt.Permisjon: {
-            if (!endringAarsak.permisjoner) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-permisjon-fom',
-                code: BruttoinntektFeilkode.PERMISJON_MANGLER
-              });
-            } else {
-              const feilkoder = validerPeriode(periodeMapper(endringAarsak.permisjoner), 'bruttoinntekt-permisjon');
-              valideringstatus = valideringstatus.concat(feilkoder);
+              if (!endringAarsak.bleKjent) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-tariffendring-kjent',
+                  code: BruttoinntektFeilkode.TARIFFENDRING_KJENT
+                });
+              }
+              break;
             }
-            break;
-          }
+            case begrunnelseEndringBruttoinntekt.Ferie: {
+              if (!endringAarsak.ferier) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-endringsaarsak',
+                  code: BruttoinntektFeilkode.FERIE_MANGLER
+                });
+              } else {
+                const feilkoder = validerPeriode(periodeMapper(endringAarsak.ferier), 'bruttoinntekt-ful');
+                valideringstatus = valideringstatus.concat(feilkoder);
+              }
+              break;
+            }
 
-          case begrunnelseEndringBruttoinntekt.Permittering: {
-            if (!endringAarsak.permitteringer) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-permittering-fom',
-                code: BruttoinntektFeilkode.PERMITTERING_MANGLER
-              });
-            } else {
-              const feilkoder = validerPeriode(
-                periodeMapper(endringAarsak.permitteringer),
-                'bruttoinntekt-permittering'
-              );
-              valideringstatus = valideringstatus.concat(feilkoder);
-            }
-            break;
-          }
+            case begrunnelseEndringBruttoinntekt.VarigLoennsendring: {
+              if (!endringAarsak.gjelderFra) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-lonnsendring-fom',
+                  code: BruttoinntektFeilkode.LONNSENDRING_FOM_MANGLER
+                });
+              } else {
+                const gjelderFra: Date = parseIsoDate(endringAarsak.gjelderFra)!;
 
-          case begrunnelseEndringBruttoinntekt.NyStilling: {
-            if (!endringAarsak.gjelderFra) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-nystilling-fom',
-                code: BruttoinntektFeilkode.NYSTILLING_FOM_MANGLER
-              });
-            } else if (
-              state.bestemmendeFravaersdag &&
-              parseIsoDate(endringAarsak.gjelderFra) > state.bestemmendeFravaersdag
-            ) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-nystilling-fom',
-                code: BruttoinntektFeilkode.NYSTILLING_FOM_ETTER_BFD
-              });
+                if (bestemmendeFravaersdag && isAfter(gjelderFra, bestemmendeFravaersdag)) {
+                  valideringstatus.push({
+                    felt: 'bruttoinntekt-lonnsendring-fom',
+                    code: BruttoinntektFeilkode.LONNSENDRING_FOM_ETTER_BFD
+                  });
+                }
+              }
+              break;
             }
-            break;
-          }
 
-          case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
-            if (!endringAarsak.gjelderFra) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-nystillingsprosent-fom',
-                code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_MANGLER
-              });
-            } else if (
-              state.bestemmendeFravaersdag &&
-              parseIsoDate(endringAarsak.gjelderFra) > state.bestemmendeFravaersdag
-            ) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-nystillingsprosent-fom',
-                code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_ETTER_BFD
-              });
+            case begrunnelseEndringBruttoinntekt.Permisjon: {
+              if (!endringAarsak.permisjoner) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-permisjon-fom',
+                  code: BruttoinntektFeilkode.PERMISJON_MANGLER
+                });
+              } else {
+                const feilkoder = validerPeriode(periodeMapper(endringAarsak.permisjoner), 'bruttoinntekt-permisjon');
+                valideringstatus = valideringstatus.concat(feilkoder);
+              }
+              break;
             }
-            break;
-          }
 
-          case begrunnelseEndringBruttoinntekt.Sykefravaer: {
-            if (!endringAarsak.sykefravaer) {
-              valideringstatus.push({
-                felt: 'bruttoinntekt-sykefravaerperioder',
-                code: BruttoinntektFeilkode.SYKEFRAVAER_MANGLER
-              });
-            } else {
-              const feilkoder = validerPeriode(
-                periodeMapper(endringAarsak.sykefravaer),
-                'bruttoinntekt-sykefravaerperioder'
-              );
-              valideringstatus = valideringstatus.concat(feilkoder);
+            case begrunnelseEndringBruttoinntekt.Permittering: {
+              if (!endringAarsak.permitteringer) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-permittering-fom',
+                  code: BruttoinntektFeilkode.PERMITTERING_MANGLER
+                });
+              } else {
+                const feilkoder = validerPeriode(
+                  periodeMapper(endringAarsak.permitteringer),
+                  'bruttoinntekt-permittering'
+                );
+                valideringstatus = valideringstatus.concat(feilkoder);
+              }
+              break;
             }
-            break;
+
+            case begrunnelseEndringBruttoinntekt.NyStilling: {
+              if (!endringAarsak.gjelderFra) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-nystilling-fom',
+                  code: BruttoinntektFeilkode.NYSTILLING_FOM_MANGLER
+                });
+              } else if (bestemmendeFravaersdag && parseIsoDate(endringAarsak.gjelderFra)! > bestemmendeFravaersdag) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-nystilling-fom',
+                  code: BruttoinntektFeilkode.NYSTILLING_FOM_ETTER_BFD
+                });
+              }
+              break;
+            }
+
+            case begrunnelseEndringBruttoinntekt.NyStillingsprosent: {
+              if (!endringAarsak.gjelderFra) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-nystillingsprosent-fom',
+                  code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_MANGLER
+                });
+              } else if (bestemmendeFravaersdag && parseIsoDate(endringAarsak.gjelderFra)! > bestemmendeFravaersdag) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-nystillingsprosent-fom',
+                  code: BruttoinntektFeilkode.NYSTILLINGSPROSENT_FOM_ETTER_BFD
+                });
+              }
+              break;
+            }
+
+            case begrunnelseEndringBruttoinntekt.Sykefravaer: {
+              if (!endringAarsak.sykefravaer) {
+                valideringstatus.push({
+                  felt: 'bruttoinntekt-sykefravaerperioder',
+                  code: BruttoinntektFeilkode.SYKEFRAVAER_MANGLER
+                });
+              } else {
+                const feilkoder = validerPeriode(
+                  periodeMapper(endringAarsak.sykefravaer),
+                  'bruttoinntekt-sykefravaerperioder'
+                );
+                valideringstatus = valideringstatus.concat(feilkoder);
+              }
+              break;
+            }
           }
         }
-      }
+      });
     }
   }
 

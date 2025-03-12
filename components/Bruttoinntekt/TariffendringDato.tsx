@@ -1,44 +1,42 @@
-import Datovelger from '../Datovelger';
+import DatoVelger from '../DatoVelger/DatoVelger';
 import lokalStyles from './Bruttoinntekt.module.css';
 
 interface TariffendringDatoProps {
-  changeTariffEndretDato: (newDate: Date | undefined) => void;
-  changeTariffKjentDato: (newDate: Date | undefined) => void;
   defaultEndringsdato?: Date;
   defaultKjentDato?: Date;
   defaultMonth?: Date;
-  visFeilmeldingTekst?: (feilmelding: string) => string;
+  name: string;
 }
 
 export default function TariffendringDato({
-  changeTariffEndretDato,
-  changeTariffKjentDato,
   defaultEndringsdato,
   defaultKjentDato,
   defaultMonth,
-  visFeilmeldingTekst
+  name
 }: Readonly<TariffendringDatoProps>) {
   const tilDato = new Date();
   return (
     <div className={lokalStyles.endremaaanedsinntekt}>
-      <Datovelger
-        onDateChange={changeTariffEndretDato}
+      <DatoVelger
+        // onDateChange={changeTariffEndretDato}
         label='Tariffendring gjelder fra'
-        id='bruttoinntekt-tariffendring-fom'
+        // id='bruttoinntekt-tariffendring-fom'
         defaultSelected={defaultEndringsdato}
         toDate={tilDato}
-        error={visFeilmeldingTekst ? visFeilmeldingTekst('bruttoinntekt-tariffendring-fom') : undefined}
+        // error={visFeilmeldingTekst ? visFeilmeldingTekst('bruttoinntekt-tariffendring-fom') : undefined}
         defaultMonth={defaultMonth}
+        name={`${name}.gjelderFra`}
       />
 
-      <Datovelger
-        onDateChange={changeTariffKjentDato}
+      <DatoVelger
+        // onDateChange={changeTariffKjentDato}
         label='Dato tariffendring ble kjent'
-        id='bruttoinntekt-tariffendring-kjent'
+        // id='bruttoinntekt-tariffendring-kjent'
         defaultSelected={defaultKjentDato}
         toDate={tilDato}
-        error={visFeilmeldingTekst ? visFeilmeldingTekst('bruttoinntekt-tariffendring-kjent') : undefined}
+        // error={visFeilmeldingTekst ? visFeilmeldingTekst('bruttoinntekt-tariffendring-kjent') : undefined}
         defaultMonth={defaultMonth}
+        name={`${name}.bleKjent`}
       />
     </div>
   );

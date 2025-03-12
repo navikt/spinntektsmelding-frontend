@@ -28,31 +28,34 @@ export default function PeriodeListevelger({
   toDate,
   visFeilmeldingTekst
 }: Readonly<PeriodeListevelgerProps>) {
-  const onRangeChange = (datoer: PeriodeParam | undefined, index: string) => {
-    const uppdatedRange = defaultRange?.map((periode) => {
-      if (periode.id === index) {
-        return {
-          fom: datoer ? datoer.fom : undefined,
-          tom: datoer ? datoer.tom : undefined,
-          id: periode.id
-        };
-      }
-      return periode;
-    });
+  const onRangeChange = (endretPeriode: PeriodeParam | undefined, index: string) => {
+    const updatedRange = defaultRange?.map(
+      (periode) => {
+        if (periode.id === index) {
+          return {
+            fom: endretPeriode ? endretPeriode.fom : undefined,
+            tom: endretPeriode ? endretPeriode.tom : undefined,
+            id: periode.id
+          };
+        }
+        return periode;
+      },
+      [defaultRange, onRangeListChange]
+    );
 
-    onRangeListChange(uppdatedRange);
+    onRangeListChange(updatedRange);
   };
 
-  const slettRad = (periodeId: string) => {
-    const uppdatedRange = defaultRange?.filter((periode) => periode.id !== periodeId);
-    onRangeListChange(uppdatedRange);
+  const slettRad = (periodeId: string | number) => {
+    const updatedRange = defaultRange?.filter((periode) => periode.id !== periodeId);
+    onRangeListChange(updatedRange);
   };
 
   const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const uppdatedRange = structuredClone(defaultRange);
-    uppdatedRange?.push({ id: nanoid() });
-    onRangeListChange(uppdatedRange);
+    const updatedRange = structuredClone(defaultRange);
+    updatedRange?.push({ id: nanoid() });
+    onRangeListChange(updatedRange);
   };
 
   useEffect(() => {
@@ -64,7 +67,7 @@ export default function PeriodeListevelger({
     <>
       {defaultRange?.map((range, index) => (
         <Periodevelger
-          key={`${fomIdBase}-${range.id || index}`}
+          key={`${fomIdBase}-${range.id}`}
           onRangeChange={(oppdatertRange) => onRangeChange(oppdatertRange, range.id)}
           defaultRange={range}
           fomTekst={fomTekst}
@@ -80,7 +83,7 @@ export default function PeriodeListevelger({
           toDate={toDate}
         />
       ))}
-      <Button variant='secondary' onClick={handleLeggTilPeriode} className={lokalStyles.leggtilperiodeknapp}>
+      <Button variant='secondary' onClick={handleLeggTilPeriode} className={lokalStyles.leggTilPeriodeKnapp}>
         Legg til periode
       </Button>
     </>

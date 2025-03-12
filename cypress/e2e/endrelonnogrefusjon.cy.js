@@ -93,6 +93,7 @@ describe('Utfylling og innsending av skjema', () => {
     cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
 
     cy.findAllByRole('button', { name: /Endre/ }).first().click();
+
     cy.findByRole('button', { name: /Legg til periode/ }).click();
 
     cy.findAllByLabelText('Fra').last().clear().type('30.01.23');
@@ -131,12 +132,17 @@ describe('Utfylling og innsending av skjema', () => {
           redusertLoennIAgp: null
         },
         inntekt: {
-          beloep: 75000,
+          beloep: 84333.33,
           inntektsdato: '2023-01-30',
           naturalytelser: [],
-          endringAarsak: { aarsak: 'Bonus' }
+          endringAarsak: null,
+          endringAarsaker: [
+            {
+              aarsak: 'Bonus'
+            }
+          ]
         },
-        refusjon: { beloepPerMaaned: 75000, sluttdato: null, endringer: [] },
+        refusjon: { beloepPerMaaned: 84333.33, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
       });
 
@@ -172,10 +178,6 @@ describe('Utfylling og innsending av skjema', () => {
     }).within(() => {
       cy.findByRole('radio', { name: 'Nei' }).click();
     });
-
-    // cy.findByRole('group', { name: /Opphører refusjonkravet i perioden?/ }).within(() => {
-    //   cy.findByRole('radio', { name: 'Nei' }).click();
-    // });
 
     cy.get('[data-cy="endre-beloep"]').click();
 
@@ -227,15 +229,18 @@ describe('Utfylling og innsending av skjema', () => {
           beloep: 75000,
           inntektsdato: '2023-02-02',
           naturalytelser: [],
-          endringAarsak: {
-            aarsak: 'Ferie',
-            ferier: [
-              {
-                fom: '2022-12-25',
-                tom: '2022-12-30'
-              }
-            ]
-          }
+          endringAarsak: null,
+          endringAarsaker: [
+            {
+              aarsak: 'Ferie',
+              ferier: [
+                {
+                  fom: '2022-12-25',
+                  tom: '2022-12-30'
+                }
+              ]
+            }
+          ]
         },
         refusjon: { beloepPerMaaned: 75000, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
@@ -340,15 +345,18 @@ describe('Utfylling og innsending av skjema', () => {
           redusertLoennIAgp: null
         },
         inntekt: {
-          beloep: 75000,
+          beloep: 84333.33,
           inntektsdato: '2023-01-30',
           naturalytelser: [],
-          endringAarsak: {
-            aarsak: 'VarigLoennsendring',
-            gjelderFra: '2022-12-30'
-          }
+          endringAarsak: null,
+          endringAarsaker: [
+            {
+              aarsak: 'VarigLoennsendring',
+              gjelderFra: '2022-12-30'
+            }
+          ]
         },
-        refusjon: { beloepPerMaaned: 75000, sluttdato: null, endringer: [] },
+        refusjon: { beloepPerMaaned: 84333.33, sluttdato: null, endringer: [] },
         avsenderTlf: '12345678'
       });
 

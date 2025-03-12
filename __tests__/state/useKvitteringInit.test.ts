@@ -102,12 +102,12 @@ describe('useKvitteringInit', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('LovligFravaer');
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toBe(30000);
 
-    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Tariffendring');
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Tariffendring');
     // expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
     expect(result.current.egenmeldingsperioder).toEqual([]);
     expect(result.current.harRefusjonEndringer).toBe('Ja');
-    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
-    expect(result.current.bruttoinntekt.endringAarsak?.bleKjent).toEqual(parseIsoDate('2023-03-31'));
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].gjelderFra).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].bleKjent).toEqual(parseIsoDate('2023-03-31'));
   });
 
   it('should fill the state with ferie stuff', async () => {
@@ -121,10 +121,10 @@ describe('useKvitteringInit', () => {
       kvitteringInit(ferieKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Ferie');
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Ferie');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.ferier).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].ferier).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-31')
@@ -143,10 +143,10 @@ describe('useKvitteringInit', () => {
       kvitteringInit(varigLonnsendringKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('VarigLoennsendring');
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('VarigLoennsendring');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].gjelderFra).toEqual(parseIsoDate('2023-02-24'));
   });
 
   it('should fill the state with permisjon stuff', async () => {
@@ -160,10 +160,10 @@ describe('useKvitteringInit', () => {
       kvitteringInit(permisjonKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Permisjon');
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Permisjon');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.permisjoner).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].permisjoner).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-31')
@@ -182,10 +182,10 @@ describe('useKvitteringInit', () => {
       kvitteringInit(permitteringKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Permittering');
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Permittering');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.permitteringer).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].permitteringer).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-31')
@@ -204,10 +204,10 @@ describe('useKvitteringInit', () => {
       kvitteringInit(nyStillingKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('NyStilling');
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('NyStilling');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].gjelderFra).toEqual(parseIsoDate('2023-02-24'));
   });
 
   it('should fill the state with NyStillingsprosent stuff', async () => {
@@ -221,10 +221,10 @@ describe('useKvitteringInit', () => {
       kvitteringInit(nyStillingsprosentKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('NyStillingsprosent');
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('NyStillingsprosent');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].gjelderFra).toEqual(parseIsoDate('2023-02-24'));
   });
 
   it('should fill the state with syk stuff', async () => {
@@ -238,10 +238,10 @@ describe('useKvitteringInit', () => {
       kvitteringInit(sykKvittering as unknown as KvitteringInit);
     });
 
-    expect(result.current.bruttoinntekt.endringAarsak?.aarsak).toBe('Sykefravaer');
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Sykefravaer');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsak?.sykefravaer).toEqual([
+    expect(result.current.bruttoinntekt.endringAarsaker?.[0]?.sykefravaer).toEqual([
       {
         fom: parseIsoDate('2023-02-06'),
         tom: parseIsoDate('2023-02-10')

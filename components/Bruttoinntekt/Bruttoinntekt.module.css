@@ -42,8 +42,9 @@
   max-height: var(--a-font-line-height-large);
 }
 
-.bruttoinntektEndringsBeloep > input {
+.bruttoinntektEndringsBeloep input {
   margin-bottom: auto;
+  max-height: 3rem;
 }
 
 .bruttoinntektbelop {
@@ -108,6 +109,10 @@
 
 .endrePadding {
   margin-top: 1.5rem;
+}
+
+.leggTilAarsak {
+  max-width: fit-content;
 }
 
 @media screen and (max-width: 500px) {
