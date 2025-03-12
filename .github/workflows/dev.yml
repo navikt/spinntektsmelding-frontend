@@ -13,92 +13,32 @@ env:
   NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
   NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 jobs:
-  # Bygg:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - run: yarn install --immutable
-  #     - run: yarn build
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: spinntektsmelding-frontend-artifact
-  #         path: ${{ github.workspace }}/build/**/*
-
-  # Kodekvalitet:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '22.6'
-  #         registry-url: 'https://npm.pkg.github.com'
-  #     - run: yarn install --immutable
-  #     - run: yarn test
-  #     - name: SonarCloud Scan
-  #       uses: sonarsource/sonarcloud-github-action@master
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  # Eslint:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '22.6'
-  #         registry-url: 'https://npm.pkg.github.com'
-  #     - run: yarn install --immutable
-  #     - run: yarn lint
-
-  # Snyk:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - name: Run Snyk to check for vulnerabilities
-  #       uses: snyk/actions/node@master
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-  Docker:
-    # needs: [Kodekvalitet, Eslint]
+  build_and_deploy:
+    name: Build, push and deploy
     runs-on: ubuntu-latest
     permissions:
-      packages: write
-      contents: write # to write sarif
-      security-events: write # push sarif to github security
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '22.6'
-      #     registry-url: "https://npm.pkg.github.com"
-      #     always-auth: true
-      # - uses: actions/checkout@master
-      # - uses: actions/download-artifact@v2
-      #   with:
-      #     name: fritak-frontend-artifact
-      #     path: build
-      #
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+      - name: Build and push image and SBOM to OCI registry
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE }}
-          secrets: |
-            "NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}"
-          build-args: |
-            "BUILDMODE=development"
+          team: helsearbeidsgiver
+          build_secrets: |
+            NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
+          build_args: |
+            BUILDMODE=development
+
+      - name: Deploy to Nais
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.
+          VAR: image=${{ steps.docker-build-push.outputs.image }}
+          TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}
+          VARS: nais/dev-gcp.json
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -113,20 +53,3 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
-
-  Deploy:
-    needs: [Docker]
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v2
-        env:
-          TEAM: helsearbeidsgiver
-          CLUSTER: dev-gcp
-          RESOURCE: naiserator.yaml
-          VARS: nais/dev-gcp.json
-          REF: ${{ env.COMMIT }}
-          IMAGE: ${{ env.IMAGE }}
