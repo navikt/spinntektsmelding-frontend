@@ -9,11 +9,10 @@ import DatoVelger from '../DatoVelger/DatoVelger';
 import PeriodeListevelger from '../PeriodeListeVelger/PeriodeListevelger';
 
 interface AarsakDetaljerProps {
-  endringAarsak: EndringAarsak;
   bestemmendeFravaersdag?: Date;
   id: string;
 }
-export default function AarsakDetaljer({ endringAarsak, bestemmendeFravaersdag, id }: Readonly<AarsakDetaljerProps>) {
+export default function AarsakDetaljer({ bestemmendeFravaersdag, id }: Readonly<AarsakDetaljerProps>) {
   const { watch } = useFormContext();
 
   const defaultEndringAarsak = watch('inntekt.endringAarsaker.' + id);

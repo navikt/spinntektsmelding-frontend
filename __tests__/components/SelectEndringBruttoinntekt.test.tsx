@@ -12,7 +12,7 @@ vi.mock('react-hook-form', () => ({
     formState: { errors: {} }
   }),
   useFieldArray: () => ({
-    fields: [{}],
+    fields: [{ onChange: vi.fn() }],
     append: vi.fn(),
     remove: vi.fn(),
     replace: vi.fn()

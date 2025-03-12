@@ -93,11 +93,7 @@ export default function Aarsaksvelger({
               </div>
             )}
           </div>
-          <AarsakDetaljer
-            endringAarsak={defaultEndringAarsak}
-            bestemmendeFravaersdag={bestemmendeFravaersdag}
-            id={key.toString()}
-          />
+          <AarsakDetaljer bestemmendeFravaersdag={bestemmendeFravaersdag} id={key.toString()} />
         </Fragment>
       ))}
       <Button variant='secondary' onClick={handleLeggTilEndringAarsak} className={lokalStyles.leggTilAarsak}>
