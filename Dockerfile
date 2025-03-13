@@ -3,8 +3,7 @@ FROM node:22.9-alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-# ARG NODE_AUTH_TOKEN
-# COPY .npmrc.docker .npmrc 
+
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc ./
 RUN corepack enable && yarn set version berry
@@ -41,14 +40,12 @@ COPY ${BUILDMODE}.env .env
 RUN yarn build && rm -f .npmrc
 
 # Production image, copy all the files and run next
-FROM node:22.9-alpine AS runner
+FROM gcr.io/distroless/nodejs22-debian12@sha256:ba670ace564d2ff780881509904d3ee4c8fbf3e587bed6a395377b7e56bfcf4a AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
-
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
@@ -63,5 +60,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD ["node", "server.js"]
-# CMD ["node_modules/.bin/next", "start"]
+CMD ["server.js"]
