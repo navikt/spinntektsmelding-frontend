@@ -83,4 +83,4 @@ jobs:
           RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.
           VAR: image=${{ steps.docker-build-push.outputs.image }}
           TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}
-          VARS: nais/dev-gcp.json
+          VARS: nais/prod-gcp.json
