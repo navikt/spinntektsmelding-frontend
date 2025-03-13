@@ -19,6 +19,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      security-events: 'write'
     steps:
       - uses: actions/checkout@v4
       - name: Build and push image and SBOM to OCI registry
@@ -31,19 +32,10 @@ jobs:
           build_args: |
             BUILDMODE=development
 
-      - name: Deploy to Nais
-        uses: nais/deploy/actions/deploy@v2
-        env:
-          CLUSTER: dev-gcp
-          RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.
-          VAR: image=${{ steps.docker-build-push.outputs.image }}
-          TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}
-          VARS: nais/dev-gcp.json
-
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.IMAGE }}
+          image-ref: ${{ steps.docker-build-push.outputs.image }}
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'HIGH,CRITICAL'
@@ -53,3 +45,12 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+
+      - name: Deploy to Nais
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.
+          VAR: image=${{ steps.docker-build-push.outputs.image }}
+          TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}
+          VARS: nais/dev-gcp.json

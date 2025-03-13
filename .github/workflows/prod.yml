@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v4
         with:
-          node-version: '22.6'
+          node-version: '22.9'
           cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --immutable
@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v4
         with:
-          node-version: '22.6'
+          node-version: '22.9'
           cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn install --immutable
