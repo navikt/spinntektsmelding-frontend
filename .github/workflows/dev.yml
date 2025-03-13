@@ -31,15 +31,6 @@ jobs:
           build_args: |
             BUILDMODE=development
 
-      - name: Deploy to Nais
-        uses: nais/deploy/actions/deploy@v2
-        env:
-          CLUSTER: dev-gcp
-          RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.
-          VAR: image=${{ steps.docker-build-push.outputs.image }}
-          TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}
-          VARS: nais/dev-gcp.json
-
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -53,3 +44,12 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+
+      - name: Deploy to Nais
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.
+          VAR: image=${{ steps.docker-build-push.outputs.image }}
+          TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}
+          VARS: nais/dev-gcp.json
