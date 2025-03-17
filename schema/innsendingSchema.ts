@@ -21,7 +21,7 @@ export const InnsendingSchema = z.object({
       )
     })
     .nullable(),
-  inntekt: z.optional(
+  inntekt: z.nullable(
     z.object({
       beloep: z
         .number({ required_error: 'Vennligst angi månedsinntekt' })
