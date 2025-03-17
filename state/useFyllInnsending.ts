@@ -14,6 +14,7 @@ import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 import { Opplysningstype } from './useForespurtDataStore';
 import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { NaturalytelseEnum } from '../schema/NaturalytelseEnum';
 
 export interface SendtPeriode {
   fom: TDateISODate;
@@ -69,6 +70,7 @@ export default function useFyllInnsending() {
     const forespurtData = forespurteOpplysningstyper;
 
     const harForespurtArbeidsgiverperiode = forespurtData.includes(forespoerselType.arbeidsgiverperiode);
+    const harForespurtInntekt = forespurtData.includes(forespoerselType.inntekt);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
@@ -132,23 +134,25 @@ export default function useFyllInnsending() {
           : [],
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
-      inntekt: {
-        beloep: skjemaData.inntekt?.beloep ?? 0,
-        inntektsdato:
-          bestemmendeFraværsdag && bestemmendeFraværsdag.length > 0
-            ? bestemmendeFraværsdag
-            : formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
-        // manueltKorrigert: verdiEllerFalse(bruttoinntekt.manueltKorrigert),
-        naturalytelser: naturalytelser
-          ? naturalytelser?.map((ytelse) => ({
-              naturalytelse: verdiEllerBlank(ytelse.type),
-              sluttdato: formatIsoDate(ytelse.bortfallsdato),
-              verdiBeloep: verdiEllerNull(ytelse.verdi)
-            }))
-          : [],
-        endringAarsak: endringAarsakParsed,
-        endringAarsaker: endringAarsakerParsed
-      },
+      inntekt: harForespurtInntekt
+        ? {
+            beloep: skjemaData.inntekt?.beloep ?? 0,
+            inntektsdato:
+              bestemmendeFraværsdag && bestemmendeFraværsdag.length > 0
+                ? bestemmendeFraværsdag
+                : formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
+            // manueltKorrigert: verdiEllerFalse(bruttoinntekt.manueltKorrigert),
+            naturalytelser: naturalytelser
+              ? naturalytelser?.map((ytelse) => ({
+                  naturalytelse: verdiEllerBlank(ytelse.type) as z.infer<typeof NaturalytelseEnum>,
+                  sluttdato: formatIsoDate(ytelse.bortfallsdato),
+                  verdiBeloep: verdiEllerNull(ytelse.verdi)
+                }))
+              : [],
+            endringAarsak: endringAarsakParsed,
+            endringAarsaker: endringAarsakerParsed
+          }
+        : null,
       refusjon:
         lonnISykefravaeret?.status === 'Ja'
           ? {

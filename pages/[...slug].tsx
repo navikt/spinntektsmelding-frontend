@@ -104,7 +104,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   let opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
-  const trengerArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
+  const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
+  const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
+
   const pathSlug = slug;
 
   const lukkHentingFeiletModal = () => {
@@ -115,7 +117,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
-  const skalViseArbeidsgiverperiode = trengerArbeidsgiverperiode || overstyrSkalViseAgp;
+  const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
   type Skjema = z.infer<typeof hovedskjemaSchema>;
 
@@ -322,12 +324,23 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
             <Skillelinje />
 
-            <Bruttoinntekt
-              bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
-              erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
-              sbBruttoinntekt={sbBruttoinntekt}
-              sbTidligereInntekt={sbTidligereInntekt}
-            />
+            {harForespurtInntekt && (
+              <Bruttoinntekt
+                bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
+                erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
+                sbBruttoinntekt={sbBruttoinntekt}
+                sbTidligereInntekt={sbTidligereInntekt}
+              />
+            )}
+            {!harForespurtInntekt && (
+              <>
+                <Heading3 unPadded>Beregnet månedslønn</Heading3>
+                <BodyLong>
+                  Vi trenger ikke informasjon om inntekt for denne sykmeldingen. Sykemeldingen er en forlengelse av en
+                  tidligere sykefraværsperiode.
+                </BodyLong>
+              </>
+            )}
 
             <Skillelinje />
 
