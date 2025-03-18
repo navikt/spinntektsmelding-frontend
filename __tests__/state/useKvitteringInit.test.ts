@@ -16,6 +16,8 @@ import inntektData from '../../mockdata/inntektData.json';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { z } from 'zod';
 import MottattKvitteringSchema, { kvitteringNavNoSchema } from '../../schema/mottattKvitteringSchema';
+import eksterntSystem from '../../mockdata/kvittering-eksternt-system.json';
+import kvitteringMedRefusjonSluttdato from '../../mockdata/kvittering-delvis-refusjon.json';
 
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 type KvitteringNavNo = z.infer<typeof kvitteringNavNoSchema>;
@@ -250,6 +252,47 @@ describe('useKvitteringInit', () => {
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-06')
+      }
+    ]);
+  });
+
+  it('should set the status for eksternt system', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(eksterntSystem as unknown as KvitteringInit);
+    });
+
+    expect(result.current.kvitteringEksterntSystem).toEqual(eksterntSystem.kvitteringEkstern);
+  });
+
+  it('should set the refusjon sluttdato in the correct place', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+    });
+
+    expect(result.current.refusjonEndringer).toEqual([
+      {
+        beloep: 1234,
+        dato: parseIsoDate('2023-04-13')
+      },
+      {
+        beloep: 12345,
+        dato: parseIsoDate('2023-04-20')
+      },
+      {
+        beloep: 0,
+        dato: parseIsoDate('2023-04-19')
       }
     ]);
   });
