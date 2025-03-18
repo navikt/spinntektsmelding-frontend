@@ -83,7 +83,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     state.innsenderNavn
   ]);
 
-  const kvitteringEksterntSystem = kvittering?.kvitteringEkstern;
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
 
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
@@ -136,11 +135,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
       : '';
 
-  if (kvitteringEksterntSystem?.tidspunkt) {
-    const tidspunkt = new Date(kvitteringEksterntSystem.tidspunkt);
-    innsendingstidspunkt =
-      tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
-  }
   const ingenArbeidsgiverperioder = arbeidsgiverperioder && arbeidsgiverperioder.length === 0;
 
   const paakrevdeOpplysninger = ['arbeidsgiverperiode', 'naturalytelser', 'refusjon'];
