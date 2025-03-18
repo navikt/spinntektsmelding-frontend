@@ -31,9 +31,8 @@ import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunne
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isBefore, isEqual, isValid } from 'date-fns';
-import { LonnISykefravaeret, Periode, YesNo } from '../../../state/state';
+import { LonnISykefravaeret, Periode } from '../../../state/state';
 
-import KvitteringAnnetSystem from '../../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
@@ -311,128 +310,115 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
       <PageContent title='Kvittering - innsendt inntektsmelding'>
         <div className={`main-content ${styles.padded}`}>
-          {kvitteringEksterntSystem?.avsenderSystem && (
-            <KvitteringAnnetSystem
-              arkivreferanse={kvitteringEksterntSystem.referanse}
-              eksterntSystem={kvitteringEksterntSystem.avsenderSystem}
-              mottattDato={innsendingstidspunkt}
-              kvitteringId={kvittid}
-            />
-          )}
-          {!kvitteringEksterntSystem?.avsenderSystem && (
-            <>
-              <div className='page-kvittering-header'>
-                <Heading2>Kvittering - innsendt inntektsmelding</Heading2>
-                <div className='page-content-header-extra'>
-                  <ButtonEndre onClick={clickEndre} />
-                </div>
-              </div>
+          <div className='page-kvittering-header'>
+            <Heading2>Kvittering - innsendt inntektsmelding</Heading2>
+            <div className='page-content-header-extra'>
+              <ButtonEndre onClick={clickEndre} />
+            </div>
+          </div>
 
-              <PersonVisning {...personData} />
-              <Skillelinje />
-              <div className={classNameWrapperFravaer}>
-                {visArbeidsgiverperiode && (
-                  <Fravaersperiode
-                    fravaersperioder={fravaersperioder}
-                    egenmeldingsperioder={egenmeldingsperioder}
-                    paakrevdeOpplysninger={paakrevdeOpplysninger}
-                  />
-                )}
-
-                <div className={classNameWrapperSkjaeringstidspunkt}>
-                  <div className={lokalStyles.ytterstefravaerwrapper}>
-                    <div className={lokalStyles.ytrefravaerswrapper}>
-                      <Heading2 className={lokalStyles.fravaerstyper}>Bestemmende fraværsdag</Heading2>
-                      <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
-                      <div className={lokalStyles.fravaerwrapper}>
-                        <div className={lokalStyles.fravaertid}>Dato</div>
-                        <div data-cy='bestemmendefravaersdag'>
-                          {visningBestemmendeFravaersdag ? (
-                            formatDate(visningBestemmendeFravaersdag)
-                          ) : (
-                            <Skeleton variant='text' />
-                          )}{' '}
-                        </div>
-                      </div>
-                    </div>
-                    {visArbeidsgiverperiode && (
-                      <div className={lokalStyles.arbeidsgiverperiode}>
-                        <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
-                        {!ingenArbeidsgiverperioder && (
-                          <BodyLong>
-                            Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
-                            Deretter betaler Nav lønn til den syke eller refunderer bedriften.
-                          </BodyLong>
-                        )}
-                        {ingenArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
-                        {arbeidsgiverperioder?.map((periode) => (
-                          <PeriodeFraTil
-                            fom={parseIsoDate(periode.fom)}
-                            tom={parseIsoDate(periode.tom)}
-                            key={periode.fom + periode.tom}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <Skillelinje />
-              <Heading2>Beregnet månedslønn</Heading2>
-              <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
-              <BodyShort>{formatCurrency(inntekt.beregnetInntekt)} kr/måned</BodyShort>
-              {endringAarsak && (
-                <>
-                  <div className={lokalStyles.uthevet}>Endret med årsak</div>
-
-                  {formatBegrunnelseEndringBruttoinntekt(endringAarsak.aarsak as string)}
-                  <EndringAarsakVisning
-                    aarsak={endringAarsak.aarsak}
-                    gjelderFra={endringAarsak.gjelderFra}
-                    bleKjent={endringAarsak.bleKjent}
-                    perioder={endringAarsak.perioder}
-                  />
-                </>
-              )}
-              {endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
-                <Fragment key={endring.aarsak + endringIndex}>
-                  <div className={lokalStyles.uthevet}>Endret med årsak</div>
-
-                  {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
-                  <EndringAarsakVisning endringAarsak={endring} />
-                </Fragment>
-              ))}
-              <Skillelinje />
-              <Heading2>Refusjon</Heading2>
-              {visFullLonnIArbeidsgiverperioden && (
-                <>
-                  <div className={lokalStyles.uthevet}>
-                    Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
-                  </div>
-                  <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLoennIArbeidsgiverPerioden} />
-                </>
-              )}
-              <LonnUnderSykefravaeret
-                loenn={loenn}
-                harRefusjonEndringer={
-                  harGyldigeRefusjonEndringer(refusjonEndringerUtenSkjaeringstidspunkt) ? 'Ja' : 'Nei'
-                }
-                refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
+          <PersonVisning {...personData} />
+          <Skillelinje />
+          <div className={classNameWrapperFravaer}>
+            {visArbeidsgiverperiode && (
+              <Fravaersperiode
+                fravaersperioder={fravaersperioder}
+                egenmeldingsperioder={egenmeldingsperioder}
+                paakrevdeOpplysninger={paakrevdeOpplysninger}
               />
-              {visNaturalytelser && (
-                <>
-                  <Skillelinje />
-                  <Heading2>Eventuelle naturalytelser</Heading2>
-                  <BortfallNaturalytelser ytelser={naturalytelser!} />
-                </>
-              )}
-              <Skillelinje />
+            )}
+
+            <div className={classNameWrapperSkjaeringstidspunkt}>
+              <div className={lokalStyles.ytterstefravaerwrapper}>
+                <div className={lokalStyles.ytrefravaerswrapper}>
+                  <Heading2 className={lokalStyles.fravaerstyper}>Bestemmende fraværsdag</Heading2>
+                  <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
+                  <div className={lokalStyles.fravaerwrapper}>
+                    <div className={lokalStyles.fravaertid}>Dato</div>
+                    <div data-cy='bestemmendefravaersdag'>
+                      {visningBestemmendeFravaersdag ? (
+                        formatDate(visningBestemmendeFravaersdag)
+                      ) : (
+                        <Skeleton variant='text' />
+                      )}{' '}
+                    </div>
+                  </div>
+                </div>
+                {visArbeidsgiverperiode && (
+                  <div className={lokalStyles.arbeidsgiverperiode}>
+                    <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
+                    {!ingenArbeidsgiverperioder && (
+                      <BodyLong>
+                        Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
+                        Deretter betaler Nav lønn til den syke eller refunderer bedriften.
+                      </BodyLong>
+                    )}
+                    {ingenArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
+                    {arbeidsgiverperioder?.map((periode) => (
+                      <PeriodeFraTil
+                        fom={parseIsoDate(periode.fom)}
+                        tom={parseIsoDate(periode.tom)}
+                        key={periode.fom + periode.tom}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <Skillelinje />
+          <Heading2>Beregnet månedslønn</Heading2>
+          <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
+          <BodyShort>{formatCurrency(inntekt.beregnetInntekt)} kr/måned</BodyShort>
+          {endringAarsak && (
+            <>
+              <div className={lokalStyles.uthevet}>Endret med årsak</div>
+
+              {formatBegrunnelseEndringBruttoinntekt(endringAarsak.aarsak as string)}
+              <EndringAarsakVisning
+                aarsak={endringAarsak.aarsak}
+                gjelderFra={endringAarsak.gjelderFra}
+                bleKjent={endringAarsak.bleKjent}
+                perioder={endringAarsak.perioder}
+              />
             </>
           )}
+          {endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
+            <Fragment key={endring.aarsak + endringIndex}>
+              <div className={lokalStyles.uthevet}>Endret med årsak</div>
+
+              {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
+              <EndringAarsakVisning endringAarsak={endring} />
+            </Fragment>
+          ))}
+          <Skillelinje />
+          <Heading2>Refusjon</Heading2>
+          {visFullLonnIArbeidsgiverperioden && (
+            <>
+              <div className={lokalStyles.uthevet}>
+                Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
+              </div>
+              <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLoennIArbeidsgiverPerioden} />
+            </>
+          )}
+          <LonnUnderSykefravaeret
+            loenn={loenn}
+            harRefusjonEndringer={harGyldigeRefusjonEndringer(refusjonEndringerUtenSkjaeringstidspunkt) ? 'Ja' : 'Nei'}
+            refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
+          />
+          {visNaturalytelser && (
+            <>
+              <Skillelinje />
+              <Heading2>Eventuelle naturalytelser</Heading2>
+              <BortfallNaturalytelser ytelser={naturalytelser!} />
+            </>
+          )}
+          <Skillelinje />
+
           <BodyShort>Kvittering - innsendt inntektsmelding{innsendingstidspunkt}</BodyShort>
           <div className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
-              {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}
+              <ButtonEndre onClick={clickEndre} />
               <Link className={lokalStyles.lukkelenke} href={environment.saksoversiktUrl}>
                 Lukk
               </Link>
