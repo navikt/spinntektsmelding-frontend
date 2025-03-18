@@ -100,7 +100,11 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
         state = slettFeilmeldingFraState(state, 'refusjon.beloepPerMaaned');
         const nBeloep = stringishToNumber(beloep);
         if (ugyldigEllerNegativtTall(nBeloep)) {
-          state = leggTilFeilmelding(state, 'refusjon.beloepPerMaaned', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
+          state = leggTilFeilmelding(
+            state,
+            'refusjon.beloepPerMaaned',
+            feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP + nBeloep
+          );
         }
         return state;
       })

@@ -1,0 +1,48 @@
+{
+  "navn": "ULTRAFIOLETT DAMESYKKEL",
+  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "innsenderNavn": "BERØMT FLYTTELASS",
+  "identitetsnummer": "10486535275",
+  "orgnrUnderenhet": "810007842",
+  "fravaersperioder": [{ "fom": "2024-12-01", "tom": "2024-12-31" }],
+  "egenmeldingsperioder": [],
+  "bestemmendeFravaersdag": "2024-12-01",
+  "eksternBestemmendeFravaersdag": null,
+  "bruttoinntekt": 0.0,
+  "tidligereinntekter": [
+    { "maaned": "2024-09", "inntekt": null },
+    { "maaned": "2024-10", "inntekt": null },
+    { "maaned": "2024-11", "inntekt": null }
+  ],
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": true },
+    "inntekt": { "paakrevd": true, "forslag": null },
+    "refusjon": { "paakrevd": true, "forslag": { "perioder": [], "opphoersdato": null } }
+  },
+  "opprettetUpresisIkkeBruk": "2025-03-18",
+  "erBesvart": false,
+  "success": {
+    "navn": "ULTRAFIOLETT DAMESYKKEL",
+    "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "innsenderNavn": "BERØMT FLYTTELASS",
+    "identitetsnummer": "10486535275",
+    "orgnrUnderenhet": "810007842",
+    "fravaersperioder": [{ "fom": "2024-12-01", "tom": "2024-12-31" }],
+    "egenmeldingsperioder": [],
+    "bestemmendeFravaersdag": "2024-12-01",
+    "eksternBestemmendeFravaersdag": null,
+    "bruttoinntekt": 0.0,
+    "tidligereinntekter": [
+      { "maaned": "2024-09", "inntekt": null },
+      { "maaned": "2024-10", "inntekt": null },
+      { "maaned": "2024-11", "inntekt": null }
+    ],
+    "forespurtData": {
+      "arbeidsgiverperiode": { "paakrevd": true },
+      "inntekt": { "paakrevd": true, "forslag": null },
+      "refusjon": { "paakrevd": true, "forslag": { "perioder": [], "opphoersdato": null } }
+    },
+    "opprettetUpresisIkkeBruk": "2025-03-18",
+    "erBesvart": false
+  }
+}
