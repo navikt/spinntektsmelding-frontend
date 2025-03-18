@@ -1,4 +1,4 @@
-import { LonnISykefravaeret, RefusjonskravetOpphoerer } from '../state/state';
+import { LonnISykefravaeret } from '../state/state';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum LonnUnderSykefravaeretFeilkode {
@@ -11,7 +11,6 @@ export enum LonnUnderSykefravaeretFeilkode {
 
 export default function validerLonnUnderSykefravaeret(
   refusjon?: LonnISykefravaeret,
-  refusjonskravetOpphoerer?: RefusjonskravetOpphoerer,
   bruttoInntekt?: number
 ): Array<ValiderResultat> {
   let errorStatus: Array<ValiderResultat> = [];
@@ -23,31 +22,10 @@ export default function validerLonnUnderSykefravaeret(
     });
   } else if (refusjon.status === 'Ja') {
     validerBelop(refusjon, errorStatus);
-    validerStatus(refusjonskravetOpphoerer, errorStatus);
     validerMaksimaltBelop(refusjon, bruttoInntekt, errorStatus);
   }
 
   return errorStatus;
-}
-
-function validerStatus(refusjonskravetOpphoerer: RefusjonskravetOpphoerer | undefined, errorStatus: ValiderResultat[]) {
-  if (!refusjonskravetOpphoerer?.status) {
-    errorStatus.push({
-      code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG,
-      felt: 'lus-sluttdato-velg'
-    });
-  } else {
-    validerJaStatusMedDato(refusjonskravetOpphoerer, errorStatus);
-  }
-}
-
-function validerJaStatusMedDato(refusjonskravetOpphoerer: RefusjonskravetOpphoerer, errorStatus: ValiderResultat[]) {
-  if (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphoersdato) {
-    errorStatus.push({
-      code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_SLUTTDATO,
-      felt: 'lus-sluttdato'
-    });
-  }
 }
 
 function validerBelop(refusjon: LonnISykefravaeret, errorStatus: ValiderResultat[]) {

@@ -34,11 +34,9 @@ describe('RefusjonArbeidsgiver', () => {
         arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: vi.fn(),
         begrunnelseRedusertUtbetaling: vi.fn(),
         beloepArbeidsgiverBetalerISykefravaeret: vi.fn(),
-        refusjonskravetOpphoererStatus: vi.fn(),
         setBeloepUtbetaltUnderArbeidsgiverperioden: vi.fn(),
         arbeidsgiverperiodeDisabled: false,
         arbeidsgiverperiodeKort: false,
-        refusjonskravetOpphoererDato: vi.fn(),
         setHarRefusjonEndringer: vi.fn(),
         refusjonEndringer: [],
         oppdaterRefusjonEndringer: vi.fn(),
@@ -48,7 +46,9 @@ describe('RefusjonArbeidsgiver', () => {
   });
 
   it('should call setIsDirtyForm when radio button is changed', () => {
-    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} />);
+    render(
+      <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1000} />
+    );
 
     const radioButton = screen.getAllByLabelText('Ja');
     fireEvent.click(radioButton[0]);
@@ -57,7 +57,9 @@ describe('RefusjonArbeidsgiver', () => {
   });
 
   it('should call setIsDirtyForm when text field is changed', () => {
-    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} />);
+    render(
+      <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1000} />
+    );
 
     const textField = screen.getByLabelText('Utbetalt under arbeidsgiverperiode');
     fireEvent.change(textField, { target: { value: '1000' } });
@@ -88,18 +90,18 @@ describe('RefusjonArbeidsgiver', () => {
         arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret: vi.fn(),
         begrunnelseRedusertUtbetaling: vi.fn(),
         beloepArbeidsgiverBetalerISykefravaeret: vi.fn(),
-        refusjonskravetOpphoererStatus: vi.fn(),
         setBeloepUtbetaltUnderArbeidsgiverperioden: vi.fn(),
         arbeidsgiverperiodeDisabled: false,
         arbeidsgiverperiodeKort: false,
-        refusjonskravetOpphoererDato: vi.fn(),
         setHarRefusjonEndringer: vi.fn(),
         refusjonEndringer: [],
         oppdaterRefusjonEndringer: vi.fn(),
         harRefusjonEndringer: false
       })
     );
-    render(<RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} />);
+    render(
+      <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1234} />
+    );
 
     expect(screen.getByText(/Innen 14 dager må du sende et brev til Nav/)).toBeInTheDocument();
   });

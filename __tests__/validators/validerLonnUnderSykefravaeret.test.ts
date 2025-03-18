@@ -1,6 +1,6 @@
-import { LonnISykefravaeret, RefusjonskravetOpphoerer } from '../../state/state';
+import { LonnISykefravaeret } from '../../state/state';
 import validerLonnUnderSykefravaeret from '../../validators/validerLonnUnderSykefravaeret';
-
+import { describe } from 'vitest';
 const arbeidsforhold = ['arbeider'];
 
 const lonnUS: LonnISykefravaeret = {
@@ -8,10 +8,6 @@ const lonnUS: LonnISykefravaeret = {
   beloep: 123
 };
 
-const refusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
-  status: 'Ja',
-  opphoersdato: new Date(2002, 1, 2)
-};
 describe.concurrent('validerLonnUnderSykefravaeret', () => {
   it('should return an empty array when everything is OK', () => {
     expect(validerLonnUnderSykefravaeret(lonnUS)).toEqual([]);
@@ -23,14 +19,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
       beloep: 123
     };
 
-    const expected = [
-      {
-        code: 'LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG',
-        felt: 'lus-sluttdato-velg'
-      }
-    ];
-
-    expect(validerLonnUnderSykefravaeret(inputLUS)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS)).toEqual([]);
   });
 
   it('should return an empty array when sluttdato is present and status is Nei', () => {
@@ -39,7 +28,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
       beloep: 123
     };
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer)).toEqual([]);
+    expect(validerLonnUnderSykefravaeret(inputLUS)).toEqual([]);
   });
 
   it('should return an error when all params are missing', () => {
@@ -65,23 +54,14 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
   });
 
   it('should return an error when opphørsdato is missing', () => {
-    const inputRefusjonskravetOpphoerer: RefusjonskravetOpphoerer = {
-      status: 'Ja'
-    };
-
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja',
       beloep: 123
     };
 
-    const expected = [
-      {
-        code: 'LONN_UNDER_SYKEFRAVAERET_SLUTTDATO',
-        felt: 'lus-sluttdato'
-      }
-    ];
+    const expected: any = [];
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, inputRefusjonskravetOpphoerer)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS)).toEqual(expected);
   });
 
   it('should return an empty array when everything is ok and lus status = Nei', () => {
@@ -90,7 +70,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
       beloep: 123
     };
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer)).toEqual([]);
+    expect(validerLonnUnderSykefravaeret(inputLUS)).toEqual([]);
   });
 
   it('should return an error when beløp is missing and and lus status = Ja', () => {
@@ -105,7 +85,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
       }
     ];
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS)).toEqual(expected);
   });
 
   it('should return an error when refusjonsbeløp higer than bruttoinntekt', () => {
@@ -123,7 +103,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
 
     const bruttoInntekt = 1000000;
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS, bruttoInntekt)).toEqual(expected);
   });
 
   it('should not return an error when refusjonsbeløp lower than bruttoinntekt', () => {
@@ -136,7 +116,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
 
     const bruttoInntekt = 1000000;
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS, bruttoInntekt)).toEqual(expected);
   });
 
   it('should not return an error when refusjonsbeløp is higher than bruttoinntekt and there is updated submission', () => {
@@ -154,7 +134,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
 
     const bruttoInntekt = 9000;
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS, bruttoInntekt)).toEqual(expected);
   });
 
   it('should return an error when refusjonsbeløp is null', () => {
@@ -172,6 +152,6 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
 
     const bruttoInntekt = 9000;
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, refusjonskravetOpphoerer, bruttoInntekt)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS, bruttoInntekt)).toEqual(expected);
   });
 });

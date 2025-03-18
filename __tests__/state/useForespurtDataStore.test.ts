@@ -179,7 +179,6 @@ describe('useForespurtDataStore', () => {
     // expect(result.current.lonnISykefravaeret?.beloep).toBe(0);
     // expect(result.current.lonnISykefravaeret?.status).toBe('Nei');
     // expect(result.current.harRefusjonEndringer).toBe('Nei');
-    // expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
   });
 
   it('should verify that bruttoinntekt can be reset', () => {

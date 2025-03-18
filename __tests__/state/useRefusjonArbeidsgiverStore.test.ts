@@ -142,74 +142,6 @@ describe('useBoundStore', () => {
     expect(result.current.lonnISykefravaeret?.beloep).toBe(777.88);
   });
 
-  it('should set the refusjonskravetOpphoerer Status.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.refusjonskravetOpphoererStatus('Ja');
-    });
-
-    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Ja');
-  });
-
-  it('should change the refusjonskravetOpphoerer Status.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.refusjonskravetOpphoererStatus('Ja');
-    });
-
-    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Ja');
-
-    act(() => {
-      result.current.refusjonskravetOpphoererStatus('Nei');
-    });
-
-    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
-  });
-
-  it('should set the refusjonskravetOpphoerer date.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.refusjonskravetOpphoererDato(new Date(2022, 4, 6));
-    });
-
-    expect(result.current.refusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 6));
-  });
-
-  it('should change the refusjonskravetOpphoerer date.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.refusjonskravetOpphoererDato(new Date(2022, 4, 6));
-    });
-
-    expect(result.current.refusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 6));
-
-    act(() => {
-      result.current.refusjonskravetOpphoererDato(new Date(2022, 1, 9));
-    });
-
-    expect(result.current.refusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 1, 9));
-  });
-
-  it('should change the refusjonskravetOpphoerer date.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.refusjonskravetOpphoererDato(new Date(2022, 4, 6));
-    });
-
-    expect(result.current.refusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 6));
-
-    act(() => {
-      result.current.refusjonskravetOpphoererDato(new Date(2022, 2, 7));
-    });
-
-    expect(result.current.refusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 2, 7));
-  });
-
   it('should change the setBeloepUtbetaltUnderArbeidsgiverperioden beløp.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -255,13 +187,9 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initRefusjonskravetOpphoerer('Ja', new Date(2022, 4, 6), 'Nei');
+      result.current.setHarRefusjonEndringer('Nei');
     });
 
-    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Ja');
-    expect(result.current.refusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 6));
-    expect(result.current.opprinneligRefusjonskravetOpphoerer?.status).toBe('Ja');
-    expect(result.current.opprinneligRefusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 6));
     expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
     expect(result.current.harRefusjonEndringer).toBe('Nei');
     expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
@@ -271,38 +199,25 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.initRefusjonskravetOpphoerer('Ja', new Date(2022, 4, 6), 'Nei');
       result.current.initRefusjonEndringer([{ beloep: 123, dato: new Date(2022, 4, 6) }]);
       result.current.setHarRefusjonEndringer('Nei');
     });
 
-    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Ja');
-    expect(result.current.refusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 6));
-    expect(result.current.opprinneligRefusjonskravetOpphoerer?.status).toBe('Ja');
-    expect(result.current.opprinneligRefusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 6));
     expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
     expect(result.current.harRefusjonEndringer).toBe('Nei');
     expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
 
     act(() => {
-      result.current.refusjonskravetOpphoererStatus('Nei');
       result.current.setHarRefusjonEndringer('Ja');
-      result.current.refusjonskravetOpphoererDato(new Date(2022, 4, 8));
       result.current.oppdaterRefusjonEndringer([{ beloep: 234, dato: new Date(2022, 4, 10) }]);
     });
 
-    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Nei');
-    expect(result.current.refusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 8));
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
     act(() => {
       result.current.tilbakestillRefusjoner();
     });
 
-    expect(result.current.refusjonskravetOpphoerer?.status).toBe('Ja');
-    expect(result.current.refusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 6));
-    expect(result.current.opprinneligRefusjonskravetOpphoerer?.status).toBe('Ja');
-    expect(result.current.opprinneligRefusjonskravetOpphoerer?.opphoersdato).toEqual(new Date(2022, 4, 6));
     expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
     expect(result.current.harRefusjonEndringer).toBe('Ja');
     expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
