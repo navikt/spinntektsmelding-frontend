@@ -1,7 +1,7 @@
 import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import useKvitteringInit, { KvitteringInit } from '../../state/useKvitteringInit';
+import useKvitteringInit from '../../state/useKvitteringInit';
 import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 import annenMottattKvittering from '../../mockdata/kvittering-lang.json';
@@ -15,7 +15,10 @@ import nyStillingsprosentKvittering from '../../mockdata/kvittering-NyStillingsp
 import inntektData from '../../mockdata/inntektData.json';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { z } from 'zod';
-import { kvitteringNavNoSchema } from '../../schema/mottattKvitteringSchema';
+import MottattKvitteringSchema, { kvitteringNavNoSchema } from '../../schema/mottattKvitteringSchema';
+
+type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
+type KvitteringNavNo = z.infer<typeof kvitteringNavNoSchema>;
 
 vi.mock('nanoid');
 
@@ -36,8 +39,6 @@ function fetchMock(url, suffix = '') {
     )
   );
 }
-
-type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
 
 describe('useKvitteringInit', () => {
   beforeEach(() => {
@@ -91,7 +92,7 @@ describe('useKvitteringInit', () => {
       kvitteringInit(annenMottattKvittering);
     });
 
-    const navNo = annenMottattKvittering.kvitteringNavNo as KvitteringNavNoSchema;
+    const navNo = annenMottattKvittering.kvitteringNavNo as KvitteringNavNo;
 
     expect(result.current.navn).toEqual(navNo.sykmeldt.navn);
     expect(result.current.identitetsnummer).toEqual(navNo.sykmeldt.fnr);
@@ -118,7 +119,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(ferieKvittering as unknown as KvitteringInit);
+      kvitteringInit(ferieKvittering as KvitteringData);
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Ferie');

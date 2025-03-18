@@ -31,7 +31,7 @@ import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunne
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isBefore, isEqual, isValid } from 'date-fns';
-import { LonnISykefravaeret, Periode, RefusjonskravetOpphoerer, YesNo } from '../../../state/state';
+import { LonnISykefravaeret, Periode, YesNo } from '../../../state/state';
 
 import KvitteringAnnetSystem from '../../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../../utils/isValidUUID';
@@ -50,6 +50,7 @@ import environment from '../../../config/environment';
 import { z } from 'zod';
 import { kvitteringNavNoSchema } from '../../../schema/mottattKvitteringSchema';
 import { EndringAarsak } from '../../../validators/validerAapenInnsending';
+import { EndringsBeloep } from '../../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 
 type PersonData = {
   navn: string;
@@ -75,7 +76,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
-  const lagretEndringsaarsaker = useBoundStore((state) => state.endringAarsaker);
+  const lagretEndringAarsaker = useBoundStore((state) => state.bruttoinntekt.endringAarsaker);
 
   const [navn, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
     state.navn,
@@ -230,21 +231,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     };
   }
 
-  let refusjonskravetOpphoerer: RefusjonskravetOpphoerer;
-
-  if (dataFraBackend) {
-    refusjonskravetOpphoerer = {
-      status: kvitteringDokument?.refusjon?.sluttdato ? 'Ja' : ('Nei' as YesNo),
-      opphoersdato: parseIsoDate(kvitteringDokument.refusjon?.sluttdato)
-    };
-  } else {
-    refusjonskravetOpphoerer = {
-      status: kvitteringData?.refusjon?.sluttdato ? 'Ja' : 'Nei',
-      opphoersdato: kvitteringData?.refusjon?.sluttdato ? parseIsoDate(kvitteringData?.refusjon?.sluttdato) : undefined
-    };
-  }
-
-  let refusjonEndringer = [];
+  let refusjonEndringer: EndringsBeloep[] = [];
   if (dataFraBackend) {
     refusjonEndringer = kvitteringDokument?.refusjon?.endringer?.map((endring) => ({
       dato: parseIsoDate(endring.startdato),
@@ -258,6 +245,21 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         }))
       : [];
   }
+
+  if (dataFraBackend) {
+    if (kvitteringDokument?.refusjon?.sluttdato) {
+      refusjonEndringer.push({
+        beloep: 0,
+        dato: parseIsoDate(kvitteringDokument.refusjon?.sluttdato)
+      });
+    }
+  } else if (kvitteringData?.refusjon?.sluttdato) {
+    refusjonEndringer.push({
+      beloep: 0,
+      dato: parseIsoDate(kvittering.refusjon?.sluttdato)
+    });
+  }
+
   let refusjonEndringerUtenSkjaeringstidspunkt = [];
   if (dataFraBackend) {
     refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
@@ -287,11 +289,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const endringAarsak = dataFraBackend
     ? kvitteringDokument.inntekt.endringAarsak
-    : kvitteringData?.inntekt.endringAarsak;
+    : kvitteringData?.inntekt?.endringAarsak;
 
   const endringAarsaker = dataFraBackend
     ? kvitteringDokument.inntekt.endringAarsaker
-    : (kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringsaarsaker);
+    : (kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringAarsaker);
 
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
@@ -412,7 +414,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               )}
               <LonnUnderSykefravaeret
                 loenn={loenn}
-                refusjonskravetOpphoerer={refusjonskravetOpphoerer}
                 harRefusjonEndringer={
                   harGyldigeRefusjonEndringer(refusjonEndringerUtenSkjaeringstidspunkt) ? 'Ja' : 'Nei'
                 }
