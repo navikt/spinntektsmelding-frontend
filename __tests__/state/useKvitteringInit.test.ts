@@ -296,4 +296,40 @@ describe('useKvitteringInit', () => {
       }
     ]);
   });
+
+  it('should set the refusjon sluttdato in the correct place, even when there are no endringer', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    kvitteringMedRefusjonSluttdato.kvitteringNavNo.skjema.refusjon.endringer = [];
+
+    act(() => {
+      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+    });
+
+    expect(result.current.refusjonEndringer).toEqual([
+      {
+        beloep: 0,
+        dato: parseIsoDate('2023-04-19')
+      }
+    ]);
+  });
+
+  it('should set the innsendingstidspunkt', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    act(() => {
+      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+    });
+
+    expect(result.current.kvitteringInnsendt).toEqual(new Date(kvitteringMedRefusjonSluttdato.kvitteringNavNo.mottatt));
+    expect(result.current.kvitteringInnsendt).toBeInstanceOf(Date);
+  });
 });
