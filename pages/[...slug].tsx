@@ -157,7 +157,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
-    console.log('formData', formData);
     setSenderInn(true);
 
     if (pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {

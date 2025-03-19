@@ -88,7 +88,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
 
   const kvitteringInit = useKvitteringInit();
-  console.log('kvittering', kvittering);
+
   const kvitteringDokument = kvittering?.selvbestemtInntektsmelding
     ? kvittering?.selvbestemtInntektsmelding
     : kvitteringData;
