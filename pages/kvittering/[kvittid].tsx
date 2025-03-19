@@ -43,6 +43,7 @@ import classNames from 'classnames/bind';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../../utils/parseIsoDate';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
+import PersonVisning from '../../components/PersonVisning/PersonVisning';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -182,7 +183,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 </div>
               </div>
 
-              <Person erKvittering={true} />
+              <PersonVisning />
               <Skillelinje />
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (

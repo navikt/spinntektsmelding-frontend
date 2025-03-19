@@ -6,13 +6,12 @@ import lokalStyles from './Person.module.css';
 import { Alert, Skeleton, TextField } from '@navikt/ds-react';
 import Heading2 from '../Heading2/Heading2';
 import Skillelinje from '../Skillelinje/Skillelinje';
-import { useFormContext } from 'react-hook-form';
 
 interface PersonProps {
   erDelvisInnsending?: boolean;
 }
 
-export default function Person({ erKvittering, erDelvisInnsending }: Readonly<PersonProps>) {
+export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
   const [
     navn,
     identitetsnummer,
@@ -20,7 +19,8 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
     virksomhetsnavn,
     innsenderNavn,
     feilHentingAvPersondata,
-    feilHentingAvArbeidsgiverdata
+    feilHentingAvArbeidsgiverdata,
+    innsenderTelefonNr
   ] = useBoundStore(
     (state) => [
       state.navn,
@@ -29,14 +29,11 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
       state.virksomhetsnavn,
       state.innsenderNavn,
       state.feilHentingAvPersondata,
-      state.feilHentingAvArbeidsgiverdata
+      state.feilHentingAvArbeidsgiverdata,
+      state.innsenderTelefonNr
     ],
     shallow
   );
-  const {
-    formState: { errors },
-    register
-  } = useFormContext();
 
   const hentingAvPersondataFeilet = feilHentingAvPersondata && feilHentingAvPersondata.length > 0;
   const hentingAvArbeidsgiverdataFeilet = feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0;
@@ -55,19 +52,6 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
 
   return (
     <>
-      {!erKvittering && (
-        <>
-          <Heading2 size='large'>Inntektsmelding</Heading2>
-          <p>
-            For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må du bekrefte eller oppdatere
-            opplysningene vi har om den ansatte og sykefraværet. Den ansatte kan se inntektsmeldinger som er sendt inn.
-          </p>
-          <Skillelinje />
-          {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
-            <Alert variant='info'>{feilmeldingTekst}</Alert>
-          )}
-        </>
-      )}
       {erDelvisInnsending && (
         <p>
           Da dette sykefraværet er innenfor samme arbeidsgiverperiode som forrige sykefravær trenger vi bare informasjon
@@ -123,17 +107,10 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
               </div>
             </div>
             <div className={lokalStyles.telefonWrapper}>
-              {!erKvittering && (
-                <TextField
-                  label='Telefon innsender'
-                  type='tel'
-                  autoComplete='tel'
-                  data-cy='innsendertlf'
-                  readOnly={!skjemadataErLastet}
-                  error={errors.avsenderTlf?.message as string}
-                  {...register('avsenderTlf')}
-                />
-              )}
+              <TextLabel>Telefon innsender</TextLabel>
+              <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
+                {innsenderTelefonNr}
+              </div>
             </div>
           </div>
         </div>

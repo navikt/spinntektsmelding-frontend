@@ -123,7 +123,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
         endringAarsaker: bruttoinntekt.endringAarsaker
-      }
+      },
+      avsenderTlf: ''
     }
   });
 

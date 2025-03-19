@@ -35,7 +35,6 @@ export default function useFyllInnsending() {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
@@ -156,7 +155,7 @@ export default function useFyllInnsending() {
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,
-      avsenderTlf: innsenderTelefonNr ?? ''
+      avsenderTlf: skjemaData.avsenderTlf ?? ''
     };
 
     if (!harForespurtArbeidsgiverperiode) {
