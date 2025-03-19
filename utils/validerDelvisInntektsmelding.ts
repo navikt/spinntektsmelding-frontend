@@ -73,7 +73,6 @@ export default function validerDelvisInntektsmelding(
   }
   feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
     state.lonnISykefravaeret,
-    state.refusjonskravetOpphoerer,
     state.bruttoinntekt.bruttoInntekt
   );
 

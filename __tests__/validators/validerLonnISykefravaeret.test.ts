@@ -1,4 +1,4 @@
-import { LonnISykefravaeret, RefusjonskravetOpphoerer } from '../../state/state';
+import { LonnISykefravaeret } from '../../state/state';
 import validerLonnISykefravaeret from '../../validators/validerLonnISykefravaeret';
 
 const lonnUS: LonnISykefravaeret = {

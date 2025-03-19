@@ -129,11 +129,7 @@ export default function validerInntektsmelding(
     );
   }
 
-  feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
-    state.lonnISykefravaeret,
-    state.refusjonskravetOpphoerer,
-    formData.inntekt?.beloep
-  );
+  feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(state.lonnISykefravaeret, formData.inntekt?.beloep);
 
   feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
     state.harRefusjonEndringer,

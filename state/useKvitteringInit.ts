@@ -32,8 +32,6 @@ export default function useKvitteringInit() {
   const initArbeidsgiverperioder = useBoundStore((state) => state.initArbeidsgiverperioder);
   const initLonnISykefravaeret = useBoundStore((state) => state.initLonnISykefravaeret);
 
-  const refusjonskravetOpphoererDato = useBoundStore((state) => state.refusjonskravetOpphoererDato);
-  const refusjonskravetOpphoererStatus = useBoundStore((state) => state.refusjonskravetOpphoererStatus);
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const [setEndringAarsaker] = useBoundStore((state) => [state.setEndringAarsaker]);
@@ -45,7 +43,7 @@ export default function useKvitteringInit() {
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const setSkjemaKvitteringEksterntSystem = useBoundStore((state) => state.setSkjemaKvitteringEksterntSystem);
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
-  const initRefusjonskravetOpphoerer = useBoundStore((state) => state.initRefusjonskravetOpphoerer);
+  const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
 
   return async (kvitteringsData: KvitteringData) => {
@@ -126,11 +124,25 @@ export default function useKvitteringInit() {
     });
 
     if (jsonData.skjema.refusjon) {
-      initRefusjonskravetOpphoerer(
-        jsonData.skjema.refusjon?.sluttdato ? 'Ja' : 'Nei',
-        jsonData.skjema.refusjon?.sluttdato ? parseIsoDate(jsonData.skjema.refusjon?.sluttdato) : undefined,
+      setHarRefusjonEndringer(
         jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0 ? 'Ja' : 'Nei'
       );
+    }
+
+    if (jsonData.skjema.refusjon?.sluttdato) {
+      if (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0) {
+        jsonData.skjema.refusjon.endringer.push({
+          beloep: 0,
+          startdato: jsonData.skjema.refusjon?.sluttdato
+        });
+      } else {
+        jsonData.skjema.refusjon.endringer = [
+          {
+            beloep: 0,
+            startdato: jsonData.skjema.refusjon?.sluttdato
+          }
+        ];
+      }
     }
 
     if (jsonData.skjema.refusjon?.endringer) {
@@ -139,13 +151,6 @@ export default function useKvitteringInit() {
         dato: parseIsoDate(endring.startdato)
       }));
       oppdaterRefusjonEndringer(endringer);
-    }
-
-    if (jsonData.skjema.refusjon?.sluttdato) {
-      refusjonskravetOpphoererDato(parseIsoDate(jsonData.skjema.refusjon?.sluttdato));
-      refusjonskravetOpphoererStatus('Ja');
-    } else if (jsonData.skjema.refusjon?.utbetalerHeleEllerDeler) {
-      refusjonskravetOpphoererStatus('Nei');
     }
   }
 

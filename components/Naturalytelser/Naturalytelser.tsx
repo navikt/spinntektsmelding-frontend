@@ -54,58 +54,60 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
         Har den ansatte naturalytelser som faller bort under sykefraværet?
       </Checkbox>
       {naturalytelser && naturalytelser.length > 0 && (
-        <table className={lokalStyles.tablenaturalytelse}>
-          <thead>
-            <tr>
-              <th>Naturalytelse</th>
-              <th>Dato naturalytelse faller bort</th>
-              <th>Verdi naturalytelse - kr/måned</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {naturalytelser.map((element) => {
-              return (
-                <tr key={element.id}>
-                  <td>
-                    <SelectNaturalytelser
-                      onChangeYtelse={(event) => setNaturalytelseType(element.id, event.target.value)}
-                      elementId={element.id}
-                      defaultValue={element.type}
-                      error={visFeilmeldingTekst('naturalytelse-type-' + element.id)}
-                    />
-                  </td>
+        <>
+          <table className={lokalStyles.tablenaturalytelse}>
+            <thead>
+              <tr>
+                <th>Naturalytelse</th>
+                <th>Dato naturalytelse faller bort</th>
+                <th>Verdi naturalytelse - kr/måned</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {naturalytelser.map((element) => {
+                return (
+                  <tr key={element.id}>
+                    <td>
+                      <SelectNaturalytelser
+                        onChangeYtelse={(event) => setNaturalytelseType(element.id, event.target.value)}
+                        elementId={element.id}
+                        defaultValue={element.type}
+                        error={visFeilmeldingTekst('naturalytelse-type-' + element.id)}
+                      />
+                    </td>
 
-                  <td className={styles.tddatepickernatural}>
-                    <NaturalytelseBortfallsdato
-                      naturalytelseId={element.id}
-                      setNaturalytelseBortfallsdato={setNaturalytelseBortfallsdato}
-                      defaultValue={element.bortfallsdato}
-                      error={visFeilmeldingTekst('naturalytelse-dato-' + element.id)}
-                    />
-                  </td>
-                  <td>
-                    <TextField
-                      label={''}
-                      className={styles.fnr}
-                      onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
-                      defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
-                      error={visFeilmeldingTekst('naturalytelse-beloep-' + element.id)}
-                    ></TextField>
-                  </td>
-                  <td>
-                    <ButtonSlette onClick={(e) => slettNaturalytelseHandler(e, element.id)} title='Slett ytelse' />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
+                    <td className={styles.tddatepickernatural}>
+                      <NaturalytelseBortfallsdato
+                        naturalytelseId={element.id}
+                        setNaturalytelseBortfallsdato={setNaturalytelseBortfallsdato}
+                        defaultValue={element.bortfallsdato}
+                        error={visFeilmeldingTekst('naturalytelse-dato-' + element.id)}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label={''}
+                        className={styles.fnr}
+                        onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
+                        defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
+                        error={visFeilmeldingTekst('naturalytelse-beloep-' + element.id)}
+                      ></TextField>
+                    </td>
+                    <td>
+                      <ButtonSlette onClick={(e) => slettNaturalytelseHandler(e, element.id)} title='Slett ytelse' />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
           <div className={lokalStyles.naturalytelserknapp}>
             <Button variant='secondary' className={styles.legtilbutton} onClick={leggTilNaturalytelseHandler}>
               Legg til naturalytelse
             </Button>
           </div>
-        </table>
+        </>
       )}
     </>
   );

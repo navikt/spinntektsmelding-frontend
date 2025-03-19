@@ -43,8 +43,3 @@ export interface Naturalytelse {
   bortfallsdato?: Date;
   verdi?: number;
 }
-
-export interface RefusjonskravetOpphoerer {
-  status?: YesNo;
-  opphoersdato?: Date;
-}

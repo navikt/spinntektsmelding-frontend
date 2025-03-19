@@ -179,8 +179,6 @@ describe('useFyllAapenInnsending', () => {
         { beloep: 12345, dato: parseIsoDate('2023-04-20') }
       ]);
 
-      result.current.refusjonskravetOpphoererStatus('Ja');
-      result.current.refusjonskravetOpphoererDato(parseIsoDate('2023-05-20'));
       result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
     });
 
@@ -220,7 +218,7 @@ describe('useFyllAapenInnsending', () => {
               startdato: '2023-04-20'
             }
           ],
-          sluttdato: '2023-05-20'
+          sluttdato: null
         },
         vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
         sykmeldtFnr: '25087327879',

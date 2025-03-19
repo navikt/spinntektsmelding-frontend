@@ -136,7 +136,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   } = methods;
 
   useEffect(() => {
-    if (bruttoinntekt.bruttoInntekt) {
+    if (bruttoinntekt.bruttoInntekt !== undefined) {
       setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
     }
   }, [bruttoinntekt.bruttoInntekt, setValue]);
@@ -151,7 +151,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   });
 
   useEffect(() => {
-    beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
+    if (inntektBeloep !== undefined) {
+      beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
+    }
   }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {

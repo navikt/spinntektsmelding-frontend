@@ -140,10 +140,14 @@ describe('useFyllInnsending', () => {
       // ]);
       // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
-      expect(innsending.refusjon?.sluttdato).toBe('2023-04-19');
+      expect(innsending.refusjon?.sluttdato).toBeNull();
       expect(innsending.refusjon?.endringer).toEqual([
         { beloep: 1234, startdato: '2023-04-13' },
-        { beloep: 12345, startdato: '2023-04-20' }
+        { beloep: 12345, startdato: '2023-04-20' },
+        {
+          beloep: 0,
+          startdato: '2023-04-19'
+        }
       ]);
       expect(innsending.inntekt?.beloep).toBe(12345);
       // expect(innsending.inntekt.bekreftet).toBeTruthy();

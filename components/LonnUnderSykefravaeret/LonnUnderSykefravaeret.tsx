@@ -1,5 +1,5 @@
 import { Alert, BodyShort, Link } from '@navikt/ds-react';
-import { LonnISykefravaeret, RefusjonskravetOpphoerer, YesNo } from '../../state/state';
+import { LonnISykefravaeret, YesNo } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
 import { EndringsBeloep } from '../RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
@@ -9,14 +9,12 @@ import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndri
 
 interface LonnUnderSykefravaeretProps {
   loenn: LonnISykefravaeret;
-  refusjonskravetOpphoerer?: RefusjonskravetOpphoerer;
   harRefusjonEndringer?: YesNo;
   refusjonEndringer?: Array<EndringsBeloep>;
 }
 
 export default function LonnUnderSykefravaeret({
   loenn,
-  refusjonskravetOpphoerer,
   harRefusjonEndringer,
   refusjonEndringer
 }: Readonly<LonnUnderSykefravaeretProps>) {
@@ -67,16 +65,6 @@ export default function LonnUnderSykefravaeret({
                 </tbody>
               </table>
             )}
-          </>
-        )}
-        {refusjonskravetOpphoerer && refusjonskravetOpphoerer.status === 'Ja' && (
-          <>
-            <div className={lokalStyle.uthevet}>Opphører refusjonkravet i perioden</div>
-            <BodyShort className={lokalStyle.svartekster}>{refusjonskravetOpphoerer.status}</BodyShort>
-            <div className={lokalStyle.uthevet}>Opphørsdato</div>
-            <BodyShort className={lokalStyle.svartekster}>
-              {formatDate(refusjonskravetOpphoerer.opphoersdato)}
-            </BodyShort>
           </>
         )}
       </div>

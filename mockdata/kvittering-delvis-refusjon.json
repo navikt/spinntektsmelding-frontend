@@ -33,9 +33,9 @@
           { "beloep": 12345.0, "startdato": "2023-04-20" }
         ],
         "sluttdato": "2023-04-19"
-      },
-      "mottatt": "2023-04-13T15:27:59.504446905+02:00"
-    }
+      }
+    },
+    "mottatt": "2023-04-13T15:27:59.504446905+02:00"
   },
   "kvitteringEkstern": null,
   "kvitteringDokument": null
