@@ -5,7 +5,7 @@ import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
-import { Alert, Button } from '@navikt/ds-react';
+import { Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import { Periode } from '../../state/state';
 import Periodevelger from '../Bruttoinntekt/Periodevelger';
@@ -14,14 +14,12 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import ButtonEndre from '../ButtonEndre';
 
 interface FravaerEnkeltAnsattforholdProps {
-  sisteAktivePeriode?: Periode;
   setIsDirtyForm: (dirty: boolean) => void;
   fravaerPerioder?: Array<Periode>;
   skjemastatus?: SkjemaStatus;
 }
 
 export default function FravaerEnkeltAnsattforhold({
-  sisteAktivePeriode,
   fravaerPerioder,
   skjemastatus,
   setIsDirtyForm
@@ -72,40 +70,13 @@ export default function FravaerEnkeltAnsattforhold({
           {!endreSykemelding && (
             <div>
               <div className={styles.datepickerEscape}>
-                <TextLabel
-                  data-cy={`sykmelding-${periodeIndex}-fra`}
-                  className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
-                >
-                  Fra
-                </TextLabel>
-                <div
-                  data-cy={`sykmelding-${periodeIndex}-fra-dato`}
-                  className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
-                >
-                  {formatDate?.(periode.fom)}
-                </div>
+                <TextLabel data-cy={`sykmelding-${periodeIndex}-fra`}>Fra</TextLabel>
+                <div data-cy={`sykmelding-${periodeIndex}-fra-dato`}>{formatDate?.(periode.fom)}</div>
               </div>
               <div className={styles.datepickerEscape}>
-                <TextLabel
-                  data-cy={`sykmelding-${periodeIndex}-til`}
-                  className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
-                >
-                  Til
-                </TextLabel>
-                <div
-                  data-cy={`sykmelding-${periodeIndex}-til-dato`}
-                  className={cx({ isDisabled: !isNotDisabled?.(periode, sisteAktivePeriode) })}
-                >
-                  {formatDate?.(periode.tom)}
-                </div>
+                <TextLabel data-cy={`sykmelding-${periodeIndex}-til`}>Til</TextLabel>
+                <div data-cy={`sykmelding-${periodeIndex}-til-dato`}>{formatDate?.(periode.tom)}</div>
               </div>
-              {!isNotDisabled?.(periode, sisteAktivePeriode) && (
-                <div className={localStyles.alertEscape}>
-                  <Alert variant='info'>
-                    Du vil motta en separat forespørsel om inntektsmelding for denne perioden.
-                  </Alert>
-                </div>
-              )}
             </div>
           )}
           {endreSykemelding && (
@@ -148,8 +119,4 @@ export default function FravaerEnkeltAnsattforhold({
       )}
     </>
   );
-}
-
-function isNotDisabled(periode: Periode, sisteAktivePeriode: Periode) {
-  return periode.fom && sisteAktivePeriode && periode.fom.getTime() <= sisteAktivePeriode.tom?.getTime()!;
 }
