@@ -4,7 +4,6 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import EgenmeldingLoader from '../Egenmelding/EgenmeldingLoader';
 import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
-import { finnFravaersperioder } from '../../state/useEgenmeldingStore';
 
 interface FravaersperiodeProps {
   lasterData?: boolean;
@@ -15,7 +14,6 @@ interface FravaersperiodeProps {
 export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyForm }: Readonly<FravaersperiodeProps>) {
   const fravaerPerioder = useBoundStore((state) => state.fravaersperioder);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.SELVBESTEMT && (!fravaerPerioder || fravaerPerioder.length < 1)) {
