@@ -43,7 +43,7 @@ import classNames from 'classnames/bind';
 import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../../utils/parseIsoDate';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
-import PersonVisning from '../../components/PersonVisning/PersonVisning';
+import PersonVisning from '../../components/Person/PersonVisning';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid

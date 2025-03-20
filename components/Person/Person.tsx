@@ -12,7 +12,7 @@ interface PersonProps {
   erDelvisInnsending?: boolean;
 }
 
-export default function Person({ erKvittering, erDelvisInnsending }: Readonly<PersonProps>) {
+export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
   const [
     navn,
     identitetsnummer,
@@ -55,19 +55,16 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
 
   return (
     <>
-      {!erKvittering && (
-        <>
-          <Heading2 size='large'>Inntektsmelding</Heading2>
-          <p>
-            For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må du bekrefte eller oppdatere
-            opplysningene vi har om den ansatte og sykefraværet. Den ansatte kan se inntektsmeldinger som er sendt inn.
-          </p>
-          <Skillelinje />
-          {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
-            <Alert variant='info'>{feilmeldingTekst}</Alert>
-          )}
-        </>
+      <Heading2 size='large'>Inntektsmelding</Heading2>
+      <p>
+        For at vi skal utbetale riktig beløp i forbindelse med sykmelding, må du bekrefte eller oppdatere opplysningene
+        vi har om den ansatte og sykefraværet. Den ansatte kan se inntektsmeldinger som er sendt inn.
+      </p>
+      <Skillelinje />
+      {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
+        <Alert variant='info'>{feilmeldingTekst}</Alert>
       )}
+
       {erDelvisInnsending && (
         <p>
           Da dette sykefraværet er innenfor samme arbeidsgiverperiode som forrige sykefravær trenger vi bare informasjon
@@ -123,17 +120,14 @@ export default function Person({ erKvittering, erDelvisInnsending }: Readonly<Pe
               </div>
             </div>
             <div className={lokalStyles.telefonWrapper}>
-              {!erKvittering && (
-                <TextField
-                  label='Telefon innsender'
-                  type='tel'
-                  autoComplete='tel'
-                  data-cy='innsendertlf'
-                  readOnly={!skjemadataErLastet}
-                  error={errors.avsenderTlf?.message as string}
-                  {...register('avsenderTlf')}
-                />
-              )}
+              <TextField
+                label='Telefon innsender'
+                // type='tel'
+                autoComplete='tel'
+                // readOnly={!skjemadataErLastet}
+                {...register('avsenderTlf')}
+                error={errors.avsenderTlf?.message as string}
+              />
             </div>
           </div>
         </div>

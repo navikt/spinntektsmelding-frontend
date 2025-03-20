@@ -135,9 +135,7 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: Readonl
               {erKvittering && (
                 <>
                   <TextLabel>Telefon innsender</TextLabel>
-                  <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
-                    {innsenderTelefonNr}
-                  </div>
+                  <div className={lokalStyles.virksomhetsnavn}>{innsenderTelefonNr}</div>
                 </>
               )}
               {!erKvittering && (
@@ -145,7 +143,6 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: Readonl
                   label='Telefon innsender'
                   type='tel'
                   autoComplete='tel'
-                  data-cy='innsendertlf'
                   error={errors.telefon?.message as string}
                   readOnly={!skjemadataErLastet}
                   {...register('telefon' as const)}

@@ -3,9 +3,7 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
-import { Alert, Skeleton, TextField } from '@navikt/ds-react';
-import Heading2 from '../Heading2/Heading2';
-import Skillelinje from '../Skillelinje/Skillelinje';
+import { Skeleton } from '@navikt/ds-react';
 
 interface PersonProps {
   erDelvisInnsending?: boolean;
@@ -108,9 +106,7 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
             </div>
             <div className={lokalStyles.telefonWrapper}>
               <TextLabel>Telefon innsender</TextLabel>
-              <div className={lokalStyles.virksomhetsnavn} data-cy='innsendertlf'>
-                {innsenderTelefonNr}
-              </div>
+              <div className={lokalStyles.virksomhetsnavn}>{innsenderTelefonNr}</div>
             </div>
           </div>
         </div>
