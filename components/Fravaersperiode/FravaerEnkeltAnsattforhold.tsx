@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react';
-import classNames from 'classnames/bind';
-
 import formatDate from '../../utils/formatDate';
-
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
 import { Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import { Periode } from '../../state/state';
 import Periodevelger from '../Bruttoinntekt/Periodevelger';
-import localStyles from './FravaerEnkeltAnsattforhold.module.css';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import ButtonEndre from '../ButtonEndre';
 
@@ -52,8 +48,6 @@ export default function FravaerEnkeltAnsattforhold({
       setEndreSykemelding(true);
     }
   }, [endreSykemelding, fravaerPerioder]);
-
-  const cx = classNames.bind(localStyles);
 
   const sortertePerioder = fravaerPerioder
     ? [...fravaerPerioder].sort((a, b) => {

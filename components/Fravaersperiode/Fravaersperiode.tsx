@@ -10,19 +10,12 @@ interface FravaersperiodeProps {
   lasterData?: boolean;
   setIsDirtyForm: (dirty: boolean) => void;
   skjemastatus?: SkjemaStatus;
-  selvbestemtInnsending?: boolean;
 }
 
-export default function Fravaersperiode({
-  lasterData,
-  skjemastatus,
-  setIsDirtyForm,
-  selvbestemtInnsending
-}: Readonly<FravaersperiodeProps>) {
+export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyForm }: Readonly<FravaersperiodeProps>) {
   const fravaerPerioder = useBoundStore((state) => state.fravaersperioder);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const sykOgEgenmeldingPerioder = finnFravaersperioder(egenmeldingsperioder ?? [], fravaerPerioder);
 
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.SELVBESTEMT && (!fravaerPerioder || fravaerPerioder.length < 1)) {
