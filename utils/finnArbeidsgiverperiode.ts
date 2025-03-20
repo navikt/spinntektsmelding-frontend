@@ -8,7 +8,7 @@ import {
   tilstoetendePeriodeManuellJustering
 } from './finnBestemmendeFravaersdag';
 
-export function finnPeriodeMedAntallDager<T extends tidPeriode>(perioder: Array<T>, antallDager: number) {
+function finnPeriodeMedAntallDager<T extends tidPeriode>(perioder: Array<T>, antallDager: number) {
   let dagerTotalt = 0;
   const arbPeriode: Array<T> = [];
 

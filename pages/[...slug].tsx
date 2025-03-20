@@ -283,12 +283,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Person />
 
             <Skillelinje />
-            <Fravaersperiode
-              lasterData={lasterData}
-              setIsDirtyForm={setIsDirtyForm}
-              skjemastatus={skjemastatus}
-              selvbestemtInnsending={selvbestemtInnsending}
-            />
+            <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
 
             <Skillelinje />
             {skalViseEgenmelding && (

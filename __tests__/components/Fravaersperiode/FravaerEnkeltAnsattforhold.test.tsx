@@ -27,9 +27,6 @@ describe('FravaerEnkeltAnsattforhold', () => {
     expect(fom2).toBeInTheDocument();
     const tom2 = screen.getByText('15.02.2002');
     expect(tom2).toBeInTheDocument();
-
-    const varsel = screen.getByText('Du vil motta en separat forespørsel om inntektsmelding for denne perioden.');
-    expect(varsel).toBeInTheDocument();
   });
 
   it('should render no fravaersperioder message when fravaersperioder is empty', () => {
@@ -56,8 +53,5 @@ describe('FravaerEnkeltAnsattforhold', () => {
     expect(fom2).toBeInTheDocument();
     const tom2 = screen.getByText('15.02.2002');
     expect(tom2).toBeInTheDocument();
-
-    const varsel = screen.queryByText('Du vil motta en separat forespørsel om inntektsmelding for denne perioden.');
-    expect(varsel).not.toBeInTheDocument();
   });
 });
