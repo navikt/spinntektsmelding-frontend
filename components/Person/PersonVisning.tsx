@@ -10,26 +10,8 @@ interface PersonProps {
 }
 
 export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
-  const [
-    navn,
-    identitetsnummer,
-    orgnrUnderenhet,
-    virksomhetsnavn,
-    innsenderNavn,
-    feilHentingAvPersondata,
-    feilHentingAvArbeidsgiverdata,
-    innsenderTelefonNr
-  ] = useBoundStore(
-    (state) => [
-      state.navn,
-      state.identitetsnummer,
-      state.orgnrUnderenhet,
-      state.virksomhetsnavn,
-      state.innsenderNavn,
-      state.feilHentingAvPersondata,
-      state.feilHentingAvArbeidsgiverdata,
-      state.innsenderTelefonNr
-    ],
+  const [sykmeldt, avsender, feilHentingAvPersondata, feilHentingAvArbeidsgiverdata] = useBoundStore(
+    (state) => [state.sykmeldt, state.avsender, state.feilHentingAvPersondata, state.feilHentingAvArbeidsgiverdata],
     shallow
   );
 
@@ -46,7 +28,7 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
 
   const feilmeldingTekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
 
-  const skjemadataErLastet = !!identitetsnummer;
+  const skjemadataErLastet = !!sykmeldt.fnr;
 
   return (
     <>
@@ -66,13 +48,13 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
             {!hentingAvPersondataFeilet && (
               <div className={lokalStyles.ansattWrapper}>
                 <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, navn)}</div>
+                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, sykmeldt.navn)}</div>
               </div>
             )}
             <div className={lokalStyles.ansattWrapper}>
               <TextLabel>Personnummer</TextLabel>
               <div data-cy='identitetsnummer'>
-                {identitetsnummer ?? <Skeleton variant='text' width='90%' height={28} />}
+                {sykmeldt.fnr ?? <Skeleton variant='text' width='90%' height={28} />}
               </div>
             </div>
           </div>
@@ -85,7 +67,7 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
               <div className={lokalStyles.virksomhetsnavnWrapper}>
                 <TextLabel>Virksomhetsnavn</TextLabel>
                 <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {virksomhetsnavn ?? <Skeleton variant='text' width='90%' height={28} />}
+                  {avsender.orgNavn ?? <Skeleton variant='text' width='90%' height={28} />}
                 </div>
               </div>
             )}
@@ -99,17 +81,17 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
             )}
             <div className={lokalStyles.orgnrNavnWrapper}>
               <TextLabel>Orgnr. for underenhet</TextLabel>
-              <div data-cy='orgnummer'>{orgnrUnderenhet ?? <Skeleton variant='text' width='90%' height={28} />}</div>
+              <div data-cy='orgnummer'>{avsender.orgnr ?? <Skeleton variant='text' width='90%' height={28} />}</div>
             </div>
             <div className={lokalStyles.innsenderNavnWrapper}>
               <TextLabel>Innsender</TextLabel>
               <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {skeletonLoader(skjemadataErLastet, innsenderNavn)}
+                {skeletonLoader(skjemadataErLastet, avsender.navn)}
               </div>
             </div>
             <div className={lokalStyles.telefonWrapper}>
               <TextLabel>Telefon innsender</TextLabel>
-              <div className={lokalStyles.virksomhetsnavn}>{innsenderTelefonNr}</div>
+              <div className={lokalStyles.virksomhetsnavn}>{avsender.tlf}</div>
             </div>
           </div>
         </div>

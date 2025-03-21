@@ -30,9 +30,9 @@ describe('usePersonStore', () => {
       result.current.initPerson(...inputPerson);
     });
 
-    expect(result.current.navn).toBe(inputPerson[0]);
-    expect(result.current.identitetsnummer).toBe(inputPerson[1]);
-    expect(result.current.orgnrUnderenhet).toBe(inputPerson[2]);
+    expect(result.current.sykmeldt.navn).toBe(inputPerson[0]);
+    expect(result.current.sykmeldt.fnr).toBe(inputPerson[1]);
+    expect(result.current.avsender.orgnr).toBe(inputPerson[2]);
   });
 
   it('should set the identitetsnummer.', () => {
@@ -46,7 +46,7 @@ describe('usePersonStore', () => {
       result.current.setIdentitetsnummer(testFnr.GyldigeFraDolly.TestPerson2);
     });
 
-    expect(result.current.identitetsnummer).toEqual(testFnr.GyldigeFraDolly.TestPerson2);
+    expect(result.current.sykmeldt.fnr).toEqual(testFnr.GyldigeFraDolly.TestPerson2);
   });
 
   it('should set the innsender telefon.', () => {
@@ -60,6 +60,6 @@ describe('usePersonStore', () => {
       result.current.setInnsenderTelefon('12345678');
     });
 
-    expect(result.current.innsenderTelefonNr).toBe('12345678');
+    expect(result.current.avsender.tlf).toBe('12345678');
   });
 });

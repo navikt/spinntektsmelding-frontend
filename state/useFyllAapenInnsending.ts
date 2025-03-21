@@ -18,7 +18,7 @@ export default function useFyllAapenInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
+  const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
   const [fullLonnIArbeidsgiverPerioden, setInnsenderTelefon] = useBoundStore((state) => [
     state.fullLonnIArbeidsgiverPerioden,
     state.setInnsenderTelefon
@@ -69,9 +69,9 @@ export default function useFyllAapenInnsending() {
 
     const innsending = validerAapenInnsending({
       vedtaksperiodeId: vedtaksperiodeId,
-      sykmeldtFnr: identitetsnummer,
+      sykmeldtFnr: sykmeldt!.fnr!,
       avsender: {
-        orgnr: orgnrUnderenhet!,
+        orgnr: avsender!.orgnr!,
         tlf: skjemaData.avsenderTlf!
       },
       sykmeldingsperioder: fravaersperioder!

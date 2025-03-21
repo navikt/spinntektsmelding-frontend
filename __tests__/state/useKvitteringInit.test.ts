@@ -68,10 +68,10 @@ describe('useKvitteringInit', () => {
 
     const skjema = mottattKvittering.kvitteringNavNo.skjema;
 
-    expect(result.current.navn).toEqual(mottattKvittering.kvitteringNavNo.sykmeldt.navn);
-    expect(result.current.identitetsnummer).toEqual(mottattKvittering.kvitteringNavNo.sykmeldt.fnr);
-    expect(result.current.orgnrUnderenhet).toEqual(mottattKvittering.kvitteringNavNo.avsender.orgnr);
-    expect(result.current.virksomhetsnavn).toEqual(mottattKvittering.kvitteringNavNo.avsender.orgNavn);
+    expect(result.current.sykmeldt.navn).toEqual(mottattKvittering.kvitteringNavNo.sykmeldt.navn);
+    expect(result.current.sykmeldt.fnr).toEqual(mottattKvittering.kvitteringNavNo.sykmeldt.fnr);
+    expect(result.current.avsender.orgnr).toEqual(mottattKvittering.kvitteringNavNo.avsender.orgnr);
+    expect(result.current.avsender.orgNavn).toEqual(mottattKvittering.kvitteringNavNo.avsender.orgNavn);
 
     expect(result.current.harRefusjonEndringer).toBe('Ja');
     expect(result.current.egenmeldingsperioder).toEqual([
@@ -96,10 +96,10 @@ describe('useKvitteringInit', () => {
 
     const navNo = annenMottattKvittering.kvitteringNavNo as KvitteringNavNo;
 
-    expect(result.current.navn).toEqual(navNo.sykmeldt.navn);
-    expect(result.current.identitetsnummer).toEqual(navNo.sykmeldt.fnr);
-    expect(result.current.orgnrUnderenhet).toEqual(navNo.avsender.orgnr);
-    expect(result.current.virksomhetsnavn).toEqual(navNo.avsender.orgNavn);
+    expect(result.current.sykmeldt.navn).toEqual(navNo.sykmeldt.navn);
+    expect(result.current.sykmeldt.fnr).toEqual(navNo.sykmeldt.fnr);
+    expect(result.current.avsender.orgnr).toEqual(navNo.avsender.orgnr);
+    expect(result.current.avsender.orgNavn).toEqual(navNo.avsender.orgNavn);
 
     expect(result.current.fullLonnIArbeidsgiverPerioden?.status).toBe('Nei');
     expect(result.current.fullLonnIArbeidsgiverPerioden?.begrunnelse).toBe('LovligFravaer');

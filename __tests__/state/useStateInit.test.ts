@@ -34,11 +34,11 @@ describe('useStateInit', () => {
         melding: 'Vi klarte ikke å hente arbeidstaker informasjon.'
       }
     ]);
-    expect(result.current.navn).toBe('Test Navn Testesen-Navnesen Jr.');
+    expect(result.current.sykmeldt.navn).toBe('Test Navn Testesen-Navnesen Jr.');
 
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(77000);
 
-    expect(result.current.orgnrUnderenhet).toBe('911206722');
+    expect(result.current.avsender.orgnr).toBe('911206722');
 
     expect(result.current.forespoerselSistOppdatert).toEqual(parseIsoDate('2023-02-20'));
   });
@@ -65,11 +65,11 @@ describe('useStateInit', () => {
         melding: 'Vi klarte ikke å hente arbeidstaker informasjon.'
       }
     ]);
-    expect(result.current.navn).toBe('Test Navn Testesen-Navnesen Jr.');
+    expect(result.current.sykmeldt.navn).toBe('Test Navn Testesen-Navnesen Jr.');
 
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(77000);
 
-    expect(result.current.orgnrUnderenhet).toBe('911206722');
+    expect(result.current.avsender.orgnr).toBe('911206722');
 
     expect(result.current.forespoerselSistOppdatert).toEqual(parseIsoDate('2023-02-20'));
 

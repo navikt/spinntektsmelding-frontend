@@ -20,7 +20,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const refusjonskravetOpphoerer = useBoundStore((state) => state.refusjonskravetOpphoerer);
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setKvitteringsdata = useBoundStore((state) => state.setKvitteringsdata);
@@ -74,9 +73,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       !opplysningerBekreftet ||
       (!harRefusjonEndringer && lonnISykefravaeret?.status === 'Ja') ||
       !fullLonnIArbeidsgiverPerioden?.status ||
-      !lonnISykefravaeret?.status ||
-      (!refusjonskravetOpphoerer?.status && lonnISykefravaeret?.status === 'Ja') ||
-      (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphoersdato)
+      !lonnISykefravaeret?.status
     ) {
       const errors: ValiderTekster[] =
         validerteData.success === false
@@ -109,17 +106,10 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         });
       }
 
-      if (lonnISykefravaeret?.status === 'Ja' && !refusjonskravetOpphoerer) {
+      if (lonnISykefravaeret?.status === 'Ja') {
         errors.push({
           text: 'Vennligst angi om refusjonskravet opphører.',
           felt: 'lus-sluttdato-velg'
-        });
-      }
-
-      if (refusjonskravetOpphoerer?.status === 'Ja' && !refusjonskravetOpphoerer?.opphoersdato) {
-        errors.push({
-          text: 'Angi siste dato det kreves refusjon for.',
-          felt: 'lus-sluttdato'
         });
       }
 
