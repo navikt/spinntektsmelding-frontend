@@ -126,7 +126,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         beloep: bruttoinntekt.bruttoInntekt,
         endringAarsaker: bruttoinntekt.endringAarsaker
       },
-      avsenderTlf: ''
+      avsenderTlf: innsenderTelefonNr
     }
   });
 
@@ -160,7 +160,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep]);
 
   useEffect(() => {
-    if (innsenderTelefonNr) {
+    if (innsenderTelefonNr !== undefined && innsenderTelefonNr !== '') {
+      console.log('innsenderTelefonNr', innsenderTelefonNr);
       setValue('avsenderTlf', innsenderTelefonNr);
     }
   }, [innsenderTelefonNr, setValue]);

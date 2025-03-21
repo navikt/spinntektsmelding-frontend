@@ -122,9 +122,9 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
             <div className={lokalStyles.telefonWrapper}>
               <TextField
                 label='Telefon innsender'
-                // type='tel'
+                type='tel'
                 autoComplete='tel'
-                // readOnly={!skjemadataErLastet}
+                readOnly={!skjemadataErLastet}
                 {...register('avsenderTlf')}
                 error={errors.avsenderTlf?.message as string}
               />

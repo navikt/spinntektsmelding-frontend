@@ -19,16 +19,16 @@ export default function useFyllAapenInnsending() {
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
-  const [fullLonnIArbeidsgiverPerioden, refusjonskravetOpphoerer] = useBoundStore((state) => [
+  const [fullLonnIArbeidsgiverPerioden, setInnsenderTelefon] = useBoundStore((state) => [
     state.fullLonnIArbeidsgiverPerioden,
-    state.refusjonskravetOpphoerer
+    state.setInnsenderTelefon
   ]);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
+  // const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const vedtaksperiodeId = useBoundStore((state) => state.vedtaksperiodeId);
@@ -65,12 +65,14 @@ export default function useFyllAapenInnsending() {
 
     setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
 
+    setInnsenderTelefon(skjemaData.avsenderTlf);
+
     const innsending = validerAapenInnsending({
       vedtaksperiodeId: vedtaksperiodeId,
       sykmeldtFnr: identitetsnummer,
       avsender: {
         orgnr: orgnrUnderenhet!,
-        tlf: innsenderTelefonNr!
+        tlf: skjemaData.avsenderTlf!
       },
       sykmeldingsperioder: fravaersperioder!
         .filter((periode) => periode.fom && periode.tom)
@@ -104,9 +106,7 @@ export default function useFyllAapenInnsending() {
         lonnISykefravaeret?.status === 'Ja'
           ? {
               beloepPerMaaned: lonnISykefravaeret.beloep!,
-              sluttdato: refusjonskravetOpphoerer?.opphoersdato
-                ? formatDateForSubmit(refusjonskravetOpphoerer?.opphoersdato)
-                : null,
+              sluttdato: null,
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,
