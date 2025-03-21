@@ -160,8 +160,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep]);
 
   useEffect(() => {
-    if (innsenderTelefonNr !== undefined && innsenderTelefonNr !== '') {
-      console.log('innsenderTelefonNr', innsenderTelefonNr);
+    if (innsenderTelefonNr !== undefined) {
       setValue('avsenderTlf', innsenderTelefonNr);
     }
   }, [innsenderTelefonNr, setValue]);
