@@ -6,6 +6,8 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import { vi } from 'vitest';
 import begrunnelseEndringBruttoinntektTekster from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntektTekster';
 
+const mockWatch = vi.fn();
+
 vi.mock('react-hook-form', () => ({
   useController: () => ({
     // field: { value: 'test' },
@@ -57,11 +59,16 @@ vi.mock('react-hook-form', () => ({
 describe('SelectEndringBruttoinntekt', () => {
   const onChangeBegrunnelse = vi.fn();
   const props = {
-    onChangeBegrunnelse,
     nyInnsending: true,
     register: vi.fn(),
-    id: 'id'
+    id: 'id',
+    begrunnelserId: 'begrunnelserId'
   };
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+    mockWatch.mockReturnValueOnce([{ aarsak: 'Bonus' }]).mockReturnValueOnce('Bonus');
+  });
 
   it.skip('should render the component with options', () => {
     render(<SelectEndringBruttoinntekt {...props} />);

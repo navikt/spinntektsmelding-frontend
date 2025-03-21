@@ -3,26 +3,45 @@ import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoinntektTekster';
 import { useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import z from 'zod';
+import { EndringAarsakSchema } from '../../schema/endringAarsakSchema';
 
 interface SelectEndringBruttoinntektProps extends Partial<SelectProps> {
   nyInnsending: boolean;
   id: string;
-  register: any;
-  error?: string;
+  label?: string;
+  begrunnelserId: string;
 }
+
+type EndringAarsak = z.infer<typeof EndringAarsakSchema>;
 
 export default function SelectEndringBruttoinntekt({
   nyInnsending,
   label,
-  id
+  id,
+  begrunnelserId
 }: Readonly<SelectEndringBruttoinntektProps>) {
   const {
     formState: { errors },
-    register
+    register,
+    watch
   } = useFormContext();
+  const valgteBegrunnelser: EndringAarsak[] = watch(begrunnelserId);
+  const denneBegrunnelsen = watch(id);
+
+  const begrunnelser: string[] =
+    valgteBegrunnelser && valgteBegrunnelser.length > 0
+      ? valgteBegrunnelser?.map((valgtBegrunnelse) => valgtBegrunnelse.aarsak)
+      : [];
+
   const begrunnelseKeys = Object.keys(begrunnelseEndringBruttoinntekt).filter(
-    (endring) => (endring !== 'Tariffendring' && nyInnsending === true) || nyInnsending === false
+    (endring) =>
+      (endring !== 'Tariffendring' && nyInnsending === true && !begrunnelser.includes(endring)) ||
+      (nyInnsending === false && !begrunnelser.includes(endring))
   );
+  if (denneBegrunnelsen && denneBegrunnelsen !== '') {
+    begrunnelseKeys.push(denneBegrunnelsen);
+  }
 
   const error = findErrorInRHFErrors(id, errors);
   return (
