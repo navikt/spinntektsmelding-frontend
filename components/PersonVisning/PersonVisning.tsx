@@ -59,9 +59,7 @@ export default function PersonVisning({
           </div>
           <div className={lokalStyles.telefonWrapper}>
             <TextLabel>Telefon innsender</TextLabel>
-            <div className={lokalStyles.virksomhetNavn} data-cy='innsendertlf'>
-              {innsenderTelefonNr}
-            </div>
+            <div className={lokalStyles.virksomhetNavn}>{innsenderTelefonNr}</div>
           </div>
         </div>
       </div>

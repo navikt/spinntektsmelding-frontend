@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { EndringAarsakSchema } from './endringAarsakSchema';
+import { isTlfNumber } from '../utils/isTlfNumber';
 
 export const hovedskjemaSchema = z.object({
   bekreft_opplysninger: z.boolean().refine((value) => value === true, {
@@ -15,5 +16,12 @@ export const hovedskjemaSchema = z.object({
         .min(0),
       endringAarsaker: z.nullable(z.array(EndringAarsakSchema))
     })
-  )
+  ),
+  avsenderTlf: z
+    .string({
+      // required_error: 'Vennligst fyll inn telefonnummer',
+      invalid_type_error: 'Dette er ikke et telefonnummer'
+    })
+    .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
+    .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' })
 });

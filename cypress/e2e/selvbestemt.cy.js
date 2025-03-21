@@ -78,9 +78,9 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.contains('Neste').click();
 
-    cy.findByLabelText('Telefon innsender').type('12345678');
-
     cy.findByLabelText('Utbetalt under arbeidsgiverperiode').type('5000');
+
+    // cy.findByLabelText('Telefon innsender').clear().type('12345678');
 
     cy.findAllByLabelText('Velg begrunnelse for kort arbeidsgiverperiode').select(
       'Det er ikke fire ukers opptjeningstid'
@@ -103,7 +103,11 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
       .findByLabelText('Nei')
       .check();
 
+    cy.findAllByLabelText('Telefon innsender').last().click().type('12345678');
+
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+
+    // cy.findAllByLabelText('Telefon innsender').last().clear().type('12345678');
 
     cy.contains('Send').click();
 
@@ -211,7 +215,8 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.findAllByRole('button', { name: 'Endre' }).last().click();
 
-    cy.get('[data-cy="inntekt-beloep-input"]').clear().type('7500');
+    cy.get('[data-cy="inntekt-beloep-input"]').as('beloep').clear();
+    cy.get('@beloep').type('7500');
 
     cy.findAllByLabelText('Velg endringsårsak').select('Varig lønnsendring');
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { use, useEffect, useMemo, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -78,13 +78,15 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     initBruttoinntekt,
     bruttoinntekt,
-    beloepArbeidsgiverBetalerISykefravaeret
+    beloepArbeidsgiverBetalerISykefravaeret,
+    innsenderTelefonNr
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
     state.initBruttoinntekt,
     state.bruttoinntekt,
-    state.beloepArbeidsgiverBetalerISykefravaeret
+    state.beloepArbeidsgiverBetalerISykefravaeret,
+    state.innsenderTelefonNr
   ]);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -123,7 +125,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
         endringAarsaker: bruttoinntekt.endringAarsaker
-      }
+      },
+      avsenderTlf: innsenderTelefonNr
     }
   });
 
@@ -155,6 +158,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
     }
   }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep]);
+
+  useEffect(() => {
+    if (innsenderTelefonNr !== undefined) {
+      setValue('avsenderTlf', innsenderTelefonNr);
+    }
+  }, [innsenderTelefonNr, setValue]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);

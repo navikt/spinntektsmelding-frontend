@@ -150,7 +150,7 @@ export default function validerInntektsmelding(
     }
   }
 
-  feilkoderTelefon = validerTelefon(state.innsenderTelefonNr);
+  feilkoderTelefon = validerTelefon(formData.avsenderTlf);
 
   errorCodes = [
     ...errorCodes,

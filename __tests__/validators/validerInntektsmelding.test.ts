@@ -33,7 +33,8 @@ describe('validerInntektsmelding', () => {
         endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
-      }
+      },
+      avsenderTlf: '12345678'
     };
 
     // Call the validerInntektsmelding function

@@ -8,7 +8,8 @@ describe('hovedskjemaSchema', () => {
       inntekt: {
         beloep: 1234.5,
         endringAarsaker: null
-      }
+      },
+      avsenderTlf: '12345678'
     };
     expect(() => hovedskjemaSchema.parse(validData)).not.toThrow();
   });
@@ -49,7 +50,8 @@ describe('hovedskjemaSchema', () => {
 
   it('should pass validation when inntekt is optional and not provided', () => {
     const validData = {
-      bekreft_opplysninger: true
+      bekreft_opplysninger: true,
+      avsenderTlf: '12345678'
     };
     expect(() => hovedskjemaSchema.parse(validData)).not.toThrow();
   });

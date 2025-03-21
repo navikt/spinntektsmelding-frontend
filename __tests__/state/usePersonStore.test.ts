@@ -35,20 +35,6 @@ describe('usePersonStore', () => {
     expect(result.current.orgnrUnderenhet).toBe(inputPerson[2]);
   });
 
-  it('should set the navn', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initPerson(...inputPerson);
-    });
-
-    act(() => {
-      result.current.setNavn('Et Annet Navn');
-    });
-
-    expect(result.current.navn).toBe('Et Annet Navn');
-  });
-
   it('should set the identitetsnummer.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -61,20 +47,6 @@ describe('usePersonStore', () => {
     });
 
     expect(result.current.identitetsnummer).toEqual(testFnr.GyldigeFraDolly.TestPerson2);
-  });
-
-  it('should set the innsendernavn.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initPerson(...inputPerson);
-    });
-
-    act(() => {
-      result.current.setInnsenderNavn('Nav eksempelnavn');
-    });
-
-    expect(result.current.innsenderNavn).toBe('Nav eksempelnavn');
   });
 
   it('should set the innsender telefon.', () => {

@@ -28,7 +28,7 @@ const mockSkjema: SkjemaData = {
     endringAarsak: null,
     endringAarsaker: [{ aarsak: 'Bonus' }]
   },
-  telefon: '12345678'
+  avsenderTlf: '12345678'
 };
 
 const initialState = useBoundStore.getState();
@@ -97,6 +97,8 @@ describe('useFyllAapenInnsending', () => {
 
       result.current.setBareNyMaanedsinntekt(500000);
     });
+
+    const skjemaData = mockSkjema;
 
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());
 
