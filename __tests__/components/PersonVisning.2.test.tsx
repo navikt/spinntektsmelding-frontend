@@ -5,7 +5,8 @@ import { Mock } from 'vitest';
 
 vi.mock('../../state/useBoundStore', () => ({
   __esModule: true,
-  default: vi.fn()
+  default: vi.fn(),
+  useBoundStore: vi.fn()
 }));
 
 describe('Person component', () => {
@@ -15,16 +16,26 @@ describe('Person component', () => {
   });
 
   it('renders correctly when data is loaded', () => {
-    (useBoundStore as Mock).mockReturnValue([
-      'John Doe', // navn
-      '12345678901', // identitetsnummer
-      '987654321', // orgnrUnderenhet
-      'Example Company', // virksomhetsnavn
-      'Jane Doe', // innsenderNavn
-      null, // feilHentingAvPersondata
-      null, // feilHentingAvArbeidsgiverdata
-      '12345678' // innsenderTelefonNr
-    ]);
+    (useBoundStore as Mock).mockImplementation((stateFn) =>
+      stateFn({
+        __esModule: true,
+        default: vi.fn(),
+        sykmeldt: {
+          navn: 'John Doe',
+          fnr: '12345678901'
+        },
+        avsender: {
+          orgnr: '987654321',
+          orgNavn: 'Example Company',
+          navn: 'Jane Doe',
+          tlf: '12345678'
+        },
+        feilVedLasting: {
+          persondata: null, // feilHentingAvPersondata
+          arbeidsgiverdata: null // feilHentingAvArbeidsgiverdata
+        }
+      })
+    );
 
     const { getByText, getByTestId } = render(<Person />);
 
@@ -40,16 +51,28 @@ describe('Person component', () => {
 
   it('renders skeleton loaders when data is not loaded', () => {
     configure({ testIdAttribute: 'data-cy' });
-    (useBoundStore as vi.Mock).mockReturnValue([
-      null, // navn
-      null, // identitetsnummer
-      null, // orgnrUnderenhet
-      null, // virksomhetsnavn
-      null, // innsenderNavn
-      null, // feilHentingAvPersondata
-      null, // feilHentingAvArbeidsgiverdata
-      null // innsenderTelefonNr
-    ]);
+    (useBoundStore as vi.Mock).mockImplementation((stateFn) =>
+      stateFn({
+        __esModule: true,
+        default: vi.fn(),
+        sykmeldt: {
+          navn: null,
+          fnr: null
+        },
+        avsender: {
+          orgnr: null,
+          orgNavn: null,
+          navn: null,
+          tlf: null
+        },
+        feilVedLasting: {
+          persondata: null, // feilHentingAvPersondata
+          arbeidsgiverdata: null // feilHentingAvArbeidsgiverdata
+        },
+        feilHentingAvPersondata: [], // feilHentingAvPersondata
+        feilHentingAvArbeidsgiverdata: []
+      })
+    );
 
     const { getByTestId } = render(<Person />);
 
@@ -61,16 +84,28 @@ describe('Person component', () => {
   });
 
   it('renders error message when data fetching fails', () => {
-    (useBoundStore as vi.Mock).mockReturnValue([
-      null, // navn
-      null, // identitetsnummer
-      null, // orgnrUnderenhet
-      null, // virksomhetsnavn
-      null, // innsenderNavn
-      ['Error fetching person data'], // feilHentingAvPersondata
-      ['Error fetching employer data'], // feilHentingAvArbeidsgiverdata
-      null // innsenderTelefonNr
-    ]);
+    (useBoundStore as vi.Mock).mockImplementation((stateFn) =>
+      stateFn({
+        __esModule: true,
+        default: vi.fn(),
+        sykmeldt: {
+          navn: null,
+          fnr: null
+        },
+        avsender: {
+          orgnr: null,
+          orgNavn: null,
+          navn: null,
+          tlf: null
+        },
+        feilVedLasting: {
+          persondata: 'Error fetching person data', // feilHentingAvPersondata
+          arbeidsgiverdata: null // feilHentingAvArbeidsgiverdata
+        },
+        feilHentingAvPersondata: ['Error fetching person data'], // feilHentingAvPersondata
+        feilHentingAvArbeidsgiverdata: ['Error fetching employer data'] // feilHentingAvArbeidsgiverdata
+      })
+    );
 
     const { getByText } = render(<Person />);
 
@@ -82,16 +117,28 @@ describe('Person component', () => {
   });
 
   it('renders partial submission message when erDelvisInnsending is true', () => {
-    (useBoundStore as vi.Mock).mockReturnValue([
-      'John Doe', // navn
-      '12345678901', // identitetsnummer
-      '987654321', // orgnrUnderenhet
-      'Example Company', // virksomhetsnavn
-      'Jane Doe', // innsenderNavn
-      null, // feilHentingAvPersondata
-      null, // feilHentingAvArbeidsgiverdata
-      '12345678' // innsenderTelefonNr
-    ]);
+    (useBoundStore as Mock).mockImplementation((stateFn) =>
+      stateFn({
+        __esModule: true,
+        default: vi.fn(),
+        sykmeldt: {
+          navn: 'John Doe',
+          fnr: '12345678901'
+        },
+        avsender: {
+          orgnr: '987654321',
+          orgNavn: 'Example Company',
+          navn: 'Jane Doe',
+          tlf: '12345678'
+        },
+        feilVedLasting: {
+          persondata: null, // feilHentingAvPersondata
+          arbeidsgiverdata: null // feilHentingAvArbeidsgiverdata
+        },
+        feilHentingAvPersondata: [], // feilHentingAvPersondata
+        feilHentingAvArbeidsgiverdata: []
+      })
+    );
 
     const { getByText } = render(<Person erDelvisInnsending={true} />);
 
