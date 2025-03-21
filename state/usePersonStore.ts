@@ -13,9 +13,7 @@ export interface PersonState {
   innsenderTelefonNr?: string;
   feilHentingAvPersondata?: Array<FeilReportElement>;
   feilHentingAvArbeidsgiverdata?: Array<FeilReportElement>;
-  setNavn: (navn: string) => void;
   setIdentitetsnummer: (identitetsnummer: string) => void;
-  setInnsenderNavn: (navn: string) => void;
   setInnsenderTelefon: (identitetsnummer: string) => void;
   initPerson: (
     navn: string,
@@ -38,24 +36,10 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set, g
   virksomhetsnavn: undefined,
   innsenderNavn: undefined,
   innsenderTelefonNr: undefined,
-  setNavn: (navn: string) => {
-    set(
-      produce((state: PersonState) => {
-        state.navn = navn;
-      })
-    );
-  },
   setIdentitetsnummer: (identitetsnummer: string) => {
     set(
       produce((state: PersonState) => {
         state.identitetsnummer = identitetsnummer;
-      })
-    );
-  },
-  setInnsenderNavn: (innsenderNavn: string) => {
-    set(
-      produce((state: PersonState) => {
-        state.innsenderNavn = innsenderNavn;
       })
     );
   },

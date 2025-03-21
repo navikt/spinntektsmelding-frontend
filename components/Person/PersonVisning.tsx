@@ -3,7 +3,7 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
-import { Skeleton } from '@navikt/ds-react';
+import { Alert, Skeleton } from '@navikt/ds-react';
 
 interface PersonProps {
   erDelvisInnsending?: boolean;
@@ -55,6 +55,9 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
           Da dette sykefraværet er innenfor samme arbeidsgiverperiode som forrige sykefravær trenger vi bare informasjon
           om inntekt og refusjon.
         </p>
+      )}
+      {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
+        <Alert variant='info'>{feilmeldingTekst}</Alert>
       )}
       <div className={lokalStyles.personInfoWrapper}>
         <div className={lokalStyles.denAnsatte}>
