@@ -5,12 +5,16 @@ import { FeilReportElement } from './useStateInit';
 import validerTelefon from '../validators/validerTelefon';
 
 export interface PersonState {
-  navn?: string;
-  identitetsnummer?: string;
-  orgnrUnderenhet?: string;
-  virksomhetsnavn?: string;
-  innsenderNavn?: string;
-  innsenderTelefonNr?: string;
+  sykmeldt: {
+    navn?: string;
+    fnr?: string;
+  };
+  avsender: {
+    orgnr?: string;
+    orgNavn?: string;
+    navn?: string;
+    tlf?: string;
+  };
   feilHentingAvPersondata?: Array<FeilReportElement>;
   feilHentingAvArbeidsgiverdata?: Array<FeilReportElement>;
   setIdentitetsnummer: (identitetsnummer: string) => void;
@@ -30,16 +34,20 @@ export interface PersonState {
 }
 
 const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set, get) => ({
-  navn: undefined,
-  identitetsnummer: undefined,
-  orgnrUnderenhet: undefined,
-  virksomhetsnavn: undefined,
-  innsenderNavn: undefined,
-  innsenderTelefonNr: undefined,
+  sykmeldt: {
+    navn: undefined,
+    fnr: undefined
+  },
+  avsender: {
+    orgnr: undefined,
+    orgNavn: undefined,
+    navn: undefined,
+    tlf: undefined
+  },
   setIdentitetsnummer: (identitetsnummer: string) => {
     set(
       produce((state: PersonState) => {
-        state.identitetsnummer = identitetsnummer;
+        state.sykmeldt.fnr = identitetsnummer;
       })
     );
   },
@@ -53,19 +61,23 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set, g
 
     set(
       produce((state: PersonState) => {
-        state.innsenderTelefonNr = innsenderTelefonNr;
+        state.avsender.tlf = innsenderTelefonNr;
       })
     );
   },
   initPerson: (navn, identitetsnummer, orgnrUnderenhet, orgNavn, innsenderNavn, innsenderTelefonNr, feilVedLasting) => {
     set(
       produce((state: PersonState) => ({
-        navn,
-        identitetsnummer,
-        orgnrUnderenhet,
-        virksomhetsnavn: orgNavn,
-        innsenderNavn,
-        innsenderTelefonNr,
+        sykmeldt: {
+          navn,
+          fnr: identitetsnummer
+        },
+        avsender: {
+          orgnr: orgnrUnderenhet,
+          orgNavn,
+          navn: innsenderNavn,
+          tlf: innsenderTelefonNr
+        },
         feilHentingAvPersondata: feilVedLasting?.persondata,
         feilHentingAvArbeidsgiverdata: feilVedLasting?.arbeidsgiverdata
       }))
