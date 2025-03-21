@@ -9,7 +9,6 @@ import styles from '../../styles/Home.module.css';
 
 import Heading2 from '../../components/Heading2/Heading2';
 import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
-import Person from '../../components/Person/Person';
 
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
