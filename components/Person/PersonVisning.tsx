@@ -21,8 +21,6 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
   const hentingAvPersondataFeilet = feilHentingAvPersondata && feilHentingAvPersondata.length > 0;
   const hentingAvArbeidsgiverdataFeilet = feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0;
 
-  const skjemadataErLastet = !!sykmeldt.fnr;
-
   return (
     <>
       <DelvisInnsendingInfo erDelvisInnsending={erDelvisInnsending} />

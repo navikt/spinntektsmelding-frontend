@@ -69,9 +69,9 @@ export default function useFyllAapenInnsending() {
 
     const innsending = validerAapenInnsending({
       vedtaksperiodeId: vedtaksperiodeId,
-      sykmeldtFnr: sykmeldt!.fnr!,
+      sykmeldtFnr: sykmeldt.fnr,
       avsender: {
-        orgnr: avsender!.orgnr!,
+        orgnr: avsender.orgnr!,
         tlf: skjemaData.avsenderTlf!
       },
       sykmeldingsperioder: fravaersperioder!
