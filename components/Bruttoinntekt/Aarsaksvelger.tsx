@@ -80,6 +80,7 @@ export default function Aarsaksvelger({
                 id={`inntekt.endringAarsaker.${key}.aarsak`}
                 nyInnsending={nyInnsending}
                 register={register}
+                begrunnelserId={`inntekt.endringAarsaker`}
               />
             </div>
             {!kanIkkeTilbakestilles && key === 0 && (
