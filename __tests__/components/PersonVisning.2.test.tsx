@@ -51,7 +51,7 @@ describe('Person component', () => {
 
   it('renders skeleton loaders when data is not loaded', () => {
     configure({ testIdAttribute: 'data-cy' });
-    (useBoundStore as vi.Mock).mockImplementation((stateFn) =>
+    (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),
@@ -84,7 +84,7 @@ describe('Person component', () => {
   });
 
   it('renders error message when data fetching fails', () => {
-    (useBoundStore as vi.Mock).mockImplementation((stateFn) =>
+    (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),

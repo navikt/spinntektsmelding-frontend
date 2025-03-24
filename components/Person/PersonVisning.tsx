@@ -3,7 +3,10 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
-import { Alert, Skeleton } from '@navikt/ds-react';
+import { Skeleton } from '@navikt/ds-react';
+import DelvisInnsendingInfo from './DelvisInnsendingInfo';
+import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
+import AnsattDataVisning from './AnsattDataVisning';
 
 interface PersonProps {
   erDelvisInnsending?: boolean;
@@ -18,30 +21,17 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
   const hentingAvPersondataFeilet = feilHentingAvPersondata && feilHentingAvPersondata.length > 0;
   const hentingAvArbeidsgiverdataFeilet = feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0;
 
-  const hvilkenFeil = `${hentingAvPersondataFeilet ? 'den ansatte' : ''} ${
-    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
-  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'bedriften' : ''}`;
-
-  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'personnummer' : ''} ${
-    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
-  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`;
-
-  const feilmeldingTekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
-
   const skjemadataErLastet = !!sykmeldt.fnr;
 
   return (
     <>
-      {erDelvisInnsending && (
-        <p>
-          Da dette sykefraværet er innenfor samme arbeidsgiverperiode som forrige sykefravær trenger vi bare informasjon
-          om inntekt og refusjon.
-        </p>
-      )}
-      {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
-        <Alert variant='info'>{feilmeldingTekst}</Alert>
-      )}
+      <DelvisInnsendingInfo erDelvisInnsending={erDelvisInnsending} />
+      <FeilVedHentingAvPersondata
+        hentingAvPersondataFeilet={hentingAvPersondataFeilet}
+        hentingAvArbeidsgiverdataFeilet={hentingAvArbeidsgiverdataFeilet}
+      />
       <div className={lokalStyles.personInfoWrapper}>
+        <AnsattDataVisning sykmeldt={sykmeldt} hentingAvPersondataFeilet={hentingAvPersondataFeilet} />
         <div className={lokalStyles.denAnsatte}>
           <Heading3>Den ansatte</Heading3>
           <div className={lokalStyles.ytreAnsattWrapper}>
@@ -100,6 +90,6 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
   );
 }
 
-function skeletonLoader(laster: boolean, tekst?: string) {
+export function skeletonLoader(laster: boolean, tekst?: string) {
   return laster ? tekst : <Skeleton variant='text' width='90%' height={28} />;
 }

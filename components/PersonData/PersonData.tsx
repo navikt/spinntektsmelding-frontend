@@ -7,6 +7,9 @@ import { Alert, Skeleton, TextField } from '@navikt/ds-react';
 import { useFormContext } from 'react-hook-form';
 import Heading2 from '../Heading2/Heading2';
 import Skillelinje from '../Skillelinje/Skillelinje';
+import FeilVedHentingAvPersondata from '../Person/FeilVedHentingAvPersondata';
+import DelvisInnsendingInfo from '../Person/DelvisInnsendingInfo';
+import AnsattDataVisning from '../Person/AnsattDataVisning';
 
 interface PersonDataProps {
   erKvittering?: boolean;
@@ -47,16 +50,6 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: Readonl
   const hentingAvPersondataFeilet = feilHentingAvPersondata && feilHentingAvPersondata.length > 0;
   const hentingAvArbeidsgiverdataFeilet = feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0;
 
-  const hvilkenFeil = `${hentingAvPersondataFeilet ? 'den ansatte' : ''} ${
-    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
-  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'bedriften' : ''}`;
-
-  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'personnummer' : ''} ${
-    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
-  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`;
-
-  const feilmeldingTekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
-
   const skjemadataErLastet = !!identitetsnummer;
 
   return (
@@ -70,37 +63,18 @@ export default function PersonData({ erKvittering, erDelvisInnsending }: Readonl
             til å se innsendt informasjon etter personopplysningslovens artikkel 15 og forvaltningsloven § 18.
           </p>
           <Skillelinje />
-          {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
-            <Alert variant='info'>{feilmeldingTekst}</Alert>
-          )}
+          <FeilVedHentingAvPersondata
+            hentingAvPersondataFeilet={hentingAvPersondataFeilet}
+            hentingAvArbeidsgiverdataFeilet={hentingAvArbeidsgiverdataFeilet}
+          />
         </>
       )}
-      {erDelvisInnsending && (
-        <p>
-          Da dette sykefraværet er innenfor samme arbeidsgiverperiode som forrige sykefravær trenger vi bare informasjon
-          om inntekt og refusjon.
-        </p>
-      )}
+      <DelvisInnsendingInfo erDelvisInnsending={erDelvisInnsending} />
       <div className={lokalStyles.personInfoWrapper}>
-        <div className={lokalStyles.denAnsatte}>
-          <Heading3>Den ansatte</Heading3>
-          <div className={lokalStyles.ytreAnsattWrapper}>
-            {!hentingAvPersondataFeilet && (
-              <div className={lokalStyles.ansattWrapper}>
-                <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>
-                  {skjemadataErLastet ? navn : <Skeleton variant='text' width='90%' height={28} />}
-                </div>
-              </div>
-            )}
-            <div className={lokalStyles.ansattWrapper}>
-              <TextLabel>Personnummer</TextLabel>
-              <div data-cy='identitetsnummer'>
-                {identitetsnummer ?? <Skeleton variant='text' width='90%' height={28} />}
-              </div>
-            </div>
-          </div>
-        </div>
+        <AnsattDataVisning
+          sykmeldt={{ fnr: identitetsnummer, navn: navn }}
+          hentingAvPersondataFeilet={hentingAvPersondataFeilet}
+        />
         <div>
           <Heading3>Arbeidsgiveren</Heading3>
 
