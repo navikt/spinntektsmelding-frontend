@@ -10,6 +10,7 @@ import { useFormContext } from 'react-hook-form';
 import DelvisInnsendingInfo from './DelvisInnsendingInfo';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import AnsattDataVisning from './AnsattDataVisning';
+import { skeletonLoader } from './PersonVisning';
 
 interface PersonProps {
   erDelvisInnsending?: boolean;
@@ -93,8 +94,4 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
       </div>
     </>
   );
-}
-
-function skeletonLoader(laster: boolean, tekst?: string) {
-  return laster ? tekst : <Skeleton variant='text' width='90%' height={28} />;
 }
