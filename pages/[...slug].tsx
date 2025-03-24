@@ -1,4 +1,4 @@
-import React, { use, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -79,19 +79,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     initBruttoinntekt,
     bruttoinntekt,
     beloepArbeidsgiverBetalerISykefravaeret,
-    innsenderTelefonNr
+    avsender,
+    sykmeldt
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
     state.initBruttoinntekt,
     state.bruttoinntekt,
     state.beloepArbeidsgiverBetalerISykefravaeret,
-    state.innsenderTelefonNr
+    state.avsender,
+    state.sykmeldt
   ]);
   const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
-
-  const [identitetsnummer, orgnrUnderenhet] = useBoundStore((state) => [state.identitetsnummer, state.orgnrUnderenhet]);
 
   const hentSkjemadata = useHentSkjemadata();
 
@@ -126,7 +126,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         beloep: bruttoinntekt.bruttoInntekt,
         endringAarsaker: bruttoinntekt.endringAarsaker
       },
-      avsenderTlf: innsenderTelefonNr
+      avsenderTlf: avsender.tlf
     }
   });
 
@@ -160,10 +160,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep]);
 
   useEffect(() => {
-    if (innsenderTelefonNr !== undefined) {
-      setValue('avsenderTlf', innsenderTelefonNr);
+    if (avsender.tlf !== undefined) {
+      setValue('avsenderTlf', avsender.tlf);
     }
-  }, [innsenderTelefonNr, setValue]);
+  }, [avsender.tlf, setValue]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
@@ -259,8 +259,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [pathSlug, skjemastatus, inntektsdato, fravaersperioder]);
 
   const { data, error } = useTidligereInntektsdata(
-    identitetsnummer!,
-    orgnrUnderenhet!,
+    sykmeldt.fnr!,
+    avsender.orgnr!,
     inntektsdato!,
     slug === 'arbeidsgiverInitiertInnsending'
   );

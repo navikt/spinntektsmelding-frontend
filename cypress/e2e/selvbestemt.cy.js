@@ -92,10 +92,10 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.findAllByLabelText('Velg endringsårsak').select('Ferie');
 
-    // Jeg er ikke sikker på hvorfor det må være denne frem og tilbakde dansen
-    cy.findAllByLabelText('Ferie til').last().clear().type('07.07.24');
-    cy.findAllByLabelText('Ferie fra').last().clear().type('01.07.24');
-    cy.findAllByLabelText('Ferie til').last().clear().type('07.07.24');
+    cy.findAllByLabelText('Ferie til').last().as('ferieTil');
+    cy.get('@ferieTil').clear().type('07.07.24');
+    cy.findAllByLabelText('Ferie fra').last().as('ferieFra');
+    cy.get('@ferieFra').clear().type('01.07.24');
 
     cy.findByRole('group', {
       name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?'

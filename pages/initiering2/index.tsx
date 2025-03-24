@@ -50,7 +50,7 @@ type SykepengePeriode = {
 };
 
 const Initiering2: NextPage = () => {
-  const identitetsnummer = useBoundStore((state) => state.identitetsnummer);
+  const sykmeldt = useBoundStore((state) => state.sykmeldt);
   const initPerson = useBoundStore((state) => state.initPerson);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
@@ -126,7 +126,7 @@ const Initiering2: NextPage = () => {
   const sykepengePeriodeId: string[] = watch('sykepengePeriodeId');
   const endreRefusjon: string = watch('endreRefusjon');
 
-  const { data, error } = useArbeidsforhold(identitetsnummer, setError);
+  const { data, error } = useArbeidsforhold(sykmeldt.fnr, setError);
 
   const handleSykepengePeriodeIdRadio = (value: any) => {
     setValue('sykepengePeriodeId', value);
@@ -163,7 +163,7 @@ const Initiering2: NextPage = () => {
     data: spData,
     error: spError,
     isLoading: spIsLoading
-  } = useSykepengesoeknader(identitetsnummer, organisasjonsnummer, fomDato, setError);
+  } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, setError);
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
@@ -284,7 +284,7 @@ const Initiering2: NextPage = () => {
     const skjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData.fulltNavn,
-      personnummer: identitetsnummer
+      personnummer: sykmeldt.fnr
     };
 
     const validationResult = initieringSchema.safeParse(skjemaData);
@@ -404,7 +404,7 @@ const Initiering2: NextPage = () => {
                 </div>
                 <div>
                   <TextLabel>Personnummer</TextLabel>
-                  <p>{identitetsnummer}</p>
+                  <p>{sykmeldt.fnr}</p>
                 </div>
               </div>
               {!data && !error && <Loading />}
@@ -465,7 +465,7 @@ const Initiering2: NextPage = () => {
                         <Box paddingBlock='4' borderWidth='1' paddingInline='4' key={periode.id}>
                           <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
                           <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
-                            <PersonInfo navn={fulltNavn} fnr={identitetsnummer} />
+                            <PersonInfo navn={fulltNavn} fnr={sykmeldt.fnr} />
                           </Link>
                           <p>
                             Sykmeldingsperiode {visFomDato(periode.forlengelseAv, sykepengePerioder)} -{' '}

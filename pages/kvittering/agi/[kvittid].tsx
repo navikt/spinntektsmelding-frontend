@@ -77,11 +77,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
   const lagretEndringAarsaker = useBoundStore((state) => state.bruttoinntekt.endringAarsaker);
 
-  const [navn, virksomhetsnavn, innsenderNavn] = useBoundStore((state) => [
-    state.navn,
-    state.virksomhetsnavn,
-    state.innsenderNavn
-  ]);
+  const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
 
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
 
@@ -109,11 +105,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         innsenderTelefonNr: kvitteringDokument.avsender.tlf
       }
     : {
-        navn: navn,
+        navn: sykmeldt.navn,
         identitetsnummer: kvitteringData?.sykmeldtFnr,
         orgnrUnderenhet: kvitteringData?.avsender.orgnr,
-        virksomhetNavn: virksomhetsnavn,
-        innsenderNavn: innsenderNavn,
+        virksomhetNavn: avsender.orgNavn,
+        innsenderNavn: avsender.navn,
         innsenderTelefonNr: kvitteringData?.avsender.tlf
       };
 
