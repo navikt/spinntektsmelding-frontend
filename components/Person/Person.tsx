@@ -1,16 +1,14 @@
-import Heading3 from '../Heading3';
-import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
-import { Skeleton, TextField } from '@navikt/ds-react';
+import { TextField } from '@navikt/ds-react';
 import Heading2 from '../Heading2/Heading2';
 import Skillelinje from '../Skillelinje/Skillelinje';
 import { useFormContext } from 'react-hook-form';
 import DelvisInnsendingInfo from './DelvisInnsendingInfo';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import AnsattDataVisning from './AnsattDataVisning';
-import { skeletonLoader } from './PersonVisning';
+import ArbeidsgiverDataVisning from './ArbeidsgiverDataVisning';
 
 interface PersonProps {
   erDelvisInnsending?: boolean;
@@ -49,48 +47,17 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
 
       <div className={lokalStyles.personInfoWrapper}>
         <AnsattDataVisning sykmeldt={sykmeldt} hentingAvPersondataFeilet={hentingAvPersondataFeilet} />
-        <div>
-          <Heading3>Arbeidsgiveren</Heading3>
 
-          <div className={lokalStyles.arbeidsgiverWrapper}>
-            {!hentingAvArbeidsgiverdataFeilet && (
-              <div className={lokalStyles.virksomhetsnavnWrapper}>
-                <TextLabel>Virksomhetsnavn</TextLabel>
-                <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  {avsender.orgNavn ?? <Skeleton variant='text' width='90%' height={28} />}
-                </div>
-              </div>
-            )}
-            {hentingAvArbeidsgiverdataFeilet && (
-              <div className={lokalStyles.virksomhetsnavnWrapper}>
-                <TextLabel>&nbsp;</TextLabel>
-                <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-                  &nbsp;
-                </div>
-              </div>
-            )}
-            <div className={lokalStyles.orgnrNavnWrapper}>
-              <TextLabel>Orgnr. for underenhet</TextLabel>
-              <div data-cy='orgnummer'>{avsender.orgnr ?? <Skeleton variant='text' width='90%' height={28} />}</div>
-            </div>
-            <div className={lokalStyles.innsenderNavnWrapper}>
-              <TextLabel>Innsender</TextLabel>
-              <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-                {skeletonLoader(skjemadataErLastet, avsender.navn)}
-              </div>
-            </div>
-            <div className={lokalStyles.telefonWrapper}>
-              <TextField
-                label='Telefon innsender'
-                type='tel'
-                autoComplete='tel'
-                readOnly={!skjemadataErLastet}
-                {...register('avsenderTlf')}
-                error={errors.avsenderTlf?.message as string}
-              />
-            </div>
-          </div>
-        </div>
+        <ArbeidsgiverDataVisning avsender={avsender} hentingAvArbeidsgiverdataFeilet={hentingAvArbeidsgiverdataFeilet}>
+          <TextField
+            label='Telefon innsender'
+            type='tel'
+            autoComplete='tel'
+            readOnly={!skjemadataErLastet}
+            {...register('avsenderTlf')}
+            error={errors.avsenderTlf?.message as string}
+          />
+        </ArbeidsgiverDataVisning>
       </div>
     </>
   );
