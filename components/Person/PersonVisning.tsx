@@ -32,23 +32,6 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
       />
       <div className={lokalStyles.personInfoWrapper}>
         <AnsattDataVisning sykmeldt={sykmeldt} hentingAvPersondataFeilet={hentingAvPersondataFeilet} />
-        <div className={lokalStyles.denAnsatte}>
-          <Heading3>Den ansatte</Heading3>
-          <div className={lokalStyles.ytreAnsattWrapper}>
-            {!hentingAvPersondataFeilet && (
-              <div className={lokalStyles.ansattWrapper}>
-                <TextLabel>Navn</TextLabel>
-                <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, sykmeldt.navn)}</div>
-              </div>
-            )}
-            <div className={lokalStyles.ansattWrapper}>
-              <TextLabel>Personnummer</TextLabel>
-              <div data-cy='identitetsnummer'>
-                {sykmeldt.fnr ?? <Skeleton variant='text' width='90%' height={28} />}
-              </div>
-            </div>
-          </div>
-        </div>
         <div>
           <Heading3>Arbeidsgiveren</Heading3>
 
