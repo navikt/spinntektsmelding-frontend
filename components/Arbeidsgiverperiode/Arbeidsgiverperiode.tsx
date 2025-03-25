@@ -287,7 +287,7 @@ export default function Arbeidsgiverperiode({
       {!skalViseArbeidsgiverperiode && (
         <BodyLong>
           Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode. Hvis dette er feil må
-          du endre perioden.{''}
+          du endre perioden.{' '}
           <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
             Les mer om arbeidsgiverperiode og hvordan denne beregnes.
           </LenkeEksternt>
