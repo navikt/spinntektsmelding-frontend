@@ -195,15 +195,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     });
   };
 
-  const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
-    setOpplysningerBekreftet(!!event.currentTarget.checked);
-    if (event.currentTarget.checked) {
-      slettFeilmelding('bekreft-opplysninger');
-    } else {
-      leggTilFeilmelding('bekreft-opplysninger', feiltekster.BEKREFT_OPPLYSNINGER);
-    }
-  };
-
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
@@ -352,7 +343,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <ConfirmationPanel
               className={styles.confirmationPanel}
               checked={opplysningerBekreftet}
-              onClick={clickOpplysningerBekreftet}
               label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
               id='bekreft-opplysninger'
               error={errors.bekreft_opplysninger?.message}
