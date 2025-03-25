@@ -168,7 +168,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
             state.tidligereInntekt = finnAktuelleInntekter(
               state.opprinneligeInntekt,
-              parseIsoDate(bestemmendeFravaersdag)
+              parseIsoDate(bestemmendeFravaersdag)!
             );
           }
 
@@ -224,7 +224,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
             state.tidligereInntekt = finnAktuelleInntekter(
               state.opprinneligeInntekt,
-              parseIsoDate(bestemmendeFravaersdag)
+              parseIsoDate(bestemmendeFravaersdag)!
             );
           }
 
