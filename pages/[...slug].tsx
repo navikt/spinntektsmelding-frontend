@@ -21,7 +21,6 @@ import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 import useBoundStore from '../state/useBoundStore';
 import Naturalytelser from '../components/Naturalytelser';
 import Person from '../components/Person/Person';
-import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
 
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
@@ -57,11 +56,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
-  const [slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
-    state.slettFeilmelding,
-    state.leggTilFeilmelding
-  ]);
-
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -90,7 +84,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.avsender,
     state.sykmeldt
   ]);
-  const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
+
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
 
   const hentSkjemadata = useHentSkjemadata();
@@ -171,11 +165,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setSenderInn(true);
 
     if (pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm || isDirty, formData).finally(
-        () => {
-          setSenderInn(false);
-        }
-      );
+      sendInnArbeidsgiverInitiertSkjema(true, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
+        setSenderInn(false);
+      });
 
       return;
     }
@@ -190,7 +182,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       setPaakrevdeOpplysninger(opplysningstyper);
     }
 
-    sendInnSkjema(opplysningerBekreftet, opplysningstyper, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
+    sendInnSkjema(true, opplysningstyper, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
       setSenderInn(false);
     });
   };
@@ -342,7 +334,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
             <ConfirmationPanel
               className={styles.confirmationPanel}
-              checked={opplysningerBekreftet}
               label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
               id='bekreft-opplysninger'
               error={errors.bekreft_opplysninger?.message}
