@@ -335,10 +335,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             {!harForespurtInntekt && (
               <>
                 <Heading3 unPadded>Beregnet månedslønn</Heading3>
-                <BodyLong>
-                  Vi trenger ikke informasjon om inntekt for denne sykmeldingen. Sykemeldingen er en forlengelse av en
-                  tidligere sykefraværsperiode.
-                </BodyLong>
+                <BodyLong>Vi trenger ikke informasjon om inntekt for dette sykefraværet.</BodyLong>
               </>
             )}
 
