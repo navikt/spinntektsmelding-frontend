@@ -41,13 +41,13 @@ describe('/api/hent-forespoersel API', () => {
     await handler(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res.json(1)).toEqual(org);
+    expect(res.json()).toEqual(org);
   });
 
   it('should proxy request in production environment', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     const mockHttpProxyMiddleware = vi.mocked(httpProxyMiddleware);
-    mockHttpProxyMiddleware.mockImplementation((req, res, next) => {
+    mockHttpProxyMiddleware.mockImplementation((_, res) => {
       res.status(200).json({ proxied: true });
     });
 
