@@ -115,15 +115,16 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
-  const trengerArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
+  const harForespurtArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
+  const harForespurtInntekt = paakrevdeOpplysninger?.includes(forespoerselType.inntekt);
 
   const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
     fravaersperioder,
     arbeidsgiverperioder,
     foreslaattBestemmendeFravaersdag,
-    !trengerArbeidsgiverperiode
+    !harForespurtArbeidsgiverperiode
   );
-  const visningBestemmendeFravaersdag = trengerArbeidsgiverperiode
+  const visningBestemmendeFravaersdag = harForespurtArbeidsgiverperiode
     ? parseIsoDate(bestemmendeFravaersdag)
     : foreslaattBestemmendeFravaersdag;
 
@@ -227,26 +228,30 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   </div>
                 </div>
               </div>
-              <Skillelinje />
-              <Heading2>Beregnet månedslønn</Heading2>
-              <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
-              <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
-              {bruttoinntekt.endringAarsak?.aarsak && (
+              {harForespurtInntekt && (
                 <>
-                  <div className={lokalStyles.uthevet}>Endret med årsak</div>
+                  <Skillelinje />
+                  <Heading2>Beregnet månedslønn</Heading2>
+                  <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
+                  <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
+                  {bruttoinntekt.endringAarsak?.aarsak && (
+                    <>
+                      <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
-                  {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringAarsak.aarsak as string)}
-                  <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
+                      {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringAarsak.aarsak as string)}
+                      <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
+                    </>
+                  )}
+                  {bruttoinntekt.endringAarsaker?.map((endring, endringIndex) => (
+                    <Fragment key={endringIndex + endring.aarsak}>
+                      <div className={lokalStyles.uthevet}>Endret med årsak</div>
+
+                      {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
+                      <EndringAarsakVisning endringAarsak={endring} />
+                    </Fragment>
+                  ))}
                 </>
               )}
-              {bruttoinntekt.endringAarsaker?.map((endring, endringIndex) => (
-                <Fragment key={endringIndex + endring.aarsak}>
-                  <div className={lokalStyles.uthevet}>Endret med årsak</div>
-
-                  {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
-                  <EndringAarsakVisning endringAarsak={endring} />
-                </Fragment>
-              ))}
               {(visRefusjon || visFullLonnIArbeidsgiverperioden) && (
                 <>
                   <Skillelinje />

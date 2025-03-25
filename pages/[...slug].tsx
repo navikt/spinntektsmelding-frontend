@@ -21,7 +21,6 @@ import RefusjonArbeidsgiver from '../components/RefusjonArbeidsgiver';
 import useBoundStore from '../state/useBoundStore';
 import Naturalytelser from '../components/Naturalytelser';
 import Person from '../components/Person/Person';
-import feiltekster from '../utils/feiltekster';
 import Feilsammendrag from '../components/Feilsammendrag';
 
 import BannerUtenVelger from '../components/BannerUtenVelger/BannerUtenVelger';
@@ -57,11 +56,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
-  const [slettFeilmelding, leggTilFeilmelding] = useBoundStore((state) => [
-    state.slettFeilmelding,
-    state.leggTilFeilmelding
-  ]);
-
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
@@ -90,7 +84,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.avsender,
     state.sykmeldt
   ]);
-  const [opplysningerBekreftet, setOpplysningerBekreftet] = useState<boolean>(false);
+
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
 
   const hentSkjemadata = useHentSkjemadata();
@@ -104,7 +98,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   let opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
-  const trengerArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
+  const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
+  const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
+
   const pathSlug = slug;
 
   const lukkHentingFeiletModal = () => {
@@ -115,7 +111,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
-  const skalViseArbeidsgiverperiode = trengerArbeidsgiverperiode || overstyrSkalViseAgp;
+  const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
   type Skjema = z.infer<typeof hovedskjemaSchema>;
 
@@ -169,11 +165,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setSenderInn(true);
 
     if (pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      sendInnArbeidsgiverInitiertSkjema(opplysningerBekreftet, pathSlug, isDirtyForm || isDirty, formData).finally(
-        () => {
-          setSenderInn(false);
-        }
-      );
+      sendInnArbeidsgiverInitiertSkjema(true, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
+        setSenderInn(false);
+      });
 
       return;
     }
@@ -188,18 +182,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       setPaakrevdeOpplysninger(opplysningstyper);
     }
 
-    sendInnSkjema(opplysningerBekreftet, opplysningstyper, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
+    sendInnSkjema(true, opplysningstyper, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
       setSenderInn(false);
     });
-  };
-
-  const clickOpplysningerBekreftet = (event: React.MouseEvent<HTMLInputElement>) => {
-    setOpplysningerBekreftet(!!event.currentTarget.checked);
-    if (event.currentTarget.checked) {
-      slettFeilmelding('bekreft-opplysninger');
-    } else {
-      leggTilFeilmelding('bekreft-opplysninger', feiltekster.BEKREFT_OPPLYSNINGER);
-    }
   };
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
@@ -322,12 +307,20 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
             <Skillelinje />
 
-            <Bruttoinntekt
-              bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
-              erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
-              sbBruttoinntekt={sbBruttoinntekt}
-              sbTidligereInntekt={sbTidligereInntekt}
-            />
+            {harForespurtInntekt && (
+              <Bruttoinntekt
+                bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
+                erSelvbestemt={skjemastatus === SkjemaStatus.SELVBESTEMT}
+                sbBruttoinntekt={sbBruttoinntekt}
+                sbTidligereInntekt={sbTidligereInntekt}
+              />
+            )}
+            {!harForespurtInntekt && (
+              <>
+                <Heading3 unPadded>Beregnet månedslønn</Heading3>
+                <BodyLong>Vi trenger ikke informasjon om inntekt for dette sykefraværet.</BodyLong>
+              </>
+            )}
 
             <Skillelinje />
 
@@ -341,8 +334,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
             <ConfirmationPanel
               className={styles.confirmationPanel}
-              checked={opplysningerBekreftet}
-              onClick={clickOpplysningerBekreftet}
               label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
               id='bekreft-opplysninger'
               error={errors.bekreft_opplysninger?.message}
