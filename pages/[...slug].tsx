@@ -120,7 +120,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
-        endringAarsaker: bruttoinntekt.endringAarsaker
+        endringAarsaker: bruttoinntekt.endringAarsaker,
+        naturalytelser: [],
+        harBortfallAvNaturalytelser: false
       },
       avsenderTlf: avsender.tlf
     }
