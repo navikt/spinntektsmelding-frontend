@@ -113,7 +113,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
                         // onChangeYtelse={(event) => element.onChange(event)}
                         // elementId={element.id}
                         // defaultValue={element.type}
-                        {...register(`inntekt.naturalytelser.${index}.type`)}
+                        {...register(`inntekt.naturalytelser.${index}.naturalytelse`)}
                         error={errors?.inntekt?.naturalytelser?.[index]?.naturalytelse.message ?? ''}
                       />
                     </td>
@@ -132,7 +132,7 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
                         className={styles.fnr}
                         // onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
                         // defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
-                        error={errors?.inntekt?.naturalytelser?.[index]?.verdi.message ?? ''}
+                        error={errors?.inntekt?.naturalytelser?.[index]?.verdiBeloep.message ?? ''}
                         {...register(`inntekt.naturalytelser.${index}.verdiBeloep`)}
                       ></TextField>
                     </td>
