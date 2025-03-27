@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { EndringAarsakSchema } from './endringAarsakSchema';
 import { isTlfNumber } from '../utils/isTlfNumber';
 import { NaturalytelseEnum } from './NaturalytelseEnum';
+import naturalytelserSchema from './NaturalytelserSchema';
 
 export const hovedskjemaSchema = z.object({
   bekreft_opplysninger: z.boolean().refine((value) => value === true, {
@@ -17,15 +18,7 @@ export const hovedskjemaSchema = z.object({
         .min(0),
       endringAarsaker: z.nullable(z.array(EndringAarsakSchema)),
       harBortfallAvNaturalytelser: z.boolean(),
-      naturalytelser: z
-        .array(
-          z.object({
-            naturalytelse: NaturalytelseEnum,
-            verdiBeloep: z.number({ required_error: 'Vennligst fyll inn beløpet.' }).min(0),
-            sluttdato: z.date({ required_error: 'Vennligst fyll inn dato.' })
-          })
-        )
-        .optional()
+      naturalytelser: z.array(naturalytelserSchema).optional()
     })
     // .superRefine((val, ctx) => {
     //   if (val.harBortfallAvNaturalytelser && val.naturalytelser.length === 0) {
