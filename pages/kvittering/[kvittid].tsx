@@ -184,7 +184,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               </div>
 
               <PersonVisning />
-              <Skillelinje />
+              {(harForespurtInntekt || harForespurtArbeidsgiverperiode) && <Skillelinje />}
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (
                   <Fravaersperiode
@@ -196,20 +196,22 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
                 <div className={classNameWrapperSkjaeringstidspunkt}>
                   <div className={lokalStyles.ytterstefravaerwrapper}>
-                    <div className={lokalStyles.ytrefravaerswrapper}>
-                      <Heading2 className={lokalStyles.fravaerstyper}>Bestemmende fraværsdag</Heading2>
-                      <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
-                      <div className={lokalStyles.fravaerwrapper}>
-                        <div className={lokalStyles.fravaertid}>Dato</div>
-                        <div data-cy='bestemmendefravaersdag'>
-                          {visningBestemmendeFravaersdag ? (
-                            formatDate(visningBestemmendeFravaersdag)
-                          ) : (
-                            <Skeleton variant='text' />
-                          )}{' '}
+                    {harForespurtInntekt && (
+                      <div className={lokalStyles.ytrefravaerswrapper}>
+                        <Heading2 className={lokalStyles.fravaerstyper}>Bestemmende fraværsdag</Heading2>
+                        <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
+                        <div className={lokalStyles.fravaerwrapper}>
+                          <div className={lokalStyles.fravaertid}>Dato</div>
+                          <div data-cy='bestemmendefravaersdag'>
+                            {visningBestemmendeFravaersdag ? (
+                              formatDate(visningBestemmendeFravaersdag)
+                            ) : (
+                              <Skeleton variant='text' />
+                            )}{' '}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                     {visArbeidsgiverperiode && (
                       <div className={lokalStyles.arbeidsgiverperiode}>
                         <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>

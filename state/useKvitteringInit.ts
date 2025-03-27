@@ -107,6 +107,7 @@ export default function useKvitteringInit() {
 
   function handleInntekt(jsonData: KvitteringNavNoSchema) {
     const beregnetInntekt = jsonData.skjema.inntekt?.beloep;
+    if (!beregnetInntekt) return;
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
     if (jsonData.skjema.inntekt?.endringAarsak) {
@@ -155,6 +156,8 @@ export default function useKvitteringInit() {
   }
 
   function handleNaturalytelser(jsonData: KvitteringNavNoSchema) {
+    if (!jsonData.skjema.inntekt) return;
+
     if (jsonData.skjema.inntekt.naturalytelser) {
       const ytelser: Array<MottattNaturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
         type: ytelse.naturalytelse,
@@ -185,10 +188,12 @@ export default function useKvitteringInit() {
   }
 
   function handleTidligereInntektsdata(jsonData: KvitteringNavNoSchema) {
+    if (!jsonData.skjema.inntekt) return;
+
     const beregnetInntekt = jsonData.skjema.inntekt?.beloep;
     setTidligereInntektsdata({
       beløp: beregnetInntekt,
-      skjæringstidspunkt: jsonData.skjema.inntekt.inntektsdato as TDateISODate,
+      skjæringstidspunkt: jsonData.skjema.inntekt?.inntektsdato as TDateISODate,
       kilde: 'INNTEKTSMELDING'
     });
   }
