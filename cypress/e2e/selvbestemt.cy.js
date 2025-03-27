@@ -88,7 +88,8 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.findAllByRole('button', { name: 'Endre' }).last().click();
 
-    cy.get('[data-cy="inntekt-beloep-input"]').clear().type('7500');
+    cy.get('[data-cy="inntekt-beloep-input"]').clear().as('inntektBeloep');
+    cy.get('@inntektBeloep').type('7500');
 
     cy.findAllByLabelText('Velg endringsårsak').select('Ferie');
 
