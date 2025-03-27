@@ -5,25 +5,22 @@ import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
 import lokalStyles from './Naturalytelser.module.css';
 
 import styles from '../../styles/Home.module.css';
-import useBoundStore from '../../state/useBoundStore';
-import NaturalytelseBortfallsdato from './NaturalytelseBortfallsdato';
 import formatCurrency from '../../utils/formatCurrency';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import DatoVelger from '../DatoVelger/DatoVelger';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import stringishToNumber from '../../utils/stringishToNumber';
 
-interface NaturalytelseProps {
-  setIsDirtyForm: (dirty: boolean) => void;
-}
-
-export default function Naturalytelser({ setIsDirtyForm }: Readonly<NaturalytelseProps>) {
+export default function Naturalytelser() {
   // const naturalytelser = useBoundStore((state) => state.naturalytelser);
   // const leggTilNaturalytelse = useBoundStore((state) => state.leggTilNaturalytelse);
-  const setNaturalytelseType = useBoundStore((state) => state.setNaturalytelseType);
-  const setNaturalytelseBortfallsdato = useBoundStore((state) => state.setNaturalytelseBortfallsdato);
-  const setNaturalytelseVerdi = useBoundStore((state) => state.setNaturalytelseVerdi);
+  // const setNaturalytelseType = useBoundStore((state) => state.setNaturalytelseType);
+  // const setNaturalytelseBortfallsdato = useBoundStore((state) => state.setNaturalytelseBortfallsdato);
+  // const setNaturalytelseVerdi = useBoundStore((state) => state.setNaturalytelseVerdi);
   // const slettNaturalytelse = useBoundStore((state) => state.slettNaturalytelse);
   // const slettAlleNaturalytelser = useBoundStore((state) => state.slettAlleNaturalytelser);
-  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
+  // const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
 
   const {
     control,
@@ -37,50 +34,30 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
     name: 'inntekt.naturalytelser'
   });
 
+  const dummyYtelse = useMemo(() => ({ naturalytelse: '', sluttdato: undefined, verdiBeloep: '' }), []);
+
   const harBortfallAvNaturalytelser = watch('inntekt.harBortfallAvNaturalytelser');
-  // const naturalytelser = watch('inntekt.naturalytelser');
+  const naturalytelser = watch('inntekt.naturalytelser');
 
-  // const visNaturalytelser = (event: React.MouseEvent<HTMLInputElement>) => {
-  //   if (event.currentTarget.checked === true) {
-  //     setIsDirtyForm(true);
-  //     leggTilNaturalytelse();
-  //   } else {
-  //     setIsDirtyForm(true);
-  //     slettAlleNaturalytelser();
-  //   }
-  // };
-
-  // const leggTilNaturalytelseHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //   event.preventDefault();
-  //   setIsDirtyForm(true);
-  //   leggTilNaturalytelse();
-  // };
-
-  // const slettNaturalytelseHandler = (event: React.MouseEvent<HTMLButtonElement>, elementId: string) => {
-  //   event.preventDefault();
-  //   setIsDirtyForm(true);
-  //   slettNaturalytelse(elementId);
-  // };
-
-  // const checkedNaturalytelser = naturalytelser && naturalytelser.length > 0;
-  console.log('fields', fields);
+  console.log('fields', fields, naturalytelser);
+  console.log('errors', errors);
 
   useEffect(() => {
     if (harBortfallAvNaturalytelser) {
       console.log('replace');
-      replace([{ naturalytelse: '', sluttdato: undefined, verdiBeloep: '' }]);
+      replace([dummyYtelse]);
     } else {
       console.log('remove');
       remove();
     }
-  }, [harBortfallAvNaturalytelser, remove, replace]);
+  }, [dummyYtelse, harBortfallAvNaturalytelser, remove, replace]);
 
   useEffect(() => {
     if ((!fields || fields.length === 0) && harBortfallAvNaturalytelser) {
       console.log('replace 2');
-      replace([{ naturalytelse: '', sluttdato: undefined, verdiBeloep: '' }]);
+      replace([dummyYtelse]);
     }
-  }, [fields, replace, harBortfallAvNaturalytelser]);
+  }, [fields, replace, harBortfallAvNaturalytelser, dummyYtelse]);
 
   return (
     <>
@@ -105,47 +82,37 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
               </tr>
             </thead>
             <tbody>
-              {fields.map((element, index) => {
-                return (
-                  <tr key={element.id}>
-                    <td>
-                      <SelectNaturalytelser
-                        // onChangeYtelse={(event) => element.onChange(event)}
-                        // elementId={element.id}
-                        // defaultValue={element.type}
-                        {...register(`inntekt.naturalytelser.${index}.naturalytelse`)}
-                        error={errors?.inntekt?.naturalytelser?.[index]?.naturalytelse.message ?? ''}
-                      />
-                    </td>
+              {fields.map((element, index) => (
+                <tr key={element.id}>
+                  <td>
+                    <SelectNaturalytelser name={`inntekt.naturalytelser.${index}.naturalytelse`} />
+                  </td>
 
-                    <td className={styles.tddatepickernatural}>
-                      <NaturalytelseBortfallsdato
-                        naturalytelseId={element.id}
-                        setNaturalytelseBortfallsdato={setNaturalytelseBortfallsdato}
-                        defaultValue={element.bortfallsdato}
-                        error={visFeilmeldingTekst('naturalytelse-dato-' + element.id)}
-                      />
-                    </td>
-                    <td>
-                      <TextField
-                        label={''}
-                        className={styles.fnr}
-                        // onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
-                        // defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
-                        error={errors?.inntekt?.naturalytelser?.[index]?.verdiBeloep.message ?? ''}
-                        {...register(`inntekt.naturalytelser.${index}.verdiBeloep`)}
-                      ></TextField>
-                    </td>
-                    <td>
-                      <ButtonSlette onClick={(e) => remove(index)} title='Slett ytelse' />
-                    </td>
-                  </tr>
-                );
-              })}
+                  <td className={styles.tddatepickernatural}>
+                    <DatoVelger name={`inntekt.naturalytelser.${index}.sluttdato`} />
+                  </td>
+
+                  <td>
+                    <TextField
+                      label={''}
+                      className={styles.fnr}
+                      // onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
+                      // defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
+                      error={findErrorInRHFErrors(`inntekt.naturalytelser.${index}.verdiBeloep`, errors)}
+                      {...register(`inntekt.naturalytelser.${index}.verdiBeloep`, {
+                        setValueAs: (value) => stringishToNumber(value)
+                      })}
+                    />
+                  </td>
+                  <td>
+                    <ButtonSlette onClick={() => remove(index)} title='Slett ytelse' />
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
           <div className={lokalStyles.naturalytelserknapp}>
-            <Button variant='secondary' className={styles.legtilbutton} onClick={(e) => append({})}>
+            <Button variant='secondary' className={styles.legtilbutton} onClick={(e) => append({ ...dummyYtelse })}>
               Legg til naturalytelse
             </Button>
           </div>

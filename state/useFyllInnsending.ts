@@ -31,7 +31,6 @@ export default function useFyllInnsending() {
     state.lonnISykefravaeret,
     state.refusjonskravetOpphoerer
   ]);
-  const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
@@ -130,8 +129,7 @@ export default function useFyllInnsending() {
               bestemmendeFraværsdag && bestemmendeFraværsdag.length > 0
                 ? bestemmendeFraværsdag
                 : formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
-            // manueltKorrigert: verdiEllerFalse(bruttoinntekt.manueltKorrigert),
-            naturalytelser: mapNaturalytelserToData(naturalytelser),
+            naturalytelser: mapNaturalytelserToData(skjemaData.inntekt.naturalytelser),
             endringAarsak: endringAarsakParsed,
             endringAarsaker: endringAarsakerParsed
           }
@@ -180,9 +178,9 @@ function mapEgenmeldingsperioder(egenmeldingsperioder: Periode[] | undefined) {
 function mapNaturalytelserToData(naturalytelser: Naturalytelse[] | undefined) {
   return naturalytelser
     ? naturalytelser?.map((ytelse) => ({
-        naturalytelse: verdiEllerBlank(ytelse.type) as z.infer<typeof NaturalytelseEnum>,
-        sluttdato: formatIsoDate(ytelse.bortfallsdato),
-        verdiBeloep: verdiEllerNull(ytelse.verdi)
+        naturalytelse: verdiEllerBlank(ytelse.naturalytelse) as z.infer<typeof NaturalytelseEnum>,
+        sluttdato: formatIsoDate(ytelse.sluttdato),
+        verdiBeloep: verdiEllerNull(ytelse.verdiBeloep)
       }))
     : [];
 }
