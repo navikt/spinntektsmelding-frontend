@@ -90,7 +90,8 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.get('[data-cy="inntekt-beloep-input"]').clear().type('7500');
 
-    cy.findAllByLabelText('Velg endringsårsak').select('Ferie');
+    cy.findAllByLabelText('Velg endringsårsak').as('endringAarsak');
+    cy.get('@endringAarsak').select('Ferie');
 
     cy.findAllByLabelText('Ferie til').last().as('ferieTil');
     cy.get('@ferieTil').clear().type('07.07.24');
@@ -218,7 +219,8 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
     cy.get('[data-cy="inntekt-beloep-input"]').as('beloep').clear();
     cy.get('@beloep').type('7500');
 
-    cy.findAllByLabelText('Velg endringsårsak').select('Varig lønnsendring');
+    cy.findAllByLabelText('Velg endringsårsak').as('endringAarsak');
+    cy.get('@endringAarsak').select('Varig lønnsendring');
 
     cy.findAllByLabelText('Lønnsendring gjelder fra').clear().type('30.06.24');
 

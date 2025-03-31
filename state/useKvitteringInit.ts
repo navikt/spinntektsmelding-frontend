@@ -155,6 +155,7 @@ export default function useKvitteringInit() {
   }
 
   function handleNaturalytelser(jsonData: KvitteringNavNoSchema) {
+    console.log('jsonData.skjema.inntekt.naturalytelser', jsonData.skjema.inntekt.naturalytelser);
     if (jsonData.skjema.inntekt.naturalytelser) {
       const ytelser: Array<MottattNaturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
         naturalytelse: ytelse.naturalytelse,

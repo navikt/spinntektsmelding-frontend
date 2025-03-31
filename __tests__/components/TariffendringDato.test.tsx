@@ -2,11 +2,12 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import TariffendringDato from '../../components/Bruttoinntekt/TariffendringDato';
 import { vi } from 'vitest';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { on } from 'events';
+
+const onChangeMock = vi.fn();
 
 vi.mock('react-hook-form', () => ({
   useController: () => ({
-    field: { value: 'test', onChange: vi.fn() },
+    field: { value: new Date(), onChange: onChangeMock },
     formState: { errors: {} }
   }),
   useFieldArray: () => ({
@@ -57,8 +58,9 @@ vi.mock('react-hook-form', () => ({
 }));
 
 describe('TariffendringDato', () => {
-  const changeTariffEndretDato = vi.fn();
-  const changeTariffKjentDato = vi.fn();
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('should render two date pickers', () => {
     render(<TariffendringDato name='test' />);
@@ -67,19 +69,19 @@ describe('TariffendringDato', () => {
     expect(datePickers).toHaveLength(2);
   });
 
-  it.skip('should call changeTariffEndretDato when the first date picker is changed', () => {
+  it('should call changeTariffEndretDato when the first date picker is changed', () => {
     render(<TariffendringDato name='test' />);
 
     const firstDatePicker = screen.getAllByRole('textbox')[0];
     fireEvent.change(firstDatePicker, { target: { value: '01.01.2022' } });
-    expect(changeTariffEndretDato).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
+    expect(onChangeMock).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
   });
 
-  it.skip('should call changeTariffKjentDato when the second date picker is changed', () => {
+  it('should call changeTariffKjentDato when the second date picker is changed', () => {
     render(<TariffendringDato name='test' />);
 
     const secondDatePicker = screen.getAllByRole('textbox')[1];
     fireEvent.change(secondDatePicker, { target: { value: '01.01.2022' } });
-    expect(changeTariffKjentDato).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
+    expect(onChangeMock).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
   });
 });

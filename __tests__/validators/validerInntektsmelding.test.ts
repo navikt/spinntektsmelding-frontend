@@ -32,7 +32,8 @@ describe('validerInntektsmelding', () => {
         endringAarsaker: null,
         endringAarsak: null,
         inntektsdato: '2021-01-01',
-        naturalytelser: []
+        naturalytelser: [],
+        harBortfallAvNaturalytelser: false
       },
       avsenderTlf: '12345678'
     };
@@ -77,7 +78,8 @@ describe('validerInntektsmelding', () => {
         endringAarsaker: null,
         endringAarsak: null,
         inntektsdato: '2021-01-01',
-        naturalytelser: []
+        naturalytelser: [],
+        harBortfallAvNaturalytelser: false
       }
     };
 

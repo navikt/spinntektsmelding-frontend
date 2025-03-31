@@ -141,7 +141,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const visNaturalytelser = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
+  const visNaturalytelser = paakrevdeOpplysninger?.includes(forespoerselType.inntekt);
   const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const visRefusjon = paakrevdeOpplysninger?.includes(forespoerselType.refusjon);
@@ -275,7 +275,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               {visNaturalytelser && (
                 <>
                   <Skillelinje />
-                  <Heading2>Eventuelle naturalytelser</Heading2>
+                  <Heading2>Naturalytelser</Heading2>
                   <BortfallNaturalytelser ytelser={naturalytelser!} />
                 </>
               )}

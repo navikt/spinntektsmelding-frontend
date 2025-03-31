@@ -42,11 +42,14 @@ export default function useFyllInnsending() {
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
-  const [setEndringAarsaker, setBareNyMaanedsinntekt, setInnsenderTelefon] = useBoundStore((state) => [
-    state.setEndringAarsaker,
-    state.setBareNyMaanedsinntekt,
-    state.setInnsenderTelefon
-  ]);
+  const [setEndringAarsaker, setBareNyMaanedsinntekt, setInnsenderTelefon, initNaturalytelser] = useBoundStore(
+    (state) => [
+      state.setEndringAarsaker,
+      state.setBareNyMaanedsinntekt,
+      state.setInnsenderTelefon,
+      state.initNaturalytelser
+    ]
+  );
 
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
   type Skjema = z.infer<typeof hovedskjemaSchema>;
@@ -114,6 +117,8 @@ export default function useFyllInnsending() {
     setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
 
     setInnsenderTelefon(skjemaData.avsenderTlf);
+
+    initNaturalytelser(skjemaData.inntekt?.naturalytelser);
 
     const innsendingSkjema: FullInnsending = {
       forespoerselId,

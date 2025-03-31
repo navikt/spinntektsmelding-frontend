@@ -21,8 +21,8 @@
         "beloep": 80666.66666666667,
         "inntektsdato": "2023-02-17",
         "naturalytelser": [
-          { "naturalytelse": "Bil", "dato": "2023-04-04", "beloep": 1234.0 },
-          { "naturalytelse": "FriTransport", "dato": "2023-04-19", "beloep": 4321.0 }
+          { "naturalytelse": "Bil", "sluttdato": "2023-04-04", "verdiBeloep": 1234.0 },
+          { "naturalytelse": "FriTransport", "sluttdato": "2023-04-19", "verdiBeloep": 4321.0 }
         ],
         "endringAarsak": null
       },

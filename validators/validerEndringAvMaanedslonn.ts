@@ -18,8 +18,7 @@ export default function valdiderEndringAvMaanedslonn(
   harRefusjonEndringer?: YesNo,
   refusjonEndringer?: Array<EndringsBeloep>,
   lonnISykefravaeret?: LonnISykefravaeret,
-  bruttoInntekt?: number,
-  sluttdato?: Date
+  bruttoInntekt?: number
 ): Array<ValiderResultat> {
   let feilmeldinger: Array<ValiderResultat> = [];
   const harLonnISykefravaeret = !!lonnISykefravaeret && lonnISykefravaeret.status === 'Ja';
@@ -93,13 +92,6 @@ export default function valdiderEndringAvMaanedslonn(
         feilmeldinger.push({
           felt: `refusjon.refusjonEndringer[${index}].dato`,
           code: EndringAvMaanedslonnFeilkode.MANGLER_DATO
-        });
-      }
-
-      if (sluttdato && endring.dato && isAfter(endring.dato, sluttdato)) {
-        feilmeldinger.push({
-          felt: `refusjon.refusjonEndringer[${index}].dato`,
-          code: EndringAvMaanedslonnFeilkode.ENDRING_DATO_ETTER_SLUTTDATO
         });
       }
     });

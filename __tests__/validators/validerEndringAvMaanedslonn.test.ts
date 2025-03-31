@@ -64,32 +64,9 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), beloep: 12345 }], undefined, 55555)).toEqual([]);
   });
 
-  it('should return error when harRefusjonEndringer is Ja and endringsdato is after sluttdoato', () => {
-    expect(
-      valdiderEndringAvMaanedslonn(
-        'Ja',
-        [{ beloep: 12345, dato: new Date(2024, 5, 5) }],
-        undefined,
-        undefined,
-        new Date(2024, 4, 4)
-      )
-    ).toEqual([
-      {
-        code: 'ENDRING_DATO_ETTER_SLUTTDATO',
-        felt: 'refusjon.refusjonEndringer[0].dato'
-      }
-    ]);
-  });
-
   it('should not return error when harRefusjonEndringer is Ja and endringsdato is before sluttdoato', () => {
     expect(
-      valdiderEndringAvMaanedslonn(
-        'Ja',
-        [{ beloep: 12345, dato: new Date(2024, 5, 5) }],
-        undefined,
-        undefined,
-        new Date(2024, 6, 6)
-      )
+      valdiderEndringAvMaanedslonn('Ja', [{ beloep: 12345, dato: new Date(2024, 5, 5) }], undefined, undefined)
     ).toEqual([]);
   });
 

@@ -22,7 +22,7 @@ export default function SelectNaturalytelser({ name, defaultValue }: Readonly<Se
 
   const error = findErrorInRHFErrors(name, errors);
   const ytelsesKeys = Object.keys(naturalytelser);
-  const defaultYtelse = defaultValue ? defaultValue.toString().toUpperCase() : '';
+  const defaultYtelse = field.value ? field.value.toString().toUpperCase() : '';
   return (
     <Select label={''} onChange={field.onChange} defaultValue={defaultYtelse} error={error}>
       <option value=''>Velg naturalytelse</option>
