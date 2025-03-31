@@ -38,12 +38,6 @@ export default function Naturalytelser() {
     }
   }, [dummyYtelse, harBortfallAvNaturalytelser, remove, replace, fields.length]);
 
-  // useEffect(() => {
-  //   if ((!fields || fields.length === 0) && harBortfallAvNaturalytelser) {
-  //     replace([dummyYtelse]);
-  //   }
-  // }, [fields, replace, harBortfallAvNaturalytelser, dummyYtelse]);
-
   const handleButtonSletteClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
     event.preventDefault();
     remove(index);

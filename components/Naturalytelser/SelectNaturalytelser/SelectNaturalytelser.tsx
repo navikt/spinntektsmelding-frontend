@@ -3,11 +3,11 @@ import naturalytelser from './naturalytelser';
 import { useController, useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../../utils/findErrorInRHFErrors';
 
-type NaturalytelsesType = keyof typeof naturalytelser;
+type Naturalytelser = keyof typeof naturalytelser;
 
 interface SelectNaturalytelserProps {
   name: string;
-  defaultValue?: NaturalytelsesType | '';
+  defaultValue?: Naturalytelser;
 }
 
 export default function SelectNaturalytelser({ name, defaultValue }: Readonly<SelectNaturalytelserProps>) {

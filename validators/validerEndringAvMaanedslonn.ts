@@ -1,4 +1,4 @@
-import { isAfter, isEqual } from 'date-fns';
+import { isEqual } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import { LonnISykefravaeret, YesNo } from '../state/state';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';

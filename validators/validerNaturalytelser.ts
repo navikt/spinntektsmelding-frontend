@@ -1,4 +1,4 @@
-import { Naturalytelse, YesNo } from '../state/state';
+import { Naturalytelse } from '../state/state';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum NaturalytelserFeilkoder {
