@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import { EndringAarsakSchema } from './endringAarsakSchema';
 import { isTlfNumber } from '../utils/isTlfNumber';
-import { NaturalytelseEnum } from './NaturalytelseEnum';
-import naturalytelserSchema from './NaturalytelserSchema';
+import naturalytelserSchema from './naturalytelserSchema';
 
 export const hovedskjemaSchema = z.object({
   bekreft_opplysninger: z.boolean().refine((value) => value === true, {
@@ -20,31 +19,9 @@ export const hovedskjemaSchema = z.object({
       harBortfallAvNaturalytelser: z.boolean(),
       naturalytelser: z.array(naturalytelserSchema).optional()
     })
-    // .superRefine((val, ctx) => {
-    //   if (val.harBortfallAvNaturalytelser && val.naturalytelser.length === 0) {
-    //     ctx.addIssue({
-    //       code: z.ZodIssueCode.custom,
-    //       message: 'Du må fylle inn alle feltene for naturalytelser',
-    //       path: ['naturalytelser']
-    //     });
-    //   }
-
-    //   if (val.harBortfallAvNaturalytelser && val.naturalytelser.length > 0) {
-    //     val.naturalytelser.forEach((element, index) => {
-    //       if (!element.naturalytelse || !element.sluttdato || !element.verdiBeloep) {
-    //         ctx.addIssue({
-    //           code: z.ZodIssueCode.custom,
-    //           message: 'Du må fylle inn alle feltene for naturalytelser',
-    //           path: ['naturalytelser', index]
-    //         });
-    //       }
-    //     });
-    //   }
-    // })
   ),
   avsenderTlf: z
     .string({
-      // required_error: 'Vennligst fyll inn telefonnummer',
       invalid_type_error: 'Dette er ikke et telefonnummer'
     })
     .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
