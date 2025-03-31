@@ -140,7 +140,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   useEffect(() => {
     if (naturalytelser !== undefined) {
-      console.log('naturalytelser', naturalytelser);
       setValue('inntekt.harBortfallAvNaturalytelser', naturalytelser.length !== 0);
       setValue('inntekt.naturalytelser', naturalytelser);
     }
