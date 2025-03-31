@@ -23,3 +23,11 @@
   width: 25%;
   max-width: 25%;
 }
+
+.tddatepickernatural {
+  padding-top: 0.5rem;
+}
+
+.tddatepickernatural label {
+  display: none;
+}

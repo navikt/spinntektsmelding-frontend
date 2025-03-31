@@ -74,7 +74,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     bruttoinntekt,
     beloepArbeidsgiverBetalerISykefravaeret,
     avsender,
-    sykmeldt
+    sykmeldt,
+    naturalytelser
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -82,7 +83,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.bruttoinntekt,
     state.beloepArbeidsgiverBetalerISykefravaeret,
     state.avsender,
-    state.sykmeldt
+    state.sykmeldt,
+    state.naturalytelser
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -120,7 +122,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
-        endringAarsaker: bruttoinntekt.endringAarsaker
+        endringAarsaker: bruttoinntekt.endringAarsaker,
+        naturalytelser: naturalytelser ?? [],
+        harBortfallAvNaturalytelser: false
       },
       avsenderTlf: avsender.tlf
     }
@@ -133,6 +137,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     handleSubmit,
     formState: { errors, isDirty }
   } = methods;
+
+  useEffect(() => {
+    if (naturalytelser !== undefined) {
+      setValue('inntekt.harBortfallAvNaturalytelser', naturalytelser.length !== 0);
+      setValue('inntekt.naturalytelser', naturalytelser);
+    }
+  }, [naturalytelser, setValue]);
 
   useEffect(() => {
     if (bruttoinntekt.bruttoInntekt !== undefined) {
@@ -329,9 +340,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
               inntekt={inntektBeloep}
             />
-
-            <Skillelinje />
-            <Naturalytelser setIsDirtyForm={setIsDirtyForm} />
+            {harForespurtInntekt && (
+              <>
+                <Skillelinje />
+                <Naturalytelser />
+              </>
+            )}
             <ConfirmationPanel
               className={styles.confirmationPanel}
               label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'

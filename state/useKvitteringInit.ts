@@ -160,9 +160,9 @@ export default function useKvitteringInit() {
 
     if (jsonData.skjema.inntekt.naturalytelser) {
       const ytelser: Array<MottattNaturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
-        type: ytelse.naturalytelse,
-        bortfallsdato: ytelse.sluttdato,
-        verdi: ytelse.verdiBeloep
+        naturalytelse: ytelse.naturalytelse,
+        sluttdato: parseIsoDate(ytelse.sluttdato),
+        verdiBeloep: ytelse.verdiBeloep
       }));
       initNaturalytelser(ytelser);
     }

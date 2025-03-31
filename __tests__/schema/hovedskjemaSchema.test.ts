@@ -7,7 +7,9 @@ describe('hovedskjemaSchema', () => {
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 1234.5,
-        endringAarsaker: null
+        endringAarsaker: null,
+        harBortfallAvNaturalytelser: false,
+        naturalytelser: []
       },
       avsenderTlf: '12345678'
     };

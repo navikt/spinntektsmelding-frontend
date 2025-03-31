@@ -109,11 +109,12 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .eq(1)
       .click();
 
-    cy.findByLabelText('Månedslønn 07.01.2024')
+    cy.findByLabelText('Månedslønn 07.01.2024').as('maanedslonn');
+    cy.get('@maanedslonn')
       .invoke('val')
       .then((str) => str.normalize('NFKC').replace(/ /g, ''))
       .should('equal', '55000');
-    cy.findByLabelText('Månedslønn 07.01.2024').clear().type('60000');
+    cy.get('@maanedslonn').clear().type('60000');
 
     cy.findAllByLabelText('Telefon innsender').type('12345678');
 

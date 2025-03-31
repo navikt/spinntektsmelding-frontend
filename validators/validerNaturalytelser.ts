@@ -1,4 +1,4 @@
-import { Naturalytelse, YesNo } from '../state/state';
+import { Naturalytelse } from '../state/state';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum NaturalytelserFeilkoder {
@@ -10,11 +10,11 @@ export enum NaturalytelserFeilkoder {
 
 export default function validerNaturalytelser(
   naturalytelser?: Array<Naturalytelse>,
-  hasBortfallAvNaturalytelser?: YesNo
+  hasBortfallAvNaturalytelser?: boolean
 ): Array<ValiderResultat> {
   let feilkoder: Array<ValiderResultat> = [];
 
-  if (hasBortfallAvNaturalytelser === 'Nei') {
+  if (hasBortfallAvNaturalytelser === undefined) {
     feilkoder.push({
       felt: '',
       code: NaturalytelserFeilkoder.MANGLER_VALG_BORTFALL_AV_NATURALYTELSER
@@ -23,23 +23,23 @@ export default function validerNaturalytelser(
 
   if (naturalytelser && naturalytelser.length > 0) {
     naturalytelser.forEach((ytelse) => {
-      if (!ytelse.bortfallsdato) {
+      if (!ytelse.sluttdato) {
         feilkoder.push({
-          felt: 'naturalytelse-dato-' + ytelse.id,
+          felt: 'naturalytelse-dato-' + ytelse.naturalytelse,
           code: NaturalytelserFeilkoder.MANGLER_BORTFALLSDATO
         });
       }
 
-      if (!ytelse.verdi) {
+      if (!ytelse.verdiBeloep) {
         feilkoder.push({
-          felt: 'naturalytelse-beloep-' + ytelse.id,
+          felt: 'naturalytelse-beloep-' + ytelse.naturalytelse,
           code: NaturalytelserFeilkoder.MANGLER_VERDI
         });
       }
 
-      if (!ytelse.type) {
+      if (!ytelse.naturalytelse) {
         feilkoder.push({
-          felt: 'naturalytelse-type-' + ytelse.id,
+          felt: 'naturalytelse-type-' + ytelse.naturalytelse,
           code: NaturalytelserFeilkoder.MANGLER_TYPE
         });
       }

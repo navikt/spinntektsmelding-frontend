@@ -31,7 +31,6 @@ export default function useFyllInnsending() {
     state.lonnISykefravaeret,
     state.refusjonskravetOpphoerer
   ]);
-  const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
@@ -43,11 +42,14 @@ export default function useFyllInnsending() {
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
-  const [setEndringAarsaker, setBareNyMaanedsinntekt, setInnsenderTelefon] = useBoundStore((state) => [
-    state.setEndringAarsaker,
-    state.setBareNyMaanedsinntekt,
-    state.setInnsenderTelefon
-  ]);
+  const [setEndringAarsaker, setBareNyMaanedsinntekt, setInnsenderTelefon, initNaturalytelser] = useBoundStore(
+    (state) => [
+      state.setEndringAarsaker,
+      state.setBareNyMaanedsinntekt,
+      state.setInnsenderTelefon,
+      state.initNaturalytelser
+    ]
+  );
 
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
   type Skjema = z.infer<typeof hovedskjemaSchema>;
@@ -116,6 +118,8 @@ export default function useFyllInnsending() {
 
     setInnsenderTelefon(skjemaData.avsenderTlf);
 
+    initNaturalytelser(skjemaData.inntekt?.naturalytelser);
+
     const innsendingSkjema: FullInnsending = {
       forespoerselId,
       agp: {
@@ -130,8 +134,7 @@ export default function useFyllInnsending() {
               bestemmendeFraværsdag && bestemmendeFraværsdag.length > 0
                 ? bestemmendeFraværsdag
                 : formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
-            // manueltKorrigert: verdiEllerFalse(bruttoinntekt.manueltKorrigert),
-            naturalytelser: mapNaturalytelserToData(naturalytelser),
+            naturalytelser: mapNaturalytelserToData(skjemaData.inntekt.naturalytelser),
             endringAarsak: endringAarsakParsed,
             endringAarsaker: endringAarsakerParsed
           }
@@ -180,9 +183,9 @@ function mapEgenmeldingsperioder(egenmeldingsperioder: Periode[] | undefined) {
 function mapNaturalytelserToData(naturalytelser: Naturalytelse[] | undefined) {
   return naturalytelser
     ? naturalytelser?.map((ytelse) => ({
-        naturalytelse: verdiEllerBlank(ytelse.type) as z.infer<typeof NaturalytelseEnum>,
-        sluttdato: formatIsoDate(ytelse.bortfallsdato),
-        verdiBeloep: verdiEllerNull(ytelse.verdi)
+        naturalytelse: verdiEllerBlank(ytelse.naturalytelse) as z.infer<typeof NaturalytelseEnum>,
+        sluttdato: formatIsoDate(ytelse.sluttdato),
+        verdiBeloep: verdiEllerNull(ytelse.verdiBeloep)
       }))
     : [];
 }

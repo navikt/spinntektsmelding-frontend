@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 import { BegrunnelseRedusertLoennIAgp } from '../schema/begrunnelseRedusertLoennIAgp';
+import naturalytelserSchema from '../schema/naturalytelserSchema';
 
 export interface Periode {
   fom?: Date;
@@ -37,9 +38,4 @@ export interface LonnIArbeidsgiverperioden {
   utbetalt?: number | null;
 }
 
-export interface Naturalytelse {
-  id: string;
-  type?: string;
-  bortfallsdato?: Date;
-  verdi?: number;
-}
+export type Naturalytelse = z.infer<typeof naturalytelserSchema>;

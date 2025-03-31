@@ -6,78 +6,73 @@ describe('validerNaturalytelser', () => {
   it('should validate that all is OK', () => {
     const input: Array<Naturalytelse> = [
       {
-        id: 'tilfeldig',
-        type: 'gratis',
-        bortfallsdato: new Date(),
-        verdi: 1234
+        naturalytelse: 'BOLIG',
+        sluttdato: new Date(),
+        verdiBeloep: 1234
       }
     ];
-    expect(validerNaturalytelser(input, 'Ja')).toEqual([]);
+    expect(validerNaturalytelser(input, true)).toEqual([]);
   });
 
-  it('should fail if bortfallsdato is missing', () => {
+  it('should fail if sluttdato is missing', () => {
     const input: Array<Naturalytelse> = [
       {
-        id: 'tilfeldig',
-        type: 'gratis',
-        verdi: 1234
+        naturalytelse: 'BOLIG',
+        verdiBeloep: 1234
       }
     ];
 
     const expected = [
       {
         code: 'MANGLER_BORTFALLSDATO',
-        felt: 'naturalytelse-dato-tilfeldig'
+        felt: 'naturalytelse-dato-BOLIG'
       }
     ];
 
-    expect(validerNaturalytelser(input, 'Ja')).toEqual(expected);
+    expect(validerNaturalytelser(input, true)).toEqual(expected);
   });
 
-  it('should fail if type is missing', () => {
+  it('should fail if naturalytelse is missing', () => {
     const input: Array<Naturalytelse> = [
       {
-        id: 'tilfeldig',
-        bortfallsdato: new Date(),
-        verdi: 1234
+        sluttdato: new Date(),
+        verdiBeloep: 1234
       }
     ];
 
     const expected = [
       {
         code: 'MANGLER_TYPE',
-        felt: 'naturalytelse-type-tilfeldig'
+        felt: 'naturalytelse-type-undefined'
       }
     ];
 
-    expect(validerNaturalytelser(input, 'Ja')).toEqual(expected);
+    expect(validerNaturalytelser(input, true)).toEqual(expected);
   });
 
-  it('should fail if verdi is missing', () => {
+  it('should fail if verdiBeloep is missing', () => {
     const input: Array<Naturalytelse> = [
       {
-        id: 'tilfeldig',
-        bortfallsdato: new Date(),
-        type: 'gratis'
+        sluttdato: new Date(),
+        naturalytelse: 'BOLIG'
       }
     ];
 
     const expected = [
       {
         code: 'MANGLER_VERDI',
-        felt: 'naturalytelse-beloep-tilfeldig'
+        felt: 'naturalytelse-beloep-BOLIG'
       }
     ];
 
-    expect(validerNaturalytelser(input, 'Ja')).toEqual(expected);
+    expect(validerNaturalytelser(input, true)).toEqual(expected);
   });
 
-  it('should not fail if verdi is missing and we dont expect any naturalytelser', () => {
+  it('should not fail if verdiBeloep is missing and we dont expect any naturalytelser', () => {
     const input: Array<Naturalytelse> = [
       {
-        id: 'tilfeldig',
-        bortfallsdato: new Date(),
-        type: 'gratis'
+        sluttdato: new Date(),
+        naturalytelse: 'BOLIG'
       }
     ];
 
@@ -88,10 +83,10 @@ describe('validerNaturalytelser', () => {
       },
       {
         code: 'MANGLER_VERDI',
-        felt: 'naturalytelse-beloep-tilfeldig'
+        felt: 'naturalytelse-beloep-BOLIG'
       }
     ];
 
-    expect(validerNaturalytelser(input, 'Nei')).toEqual(expected);
+    expect(validerNaturalytelser(input, undefined)).toEqual(expected);
   });
 });

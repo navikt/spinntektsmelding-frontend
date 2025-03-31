@@ -1,23 +1,30 @@
 import { Select } from '@navikt/ds-react';
 import naturalytelser from './naturalytelser';
+import { useController, useFormContext } from 'react-hook-form';
+import findErrorInRHFErrors from '../../../utils/findErrorInRHFErrors';
+
+type Naturalytelser = keyof typeof naturalytelser;
 
 interface SelectNaturalytelserProps {
-  onChangeYtelse: (event: React.ChangeEvent<HTMLSelectElement>, ytelseId: string) => void;
-  elementId: string;
-  defaultValue?: string;
-  error?: string;
+  name: string;
+  defaultValue?: Naturalytelser;
 }
 
-export default function SelectNaturalytelser(props: SelectNaturalytelserProps) {
+export default function SelectNaturalytelser({ name, defaultValue }: Readonly<SelectNaturalytelserProps>) {
+  const { control } = useFormContext();
+  const {
+    field,
+    formState: { errors }
+  } = useController({
+    name,
+    control
+  });
+
+  const error = findErrorInRHFErrors(name, errors);
   const ytelsesKeys = Object.keys(naturalytelser);
-  const defaultYtelse = props.defaultValue ? props.defaultValue.toUpperCase() : '';
+  const defaultYtelse = field.value ? field.value.toString().toUpperCase() : '';
   return (
-    <Select
-      label={''}
-      onChange={(event) => props.onChangeYtelse(event, props.elementId)}
-      defaultValue={defaultYtelse}
-      error={props.error}
-    >
+    <Select label={''} onChange={field.onChange} defaultValue={defaultYtelse} error={error}>
       <option value=''>Velg naturalytelse</option>
       {ytelsesKeys.map((ytelseKey) => (
         <option value={ytelseKey} key={ytelseKey}>

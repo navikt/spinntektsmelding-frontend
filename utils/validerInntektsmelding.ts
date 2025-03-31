@@ -118,7 +118,10 @@ export default function validerInntektsmelding(
   feilkoderBruttoinntekt = validerBruttoinntekt(state, formData, bestemmendeFravaersdag!);
 
   if (state.naturalytelser) {
-    feilkoderNaturalytelser = validerNaturalytelser(state.naturalytelser, state.hasBortfallAvNaturalytelser);
+    feilkoderNaturalytelser = validerNaturalytelser(
+      formData.inntekt?.naturalytelser,
+      formData.inntekt?.harBortfallAvNaturalytelser
+    );
   }
 
   if (!kunInntektOgRefusjon) {

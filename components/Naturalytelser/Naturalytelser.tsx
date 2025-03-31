@@ -5,55 +5,56 @@ import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
 import lokalStyles from './Naturalytelser.module.css';
 
 import styles from '../../styles/Home.module.css';
-import useBoundStore from '../../state/useBoundStore';
-import NaturalytelseBortfallsdato from './NaturalytelseBortfallsdato';
-import formatCurrency from '../../utils/formatCurrency';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useEffect, useMemo } from 'react';
+import DatoVelger from '../DatoVelger/DatoVelger';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import stringishToNumber from '../../utils/stringishToNumber';
 
-interface NaturalytelseProps {
-  setIsDirtyForm: (dirty: boolean) => void;
-}
+export default function Naturalytelser() {
+  const {
+    control,
+    register,
+    watch,
+    formState: { errors }
+  } = useFormContext();
 
-export default function Naturalytelser({ setIsDirtyForm }: Readonly<NaturalytelseProps>) {
-  const naturalytelser = useBoundStore((state) => state.naturalytelser);
-  const leggTilNaturalytelse = useBoundStore((state) => state.leggTilNaturalytelse);
-  const setNaturalytelseType = useBoundStore((state) => state.setNaturalytelseType);
-  const setNaturalytelseBortfallsdato = useBoundStore((state) => state.setNaturalytelseBortfallsdato);
-  const setNaturalytelseVerdi = useBoundStore((state) => state.setNaturalytelseVerdi);
-  const slettNaturalytelse = useBoundStore((state) => state.slettNaturalytelse);
-  const slettAlleNaturalytelser = useBoundStore((state) => state.slettAlleNaturalytelser);
-  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: 'inntekt.naturalytelser'
+  });
 
-  const visNaturalytelser = (event: React.MouseEvent<HTMLInputElement>) => {
-    if (event.currentTarget.checked === true) {
-      setIsDirtyForm(true);
-      leggTilNaturalytelse();
+  const dummyYtelse = useMemo(() => ({ naturalytelse: '', sluttdato: undefined, verdiBeloep: '' }), []);
+
+  const harBortfallAvNaturalytelser = watch('inntekt.harBortfallAvNaturalytelser');
+
+  useEffect(() => {
+    if (harBortfallAvNaturalytelser) {
+      if (fields.length === 0) {
+        replace([dummyYtelse]);
+      }
     } else {
-      setIsDirtyForm(true);
-      slettAlleNaturalytelser();
+      remove();
     }
-  };
+  }, [dummyYtelse, harBortfallAvNaturalytelser, remove, replace, fields.length]);
 
-  const leggTilNaturalytelseHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleButtonSletteClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
     event.preventDefault();
-    setIsDirtyForm(true);
-    leggTilNaturalytelse();
+    remove(index);
   };
 
-  const slettNaturalytelseHandler = (event: React.MouseEvent<HTMLButtonElement>, elementId: string) => {
+  const handleButtonLeggTilClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    setIsDirtyForm(true);
-    slettNaturalytelse(elementId);
+    append({ ...dummyYtelse });
   };
-
-  const checkedNaturalytelser = naturalytelser && naturalytelser.length > 0;
 
   return (
     <>
       <Heading3>Naturalytelser</Heading3>
-      <Checkbox value='Naturalytelser' onClick={visNaturalytelser} checked={checkedNaturalytelser}>
+      <Checkbox {...register('inntekt.harBortfallAvNaturalytelser')}>
         Har den ansatte naturalytelser som faller bort under sykefraværet?
       </Checkbox>
-      {naturalytelser && naturalytelser.length > 0 && (
+      {harBortfallAvNaturalytelser && (
         <>
           <table className={lokalStyles.tablenaturalytelse}>
             <thead>
@@ -65,45 +66,37 @@ export default function Naturalytelser({ setIsDirtyForm }: Readonly<Naturalytels
               </tr>
             </thead>
             <tbody>
-              {naturalytelser.map((element) => {
-                return (
-                  <tr key={element.id}>
-                    <td>
-                      <SelectNaturalytelser
-                        onChangeYtelse={(event) => setNaturalytelseType(element.id, event.target.value)}
-                        elementId={element.id}
-                        defaultValue={element.type}
-                        error={visFeilmeldingTekst('naturalytelse-type-' + element.id)}
-                      />
-                    </td>
+              {fields.map((element, index) => (
+                <tr key={element.id}>
+                  <td>
+                    <SelectNaturalytelser name={`inntekt.naturalytelser.${index}.naturalytelse`} />
+                  </td>
 
-                    <td className={styles.tddatepickernatural}>
-                      <NaturalytelseBortfallsdato
-                        naturalytelseId={element.id}
-                        setNaturalytelseBortfallsdato={setNaturalytelseBortfallsdato}
-                        defaultValue={element.bortfallsdato}
-                        error={visFeilmeldingTekst('naturalytelse-dato-' + element.id)}
-                      />
-                    </td>
-                    <td>
-                      <TextField
-                        label={''}
-                        className={styles.fnr}
-                        onChange={(event) => setNaturalytelseVerdi(element.id, event.target.value)}
-                        defaultValue={element.verdi ? formatCurrency(element.verdi) : undefined}
-                        error={visFeilmeldingTekst('naturalytelse-beloep-' + element.id)}
-                      ></TextField>
-                    </td>
-                    <td>
-                      <ButtonSlette onClick={(e) => slettNaturalytelseHandler(e, element.id)} title='Slett ytelse' />
-                    </td>
-                  </tr>
-                );
-              })}
+                  <td className={lokalStyles.tddatepickernatural}>
+                    <DatoVelger name={`inntekt.naturalytelser.${index}.sluttdato`} />
+                  </td>
+
+                  <td>
+                    <TextField
+                      label={''}
+                      className={styles.fnr}
+                      error={findErrorInRHFErrors(`inntekt.naturalytelser.${index}.verdiBeloep`, errors)}
+                      {...register(`inntekt.naturalytelser.${index}.verdiBeloep`, {
+                        setValueAs: (value) => stringishToNumber(value)
+                      })}
+                    />
+                  </td>
+                  <td>
+                    {index > 0 && (
+                      <ButtonSlette onClick={(e) => handleButtonSletteClick(e, index)} title='Slett ytelse' />
+                    )}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
           <div className={lokalStyles.naturalytelserknapp}>
-            <Button variant='secondary' className={styles.legtilbutton} onClick={leggTilNaturalytelseHandler}>
+            <Button variant='secondary' className={styles.legtilbutton} onClick={handleButtonLeggTilClick}>
               Legg til naturalytelse
             </Button>
           </div>
