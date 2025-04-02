@@ -32,7 +32,7 @@ export default function useHentKvitteringsdata() {
             window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
           }
 
-          if (error.status !== 200 && pathSlug) {
+          if (error.status !== 200) {
             setSkjemaFeilet();
             logger.warn('Fant ikke kvittering for ', pathSlug);
           }

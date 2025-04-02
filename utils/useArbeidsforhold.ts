@@ -5,11 +5,11 @@ import { FieldError } from 'react-hook-form';
 
 export default function useArbeidsforhold(
   identitetsnummer: string | undefined,
-  setError: (name: string, error: FieldError, options?: { shouldFocus?: boolean | undefined }) => void
+  setError: (name: string, error: FieldError, options?: { shouldFocus: boolean | undefined }) => void
 ) {
   return useSWRImmutable(
     [environment.initierBlankSkjemaUrl, identitetsnummer],
-    ([url, idToken]) => fetcherArbeidsforhold(!!identitetsnummer ? url : null, idToken),
+    ([url, idToken]) => fetcherArbeidsforhold(identitetsnummer ? url : null, idToken),
     {
       onError: (err) => {
         if (err.status === 401) {

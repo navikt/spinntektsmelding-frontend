@@ -134,7 +134,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         component: amplitudeComponent
       });
 
-      // errorResponse(errors);
       setSkalViseFeilmeldinger(true);
     } else {
       setKvitteringsdata(validerteData.data);

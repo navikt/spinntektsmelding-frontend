@@ -1,4 +1,3 @@
-import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import TariffendringDato from './TariffendringDato';
 import lokalStyles from './Bruttoinntekt.module.css';
 import parseIsoDate from '../../utils/parseIsoDate';
