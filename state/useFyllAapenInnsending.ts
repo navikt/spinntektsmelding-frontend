@@ -28,7 +28,6 @@ export default function useFyllAapenInnsending() {
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  // const innsenderTelefonNr = useBoundStore((state) => state.innsenderTelefonNr);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const vedtaksperiodeId = useBoundStore((state) => state.vedtaksperiodeId);
@@ -72,7 +71,7 @@ export default function useFyllAapenInnsending() {
       sykmeldtFnr: sykmeldt.fnr,
       avsender: {
         orgnr: avsender.orgnr!,
-        tlf: skjemaData.avsenderTlf!
+        tlf: skjemaData.avsenderTlf
       },
       sykmeldingsperioder: fravaersperioder!
         .filter((periode) => periode.fom && periode.tom)

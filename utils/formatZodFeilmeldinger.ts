@@ -9,11 +9,9 @@ export default function formatZodFeilmeldinger(validationResult: SafeParseReturn
   return Object.keys(formaterteFeilmeldinger)
     .filter((feil) => feil !== '_errors')
     .map((feil) => {
-      // if (formaterteFeilmeldinger[feil as keyof typeof formaterteFeilmeldinger]._errors) {
       return {
         text: formaterteFeilmeldinger[feil as keyof typeof formaterteFeilmeldinger]._errors.join(', '),
         felt: feil
       } as Feilmelding;
-      // }
     });
 }
