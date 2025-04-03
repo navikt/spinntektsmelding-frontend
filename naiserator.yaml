@@ -19,15 +19,15 @@ spec:
   liveness:
     path: /im-dialog/api/is-alive
     initialDelay: 15
-    timeout: 1
-    periodSeconds: 3
-    failureThreshold: 10
+    timeout: 5
+    periodSeconds: 10
+    failureThreshold: 12
   readiness:
     path: /im-dialog/api/is-ready
     initialDelay: 15
-    timeout: 1
-    periodSeconds: 3
-    failureThreshold: 10
+    timeout: 5
+    periodSeconds: 10
+    failureThreshold: 12
   replicas:
     max: 1
     min: 1
