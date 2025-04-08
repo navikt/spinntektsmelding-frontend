@@ -8,8 +8,25 @@ updates:
 # Maintain dependencies for Yarn
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/" # Location of package manifests
+    registries:
+      - npm-github
     schedule:
       interval: "weekly"
+    groups:
+      aksel:
+        patterns:
+          - '@navikt/ds*'
+          - '@navikt/aksel*'
+      vitest:
+        patterns:
+          - 'vitest'
+          - '@vitest/*'
+      react:
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - '@types/react'
+          - '@types/react-dom'
 
 # Maintain dependencies for Docker
   - package-ecosystem: "docker" # See documentation for possible values
@@ -22,3 +39,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+
+
+registries:
+  npm-github:
+    type: npm-registry
+    url: https://npm.pkg.github.com
+    token: ${{ secrets.READER_TOKEN }}
+    replaces-base: true
