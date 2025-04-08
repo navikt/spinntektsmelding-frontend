@@ -9,6 +9,7 @@ interface SelectBegrunnelseKortArbeidsgiverperiodeProps {
   defaultValue?: string;
   error?: React.ReactNode;
   label?: string;
+  ikkeAgp?: boolean;
 }
 
 export default function SelectBegrunnelseKortArbeidsgiverperiode(
@@ -18,6 +19,17 @@ export default function SelectBegrunnelseKortArbeidsgiverperiode(
     (begrunnelse) => filterBegrunnelseKortArbeidsgiverperiode.indexOf(begrunnelse) > -1
   );
   const label = props.label ? props.label : 'Velg begrunnelse for kort arbeidsgiverperiode';
+
+  let begrunnelse: string[] = [];
+
+  if (props.ikkeAgp) {
+    begrunnelse = begrunnelseKeys.filter((begrunnelse) => {
+      console.log('begrunnelse', begrunnelse);
+      return begrunnelse !== 'BetvilerArbeidsufoerhet';
+    });
+  } else {
+    begrunnelse = [...begrunnelseKeys];
+  }
 
   return (
     <Select
@@ -29,7 +41,7 @@ export default function SelectBegrunnelseKortArbeidsgiverperiode(
       error={props.error}
     >
       <option value=''>Velg begrunnelse</option>
-      {begrunnelseKeys.map((begrunnelseKey) => (
+      {begrunnelse.map((begrunnelseKey) => (
         <option value={begrunnelseKey} key={begrunnelseKey}>
           {begrunnelseIngenEllerRedusertUtbetalingListe[begrunnelseKey]}
         </option>
