@@ -43,6 +43,7 @@ import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../../utils/parseIsoDate';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import PersonVisning from '../../components/Person/PersonVisning';
+import maserEndringAarsaker from '../../utils/maserEndringAarsaker';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
@@ -155,6 +156,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     infoboks: visArbeidsgiverperiode
   });
 
+  const endringAarsaker = maserEndringAarsaker(bruttoinntekt.endringAarsak, bruttoinntekt.endringAarsaker);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -236,15 +239,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <Heading2>Beregnet månedslønn</Heading2>
                   <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
                   <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
-                  {bruttoinntekt.endringAarsak?.aarsak && (
-                    <>
-                      <div className={lokalStyles.uthevet}>Endret med årsak</div>
-
-                      {formatBegrunnelseEndringBruttoinntekt(bruttoinntekt.endringAarsak.aarsak as string)}
-                      <EndringAarsakVisning endringAarsak={bruttoinntekt.endringAarsak} />
-                    </>
-                  )}
-                  {bruttoinntekt.endringAarsaker?.map((endring, endringIndex) => (
+                  {endringAarsaker?.map((endring, endringIndex) => (
                     <Fragment key={endringIndex + endring.aarsak}>
                       <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
