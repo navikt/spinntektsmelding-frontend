@@ -1,4 +1,4 @@
-// import testdata from '../../../mockdata/selvbestemt-kvittering.json';
+import testdata from '../../../mockdata/selvbestemt-kvittering.json';
 import { Fragment, useEffect } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
@@ -290,6 +290,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const visningEndringAarsaker = maserEndringAarsaker(endringAarsak, endringAarsaker);
+
+  console.log('visningEndringAarsaker', visningEndringAarsaker);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -363,10 +366,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <BodyShort>{formatCurrency(inntekt.beregnetInntekt)} kr/måned</BodyShort>
 
           {visningEndringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
-            <Fragment key={endring.aarsak + endringIndex}>
+            <Fragment key={endring?.aarsak + endringIndex}>
               <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
-              {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
+              {formatBegrunnelseEndringBruttoinntekt(endring?.aarsak as string)}
               <EndringAarsakVisning endringAarsak={endring} />
             </Fragment>
           ))}
@@ -436,9 +439,9 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         kvittid: context.query.kvittid,
-        kvittering: {},
-        kvitteringStatus: 404,
-        dataFraBackend: false
+        kvittering: testdata,
+        kvitteringStatus: 200,
+        dataFraBackend: true
       }
     };
   }

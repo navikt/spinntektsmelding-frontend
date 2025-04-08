@@ -8,5 +8,9 @@ export default function maserEndringAarsaker(
     return endringAarsaker;
   }
 
+  if (!endringAarsak) {
+    return [];
+  }
+
   return [endringAarsak];
 }
