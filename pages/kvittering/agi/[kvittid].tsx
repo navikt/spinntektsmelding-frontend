@@ -291,8 +291,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   }, []);
   const visningEndringAarsaker = maserEndringAarsaker(endringAarsak, endringAarsaker);
 
-  console.log('visningEndringAarsaker', visningEndringAarsaker);
-
   return (
     <div className={styles.container}>
       <Head>

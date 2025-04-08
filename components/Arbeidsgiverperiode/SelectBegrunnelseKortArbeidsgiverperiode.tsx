@@ -24,7 +24,6 @@ export default function SelectBegrunnelseKortArbeidsgiverperiode(
 
   if (props.ikkeAgp) {
     begrunnelse = begrunnelseKeys.filter((begrunnelse) => {
-      console.log('begrunnelse', begrunnelse);
       return begrunnelse !== 'BetvilerArbeidsufoerhet';
     });
   } else {
