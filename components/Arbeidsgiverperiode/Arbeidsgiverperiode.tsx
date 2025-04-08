@@ -425,6 +425,7 @@ export default function Arbeidsgiverperiode({
               onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
               defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
               error={visFeilmeldingTekst('agp.redusertLoennIAgp.begrunnelse')}
+              ikkeAgp={arbeidsgiverperiodeDisabled}
             />
           </div>
           {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
@@ -446,6 +447,7 @@ export default function Arbeidsgiverperiode({
                 defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
                 error={visFeilmeldingTekst('agp.redusertLoennIAgp.begrunnelse')}
                 label='Velg begrunnelse'
+                ikkeAgp={arbeidsgiverperiodeDisabled}
               />
               {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
             </>
