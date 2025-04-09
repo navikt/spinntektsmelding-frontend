@@ -1,13 +1,15 @@
-import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Begrunnelse, Periode, YesNo } from './state';
+import { Begrunnelse, Periode } from './state';
 import useBoundStore from './useBoundStore';
-import validerAapenInnsending, { RefusjonEndring } from '../validators/validerAapenInnsending';
+import validerAapenInnsending from '../validators/validerAapenInnsending';
 import {
   SendtPeriode,
   formaterRedusertLoennIAgp,
-  konverterPerioderFraMottattTilInterntFormat
+  konverterPerioderFraMottattTilInterntFormat,
+  konverterRefusjonEndringer,
+  mapEgenmeldingsperioder,
+  mapNaturalytelserToData
 } from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 import { z } from 'zod';
@@ -19,11 +21,11 @@ export default function useFyllAapenInnsending() {
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
-  const [fullLonnIArbeidsgiverPerioden, setInnsenderTelefon] = useBoundStore((state) => [
+  const [fullLonnIArbeidsgiverPerioden, setInnsenderTelefon, initNaturalytelser] = useBoundStore((state) => [
     state.fullLonnIArbeidsgiverPerioden,
-    state.setInnsenderTelefon
+    state.setInnsenderTelefon,
+    state.initNaturalytelser
   ]);
-  const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
@@ -66,6 +68,8 @@ export default function useFyllAapenInnsending() {
 
     setInnsenderTelefon(skjemaData.avsenderTlf);
 
+    initNaturalytelser(skjemaData.inntekt?.naturalytelser);
+
     const innsending = validerAapenInnsending({
       vedtaksperiodeId: vedtaksperiodeId,
       sykmeldtFnr: sykmeldt.fnr,
@@ -81,23 +85,13 @@ export default function useFyllAapenInnsending() {
           fom: formatDateForSubmit(periode.fom),
           tom: formatDateForSubmit(periode.tom)
         })),
-        egenmeldinger: egenmeldingsperioder
-          ? egenmeldingsperioder
-              .filter((periode) => periode.fom && periode.tom)
-              .map((periode) => ({ fom: formatDateForSubmit(periode.fom), tom: formatDateForSubmit(periode.tom) }))
-          : [],
+        egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
       inntekt: {
         beloep: skjemaData.inntekt?.beloep ?? 0,
         inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
-        naturalytelser: naturalytelser
-          ? naturalytelser?.map((ytelse) => ({
-              naturalytelse: ytelse.type,
-              verdiBeloep: ytelse.verdi,
-              sluttdato: formatDateForSubmit(ytelse.bortfallsdato)
-            }))
-          : [],
+        naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
         endringAarsak: null,
         endringAarsaker: endringAarsakerParsed ?? null
       },
@@ -124,25 +118,6 @@ function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsper
     perioder = egenmeldingsperioder;
   }
   return perioder;
-}
-
-function konverterRefusjonEndringer(
-  harRefusjonEndringer: YesNo | undefined,
-  refusjonEndringer: Array<EndringsBeloep> | undefined
-): RefusjonEndring[] | undefined {
-  const refusjoner: RefusjonEndring[] | undefined =
-    harRefusjonEndringer === 'Ja' && refusjonEndringer
-      ? refusjonEndringer.map((endring) => ({
-          beloep: endring.beloep!,
-          startdato: formatDateForSubmit(endring.dato)
-        }))
-      : undefined;
-
-  if (refusjoner && refusjoner.length > 0) {
-    return refusjoner;
-  } else {
-    return [];
-  }
 }
 
 export function skalSendeArbeidsgiverperiode(begrunnelse?: Begrunnelse, perioder?: Periode[]): boolean {
