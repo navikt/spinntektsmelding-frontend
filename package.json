@@ -80,7 +80,7 @@
     "vitest-fetch-mock": "^0.4.5",
     "vitest-sonar-reporter": "^2.0.0"
   },
-  "packageManager": "yarn@4.7.0",
+  "packageManager": "yarn@4.8.1",
   "resolutions": {
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3"
