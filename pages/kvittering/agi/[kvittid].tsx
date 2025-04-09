@@ -50,6 +50,7 @@ import { z } from 'zod';
 import { kvitteringNavNoSchema } from '../../../schema/mottattKvitteringSchema';
 import { EndringAarsak } from '../../../validators/validerAapenInnsending';
 import { EndringsBeloep } from '../../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import maserEndringAarsaker from '../../../utils/maserEndringAarsaker';
 
 type PersonData = {
   navn: string;
@@ -288,6 +289,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const visningEndringAarsaker = maserEndringAarsaker(endringAarsak, endringAarsaker);
 
   return (
     <div className={styles.container}>
@@ -360,24 +362,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <Heading2>Beregnet månedslønn</Heading2>
           <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
           <BodyShort>{formatCurrency(inntekt.beregnetInntekt)} kr/måned</BodyShort>
-          {endringAarsak && (
-            <>
+
+          {visningEndringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
+            <Fragment key={endring?.aarsak + endringIndex}>
               <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
-              {formatBegrunnelseEndringBruttoinntekt(endringAarsak.aarsak as string)}
-              <EndringAarsakVisning
-                aarsak={endringAarsak.aarsak}
-                gjelderFra={endringAarsak.gjelderFra}
-                bleKjent={endringAarsak.bleKjent}
-                perioder={endringAarsak.perioder}
-              />
-            </>
-          )}
-          {endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
-            <Fragment key={endring.aarsak + endringIndex}>
-              <div className={lokalStyles.uthevet}>Endret med årsak</div>
-
-              {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
+              {formatBegrunnelseEndringBruttoinntekt(endring?.aarsak as string)}
               <EndringAarsakVisning endringAarsak={endring} />
             </Fragment>
           ))}
@@ -447,7 +437,7 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         kvittid: context.query.kvittid,
-        kvittering: {},
+        kvittering: null,
         kvitteringStatus: 404,
         dataFraBackend: false
       }

@@ -106,13 +106,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         });
       }
 
-      if (lonnISykefravaeret?.status === 'Ja') {
-        errors.push({
-          text: 'Vennligst angi om refusjonskravet opphører.',
-          felt: 'lus-sluttdato-velg'
-        });
-      }
-
       if (!opplysningerBekreftet) {
         errors.push({
           text: feiltekster.BEKREFT_OPPLYSNINGER,
