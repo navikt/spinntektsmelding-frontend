@@ -7,7 +7,8 @@ import validerAapenInnsending, { RefusjonEndring } from '../validators/validerAa
 import {
   SendtPeriode,
   formaterRedusertLoennIAgp,
-  konverterPerioderFraMottattTilInterntFormat
+  konverterPerioderFraMottattTilInterntFormat,
+  mapNaturalytelserToData
 } from './useFyllInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
 import { z } from 'zod';
@@ -19,11 +20,11 @@ export default function useFyllAapenInnsending() {
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
-  const [fullLonnIArbeidsgiverPerioden, setInnsenderTelefon] = useBoundStore((state) => [
+  const [fullLonnIArbeidsgiverPerioden, setInnsenderTelefon, initNaturalytelser] = useBoundStore((state) => [
     state.fullLonnIArbeidsgiverPerioden,
-    state.setInnsenderTelefon
+    state.setInnsenderTelefon,
+    state.initNaturalytelser
   ]);
-  const naturalytelser = useBoundStore((state) => state.naturalytelser);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
@@ -66,6 +67,8 @@ export default function useFyllAapenInnsending() {
 
     setInnsenderTelefon(skjemaData.avsenderTlf);
 
+    initNaturalytelser(skjemaData.inntekt?.naturalytelser);
+
     const innsending = validerAapenInnsending({
       vedtaksperiodeId: vedtaksperiodeId,
       sykmeldtFnr: sykmeldt.fnr,
@@ -91,13 +94,7 @@ export default function useFyllAapenInnsending() {
       inntekt: {
         beloep: skjemaData.inntekt?.beloep ?? 0,
         inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
-        naturalytelser: naturalytelser
-          ? naturalytelser?.map((ytelse) => ({
-              naturalytelse: ytelse.type,
-              verdiBeloep: ytelse.verdi,
-              sluttdato: formatDateForSubmit(ytelse.bortfallsdato)
-            }))
-          : [],
+        naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
         endringAarsak: null,
         endringAarsaker: endringAarsakerParsed ?? null
       },

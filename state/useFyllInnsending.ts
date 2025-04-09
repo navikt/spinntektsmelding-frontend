@@ -134,7 +134,7 @@ export default function useFyllInnsending() {
               bestemmendeFraværsdag && bestemmendeFraværsdag.length > 0
                 ? bestemmendeFraværsdag
                 : formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
-            naturalytelser: mapNaturalytelserToData(skjemaData.inntekt.naturalytelser),
+            naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
             endringAarsak: endringAarsakParsed,
             endringAarsaker: endringAarsakerParsed
           }
@@ -180,7 +180,7 @@ function mapEgenmeldingsperioder(egenmeldingsperioder: Periode[] | undefined) {
     : [];
 }
 
-function mapNaturalytelserToData(naturalytelser: Naturalytelse[] | undefined) {
+export function mapNaturalytelserToData(naturalytelser: Naturalytelse[] | undefined) {
   return naturalytelser
     ? naturalytelser?.map((ytelse) => ({
         naturalytelse: verdiEllerBlank(ytelse.naturalytelse) as z.infer<typeof NaturalytelseEnum>,
