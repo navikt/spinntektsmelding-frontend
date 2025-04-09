@@ -1,6 +1,6 @@
 import { isValid } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
+import finnBestemmendeFravaersdag, { tidPeriode } from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { LonnIArbeidsgiverperioden, Naturalytelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
@@ -15,11 +15,9 @@ import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSc
 import { Opplysningstype } from './useForespurtDataStore';
 import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 import { NaturalytelseEnum } from '../schema/NaturalytelseEnum';
+import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
 
-export interface SendtPeriode {
-  fom: TDateISODate;
-  tom: TDateISODate;
-}
+export type SendtPeriode = z.infer<typeof apiPeriodeSchema>;
 
 export default function useFyllInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
@@ -172,7 +170,7 @@ function mapArbeidsgiverPerioder(
     : [];
 }
 
-function mapEgenmeldingsperioder(egenmeldingsperioder: Periode[] | undefined) {
+export function mapEgenmeldingsperioder(egenmeldingsperioder: Periode[] | undefined) {
   return egenmeldingsperioder
     ? egenmeldingsperioder
         .filter((periode) => periode.fom && periode.tom)
@@ -240,8 +238,8 @@ export function konverterPerioderFraMottattTilInterntFormat(
     : undefined;
 }
 
-function finnInnsendbareArbeidsgiverperioder(
-  arbeidsgiverperioder: Periode[] | undefined,
+function finnInnsendbareArbeidsgiverperioder<T extends tidPeriode>(
+  arbeidsgiverperioder: T[] | undefined,
   harForespurtArbeidsgiverperiode: boolean
 ): SendtPeriode[] | [] {
   if (!harForespurtArbeidsgiverperiode) {
@@ -263,7 +261,7 @@ function verdiEllerNull(verdi: number | undefined): number {
   return verdi ?? 0;
 }
 
-function konverterRefusjonEndringer(
+export function konverterRefusjonEndringer(
   harRefusjonEndringer: YesNo | undefined,
   refusjonEndringer: Array<EndringsBeloep> | undefined
 ): RefusjonEndring[] | [] {
