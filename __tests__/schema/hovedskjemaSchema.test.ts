@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import { aa } from 'vitest/dist/chunks/reporters.d.CqBhtcTq.js';
 
 describe('hovedskjemaSchema', () => {
   it('should pass validation when all fields are correct', () => {
@@ -56,5 +57,19 @@ describe('hovedskjemaSchema', () => {
       avsenderTlf: '12345678'
     };
     expect(() => hovedskjemaSchema.parse(validData)).not.toThrow();
+  });
+
+  it('should fail validation when two endringAarsaker are identical', () => {
+    const invalidData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: -100,
+        endringAarsaker: [
+          { aarsak: 'Bonus', begrunnelse: 'Test' },
+          { aarsak: 'Bonus', begrunnelse: 'Test' }
+        ]
+      }
+    };
+    expect(() => hovedskjemaSchema.parse(invalidData)).toThrow();
   });
 });
