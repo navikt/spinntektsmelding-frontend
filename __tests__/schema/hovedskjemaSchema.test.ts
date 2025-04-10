@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
-import { aa } from 'vitest/dist/chunks/reporters.d.CqBhtcTq.js';
 
 describe('hovedskjemaSchema', () => {
   it('should pass validation when all fields are correct', () => {
