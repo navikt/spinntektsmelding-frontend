@@ -12,6 +12,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import stringishToNumber from '../../utils/stringishToNumber';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import ButtonSlette from '../ButtonSlette';
+import { ExclamationmarkTriangleFillIcon } from '@navikt/aksel-icons';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
@@ -75,6 +76,15 @@ export default function Aarsaksvelger({
               />
             )}
             <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
+              {errors?.inntekt?.endringAarsaker?.root && key === 1 && (
+                <p
+                  className='navds-error-message navds-label navds-error-message--show-icon'
+                  id='inntekt.endringAarsaker.root'
+                >
+                  <ExclamationmarkTriangleFillIcon />
+                  {errors?.inntekt?.endringAarsaker?.root?.message}
+                </p>
+              )}
               <SelectEndringBruttoinntekt
                 error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
                 id={`inntekt.endringAarsaker.${key}.aarsak`}
