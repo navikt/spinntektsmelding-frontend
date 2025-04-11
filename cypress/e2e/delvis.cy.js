@@ -44,7 +44,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           inntektsdato: '2024-12-05',
           naturalytelser: [],
           endringAarsak: null,
-          endringAarsaker: null
+          endringAarsaker: []
         },
         refusjon: null,
         avsenderTlf: '12345678'

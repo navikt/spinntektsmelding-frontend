@@ -108,7 +108,7 @@ export default function useFyllInnsending() {
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
           return konverterEndringAarsakSchema.parse(endringAarsak);
         })
-      : null;
+      : [];
 
     setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
 
