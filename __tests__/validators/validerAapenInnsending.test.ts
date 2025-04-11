@@ -55,7 +55,7 @@ describe('validerAapenInnsending', () => {
         beloep: 1000,
         inntektsdato: '2002-02-02',
         naturalytelser: [],
-        endringAarsak: null,
+
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: {

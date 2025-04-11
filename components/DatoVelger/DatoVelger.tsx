@@ -26,7 +26,6 @@ export default function DatoVelger({
   defaultMonth,
   name
 }: Readonly<DatoVelgerProps>) {
-  console.log('DatoVelger', name, defaultSelected);
   if (!defaultSelected || !isValid(defaultSelected)) {
     defaultSelected = undefined;
   }

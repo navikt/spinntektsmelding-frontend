@@ -32,7 +32,10 @@ export default function Bruttoinntekt({
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
-  const [setBareNyMaanedsinntekt] = useBoundStore((state) => [state.setBareNyMaanedsinntekt]);
+  const [setBareNyMaanedsinntekt, opprinneligbruttoinntekt] = useBoundStore((state) => [
+    state.setBareNyMaanedsinntekt,
+    state.opprinneligbruttoinntekt
+  ]);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
@@ -42,7 +45,7 @@ export default function Bruttoinntekt({
   const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
-  const { watch } = useFormContext();
+  const { watch, setValue } = useFormContext();
 
   const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -53,6 +56,9 @@ export default function Bruttoinntekt({
     });
 
     setEndreMaanedsinntekt(false);
+    setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+    setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? []);
+
     tilbakestillMaanedsinntekt();
   };
 

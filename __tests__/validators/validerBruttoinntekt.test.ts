@@ -32,7 +32,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       inntekt: {
         beloep: 12345,
         endringAarsaker: null,
-        endringAarsak: null,
+
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -54,7 +54,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       inntekt: {
         beloep: -1,
         endringAarsaker: null,
-        endringAarsak: null,
+
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -82,7 +82,7 @@ describe.concurrent('validerBruttoinntekt', () => {
       inntekt: {
         beloep: 1234,
         endringAarsaker: [{ aarsak: '' }],
-        endringAarsak: null,
+
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -112,7 +112,6 @@ describe.concurrent('validerBruttoinntekt', () => {
         beloep: 123,
         endringAarsaker: [{ aarsak: '' }],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -143,7 +142,6 @@ describe.concurrent('validerBruttoinntekt', () => {
         beloep: 0,
         endringAarsaker: [{ aarsak: '' }],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -173,7 +171,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -214,7 +211,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -264,7 +260,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -302,7 +297,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -334,7 +328,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -364,7 +357,6 @@ describe.concurrent('validerBruttoinntekt', () => {
         beloep: 123,
         endringAarsaker: [{ aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring }],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -496,7 +488,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -530,7 +521,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -570,7 +560,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -607,7 +596,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -640,7 +628,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -674,7 +661,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -714,7 +700,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -751,7 +736,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -785,7 +769,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -819,7 +802,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -853,7 +835,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -887,7 +868,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -921,7 +901,6 @@ describe.concurrent('validerBruttoinntekt', () => {
           }
         ],
 
-        endringAarsak: null,
         inntektsdato: '2021-01-01',
         naturalytelser: []
       }
@@ -993,7 +972,6 @@ it('should return an error when sykefravær property is missing', () => {
         }
       ],
 
-      endringAarsak: null,
       inntektsdato: '2021-01-01',
       naturalytelser: []
     }
@@ -1030,7 +1008,6 @@ it('should return an error when sykefravær fom & tom is missing', () => {
         }
       ],
 
-      endringAarsak: null,
       inntektsdato: '2021-01-01',
       naturalytelser: []
     }
@@ -1070,7 +1047,6 @@ it('should return an error when Sykefravaer fom is missing', () => {
         }
       ],
 
-      endringAarsak: null,
       inntektsdato: '2021-01-01',
       naturalytelser: []
     }
@@ -1107,7 +1083,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
 //         }
 //       ],
 
-//       endringAarsak: null,
+//
 //       inntektsdato: '2021-01-01',
 //       naturalytelser: []
 //     }

@@ -92,8 +92,7 @@ export default function useFyllAapenInnsending() {
         beloep: skjemaData.inntekt?.beloep ?? 0,
         inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
         naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
-        endringAarsak: null,
-        endringAarsaker: endringAarsakerParsed ?? null
+        endringAarsaker: endringAarsakerParsed ?? []
       },
       refusjon:
         lonnISykefravaeret?.status === 'Ja'

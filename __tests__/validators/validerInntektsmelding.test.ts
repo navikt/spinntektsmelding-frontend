@@ -30,7 +30,7 @@ describe('validerInntektsmelding', () => {
       inntekt: {
         beloep: 12345,
         endringAarsaker: null,
-        endringAarsak: null,
+
         inntektsdato: '2021-01-01',
         naturalytelser: [],
         harBortfallAvNaturalytelser: false
@@ -76,7 +76,7 @@ describe('validerInntektsmelding', () => {
       inntekt: {
         beloep: 12345,
         endringAarsaker: null,
-        endringAarsak: null,
+
         inntektsdato: '2021-01-01',
         naturalytelser: [],
         harBortfallAvNaturalytelser: false

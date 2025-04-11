@@ -146,7 +146,6 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
           beloep: 7500,
           inntektsdato: '2024-09-10',
           naturalytelser: [],
-          endringAarsak: null,
           endringAarsaker: [
             {
               aarsak: 'Ferie',
@@ -268,7 +267,6 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
           beloep: 7500,
           inntektsdato: '2024-09-10',
           naturalytelser: [],
-          endringAarsak: null,
           endringAarsaker: [
             {
               aarsak: 'VarigLoennsendring',
