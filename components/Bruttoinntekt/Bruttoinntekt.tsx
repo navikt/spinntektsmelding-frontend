@@ -56,11 +56,9 @@ export default function Bruttoinntekt({
     });
 
     setEndreMaanedsinntekt(false);
-    setValue('inntekt.beloep', opprinneligbruttoinntekt.bruttoInntekt);
-    setValue('inntekt.endringAarsaker', opprinneligbruttoinntekt.endringAarsaker ?? null);
-    setValue('inntekt.endringAarsak', undefined);
+    setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+    setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
 
-    setBareNyMaanedsinntekt(undefined);
     tilbakestillMaanedsinntekt();
   };
 
