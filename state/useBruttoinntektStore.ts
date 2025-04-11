@@ -275,7 +275,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     );
   },
   setEndringAarsaker: (endringAarsaker: Array<EndringAarsak | ApiEndringAarsak>) => {
-    const normalisertEndringAarsaker = endringAarsaker ? endringAarsaker.map(normaliserEndringAarsak) : undefined;
+    const normalisertEndringAarsaker = endringAarsaker ? endringAarsaker.map(normaliserEndringAarsak) : [];
     set(
       produce((state) => {
         state.bruttoinntekt.endringAarsaker = normalisertEndringAarsaker;

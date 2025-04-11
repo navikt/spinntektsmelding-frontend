@@ -57,7 +57,7 @@ export default function Bruttoinntekt({
 
     setEndreMaanedsinntekt(false);
     setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
-    setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
+    setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? []);
 
     tilbakestillMaanedsinntekt();
   };
