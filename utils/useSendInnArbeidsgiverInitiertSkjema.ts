@@ -22,7 +22,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
-  const setKvitteringsdata = useBoundStore((state) => state.setKvitteringsdata);
+  const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
   const errorResponse = useErrorRespons();
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
@@ -129,7 +129,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
       setSkalViseFeilmeldinger(true);
     } else {
-      setKvitteringsdata(validerteData.data);
+      setKvitteringData(validerteData.data);
 
       fyllFeilmeldinger([]);
 

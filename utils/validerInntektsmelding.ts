@@ -102,14 +102,21 @@ export default function validerInntektsmelding(
 
   const fravaersperioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
 
-  const bestemmendeFravaersdag = parseIsoDate(
-    finnBestemmendeFravaersdag(
-      fravaersperioder,
-      state.arbeidsgiverperioder,
-      state.foreslaattBestemmendeFravaersdag,
-      !state.skjaeringstidspunkt
-    )
-  );
+  let kreverAgp = true;
+  if (state.forespurtData?.arbeidsgiverperiode.paakrevd === false) {
+    kreverAgp = false;
+  }
+
+  const bestemmendeFravaersdag = kreverAgp
+    ? parseIsoDate(
+        finnBestemmendeFravaersdag(
+          fravaersperioder,
+          state.arbeidsgiverperioder,
+          state.foreslaattBestemmendeFravaersdag,
+          !state.skjaeringstidspunkt
+        )
+      )
+    : parseIsoDate(state.forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt);
 
   if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && !kunInntektOgRefusjon) {
     feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');

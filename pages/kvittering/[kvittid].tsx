@@ -74,6 +74,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  const forespurtData = useBoundStore((state) => state.forespurtData);
+  const kvitteringData = useBoundStore((state) => state.kvitteringData);
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     gammeltSkjaeringstidspunkt && refusjonEndringer
@@ -118,12 +120,15 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const harForespurtArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = paakrevdeOpplysninger?.includes(forespoerselType.inntekt);
 
-  const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
-    fravaersperioder,
-    arbeidsgiverperioder,
-    foreslaattBestemmendeFravaersdag,
-    !harForespurtArbeidsgiverperiode
-  );
+  const bestemmendeFravaersdag = harForespurtArbeidsgiverperiode
+    ? finnBestemmendeFravaersdag(
+        fravaersperioder,
+        arbeidsgiverperioder,
+        foreslaattBestemmendeFravaersdag,
+        !harForespurtArbeidsgiverperiode
+      )
+    : parseIsoDate(kvitteringData?.inntekt?.inntektsdato);
+
   const visningBestemmendeFravaersdag = harForespurtArbeidsgiverperiode
     ? parseIsoDate(bestemmendeFravaersdag)
     : foreslaattBestemmendeFravaersdag;

@@ -23,11 +23,14 @@ export default function useFyllInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, refusjonskravetOpphoerer] = useBoundStore((state) => [
-    state.fullLonnIArbeidsgiverPerioden,
-    state.lonnISykefravaeret,
-    state.refusjonskravetOpphoerer
-  ]);
+  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, refusjonskravetOpphoerer, forespurtData] = useBoundStore(
+    (state) => [
+      state.fullLonnIArbeidsgiverPerioden,
+      state.lonnISykefravaeret,
+      state.refusjonskravetOpphoerer,
+      state.forespurtData
+    ]
+  );
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
@@ -39,14 +42,14 @@ export default function useFyllInnsending() {
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
   const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
-  const [setEndringAarsaker, setBareNyMaanedsinntekt, setInnsenderTelefon, initNaturalytelser] = useBoundStore(
-    (state) => [
+  const [setEndringAarsaker, setBareNyMaanedsinntekt, setInnsenderTelefon, initNaturalytelser, setKvitteringData] =
+    useBoundStore((state) => [
       state.setEndringAarsaker,
       state.setBareNyMaanedsinntekt,
       state.setInnsenderTelefon,
-      state.initNaturalytelser
-    ]
-  );
+      state.initNaturalytelser,
+      state.setKvitteringData
+    ]);
 
   type FullInnsending = z.infer<typeof fullInnsendingSchema>;
   type Skjema = z.infer<typeof hovedskjemaSchema>;
@@ -59,10 +62,8 @@ export default function useFyllInnsending() {
   ): FullInnsending => {
     setSkalViseFeilmeldinger(true);
 
-    const forespurtData = forespurteOpplysningstyper;
-
-    const harForespurtArbeidsgiverperiode = forespurtData.includes(forespoerselType.arbeidsgiverperiode);
-    const harForespurtInntekt = forespurtData.includes(forespoerselType.inntekt);
+    const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
+    const harForespurtInntekt = forespurteOpplysningstyper.includes(forespoerselType.inntekt);
 
     const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
 
@@ -84,6 +85,7 @@ export default function useFyllInnsending() {
               arbeidsgiverKanFlytteSkjæringstidspunkt()
             )
           );
+<<<<<<< HEAD
     const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
       harForespurtArbeidsgiverperiode,
       perioder,
@@ -94,6 +96,29 @@ export default function useFyllInnsending() {
       bestemmendeFravaersdag,
       beregnetSkjaeringstidspunkt
     );
+=======
+
+    let kreverAgp = true;
+    if (forespurtData?.arbeidsgiverperiode?.paakrevd === false) {
+      kreverAgp = false;
+    }
+    const bestemmendeFraværsdag = kreverAgp
+      ? hentBestemmendeFraværsdag(
+          harForespurtArbeidsgiverperiode,
+          perioder,
+          formatertePerioder,
+          skjaeringstidspunkt,
+          arbeidsgiverKanFlytteSkjæringstidspunkt(),
+          inngangFraKvittering,
+          bestemmendeFravaersdag,
+          beregnetSkjaeringstidspunkt
+        )
+      : forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
+
+    console.log('fyll bestemmendeFraværsdag', bestemmendeFraværsdag);
+
+    const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
+>>>>>>> f222889f (Setter inntektsdato)
 
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
@@ -119,10 +144,7 @@ export default function useFyllInnsending() {
       inntekt: harForespurtInntekt
         ? {
             beloep: skjemaData.inntekt?.beloep ?? 0,
-            inntektsdato:
-              bestemmendeFraværsdag && bestemmendeFraværsdag.length > 0
-                ? bestemmendeFraværsdag
-                : formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
+            inntektsdato: bestemmendeFraværsdag ? bestemmendeFraværsdag : formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
             naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
             endringAarsaker: endringAarsakerParsed
           }
@@ -138,6 +160,10 @@ export default function useFyllInnsending() {
           : null,
       avsenderTlf: skjemaData.avsenderTlf ?? ''
     };
+
+    setKvitteringData(innsendingSkjema);
+
+    console.log('fyll innsendingSkjema', innsendingSkjema);
 
     if (!harForespurtArbeidsgiverperiode) {
       innsendingSkjema.agp = null;

@@ -75,7 +75,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     beloepArbeidsgiverBetalerISykefravaeret,
     avsender,
     sykmeldt,
-    naturalytelser
+    naturalytelser,
+    forespurtData
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -84,7 +85,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.beloepArbeidsgiverBetalerISykefravaeret,
     state.avsender,
     state.sykmeldt,
-    state.naturalytelser
+    state.naturalytelser,
+    state.forespurtData
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -199,6 +201,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   };
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
+    if (!harForespurtArbeidsgiverperiode) {
+      return parseIsoDate(forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt);
+    }
     const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
       altFravaer,
@@ -212,7 +217,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     egenmeldingsperioder,
     foreslaattBestemmendeFravaersdag,
     fravaersperioder,
-    arbeidsgiverKanFlytteSkjæringstidspunkt
+    arbeidsgiverKanFlytteSkjæringstidspunkt,
+    harForespurtArbeidsgiverperiode
   ]);
 
   const inntektsdato = useMemo(() => {
@@ -263,6 +269,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
   const sbTidligereInntekt = !error ? data?.tidligereInntekter : undefined;
+
+  console.log('beregnetBestemmendeFraværsdag', beregnetBestemmendeFraværsdag);
 
   return (
     <div className={styles.container}>
