@@ -25,7 +25,6 @@ const mockSkjema: SkjemaData = {
   bekreft_opplysninger: true,
   inntekt: {
     beloep: 500000,
-    endringAarsak: null,
     endringAarsaker: [{ aarsak: 'Bonus' }]
   },
   avsenderTlf: '12345678'
@@ -79,7 +78,7 @@ describe('useFyllAapenInnsending', () => {
         new Date()
       );
 
-      result.current.setEndringAarsak({ aarsak: 'Bonus' });
+      result.current.setEndringAarsaker([{ aarsak: 'Bonus' }]);
 
       result.current.setInnsenderTelefon('12345678');
       result.current.setVedtaksperiodeId('8d50ef20-37b5-4829-ad83-56219e70b375');
@@ -121,7 +120,7 @@ describe('useFyllAapenInnsending', () => {
           beloep: 500000,
           inntektsdato: '2023-02-14',
           naturalytelser: [],
-          endringAarsak: null,
+
           endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: null,
@@ -156,7 +155,7 @@ describe('useFyllAapenInnsending', () => {
         new Date()
       );
 
-      result.current.setEndringAarsak({ aarsak: 'Bonus' });
+      result.current.setEndringAarsaker([{ aarsak: 'Bonus' }]);
 
       result.current.setInnsenderTelefon('12345678');
       result.current.setVedtaksperiodeId('8d50ef20-37b5-4829-ad83-56219e70b375');
@@ -205,7 +204,7 @@ describe('useFyllAapenInnsending', () => {
           beloep: 500000,
           inntektsdato: '2023-02-14',
           naturalytelser: [],
-          endringAarsak: null,
+
           endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: {
