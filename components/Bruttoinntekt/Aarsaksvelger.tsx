@@ -6,7 +6,6 @@ import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import { Inntekt } from '../../state/state';
 import React, { Fragment, useEffect } from 'react';
-import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import AarsakDetaljer from './AarsakDetaljer';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import stringishToNumber from '../../utils/stringishToNumber';
