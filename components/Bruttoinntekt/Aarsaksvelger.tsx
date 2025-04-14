@@ -16,7 +16,6 @@ import ButtonSlette from '../ButtonSlette';
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  defaultEndringAarsak: EndringAarsak;
   visFeilmeldingTekst: (feilmelding: string) => string;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
@@ -26,7 +25,6 @@ interface AarsaksvelgerProps {
 export default function Aarsaksvelger({
   bruttoinntekt,
   clickTilbakestillMaanedsinntekt,
-  defaultEndringAarsak,
   visFeilmeldingTekst,
   bestemmendeFravaersdag,
   nyInnsending,

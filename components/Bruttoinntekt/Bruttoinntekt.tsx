@@ -12,7 +12,6 @@ import formatDate from '../../utils/formatDate';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
-import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
 import { useFormContext } from 'react-hook-form';
 
@@ -32,17 +31,13 @@ export default function Bruttoinntekt({
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
-  const [setBareNyMaanedsinntekt, opprinneligbruttoinntekt] = useBoundStore((state) => [
-    state.setBareNyMaanedsinntekt,
-    state.opprinneligbruttoinntekt
-  ]);
+  const [setBareNyMaanedsinntekt] = useBoundStore((state) => [state.setBareNyMaanedsinntekt]);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
-  const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
   const { watch, setValue } = useFormContext();
@@ -81,7 +76,7 @@ export default function Bruttoinntekt({
     }
   }, [endringAarsaker]);
 
-  const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringAarsak?.aarsak;
+  const endringAvBelop = endreMaanedsinntekt;
 
   const gjennomsnittligInntekt = erSelvbestemt
     ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
@@ -141,7 +136,6 @@ export default function Bruttoinntekt({
         {(endringAvBelop || erBlanktSkjema) && (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
-            defaultEndringAarsak={endringAarsak!}
             visFeilmeldingTekst={visFeilmeldingTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}

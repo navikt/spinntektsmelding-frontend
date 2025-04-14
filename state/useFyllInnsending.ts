@@ -7,7 +7,7 @@ import useBoundStore from './useBoundStore';
 import forespoerselType from '../config/forespoerselType';
 import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
-import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
+import { RefusjonEndring } from '../validators/validerAapenInnsending';
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
@@ -21,7 +21,6 @@ export type SendtPeriode = z.infer<typeof apiPeriodeSchema>;
 
 export default function useFyllInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, refusjonskravetOpphoerer] = useBoundStore((state) => [
