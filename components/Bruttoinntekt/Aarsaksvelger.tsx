@@ -49,7 +49,7 @@ export default function Aarsaksvelger({
 
   useEffect(() => {
     if (fields.length === 0) {
-      replace({});
+      replace([{}]);
     }
   }, [fields, replace]);
 
@@ -80,14 +80,13 @@ export default function Aarsaksvelger({
                 begrunnelserId={`inntekt.endringAarsaker`}
               />
             </div>
+
+            <div>
+              <ButtonSlette className={lokalStyles.kontrollerknapp} onClick={() => remove(key)} title={'Slett'} />
+            </div>
             {!kanIkkeTilbakestilles && key === 0 && (
               <div>
                 <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={clickTilbakestillMaanedsinntekt} />
-              </div>
-            )}
-            {key > 0 && (
-              <div>
-                <ButtonSlette className={lokalStyles.kontrollerknapp} onClick={() => remove(key)} title={'Slett'} />
               </div>
             )}
           </div>
