@@ -32,6 +32,7 @@ type ApiEndringAarsak = z.infer<typeof EndringAarsakSchema>;
 
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
+  opprinneligbruttoinntekt: Inntekt;
   tidligereInntekt?: Array<HistoriskInntekt>;
   opprinneligeInntekt?: Array<HistoriskInntekt>;
   sisteLonnshentedato?: Date;
@@ -50,7 +51,6 @@ export interface BruttoinntektState {
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
-  setEndringAarsak: (endringAarsak: EndringAarsak | ApiEndringAarsak) => void;
   setEndringAarsaker: (endringAarsaker: Array<EndringAarsak | ApiEndringAarsak>) => void;
 }
 
@@ -172,13 +172,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.bruttoinntekt.endringAarsak.aarsak = undefined;
         }
 
-        if (!state.opprinneligbruttoinntekt.endringAarsak) {
-          state.opprinneligbruttoinntekt.endringAarsak = { aarsak: undefined };
-        }
-        if (!state.opprinneligbruttoinntekt.endringAarsak.aarsak) {
-          state.opprinneligbruttoinntekt.endringAarsak.aarsak = undefined;
-        }
-
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         state.opprinneligeInntekt = tidligereInntekt;
 
@@ -281,19 +274,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     );
   },
-  setEndringAarsak: (endringAarsak: EndringAarsak | ApiEndringAarsak) => {
-    endringAarsak = normaliserEndringAarsak(endringAarsak);
-
-    set(
-      produce((state) => {
-        state.bruttoinntekt.endringAarsak = endringAarsak;
-        state.opprinneligbruttoinntekt.endringAarsak = endringAarsak;
-        return state;
-      })
-    );
-  },
   setEndringAarsaker: (endringAarsaker: Array<EndringAarsak | ApiEndringAarsak>) => {
-    const normalisertEndringAarsaker = endringAarsaker?.map(normaliserEndringAarsak);
+    const normalisertEndringAarsaker = endringAarsaker ? endringAarsaker.map(normaliserEndringAarsak) : [];
     set(
       produce((state) => {
         state.bruttoinntekt.endringAarsaker = normalisertEndringAarsaker;
@@ -368,15 +350,15 @@ function normaliserEndringAarsak(endringAarsak: EndringAarsak | ApiEndringAarsak
       }
 
       case 'Tariffendring': {
-        endringAarsak.bleKjent = konverterTilDate(endringAarsak.bleKjent);
-        endringAarsak.gjelderFra = konverterTilDate(endringAarsak.gjelderFra);
+        endringAarsak.bleKjent = konverterTilDate(endringAarsak.bleKjent)!;
+        endringAarsak.gjelderFra = konverterTilDate(endringAarsak.gjelderFra)!;
 
         break;
       }
       case 'NyStilling':
       case 'NyStillingsprosent':
       case 'VarigLoennsendring': {
-        endringAarsak.gjelderFra = konverterTilDate(endringAarsak.gjelderFra);
+        endringAarsak.gjelderFra = konverterTilDate(endringAarsak.gjelderFra)!;
 
         break;
       }

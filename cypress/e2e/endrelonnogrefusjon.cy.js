@@ -135,7 +135,7 @@ describe('Utfylling og innsending av skjema', () => {
           beloep: 84333.33,
           inntektsdato: '2023-01-30',
           naturalytelser: [],
-          endringAarsak: null,
+
           endringAarsaker: [
             {
               aarsak: 'Bonus'
@@ -229,7 +229,7 @@ describe('Utfylling og innsending av skjema', () => {
           beloep: 75000,
           inntektsdato: '2023-02-02',
           naturalytelser: [],
-          endringAarsak: null,
+
           endringAarsaker: [
             {
               aarsak: 'Ferie',
@@ -348,7 +348,7 @@ describe('Utfylling og innsending av skjema', () => {
           beloep: 84333.33,
           inntektsdato: '2023-01-30',
           naturalytelser: [],
-          endringAarsak: null,
+
           endringAarsaker: [
             {
               aarsak: 'VarigLoennsendring',

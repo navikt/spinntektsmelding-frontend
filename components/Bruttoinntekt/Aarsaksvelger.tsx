@@ -6,7 +6,6 @@ import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import { Inntekt } from '../../state/state';
 import React, { Fragment, useEffect } from 'react';
-import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import AarsakDetaljer from './AarsakDetaljer';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import stringishToNumber from '../../utils/stringishToNumber';
@@ -17,7 +16,6 @@ import { ExclamationmarkTriangleFillIcon } from '@navikt/aksel-icons';
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
   clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  defaultEndringAarsak: EndringAarsak;
   visFeilmeldingTekst: (feilmelding: string) => string;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
@@ -27,7 +25,6 @@ interface AarsaksvelgerProps {
 export default function Aarsaksvelger({
   bruttoinntekt,
   clickTilbakestillMaanedsinntekt,
-  defaultEndringAarsak,
   visFeilmeldingTekst,
   bestemmendeFravaersdag,
   nyInnsending,
@@ -53,7 +50,7 @@ export default function Aarsaksvelger({
 
   useEffect(() => {
     if (fields.length === 0) {
-      replace({});
+      replace([{}]);
     }
   }, [fields, replace]);
 
@@ -93,14 +90,13 @@ export default function Aarsaksvelger({
                 begrunnelserId={`inntekt.endringAarsaker`}
               />
             </div>
+
+            <div>
+              <ButtonSlette className={lokalStyles.kontrollerknapp} onClick={() => remove(key)} title={'Slett'} />
+            </div>
             {!kanIkkeTilbakestilles && key === 0 && (
               <div>
                 <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={clickTilbakestillMaanedsinntekt} />
-              </div>
-            )}
-            {key > 0 && (
-              <div>
-                <ButtonSlette className={lokalStyles.kontrollerknapp} onClick={() => remove(key)} title={'Slett'} />
               </div>
             )}
           </div>

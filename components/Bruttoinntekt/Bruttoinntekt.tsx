@@ -12,7 +12,6 @@ import formatDate from '../../utils/formatDate';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
-import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
 import { useFormContext } from 'react-hook-form';
 
@@ -39,10 +38,9 @@ export default function Bruttoinntekt({
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const henterData = useBoundStore((state) => state.henterData);
   const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
-  const endringAarsak: EndringAarsak | undefined = useBoundStore((state) => state.bruttoinntekt.endringAarsak);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
-  const { watch } = useFormContext();
+  const { watch, setValue } = useFormContext();
 
   const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -53,6 +51,9 @@ export default function Bruttoinntekt({
     });
 
     setEndreMaanedsinntekt(false);
+    setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+    setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? []);
+
     tilbakestillMaanedsinntekt();
   };
 
@@ -75,7 +76,7 @@ export default function Bruttoinntekt({
     }
   }, [endringAarsaker]);
 
-  const endringAvBelop = endreMaanedsinntekt || bruttoinntekt.endringAarsak?.aarsak;
+  const endringAvBelop = endreMaanedsinntekt;
 
   const gjennomsnittligInntekt = erSelvbestemt
     ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
@@ -135,7 +136,6 @@ export default function Bruttoinntekt({
         {(endringAvBelop || erBlanktSkjema) && (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
-            defaultEndringAarsak={endringAarsak!}
             visFeilmeldingTekst={visFeilmeldingTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}

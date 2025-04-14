@@ -50,8 +50,8 @@ describe('Utfylling og innsending av skjema', () => {
           beloep: 45000,
           inntektsdato: '2023-08-23',
           naturalytelser: [],
-          endringAarsak: null,
-          endringAarsaker: null
+
+          endringAarsaker: []
         },
         refusjon: null,
         avsenderTlf: '12345678'

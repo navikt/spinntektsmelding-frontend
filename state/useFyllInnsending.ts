@@ -7,7 +7,7 @@ import useBoundStore from './useBoundStore';
 import forespoerselType from '../config/forespoerselType';
 import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
-import { EndringAarsak, RefusjonEndring } from '../validators/validerAapenInnsending';
+import { RefusjonEndring } from '../validators/validerAapenInnsending';
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
@@ -21,7 +21,6 @@ export type SendtPeriode = z.infer<typeof apiPeriodeSchema>;
 
 export default function useFyllInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, refusjonskravetOpphoerer] = useBoundStore((state) => [
@@ -58,13 +57,6 @@ export default function useFyllInnsending() {
     forespurteOpplysningstyper: Opplysningstype[],
     skjemaData: Skjema
   ): FullInnsending => {
-    const endringAarsak: EndringAarsak | null =
-      bruttoinntekt.endringAarsak !== null &&
-      bruttoinntekt.endringAarsak?.aarsak !== undefined &&
-      bruttoinntekt.endringAarsak?.aarsak !== ''
-        ? bruttoinntekt.endringAarsak
-        : null;
-
     setSkalViseFeilmeldinger(true);
 
     const forespurtData = forespurteOpplysningstyper;
@@ -102,13 +94,12 @@ export default function useFyllInnsending() {
       bestemmendeFravaersdag,
       beregnetSkjaeringstidspunkt
     );
-    const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
 
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
           return konverterEndringAarsakSchema.parse(endringAarsak);
         })
-      : null;
+      : [];
 
     setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
 
@@ -133,7 +124,6 @@ export default function useFyllInnsending() {
                 ? bestemmendeFraværsdag
                 : formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
             naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
-            endringAarsak: endringAarsakParsed,
             endringAarsaker: endringAarsakerParsed
           }
         : null,

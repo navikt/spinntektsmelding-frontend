@@ -15,7 +15,6 @@ export type YesNo = 'Ja' | 'Nei';
 export interface Inntekt {
   bruttoInntekt?: number;
   manueltKorrigert: boolean;
-  endringAarsak?: EndringAarsak;
   endringAarsaker?: Array<EndringAarsak>;
 }
 

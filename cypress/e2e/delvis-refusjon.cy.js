@@ -62,8 +62,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 26000,
           inntektsdato: '2023-08-08',
           naturalytelser: [],
-          endringAarsak: null,
-          endringAarsaker: null
+
+          endringAarsaker: []
         },
         refusjon: null,
         avsenderTlf: '12345678'
@@ -141,7 +141,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 50000,
           inntektsdato: '2023-08-08',
           naturalytelser: [],
-          endringAarsak: null,
+
           endringAarsaker: [
             {
               aarsak: 'VarigLoennsendring',
@@ -231,7 +231,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           beloep: 50000,
           inntektsdato: '2023-08-08',
           naturalytelser: [],
-          endringAarsak: null,
+
           endringAarsaker: [
             {
               aarsak: 'Ferie',
