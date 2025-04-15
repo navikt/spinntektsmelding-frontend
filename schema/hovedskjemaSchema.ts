@@ -15,18 +15,7 @@ export const hovedskjemaSchema = z.object({
           invalid_type_error: 'Vennligst angi bruttoinntekt på formatet 1234,50'
         })
         .min(0),
-      endringAarsaker: z.nullable(
-        z.array(EndringAarsakSchema).refine(
-          (val) => {
-            const aarsaker = val.map((v) => v.aarsak);
-            const uniqueAarsaker = new Set(aarsaker);
-            return aarsaker.length > 0 && uniqueAarsaker.size === aarsaker.length;
-          },
-          {
-            message: 'Det kan ikke være flere like begrunnelser'
-          }
-        )
-      ),
+      endringAarsaker: z.nullable(z.array(EndringAarsakSchema)),
       harBortfallAvNaturalytelser: z.boolean(),
       naturalytelser: z.array(naturalytelserSchema).optional()
     })
