@@ -85,18 +85,6 @@ export default function useFyllInnsending() {
               arbeidsgiverKanFlytteSkjæringstidspunkt()
             )
           );
-<<<<<<< HEAD
-    const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
-      harForespurtArbeidsgiverperiode,
-      perioder,
-      formatertePerioder,
-      skjaeringstidspunkt,
-      arbeidsgiverKanFlytteSkjæringstidspunkt(),
-      inngangFraKvittering,
-      bestemmendeFravaersdag,
-      beregnetSkjaeringstidspunkt
-    );
-=======
 
     let kreverAgp = true;
     if (forespurtData?.arbeidsgiverperiode?.paakrevd === false) {
@@ -116,9 +104,6 @@ export default function useFyllInnsending() {
       : forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
 
     console.log('fyll bestemmendeFraværsdag', bestemmendeFraværsdag);
-
-    const endringAarsakParsed = endringAarsak ? konverterEndringAarsakSchema.parse(endringAarsak) : null;
->>>>>>> f222889f (Setter inntektsdato)
 
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
@@ -161,13 +146,13 @@ export default function useFyllInnsending() {
       avsenderTlf: skjemaData.avsenderTlf ?? ''
     };
 
-    setKvitteringData(innsendingSkjema);
-
-    console.log('fyll innsendingSkjema', innsendingSkjema);
-
     if (!harForespurtArbeidsgiverperiode) {
       innsendingSkjema.agp = null;
     }
+
+    setKvitteringData(innsendingSkjema);
+
+    console.log('fyll innsendingSkjema', innsendingSkjema);
 
     return innsendingSkjema;
   };

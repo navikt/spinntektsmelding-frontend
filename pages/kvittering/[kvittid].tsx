@@ -120,19 +120,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const harForespurtArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = paakrevdeOpplysninger?.includes(forespoerselType.inntekt);
 
-  const bestemmendeFravaersdag = harForespurtArbeidsgiverperiode
-    ? finnBestemmendeFravaersdag(
-        fravaersperioder,
-        arbeidsgiverperioder,
-        foreslaattBestemmendeFravaersdag,
-        !harForespurtArbeidsgiverperiode
-      )
-    : parseIsoDate(kvitteringData?.inntekt?.inntektsdato);
-
-  const visningBestemmendeFravaersdag = harForespurtArbeidsgiverperiode
-    ? parseIsoDate(bestemmendeFravaersdag)
-    : foreslaattBestemmendeFravaersdag;
-
+  const bestemmendeFravaersdag = kvitteringData
+    ? parseIsoDate(kvitteringData?.inntekt?.inntektsdato)
+    : parseIsoDate(gammeltSkjaeringstidspunkt);
+  console.log('bestemmendeFravaersdag', bestemmendeFravaersdag);
+  const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
+  console.log('visningBestemmendeFravaersdag', visningBestemmendeFravaersdag);
   useEffect(() => {
     if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem) {
       if (!kvitteringSlug || kvitteringSlug === '') return;
