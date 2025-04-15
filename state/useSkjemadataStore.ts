@@ -31,7 +31,7 @@ export interface SkjemadataState {
   setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEksternSchema) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
-  setKvitteringData: (data: any) => void;
+  setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
   setVedtaksperiodeId: (id: string) => void;
   setForespoerselSistOppdatert: (tidspunkt: string | Date) => void;
   tracker: string;
