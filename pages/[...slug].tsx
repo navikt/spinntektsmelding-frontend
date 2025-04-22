@@ -202,7 +202,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     if (!harForespurtArbeidsgiverperiode) {
-      return parseIsoDate(forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt);
+      return parseIsoDate(
+        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
+      );
     }
     const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
@@ -269,8 +271,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
   const sbTidligereInntekt = !error ? data?.tidligereInntekter : undefined;
-
-  console.log('beregnetBestemmendeFraværsdag', beregnetBestemmendeFraværsdag);
 
   return (
     <div className={styles.container}>

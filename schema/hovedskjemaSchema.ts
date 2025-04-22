@@ -22,10 +22,8 @@ export const hovedskjemaSchema = z.object({
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: 'Vennligst angi årsak til endringen.',
-              path: ['0', 'aarsak'],
-              fatal: true
+              path: ['0', 'aarsak']
             });
-            return z.NEVER;
           }
           const aarsaker = val.map((v) => v.aarsak);
           const uniqueAarsaker = new Set(aarsaker);

@@ -103,8 +103,6 @@ export default function useFyllInnsending() {
         )
       : forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
 
-    console.log('fyll bestemmendeFraværsdag', bestemmendeFraværsdag);
-
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
           return konverterEndringAarsakSchema.parse(endringAarsak);
@@ -151,8 +149,6 @@ export default function useFyllInnsending() {
     }
 
     setKvitteringData(innsendingSkjema);
-
-    console.log('fyll innsendingSkjema', innsendingSkjema);
 
     return innsendingSkjema;
   };

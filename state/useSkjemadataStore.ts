@@ -34,7 +34,6 @@ export interface SkjemadataState {
   setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
   setVedtaksperiodeId: (id: string) => void;
   setForespoerselSistOppdatert: (tidspunkt: string | Date) => void;
-  tracker: string;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
@@ -52,7 +51,6 @@ export interface SkjemadataState {
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
   inngangFraKvittering: false,
   direkteInngangKvittering: false,
-  tracker: nanoid(),
   nyInnsending: true,
   henterInntektsdata: false,
   skjemaFeilet: false,

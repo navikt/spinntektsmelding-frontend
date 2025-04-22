@@ -123,9 +123,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const bestemmendeFravaersdag = kvitteringData
     ? parseIsoDate(kvitteringData?.inntekt?.inntektsdato)
     : parseIsoDate(gammeltSkjaeringstidspunkt);
-  console.log('bestemmendeFravaersdag', bestemmendeFravaersdag);
+
   const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
-  console.log('visningBestemmendeFravaersdag', visningBestemmendeFravaersdag);
+
   useEffect(() => {
     if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem) {
       if (!kvitteringSlug || kvitteringSlug === '') return;

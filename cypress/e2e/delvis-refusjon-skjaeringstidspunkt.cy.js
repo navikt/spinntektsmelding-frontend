@@ -56,7 +56,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         agp: null,
         inntekt: {
           beloep: 55000,
-          inntektsdato: '2024-01-07',
+          inntektsdato: '2023-09-18',
           naturalytelser: [],
 
           endringAarsaker: []
@@ -72,7 +72,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.get('[data-cy="bestemmendefravaersdag"]')
       .invoke('text')
-      .should('match', /07.01.2024/);
+      .should('match', /18.09.2023/);
   });
 
   it('Changes and submit', () => {
@@ -109,7 +109,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .eq(1)
       .click();
 
-    cy.findByLabelText('Månedslønn 07.01.2024').as('maanedslonn');
+    cy.findByLabelText('Månedslønn 18.09.2023').as('maanedslonn');
     cy.get('@maanedslonn')
       .invoke('val')
       .then((str) => str.normalize('NFKC').replace(/ /g, ''))
@@ -152,7 +152,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         agp: null,
         inntekt: {
           beloep: 60000,
-          inntektsdato: '2024-01-07',
+          inntektsdato: '2023-09-18',
           naturalytelser: [],
 
           endringAarsaker: [{ aarsak: 'Bonus' }]
@@ -171,6 +171,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.get('[data-cy="bestemmendefravaersdag"]')
       .invoke('text')
-      .should('match', /07.01.2024/);
+      .should('match', /18.09.2023/);
   });
 });
