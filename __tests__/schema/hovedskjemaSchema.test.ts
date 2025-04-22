@@ -82,7 +82,7 @@ describe('hovedskjemaSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should fail validation when two endringAarsaker are an empty array', () => {
+  it('should not fail validation when endringAarsaker is an empty array', () => {
     const schemaData = {
       bekreft_opplysninger: true,
       inntekt: {
@@ -93,6 +93,7 @@ describe('hovedskjemaSchema', () => {
       avsenderTlf: '12345678'
     };
     const status = hovedskjemaSchema.safeParse(schemaData);
+    expect(status.error).toBeUndefined();
     expect(status.success).toBe(true);
   });
 
@@ -111,7 +112,7 @@ describe('hovedskjemaSchema', () => {
     expect(status.success).toBe(true);
   });
 
-  it('should fail validation when two endringAarsaker are null', () => {
+  it('should not fail validation when endringAarsaker is null', () => {
     const schemaData = {
       bekreft_opplysninger: true,
       inntekt: {
@@ -125,7 +126,7 @@ describe('hovedskjemaSchema', () => {
     expect(status.success).toBe(true);
   });
 
-  it('should fail validation when two endringAarsaker are undefined', () => {
+  it('should not fail validation when endringAarsaker is undefined', () => {
     const schemaData = {
       bekreft_opplysninger: true,
       inntekt: {
@@ -136,7 +137,10 @@ describe('hovedskjemaSchema', () => {
       avsenderTlf: '12345678'
     };
     const status = hovedskjemaSchema.safeParse(schemaData);
-    expect(status.error).toBeUndefined();
-    expect(status.success).toBe(true);
+    expect(status.success).toBe(false);
+    expect(status.error).toBeTruthy();
+    expect(status.error?.flatten().fieldErrors).toEqual({
+      inntekt: ['Invalid input']
+    });
   });
 });

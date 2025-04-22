@@ -115,7 +115,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByRole('button', { name: 'Send' }).click();
 
-    cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
+    cy.findAllByText('Vennligst angi årsak til endringen.').should('be.visible');
     cy.findAllByLabelText('Velg endringsårsak').select('Varig lønnsendring');
 
     cy.findAllByLabelText('Lønnsendring gjelder fra').clear().type('30.06.23');
@@ -203,7 +203,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByRole('button', { name: 'Send' }).click();
 
-    cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
+    cy.findAllByText('Vennligst angi årsak til endringen.').should('be.visible');
     cy.findAllByLabelText('Velg endringsårsak').select('Ferie');
 
     cy.findAllByLabelText('Ferie fra').clear().type('30.06.23');

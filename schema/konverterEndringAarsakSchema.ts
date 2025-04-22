@@ -106,6 +106,6 @@ export const konverterEndringAarsakSchema = z.discriminatedUnion(
     EndringAarsakSammeSomSistSchema
   ],
   {
-    errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak for endringen.' })
+    errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak til endringen.' })
   }
 );
