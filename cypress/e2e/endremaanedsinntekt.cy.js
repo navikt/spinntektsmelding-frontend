@@ -66,7 +66,7 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.findAllByText('Vennligst angi bruttoinntekt på formatet 1234,50').should('exist');
 
-    cy.findAllByText('Vennligst angi årsak for endringen.').should('exist');
+    cy.findAllByText('Vennligst angi årsak til endringen.').should('exist');
 
     cy.get('[data-cy="inntekt-beloep-input"]').clear();
     cy.get('[data-cy="inntekt-beloep-input"]').type('70000');

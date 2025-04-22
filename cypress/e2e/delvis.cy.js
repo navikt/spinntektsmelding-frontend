@@ -8,6 +8,11 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('kvittering');
+
+    cy.intercept('/collect', {
+      statusCode: 202,
+      body: 'OK'
+    }).as('collect');
   });
 
   it('No changes and submit', () => {
@@ -98,7 +103,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByRole('button', { name: 'Send' }).click();
 
-    cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
+    cy.findAllByText('Vennligst angi årsak til endringen.').should('be.visible');
     cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
 
     cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?' })

@@ -65,7 +65,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.findByRole('button', { name: 'Send' }).click();
 
-    cy.findAllByText('Vennligst angi årsak for endringen.').should('be.visible');
+    cy.findAllByText('Vennligst angi årsak til endringen.').should('be.visible');
     cy.findAllByLabelText('Velg endringsårsak').select('Bonus');
 
     cy.findByRole('group', { name: 'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?' })

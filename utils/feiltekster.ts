@@ -19,7 +19,7 @@ const feiltekster = {
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO_VELG: 'Angi om arbeidsgiver betaler lønn under hele perioden.',
   LONN_UNDER_SYKEFRAVAERET_SLUTTDATO: 'Angi siste dato det kreves refusjon for.',
   BEKREFT_OPPLYSNINGER: 'Bekreft at opplysningene gitt er riktig og fullstendige.',
-  ENDRINGSAARSAK_MANGLER: 'Vennligst angi årsak for endringen.',
+  ENDRINGSAARSAK_MANGLER: 'Vennligst angi årsak til endringen.',
   SERVERFEIL_ARBEIDSGIVER: 'Kunne ikke hente ut arbeidsgiverdata.',
   SERVERFEIL_IM: 'Kunne ikke hente ut inntektsmeldingdata.',
   SERVERFEIL_INNTEKT: 'Kunne ikke hente ut inntektsdata.',

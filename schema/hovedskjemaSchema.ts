@@ -15,7 +15,41 @@ export const hovedskjemaSchema = z.object({
           invalid_type_error: 'Vennligst angi bruttoinntekt på formatet 1234,50'
         })
         .min(0),
-      endringAarsaker: z.nullable(z.array(EndringAarsakSchema)),
+      endringAarsaker: z
+        .array(EndringAarsakSchema.or(z.object({})))
+        .superRefine((val, ctx) => {
+          if (JSON.stringify(val) === JSON.stringify([{}])) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Vennligst angi årsak til endringen.',
+              path: ['0', 'aarsak'],
+              fatal: true
+            });
+            return z.NEVER;
+          }
+          const aarsaker = val.map((v) => v.aarsak);
+          const uniqueAarsaker = new Set(aarsaker);
+          if (aarsaker.length > 0 && uniqueAarsaker.size !== aarsaker.length) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Det kan ikke være flere like begrunnelser.',
+              path: ['root'],
+              fatal: true
+            });
+            return z.NEVER;
+          }
+          val.forEach((v, index) => {
+            if (v.aarsak === '' || v.aarsak === undefined) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Vennligst angi årsak til endringen.',
+                path: [index, 'aarsak'],
+                fatal: true
+              });
+            }
+          });
+        })
+        .or(z.null()),
       harBortfallAvNaturalytelser: z.boolean(),
       naturalytelser: z.array(naturalytelserSchema).optional()
     })

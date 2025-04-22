@@ -45,7 +45,7 @@ export default function SelectEndringBruttoinntekt({
 
   const error = findErrorInRHFErrors(id, errors);
   return (
-    <Select label={label ?? 'Velg endringsårsak'} error={error} {...register(id)}>
+    <Select label={label ?? 'Velg endringsårsak'} error={error} id={id} {...register(id)}>
       <option value=''>Velg begrunnelse</option>
       {begrunnelseKeys.map((begrunnelseKey) => (
         <option value={begrunnelseKey} key={begrunnelseKey}>
