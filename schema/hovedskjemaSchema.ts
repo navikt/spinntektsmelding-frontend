@@ -48,8 +48,6 @@ export const hovedskjemaSchema = z.object({
               });
             }
           });
-
-          return z.NEVER;
         })
         .or(z.null()),
       harBortfallAvNaturalytelser: z.boolean(),
