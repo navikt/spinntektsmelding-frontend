@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import { aa } from 'vitest/dist/chunks/reporters.d.CqBhtcTq.js';
 
 describe('hovedskjemaSchema', () => {
   it('should pass validation when all fields are correct', () => {
@@ -142,5 +143,53 @@ describe('hovedskjemaSchema', () => {
     expect(status.error?.flatten().fieldErrors).toEqual({
       inntekt: ['Invalid input']
     });
+  });
+
+  it('should fail validation when the endringsaarsak object is empty.', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 100,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: [{}]
+      },
+      avsenderTlf: '12345678'
+    };
+    const result = hovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(false);
+    expect(result.error?.errors[0].message).toBe('Invalid input');
+    expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
+  });
+
+  it('should fail validation when the endringsaarsak aarsak is an empty string.', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 100,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: [{ aarsak: '' }]
+      },
+      avsenderTlf: '12345678'
+    };
+    const result = hovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(false);
+    expect(result.error?.errors[0].message).toBe('Invalid input');
+    expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
+  });
+
+  it('should fail validation when the endringsaarsak aarsak is undefined.', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 100,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: [{ aarsak: undefined }]
+      },
+      avsenderTlf: '12345678'
+    };
+    const result = hovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(false);
+    expect(result.error?.errors[0].message).toBe('Invalid input');
+    expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
   });
 });
