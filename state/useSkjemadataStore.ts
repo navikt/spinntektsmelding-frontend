@@ -1,7 +1,6 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { nanoid } from 'nanoid';
 import { Opplysningstype } from './useForespurtDataStore';
 import { YesNo } from './state';
 import parseIsoDate from '../utils/parseIsoDate';
