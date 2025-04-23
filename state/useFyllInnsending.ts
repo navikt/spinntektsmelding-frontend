@@ -36,12 +36,13 @@ export default function useFyllInnsending() {
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
+  const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
+  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
-  const bestemmendeFravaersdag = useBoundStore((state) => state.bestemmendeFravaersdag);
   const [setEndringAarsaker, setBareNyMaanedsinntekt, setInnsenderTelefon, initNaturalytelser, setKvitteringData] =
     useBoundStore((state) => [
       state.setEndringAarsaker,
@@ -74,7 +75,7 @@ export default function useFyllInnsending() {
 
     const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
-    const beregnetSkjaeringstidspunkt =
+    let beregnetSkjaeringstidspunkt =
       skjaeringstidspunkt && isValid(skjaeringstidspunkt)
         ? skjaeringstidspunkt
         : parseIsoDate(
@@ -87,8 +88,15 @@ export default function useFyllInnsending() {
           );
 
     let kreverAgp = true;
-    if (forespurtData?.arbeidsgiverperiode?.paakrevd === false) {
+    if (forespurtData?.arbeidsgiverperiode?.paakrevd === false || !harForespurtArbeidsgiverperiode) {
       kreverAgp = false;
+      setSkjaeringstidspunkt(
+        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
+      );
+
+      beregnetSkjaeringstidspunkt = parseIsoDate(
+        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
+      );
     }
     const bestemmendeFraværsdag = kreverAgp
       ? hentBestemmendeFraværsdag(
@@ -98,7 +106,7 @@ export default function useFyllInnsending() {
           skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt(),
           inngangFraKvittering,
-          bestemmendeFravaersdag,
+          undefined,
           beregnetSkjaeringstidspunkt
         )
       : forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;

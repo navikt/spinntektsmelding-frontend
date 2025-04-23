@@ -43,7 +43,7 @@ export interface ArbeidsgiverperiodeState {
   setArbeidsgiverperiodeKort: (disabled: boolean) => void;
   setForeslaattBestemmendeFravaersdag: (bestemmendeFravaersdag: Date | undefined) => void;
   arbeidsgiverKanFlytteSkjæringstidspunkt: () => boolean;
-  setSkjaeringstidspunkt: (skjaeringstidspunkt: TDateISODate | null) => void;
+  setSkjaeringstidspunkt: (skjaeringstidspunkt: TDateISODate | Date | null) => void;
   setMottattBestemmendeFravaersdag: (bestemmendeFravaersdag: TDateISODate) => void;
   setMottattEksternBestemmendeFravaersdag: (bestemmendeFravaersdag: TDateISODate) => void;
 }
