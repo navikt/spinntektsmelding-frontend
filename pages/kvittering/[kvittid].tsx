@@ -39,7 +39,6 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
-import finnBestemmendeFravaersdag from '../../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../../utils/parseIsoDate';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import PersonVisning from '../../components/Person/PersonVisning';
@@ -72,8 +71,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
   const kvitteringSlug = kvittid || searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
-  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  const kvitteringData = useBoundStore((state) => state.kvitteringData);
 
   const refusjonEndringerUtenSkjaeringstidspunkt =
     gammeltSkjaeringstidspunkt && refusjonEndringer
@@ -118,15 +117,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const harForespurtArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = paakrevdeOpplysninger?.includes(forespoerselType.inntekt);
 
-  const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
-    fravaersperioder,
-    arbeidsgiverperioder,
-    foreslaattBestemmendeFravaersdag,
-    !harForespurtArbeidsgiverperiode
-  );
-  const visningBestemmendeFravaersdag = harForespurtArbeidsgiverperiode
-    ? parseIsoDate(bestemmendeFravaersdag)
-    : foreslaattBestemmendeFravaersdag;
+  const bestemmendeFravaersdag = kvitteringData
+    ? parseIsoDate(kvitteringData?.inntekt?.inntektsdato)
+    : parseIsoDate(gammeltSkjaeringstidspunkt);
+
+  const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
 
   useEffect(() => {
     if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem) {

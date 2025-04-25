@@ -125,4 +125,160 @@ describe('validerInntektsmelding', () => {
       ]
     });
   });
+
+  it('should return an object with valideringOK as false and  errorTexts when fraværsperiode is missing', () => {
+    // Mock the state and other dependencies
+    const mockSetSkalViseFeilmeldinger = vi.fn();
+    const state = {
+      fravaersperioder: undefined,
+      // egenmeldingsperioder: [],
+      naturalytelser: [],
+      hasBortfallAvNaturalytelser: false,
+      fullLonnIArbeidsgiverPerioden: {
+        status: 'Ja'
+      },
+      arbeidsgiverperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-16') }],
+      lonnISykefravaeret: { status: 'Nei' },
+      refusjonskravetOpphoerer: false,
+      bruttoinntekt: { bruttoInntekt: 0 },
+      nyInnsending: false,
+      harRefusjonEndringer: false,
+      refusjonEndringer: [],
+      innsenderTelefonNr: '12345678',
+      setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger
+    };
+
+    const formData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 12345,
+        endringAarsaker: null,
+
+        inntektsdato: '2021-01-01',
+        naturalytelser: [],
+        harBortfallAvNaturalytelser: false
+      },
+      avsenderTlf: '12345678'
+    };
+
+    // Call the validerInntektsmelding function
+
+    const result = validerInntektsmelding(state, true, false, formData);
+
+    // Assert the result
+    expect(mockSetSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
+    expect(result).toEqual({
+      valideringOK: false,
+      errorTexts: [
+        {
+          felt: '',
+          text: 'Mangler fraværsperiode.'
+        }
+      ]
+    });
+  });
+
+  it('should return an object with valideringOK as true and empty errorTexts when there are no errors and agp is not required', () => {
+    // Mock the state and other dependencies
+    const mockSetSkalViseFeilmeldinger = vi.fn();
+    const state = {
+      fravaersperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-31'), id: '1' }],
+      // egenmeldingsperioder: [],
+      naturalytelser: [],
+      hasBortfallAvNaturalytelser: false,
+      fullLonnIArbeidsgiverPerioden: {
+        status: 'Ja'
+      },
+      arbeidsgiverperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-16') }],
+      lonnISykefravaeret: { status: 'Nei' },
+      refusjonskravetOpphoerer: false,
+      bruttoinntekt: { bruttoInntekt: 0 },
+      nyInnsending: false,
+      harRefusjonEndringer: false,
+      refusjonEndringer: [],
+      innsenderTelefonNr: '12345678',
+      setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger,
+      forespurtData: {
+        arbeidsgiverperiode: {
+          paakrevd: false
+        }
+      }
+    };
+
+    const formData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 12345,
+        endringAarsaker: null,
+
+        inntektsdato: '2021-01-01',
+        naturalytelser: [],
+        harBortfallAvNaturalytelser: false
+      },
+      avsenderTlf: '12345678'
+    };
+
+    // Call the validerInntektsmelding function
+
+    const result = validerInntektsmelding(state, true, false, formData);
+
+    // Assert the result
+    expect(mockSetSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
+    expect(result).toEqual({
+      valideringOK: true,
+      errorTexts: []
+    });
+  });
+
+  it('should return an object with valideringOK as true and empty errorTexts when there are no errors and there are egenmeldingsperioder', () => {
+    // Mock the state and other dependencies
+    const mockSetSkalViseFeilmeldinger = vi.fn();
+    const state = {
+      fravaersperioder: [{ fom: parseIsoDate('2021-01-02'), tom: parseIsoDate('2021-01-31'), id: '1' }],
+      egenmeldingsperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-01'), id: '1' }],
+      naturalytelser: [],
+      hasBortfallAvNaturalytelser: false,
+      fullLonnIArbeidsgiverPerioden: {
+        status: 'Ja'
+      },
+      arbeidsgiverperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-16') }],
+      lonnISykefravaeret: { status: 'Nei' },
+      refusjonskravetOpphoerer: false,
+      bruttoinntekt: { bruttoInntekt: 0 },
+      nyInnsending: false,
+      harRefusjonEndringer: false,
+      refusjonEndringer: [],
+      innsenderTelefonNr: '12345678',
+      setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger,
+      forespurtData: {
+        arbeidsgiverperiode: {
+          paakrevd: true
+        }
+      }
+    };
+
+    const formData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 12345,
+        endringAarsaker: null,
+
+        inntektsdato: '2021-01-01',
+        naturalytelser: [],
+        harBortfallAvNaturalytelser: false
+      },
+      avsenderTlf: '12345678'
+    };
+
+    // Call the validerInntektsmelding function
+
+    const result = validerInntektsmelding(state, true, false, formData);
+
+    // Assert the result
+    expect(mockSetSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
+    expect(result).toEqual({
+      valideringOK: true,
+      errorTexts: []
+    });
+  });
 });

@@ -1,12 +1,13 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { nanoid } from 'nanoid';
 import { Opplysningstype } from './useForespurtDataStore';
 import { YesNo } from './state';
-import { AapenInnsending } from '../validators/validerAapenInnsending';
 import parseIsoDate from '../utils/parseIsoDate';
 import { kvitteringEksternSchema } from '../schema/mottattKvitteringSchema';
+import z from 'zod';
+import fullInnsendingSchema from '../schema/fullInnsendingSchema';
+import aapenInnsendingSchema from '../schema/aapenInnsendingSchema';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
@@ -14,6 +15,8 @@ export enum SkjemaStatus {
 }
 
 type KvitteringEksternSchema = z.infer<typeof kvitteringEksternSchema>;
+type KvitteringFullInnsending = z.infer<typeof fullInnsendingSchema>;
+type KvitteringSelvbestemtInnsending = z.infer<typeof aapenInnsendingSchema>;
 
 export interface SkjemadataState {
   nyInnsending: boolean;
@@ -27,10 +30,9 @@ export interface SkjemadataState {
   setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEksternSchema) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
-  setKvitteringsdata: (data: any) => void;
+  setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
   setVedtaksperiodeId: (id: string) => void;
   setForespoerselSistOppdatert: (tidspunkt: string | Date) => void;
-  tracker: string;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
@@ -40,7 +42,7 @@ export interface SkjemadataState {
   endringerAvRefusjon?: YesNo;
   kvitteringEksterntSystem?: KvitteringEksternSchema;
   skjemastatus: SkjemaStatus;
-  kvitteringData?: AapenInnsending;
+  kvitteringData?: KvitteringFullInnsending | KvitteringSelvbestemtInnsending;
   vedtaksperiodeId?: string;
   forespoerselSistOppdatert?: Date;
 }
@@ -48,7 +50,6 @@ export interface SkjemadataState {
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
   inngangFraKvittering: false,
   direkteInngangKvittering: false,
-  tracker: nanoid(),
   nyInnsending: true,
   henterInntektsdata: false,
   skjemaFeilet: false,
@@ -125,7 +126,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setKvitteringsdata: (data: any) => {
+  setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => {
     set(
       produce((state: SkjemadataState) => {
         state.kvitteringData = data;
