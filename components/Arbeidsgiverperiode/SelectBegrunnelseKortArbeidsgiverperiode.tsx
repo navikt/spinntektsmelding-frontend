@@ -18,7 +18,7 @@ export default function SelectBegrunnelseKortArbeidsgiverperiode(
   const begrunnelseKeys = Object.keys(begrunnelseIngenEllerRedusertUtbetalingListe).filter(
     (begrunnelse) => filterBegrunnelseKortArbeidsgiverperiode.indexOf(begrunnelse) > -1
   );
-  const label = props.label ? props.label : 'Velg begrunnelse for kort arbeidsgiverperiode';
+  const label = props.label ?? 'Velg begrunnelse for kort arbeidsgiverperiode';
 
   let begrunnelse: string[] = [];
 

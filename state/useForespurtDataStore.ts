@@ -2,58 +2,9 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { HistoriskInntekt } from './state';
-import { MottattPeriodeRefusjon, TDateISODate } from './MottattData';
+import { ForrigeInntekt, MottattForespurtData, Opplysningstype } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
-
-export type Opplysningstype = (typeof forespoerselType)[keyof typeof forespoerselType];
-
-type FourDigitString = string & { length: 4 } & { [Symbol.match](string: string): RegExpMatchArray | null };
-
-type Beregningsmåned = `${FourDigitString}-${
-  | '01'
-  | '02'
-  | '03'
-  | '04'
-  | '05'
-  | '06'
-  | '07'
-  | '08'
-  | '09'
-  | '10'
-  | '11'
-  | '12'}`;
-
-type Beregningsmåneder = Array<Beregningsmåned>;
-
-type OpplysningstypeInntekt = 'ForslagInntektFastsatt' | 'ForslagInntektGrunnlag';
-
-export type ForrigeInntekt = {
-  skjæringstidspunkt: TDateISODate;
-  kilde: 'INNTEKTSMELDING' | 'AAREG';
-  beløp: number;
-};
-
-type ForslagInntekt = {
-  type: OpplysningstypeInntekt;
-  beregningsmaaneder?: Beregningsmåneder;
-  forrigeInntekt?: ForrigeInntekt;
-};
-
-type ForslagRefusjon = {
-  opphoersdato: TDateISODate | null;
-  perioder: Array<MottattPeriodeRefusjon>;
-  refundert?: number;
-};
-
-type ForespurtData = {
-  paakrevd: boolean;
-  forslag?: ForslagInntekt & ForslagRefusjon;
-};
-
-export type MottattForespurtData = {
-  [key in Opplysningstype]: ForespurtData;
-};
 
 export interface ForespurtDataState {
   forespurtData?: MottattForespurtData;

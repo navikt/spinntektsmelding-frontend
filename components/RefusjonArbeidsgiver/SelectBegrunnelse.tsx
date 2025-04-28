@@ -11,7 +11,7 @@ interface SelectBegrunnelseProps {
 
 export default function SelectBegrunnelse(props: Readonly<SelectBegrunnelseProps>) {
   const begrunnelseKeys = Object.keys(begrunnelseIngenEllerRedusertUtbetalingListe);
-  const label = props.label ? props.label : 'Velg begrunnelse for ingen eller redusert utbetaling';
+  const label = props.label ?? 'Velg begrunnelse for ingen eller redusert utbetaling';
   return (
     <Select
       label={label}

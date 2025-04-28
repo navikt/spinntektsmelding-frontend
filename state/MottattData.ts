@@ -1,81 +1,38 @@
-import { HistoriskInntekt } from './state';
-import { MottattForespurtData } from './useForespurtDataStore';
-import { FeilReportElement } from './useStateInit';
+import z from 'zod';
+import forespoerselType from '../config/forespoerselType';
 
-export interface MottattPeriode {
-  fom: TDateISODate;
-  tom: TDateISODate;
-}
+const beregningsmånedSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
 
-export interface MottattPeriodeRefusjon extends MottattPeriode {
-  beloep: number;
-}
+const dateISODateSchema = z.string().date();
 
-export interface MottattNaturalytelse {
-  type: string;
-  bortfallsdato: string;
-  verdi: number;
-}
+export type Opplysningstype = (typeof forespoerselType)[keyof typeof forespoerselType];
 
-export type TDateISODate =
-  | `${number}-${number}-${number}`
-  | `${number}-${number}-${number}T${number}:${number}:${number}.${number}Z`;
+export const forrigeInntektSchema = z.object({
+  skjæringstidspunkt: dateISODateSchema,
+  kilde: z.enum(['INNTEKTSMELDING', 'AAREG']),
+  beløp: z.number()
+});
 
-type FeilReportFeilListe = {
-  feil: Array<FeilReportElement>;
-};
+// Define ForespurtData schema
+const forespurtDataSchema = z.object({
+  paakrevd: z.boolean(),
+  forslag: z
+    .object({
+      type: z.enum(['ForslagInntektFastsatt', 'ForslagInntektGrunnlag']),
+      beregningsmaaneder: z.array(beregningsmånedSchema).optional(),
+      forrigeInntekt: forrigeInntektSchema.optional(),
+      opphoersdato: dateISODateSchema.nullable(),
+      perioder: z.array(z.any()), // Replace with proper schema when available
+      refundert: z.number().optional()
+    })
+    .optional()
+});
 
-type ForespurteData = {
-  arbeidsgiverperiode: { paakrevd: boolean };
-  inntekt: {
-    paakrevd: boolean;
-    forslag: {
-      type: string;
-      beregningsmaaneder?: Array<string>;
-      forrigeInntekt?: {
-        skjæringstidspunkt: TDateISODate;
-        kilde: string;
-        beløp: number;
-      };
-    };
-  };
-  refusjon: {
-    paakrevd: boolean;
-    forslag: {
-      perioder: Array<MottattPeriodeRefusjon>;
-      opphoersdato?: TDateISODate | null;
-      refundert?: number;
-    };
-  };
-};
+// Schema for MottattForespurtData
+const mottattForespurtDataSchema = z.record(
+  z.string(), // Represents Opplysningstype values
+  forespurtDataSchema
+);
 
-interface MottattData {
-  navn: string;
-  identitetsnummer: string;
-  orgNavn: string;
-  orgnrUnderenhet: string;
-  fravaersperioder: Array<MottattPeriode>;
-  egenmeldingsperioder: Array<MottattPeriode>;
-  bruttoinntekt: number;
-  tidligereinntekter: Array<HistoriskInntekt>;
-  innsenderNavn: string;
-  telefonnummer?: string;
-  feilReport?: FeilReportFeilListe;
-  forespurtData?: MottattForespurtData;
-  skjaeringstidspunkt: TDateISODate;
-  eksternBestemmendeFravaersdag: TDateISODate;
-  bestemmendeFravaersdag: TDateISODate;
-  opprettetUpresisIkkeBruk?: TDateISODate;
-}
-
-export default MottattData;
-
-export interface MottatArbeidsgiver {
-  name: string;
-  type: string;
-  parentOrganizationNumber?: string | null;
-  organizationForm: string;
-  organizationNumber: string;
-  socialSecurityNumber?: string | null;
-  status: string;
-}
+export type MottattForespurtData = z.infer<typeof mottattForespurtDataSchema>;
+export type ForrigeInntekt = z.infer<typeof forrigeInntektSchema>;

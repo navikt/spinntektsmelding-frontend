@@ -1,8 +1,8 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { FeilReportElement } from './useStateInit';
 import validerTelefon from '../validators/validerTelefon';
+import { FeilReportElement } from './MottattData';
 
 export interface PersonState {
   sykmeldt: {
