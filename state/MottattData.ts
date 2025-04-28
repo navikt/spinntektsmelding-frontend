@@ -1,13 +1,13 @@
 import z from 'zod';
 import forespoerselType from '../config/forespoerselType';
 
-const beregningsmånedSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
+const beregningsmaanedSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
 
 const dateISODateSchema = z.string().date();
 
 export type Opplysningstype = (typeof forespoerselType)[keyof typeof forespoerselType];
 
-export const forrigeInntektSchema = z.object({
+const forrigeInntektSchema = z.object({
   skjæringstidspunkt: dateISODateSchema,
   kilde: z.enum(['INNTEKTSMELDING', 'AAREG']),
   beløp: z.number()
@@ -15,24 +15,63 @@ export const forrigeInntektSchema = z.object({
 
 // Define ForespurtData schema
 const forespurtDataSchema = z.object({
-  paakrevd: z.boolean(),
+  paakrevd: z.boolean()
+});
+
+const forespurtInntektDataSchema = forespurtDataSchema.extend({
   forslag: z
     .object({
       type: z.enum(['ForslagInntektFastsatt', 'ForslagInntektGrunnlag']),
-      beregningsmaaneder: z.array(beregningsmånedSchema).optional(),
       forrigeInntekt: forrigeInntektSchema.optional(),
+      beregningsmaaneder: z.array(beregningsmaanedSchema).optional()
+    })
+    .optional()
+});
+
+const forespurtRefusjonDataSchema = forespurtDataSchema.extend({
+  paakrevd: z.boolean(),
+  forslag: z
+    .object({
       opphoersdato: dateISODateSchema.nullable(),
-      perioder: z.array(z.any()), // Replace with proper schema when available
+      perioder: z
+        .array(
+          z.object({
+            fom: dateISODateSchema,
+            beloep: z.number().optional()
+          })
+        )
+        .optional(),
       refundert: z.number().optional()
     })
     .optional()
 });
 
-// Schema for MottattForespurtData
-const mottattForespurtDataSchema = z.record(
-  z.string(), // Represents Opplysningstype values
-  forespurtDataSchema
-);
+const forespurtArbeidsgiverperiodeDataSchema = forespurtDataSchema.extend({
+  paakrevd: z.boolean(),
+  forslag: z
+    .object({
+      type: z.enum(['ForslagInntektFastsatt', 'ForslagInntektGrunnlag']),
+      beregningsmaaneder: z.array(beregningsmaanedSchema).optional(),
+      forrigeInntekt: forrigeInntektSchema.optional(),
+      opphoersdato: dateISODateSchema.nullable().optional(),
+      perioder: z.array(
+        z
+          .object({
+            fom: dateISODateSchema,
+            beloep: z.number().optional()
+          })
+          .or(z.array(z.object({}).optional()))
+      ),
+      refundert: z.number().optional()
+    })
+    .optional()
+});
+
+const mottattForespurtDataSchema = z.object({
+  inntekt: forespurtInntektDataSchema,
+  refusjon: forespurtRefusjonDataSchema,
+  arbeidsgiverperiode: forespurtArbeidsgiverperiodeDataSchema
+});
 
 export type MottattForespurtData = z.infer<typeof mottattForespurtDataSchema>;
 export type ForrigeInntekt = z.infer<typeof forrigeInntektSchema>;
