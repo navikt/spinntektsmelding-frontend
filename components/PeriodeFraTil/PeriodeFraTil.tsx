@@ -10,8 +10,8 @@ interface PeriodeFraTilProps {
 }
 
 export default function PeriodeFraTil(props: PeriodeFraTilProps) {
-  const visningFom = props.fomTekst ? props.fomTekst : 'Fra';
-  const visningTom = props.tomTekst ? props.tomTekst : 'Til';
+  const visningFom = props.fomTekst ?? 'Fra';
+  const visningTom = props.tomTekst ?? 'Til';
   if (props.fom || props.tom) {
     return (
       <>

@@ -80,15 +80,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
 
-  const kvitteringSlug = kvittid || searchParams.get('kvittid');
+  const kvitteringSlug = kvittid ?? searchParams.get('kvittid');
 
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
 
   const kvitteringInit = useKvitteringInit();
 
-  const kvitteringDokument = kvittering?.selvbestemtInntektsmelding
-    ? kvittering?.selvbestemtInntektsmelding
-    : kvitteringData;
+  const kvitteringDokument = kvittering?.selvbestemtInntektsmelding ?? kvitteringData;
 
   const kvitteringInnsendt = new Date(kvitteringDokument?.tidspunkt);
   const bestemmendeFravaersdag = dataFraBackend

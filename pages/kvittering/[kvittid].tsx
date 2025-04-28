@@ -69,7 +69,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
-  const kvitteringSlug = kvittid || searchParams.get('kvittid');
+  const kvitteringSlug = kvittid ?? searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const kvitteringData = useBoundStore((state) => state.kvitteringData);

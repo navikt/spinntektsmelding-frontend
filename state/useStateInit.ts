@@ -2,15 +2,8 @@ import { nanoid } from 'nanoid';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
-import MottattData from './MottattData';
+import MottattData, { FeilReportElement } from './MottattData';
 import useBoundStore from './useBoundStore';
-
-type Datafelt = 'virksomhet' | 'arbeidstaker-informasjon' | 'forespoersel-svar' | 'inntekt' | 'personer';
-
-export type FeilReportElement = {
-  melding: string;
-  datafelt: Datafelt;
-};
 
 function feilRapportMapper(feilReport?: Array<FeilReportElement>) {
   if (!feilReport) return {};
