@@ -64,7 +64,7 @@
     "cypress-axe": "1.6.0",
     "cypress-real-events": "1.14.0",
     "eslint": "8.57.1",
-    "eslint-config-next": "15.2.4",
+    "eslint-config-next": "15.3.1",
     "husky": "^9.1.7",
     "jest-axe": "10.0.0",
     "jsdom": "26.0.0",
