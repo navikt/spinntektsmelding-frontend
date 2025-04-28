@@ -47,27 +47,10 @@ const forespurtRefusjonDataSchema = forespurtDataSchema.extend({
 });
 
 const forespurtArbeidsgiverperiodeDataSchema = forespurtDataSchema.extend({
-  paakrevd: z.boolean(),
-  forslag: z
-    .object({
-      type: z.enum(['ForslagInntektFastsatt', 'ForslagInntektGrunnlag']),
-      beregningsmaaneder: z.array(beregningsmaanedSchema).optional(),
-      forrigeInntekt: forrigeInntektSchema.optional(),
-      opphoersdato: dateISODateSchema.nullable().optional(),
-      perioder: z.array(
-        z
-          .object({
-            fom: dateISODateSchema,
-            beloep: z.number().optional()
-          })
-          .or(z.array(z.object({}).optional()))
-      ),
-      refundert: z.number().optional()
-    })
-    .optional()
+  paakrevd: z.boolean()
 });
 
-const mottattForespurtDataSchema = z.object({
+export const mottattForespurtDataSchema = z.object({
   inntekt: forespurtInntektDataSchema,
   refusjon: forespurtRefusjonDataSchema,
   arbeidsgiverperiode: forespurtArbeidsgiverperiodeDataSchema

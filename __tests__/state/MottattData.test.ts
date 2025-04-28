@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { MottattForespurtData, ForrigeInntekt, Opplysningstype } from '../../state/MottattData';
+import {
+  MottattForespurtData,
+  ForrigeInntekt,
+  Opplysningstype,
+  mottattForespurtDataSchema
+} from '../../state/MottattData';
 import forespoerselType from '../../config/forespoerselType';
 
 describe('MottattData types', () => {
@@ -70,5 +75,45 @@ describe('MottattData types', () => {
     const sampleOpplysningstype = opplysningstyper[0] as Opplysningstype;
 
     expect(opplysningstyper).toContain(sampleOpplysningstype);
+  });
+
+  it('should parse MottattForespurtData type with correct structure', () => {
+    const mockMottattForespurtData: MottattForespurtData = {
+      inntekt: {
+        paakrevd: true,
+        forslag: {
+          type: 'ForslagInntektFastsatt',
+          beregningsmaaneder: ['2023-01', '2023-02']
+        }
+      },
+      refusjon: {
+        paakrevd: false,
+        forslag: {
+          opphoersdato: null,
+          perioder: [
+            {
+              fom: '2023-01-01',
+              beloep: 500
+            }
+          ]
+        }
+      },
+      arbeidsgiverperiode: {
+        paakrevd: true
+      }
+    };
+
+    const parsedData = mottattForespurtDataSchema.safeParse(mockMottattForespurtData);
+    expect(parsedData.error).toBeUndefined();
+    expect(parsedData.success).toBe(true);
+    expect(parsedData).toBeDefined();
+    expect(parsedData.data).toHaveProperty('inntekt');
+    expect(parsedData.data).toHaveProperty('refusjon');
+    expect(parsedData.data).toHaveProperty('arbeidsgiverperiode');
+    expect(parsedData.data?.inntekt).toHaveProperty('paakrevd');
+    expect(typeof parsedData.data?.inntekt.paakrevd).toBe('boolean');
+    expect(parsedData.data?.refusjon.forslag).toHaveProperty('opphoersdato');
+    expect(parsedData.data?.refusjon.forslag?.perioder?.[0]).toHaveProperty('fom');
+    expect(parsedData.data?.arbeidsgiverperiode.paakrevd).toBe(true);
   });
 });
