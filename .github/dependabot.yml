@@ -8,8 +8,11 @@ updates:
 # Maintain dependencies for Yarn
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/" # Location of package manifests
-    registries:
-      - npm-github
+    registries: '*'
+    open-pull-requests-limit: 20
+    ignore:
+      - dependency-name: 'eslint'
+        versions: ['9.x']
     schedule:
       interval: "weekly"
     groups:
@@ -46,4 +49,3 @@ registries:
     type: npm-registry
     url: https://npm.pkg.github.com
     token: ${{ secrets.READER_TOKEN }}
-    replaces-base: true
