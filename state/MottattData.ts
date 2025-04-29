@@ -1,9 +1,24 @@
 import z from 'zod';
 import forespoerselType from '../config/forespoerselType';
 
-const beregningsmaanedSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
+export const dateISODateSchema = z.string().date();
 
-const dateISODateSchema = z.string().date();
+const MottattPeriodeSchema = z.object({
+  fom: dateISODateSchema,
+  tom: dateISODateSchema
+});
+
+export type MottattPeriode = z.infer<typeof MottattPeriodeSchema>;
+
+const MottattNaturalytelseSchema = z.object({
+  type: z.string(),
+  bortfallsdato: z.string().date(),
+  verdi: z.number()
+});
+
+export type MottattNaturalytelse = z.infer<typeof MottattNaturalytelseSchema>;
+
+const beregningsmaanedSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
 
 export type Opplysningstype = (typeof forespoerselType)[keyof typeof forespoerselType];
 

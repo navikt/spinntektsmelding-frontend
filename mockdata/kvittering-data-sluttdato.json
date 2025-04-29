@@ -5,12 +5,12 @@
       "orgnr": "810007842",
       "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
       "navn": "BERØMT FLYTTELASS",
-      "tlf": "+4741359019"
+      "tlf": "+4712345678"
     },
     "sykmeldingsperioder": [{ "fom": "2024-02-01", "tom": "2024-03-31" }],
     "skjema": {
       "forespoerselId": "b93d40b7-f2c3-4095-9178-2063e95868ad",
-      "avsenderTlf": "+4741359019",
+      "avsenderTlf": "+4712345678",
       "agp": {
         "perioder": [{ "fom": "2024-01-31", "tom": "2024-02-15" }],
         "egenmeldinger": [{ "fom": "2024-01-31", "tom": "2024-01-31" }],

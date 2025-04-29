@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../../config/environment';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
-import org from '../../../mockdata/kvittering-data-sluttdato.json';
+import org from '../../../mockdata/kvittering-delvis-endret-inntekt.json';
 
 const basePath = 'http://' + global.process.env.IM_API_URI + environment.hentKvitteringAPI;
 

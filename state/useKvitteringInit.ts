@@ -1,5 +1,5 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattNaturalytelse, MottattPeriode, TDateISODate } from './MottattData';
+import { dateISODateSchema, MottattNaturalytelse, MottattPeriode } from './MottattData';
 import useBoundStore from './useBoundStore';
 
 import MottattKvitteringSchema, {
@@ -13,11 +13,16 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from './useEgenmeldingStore';
 import { isBefore } from 'date-fns';
 import { z } from 'zod';
-import { Opplysningstype } from './useForespurtDataStore';
+import { Opplysningstype } from './MottattData';
+import { RefusjonEndringSchema } from '../schema/refusjonEndringSchema';
+import { Naturalytelse } from './state';
+import { NaturalytelseEnum } from '../schema/NaturalytelseEnum';
 
 type KvitteringEksternSchema = z.infer<typeof kvitteringEksternSchema>;
 type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
+type RefusjonEndring = z.infer<typeof RefusjonEndringSchema>;
+type TDateISODate = z.infer<typeof dateISODateSchema>;
 
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
@@ -126,9 +131,9 @@ export default function useKvitteringInit() {
 
     if (jsonData.skjema.refusjon?.sluttdato) {
       if (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0) {
-        jsonData.skjema.refusjon.endringer.push({
+        (jsonData.skjema.refusjon.endringer as Array<RefusjonEndring>).push({
           beloep: 0,
-          startdato: jsonData.skjema.refusjon.sluttdato!
+          startdato: jsonData.skjema.refusjon.sluttdato
         });
       } else {
         jsonData.skjema.refusjon.endringer = [
@@ -136,7 +141,7 @@ export default function useKvitteringInit() {
             beloep: 0,
             startdato: jsonData.skjema.refusjon?.sluttdato
           }
-        ];
+        ] as Array<RefusjonEndring>;
       }
     }
 
@@ -159,9 +164,9 @@ export default function useKvitteringInit() {
     if (!jsonData.skjema.inntekt) return;
 
     if (jsonData.skjema.inntekt.naturalytelser) {
-      const ytelser: Array<MottattNaturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
-        naturalytelse: ytelse.naturalytelse,
-        sluttdato: parseIsoDate(ytelse.sluttdato),
+      const ytelser: Array<Naturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
+        naturalytelse: ytelse.naturalytelse as z.infer<typeof NaturalytelseEnum>,
+        sluttdato: parseIsoDate(ytelse.sluttdato)!,
         verdiBeloep: ytelse.verdiBeloep
       }));
       initNaturalytelser(ytelser);
