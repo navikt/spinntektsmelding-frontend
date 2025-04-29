@@ -1,11 +1,8 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { dateISODateSchema, MottattNaturalytelse, MottattPeriode } from './MottattData';
+import { MottattPeriode, Opplysningstype } from './MottattData';
 import useBoundStore from './useBoundStore';
 
-import MottattKvitteringSchema, {
-  kvitteringEksternSchema,
-  kvitteringNavNoSchema
-} from '../schema/mottattKvitteringSchema';
+import MottattKvitteringSchema, { kvitteringNavNoSchema } from '../schema/mottattKvitteringSchema';
 
 import forespoerselType from '../config/forespoerselType';
 import { konverterBegrunnelseFullLonnIArbeidsgiverperiode } from '../utils/konverterBegrunnelseFullLonnIArbeidsgiverperiode';
@@ -13,16 +10,12 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from './useEgenmeldingStore';
 import { isBefore } from 'date-fns';
 import { z } from 'zod';
-import { Opplysningstype } from './MottattData';
 import { RefusjonEndringSchema } from '../schema/refusjonEndringSchema';
 import { Naturalytelse } from './state';
-import { NaturalytelseEnum } from '../schema/NaturalytelseEnum';
 
-type KvitteringEksternSchema = z.infer<typeof kvitteringEksternSchema>;
 type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 type RefusjonEndring = z.infer<typeof RefusjonEndringSchema>;
-type TDateISODate = z.infer<typeof dateISODateSchema>;
 
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
@@ -165,7 +158,7 @@ export default function useKvitteringInit() {
 
     if (jsonData.skjema.inntekt.naturalytelser) {
       const ytelser: Array<Naturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
-        naturalytelse: ytelse.naturalytelse as z.infer<typeof NaturalytelseEnum>,
+        naturalytelse: ytelse.naturalytelse,
         sluttdato: parseIsoDate(ytelse.sluttdato)!,
         verdiBeloep: ytelse.verdiBeloep
       }));
@@ -198,7 +191,7 @@ export default function useKvitteringInit() {
     const beregnetInntekt = jsonData.skjema.inntekt?.beloep;
     setTidligereInntektsdata({
       beløp: beregnetInntekt,
-      skjæringstidspunkt: jsonData.skjema.inntekt?.inntektsdato as TDateISODate,
+      skjæringstidspunkt: jsonData.skjema.inntekt?.inntektsdato,
       kilde: 'INNTEKTSMELDING'
     });
   }
@@ -228,7 +221,7 @@ export default function useKvitteringInit() {
       isBefore(parseIsoDate(bestemmendeFravaersdag)!, parseIsoDate(beregnetBestemmeFravaersdag)!)
     ) {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
-      setSkjaeringstidspunkt(bestemmendeFravaersdag as TDateISODate);
+      setSkjaeringstidspunkt(bestemmendeFravaersdag);
     }
   }
 }
