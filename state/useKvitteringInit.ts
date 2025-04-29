@@ -124,17 +124,11 @@ export default function useKvitteringInit() {
       beloep: jsonData.skjema.refusjon?.beloepPerMaaned
     });
 
-    if (jsonData.skjema.refusjon) {
-      setHarRefusjonEndringer(
-        jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0 ? 'Ja' : 'Nei'
-      );
-    }
-
     if (jsonData.skjema.refusjon?.sluttdato) {
       if (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0) {
         jsonData.skjema.refusjon.endringer.push({
           beloep: 0,
-          startdato: jsonData.skjema.refusjon?.sluttdato
+          startdato: jsonData.skjema.refusjon.sluttdato!
         });
       } else {
         jsonData.skjema.refusjon.endringer = [
@@ -152,6 +146,12 @@ export default function useKvitteringInit() {
         dato: parseIsoDate(endring.startdato)
       }));
       oppdaterRefusjonEndringer(endringer);
+    }
+
+    if (jsonData.skjema.refusjon) {
+      setHarRefusjonEndringer(
+        jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0 ? 'Ja' : 'Nei'
+      );
     }
   }
 
