@@ -5,6 +5,10 @@ on:
     branches:
       - dev
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   APP: spinntektsmelding-frontend
   IMAGE: ghcr.io/${{ github.repository }}/spinntektsmelding-frontend:${{ github.sha }}
