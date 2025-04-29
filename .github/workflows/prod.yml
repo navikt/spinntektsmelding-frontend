@@ -4,6 +4,10 @@ on:
   release:
     types: [released]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   APP: spinntektsmelding-frontend
   IMAGE: ghcr.io/${{ github.repository }}/spinntektsmelding-frontend-prod:${{ github.sha }}
