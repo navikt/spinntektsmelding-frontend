@@ -33,10 +33,10 @@ spec:
     min: 1
   resources:
     limits:
-      cpu: 300m
+      # cpu: 300m
       memory: 512Mi
     requests:
-      cpu: 150m
+      cpu: 100m
       memory: 256Mi
   idporten:
     enabled: true
