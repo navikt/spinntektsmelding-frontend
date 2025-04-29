@@ -1,11 +1,8 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattNaturalytelse, MottattPeriode, TDateISODate } from './MottattData';
+import { MottattPeriode, Opplysningstype } from './MottattData';
 import useBoundStore from './useBoundStore';
 
-import MottattKvitteringSchema, {
-  kvitteringEksternSchema,
-  kvitteringNavNoSchema
-} from '../schema/mottattKvitteringSchema';
+import MottattKvitteringSchema, { kvitteringNavNoSchema } from '../schema/mottattKvitteringSchema';
 
 import forespoerselType from '../config/forespoerselType';
 import { konverterBegrunnelseFullLonnIArbeidsgiverperiode } from '../utils/konverterBegrunnelseFullLonnIArbeidsgiverperiode';
@@ -13,11 +10,12 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from './useEgenmeldingStore';
 import { isBefore } from 'date-fns';
 import { z } from 'zod';
-import { Opplysningstype } from './useForespurtDataStore';
+import { RefusjonEndringSchema } from '../schema/refusjonEndringSchema';
+import { Naturalytelse } from './state';
 
-type KvitteringEksternSchema = z.infer<typeof kvitteringEksternSchema>;
 type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
+type RefusjonEndring = z.infer<typeof RefusjonEndringSchema>;
 
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
@@ -124,17 +122,11 @@ export default function useKvitteringInit() {
       beloep: jsonData.skjema.refusjon?.beloepPerMaaned
     });
 
-    if (jsonData.skjema.refusjon) {
-      setHarRefusjonEndringer(
-        jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0 ? 'Ja' : 'Nei'
-      );
-    }
-
     if (jsonData.skjema.refusjon?.sluttdato) {
       if (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0) {
-        jsonData.skjema.refusjon.endringer.push({
+        (jsonData.skjema.refusjon.endringer as Array<RefusjonEndring>).push({
           beloep: 0,
-          startdato: jsonData.skjema.refusjon?.sluttdato
+          startdato: jsonData.skjema.refusjon.sluttdato
         });
       } else {
         jsonData.skjema.refusjon.endringer = [
@@ -142,7 +134,7 @@ export default function useKvitteringInit() {
             beloep: 0,
             startdato: jsonData.skjema.refusjon?.sluttdato
           }
-        ];
+        ] as Array<RefusjonEndring>;
       }
     }
 
@@ -153,15 +145,21 @@ export default function useKvitteringInit() {
       }));
       oppdaterRefusjonEndringer(endringer);
     }
+
+    if (jsonData.skjema.refusjon) {
+      setHarRefusjonEndringer(
+        jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0 ? 'Ja' : 'Nei'
+      );
+    }
   }
 
   function handleNaturalytelser(jsonData: KvitteringNavNoSchema) {
     if (!jsonData.skjema.inntekt) return;
 
     if (jsonData.skjema.inntekt.naturalytelser) {
-      const ytelser: Array<MottattNaturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
+      const ytelser: Array<Naturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
         naturalytelse: ytelse.naturalytelse,
-        sluttdato: parseIsoDate(ytelse.sluttdato),
+        sluttdato: parseIsoDate(ytelse.sluttdato)!,
         verdiBeloep: ytelse.verdiBeloep
       }));
       initNaturalytelser(ytelser);
@@ -193,7 +191,7 @@ export default function useKvitteringInit() {
     const beregnetInntekt = jsonData.skjema.inntekt?.beloep;
     setTidligereInntektsdata({
       beløp: beregnetInntekt,
-      skjæringstidspunkt: jsonData.skjema.inntekt?.inntektsdato as TDateISODate,
+      skjæringstidspunkt: jsonData.skjema.inntekt?.inntektsdato,
       kilde: 'INNTEKTSMELDING'
     });
   }
@@ -223,7 +221,7 @@ export default function useKvitteringInit() {
       isBefore(parseIsoDate(bestemmendeFravaersdag)!, parseIsoDate(beregnetBestemmeFravaersdag)!)
     ) {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
-      setSkjaeringstidspunkt(bestemmendeFravaersdag as TDateISODate);
+      setSkjaeringstidspunkt(bestemmendeFravaersdag);
     }
   }
 }
