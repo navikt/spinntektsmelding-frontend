@@ -7978,13 +7978,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-http-proxy-middleware@npm:1.2.6":
-  version: 1.2.6
-  resolution: "next-http-proxy-middleware@npm:1.2.6"
+"next-http-proxy-middleware@npm:1.2.7":
+  version: 1.2.7
+  resolution: "next-http-proxy-middleware@npm:1.2.7"
   dependencies:
     "@types/http-proxy": "npm:1.17.3"
     http-proxy: "npm:^1.18.1"
-  checksum: 10c0/e114c0cf3955e3f04a0973dac57bd1153970a987be952a8c850483da082b81763d9dd71a27941478ab0e600c3299d451d97241ccd5afc626fedd5f79975dc232
+  checksum: 10c0/e1f2dcf1beec456e3ebfea8c5b38f2babd447cc70874a6047aed038451da4ca2388d14377a927e5b6c469f07967fe165960d41129adad7ea2299a9877aab848d
   languageName: node
   linkType: hard
 
@@ -9942,7 +9942,7 @@ __metadata:
     lint-staged: "npm:15.5.1"
     nanoid: "npm:5.1.5"
     next: "npm:15.2.4"
-    next-http-proxy-middleware: "npm:1.2.6"
+    next-http-proxy-middleware: "npm:1.2.7"
     next-router-mock: "npm:0.9.13"
     pino: "npm:9.6.0"
     pino-pretty: "npm:^13.0.0"
