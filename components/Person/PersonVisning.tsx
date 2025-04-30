@@ -2,7 +2,6 @@ import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
-import { Skeleton } from '@navikt/ds-react';
 import DelvisInnsendingInfo from './DelvisInnsendingInfo';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import AnsattDataVisning from './AnsattDataVisning';
@@ -38,8 +37,4 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
       </div>
     </>
   );
-}
-
-export function skeletonLoader(laster: boolean, tekst?: string) {
-  return laster ? tekst : <Skeleton variant='text' width='90%' height={28} />;
 }

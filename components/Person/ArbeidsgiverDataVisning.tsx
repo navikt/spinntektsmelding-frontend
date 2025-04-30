@@ -1,8 +1,7 @@
 import Heading3 from '../Heading3';
+import { SkeletonLoader } from '../SkeletonLoader/SkeletonLoader';
 import TextLabel from '../TextLabel';
-import { skeletonLoader } from './PersonVisning';
 import lokalStyles from './Person.module.css';
-import { Skeleton } from '@navikt/ds-react';
 
 interface Arbeidsgiver {
   orgNavn?: string;
@@ -32,7 +31,7 @@ export default function ArbeidsgiverDataVisning({
           <div className={lokalStyles.virksomhetsnavnWrapper}>
             <TextLabel>Virksomhetsnavn</TextLabel>
             <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
-              {avsender.orgNavn ?? <Skeleton variant='text' width='90%' height={28} />}
+              <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={avsender.orgNavn} />
             </div>
           </div>
         )}
@@ -46,19 +45,17 @@ export default function ArbeidsgiverDataVisning({
         )}
         <div className={lokalStyles.orgnrNavnWrapper}>
           <TextLabel>Orgnr. for underenhet</TextLabel>
-          <div data-cy='orgnummer'>{avsender.orgnr ?? <Skeleton variant='text' width='90%' height={28} />}</div>
+          <div data-cy='orgnummer'>
+            <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={avsender.orgnr} />
+          </div>
         </div>
         <div className={lokalStyles.innsenderNavnWrapper}>
           <TextLabel>Innsender</TextLabel>
           <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
-            {skeletonLoader(skjemadataErLastet, avsender.navn)}
+            <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={avsender.navn} />
           </div>
         </div>
-        <div className={lokalStyles.telefonWrapper}>
-          {children}
-          {/*<TextLabel>Telefon innsender</TextLabel>
-          <div className={lokalStyles.virksomhetsnavn}>{avsender.tlf}</div>*/}
-        </div>
+        <div className={lokalStyles.telefonWrapper}>{children}</div>
       </div>
     </div>
   );
