@@ -2,14 +2,17 @@ import { differenceInDays, formatISO9075, isBefore } from 'date-fns';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
 import { finnSammenhengendePeriode } from './finnArbeidsgiverperiode';
-import { TDateISODate } from '../state/MottattData';
 import sorterFomStigende from './sorterFomStigende';
 import sorterFomSynkende from './sorterFomSynkende';
+import { dateISODateSchema } from '../state/MottattData';
+import { z } from 'zod';
 
 export type tidPeriode = {
   fom?: Date;
   tom?: Date;
 };
+
+type TDateISODate = z.infer<typeof dateISODateSchema>;
 
 export function overlappendePeriode<T extends tidPeriode>(ene: T, andre: T): T | null {
   if (!ene || !andre) return null;
