@@ -10,6 +10,8 @@ const feiltekster = {
     'Angi om arbeidsgiver betaler ut full lønn til arbeidstaker i arbeidsgiverperioden.',
   LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE:
     'Begrunnelse for redusert utbetaling av lønn i arbeidsgiverperioden mangler.',
+  LONN_I_ARBEIDSGIVERPERIODEN_UGYLDIG_BEGRUNNELSE:
+    '"Vi betviler at ansatt er ute av stand til å jobbe" kan kun benyttes når det er arbeidsgiverperiode.',
   LONN_UNDER_SYKEFRAVAERET_MANGLER: 'Angi om arbeidsgiver betaler lønn under hele eller deler av sykefraværet.',
   LONN_UNDER_SYKEFRAVAERET_BELOP:
     'Angi refusjonsbeløpet arbeidsgiver har betalt under hele eller deler av sykefraværet.',

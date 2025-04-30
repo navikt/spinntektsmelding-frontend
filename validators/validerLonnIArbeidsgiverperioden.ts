@@ -5,6 +5,7 @@ import { ValiderResultat } from '../utils/validerInntektsmelding';
 export enum LonnIArbeidsgiverperiodenFeilkode {
   LONN_I_ARBEIDSGIVERPERIODEN_MANGLER = 'LONN_I_ARBEIDSGIVERPERIODEN_MANGLER',
   LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE = 'LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE',
+  LONN_I_ARBEIDSGIVERPERIODEN_UGYLDIG_BEGRUNNELSE = 'LONN_I_ARBEIDSGIVERPERIODEN_UGYLDIG_BEGRUNNELSE',
   LONN_I_ARBEIDSGIVERPERIODEN_BELOP = 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP',
   LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE = 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
   LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT = 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT'
@@ -20,11 +21,11 @@ export default function validerLonnIArbeidsgiverperioden(
   const ingenArbeidsgiverperiode = isIngenArbeidsgiverperiode(arbeidsgiverperioder);
 
   if (ingenArbeidsgiverperiode) {
-    errorStatus = validateIngenArbeidsgiverperiode(lonnIAP, errorStatus);
+    errorStatus = validateIngenArbeidsgiverperiode(errorStatus, lonnIAP);
     return errorStatus;
   }
 
-  errorStatus = validateLonnIAgpStatus(lonnIAP, bruttoInntekt, ingenArbeidsgiverperiode, errorStatus);
+  errorStatus = validateLonnIAgpStatus(errorStatus, lonnIAP, bruttoInntekt);
 
   return errorStatus;
 }
@@ -38,12 +39,16 @@ function isIngenArbeidsgiverperiode(arbeidsgiverperioder?: Periode[]): boolean {
 }
 
 function validateIngenArbeidsgiverperiode(
-  lonnIAP?: LonnIArbeidsgiverperioden,
-  errorStatus?: Array<ValiderResultat>
+  errorStatus: Array<ValiderResultat>,
+  lonnIAP?: LonnIArbeidsgiverperioden
 ): Array<ValiderResultat> {
-  if (!errorStatus) {
-    errorStatus = [];
+  if (lonnIAP?.begrunnelse === 'BetvilerArbeidsufoerhet') {
+    errorStatus.push({
+      code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UGYLDIG_BEGRUNNELSE,
+      felt: 'agp.redusertLoennIAgp.begrunnelse'
+    });
   }
+
   if (!lonnIAP?.begrunnelse || lonnIAP?.begrunnelse?.length === 0) {
     errorStatus.push({
       code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE,
@@ -67,14 +72,10 @@ function validateIngenArbeidsgiverperiode(
 }
 
 function validateLonnIAgpStatus(
+  errorStatus: Array<ValiderResultat>,
   lonnIAP?: LonnIArbeidsgiverperioden,
-  bruttoInntekt?: number,
-  ingenArbeidsgiverperiode?: boolean,
-  errorStatus?: Array<ValiderResultat>
+  bruttoInntekt?: number
 ): Array<ValiderResultat> {
-  if (!errorStatus) {
-    errorStatus = [];
-  }
   if (!lonnIAP?.status) {
     errorStatus.push({
       code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_MANGLER,
@@ -98,13 +99,6 @@ function validateLonnIAgpStatus(
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT,
         felt: 'agp.redusertLoennIAgp.beloep'
-      });
-    }
-
-    if (ingenArbeidsgiverperiode && lonnIAP.status === 'Ja') {
-      errorStatus.push({
-        code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE,
-        felt: 'lia-radio'
       });
     }
   }
