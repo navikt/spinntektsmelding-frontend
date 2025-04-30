@@ -6,11 +6,7 @@ import sorterFomStigende from './sorterFomStigende';
 import sorterFomSynkende from './sorterFomSynkende';
 import { dateISODateSchema } from '../state/MottattData';
 import { z } from 'zod';
-
-export type tidPeriode = {
-  fom?: Date;
-  tom?: Date;
-};
+import { tidPeriode } from '../schema/tidPeriode';
 
 type TDateISODate = z.infer<typeof dateISODateSchema>;
 

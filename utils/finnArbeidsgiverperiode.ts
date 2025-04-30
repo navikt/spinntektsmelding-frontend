@@ -3,10 +3,10 @@ import { addDays, differenceInCalendarDays } from 'date-fns';
 import {
   finnSorterteUnikePerioder,
   overlappendePeriode,
-  tidPeriode,
   tilstoetendePeriode,
   tilstoetendePeriodeManuellJustering
 } from './finnBestemmendeFravaersdag';
+import { tidPeriode } from '../schema/tidPeriode';
 
 function finnPeriodeMedAntallDager<T extends tidPeriode>(perioder: Array<T>, antallDager: number) {
   let dagerTotalt = 0;

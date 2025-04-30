@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import sorterFomSynkende from '../../utils/sorterFomSynkende';
-import { tidPeriode } from '../../utils/finnBestemmendeFravaersdag';
+import { tidPeriode } from '../../schema/tidPeriode';
 
 describe('sorterFomSynkende', () => {
   it('should return 0 if either fom is undefined', () => {

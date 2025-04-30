@@ -1,4 +1,4 @@
-import { tidPeriode } from './finnBestemmendeFravaersdag';
+import { tidPeriode } from '../schema/tidPeriode';
 
 function sorterFomSynkende<T extends tidPeriode>(a: T, b: T): number {
   if (!a.fom || !b.fom) {

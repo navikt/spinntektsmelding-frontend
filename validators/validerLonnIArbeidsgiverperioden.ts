@@ -1,5 +1,5 @@
 import { LonnIArbeidsgiverperioden } from '../state/state';
-import { tidPeriode } from '../utils/finnBestemmendeFravaersdag';
+import { tidPeriode } from '../schema/tidPeriode';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 
