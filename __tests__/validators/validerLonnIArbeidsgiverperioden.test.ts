@@ -373,4 +373,67 @@ describe('validerLonnIArbeidsgiverperioden', () => {
 
     expect(validerLonnIArbeidsgiverperioden(input, undefined, 1010)).toEqual(expected);
   });
+
+  it('should return an error when status is Ja and agp is empty', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Ja',
+      begrunnelse: 'BeskjedGittForSent',
+      utbetalt: 500
+    };
+    const arbeidsgiverperioder = [{ fom: undefined, tom: undefined, id: '1' }];
+    const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
+        felt: 'lia-radio'
+      }
+    ];
+    expect(validerLonnIArbeidsgiverperioden(input, arbeidsgiverperioder, 1010)).toEqual(expected);
+  });
+  it('should return an error when status is Ja and agp is undefined', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Ja',
+      begrunnelse: 'BeskjedGittForSent',
+      utbetalt: 500
+    };
+    const arbeidsgiverperioder = undefined;
+    const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
+        felt: 'lia-radio'
+      }
+    ];
+    expect(validerLonnIArbeidsgiverperioden(input, arbeidsgiverperioder, 1010)).toEqual(expected);
+  });
+
+  it('should return an error when status is Nei, agp is missing and begrunnelse is BetvilerArbeidsufoerhet', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      begrunnelse: 'BetvilerArbeidsufoerhet',
+      utbetalt: 0
+    };
+    const arbeidsgiverperioder = [{}];
+    const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_UGYLDIG_BEGRUNNELSE',
+        felt: 'agp.redusertLoennIAgp.begrunnelse'
+      }
+    ];
+    expect(validerLonnIArbeidsgiverperioden(input, arbeidsgiverperioder, 1010)).toEqual(expected);
+  });
+
+  it('should return an error when status is Ja and agp is missing', () => {
+    const input: LonnIArbeidsgiverperioden = {
+      status: 'Ja',
+      begrunnelse: 'BeskjedGittForSent',
+      utbetalt: 0
+    };
+    const arbeidsgiverperioder = [{}];
+    const expected = [
+      {
+        code: 'LONN_I_ARBEIDSGIVERPERIODEN_UTEN_ARBEIDSGIVERPERIODE',
+        felt: 'lia-radio'
+      }
+    ];
+    expect(validerLonnIArbeidsgiverperioden(input, arbeidsgiverperioder, 1010)).toEqual(expected);
+  });
 });
