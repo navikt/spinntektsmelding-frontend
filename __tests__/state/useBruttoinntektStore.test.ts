@@ -3,8 +3,8 @@ import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
 import feiltekster from '../../utils/feiltekster';
 import { finnAktuelleInntekter, sorterInntekter } from '../../state/useBruttoinntektStore';
-import { HistoriskInntekt } from '../../state/state';
 import parseIsoDate from '../../utils/parseIsoDate';
+import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
 
 const inputInntekt: number = 40000;
 const tidligereInntekt: Array<HistoriskInntekt> = [

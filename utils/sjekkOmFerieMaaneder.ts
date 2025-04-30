@@ -1,4 +1,4 @@
-import { HistoriskInntekt } from '../state/state';
+import { HistoriskInntekt } from '../schema/historiskInntektSchema';
 
 function sjekkOmFerieMaaneder(tidligereinntekt: Array<HistoriskInntekt> | undefined): boolean {
   const ferieMnd = tidligereinntekt

@@ -2,8 +2,9 @@ import { nanoid } from 'nanoid';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
-import MottattData, { FeilReportElement } from './MottattData';
+import MottattData from './MottattData';
 import useBoundStore from './useBoundStore';
+import { FeilReportElement } from '../schema/feilRepportSchema';
 
 function feilRapportMapper(feilReport?: Array<FeilReportElement>) {
   if (!feilReport) return {};

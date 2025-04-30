@@ -18,12 +18,10 @@ import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
 import formatCurrency from '../../utils/formatCurrency';
-import {
-  finnSammenhengendePeriode,
-  finnSammenhengendePeriodeManuellJustering
-} from '../../utils/finnArbeidsgiverperiode';
+import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeopphold';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
+import { finnSammenhengendePeriode } from '../../utils/finnBestemmendeFravaersdag';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;

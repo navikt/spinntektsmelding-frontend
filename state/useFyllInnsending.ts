@@ -15,9 +15,8 @@ import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 import { NaturalytelseEnum } from '../schema/NaturalytelseEnum';
 import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
 import { tidPeriode } from '../schema/tidPeriode';
-import { dateISODateSchema, Opplysningstype } from './MottattData';
+import { TDateISODate, Opplysningstype } from './MottattData';
 
-type TDateISODate = z.infer<typeof dateISODateSchema>;
 export type SendtPeriode = z.infer<typeof apiPeriodeSchema>;
 
 export default function useFyllInnsending() {

@@ -9,7 +9,6 @@ import { subMonths, startOfMonth } from 'date-fns';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 import roundTwoDecimals from '../utils/roundTwoDecimals';
-import { FeilReportElement } from './useStateInit';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import Router from 'next/router';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
@@ -17,6 +16,7 @@ import isValidUUID from '../utils/isValidUUID';
 import { EndringAarsakSchema } from '../schema/apiEndringAarsakSchema';
 import { z } from 'zod';
 import parseIsoDate from '../utils/parseIsoDate';
+import { FeilReportElement } from '../schema/feilRepportSchema';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {

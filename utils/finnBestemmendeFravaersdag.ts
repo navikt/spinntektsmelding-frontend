@@ -1,14 +1,10 @@
 import { differenceInDays, formatISO9075, isBefore } from 'date-fns';
 import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
-import { finnSammenhengendePeriode } from './finnArbeidsgiverperiode';
 import sorterFomStigende from './sorterFomStigende';
 import sorterFomSynkende from './sorterFomSynkende';
-import { dateISODateSchema } from '../state/MottattData';
-import { z } from 'zod';
+import { TDateISODate } from '../state/MottattData';
 import { tidPeriode } from '../schema/tidPeriode';
-
-type TDateISODate = z.infer<typeof dateISODateSchema>;
 
 export function overlappendePeriode<T extends tidPeriode>(ene: T, andre: T): T | null {
   if (!ene || !andre) return null;
@@ -175,4 +171,40 @@ export function finnSorterteUnikePerioder<T extends tidPeriode>(fravaerPerioder:
   const sorterteSykmeldingPerioder = fravaerPerioder.toSorted(sorterFomStigende);
 
   return sorterteSykmeldingPerioder;
+}
+
+export function finnSammenhengendePeriode<T extends tidPeriode>(fravaersperioder: Array<T>): Array<T> {
+  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
+  mergedSykmeldingsperioder.forEach((periode) => {
+    const aktivPeriode = tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1];
+    const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
+
+    if (oppdatertPeriode) {
+      tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1] = oppdatertPeriode;
+    } else {
+      tilstoetendeSykmeldingsperioder.push(periode);
+    }
+  });
+
+  return tilstoetendeSykmeldingsperioder;
+}
+
+export function joinPerioderMedOverlapp<T extends tidPeriode>(fravaersperioder: T[]) {
+  const sorterteSykmeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
+
+  const mergedSykmeldingsperioder = [sorterteSykmeldingsperioder[0]];
+
+  sorterteSykmeldingsperioder.forEach((periode) => {
+    const aktivPeriode = mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1];
+    const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
+
+    if (oppdatertPeriode) {
+      mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = oppdatertPeriode;
+    } else {
+      mergedSykmeldingsperioder.push(periode);
+    }
+  });
+
+  const tilstoetendeSykmeldingsperioder = [mergedSykmeldingsperioder[0]];
+  return { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder };
 }

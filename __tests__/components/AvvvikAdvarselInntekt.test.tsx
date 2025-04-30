@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AvvikAdvarselInntekt from '../../components/AvvikAdvarselInntekt/AvvikAdvarselInntekt';
-import { HistoriskInntekt } from '../../state/state';
+import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
 
 describe('AvvikAdvarselInntekt', () => {
   it('renders null when there are no tidligereInntekter', () => {

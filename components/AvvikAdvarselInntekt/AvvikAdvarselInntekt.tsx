@@ -1,5 +1,5 @@
 import { Alert, BodyLong } from '@navikt/ds-react';
-import { HistoriskInntekt } from '../../state/state';
+import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
 import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
 import lokalStyles from './AvvikAdvarselInntekt.module.css';
 

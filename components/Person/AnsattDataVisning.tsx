@@ -2,7 +2,6 @@ import Heading3 from '../Heading3';
 import { SkeletonLoader } from '../SkeletonLoader/SkeletonLoader';
 import TextLabel from '../TextLabel';
 import lokalStyles from './Person.module.css';
-import { Skeleton } from '@navikt/ds-react';
 
 interface Sykmeldt {
   fnr?: string;
