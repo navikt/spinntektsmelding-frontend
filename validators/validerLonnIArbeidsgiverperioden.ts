@@ -1,4 +1,4 @@
-import { LonnIArbeidsgiverperioden, Periode } from '../state/state';
+import { LonnIArbeidsgiverperioden } from '../state/state';
 import { tidPeriode } from '../utils/finnBestemmendeFravaersdag';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
