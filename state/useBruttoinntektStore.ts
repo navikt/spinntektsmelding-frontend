@@ -165,12 +165,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           manueltKorrigert: false
         };
 
-        if (!state.bruttoinntekt.endringAarsak) {
-          state.bruttoinntekt.endringAarsak = { aarsak: undefined };
-        }
-        if (!state.bruttoinntekt.endringAarsak.aarsak) {
-          state.bruttoinntekt.endringAarsak.aarsak = undefined;
-        }
+        state.bruttoinntekt.endringAarsak ??= { aarsak: undefined };
+
+        state.bruttoinntekt.endringAarsak.aarsak ??= undefined;
 
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         state.opprinneligeInntekt = tidligereInntekt;

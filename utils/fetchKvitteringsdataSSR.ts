@@ -40,7 +40,7 @@ const fetchKvitteringsdataSSR = (url: string, forespoerselId: string, token?: st
         });
     })
     .catch((errorRes) => {
-      const error = new NetworkError(errorRes.message || 'An error occurred while fetching the data...');
+      const error = new NetworkError(errorRes.message ?? 'An error occurred while fetching the data...');
       error.status = errorRes.status;
       error.info = errorRes;
       return Promise.reject(error);

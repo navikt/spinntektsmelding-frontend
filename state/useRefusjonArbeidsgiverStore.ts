@@ -170,13 +170,9 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
           state.refusjonEndringer = [{}];
         }
 
-        if (!state.opprinneligHarRefusjonEndringer) {
-          state.opprinneligHarRefusjonEndringer = harEndringer;
-        }
+        state.opprinneligHarRefusjonEndringer ??= harEndringer;
 
-        if (!state.opprinneligRefusjonEndringer) {
-          state.opprinneligRefusjonEndringer = [{}];
-        }
+        state.opprinneligRefusjonEndringer ??= [{}];
 
         return state;
       })
