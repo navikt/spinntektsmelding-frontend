@@ -1,4 +1,4 @@
-import { MottatArbeidsgiver } from '../state/MottattData';
+import { MottatArbeidsgiver } from '../schema/forespurtData';
 
 const testOrganisasjoner: MottatArbeidsgiver[] = [
   {

@@ -22,7 +22,7 @@ import { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { TDateISODate } from '../../state/MottattData';
+import { TDateISODate } from '../../schema/forespurtData';
 import { differenceInCalendarDays, differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/router';

@@ -40,7 +40,7 @@ import { harGyldigeRefusjonEndringer } from '../../../utils/harGyldigeRefusjonEn
 import hentKvitteringsdataSSR from '../../../utils/hentKvitteringsdataSSR';
 import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
-import { MottattPeriode } from '../../../state/MottattData';
+import { MottattPeriode } from '../../../schema/forespurtData';
 import useKvitteringInit from '../../../state/useKvitteringInit';
 
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';

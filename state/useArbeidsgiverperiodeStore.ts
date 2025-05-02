@@ -9,7 +9,7 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import validerPeriodeFravaer from '../validators/validerPeriodeFravaer';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
-import { TDateISODate } from './MottattData';
+import { TDateISODate } from '../schema/forespurtData';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';

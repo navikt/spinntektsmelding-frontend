@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { ForrigeInntekt, MottattForespurtData, Opplysningstype } from './MottattData';
+import { ForrigeInntekt, MottattForespurtData, Opplysningstype } from '../schema/forespurtData';
 import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
 import { HistoriskInntekt } from '../schema/historiskInntektSchema';
