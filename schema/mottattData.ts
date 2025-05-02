@@ -1,6 +1,6 @@
 import z from 'zod';
-import { dateISODateSchema, mottattForespurtDataSchema, MottattPeriodeSchema } from '../state/MottattData';
-import { FeilReportFeilListeSchema } from './feilRepportSchema';
+import { dateISODateSchema, mottattForespurtDataSchema, MottattPeriodeSchema } from './forespurtData';
+import { FeilReportFeilListeSchema } from './feilReportSchema';
 import { HistoriskInntektSchema } from './historiskInntektSchema';
 
 const MottattDataSchema = z.object({
@@ -16,10 +16,11 @@ const MottattDataSchema = z.object({
   telefonnummer: z.string().optional(),
   feilReport: FeilReportFeilListeSchema.optional(),
   forespurtData: mottattForespurtDataSchema.optional(),
-  skjaeringstidspunkt: dateISODateSchema,
+  skjaeringstidspunkt: dateISODateSchema, // TODO: Er denne i bruk?
   eksternBestemmendeFravaersdag: dateISODateSchema,
   bestemmendeFravaersdag: dateISODateSchema,
-  opprettetUpresisIkkeBruk: dateISODateSchema.optional()
+  opprettetUpresisIkkeBruk: dateISODateSchema.optional(),
+  erBesvart: z.boolean()
 });
 
 export type MottattData = z.infer<typeof MottattDataSchema>;

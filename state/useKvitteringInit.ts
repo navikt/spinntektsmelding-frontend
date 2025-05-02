@@ -1,5 +1,5 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattPeriode, Opplysningstype } from './MottattData';
+import { MottattPeriode, Opplysningstype } from '../schema/forespurtData';
 import useBoundStore from './useBoundStore';
 
 import MottattKvitteringSchema, { kvitteringNavNoSchema } from '../schema/mottattKvitteringSchema';

@@ -3,7 +3,7 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { Periode } from './state';
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattPeriode } from './MottattData';
+import { MottattPeriode } from '../schema/forespurtData';
 import { CompleteState } from './useBoundStore';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';

@@ -16,7 +16,7 @@ import isValidUUID from '../utils/isValidUUID';
 import { EndringAarsakSchema } from '../schema/apiEndringAarsakSchema';
 import { z } from 'zod';
 import parseIsoDate from '../utils/parseIsoDate';
-import { FeilReportElement } from '../schema/feilRepportSchema';
+import { FeilReportElement } from '../schema/feilReportSchema';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {

@@ -4,7 +4,7 @@ import {
   ForrigeInntekt,
   Opplysningstype,
   mottattForespurtDataSchema
-} from '../../state/MottattData';
+} from '../../schema/forespurtData';
 import forespoerselType from '../../config/forespoerselType';
 
 describe('MottattData types', () => {
