@@ -7,10 +7,11 @@ import { MottattPeriode } from './MottattData';
 import { CompleteState } from './useBoundStore';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
-import finnBestemmendeFravaersdag, { tidPeriode } from '../utils/finnBestemmendeFravaersdag';
+import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
 import sorterFomStigende from '../utils/sorterFomStigende';
+import { tidPeriode } from '../schema/tidPeriode';
 
 export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;

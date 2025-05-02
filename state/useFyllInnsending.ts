@@ -1,21 +1,21 @@
 import { isValid } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import finnBestemmendeFravaersdag, { tidPeriode } from '../utils/finnBestemmendeFravaersdag';
+import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { LonnIArbeidsgiverperioden, Naturalytelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import forespoerselType from '../config/forespoerselType';
-import { TDateISODate } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
 import { RefusjonEndring } from '../validators/validerAapenInnsending';
 import { z } from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
 import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
-import { Opplysningstype } from './useForespurtDataStore';
 import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 import { NaturalytelseEnum } from '../schema/NaturalytelseEnum';
 import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
+import { tidPeriode } from '../schema/tidPeriode';
+import { TDateISODate, Opplysningstype } from './MottattData';
 
 export type SendtPeriode = z.infer<typeof apiPeriodeSchema>;
 

@@ -2,7 +2,7 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import validerTelefon from '../validators/validerTelefon';
-import { FeilReportElement } from './MottattData';
+import { FeilReportElement } from '../schema/feilRepportSchema';
 
 export interface PersonState {
   sykmeldt: {

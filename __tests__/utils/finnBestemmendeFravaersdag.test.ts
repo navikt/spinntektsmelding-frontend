@@ -1,11 +1,11 @@
 import { parseISO } from 'date-fns';
 import { Periode } from '../../state/state';
 import finnBestemmendeFravaersdag, {
-  tidPeriode,
   tilstoetendePeriode,
   tilstoetendePeriodeManuellJustering
 } from '../../utils/finnBestemmendeFravaersdag';
 import { describe } from 'vitest';
+import { tidPeriode } from '../../schema/tidPeriode';
 
 describe.concurrent('finnBestemmendeFravaersdag', () => {
   it('should return the correct bestemmende fraværsdag for two periode directly following each other', () => {

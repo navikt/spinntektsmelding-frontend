@@ -18,11 +18,6 @@ export interface Inntekt {
   endringAarsaker?: Array<EndringAarsak>;
 }
 
-export interface HistoriskInntekt {
-  maaned: string;
-  inntekt: number | null;
-}
-
 export interface LonnISykefravaeret {
   status?: YesNo;
   beloep?: number;

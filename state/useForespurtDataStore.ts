@@ -1,10 +1,10 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { HistoriskInntekt } from './state';
 import { ForrigeInntekt, MottattForespurtData, Opplysningstype } from './MottattData';
 import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
+import { HistoriskInntekt } from '../schema/historiskInntektSchema';
 
 export interface ForespurtDataState {
   forespurtData?: MottattForespurtData;

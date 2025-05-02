@@ -210,9 +210,8 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.findByLabelText('Utbetalt under arbeidsgiverperiode').type('5000');
 
-    cy.findAllByLabelText('Velg begrunnelse for kort arbeidsgiverperiode').select(
-      'Det er ikke fire ukers opptjeningstid'
-    );
+    cy.findAllByLabelText('Velg begrunnelse for kort arbeidsgiverperiode').as('begrunnelse');
+    cy.get('@begrunnelse').select('Det er ikke fire ukers opptjeningstid');
 
     cy.findAllByRole('button', { name: 'Endre' }).last().click();
 

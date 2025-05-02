@@ -1,8 +1,7 @@
 import Heading3 from '../Heading3';
+import { SkeletonLoader } from '../SkeletonLoader/SkeletonLoader';
 import TextLabel from '../TextLabel';
 import lokalStyles from './Person.module.css';
-import { Skeleton } from '@navikt/ds-react';
-import { skeletonLoader } from './PersonVisning';
 
 interface Sykmeldt {
   fnr?: string;
@@ -27,12 +26,16 @@ export default function AnsattDataVisning({
         {!hentingAvPersondataFeilet && (
           <div className={lokalStyles.ansattWrapper}>
             <TextLabel>Navn</TextLabel>
-            <div data-cy='navn'>{skeletonLoader(skjemadataErLastet, sykmeldt.navn)}</div>
+            <div data-cy='navn'>
+              <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={sykmeldt.navn} />
+            </div>
           </div>
         )}
         <div className={lokalStyles.ansattWrapper}>
           <TextLabel>Personnummer</TextLabel>
-          <div data-cy='identitetsnummer'>{sykmeldt.fnr ?? <Skeleton variant='text' width='90%' height={28} />}</div>
+          <div data-cy='identitetsnummer'>
+            <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={sykmeldt.fnr} />
+          </div>
         </div>
       </div>
     </div>

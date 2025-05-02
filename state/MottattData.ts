@@ -1,9 +1,11 @@
 import z from 'zod';
 import forespoerselType from '../config/forespoerselType';
 
-const dateISODateSchema = z.string().date();
+export const dateISODateSchema = z.string().date();
 
-const MottattPeriodeSchema = z.object({
+export type TDateISODate = z.infer<typeof dateISODateSchema>;
+
+export const MottattPeriodeSchema = z.object({
   fom: dateISODateSchema,
   tom: dateISODateSchema
 });

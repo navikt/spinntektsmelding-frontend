@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { HistoriskInntekt } from '../../state/state';
+import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
 import formatCurrency from '../../utils/formatCurrency';
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';
 import lokalStyles from './Bruttoinntekt.module.css';

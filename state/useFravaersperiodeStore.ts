@@ -33,9 +33,8 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
     set(
       produce((state) => {
         const nyFravaersperiode: Periode = { id: nanoid() };
-        if (!kopiPeriode) {
-          kopiPeriode = [];
-        }
+        kopiPeriode ??= [];
+
         kopiPeriode.push(nyFravaersperiode);
         state.fravaersperioder = kopiPeriode;
 
