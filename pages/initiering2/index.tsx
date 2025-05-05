@@ -18,7 +18,6 @@ import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
 import initieringSchema from '../../schema/initieringSchema';
 
-import { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
@@ -40,6 +39,7 @@ import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
 import parseIsoDate from '../../utils/parseIsoDate';
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
+import { endepunktArbeidsforholdSchema } from '../../schema/endepunktArbeidsforholdSchema';
 
 type SykepengePeriode = {
   id: string;

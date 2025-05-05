@@ -1,6 +1,4 @@
-import { z } from 'zod';
 import NetworkError from './NetworkError';
-import { OrganisasjonsnummerSchema } from '../schema/organisasjonsnummerSchema';
 
 export default function fetcherArbeidsforhold(url: string | null, identitetsnummer?: string) {
   if (!url || !identitetsnummer) return Promise.resolve([]);
@@ -28,31 +26,3 @@ export default function fetcherArbeidsforhold(url: string | null, identitetsnumm
       throw newError;
     });
 }
-
-const ISO_DATE_REGEX = /\d{4}-[01]\d-[0-3]\d/;
-
-export const endepunktArbeidsforholdSchema = z.object({
-  fulltNavn: z.string(),
-  underenheter: z.array(
-    z
-      .object({
-        orgnrUnderenhet: OrganisasjonsnummerSchema,
-        virksomhetsnavn: z.string()
-      })
-      .optional()
-  ),
-  perioder: z
-    .array(
-      z.object({
-        fom: z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'),
-        tom: z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'),
-        id: z.string()
-      })
-    )
-    .optional(),
-  feilReport: z
-    .object({
-      feil: z.array(z.object({ melding: z.string() }))
-    })
-    .optional()
-});

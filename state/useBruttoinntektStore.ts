@@ -44,7 +44,7 @@ export interface BruttoinntektState {
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
     bruttoInntekt: number,
-    tidligereInntekt: Array<HistoriskInntekt>,
+    tidligereInntekt: Array<HistoriskInntekt> | null,
     bestemmendeFravaersdag: Date
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
@@ -117,13 +117,10 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) =>
+  setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt> | null) =>
     set(
       produce((state) => {
-        state.tidligereInntekt = tidligereInntekt.map((inntekt) => ({
-          maaned: inntekt.maaned,
-          inntekt: inntekt.inntekt
-        }));
+        state.tidligereInntekt = tidligereInntekt;
         return state;
       })
     ),

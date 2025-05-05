@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import fetcherArbeidsforhold, { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
+import fetcherArbeidsforhold from '../../utils/fetcherArbeidsforhold';
 
 describe('fetcherArbeidsforhold', () => {
   it('returns an empty array when identitetsnummer is not provided', async () => {
@@ -63,43 +63,5 @@ describe('fetcherArbeidsforhold', () => {
       },
       body: JSON.stringify({ identitetsnummer })
     });
-  });
-});
-
-describe('endepunktArbeidsforholdSchema', () => {
-  it('validates the schema correctly', () => {
-    const data = {
-      fulltNavn: 'John Doe',
-      underenheter: [
-        {
-          orgnrUnderenhet: '810008032',
-          virksomhetsnavn: 'ANSTENDIG PIGGSVIN BRANNVESEN'
-        },
-        {
-          orgnrUnderenhet: '810007842',
-          virksomhetsnavn: 'ANSTENDIG PIGGSVIN BARNEHAGE'
-        }
-      ]
-    };
-
-    expect(endepunktArbeidsforholdSchema.safeParse(data).success).toBe(true);
-  });
-
-  it('returns an error when the schema validation fails', () => {
-    const data = {
-      fulltNavn: 'John Doe',
-      underenheter: [
-        {
-          orgnrUnderenhet: '99810008032',
-          virksomhetsnavn: 'ANSTENDIG PIGGSVIN BRANNVESEN'
-        },
-        {
-          orgnrUnderenhet: '810007842',
-          virksomhetsnavn: 123 // Invalid type
-        }
-      ]
-    };
-
-    expect(endepunktArbeidsforholdSchema.safeParse(data).success).toBe(false);
   });
 });
