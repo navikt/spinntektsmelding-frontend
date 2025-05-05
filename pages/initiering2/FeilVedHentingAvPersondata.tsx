@@ -12,13 +12,13 @@ export default function FeilVedHentingAvPersondata({
   const hentingAvPersondataFeilet = fulltNavnMangler;
   const hentingAvArbeidsgiverdataFeilet = orgNavnMangler;
 
-  const hvilkenFeil = `${hentingAvPersondataFeilet ? 'den ansatte' : ''} ${
-    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
-  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'bedriften' : ''}`;
+  const hvilkenFeil = `${hentingAvPersondataFeilet ? 'den ansatte' : ''}${
+    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? ' og ' : ''
+  }${hentingAvArbeidsgiverdataFeilet ? 'bedriften' : ''}`.trim();
 
-  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'personnummer' : ''} ${
-    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
-  } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`;
+  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'personnummer' : ''}${
+    hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? ' og ' : ''
+  }${hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`.trim();
 
   const feilmeldingTekst = `Vi klarer ikke hente navn på ${hvilkenFeil} akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at ${hvilkenSjekk} stemmer.`;
 
