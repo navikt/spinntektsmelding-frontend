@@ -3,27 +3,7 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import useBoundStore from './useBoundStore';
-import { FeilReportElement } from '../schema/feilReportSchema';
 import { MottattData } from '../schema/mottattData';
-
-function feilRapportMapper(feilReport?: Array<FeilReportElement>) {
-  if (!feilReport) return {};
-
-  const virksomhetFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'virksomhet');
-  const arbeidstakerFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'arbeidstaker-informasjon');
-
-  const forespoerselFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'forespoersel-svar');
-  const inntektFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'inntekt');
-  const personopplysningerFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'personer');
-
-  return {
-    virksomhetFeil,
-    arbeidstakerFeil,
-    forespoerselFeil,
-    inntektFeil,
-    personopplysningerFeil
-  };
-}
 
 export default function useStateInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
@@ -84,12 +64,7 @@ export default function useStateInit() {
 
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
 
-    initBruttoinntekt(
-      jsonData.bruttoinntekt,
-      jsonData.tidligereinntekter,
-      parseIsoDate(bestemmendeFravaersdag)!,
-      jsonData.tidligereinntekter === null
-    );
+    initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekter, parseIsoDate(bestemmendeFravaersdag)!);
 
     if (jsonData.forespurtData) {
       initForespurtData(

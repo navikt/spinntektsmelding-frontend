@@ -39,7 +39,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const arbeidsgiverperiodePaakrevd = forespurtData?.arbeidsgiverperiode?.paakrevd;
 
     if (!arbeidsgiverperiodePaakrevd) {
-      initBruttoinntekt(bruttoinntekt, tidligereinntekter, bestemmendeFravaersdag!, undefined);
+      initBruttoinntekt(bruttoinntekt, tidligereinntekter, bestemmendeFravaersdag!);
 
       slettAlleArbeidsgiverperioder();
     }

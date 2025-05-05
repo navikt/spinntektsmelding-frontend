@@ -2,7 +2,6 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import validerTelefon from '../validators/validerTelefon';
-// import { FeilReportElement } from '../schema/feilReportSchema';
 
 export interface PersonState {
   sykmeldt: {
@@ -15,8 +14,6 @@ export interface PersonState {
     navn?: string;
     tlf?: string;
   };
-  // feilHentingAvPersondata?: Array<FeilReportElement>;
-  // feilHentingAvArbeidsgiverdata?: Array<FeilReportElement>;
   setIdentitetsnummer: (identitetsnummer: string) => void;
   setInnsenderTelefon: (identitetsnummer: string) => void;
   initPerson: (

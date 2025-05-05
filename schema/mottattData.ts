@@ -1,6 +1,5 @@
 import z from 'zod';
 import { dateISODateSchema, mottattForespurtDataSchema, MottattPeriodeSchema } from './forespurtData';
-import { FeilReportFeilListeSchema } from './feilReportSchema';
 import { HistoriskInntektSchema } from './historiskInntektSchema';
 
 const MottattDataSchema = z.object({
@@ -14,7 +13,6 @@ const MottattDataSchema = z.object({
   tidligereinntekter: z.array(HistoriskInntektSchema).nullable(),
   innsenderNavn: z.string(),
   telefonnummer: z.string().optional(),
-  // feilReport: FeilReportFeilListeSchema.optional(), // TODO: Fjernes!
   forespurtData: mottattForespurtDataSchema.optional(),
   skjaeringstidspunkt: dateISODateSchema, // TODO: Er denne i bruk?
   eksternBestemmendeFravaersdag: dateISODateSchema,
