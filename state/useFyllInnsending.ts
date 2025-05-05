@@ -15,7 +15,7 @@ import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
 import { NaturalytelseEnum } from '../schema/NaturalytelseEnum';
 import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
 import { tidPeriode } from '../schema/tidPeriode';
-import { TDateISODate, Opplysningstype } from '../schema/forespurtData';
+import { Opplysningstype } from '../schema/forespurtData';
 
 export type SendtPeriode = z.infer<typeof apiPeriodeSchema>;
 
