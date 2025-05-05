@@ -21,8 +21,6 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
     register
   } = useFormContext();
 
-  const hentingAvArbeidsgiverdataFeilet = avsender.orgNavn === null;
-
   const skjemadataErLastet = !!sykmeldt.fnr;
 
   return (
