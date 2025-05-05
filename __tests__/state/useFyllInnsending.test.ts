@@ -1,7 +1,7 @@
 import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import useFyllInnsending, { formaterOpphørsdato, formaterRedusertLoennIAgp } from '../../state/useFyllInnsending';
+import useFyllInnsending, { formaterRedusertLoennIAgp } from '../../state/useFyllInnsending';
 import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 
@@ -222,23 +222,5 @@ describe('formaterRedusertLoennIAgp', () => {
     };
 
     expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
-  });
-});
-
-describe('formaterOpphørsdato', () => {
-  it('should return a formatted data', async () => {
-    expect(formaterOpphørsdato('Ja', new Date('2024-01-02'))).toBe('2024-01-02');
-  });
-
-  it('should return null when kravetOpphoerer = Nei', async () => {
-    expect(formaterOpphørsdato('Nei', new Date('2024-01-02'))).toBeNull();
-  });
-
-  it('should return null when kravetOpphoerer = undefined', async () => {
-    expect(formaterOpphørsdato(undefined, new Date('2024-01-02'))).toBeNull();
-  });
-
-  it('should return null when kravetOpphoerer = undefined', async () => {
-    expect(formaterOpphørsdato('Ja', undefined)).toBeNull();
   });
 });

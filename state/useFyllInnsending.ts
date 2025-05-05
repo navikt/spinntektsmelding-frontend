@@ -23,14 +23,11 @@ export default function useFyllInnsending() {
   const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, refusjonskravetOpphoerer, forespurtData] = useBoundStore(
-    (state) => [
-      state.fullLonnIArbeidsgiverPerioden,
-      state.lonnISykefravaeret,
-      state.refusjonskravetOpphoerer,
-      state.forespurtData
-    ]
-  );
+  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, forespurtData] = useBoundStore((state) => [
+    state.fullLonnIArbeidsgiverPerioden,
+    state.lonnISykefravaeret,
+    state.forespurtData
+  ]);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
@@ -144,7 +141,7 @@ export default function useFyllInnsending() {
         lonnISykefravaeret?.status === 'Ja'
           ? {
               beloepPerMaaned: lonnISykefravaeret.beloep!,
-              sluttdato: formaterOpphørsdato(refusjonskravetOpphoerer?.status, refusjonskravetOpphoerer?.opphoersdato),
+              sluttdato: null,
 
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
@@ -283,18 +280,6 @@ export function konverterRefusjonEndringer(
   } else {
     return [];
   }
-}
-
-export function formaterOpphørsdato(
-  kravetOpphoerer: YesNo | undefined,
-  refusjonskravetOpphoerer: Date | undefined
-): TDateISODate | null {
-  const formatertDato =
-    kravetOpphoerer === 'Ja' && refusjonskravetOpphoerer ? formatIsoDate(refusjonskravetOpphoerer) : null;
-  if (formatertDato) {
-    return formatertDato;
-  }
-  return null;
 }
 
 export function formaterRedusertLoennIAgp(

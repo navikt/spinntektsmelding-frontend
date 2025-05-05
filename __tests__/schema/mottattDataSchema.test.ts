@@ -11,7 +11,6 @@ const baseValid = {
   bruttoinntekt: 50000,
   tidligereinntekter: null,
   innsenderNavn: 'Kari Tester',
-  skjaeringstidspunkt: '2023-01-01',
   eksternBestemmendeFravaersdag: '2023-02-01',
   bestemmendeFravaersdag: '2023-03-01',
   erBesvart: true

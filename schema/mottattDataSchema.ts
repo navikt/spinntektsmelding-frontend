@@ -14,7 +14,6 @@ export const MottattDataSchema = z.object({
   innsenderNavn: z.string(),
   telefonnummer: z.string().optional(),
   forespurtData: mottattForespurtDataSchema.optional(),
-  skjaeringstidspunkt: dateISODateSchema, // TODO: Er denne i bruk?
   eksternBestemmendeFravaersdag: dateISODateSchema,
   bestemmendeFravaersdag: dateISODateSchema,
   opprettetUpresisIkkeBruk: dateISODateSchema.optional(),
