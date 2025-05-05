@@ -2,7 +2,7 @@ import z from 'zod';
 import { dateISODateSchema, mottattForespurtDataSchema, MottattPeriodeSchema } from './forespurtData';
 import { HistoriskInntektSchema } from './historiskInntektSchema';
 
-const MottattDataSchema = z.object({
+export const MottattDataSchema = z.object({
   navn: z.string().nullable(),
   identitetsnummer: z.string(),
   orgNavn: z.string().nullable(),
