@@ -11,6 +11,9 @@
 // please read our getting started guide:
 // https://on.cypress.io/introduction-to-cypress
 
+import { object } from 'zod';
+import apiData from '../../mockdata/trenger-forhaandsutfyll.json';
+
 describe('Utfylling og innsending av skjema', () => {
   beforeEach(() => {
     // Cypress starts out with a blank slate for each test
@@ -89,6 +92,135 @@ describe('Utfylling og innsending av skjema', () => {
     cy.get('[data-cy="arbeidsgiverperiode-0-fra-dato"]').should('have.text', '01.02.2023');
     cy.get('[data-cy="arbeidsgiverperiode-0-til-dato"]').should('have.text', '15.02.2023');
     // });
+
+    // it('should display information on the beregnet månedslønn', () => {
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').its('length').should('be.eq', 3);
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').first().find('td').first().should('have.text', 'November:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr')
+      .first()
+      .find('td')
+      .last()
+      .invoke('text')
+      .should('match', /88\s000,00\skr/);
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').last().find('td').first().should('have.text', 'Januar:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr')
+      .last()
+      .find('td')
+      .last()
+      .invoke('text')
+      .should('match', /66\s000,00\skr/);
+
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
+
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .findByLabelText('Nei')
+      .check();
+
+    cy.findByRole('checkbox', {
+      name: 'Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+    }).check();
+    cy.injectAxe();
+    cy.checkA11y();
+
+    cy.findByRole('button', { name: 'Send' }).click();
+    cy.wait('@innsendingInntektsmelding');
+    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
+
+    cy.checkA11y();
+  });
+
+  it('should display warning that the person name can not be loaded and then submit', () => {
+    const aktiveApiData = { ...apiData };
+    aktiveApiData.navn = null;
+
+    cy.intercept('/im-dialog/api/hent-forespoersel', aktiveApiData).as('hent-forespoersel');
+
+    cy.intercept('/im-dialog/api/inntektsdata', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('inntektsdata');
+
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding', {
+      statusCode: 201,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('innsendingInntektsmelding');
+
+    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+
+    cy.wait('@hent-forespoersel');
+
+    cy.findByText(/Vi klarer ikke hente navn på den ansatte akkurat nå./).should('be.visible');
+
+    // it('should display information on the beregnet månedslønn', () => {
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').its('length').should('be.eq', 3);
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').first().find('td').first().should('have.text', 'November:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr')
+      .first()
+      .find('td')
+      .last()
+      .invoke('text')
+      .should('match', /88\s000,00\skr/);
+    cy.get('[data-cy="tidligereinntekt"] tbody tr').last().find('td').first().should('have.text', 'Januar:');
+    cy.get('[data-cy="tidligereinntekt"] tbody tr')
+      .last()
+      .find('td')
+      .last()
+      .invoke('text')
+      .should('match', /66\s000,00\skr/);
+
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .findByLabelText('Ja')
+      .check();
+
+    cy.findByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .findByLabelText('Nei')
+      .check();
+
+    cy.findByRole('checkbox', {
+      name: 'Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
+    }).check();
+    cy.injectAxe();
+    cy.checkA11y();
+
+    cy.findByRole('button', { name: 'Send' }).click();
+    cy.wait('@innsendingInntektsmelding');
+    cy.findAllByText('Kvittering - innsendt inntektsmelding').should('be.visible');
+
+    cy.checkA11y();
+  });
+
+  it('should display warning that the person name and org.name can not be loaded and then submit', () => {
+    const aktiveApiData = { ...apiData };
+    aktiveApiData.navn = null;
+    aktiveApiData.orgNavn = null;
+
+    cy.intercept('/im-dialog/api/hent-forespoersel', aktiveApiData).as('hent-forespoersel');
+
+    cy.intercept('/im-dialog/api/inntektsdata', {
+      statusCode: 404,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('inntektsdata');
+
+    cy.intercept('/im-dialog/api/innsendingInntektsmelding', {
+      statusCode: 201,
+      body: {
+        name: 'Nothing'
+      }
+    }).as('innsendingInntektsmelding');
+
+    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+
+    cy.wait('@hent-forespoersel');
+
+    cy.findByText(/Vi klarer ikke hente navn på den ansatte og bedriften akkurat nå./).should('be.visible');
 
     // it('should display information on the beregnet månedslønn', () => {
     cy.get('[data-cy="tidligereinntekt"] tbody tr').its('length').should('be.eq', 3);
