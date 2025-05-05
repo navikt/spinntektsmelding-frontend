@@ -56,12 +56,12 @@ describe('Person component', () => {
         __esModule: true,
         default: vi.fn(),
         sykmeldt: {
-          navn: null,
+          navn: undefined,
           fnr: null
         },
         avsender: {
           orgnr: null,
-          orgNavn: null,
+          orgNavn: undefined,
           navn: null,
           tlf: null
         },
@@ -97,13 +97,7 @@ describe('Person component', () => {
           orgNavn: null,
           navn: null,
           tlf: null
-        },
-        feilVedLasting: {
-          persondata: 'Error fetching person data', // feilHentingAvPersondata
-          arbeidsgiverdata: null // feilHentingAvArbeidsgiverdata
-        },
-        feilHentingAvPersondata: ['Error fetching person data'], // feilHentingAvPersondata
-        feilHentingAvArbeidsgiverdata: ['Error fetching employer data'] // feilHentingAvArbeidsgiverdata
+        }
       })
     );
 
@@ -130,13 +124,7 @@ describe('Person component', () => {
           orgNavn: 'Example Company',
           navn: 'Jane Doe',
           tlf: '12345678'
-        },
-        feilVedLasting: {
-          persondata: null, // feilHentingAvPersondata
-          arbeidsgiverdata: null // feilHentingAvArbeidsgiverdata
-        },
-        feilHentingAvPersondata: [], // feilHentingAvPersondata
-        feilHentingAvArbeidsgiverdata: []
+        }
       })
     );
 

@@ -40,23 +40,14 @@ export default function useStateInit() {
     state.setMottattEksternBestemmendeFravaersdag
   ]);
 
-  const setForespoerselSistOppdatert = useBoundStore((state) => state.setForespoerselSistOppdatert);
-
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
 
   return (jsonData: MottattData) => {
-    const feilRapporter = feilRapportMapper(jsonData.feilReport?.feil);
-
     initFravaersperiode(jsonData.fravaersperioder);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
-    const feilVedLasting = {
-      persondata: feilRapporter.arbeidstakerFeil?.concat(feilRapporter.personopplysningerFeil),
-      arbeidsgiverdata: feilRapporter.virksomhetFeil,
-      inntekt: feilRapporter.inntektFeil
-    };
 
     initPerson(
       jsonData.navn,
@@ -64,8 +55,7 @@ export default function useStateInit() {
       jsonData.orgnrUnderenhet,
       jsonData.orgNavn,
       jsonData.innsenderNavn,
-      jsonData.telefonnummer,
-      feilVedLasting
+      jsonData.telefonnummer
     );
 
     if (jsonData.eksternBestemmendeFravaersdag) setSkjaeringstidspunkt(jsonData.eksternBestemmendeFravaersdag);
@@ -98,7 +88,7 @@ export default function useStateInit() {
       jsonData.bruttoinntekt,
       jsonData.tidligereinntekter,
       parseIsoDate(bestemmendeFravaersdag)!,
-      feilVedLasting.inntekt
+      jsonData.tidligereinntekter === null
     );
 
     if (jsonData.forespurtData) {
@@ -108,10 +98,6 @@ export default function useStateInit() {
         jsonData.bruttoinntekt,
         jsonData.tidligereinntekter
       );
-    }
-
-    if (jsonData.opprettetUpresisIkkeBruk) {
-      setForespoerselSistOppdatert(jsonData.opprettetUpresisIkkeBruk);
     }
   };
 }

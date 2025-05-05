@@ -4,17 +4,17 @@ import { FeilReportFeilListeSchema } from './feilReportSchema';
 import { HistoriskInntektSchema } from './historiskInntektSchema';
 
 const MottattDataSchema = z.object({
-  navn: z.string(),
+  navn: z.string().nullable(),
   identitetsnummer: z.string(),
-  orgNavn: z.string(),
+  orgNavn: z.string().nullable(),
   orgnrUnderenhet: z.string(),
   fravaersperioder: z.array(MottattPeriodeSchema),
   egenmeldingsperioder: z.array(MottattPeriodeSchema),
   bruttoinntekt: z.number(),
-  tidligereinntekter: z.array(HistoriskInntektSchema),
+  tidligereinntekter: z.array(HistoriskInntektSchema).nullable(),
   innsenderNavn: z.string(),
   telefonnummer: z.string().optional(),
-  feilReport: FeilReportFeilListeSchema.optional(),
+  // feilReport: FeilReportFeilListeSchema.optional(), // TODO: Fjernes!
   forespurtData: mottattForespurtDataSchema.optional(),
   skjaeringstidspunkt: dateISODateSchema, // TODO: Er denne i bruk?
   eksternBestemmendeFravaersdag: dateISODateSchema,

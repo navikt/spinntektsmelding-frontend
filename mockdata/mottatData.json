@@ -38,13 +38,5 @@
 
   "innsenderNavn": "Test Testesen",
   "innsenderTelefonNr": "12345678",
-  "feilReport": {
-    "feil": [
-      {
-        "melding": "Vi klarte ikke å hente arbeidstaker informasjon.",
-        "datafelt": "arbeidstaker-informasjon"
-      }
-    ]
-  },
   "opprettetUpresisIkkeBruk": "2023-02-20"
 }

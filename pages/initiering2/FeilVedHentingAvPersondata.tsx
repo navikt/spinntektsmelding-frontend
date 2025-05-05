@@ -1,23 +1,18 @@
 import { Alert } from '@navikt/ds-react';
 
 interface FeilVedHentingAvPersondataProps {
-  sykmeldt: {
-    navn?: string;
-    fnr?: string;
-  };
-  avsender: {
-    orgnr?: string;
-    orgNavn?: string;
-    navn?: string;
-    tlf?: string;
-  };
+  fulltNavnMangler?: boolean;
+  orgNavnMangler?: boolean;
 }
 
-export default function FeilVedHentingAvPersondata({ sykmeldt, avsender }: Readonly<FeilVedHentingAvPersondataProps>) {
-  const hentingAvPersondataFeilet = sykmeldt.navn === null;
-  const hentingAvArbeidsgiverdataFeilet = avsender.orgNavn === null;
+export default function FeilVedHentingAvPersondata({
+  fulltNavnMangler,
+  orgNavnMangler
+}: Readonly<FeilVedHentingAvPersondataProps>) {
+  const hentingAvPersondataFeilet = fulltNavnMangler;
+  const hentingAvArbeidsgiverdataFeilet = orgNavnMangler;
 
-  const hvilkenFeil = `${sykmeldt.navn === null ? 'den ansatte' : ''} ${
+  const hvilkenFeil = `${hentingAvPersondataFeilet ? 'den ansatte' : ''} ${
     hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
   } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'bedriften' : ''}`;
 

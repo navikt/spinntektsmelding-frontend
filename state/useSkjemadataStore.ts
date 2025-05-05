@@ -1,13 +1,12 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { Opplysningstype } from './useForespurtDataStore';
 import { YesNo } from './state';
-import parseIsoDate from '../utils/parseIsoDate';
 import { kvitteringEksternSchema } from '../schema/mottattKvitteringSchema';
 import z from 'zod';
 import fullInnsendingSchema from '../schema/fullInnsendingSchema';
 import aapenInnsendingSchema from '../schema/aapenInnsendingSchema';
+import { Opplysningstype } from '../schema/forespurtData';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
@@ -32,7 +31,6 @@ export interface SkjemadataState {
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
   setVedtaksperiodeId: (id: string) => void;
-  setForespoerselSistOppdatert: (tidspunkt: string | Date) => void;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
@@ -44,7 +42,6 @@ export interface SkjemadataState {
   skjemastatus: SkjemaStatus;
   kvitteringData?: KvitteringFullInnsending | KvitteringSelvbestemtInnsending;
   vedtaksperiodeId?: string;
-  forespoerselSistOppdatert?: Date;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -137,27 +134,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.vedtaksperiodeId = id;
-      })
-    );
-  },
-  setForespoerselSistOppdatert: (tidspunkt: string | Date) => {
-    let oppdatert: Date | undefined = undefined;
-
-    if (typeof tidspunkt === 'string') {
-      oppdatert = parseIsoDate(tidspunkt);
-    } else {
-      oppdatert = tidspunkt;
-    }
-
-    if (!oppdatert) {
-      return;
-    }
-
-    set(
-      produce((state: SkjemadataState) => {
-        if (oppdatert !== undefined) {
-          state.forespoerselSistOppdatert = oppdatert;
-        }
       })
     );
   }
