@@ -220,7 +220,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     foreslaattBestemmendeFravaersdag,
     fravaersperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
-    harForespurtArbeidsgiverperiode
+    harForespurtArbeidsgiverperiode,
+    forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
   ]);
 
   const inntektsdato = useMemo(() => {
@@ -240,7 +241,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         setLasterData(false);
       });
     } else if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-      if (inntektsdato && isValidUUID(pathSlug)) {
+      if (inntektsdato && harForespurtArbeidsgiverperiode && isValidUUID(pathSlug)) {
+        console.log('Henter inntektsdata for arbeidsgiverinitiert skjema');
         fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
           .then((inntektSisteTreMnd) => {
             setTidligereInntekter(inntektSisteTreMnd.data.tidligereInntekter);
@@ -300,7 +302,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 <Skillelinje />
               </>
             )}
-
             {skalViseArbeidsgiverperiode && (
               <Arbeidsgiverperiode
                 arbeidsgiverperioder={arbeidsgiverperioder}
