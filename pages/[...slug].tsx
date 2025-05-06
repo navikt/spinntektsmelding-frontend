@@ -90,6 +90,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
+  const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
 
   const hentSkjemadata = useHentSkjemadata();
 
@@ -241,8 +242,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         setLasterData(false);
       });
     } else if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-      if (inntektsdato && harForespurtArbeidsgiverperiode && isValidUUID(pathSlug)) {
-        console.log('Henter inntektsdata for arbeidsgiverinitiert skjema');
+      if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(pathSlug)) {
+        setHentInntektEnGang(false);
+
         fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
           .then((inntektSisteTreMnd) => {
             setTidligereInntekter(inntektSisteTreMnd.data.tidligereInntekter);
