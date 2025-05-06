@@ -9,7 +9,7 @@ export const MottattDataSchema = z.object({
   orgnrUnderenhet: z.string(),
   fravaersperioder: z.array(MottattPeriodeSchema),
   egenmeldingsperioder: z.array(MottattPeriodeSchema),
-  bruttoinntekt: z.number(),
+  bruttoinntekt: z.number().nullable(),
   tidligereinntekter: z.array(HistoriskInntektSchema).nullable(),
   innsenderNavn: z.string(),
   telefonnummer: z.string().optional(),
