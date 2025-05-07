@@ -1,13 +1,17 @@
-import { FieldError, UseControllerProps, FieldValues } from 'react-hook-form';
+import { FieldErrors } from 'react-hook-form';
 import useBoundStore from '../../state/useBoundStore';
 import FeilListe from './FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
+import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import z from 'zod';
 
-interface FeilsammendragProps<T extends FieldValues> extends UseControllerProps<T> {
-  skjemafeil: FieldError[] | undefined;
+type HovedSkjema = z.infer<typeof hovedskjemaSchema>;
+
+interface FeilsammendragProps {
+  skjemafeil: FieldErrors<HovedSkjema> | undefined;
 }
 
-export default function Feilsammendrag({ skjemafeil }: Readonly<FeilsammendragProps<any>>) {
+export default function Feilsammendrag({ skjemafeil }: Readonly<FeilsammendragProps>) {
   const feil = formatRHFFeilmeldinger(skjemafeil);
 
   const feilmeldinger = useBoundStore((state) => state.feilmeldinger);
