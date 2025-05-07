@@ -10,15 +10,11 @@ interface Sykmeldt {
 
 interface AnsattDataVisningProps<T extends Sykmeldt> {
   sykmeldt: T;
-  hentingAvPersondataFeilet?: boolean;
 }
 
-export default function AnsattDataVisning({
-  sykmeldt,
-  hentingAvPersondataFeilet
-}: Readonly<AnsattDataVisningProps<Sykmeldt>>) {
+export default function AnsattDataVisning({ sykmeldt }: Readonly<AnsattDataVisningProps<Sykmeldt>>) {
   const skjemadataErLastet = !!sykmeldt.fnr;
-
+  const hentingAvPersondataFeilet = sykmeldt.navn === null;
   return (
     <div className={lokalStyles.denAnsatte}>
       <Heading3>Den ansatte</Heading3>

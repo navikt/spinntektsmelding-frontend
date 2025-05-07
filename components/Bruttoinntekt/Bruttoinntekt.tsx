@@ -37,11 +37,10 @@ export default function Bruttoinntekt({
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const henterData = useBoundStore((state) => state.henterData);
-  const feilHentingAvInntektsdata = useBoundStore((state) => state.feilHentingAvInntektsdata);
   const amplitudeComponent = 'BeregnetMånedslønn';
 
   const { watch, setValue } = useFormContext();
-
+  const feilHentingAvInntektsdata = tidligereinntekt === null;
   const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 

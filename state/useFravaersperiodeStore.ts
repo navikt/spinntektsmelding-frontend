@@ -95,7 +95,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
           if (bestemmende) {
             state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmende);
-            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende));
+            state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende)!);
           }
         }
         return state;

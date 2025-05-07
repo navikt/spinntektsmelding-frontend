@@ -11,17 +11,15 @@ interface Arbeidsgiver {
 
 interface ArbeidsgiverDataVisningProps<T extends Arbeidsgiver> {
   avsender: T;
-  hentingAvArbeidsgiverdataFeilet?: boolean;
   children?: React.ReactNode;
 }
 
 export default function ArbeidsgiverDataVisning({
   avsender,
-  hentingAvArbeidsgiverdataFeilet,
   children
 }: Readonly<ArbeidsgiverDataVisningProps<Arbeidsgiver>>) {
   const skjemadataErLastet = !!avsender.orgnr;
-
+  const hentingAvArbeidsgiverdataFeilet = avsender.orgNavn === null;
   return (
     <div>
       <Heading3>Arbeidsgiveren</Heading3>

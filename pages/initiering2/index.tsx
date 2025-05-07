@@ -18,7 +18,6 @@ import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
 import initieringSchema from '../../schema/initieringSchema';
 
-import { endepunktArbeidsforholdSchema } from '../../utils/fetcherArbeidsforhold';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
@@ -39,6 +38,8 @@ import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finn
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
 import parseIsoDate from '../../utils/parseIsoDate';
 import sorterFomStigende from '../../utils/sorterFomStigende';
+import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
+import { endepunktArbeidsforholdSchema } from '../../schema/endepunktArbeidsforholdSchema';
 
 type SykepengePeriode = {
   id: string;
@@ -82,7 +83,7 @@ const Initiering2: NextPage = () => {
 
             .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
         ),
-      navn: z.string().optional(),
+      navn: z.string().nullable().optional(),
       personnummer: PersonnummerSchema.optional(),
       sykepengePeriodeId: z.array(z.string().uuid()).optional(),
       endreRefusjon: z.string().optional()
@@ -123,11 +124,11 @@ const Initiering2: NextPage = () => {
   } = methods;
 
   const orgnr = watch('organisasjonsnummer');
-  const sykepengePeriodeId: string[] = watch('sykepengePeriodeId');
-  const endreRefusjon: string = watch('endreRefusjon');
+  const sykepengePeriodeId: string[] | undefined = watch('sykepengePeriodeId');
+  const endreRefusjon: string | undefined = watch('endreRefusjon');
 
   const { data, error } = useArbeidsforhold(sykmeldt.fnr, setError);
-
+  let orgNavnMangler = false;
   const handleSykepengePeriodeIdRadio = (value: any) => {
     setValue('sykepengePeriodeId', value);
   };
@@ -138,10 +139,13 @@ const Initiering2: NextPage = () => {
     if (mottatteData.success) {
       fulltNavn = mottatteData.data.fulltNavn;
 
-      if (mottatteData.success && !mottatteData.data.feilReport) {
+      if (mottatteData.success) {
         arbeidsforhold =
           mottatteData?.data?.underenheter && mottatteData.data.underenheter.length > 0 && !error
             ? mottatteData.data.underenheter.map((arbeidsgiver: any) => {
+                if (arbeidsgiver.orgnrUnderenhet === null) {
+                  orgNavnMangler = true;
+                }
                 return {
                   orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet,
                   virksomhetsnavn: arbeidsgiver.virksomhetsnavn
@@ -275,7 +279,7 @@ const Initiering2: NextPage = () => {
     const mottatteSykepengesoeknader = spData ? endepunktSykepengesoeknaderSchema.safeParse(spData) : undefined;
     const mottatteData = data ? endepunktArbeidsforholdSchema.safeParse(data) : undefined;
 
-    if (mottatteData?.success && !mottatteData.data.feilReport) {
+    if (mottatteData?.success) {
       handleValidData(formData, mottatteData.data, mottatteSykepengesoeknader);
     }
   };
@@ -283,7 +287,7 @@ const Initiering2: NextPage = () => {
   const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any) => {
     const skjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
-      fulltNavn: mottatteData.fulltNavn,
+      fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
       personnummer: sykmeldt.fnr
     };
 
@@ -397,6 +401,7 @@ const Initiering2: NextPage = () => {
           <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
           <FormProvider {...methods}>
             <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
+              <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
               <div className={lokalStyles.persondata}>
                 <div className={lokalStyles.navn}>
                   <TextLabel>Navn</TextLabel>

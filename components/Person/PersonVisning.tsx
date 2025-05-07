@@ -12,25 +12,16 @@ interface PersonProps {
 }
 
 export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
-  const [sykmeldt, avsender, feilHentingAvPersondata, feilHentingAvArbeidsgiverdata] = useBoundStore(
-    (state) => [state.sykmeldt, state.avsender, state.feilHentingAvPersondata, state.feilHentingAvArbeidsgiverdata],
-    shallow
-  );
-
-  const hentingAvPersondataFeilet = feilHentingAvPersondata && feilHentingAvPersondata.length > 0;
-  const hentingAvArbeidsgiverdataFeilet = feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0;
+  const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender], shallow);
 
   return (
     <>
       <DelvisInnsendingInfo erDelvisInnsending={erDelvisInnsending} />
-      <FeilVedHentingAvPersondata
-        hentingAvPersondataFeilet={hentingAvPersondataFeilet}
-        hentingAvArbeidsgiverdataFeilet={hentingAvArbeidsgiverdataFeilet}
-      />
+      <FeilVedHentingAvPersondata sykmeldt={sykmeldt} avsender={avsender} />
       <div className={lokalStyles.personInfoWrapper}>
-        <AnsattDataVisning sykmeldt={sykmeldt} hentingAvPersondataFeilet={hentingAvPersondataFeilet} />
+        <AnsattDataVisning sykmeldt={sykmeldt} />
 
-        <ArbeidsgiverDataVisning avsender={avsender} hentingAvArbeidsgiverdataFeilet={hentingAvArbeidsgiverdataFeilet}>
+        <ArbeidsgiverDataVisning avsender={avsender}>
           <TextLabel>Telefon innsender</TextLabel>
           <div className={lokalStyles.virksomhetsnavn}>{avsender.tlf}</div>
         </ArbeidsgiverDataVisning>

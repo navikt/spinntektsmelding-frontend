@@ -15,17 +15,11 @@ interface PersonProps {
 }
 
 export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
-  const [sykmeldt, avsender, feilHentingAvPersondata, feilHentingAvArbeidsgiverdata] = useBoundStore(
-    (state) => [state.sykmeldt, state.avsender, state.feilHentingAvPersondata, state.feilHentingAvArbeidsgiverdata],
-    shallow
-  );
+  const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender], shallow);
   const {
     formState: { errors },
     register
   } = useFormContext();
-
-  const hentingAvPersondataFeilet = feilHentingAvPersondata && feilHentingAvPersondata.length > 0;
-  const hentingAvArbeidsgiverdataFeilet = feilHentingAvArbeidsgiverdata && feilHentingAvArbeidsgiverdata.length > 0;
 
   const skjemadataErLastet = !!sykmeldt.fnr;
 
@@ -38,17 +32,14 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
       </p>
       <Skillelinje />
 
-      <FeilVedHentingAvPersondata
-        hentingAvPersondataFeilet={hentingAvPersondataFeilet}
-        hentingAvArbeidsgiverdataFeilet={hentingAvArbeidsgiverdataFeilet}
-      />
+      <FeilVedHentingAvPersondata sykmeldt={sykmeldt} avsender={avsender} />
 
       <DelvisInnsendingInfo erDelvisInnsending={erDelvisInnsending} />
 
       <div className={lokalStyles.personInfoWrapper}>
-        <AnsattDataVisning sykmeldt={sykmeldt} hentingAvPersondataFeilet={hentingAvPersondataFeilet} />
+        <AnsattDataVisning sykmeldt={sykmeldt} />
 
-        <ArbeidsgiverDataVisning avsender={avsender} hentingAvArbeidsgiverdataFeilet={hentingAvArbeidsgiverdataFeilet}>
+        <ArbeidsgiverDataVisning avsender={avsender}>
           <TextField
             label='Telefon innsender'
             type='tel'

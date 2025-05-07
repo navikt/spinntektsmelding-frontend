@@ -3,27 +3,7 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import useBoundStore from './useBoundStore';
-import { FeilReportElement } from '../schema/feilReportSchema';
-import { MottattData } from '../schema/mottattData';
-
-function feilRapportMapper(feilReport?: Array<FeilReportElement>) {
-  if (!feilReport) return {};
-
-  const virksomhetFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'virksomhet');
-  const arbeidstakerFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'arbeidstaker-informasjon');
-
-  const forespoerselFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'forespoersel-svar');
-  const inntektFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'inntekt');
-  const personopplysningerFeil = feilReport.filter((feilElement) => feilElement.datafelt === 'personer');
-
-  return {
-    virksomhetFeil,
-    arbeidstakerFeil,
-    forespoerselFeil,
-    inntektFeil,
-    personopplysningerFeil
-  };
-}
+import { MottattData } from '../schema/mottattDataSchema';
 
 export default function useStateInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
@@ -40,23 +20,14 @@ export default function useStateInit() {
     state.setMottattEksternBestemmendeFravaersdag
   ]);
 
-  const setForespoerselSistOppdatert = useBoundStore((state) => state.setForespoerselSistOppdatert);
-
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
 
   return (jsonData: MottattData) => {
-    const feilRapporter = feilRapportMapper(jsonData.feilReport?.feil);
-
     initFravaersperiode(jsonData.fravaersperioder);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
-    const feilVedLasting = {
-      persondata: feilRapporter.arbeidstakerFeil?.concat(feilRapporter.personopplysningerFeil),
-      arbeidsgiverdata: feilRapporter.virksomhetFeil,
-      inntekt: feilRapporter.inntektFeil
-    };
 
     initPerson(
       jsonData.navn,
@@ -64,8 +35,7 @@ export default function useStateInit() {
       jsonData.orgnrUnderenhet,
       jsonData.orgNavn,
       jsonData.innsenderNavn,
-      jsonData.telefonnummer,
-      feilVedLasting
+      jsonData.telefonnummer
     );
 
     if (jsonData.eksternBestemmendeFravaersdag) setSkjaeringstidspunkt(jsonData.eksternBestemmendeFravaersdag);
@@ -94,12 +64,7 @@ export default function useStateInit() {
 
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
 
-    initBruttoinntekt(
-      jsonData.bruttoinntekt,
-      jsonData.tidligereinntekter,
-      parseIsoDate(bestemmendeFravaersdag)!,
-      feilVedLasting.inntekt
-    );
+    initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekter, parseIsoDate(bestemmendeFravaersdag)!);
 
     if (jsonData.forespurtData) {
       initForespurtData(
@@ -108,10 +73,6 @@ export default function useStateInit() {
         jsonData.bruttoinntekt,
         jsonData.tidligereinntekter
       );
-    }
-
-    if (jsonData.opprettetUpresisIkkeBruk) {
-      setForespoerselSistOppdatert(jsonData.opprettetUpresisIkkeBruk);
     }
   };
 }

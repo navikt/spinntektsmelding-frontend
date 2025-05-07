@@ -2,7 +2,6 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import validerTelefon from '../validators/validerTelefon';
-import { FeilReportElement } from '../schema/feilReportSchema';
 
 export interface PersonState {
   sykmeldt: {
@@ -15,21 +14,15 @@ export interface PersonState {
     navn?: string;
     tlf?: string;
   };
-  feilHentingAvPersondata?: Array<FeilReportElement>;
-  feilHentingAvArbeidsgiverdata?: Array<FeilReportElement>;
   setIdentitetsnummer: (identitetsnummer: string) => void;
   setInnsenderTelefon: (identitetsnummer: string) => void;
   initPerson: (
-    navn: string,
+    navn: string | null,
     identitetsnummer: string,
     orgnrUnderenhet: string,
-    orgNavn: string,
+    orgNavn: string | null,
     innsenderNavn?: string,
-    innsenderTelefonNr?: string,
-    feilVedLasting?: {
-      persondata?: Array<FeilReportElement>;
-      arbeidsgiverdata?: Array<FeilReportElement>;
-    }
+    innsenderTelefonNr?: string
   ) => void;
 }
 
@@ -65,7 +58,7 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set, g
       })
     );
   },
-  initPerson: (navn, identitetsnummer, orgnrUnderenhet, orgNavn, innsenderNavn, innsenderTelefonNr, feilVedLasting) => {
+  initPerson: (navn, identitetsnummer, orgnrUnderenhet, orgNavn, innsenderNavn, innsenderTelefonNr) => {
     set(
       produce((state: PersonState) => ({
         sykmeldt: {
@@ -77,9 +70,7 @@ const usePersonStore: StateCreator<CompleteState, [], [], PersonState> = (set, g
           orgNavn,
           navn: innsenderNavn,
           tlf: innsenderTelefonNr
-        },
-        feilHentingAvPersondata: feilVedLasting?.persondata,
-        feilHentingAvArbeidsgiverdata: feilVedLasting?.arbeidsgiverdata
+        }
       }))
     );
   }

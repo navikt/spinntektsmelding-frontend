@@ -16,7 +16,6 @@ import isValidUUID from '../utils/isValidUUID';
 import { EndringAarsakSchema } from '../schema/apiEndringAarsakSchema';
 import { z } from 'zod';
 import parseIsoDate from '../utils/parseIsoDate';
-import { FeilReportElement } from '../schema/feilReportSchema';
 import forespoerselType from '../config/forespoerselType';
 import { HistoriskInntekt } from '../schema/historiskInntektSchema';
 
@@ -39,7 +38,6 @@ export interface BruttoinntektState {
   opprinneligeInntekt?: Array<HistoriskInntekt>;
   sisteLonnshentedato?: Date;
   henterData: boolean;
-  feilHentingAvInntektsdata?: Array<FeilReportElement>;
   setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => void;
   setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
@@ -47,9 +45,8 @@ export interface BruttoinntektState {
   setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
   initBruttoinntekt: (
     bruttoInntekt: number,
-    tidligereInntekt: Array<HistoriskInntekt>,
-    bestemmendeFravaersdag: Date,
-    feilHentingAvInntektsdata?: Array<FeilReportElement>
+    tidligereInntekt: Array<HistoriskInntekt> | null,
+    bestemmendeFravaersdag: Date
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
@@ -121,21 +118,17 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) =>
+  setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt> | null) =>
     set(
       produce((state) => {
-        state.tidligereInntekt = tidligereInntekt.map((inntekt) => ({
-          maaned: inntekt.maaned,
-          inntekt: inntekt.inntekt
-        }));
+        state.tidligereInntekt = tidligereInntekt;
         return state;
       })
     ),
   initBruttoinntekt: (
     bruttoInntekt: number,
-    tidligereInntekt: Array<HistoriskInntekt>,
-    bestemmendeFravaersdag: Date,
-    feilHentingAvInntektsdata?
+    tidligereInntekt: Array<HistoriskInntekt> | null,
+    bestemmendeFravaersdag: Date
   ) => {
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
     const sumInntekter = aktuelleInntekter.reduce((prev, cur) => {
@@ -180,8 +173,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
             inntekt: inntekt.inntekt
           }));
         }
-
-        state.feilHentingAvInntektsdata = feilHentingAvInntektsdata;
 
         return state;
       })
@@ -291,7 +282,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
 export default useBruttoinntektStore;
 
-export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[], bestemmendeFravaersdag: Date) {
+export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[] | null, bestemmendeFravaersdag: Date) {
   const bestMnd = `00${bestemmendeFravaersdag.getMonth() + 1}`.slice(-2);
   const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
   const sisteMnd = `00${subMonths(bestemmendeFravaersdag, 3).getMonth() + 1}`.slice(-2);
