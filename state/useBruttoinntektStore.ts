@@ -16,6 +16,7 @@ import isValidUUID from '../utils/isValidUUID';
 import { EndringAarsakSchema } from '../schema/apiEndringAarsakSchema';
 import { z } from 'zod';
 import parseIsoDate from '../utils/parseIsoDate';
+import forespoerselType from '../config/forespoerselType';
 import { HistoriskInntekt } from '../schema/historiskInntektSchema';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
@@ -181,11 +182,14 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     const opprinneligeInntekt = get().opprinneligeInntekt || [];
     let tidligereInntekt = structuredClone(opprinneligeInntekt);
     const bruttoinntekt = get().bruttoinntekt;
+    const hentPaakrevdOpplysningstyper = get().hentPaakrevdOpplysningstyper;
 
     const slug = Router.query.slug as string;
 
     const forespoerselId = Array.isArray(slug) ? (slug[0] as string) : slug;
 
+    const opplysningstyper = hentPaakrevdOpplysningstyper();
+    const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     let henterData = get().henterData;
     const sisteLonnshentedato = get().sisteLonnshentedato;
 
@@ -194,7 +198,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     if (
       !(henterData || !sisteLonnshentedato || !bestemmendeFravaersdag) &&
       startOfMonth(sisteLonnshentedato).getMonth() !== startOfMonth(bestemmendeFravaersdag).getMonth() &&
-      isValidUUID(forespoerselId)
+      isValidUUID(forespoerselId) &&
+      harForespurtArbeidsgiverperiode
     ) {
       henterData = true;
 

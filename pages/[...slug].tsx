@@ -90,6 +90,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
+  const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
 
   const hentSkjemadata = useHentSkjemadata();
 
@@ -220,7 +221,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     foreslaattBestemmendeFravaersdag,
     fravaersperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
-    harForespurtArbeidsgiverperiode
+    harForespurtArbeidsgiverperiode,
+    forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
   ]);
 
   const inntektsdato = useMemo(() => {
@@ -240,7 +242,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         setLasterData(false);
       });
     } else if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-      if (inntektsdato && isValidUUID(pathSlug)) {
+      if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(pathSlug)) {
+        setHentInntektEnGang(false);
+
         fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
           .then((inntektSisteTreMnd) => {
             setTidligereInntekter(inntektSisteTreMnd.data.tidligereInntekter);
@@ -300,7 +304,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 <Skillelinje />
               </>
             )}
-
             {skalViseArbeidsgiverperiode && (
               <Arbeidsgiverperiode
                 arbeidsgiverperioder={arbeidsgiverperioder}
