@@ -15,7 +15,7 @@ export interface ForespurtDataState {
   initForespurtData: (
     forespurtData: MottattForespurtData,
     mottattBestemmendeFravaersdag: string,
-    bruttoinntekt: number,
+    bruttoinntekt: number | null,
     tidligereinntekter: HistoriskInntekt[] | null
   ) => void;
   hentOpplysningstyper: () => Array<Opplysningstype>;
