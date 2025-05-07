@@ -28,7 +28,7 @@ export interface ArbeidsgiverperiodeState {
   arbeidsgiverperiodeDisabled: boolean;
   arbeidsgiverperiodeKort: boolean;
   mottattBestemmendeFravaersdag?: TDateISODate;
-  mottattEksternBestemmendeFravaersdag?: TDateISODate;
+  mottattEksternInntektsdato?: TDateISODate;
   setArbeidsgiverperioder: (arbeidsgiverperioder: Array<Periode> | undefined) => void;
   initArbeidsgiverperioder: (arbeidsgiverperioder: Array<ApiPeriodeSchema> | undefined) => void;
   setEndringsbegrunnelse: (begrunnelse: string) => void;
@@ -45,7 +45,7 @@ export interface ArbeidsgiverperiodeState {
   arbeidsgiverKanFlytteSkjæringstidspunkt: () => boolean;
   setSkjaeringstidspunkt: (skjaeringstidspunkt: TDateISODate | Date | null | undefined) => void;
   setMottattBestemmendeFravaersdag: (bestemmendeFravaersdag: TDateISODate) => void;
-  setMottattEksternBestemmendeFravaersdag: (bestemmendeFravaersdag: TDateISODate) => void;
+  setMottattEksternInntektsdato: (bestemmendeFravaersdag: TDateISODate) => void;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => {
@@ -309,10 +309,10 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         })
       );
     },
-    setMottattEksternBestemmendeFravaersdag: (bestemmendeFravaersdag: TDateISODate) => {
+    setMottattEksternInntektsdato: (bestemmendeFravaersdag: TDateISODate) => {
       set(
         produce((state) => {
-          state.mottattEksternBestemmendeFravaersdag = bestemmendeFravaersdag;
+          state.mottattEksternInntektsdato = bestemmendeFravaersdag;
           return state;
         })
       );
