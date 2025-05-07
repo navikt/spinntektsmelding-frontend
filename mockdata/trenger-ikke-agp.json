@@ -7,7 +7,7 @@
   "fravaersperioder": [{ "fom": "2025-03-10", "tom": "2025-03-31" }],
   "egenmeldingsperioder": [],
   "bestemmendeFravaersdag": "2025-03-10",
-  "eksternBestemmendeFravaersdag": null,
+  "eksternInntektsdato": null,
   "bruttoinntekt": 26666.67,
   "tidligereinntekter": [
     { "maaned": "2024-12", "inntekt": 40000.0 },

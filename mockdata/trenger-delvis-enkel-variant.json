@@ -7,7 +7,7 @@
   "fravaersperioder": [{ "fom": "2024-12-05", "tom": "2024-12-30" }],
   "egenmeldingsperioder": [],
   "bestemmendeFravaersdag": "2024-12-05",
-  "eksternBestemmendeFravaersdag": null,
+  "eksternInntektsdato": null,
   "bruttoinntekt": 36000.0,
   "tidligereinntekter": [
     { "maaned": "2024-09", "inntekt": 54000.0 },
@@ -30,7 +30,7 @@
     "fravaersperioder": [{ "fom": "2024-12-05", "tom": "2024-12-30" }],
     "egenmeldingsperioder": [],
     "bestemmendeFravaersdag": "2024-12-05",
-    "eksternBestemmendeFravaersdag": null,
+    "eksternInntektsdato": null,
     "bruttoinntekt": 36000.0,
     "tidligereinntekter": [
       { "maaned": "2024-09", "inntekt": 54000.0 },
