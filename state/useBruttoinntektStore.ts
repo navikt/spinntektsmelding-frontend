@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
-import { HistoriskInntekt, Inntekt } from './state';
+import { Inntekt } from './state';
 import stringishToNumber from '../utils/stringishToNumber';
 import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldingerStore';
@@ -18,6 +18,7 @@ import { z } from 'zod';
 import parseIsoDate from '../utils/parseIsoDate';
 import { FeilReportElement } from '../schema/feilReportSchema';
 import forespoerselType from '../config/forespoerselType';
+import { HistoriskInntekt } from '../schema/historiskInntektSchema';
 
 export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
   if (a.maaned < b.maaned) {

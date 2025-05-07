@@ -16,7 +16,8 @@ const tidligereInntekt: Array<HistoriskInntekt> = [
   { maaned: '2002-07', inntekt: 55000 },
   { maaned: '2002-08', inntekt: 50000 },
   { maaned: '2002-09', inntekt: 45000 },
-  { maaned: '2002-10', inntekt: 55000 }
+  { maaned: '2002-10', inntekt: 55000 },
+  { maaned: '2002-11', inntekt: 50000 }
 ];
 
 describe('useBoundStore', () => {
@@ -210,7 +211,7 @@ describe('useBoundStore', () => {
     expect(inntekter).toEqual(expected);
   });
 
-  it.skip('should rekalkulerBruttoinntekt', () => {
+  it('should rekalkulerBruttoinntekt', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -218,13 +219,21 @@ describe('useBoundStore', () => {
     });
 
     act(() => {
+      result.current.setPaakrevdeOpplysninger(['arbeidsgiverperiode', 'inntekt', 'refusjon']);
+    });
+
+    act(() => {
       result.current.rekalkulerBruttoinntekt(new Date(2002, 11, 11));
     });
 
-    expect(result.current.bruttoinntekt?.endrinAarsak).toBeUndefined();
+    expect(result.current.bruttoinntekt?.endringAarsaker).toBeUndefined();
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(50000);
     expect(result.current.tidligereInntekt).toEqual([
+      {
+        inntekt: 50000,
+        maaned: '2002-11'
+      },
       {
         inntekt: 55000,
         maaned: '2002-10'
@@ -232,10 +241,6 @@ describe('useBoundStore', () => {
       {
         inntekt: 45000,
         maaned: '2002-09'
-      },
-      {
-        inntekt: 50000,
-        maaned: '2002-08'
       }
     ]);
   });
