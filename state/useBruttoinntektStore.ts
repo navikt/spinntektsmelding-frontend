@@ -211,8 +211,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     ) {
       henterData = true;
 
-      console.log('Henter inntektsdata for forespoerselId: ', forespoerselId);
-
       const inntektsdata = await fetchInntektsdata(environment.inntektsdataUrl, forespoerselId, bestemmendeFravaersdag);
       const oppdaterteInntekter = inntektsdata.data;
 
