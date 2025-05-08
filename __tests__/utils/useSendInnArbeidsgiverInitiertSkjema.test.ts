@@ -54,7 +54,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
         vedtaksperiodeId: '1234567890',
         skjaeringstidspunkt: new Date('2023-01-01'),
         arbeidsgiverperioder: [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-10') }],
-        fravaersperioder: [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-10') }]
+        sykmeldingsperioder: [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-10') }]
       })
     );
   };

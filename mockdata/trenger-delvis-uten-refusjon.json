@@ -5,7 +5,7 @@
   "identitetsnummer": "10486535275",
   "orgnrUnderenhet": "810007842",
   "eksternBestemmendeFravaersdag": null,
-  "fravaersperioder": [
+  "sykmeldingsperioder": [
     {
       "fom": "2023-04-19",
       "tom": "2023-04-23"

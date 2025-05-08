@@ -37,8 +37,10 @@ function finnArbeidsgiverperiode<T extends tidPeriode>(fravaerPerioder: Array<T>
   return finnPeriodeMedAntallDager(tilstoetendePerioder, 16);
 }
 
-export function finnSammenhengendePeriodeManuellJustering<T extends tidPeriode>(fravaersperioder: Array<T>): Array<T> {
-  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
+export function finnSammenhengendePeriodeManuellJustering<T extends tidPeriode>(
+  sykmeldingsperioder: Array<T>
+): Array<T> {
+  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(sykmeldingsperioder);
   mergedSykmeldingsperioder.forEach((periode) => {
     const aktivPeriode = tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1];
     const oppdatertPeriode = tilstoetendePeriodeManuellJustering(aktivPeriode, periode);

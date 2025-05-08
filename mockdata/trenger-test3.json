@@ -5,7 +5,7 @@
   "identitetsnummer": "11457918943",
   "orgnrUnderenhet": "810007842",
   "eksternBestemmendeFravaersdag": null,
-  "fravaersperioder": [{ "fom": "2023-12-25", "tom": "2023-12-31" }],
+  "sykmeldingsperioder": [{ "fom": "2023-12-25", "tom": "2023-12-31" }],
   "egenmeldingsperioder": [],
   "bruttoinntekt": 54300.0,
   "tidligereinntekter": [

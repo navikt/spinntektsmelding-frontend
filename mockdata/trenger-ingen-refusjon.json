@@ -5,7 +5,7 @@
   "identitetsnummer": "16446719762",
   "orgnrUnderenhet": "810007842",
   "eksternBestemmendeFravaersdag": null,
-  "fravaersperioder": [{ "fom": "2024-01-23", "tom": "2024-01-28" }],
+  "sykmeldingsperioder": [{ "fom": "2024-01-23", "tom": "2024-01-28" }],
   "egenmeldingsperioder": [],
   "bruttoinntekt": 47000.0,
   "tidligereinntekter": [

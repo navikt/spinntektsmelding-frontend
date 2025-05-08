@@ -57,7 +57,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const [skjemastatus, inngangFraKvittering] = useBoundStore((state) => [
@@ -207,7 +207,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
       );
     }
-    const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
+    const altFravaer = finnFravaersperioder(sykmeldingsperioder, egenmeldingsperioder);
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
       altFravaer,
       arbeidsgiverperioder,
@@ -219,7 +219,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     arbeidsgiverperioder,
     egenmeldingsperioder,
     foreslaattBestemmendeFravaersdag,
-    fravaersperioder,
+    sykmeldingsperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     harForespurtArbeidsgiverperiode,
     forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
@@ -236,7 +236,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (!isValidUUID(pathSlug)) {
       return;
     }
-    if (!fravaersperioder) {
+    if (!sykmeldingsperioder) {
       setLasterData(true);
       hentSkjemadata(pathSlug, erEndring)?.finally(() => {
         setLasterData(false);
@@ -264,7 +264,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug, skjemastatus, inntektsdato, fravaersperioder]);
+  }, [pathSlug, skjemastatus, inntektsdato, sykmeldingsperioder]);
 
   const { data, error } = useTidligereInntektsdata(
     sykmeldt.fnr!,

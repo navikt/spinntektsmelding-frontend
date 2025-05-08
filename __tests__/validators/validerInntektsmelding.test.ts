@@ -7,7 +7,7 @@ describe('validerInntektsmelding', () => {
     // Mock the state and other dependencies
     const mockSetSkalViseFeilmeldinger = vi.fn();
     const state = {
-      fravaersperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-31'), id: '1' }],
+      sykmeldingsperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-31'), id: '1' }],
       // egenmeldingsperioder: [],
       naturalytelser: [],
       hasBortfallAvNaturalytelser: false,
@@ -55,7 +55,7 @@ describe('validerInntektsmelding', () => {
     const mockSetSkalViseFeilmeldinger = vi.fn();
 
     const state = {
-      fravaersperioder: [],
+      sykmeldingsperioder: [],
       egenmeldingsperioder: [],
       naturalytelser: [],
       hasBortfallAvNaturalytelser: false,
@@ -130,7 +130,7 @@ describe('validerInntektsmelding', () => {
     // Mock the state and other dependencies
     const mockSetSkalViseFeilmeldinger = vi.fn();
     const state = {
-      fravaersperioder: undefined,
+      sykmeldingsperioder: undefined,
       // egenmeldingsperioder: [],
       naturalytelser: [],
       hasBortfallAvNaturalytelser: false,
@@ -182,7 +182,7 @@ describe('validerInntektsmelding', () => {
     // Mock the state and other dependencies
     const mockSetSkalViseFeilmeldinger = vi.fn();
     const state = {
-      fravaersperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-31'), id: '1' }],
+      sykmeldingsperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-31'), id: '1' }],
       // egenmeldingsperioder: [],
       naturalytelser: [],
       hasBortfallAvNaturalytelser: false,
@@ -234,7 +234,7 @@ describe('validerInntektsmelding', () => {
     // Mock the state and other dependencies
     const mockSetSkalViseFeilmeldinger = vi.fn();
     const state = {
-      fravaersperioder: [{ fom: parseIsoDate('2021-01-02'), tom: parseIsoDate('2021-01-31'), id: '1' }],
+      sykmeldingsperioder: [{ fom: parseIsoDate('2021-01-02'), tom: parseIsoDate('2021-01-31'), id: '1' }],
       egenmeldingsperioder: [{ fom: parseIsoDate('2021-01-01'), tom: parseIsoDate('2021-01-01'), id: '1' }],
       naturalytelser: [],
       hasBortfallAvNaturalytelser: false,

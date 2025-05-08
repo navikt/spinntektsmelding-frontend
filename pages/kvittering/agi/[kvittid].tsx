@@ -152,10 +152,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         beregnetInntekt: kvitteringData?.inntekt?.beloep
       };
 
-  let fravaersperioder: Periode[] = [];
+  let sykmeldingsperioder: Periode[] = [];
   let egenmeldingsperioder: Periode[] = [];
   if (dataFraBackend) {
-    fravaersperioder = kvitteringDokument.sykmeldingsperioder?.map((periode: MottattPeriode) => ({
+    sykmeldingsperioder = kvitteringDokument.sykmeldingsperioder?.map((periode: MottattPeriode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
       id: periode.fom + periode.tom
@@ -167,7 +167,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       id: periode.fom + periode.tom
     }));
   } else {
-    fravaersperioder = kvitteringData.sykmeldingsperioder?.map((periode: MottattPeriode) => ({
+    sykmeldingsperioder = kvitteringData.sykmeldingsperioder?.map((periode: MottattPeriode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
       id: periode.fom + periode.tom
@@ -312,7 +312,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <div className={classNameWrapperFravaer}>
             {visArbeidsgiverperiode && (
               <Fravaersperiode
-                fravaersperioder={fravaersperioder}
+                sykmeldingsperioder={sykmeldingsperioder}
                 egenmeldingsperioder={egenmeldingsperioder}
                 paakrevdeOpplysninger={paakrevdeOpplysninger}
               />

@@ -4,7 +4,7 @@
   "innsenderNavn": "BERØMT FLYTTELASS",
   "identitetsnummer": "03417703232",
   "orgnrUnderenhet": "810007842",
-  "fravaersperioder": [{ "fom": "2025-03-10", "tom": "2025-03-31" }],
+  "sykmeldingsperioder": [{ "fom": "2025-03-10", "tom": "2025-03-31" }],
   "egenmeldingsperioder": [],
   "bestemmendeFravaersdag": "2025-03-10",
   "eksternBestemmendeFravaersdag": null,

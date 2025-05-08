@@ -6,7 +6,7 @@
   "orgnrUnderenhet": "810007982",
 
   "eksternBestemmendeFravaersdag": "2024-01-02",
-  "fravaersperioder": [
+  "sykmeldingsperioder": [
     {
       "fom": "2024-01-02",
       "tom": "2024-01-03"

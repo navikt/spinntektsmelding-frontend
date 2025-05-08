@@ -4,7 +4,7 @@
   "innsenderNavn": "Muskuløs Vals",
   "identitetsnummer": "10486535275",
   "orgnrUnderenhet": "810007842",
-  "fravaersperioder": [
+  "sykmeldingsperioder": [
     { "fom": "2023-08-25", "tom": "2023-08-28" },
     { "fom": "2023-08-29", "tom": "2023-09-11" },
     { "fom": "2023-09-12", "tom": "2023-10-02" }

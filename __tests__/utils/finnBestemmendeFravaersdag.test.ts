@@ -500,7 +500,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
 
   /***** */
   it('should return correct bfd when arbeidsgiverKanFlytte is true and forespurtBestemmendeFraværsdag is undefined, different periodes', () => {
-    const fravaersperioder: Periode[] = [
+    const sykmeldingsperioder: Periode[] = [
       {
         id: '1',
         fom: parseISO('2023-11-29'),
@@ -514,7 +514,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2023-12-03')
       }
     ];
-    expect(finnBestemmendeFravaersdag(fravaersperioder, arbeidsgiverperiode, undefined, true)).toEqual('2023-11-30');
+    expect(finnBestemmendeFravaersdag(sykmeldingsperioder, arbeidsgiverperiode, undefined, true)).toEqual('2023-11-30');
   });
 
   it('should return correct bfd when arbeidsgiverKanFlytte is false and forespurtBestemmendeFraværsdag is undefined, different periodes', () => {

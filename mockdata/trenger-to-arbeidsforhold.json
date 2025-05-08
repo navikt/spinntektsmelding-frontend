@@ -3,7 +3,7 @@
   "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
   "identitetsnummer": "10486535275",
   "orgnrUnderenhet": "810007842",
-  "fravaersperioder": [
+  "sykmeldingsperioder": [
     { "fom": "2023-09-04", "tom": "2023-09-10" },
     { "fom": "2023-09-11", "tom": "2023-09-24" }
   ],

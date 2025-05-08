@@ -173,8 +173,8 @@ export function finnSorterteUnikePerioder<T extends tidPeriode>(fravaerPerioder:
   return sorterteSykmeldingPerioder;
 }
 
-export function finnSammenhengendePeriode<T extends tidPeriode>(fravaersperioder: Array<T>): Array<T> {
-  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
+export function finnSammenhengendePeriode<T extends tidPeriode>(sykmeldingsperioder: Array<T>): Array<T> {
+  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(sykmeldingsperioder);
   mergedSykmeldingsperioder.forEach((periode) => {
     const aktivPeriode = tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1];
     const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
@@ -189,8 +189,8 @@ export function finnSammenhengendePeriode<T extends tidPeriode>(fravaersperioder
   return tilstoetendeSykmeldingsperioder;
 }
 
-export function joinPerioderMedOverlapp<T extends tidPeriode>(fravaersperioder: T[]) {
-  const sorterteSykmeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
+export function joinPerioderMedOverlapp<T extends tidPeriode>(sykmeldingsperioder: T[]) {
+  const sorterteSykmeldingsperioder = finnSorterteUnikePerioder(sykmeldingsperioder);
 
   const mergedSykmeldingsperioder = [sorterteSykmeldingsperioder[0]];
 

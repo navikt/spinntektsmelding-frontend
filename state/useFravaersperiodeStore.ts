@@ -15,7 +15,7 @@ import { z } from 'zod';
 type ApiPeriodeSchema = z.infer<typeof apiPeriodeSchema>;
 
 export interface FravaersperiodeState {
-  fravaersperioder?: Array<Periode>;
+  sykmeldingsperioder?: Array<Periode>;
   opprinneligFravaersperiode?: Array<Periode>;
   leggTilFravaersperiode: () => void;
   slettFravaersperiode: (periodeId: string) => void;
@@ -25,18 +25,18 @@ export interface FravaersperiodeState {
 }
 
 const useFravaersperiodeStore: StateCreator<CompleteState, [], [], FravaersperiodeState> = (set, get) => ({
-  fravaersperioder: undefined,
+  sykmeldingsperioder: undefined,
   opprinneligFravaersperiode: undefined,
 
   leggTilFravaersperiode: () => {
-    let kopiPeriode = structuredClone(get().fravaersperioder);
+    let kopiPeriode = structuredClone(get().sykmeldingsperioder);
     set(
       produce((state) => {
         const nyFravaersperiode: Periode = { id: nanoid() };
         kopiPeriode ??= [];
 
         kopiPeriode.push(nyFravaersperiode);
-        state.fravaersperioder = kopiPeriode;
+        state.sykmeldingsperioder = kopiPeriode;
 
         return state;
       })
@@ -46,10 +46,10 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
   slettFravaersperiode: (periodeId: string) =>
     set(
       produce((state) => {
-        if (state.fravaersperioder) {
-          if (state.fravaersperioder) {
-            const nyePerioder = state.fravaersperioder.filter((periode: Periode) => periode.id !== periodeId);
-            state.fravaersperioder = nyePerioder;
+        if (state.sykmeldingsperioder) {
+          if (state.sykmeldingsperioder) {
+            const nyePerioder = state.sykmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId);
+            state.sykmeldingsperioder = nyePerioder;
           }
         }
 
@@ -64,8 +64,8 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
     const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
     set(
       produce((state) => {
-        if (state.fravaersperioder) {
-          state.fravaersperioder = state.fravaersperioder.map((periode: Periode) => {
+        if (state.sykmeldingsperioder) {
+          state.sykmeldingsperioder = state.sykmeldingsperioder.map((periode: Periode) => {
             if (periode.id === periodeId) {
               if (periode.tom !== oppdatertPeriode?.tom || periode.fom !== oppdatertPeriode?.fom) {
                 state.sammeFravaersperiode = false;
@@ -77,7 +77,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
           });
         }
 
-        const fravaerPerioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
+        const fravaerPerioder = finnFravaersperioder(state.sykmeldingsperioder, state.egenmeldingsperioder);
 
         const fPerioder: Periode[] = fravaerPerioder.filter((periode: Periode) => {
           return periode.tom && periode.fom;
@@ -108,7 +108,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
     const klonetFravaersperiode = structuredClone(tilbakestiltPeriode);
     return set(
       produce((state) => {
-        state.fravaersperioder = klonetFravaersperiode;
+        state.sykmeldingsperioder = klonetFravaersperiode;
 
         state.sammeFravaersperiode = false;
         return state;
@@ -125,7 +125,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
 
     return set(
       produce((state) => {
-        state.fravaersperioder = structuredClone(fravaerPerioder);
+        state.sykmeldingsperioder = structuredClone(fravaerPerioder);
         state.opprinneligFravaersperiode = structuredClone(fravaerPerioder);
 
         return state;

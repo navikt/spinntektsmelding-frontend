@@ -5,7 +5,7 @@
   "orgNavn": "Veldig ampert piggsvin barnehage",
   "bruttoinntekt": 77000,
   "eksternBestemmendeFravaersdag": "2023-02-02",
-  "fravaersperioder": [
+  "sykmeldingsperioder": [
     {
       "fom": "2023-02-03",
       "tom": "2023-02-24"

@@ -20,7 +20,7 @@ import { Opplysningstype } from '../schema/forespurtData';
 export type SendtPeriode = z.infer<typeof apiPeriodeSchema>;
 
 export default function useFyllInnsending() {
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, forespurtData] = useBoundStore((state) => [
@@ -63,7 +63,7 @@ export default function useFyllInnsending() {
     const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     const harForespurtInntekt = forespurteOpplysningstyper.includes(forespoerselType.inntekt);
 
-    const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
+    const perioder = concatPerioder(sykmeldingsperioder, egenmeldingsperioder);
 
     const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(
       arbeidsgiverperioder,
@@ -218,10 +218,10 @@ function hentBestemmendeFraværsdag(
   }
 }
 
-function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
+function concatPerioder(sykmeldingsperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
   let perioder;
-  if (fravaersperioder) {
-    perioder = fravaersperioder.concat(egenmeldingsperioder ?? []);
+  if (sykmeldingsperioder) {
+    perioder = sykmeldingsperioder.concat(egenmeldingsperioder ?? []);
   } else {
     perioder = egenmeldingsperioder;
   }

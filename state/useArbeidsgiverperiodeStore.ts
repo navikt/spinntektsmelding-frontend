@@ -128,7 +128,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       ),
     setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
       const egenmeldingsperioder = get().egenmeldingsperioder;
-      const sykmeldingsperioder = get().fravaersperioder;
+      const sykmeldingsperioder = get().sykmeldingsperioder;
       const skjaeringstidspunkt = get().skjaeringstidspunkt;
       const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
@@ -198,7 +198,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     tilbakestillArbeidsgiverperiode: () => {
       const opprinnelig = get().opprinneligArbeidsgiverperioder;
       const egenmeldingsperioder = get().egenmeldingsperioder;
-      const sykmeldingsperioder = get().fravaersperioder;
+      const sykmeldingsperioder = get().sykmeldingsperioder;
       const skjaeringstidspunkt = get().skjaeringstidspunkt;
       const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
@@ -238,7 +238,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     harArbeidsgiverperiodenBlittEndret: () => {
       const opprinnelig = get().opprinneligArbeidsgiverperioder;
       const egenmeldingsperioder = get().egenmeldingsperioder;
-      const sykmeldingsperioder = get().fravaersperioder;
+      const sykmeldingsperioder = get().sykmeldingsperioder;
       set(
         produce((state) => {
           if (!opprinnelig) {

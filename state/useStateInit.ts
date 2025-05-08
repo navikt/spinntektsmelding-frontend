@@ -26,7 +26,7 @@ export default function useStateInit() {
   );
 
   return (jsonData: MottattData) => {
-    initFravaersperiode(jsonData.fravaersperioder);
+    initFravaersperiode(jsonData.sykmeldingsperioder);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
 
     initPerson(
@@ -40,7 +40,7 @@ export default function useStateInit() {
 
     if (jsonData.eksternBestemmendeFravaersdag) setSkjaeringstidspunkt(jsonData.eksternBestemmendeFravaersdag);
 
-    const perioder = jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
+    const perioder = jsonData.sykmeldingsperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
       id: nanoid()
