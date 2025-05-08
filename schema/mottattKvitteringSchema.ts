@@ -6,18 +6,18 @@ import { TelefonNummerSchema } from './telefonNummerSchema';
 import { EndringAarsakSchema } from './apiEndringAarsakSchema';
 import { RefusjonEndringSchema } from './apiRefusjonEndringSchema';
 import { apiNaturalytelserSchema } from './apiNaturalytelserSchema';
+import { sykmeldtSchema } from './sykmeldtSchema';
+import { avsenderSchema } from './avsenderSchema';
+
+const mottattAvsenderSchema = avsenderSchema.extend({
+  orgNavn: z.string().min(1),
+  navn: z.string().min(1),
+  tlf: TelefonNummerSchema
+});
 
 export const kvitteringNavNoSchema = z.object({
-  sykmeldt: z.object({
-    navn: z.string().min(1),
-    fnr: PersonnummerSchema
-  }),
-  avsender: z.object({
-    orgnr: OrganisasjonsnummerSchema,
-    orgNavn: z.string().min(1),
-    navn: z.string().min(1),
-    tlf: TelefonNummerSchema
-  }),
+  sykmeldt: sykmeldtSchema,
+  avsender: mottattAvsenderSchema,
   sykmeldingsperioder: z.array(apiPeriodeSchema),
   skjema: z.object({
     agp: z

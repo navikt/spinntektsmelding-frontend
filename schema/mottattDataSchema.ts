@@ -1,23 +1,29 @@
 import z from 'zod';
 import { dateISODateSchema, mottattForespurtDataSchema, MottattPeriodeSchema } from './forespurtData';
-import { HistoriskInntektSchema } from './historiskInntektSchema';
+import { forespurtHistoriskInntektSchema } from './forespurtHistoriskInntektSchema';
+import { sykmeldtSchema } from './sykmeldtSchema';
+import { avsenderSchema } from './avsenderSchema';
 
-export const MottattDataSchema = z.object({
-  navn: z.string().nullable(),
-  identitetsnummer: z.string(),
-  orgNavn: z.string().nullable(),
-  orgnrUnderenhet: z.string(),
-  fravaersperioder: z.array(MottattPeriodeSchema),
-  egenmeldingsperioder: z.array(MottattPeriodeSchema),
-  bruttoinntekt: z.number().nullable(),
-  tidligereinntekter: z.array(HistoriskInntektSchema).nullable(),
-  innsenderNavn: z.string(),
-  telefonnummer: z.string().optional(),
-  forespurtData: mottattForespurtDataSchema.optional(),
-  eksternBestemmendeFravaersdag: dateISODateSchema,
-  bestemmendeFravaersdag: dateISODateSchema,
-  opprettetUpresisIkkeBruk: dateISODateSchema.optional(),
-  erBesvart: z.boolean()
+const mottattSykmeldt = sykmeldtSchema.extend({
+  navn: z.string().nullable()
 });
 
-export type MottattData = z.infer<typeof MottattDataSchema>;
+const mottattAvsenderSchema = avsenderSchema.extend({
+  orgNavn: z.string().nullable(),
+  navn: z.string().nullable()
+});
+
+export const mottattDataSchema = z.object({
+  sykmeldt: mottattSykmeldt,
+  avsender: mottattAvsenderSchema,
+  egenmeldingsperioder: z.array(MottattPeriodeSchema).default([]),
+  sykmeldingsperioder: z.array(MottattPeriodeSchema).min(1, 'Sykmeldingsperioder må ha minst en periode.'),
+  bestemmendeFravaersdag: dateISODateSchema,
+  eksternBestemmendeFravaersdag: dateISODateSchema,
+  inntekt: forespurtHistoriskInntektSchema.nullable(),
+  forespurtData: mottattForespurtDataSchema.optional(),
+  erBesvart: z.boolean(),
+  telefonnummer: z.string().optional()
+});
+
+export type MottattData = z.infer<typeof mottattDataSchema>;
