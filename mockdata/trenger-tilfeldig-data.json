@@ -7,7 +7,7 @@
   "sykmeldingsperioder": [{ "fom": "2025-02-07", "tom": "2025-03-27" }],
   "egenmeldingsperioder": [],
   "bestemmendeFravaersdag": "2025-02-07",
-  "eksternBestemmendeFravaersdag": null,
+  "eksternInntektsdato": null,
   "bruttoinntekt": 40000.0,
   "tidligereinntekter": [
     { "maaned": "2024-11", "inntekt": 40000.0 },

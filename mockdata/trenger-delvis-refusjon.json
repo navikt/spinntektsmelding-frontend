@@ -1,10 +1,14 @@
 {
-  "navn": "DISKRET HANDLEKRAFT",
-  "orgNavn": "ANSTENDIG PIGGSVIN SYKEHJEM",
-  "innsenderNavn": "MUSKULØS VALS",
-  "identitetsnummer": "18468037250",
-  "orgnrUnderenhet": "810007982",
-  "eksternBestemmendeFravaersdag": "2023-08-08",
+  "sykmeldt": {
+    "navn": "DISKRET HANDLEKRAFT",
+    "fnr": "18468037250"
+  },
+  "avsender": {
+    "orgnr": "810007982",
+    "orgNavn": "ANSTENDIG PIGGSVIN SYKEHJEM",
+    "navn": "MUSKULØS VALS"
+  },
+  "eksternInntektsdato": "2023-08-08",
   "sykmeldingsperioder": [
     {
       "fom": "2023-08-08",
@@ -12,22 +16,15 @@
     }
   ],
   "egenmeldingsperioder": [],
-  "bruttoinntekt": 26000,
-  "tidligereinntekter": [
-    {
-      "maaned": "2023-05",
-      "inntekt": 26000
-    },
-    {
-      "maaned": "2023-06",
-      "inntekt": 26000
-    },
-    {
-      "maaned": "2023-07",
-      "inntekt": 26000
-    }
-  ],
-
+  "inntekt": {
+    "gjennomsnitt": 26000,
+    "historisk": [
+      ["2023-05", 26000],
+      ["2023-06", 26000],
+      ["2023-07", 26000]
+    ]
+  },
+  "bestemmendeFravaersdag": "2023-08-08",
   "forespurtData": {
     "arbeidsgiverperiode": {
       "paakrevd": false

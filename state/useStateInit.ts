@@ -15,9 +15,9 @@ export default function useStateInit() {
     state.setForeslaattBestemmendeFravaersdag,
     state.setSkjaeringstidspunkt
   ]);
-  const [setMottattBestemmendeFravaersdag, setMottattEksternBestemmendeFravaersdag] = useBoundStore((state) => [
+  const [setMottattBestemmendeFravaersdag, setMottattEksternInntektsdato] = useBoundStore((state) => [
     state.setMottattBestemmendeFravaersdag,
-    state.setMottattEksternBestemmendeFravaersdag
+    state.setMottattEksternInntektsdato
   ]);
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
@@ -38,7 +38,7 @@ export default function useStateInit() {
       jsonData.telefonnummer
     );
 
-    if (jsonData.eksternBestemmendeFravaersdag) setSkjaeringstidspunkt(jsonData.eksternBestemmendeFravaersdag);
+    if (jsonData.eksternInntektsdato) setSkjaeringstidspunkt(jsonData.eksternInntektsdato);
 
     const perioder = jsonData.sykmeldingsperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
       fom: parseIsoDate(periode.fom),
@@ -47,19 +47,19 @@ export default function useStateInit() {
     }));
 
     setMottattBestemmendeFravaersdag(jsonData.bestemmendeFravaersdag);
-    setMottattEksternBestemmendeFravaersdag(jsonData.eksternBestemmendeFravaersdag);
+    setMottattEksternInntektsdato(jsonData.eksternInntektsdato);
 
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
 
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
       perioder,
       arbeidsgiverperiode,
-      jsonData.eksternBestemmendeFravaersdag,
+      jsonData.eksternInntektsdato,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
 
-    if (jsonData.eksternBestemmendeFravaersdag) {
-      setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.eksternBestemmendeFravaersdag));
+    if (jsonData.eksternInntektsdato) {
+      setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.eksternInntektsdato));
     } else if (bestemmendeFravaersdag) setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);

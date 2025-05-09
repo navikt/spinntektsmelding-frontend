@@ -7,7 +7,7 @@
   "sykmeldingsperioder": [{ "fom": "2024-11-04", "tom": "2024-11-27" }],
   "egenmeldingsperioder": [],
   "bestemmendeFravaersdag": "2024-11-04",
-  "eksternBestemmendeFravaersdag": null,
+  "eksternInntektsdato": null,
   "bruttoinntekt": 54000.0,
   "tidligereinntekter": [
     { "maaned": "2024-08", "inntekt": 54000.0 },
@@ -30,7 +30,7 @@
     "sykmeldingsperioder": [{ "fom": "2024-11-04", "tom": "2024-11-27" }],
     "egenmeldingsperioder": [],
     "bestemmendeFravaersdag": "2024-11-04",
-    "eksternBestemmendeFravaersdag": null,
+    "eksternInntektsdato": null,
     "bruttoinntekt": 54000.0,
     "tidligereinntekter": [
       { "maaned": "2024-08", "inntekt": 54000.0 },

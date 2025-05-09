@@ -4,7 +4,7 @@
   "innsenderNavn": "",
   "identitetsnummer": "17458609411",
   "orgnrUnderenhet": "810007982",
-  "eksternBestemmendeFravaersdag": null,
+  "eksternInntektsdato": null,
   "sykmeldingsperioder": [
     {
       "fom": "2023-10-20",

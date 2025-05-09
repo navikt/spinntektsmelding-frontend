@@ -101,7 +101,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.location('pathname').should('equal', '/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    wait(100);
+    wait(1000);
 
     cy.findAllByRole('button', {
       name: 'Endre'
