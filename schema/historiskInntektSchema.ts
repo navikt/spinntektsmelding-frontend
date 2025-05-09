@@ -1,8 +1,5 @@
 import z from 'zod';
 
-export const HistoriskInntektSchema = z.object({
-  maaned: z.string(),
-  inntekt: z.number().nullable()
-});
+export const historiskInntektSchema = z.map(z.string(), z.number().nullable());
 
-export type HistoriskInntekt = z.infer<typeof HistoriskInntektSchema>;
+export type HistoriskInntekt = z.infer<typeof historiskInntektSchema>;

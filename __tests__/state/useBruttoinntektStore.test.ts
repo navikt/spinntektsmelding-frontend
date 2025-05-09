@@ -7,18 +7,18 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
 
 const inputInntekt: number = 40000;
-const tidligereInntekt: Array<HistoriskInntekt> = [
-  { maaned: '2002-02', inntekt: 33000 },
-  { maaned: '2002-03', inntekt: 44000 },
-  { maaned: '2002-04', inntekt: 55000 },
-  { maaned: '2002-05', inntekt: 55000 },
-  { maaned: '2002-06', inntekt: 55000 },
-  { maaned: '2002-07', inntekt: 55000 },
-  { maaned: '2002-08', inntekt: 50000 },
-  { maaned: '2002-09', inntekt: 45000 },
-  { maaned: '2002-10', inntekt: 55000 },
-  { maaned: '2002-11', inntekt: 50000 }
-];
+const tidligereInntekt: HistoriskInntekt = new Map([
+  ['2002-02', 33000],
+  ['2002-03', 44000],
+  ['2002-04', 55000],
+  ['2002-05', 55000],
+  ['2002-06', 55000],
+  ['2002-07', 55000],
+  ['2002-08', 50000],
+  ['2002-09', 45000],
+  ['2002-10', 55000],
+  ['2002-11', 50000]
+]);
 
 describe('useBoundStore', () => {
   afterEach(() => {
@@ -36,7 +36,7 @@ describe('useBoundStore', () => {
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(40000);
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
-    expect(result.current.tidligereInntekt?.length).toBe(3);
+    expect(result.current.tidligereInntekt?.size).toBe(3);
   });
 
   it('should set ny maanedsinntekt.', () => {
@@ -158,20 +158,11 @@ describe('useBoundStore', () => {
   it('should find a liste of 3 current inntekter', () => {
     const inntekter = finnAktuelleInntekter(tidligereInntekt, new Date(2002, 9, 9));
 
-    const expected = [
-      {
-        inntekt: 45000,
-        maaned: '2002-09'
-      },
-      {
-        inntekt: 50000,
-        maaned: '2002-08'
-      },
-      {
-        inntekt: 55000,
-        maaned: '2002-07'
-      }
-    ];
+    const expected = new Map([
+      ['2002-09', 45000],
+      ['2002-08', 50000],
+      ['2002-07', 55000]
+    ]);
 
     expect(inntekter).toEqual(expected);
   });
@@ -179,34 +170,28 @@ describe('useBoundStore', () => {
   it('should find an empty liste when there are no current inntekter', () => {
     const inntekter = finnAktuelleInntekter(undefined, new Date(2002, 9, 9));
 
-    expect(inntekter).toEqual([]);
+    expect(inntekter).toEqual(new Map([]));
   });
 
   it('should find an empty liste when there are no current inntekter', () => {
-    const inntekter = finnAktuelleInntekter([], new Date(2002, 9, 9));
+    const inntekter = finnAktuelleInntekter(new Map([]), new Date(2002, 9, 9));
 
-    expect(inntekter).toEqual([]);
+    expect(inntekter).toEqual(new Map([]));
   });
 
   it('should find a liste of no current inntekter as they are too old', () => {
     const inntekter = finnAktuelleInntekter(tidligereInntekt, new Date(2003, 9, 9));
 
-    expect(inntekter).toEqual([]);
+    expect(inntekter).toEqual(new Map([]));
   });
 
   it('should find a liste of 2 current inntekter', () => {
     const inntekter = finnAktuelleInntekter(tidligereInntekt, new Date(2002, 3, 9));
 
-    const expected = [
-      {
-        inntekt: 44000,
-        maaned: '2002-03'
-      },
-      {
-        inntekt: 33000,
-        maaned: '2002-02'
-      }
-    ];
+    const expected = new Map([
+      ['2002-03', 44000],
+      ['2002-02', 33000]
+    ]);
 
     expect(inntekter).toEqual(expected);
   });
@@ -229,64 +214,44 @@ describe('useBoundStore', () => {
     expect(result.current.bruttoinntekt?.endringAarsaker).toBeUndefined();
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(50000);
-    expect(result.current.tidligereInntekt).toEqual([
-      {
-        inntekt: 50000,
-        maaned: '2002-11'
-      },
-      {
-        inntekt: 55000,
-        maaned: '2002-10'
-      },
-      {
-        inntekt: 45000,
-        maaned: '2002-09'
-      }
-    ]);
+    expect(result.current.tidligereInntekt).toEqual(
+      new Map([
+        ['2002-11', 50000],
+        ['2002-10', 55000],
+        ['2002-09', 45000]
+      ])
+    );
   });
 
   it('should setTidligereInntekter', () => {
-    const tidligereInntekt: Array<HistoriskInntekt> = [
-      { maaned: '2002-02', inntekt: 33000 },
-      { maaned: '2002-03', inntekt: 44000 },
-      { maaned: '2002-04', inntekt: 55000 }
-    ];
+    const tidligereInntekt: HistoriskInntekt = new Map([
+      ['2002-02', 33000],
+      ['2002-03', 44000],
+      ['2002-04', 55000]
+    ]);
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
       result.current.setTidligereInntekter(tidligereInntekt);
     });
 
-    expect(result.current.tidligereInntekt).toEqual([
-      {
-        inntekt: 33000,
-        maaned: '2002-02'
-      },
-      {
-        inntekt: 44000,
-        maaned: '2002-03'
-      },
-      {
-        inntekt: 55000,
-        maaned: '2002-04'
-      }
-    ]);
+    expect(result.current.tidligereInntekt).toEqual(tidligereInntekt);
   });
 
   it('should return 0 when maaned are equal', () => {
-    const retval = sorterInntekter({ maaned: '2002-01', inntekt: 0 }, { maaned: '2002-01', inntekt: 0 });
+    const retval = sorterInntekter(['2002-01', 0], ['2002-01', 0]);
 
     expect(retval).toBe(0);
   });
 
   it('should return -1 when first maaned is bigger than last', () => {
-    const retval = sorterInntekter({ maaned: '2002-02', inntekt: 0 }, { maaned: '2002-01', inntekt: 0 });
+    const retval = sorterInntekter(['2002-02', 0], ['2002-01', 0]);
 
     expect(retval).toBe(-1);
   });
 
   it('should return 1 when first maaned is smaller than last', () => {
-    const retval = sorterInntekter({ maaned: '2002-02', inntekt: 0 }, { maaned: '2002-03', inntekt: 0 });
+    const retval = sorterInntekter(['2002-02', 0], ['2002-03', 0]);
 
     expect(retval).toBe(1);
   });
@@ -536,7 +501,7 @@ describe('useBoundStore', () => {
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(40000);
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
-    expect(result.current.tidligereInntekt?.length).toBe(3);
+    expect(result.current.tidligereInntekt?.size).toBe(3);
 
     act(() => {
       result.current.slettBruttoinntekt();
@@ -544,6 +509,6 @@ describe('useBoundStore', () => {
 
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBeUndefined();
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
-    expect(result.current.bruttoinntekt?.endringAarsak).toBeUndefined();
+    expect(result.current.bruttoinntekt?.endringAarsaker).toBeUndefined();
   });
 });

@@ -4,7 +4,7 @@ import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
 import lokalStyles from './AvvikAdvarselInntekt.module.css';
 
 interface AvvikAdvarselInntektProps {
-  tidligereInntekter?: Array<HistoriskInntekt>;
+  tidligereInntekter?: HistoriskInntekt;
 }
 
 const AvvikAdvarselInntekt: React.FunctionComponent<AvvikAdvarselInntektProps> = ({

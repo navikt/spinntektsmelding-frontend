@@ -16,7 +16,7 @@ describe('AvvikAdvarselInntekt', () => {
   });
 
   it('renders warning alert when there are manglendeEller0FraAmeldingen', () => {
-    const tidligereInntekter: Array<HistoriskInntekt> = [
+    const tidligereInntekter: HistoriskInntekt = [
       { maaned: '2023-01', inntekt: null },
       { maaned: '2023-02', inntekt: null },
       { maaned: '2023-03', inntekt: null }
@@ -26,7 +26,7 @@ describe('AvvikAdvarselInntekt', () => {
   });
 
   it('renders warning alert when there are feriemaaneder', () => {
-    const tidligereInntekter: Array<HistoriskInntekt> = [
+    const tidligereInntekter: HistoriskInntekt = [
       { maaned: '2023-05', inntekt: 12028.25 },
       { maaned: '2023-06', inntekt: 11730.69 },
       { maaned: '2023-07', inntekt: 17659.88 }

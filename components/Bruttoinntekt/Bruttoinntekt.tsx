@@ -18,7 +18,7 @@ import { useFormContext } from 'react-hook-form';
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
   sbBruttoinntekt?: number;
-  sbTidligereInntekt?: Array<HistoriskInntekt>;
+  sbTidligereInntekt?: HistoriskInntekt;
   erSelvbestemt?: boolean;
 }
 
@@ -30,7 +30,7 @@ export default function Bruttoinntekt({
 }: Readonly<BruttoinntektProps>) {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-  const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
+  const tidligereinntekt: HistoriskInntekt | undefined = useBoundStore((state) => state.tidligereInntekt);
   const [setBareNyMaanedsinntekt] = useBoundStore((state) => [state.setBareNyMaanedsinntekt]);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);

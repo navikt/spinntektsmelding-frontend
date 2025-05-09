@@ -19,7 +19,7 @@ export const mottattDataSchema = z.object({
   egenmeldingsperioder: z.array(MottattPeriodeSchema).default([]),
   sykmeldingsperioder: z.array(MottattPeriodeSchema).min(1, 'Sykmeldingsperioder må ha minst en periode.'),
   bestemmendeFravaersdag: dateISODateSchema,
-  eksternBestemmendeFravaersdag: dateISODateSchema,
+  eksternInntektsdato: dateISODateSchema.nullable(),
   inntekt: forespurtHistoriskInntektSchema.nullable(),
   forespurtData: mottattForespurtDataSchema.optional(),
   erBesvart: z.boolean(),

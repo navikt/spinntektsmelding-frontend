@@ -70,11 +70,11 @@ describe('useFyllAapenInnsending', () => {
 
       result.current.initBruttoinntekt(
         500000,
-        [
-          { maaned: '2022-10', inntekt: 500000 },
-          { maaned: '2022-11', inntekt: 500000 },
-          { maaned: '2022-12', inntekt: 500000 }
-        ],
+        new Map([
+          ['2022-10', 500000],
+          ['2022-11', 500000],
+          ['2022-12', 500000]
+        ]),
         new Date()
       );
 
@@ -147,11 +147,11 @@ describe('useFyllAapenInnsending', () => {
 
       result.current.initBruttoinntekt(
         500000,
-        [
-          { maaned: '2022-10', inntekt: 500000 },
-          { maaned: '2022-11', inntekt: 500000 },
-          { maaned: '2022-12', inntekt: 500000 }
-        ],
+        new Map([
+          ['2022-10', 500000],
+          ['2022-11', 500000],
+          ['2022-12', 500000]
+        ]),
         new Date()
       );
 

@@ -5,7 +5,7 @@ import { HistoriskInntekt } from '../../../schema/historiskInntektSchema';
 
 describe('TidligereInntekt', () => {
   it('renders 3 rows', () => {
-    const tidligereinntekt: Array<HistoriskInntekt> = [
+    const tidligereinntekt: HistoriskInntekt = [
       {
         maaned: '2020-12',
         inntekt: 234
@@ -36,7 +36,7 @@ describe('TidligereInntekt', () => {
   });
 
   it('should have no violations', async () => {
-    const tidligereinntekt: Array<HistoriskInntekt> = [
+    const tidligereinntekt: HistoriskInntekt = [
       {
         maaned: '2020-11',
         inntekt: 123

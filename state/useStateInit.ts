@@ -30,11 +30,11 @@ export default function useStateInit() {
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
 
     initPerson(
-      jsonData.navn,
-      jsonData.identitetsnummer,
-      jsonData.orgnrUnderenhet,
-      jsonData.orgNavn,
-      jsonData.innsenderNavn,
+      jsonData.sykmeldt.navn,
+      jsonData.sykmeldt.fnr,
+      jsonData.avsender.orgnr,
+      jsonData.avsender.orgNavn,
+      jsonData.avsender.navn,
       jsonData.telefonnummer
     );
 
@@ -64,14 +64,18 @@ export default function useStateInit() {
 
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
 
-    initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekter, parseIsoDate(bestemmendeFravaersdag)!);
+    initBruttoinntekt(
+      jsonData.inntekt?.gjennomsnitt ?? null,
+      jsonData.inntekt?.historikk ?? null,
+      parseIsoDate(bestemmendeFravaersdag)!
+    );
 
     if (jsonData.forespurtData) {
       initForespurtData(
         jsonData.forespurtData,
         jsonData.bestemmendeFravaersdag ?? parseIsoDate(bestemmendeFravaersdag)!,
-        jsonData.bruttoinntekt,
-        jsonData.tidligereinntekter
+        jsonData.inntekt?.gjennomsnitt ?? null,
+        jsonData.inntekt?.historikk ?? null
       );
     }
   };

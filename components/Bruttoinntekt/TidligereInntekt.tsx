@@ -7,7 +7,7 @@ import { Skeleton } from '@navikt/ds-react';
 import ugyldigEllerNegativtTall from '../../utils/ugyldigEllerNegativtTall';
 
 interface TidligereInntektProps {
-  tidligereinntekt: Array<HistoriskInntekt>;
+  tidligereinntekt: HistoriskInntekt;
   henterData: boolean;
 }
 
@@ -39,9 +39,9 @@ const lasterDataPlaceholder = [
 ];
 
 export default function TidligereInntekt({ tidligereinntekt, henterData }: Readonly<TidligereInntektProps>) {
-  const [sortertInntekt, setSortertInntekt] = useState<Array<HistoriskInntekt>>([]);
+  const [sortertInntekt, setSortertInntekt] = useState<HistoriskInntekt>([]);
   useEffect(() => {
-    const inntekter: Array<HistoriskInntekt> = [...tidligereinntekt].sort(sorterInntekter);
+    const inntekter: HistoriskInntekt = [...tidligereinntekt].sort(sorterInntekter);
 
     if (inntekter) {
       setSortertInntekt(inntekter);

@@ -1,6 +1,6 @@
 import { HistoriskInntekt } from '../schema/historiskInntektSchema';
 
-function sjekkOmFerieMaaneder(tidligereinntekt: Array<HistoriskInntekt> | undefined): boolean {
+function sjekkOmFerieMaaneder(tidligereinntekt: HistoriskInntekt | undefined): boolean {
   const ferieMnd = tidligereinntekt
     ?.map((inntekt) => inntekt.maaned.split('-')[1])
     .filter((mnd) => Number(mnd) >= 5 && Number(mnd) <= 8);

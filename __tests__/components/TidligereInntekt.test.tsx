@@ -24,7 +24,7 @@ vi.mock('../../utils/formatMaanedsnavn', async () => {
 });
 
 describe('TidligereInntekt', () => {
-  const tidligereinntekt: Array<HistoriskInntekt> = [
+  const tidligereinntekt: HistoriskInntekt = [
     {
       maaned: '2021-01',
       inntekt: 10000

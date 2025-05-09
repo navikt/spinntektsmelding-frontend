@@ -38,7 +38,7 @@ const baseValid: MottattData = {
       ['2023-03', 50000]
     ])
   },
-  eksternBestemmendeFravaersdag: '2023-02-01',
+  eksternInntektsdato: '2023-02-01',
   bestemmendeFravaersdag: '2023-03-01',
   erBesvart: true
 };

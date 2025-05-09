@@ -4,7 +4,7 @@ import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
 
 describe('sjekkOmFerieMaaneder', () => {
   it('should return true if there are months between May and August', () => {
-    const tidligereinntekt: Array<HistoriskInntekt> = [
+    const tidligereinntekt: HistoriskInntekt = [
       { maaned: '2023-05', inntekt: 10000 },
       { maaned: '2023-06', inntekt: 15000 }
     ];
@@ -12,7 +12,7 @@ describe('sjekkOmFerieMaaneder', () => {
   });
 
   it('should return false if there are no months between May and August', () => {
-    const tidligereinntekt: Array<HistoriskInntekt> = [
+    const tidligereinntekt: HistoriskInntekt = [
       { maaned: '2023-04', inntekt: 10000 },
       { maaned: '2023-09', inntekt: 15000 }
     ];

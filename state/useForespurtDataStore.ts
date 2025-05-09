@@ -16,7 +16,7 @@ export interface ForespurtDataState {
     forespurtData: MottattForespurtData,
     mottattBestemmendeFravaersdag: string,
     bruttoinntekt: number | null,
-    tidligereinntekter: HistoriskInntekt[] | null
+    tidligereinntekter: HistoriskInntekt | null
   ) => void;
   hentOpplysningstyper: () => Array<Opplysningstype>;
   hentPaakrevdOpplysningstyper: () => Array<Opplysningstype>;
