@@ -247,14 +247,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
         fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
           .then((inntektSisteTreMnd) => {
-            const tidligereInntekt = new Map<string, number>(
-              inntektSisteTreMnd.data.tidligereInntekter.map(
-                (inntekt) => [inntekt.maaned, inntekt.inntekt] as [string, number]
-              )
-            );
+            const tidligereInntekt = new Map<string, number>(inntektSisteTreMnd.data.historikk);
 
             setTidligereInntekter(tidligereInntekt);
-            initBruttoinntekt(inntektSisteTreMnd.data.beregnetInntekt, tidligereInntekt, inntektsdato);
+            initBruttoinntekt(inntektSisteTreMnd.data.gjennomsnitt, tidligereInntekt, inntektsdato);
           })
           .catch((error) => {
             logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
@@ -275,8 +271,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     slug === 'arbeidsgiverInitiertInnsending'
   );
 
-  const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
-  const sbTidligereInntekt = !error ? data?.tidligereInntekter : undefined;
+  const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
+  const sbTidligereInntekt = !error ? new Map(data?.historikk) : undefined;
 
   return (
     <div className={styles.container}>
