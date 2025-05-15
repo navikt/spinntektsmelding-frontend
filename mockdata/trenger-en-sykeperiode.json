@@ -1,9 +1,24 @@
 {
-  "navn": "Test Navn Testesen-Navnesen Jr.",
-  "identitetsnummer": "10486535275",
-  "orgnrUnderenhet": "911206722",
-  "orgNavn": "Veldig ampert piggsvin barnehage",
-  "bruttoinntekt": 77000,
+  "sykmeldt": {
+    "navn": "Test Navn Testesen-Navnesen Jr.",
+    "fnr": "10486535275"
+  },
+  "avsender": {
+    "orgnr": "911206722",
+    "orgNavn": "Veldig ampert piggsvin barnehage",
+    "navn": "Test Testesen"
+  },
+  "inntekt": {
+    "gjennomsnitt": 77000,
+    "historikk": [
+      ["2023-01", 66000],
+      ["2022-12", 88000],
+      ["2022-11", 88000]
+    ]
+  },
+  "bestemmendeFravaersdag": "2023-03-15",
+  "eksternInntektsdato": null,
+  "telefonnummer": "12345678",
   "eksternInntektsdato": "2023-02-02",
   "sykmeldingsperioder": [
     {
@@ -17,22 +32,6 @@
       "tom": "2023-02-02"
     }
   ],
-  "tidligereinntekter": [
-    {
-      "maaned": "2023-01",
-      "inntekt": 66000
-    },
-    {
-      "maaned": "2022-12",
-      "inntekt": 88000
-    },
-    {
-      "maaned": "2022-11",
-      "inntekt": 88000
-    }
-  ],
-  "innsenderNavn": "Test Testesen",
-  "telefonnummer": "12345678",
 
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": true },

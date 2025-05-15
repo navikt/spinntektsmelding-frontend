@@ -1,19 +1,28 @@
 {
-  "navn": "ULTRAFIOLETT DAMESYKKEL",
-  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
-  "identitetsnummer": "10486535275",
-  "orgnrUnderenhet": "810007842",
+  "sykmeldt": {
+    "navn": "ULTRAFIOLETT DAMESYKKEL",
+    "fnr": "10486535275"
+  },
+  "avsender": {
+    "orgnr": "810007842",
+    "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "navn": "BERØMT FLYTTELASS"
+  },
+
   "sykmeldingsperioder": [
     { "fom": "2023-09-04", "tom": "2023-09-10" },
     { "fom": "2023-09-11", "tom": "2023-09-24" }
   ],
   "egenmeldingsperioder": [],
-  "bruttoinntekt": 45000.0,
-  "tidligereinntekter": [
-    { "maaned": "2023-07", "inntekt": 45000.0 },
-    { "maaned": "2023-06", "inntekt": 45000.0 },
-    { "maaned": "2023-05", "inntekt": 45000.0 }
-  ],
+  "inntekt": {
+    "gjennomsnitt": 45000.0,
+    "historikk": [
+      ["2023-05", 45000.0],
+      ["2023-06", 45000.0],
+      ["2023-07", 45000.0]
+    ]
+  },
+  "bestemmendeFravaersdag": "2023-09-04",
   "eksternInntektsdato": "2023-08-23",
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": true },

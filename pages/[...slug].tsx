@@ -247,12 +247,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
         fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
           .then((inntektSisteTreMnd) => {
-            setTidligereInntekter(inntektSisteTreMnd.data.tidligereInntekter);
-            initBruttoinntekt(
-              inntektSisteTreMnd.data.beregnetInntekt,
-              inntektSisteTreMnd.data.tidligereInntekter,
-              inntektsdato
+            const tidligereInntekt = new Map<string, number>(
+              inntektSisteTreMnd.data.tidligereInntekter.map(
+                (inntekt) => [inntekt.maaned, inntekt.inntekt] as [string, number]
+              )
             );
+
+            setTidligereInntekter(tidligereInntekt);
+            initBruttoinntekt(inntektSisteTreMnd.data.beregnetInntekt, tidligereInntekt, inntektsdato);
           })
           .catch((error) => {
             logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);

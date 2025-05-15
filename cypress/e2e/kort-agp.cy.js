@@ -44,6 +44,8 @@ describe('Utfylling og innsending av skjema', () => {
 
     cy.wait('@hent-forespoersel');
 
+    cy.wait(1000);
+
     cy.findAllByRole('button', { name: /Endre/ }).first().click();
 
     cy.findAllByLabelText('Til').last().clear().type('16.03.23');

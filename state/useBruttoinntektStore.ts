@@ -132,8 +132,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   ) => {
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
     const arrInntekter = Array.from(aktuelleInntekter);
+
     const sumInntekter = arrInntekter.reduce((prev, cur) => {
-      prev += cur[1] ?? 0;
+      if (cur[1] == null) {
+        return prev;
+      }
+      prev += typeof cur[1] === 'number' ? cur[1] : 0;
       return prev;
     }, 0);
 

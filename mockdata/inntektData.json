@@ -1,17 +1,8 @@
 {
-  "bruttoinntekt": 84333.33,
-  "tidligereInntekter": [
-    {
-      "maaned": "2023-12",
-      "inntekt": 88000.0
-    },
-    {
-      "maaned": "2023-11",
-      "inntekt": 88000.0
-    },
-    {
-      "maaned": "2023-10",
-      "inntekt": 77000.0
-    }
+  "gjennomsnitt": 84333.33,
+  "historikk": [
+    ["2023-12", 88000.0],
+    ["2023-11", 88000.0],
+    ["2023-10", 77000.0]
   ]
 }

@@ -82,7 +82,7 @@ export default function Bruttoinntekt({
     : bruttoinntekt?.bruttoInntekt;
   const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereInntekt : tidligereinntekt;
 
-  const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.length > 0;
+  const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.size > 0;
 
   const erBlanktSkjema = false;
 
