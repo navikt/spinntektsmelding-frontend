@@ -5,7 +5,7 @@
   "orgNavn": "Veldig ampert piggsvin barnehage",
   "bruttoinntekt": 0,
 
-  "fravaersperioder": [
+  "sykmeldingsperioder": [
     {
       "fom": "2023-09-01",
       "tom": "2023-09-05"

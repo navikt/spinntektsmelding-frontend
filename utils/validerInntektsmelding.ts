@@ -84,15 +84,15 @@ export default function validerInntektsmelding(
 
   state.setSkalViseFeilmeldinger(true);
 
-  if (state.fravaersperioder) {
-    if (state.fravaersperioder.length < 1) {
+  if (state.sykmeldingsperioder) {
+    if (state.sykmeldingsperioder.length < 1) {
       errorCodes.push({
         felt: '',
         code: ErrorCodes.INGEN_FRAVAERSPERIODER
       });
     }
 
-    feilkoderFravaersperioder = validerPeriode(state.fravaersperioder);
+    feilkoderFravaersperioder = validerPeriode(state.sykmeldingsperioder);
   } else {
     errorCodes.push({
       felt: '',
@@ -100,7 +100,7 @@ export default function validerInntektsmelding(
     });
   }
 
-  const fravaersperioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
+  const sykmeldingsperioder = finnFravaersperioder(state.sykmeldingsperioder, state.egenmeldingsperioder);
 
   let kreverAgp = true;
   if (state.forespurtData?.arbeidsgiverperiode.paakrevd === false) {
@@ -110,7 +110,7 @@ export default function validerInntektsmelding(
   const bestemmendeFravaersdag = kreverAgp
     ? parseIsoDate(
         finnBestemmendeFravaersdag(
-          fravaersperioder,
+          sykmeldingsperioder,
           state.arbeidsgiverperioder,
           state.foreslaattBestemmendeFravaersdag,
           !state.skjaeringstidspunkt

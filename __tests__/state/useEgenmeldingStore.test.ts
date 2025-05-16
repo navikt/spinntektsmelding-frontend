@@ -181,7 +181,7 @@ describe('useEgenmeldingStore', () => {
   it('should set ting tilbake. And fix bestemmende fraværsdag', () => {
     const egenmeldingsperioder: Array<MottattPeriode> = [{ fom: '2023-04-06', tom: '2023-05-06' }];
 
-    const fravaersperioder: Array<MottattPeriode> = [
+    const sykmeldingsperioder: Array<MottattPeriode> = [
       { fom: '2022-12-06', tom: '2023-01-06' },
       { fom: '2023-02-06', tom: '2023-03-06' }
     ];
@@ -192,7 +192,7 @@ describe('useEgenmeldingStore', () => {
     });
 
     act(() => {
-      result.current.initFravaersperiode(fravaersperioder);
+      result.current.initFravaersperiode(sykmeldingsperioder);
     });
 
     const id = result.current.egenmeldingsperioder![0].id;

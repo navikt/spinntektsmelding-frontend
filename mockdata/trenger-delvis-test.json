@@ -4,9 +4,8 @@
   "innsenderNavn": "MUSKULØS VALS",
   "identitetsnummer": "18468037250",
   "orgnrUnderenhet": "810007982",
-
-  "eksternBestemmendeFravaersdag": "2024-01-02",
-  "fravaersperioder": [
+  "eksternInntektsdato": "2024-01-02",
+  "sykmeldingsperioder": [
     {
       "fom": "2024-01-02",
       "tom": "2024-01-03"

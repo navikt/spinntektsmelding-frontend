@@ -28,7 +28,7 @@ export interface ArbeidsgiverperiodeState {
   arbeidsgiverperiodeDisabled: boolean;
   arbeidsgiverperiodeKort: boolean;
   mottattBestemmendeFravaersdag?: TDateISODate;
-  mottattEksternBestemmendeFravaersdag?: TDateISODate;
+  mottattEksternInntektsdato?: TDateISODate;
   setArbeidsgiverperioder: (arbeidsgiverperioder: Array<Periode> | undefined) => void;
   initArbeidsgiverperioder: (arbeidsgiverperioder: Array<ApiPeriodeSchema> | undefined) => void;
   setEndringsbegrunnelse: (begrunnelse: string) => void;
@@ -45,7 +45,7 @@ export interface ArbeidsgiverperiodeState {
   arbeidsgiverKanFlytteSkjæringstidspunkt: () => boolean;
   setSkjaeringstidspunkt: (skjaeringstidspunkt: TDateISODate | Date | null | undefined) => void;
   setMottattBestemmendeFravaersdag: (bestemmendeFravaersdag: TDateISODate) => void;
-  setMottattEksternBestemmendeFravaersdag: (bestemmendeFravaersdag: TDateISODate) => void;
+  setMottattEksternInntektsdato: (bestemmendeFravaersdag: TDateISODate | null) => void;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => {
@@ -128,7 +128,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       ),
     setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
       const egenmeldingsperioder = get().egenmeldingsperioder;
-      const sykmeldingsperioder = get().fravaersperioder;
+      const sykmeldingsperioder = get().sykmeldingsperioder;
       const skjaeringstidspunkt = get().skjaeringstidspunkt;
       const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
@@ -198,7 +198,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     tilbakestillArbeidsgiverperiode: () => {
       const opprinnelig = get().opprinneligArbeidsgiverperioder;
       const egenmeldingsperioder = get().egenmeldingsperioder;
-      const sykmeldingsperioder = get().fravaersperioder;
+      const sykmeldingsperioder = get().sykmeldingsperioder;
       const skjaeringstidspunkt = get().skjaeringstidspunkt;
       const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
       set(
@@ -238,7 +238,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     harArbeidsgiverperiodenBlittEndret: () => {
       const opprinnelig = get().opprinneligArbeidsgiverperioder;
       const egenmeldingsperioder = get().egenmeldingsperioder;
-      const sykmeldingsperioder = get().fravaersperioder;
+      const sykmeldingsperioder = get().sykmeldingsperioder;
       set(
         produce((state) => {
           if (!opprinnelig) {
@@ -309,10 +309,10 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         })
       );
     },
-    setMottattEksternBestemmendeFravaersdag: (bestemmendeFravaersdag: TDateISODate) => {
+    setMottattEksternInntektsdato: (bestemmendeFravaersdag: TDateISODate | null) => {
       set(
         produce((state) => {
-          state.mottattEksternBestemmendeFravaersdag = bestemmendeFravaersdag;
+          state.mottattEksternInntektsdato = bestemmendeFravaersdag;
           return state;
         })
       );

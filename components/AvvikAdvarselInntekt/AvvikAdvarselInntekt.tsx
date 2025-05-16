@@ -4,16 +4,17 @@ import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
 import lokalStyles from './AvvikAdvarselInntekt.module.css';
 
 interface AvvikAdvarselInntektProps {
-  tidligereInntekter?: Array<HistoriskInntekt>;
+  tidligereInntekter?: HistoriskInntekt;
 }
 
 const AvvikAdvarselInntekt: React.FunctionComponent<AvvikAdvarselInntektProps> = ({
   tidligereInntekter
 }: AvvikAdvarselInntektProps) => {
+  const arrTidligereInntekter = Array.from(tidligereInntekter || []);
   const erFeriemaaneder = sjekkOmFerieMaaneder(tidligereInntekter);
   const manglendeEller0FraAmeldingen =
-    !tidligereInntekter || tidligereInntekter?.filter((inntekt) => !inntekt.inntekt).length > 0;
-  const harTidligereInntekt = tidligereInntekter && tidligereInntekter.length > 0;
+    !arrTidligereInntekter || arrTidligereInntekter?.filter((inntekt) => !inntekt[1]).length > 0;
+  const harTidligereInntekt = arrTidligereInntekter && arrTidligereInntekter.length > 0;
 
   if (!tidligereInntekter) {
     return null;

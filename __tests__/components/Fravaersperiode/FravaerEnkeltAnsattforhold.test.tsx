@@ -3,8 +3,8 @@ import FravaerEnkeltAnsattforhold from '../../../components/Fravaersperiode/Frav
 import { vi } from 'vitest';
 
 describe('FravaerEnkeltAnsattforhold', () => {
-  it('should render fravaersperioder correctly', () => {
-    const fravaersperioder = [
+  it('should render sykmeldingsperioder correctly', () => {
+    const sykmeldingsperioder = [
       { fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' },
       { fom: new Date(2002, 1, 1), tom: new Date(2002, 1, 15), id: '2' }
     ];
@@ -13,7 +13,7 @@ describe('FravaerEnkeltAnsattforhold', () => {
 
     render(
       <FravaerEnkeltAnsattforhold
-        fravaerPerioder={fravaersperioder}
+        fravaerPerioder={sykmeldingsperioder}
         sisteAktivePeriode={{ fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' }}
         setIsDirtyForm={mockFn}
       />
@@ -29,8 +29,8 @@ describe('FravaerEnkeltAnsattforhold', () => {
     expect(tom2).toBeInTheDocument();
   });
 
-  it('should render no fravaersperioder message when fravaersperioder is empty', () => {
-    const fravaersperioder = [
+  it('should render no sykmeldingsperioder message when sykmeldingsperioder is empty', () => {
+    const sykmeldingsperioder = [
       { fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' },
       { fom: new Date(2002, 1, 1), tom: new Date(2002, 1, 15), id: '2' }
     ];
@@ -39,7 +39,7 @@ describe('FravaerEnkeltAnsattforhold', () => {
 
     render(
       <FravaerEnkeltAnsattforhold
-        fravaerPerioder={fravaersperioder}
+        fravaerPerioder={sykmeldingsperioder}
         sisteAktivePeriode={{ fom: new Date(2002, 2, 1), tom: new Date(2002, 2, 15), id: '3' }}
         setIsDirtyForm={mockFn}
       />

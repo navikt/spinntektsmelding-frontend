@@ -11,7 +11,6 @@
 // please read our getting started guide:
 // https://on.cypress.io/introduction-to-cypress
 
-import { object } from 'zod';
 import apiData from '../../mockdata/trenger-forhaandsutfyll.json';
 
 describe('Utfylling og innsending av skjema', () => {
@@ -133,7 +132,7 @@ describe('Utfylling og innsending av skjema', () => {
 
   it('should display warning that the person name can not be loaded and then submit', () => {
     const aktiveApiData = { ...apiData };
-    aktiveApiData.navn = null;
+    aktiveApiData.sykmeldt.navn = null;
 
     cy.intercept('/im-dialog/api/hent-forespoersel', aktiveApiData).as('hent-forespoersel');
 
@@ -197,8 +196,8 @@ describe('Utfylling og innsending av skjema', () => {
 
   it('should display warning that the person name and org.name can not be loaded and then submit', () => {
     const aktiveApiData = { ...apiData };
-    aktiveApiData.navn = null;
-    aktiveApiData.orgNavn = null;
+    aktiveApiData.sykmeldt.navn = null;
+    aktiveApiData.avsender.orgNavn = null;
 
     cy.intercept('/im-dialog/api/hent-forespoersel', aktiveApiData).as('hent-forespoersel');
 

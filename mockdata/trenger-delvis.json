@@ -4,7 +4,7 @@
   "innsenderNavn": "Muskuløs Vals",
   "identitetsnummer": "10486535275",
   "orgnrUnderenhet": "810007842",
-  "fravaersperioder": [
+  "sykmeldingsperioder": [
     { "fom": "2023-02-02", "tom": "2023-02-20" },
     { "fom": "2023-02-24", "tom": "2023-02-28" }
   ],
@@ -15,7 +15,7 @@
     { "maaned": "2022-10", "inntekt": 46000.0 },
     { "maaned": "2022-12", "inntekt": 46000.0 }
   ],
-  "eksternBestemmendeFravaersdag": "2023-02-25",
+  "eksternInntektsdato": "2023-02-25",
   "bestemmendeFravaersdag": "2023-02-25",
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": false },

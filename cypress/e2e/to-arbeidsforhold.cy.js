@@ -23,7 +23,10 @@ describe('Utfylling og innsending av skjema', () => {
     }).as('kvittering');
     cy.wait('@hent-forespoersel');
 
-    cy.findAllByLabelText('Telefon innsender').type('12345678');
+    // cy.wait(1000);
+
+    cy.findAllByLabelText('Telefon innsender').as('telefon');
+    cy.get('@telefon').type('12345678');
 
     cy.findByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .findByLabelText('Ja')

@@ -21,7 +21,7 @@ export interface PersonState {
     identitetsnummer: string,
     orgnrUnderenhet: string,
     orgNavn: string | null,
-    innsenderNavn?: string,
+    innsenderNavn?: string | null,
     innsenderTelefonNr?: string
   ) => void;
 }

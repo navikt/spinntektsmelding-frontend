@@ -49,10 +49,10 @@ export default function RefusjonArbeidsgiver({
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
-  const fravaer = fravaersperioder ? fravaersperioder.concat(egenmeldingsperioder ?? []) : [];
+  const fravaer = sykmeldingsperioder ? sykmeldingsperioder.concat(egenmeldingsperioder ?? []) : [];
 
   const fravaerSortert = fravaer.toSorted(sorterFomStigende);
 

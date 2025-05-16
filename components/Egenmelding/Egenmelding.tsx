@@ -24,20 +24,20 @@ interface EgenmeldingProps {
 
 export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInnsending }: Readonly<EgenmeldingProps>) {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
 
   const foersteFravaersdag = useMemo(
     () =>
-      !fravaersperioder
+      !sykmeldingsperioder
         ? new Date()
-        : fravaersperioder
+        : sykmeldingsperioder
             .map((periode) => periode.fom)
             .reduce(
               (prevDate, curDate) => ((curDate || new Date()) <= (prevDate || new Date()) ? curDate : prevDate),
               new Date()
             ),
-    [fravaersperioder]
+    [sykmeldingsperioder]
   );
 
   const slettEgenmeldingsperiode = useBoundStore((state) => state.slettEgenmeldingsperiode);

@@ -7,13 +7,13 @@ import lokalStyles from './Fravaersperiode.module.css';
 import classNames from 'classnames/bind';
 
 interface FravaersperiodeProps {
-  fravaersperioder?: Periode[];
+  sykmeldingsperioder?: Periode[];
   egenmeldingsperioder?: Periode[];
   paakrevdeOpplysninger: string[];
 }
 
 export default function Fravaersperiode({
-  fravaersperioder,
+  sykmeldingsperioder,
   egenmeldingsperioder,
   paakrevdeOpplysninger
 }: Readonly<FravaersperiodeProps>) {
@@ -42,7 +42,7 @@ export default function Fravaersperiode({
       <div className={lokalStyles.ytterstefravaerwrapper}>
         <div className={lokalStyles.ytrefravaerswrapper}>
           <Heading3 className={classNameHeadingSykmelding}>Sykmelding</Heading3>
-          {fravaersperioder?.map((periode) => (
+          {sykmeldingsperioder?.map((periode) => (
             <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'fperiode' + periode.id} />
           ))}
         </div>

@@ -12,7 +12,7 @@ interface FravaersperiodeProps {
 }
 
 export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyForm }: Readonly<FravaersperiodeProps>) {
-  const fravaerPerioder = useBoundStore((state) => state.fravaersperioder);
+  const fravaerPerioder = useBoundStore((state) => state.sykmeldingsperioder);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
 
   useEffect(() => {

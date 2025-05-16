@@ -4,8 +4,8 @@
   "innsenderNavn": "",
   "identitetsnummer": "27467549222",
   "orgnrUnderenhet": "810007982",
-  "eksternBestemmendeFravaersdag": null,
-  "fravaersperioder": [{ "fom": "2024-03-18", "tom": "2024-03-24" }],
+  "eksternInntektsdato": null,
+  "sykmeldingsperioder": [{ "fom": "2024-03-18", "tom": "2024-03-24" }],
   "egenmeldingsperioder": [],
   "bruttoinntekt": 0.0,
   "tidligereinntekter": [
