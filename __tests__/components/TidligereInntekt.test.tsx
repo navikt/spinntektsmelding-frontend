@@ -116,8 +116,6 @@ describe('TidligereInntekt', () => {
 
     const arrInntekter = Array.from(invalidInntekt);
 
-    console.log('arrInntekter', arrInntekter);
-
     dataRows.forEach((row, index) => {
       const cells = row.querySelectorAll('td');
       expect(cells).toHaveLength(2);

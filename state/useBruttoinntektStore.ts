@@ -121,7 +121,12 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   setTidligereInntekter: (tidligereInntekt: HistoriskInntekt | null) =>
     set(
       produce((state) => {
-        state.tidligereInntekt = tidligereInntekt;
+        if (tidligereInntekt) {
+          const merged = new Map([...state.tidligereInntekt, ...tidligereInntekt]);
+
+          state.tidligereInntekt = merged;
+        }
+
         return state;
       })
     ),

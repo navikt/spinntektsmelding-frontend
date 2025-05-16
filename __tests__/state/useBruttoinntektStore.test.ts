@@ -5,6 +5,8 @@ import feiltekster from '../../utils/feiltekster';
 import { finnAktuelleInntekter, sorterInntekter } from '../../state/useBruttoinntektStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
+import { enableMapSet } from 'immer';
+enableMapSet();
 
 const inputInntekt: number = 40000;
 const tidligereInntekt: HistoriskInntekt = new Map([
@@ -231,11 +233,13 @@ describe('useBoundStore', () => {
     ]);
     const { result } = renderHook(() => useBoundStore((state) => state));
 
+    const inntekter = new Map([...tidligereInntekt, ['2002-09', 45000], ['2002-10', 55000], ['2002-11', 50000]]);
+
     act(() => {
       result.current.setTidligereInntekter(tidligereInntekt);
     });
 
-    expect(result.current.tidligereInntekt).toEqual(tidligereInntekt);
+    expect(result.current.tidligereInntekt).toEqual(inntekter);
   });
 
   it('should return 0 when maaned are equal', () => {

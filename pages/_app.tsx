@@ -4,6 +4,8 @@ import '../styles/bedriftsmeny.css';
 import 'core-js-pure/actual/structured-clone';
 import { getFaro, initInstrumentation, pinoLevelToFaroLevel } from '../utils/faro';
 import type { AppProps } from 'next/app';
+import { enableMapSet } from 'immer';
+enableMapSet();
 
 import '../components/PageContent/PageContent.css';
 
