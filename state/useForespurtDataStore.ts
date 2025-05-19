@@ -110,10 +110,10 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const refusjon = get().forespurtData?.refusjon?.forslag;
 
     if (refusjon) {
-      if (refusjon.perioder.length === 1 && refusjon.perioder[0].beloep === 0) {
+      if (refusjon.perioder && refusjon.perioder.length === 1 && refusjon.perioder[0].beloep === 0) {
         return false;
       }
-      return refusjon.perioder.length > 0;
+      return refusjon.perioder && refusjon.perioder.length > 0 ? true : false;
     } else {
       return false;
     }

@@ -117,11 +117,13 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
   },
 
   initFravaersperiode: (mottattFravaerPerioder: Array<ApiPeriodeSchema>) => {
-    const fravaerPerioder: Array<Periode> = mottattFravaerPerioder.map((periode) => ({
-      fom: parseIsoDate(periode.fom),
-      tom: parseIsoDate(periode.tom),
-      id: nanoid()
-    }));
+    const fravaerPerioder: Array<Periode> = mottattFravaerPerioder
+      ? mottattFravaerPerioder.map((periode) => ({
+          fom: parseIsoDate(periode.fom),
+          tom: parseIsoDate(periode.tom),
+          id: nanoid()
+        }))
+      : [];
 
     return set(
       produce((state) => {
