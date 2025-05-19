@@ -32,7 +32,7 @@ export default function Aarsaksvelger({
 }: Readonly<AarsaksvelgerProps>) {
   const handleLeggTilEndringAarsak = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    append({});
+    leggTilEndringsaarsak({});
   };
 
   const {
@@ -41,18 +41,24 @@ export default function Aarsaksvelger({
     control
   } = useFormContext();
 
-  const { fields, append, remove, replace } = useFieldArray({
-    control, // control props comes from useForm (optional: if you are using FormContext)
-    name: 'inntekt.endringAarsaker' // unique name for your Field Array
+  const {
+    fields,
+    append: leggTilEndringsaarsak,
+    remove: slettEndringsaarsak,
+    replace: initialiserEndringsaarsaker
+  } = useFieldArray({
+    control,
+    name: 'inntekt.endringAarsaker'
   });
+
   const beloepFeltnavn = 'inntekt.beloep';
   const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
 
   useEffect(() => {
     if (fields.length === 0) {
-      replace([{}]);
+      initialiserEndringsaarsaker([{}]);
     }
-  }, [fields, replace]);
+  }, [fields, initialiserEndringsaarsaker]);
 
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
@@ -92,7 +98,11 @@ export default function Aarsaksvelger({
             </div>
 
             <div>
-              <ButtonSlette className={lokalStyles.kontrollerknapp} onClick={() => remove(key)} title={'Slett'} />
+              <ButtonSlette
+                className={lokalStyles.kontrollerknapp}
+                onClick={() => slettEndringsaarsak(key)}
+                title={'Slett'}
+              />
             </div>
             {!kanIkkeTilbakestilles && key === 0 && (
               <div>

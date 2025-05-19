@@ -46,15 +46,9 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
   slettFravaersperiode: (periodeId: string) =>
     set(
       produce((state) => {
-        if (state.sykmeldingsperioder) {
-          if (state.sykmeldingsperioder) {
-            const nyePerioder = state.sykmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId);
-            state.sykmeldingsperioder = nyePerioder;
-          }
-        }
-
+        const utenValgt = state.sykmeldingsperioder?.filter((p) => p.id !== periodeId) ?? [];
+        state.sykmeldingsperioder = utenValgt;
         state.sammeFravaersperiode = false;
-
         return state;
       })
     ),
@@ -104,32 +98,26 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
   },
 
   tilbakestillFravaersperiode: () => {
-    const tilbakestiltPeriode = get().opprinneligFravaersperiode;
-    const klonetFravaersperiode = structuredClone(tilbakestiltPeriode);
+    const originale = get().opprinneligFravaersperiode;
     return set(
       produce((state) => {
-        state.sykmeldingsperioder = klonetFravaersperiode;
-
+        state.sykmeldingsperioder = structuredClone(originale);
         state.sammeFravaersperiode = false;
         return state;
       })
     );
   },
 
-  initFravaersperiode: (mottattFravaerPerioder: Array<ApiPeriodeSchema>) => {
-    const fravaerPerioder: Array<Periode> = mottattFravaerPerioder
-      ? mottattFravaerPerioder.map((periode) => ({
-          fom: parseIsoDate(periode.fom),
-          tom: parseIsoDate(periode.tom),
-          id: nanoid()
-        }))
-      : [];
-
+  initFravaersperiode: (mottatt) => {
+    const konverterte = mottatt.map(({ fom, tom }) => ({
+      id: nanoid(),
+      fom: parseIsoDate(fom),
+      tom: parseIsoDate(tom)
+    }));
     return set(
       produce((state) => {
-        state.sykmeldingsperioder = structuredClone(fravaerPerioder);
-        state.opprinneligFravaersperiode = structuredClone(fravaerPerioder);
-
+        state.sykmeldingsperioder = structuredClone(konverterte);
+        state.opprinneligFravaersperiode = structuredClone(konverterte);
         return state;
       })
     );
