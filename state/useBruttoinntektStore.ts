@@ -213,20 +213,14 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       const inntektsdata = await fetchInntektsdata(environment.inntektsdataUrl, forespoerselId, bestemmendeFravaersdag);
       const oppdaterteInntekter = inntektsdata.data;
 
-      // oppdaterteInntekter.tidligereInntekter.forEach((inntekt: HistoriskInntekt) => {
-      //   if (!tidligereInntekt.find((element) => element.maaned === inntekt.maaned)) {
-      //     tidligereInntekt.push(inntekt);
-      //   }
-      // });
       tidligereInntekt = oppdaterteInntekter.historikk;
       snittInntekter = oppdaterteInntekter.gjennomsnitt;
       henterData = false;
     } else {
       const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
-      // const aktuelleInntekter = tidligereInntekt;
       const arrInntekter = Array.from(aktuelleInntekter);
       const sumInntekter = arrInntekter.reduce((prev, cur) => {
-        prev += cur[1] ?? 0;
+        prev += (cur[1] as number) ?? 0;
         return prev;
       }, 0);
 
@@ -249,7 +243,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
         if (tidligereInntekt) {
           state.tidligereInntekt = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
-          // state.tidligereInntekt = new Map(Array.from(tidligereInntekt));
         }
 
         return state;
@@ -303,11 +296,6 @@ export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt | null,
       .sort(sorterInntekter)
       .slice(0, 3)
   );
-  // const aktuelleInntekter = tidligereInntekt
-  //   .filter((inntekt) => inntekt.maaned < bestemmendeMaaned && inntekt.maaned >= sisteMaaned)
-  //   .sort(sorterInntekter)
-  //   .slice(0, 3);
-
   return aktuelleInntekter || new Map();
 }
 

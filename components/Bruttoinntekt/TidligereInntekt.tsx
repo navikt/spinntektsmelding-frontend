@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
 import formatCurrency from '../../utils/formatCurrency';
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';

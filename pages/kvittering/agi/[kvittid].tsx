@@ -167,17 +167,21 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       id: periode.fom + periode.tom
     }));
   } else {
-    sykmeldingsperioder = kvitteringData.sykmeldingsperioder?.map((periode: MottattPeriode) => ({
-      fom: parseIsoDate(periode.fom),
-      tom: parseIsoDate(periode.tom),
-      id: periode.fom + periode.tom
-    }));
+    sykmeldingsperioder = kvitteringData?.sykmeldingsperioder
+      ? kvitteringData.sykmeldingsperioder?.map((periode: MottattPeriode) => ({
+          fom: parseIsoDate(periode.fom),
+          tom: parseIsoDate(periode.tom),
+          id: periode.fom + periode.tom
+        }))
+      : [];
 
-    egenmeldingsperioder = kvitteringData.agp.egenmeldinger?.map((periode: MottattPeriode) => ({
-      fom: parseIsoDate(periode.fom),
-      tom: parseIsoDate(periode.tom),
-      id: periode.fom + periode.tom
-    }));
+    egenmeldingsperioder = kvitteringData?.agp?.egenmeldinger
+      ? kvitteringData?.agp?.egenmeldinger?.map((periode: MottattPeriode) => ({
+          fom: parseIsoDate(periode.fom),
+          tom: parseIsoDate(periode.tom),
+          id: periode.fom + periode.tom
+        }))
+      : [];
   }
 
   const cx = classNames.bind(lokalStyles);
