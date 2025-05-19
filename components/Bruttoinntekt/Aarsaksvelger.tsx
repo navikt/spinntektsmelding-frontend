@@ -15,7 +15,7 @@ import { ExclamationmarkTriangleFillIcon } from '@navikt/aksel-icons';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
-  clickTilbakestillMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleResetMaanedsinntekt: (event: React.MouseEvent<HTMLButtonElement>) => void;
   visFeilmeldingTekst: (feilmelding: string) => string;
   bestemmendeFravaersdag?: Date;
   nyInnsending: boolean;
@@ -24,7 +24,7 @@ interface AarsaksvelgerProps {
 
 export default function Aarsaksvelger({
   bruttoinntekt,
-  clickTilbakestillMaanedsinntekt,
+  handleResetMaanedsinntekt,
   visFeilmeldingTekst,
   bestemmendeFravaersdag,
   nyInnsending,
@@ -106,7 +106,7 @@ export default function Aarsaksvelger({
             </div>
             {!kanIkkeTilbakestilles && key === 0 && (
               <div>
-                <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={clickTilbakestillMaanedsinntekt} />
+                <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={handleResetMaanedsinntekt} />
               </div>
             )}
           </div>

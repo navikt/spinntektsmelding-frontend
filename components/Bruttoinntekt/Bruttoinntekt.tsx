@@ -41,7 +41,7 @@ export default function Bruttoinntekt({
 
   const { watch, setValue } = useFormContext();
   const feilHentingAvInntektsdata = tidligereinntekt === null;
-  const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleResetMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     logEvent('knapp klikket', {
@@ -56,7 +56,7 @@ export default function Bruttoinntekt({
     tilbakestillMaanedsinntekt();
   };
 
-  const setEndreMaanedsinntektHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleStartEditingMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     logEvent('knapp klikket', {
@@ -127,7 +127,7 @@ export default function Bruttoinntekt({
             </TextLabel>
             <ButtonEndre
               data-cy='endre-beloep'
-              onClick={setEndreMaanedsinntektHandler}
+              onClick={handleStartEditingMaanedsinntekt}
               className={lokalStyles.endrePadding}
             />
           </>
@@ -138,7 +138,7 @@ export default function Bruttoinntekt({
             visFeilmeldingTekst={visFeilmeldingTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}
-            clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+            handleResetMaanedsinntekt={handleResetMaanedsinntekt}
             kanIkkeTilbakestilles={erBlanktSkjema}
           />
         )}

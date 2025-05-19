@@ -11,6 +11,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
 import { z } from 'zod';
+import { tidPeriode } from '../schema/tidPeriode';
 
 type ApiPeriodeSchema = z.infer<typeof apiPeriodeSchema>;
 
@@ -46,7 +47,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
   slettFravaersperiode: (periodeId: string) =>
     set(
       produce((state) => {
-        const utenValgt = state.sykmeldingsperioder?.filter((p) => p.id !== periodeId) ?? [];
+        const utenValgt = state.sykmeldingsperioder?.filter((periode: Periode) => periode.id !== periodeId) ?? [];
         state.sykmeldingsperioder = utenValgt;
         state.sammeFravaersperiode = false;
         return state;
@@ -73,7 +74,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
 
         const fravaerPerioder = finnFravaersperioder(state.sykmeldingsperioder, state.egenmeldingsperioder);
 
-        const fPerioder: Periode[] = fravaerPerioder.filter((periode: Periode) => {
+        const fPerioder: tidPeriode[] = fravaerPerioder.filter((periode: tidPeriode) => {
           return periode.tom && periode.fom;
         });
 

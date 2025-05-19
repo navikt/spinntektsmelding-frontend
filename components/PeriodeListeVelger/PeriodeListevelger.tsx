@@ -29,7 +29,12 @@ export default function PeriodeListevelger({
 }: Readonly<PeriodeListevelgerProps>) {
   const { control } = useFormContext();
 
-  const { fields, append, remove, replace } = useFieldArray({
+  const {
+    fields,
+    append: leggTilPeriode,
+    remove: slettPeriode,
+    replace: erstattPeriode
+  } = useFieldArray({
     control,
     name
   });
@@ -38,23 +43,23 @@ export default function PeriodeListevelger({
     if (defaultRange && defaultRange.length > 0) {
       defaultRange.forEach((range, index) => {
         if (index === 0) {
-          replace({ fom: parseIsoDate(range.fom), tom: parseIsoDate(range.tom) });
+          erstattPeriode({ fom: parseIsoDate(range.fom), tom: parseIsoDate(range.tom) });
         } else {
-          append({ fom: parseIsoDate(range.fom), tom: parseIsoDate(range.tom) });
+          leggTilPeriode({ fom: parseIsoDate(range.fom), tom: parseIsoDate(range.tom) });
         }
       });
     }
-  }, [append, defaultRange, replace]);
+  }, [leggTilPeriode, defaultRange, erstattPeriode]);
 
   useEffect(() => {
     if (fields.length === 0) {
-      replace({});
+      erstattPeriode({});
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     event.preventDefault();
-    append({});
+    leggTilPeriode({});
   };
 
   if (!toDateTom && toDate && !toDateTomFri) {
@@ -65,24 +70,10 @@ export default function PeriodeListevelger({
     <>
       {fields.map((range, key) => (
         <div className={lokalStyles.endremaaanedsinntekt} key={range.id}>
-          <DatoVelger
-            name={`${name}.${key}.fom`}
-            // fromDate={fromDate}
-            toDate={toDate}
-            label={fomTekst}
-            // defaultSelected={defaultRange?.fom}
-            defaultMonth={defaultMonth}
-          />
-          <DatoVelger
-            name={`${name}.${key}.tom`}
-            // fromDate={fromDate}
-            label={tomTekst}
-            // defaultSelected={defaultRange?.tom}
-            toDate={toDateTom}
-            defaultMonth={defaultMonth}
-          />
+          <DatoVelger name={`${name}.${key}.fom`} toDate={toDate} label={fomTekst} defaultMonth={defaultMonth} />
+          <DatoVelger name={`${name}.${key}.tom`} label={tomTekst} toDate={toDateTom} defaultMonth={defaultMonth} />
           {key > 0 && (
-            <ButtonSlette title='Slett periode' onClick={() => remove(key)} className={lokalStyles.sletteknapp} />
+            <ButtonSlette title='Slett periode' onClick={() => slettPeriode(key)} className={lokalStyles.sletteknapp} />
           )}
         </div>
       ))}
