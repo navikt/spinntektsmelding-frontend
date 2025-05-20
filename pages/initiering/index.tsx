@@ -15,7 +15,7 @@ import useBoundStore from '../../state/useBoundStore';
 
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { PersonnummerSchema } from '../../schema/personnummerSchema';
+import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema

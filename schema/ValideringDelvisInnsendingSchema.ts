@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { TelefonNummerSchema } from './telefonNummerSchema';
-import { SkjemavalideringEndringAarsakSchema } from './skjemavalideringEndringAarsakSchema';
+import { TelefonNummerSchema } from './TelefonNummerSchema';
+import { SkjemavalideringEndringAarsakSchema } from './SkjemavalideringEndringAarsakSchema';
 import { isEqual } from 'date-fns/isEqual';
 
 export default z

@@ -4,7 +4,7 @@ import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoin
 import { useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import z from 'zod';
-import { EndringAarsakSchema } from '../../schema/endringAarsakSchema';
+import { EndringAarsakSchema } from '../../schema/EndringAarsakSchema';
 
 interface SelectEndringBruttoinntektProps extends Partial<SelectProps> {
   nyInnsending: boolean;

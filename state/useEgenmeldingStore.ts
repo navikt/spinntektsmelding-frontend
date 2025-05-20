@@ -3,7 +3,7 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { Periode } from './state';
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattPeriode } from '../schema/forespurtData';
+import { MottattPeriode } from '../schema/ForespurtDataSchema';
 import { CompleteState } from './useBoundStore';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
@@ -11,7 +11,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
 import sorterFomStigende from '../utils/sorterFomStigende';
-import { tidPeriode } from '../schema/tidPeriode';
+import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
 
 export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;
@@ -196,7 +196,7 @@ function updateDateValue(egenmeldingsperioder?: Periode[], periodeId?: string, d
   return oppdatertEgenmeldingPerioder;
 }
 
-export function finnFravaersperioder<T extends tidPeriode>(
+export function finnFravaersperioder<T extends TidPeriodeSchema>(
   sykmeldingsperioder?: Array<T>,
   egenmeldingsperioder?: Array<T>
 ) {

@@ -5,7 +5,7 @@ import finnBestemmendeFravaersdag, {
   tilstoetendePeriodeManuellJustering
 } from '../../utils/finnBestemmendeFravaersdag';
 import { describe } from 'vitest';
-import { tidPeriode } from '../../schema/tidPeriode';
+import { TidPeriodeSchema } from '../../schema/TidPeriodeSchema';
 
 describe.concurrent('finnBestemmendeFravaersdag', () => {
   it('should return the correct bestemmende fraværsdag for two periode directly following each other', () => {
@@ -903,7 +903,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
   });
 
   it('should return correct bfd when 2bananer and loads of perioder', () => {
-    const periode1: tidPeriode[] = [
+    const periode1: TidPeriodeSchema[] = [
       {
         fom: parseISO('2023-09-01'),
         tom: parseISO('2023-09-05')
@@ -1013,7 +1013,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
   });
 
   it('should return correct bfd when 2bananer and loads of perioder, uten agp', () => {
-    const periode1: tidPeriode[] = [
+    const periode1: TidPeriodeSchema[] = [
       {
         fom: parseISO('2023-09-01'),
         tom: parseISO('2023-09-05')

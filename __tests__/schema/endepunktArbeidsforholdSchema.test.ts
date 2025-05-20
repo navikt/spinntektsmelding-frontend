@@ -1,6 +1,6 @@
-import { endepunktArbeidsforholdSchema } from '../../schema/endepunktArbeidsforholdSchema';
+import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 
-describe('endepunktArbeidsforholdSchema', () => {
+describe('EndepunktArbeidsforholdSchema', () => {
   it('validates the schema correctly', () => {
     const data = {
       fulltNavn: 'John Doe',
@@ -16,7 +16,7 @@ describe('endepunktArbeidsforholdSchema', () => {
       ]
     };
 
-    expect(endepunktArbeidsforholdSchema.safeParse(data).success).toBe(true);
+    expect(EndepunktArbeidsforholdSchema.safeParse(data).success).toBe(true);
   });
 
   it('returns an error when the schema validation fails', () => {
@@ -34,7 +34,7 @@ describe('endepunktArbeidsforholdSchema', () => {
       ]
     };
 
-    expect(endepunktArbeidsforholdSchema.safeParse(data).success).toBe(false);
+    expect(EndepunktArbeidsforholdSchema.safeParse(data).success).toBe(false);
   });
 
   it('validates data with valid perioder', () => {
@@ -63,7 +63,7 @@ describe('endepunktArbeidsforholdSchema', () => {
         }
       ]
     };
-    const result = endepunktArbeidsforholdSchema.safeParse(data);
+    const result = EndepunktArbeidsforholdSchema.safeParse(data);
     expect(result.error).toBeUndefined();
 
     expect(result.success).toBe(true);
@@ -81,7 +81,7 @@ describe('endepunktArbeidsforholdSchema', () => {
         }
       ]
     };
-    const result = endepunktArbeidsforholdSchema.safeParse(data);
+    const result = EndepunktArbeidsforholdSchema.safeParse(data);
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -95,7 +95,7 @@ describe('endepunktArbeidsforholdSchema', () => {
       underenheter: []
       // underenheter and perioder both omitted
     };
-    const result = endepunktArbeidsforholdSchema.safeParse(data);
+    const result = EndepunktArbeidsforholdSchema.safeParse(data);
     expect(result.error).toBeUndefined();
     expect(result.success).toBe(true);
   });

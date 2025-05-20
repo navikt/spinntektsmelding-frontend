@@ -17,7 +17,7 @@ import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../v
 import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 import validerPeriodeOverlapp, { PeriodeOverlappFeilkode } from '../validators/validerPeriodeOverlapp';
-import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { z } from 'zod';
 import finnBestemmendeFravaersdag from './finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
@@ -61,7 +61,7 @@ type codeUnion =
   | TelefonFeilkode
   | PeriodeOverlappFeilkode;
 
-type Skjema = z.infer<typeof hovedskjemaSchema>;
+type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 export default function validerInntektsmelding(
   state: CompleteState,
@@ -103,7 +103,7 @@ export default function validerInntektsmelding(
   const sykmeldingsperioder = finnFravaersperioder(state.sykmeldingsperioder, state.egenmeldingsperioder);
 
   let kreverAgp = true;
-  if (state.forespurtData?.arbeidsgiverperiode.paakrevd === false) {
+  if (state.ForespurtDataSchema?.arbeidsgiverperiode.paakrevd === false) {
     kreverAgp = false;
   }
 
@@ -116,7 +116,7 @@ export default function validerInntektsmelding(
           !state.skjaeringstidspunkt
         )
       )
-    : parseIsoDate(state.forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt);
+    : parseIsoDate(state.ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt);
 
   if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && !kunInntektOgRefusjon) {
     feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');

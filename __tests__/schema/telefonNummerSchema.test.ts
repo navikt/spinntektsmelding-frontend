@@ -1,4 +1,4 @@
-import { TelefonNummerSchema } from '../../schema/telefonNummerSchema';
+import { TelefonNummerSchema } from '../../schema/TelefonNummerSchema';
 
 describe('TelefonNummerSchema', () => {
   it('should validate TelefonNummerSchema', () => {

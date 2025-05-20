@@ -1,6 +1,6 @@
 import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
-import { MottattPeriode } from '../../schema/forespurtData';
+import { MottattPeriode } from '../../schema/ForespurtDataSchema';
 import { vi } from 'vitest';
 import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
 import PeriodeType from '../../config/PeriodeType';

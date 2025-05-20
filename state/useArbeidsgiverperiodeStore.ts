@@ -9,14 +9,14 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import validerPeriodeFravaer from '../validators/validerPeriodeFravaer';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 import { slettFeilmeldingFraState } from './useFeilmeldingerStore';
-import { TDateISODate } from '../schema/forespurtData';
+import { TDateISODate } from '../schema/ForespurtDataSchema';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
-import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
+import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import { z } from 'zod';
 
-type ApiPeriodeSchema = z.infer<typeof apiPeriodeSchema>;
+type ApiPeriodeSchema = z.infer<typeof ApiPeriodeSchema>;
 
 export interface ArbeidsgiverperiodeState {
   skjaeringstidspunkt?: Date;

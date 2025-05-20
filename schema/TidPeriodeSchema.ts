@@ -5,4 +5,4 @@ const tidPeriodeSchema = z.object({
   tom: z.date().optional()
 });
 
-export type tidPeriode = z.infer<typeof tidPeriodeSchema>;
+export type TidPeriodeSchema = z.infer<typeof tidPeriodeSchema>;

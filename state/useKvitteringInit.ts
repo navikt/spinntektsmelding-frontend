@@ -1,8 +1,8 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattPeriode, Opplysningstype } from '../schema/forespurtData';
+import { MottattPeriode, Opplysningstype } from '../schema/ForespurtDataSchema';
 import useBoundStore from './useBoundStore';
 
-import MottattKvitteringSchema, { kvitteringNavNoSchema } from '../schema/mottattKvitteringSchema';
+import { MottattKvitteringSchema, KvitteringNavNoSchema } from '../schema/MottattKvitteringSchema';
 
 import forespoerselType from '../config/forespoerselType';
 import { konverterBegrunnelseFullLonnIArbeidsgiverperiode } from '../utils/konverterBegrunnelseFullLonnIArbeidsgiverperiode';
@@ -10,11 +10,11 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from './useEgenmeldingStore';
 import { isBefore } from 'date-fns';
 import { z } from 'zod';
-import { RefusjonEndringSchema } from '../schema/refusjonEndringSchema';
+import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
 import { Naturalytelse } from './state';
 
-type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
-type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
+type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
+type MottattKvittering = z.infer<typeof MottattKvitteringSchema>;
 type RefusjonEndring = z.infer<typeof RefusjonEndringSchema>;
 
 export default function useKvitteringInit() {
@@ -44,7 +44,7 @@ export default function useKvitteringInit() {
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
 
-  return async (kvitteringsData: KvitteringData) => {
+  return async (kvitteringsData: MottattKvittering) => {
     if (!kvitteringsData) return;
 
     if (kvitteringsData.kvitteringEkstern && kvitteringsData.kvitteringEkstern !== null) {

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PeriodeSchema } from './konverterPeriodeSchema';
+import { PeriodeSchema } from './KonverterPeriodeSchema';
 import { toLocalIso } from '../utils/toLocalIso';
 
 const EndringAarsakBonusSchema = z.object({
@@ -88,7 +88,7 @@ const EndringAarsakVarigLoennsendringSchema = z.object({
     .transform((val) => toLocalIso(val))
 });
 
-export const konverterEndringAarsakSchema = z.discriminatedUnion(
+export const KonverterEndringAarsakSchema = z.discriminatedUnion(
   'aarsak',
   [
     EndringAarsakBonusSchema,

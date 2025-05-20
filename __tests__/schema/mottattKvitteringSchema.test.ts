@@ -1,21 +1,21 @@
-import mottattKvitteringSchema from '../../schema/mottattKvitteringSchema';
+import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 
 import { z } from 'zod';
 
 import kvittering from '../../mockdata/kvittering-data.json';
 
-describe('mottattKvitteringSchema', () => {
-  it('should validate mottattKvitteringSchema', () => {
-    expect(mottattKvitteringSchema.safeParse(kvittering).success).toBe(true);
+describe('MottattKvitteringSchema', () => {
+  it('should validate MottattKvitteringSchema', () => {
+    expect(MottattKvitteringSchema.safeParse(kvittering).success).toBe(true);
   });
 
-  it('should validate mottattKvitteringSchema with error on fnr', () => {
+  it('should validate MottattKvitteringSchema with error on fnr', () => {
     const data = {
       ...kvittering
     };
     data.kvitteringDokument.identitetsnummer = '12345678901';
 
-    const result = mottattKvitteringSchema.safeParse(data);
+    const result = MottattKvitteringSchema.safeParse(data);
 
     expect(result.success).toBe(false);
     expect(JSON.stringify(result.error)).toEqual(

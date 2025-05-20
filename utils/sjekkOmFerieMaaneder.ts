@@ -1,4 +1,4 @@
-import { HistoriskInntekt } from '../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../schema/HistoriskInntektSchema';
 
 function sjekkOmFerieMaaneder(tidligereinntekt: HistoriskInntekt | undefined): boolean {
   if (!tidligereinntekt) {

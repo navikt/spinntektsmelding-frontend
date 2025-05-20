@@ -1,14 +1,14 @@
-import mottattKvitteringSchema from '../schema/mottattKvitteringSchema';
+import { MottattKvitteringSchema } from '../schema/MottattKvitteringSchema';
 import NetworkError from './NetworkError';
 import isValidUUID from './isValidUUID';
 import { z } from 'zod';
 
-type MottattKvitteringSchema = z.infer<typeof mottattKvitteringSchema>;
+type MottattKvittering = z.infer<typeof MottattKvitteringSchema>;
 
 const fetchKvitteringsdata = (
   url: string,
   forespoerselId: string
-): Promise<{ status: number; data: MottattKvitteringSchema | undefined }> => {
+): Promise<{ status: number; data: MottattKvittering | undefined }> => {
   if (isValidUUID(forespoerselId) === false) {
     return Promise.resolve({ status: 404, data: undefined });
   }
@@ -31,7 +31,7 @@ const fetchKvitteringsdata = (
         throw error;
       }
 
-      return res.json().then((data: MottattKvitteringSchema) => {
+      return res.json().then((data: MottattKvittering) => {
         return { status: res.status, data };
       });
     })

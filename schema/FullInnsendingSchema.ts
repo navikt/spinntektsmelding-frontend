@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { isTlfNumber } from '../utils/isTlfNumber';
-import { InnsendingSchema, superRefineInnsending } from './innsendingSchema';
+import { InnsendingSchema, superRefineInnsending } from './InnsendingSchema';
 
-const fullInnsendingSchema = InnsendingSchema.extend({
+const FullInnsendingSchema = InnsendingSchema.extend({
   forespoerselId: z.string().uuid(),
   avsenderTlf: z
     .string({
@@ -13,4 +13,4 @@ const fullInnsendingSchema = InnsendingSchema.extend({
     .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' })
 }).superRefine(superRefineInnsending);
 
-export default fullInnsendingSchema;
+export default FullInnsendingSchema;

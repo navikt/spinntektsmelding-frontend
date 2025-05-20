@@ -8,25 +8,25 @@ import forespoerselType from '../config/forespoerselType';
 import parseIsoDate from '../utils/parseIsoDate';
 import { RefusjonEndring } from '../validators/validerAapenInnsending';
 import { z } from 'zod';
-import fullInnsendingSchema from '../schema/fullInnsendingSchema';
+import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
-import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
-import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
-import { NaturalytelseEnum } from '../schema/NaturalytelseEnum';
-import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
-import { tidPeriode } from '../schema/tidPeriode';
-import { Opplysningstype } from '../schema/forespurtData';
+import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import { NaturalytelseEnumSchema } from '../schema/NaturalytelseEnumSchema';
+import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
+import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
+import { Opplysningstype } from '../schema/ForespurtDataSchema';
 
-export type SendtPeriode = z.infer<typeof apiPeriodeSchema>;
+export type SendtPeriode = z.infer<typeof ApiPeriodeSchema>;
 
 export default function useFyllInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, forespurtData] = useBoundStore((state) => [
+  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, ForespurtDataSchema] = useBoundStore((state) => [
     state.fullLonnIArbeidsgiverPerioden,
     state.lonnISykefravaeret,
-    state.forespurtData
+    state.ForespurtDataSchema
   ]);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
@@ -49,8 +49,8 @@ export default function useFyllInnsending() {
       state.setKvitteringData
     ]);
 
-  type FullInnsending = z.infer<typeof fullInnsendingSchema>;
-  type Skjema = z.infer<typeof hovedskjemaSchema>;
+  type FullInnsending = z.infer<typeof FullInnsendingSchema>;
+  type Skjema = z.infer<typeof HovedskjemaSchema>;
 
   return (
     opplysningerBekreftet: boolean,
@@ -85,14 +85,14 @@ export default function useFyllInnsending() {
           );
 
     let kreverAgp = true;
-    if (forespurtData?.arbeidsgiverperiode?.paakrevd === false || !harForespurtArbeidsgiverperiode) {
+    if (ForespurtDataSchema?.arbeidsgiverperiode?.paakrevd === false || !harForespurtArbeidsgiverperiode) {
       kreverAgp = false;
       setSkjaeringstidspunkt(
-        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
+        ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
       );
 
       beregnetSkjaeringstidspunkt = parseIsoDate(
-        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
+        ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
       );
     }
     const bestemmendeFraværsdag = kreverAgp
@@ -106,11 +106,11 @@ export default function useFyllInnsending() {
           undefined,
           beregnetSkjaeringstidspunkt
         )
-      : forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
+      : ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
 
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
-          return konverterEndringAarsakSchema.parse(endringAarsak);
+          return KonverterEndringAarsakSchema.parse(endringAarsak);
         })
       : [];
 
@@ -183,7 +183,7 @@ export function mapEgenmeldingsperioder(egenmeldingsperioder: Periode[] | undefi
 export function mapNaturalytelserToData(naturalytelser: Naturalytelse[] | undefined) {
   return naturalytelser
     ? naturalytelser?.map((ytelse) => ({
-        naturalytelse: verdiEllerBlank(ytelse.naturalytelse) as z.infer<typeof NaturalytelseEnum>,
+        naturalytelse: verdiEllerBlank(ytelse.naturalytelse) as z.infer<typeof NaturalytelseEnumSchema>,
         sluttdato: formatIsoDate(ytelse.sluttdato),
         verdiBeloep: verdiEllerNull(ytelse.verdiBeloep)
       }))
@@ -240,7 +240,7 @@ export function konverterPerioderFraMottattTilInterntFormat(
     : undefined;
 }
 
-function finnInnsendbareArbeidsgiverperioder<T extends tidPeriode>(
+function finnInnsendbareArbeidsgiverperioder<T extends TidPeriodeSchema>(
   arbeidsgiverperioder: T[] | undefined,
   harForespurtArbeidsgiverperiode: boolean
 ): SendtPeriode[] | [] {

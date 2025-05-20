@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import TidligereInntekt from '../../components/Bruttoinntekt/TidligereInntekt';
-import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import { vi } from 'vitest';
 
 vi.mock('@navikt/ds-react', async () => {

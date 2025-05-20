@@ -4,7 +4,7 @@ import { renderHook, act } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 // import environment from '../config/environment';
-import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../../state/useForespurtDataStore';
 // import forespoerselType from '../config/forespoerselType';
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
@@ -49,14 +49,14 @@ vi.mock('./useErrorResponse', () => ({
   ErrorResponse: vi.fn()
 }));
 
-vi.mock('../schema/fullInnsendingSchema', () => ({
+vi.mock('../schema/FullInnsendingSchema', () => ({
   __esModule: true,
   default: {
     safeParse: vi.fn().mockReturnValue({ success: true })
   }
 }));
 
-vi.mock('../schema/responseBackendError', () => ({
+vi.mock('../schema/ResponseBackendErrorSchema', () => ({
   __esModule: true,
   default: {
     safeParse: vi.fn().mockReturnValue({ success: true })
@@ -77,7 +77,7 @@ describe('useSendInnSkjema', () => {
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = false;
-    const formData = {} as z.infer<typeof hovedskjemaSchema>;
+    const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     const response = await result.current(
       opplysningerBekreftet,
@@ -95,7 +95,7 @@ describe('useSendInnSkjema', () => {
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = true;
-    const formData = {} as z.infer<typeof hovedskjemaSchema>;
+    const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     (validerInntektsmelding as Mock).mockReturnValueOnce({
       errorTexts: [{ message: 'test error' }]
@@ -116,7 +116,7 @@ describe('useSendInnSkjema', () => {
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = true;
-    const formData = {} as z.infer<typeof hovedskjemaSchema>;
+    const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     global.fetch = vi.fn().mockResolvedValue({
       status: 201,
@@ -136,7 +136,7 @@ describe('useSendInnSkjema', () => {
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = true;
-    const formData = {} as z.infer<typeof hovedskjemaSchema>;
+    const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     global.fetch = vi.fn().mockResolvedValue({
       status: 500,
@@ -160,7 +160,7 @@ describe('useSendInnSkjema', () => {
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = true;
-    const formData = {} as z.infer<typeof hovedskjemaSchema>;
+    const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     (validerInntektsmelding as Mock).mockReturnValueOnce([]);
 

@@ -1,6 +1,6 @@
 import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
 import { useEffect, useState } from 'react';
-import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';

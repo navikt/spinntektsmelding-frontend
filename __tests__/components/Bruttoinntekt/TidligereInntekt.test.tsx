@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import TidligereInntekt from '../../../components/Bruttoinntekt/TidligereInntekt';
-import { HistoriskInntekt } from '../../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../../schema/HistoriskInntektSchema';
 
 describe('TidligereInntekt', () => {
   it('renders 3 rows', () => {

@@ -1,4 +1,4 @@
-import { InnsendingSchema } from '../../schema/innsendingSchema';
+import { InnsendingSchema } from '../../schema/InnsendingSchema';
 
 import { z } from 'zod';
 

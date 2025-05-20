@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
-import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 
 describe('sjekkOmFerieMaaneder', () => {
   it('should return true if there are months between May and August', () => {

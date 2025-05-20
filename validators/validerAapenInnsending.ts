@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { EndringAarsakSchema } from '../schema/endringAarsakSchema';
-import { RefusjonEndringSchema } from '../schema/apiRefusjonEndringSchema';
-import aapenInnsendingSchema from '../schema/aapenInnsendingSchema';
+import { EndringAarsakSchema } from '../schema/EndringAarsakSchema';
+import { RefusjonEndringSchema } from '../schema/ApiRefusjonEndringSchema';
+import AapenInnsendingSchema from '../schema/AapenInnsendingSchema';
 
-export type AapenInnsending = z.infer<typeof aapenInnsendingSchema>;
+export type AapenInnsending = z.infer<typeof AapenInnsendingSchema>;
 
 export default function validerAapenInnsending(data: Partial<AapenInnsending>) {
-  return aapenInnsendingSchema.safeParse(data);
+  return AapenInnsendingSchema.safeParse(data);
 }
 
 export type EndringAarsak = z.infer<typeof EndringAarsakSchema>;

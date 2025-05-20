@@ -1,4 +1,4 @@
-import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import formatCurrency from '../../utils/formatCurrency';
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';
 import lokalStyles from './Bruttoinntekt.module.css';

@@ -44,7 +44,7 @@ import isValidUUID from '../utils/isValidUUID';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
 import Heading3 from '../components/Heading3';
 import forespoerselType from '../config/forespoerselType';
-import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -76,7 +76,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     avsender,
     sykmeldt,
     naturalytelser,
-    forespurtData
+    ForespurtDataSchema
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -86,7 +86,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.avsender,
     state.sykmeldt,
     state.naturalytelser,
-    state.forespurtData
+    state.ForespurtDataSchema
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -118,10 +118,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
-  type Skjema = z.infer<typeof hovedskjemaSchema>;
+  type Skjema = z.infer<typeof HovedskjemaSchema>;
 
   const methods = useForm<Skjema>({
-    resolver: zodResolver(hovedskjemaSchema),
+    resolver: zodResolver(HovedskjemaSchema),
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
@@ -204,7 +204,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const beregnetBestemmendeFraværsdag = useMemo(() => {
     if (!harForespurtArbeidsgiverperiode) {
       return parseIsoDate(
-        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
+        ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
       );
     }
     const altFravaer = finnFravaersperioder(sykmeldingsperioder, egenmeldingsperioder);
@@ -222,7 +222,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sykmeldingsperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     harForespurtArbeidsgiverperiode,
-    forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
+    ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
   ]);
 
   const inntektsdato = useMemo(() => {

@@ -9,15 +9,15 @@ import inntektData from '../../mockdata/inntektData.json';
 import useKvitteringInit from '../../state/useKvitteringInit';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { z } from 'zod';
-import fullInnsendingSchema from '../../schema/fullInnsendingSchema';
-import MottattKvitteringSchema from '../../schema/mottattKvitteringSchema';
+import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
+import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
 import { Opplysningstype } from '../../state/useForespurtDataStore';
 import forespoerselType from '../../config/forespoerselType';
-import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 
-type InnsendingSkjema = z.infer<typeof fullInnsendingSchema>;
+type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
-type SkjemaData = z.infer<typeof hovedskjemaSchema>;
+type SkjemaData = z.infer<typeof HovedskjemaSchema>;
 
 vi.mock('nanoid');
 

@@ -9,11 +9,12 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
-import { apiPeriodeSchema } from '../schema/apiPeriodeSchema';
+import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
+import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
 import { z } from 'zod';
-import { tidPeriode } from '../schema/tidPeriode';
 
-type ApiPeriodeSchema = z.infer<typeof apiPeriodeSchema>;
+type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
+type TidPeriode = z.infer<typeof TidPeriodeSchema>;
 
 export interface FravaersperiodeState {
   sykmeldingsperioder?: Array<Periode>;
@@ -22,7 +23,7 @@ export interface FravaersperiodeState {
   slettFravaersperiode: (periodeId: string) => void;
   setFravaersperiodeDato: (periodeId: string, oppdatertPeriode: PeriodeParam | undefined) => void;
   tilbakestillFravaersperiode: () => void;
-  initFravaersperiode: (mottatFravaersperiode: Array<ApiPeriodeSchema>) => void;
+  initFravaersperiode: (mottatFravaersperiode: Array<ApiPeriode>) => void;
 }
 
 const useFravaersperiodeStore: StateCreator<CompleteState, [], [], FravaersperiodeState> = (set, get) => ({
@@ -74,7 +75,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
 
         const fravaerPerioder = finnFravaersperioder(state.sykmeldingsperioder, state.egenmeldingsperioder);
 
-        const fPerioder: tidPeriode[] = fravaerPerioder.filter((periode: tidPeriode) => {
+        const fPerioder: TidPeriode[] = fravaerPerioder.filter((periode: TidPeriode) => {
           return periode.tom && periode.fom;
         });
 

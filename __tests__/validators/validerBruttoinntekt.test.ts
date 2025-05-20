@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
-import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import { CompleteState } from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import validerBruttoinntekt from '../../validators/validerBruttoinntekt';
@@ -9,7 +9,7 @@ import { describe } from 'vitest';
 import { nanoid } from 'nanoid';
 
 timezone_mock.register('UTC');
-type Skjema = z.infer<typeof hovedskjemaSchema>;
+type Skjema = z.infer<typeof HovedskjemaSchema>;
 vi.mock('nanoid');
 
 nanoid.mockReturnValue('uuid');

@@ -2,20 +2,20 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { YesNo } from './state';
-import { kvitteringEksternSchema } from '../schema/mottattKvitteringSchema';
+import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
 import z from 'zod';
-import fullInnsendingSchema from '../schema/fullInnsendingSchema';
-import aapenInnsendingSchema from '../schema/aapenInnsendingSchema';
-import { Opplysningstype } from '../schema/forespurtData';
+import FullInnsendingSchema from '../schema/FullInnsendingSchema';
+import AapenInnsendingSchema from '../schema/AapenInnsendingSchema';
+import { Opplysningstype } from '../schema/ForespurtDataSchema';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
   SELVBESTEMT = 'SELVBESTEMT'
 }
 
-type KvitteringEksternSchema = z.infer<typeof kvitteringEksternSchema>;
-type KvitteringFullInnsending = z.infer<typeof fullInnsendingSchema>;
-type KvitteringSelvbestemtInnsending = z.infer<typeof aapenInnsendingSchema>;
+type KvitteringEkstern = z.infer<typeof KvitteringEksternSchema>;
+type KvitteringFullInnsending = z.infer<typeof FullInnsendingSchema>;
+type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
 
 export interface SkjemadataState {
   nyInnsending: boolean;
@@ -27,7 +27,7 @@ export interface SkjemadataState {
   setInngangFraKvittering: () => void;
   setDirekteInngangKvittering: () => void;
   setEndringerAvRefusjon: (endring: YesNo) => void;
-  setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEksternSchema) => void;
+  setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
   setVedtaksperiodeId: (id: string) => void;
@@ -38,7 +38,7 @@ export interface SkjemadataState {
   inngangFraKvittering: boolean;
   direkteInngangKvittering: boolean;
   endringerAvRefusjon?: YesNo;
-  kvitteringEksterntSystem?: KvitteringEksternSchema;
+  kvitteringEksterntSystem?: KvitteringEkstern;
   skjemastatus: SkjemaStatus;
   kvitteringData?: KvitteringFullInnsending | KvitteringSelvbestemtInnsending;
   vedtaksperiodeId?: string;
@@ -109,7 +109,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEksternSchema) => {
+  setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => {
     set(
       produce((state: SkjemadataState) => {
         state.kvitteringEksterntSystem = eksterntSystem;

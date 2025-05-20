@@ -1,9 +1,9 @@
-import aapenInnsendingSchema from '../../schema/aapenInnsendingSchema';
+import AapenInnsendingSchema from '../../schema/AapenInnsendingSchema';
 
 import { z } from 'zod';
 
-describe('aapenInnsendingSchema', () => {
-  it('should validate aapenInnsendingSchema', () => {
+describe('AapenInnsendingSchema', () => {
+  it('should validate AapenInnsendingSchema', () => {
     const data = {
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
@@ -27,10 +27,10 @@ describe('aapenInnsendingSchema', () => {
       ]
     };
 
-    expect(aapenInnsendingSchema.safeParse(data).success).toBe(true);
+    expect(AapenInnsendingSchema.safeParse(data).success).toBe(true);
   });
 
-  it('should validate aapenInnsendingSchema with error on avsendertlf', () => {
+  it('should validate AapenInnsendingSchema with error on avsendertlf', () => {
     const data = {
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
@@ -54,7 +54,7 @@ describe('aapenInnsendingSchema', () => {
       ]
     };
 
-    const result = aapenInnsendingSchema.safeParse(data);
+    const result = AapenInnsendingSchema.safeParse(data);
     expect(result.success).toBe(false);
     expect(JSON.stringify(result.error)).toEqual(
       JSON.stringify(
@@ -71,7 +71,7 @@ describe('aapenInnsendingSchema', () => {
     );
   });
 
-  it('should validate aapenInnsendingSchema with error on refusjon > inntekt', () => {
+  it('should validate AapenInnsendingSchema with error on refusjon > inntekt', () => {
     const data = {
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
@@ -94,7 +94,7 @@ describe('aapenInnsendingSchema', () => {
         { fom: '2023-03-05', tom: '2023-03-06' }
       ]
     };
-    const result = aapenInnsendingSchema.safeParse(data);
+    const result = AapenInnsendingSchema.safeParse(data);
     expect(result.success).toBe(false);
     expect(JSON.stringify(result.error)).toEqual(
       JSON.stringify(

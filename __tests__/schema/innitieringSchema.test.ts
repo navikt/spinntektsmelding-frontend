@@ -1,4 +1,4 @@
-import InitieringSchema from '../../schema/initieringSchema';
+import InitieringSchema from '../../schema/InitieringSchema';
 
 import testFnr from '../../mockdata/testFnr';
 import testOrganisasjoner from '../../mockdata/testOrganisasjoner';

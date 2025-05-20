@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import Egenmelding from '../../components/Egenmelding';
 import { vi } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
-import { MottattPeriode } from '../../schema/forespurtData';
+import { MottattPeriode } from '../../schema/ForespurtDataSchema';
 
 const egenmeldingsperioder: Array<MottattPeriode> = [
   { fom: '2022-06-06', tom: '2022-07-06' },

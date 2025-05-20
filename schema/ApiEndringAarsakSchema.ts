@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { apiPeriodeSchema } from './apiPeriodeSchema';
+import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import {
   EndringAarsakBonusSchema,
   EndringAarsakFeilregistrertSchema,
@@ -14,29 +14,29 @@ import {
   EndringAarsakSykefravaerSchema,
   EndringAarsakTariffendringSchema,
   EndringAarsakVarigLoennsendringSchema
-} from './endringAarsakSchema';
+} from './EndringAarsakSchema';
 
 const apiEndringAarsakFerieSchema = EndringAarsakFerieSchema.merge(
   z.object({
-    ferier: z.array(apiPeriodeSchema)
+    ferier: z.array(ApiPeriodeSchema)
   })
 );
 
 const apiEndringAarsakPermisjonSchema = EndringAarsakPermisjonSchema.merge(
   z.object({
-    permisjoner: z.array(apiPeriodeSchema)
+    permisjoner: z.array(ApiPeriodeSchema)
   })
 );
 
 const apiEndringAarsakPermitteringSchema = EndringAarsakPermitteringSchema.merge(
   z.object({
-    permitteringer: z.array(apiPeriodeSchema)
+    permitteringer: z.array(ApiPeriodeSchema)
   })
 );
 
 const apiEndringAarsakSykefravaerSchema = EndringAarsakSykefravaerSchema.merge(
   z.object({
-    sykefravaer: z.array(apiPeriodeSchema)
+    sykefravaer: z.array(ApiPeriodeSchema)
   })
 );
 

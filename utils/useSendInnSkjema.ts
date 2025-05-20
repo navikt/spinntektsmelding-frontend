@@ -7,12 +7,12 @@ import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
 import validerInntektsmelding from './validerInntektsmelding';
-import fullInnsendingSchema from '../schema/fullInnsendingSchema';
+import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { z } from 'zod';
-import responseBackendError from '../schema/responseBackendError';
+import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
 import { Opplysningstype } from '../state/useForespurtDataStore';
 import forespoerselType from '../config/forespoerselType';
-import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -26,7 +26,7 @@ export default function useSendInnSkjema(
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
-  type Skjema = z.infer<typeof hovedskjemaSchema>;
+  type Skjema = z.infer<typeof HovedskjemaSchema>;
 
   return async (
     opplysningerBekreftet: boolean,
@@ -75,7 +75,7 @@ export default function useSendInnSkjema(
         component: amplitudeComponent
       });
     } else {
-      type FullInnsending = z.infer<typeof fullInnsendingSchema>;
+      type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
       const skjemaData: FullInnsending = fyllInnsending(
         opplysningerBekreftet,
@@ -84,7 +84,7 @@ export default function useSendInnSkjema(
         formData
       );
 
-      const validerteData = fullInnsendingSchema.safeParse(skjemaData);
+      const validerteData = FullInnsendingSchema.safeParse(skjemaData);
 
       if (validerteData.success === false) {
         logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
@@ -179,7 +179,7 @@ export default function useSendInnSkjema(
               });
 
               if (resultat.error) {
-                const feilResultat = responseBackendError.safeParse(resultat);
+                const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
                 if (feilResultat.success === true) {
                   const feil = feilResultat.data;
                   let errors: Array<ErrorResponse> = [];

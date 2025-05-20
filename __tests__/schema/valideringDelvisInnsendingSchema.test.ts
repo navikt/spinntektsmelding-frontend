@@ -1,8 +1,8 @@
-import valideringDelvisInnsendingSchema from '../../schema/valideringDelvisInnsendingSchema';
+import ValideringDelvisInnsendingSchema from '../../schema/ValideringDelvisInnsendingSchema';
 import { YesNo } from '../../state/state';
 import { describe, expect, it } from 'vitest';
 
-describe.concurrent('valideringDelvisInnsendingSchema', () => {
+describe.concurrent('ValideringDelvisInnsendingSchema', () => {
   it('should validate a valid input', () => {
     const validInput = {
       inntekt: {
@@ -28,7 +28,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
       }
     };
 
-    const result = valideringDelvisInnsendingSchema.safeParse(validInput);
+    const result = ValideringDelvisInnsendingSchema.safeParse(validInput);
 
     expect(result.success).toBe(true);
     expect(result.data).toEqual(validInput);
@@ -59,7 +59,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
       }
     };
 
-    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+    const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error.issues[0].message).toBe('Refusjon kan ikke være høyere enn brutto lønn.');
@@ -91,7 +91,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
       }
     };
 
-    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+    const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error.issues[0].message).toBe('Vennligst angi månedsinntekt.');
@@ -123,7 +123,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
       }
     };
 
-    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+    const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error.issues[0].message).toBe(
@@ -157,7 +157,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
       }
     };
 
-    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+    const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error?.issues[0].message).toBe('Refusjonsbeløp mangler selv om det kreves refusjon.');
@@ -193,7 +193,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
       }
     };
 
-    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+    const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error?.issues[0].message).toBe('Det kan ikke være flere endringer av refusjon samme dag.');
@@ -229,7 +229,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
       }
     };
 
-    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+    const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(true);
   });
@@ -263,7 +263,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
       }
     };
 
-    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+    const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
     expect(result.error?.issues[0].message).toBe('Vennligst angi sluttdato for refusjonskravet.');
@@ -299,7 +299,7 @@ describe.concurrent('valideringDelvisInnsendingSchema', () => {
       }
     };
 
-    const result = valideringDelvisInnsendingSchema.safeParse(invalidInput);
+    const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(true);
   });

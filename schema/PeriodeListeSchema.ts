@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { apiPeriodeSchema } from './apiPeriodeSchema';
+import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import feiltekster from '../utils/feiltekster';
 
-export const PeriodeListeSchema = z.array(apiPeriodeSchema).superRefine((val, ctx) => {
+export const PeriodeListeSchema = z.array(ApiPeriodeSchema).superRefine((val, ctx) => {
   for (let i = 0; i < val.length - 1; i++) {
     const tom = new Date(val[i].tom);
     const fom = new Date(val[i + 1].fom);

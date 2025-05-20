@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import { aa } from 'vitest/dist/chunks/reporters.d.CqBhtcTq.js';
 
-describe('hovedskjemaSchema', () => {
+describe('HovedskjemaSchema', () => {
   it('should pass validation when all fields are correct', () => {
     const schemaData = {
       bekreft_opplysninger: true,
@@ -14,7 +14,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const result = hovedskjemaSchema.safeParse(schemaData);
+    const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(true);
     expect(result.error).toBeUndefined();
   });
@@ -28,7 +28,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const result = hovedskjemaSchema.safeParse(schemaData);
+    const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
     expect(result.error.errors[0].message).toBe('Du må bekrefte at opplysningene er riktige før du kan sende inn.');
     expect(result.error.errors[0].path).toEqual(['bekreft_opplysninger']);
@@ -42,7 +42,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const result = hovedskjemaSchema.safeParse(schemaData);
+    const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
     expect(result.error.errors[0].message).toBe('Vennligst fyll inn beløpet for inntekt.');
   });
@@ -56,7 +56,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const result = hovedskjemaSchema.safeParse(schemaData);
+    const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
   });
 
@@ -65,7 +65,7 @@ describe('hovedskjemaSchema', () => {
       bekreft_opplysninger: true,
       avsenderTlf: '12345678'
     };
-    const result = hovedskjemaSchema.safeParse(schemaData);
+    const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(true);
   });
 
@@ -79,7 +79,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const result = hovedskjemaSchema.safeParse(schemaData);
+    const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
   });
 
@@ -93,7 +93,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const status = hovedskjemaSchema.safeParse(schemaData);
+    const status = HovedskjemaSchema.safeParse(schemaData);
     expect(status.error).toBeUndefined();
     expect(status.success).toBe(true);
   });
@@ -108,7 +108,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const status = hovedskjemaSchema.safeParse(schemaData);
+    const status = HovedskjemaSchema.safeParse(schemaData);
     expect(status.error).toBeUndefined();
     expect(status.success).toBe(true);
   });
@@ -123,7 +123,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const status = hovedskjemaSchema.safeParse(schemaData);
+    const status = HovedskjemaSchema.safeParse(schemaData);
     expect(status.success).toBe(true);
   });
 
@@ -137,7 +137,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const status = hovedskjemaSchema.safeParse(schemaData);
+    const status = HovedskjemaSchema.safeParse(schemaData);
     expect(status.success).toBe(false);
     expect(status.error).toBeTruthy();
     expect(status.error?.flatten().fieldErrors).toEqual({
@@ -155,7 +155,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const result = hovedskjemaSchema.safeParse(schemaData);
+    const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
     expect(result.error?.errors[0].message).toBe('Invalid input');
     expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
@@ -171,7 +171,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const result = hovedskjemaSchema.safeParse(schemaData);
+    const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
     expect(result.error?.errors[0].message).toBe('Invalid input');
     expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
@@ -187,7 +187,7 @@ describe('hovedskjemaSchema', () => {
       },
       avsenderTlf: '12345678'
     };
-    const result = hovedskjemaSchema.safeParse(schemaData);
+    const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
     expect(result.error?.errors[0].message).toBe('Invalid input');
     expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);

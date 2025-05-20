@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 import feiltekster from '../../utils/feiltekster';
 import { finnAktuelleInntekter, sorterInntekter } from '../../state/useBruttoinntektStore';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import { enableMapSet } from 'immer';
 enableMapSet();
 

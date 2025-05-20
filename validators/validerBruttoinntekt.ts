@@ -6,7 +6,7 @@ import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 import validerPeriode from './validerPeriode';
 import { z } from 'zod';
-import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { periodeMapper } from '../utils/periodeMapper';
 
 export enum BruttoinntektFeilkode {
@@ -27,7 +27,7 @@ export enum BruttoinntektFeilkode {
   SYKEFRAVAER_MANGLER = 'SYKEFRAVAER_MANGLER'
 }
 
-type Skjema = z.infer<typeof hovedskjemaSchema>;
+type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 export default function validerBruttoinntekt(
   state: CompleteState,

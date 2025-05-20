@@ -1,9 +1,9 @@
 import { describe, vi } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import { ForrigeInntekt, Opplysningstype } from '../../state/useForespurtDataStore';
 import { parseISO } from 'date-fns';
 import trengerDelvis from '../../mockdata/trenger-delvis.json';
+import { ForrigeInntekt, Opplysningstype } from '../../schema/ForespurtDataSchema';
 
 const initialState = useBoundStore.getState();
 

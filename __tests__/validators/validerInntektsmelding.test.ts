@@ -198,7 +198,7 @@ describe('validerInntektsmelding', () => {
       refusjonEndringer: [],
       innsenderTelefonNr: '12345678',
       setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger,
-      forespurtData: {
+      ForespurtDataSchema: {
         arbeidsgiverperiode: {
           paakrevd: false
         }
@@ -250,7 +250,7 @@ describe('validerInntektsmelding', () => {
       refusjonEndringer: [],
       innsenderTelefonNr: '12345678',
       setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger,
-      forespurtData: {
+      ForespurtDataSchema: {
         arbeidsgiverperiode: {
           paakrevd: true
         }

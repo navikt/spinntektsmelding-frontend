@@ -3,7 +3,7 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import useBoundStore from './useBoundStore';
-import { MottattData } from '../schema/mottattDataSchema';
+import { MottattData } from '../schema/MottattDataSchema';
 
 export default function useStateInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);

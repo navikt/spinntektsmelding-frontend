@@ -11,9 +11,9 @@ import {
   mapEgenmeldingsperioder,
   mapNaturalytelserToData
 } from './useFyllInnsending';
-import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
+import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSchema';
 import { z } from 'zod';
-import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { isValid } from 'date-fns/isValid';
 
 export default function useFyllAapenInnsending() {
@@ -55,11 +55,11 @@ export default function useFyllAapenInnsending() {
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
 
-  type SkjemaData = z.infer<typeof hovedskjemaSchema>;
+  type SkjemaData = z.infer<typeof HovedskjemaSchema>;
 
   return (skjemaData: SkjemaData) => {
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
-      ? skjemaData.inntekt.endringAarsaker.map((endringAarsak) => konverterEndringAarsakSchema.parse(endringAarsak))
+      ? skjemaData.inntekt.endringAarsaker.map((endringAarsak) => KonverterEndringAarsakSchema.parse(endringAarsak))
       : null;
 
     setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);

@@ -1,5 +1,5 @@
 import testOrganisasjoner from '../../mockdata/testOrganisasjoner';
-import { OrganisasjonsnummerSchema } from '../../schema/organisasjonsnummerSchema';
+import { OrganisasjonsnummerSchema } from '../../schema/OrganisasjonsnummerSchema';
 
 describe('OrganisasjonsnummerSchema', () => {
   it('should validate OrganisasjonsnummerSchema 0', () => {

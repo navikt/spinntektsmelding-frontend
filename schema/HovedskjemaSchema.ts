@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { EndringAarsakSchema } from './endringAarsakSchema';
+import { EndringAarsakSchema } from './EndringAarsakSchema';
 import { isTlfNumber } from '../utils/isTlfNumber';
-import naturalytelserSchema from './naturalytelserSchema';
+import NaturalytelserSchema from './NaturalytelserSchema';
 
-export const hovedskjemaSchema = z.object({
+export const HovedskjemaSchema = z.object({
   bekreft_opplysninger: z.boolean().refine((value) => value === true, {
     message: 'Du må bekrefte at opplysningene er riktige før du kan sende inn.'
   }),
@@ -51,7 +51,7 @@ export const hovedskjemaSchema = z.object({
         })
         .or(z.null()),
       harBortfallAvNaturalytelser: z.boolean(),
-      naturalytelser: z.array(naturalytelserSchema).optional()
+      naturalytelser: z.array(NaturalytelserSchema).optional()
     })
   ),
   avsenderTlf: z

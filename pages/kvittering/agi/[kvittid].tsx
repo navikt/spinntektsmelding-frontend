@@ -40,14 +40,14 @@ import { harGyldigeRefusjonEndringer } from '../../../utils/harGyldigeRefusjonEn
 import hentKvitteringsdataSSR from '../../../utils/hentKvitteringsdataSSR';
 import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
-import { MottattPeriode } from '../../../schema/forespurtData';
+import { MottattPeriode } from '../../../schema/ForespurtDataSchema';
 import useKvitteringInit from '../../../state/useKvitteringInit';
 
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 import { getToken, validateToken } from '@navikt/oasis';
 import environment from '../../../config/environment';
 import { z } from 'zod';
-import { kvitteringNavNoSchema } from '../../../schema/mottattKvitteringSchema';
+import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import { EndringAarsak } from '../../../validators/validerAapenInnsending';
 import { EndringsBeloep } from '../../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import maserEndringAarsaker from '../../../utils/maserEndringAarsaker';
@@ -415,7 +415,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
 export default Kvittering;
 
-type KvitteringNavNoSchema = z.infer<typeof kvitteringNavNoSchema>;
+type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
 
 function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
   const kvittering: KvitteringNavNoSchema = {
