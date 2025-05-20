@@ -14,11 +14,7 @@
   "eksternInntektsdato": null,
   "inntekt": {
     "gjennomsnitt": 36000.0,
-    "historikk": [
-      ["2024-09", 54000.0],
-      ["2024-10", 54000.0],
-      ["2024-11", null]
-    ]
+    "historikk": { "2024-09": 54000.0, "2024-10": 54000.0, "2024-11": null }
   },
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": false },

@@ -272,7 +272,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   );
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
-  const sbTidligereInntekt = !error ? new Map(data?.historikk) : undefined;
+  const sbTidligereInntekt = !error && data?.historikk ? data?.historikk : undefined;
 
   return (
     <div className={styles.container}>

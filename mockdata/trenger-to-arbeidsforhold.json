@@ -16,11 +16,11 @@
   "egenmeldingsperioder": [],
   "inntekt": {
     "gjennomsnitt": 45000.0,
-    "historikk": [
-      ["2023-05", 45000.0],
-      ["2023-06", 45000.0],
-      ["2023-07", 45000.0]
-    ]
+    "historikk": {
+      "2023-05": 45000.0,
+      "2023-06": 45000.0,
+      "2023-07": 45000.0
+    }
   },
   "bestemmendeFravaersdag": "2023-09-04",
   "eksternInntektsdato": "2023-08-23",

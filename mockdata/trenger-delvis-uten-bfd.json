@@ -18,11 +18,11 @@
   "egenmeldingsperioder": [],
   "inntekt": {
     "gjennomsnitt": 55000,
-    "historikk": [
-      ["2023-10", 55000],
-      ["2023-11", 55000],
-      ["2023-12", 55000]
-    ]
+    "historikk": {
+      "2023-10": 55000,
+      "2023-11": 55000,
+      "2023-12": 55000
+    }
   },
   "forespurtData": {
     "arbeidsgiverperiode": {

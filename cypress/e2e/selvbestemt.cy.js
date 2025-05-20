@@ -78,7 +78,8 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.contains('Neste').click();
 
-    cy.findByLabelText('Utbetalt under arbeidsgiverperiode').type('5000');
+    cy.findByLabelText('Utbetalt under arbeidsgiverperiode').as('utbetalt');
+    cy.get('@utbetalt').type('5000');
 
     // cy.findByLabelText('Telefon innsender').clear().type('12345678');
 
@@ -105,7 +106,8 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
       .findByLabelText('Nei')
       .check();
 
-    cy.findAllByLabelText('Telefon innsender').last().click().type('12345678');
+    cy.findAllByLabelText('Telefon innsender').last().as('telefon');
+    cy.get('@telefon').click().type('12345678');
 
     cy.findByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
@@ -208,7 +210,8 @@ describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     cy.findByLabelText('Telefon innsender').type('12345678');
 
-    cy.findByLabelText('Utbetalt under arbeidsgiverperiode').type('5000');
+    cy.findByLabelText('Utbetalt under arbeidsgiverperiode').as('utbetalt');
+    cy.get('@utbetalt').type('5000');
 
     cy.findAllByLabelText('Velg begrunnelse for kort arbeidsgiverperiode').as('begrunnelse');
     cy.get('@begrunnelse').select('Det er ikke fire ukers opptjeningstid');

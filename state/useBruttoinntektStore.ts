@@ -137,7 +137,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   ) => {
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
     const arrInntekter = Array.from(aktuelleInntekter);
-
     const sumInntekter = arrInntekter.reduce((prev, cur) => {
       if (cur[1] == null) {
         return prev;
@@ -289,14 +288,19 @@ export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt | null,
   const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
   const sisteMnd = `00${subMonths(bestemmendeFravaersdag, 3).getMonth() + 1}`.slice(-2);
   const sisteMaaned = `${subMonths(bestemmendeFravaersdag, 3).getFullYear()}-${sisteMnd}`;
-  if (!tidligereInntekt) return new Map([]);
-  const aktuelleInntekter = new Map(
-    Array.from(tidligereInntekt)
+  if (!tidligereInntekt) return new Map<string, number | null>([]);
+
+  const arrayTidligereInntekt: [string, number | null][] = Object.entries(tidligereInntekt).map(
+    ([key, value]) => [key, value] as [string, number | null]
+  );
+
+  const aktuelleInntekter = new Map<string, number | null>(
+    arrayTidligereInntekt
       .filter(([key, value]) => key < bestemmendeMaaned && key >= sisteMaaned)
       .sort(sorterInntekter)
       .slice(0, 3)
   );
-  return aktuelleInntekter || new Map();
+  return aktuelleInntekter;
 }
 
 function normaliserEndringAarsak(endringAarsak: EndringAarsak | ApiEndringAarsak): EndringAarsak {

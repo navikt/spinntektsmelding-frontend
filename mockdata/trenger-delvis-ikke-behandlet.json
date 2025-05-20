@@ -13,21 +13,11 @@
   ],
   "egenmeldingsperioder": [],
   "bruttoinntekt": 45000,
-  "tidligereinntekter": [
-    {
-      "maaned": "2023-01",
-      "inntekt": 45000
-    },
-    {
-      "maaned": "2023-02",
-      "inntekt": 45000
-    },
-    {
-      "maaned": "2023-03",
-      "inntekt": 45000
-    }
-  ],
-
+  "tidligereinntekter": {
+    "2023-01": 45000,
+    "2023-02": 45000,
+    "2023-03": 45000
+  },
   "forespurtData": {
     "arbeidsgiverperiode": {
       "paakrevd": false

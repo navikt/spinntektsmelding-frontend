@@ -41,6 +41,11 @@ export default function Bruttoinntekt({
 
   const { watch, setValue } = useFormContext();
   const feilHentingAvInntektsdata = tidligereinntekt === null;
+
+  const arrayTidligereInntekt: [string, number | null][] = sbTidligereInntekt
+    ? Object.entries(sbTidligereInntekt).map(([key, value]) => [key, value] as [string, number | null])
+    : [];
+
   const handleResetMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
@@ -80,7 +85,7 @@ export default function Bruttoinntekt({
   const gjennomsnittligInntekt = erSelvbestemt
     ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
     : bruttoinntekt?.bruttoInntekt;
-  const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereInntekt : tidligereinntekt;
+  const sisteTreMndTidligereinntekt = erSelvbestemt ? new Map(arrayTidligereInntekt) : tidligereinntekt;
 
   const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.size > 0;
 
@@ -100,7 +105,7 @@ export default function Bruttoinntekt({
         Beregnet månedslønn skal som hovedregel være et gjennomsnitt av den inntekten som er rapportert til a-ordningen
         i de tre siste kalendermånedene før sykefraværet startet.
       </BodyLong>
-      {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
+      {feilHentingAvInntektsdata && (
         <Alert variant='info'>
           Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedslønn selv eller
           forsøke igjen senere.
