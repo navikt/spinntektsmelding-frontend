@@ -45,6 +45,7 @@ import useHentSkjemadata from '../utils/useHentSkjemadata';
 import Heading3 from '../components/Heading3';
 import forespoerselType from '../config/forespoerselType';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import { countTrue } from '../utils/countTrue';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -138,7 +139,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setValue,
     control,
     handleSubmit,
-    formState: { errors, isDirty }
+    formState: { errors, isDirty, dirtyFields }
   } = methods;
 
   useEffect(() => {
@@ -196,7 +197,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       setPaakrevdeOpplysninger(opplysningstyper);
     }
 
-    sendInnSkjema(true, opplysningstyper, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
+    sendInnSkjema(
+      true,
+      opplysningstyper,
+      pathSlug,
+      isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
+      formData
+    ).finally(() => {
       setSenderInn(false);
     });
   };
