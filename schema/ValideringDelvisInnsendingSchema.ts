@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
-import { SkjemavalideringEndringAarsakSchema } from './SkjemavalideringEndringAarsakSchema';
+import { EndringAarsakSchema } from './EndringAarsakSchema';
 import { isEqual } from 'date-fns/isEqual';
 
 export default z
@@ -11,7 +11,7 @@ export default z
           errorMap: (_issue, _ctx) => ({ message: 'Vennligst angi om det har vært endringer i beregnet månedslønn.' })
         }),
         beloep: z.number().gte(0).optional(),
-        endringAarsak: SkjemavalideringEndringAarsakSchema.optional()
+        endringAarsak: EndringAarsakSchema.optional()
       })
       .superRefine((value, ctx) => {
         if (value.ingenEndringBruttoloenn === 'Nei' && value.beloep === undefined) {
