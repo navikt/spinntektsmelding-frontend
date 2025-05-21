@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:22.9-alpine AS deps
+FROM node:24.0-alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -17,7 +17,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     yarn install --immutable
 
 # Rebuild the source code only when needed
-FROM node:22.9-alpine AS builder
+FROM node:24.0-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -40,7 +40,7 @@ COPY ${BUILDMODE}.env .env
 RUN yarn build && rm -f .npmrc
 
 # Production image, copy all the files and run next
-FROM gcr.io/distroless/nodejs22-debian12@sha256:5bbfaef4976723a9574efdeea941ca4f2a30b271a8b9ad6a1036dbaae68f855d AS runner
+FROM gcr.io/distroless/nodejs24-debian12@sha256:5c121d6894788e57dcb7c7b59030d9f213c9b77da8cbd4a5b5ccda8a360c57f5 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
