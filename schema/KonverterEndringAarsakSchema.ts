@@ -1,34 +1,27 @@
 import { z } from 'zod';
 import { PeriodeSchema } from './KonverterPeriodeSchema';
 import { toLocalIso } from '../utils/toLocalIso';
+import {
+  EndringAarsakBonusSchema,
+  EndringAarsakFeilregistrertSchema,
+  EndringAarsakFerieSchema,
+  EndringAarsakFerietrekkSchema,
+  EndringAarsakNyansattSchema,
+  EndringAarsakNyStillingSchema,
+  EndringAarsakNyStillingsprosentSchema,
+  EndringAarsakPermisjonSchema,
+  EndringAarsakPermitteringSchema,
+  EndringAarsakSammeSomSistSchema,
+  EndringAarsakSykefravaerSchema,
+  EndringAarsakTariffendringSchema,
+  EndringAarsakVarigLoennsendringSchema
+} from './EndringAarsakSchema';
 
-const EndringAarsakBonusSchema = z.object({
-  aarsak: z.literal('Bonus')
-});
-
-const EndringAarsakFeilregistrertSchema = z.object({
-  aarsak: z.literal('Feilregistrert')
-});
-
-const EndringAarsakFerieSchema = z.object({
-  aarsak: z.literal('Ferie'),
+const KonverterEndringAarsakFerieSchema = EndringAarsakFerieSchema.extend({
   ferier: z.array(PeriodeSchema)
 });
 
-const EndringAarsakFerietrekkSchema = z.object({
-  aarsak: z.literal('Ferietrekk')
-});
-
-const EndringAarsakSammeSomSistSchema = z.object({
-  aarsak: z.literal('SammeSomSist')
-});
-
-const EndringAarsakNyansattSchema = z.object({
-  aarsak: z.literal('Nyansatt')
-});
-
-const EndringAarsakNyStillingSchema = z.object({
-  aarsak: z.literal('NyStilling'),
+const KonverterEndringAarsakNyStillingSchema = EndringAarsakNyStillingSchema.extend({
   gjelderFra: z
     .date({
       required_error: 'Vennligst fyll inn fra dato',
@@ -37,8 +30,7 @@ const EndringAarsakNyStillingSchema = z.object({
     .transform((val) => toLocalIso(val))
 });
 
-const EndringAarsakNyStillingsprosentSchema = z.object({
-  aarsak: z.literal('NyStillingsprosent'),
+const KonverterEndringAarsakNyStillingsprosentSchema = EndringAarsakNyStillingsprosentSchema.extend({
   gjelderFra: z
     .date({
       required_error: 'Vennligst fyll inn fra dato',
@@ -47,23 +39,19 @@ const EndringAarsakNyStillingsprosentSchema = z.object({
     .transform((val) => toLocalIso(val))
 });
 
-const EndringAarsakPermisjonSchema = z.object({
-  aarsak: z.literal('Permisjon'),
+const KonverterEndringAarsakPermisjonSchema = EndringAarsakPermisjonSchema.extend({
   permisjoner: z.array(PeriodeSchema)
 });
 
-const EndringAarsakPermitteringSchema = z.object({
-  aarsak: z.literal('Permittering'),
+const KonverterEndringAarsakPermitteringSchema = EndringAarsakPermitteringSchema.extend({
   permitteringer: z.array(PeriodeSchema)
 });
 
-const EndringAarsakSykefravaerSchema = z.object({
-  aarsak: z.literal('Sykefravaer'),
+const KonverterEndringAarsakSykefravaerSchema = EndringAarsakSykefravaerSchema.extend({
   sykefravaer: z.array(PeriodeSchema)
 });
 
-const EndringAarsakTariffendringSchema = z.object({
-  aarsak: z.literal('Tariffendring'),
+const KonverterEndringAarsakTariffendringSchema = EndringAarsakTariffendringSchema.extend({
   gjelderFra: z
     .date({
       required_error: 'Vennligst fyll inn fra dato',
@@ -78,8 +66,7 @@ const EndringAarsakTariffendringSchema = z.object({
     .transform((val) => toLocalIso(val))
 });
 
-const EndringAarsakVarigLoennsendringSchema = z.object({
-  aarsak: z.literal('VarigLoennsendring'),
+const KonverterEndringAarsakVarigLoennsendringSchema = EndringAarsakVarigLoennsendringSchema.extend({
   gjelderFra: z
     .date({
       required_error: 'Vennligst fyll inn fra dato',
@@ -93,16 +80,16 @@ export const KonverterEndringAarsakSchema = z.discriminatedUnion(
   [
     EndringAarsakBonusSchema,
     EndringAarsakFeilregistrertSchema,
-    EndringAarsakFerieSchema,
+    KonverterEndringAarsakFerieSchema,
     EndringAarsakFerietrekkSchema,
     EndringAarsakNyansattSchema,
-    EndringAarsakNyStillingSchema,
-    EndringAarsakNyStillingsprosentSchema,
-    EndringAarsakPermisjonSchema,
-    EndringAarsakPermitteringSchema,
-    EndringAarsakSykefravaerSchema,
-    EndringAarsakTariffendringSchema,
-    EndringAarsakVarigLoennsendringSchema,
+    KonverterEndringAarsakNyStillingSchema,
+    KonverterEndringAarsakNyStillingsprosentSchema,
+    KonverterEndringAarsakPermisjonSchema,
+    KonverterEndringAarsakPermitteringSchema,
+    KonverterEndringAarsakSykefravaerSchema,
+    KonverterEndringAarsakTariffendringSchema,
+    KonverterEndringAarsakVarigLoennsendringSchema,
     EndringAarsakSammeSomSistSchema
   ],
   {
