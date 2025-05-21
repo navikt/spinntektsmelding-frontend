@@ -3,7 +3,7 @@ import {
   MottattForespurtData,
   ForrigeInntekt,
   Opplysningstype,
-  mottattForespurtDataSchema
+  MottattForespurtDataSchema
 } from '../../schema/ForespurtDataSchema';
 import forespoerselType from '../../config/forespoerselType';
 
@@ -103,7 +103,7 @@ describe('MottattData types', () => {
       }
     };
 
-    const parsedData = mottattForespurtDataSchema.safeParse(mockMottattForespurtData);
+    const parsedData = MottattForespurtDataSchema.safeParse(mockMottattForespurtData);
     expect(parsedData.error).toBeUndefined();
     expect(parsedData.success).toBe(true);
     expect(parsedData).toBeDefined();

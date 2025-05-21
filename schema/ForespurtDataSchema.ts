@@ -1,51 +1,51 @@
 import z from 'zod';
 import forespoerselType from '../config/forespoerselType';
 
-export const dateISODateSchema = z.string().date();
+export const DateISODateSchema = z.string().date();
 
-export type TDateISODate = z.infer<typeof dateISODateSchema>;
+export type TDateISODate = z.infer<typeof DateISODateSchema>;
 
 export const MottattPeriodeSchema = z.object({
-  fom: dateISODateSchema,
-  tom: dateISODateSchema
+  fom: DateISODateSchema,
+  tom: DateISODateSchema
 });
 
 export type MottattPeriode = z.infer<typeof MottattPeriodeSchema>;
 
-const beregningsmaanedSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
+const BeregningsmaanedSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
 
 export type Opplysningstype = (typeof forespoerselType)[keyof typeof forespoerselType];
 
-const forrigeInntektSchema = z.object({
-  skjæringstidspunkt: dateISODateSchema,
+const ForrigeInntektSchema = z.object({
+  skjæringstidspunkt: DateISODateSchema,
   kilde: z.enum(['INNTEKTSMELDING', 'AAREG']),
   beløp: z.number()
 });
 
 // Define ForespurtData schema
-const forespurtDataSchema = z.object({
+const ForespurtDataSchema = z.object({
   paakrevd: z.boolean()
 });
 
-const forespurtInntektDataSchema = forespurtDataSchema.extend({
+const ForespurtInntektDataSchema = ForespurtDataSchema.extend({
   forslag: z
     .object({
       type: z.enum(['ForslagInntektFastsatt', 'ForslagInntektGrunnlag']),
-      forrigeInntekt: forrigeInntektSchema.optional(),
-      beregningsmaaneder: z.array(beregningsmaanedSchema).optional()
+      forrigeInntekt: ForrigeInntektSchema.optional(),
+      beregningsmaaneder: z.array(BeregningsmaanedSchema).optional()
     })
     .optional()
 });
 
-const forespurtRefusjonDataSchema = forespurtDataSchema.extend({
+const ForespurtRefusjonDataSchema = ForespurtDataSchema.extend({
   paakrevd: z.boolean(),
   forslag: z
     .object({
-      opphoersdato: dateISODateSchema.nullable(),
+      opphoersdato: DateISODateSchema.nullable(),
       perioder: z
         .array(
           z.object({
-            fom: dateISODateSchema,
+            fom: DateISODateSchema,
             beloep: z.number().optional()
           })
         )
@@ -55,15 +55,15 @@ const forespurtRefusjonDataSchema = forespurtDataSchema.extend({
     .optional()
 });
 
-const forespurtArbeidsgiverperiodeDataSchema = forespurtDataSchema.extend({
+const forespurtArbeidsgiverperiodeDataSchema = ForespurtDataSchema.extend({
   paakrevd: z.boolean()
 });
 
-export const mottattForespurtDataSchema = z.object({
-  inntekt: forespurtInntektDataSchema,
-  refusjon: forespurtRefusjonDataSchema,
+export const MottattForespurtDataSchema = z.object({
+  inntekt: ForespurtInntektDataSchema,
+  refusjon: ForespurtRefusjonDataSchema,
   arbeidsgiverperiode: forespurtArbeidsgiverperiodeDataSchema
 });
 
-export type MottattForespurtData = z.infer<typeof mottattForespurtDataSchema>;
-export type ForrigeInntekt = z.infer<typeof forrigeInntektSchema>;
+export type MottattForespurtData = z.infer<typeof MottattForespurtDataSchema>;
+export type ForrigeInntekt = z.infer<typeof ForrigeInntektSchema>;

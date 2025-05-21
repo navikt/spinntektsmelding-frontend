@@ -1,10 +1,10 @@
 import z from 'zod';
-import { dateISODateSchema, mottattForespurtDataSchema, MottattPeriodeSchema } from './ForespurtDataSchema';
+import { DateISODateSchema, MottattForespurtDataSchema, MottattPeriodeSchema } from './ForespurtDataSchema';
 import { ForespurtHistoriskInntektSchema } from './ForespurtHistoriskInntektSchema';
 import { SykmeldtSchema } from './SykmeldtSchema';
 import { AvsenderSchema } from './AvsenderSchema';
 
-const mottattSykmeldt = SykmeldtSchema.extend({
+const MottattSykmeldtSchema = SykmeldtSchema.extend({
   navn: z.string().nullable()
 });
 
@@ -14,14 +14,14 @@ const MottattAvsenderSchema = AvsenderSchema.extend({
 });
 
 export const MottattDataSchema = z.object({
-  sykmeldt: mottattSykmeldt,
+  sykmeldt: MottattSykmeldtSchema,
   avsender: MottattAvsenderSchema,
   egenmeldingsperioder: z.array(MottattPeriodeSchema).default([]),
   sykmeldingsperioder: z.array(MottattPeriodeSchema).min(1, 'Sykmeldingsperioder må ha minst en periode.'),
-  bestemmendeFravaersdag: dateISODateSchema,
-  eksternInntektsdato: dateISODateSchema.nullable(),
+  bestemmendeFravaersdag: DateISODateSchema,
+  eksternInntektsdato: DateISODateSchema.nullable(),
   inntekt: ForespurtHistoriskInntektSchema.nullable(),
-  ForespurtDataSchema: mottattForespurtDataSchema.optional(),
+  forespurtData: MottattForespurtDataSchema.optional(),
   erBesvart: z.boolean(),
   telefonnummer: z.string().optional()
 });
