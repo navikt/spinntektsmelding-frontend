@@ -1,7 +1,6 @@
 import { LonnISykefravaeret } from '../../state/state';
 import validerLonnUnderSykefravaeret from '../../validators/validerLonnUnderSykefravaeret';
 import { describe } from 'vitest';
-const arbeidsforhold = ['arbeider'];
 
 const lonnUS: LonnISykefravaeret = {
   status: 'Nei',
@@ -42,7 +41,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
     expect(validerLonnUnderSykefravaeret()).toEqual(expected);
   });
 
-  it('should return an error when first param is undefined', () => {
+  it('should return an error when all params are missing', () => {
     const expected = [
       {
         code: 'LONN_UNDER_SYKEFRAVAERET_MANGLER',
@@ -51,6 +50,17 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
     ];
 
     expect(validerLonnUnderSykefravaeret()).toEqual(expected);
+  });
+
+  it('should return an error when status param is undefined in refusjon param', () => {
+    const expected = [
+      {
+        code: 'LONN_UNDER_SYKEFRAVAERET_MANGLER',
+        felt: 'lus-radio'
+      }
+    ];
+
+    expect(validerLonnUnderSykefravaeret({})).toEqual(expected);
   });
 
   it('should return an error when opphørsdato is missing', () => {
