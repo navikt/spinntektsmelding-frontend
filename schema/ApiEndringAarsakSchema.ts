@@ -91,7 +91,7 @@ const apiEndringAarsakVarigLoennsendringSchema = EndringAarsakVarigLoennsendring
   })
 );
 
-export const EndringAarsakSchema = z.discriminatedUnion(
+export const ApiEndringAarsakSchema = z.discriminatedUnion(
   'aarsak',
   [
     EndringAarsakBonusSchema,

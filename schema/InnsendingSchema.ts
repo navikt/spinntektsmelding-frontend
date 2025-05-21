@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { EndringAarsakSchema } from './ApiEndringAarsakSchema';
+import { ApiEndringAarsakSchema } from './ApiEndringAarsakSchema';
 import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import { RefusjonEndringSchema } from './ApiRefusjonEndringSchema';
 import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSchema';
@@ -28,7 +28,7 @@ export const InnsendingSchema = z.object({
         .min(0, 'Månedsinntekt må være større enn eller lik 0'),
       inntektsdato: z.string({ required_error: 'Bestemmende fraværsdag mangler' }),
       naturalytelser: ApiNaturalytelserSchema,
-      endringAarsaker: z.nullable(z.array(EndringAarsakSchema))
+      endringAarsaker: z.nullable(z.array(ApiEndringAarsakSchema))
     })
   ),
   refusjon: z.nullable(

@@ -1,7 +1,7 @@
-import { EndringAarsakSchema } from '../../schema/ApiEndringAarsakSchema';
+import { ApiEndringAarsakSchema } from '../../schema/ApiEndringAarsakSchema';
 
-describe('EndringAarsakSchema', () => {
-  it('should validate EndringAarsakSchema for Bonus', () => {
+describe('ApiEndringAarsakSchema', () => {
+  it('should validate ApiEndringAarsakSchema for Bonus', () => {
     const data = {
       aarsak: 'Bonus'
     };
@@ -10,12 +10,12 @@ describe('EndringAarsakSchema', () => {
       aarsak: 'Bonus'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for Feilregistrert', () => {
+  it('should validate ApiEndringAarsakSchema for Feilregistrert', () => {
     const data = {
       aarsak: 'Feilregistrert'
     };
@@ -24,12 +24,12 @@ describe('EndringAarsakSchema', () => {
       aarsak: 'Feilregistrert'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for Ferie', () => {
+  it('should validate ApiEndringAarsakSchema for Ferie', () => {
     const data = {
       aarsak: 'Ferie',
       ferier: [
@@ -50,12 +50,12 @@ describe('EndringAarsakSchema', () => {
       ]
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for Ferietrekk', () => {
+  it('should validate ApiEndringAarsakSchema for Ferietrekk', () => {
     const data = {
       aarsak: 'Ferietrekk'
     };
@@ -64,12 +64,12 @@ describe('EndringAarsakSchema', () => {
       aarsak: 'Ferietrekk'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for SammeSomSist', () => {
+  it('should validate ApiEndringAarsakSchema for SammeSomSist', () => {
     const data = {
       aarsak: 'SammeSomSist'
     };
@@ -78,12 +78,12 @@ describe('EndringAarsakSchema', () => {
       aarsak: 'SammeSomSist'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for Nyansatt', () => {
+  it('should validate ApiEndringAarsakSchema for Nyansatt', () => {
     const data = {
       aarsak: 'Nyansatt'
     };
@@ -92,12 +92,12 @@ describe('EndringAarsakSchema', () => {
       aarsak: 'Nyansatt'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for NyStilling', () => {
+  it('should validate ApiEndringAarsakSchema for NyStilling', () => {
     const data = {
       aarsak: 'NyStilling',
       gjelderFra: '2021-01-01'
@@ -108,12 +108,12 @@ describe('EndringAarsakSchema', () => {
       gjelderFra: '2021-01-01'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for NyStillingsprosent', () => {
+  it('should validate ApiEndringAarsakSchema for NyStillingsprosent', () => {
     const data = {
       aarsak: 'NyStillingsprosent',
       gjelderFra: '2021-01-01'
@@ -124,12 +124,12 @@ describe('EndringAarsakSchema', () => {
       gjelderFra: '2021-01-01'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for Permisjon', () => {
+  it('should validate ApiEndringAarsakSchema for Permisjon', () => {
     const data = {
       aarsak: 'Permisjon',
       permisjoner: [
@@ -150,12 +150,12 @@ describe('EndringAarsakSchema', () => {
       ]
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for Permittering', () => {
+  it('should validate ApiEndringAarsakSchema for Permittering', () => {
     const data = {
       aarsak: 'Permittering',
       permitteringer: [
@@ -176,12 +176,12 @@ describe('EndringAarsakSchema', () => {
       ]
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for Sykefravaer', () => {
+  it('should validate ApiEndringAarsakSchema for Sykefravaer', () => {
     const data = {
       aarsak: 'Sykefravaer',
       sykefravaer: [
@@ -202,12 +202,12 @@ describe('EndringAarsakSchema', () => {
       ]
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for Tariffendring', () => {
+  it('should validate ApiEndringAarsakSchema for Tariffendring', () => {
     const data = {
       aarsak: 'Tariffendring',
       gjelderFra: '2021-01-01',
@@ -220,12 +220,12 @@ describe('EndringAarsakSchema', () => {
       bleKjent: '2021-01-02'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should validate EndringAarsakSchema for VarigLoennsendring', () => {
+  it('should validate ApiEndringAarsakSchema for VarigLoennsendring', () => {
     const data = {
       aarsak: 'VarigLoennsendring',
       gjelderFra: '2021-01-01'
@@ -236,12 +236,12 @@ describe('EndringAarsakSchema', () => {
       gjelderFra: '2021-01-01'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(true);
     expect(parsed.data).toEqual(expected);
   });
 
-  it('should not validate EndringAarsakSchema for Error', () => {
+  it('should not validate ApiEndringAarsakSchema for Error', () => {
     const data = {
       aarsak: 'Error'
     };
@@ -250,7 +250,7 @@ describe('EndringAarsakSchema', () => {
       aarsak: 'Error'
     };
 
-    const parsed = EndringAarsakSchema.safeParse(data);
+    const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(false);
     expect(parsed.data).toBeUndefined();
   });
