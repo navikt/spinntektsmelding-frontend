@@ -152,7 +152,7 @@ describe('useBoundStore', () => {
       result.current.tilbakestillMaanedsinntekt();
     });
 
-    expect(result.current.bruttoinntekt?.endringAarsak?.aarsak).toBeUndefined();
+    expect(result.current.bruttoinntekt?.endringAarsaker?.aarsak).toBeUndefined();
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(40000);
   });
@@ -243,21 +243,21 @@ describe('useBoundStore', () => {
   });
 
   it('should return 0 when maaned are equal', () => {
-    const retval = sorterInntekter(['2002-01', 0], ['2002-01', 0]);
+    const sorteringRetning = sorterInntekter(['2002-01', 0], ['2002-01', 0]);
 
-    expect(retval).toBe(0);
+    expect(sorteringRetning).toBe(0);
   });
 
   it('should return -1 when first maaned is bigger than last', () => {
-    const retval = sorterInntekter(['2002-02', 0], ['2002-01', 0]);
+    const sorteringRetning = sorterInntekter(['2002-02', 0], ['2002-01', 0]);
 
-    expect(retval).toBe(-1);
+    expect(sorteringRetning).toBe(-1);
   });
 
   it('should return 1 when first maaned is smaller than last', () => {
-    const retval = sorterInntekter(['2002-02', 0], ['2002-03', 0]);
+    const sorteringRetning = sorterInntekter(['2002-02', 0], ['2002-03', 0]);
 
-    expect(retval).toBe(1);
+    expect(sorteringRetning).toBe(1);
   });
 
   it('should setEndringAarsak', () => {

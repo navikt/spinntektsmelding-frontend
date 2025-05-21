@@ -332,9 +332,9 @@ function normaliserEndringAarsak(endringAarsak: EndringAarsak | ApiEndringAarsak
         endringAarsak.permitteringer =
           typeof endringAarsak.permitteringer[0].fom !== 'string'
             ? endringAarsak.permitteringer
-            : endringAarsak.permitteringer.map((permitering) => ({
-                fom: parseIsoDate(permitering.fom)!,
-                tom: parseIsoDate(permitering.tom)!
+            : endringAarsak.permitteringer.map((permittering) => ({
+                fom: parseIsoDate(permittering.fom)!,
+                tom: parseIsoDate(permittering.tom)!
               }));
         break;
       }
