@@ -13,7 +13,7 @@ import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import Router from 'next/router';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 import isValidUUID from '../utils/isValidUUID';
-import { EndringAarsakSchema } from '../schema/ApiEndringAarsakSchema';
+import { ApiEndringAarsakSchema } from '../schema/ApiEndringAarsakSchema';
 import { z } from 'zod';
 import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
@@ -29,7 +29,7 @@ export const sorterInntekter = (a: [string, number | null], b: [string, number |
   return 0;
 };
 
-type ApiEndringAarsak = z.infer<typeof EndringAarsakSchema>;
+type ApiEndringAarsak = z.infer<typeof ApiEndringAarsakSchema>;
 
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
@@ -63,7 +63,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   opprinneligbruttoinntekt: {
     bruttoInntekt: undefined,
     manueltKorrigert: false,
-    endringAarsak: undefined
+    endringAarsak: undefined,
+    endringAarsaker: undefined
   },
   tidligereInntekt: undefined,
   henterData: false,
@@ -169,9 +170,9 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           manueltKorrigert: false
         };
 
-        state.bruttoinntekt.endringAarsak ??= { aarsak: undefined };
+        state.bruttoinntekt.endringAarsaker ??= [{ aarsak: undefined }];
 
-        state.bruttoinntekt.endringAarsak.aarsak ??= undefined;
+        state.bruttoinntekt.endringAarsaker[0].aarsak ??= undefined;
 
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         state.opprinneligeInntekt = tidligereInntekt;
@@ -234,7 +235,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           state.bruttoinntekt = {
             bruttoInntekt: snittInntekter,
             manueltKorrigert: false,
-            endringAarsak: undefined
+            endringAarsaker: undefined
           };
         }
 
@@ -262,7 +263,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.bruttoinntekt = {
           bruttoInntekt: undefined,
           manueltKorrigert: false,
-          endringAarsak: undefined
+          endringAarsaker: undefined
         };
 
         return state;
