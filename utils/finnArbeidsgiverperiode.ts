@@ -5,9 +5,9 @@ import {
   joinPerioderMedOverlapp,
   tilstoetendePeriodeManuellJustering
 } from './finnBestemmendeFravaersdag';
-import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
+import { TidPeriode } from '../schema/TidPeriodeSchema';
 
-function finnPeriodeMedAntallDager<T extends TidPeriodeSchema>(perioder: Array<T>, antallDager: number) {
+function finnPeriodeMedAntallDager<T extends TidPeriode>(perioder: Array<T>, antallDager: number) {
   let dagerTotalt = 0;
   const arbPeriode: Array<T> = [];
 
@@ -31,13 +31,13 @@ function finnPeriodeMedAntallDager<T extends TidPeriodeSchema>(perioder: Array<T
   return arbPeriode;
 }
 
-function finnArbeidsgiverperiode<T extends TidPeriodeSchema>(fravaerPerioder: Array<T>): Array<T> {
+function finnArbeidsgiverperiode<T extends TidPeriode>(fravaerPerioder: Array<T>): Array<T> {
   const tilstoetendePerioder = finnSammenhengendePeriode(fravaerPerioder);
 
   return finnPeriodeMedAntallDager(tilstoetendePerioder, 16);
 }
 
-export function finnSammenhengendePeriodeManuellJustering<T extends TidPeriodeSchema>(
+export function finnSammenhengendePeriodeManuellJustering<T extends TidPeriode>(
   sykmeldingsperioder: Array<T>
 ): Array<T> {
   const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(sykmeldingsperioder);
