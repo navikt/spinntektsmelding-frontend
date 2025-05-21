@@ -1,32 +1,32 @@
 import { z } from 'zod';
-import { PeriodeSchema } from './periodeSchema';
+import { PeriodeSchema } from './PeriodeSchema';
 
-const EndringAarsakBonusSchema = z.object({
+export const EndringAarsakBonusSchema = z.object({
   aarsak: z.literal('Bonus')
 });
 
-const EndringAarsakFeilregistrertSchema = z.object({
+export const EndringAarsakFeilregistrertSchema = z.object({
   aarsak: z.literal('Feilregistrert')
 });
 
-const EndringAarsakFerieSchema = z.object({
+export const EndringAarsakFerieSchema = z.object({
   aarsak: z.literal('Ferie'),
   ferier: z.array(PeriodeSchema)
 });
 
-const EndringAarsakFerietrekkSchema = z.object({
+export const EndringAarsakFerietrekkSchema = z.object({
   aarsak: z.literal('Ferietrekk')
 });
 
-const EndringAarsakSammeSomSistSchema = z.object({
+export const EndringAarsakSammeSomSistSchema = z.object({
   aarsak: z.literal('SammeSomSist')
 });
 
-const EndringAarsakNyansattSchema = z.object({
+export const EndringAarsakNyansattSchema = z.object({
   aarsak: z.literal('Nyansatt')
 });
 
-const EndringAarsakNyStillingSchema = z.object({
+export const EndringAarsakNyStillingSchema = z.object({
   aarsak: z.literal('NyStilling'),
   gjelderFra: z.date({
     required_error: 'Vennligst fyll inn fra dato',
@@ -34,7 +34,7 @@ const EndringAarsakNyStillingSchema = z.object({
   })
 });
 
-const EndringAarsakNyStillingsprosentSchema = z.object({
+export const EndringAarsakNyStillingsprosentSchema = z.object({
   aarsak: z.literal('NyStillingsprosent'),
   gjelderFra: z.date({
     required_error: 'Vennligst fyll inn fra dato',
@@ -42,22 +42,22 @@ const EndringAarsakNyStillingsprosentSchema = z.object({
   })
 });
 
-const EndringAarsakPermisjonSchema = z.object({
+export const EndringAarsakPermisjonSchema = z.object({
   aarsak: z.literal('Permisjon'),
   permisjoner: z.array(PeriodeSchema)
 });
 
-const EndringAarsakPermitteringSchema = z.object({
+export const EndringAarsakPermitteringSchema = z.object({
   aarsak: z.literal('Permittering'),
   permitteringer: z.array(PeriodeSchema)
 });
 
-const EndringAarsakSykefravaerSchema = z.object({
+export const EndringAarsakSykefravaerSchema = z.object({
   aarsak: z.literal('Sykefravaer'),
   sykefravaer: z.array(PeriodeSchema)
 });
 
-const EndringAarsakTariffendringSchema = z.object({
+export const EndringAarsakTariffendringSchema = z.object({
   aarsak: z.literal('Tariffendring'),
   gjelderFra: z.date({
     required_error: 'Vennligst fyll inn fra dato',
@@ -69,7 +69,7 @@ const EndringAarsakTariffendringSchema = z.object({
   })
 });
 
-const EndringAarsakVarigLoennsendringSchema = z.object({
+export const EndringAarsakVarigLoennsendringSchema = z.object({
   aarsak: z.literal('VarigLoennsendring'),
   gjelderFra: z.date({
     required_error: 'Vennligst fyll inn fra dato',
@@ -77,7 +77,7 @@ const EndringAarsakVarigLoennsendringSchema = z.object({
   })
 });
 
-export const SkjemavalideringEndringAarsakSchema = z.discriminatedUnion(
+export const EndringAarsakSchema = z.discriminatedUnion(
   'aarsak',
   [
     EndringAarsakBonusSchema,

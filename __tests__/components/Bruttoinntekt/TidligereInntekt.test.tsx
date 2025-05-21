@@ -1,24 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import TidligereInntekt from '../../../components/Bruttoinntekt/TidligereInntekt';
-import { HistoriskInntekt } from '../../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../../schema/HistoriskInntektSchema';
 
 describe('TidligereInntekt', () => {
   it('renders 3 rows', () => {
-    const tidligereinntekt: Array<HistoriskInntekt> = [
-      {
-        maaned: '2020-12',
-        inntekt: 234
-      },
-      {
-        maaned: '2020-11',
-        inntekt: 123
-      },
-      {
-        maaned: '2021-01',
-        inntekt: 345
-      }
-    ];
+    const tidligereinntekt: HistoriskInntekt = new Map([
+      ['2020-12', 234],
+      ['2020-11', 123],
+      ['2021-01', 345]
+    ]);
     render(<TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={false} />);
 
     const rader = screen.getAllByRole('row');
@@ -36,21 +27,12 @@ describe('TidligereInntekt', () => {
   });
 
   it('should have no violations', async () => {
-    const tidligereinntekt: Array<HistoriskInntekt> = [
-      {
-        maaned: '2020-11',
-        inntekt: 123
-      },
-      {
-        maaned: '2021-01',
-        inntekt: 345
-      },
-      {
-        maaned: '2020-12',
-        inntekt: 234
-      }
-    ];
-    const { container } = render(<TidligereInntekt tidligereinntekt={tidligereinntekt} />);
+    const tidligereinntekt: HistoriskInntekt = new Map([
+      ['2020-12', 234],
+      ['2020-11', 123],
+      ['2021-01', 345]
+    ]);
+    const { container } = render(<TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={false} />);
 
     const results = await axe(container);
 

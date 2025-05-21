@@ -4,7 +4,7 @@ import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
 import testdata from '../../mockdata/sp-soeknad.json';
 import isMod11Number from '../../utils/isMod10Number';
-import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
+import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 
@@ -24,7 +24,7 @@ export const config = {
   }
 };
 
-type Sykepengesoeknader = z.infer<typeof endepunktSykepengesoeknaderSchema>;
+type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;

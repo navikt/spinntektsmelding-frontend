@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import NetworkError from './NetworkError';
-import { endepunktSykepengesoeknaderSchema } from '../schema/endepunktSykepengesoeknaderSchema';
+import { EndepunktSykepengesoeknaderSchema } from '../schema/EndepunktSykepengesoeknaderSchema';
 
-type EndepunktSykepengesoeknader = z.infer<typeof endepunktSykepengesoeknaderSchema>;
+type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 
 export default function fetcherSykepengesoeknader(
   url: string | null,

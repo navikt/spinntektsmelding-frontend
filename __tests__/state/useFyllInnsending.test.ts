@@ -9,14 +9,14 @@ import inntektData from '../../mockdata/inntektData.json';
 import delvisRefusjon from '../../mockdata/kvittering-delvis-refusjon.json';
 import useKvitteringInit from '../../state/useKvitteringInit';
 import { LonnIArbeidsgiverperioden } from '../../state/state';
-import fullInnsendingSchema from '../../schema/fullInnsendingSchema';
+import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
 import { z } from 'zod';
 
-import MottattKvitteringSchema from '../../schema/mottattKvitteringSchema';
-import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
+import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 
-type Skjema = z.infer<typeof hovedskjemaSchema>;
-type InnsendingSkjema = z.infer<typeof fullInnsendingSchema>;
+type Skjema = z.infer<typeof HovedskjemaSchema>;
+type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 
 vi.mock('nanoid');

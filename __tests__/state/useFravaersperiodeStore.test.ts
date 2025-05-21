@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
-import { MottattPeriode } from '../../schema/forespurtData';
+import { MottattPeriode } from '../../schema/ForespurtDataSchema';
 import { vi } from 'vitest';
 import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
 
@@ -33,9 +33,9 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(fravaersperiode);
     });
 
-    expect(result.current.fravaersperioder?.[0].fom).toEqual(new Date(2022, 5, 6));
-    expect(result.current.fravaersperioder?.[0].tom).toEqual(new Date(2022, 6, 6));
-    expect(result.current.fravaersperioder?.length).toBe(3);
+    expect(result.current.sykmeldingsperioder?.[0].fom).toEqual(new Date(2022, 5, 6));
+    expect(result.current.sykmeldingsperioder?.[0].tom).toEqual(new Date(2022, 6, 6));
+    expect(result.current.sykmeldingsperioder?.length).toBe(3);
   });
 
   it('should delete the fravaersperiode for å given periode.', () => {
@@ -45,15 +45,15 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(fravaersperiode);
     });
 
-    const periodeId = result.current.fravaersperioder?.[0].id || 'unknown';
+    const periodeId = result.current.sykmeldingsperioder?.[0].id || 'unknown';
 
-    expect(result.current.fravaersperioder?.length).toBe(3);
+    expect(result.current.sykmeldingsperioder?.length).toBe(3);
 
     act(() => {
       result.current.slettFravaersperiode(periodeId);
     });
 
-    expect(result.current.fravaersperioder?.length).toBe(2);
+    expect(result.current.sykmeldingsperioder?.length).toBe(2);
   });
 
   it('should add a fravaersperiode for å given arbeidsforholdId.', () => {
@@ -63,16 +63,16 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(fravaersperiode);
     });
 
-    expect(result.current.fravaersperioder?.length).toBe(3);
+    expect(result.current.sykmeldingsperioder?.length).toBe(3);
 
     act(() => {
       result.current.leggTilFravaersperiode();
     });
 
-    expect(result.current.fravaersperioder?.length).toBe(4);
+    expect(result.current.sykmeldingsperioder?.length).toBe(4);
   });
 
-  it('should reset all fravaersperioder for å given arbeidsforholdId.', () => {
+  it('should reset all sykmeldingsperioder for å given arbeidsforholdId.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
@@ -84,7 +84,7 @@ describe('useBoundStore', () => {
       result.current.tilbakestillFravaersperiode();
     });
 
-    expect(result.current.fravaersperioder?.length).toBe(3);
+    expect(result.current.sykmeldingsperioder?.length).toBe(3);
   });
 
   it('should set the egenmelding datospenn for å given periode.', () => {
@@ -99,13 +99,13 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(fravaersperiode);
     });
 
-    const periodeId = result.current.fravaersperioder?.[0].id;
+    const periodeId = result.current.sykmeldingsperioder?.[0].id;
 
     act(() => {
       result.current.setFravaersperiodeDato(periodeId || '1', datoSpenn);
     });
 
-    expect(result.current.fravaersperioder?.[0].tom).toEqual(new Date(2022, 5, 15));
-    expect(result.current.fravaersperioder?.[0].fom).toEqual(new Date(2022, 4, 14));
+    expect(result.current.sykmeldingsperioder?.[0].tom).toEqual(new Date(2022, 5, 15));
+    expect(result.current.sykmeldingsperioder?.[0].fom).toEqual(new Date(2022, 4, 14));
   });
 });

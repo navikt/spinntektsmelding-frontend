@@ -57,7 +57,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
@@ -124,7 +124,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
 
   useEffect(() => {
-    if (!fravaersperioder && !kvitteringEksterntSystem?.avsenderSystem) {
+    if (!sykmeldingsperioder && !kvitteringEksterntSystem?.avsenderSystem) {
       if (!kvitteringSlug || kvitteringSlug === '') return;
       hentKvitteringsdata(kvitteringSlug);
     }
@@ -183,7 +183,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (
                   <Fravaersperiode
-                    fravaersperioder={fravaersperioder}
+                    sykmeldingsperioder={sykmeldingsperioder}
                     egenmeldingsperioder={egenmeldingsperioder}
                     paakrevdeOpplysninger={paakrevdeOpplysninger}
                   />

@@ -3,7 +3,7 @@ import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import useBoundStore from './useBoundStore';
-import { MottattData } from '../schema/mottattDataSchema';
+import { MottattData } from '../schema/MottattDataSchema';
 
 export default function useStateInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
@@ -15,9 +15,9 @@ export default function useStateInit() {
     state.setForeslaattBestemmendeFravaersdag,
     state.setSkjaeringstidspunkt
   ]);
-  const [setMottattBestemmendeFravaersdag, setMottattEksternBestemmendeFravaersdag] = useBoundStore((state) => [
+  const [setMottattBestemmendeFravaersdag, setMottattEksternInntektsdato] = useBoundStore((state) => [
     state.setMottattBestemmendeFravaersdag,
-    state.setMottattEksternBestemmendeFravaersdag
+    state.setMottattEksternInntektsdato
   ]);
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
@@ -26,52 +26,56 @@ export default function useStateInit() {
   );
 
   return (jsonData: MottattData) => {
-    initFravaersperiode(jsonData.fravaersperioder);
+    initFravaersperiode(jsonData.sykmeldingsperioder);
     initEgenmeldingsperiode(jsonData.egenmeldingsperioder);
 
     initPerson(
-      jsonData.navn,
-      jsonData.identitetsnummer,
-      jsonData.orgnrUnderenhet,
-      jsonData.orgNavn,
-      jsonData.innsenderNavn,
+      jsonData.sykmeldt.navn,
+      jsonData.sykmeldt.fnr,
+      jsonData.avsender.orgnr,
+      jsonData.avsender.orgNavn,
+      jsonData.avsender.navn,
       jsonData.telefonnummer
     );
 
-    if (jsonData.eksternBestemmendeFravaersdag) setSkjaeringstidspunkt(jsonData.eksternBestemmendeFravaersdag);
+    if (jsonData.eksternInntektsdato) setSkjaeringstidspunkt(jsonData.eksternInntektsdato);
 
-    const perioder = jsonData.fravaersperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
+    const perioder = jsonData.sykmeldingsperioder.concat(jsonData.egenmeldingsperioder).map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom),
       id: nanoid()
     }));
 
     setMottattBestemmendeFravaersdag(jsonData.bestemmendeFravaersdag);
-    setMottattEksternBestemmendeFravaersdag(jsonData.eksternBestemmendeFravaersdag);
+    setMottattEksternInntektsdato(jsonData.eksternInntektsdato);
 
     const arbeidsgiverperiode = finnArbeidsgiverperiode(perioder);
 
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
       perioder,
       arbeidsgiverperiode,
-      jsonData.eksternBestemmendeFravaersdag,
+      jsonData.eksternInntektsdato,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
 
-    if (jsonData.eksternBestemmendeFravaersdag) {
-      setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.eksternBestemmendeFravaersdag));
+    if (jsonData.eksternInntektsdato) {
+      setForeslaattBestemmendeFravaersdag(parseIsoDate(jsonData.eksternInntektsdato));
     } else if (bestemmendeFravaersdag) setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
 
     if (arbeidsgiverperiode) setArbeidsgiverperioder(arbeidsgiverperiode);
 
-    initBruttoinntekt(jsonData.bruttoinntekt, jsonData.tidligereinntekter, parseIsoDate(bestemmendeFravaersdag)!);
+    initBruttoinntekt(
+      jsonData.inntekt?.gjennomsnitt ?? null,
+      jsonData.inntekt?.historikk ?? null,
+      parseIsoDate(bestemmendeFravaersdag)!
+    );
 
     if (jsonData.forespurtData) {
       initForespurtData(
         jsonData.forespurtData,
         jsonData.bestemmendeFravaersdag ?? parseIsoDate(bestemmendeFravaersdag)!,
-        jsonData.bruttoinntekt,
-        jsonData.tidligereinntekter
+        jsonData.inntekt?.gjennomsnitt ?? null,
+        jsonData.inntekt?.historikk ?? null
       );
     }
   };

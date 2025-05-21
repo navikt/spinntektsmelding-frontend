@@ -2,10 +2,10 @@ import { FieldErrors } from 'react-hook-form';
 import useBoundStore from '../../state/useBoundStore';
 import FeilListe from './FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import z from 'zod';
 
-type HovedSkjema = z.infer<typeof hovedskjemaSchema>;
+type HovedSkjema = z.infer<typeof HovedskjemaSchema>;
 
 interface FeilsammendragProps {
   skjemafeil: FieldErrors<HovedSkjema> | undefined;

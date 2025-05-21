@@ -1,4 +1,4 @@
-import { RefusjonEndringSchema } from '../../schema/apiRefusjonEndringSchema';
+import { RefusjonEndringSchema } from '../../schema/ApiRefusjonEndringSchema';
 
 describe('RefusjonEndringSchema', () => {
   it('should validate RefusjonEndringSchema', () => {

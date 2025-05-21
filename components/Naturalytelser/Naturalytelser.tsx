@@ -19,7 +19,12 @@ export default function Naturalytelser() {
     formState: { errors }
   } = useFormContext();
 
-  const { fields, append, remove, replace } = useFieldArray({
+  const {
+    fields,
+    append: leggTilYtelse,
+    remove: fjernYtelse,
+    replace: initialiserYtelse
+  } = useFieldArray({
     control,
     name: 'inntekt.naturalytelser'
   });
@@ -31,21 +36,21 @@ export default function Naturalytelser() {
   useEffect(() => {
     if (harBortfallAvNaturalytelser) {
       if (fields.length === 0) {
-        replace([dummyYtelse]);
+        initialiserYtelse([dummyYtelse]);
       }
     } else {
-      remove();
+      fjernYtelse();
     }
-  }, [dummyYtelse, harBortfallAvNaturalytelser, remove, replace, fields.length]);
+  }, [dummyYtelse, harBortfallAvNaturalytelser, fjernYtelse, initialiserYtelse, fields.length]);
 
   const handleButtonSletteClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
     event.preventDefault();
-    remove(index);
+    fjernYtelse(index);
   };
 
   const handleButtonLeggTilClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    append({ ...dummyYtelse });
+    leggTilYtelse({ ...dummyYtelse });
   };
 
   return (

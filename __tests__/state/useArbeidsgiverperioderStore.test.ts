@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
-import { MottattPeriode } from '../../schema/forespurtData';
+import { MottattPeriode } from '../../schema/ForespurtDataSchema';
 import { Periode } from '../../state/state';
 import { nanoid } from 'nanoid';
 import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';

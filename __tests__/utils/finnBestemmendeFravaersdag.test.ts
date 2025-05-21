@@ -5,7 +5,7 @@ import finnBestemmendeFravaersdag, {
   tilstoetendePeriodeManuellJustering
 } from '../../utils/finnBestemmendeFravaersdag';
 import { describe } from 'vitest';
-import { tidPeriode } from '../../schema/tidPeriode';
+import { TidPeriodeSchema } from '../../schema/TidPeriodeSchema';
 
 describe.concurrent('finnBestemmendeFravaersdag', () => {
   it('should return the correct bestemmende fraværsdag for two periode directly following each other', () => {
@@ -500,7 +500,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
 
   /***** */
   it('should return correct bfd when arbeidsgiverKanFlytte is true and forespurtBestemmendeFraværsdag is undefined, different periodes', () => {
-    const fravaersperioder: Periode[] = [
+    const sykmeldingsperioder: Periode[] = [
       {
         id: '1',
         fom: parseISO('2023-11-29'),
@@ -514,7 +514,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
         tom: parseISO('2023-12-03')
       }
     ];
-    expect(finnBestemmendeFravaersdag(fravaersperioder, arbeidsgiverperiode, undefined, true)).toEqual('2023-11-30');
+    expect(finnBestemmendeFravaersdag(sykmeldingsperioder, arbeidsgiverperiode, undefined, true)).toEqual('2023-11-30');
   });
 
   it('should return correct bfd when arbeidsgiverKanFlytte is false and forespurtBestemmendeFraværsdag is undefined, different periodes', () => {
@@ -903,7 +903,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
   });
 
   it('should return correct bfd when 2bananer and loads of perioder', () => {
-    const periode1: tidPeriode[] = [
+    const periode1: TidPeriodeSchema[] = [
       {
         fom: parseISO('2023-09-01'),
         tom: parseISO('2023-09-05')
@@ -1013,7 +1013,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
   });
 
   it('should return correct bfd when 2bananer and loads of perioder, uten agp', () => {
-    const periode1: tidPeriode[] = [
+    const periode1: TidPeriodeSchema[] = [
       {
         fom: parseISO('2023-09-01'),
         tom: parseISO('2023-09-05')

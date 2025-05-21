@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import TidligereInntekt from '../../components/Bruttoinntekt/TidligereInntekt';
-import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import { vi } from 'vitest';
 
 vi.mock('@navikt/ds-react', async () => {
@@ -24,20 +24,11 @@ vi.mock('../../utils/formatMaanedsnavn', async () => {
 });
 
 describe('TidligereInntekt', () => {
-  const tidligereinntekt: Array<HistoriskInntekt> = [
-    {
-      maaned: '2021-01',
-      inntekt: 10000
-    },
-    {
-      maaned: '2021-02',
-      inntekt: 20000
-    },
-    {
-      maaned: '2021-03',
-      inntekt: 30000
-    }
-  ];
+  const tidligereinntekt: HistoriskInntekt = new Map([
+    ['2021-01', 10000],
+    ['2021-02', 20000],
+    ['2021-03', 30000]
+  ]);
 
   it('should render the table with the correct data', () => {
     render(<TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={false} />);
@@ -59,11 +50,13 @@ describe('TidligereInntekt', () => {
     const dataRows = rows.slice(1);
     expect(dataRows).toHaveLength(3);
 
+    const arrInntekter = Array.from(tidligereinntekt);
+
     dataRows.forEach((row, index) => {
       const cells = row.querySelectorAll('td');
       expect(cells).toHaveLength(2);
-      expect(cells[0]).toHaveTextContent(tidligereinntekt[index].maaned);
-      expect(cells[1]).toHaveTextContent(`${tidligereinntekt[index].inntekt} kr`);
+      expect(cells[0]).toHaveTextContent(arrInntekter[index][0]);
+      expect(cells[1]).toHaveTextContent(`${arrInntekter[index][1]} kr`);
     });
   });
 
@@ -96,20 +89,11 @@ describe('TidligereInntekt', () => {
   });
 
   it('should render "-" for invalid or negative inntekt values', () => {
-    const invalidInntekt = [
-      {
-        maaned: '2021-01',
-        inntekt: undefined
-      },
-      {
-        maaned: '2021-02',
-        inntekt: -10000
-      },
-      {
-        maaned: '2021-03',
-        inntekt: 0
-      }
-    ];
+    const invalidInntekt = new Map([
+      ['2021-01', undefined],
+      ['2021-02', -10000],
+      ['2021-03', 0]
+    ]);
 
     render(<TidligereInntekt tidligereinntekt={invalidInntekt} henterData={false} />);
 
@@ -130,10 +114,12 @@ describe('TidligereInntekt', () => {
     const dataRows = rows.slice(1);
     expect(dataRows).toHaveLength(3);
 
+    const arrInntekter = Array.from(invalidInntekt);
+
     dataRows.forEach((row, index) => {
       const cells = row.querySelectorAll('td');
       expect(cells).toHaveLength(2);
-      expect(cells[0]).toHaveTextContent(invalidInntekt[index].maaned);
+      expect(cells[0]).toHaveTextContent(arrInntekter[index][0]);
       if (index === 0) {
         expect(cells[1]).toHaveTextContent('-');
         return;

@@ -1,6 +1,6 @@
-import { tidPeriode } from '../schema/tidPeriode';
+import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
 
-function sorterFomStigende<T extends tidPeriode>(a: T, b: T): number {
+function sorterFomStigende<T extends TidPeriodeSchema>(a: T, b: T): number {
   if (!a.fom || !b.fom) {
     return 0;
   }

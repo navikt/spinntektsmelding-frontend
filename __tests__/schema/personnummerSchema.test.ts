@@ -1,4 +1,4 @@
-import { PersonnummerSchema } from '../../schema/personnummerSchema';
+import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 
 describe('PersonnummerSchema', () => {
   it('should validate PersonnummerSchema', () => {

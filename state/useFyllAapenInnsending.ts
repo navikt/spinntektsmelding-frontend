@@ -11,13 +11,13 @@ import {
   mapEgenmeldingsperioder,
   mapNaturalytelserToData
 } from './useFyllInnsending';
-import { konverterEndringAarsakSchema } from '../schema/konverterEndringAarsakSchema';
+import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSchema';
 import { z } from 'zod';
-import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { isValid } from 'date-fns/isValid';
 
 export default function useFyllAapenInnsending() {
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
@@ -42,7 +42,7 @@ export default function useFyllAapenInnsending() {
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
 
-  const perioder = concatPerioder(fravaersperioder, egenmeldingsperioder);
+  const perioder = concatPerioder(sykmeldingsperioder, egenmeldingsperioder);
   const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(
     arbeidsgiverperioder,
     true
@@ -55,11 +55,11 @@ export default function useFyllAapenInnsending() {
     arbeidsgiverKanFlytteSkjæringstidspunkt()
   );
 
-  type SkjemaData = z.infer<typeof hovedskjemaSchema>;
+  type SkjemaData = z.infer<typeof HovedskjemaSchema>;
 
   return (skjemaData: SkjemaData) => {
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
-      ? skjemaData.inntekt.endringAarsaker.map((endringAarsak) => konverterEndringAarsakSchema.parse(endringAarsak))
+      ? skjemaData.inntekt.endringAarsaker.map((endringAarsak) => KonverterEndringAarsakSchema.parse(endringAarsak))
       : null;
 
     setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
@@ -77,7 +77,7 @@ export default function useFyllAapenInnsending() {
         orgnr: avsender.orgnr!,
         tlf: skjemaData.avsenderTlf
       },
-      sykmeldingsperioder: fravaersperioder!
+      sykmeldingsperioder: sykmeldingsperioder!
         .filter((periode) => periode.fom && periode.tom)
         .map((periode) => ({ fom: formatDateForSubmit(periode.fom), tom: formatDateForSubmit(periode.tom) })),
       agp: {
@@ -109,10 +109,10 @@ export default function useFyllAapenInnsending() {
   };
 }
 
-function concatPerioder(fravaersperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
+function concatPerioder(sykmeldingsperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
   let perioder;
-  if (fravaersperioder) {
-    perioder = fravaersperioder.concat(egenmeldingsperioder ?? []);
+  if (sykmeldingsperioder) {
+    perioder = sykmeldingsperioder.concat(egenmeldingsperioder ?? []);
   } else {
     perioder = egenmeldingsperioder;
   }

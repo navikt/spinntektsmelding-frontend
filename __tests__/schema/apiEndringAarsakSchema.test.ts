@@ -1,4 +1,4 @@
-import { EndringAarsakSchema } from '../../schema/apiEndringAarsakSchema';
+import { EndringAarsakSchema } from '../../schema/ApiEndringAarsakSchema';
 
 describe('EndringAarsakSchema', () => {
   it('should validate EndringAarsakSchema for Bonus', () => {

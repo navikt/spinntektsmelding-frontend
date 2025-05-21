@@ -1,8 +1,12 @@
-import { HistoriskInntekt } from '../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../schema/HistoriskInntektSchema';
 
-function sjekkOmFerieMaaneder(tidligereinntekt: Array<HistoriskInntekt> | undefined): boolean {
-  const ferieMnd = tidligereinntekt
-    ?.map((inntekt) => inntekt.maaned.split('-')[1])
+function sjekkOmFerieMaaneder(tidligereinntekt: HistoriskInntekt | undefined): boolean {
+  if (!tidligereinntekt) {
+    return false;
+  }
+  const arrTidligereinntekt = Array.from(tidligereinntekt);
+  const ferieMnd = arrTidligereinntekt
+    ?.map((inntekt) => inntekt[0].split('-')[1])
     .filter((mnd) => Number(mnd) >= 5 && Number(mnd) <= 8);
 
   return ferieMnd !== undefined && ferieMnd.length > 0;

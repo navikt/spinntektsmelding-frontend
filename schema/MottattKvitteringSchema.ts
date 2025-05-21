@@ -1,29 +1,29 @@
 import { z } from 'zod';
-import { apiPeriodeSchema } from './apiPeriodeSchema';
-import { PersonnummerSchema } from './personnummerSchema';
-import { OrganisasjonsnummerSchema } from './organisasjonsnummerSchema';
-import { TelefonNummerSchema } from './telefonNummerSchema';
-import { EndringAarsakSchema } from './apiEndringAarsakSchema';
-import { RefusjonEndringSchema } from './apiRefusjonEndringSchema';
-import { apiNaturalytelserSchema } from './apiNaturalytelserSchema';
+import { ApiPeriodeSchema } from './ApiPeriodeSchema';
+import { PersonnummerSchema } from './PersonnummerSchema';
+import { OrganisasjonsnummerSchema } from './OrganisasjonsnummerSchema';
+import { TelefonNummerSchema } from './TelefonNummerSchema';
+import { EndringAarsakSchema } from './ApiEndringAarsakSchema';
+import { RefusjonEndringSchema } from './ApiRefusjonEndringSchema';
+import { ApiNaturalytelserSchema } from './ApiNaturalytelserSchema';
+import { SykmeldtSchema } from './SykmeldtSchema';
+import { AvsenderSchema } from './AvsenderSchema';
 
-export const kvitteringNavNoSchema = z.object({
-  sykmeldt: z.object({
-    navn: z.string().min(1),
-    fnr: PersonnummerSchema
-  }),
-  avsender: z.object({
-    orgnr: OrganisasjonsnummerSchema,
-    orgNavn: z.string().min(1),
-    navn: z.string().min(1),
-    tlf: TelefonNummerSchema
-  }),
-  sykmeldingsperioder: z.array(apiPeriodeSchema),
+const MottattAvsenderSchema = AvsenderSchema.extend({
+  orgNavn: z.string().min(1),
+  navn: z.string().min(1),
+  tlf: TelefonNummerSchema
+});
+
+export const KvitteringNavNoSchema = z.object({
+  sykmeldt: SykmeldtSchema,
+  avsender: MottattAvsenderSchema,
+  sykmeldingsperioder: z.array(ApiPeriodeSchema),
   skjema: z.object({
     agp: z
       .object({
-        perioder: z.array(apiPeriodeSchema),
-        egenmeldinger: z.array(apiPeriodeSchema),
+        perioder: z.array(ApiPeriodeSchema),
+        egenmeldinger: z.array(ApiPeriodeSchema),
         redusertLoennIAgp: z
           .object({
             beloep: z.number().min(0),
@@ -36,7 +36,7 @@ export const kvitteringNavNoSchema = z.object({
       beloep: z.number(),
       endringAarsak: EndringAarsakSchema,
       inntektsdato: z.string().date(),
-      naturalytelser: apiNaturalytelserSchema,
+      naturalytelser: ApiNaturalytelserSchema,
       endringAarsaker: z.array(EndringAarsakSchema)
     }),
     refusjon: z
@@ -50,13 +50,13 @@ export const kvitteringNavNoSchema = z.object({
   mottatt: z.string().date()
 });
 
-export const kvitteringEksternSchema = z.object({
+export const KvitteringEksternSchema = z.object({
   avsenderSystem: z.string(),
   referanse: z.string(),
   tidspunkt: z.date()
 });
 
-export default z.object({
+export const MottattKvitteringSchema = z.object({
   kvitteringDokument: z
     .object({
       orgnrUnderenhet: OrganisasjonsnummerSchema,
@@ -65,10 +65,10 @@ export default z.object({
       telefonnummer: z.string().min(1),
       innsenderNavn: z.string().min(1),
       virksomhetNavn: z.string().min(1),
-      egenmeldingsperioder: z.array(apiPeriodeSchema),
-      arbeidsgiverperioder: z.array(apiPeriodeSchema),
+      egenmeldingsperioder: z.array(ApiPeriodeSchema),
+      arbeidsgiverperioder: z.array(ApiPeriodeSchema),
       bestemmendeFraværsdag: z.string().min(1),
-      fraværsperioder: z.array(apiPeriodeSchema),
+      fraværsperioder: z.array(ApiPeriodeSchema),
       inntekt: z.object({
         bekreftet: z.boolean(),
         beregnetInntekt: z.number(),
@@ -86,6 +86,6 @@ export default z.object({
       forespurtData: z.array(z.string())
     })
     .nullable(),
-  kvitteringEkstern: kvitteringEksternSchema.nullable(),
-  kvitteringNavNo: kvitteringNavNoSchema.nullable()
+  kvitteringEkstern: KvitteringEksternSchema.nullable(),
+  kvitteringNavNo: KvitteringNavNoSchema.nullable()
 });

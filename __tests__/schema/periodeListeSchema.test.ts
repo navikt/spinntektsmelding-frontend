@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PeriodeListeSchema } from '../../schema/periodeListeSchema';
+import { PeriodeListeSchema } from '../../schema/PeriodeListeSchema';
 type PeriodeListeSchema = z.infer<typeof PeriodeListeSchema>;
 
 describe('PeriodeListeSchema', () => {

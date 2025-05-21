@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const NaturalytelseEnum = z.enum(
+export const NaturalytelseEnumSchema = z.enum(
   [
     'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
     'ANNET',

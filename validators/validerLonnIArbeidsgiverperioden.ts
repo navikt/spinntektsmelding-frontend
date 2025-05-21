@@ -1,5 +1,5 @@
 import { LonnIArbeidsgiverperioden } from '../state/state';
-import { tidPeriode } from '../schema/tidPeriode';
+import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 
@@ -12,7 +12,7 @@ export enum LonnIArbeidsgiverperiodenFeilkode {
   LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT = 'LONN_I_ARBEIDSGIVERPERIODEN_BELOP_OVERSTIGER_BRUTTOINNTEKT'
 }
 
-export default function validerLonnIArbeidsgiverperioden<T extends tidPeriode>(
+export default function validerLonnIArbeidsgiverperioden<T extends TidPeriodeSchema>(
   lonnIAP?: LonnIArbeidsgiverperioden,
   arbeidsgiverperioder?: T[],
   bruttoInntekt?: number
@@ -31,7 +31,7 @@ export default function validerLonnIArbeidsgiverperioden<T extends tidPeriode>(
   return errorStatus;
 }
 
-function isIngenArbeidsgiverperiode<T extends tidPeriode>(arbeidsgiverperioder?: T[]): boolean {
+function isIngenArbeidsgiverperiode<T extends TidPeriodeSchema>(arbeidsgiverperioder?: T[]): boolean {
   return (
     arbeidsgiverperioder === undefined ||
     arbeidsgiverperioder?.length === 0 ||

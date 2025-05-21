@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 import { EndringAarsak } from '../validators/validerAapenInnsending';
-import { BegrunnelseRedusertLoennIAgp } from '../schema/begrunnelseRedusertLoennIAgp';
-import naturalytelserSchema from '../schema/naturalytelserSchema';
+import { BegrunnelseRedusertLoennIAgp } from '../schema/BegrunnelseRedusertLoennIAgpSchema';
+import NaturalytelserSchema from '../schema/NaturalytelserSchema';
 
 export interface Periode {
   fom?: Date;
@@ -23,8 +23,8 @@ export interface LonnISykefravaeret {
   beloep?: number;
 }
 
-const begrunnelseRedusertLoennIAgp = z.enum(BegrunnelseRedusertLoennIAgp);
-export type Begrunnelse = z.infer<typeof begrunnelseRedusertLoennIAgp>;
+const BegrunnelseRedusertLoennIAgpSchema = z.enum(BegrunnelseRedusertLoennIAgp);
+export type Begrunnelse = z.infer<typeof BegrunnelseRedusertLoennIAgpSchema>;
 
 export interface LonnIArbeidsgiverperioden {
   status?: YesNo;
@@ -32,4 +32,4 @@ export interface LonnIArbeidsgiverperioden {
   utbetalt?: number | null;
 }
 
-export type Naturalytelse = z.infer<typeof naturalytelserSchema>;
+export type Naturalytelse = z.infer<typeof NaturalytelserSchema>;

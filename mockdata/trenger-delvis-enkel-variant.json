@@ -1,19 +1,21 @@
 {
-  "navn": "BERØMT FLYTTELASS",
-  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
-  "innsenderNavn": "BERØMT FLYTTELASS",
-  "identitetsnummer": "10107400090",
-  "orgnrUnderenhet": "810007842",
-  "fravaersperioder": [{ "fom": "2024-12-05", "tom": "2024-12-30" }],
+  "sykmeldt": {
+    "navn": "BERØMT FLYTTELASS",
+    "fnr": "10107400090"
+  },
+  "avsender": {
+    "orgnr": "810007842",
+    "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "navn": "BERØMT FLYTTELASS"
+  },
+  "sykmeldingsperioder": [{ "fom": "2024-12-05", "tom": "2024-12-30" }],
   "egenmeldingsperioder": [],
   "bestemmendeFravaersdag": "2024-12-05",
-  "eksternBestemmendeFravaersdag": null,
-  "bruttoinntekt": 36000.0,
-  "tidligereinntekter": [
-    { "maaned": "2024-09", "inntekt": 54000.0 },
-    { "maaned": "2024-10", "inntekt": 54000.0 },
-    { "maaned": "2024-11", "inntekt": null }
-  ],
+  "eksternInntektsdato": null,
+  "inntekt": {
+    "gjennomsnitt": 36000.0,
+    "historikk": { "2024-09": 54000.0, "2024-10": 54000.0, "2024-11": null }
+  },
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": false },
     "inntekt": { "paakrevd": true, "forslag": null },
@@ -27,10 +29,10 @@
     "innsenderNavn": "BERØMT FLYTTELASS",
     "identitetsnummer": "10107400090",
     "orgnrUnderenhet": "810007842",
-    "fravaersperioder": [{ "fom": "2024-12-05", "tom": "2024-12-30" }],
+    "sykmeldingsperioder": [{ "fom": "2024-12-05", "tom": "2024-12-30" }],
     "egenmeldingsperioder": [],
     "bestemmendeFravaersdag": "2024-12-05",
-    "eksternBestemmendeFravaersdag": null,
+    "eksternInntektsdato": null,
     "bruttoinntekt": 36000.0,
     "tidligereinntekter": [
       { "maaned": "2024-09", "inntekt": 54000.0 },

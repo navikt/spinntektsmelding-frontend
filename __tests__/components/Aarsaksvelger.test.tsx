@@ -78,7 +78,7 @@ vi.mock('react-hook-form', () => ({
 describe('Aarsaksvelger', () => {
   const changeMaanedsintektHandler = vi.fn();
   const changeBegrunnelseHandler = vi.fn();
-  const clickTilbakestillMaanedsinntekt = vi.fn();
+  const handleResetMaanedsinntekt = vi.fn();
   const setEndringAarsakGjelderFra = vi.fn();
   const setEndringAarsakBleKjent = vi.fn();
   const visFeilmeldingTekst = vi.fn();
@@ -92,9 +92,8 @@ describe('Aarsaksvelger', () => {
   it('renders the component', () => {
     render(
       <Aarsaksvelger
-        defaultEndringAarsak={{ aarsak: 'Bonus' }}
         bruttoinntekt={undefined}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
       />
@@ -110,9 +109,8 @@ describe('Aarsaksvelger', () => {
   it.skip('calls the changeMaanedsintektHandler function when the input value changes', async () => {
     render(
       <Aarsaksvelger
-        defaultEndringAarsak={{ aarsak: 'Bonus' }}
         bruttoinntekt={undefined}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
       />
@@ -128,9 +126,8 @@ describe('Aarsaksvelger', () => {
   it.skip('calls the changeBegrunnelseHandler function when the select value changes', async () => {
     render(
       <Aarsaksvelger
-        defaultEndringAarsak={{ aarsak: 'Bonus' }}
         bruttoinntekt={undefined}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
       />
@@ -142,12 +139,11 @@ describe('Aarsaksvelger', () => {
     expect(changeBegrunnelseHandler).toHaveBeenCalledWith('Bonus');
   });
 
-  it.skip('calls the clickTilbakestillMaanedsinntekt function when the button is clicked', () => {
+  it.skip('calls the handleResetMaanedsinntekt function when the button is clicked', () => {
     render(
       <Aarsaksvelger
-        defaultEndringAarsak={{ aarsak: 'Bonus' }}
         bruttoinntekt={undefined}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
       />
@@ -156,15 +152,14 @@ describe('Aarsaksvelger', () => {
       name: /Tilbakestill/i
     });
     button.click();
-    expect(clickTilbakestillMaanedsinntekt).toHaveBeenCalledTimes(1);
+    expect(handleResetMaanedsinntekt).toHaveBeenCalledTimes(1);
   });
 
   it.skip('calls the changeBegrunnelseHandler function when the Varig lønnsendring is selected', async () => {
     render(
       <Aarsaksvelger
-        defaultEndringAarsak={{ aarsak: 'Bonus' }}
         bruttoinntekt={undefined}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
       />
@@ -182,13 +177,14 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'Tariffendring', gjelderFra: '2022-01-01', bleKjent: '2022-01-01' },
+          endringAarsaker: [
+            { aarsak: 'Tariffendring', gjelderFra: parseIsoDate('2022-01-01')!, bleKjent: parseIsoDate('2022-01-01')! }
+          ],
           manueltKorrigert: false
         }}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Tariffendring', gjelderFra: '2022-01-01', bleKjent: '2022-01-01' }}
       />
     );
 
@@ -210,14 +206,12 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'Ferie', ferier: perioder },
+          endringAarsaker: [{ aarsak: 'Ferie', ferier: perioder }],
           manueltKorrigert: false
         }}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
-        setPerioder={setPerioder}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Ferie', ferier: perioder }}
       />
     );
 
@@ -246,14 +240,12 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'VarigLoennsendring', gjelderFra: '2022-01-01' },
+          endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: parseIsoDate('2022-01-01')! }],
           manueltKorrigert: false
         }}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
-        setPerioder={setPerioder}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'VarigLoennsendring', gjelderFra: '2022-01-01' }}
       />
     );
 
@@ -271,14 +263,12 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'Permisjon', permisjoner: perioder },
+          endringAarsaker: [{ aarsak: 'Permisjon', permisjoner: perioder }],
           manueltKorrigert: false
         }}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
-        setPerioder={setPerioderMock}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Permisjon', permisjoner: perioder }}
       />
     );
 
@@ -299,12 +289,14 @@ describe('Aarsaksvelger', () => {
 
     render(
       <Aarsaksvelger
-        bruttoinntekt={{ bruttoInntekt: 1000, endringsaarsak: 'Permittering', manueltKorrigert: false }}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        bruttoinntekt={{
+          bruttoInntekt: 1000,
+          endringAarsaker: [{ aarsak: 'Permittering', permitteringer: perioder }],
+          manueltKorrigert: false
+        }}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
-        setPerioder={setPerioder}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Permittering', permitteringer: perioder }}
       />
     );
 
@@ -328,14 +320,12 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'NyStilling', gjelderFra: new Date('2022-01-01') },
+          endringAarsaker: [{ aarsak: 'NyStilling', gjelderFra: new Date('2022-01-01') }],
           manueltKorrigert: false
         }}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
-        setPerioder={setPerioder}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'NyStilling', gjelderFra: new Date('2022-01-01') }}
       />
     );
 
@@ -352,13 +342,12 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'NyStillingsprosent', gjelderFra: new Date('2022-01-01') },
+          endringAarsaker: [{ aarsak: 'NyStillingsprosent', gjelderFra: new Date('2022-01-01') }],
           manueltKorrigert: false
         }}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'NyStillingsprosent', gjelderFra: new Date('2022-01-01') }}
       />
     );
 
@@ -375,13 +364,12 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'Sykefravaer', sykefravaer: perioder },
+          endringAarsaker: [{ aarsak: 'Sykefravaer', sykefravaer: perioder }],
           manueltKorrigert: false
         }}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Sykefravaer', sykefravaer: perioder }}
       />
     );
 
@@ -475,13 +463,12 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsak: { aarsak: 'Sykefravaer', sykefravaer: perioder },
+          endringAarsaker: [{ aarsak: 'Sykefravaer', sykefravaer: perioder }],
           manueltKorrigert: false
         }}
-        clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
-        defaultEndringAarsak={{ aarsak: 'Sykefravaer', sykefravaer: perioder }}
       />
     );
 

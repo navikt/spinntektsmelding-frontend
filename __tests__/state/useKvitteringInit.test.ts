@@ -15,7 +15,7 @@ import nyStillingsprosentKvittering from '../../mockdata/kvittering-NyStillingsp
 import inntektData from '../../mockdata/inntektData.json';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { z } from 'zod';
-import MottattKvitteringSchema, { kvitteringNavNoSchema } from '../../schema/mottattKvitteringSchema';
+import MottattKvitteringSchema, { kvitteringNavNoSchema } from '../../schema/MottattKvitteringSchema';
 import eksterntSystem from '../../mockdata/kvittering-eksternt-system.json';
 import kvitteringMedRefusjonSluttdato from '../../mockdata/kvittering-delvis-refusjon.json';
 

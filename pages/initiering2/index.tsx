@@ -16,20 +16,20 @@ import { useEffect, useMemo, useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
-import initieringSchema from '../../schema/initieringSchema';
+import InitieringSchema from '../../schema/InitieringSchema';
 
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { TDateISODate } from '../../schema/forespurtData';
+import { TDateISODate } from '../../schema/ForespurtDataSchema';
 import { differenceInCalendarDays, differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
 import formatIsoDate from '../../utils/formatIsoDate';
-import { PersonnummerSchema } from '../../schema/personnummerSchema';
-import { endepunktSykepengesoeknaderSchema } from '../../schema/endepunktSykepengesoeknaderSchema';
+import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
+import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
 import { logger } from '@navikt/next-logger';
 import environment from '../../config/environment';
@@ -39,7 +39,7 @@ import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
 import parseIsoDate from '../../utils/parseIsoDate';
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
-import { endepunktArbeidsforholdSchema } from '../../schema/endepunktArbeidsforholdSchema';
+import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 
 type SykepengePeriode = {
   id: string;
@@ -107,7 +107,7 @@ const Initiering2: NextPage = () => {
     });
 
   type Skjema = z.infer<typeof skjemaSchema>;
-  type EndepunktSykepengesoeknader = z.infer<typeof endepunktSykepengesoeknaderSchema>;
+  type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 
   const methods = useForm<Skjema>({
     resolver: zodResolver(skjemaSchema)
@@ -134,7 +134,7 @@ const Initiering2: NextPage = () => {
   };
 
   if (data) {
-    const mottatteData = endepunktArbeidsforholdSchema.safeParse(data);
+    const mottatteData = EndepunktArbeidsforholdSchema.safeParse(data);
 
     if (mottatteData.success) {
       fulltNavn = mottatteData.data.fulltNavn;
@@ -174,7 +174,7 @@ const Initiering2: NextPage = () => {
   const sykepengePerioder: SykepengePeriode[] = useMemo(() => {
     if (!spData) return [];
 
-    const mottatteSykepengesoknader = endepunktSykepengesoeknaderSchema.safeParse(spData);
+    const mottatteSykepengesoknader = EndepunktSykepengesoeknaderSchema.safeParse(spData);
 
     if (!mottatteSykepengesoknader.success) {
       logger.error('Feil ved validering av sykepengesøknader', mottatteSykepengesoknader.error.errors);
@@ -276,8 +276,8 @@ const Initiering2: NextPage = () => {
       return;
     }
 
-    const mottatteSykepengesoeknader = spData ? endepunktSykepengesoeknaderSchema.safeParse(spData) : undefined;
-    const mottatteData = data ? endepunktArbeidsforholdSchema.safeParse(data) : undefined;
+    const mottatteSykepengesoeknader = spData ? EndepunktSykepengesoeknaderSchema.safeParse(spData) : undefined;
+    const mottatteData = data ? EndepunktArbeidsforholdSchema.safeParse(data) : undefined;
 
     if (mottatteData?.success) {
       handleValidData(formData, mottatteData.data, mottatteSykepengesoeknader);
@@ -291,7 +291,7 @@ const Initiering2: NextPage = () => {
       personnummer: sykmeldt.fnr
     };
 
-    const validationResult = initieringSchema.safeParse(skjemaData);
+    const validationResult = InitieringSchema.safeParse(skjemaData);
     const sykmeldingsperiode = getSykmeldingsperiode(formData, mottatteSykepengesoeknader);
 
     if (sykmeldingsperiode.length === 0) {

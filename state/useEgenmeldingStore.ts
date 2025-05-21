@@ -3,7 +3,7 @@ import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { Periode } from './state';
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattPeriode } from '../schema/forespurtData';
+import { MottattPeriode } from '../schema/ForespurtDataSchema';
 import { CompleteState } from './useBoundStore';
 import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
 import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
@@ -11,7 +11,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
 import sorterFomStigende from '../utils/sorterFomStigende';
-import { tidPeriode } from '../schema/tidPeriode';
+import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
 
 export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;
@@ -31,7 +31,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
   setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
     const skjaeringstidspunkt = get().skjaeringstidspunkt;
     const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
-    const fravaersperioder = get().fravaersperioder;
+    const sykmeldingsperioder = get().sykmeldingsperioder;
     const egenmeldingsperioder = get().egenmeldingsperioder;
     set(
       produce((state) => {
@@ -49,7 +49,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
             state,
             skjaeringstidspunkt,
             arbeidsgiverKanFlytteSkjæringstidspunkt,
-            fravaersperioder,
+            sykmeldingsperioder,
             oppdatertEgenmeldingsperiode
           );
         }
@@ -60,7 +60,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
   slettEgenmeldingsperiode: (periodeId: string) => {
     const skjaeringstidspunkt = get().skjaeringstidspunkt;
     const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
-    const fravaersperioder = get().fravaersperioder;
+    const sykmeldingsperioder = get().sykmeldingsperioder;
     const egenmeldingsperioder = get().egenmeldingsperioder;
     set(
       produce((state) => {
@@ -75,7 +75,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           state,
           skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt,
-          fravaersperioder,
+          sykmeldingsperioder,
           oppdatertePerioder
         );
 
@@ -110,7 +110,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
     const clonedEgenmelding = structuredClone(get().opprinneligEgenmeldingsperiode);
     const skjaeringstidspunkt = get().skjaeringstidspunkt;
     const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
-    const fravaersperioder = get().fravaersperioder;
+    const sykmeldingsperioder = get().sykmeldingsperioder;
     set(
       produce((state) => {
         state.egenmeldingsperioder = clonedEgenmelding;
@@ -123,7 +123,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
           state,
           skjaeringstidspunkt,
           arbeidsgiverKanFlytteSkjæringstidspunkt,
-          fravaersperioder,
+          sykmeldingsperioder,
           clonedEgenmelding
         );
 
@@ -160,10 +160,10 @@ function oppdaterOgRekalkulerInntekt(
   state: any,
   skjaeringstidspunkt: Date | undefined,
   arbeidsgiverKanFlytteSkjæringstidspunkt: () => boolean,
-  fravaersperioder: Array<Periode>,
+  sykmeldingsperioder: Array<Periode>,
   egenmeldingsperioder: Array<Periode>
 ) {
-  const fPerioder = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
+  const fPerioder = finnFravaersperioder(sykmeldingsperioder, egenmeldingsperioder);
   if (fPerioder) {
     const agp = finnArbeidsgiverperiode(fPerioder.toSorted(sorterFomStigende));
     state.arbeidsgiverperioder = agp;
@@ -196,12 +196,14 @@ function updateDateValue(egenmeldingsperioder?: Periode[], periodeId?: string, d
   return oppdatertEgenmeldingPerioder;
 }
 
-export function finnFravaersperioder<T extends tidPeriode>(
-  fravaersperioder?: Array<T>,
+export function finnFravaersperioder<T extends TidPeriodeSchema>(
+  sykmeldingsperioder?: Array<T>,
   egenmeldingsperioder?: Array<T>
 ) {
   const perioder =
-    fravaersperioder && egenmeldingsperioder ? fravaersperioder.concat(egenmeldingsperioder) : fravaersperioder;
+    sykmeldingsperioder && egenmeldingsperioder
+      ? sykmeldingsperioder.concat(egenmeldingsperioder)
+      : sykmeldingsperioder;
 
   if (!perioder) {
     return [];

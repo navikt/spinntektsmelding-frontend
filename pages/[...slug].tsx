@@ -44,7 +44,7 @@ import isValidUUID from '../utils/isValidUUID';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
 import Heading3 from '../components/Heading3';
 import forespoerselType from '../config/forespoerselType';
-import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -57,7 +57,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
 
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  const fravaersperioder = useBoundStore((state) => state.fravaersperioder);
+  const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const [skjemastatus, inngangFraKvittering] = useBoundStore((state) => [
@@ -118,10 +118,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
-  type Skjema = z.infer<typeof hovedskjemaSchema>;
+  type Skjema = z.infer<typeof HovedskjemaSchema>;
 
   const methods = useForm<Skjema>({
-    resolver: zodResolver(hovedskjemaSchema),
+    resolver: zodResolver(HovedskjemaSchema),
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
@@ -207,7 +207,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
       );
     }
-    const altFravaer = finnFravaersperioder(fravaersperioder, egenmeldingsperioder);
+    const altFravaer = finnFravaersperioder(sykmeldingsperioder, egenmeldingsperioder);
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
       altFravaer,
       arbeidsgiverperioder,
@@ -219,7 +219,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     arbeidsgiverperioder,
     egenmeldingsperioder,
     foreslaattBestemmendeFravaersdag,
-    fravaersperioder,
+    sykmeldingsperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     harForespurtArbeidsgiverperiode,
     forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
@@ -236,7 +236,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (!isValidUUID(pathSlug)) {
       return;
     }
-    if (!fravaersperioder) {
+    if (!sykmeldingsperioder) {
       setLasterData(true);
       hentSkjemadata(pathSlug, erEndring)?.finally(() => {
         setLasterData(false);
@@ -247,12 +247,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
         fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
           .then((inntektSisteTreMnd) => {
-            setTidligereInntekter(inntektSisteTreMnd.data.tidligereInntekter);
-            initBruttoinntekt(
-              inntektSisteTreMnd.data.beregnetInntekt,
-              inntektSisteTreMnd.data.tidligereInntekter,
-              inntektsdato
-            );
+            const tidligereInntekt = new Map<string, number>(inntektSisteTreMnd.data.historikk);
+
+            setTidligereInntekter(tidligereInntekt);
+            initBruttoinntekt(inntektSisteTreMnd.data.gjennomsnitt, tidligereInntekt, inntektsdato);
           })
           .catch((error) => {
             logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
@@ -264,7 +262,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug, skjemastatus, inntektsdato, fravaersperioder]);
+  }, [pathSlug, skjemastatus, inntektsdato, sykmeldingsperioder]);
 
   const { data, error } = useTidligereInntektsdata(
     sykmeldt.fnr!,
@@ -273,8 +271,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     slug === 'arbeidsgiverInitiertInnsending'
   );
 
-  const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.bruttoinntekt : undefined;
-  const sbTidligereInntekt = !error ? data?.tidligereInntekter : undefined;
+  const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
+  const sbTidligereInntekt = !error && data?.historikk ? data?.historikk : undefined;
 
   return (
     <div className={styles.container}>

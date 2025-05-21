@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const apiPeriodeSchema = z
+export const ApiPeriodeSchema = z
   .object({
     fom: z
       .string({

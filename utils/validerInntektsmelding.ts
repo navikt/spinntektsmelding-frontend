@@ -17,7 +17,7 @@ import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../v
 import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 import validerPeriodeOverlapp, { PeriodeOverlappFeilkode } from '../validators/validerPeriodeOverlapp';
-import { hovedskjemaSchema } from '../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { z } from 'zod';
 import finnBestemmendeFravaersdag from './finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
@@ -61,7 +61,7 @@ type codeUnion =
   | TelefonFeilkode
   | PeriodeOverlappFeilkode;
 
-type Skjema = z.infer<typeof hovedskjemaSchema>;
+type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 export default function validerInntektsmelding(
   state: CompleteState,
@@ -84,15 +84,15 @@ export default function validerInntektsmelding(
 
   state.setSkalViseFeilmeldinger(true);
 
-  if (state.fravaersperioder) {
-    if (state.fravaersperioder.length < 1) {
+  if (state.sykmeldingsperioder) {
+    if (state.sykmeldingsperioder.length < 1) {
       errorCodes.push({
         felt: '',
         code: ErrorCodes.INGEN_FRAVAERSPERIODER
       });
     }
 
-    feilkoderFravaersperioder = validerPeriode(state.fravaersperioder);
+    feilkoderFravaersperioder = validerPeriode(state.sykmeldingsperioder);
   } else {
     errorCodes.push({
       felt: '',
@@ -100,23 +100,23 @@ export default function validerInntektsmelding(
     });
   }
 
-  const fravaersperioder = finnFravaersperioder(state.fravaersperioder, state.egenmeldingsperioder);
+  const sykmeldingsperioder = finnFravaersperioder(state.sykmeldingsperioder, state.egenmeldingsperioder);
 
   let kreverAgp = true;
-  if (state.forespurtData?.arbeidsgiverperiode.paakrevd === false) {
+  if (state.ForespurtDataSchema?.arbeidsgiverperiode.paakrevd === false) {
     kreverAgp = false;
   }
 
   const bestemmendeFravaersdag = kreverAgp
     ? parseIsoDate(
         finnBestemmendeFravaersdag(
-          fravaersperioder,
+          sykmeldingsperioder,
           state.arbeidsgiverperioder,
           state.foreslaattBestemmendeFravaersdag,
           !state.skjaeringstidspunkt
         )
       )
-    : parseIsoDate(state.forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt);
+    : parseIsoDate(state.ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt);
 
   if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && !kunInntektOgRefusjon) {
     feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');

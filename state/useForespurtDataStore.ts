@@ -1,10 +1,10 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { ForrigeInntekt, MottattForespurtData, Opplysningstype } from '../schema/forespurtData';
+import { ForrigeInntekt, MottattForespurtData, Opplysningstype } from '../schema/ForespurtDataSchema';
 import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
-import { HistoriskInntekt } from '../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../schema/HistoriskInntektSchema';
 
 export interface ForespurtDataState {
   forespurtData?: MottattForespurtData;
@@ -16,7 +16,7 @@ export interface ForespurtDataState {
     forespurtData: MottattForespurtData,
     mottattBestemmendeFravaersdag: string,
     bruttoinntekt: number | null,
-    tidligereinntekter: HistoriskInntekt[] | null
+    tidligereinntekter: HistoriskInntekt | null
   ) => void;
   hentOpplysningstyper: () => Array<Opplysningstype>;
   hentPaakrevdOpplysningstyper: () => Array<Opplysningstype>;
@@ -110,10 +110,10 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     const refusjon = get().forespurtData?.refusjon?.forslag;
 
     if (refusjon) {
-      if (refusjon.perioder.length === 1 && refusjon.perioder[0].beloep === 0) {
+      if (refusjon.perioder && refusjon.perioder.length === 1 && refusjon.perioder[0].beloep === 0) {
         return false;
       }
-      return refusjon.perioder.length > 0;
+      return Boolean(refusjon.perioder && refusjon.perioder.length > 0);
     } else {
       return false;
     }

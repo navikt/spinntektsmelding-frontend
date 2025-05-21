@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import formatCurrency from '../../utils/formatCurrency';
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -7,16 +6,16 @@ import { Skeleton } from '@navikt/ds-react';
 import ugyldigEllerNegativtTall from '../../utils/ugyldigEllerNegativtTall';
 
 interface TidligereInntektProps {
-  tidligereinntekt: Array<HistoriskInntekt>;
+  tidligereinntekt: HistoriskInntekt;
   henterData: boolean;
 }
 
-const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
-  if (a.maaned === b.maaned) {
+const sorterInntekter = (a: [string, number | null], b: [string, number | null]) => {
+  if (a[0] === b[0]) {
     return 0;
   }
 
-  if (a.maaned < b.maaned) {
+  if (a[0] < b[0]) {
     return -1;
   } else {
     return 1;
@@ -39,14 +38,8 @@ const lasterDataPlaceholder = [
 ];
 
 export default function TidligereInntekt({ tidligereinntekt, henterData }: Readonly<TidligereInntektProps>) {
-  const [sortertInntekt, setSortertInntekt] = useState<Array<HistoriskInntekt>>([]);
-  useEffect(() => {
-    const inntekter: Array<HistoriskInntekt> = [...tidligereinntekt].sort(sorterInntekter);
+  const inntekter = Array.from(tidligereinntekt).sort(sorterInntekter);
 
-    if (inntekter) {
-      setSortertInntekt(inntekter);
-    }
-  }, [tidligereinntekt]);
   return (
     <table
       className={lokalStyles.inntektsliste}
@@ -74,14 +67,14 @@ export default function TidligereInntekt({ tidligereinntekt, henterData }: Reado
             ))}
           </>
         )}
-        {!henterData && sortertInntekt.length !== 0 && (
+        {!henterData && inntekter.length !== 0 && (
           <>
-            {sortertInntekt.map((inntekt) => (
-              <tr key={inntekt.maaned}>
-                <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt.maaned)}:</td>
+            {inntekter.map((inntekt) => (
+              <tr key={inntekt[0]}>
+                <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt[0])}:</td>
                 <td className={lokalStyles.maanedsinntekt}>
-                  {ugyldigEllerNegativtTall(inntekt.inntekt) && '-'}
-                  {!ugyldigEllerNegativtTall(inntekt.inntekt) && <>{formatCurrency(inntekt.inntekt)} kr</>}
+                  {ugyldigEllerNegativtTall(inntekt[1]) && '-'}
+                  {!ugyldigEllerNegativtTall(inntekt[1]) && <>{formatCurrency(inntekt[1])} kr</>}
                 </td>
               </tr>
             ))}

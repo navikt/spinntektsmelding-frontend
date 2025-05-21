@@ -13,16 +13,16 @@ import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import Router from 'next/router';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 import isValidUUID from '../utils/isValidUUID';
-import { EndringAarsakSchema } from '../schema/apiEndringAarsakSchema';
+import { EndringAarsakSchema } from '../schema/ApiEndringAarsakSchema';
 import { z } from 'zod';
 import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
-import { HistoriskInntekt } from '../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../schema/HistoriskInntektSchema';
 
-export const sorterInntekter = (a: HistoriskInntekt, b: HistoriskInntekt) => {
-  if (a.maaned < b.maaned) {
+export const sorterInntekter = (a: [string, number | null], b: [string, number | null]) => {
+  if (a[0] < b[0]) {
     return 1;
-  } else if (a.maaned > b.maaned) {
+  } else if (a[0] > b[0]) {
     return -1;
   }
 
@@ -34,18 +34,18 @@ type ApiEndringAarsak = z.infer<typeof EndringAarsakSchema>;
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   opprinneligbruttoinntekt: Inntekt;
-  tidligereInntekt?: Array<HistoriskInntekt>;
-  opprinneligeInntekt?: Array<HistoriskInntekt>;
+  tidligereInntekt?: HistoriskInntekt;
+  opprinneligeInntekt?: HistoriskInntekt;
   sisteLonnshentedato?: Date;
   henterData: boolean;
   setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => void;
   setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
   tilbakestillMaanedsinntekt: () => void;
-  setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt>) => void;
+  setTidligereInntekter: (tidligereInntekt: HistoriskInntekt) => void;
   initBruttoinntekt: (
-    bruttoInntekt: number,
-    tidligereInntekt: Array<HistoriskInntekt> | null,
+    bruttoInntekt: number | null,
+    tidligereInntekt: HistoriskInntekt | null,
     bestemmendeFravaersdag: Date
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
@@ -118,28 +118,37 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         return state;
       })
     ),
-  setTidligereInntekter: (tidligereInntekt: Array<HistoriskInntekt> | null) =>
+  setTidligereInntekter: (tidligereInntekt: HistoriskInntekt | null) =>
     set(
       produce((state) => {
-        state.tidligereInntekt = tidligereInntekt;
+        if (tidligereInntekt) {
+          const merged = new Map([...state.tidligereInntekt, ...tidligereInntekt]);
+
+          state.tidligereInntekt = merged;
+        }
+
         return state;
       })
     ),
   initBruttoinntekt: (
-    bruttoInntekt: number,
-    tidligereInntekt: Array<HistoriskInntekt> | null,
+    bruttoInntekt: number | null,
+    tidligereInntekt: HistoriskInntekt | null,
     bestemmendeFravaersdag: Date
   ) => {
     const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
-    const sumInntekter = aktuelleInntekter.reduce((prev, cur) => {
-      prev += cur.inntekt ?? 0;
+    const arrInntekter = Array.from(aktuelleInntekter);
+    const sumInntekter = arrInntekter.reduce((prev, cur) => {
+      if (cur[1] == null) {
+        return prev;
+      }
+      prev += typeof cur[1] === 'number' ? cur[1] : 0;
       return prev;
     }, 0);
 
     const snittInntekter =
       typeof bruttoInntekt === 'number'
         ? roundTwoDecimals(bruttoInntekt)
-        : roundTwoDecimals(sumInntekter / aktuelleInntekter.length);
+        : roundTwoDecimals(sumInntekter / arrInntekter.length);
 
     set(
       produce((state) => {
@@ -167,11 +176,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         state.opprinneligeInntekt = tidligereInntekt;
 
-        if (aktuelleInntekter) {
-          state.tidligereInntekt = aktuelleInntekter.map((inntekt) => ({
-            maaned: inntekt.maaned,
-            inntekt: inntekt.inntekt
-          }));
+        if (arrInntekter) {
+          state.tidligereInntekt = new Map(arrInntekter);
         }
 
         return state;
@@ -206,23 +212,18 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       const inntektsdata = await fetchInntektsdata(environment.inntektsdataUrl, forespoerselId, bestemmendeFravaersdag);
       const oppdaterteInntekter = inntektsdata.data;
 
-      oppdaterteInntekter.tidligereInntekter.forEach((inntekt: HistoriskInntekt) => {
-        if (!tidligereInntekt.find((element) => element.maaned === inntekt.maaned)) {
-          tidligereInntekt.push(inntekt);
-        }
-      });
+      tidligereInntekt = oppdaterteInntekter.historikk;
+      snittInntekter = oppdaterteInntekter.gjennomsnitt;
       henterData = false;
-
-      snittInntekter = oppdaterteInntekter.bruttoinntekt;
     } else {
-      const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
-
-      const sumInntekter = aktuelleInntekter.reduce((prev, cur) => {
-        prev += cur.inntekt ?? 0;
+      const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
+      const arrInntekter = Array.from(aktuelleInntekter);
+      const sumInntekter = arrInntekter.reduce((prev, cur) => {
+        prev += (cur[1] as number) ?? 0;
         return prev;
       }, 0);
 
-      snittInntekter = sumInntekter / aktuelleInntekter.length;
+      snittInntekter = sumInntekter / arrInntekter.length;
     }
 
     set(
@@ -240,7 +241,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         state.opprinneligeInntekt = tidligereInntekt;
 
         if (tidligereInntekt) {
-          state.tidligereInntekt = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
+          state.tidligereInntekt = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
         }
 
         return state;
@@ -282,18 +283,24 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
 export default useBruttoinntektStore;
 
-export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt[] | null, bestemmendeFravaersdag: Date) {
+export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt | null, bestemmendeFravaersdag: Date) {
   const bestMnd = `00${bestemmendeFravaersdag.getMonth() + 1}`.slice(-2);
   const bestemmendeMaaned = `${bestemmendeFravaersdag.getFullYear()}-${bestMnd}`;
   const sisteMnd = `00${subMonths(bestemmendeFravaersdag, 3).getMonth() + 1}`.slice(-2);
   const sisteMaaned = `${subMonths(bestemmendeFravaersdag, 3).getFullYear()}-${sisteMnd}`;
-  if (!tidligereInntekt) return [];
-  const aktuelleInntekter = tidligereInntekt
-    .filter((inntekt) => inntekt.maaned < bestemmendeMaaned && inntekt.maaned >= sisteMaaned)
-    .sort(sorterInntekter)
-    .slice(0, 3);
+  if (!tidligereInntekt) return new Map<string, number | null>([]);
 
-  return aktuelleInntekter || [];
+  const arrayTidligereInntekt: [string, number | null][] = Object.entries(tidligereInntekt).map(
+    ([key, value]) => [key, value] as [string, number | null]
+  );
+
+  const aktuelleInntekter = new Map<string, number | null>(
+    arrayTidligereInntekt
+      .filter(([key, value]) => key < bestemmendeMaaned && key >= sisteMaaned)
+      .sort(sorterInntekter)
+      .slice(0, 3)
+  );
+  return aktuelleInntekter;
 }
 
 function normaliserEndringAarsak(endringAarsak: EndringAarsak | ApiEndringAarsak): EndringAarsak {
@@ -325,9 +332,9 @@ function normaliserEndringAarsak(endringAarsak: EndringAarsak | ApiEndringAarsak
         endringAarsak.permitteringer =
           typeof endringAarsak.permitteringer[0].fom !== 'string'
             ? endringAarsak.permitteringer
-            : endringAarsak.permitteringer.map((permitering) => ({
-                fom: parseIsoDate(permitering.fom)!,
-                tom: parseIsoDate(permitering.tom)!
+            : endringAarsak.permitteringer.map((permittering) => ({
+                fom: parseIsoDate(permittering.fom)!,
+                tom: parseIsoDate(permittering.tom)!
               }));
         break;
       }

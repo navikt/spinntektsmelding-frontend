@@ -25,7 +25,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     }).as('innsendingInntektsmelding');
 
     cy.wait('@hent-forespoersel');
-
+    cy.wait(1000);
     cy.findAllByRole('button', {
       name: 'Endre'
     })

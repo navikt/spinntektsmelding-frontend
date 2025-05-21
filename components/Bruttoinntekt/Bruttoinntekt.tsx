@@ -1,6 +1,6 @@
 import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
 import { useEffect, useState } from 'react';
-import { HistoriskInntekt } from '../../schema/historiskInntektSchema';
+import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
@@ -18,7 +18,7 @@ import { useFormContext } from 'react-hook-form';
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
   sbBruttoinntekt?: number;
-  sbTidligereInntekt?: Array<HistoriskInntekt>;
+  sbTidligereInntekt?: HistoriskInntekt;
   erSelvbestemt?: boolean;
 }
 
@@ -30,7 +30,7 @@ export default function Bruttoinntekt({
 }: Readonly<BruttoinntektProps>) {
   const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-  const tidligereinntekt: Array<HistoriskInntekt> | undefined = useBoundStore((state) => state.tidligereInntekt);
+  const tidligereinntekt: HistoriskInntekt | undefined = useBoundStore((state) => state.tidligereInntekt);
   const [setBareNyMaanedsinntekt] = useBoundStore((state) => [state.setBareNyMaanedsinntekt]);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
@@ -41,7 +41,12 @@ export default function Bruttoinntekt({
 
   const { watch, setValue } = useFormContext();
   const feilHentingAvInntektsdata = tidligereinntekt === null;
-  const clickTilbakestillMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
+
+  const arrayTidligereInntekt: [string, number | null][] = sbTidligereInntekt
+    ? Object.entries(sbTidligereInntekt).map(([key, value]) => [key, value] as [string, number | null])
+    : [];
+
+  const handleResetMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     logEvent('knapp klikket', {
@@ -56,7 +61,7 @@ export default function Bruttoinntekt({
     tilbakestillMaanedsinntekt();
   };
 
-  const setEndreMaanedsinntektHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleStartEditingMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     logEvent('knapp klikket', {
@@ -80,9 +85,9 @@ export default function Bruttoinntekt({
   const gjennomsnittligInntekt = erSelvbestemt
     ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
     : bruttoinntekt?.bruttoInntekt;
-  const sisteTreMndTidligereinntekt = erSelvbestemt ? sbTidligereInntekt : tidligereinntekt;
+  const sisteTreMndTidligereinntekt = erSelvbestemt ? new Map(arrayTidligereInntekt) : tidligereinntekt;
 
-  const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.length > 0;
+  const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.size > 0;
 
   const erBlanktSkjema = false;
 
@@ -100,7 +105,7 @@ export default function Bruttoinntekt({
         Beregnet månedslønn skal som hovedregel være et gjennomsnitt av den inntekten som er rapportert til a-ordningen
         i de tre siste kalendermånedene før sykefraværet startet.
       </BodyLong>
-      {feilHentingAvInntektsdata && feilHentingAvInntektsdata.length > 0 && (
+      {feilHentingAvInntektsdata && (
         <Alert variant='info'>
           Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedslønn selv eller
           forsøke igjen senere.
@@ -127,7 +132,7 @@ export default function Bruttoinntekt({
             </TextLabel>
             <ButtonEndre
               data-cy='endre-beloep'
-              onClick={setEndreMaanedsinntektHandler}
+              onClick={handleStartEditingMaanedsinntekt}
               className={lokalStyles.endrePadding}
             />
           </>
@@ -138,7 +143,7 @@ export default function Bruttoinntekt({
             visFeilmeldingTekst={visFeilmeldingTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}
-            clickTilbakestillMaanedsinntekt={clickTilbakestillMaanedsinntekt}
+            handleResetMaanedsinntekt={handleResetMaanedsinntekt}
             kanIkkeTilbakestilles={erBlanktSkjema}
           />
         )}

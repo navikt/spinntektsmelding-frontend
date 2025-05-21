@@ -3,10 +3,10 @@ import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
 import sorterFomStigende from './sorterFomStigende';
 import sorterFomSynkende from './sorterFomSynkende';
-import { TDateISODate } from '../schema/forespurtData';
-import { tidPeriode } from '../schema/tidPeriode';
+import { TDateISODate } from '../schema/ForespurtDataSchema';
+import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
 
-export function overlappendePeriode<T extends tidPeriode>(ene: T, andre: T): T | null {
+export function overlappendePeriode<T extends TidPeriodeSchema>(ene: T, andre: T): T | null {
   if (!ene || !andre) return null;
   if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
   if (ene.tom < andre.fom || ene.fom > andre.tom) {
@@ -22,7 +22,7 @@ export function overlappendePeriode<T extends tidPeriode>(ene: T, andre: T): T |
   return obj;
 }
 
-export function tilstoetendePeriode<T extends tidPeriode>(ene: T, andre: T) {
+export function tilstoetendePeriode<T extends TidPeriodeSchema>(ene: T, andre: T) {
   if (!ene || !andre) return null;
   if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
@@ -43,7 +43,7 @@ export function tilstoetendePeriode<T extends tidPeriode>(ene: T, andre: T) {
   return null;
 }
 
-export function tilstoetendePeriodeManuellJustering<T extends tidPeriode>(ene: T, andre: T): T | null {
+export function tilstoetendePeriodeManuellJustering<T extends TidPeriodeSchema>(ene: T, andre: T): T | null {
   if (!ene || !andre) return null;
   if (ene.tom === andre.tom && ene.fom === andre.fom) {
     return ene;
@@ -70,21 +70,21 @@ export function tilstoetendePeriodeManuellJustering<T extends tidPeriode>(ene: T
  * Perioder som starter etter arbeidsgiverperioden (16 første dagene) vil ikke bli tatt med i beregningen,
  * med mindre de ikke stater etter dag 17
  */
-function finnBestemmendeFravaersdag<T extends tidPeriode>(
+function finnBestemmendeFravaersdag<T extends TidPeriodeSchema>(
   fravaerPerioder?: Array<T>,
   arbeidsgiverperiode?: Array<T>,
   forespurtBestemmendeFraværsdag?: string | Date,
   arbeidsgiverKanFlytteBFD?: boolean,
   mottattBestemmendeFravaersdag?: TDateISODate,
-  mottattEksternBestemmendeFravaersdag?: TDateISODate,
+  mottattEksternInntektsdato?: TDateISODate,
   laastTilMottattPeriode?: boolean
 ): string | undefined {
   if (laastTilMottattPeriode && mottattBestemmendeFravaersdag) {
-    if (!mottattEksternBestemmendeFravaersdag) return mottattBestemmendeFravaersdag;
-    if (isBefore(parseIsoDate(mottattBestemmendeFravaersdag)!, parseIsoDate(mottattEksternBestemmendeFravaersdag)!)) {
+    if (!mottattEksternInntektsdato) return mottattBestemmendeFravaersdag;
+    if (isBefore(parseIsoDate(mottattBestemmendeFravaersdag)!, parseIsoDate(mottattEksternInntektsdato)!)) {
       return mottattBestemmendeFravaersdag;
     } else {
-      return mottattEksternBestemmendeFravaersdag;
+      return mottattEksternInntektsdato;
     }
   }
 
@@ -167,14 +167,14 @@ function finnBestemmendeFravaersdag<T extends tidPeriode>(
 
 export default finnBestemmendeFravaersdag;
 
-export function finnSorterteUnikePerioder<T extends tidPeriode>(fravaerPerioder: Array<T>): Array<T> {
+export function finnSorterteUnikePerioder<T extends TidPeriodeSchema>(fravaerPerioder: Array<T>): Array<T> {
   const sorterteSykmeldingPerioder = fravaerPerioder.toSorted(sorterFomStigende);
 
   return sorterteSykmeldingPerioder;
 }
 
-export function finnSammenhengendePeriode<T extends tidPeriode>(fravaersperioder: Array<T>): Array<T> {
-  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(fravaersperioder);
+export function finnSammenhengendePeriode<T extends TidPeriodeSchema>(sykmeldingsperioder: Array<T>): Array<T> {
+  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(sykmeldingsperioder);
   mergedSykmeldingsperioder.forEach((periode) => {
     const aktivPeriode = tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1];
     const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
@@ -189,8 +189,8 @@ export function finnSammenhengendePeriode<T extends tidPeriode>(fravaersperioder
   return tilstoetendeSykmeldingsperioder;
 }
 
-export function joinPerioderMedOverlapp<T extends tidPeriode>(fravaersperioder: T[]) {
-  const sorterteSykmeldingsperioder = finnSorterteUnikePerioder(fravaersperioder);
+export function joinPerioderMedOverlapp<T extends TidPeriodeSchema>(sykmeldingsperioder: T[]) {
+  const sorterteSykmeldingsperioder = finnSorterteUnikePerioder(sykmeldingsperioder);
 
   const mergedSykmeldingsperioder = [sorterteSykmeldingsperioder[0]];
 

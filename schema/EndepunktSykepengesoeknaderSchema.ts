@@ -13,7 +13,7 @@ const soeknadStatus = z.enum([
 
 const ISO_DATE_REGEX = /\d{4}-[01]\d-[0-3]\d/;
 
-export const endepunktSykepengesoeknaderSchema = z
+export const EndepunktSykepengesoeknaderSchema = z
   .array(
     z.object({
       sykepengesoknadUuid: z.string().uuid(),

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, Mock } from 'vitest';
 import { renderHook, act, cleanup } from '@testing-library/react';
 import { z } from 'zod';
-import { hovedskjemaSchema } from '../../schema/hovedskjemaSchema';
+import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsgiverInitiertSkjema';
 import logEvent from '../../utils/logEvent';
 import validerInntektsmelding from '../../utils/validerInntektsmelding';
@@ -17,10 +17,10 @@ vi.mock('../../utils/logEvent', { spy: true });
 vi.mock('../../utils/isValidUUID', () => ({ default: vi.fn().mockReturnValue(true) }));
 vi.mock('../../utils/validerInntektsmelding', { spy: true });
 vi.mock('./useErrorResponse');
-vi.mock('../schema/fullInnsendingSchema', () => ({
+vi.mock('../schema/FullInnsendingSchema', () => ({
   default: { safeParse: vi.fn().mockReturnValue({ success: true }) }
 }));
-vi.mock('../schema/responseBackendError', () => ({
+vi.mock('../schema/ResponseBackendErrorSchema', () => ({
   default: { safeParse: vi.fn().mockReturnValue({ success: true }) }
 }));
 vi.mock('../../state/useFyllAapenInnsending');
@@ -28,7 +28,7 @@ vi.mock('../../state/useFyllAapenInnsending');
 describe('useSendInnArbeidsgiverInitiertSkjema', () => {
   const innsendingFeiletIngenTilgang = vi.fn();
   const amplitudeComponent = 'testComponent';
-  const defaultFormData = {} as z.infer<typeof hovedskjemaSchema>;
+  const defaultFormData = {} as z.infer<typeof HovedskjemaSchema>;
   const pathSlug = 'arbeidsgiverInitiertInnsending';
 
   // Setup default mock store state
@@ -54,7 +54,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
         vedtaksperiodeId: '1234567890',
         skjaeringstidspunkt: new Date('2023-01-01'),
         arbeidsgiverperioder: [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-10') }],
-        fravaersperioder: [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-10') }]
+        sykmeldingsperioder: [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-10') }]
       })
     );
   };
