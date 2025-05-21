@@ -3,7 +3,7 @@ import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import { PersonnummerSchema } from './PersonnummerSchema';
 import { OrganisasjonsnummerSchema } from './OrganisasjonsnummerSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
-import { EndringAarsakSchema } from './ApiEndringAarsakSchema';
+import { ApiEndringAarsakSchema } from './ApiEndringAarsakSchema';
 import { RefusjonEndringSchema } from './ApiRefusjonEndringSchema';
 import { ApiNaturalytelserSchema } from './ApiNaturalytelserSchema';
 import { SykmeldtSchema } from './SykmeldtSchema';
@@ -34,10 +34,10 @@ export const KvitteringNavNoSchema = z.object({
       .nullable(),
     inntekt: z.object({
       beloep: z.number(),
-      endringAarsak: EndringAarsakSchema,
+      endringAarsak: ApiEndringAarsakSchema,
       inntektsdato: z.string().date(),
       naturalytelser: ApiNaturalytelserSchema,
-      endringAarsaker: z.array(EndringAarsakSchema)
+      endringAarsaker: z.array(ApiEndringAarsakSchema)
     }),
     refusjon: z
       .object({
