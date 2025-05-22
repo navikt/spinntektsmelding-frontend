@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe('Delvis skjema - Utfylling og innsending av skjema', () => {
-  beforeEach(() => {
+  it('Changes and submit', () => {
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
       statusCode: 404,
       body: {
@@ -19,9 +19,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('innsendingInntektsmelding');
-  });
-
-  it('Changes and submit', () => {
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@hent-forespoersel');
