@@ -11,7 +11,6 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   });
 
   it('Changes and submit', () => {
-    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
     cy.intercept('/im-dialog/api/hent-forespoersel', {
       fixture: '../../mockdata/trenger-delvis-enkel-variant.json'
     }).as('hent-forespoersel');
@@ -21,6 +20,8 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         name: 'Nothing'
       }
     }).as('innsendingInntektsmelding');
+
+    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@hent-forespoersel');
     // cy.wait(1000);
