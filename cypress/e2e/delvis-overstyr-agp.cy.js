@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 
-const { endianness } = require('os');
-
 describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   beforeEach(() => {
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
@@ -28,9 +26,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // cy.wait(1000);
     cy.findAllByRole('button', {
       name: 'Endre'
-    })
-      .eq(0)
-      .as('endreKnapp');
+    }).as('endreKnapper');
+
+    cy.get('@endreKnapper').eq(0).as('endreKnapp');
 
     cy.get('@endreKnapp').click();
 
