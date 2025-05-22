@@ -14,7 +14,7 @@ import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSc
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { NaturalytelseEnumSchema } from '../schema/NaturalytelseEnumSchema';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
-import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
+import { TidPeriode } from '../schema/TidPeriodeSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
 
 export type SendtPeriode = z.infer<typeof ApiPeriodeSchema>;
@@ -240,7 +240,7 @@ export function konverterPerioderFraMottattTilInterntFormat(
     : undefined;
 }
 
-function finnInnsendbareArbeidsgiverperioder<T extends TidPeriodeSchema>(
+function finnInnsendbareArbeidsgiverperioder<T extends TidPeriode>(
   arbeidsgiverperioder: T[] | undefined,
   harForespurtArbeidsgiverperiode: boolean
 ): SendtPeriode[] | [] {

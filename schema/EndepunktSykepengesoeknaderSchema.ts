@@ -11,7 +11,7 @@ const soeknadStatus = z.enum([
   'SLETTET'
 ]);
 
-const ISO_DATE_REGEX = /\d{4}-[01]\d-[0-3]\d/;
+export const ISO_DATE_REGEX = /\d{4}-[01]\d-[0-3]\d/;
 
 export const EndepunktSykepengesoeknaderSchema = z
   .array(
