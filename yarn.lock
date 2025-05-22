@@ -2338,7 +2338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/cypress@npm:10.0.3":
+"@testing-library/cypress@npm:^10.0.3":
   version: 10.0.3
   resolution: "@testing-library/cypress@npm:10.0.3"
   dependencies:
@@ -10063,7 +10063,7 @@ __metadata:
     "@navikt/next-logger": "npm:3.0.3"
     "@navikt/oasis": "npm:^3.8.0"
     "@next/bundle-analyzer": "npm:15.3.2"
-    "@testing-library/cypress": "npm:10.0.3"
+    "@testing-library/cypress": "npm:^10.0.3"
     "@testing-library/dom": "npm:10.4.0"
     "@testing-library/jest-dom": "npm:6.6.3"
     "@testing-library/react": "npm:16.3.0"

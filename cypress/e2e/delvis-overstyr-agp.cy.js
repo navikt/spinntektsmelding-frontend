@@ -27,7 +27,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       name: 'Endre'
     }).as('endreKnapper');
 
-    cy.get('@endreKnapper').eq(0).as('endreKnapp');
+    cy.get('@endreKnapper').first().as('endreKnapp');
 
     cy.get('@endreKnapp').click();
 
