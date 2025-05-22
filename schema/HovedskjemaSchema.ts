@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { EndringAarsakSchema } from './EndringAarsakSchema';
-import { isTlfNumber } from '../utils/isTlfNumber';
 import NaturalytelserSchema from './NaturalytelserSchema';
+import { TelefonNummerSchema } from './TelefonNummerSchema';
 
 export const HovedskjemaSchema = z.object({
   bekreft_opplysninger: z.boolean().refine((value) => value === true, {
@@ -54,10 +54,5 @@ export const HovedskjemaSchema = z.object({
       naturalytelser: z.array(NaturalytelserSchema).optional()
     })
   ),
-  avsenderTlf: z
-    .string({
-      invalid_type_error: 'Dette er ikke et telefonnummer'
-    })
-    .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
-    .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' })
+  avsenderTlf: TelefonNummerSchema
 });

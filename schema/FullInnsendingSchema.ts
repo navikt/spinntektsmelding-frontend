@@ -1,16 +1,10 @@
 import { z } from 'zod';
-import { isTlfNumber } from '../utils/isTlfNumber';
 import { InnsendingSchema, superRefineInnsending } from './InnsendingSchema';
+import { TelefonNummerSchema } from './TelefonNummerSchema';
 
 const FullInnsendingSchema = InnsendingSchema.extend({
   forespoerselId: z.string().uuid(),
-  avsenderTlf: z
-    .string({
-      required_error: 'Vennligst fyll inn telefonnummer',
-      invalid_type_error: 'Dette er ikke et telefonnummer'
-    })
-    .min(8, { message: 'Telefonnummeret er for kort, det må være 8 siffer' })
-    .refine((val) => isTlfNumber(val), { message: 'Telefonnummeret er ikke gyldig' })
+  avsenderTlf: TelefonNummerSchema
 }).superRefine(superRefineInnsending);
 
 export default FullInnsendingSchema;

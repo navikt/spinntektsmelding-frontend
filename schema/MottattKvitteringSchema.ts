@@ -62,7 +62,7 @@ export const MottattKvitteringSchema = z.object({
       orgnrUnderenhet: OrganisasjonsnummerSchema,
       identitetsnummer: PersonnummerSchema,
       fulltNavn: z.string().min(1),
-      telefonnummer: z.string().min(1),
+      telefonnummer: TelefonNummerSchema,
       innsenderNavn: z.string().min(1),
       virksomhetNavn: z.string().min(1),
       egenmeldingsperioder: z.array(ApiPeriodeSchema),
