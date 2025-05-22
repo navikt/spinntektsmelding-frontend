@@ -10,9 +10,9 @@ import validerInntektsmelding from './validerInntektsmelding';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { z } from 'zod';
 import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
-import { Opplysningstype } from '../state/useForespurtDataStore';
 import forespoerselType from '../config/forespoerselType';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import { Opplysningstype } from '../schema/ForespurtDataSchema';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
