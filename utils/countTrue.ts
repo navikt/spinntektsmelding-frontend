@@ -10,7 +10,7 @@ export function countTrue(data: unknown): number {
       }
     } else if (value && typeof value === 'object') {
       for (const key in value) {
-        if (Object.prototype.hasOwnProperty.call(value, key)) {
+        if (Object.hasOwn(value, key)) {
           walk((value as Record<string, unknown>)[key]);
         }
       }
