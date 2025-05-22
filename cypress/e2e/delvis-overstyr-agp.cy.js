@@ -25,12 +25,14 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     }).as('innsendingInntektsmelding');
 
     cy.wait('@hent-forespoersel');
-    cy.wait(1000);
+    // cy.wait(1000);
     cy.findAllByRole('button', {
       name: 'Endre'
-    }).as('endreKnapp');
+    })
+      .eq(0)
+      .as('endreKnapp');
 
-    cy.get('@endreKnapp').eq(0).click();
+    cy.get('@endreKnapp').click();
 
     cy.findByLabelText('Fra').type('01.02.2023');
     cy.findByLabelText('Til').type('16.02.2023');
@@ -39,7 +41,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       name: 'Endre'
     })
       .eq(0)
-      .click();
+      .as('endreKnapp2');
+
+    cy.get('@endreKnapp2').click();
 
     cy.findByLabelText('Månedslønn 05.12.2024')
       .invoke('val')
