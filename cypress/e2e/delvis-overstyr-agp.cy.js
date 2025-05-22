@@ -25,11 +25,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.wait(5000);
     cy.findAllByRole('button', {
       name: 'Endre'
-    }).as('endreKnapper');
-
-    cy.get('@endreKnapper').first().as('endreKnapp');
-
-    cy.get('@endreKnapp').click();
+    })
+      .first()
+      .click();
 
     cy.findByLabelText('Fra').type('01.02.2023');
     cy.findByLabelText('Til').type('16.02.2023');
