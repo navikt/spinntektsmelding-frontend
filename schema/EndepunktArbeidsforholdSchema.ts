@@ -1,6 +1,6 @@
-const ISO_DATE_REGEX = /\d{4}-[01]\d-[0-3]\d/;
 import { z } from 'zod';
 import { OrganisasjonsnummerSchema } from './OrganisasjonsnummerSchema';
+import { ISO_DATE_REGEX } from './EndepunktSykepengesoeknaderSchema';
 
 export const EndepunktArbeidsforholdSchema = z.object({
   fulltNavn: z.string(),

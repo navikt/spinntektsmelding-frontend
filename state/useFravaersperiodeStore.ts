@@ -10,11 +10,10 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
-import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
 import { z } from 'zod';
+import { TidPeriode } from '../schema/TidPeriodeSchema';
 
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
-type TidPeriode = z.infer<typeof TidPeriodeSchema>;
 
 export interface FravaersperiodeState {
   sykmeldingsperioder?: Array<Periode>;

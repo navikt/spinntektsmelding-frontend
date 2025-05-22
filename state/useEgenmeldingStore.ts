@@ -11,7 +11,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
 import sorterFomStigende from '../utils/sorterFomStigende';
-import { TidPeriodeSchema } from '../schema/TidPeriodeSchema';
+import { TidPeriode } from '../schema/TidPeriodeSchema';
 
 export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;
@@ -196,7 +196,7 @@ function updateDateValue(egenmeldingsperioder?: Periode[], periodeId?: string, d
   return oppdatertEgenmeldingPerioder;
 }
 
-export function finnFravaersperioder<T extends TidPeriodeSchema>(
+export function finnFravaersperioder<T extends TidPeriode>(
   sykmeldingsperioder?: Array<T>,
   egenmeldingsperioder?: Array<T>
 ) {

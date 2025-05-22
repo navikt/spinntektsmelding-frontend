@@ -3,6 +3,7 @@ import { DateISODateSchema, MottattForespurtDataSchema, MottattPeriodeSchema } f
 import { ForespurtHistoriskInntektSchema } from './ForespurtHistoriskInntektSchema';
 import { SykmeldtSchema } from './SykmeldtSchema';
 import { AvsenderSchema } from './AvsenderSchema';
+import { TelefonNummerSchema } from './TelefonNummerSchema';
 
 const MottattSykmeldtSchema = SykmeldtSchema.extend({
   navn: z.string().nullable()
@@ -23,7 +24,7 @@ export const MottattDataSchema = z.object({
   inntekt: ForespurtHistoriskInntektSchema.nullable(),
   forespurtData: MottattForespurtDataSchema.optional(),
   erBesvart: z.boolean(),
-  telefonnummer: z.string().optional()
+  telefonnummer: TelefonNummerSchema.optional()
 });
 
 export type MottattData = z.infer<typeof MottattDataSchema>;
