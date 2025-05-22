@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+import trengerDelvis from '../../mockdata/trenger-delvis-enkel-variant.json';
+
 describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   it('Changes and submit', () => {
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
@@ -9,9 +11,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       }
     }).as('kvittering');
 
-    cy.intercept('/im-dialog/api/hent-forespoersel', {
-      fixture: '../../mockdata/trenger-delvis-enkel-variant.json'
-    }).as('hent-forespoersel');
+    cy.intercept('/im-dialog/api/hent-forespoersel', trengerDelvis).as('hent-forespoersel');
 
     cy.intercept('/im-dialog/api/innsendingInntektsmelding', {
       statusCode: 201,
