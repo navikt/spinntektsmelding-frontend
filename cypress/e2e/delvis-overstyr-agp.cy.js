@@ -25,7 +25,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@hent-forespoersel');
-    // cy.wait(1000);
+    cy.wait(5000);
     cy.findAllByRole('button', {
       name: 'Endre'
     }).as('endreKnapper');
