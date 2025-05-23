@@ -118,7 +118,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await page.getByRole('button', { name: 'Send' }).click();
     const responsData = await req2;
 
-    expect(JSON.parse(responsData.postData()!)).toEqual({
+    expect(JSON.parse(responsData.request().postData()!)).toEqual({
       forespoerselId: '12345678-3456-5678-2457-123456789012',
       agp: null,
       inntekt: {
