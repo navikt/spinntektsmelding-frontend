@@ -1,0 +1,38 @@
+{
+  "sykmeldt": { "fnr": "03417703232", "navn": "USJENERT JOURNAL" },
+  "avsender": {
+    "orgnr": "810007842",
+    "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "navn": "BERØMT FLYTTELASS"
+  },
+  "egenmeldingsperioder": [],
+  "sykmeldingsperioder": [{ "fom": "2025-02-01", "tom": "2025-02-28" }],
+  "bestemmendeFravaersdag": "2025-02-01",
+  "eksternInntektsdato": null,
+  "inntekt": {
+    "gjennomsnitt": 40000.0,
+    "historikk": { "2024-11": 40000.0, "2024-12": 40000.0, "2025-01": 40000.0 }
+  },
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": true },
+    "inntekt": { "paakrevd": true, "forslag": null },
+    "refusjon": {
+      "paakrevd": true,
+      "forslag": { "perioder": [], "opphoersdato": null }
+    }
+  },
+  "erBesvart": false,
+  "navn": "USJENERT JOURNAL",
+  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+  "innsenderNavn": "BERØMT FLYTTELASS",
+  "identitetsnummer": "03417703232",
+  "orgnrUnderenhet": "810007842",
+  "fravaersperioder": [{ "fom": "2025-02-01", "tom": "2025-02-28" }],
+  "eksternBestemmendeFravaersdag": null,
+  "bruttoinntekt": 40000.0,
+  "tidligereinntekter": [
+    { "maaned": "2024-11", "inntekt": 40000.0 },
+    { "maaned": "2024-12", "inntekt": 40000.0 },
+    { "maaned": "2025-01", "inntekt": 40000.0 }
+  ]
+}
