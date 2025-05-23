@@ -38,7 +38,7 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     cy.wait(1000);
 
-    cy.findAllByRole('button', { name: 'Endre' }).first().click();
+    cy.findAllByRole('button', { name: /Endre/ }).first().click();
 
     cy.wait(1000);
 

@@ -45,7 +45,7 @@ describe('Utfylling av skjema - ingen arbeidsgiverperiode', () => {
 
     cy.contains('label', 'Velg begrunnelse').should('exist');
 
-    cy.findByRole('option', { name: /Velg begrunnelse/ }).should('exist');
+    cy.findAllByRole('option', { name: /Velg begrunnelse/ }).should('exist');
 
     cy.findByRole('group', { name: /Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden/ }).within(() => {
       cy.findByRole('radio', { name: 'Ja' }).should('be.disabled');

@@ -1,35 +1,32 @@
 /// <reference types="cypress" />
 
-const { endianness } = require('os');
+import trengerDelvis from '../../mockdata/trenger-delvis-enkel-variant.json';
 
 describe('Delvis skjema - Utfylling og innsending av skjema', () => {
-  beforeEach(() => {
+  it('Changes and submit', () => {
     cy.intercept('/im-dialog/api/hentKvittering/12345678-3456-5678-2457-123456789012', {
       statusCode: 404,
       body: {
         name: 'Nothing'
       }
     }).as('kvittering');
-  });
 
-  it('Changes and submit', () => {
-    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    cy.intercept('/im-dialog/api/hent-forespoersel', {
-      fixture: '../../mockdata/trenger-delvis-enkel-variant.json'
-    }).as('hent-forespoersel');
+    cy.intercept('/im-dialog/api/hent-forespoersel', trengerDelvis).as('hent-forespoersel');
+
     cy.intercept('/im-dialog/api/innsendingInntektsmelding', {
       statusCode: 201,
       body: {
         name: 'Nothing'
       }
     }).as('innsendingInntektsmelding');
+    cy.visit('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
     cy.wait('@hent-forespoersel');
-    cy.wait(1000);
+    cy.wait(5000);
     cy.findAllByRole('button', {
       name: 'Endre'
     })
-      .eq(0)
+      .first()
       .click();
 
     cy.findByLabelText('Fra').type('01.02.2023');
@@ -39,7 +36,9 @@ describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       name: 'Endre'
     })
       .eq(0)
-      .click();
+      .as('endreKnapp2');
+
+    cy.get('@endreKnapp2').click();
 
     cy.findByLabelText('Månedslønn 05.12.2024')
       .invoke('val')
