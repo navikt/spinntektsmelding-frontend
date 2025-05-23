@@ -4,7 +4,7 @@ import apiData from '../mockdata/trenger-delvis-enkel-variant.json';
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
     // intercept hentKvittering → 404
-    await page.route('**/im-dialog/api/hentKvittering/**', (route) =>
+    await page.route('*/**/api/hentKvittering/**', (route) =>
       route.fulfill({
         status: 404,
         body: JSON.stringify({ name: 'Nothing' }),
@@ -17,11 +17,11 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
   test('No changes and submit', async ({ page }) => {
     // intercept forespoersel → fixture
-    await page.route('**/im-dialog/api/hent-forespoersel', (route) =>
+    await page.route('*/**/api/hent-forespoersel', (route) =>
       route.fulfill({ status: 200, body: JSON.stringify(apiData), headers: { 'Content-Type': 'application/json' } })
     );
     // intercept innsendingInntektsmelding → success
-    await page.route('**/im-dialog/api/innsendingInntektsmelding', (route) =>
+    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         body: JSON.stringify({ name: 'Nothing' }),
@@ -43,10 +43,10 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // confirm
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
     // submit
+    const pageLoad = page.waitForRequest('**/innsendingInntektsmelding');
     await page.getByRole('button', { name: 'Send' }).click();
-
+    const req = await pageLoad;
     // assert request body
-    const req = await page.waitForRequest('**/innsendingInntektsmelding');
     expect(JSON.parse(req.postData()!)).toEqual({
       forespoerselId: '12345678-3456-5678-2457-123456789012',
       agp: null,
@@ -62,15 +62,16 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     // verify navigation and UI
     await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
-    await expect(page.getByText('Kvittering - innsendt inntektsmelding')).toBeVisible();
-    await expect(page.getByText('05.12.2024')).toBeVisible();
+    await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
+    // await expect(page.getByText('05.12.2024')).toBeVisible();
+    await expect(page.locator('text="05.12.2024"')).toBeVisible();
   });
 
   test('Changes and submit', async ({ page }) => {
-    await page.route('**/im-dialog/api/hent-forespoersel', (route) =>
+    await page.route('*/**/api/hent-forespoersel', (route) =>
       route.fulfill({ status: 200, body: JSON.stringify(apiData), headers: { 'Content-Type': 'application/json' } })
     );
-    await page.route('**/im-dialog/api/innsendingInntektsmelding', (route) =>
+    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         body: JSON.stringify({ name: 'Nothing' }),
@@ -100,7 +101,10 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await page.getByRole('button', { name: 'Send' }).click();
 
     // validation error for missing årsak
-    await expect(page.getByText('Vennligst angi årsak til endringen.')).toBeVisible();
+    // await expect(page.getByText('Vennligst angi årsak til endringen.')).toBeVisible();
+    const elements = page.locator('text="Vennligst angi årsak til endringen."');
+    await expect(elements).toHaveCount(3);
+    // await expect(page.locator('text="Vennligst angi årsak til endringen."')).toBe(3);
     await page.getByLabel('Velg endringsårsak').selectOption('Bonus');
 
     // set refusjon
@@ -110,10 +114,11 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       .check();
     await page.getByLabel('Endret beløp/måned').fill('45000');
     await page.getByLabel('Dato for endring').fill('30.09.2025');
+    const req2 = page.waitForResponse('*/**/api/innsendingInntektsmelding');
     await page.getByRole('button', { name: 'Send' }).click();
+    const responsData = await req2;
 
-    const req2 = await page.waitForRequest('**/innsendingInntektsmelding');
-    expect(JSON.parse(req2.postData()!)).toEqual({
+    expect(JSON.parse(responsData.postData()!)).toEqual({
       forespoerselId: '12345678-3456-5678-2457-123456789012',
       agp: null,
       inntekt: {
@@ -131,7 +136,9 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     });
 
     await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
-    await expect(page.getByText('Bonus')).toBeVisible();
-    await expect(page.getByText('45 000,00')).toBeVisible();
+    await expect(page.locator('text="Bonus"')).toBeVisible();
+    await expect(page.locator('text="45 000,00"')).toBeVisible();
+    // await expect(page.getByText('Bonus')).toBeVisible();
+    // await expect(page.getByText('45 000,00')).toBeVisible();
   });
 });

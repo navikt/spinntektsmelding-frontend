@@ -4,7 +4,7 @@ import apiData from '../mockdata/trenger-forhaandsutfyll.json';
 test.describe('Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
     // intercept hentKvittering → 404
-    await page.route('**/im-dialog/api/hentKvittering/**', (route) =>
+    await page.route('*/**/api/hentKvittering/**', (route) =>
       route.fulfill({
         status: 404,
         contentType: 'application/json',
@@ -12,14 +12,14 @@ test.describe('Utfylling og innsending av skjema', () => {
       })
     );
     // inject a11y checks
-    await page.addInitScript(() => {
-      // require('@axe-core/playwright').injectAxe();
-    });
+    // await page.addInitScript(() => {
+    //   // require('@axe-core/playwright').injectAxe();
+    // });
   });
 
   test('should display information on the person and the submitter', async ({ page }) => {
     // intercept forespoersel
-    await page.route('**/im-dialog/api/hent-forespoersel', (route) =>
+    await page.route('*/**/api/hent-forespoersel', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -27,11 +27,11 @@ test.describe('Utfylling og innsending av skjema', () => {
       })
     );
     // intercept inntektsdata → 404
-    await page.route('**/im-dialog/api/inntektsdata', (route) =>
+    await page.route('*/**/api/inntektsdata', (route) =>
       route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ name: 'Nothing' }) })
     );
     // intercept innsending
-    await page.route('**/im-dialog/api/innsendingInntektsmelding', (route) =>
+    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
         contentType: 'application/json',
@@ -42,7 +42,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     await page.route('**/collect', (route) => route.fulfill({ status: 202, contentType: 'text/plain', body: 'OK' }));
 
     await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    await page.waitForResponse('**/im-dialog/api/hent-forespoersel');
+    // await page.waitForResponse('*/**/api/hent-forespoersel');
 
     // Person data
     await expect(page.locator('[data-cy="navn"]')).toHaveText('Test Navn Testesen-Navnesen Jr.');
@@ -89,8 +89,10 @@ test.describe('Utfylling og innsending av skjema', () => {
     // await page.checkA11y();
 
     // Submit and confirm
+    const pageLoad = page.waitForResponse('*/**/api/innsendingInntektsmelding');
     await page.getByRole('button', { name: 'Send' }).click();
-    await page.waitForResponse('**/im-dialog/api/innsendingInntektsmelding');
-    await expect(page.getByText('Kvittering - innsendt inntektsmelding')).toBeVisible();
+    await pageLoad;
+    // await expect(page.getByText('Kvittering - innsendt inntektsmelding')).toBeVisible();
+    await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 });
