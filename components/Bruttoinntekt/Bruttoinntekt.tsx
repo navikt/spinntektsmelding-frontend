@@ -14,7 +14,6 @@ import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
 import { useFormContext } from 'react-hook-form';
-import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import { harEndringAarsak } from '../../utils/harEndringAarsak';
 
 interface BruttoinntektProps {
