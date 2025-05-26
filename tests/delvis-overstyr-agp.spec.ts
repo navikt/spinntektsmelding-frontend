@@ -31,9 +31,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   });
 
   // Visit the page
-  await page.goto(
-    'https://urldefense.com/v3/__http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012__;!!M12l6qNq_w!oJ865nUABUVg2qATkbMBbN1LILHmCWMoPB1j4qFjpXASD_dbjBFSdX1Sfu04gHDH9Cbea4Y9ylM7tPuLQwgU6zM$ '
-  );
+  await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
   // Wait for the API to be loaded
   await page.waitForResponse('*/**/api/hent-forespoersel');
@@ -56,7 +54,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
 
   await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
 
-  formPage.fillInput('Telefon innsender', '12345678');
+  await formPage.fillInput('Telefon innsender', '12345678');
 
   await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
