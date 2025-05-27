@@ -3330,17 +3330,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axe-core@npm:4.10.3, axe-core@npm:~4.10.2":
-  version: 4.10.3
-  resolution: "axe-core@npm:4.10.3"
-  checksum: 10c0/1b1c24f435b2ffe89d76eca0001cbfff42dbf012ad9bd37398b70b11f0d614281a38a28bc3069e8972e3c90ec929a8937994bd24b0ebcbaab87b8d1e241ab0c7
-  languageName: node
-  linkType: hard
-
 "axe-core@npm:^3.5.5":
   version: 3.5.6
   resolution: "axe-core@npm:3.5.6"
   checksum: 10c0/f02a5b0e04e04a1024d7dc5c9931f87864c0394a218c6bd9057f0104df7f6310178bbbab47afd0c0fd4b585a08e8c599eebf5a89b6898f3fbeb7bfa33c25bfc8
+  languageName: node
+  linkType: hard
+
+"axe-core@npm:~4.10.2":
+  version: 4.10.3
+  resolution: "axe-core@npm:4.10.3"
+  checksum: 10c0/1b1c24f435b2ffe89d76eca0001cbfff42dbf012ad9bd37398b70b11f0d614281a38a28bc3069e8972e3c90ec929a8937994bd24b0ebcbaab87b8d1e241ab0c7
   languageName: node
   linkType: hard
 
@@ -8065,7 +8065,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.52.0":
+"playwright-core@npm:1.52.0, playwright-core@npm:^1.52.0":
   version: 1.52.0
   resolution: "playwright-core@npm:1.52.0"
   bin:
@@ -9247,7 +9247,6 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.5.0"
     "@vitest/coverage-v8": "npm:^3.1.4"
     "@vitest/ui": "npm:^3.1.4"
-    axe-core: "npm:4.10.3"
     classnames: "npm:2.5.1"
     core-js-pure: "npm:3.42.0"
     cross-env: "npm:7.0.3"
@@ -9268,6 +9267,7 @@ __metadata:
     next-router-mock: "npm:1.0.2"
     pino: "npm:9.7.0"
     pino-pretty: "npm:^13.0.0"
+    playwright-core: "npm:^1.52.0"
     prettier: "npm:^3.5.3"
     react: "npm:19.1.0"
     react-dom: "npm:19.1.0"
