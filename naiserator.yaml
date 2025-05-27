@@ -35,7 +35,7 @@ spec:
     limits:
       memory: 200Mi
     requests:
-      cpu: 50m
+      cpu: 75m
       memory: 200Mi
   idporten:
     enabled: true
