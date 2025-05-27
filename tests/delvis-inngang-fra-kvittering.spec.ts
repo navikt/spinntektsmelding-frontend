@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import trengerDelvis from '../mockdata/trenger-delvis.json';
 import inntektData from '../mockdata/inntektData.json';
 import kvitteringData from '../mockdata/kvittering-delvis.json';
+import { FormPage } from './utils/formPage';
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,6 +28,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   });
 
   test('Changes and submit', async ({ page }) => {
+    const formPage = new FormPage(page);
     // verify on receipt page
     await page.waitForResponse('*/**/api/hentKvittering/12345678-3456-5678-2457-123456789012');
     await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
@@ -38,27 +40,27 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await page.getByRole('button', { name: /Endre/ }).nth(1).click();
 
     await expect(page.locator('label:text("Månedslønn 02.01.2023")')).toHaveValue('65000');
-    await page.fill('label:text("Månedslønn 02.01.2023")', '50000');
+    await formPage.fillInput('Månedslønn 02.01.2023', '50000');
 
     // select change reason
-    await page.getByLabel('Velg endringsårsak').selectOption('Bonus');
+    await formPage.selectOption('Velg endringsårsak', 'Bonus');
+
     // choose refusjon = Ja
-    await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
+
     // confirm phone and checkbox
     await expect(page.getByLabel('Telefon innsender')).toHaveValue('12345678');
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
     // click second "Endre"
     await page.getByRole('button', { name: /Endre/ }).nth(1).click();
     // set refusjonsbeløp
-    await page.fill('label:text("Oppgi refusjonsbeløpet per måned")', '50000');
+    await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '50000');
 
     // submit
     const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-    await page.getByRole('button', { name: 'Send' }).click();
+    await formPage.clickButton('Send');
     const req = await reqPromise;
     const body = JSON.parse(req.postData()!);
     expect(body).toEqual({

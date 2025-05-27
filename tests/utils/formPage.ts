@@ -10,26 +10,30 @@ export class FormPage {
   }
 
   // Custom locator for radio button within a group
-  async getRadioButton(groupName: string, optionLabel: string): Promise<Locator> {
+  async getRadioButton(groupName: string | RegExp, optionLabel: string | RegExp): Promise<Locator> {
     // Find the radio group by its name and return the specific radio button by its label
     // return this.page.locator(`role=group[name="${groupName}"] input[type="radio"][value="${optionLabel}"]`);
     return this.page.getByRole('group', { name: groupName }).getByLabel(optionLabel);
   }
 
   // Example of a method to check a radio button
-  async checkRadioButton(groupName: string, optionLabel: string): Promise<void> {
+  async checkRadioButton(groupName: string | RegExp, optionLabel: string | RegExp): Promise<void> {
     const radioButton = await this.getRadioButton(groupName, optionLabel);
-    await radioButton.check();
+    return radioButton.check();
   }
 
   // Example of a method to uncheck a radio button
-  async uncheckRadioButton(groupName: string, optionLabel: string): Promise<void> {
+  async uncheckRadioButton(groupName: string | RegExp, optionLabel: string | RegExp): Promise<void> {
     const radioButton = await this.getRadioButton(groupName, optionLabel);
     await radioButton.uncheck();
   }
 
+  async getInput(label: string): Promise<Locator> {
+    return this.page.getByRole('textbox', { name: label });
+  }
+
   async fillInput(label: string, value: string): Promise<void> {
-    const inputField = this.page.getByLabel(label);
+    const inputField = await this.getInput(label);
     await inputField.fill(value);
   }
   async clickButton(buttonText: string): Promise<void> {

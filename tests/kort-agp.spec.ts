@@ -52,7 +52,8 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
 
     // endre siste "Til"-dato
     // await page.getByLabel('Til').nth(1).fill('16.03.23');
-    await page.getByRole('textbox', { name: 'Til' }).last().fill('16.03.23');
+    const TilFelt = await formPage.getInput('Til');
+    await TilFelt.last().fill('16.03.23');
 
     // endre utbetalt beløp under arbeidsgiverperiode
     await formPage.fillInput('Utbetalt under arbeidsgiverperiode', '50000');
