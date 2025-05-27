@@ -26,6 +26,6 @@
     "./__tests__/setup.ts",
     "vitest.config.mts"
   ],
-  "exclude": ["node_modules", "cypress.config.ts"],
-  "types": ["node", "vitest/globals", "cypress", "cypress-real-events", "vitest/jsdom"]
+  "exclude": ["node_modules"],
+  "types": ["node", "vitest/globals", "vitest/jsdom"]
 }
