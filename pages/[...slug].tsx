@@ -46,6 +46,7 @@ import Heading3 from '../components/Heading3';
 import forespoerselType from '../config/forespoerselType';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
+import { harEndringAarsak } from '../utils/harEndringAarsak';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -156,7 +157,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [bruttoinntekt.bruttoInntekt, setValue]);
 
   useEffect(() => {
-    setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
+    if (harEndringAarsak(bruttoinntekt.endringAarsaker)) {
+      setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
+    }
   }, [bruttoinntekt.endringAarsaker, setValue]);
 
   const inntektBeloep = useWatch({

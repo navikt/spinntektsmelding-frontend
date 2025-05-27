@@ -14,6 +14,7 @@ import logEvent from '../../utils/logEvent';
 import Aarsaksvelger from './Aarsaksvelger';
 import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
 import { useFormContext } from 'react-hook-form';
+import { harEndringAarsak } from '../../utils/harEndringAarsak';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
@@ -68,14 +69,15 @@ export default function Bruttoinntekt({
       tittel: 'Endre beregnet månedsinntekt',
       component: amplitudeComponent
     });
-
+    console.log('handleStartEditingMaanedsinntekt');
     setEndreMaanedsinntekt(true);
   };
 
   const endringAarsaker = watch('inntekt.endringAarsaker');
 
   useEffect(() => {
-    if (endringAarsaker && endringAarsaker.length > 0) {
+    if (harEndringAarsak(endringAarsaker)) {
+      console.log('endringAarsaker', endringAarsaker);
       setEndreMaanedsinntekt(true);
     }
   }, [endringAarsaker]);
