@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import apiData from '../mockdata/trenger-forhaandsutfyll.json';
+import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
@@ -85,8 +86,9 @@ test.describe('Utfylling og innsending av skjema', () => {
       .getByRole('checkbox', { name: 'Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.' })
       .check();
 
-    // a11y check (requires Playwright-axe setup)
-    // await page.checkA11y();
+    // Accessibility scan
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    expect(accessibilityScanResults.violations).toEqual([]);
 
     // Submit and confirm
     const pageLoad = page.waitForResponse('*/**/api/innsendingInntektsmelding');
@@ -94,5 +96,8 @@ test.describe('Utfylling og innsending av skjema', () => {
     await pageLoad;
     // await expect(page.getByText('Kvittering - innsendt inntektsmelding')).toBeVisible();
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
+
+    const accessibilityScanResultsKvittering = await new AxeBuilder({ page }).analyze();
+    expect(accessibilityScanResultsKvittering.violations).toEqual([]);
   });
 });
