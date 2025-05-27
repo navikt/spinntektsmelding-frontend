@@ -46,6 +46,7 @@
     "zustand": "5.0.4"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
     "@next/bundle-analyzer": "15.3.2",
     "@playwright/test": "^1.52.0",
     "@testing-library/cypress": "^10.0.3",
