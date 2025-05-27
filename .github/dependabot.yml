@@ -14,7 +14,7 @@ updates:
       - dependency-name: 'eslint'
         versions: ['9.x']
     schedule:
-      interval: "weekly"
+      interval: "daily"
     groups:
       aksel:
         patterns:
@@ -30,6 +30,9 @@ updates:
           - 'react-dom'
           - '@types/react'
           - '@types/react-dom'
+      grafana:
+        patterns:
+          - '@grafana/*'
 
 # Maintain dependencies for Docker
   - package-ecosystem: "docker" # See documentation for possible values
