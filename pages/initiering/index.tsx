@@ -1,8 +1,8 @@
-import { Alert, Button, TextField } from '@navikt/ds-react';
+import { Alert, Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Heading1 from '../../components/Heading1/Heading1';
@@ -16,22 +16,28 @@ import useBoundStore from '../../state/useBoundStore';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
+import VelgAarsak from './VelgAarsak';
 
 const skjemaFnrSchema = z.object({
-  identitetsnummer: PersonnummerSchema
+  identitetsnummer: PersonnummerSchema,
+  aarsakInnsending: z.enum(['UnntattAARegisteret', 'Annet'], {
+    errorMap: () => ({ message: 'Du må velge en årsak til at du vil opprette inntektsmelding.' })
+  })
 });
 
 const Initiering: NextPage = () => {
   type SkjemaFnr = z.infer<typeof skjemaFnrSchema>;
   const setIdentitetsnummer = useBoundStore((state) => state.setIdentitetsnummer);
 
+  const methods = useForm({
+    resolver: zodResolver(skjemaFnrSchema)
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm({
-    resolver: zodResolver(skjemaFnrSchema)
-  });
+  } = methods;
 
   const router = useRouter();
 
@@ -58,18 +64,21 @@ const Initiering: NextPage = () => {
               er ferdig og den sykmeldte har sendt inn søknad om sykepenger. Hvis du ikke fått denne oppgaven og du
               mener at du skal levere inntektsmelding så er det mulig å opprette den manuelt.
             </Alert>
-            <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
-              <TextField
-                label='Angi personnummer for den ansatte'
-                description='(ddmmååxxxxx)'
-                className={lokalStyles.personnummer}
-                {...register('identitetsnummer')}
-                error={errors.identitetsnummer?.message as string}
-              />
-              <Button variant='primary' className={lokalStyles.primaryKnapp}>
-                Neste
-              </Button>
-            </form>
+            <FormProvider {...methods}>
+              <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
+                <VelgAarsak legend='Årsak til at du vil opprette inntektsmelding.' name='aarsakInnsending' />
+                <TextField
+                  label='Ansattes fødselsnummer'
+                  description='(ddmmååxxxxx)'
+                  className={lokalStyles.personnummer}
+                  {...register('identitetsnummer')}
+                  error={errors.identitetsnummer?.message as string}
+                />
+                <Button variant='primary' className={lokalStyles.primaryKnapp}>
+                  Neste
+                </Button>
+              </form>
+            </FormProvider>
             <FeilListe skalViseFeilmeldinger={feilmeldinger.length > 0} feilmeldinger={feilmeldinger ?? []} />
           </div>
         </main>
