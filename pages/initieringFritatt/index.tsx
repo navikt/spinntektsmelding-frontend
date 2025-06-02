@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Button } from '@navikt/ds-react';
+=======
+import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box } from '@navikt/ds-react';
+>>>>>>> 69a01bf8 (Initielle tanker om innganger)
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
@@ -264,7 +268,6 @@ const InitieringFritatt: NextPage = () => {
               </div>
             </form>
           </FormProvider>
-
           <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
         </div>
       </PageContent>
