@@ -20,7 +20,7 @@ import VelgAarsak from './VelgAarsak';
 
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,
-  aarsakInnsending: z.enum(['UnntattAARegisteret', 'Annet'], {
+  aarsakInnsending: z.enum(['UnntattAARegisteret', 'Annet', 'Behandlingsdager'], {
     errorMap: () => ({ message: 'Du må velge en årsak til at du vil opprette inntektsmelding.' })
   })
 });
@@ -28,6 +28,7 @@ const skjemaFnrSchema = z.object({
 const Initiering: NextPage = () => {
   type SkjemaFnr = z.infer<typeof skjemaFnrSchema>;
   const setIdentitetsnummer = useBoundStore((state) => state.setIdentitetsnummer);
+  const setAarsakSelvbestemtInnsending = useBoundStore((state) => state.setAarsakSelvbestemtInnsending);
 
   const methods = useForm({
     resolver: zodResolver(skjemaFnrSchema)
@@ -43,7 +44,17 @@ const Initiering: NextPage = () => {
 
   const submitForm: SubmitHandler<SkjemaFnr> = (skjemaData: SkjemaFnr) => {
     setIdentitetsnummer(skjemaData.identitetsnummer);
-    router.push('/initiering2', { scroll: false });
+    setAarsakSelvbestemtInnsending(skjemaData.aarsakInnsending);
+    if (skjemaData.aarsakInnsending === 'UnntattAARegisteret') {
+      router.push('/initieringFritatt', { scroll: false });
+      return;
+    }
+    if (skjemaData.aarsakInnsending === 'Behandlingsdager') {
+      router.push('/initieringBehandlingsdager', { scroll: false });
+      return;
+    }
+
+    router.push('/initieringAnnet', { scroll: false });
   };
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);

@@ -61,6 +61,10 @@ class Environment {
     return this.publicRuntimeConfig.innsendingSelvbestemtInntektsmeldingApi;
   }
 
+  get arbeidsgiverListe() {
+    return this.publicRuntimeConfig.arbeidsgiverListe;
+  }
+
   public baseUrl = '/im-dialog';
 
   public skjemadataUrl = '/im-dialog/api/hent-forespoersel';

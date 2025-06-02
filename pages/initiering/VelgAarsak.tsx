@@ -23,6 +23,13 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
       render={({ field }) => (
         <RadioGroup {...field} legend={legend} error={error} id={name}>
           <Radio
+            value='Behandlingsdager'
+            id={field.name + '_Behandlingsdager'}
+            description='Du har en ansatt som har godkjent sykmelding og sendt søknad for enkeltstående behandlingsdager'
+          >
+            Enkeltstående behandlingsdager
+          </Radio>
+          <Radio
             value='UnntattAARegisteret'
             id={field.name + '_UnntattAARegisteret'}
             description='Ambassadepersonell, fiskerer og utenlandske arbeidstakere'
