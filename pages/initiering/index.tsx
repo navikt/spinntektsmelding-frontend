@@ -1,4 +1,4 @@
-import { Alert, Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { Alert, Button, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
@@ -16,7 +16,7 @@ import useBoundStore from '../../state/useBoundStore';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
-import VelgAarsak from './VelgAarsak';
+import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,
