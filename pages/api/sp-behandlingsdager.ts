@@ -7,6 +7,7 @@ import isMod11Number from '../../utils/isMod10Number';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
+import { min } from 'date-fns';
 
 function minDate(date1: string, date2: string): string {
   return date1 < date2 ? date1 : date2;
