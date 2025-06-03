@@ -25,7 +25,8 @@ export const EndepunktSykepengesoeknadSchema = z.object({
     .or(z.tuple([])),
   vedtaksperiodeId: z.string().uuid().nullable(),
   forespoerselId: z.string().uuid().optional(),
-  soknadstype: z.string()
+  soknadstype: z.string(),
+  behandlingsdager: z.array(z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format')).or(z.tuple([]))
 });
 
 export const EndepunktSykepengesoeknaderSchema = z.array(EndepunktSykepengesoeknadSchema).or(z.tuple([]));

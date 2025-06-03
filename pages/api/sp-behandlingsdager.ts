@@ -7,11 +7,19 @@ import isMod11Number from '../../utils/isMod10Number';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
+import { min } from 'date-fns';
 
 type forespoerselIdListeEnhet = {
   vedtaksperiodeId: string;
   forespoerselId: string;
 };
+
+function minDate(date1: string, date2: string): string {
+  return date1 < date2 ? date1 : date2;
+}
+function maxDate(date1: string, date2: string): string {
+  return date1 > date2 ? date1 : date2;
+}
 
 const basePath =
   'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
@@ -103,6 +111,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(200).json([]);
   }
 
+  const sykmeldingPerioder = [aktiveSoeknader[0]];
+
+  aktiveSoeknader.forEach((soeknad) => {
+    if (!sykmeldingPerioder.some((periode) => periode.sykmeldingId === soeknad.sykmeldingId)) {
+      sykmeldingPerioder.push(soeknad);
+    }
+    sykmeldingPerioder.map((periode) => {
+      if (periode.sykmeldingId === soeknad.sykmeldingId) {
+        return {
+          ...periode,
+          behandlingsdager: [...(periode.behandlingsdager || []), ...soeknad.behandlingsdager],
+          fom: minDate(periode.fom, soeknad.fom),
+          tom: maxDate(periode.tom, soeknad.tom)
+        };
+      }
+      return periode;
+    });
+  });
   // const idListe = aktiveSoeknader.map((soeknad) => soeknad.vedtaksperiodeId);
   // const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
   //   method: 'POST',
@@ -128,7 +154,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   //     (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
   //   )?.forespoerselId
   // }));
-  console.log('Hentet aktive behandlingsdager for orgnr:', orgnr, 'antall:', aktiveSoeknader.length);
+  console.log(
+    'Hentet aktive behandlingsdager for orgnr:',
+    orgnr,
+    'antall:',
+    sykmeldingPerioder.length,
+    'fra:',
+    aktiveSoeknader.length
+  );
 
   return res.status(soeknadResponse.status).json(aktiveSoeknader);
 };
