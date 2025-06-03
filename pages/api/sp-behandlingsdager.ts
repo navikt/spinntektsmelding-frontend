@@ -2,12 +2,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
-import testdata from '../../mockdata/sp-soeknad.json';
+import testdata from '../../mockdata/behandlingsdager.json';
 import isMod11Number from '../../utils/isMod10Number';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
-import { min } from 'date-fns';
 
 type forespoerselIdListeEnhet = {
   vedtaksperiodeId: string;

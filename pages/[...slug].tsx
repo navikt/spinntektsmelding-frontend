@@ -78,7 +78,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     avsender,
     sykmeldt,
     naturalytelser,
-    forespurtData
+    forespurtData,
+    behandlingsdager
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -88,7 +89,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.avsender,
     state.sykmeldt,
     state.naturalytelser,
-    state.forespurtData
+    state.forespurtData,
+    state.behandlingsdager
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -116,6 +118,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const selvbestemtInnsending =
     pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
+
+  const behandlingsdagerInnsending = pathSlug === 'behandlingsdager';
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
@@ -299,7 +303,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Person />
 
             <Skillelinje />
-            <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
+            {!behandlingsdagerInnsending && (
+              <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
+            )}
+            {behandlingsdagerInnsending && (
+              <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
+            )}
 
             <Skillelinje />
             {skalViseEgenmelding && (
