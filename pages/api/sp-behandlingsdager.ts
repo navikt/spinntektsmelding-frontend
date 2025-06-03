@@ -94,6 +94,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const aktiveSoeknader = soeknadData.filter((soeknad) => soeknad.soknadstype === 'BEHANDLINGSDAGER');
 
   if (aktiveSoeknader.length === 0) {
+    console.log('Ingen aktive behandlingsdager funnet for orgnr:', orgnr);
     return res.status(200).json([]);
   }
 
@@ -122,6 +123,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   //     (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
   //   )?.forespoerselId
   // }));
+  console.log('Hentet aktive behandlingsdager for orgnr:', orgnr, 'antall:', aktiveSoeknader.length);
 
   return res.status(soeknadResponse.status).json(aktiveSoeknader);
 };
