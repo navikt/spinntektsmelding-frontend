@@ -47,6 +47,7 @@ import forespoerselType from '../config/forespoerselType';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
+import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -306,9 +307,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             {!behandlingsdagerInnsending && (
               <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
             )}
-            {behandlingsdagerInnsending && (
-              <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
-            )}
+            {behandlingsdagerInnsending && <Behandlingsdager behandlingsdager={behandlingsdager} />}
 
             <Skillelinje />
             {skalViseEgenmelding && (
