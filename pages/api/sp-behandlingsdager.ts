@@ -163,7 +163,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     aktiveSoeknader.length
   );
 
-  return res.status(soeknadResponse.status).json(aktiveSoeknader);
+  return res.status(soeknadResponse.status).json(sykmeldingPerioder);
 };
 
 export default handler;
