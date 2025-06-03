@@ -40,18 +40,15 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
-import useArbeidsgiverListe from '../../utils/useArbeidsgiverListe';
 
 type SykepengePeriode = {
   id: string;
   fom: Date;
   tom: Date;
-  antallEgenmeldingsdager: number;
-  forespoerselId?: string;
-  forlengelseAv?: string;
+  antallBehandlingsdager: number;
 };
 
-const Initiering2: NextPage = () => {
+const InitieringBehandlingsdager: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
   const initPerson = useBoundStore((state) => state.initPerson);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
@@ -128,7 +125,8 @@ const Initiering2: NextPage = () => {
   const sykepengePeriodeId: string[] | undefined = watch('sykepengePeriodeId');
   const endreRefusjon: string | undefined = watch('endreRefusjon');
 
-  const { data, error } = useArbeidsgiverListe(setError);
+  // const { data, error } = useArbeidsgiverListe(setError);
+  const { data, error } = useArbeidsforhold(sykmeldt.fnr, setError);
   let orgNavnMangler = false;
   const handleSykepengePeriodeIdRadio = (value: any) => {
     setValue('sykepengePeriodeId', value);
@@ -161,7 +159,7 @@ const Initiering2: NextPage = () => {
     }
   }
 
-  const organisasjonsnummer = '315609267'; // orgnr ?? orgnrUnderenhet;
+  const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
 
   const fomDato = formatIsoDate(subYears(new Date(), 1));
   const {
@@ -175,43 +173,25 @@ const Initiering2: NextPage = () => {
   const sykepengePerioder: SykepengePeriode[] = useMemo(() => {
     if (!spData) return [];
 
-    const mottatteSykepengesoknader = EndepunktSykepengesoeknaderSchema.safeParse(spData);
+    const mottatteBehandlingsdager = EndepunktSykepengesoeknaderSchema.safeParse(spData);
 
-    if (!mottatteSykepengesoknader.success) {
-      logger.error('Feil ved validering av sykepengesøknader', mottatteSykepengesoknader.error.errors);
+    if (!mottatteBehandlingsdager.success) {
+      logger.error('Feil ved validering av sykepengesøknader', mottatteBehandlingsdager.error.errors);
       return [];
     }
 
     let perioder =
-      mottatteSykepengesoknader.data.length > 0
-        ? mottatteSykepengesoknader.data.map((periode) => ({
+      mottatteBehandlingsdager.data.length > 0
+        ? mottatteBehandlingsdager.data.map((periode) => ({
             fom: new Date(periode.fom),
             tom: new Date(periode.tom),
-            id: periode.sykepengesoknadUuid,
-            antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length,
+            id: periode.sykmeldingId,
+            antallBehandlingsdager: periode.behandlingsdager.length,
             forespoerselId: periode.forespoerselId
           }))
         : [];
 
-    return perioder.reduce((acc, current) => {
-      if (acc.length === 0) {
-        acc.push(current);
-        return acc;
-      }
-      if (
-        (acc[acc.length - 1].forespoerselId || acc[acc.length - 1].forlengelseAv) &&
-        differenceInCalendarDays(current.fom, acc[acc.length - 1].tom) >= 1
-      ) {
-        acc.push({
-          ...current,
-          forlengelseAv: acc[acc.length - 1].forespoerselId ?? acc[acc.length - 1].forlengelseAv
-        });
-        return acc;
-      } else {
-        acc.push({ ...current, forlengelseAv: undefined });
-        return acc;
-      }
-    }, [] as SykepengePeriode[]);
+    return perioder;
   }, [spData]);
 
   const valgteSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
@@ -431,7 +411,7 @@ const Initiering2: NextPage = () => {
                   {spIsLoading && <Loading />}
                   {spData && organisasjonsnummer && (
                     <CheckboxGroup
-                      legend='Velg sykmeldingsperiode'
+                      legend='Velg periode for behandlingsdager'
                       id='sykepengePeriodeId'
                       error={errors.sykepengePeriodeId?.message as string}
                       onChange={handleSykepengePeriodeIdRadio}
@@ -439,18 +419,16 @@ const Initiering2: NextPage = () => {
                       {sykepengePerioder.map((periode) => (
                         <Checkbox key={periode.id} value={periode.id} disabled={!!periode.forespoerselId}>
                           {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
-                          {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                          {!!periode.forespoerselId && ' (Inntektsmelding er allerede forespurt)'}
-                          {periode.forlengelseAv && ' (forlengelse)'}
+                          {formaterEgenmeldingsdager(periode.antallBehandlingsdager)}
                         </Checkbox>
                       ))}
                     </CheckboxGroup>
                   )}
                   {(spError || (organisasjonsnummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
                     <Alert variant='error'>
-                      Finner ingen sykepengesøknader for den valgte personen i den valgte organisasjonen. Sjekk at du
-                      har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om sykepenger er
-                      sendt inn.
+                      Finner ingen søknader om behandlingsdager for den valgte personen i den valgte organisasjonen.
+                      Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om
+                      behandlingsdager er sendt inn.
                     </Alert>
                   )}
                 </>
@@ -524,14 +502,14 @@ const Initiering2: NextPage = () => {
   );
 };
 
-function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
-  if (antallEgenmeldingsdager === 0) {
+function formaterEgenmeldingsdager(antallBehandlingsdager: number) {
+  if (antallBehandlingsdager === 0) {
     return null;
   }
 
-  return antallEgenmeldingsdager === 1
+  return antallBehandlingsdager === 1
     ? '(pluss 1 egenmeldingsdag)'
-    : `(pluss ${antallEgenmeldingsdager} egenmeldingsdager)`;
+    : `(pluss ${antallBehandlingsdager} egenmeldingsdager)`;
 }
 
 function OrganisasjonInfo({
@@ -592,4 +570,4 @@ function visTomDato(id: string, mottatteSykepengesoeknader: SykepengePeriode[]) 
   return formatDate(parseIsoDate(periode.tom));
 }
 
-export default Initiering2;
+export default InitieringBehandlingsdager;
