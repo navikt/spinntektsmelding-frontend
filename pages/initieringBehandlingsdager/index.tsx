@@ -26,7 +26,7 @@ import { differenceInCalendarDays, differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/router';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
-import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
+import useBehandlingsdager from '../../utils/useBehandlingsdager';
 import formatIsoDate from '../../utils/formatIsoDate';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
@@ -161,14 +161,14 @@ const Initiering2: NextPage = () => {
     }
   }
 
-  const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
+  const organisasjonsnummer = '315609267'; // orgnr ?? orgnrUnderenhet;
 
   const fomDato = formatIsoDate(subYears(new Date(), 1));
   const {
     data: spData,
     error: spError,
     isLoading: spIsLoading
-  } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, setError);
+  } = useBehandlingsdager(sykmeldt.fnr, organisasjonsnummer, fomDato, setError);
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 

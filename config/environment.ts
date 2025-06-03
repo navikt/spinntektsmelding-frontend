@@ -87,6 +87,7 @@ class Environment {
   public innsendingAGInitiertUrl = '/im-dialog/api/selvbestemt-inntektsmelding';
 
   public hentSykepengesoknaderUrl = '/im-dialog/api/sp-soeknader';
+  public hentBehandlingsdagerUrl = '/im-dialog/api/sp-behandlingsdager';
 
   get environment() {
     return this.publicRuntimeConfig.environment;
