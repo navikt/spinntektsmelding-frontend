@@ -111,13 +111,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(200).json([]);
   }
 
-  const sykmeldingPerioder = [aktiveSoeknader[0]];
+  let sykmeldingPerioder = [aktiveSoeknader[0]];
 
   aktiveSoeknader.forEach((soeknad) => {
     if (!sykmeldingPerioder.some((periode) => periode.sykmeldingId === soeknad.sykmeldingId)) {
       sykmeldingPerioder.push(soeknad);
     }
-    sykmeldingPerioder.map((periode) => {
+    sykmeldingPerioder = sykmeldingPerioder.map((periode) => {
       if (periode.sykmeldingId === soeknad.sykmeldingId) {
         return {
           ...periode,
