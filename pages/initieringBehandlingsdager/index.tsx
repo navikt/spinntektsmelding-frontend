@@ -40,6 +40,7 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
+import useArbeidsgiverListe from '../../utils/useArbeidsgiverListe';
 
 type SykepengePeriode = {
   id: string;
@@ -127,7 +128,7 @@ const Initiering2: NextPage = () => {
   const sykepengePeriodeId: string[] | undefined = watch('sykepengePeriodeId');
   const endreRefusjon: string | undefined = watch('endreRefusjon');
 
-  const { data, error } = useArbeidsforhold(sykmeldt.fnr, setError);
+  const { data, error } = useArbeidsgiverListe(setError);
   let orgNavnMangler = false;
   const handleSykepengePeriodeIdRadio = (value: any) => {
     setValue('sykepengePeriodeId', value);
