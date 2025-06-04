@@ -89,6 +89,8 @@ class Environment {
   public hentSykepengesoknaderUrl = '/im-dialog/api/sp-soeknader';
   public hentBehandlingsdagerUrl = '/im-dialog/api/sp-behandlingsdager';
 
+  public mineTilgangerUrl = '/im-dialog/api/mine-tilganger';
+
   get environment() {
     return this.publicRuntimeConfig.environment;
   }
