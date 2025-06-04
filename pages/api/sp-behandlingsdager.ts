@@ -8,11 +8,6 @@ import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepen
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 
-type forespoerselIdListeEnhet = {
-  vedtaksperiodeId: string;
-  forespoerselId: string;
-};
-
 function minDate(date1: string, date2: string): string {
   return date1 < date2 ? date1 : date2;
 }
@@ -23,7 +18,6 @@ function maxDate(date1: string, date2: string): string {
 const basePath =
   'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
 const authApi = 'http://' + global.process.env.IM_API_URI + global.process.env.AUTH_SYKEPENGESOEKNAD_API;
-const forespoerselIdListeApi = 'http://' + global.process.env.IM_API_URI + global.process.env.FORESPOERSEL_ID_LISTE_API;
 
 export const config = {
   api: {
@@ -120,7 +114,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       if (periode.sykmeldingId === soeknad.sykmeldingId) {
         return {
           ...periode,
-          behandlingsdager: [...(periode.behandlingsdager || []), ...soeknad.behandlingsdager],
+          behandlingsdager: [...new Set([...(periode.behandlingsdager || []), ...soeknad.behandlingsdager])],
           fom: minDate(periode.fom, soeknad.fom),
           tom: maxDate(periode.tom, soeknad.tom)
         };
@@ -128,31 +122,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       return periode;
     });
   });
-  // const idListe = aktiveSoeknader.map((soeknad) => soeknad.vedtaksperiodeId);
-  // const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     Authorization: `Bearer ${token}`
-  //   },
-  //   body: JSON.stringify({ vedtaksperiodeIdListe: idListe })
-  // });
 
-  // if (!forespoerselIdListe.ok) {
-  //   console.error('Feil ved henting av forespørselIder ', forespoerselIdListe.statusText);
-  //   return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
-  // }
-
-  // const forespoerselIdListeData: forespoerselIdListeEnhet[] = (await safelyParseJSON(
-  //   forespoerselIdListe
-  // )) as forespoerselIdListeEnhet[];
-
-  // const soeknadResponseData = aktiveSoeknader.map((soeknad) => ({
-  //   ...soeknad,
-  //   forespoerselId: forespoerselIdListeData.find(
-  //     (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
-  //   )?.forespoerselId
-  // }));
   console.log(
     'Hentet aktive behandlingsdager for orgnr:',
     orgnr,

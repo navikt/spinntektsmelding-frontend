@@ -1,5 +1,6 @@
 import parseIsoDate from '../../utils/parseIsoDate';
 import formatDate from '../../utils/formatDate';
+import styling from './Behandlingsdager.module.css';
 
 interface BehandlingsdagerProps {
   behandlingsdager?: string[];
@@ -11,13 +12,13 @@ export function Behandlingsdager({ behandlingsdager }: BehandlingsdagerProps) {
   }
 
   return (
-    <div>
+    <div className={styling.behandlingsdager}>
       <h3>Behandlingsdager</h3>
-      {behandlingsdager.map((dag) => (
-        <div key={dag}>
-          <p>{formatDate(parseIsoDate(dag))}</p>
-        </div>
-      ))}
+      <div className={styling.behandlingsdagerListe}>
+        {behandlingsdager.map((dag) => (
+          <p key={dag}>{formatDate(parseIsoDate(dag))}</p>
+        ))}
+      </div>
     </div>
   );
 }
