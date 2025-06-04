@@ -48,6 +48,7 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
+import ArbeidsgiverperiodeBehandlingsdager from '../components/ArbeidsgiverperiodeBehandlingsdager';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -328,7 +329,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 <Skillelinje />
               </>
             )}
-            {skalViseArbeidsgiverperiode && (
+            {skalViseArbeidsgiverperiode && !behandlingsdagerInnsending && (
               <Arbeidsgiverperiode
                 arbeidsgiverperioder={arbeidsgiverperioder}
                 setIsDirtyForm={setIsDirtyForm}
@@ -349,6 +350,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                   Endre
                 </Button>
               </>
+            )}
+            {behandlingsdagerInnsending && (
+              <ArbeidsgiverperiodeBehandlingsdager
+                arbeidsgiverperioder={arbeidsgiverperioder}
+                skjemastatus={skjemastatus}
+                skalViseArbeidsgiverperiode={overstyrSkalViseAgp}
+              />
             )}
 
             <Skillelinje />
@@ -374,6 +382,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
               setIsDirtyForm={setIsDirtyForm}
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
               inntekt={inntektBeloep}
+              behandlingsdager={behandlingsdagerInnsending}
             />
             {harForespurtInntekt && (
               <>

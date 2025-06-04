@@ -16,12 +16,14 @@ interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
   skalViseArbeidsgiverperiode?: boolean;
   inntekt: number;
+  behandlingsdager?: boolean;
 }
 
 export default function RefusjonArbeidsgiver({
   setIsDirtyForm,
   skalViseArbeidsgiverperiode,
-  inntekt
+  inntekt,
+  behandlingsdager
 }: Readonly<RefusjonArbeidsgiverProps>) {
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
@@ -78,9 +80,10 @@ export default function RefusjonArbeidsgiver({
 
   const betalerArbeidsgiverEtterAgpLegend = 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?';
 
-  const betalerArbeidsgiverFullLonnLegend = arbeidsgiverperiodeKort
-    ? 'Betaler arbeidsgiver ut full lønn de første 16 dagene?'
-    : 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?';
+  const betalerArbeidsgiverFullLonnLegend =
+    arbeidsgiverperiodeKort && !behandlingsdager
+      ? 'Betaler arbeidsgiver ut full lønn de første 16 dagene?'
+      : 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?';
   return (
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
@@ -94,7 +97,7 @@ export default function RefusjonArbeidsgiver({
               error={visFeilmeldingTekst('lia-radio')}
               onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
               value={fullLonnIArbeidsgiverPerioden?.status ?? null}
-              disabled={arbeidsgiverperiodeDisabled || arbeidsgiverperiodeKort}
+              disabled={arbeidsgiverperiodeDisabled || (arbeidsgiverperiodeKort && !behandlingsdager)}
             >
               <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
                 Ja

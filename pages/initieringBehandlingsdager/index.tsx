@@ -58,6 +58,7 @@ const InitieringBehandlingsdager: NextPage = () => {
   const setBehandlingsdager = useBoundStore((state) => state.setBehandlingsdager);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
+  const initArbeidsgiverperioder = useBoundStore((state) => state.initArbeidsgiverperioder);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -297,6 +298,17 @@ const InitieringBehandlingsdager: NextPage = () => {
     const bestemmendeFravaersdag =
       sorterteBehandlingsdager[11] ?? sorterteBehandlingsdager[sorterteBehandlingsdager.length - 1];
 
+    const arbeidsgiverperioder = sorterteBehandlingsdager
+      .map((dag: string, index: number) => {
+        if (index < 12) {
+          return {
+            fom: dag as TDateISODate,
+            tom: dag as TDateISODate
+          };
+        }
+      })
+      .filter((dag: any) => dag !== undefined);
+
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     const valgtSykmeldingsperiode = getSykmeldingsperioder(sykmeldingsperiode);
@@ -306,6 +318,7 @@ const InitieringBehandlingsdager: NextPage = () => {
     // setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
     setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
     setBehandlingsdager(sykmeldingsperiode.behandlingsdager);
+    initArbeidsgiverperioder(arbeidsgiverperioder);
     router.push('/behandlingsdager');
   };
 
@@ -368,7 +381,7 @@ const InitieringBehandlingsdager: NextPage = () => {
                       onChange={handleSykmeldingIdRadio}
                     >
                       {sykepengePerioder.map((periode) => (
-                        <Radio key={periode.id} value={periode.id}>
+                        <Radio key={periode.id} value={periode.id} disabled={periode.antallBehandlingsdager <= 12}>
                           {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                           {formaterBehandlingsdager(periode.antallBehandlingsdager)}
                         </Radio>
@@ -420,7 +433,11 @@ function formaterBehandlingsdager(antallBehandlingsdager: number) {
     return null;
   }
 
-  return antallBehandlingsdager === 1 ? '(1 behandlingsdag)' : `(${antallBehandlingsdager} behandlingsdager)`;
+  if (antallBehandlingsdager <= 12) {
+    return '(Det må være mer enn 12 behandlingsdager før du kan sende inn inntektsmeldingen)';
+  } else {
+    return `(${antallBehandlingsdager} behandlingsdager)`;
+  }
 }
 
 export default InitieringBehandlingsdager;
