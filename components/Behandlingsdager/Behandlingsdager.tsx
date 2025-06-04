@@ -1,6 +1,7 @@
 import parseIsoDate from '../../utils/parseIsoDate';
 import formatDate from '../../utils/formatDate';
 import styling from './Behandlingsdager.module.css';
+import Heading3 from '../Heading3';
 
 interface BehandlingsdagerProps {
   behandlingsdager?: string[];
@@ -11,11 +12,13 @@ export function Behandlingsdager({ behandlingsdager }: BehandlingsdagerProps) {
     return null;
   }
 
+  const sorterteDager = behandlingsdager.toSorted();
+
   return (
     <div className={styling.behandlingsdager}>
-      <h3>Behandlingsdager</h3>
+      <Heading3>Behandlingsdager</Heading3>
       <div className={styling.behandlingsdagerListe}>
-        {behandlingsdager.map((dag) => (
+        {sorterteDager.map((dag) => (
           <p key={dag}>{formatDate(parseIsoDate(dag))}</p>
         ))}
       </div>

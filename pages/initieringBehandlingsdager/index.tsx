@@ -41,6 +41,7 @@ import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finn
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 type SykepengePeriode = {
   id: string;
@@ -56,6 +57,7 @@ const InitieringBehandlingsdager: NextPage = () => {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const setBehandlingsdager = useBoundStore((state) => state.setBehandlingsdager);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -291,6 +293,10 @@ const InitieringBehandlingsdager: NextPage = () => {
     const orgNavn = arbeidsforhold.find(
       (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
     )?.virksomhetsnavn!;
+    const sorterteBehandlingsdager = sykmeldingsperiode.behandlingsdager.toSorted();
+    const bestemmendeFravaersdag =
+      sorterteBehandlingsdager[11] ?? sorterteBehandlingsdager[sorterteBehandlingsdager.length - 1];
+
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     const valgtSykmeldingsperiode = getSykmeldingsperioder(sykmeldingsperiode);
@@ -298,6 +304,7 @@ const InitieringBehandlingsdager: NextPage = () => {
     // initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
     // setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
+    setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
     setBehandlingsdager(sykmeldingsperiode.behandlingsdager);
     router.push('/behandlingsdager');
   };

@@ -216,7 +216,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     });
   };
 
-  const beregnetBestemmendeFraværsdag = useMemo(() => {
+  const mellomregningBeregnetBestemmendeFraværsdag = useMemo(() => {
     if (!harForespurtArbeidsgiverperiode) {
       return parseIsoDate(
         forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
@@ -239,6 +239,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     harForespurtArbeidsgiverperiode,
     forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
   ]);
+
+  const beregnetBestemmendeFraværsdag = behandlingsdagerInnsending
+    ? foreslaattBestemmendeFravaersdag
+    : mellomregningBeregnetBestemmendeFraværsdag;
 
   const inntektsdato = useMemo(() => {
     return beregnetBestemmendeFraværsdag ? startOfMonth(beregnetBestemmendeFraværsdag) : undefined;
@@ -283,7 +287,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sykmeldt.fnr!,
     avsender.orgnr!,
     inntektsdato!,
-    slug === 'arbeidsgiverInitiertInnsending'
+    skjemastatus === SkjemaStatus.SELVBESTEMT
   );
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
@@ -304,19 +308,23 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Person />
 
             <Skillelinje />
-            {!behandlingsdagerInnsending && (
-              <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
-            )}
-            {behandlingsdagerInnsending && <Behandlingsdager behandlingsdager={behandlingsdager} />}
+
+            <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
 
             <Skillelinje />
-            {skalViseEgenmelding && (
+            {skalViseEgenmelding && !behandlingsdagerInnsending && (
               <>
                 <Egenmelding
                   lasterData={lasterData}
                   setIsDirtyForm={setIsDirtyForm}
                   selvbestemtInnsending={selvbestemtInnsending}
                 />
+                <Skillelinje />
+              </>
+            )}
+            {behandlingsdagerInnsending && (
+              <>
+                <Behandlingsdager behandlingsdager={behandlingsdager} />
                 <Skillelinje />
               </>
             )}
