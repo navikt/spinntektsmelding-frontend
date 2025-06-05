@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
-import testdata from '../../mockdata/behandlingsdager.json';
+import testdata from '../../mockdata/endepunktAltinnTilganger.json';
 import { EndepunktAltinnTilgangerSchema } from '../../schema/EndepunktAltinnTilgangerSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
@@ -17,10 +17,28 @@ export const config = {
 
 type EndepunktAltinnTilganger = z.infer<typeof EndepunktAltinnTilgangerSchema>;
 
+type OrgNode = {
+  orgnr: string;
+  navn: string;
+  underenheter: OrgNode[];
+};
+
+function extractOrgStructure(hierarki: any[]): OrgNode[] {
+  return hierarki.map(({ orgnr, navn, underenheter }) => ({
+    orgnr,
+    navn,
+    underenheter: extractOrgStructure(underenheter || [])
+  }));
+}
+
+const simpleTree = extractOrgStructure(testdata.hierarki);
+console.log(simpleTree);
+
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
-    setTimeout(() => res.status(200).json(testdata), 100);
+    const simpleTree = extractOrgStructure(testdata.hierarki);
+    setTimeout(() => res.status(200).json(simpleTree), 100);
     return;
   }
 
