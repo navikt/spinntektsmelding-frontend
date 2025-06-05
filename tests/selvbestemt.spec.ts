@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { FormPage } from './utils/formPage';
 
 const spSoeknader = [
   {
@@ -64,14 +65,17 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
   });
 
   test('selvbestemt med ferie', async ({ page }) => {
+    const formPage = new FormPage(page);
     // select fødselsnummer and next
-    await page.getByLabel('Angi personnummer for den ansatte').fill('25087327879');
-    await page.getByRole('button', { name: 'Neste' }).click();
-    await page.waitForURL('**/im-dialog/initiering2');
+    await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
+    await formPage.checkRadioButton('Årsak til at du vil opprette inntektsmelding.', 'Annen årsak');
+
+    await formPage.clickButton('Neste');
+    await page.waitForURL('**/im-dialog/initieringAnnet');
 
     // choose period with ferie dager
     await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
-    await page.getByRole('button', { name: 'Neste' }).click();
+    await formPage.clickButton('Neste');
 
     // fill utbetalt under AGP
     await page.getByLabel('Utbetalt under arbeidsgiverperiode').fill('5000');
@@ -91,18 +95,15 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByLabel('Ferie til').last().fill('07.07.24');
     await page.getByLabel('Ferie fra').last().fill('01.07.24');
     // select refusjon under sykefraværet = Nei
-    await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Nei')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
     // fill phone and confirm
     await page.getByLabel('Telefon innsender').last().fill('12345678');
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
     // send
 
     // assert payload
     const reqPromise = page.waitForRequest('*/**/api/selvbestemt-inntektsmelding');
-    await page.getByRole('button', { name: 'Send' }).click();
+    await formPage.clickButton('Send');
     const req = await reqPromise;
     expect(JSON.parse(req.postData()!)).toEqual({
       agp: {
@@ -153,9 +154,12 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // );
 
     // fill personnummer and next
-    await page.getByLabel('Angi personnummer for den ansatte').fill('25087327879');
+    const formPage = new FormPage(page);
+    await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
+    await formPage.checkRadioButton('Årsak til at du vil opprette inntektsmelding.', 'Annen årsak');
     await page.getByRole('button', { name: 'Neste' }).click();
-    await page.waitForURL('**/initiering2');
+
+    await page.waitForURL('**/initieringAnnet');
 
     // select both periods
     await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
@@ -177,16 +181,13 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Varig lønnsendring' });
     await page.getByLabel('Lønnsendring gjelder fra').fill('30.06.24');
     // refusjon = Nei
-    await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Nei')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
     // confirm + send
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
     // assert payload
     const req2Promise = page.waitForRequest('*/**/api/selvbestemt-inntektsmelding');
-    await page.getByRole('button', { name: 'Send' }).click();
+    await formPage.clickButton('Send');
     const req2 = await req2Promise;
     expect(JSON.parse(req2.postData()!)).toEqual({
       agp: {
