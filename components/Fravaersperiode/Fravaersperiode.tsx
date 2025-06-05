@@ -21,12 +21,13 @@ export default function Fravaersperiode({ lasterData, skjemastatus, setIsDirtyFo
     }
   }, [fravaerPerioder, skjemastatus, leggTilFravaersperiode]);
 
+  const fravaerPerioderErTom = !fravaerPerioder || fravaerPerioder.length === 0;
   return (
     <>
       <Heading3>Sykmeldingsperiode</Heading3>
 
       {lasterData && <EgenmeldingLoader />}
-      {!lasterData && (
+      {!lasterData && !fravaerPerioderErTom && (
         <FravaerEnkeltAnsattforhold
           fravaerPerioder={fravaerPerioder}
           skjemastatus={skjemastatus}

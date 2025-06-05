@@ -48,16 +48,20 @@ export default function useFyllAapenInnsending() {
     true
   );
   const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
-  const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
-    perioder,
-    formatertePerioder,
-    skjaeringstidspunkt,
-    arbeidsgiverKanFlytteSkjæringstidspunkt()
-  );
 
   type SkjemaData = z.infer<typeof HovedskjemaSchema>;
 
   return (skjemaData: SkjemaData) => {
+    const bestemmendeFravaersdag =
+      perioder && perioder.length > 0
+        ? finnBestemmendeFravaersdag(
+            perioder,
+            formatertePerioder,
+            skjaeringstidspunkt,
+            arbeidsgiverKanFlytteSkjæringstidspunkt()
+          )
+        : undefined;
+
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt.endringAarsaker.map((endringAarsak) => KonverterEndringAarsakSchema.parse(endringAarsak))
       : null;
