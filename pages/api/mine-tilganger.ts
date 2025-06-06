@@ -27,7 +27,7 @@ function extractOrgStructure(hierarki: any[]): OrgNode[] {
   return hierarki.map(({ orgnr, navn, underenheter }) => ({
     orgnr,
     navn,
-    underenheter: extractOrgStructure(underenheter || [])
+    underenheter: extractOrgStructure(underenheter ?? [])
   }));
 }
 

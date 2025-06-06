@@ -29,7 +29,10 @@ import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
 import formatIsoDate from '../../utils/formatIsoDate';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
-import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
+import {
+  EndepunktSykepengesoeknaderSchema,
+  EndepunktSykepengesoeknadSchema
+} from '../../schema/EndepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
 import { logger } from '@navikt/next-logger';
 import environment from '../../config/environment';
@@ -49,6 +52,9 @@ type SykepengePeriode = {
   forespoerselId?: string;
   forlengelseAv?: string;
 };
+
+type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
+type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
 
 const Initiering2: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -108,7 +114,7 @@ const Initiering2: NextPage = () => {
 
   type Skjema = z.infer<typeof skjemaSchema>;
   type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
-
+  type EndepunktSykepengesoeknadSchema = z.infer<typeof EndepunktSykepengesoeknadSchema>;
   const methods = useForm<Skjema>({
     resolver: zodResolver(skjemaSchema)
   });
@@ -308,14 +314,17 @@ const Initiering2: NextPage = () => {
     }
   };
 
-  const getSykmeldingsperiode = (formData: Skjema, mottatteSykepengesoeknader: any) => {
-    const sykmeldingsperiode: EndepunktSykepengesoeknader | [] = [];
+  const getSykmeldingsperiode = (
+    formData: Skjema,
+    mottatteSykepengesoeknader: z.SafeParseReturnType<EndepunktSykepengesoeknader, EndepunktSykepengesoeknader>
+  ) => {
+    const sykmeldingsperiode: EndepunktSykepengesoeknad[] = [];
     formData.sykepengePeriodeId?.forEach((id) => {
       const periode =
         mottatteSykepengesoeknader?.success &&
         mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
       if (periode) {
-        sykmeldingsperiode.push(periode);
+        sykmeldingsperiode.push(periode as EndepunktSykepengesoeknad);
       }
     });
 

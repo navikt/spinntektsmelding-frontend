@@ -25,8 +25,8 @@ export default function SelectArbeidsgiver({
   description,
   descriptionLabel
 }: Readonly<SelectArbeidsgiverProps>) {
-  const visningLabel = label || 'Arbeidsgiver';
-  const selectLabel = descriptionLabel || 'Organisasjon';
+  const visningLabel = label ?? 'Arbeidsgiver';
+  const selectLabel = descriptionLabel ?? 'Organisasjon';
   if (arbeidsforhold.length === 1) {
     return (
       <>

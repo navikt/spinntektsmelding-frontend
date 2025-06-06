@@ -1,11 +1,11 @@
 import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherArbeidsforhold from './fetcherArbeidsforhold';
-import { FieldError } from 'react-hook-form';
+import { UseFormSetError } from 'react-hook-form';
 
 export default function useArbeidsforhold(
   identitetsnummer: string | undefined,
-  setError: (name: string, error: FieldError, options?: { shouldFocus: boolean | undefined }) => void
+  setError: UseFormSetError<any> // (name: string, error: FieldError, options?: { shouldFocus: boolean | undefined }) => void
 ) {
   return useSWRImmutable(
     [environment.initierBlankSkjemaUrl, identitetsnummer],

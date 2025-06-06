@@ -7,7 +7,7 @@ interface BehandlingsdagerProps {
   behandlingsdager?: string[];
 }
 
-export function Behandlingsdager({ behandlingsdager }: BehandlingsdagerProps) {
+export function Behandlingsdager({ behandlingsdager }: Readonly<BehandlingsdagerProps>) {
   if (!behandlingsdager || behandlingsdager.length === 0) {
     return null;
   }
