@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import FeilVedHentingAvPersondata from '../../../pages/initiering2/FeilVedHentingAvPersondata';
+import FeilVedHentingAvPersondata from '../../../pages/initieringAnnet/FeilVedHentingAvPersondata';
 
 describe('FeilVedHentingAvPersondata', () => {
   it('renders nothing when no errors', () => {

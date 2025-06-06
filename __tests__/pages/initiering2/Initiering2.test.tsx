@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import Initiering2 from '../../../pages/initiering2/index';
+import Initiering2 from '../../../pages/initieringAnnet/index';
 import { vi, expect } from 'vitest';
 // import { create } from 'zustand';
 import useBoundStore from '../../../state/useBoundStore';
