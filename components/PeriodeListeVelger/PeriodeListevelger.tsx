@@ -67,7 +67,7 @@ export default function PeriodeListevelger({
     toDateTomVisning = toDate;
   }
 
-  toDateTomVisning = undefined;
+  toDateTomVisning = undefined; // Dette er for å hindre at date-pickeren hikker i noen nettlesere.
 
   return (
     <>
