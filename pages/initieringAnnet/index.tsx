@@ -114,7 +114,8 @@ const Initiering2: NextPage = () => {
 
   type Skjema = z.infer<typeof skjemaSchema>;
   type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
-  type EndepunktSykepengesoeknadSchema = z.infer<typeof EndepunktSykepengesoeknadSchema>;
+  type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
+
   const methods = useForm<Skjema>({
     resolver: zodResolver(skjemaSchema)
   });
@@ -282,7 +283,9 @@ const Initiering2: NextPage = () => {
       return;
     }
 
-    const mottatteSykepengesoeknader = spData ? EndepunktSykepengesoeknaderSchema.safeParse(spData) : undefined;
+    const mottatteSykepengesoeknader: EndepunktSykepengesoeknad[] | undefined = spData
+      ? EndepunktSykepengesoeknaderSchema.safeParse(spData)
+      : undefined;
     const mottatteData = data ? EndepunktArbeidsforholdSchema.safeParse(data) : undefined;
 
     if (mottatteData?.success) {
@@ -582,20 +585,16 @@ function startFDato(siffer: string): string {
   return siffer;
 }
 
-function visFomDato(id: string, mottatteSykepengesoeknader: SykepengePeriode[]) {
-  const periode = mottatteSykepengesoeknader.find((soeknad: SykepengePeriode) => soeknad.forespoerselId === id);
+function visDato(id: string, perioder: SykepengePeriode[], key: 'fom' | 'tom'): string {
+  const periode = perioder.find((p) => p.forespoerselId === id);
   if (!periode) {
     return '';
   }
-  return formatDate(parseIsoDate(periode.fom));
+  return formatDate(parseIsoDate(periode[key]));
 }
 
-function visTomDato(id: string, mottatteSykepengesoeknader: SykepengePeriode[]) {
-  const periode = mottatteSykepengesoeknader.find((soeknad: SykepengePeriode) => soeknad.forespoerselId === id);
-  if (!periode) {
-    return '';
-  }
-  return formatDate(parseIsoDate(periode.tom));
-}
+const visFomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, perioder, 'fom');
+
+const visTomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, perioder, 'tom');
 
 export default Initiering2;

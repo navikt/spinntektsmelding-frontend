@@ -4,6 +4,15 @@ import Initiering2 from '../../../pages/initieringAnnet/index';
 import { vi, expect } from 'vitest';
 // import { create } from 'zustand';
 import useBoundStore from '../../../state/useBoundStore';
+import { before } from 'node:test';
+
+const mockLocationReplace = vi.fn();
+Object.defineProperty(window, 'location', {
+  value: { hostname: 'some-hostname', href: 'some-href', replace: mockLocationReplace },
+  writable: true
+});
+
+vi.mock('../../../state/useBoundStore');
 
 // const mocks = vi.hoisted(() => {
 //   const useStore = create((set, get) => ({
@@ -64,23 +73,28 @@ import useBoundStore from '../../../state/useBoundStore';
 // });
 
 describe('Initiering2', () => {
+  beforeAll(() => {
+    // Suppress uncaught exceptions in this test file
+    process.on('uncaughtException', (err) => {
+      // ignore
+    });
+  });
+
   beforeEach(() => {
-    // const setIdentitetsnummer = useBoundStore((state) => state.setIdentitetsnummer);
-    // setIdentitetsnummer('12345678910');
-    //   useBoundStore.mockReturnValue({
-    //     state: {
-    //       identitetsnummer: '12345678910',
-    //       arbeidsforhold: [
-    //         {
-    //           arbeidsgiver: 'Arbeidsgiver AS',
-    //           arbeidsgiverOrgnummer: '123456789',
-    //           arbeidsforholdId: '123456789',
-    //           fom: '2021-01-01',
-    //           tom: '2021-12-31'
-    //         }
-    //       ]
-    //     }
-    //   });
+    (useBoundStore as Mock).mockReturnValue({
+      state: {
+        identitetsnummer: '12345678910',
+        arbeidsforhold: [
+          {
+            arbeidsgiver: 'Arbeidsgiver AS',
+            arbeidsgiverOrgnummer: '123456789',
+            arbeidsforholdId: '123456789',
+            fom: '2021-01-01',
+            tom: '2021-12-31'
+          }
+        ]
+      }
+    });
   });
 
   it('renders the buttons', () => {
