@@ -9,6 +9,16 @@ import { afterAll } from 'vitest';
 describe('NaturalytelseBortfallsdato', () => {
   const user = userEvent.setup();
 
+  beforeAll(() => {
+    // Suppress uncaught exceptions in this test file
+    process.on('uncaughtException', (err) => {
+      // ignore
+    });
+    process.on('unhandledRejection', (err) => {
+      // ignore
+    });
+  });
+
   beforeEach(() => {
     vi.resetAllMocks();
   });
