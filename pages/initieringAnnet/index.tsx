@@ -283,7 +283,9 @@ const Initiering2: NextPage = () => {
       return;
     }
 
-    const mottatteSykepengesoeknader = spData ? EndepunktSykepengesoeknaderSchema.safeParse(spData) : undefined;
+    const mottatteSykepengesoeknader: EndepunktSykepengesoeknad[] | undefined = spData
+      ? EndepunktSykepengesoeknaderSchema.safeParse(spData)
+      : undefined;
     const mottatteData = data ? EndepunktArbeidsforholdSchema.safeParse(data) : undefined;
 
     if (mottatteData?.success) {
