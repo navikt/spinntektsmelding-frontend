@@ -5,6 +5,12 @@ import { vi, expect } from 'vitest';
 // import { create } from 'zustand';
 import useBoundStore from '../../../state/useBoundStore';
 
+const mockLocationReplace = vi.fn();
+Object.defineProperty(window, 'location', {
+  value: { hostname: 'some-hostname', href: 'some-href', replace: mockLocationReplace },
+  writable: true
+});
+
 // const mocks = vi.hoisted(() => {
 //   const useStore = create((set, get) => ({
 //     identitetsnummer: '12345678910',
