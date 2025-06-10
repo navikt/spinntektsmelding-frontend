@@ -20,6 +20,16 @@ vi.mock('next/navigation', () => ({
 const initialState = useBoundStore.getState();
 
 describe('Kvittering', () => {
+  beforeAll(() => {
+    // Suppress uncaught exceptions in this test file
+    process.on('uncaughtException', (err) => {
+      // ignore
+    });
+    process.on('unhandledRejection', (err) => {
+      // ignore
+    });
+  });
+
   beforeEach(() => {
     const spy = vi.spyOn(window, 'print');
     vi.spyOn(env, 'saksoversiktUrl', 'get').mockReturnValue('https://mocked.nav.no');

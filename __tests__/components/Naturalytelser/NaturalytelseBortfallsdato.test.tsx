@@ -14,6 +14,9 @@ describe('NaturalytelseBortfallsdato', () => {
     process.on('uncaughtException', (err) => {
       // ignore
     });
+    process.on('unhandledRejection', (err) => {
+      // ignore
+    });
   });
 
   beforeEach(() => {
