@@ -152,7 +152,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     await expect(page.locator('text="50 000,00 kr/måned"').first()).toBeVisible();
   });
 
-  test.skip('Changes to ferie and submit', async ({ page }) => {
+  test('Changes to ferie and submit', async ({ page }) => {
     const formPage = new FormPage(page);
 
     // stub hent-forespoersel

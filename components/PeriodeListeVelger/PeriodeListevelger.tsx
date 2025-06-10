@@ -61,17 +61,25 @@ export default function PeriodeListevelger({
     event.preventDefault();
     leggTilPeriode({});
   };
+  let toDateTomVisning: Date | undefined = toDateTom;
 
   if (!toDateTom && toDate && !toDateTomFri) {
-    toDateTom = toDate;
+    toDateTomVisning = toDate;
   }
+
+  toDateTomVisning = undefined; // Dette er for å hindre at date-pickeren hikker i noen nettlesere.
 
   return (
     <>
       {fields.map((range, key) => (
         <div className={lokalStyles.endremaaanedsinntekt} key={range.id}>
           <DatoVelger name={`${name}.${key}.fom`} toDate={toDate} label={fomTekst} defaultMonth={defaultMonth} />
-          <DatoVelger name={`${name}.${key}.tom`} label={tomTekst} toDate={toDateTom} defaultMonth={defaultMonth} />
+          <DatoVelger
+            name={`${name}.${key}.tom`}
+            label={tomTekst}
+            toDate={toDateTomVisning}
+            defaultMonth={defaultMonth}
+          />
           {key > 0 && (
             <ButtonSlette title='Slett periode' onClick={() => slettPeriode(key)} className={lokalStyles.sletteknapp} />
           )}
