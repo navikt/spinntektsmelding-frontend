@@ -4,6 +4,7 @@ import Initiering2 from '../../../pages/initiering2/index';
 import { vi, expect, Mock } from 'vitest';
 // import { create } from 'zustand';
 import useBoundStore from '../../../state/useBoundStore';
+import { before } from 'node:test';
 
 const mockLocationReplace = vi.fn();
 Object.defineProperty(window, 'location', {
@@ -72,13 +73,14 @@ vi.mock('../../../state/useBoundStore');
 // });
 
 describe('Initiering2', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     // Suppress uncaught exceptions in this test file
     process.on('uncaughtException', (err) => {
       // ignore
     });
-    // const setIdentitetsnummer = useBoundStore((state) => state.setIdentitetsnummer);
-    // setIdentitetsnummer('12345678910');
+  });
+
+  beforeEach(() => {
     (useBoundStore as Mock).mockReturnValue({
       state: {
         identitetsnummer: '12345678910',
