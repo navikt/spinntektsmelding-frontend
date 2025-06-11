@@ -1,14 +1,14 @@
 import NetworkError from '../utils/NetworkError';
 
 const fetchInntektskjemaForNotifikasjon = async (url: string, uuid: string) => {
-  const res = await fetch(url, {
-    method: 'POST',
+  const res = await fetch(`${url}/${uuid}`, {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      uuid
-    })
+    }
+    // body: JSON.stringify({
+    //   uuid
+    // })
   });
 
   if (!res.ok) {

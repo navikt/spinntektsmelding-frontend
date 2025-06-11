@@ -5,6 +5,7 @@ import useStateInit from '../state/useStateInit';
 import feiltekster from './feiltekster';
 import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
+import isValidUUID from './isValidUUID';
 
 export default function useHentSkjemadata() {
   const initState = useStateInit();
@@ -21,7 +22,7 @@ export default function useHentSkjemadata() {
       return Promise.resolve({});
     }
 
-    if (forespoerselID) {
+    if (forespoerselID && isValidUUID(forespoerselID)) {
       return fetchInntektskjemaForNotifikasjon(environment.skjemadataUrl, forespoerselID)
         .then((skjemadata) => {
           if (skjemadata.erBesvart === true && !erEndring) {
