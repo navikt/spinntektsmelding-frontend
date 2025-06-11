@@ -4,7 +4,6 @@ import Initiering2 from '../../../pages/initieringAnnet/index';
 import { vi, expect } from 'vitest';
 // import { create } from 'zustand';
 import useBoundStore from '../../../state/useBoundStore';
-import { before } from 'node:test';
 
 const mockLocationReplace = vi.fn();
 Object.defineProperty(window, 'location', {
