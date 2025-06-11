@@ -288,7 +288,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sykmeldt.fnr!,
     avsender.orgnr!,
     inntektsdato!,
-    skjemastatus === SkjemaStatus.SELVBESTEMT
+    skjemastatus === SkjemaStatus.SELVBESTEMT && Boolean(inntektsdato)
   );
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
