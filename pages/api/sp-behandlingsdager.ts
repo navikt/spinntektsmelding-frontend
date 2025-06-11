@@ -114,7 +114,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       if (periode.sykmeldingId === soeknad.sykmeldingId) {
         return {
           ...periode,
-          behandlingsdager: [...new Set([...(periode.behandlingsdager || []), ...soeknad.behandlingsdager])],
+          behandlingsdager: [...new Set([...(periode.behandlingsdager ?? []), ...(soeknad.behandlingsdager ?? [])])],
           fom: minDate(periode.fom, soeknad.fom),
           tom: maxDate(periode.tom, soeknad.tom)
         };

@@ -1,11 +1,9 @@
 import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherArbeidsgiverListe from './fetcherArbeidsgiverListe';
-import { FieldError } from 'react-hook-form';
+import { UseFormSetError } from 'react-hook-form';
 
-export default function useArbeidsgiverListe(
-  setError: (name: string, error: FieldError, options?: { shouldFocus: boolean | undefined }) => void
-) {
+export default function useArbeidsgiverListe(setError: UseFormSetError<any>) {
   return useSWRImmutable([environment.mineTilgangerUrl], ([url]) => fetcherArbeidsgiverListe(url), {
     onError: (err) => {
       if (err.status === 401) {

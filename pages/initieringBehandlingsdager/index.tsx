@@ -186,7 +186,7 @@ const InitieringBehandlingsdager: NextPage = () => {
             fom: new Date(periode.fom),
             tom: new Date(periode.tom),
             id: periode.sykmeldingId,
-            antallBehandlingsdager: periode.behandlingsdager.length,
+            antallBehandlingsdager: periode.behandlingsdager?.length ?? 0,
             forespoerselId: periode.forespoerselId
           }))
         : [];
@@ -282,12 +282,12 @@ const InitieringBehandlingsdager: NextPage = () => {
       typeof EndepunktSykepengesoeknaderSchema,
       EndepunktSykepengesoeknad[]
     >
-  ): EndepunktSykepengesoeknad => {
+  ): EndepunktSykepengesoeknad | boolean => {
     const sykmeldingsperiode =
       mottatteSykepengesoeknader?.success &&
       mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykmeldingId === formData.sykmeldingId);
 
-    return sykmeldingsperiode;
+    return sykmeldingsperiode ?? false;
   };
 
   const handleValidFormData = (validerteData: any, sykmeldingsperiode: any) => {
