@@ -31,6 +31,8 @@ export interface SkjemadataState {
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
   setVedtaksperiodeId: (id: string) => void;
+  setAarsakSelvbestemtInnsending: (aarsak: string) => void;
+  setBehandlingsdager: (behandlingsdager: string[]) => void;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
@@ -42,6 +44,8 @@ export interface SkjemadataState {
   skjemastatus: SkjemaStatus;
   kvitteringData?: KvitteringFullInnsending | KvitteringSelvbestemtInnsending;
   vedtaksperiodeId?: string;
+  aarsakSelvbestemtInnsending?: string;
+  behandlingsdager?: string[];
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -52,6 +56,8 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   skjemaFeilet: false,
   skjemastatus: SkjemaStatus.FULL,
   kvitteringData: undefined,
+  aarsakSelvbestemtInnsending: undefined,
+  behandlingsdager: undefined,
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
@@ -134,6 +140,20 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.vedtaksperiodeId = id;
+      })
+    );
+  },
+  setAarsakSelvbestemtInnsending: (aarsak: string) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.aarsakSelvbestemtInnsending = aarsak;
+      })
+    );
+  },
+  setBehandlingsdager: (behandlingsdager: string[]) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.behandlingsdager = behandlingsdager;
       })
     );
   }

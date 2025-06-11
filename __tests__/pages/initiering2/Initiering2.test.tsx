@@ -1,10 +1,9 @@
 import { render } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import Initiering2 from '../../../pages/initiering2/index';
-import { vi, expect, Mock } from 'vitest';
+import Initiering2 from '../../../pages/initieringAnnet/index';
+import { vi, expect } from 'vitest';
 // import { create } from 'zustand';
 import useBoundStore from '../../../state/useBoundStore';
-import { before } from 'node:test';
 
 const mockLocationReplace = vi.fn();
 Object.defineProperty(window, 'location', {
