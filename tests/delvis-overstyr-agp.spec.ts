@@ -40,8 +40,8 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   await page.waitForTimeout(5000);
   await page.locator('button:has-text("Endre")').first().click();
 
-  await page.fill('label:text("Fra")', '01.02.2023');
-  await page.fill('label:text("Til")', '16.02.2023');
+  await formPage.fillInput('Fra', '01.02.2023');
+  await formPage.fillInput('Til', '16.02.2023');
 
   const endreKnapp2 = page.locator('button:has-text("Endre")').nth(0);
   await endreKnapp2.click();
