@@ -1,5 +1,5 @@
 import createFetchMock from 'vitest-fetch-mock';
-import handler, { config } from '../../../pages/api/hent-forespoersel';
+import handler, { config } from '../../../pages/api/hent-forespoersel/[postId]';
 import { NextApiRequest, NextApiResponse } from 'next';
 import org from '../../../mockdata/trenger-ikke-lonn.json';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
