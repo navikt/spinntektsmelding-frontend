@@ -12,12 +12,12 @@ test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
       r.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ name: 'Nothing' }) })
     );
     // stub forespørsel
-    await page.route('*/**/api/hent-forespoersel', (r) =>
+    await page.route('*/**/api/hent-forespoersel/*', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(originalData) })
     );
     // navigate
     await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
   });
 
   test('Det er ikke arbeidsgiverperiode toggle works', async ({ page }) => {

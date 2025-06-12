@@ -12,7 +12,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
       r.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ name: 'Nothing' }) })
     );
     // stub forespørsel
-    await page.route('*/**/api/hent-forespoersel', (r) =>
+    await page.route('*/**/api/hent-forespoersel/*', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(originalData) })
     );
     // navigate to form
@@ -21,7 +21,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
 
   test('kan endre bruttoinntekt og refusjon', async ({ page }) => {
     const formPage = new FormPage(page);
-    await page.waitForResponse('*/**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // velg full lønn og refusjon
     await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');

@@ -10,7 +10,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await page.route('**/collect', (r) => r.fulfill({ status: 202, body: 'OK' }));
     // stub initial API calls
     trengerDelvis.erBesvart = true;
-    await page.route('*/**/api/hent-forespoersel', (r) =>
+    await page.route('*/**/api/hent-forespoersel/*', (r) =>
       r.fulfill({ status: 200, body: JSON.stringify(trengerDelvis), contentType: 'application/json' })
     );
     await page.route('*/**/api/inntektsdata', (r) =>
@@ -24,7 +24,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     );
     // navigate to receipt page
     await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    await page.waitForResponse('*/**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
   });
 
   test('Changes and submit', async ({ page }) => {
