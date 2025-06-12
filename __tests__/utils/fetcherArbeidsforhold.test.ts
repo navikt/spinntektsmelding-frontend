@@ -41,7 +41,7 @@ describe('fetcherArbeidsforhold', () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ identitetsnummer })
+      body: JSON.stringify({ sykmeldtFnr: identitetsnummer })
     });
   });
 
@@ -61,7 +61,7 @@ describe('fetcherArbeidsforhold', () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ identitetsnummer })
+      body: JSON.stringify({ sykmeldtFnr: identitetsnummer })
     });
   });
 });

@@ -8,7 +8,7 @@ export default function fetcherArbeidsforhold(url: string | null, identitetsnumm
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ identitetsnummer })
+    body: JSON.stringify({ sykmeldtFnr: identitetsnummer })
   })
     .then((res) => {
       if (!res.ok) {
