@@ -11,7 +11,7 @@ test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
     // stub collect beacon
     await page.route('**/collect', (r) => r.fulfill({ status: 202, body: 'OK' }));
     // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel', (r) =>
+    await page.route('*/**/api/hent-forespoersel/*', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(hentForespoersel) })
     );
     // stub inntektsdata

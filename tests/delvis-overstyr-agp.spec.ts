@@ -14,7 +14,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
     });
   });
 
-  await page.route('*/**/api/hent-forespoersel', (route) => {
+  await page.route('*/**/api/hent-forespoersel/*', (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify(trengerDelvis)
@@ -34,7 +34,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
 
   // Wait for the API to be loaded
-  await page.waitForResponse('*/**/api/hent-forespoersel');
+  await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
   // Simulate interaction
   await page.waitForTimeout(5000);

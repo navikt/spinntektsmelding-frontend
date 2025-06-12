@@ -17,7 +17,7 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
       })
     );
     // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel', (route) =>
+    await page.route('*/**/api/hent-forespoersel/*', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -42,7 +42,7 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
     );
 
     await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
   });
 
   test('can check the radioboxes for refusjon and submit', async ({ page }) => {

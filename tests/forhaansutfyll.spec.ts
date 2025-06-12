@@ -20,7 +20,7 @@ test.describe('Utfylling og innsending av skjema', () => {
 
   test('should display information on the person and the submitter', async ({ page }) => {
     // intercept forespoersel
-    await page.route('*/**/api/hent-forespoersel', (route) =>
+    await page.route('*/**/api/hent-forespoersel/*', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -43,7 +43,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     await page.route('**/collect', (route) => route.fulfill({ status: 202, contentType: 'text/plain', body: 'OK' }));
 
     await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    // await page.waitForResponse('*/**/api/hent-forespoersel');
+    // await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // Person data
     await expect(page.locator('[data-cy="navn"]')).toHaveText('Test Navn Testesen-Navnesen Jr.');

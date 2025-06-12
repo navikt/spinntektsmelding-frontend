@@ -17,7 +17,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     );
 
     // stub data calls
-    await page.route('*/**/api/hent-forespoersel', (r) =>
+    await page.route('*/**/api/hent-forespoersel/*', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(trengerSykeperiode) })
     );
     await page.route('*/**/api/inntektsdata', (r) =>
@@ -35,7 +35,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     const formPage = new FormPage(page);
 
     // wait for initial data
-    await page.waitForResponse('*/**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // select full lønn & refusjon = Ja
     await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
@@ -116,7 +116,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     const formPage = new FormPage(page);
     // stub data calls
 
-    await page.waitForResponse('**/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // same setup as first...
     await page
@@ -172,7 +172,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
   test('refusjon med varig lønnsendring', async ({ page }) => {
     const formPage = new FormPage(page);
 
-    await page.waitForResponse('**/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // common setup
     await page

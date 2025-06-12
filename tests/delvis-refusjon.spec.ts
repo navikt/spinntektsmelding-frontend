@@ -23,7 +23,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     const formPage = new FormPage(page);
 
     // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel', (route) =>
+    await page.route('*/**/api/hent-forespoersel/*', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -41,7 +41,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
 
     // visit form
     await page.goto(baseUrl);
-    await page.waitForResponse('**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // choose "Nei" for refusjon
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
@@ -73,7 +73,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     const formPage = new FormPage(page);
 
     // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel', (route) =>
+    await page.route('*/**/api/hent-forespoersel/*', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -91,7 +91,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
 
     // visit form
     await page.goto(baseUrl);
-    await page.waitForResponse('**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     await page.getByRole('button', { name: 'Endre' }).nth(1).click();
 
@@ -156,7 +156,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     const formPage = new FormPage(page);
 
     // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel', (route) =>
+    await page.route('*/**/api/hent-forespoersel/*', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -174,7 +174,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
 
     // visit form
     await page.goto(baseUrl);
-    await page.waitForResponse('**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     await page.getByRole('button', { name: 'Endre' }).nth(1).click();
 
