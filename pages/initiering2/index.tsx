@@ -1,6 +1,6 @@
 import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod';
+import { SafeParseReturnType, z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -280,9 +280,7 @@ const Initiering2: NextPage = () => {
       return;
     }
 
-    const mottatteSykepengesoeknader: EndepunktSykepengesoeknad[] | undefined = spData
-      ? EndepunktSykepengesoeknaderSchema.safeParse(spData)
-      : undefined;
+    const mottatteSykepengesoeknader = spData ? EndepunktSykepengesoeknaderSchema.safeParse(spData) : undefined;
     const mottatteData = data ? EndepunktArbeidsforholdSchema.safeParse(data) : undefined;
 
     if (mottatteData?.success) {
@@ -290,7 +288,13 @@ const Initiering2: NextPage = () => {
     }
   };
 
-  const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any) => {
+  const handleValidData = (
+    formData: Skjema,
+    mottatteData: any,
+    mottatteSykepengesoeknader:
+      | SafeParseReturnType<[] | EndepunktSykepengesoeknad[], typeof EndepunktSykepengesoeknaderSchema>
+      | undefined
+  ) => {
     const skjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
@@ -314,14 +318,19 @@ const Initiering2: NextPage = () => {
     }
   };
 
-  const getSykmeldingsperiode = (formData: Skjema, mottatteSykepengesoeknader: any) => {
-    const sykmeldingsperiode: EndepunktSykepengesoeknader | [] = [];
+  const getSykmeldingsperiode = (
+    formData: Skjema,
+    mottatteSykepengesoeknader: SafeParseReturnType<EndepunktSykepengesoeknad[], EndepunktSykepengesoeknad[]>
+  ) => {
+    const sykmeldingsperiode: EndepunktSykepengesoeknad[] = [];
     formData.sykepengePeriodeId?.forEach((id) => {
-      const periode =
+      const periode: EndepunktSykepengesoeknad | false | undefined =
         mottatteSykepengesoeknader?.success &&
-        mottatteSykepengesoeknader?.data?.find((soeknad) => soeknad.sykepengesoknadUuid === id);
+        mottatteSykepengesoeknader?.data?.find(
+          (soeknad: EndepunktSykepengesoeknad) => soeknad.sykepengesoknadUuid === id
+        );
       if (periode) {
-        sykmeldingsperiode.push(periode);
+        sykmeldingsperiode.push(periode as EndepunktSykepengesoeknad);
       }
     });
 
