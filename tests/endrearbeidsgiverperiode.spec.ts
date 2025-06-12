@@ -30,7 +30,7 @@ test.describe('Utfylling og innsending av skjema', () => {
   test('can click the Endre arbeidsgiverperiode button so that egenmelding gets disabled', async ({ page }) => {
     const formPage = new FormPage(page);
     // wait for data
-    await page.waitForResponse('*/**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
     // click override button
     await page.locator('[data-cy="endre-arbeidsgiverperiode"]').click();
     // assert info alert text

@@ -32,10 +32,9 @@ describe('fetchInntektskjemaForNotifikasjon', () => {
 
     const result = await fetchInntektskjemaForNotifikasjon(url, uuid);
 
-    expect(global.fetch).toHaveBeenCalledWith(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uuid })
+    expect(global.fetch).toHaveBeenCalledWith(url + '/' + uuid, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
     });
     expect(result).toEqual(mockData);
   });

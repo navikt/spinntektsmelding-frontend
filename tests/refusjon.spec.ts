@@ -15,7 +15,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       })
     );
     // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel', (route) =>
+    await page.route('*/**/api/hent-forespoersel/*', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -33,7 +33,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
 
     // navigate to form
     await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hent-forespoersel');
+    await page.waitForResponse('*/**/api/hent-forespoersel/*');
   });
 
   test('can check radios for refusjon and submit', async ({ page }) => {

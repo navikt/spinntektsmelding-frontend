@@ -9,7 +9,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
     await page.route('**/collect', (r) => r.fulfill({ status: 202, body: 'OK' }));
     // stub hent-forespoersel
     trengerDelvis.erBesvart = true;
-    await page.route('*/**/api/hent-forespoersel', (r) =>
+    await page.route('*/**/api/hent-forespoersel/*', (r) =>
       r.fulfill({ status: 200, body: JSON.stringify(trengerDelvis), contentType: 'application/json' })
     );
     // stub inntektsdata
