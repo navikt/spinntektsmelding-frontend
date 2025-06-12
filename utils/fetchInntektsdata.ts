@@ -1,12 +1,12 @@
 import formatIsoDate from './formatIsoDate';
 import NetworkError from './NetworkError';
 
-const fetchInntektsdata = async (url: string, forespoerselId: string, skjaeringstidspunkt: Date | undefined) => {
-  if (!skjaeringstidspunkt) {
-    throw new Error('No skjaeringstidspunkt provided');
+const fetchInntektsdata = async (url: string, forespoerselId: string, inntektsdato: Date | undefined) => {
+  if (!inntektsdato) {
+    throw new Error('No inntektsdato provided');
   }
 
-  const tidspunkt = formatIsoDate(skjaeringstidspunkt);
+  const formatertInntektsdatoIso = formatIsoDate(inntektsdato);
   return fetch(url, {
     method: 'POST',
     headers: {
@@ -14,7 +14,7 @@ const fetchInntektsdata = async (url: string, forespoerselId: string, skjaerings
     },
     body: JSON.stringify({
       forespoerselId: forespoerselId,
-      skjaeringstidspunkt: tidspunkt
+      inntektsdato: formatertInntektsdatoIso
     })
   })
     .then((res) => {

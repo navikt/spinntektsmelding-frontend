@@ -79,7 +79,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     const skReq = await skReqPromise;
     expect(JSON.parse(skReq.postData()!)).toEqual({
       forespoerselId: uuid,
-      skjaeringstidspunkt: '2023-01-30'
+      inntektsdato: '2023-01-30'
     });
 
     // submit
