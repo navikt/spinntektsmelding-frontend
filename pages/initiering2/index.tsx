@@ -335,7 +335,7 @@ const Initiering2: NextPage = () => {
       }
 
       if (periode) {
-        sykmeldingsperiode.push(periode as EndepunktSykepengesoeknad);
+        sykmeldingsperiode.push(periode);
       }
     });
 
