@@ -324,11 +324,16 @@ const Initiering2: NextPage = () => {
   ) => {
     const sykmeldingsperiode: EndepunktSykepengesoeknad[] = [];
     formData.sykepengePeriodeId?.forEach((id) => {
-      const periode: EndepunktSykepengesoeknad | false | undefined =
-        mottatteSykepengesoeknader?.success &&
-        mottatteSykepengesoeknader?.data?.find(
+      let periode: EndepunktSykepengesoeknad | false;
+      if (mottatteSykepengesoeknader?.success === false) {
+        periode = false;
+      } else {
+        const funnetPeriode = mottatteSykepengesoeknader?.data?.find(
           (soeknad: EndepunktSykepengesoeknad) => soeknad.sykepengesoknadUuid === id
         );
+        periode = funnetPeriode ?? false;
+      }
+
       if (periode) {
         sykmeldingsperiode.push(periode as EndepunktSykepengesoeknad);
       }
