@@ -292,7 +292,7 @@ const Initiering2: NextPage = () => {
     formData: Skjema,
     mottatteData: any,
     mottatteSykepengesoeknader:
-      | SafeParseReturnType<[] | EndepunktSykepengesoeknad[], typeof EndepunktSykepengesoeknaderSchema>
+      | SafeParseReturnType<EndepunktSykepengesoeknad[], typeof EndepunktSykepengesoeknaderSchema>
       | undefined
   ) => {
     const skjemaData = {
@@ -320,7 +320,9 @@ const Initiering2: NextPage = () => {
 
   const getSykmeldingsperiode = (
     formData: Skjema,
-    mottatteSykepengesoeknader: SafeParseReturnType<EndepunktSykepengesoeknad[], EndepunktSykepengesoeknad[]>
+    mottatteSykepengesoeknader:
+      | SafeParseReturnType<EndepunktSykepengesoeknad[], EndepunktSykepengesoeknad[]>
+      | undefined
   ) => {
     const sykmeldingsperiode: EndepunktSykepengesoeknad[] = [];
     formData.sykepengePeriodeId?.forEach((id) => {
