@@ -3,7 +3,7 @@
   "version": "0.3.22",
   "private": true,
   "scripts": {
-    "dev": "next dev | pino-pretty",
+    "dev": "next dev | pino-pretty --messageKey=message",
     "dev:decoratorless": "cross-env DISABLE_DECORATOR=true next dev | pino-pretty",
     "build": "NODE_ENV=production next build",
     "start": "next start",
