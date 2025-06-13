@@ -375,7 +375,10 @@ const Initiering2: NextPage = () => {
   const getEgenmeldingsperioder = (sykmeldingsperiode: any) => {
     return sykmeldingsperiode
       .flatMap((periode: any) => {
-        const sorterteEgenmeldingsdager = periode.egenmeldingsdagerFraSykmelding.toSorted();
+        const sorterteEgenmeldingsdager =
+          periode.egenmeldingsdagerFraSykmelding && periode.egenmeldingsdagerFraSykmelding.length > 0
+            ? periode.egenmeldingsdagerFraSykmelding.toSorted()
+            : [];
         const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
           (accumulator: any, currentValue: any) => {
             const tom = new Date(currentValue);

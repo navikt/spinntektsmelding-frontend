@@ -168,7 +168,8 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
 export default finnBestemmendeFravaersdag;
 
 export function finnSorterteUnikePerioder<T extends TidPeriode>(fravaerPerioder: Array<T>): Array<T> {
-  const sorterteSykmeldingPerioder = fravaerPerioder.toSorted(sorterFomStigende);
+  const sorterteSykmeldingPerioder =
+    fravaerPerioder && fravaerPerioder.length > 0 ? fravaerPerioder.toSorted(sorterFomStigende) : [];
 
   return sorterteSykmeldingPerioder;
 }
