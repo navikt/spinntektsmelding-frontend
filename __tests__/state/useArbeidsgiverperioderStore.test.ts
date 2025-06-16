@@ -1463,4 +1463,44 @@ describe('useBoundStore', () => {
 
     expect(result.current.bestemmendeFravaersdag).toEqual(parseIsoDate('2021-10-01'));
   });
+
+  it('should set the har blitt endret flag. Perioder mangler', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
+    const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
+      {
+        fom: '2021-10-01',
+        tom: '2021-10-05'
+      }
+    ];
+
+    act(() => {
+      result.current.initArbeidsgiverperioder(mottattArbeidsgiverperiode);
+    });
+
+    expect(result.current.endretArbeidsgiverperiode).toBeFalsy();
+
+    act(() => {
+      result.current.harArbeidsgiverperiodenBlittEndret();
+    });
+
+    expect(result.current.endretArbeidsgiverperiode).toBeTruthy();
+  });
+
+  it('should reset status on foreslaattBestemmendeFravaersdag', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    act(() => {
+      result.current.setForeslaattBestemmendeFravaersdag(undefined);
+    });
+
+    expect(result.current.foreslaattBestemmendeFravaersdag).toBeUndefined();
+
+    act(() => {
+      result.current.setForeslaattBestemmendeFravaersdag(parseIsoDate('2022-10-01'));
+    });
+
+    expect(result.current.foreslaattBestemmendeFravaersdag).toEqual(parseIsoDate('2022-10-01'));
+  });
 });
