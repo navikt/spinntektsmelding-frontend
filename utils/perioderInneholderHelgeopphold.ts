@@ -3,6 +3,7 @@ import { Periode } from '../state/state';
 import sorterFomStigende from './sorterFomStigende';
 
 const perioderInneholderHelgeopphold = (perioder: Periode[]) => {
+  if (!perioder || perioder.length === 0) return false;
   const problem = perioder.find((p) => !p.fom || !p.tom);
   if (problem) return false;
 

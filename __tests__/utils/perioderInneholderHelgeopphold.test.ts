@@ -105,4 +105,10 @@ describe('perioderInneholderHelgeopphold', () => {
 
     expect(perioderInneholderHelgeopphold(perioder)).toBe(false);
   });
+
+  it('should return false if perioder is undefined', () => {
+    const perioder = undefined;
+
+    expect(perioderInneholderHelgeopphold(perioder)).toBe(false);
+  });
 });
