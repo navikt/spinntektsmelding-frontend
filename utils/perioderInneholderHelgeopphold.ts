@@ -3,10 +3,11 @@ import { Periode } from '../state/state';
 import sorterFomStigende from './sorterFomStigende';
 
 const perioderInneholderHelgeopphold = (perioder: Periode[]) => {
+  if (!perioder || perioder.length === 0) return false;
   const problem = perioder.find((p) => !p.fom || !p.tom);
   if (problem) return false;
 
-  const sortertePerioder = perioder && perioder.length > 0 ? perioder.toSorted(sorterFomStigende) : [];
+  const sortertePerioder = perioder.toSorted(sorterFomStigende);
   for (let index = 1; index < sortertePerioder.length; index++) {
     const forrigePeriode = sortertePerioder[index - 1];
     const periode = sortertePerioder[index];
