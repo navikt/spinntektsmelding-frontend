@@ -209,13 +209,27 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       harForespurtArbeidsgiverperiode
     ) {
       henterData = true;
+      try {
+        const inntektsdata = await fetchInntektsdata(
+          environment.inntektsdataUrl,
+          forespoerselId,
+          bestemmendeFravaersdag
+        );
+        const oppdaterteInntekter = inntektsdata.data;
 
-      const inntektsdata = await fetchInntektsdata(environment.inntektsdataUrl, forespoerselId, bestemmendeFravaersdag);
-      const oppdaterteInntekter = inntektsdata.data;
+        tidligereInntekt = oppdaterteInntekter.historikk;
+        snittInntekter = oppdaterteInntekter.gjennomsnitt;
+        henterData = false;
+      } catch (error) {
+        const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
+        const arrInntekter = Array.from(aktuelleInntekter);
+        const sumInntekter = arrInntekter.reduce((prev, cur) => {
+          prev += (cur[1] as number) ?? 0;
+          return prev;
+        }, 0);
 
-      tidligereInntekt = oppdaterteInntekter.historikk;
-      snittInntekter = oppdaterteInntekter.gjennomsnitt;
-      henterData = false;
+        snittInntekter = sumInntekter / arrInntekter.length;
+      }
     } else {
       const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
       const arrInntekter = Array.from(aktuelleInntekter);
