@@ -219,7 +219,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
         tidligereInntekt = oppdaterteInntekter.historikk;
         snittInntekter = oppdaterteInntekter.gjennomsnitt;
-        henterData = false;
       } catch (error) {
         const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
         const arrInntekter = Array.from(aktuelleInntekter);
@@ -229,6 +228,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         }, 0);
 
         snittInntekter = sumInntekter / arrInntekter.length;
+      } finally {
+        henterData = false;
       }
     } else {
       const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
