@@ -227,7 +227,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
           return prev;
         }, 0);
 
-        snittInntekter = sumInntekter / arrInntekter.length;
+        snittInntekter = arrInntekter.length > 0 ? sumInntekter / arrInntekter.length : 0;
       } finally {
         henterData = false;
       }
