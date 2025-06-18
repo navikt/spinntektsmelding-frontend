@@ -113,7 +113,20 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
 
     const bruttoInntekt = 1000000;
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, bruttoInntekt)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS, bruttoInntekt, true)).toEqual(expected);
+  });
+
+  it('should not return an error when refusjonsbeløp higer than bruttoinntekt and inntekt is not requested', () => {
+    const inputLUS: LonnISykefravaeret = {
+      status: 'Ja',
+      beloep: 1000111
+    };
+
+    const expected = [];
+
+    const bruttoInntekt = 1000000;
+
+    expect(validerLonnUnderSykefravaeret(inputLUS, bruttoInntekt, false)).toEqual(expected);
   });
 
   it('should not return an error when refusjonsbeløp lower than bruttoinntekt', () => {
@@ -144,7 +157,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
 
     const bruttoInntekt = 9000;
 
-    expect(validerLonnUnderSykefravaeret(inputLUS, bruttoInntekt)).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(inputLUS, bruttoInntekt, true)).toEqual(expected);
   });
 
   it('should return an error when refusjonsbeløp is null', () => {
