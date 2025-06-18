@@ -1,0 +1,45 @@
+{
+  "sykmeldt": {
+    "fnr": "25087327879",
+    "navn": "Test Navn Testesen-Navnesen Jr."
+  },
+  "avsender": {
+    "orgnr": "911206722",
+    "orgNavn": "Veldig ampert piggsvin barnehage",
+    "navn": "Test Testesen"
+  },
+  "egenmeldingsperioder": [],
+  "sykmeldingsperioder": [
+    {
+      "fom": "2025-05-31",
+      "tom": "2025-06-16"
+    }
+  ],
+  "bestemmendeFravaersdag": "2025-05-31",
+  "eksternInntektsdato": null,
+  "inntekt": {
+    "gjennomsnitt": 77000,
+    "historikk": {
+      "2025-02": null,
+      "2025-03": 76000,
+      "2025-04": 78000
+    }
+  },
+  "forespurtData": {
+    "arbeidsgiverperiode": {
+      "paakrevd": false
+    },
+    "inntekt": {
+      "paakrevd": false,
+      "forslag": null
+    },
+    "refusjon": {
+      "paakrevd": true,
+      "forslag": {
+        "perioder": [],
+        "opphoersdato": null
+      }
+    }
+  },
+  "erBesvart": false
+}
