@@ -13,7 +13,7 @@ import validerLonnUnderSykefravaeret, {
 import validerPeriodeEgenmelding, { PeriodeEgenmeldingFeilkode } from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import { CompleteState } from '../state/useBoundStore';
-import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
+import validerEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
 import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 import validerPeriodeOverlapp, { PeriodeOverlappFeilkode } from '../validators/validerPeriodeOverlapp';
@@ -147,12 +147,12 @@ export default function validerInntektsmelding(
     kreverInntekt
   );
 
-  feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
+  feilkoderEndringAvMaanedslonn = validerEndringAvMaanedslonn(
     state.harRefusjonEndringer,
     state.refusjonEndringer,
     state.lonnISykefravaeret,
     formData.inntekt?.beloep,
-    state.refusjonskravetOpphoerer?.opphoersdato
+    kreverInntekt
   );
 
   feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);

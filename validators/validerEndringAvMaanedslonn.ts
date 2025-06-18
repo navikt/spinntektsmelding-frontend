@@ -14,7 +14,7 @@ export enum EndringAvMaanedslonnFeilkode {
   ENDRING_DATO_ETTER_SLUTTDATO = 'ENDRING_DATO_ETTER_SLUTTDATO'
 }
 
-export default function valdiderEndringAvMaanedslonn(
+export default function validerEndringAvMaanedslonn(
   harRefusjonEndringer?: YesNo,
   refusjonEndringer?: Array<EndringsBeloep>,
   lonnISykefravaeret?: LonnISykefravaeret,

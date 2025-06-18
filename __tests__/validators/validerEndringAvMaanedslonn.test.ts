@@ -52,7 +52,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
   });
 
   it('should return error when harRefusjonEndringer is Ja and beloep higher than bruttoinntekt', () => {
-    expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), beloep: 12345 }], undefined, 555)).toEqual([
+    expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), beloep: 12345 }], undefined, 555, true)).toEqual([
       {
         code: 'BELOP_OVERSTIGER_BRUTTOINNTEKT',
         felt: 'refusjon.refusjonEndringer[0].beløp'
