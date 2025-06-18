@@ -36,8 +36,8 @@ export class FormPage {
     const inputField = await this.getInput(label);
     await inputField.fill(value);
   }
-  async clickButton(buttonText: string): Promise<void> {
-    const button = this.page.getByRole('button', { name: buttonText });
+  async clickButton(buttonText: string, index: number = 0): Promise<void> {
+    const button = this.page.getByRole('button', { name: buttonText }).nth(index);
     await button.click();
   }
   async getInputValue(label: string): Promise<string> {

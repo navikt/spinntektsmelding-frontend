@@ -18,7 +18,8 @@ export default function valdiderEndringAvMaanedslonn(
   harRefusjonEndringer?: YesNo,
   refusjonEndringer?: Array<EndringsBeloep>,
   lonnISykefravaeret?: LonnISykefravaeret,
-  bruttoInntekt?: number
+  bruttoInntekt?: number,
+  kreverInntekt?: boolean
 ): Array<ValiderResultat> {
   let feilmeldinger: Array<ValiderResultat> = [];
   const harLonnISykefravaeret = !!lonnISykefravaeret && lonnISykefravaeret.status === 'Ja';
@@ -81,7 +82,7 @@ export default function valdiderEndringAvMaanedslonn(
           code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP
         });
       }
-      if (endring.beloep && bruttoInntekt && endring.beloep > bruttoInntekt) {
+      if (endring.beloep && bruttoInntekt && endring.beloep > bruttoInntekt && kreverInntekt) {
         feilmeldinger.push({
           felt: `refusjon.refusjonEndringer[${index}].beløp`,
           code: EndringAvMaanedslonnFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT
