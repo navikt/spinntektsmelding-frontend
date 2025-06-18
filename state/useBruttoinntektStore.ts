@@ -219,7 +219,8 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
 
         tidligereInntekt = oppdaterteInntekter.historikk;
         snittInntekter = oppdaterteInntekter.gjennomsnitt;
-      } catch (error) {
+      } catch (error: unknown) {
+        console.error('Error fetching inntektsdata:', error);
         const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
         const arrInntekter = Array.from(aktuelleInntekter);
         const sumInntekter = arrInntekter.reduce((prev, cur) => {
