@@ -11,7 +11,8 @@ export enum LonnUnderSykefravaeretFeilkode {
 
 export default function validerLonnUnderSykefravaeret(
   refusjon?: LonnISykefravaeret,
-  bruttoInntekt?: number
+  bruttoInntekt?: number,
+  kreverInntekt?: boolean
 ): Array<ValiderResultat> {
   let errorStatus: Array<ValiderResultat> = [];
 
@@ -22,7 +23,9 @@ export default function validerLonnUnderSykefravaeret(
     });
   } else if (refusjon.status === 'Ja') {
     validerBelop(refusjon, errorStatus);
-    validerMaksimaltBelop(refusjon, bruttoInntekt, errorStatus);
+    if (kreverInntekt) {
+      validerMaksimaltBelop(refusjon, bruttoInntekt, errorStatus);
+    }
   }
 
   return errorStatus;
