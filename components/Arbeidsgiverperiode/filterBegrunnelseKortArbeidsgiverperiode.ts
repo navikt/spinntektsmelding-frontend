@@ -8,7 +8,8 @@ const filterBegrunnelseKortArbeidsgiverperiode = [
   'Saerregler',
   'TidligereVirksomhet',
   'IkkeFullStillingsandel',
-  'FerieEllerAvspasering'
+  'FerieEllerAvspasering',
+  'IkkeFravaer'
 ];
 
 export default filterBegrunnelseKortArbeidsgiverperiode;
