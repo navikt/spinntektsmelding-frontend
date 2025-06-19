@@ -16,7 +16,7 @@ test.describe('Utfylling og innsending av skjema', () => {
       })
     );
     // stub hent-forespoersel → fixture
-    await page.route('**/im-dialog/api/hent-forespoersel', (route) =>
+    await page.route('**/im-dialog/api/hent-forespoersel/*', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',

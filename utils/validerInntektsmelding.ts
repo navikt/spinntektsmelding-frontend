@@ -13,7 +13,7 @@ import validerLonnUnderSykefravaeret, {
 import validerPeriodeEgenmelding, { PeriodeEgenmeldingFeilkode } from '../validators/validerPeriodeEgenmelding';
 import validerBekreftOpplysninger, { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import { CompleteState } from '../state/useBoundStore';
-import valdiderEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
+import validerEndringAvMaanedslonn, { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
 import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 import validerPeriodeOverlapp, { PeriodeOverlappFeilkode } from '../validators/validerPeriodeOverlapp';
@@ -103,9 +103,11 @@ export default function validerInntektsmelding(
   const sykmeldingsperioder = finnFravaersperioder(state.sykmeldingsperioder, state.egenmeldingsperioder);
 
   let kreverAgp = true;
-  if (state.ForespurtDataSchema?.arbeidsgiverperiode.paakrevd === false) {
+  if (state.forespurtData?.arbeidsgiverperiode.paakrevd === false) {
     kreverAgp = false;
   }
+
+  const kreverInntekt = state.forespurtData?.inntekt.paakrevd;
 
   const bestemmendeFravaersdag = kreverAgp
     ? parseIsoDate(
@@ -116,7 +118,7 @@ export default function validerInntektsmelding(
           !state.skjaeringstidspunkt
         )
       )
-    : parseIsoDate(state.ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt);
+    : parseIsoDate(state.forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt);
 
   if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0 && !kunInntektOgRefusjon) {
     feilkoderEgenmeldingsperioder = validerPeriodeEgenmelding(state.egenmeldingsperioder, 'egenmeldingsperioder');
@@ -139,14 +141,18 @@ export default function validerInntektsmelding(
     );
   }
 
-  feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(state.lonnISykefravaeret, formData.inntekt?.beloep);
+  feilkoderLonnUnderSykefravaeret = validerLonnUnderSykefravaeret(
+    state.lonnISykefravaeret,
+    formData.inntekt?.beloep,
+    kreverInntekt
+  );
 
-  feilkoderEndringAvMaanedslonn = valdiderEndringAvMaanedslonn(
+  feilkoderEndringAvMaanedslonn = validerEndringAvMaanedslonn(
     state.harRefusjonEndringer,
     state.refusjonEndringer,
     state.lonnISykefravaeret,
     formData.inntekt?.beloep,
-    state.refusjonskravetOpphoerer?.opphoersdato
+    kreverInntekt
   );
 
   feilkoderBekreftOpplyninger = validerBekreftOpplysninger(opplysningerBekreftet);
