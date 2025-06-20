@@ -1,6 +1,6 @@
-import { MottatArbeidsgiver } from '../schema/ForespurtDataSchema';
+import { MottattArbeidsgiver } from '../schema/MottattArbeidsgiverSchema';
 
-const testOrganisasjoner: MottatArbeidsgiver[] = [
+const testOrganisasjoner: MottattArbeidsgiver[] = [
   {
     name: 'ANSTENDIG BJØRN KOMMUNE',
     type: 'Enterprise',
