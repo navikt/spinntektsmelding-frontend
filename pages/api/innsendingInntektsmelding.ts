@@ -3,13 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../config/environment';
 
-import org from '../../mockdata/testOrganisasjoner';
 import feilRespons from '../../mockdata/respons-backendfeil.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
 const basePath = 'http://' + global.process.env.IM_API_URI + environment.innsendingInntektsmeldingAPI;
 
-type Data = typeof org;
+type FeilRespons = { valideringsfeil: string[]; error: string };
 
 export const config = {
   api: {
@@ -18,7 +17,7 @@ export const config = {
   }
 };
 
-const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
+const handler = (req: NextApiRequest, res: NextApiResponse<FeilRespons>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
     setTimeout(() => {
