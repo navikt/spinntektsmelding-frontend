@@ -5,10 +5,9 @@ import environment from '../../config/environment';
 
 import org from '../../mockdata/testOrganisasjoner';
 import handleProxyInit from '../../utils/api/handleProxyInit';
+import { MottattArbeidsgiver } from '../../schema/MottattArbeidsgiverSchema';
 
 const basePath = 'http://' + global.process.env.IM_API_URI + environment.arbeidsgiverAPI;
-
-type Data = typeof org;
 
 export const config = {
   api: {
@@ -17,7 +16,7 @@ export const config = {
   }
 };
 
-const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
+const handler = (req: NextApiRequest, res: NextApiResponse<MottattArbeidsgiver[]>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
     return res.status(200).json(org);
