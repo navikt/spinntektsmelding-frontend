@@ -97,7 +97,7 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   );
 
   const sisteDagArbeidsgiverperiode =
-    arbeidsgiverperiode && arbeidsgiverperiode.length > 0
+    Array.isArray(arbeidsgiverperiode) && arbeidsgiverperiode.length > 0
       ? arbeidsgiverperiode?.toSorted(sorterFomSynkende)[0].tom
       : undefined;
 
@@ -169,7 +169,7 @@ export default finnBestemmendeFravaersdag;
 
 export function finnSorterteUnikePerioder<T extends TidPeriode>(fravaerPerioder: Array<T>): Array<T> {
   const sorterteSykmeldingPerioder =
-    fravaerPerioder && fravaerPerioder.length > 0 ? fravaerPerioder.toSorted(sorterFomStigende) : [];
+    Array.isArray(fravaerPerioder) && fravaerPerioder.length > 0 ? fravaerPerioder.toSorted(sorterFomStigende) : [];
 
   return sorterteSykmeldingPerioder;
 }

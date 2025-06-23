@@ -59,7 +59,7 @@ export default function RefusjonArbeidsgiver({
   const foersteFravaersdag = fravaerSortert[0]?.fom;
 
   const sisteArbeidsgiverperiode =
-    arbeidsgiverperioder && arbeidsgiverperioder.length > 0
+    Array.isArray(arbeidsgiverperioder) && arbeidsgiverperioder.length > 0
       ? arbeidsgiverperioder?.toSorted(sorterFomStigende)
       : arbeidsgiverperioder;
 
