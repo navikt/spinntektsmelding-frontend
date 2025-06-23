@@ -93,14 +93,15 @@ export default z
     }
 
     if (value.refusjon.harEndringer === 'Ja') {
-      const sorterteEndringer = value.refusjon.refusjonEndringer
-        ? value.refusjon.refusjonEndringer.toSorted((a, b) => {
-            if (a.dato && b.dato) {
-              return a.dato > b.dato ? 1 : -1;
-            }
-            return -1;
-          })
-        : [];
+      const sorterteEndringer =
+        Array.isArray(value.refusjon.refusjonEndringer) && value.refusjon.refusjonEndringer.length > 0
+          ? value.refusjon.refusjonEndringer.toSorted((a, b) => {
+              if (a.dato && b.dato) {
+                return a.dato > b.dato ? 1 : -1;
+              }
+              return -1;
+            })
+          : [];
       const unikeEndringer = sorterteEndringer.reduce(
         (acc: Array<{ beloep?: number; dato?: Date }>, endring, index) => {
           if (index === 0) {
