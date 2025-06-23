@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const MottattArbeidsgiverSchema = z.object({
+const MottattArbeidsgiverSchema = z.object({
   name: z.string(),
   type: z.string(), // e.g. 'Enterprise'
   parentOrganizationNumber: z.string().nullable(),
