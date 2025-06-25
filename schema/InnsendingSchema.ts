@@ -5,6 +5,7 @@ import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import { RefusjonEndringSchema } from './ApiRefusjonEndringSchema';
 import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSchema';
 import { ApiNaturalytelserSchema } from './ApiNaturalytelserSchema';
+import { isBefore } from 'date-fns';
 
 export const InnsendingSchema = z.object({
   agp: z
@@ -73,6 +74,50 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
       code: z.ZodIssueCode.custom,
       message: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
       path: ['agp', 'redusertLoennIAgp', 'beloep']
+    });
+  }
+
+  if ((val.inntekt?.beloep ?? 0) > 1000000) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Inntekten kan ikke være over 1 million.',
+      path: ['inntekt', 'beloep']
+    });
+  }
+
+  if (val.refusjon) {
+    const agpSluttdato = val.agp?.perioder?.[val.agp.perioder.length - 1]?.tom ?? undefined;
+    val.refusjon?.endringer.forEach((endring, index) => {
+      if (endring.beloep > (val.inntekt?.beloep ?? 0)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Refusjon kan ikke være høyere enn inntekt.',
+          path: ['refusjon', 'endringer', index, 'beloep']
+        });
+      }
+      if (endring.beloep < 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Refusjon må være større eller lik 0.',
+          path: ['refusjon', 'endringer', index, 'beloep']
+        });
+      }
+
+      if (isBefore(endring.startdato, agpSluttdato ?? '')) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
+          path: ['refusjon', 'endringer', index, 'startdato']
+        });
+      }
+
+      if (isBefore(endring.startdato, val.inntekt?.inntektsdato ?? '')) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Startdato for refusjonsendringer må være etter dato for rapportert inntekt.',
+          path: ['refusjon', 'endringer', index, 'startdato']
+        });
+      }
     });
   }
 }

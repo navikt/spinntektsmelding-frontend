@@ -114,17 +114,17 @@ export default function RefusjonUtbetalingEndring({
                 label='Endret beløp/måned'
                 onChange={(event) => changeBelopHandler(event, key)}
                 defaultValue={endring.beloep ?? ''}
-                id={`refusjon.refusjonEndringer[${key}].beløp`}
-                error={visFeilmeldingTekst(`refusjon.refusjonEndringer[${key}].beløp`)}
+                id={`refusjon.endringer.${key}.beloep`}
+                error={visFeilmeldingTekst(`refusjon.endringer.${key}.beloep`)}
                 className={lokalStyles.endringsboks}
               />
               <Datovelger
                 fromDate={minDate}
                 toDate={maxDate}
                 onDateChange={(val: Date | undefined) => changeDatoHandler(val, key)}
-                id={`refusjon.refusjonEndringer[${key}].dato`}
+                id={`refusjon.endringer.${key}.dato`}
                 label='Dato for endring'
-                error={visFeilmeldingTekst(`refusjon.refusjonEndringer[${key}].dato`)}
+                error={visFeilmeldingTekst(`refusjon.endringer.${key}.dato`)}
                 defaultSelected={endring.dato}
               />
               <ButtonSlette
