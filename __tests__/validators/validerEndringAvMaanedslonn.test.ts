@@ -24,11 +24,11 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{}])).toEqual([
       {
         code: 'MANGLER_BELOP',
-        felt: 'refusjon.refusjonEndringer[0].beløp'
+        felt: 'refusjon.endringer.0.beloep'
       },
       {
         code: 'MANGLER_DATO',
-        felt: 'refusjon.refusjonEndringer[0].dato'
+        felt: 'refusjon.endringer.0.startdato'
       }
     ]);
   });
@@ -37,7 +37,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{ beloep: -1, dato: new Date() }])).toEqual([
       {
         code: 'MANGLER_BELOP',
-        felt: 'refusjon.refusjonEndringer[0].beløp'
+        felt: 'refusjon.endringer.0.beloep'
       }
     ]);
   });
@@ -46,7 +46,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{ beloep: 'string', dato: new Date() }])).toEqual([
       {
         code: 'MANGLER_BELOP',
-        felt: 'refusjon.refusjonEndringer[0].beløp'
+        felt: 'refusjon.endringer.0.beloep'
       }
     ]);
   });
@@ -55,7 +55,7 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{ dato: new Date(), beloep: 12345 }], undefined, 555, true)).toEqual([
       {
         code: 'BELOP_OVERSTIGER_BRUTTOINNTEKT',
-        felt: 'refusjon.refusjonEndringer[0].beløp'
+        felt: 'refusjon.endringer.0.beloep'
       }
     ]);
   });
