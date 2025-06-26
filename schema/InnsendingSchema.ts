@@ -41,7 +41,7 @@ export const InnsendingSchema = z.object({
       sluttdato: z
         .string({
           required_error: 'Vennligst fyll inn til dato',
-          invalid_type_error: 'Dette er ikke en dato'
+          invalid_type_error: 'Dette er ikke en gyldig dato'
         })
         .date()
         .nullable()

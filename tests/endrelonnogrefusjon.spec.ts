@@ -109,6 +109,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
 
     // confirm receipt page
     // await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -118,19 +119,27 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
 
     await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
+    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
+
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
+
+    await formPage.checkRadioButton(
+      'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
+      'Nei'
+    );
     // same setup as first...
-    await page
-      .getByRole('group', { name: /ut full lønn/ })
-      .getByLabel('Ja')
-      .check();
-    await page
-      .getByRole('group', { name: /krever refusjon/ })
-      .getByLabel('Ja')
-      .check();
-    await page
-      .getByRole('group', { name: /endringer i refusjonsbeløpet/ })
-      .getByRole('radio', { name: 'Nei' })
-      .check();
+    // await page
+    //   .getByRole('group', { name: /ut full lønn/ })
+    //   .getByLabel('Ja')
+    //   .check();
+    // await page
+    //   .getByRole('group', { name: /krever refusjon/ })
+    //   .getByLabel('Ja')
+    //   .check();
+    // await page
+    //   .getByRole('group', { name: /endringer i refusjonsbeløpet/ })
+    //   .getByRole('radio', { name: 'Nei' })
+    //   .check();
     await page.locator('[data-cy="endre-beloep"]').click();
     const salaryInput = page.locator('[data-cy="inntekt-beloep-input"]');
     await salaryInput.fill('70000');
@@ -174,19 +183,27 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
 
     await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
+    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
+
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
+
+    await formPage.checkRadioButton(
+      'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
+      'Nei'
+    );
     // common setup
-    await page
-      .getByRole('group', { name: /ut full lønn/ })
-      .getByLabel('Ja')
-      .check();
-    await page
-      .getByRole('group', { name: /krever refusjon/ })
-      .getByLabel('Ja')
-      .check();
-    await page
-      .getByRole('group', { name: /endringer i refusjonsbeløpet/ })
-      .getByRole('radio', { name: 'Nei' })
-      .check();
+    // await page
+    //   .getByRole('group', { name: /ut full lønn/ })
+    //   .getByLabel('Ja')
+    //   .check();
+    // await page
+    //   .getByRole('group', { name: /krever refusjon/ })
+    //   .getByLabel('Ja')
+    //   .check();
+    // await page
+    //   .getByRole('group', { name: /endringer i refusjonsbeløpet/ })
+    //   .getByRole('radio', { name: 'Nei' })
+    //   .check();
     await page.locator('[data-cy="endre-beloep"]').click();
     const salaryInput = page.locator('[data-cy="inntekt-beloep-input"]');
     await salaryInput.fill('70000');
@@ -229,6 +246,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     });
 
     // await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 });
