@@ -123,12 +123,10 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     });
     // final confirmation
 
-    test.step('Check final page', async () => {
-      await page.waitForURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
-      await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/18\.09\.2023/);
-      await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
-      await expect(page.locator('text="Bonus"')).toBeVisible();
-      await expect(page.locator('text="60 000,00 kr/måned"').first()).toBeVisible();
-    });
+    await page.waitForURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+    await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/18\.09\.2023/);
+    await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
+    await expect(page.locator('text="Bonus"')).toBeVisible();
+    await expect(page.locator('text="60 000,00 kr/måned"').first()).toBeVisible();
   });
 });
