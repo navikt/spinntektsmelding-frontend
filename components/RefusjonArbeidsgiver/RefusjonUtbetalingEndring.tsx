@@ -122,9 +122,9 @@ export default function RefusjonUtbetalingEndring({
                 fromDate={minDate}
                 toDate={maxDate}
                 onDateChange={(val: Date | undefined) => changeDatoHandler(val, key)}
-                id={`refusjon.endringer.${key}.dato`}
+                id={`refusjon.endringer.${key}.startdato`}
                 label='Dato for endring'
-                error={visFeilmeldingTekst(`refusjon.endringer.${key}.dato`)}
+                error={visFeilmeldingTekst(`refusjon.endringer.${key}.startdato`)}
                 defaultSelected={endring.dato}
               />
               <ButtonSlette

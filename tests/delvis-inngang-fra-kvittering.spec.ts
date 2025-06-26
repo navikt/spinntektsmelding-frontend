@@ -4,84 +4,104 @@ import inntektData from '../mockdata/inntektData.json';
 import kvitteringData from '../mockdata/kvittering-delvis.json';
 import { FormPage } from './utils/formPage';
 
+const uuid = '12345678-3456-5678-2457-123456789012';
+const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
+
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
     // stub collect beacon
     await page.route('**/collect', (r) => r.fulfill({ status: 202, body: 'OK' }));
-    // stub initial API calls
+
+    // mark as besvart
     trengerDelvis.erBesvart = true;
-    await page.route('*/**/api/hent-forespoersel/*', (r) =>
+
+    // stub API
+    await page.route('**/api/hent-forespoersel/*', (r) =>
       r.fulfill({ status: 200, body: JSON.stringify(trengerDelvis), contentType: 'application/json' })
     );
-    await page.route('*/**/api/inntektsdata', (r) =>
+    await page.route('**/api/inntektsdata', (r) =>
       r.fulfill({ status: 200, body: JSON.stringify(inntektData), contentType: 'application/json' })
     );
-    await page.route('*/**/api/hentKvittering/**', (r) =>
+    await page.route('**/api/hentKvittering/**', (r) =>
       r.fulfill({ status: 200, body: JSON.stringify(kvitteringData), contentType: 'application/json' })
     );
-    await page.route('*/**/api/innsendingInntektsmelding', (r) =>
+    await page.route('**/api/innsendingInntektsmelding', (r) =>
       r.fulfill({ status: 201, body: JSON.stringify({ name: 'Nothing' }), contentType: 'application/json' })
     );
-    // navigate to receipt page
-    await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
+
+    await page.goto(baseUrl);
+    await page.waitForResponse('**/api/hent-forespoersel/*');
   });
 
   test('Changes and submit', async ({ page }) => {
     const formPage = new FormPage(page);
-    // verify on receipt page
-    await page.waitForResponse('*/**/api/hentKvittering/12345678-3456-5678-2457-123456789012');
-    await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
-    // click first "Endre"
-    await page.getByRole('button', { name: /Endre/ }).first().click();
-    await page.waitForURL('**/im-dialog/12345678-3456-5678-2457-123456789012');
 
-    // update income to 50000
-    await page.getByRole('button', { name: /Endre/ }).nth(1).click();
-
-    await expect(page.locator('label:text("Månedslønn 02.01.2023")')).toHaveValue('65000');
-    await formPage.fillInput('Månedslønn 02.01.2023', '50000');
-
-    // select change reason
-    await formPage.selectOption('Velg endringsårsak', 'Bonus');
-
-    // choose refusjon = Ja
-    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
-
-    // confirm phone and checkbox
-    await expect(page.getByLabel('Telefon innsender')).toHaveValue('12345678');
-
-    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
-
-    // click second "Endre"
-    await page.getByRole('button', { name: /Endre/ }).nth(1).click();
-    // set refusjonsbeløp
-    await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '50000');
-
-    // submit
-    const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-    await formPage.clickButton('Send');
-    const req = await reqPromise;
-    const body = JSON.parse(req.postData()!);
-    expect(body).toEqual({
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
-      agp: null,
-      inntekt: {
-        beloep: 50000,
-        inntektsdato: '2023-01-02',
-        naturalytelser: [],
-        endringAarsaker: [{ aarsak: 'Bonus' }]
-      },
-      refusjon: { beloepPerMaaned: 50000, sluttdato: null, endringer: [] },
-      avsenderTlf: '12345678'
+    await test.step('Gå til kvitteringsside og trykk Endre', async () => {
+      await page.waitForResponse(`**/api/hentKvittering/${uuid}`);
+      await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
+      await page.getByRole('button', { name: /Endre/ }).first().click();
+      await expect(page).toHaveURL(baseUrl);
     });
 
-    // confirmation page
-    await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/02.01.2023/);
-    await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
-    await expect(page.locator('text="12345678"')).toBeVisible();
-    await expect(page.locator('text="Bonus"')).toBeVisible();
-    await expect(page.locator('text="50 000,00 kr/måned"').first()).toBeVisible();
-    // await expect(page.locator('text="02.01.2023"')).toBeVisible();
+    await test.step('Oppdater månedslønn', async () => {
+      await page.getByRole('button', { name: /Endre/ }).nth(1).click();
+
+      const incomeInput = page.getByLabel('Månedslønn 02.01.2023');
+      await expect(incomeInput).toBeVisible();
+      await expect(incomeInput).toHaveValue('65000');
+      await incomeInput.fill('50000');
+    });
+
+    await test.step('Velg endringsårsak og refusjon', async () => {
+      await formPage.selectOption('Velg endringsårsak', 'Bonus');
+      await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
+    });
+
+    await test.step('Bekreft telefonnummer og kryss av', async () => {
+      const tlf = page.getByLabel('Telefon innsender');
+      await expect(tlf).toHaveValue('12345678');
+
+      await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
+    });
+
+    await test.step('Oppdater refusjonsbeløp', async () => {
+      await page.getByRole('button', { name: /Endre/ }).nth(1).click();
+
+      const refusjonInput = page.getByLabel('Oppgi refusjonsbeløpet per måned');
+      await expect(refusjonInput).toBeVisible();
+      await refusjonInput.fill('50000');
+    });
+
+    await test.step('Send inn og verifiser payload', async () => {
+      const reqPromise = page.waitForRequest('**/api/innsendingInntektsmelding');
+      await formPage.clickButton('Send');
+      const req = await reqPromise;
+      const body = JSON.parse(req.postData()!);
+
+      expect(body).toEqual({
+        forespoerselId: uuid,
+        agp: null,
+        inntekt: {
+          beloep: 50000,
+          inntektsdato: '2023-01-02',
+          naturalytelser: [],
+          endringAarsaker: [{ aarsak: 'Bonus' }]
+        },
+        refusjon: {
+          beloepPerMaaned: 50000,
+          sluttdato: null,
+          endringer: []
+        },
+        avsenderTlf: '12345678'
+      });
+    });
+
+    await test.step('Verifiser kvitteringssiden', async () => {
+      await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/02.01.2023/);
+      await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
+      await expect(page.locator('text="12345678"')).toBeVisible();
+      await expect(page.locator('text="Bonus"')).toBeVisible();
+      await expect(page.locator('text="50 000,00 kr/måned"').first()).toBeVisible();
+    });
   });
 });

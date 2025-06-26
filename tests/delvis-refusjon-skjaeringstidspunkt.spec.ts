@@ -64,7 +64,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       avsenderTlf: '12345678'
     });
     // confirmation page
-    await expect(page).toHaveURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+    await page.waitForURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     // the old bfd date should not appear
     await expect(await formPage.getByText('24.01.2023')).toHaveCount(0);
@@ -122,8 +122,8 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       avsenderTlf: '12345678'
     });
     // final confirmation
-    await expect(page).toHaveURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
 
+    await page.waitForURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/18\.09\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     await expect(page.locator('text="Bonus"')).toBeVisible();

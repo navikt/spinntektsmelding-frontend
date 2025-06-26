@@ -78,20 +78,20 @@ export default function validerEndringAvMaanedslonn(
     refusjonEndringer.forEach((endring, index) => {
       if (ugyldigEllerNegativtTall(endring.beloep)) {
         feilmeldinger.push({
-          felt: `refusjon.refusjonEndringer[${index}].beløp`,
+          felt: `refusjon.endringer.${index}.beloep`,
           code: EndringAvMaanedslonnFeilkode.MANGLER_BELOP
         });
       }
       if (endring.beloep && bruttoInntekt && endring.beloep > bruttoInntekt && kreverInntekt) {
         feilmeldinger.push({
-          felt: `refusjon.refusjonEndringer[${index}].beløp`,
+          felt: `refusjon.endringer.${index}.beloep`,
           code: EndringAvMaanedslonnFeilkode.BELOP_OVERSTIGER_BRUTTOINNTEKT
         });
       }
 
       if (!endring.dato) {
         feilmeldinger.push({
-          felt: `refusjon.refusjonEndringer[${index}].dato`,
+          felt: `refusjon.endringer.${index}.startdato`,
           code: EndringAvMaanedslonnFeilkode.MANGLER_DATO
         });
       }

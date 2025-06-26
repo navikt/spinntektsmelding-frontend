@@ -110,6 +110,8 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   });
 
   // Check final page
+  await page.waitForURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+
   await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/05.12.2024/);
   await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   await expect(page.locator('text="12345678"')).toBeVisible();
