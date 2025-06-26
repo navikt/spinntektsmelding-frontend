@@ -48,6 +48,10 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
 
   const maanedslonn = page.locator('label:has-text("Månedslønn 05.12.2024")');
   await expect(maanedslonn).toHaveValue('36000');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 17170315 (Felles validering (#1001))
   await formPage.fillInput('Månedslønn 05.12.2024', '50000');
 
   await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
