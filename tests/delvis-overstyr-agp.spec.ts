@@ -40,15 +40,16 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   await page.waitForTimeout(5000);
   await page.locator('button:has-text("Endre")').first().click();
 
-  await page.fill('label:text("Fra")', '01.02.2023');
-  await page.fill('label:text("Til")', '16.02.2023');
+  await formPage.fillInput('Fra', '01.02.2023');
+  await formPage.fillInput('Til', '16.02.2023');
 
   const endreKnapp2 = page.locator('button:has-text("Endre")').nth(0);
   await endreKnapp2.click();
 
   const maanedslonn = page.locator('label:has-text("Månedslønn 05.12.2024")');
   await expect(maanedslonn).toHaveValue('36000');
-  await page.fill('label:has-text("Månedslønn 05.12.2024")', '50000');
+
+  await formPage.fillInput('Månedslønn 05.12.2024', '50000');
 
   await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
@@ -110,6 +111,8 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   });
 
   // Check final page
+  await page.waitForURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+
   await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/05.12.2024/);
   await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   await expect(page.locator('text="12345678"')).toBeVisible();
