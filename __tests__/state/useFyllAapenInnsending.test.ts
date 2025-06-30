@@ -272,11 +272,6 @@ describe('useFyllAapenInnsending', () => {
 
       result.current.setHarRefusjonEndringer('Ja');
 
-      result.current.initRefusjonEndringer([
-        { beloep: 1234, dato: parseIsoDate('2023-04-13') },
-        { beloep: 12345, dato: parseIsoDate('2023-04-20') }
-      ]);
-
       result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
 
       result.current.setArbeidsgiverperiodeDisabled(true);

@@ -71,6 +71,8 @@ export default function useFyllAapenInnsending() {
 
     initNaturalytelser(skjemaData.inntekt?.naturalytelser);
 
+    const formattedAgpPerioder = getFormattedAgpPerioder(arbeidsgiverperiodeDisabled, arbeidsgiverperioder);
+
     const innsending = validerAapenInnsending({
       vedtaksperiodeId: vedtaksperiodeId,
       sykmeldtFnr: sykmeldt.fnr,
@@ -82,12 +84,7 @@ export default function useFyllAapenInnsending() {
         .filter((periode) => periode.fom && periode.tom)
         .map((periode) => ({ fom: formatDateForSubmit(periode.fom), tom: formatDateForSubmit(periode.tom) })),
       agp: {
-        perioder: arbeidsgiverperiodeDisabled
-          ? []
-          : arbeidsgiverperioder!.map((periode) => ({
-              fom: formatDateForSubmit(periode.fom),
-              tom: formatDateForSubmit(periode.tom)
-            })),
+        perioder: formattedAgpPerioder,
         egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
@@ -110,6 +107,15 @@ export default function useFyllAapenInnsending() {
 
     return innsending;
   };
+}
+
+function getFormattedAgpPerioder(arbeidsgiverperiodeDisabled: boolean, arbeidsgiverperioder: Periode[] | undefined) {
+  return arbeidsgiverperiodeDisabled
+    ? []
+    : arbeidsgiverperioder!.map((periode) => ({
+        fom: formatDateForSubmit(periode.fom),
+        tom: formatDateForSubmit(periode.tom)
+      }));
 }
 
 function concatPerioder(sykmeldingsperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
