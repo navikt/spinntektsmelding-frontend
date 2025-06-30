@@ -112,7 +112,7 @@ export default function useFyllAapenInnsending() {
 function getFormattedAgpPerioder(arbeidsgiverperiodeDisabled: boolean, arbeidsgiverperioder: Periode[] | undefined) {
   return arbeidsgiverperiodeDisabled
     ? []
-    : arbeidsgiverperioder!.map((periode) => ({
+    : (arbeidsgiverperioder ?? []).map((periode) => ({
         fom: formatDateForSubmit(periode.fom),
         tom: formatDateForSubmit(periode.tom)
       }));
