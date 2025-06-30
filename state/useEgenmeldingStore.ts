@@ -165,7 +165,7 @@ function oppdaterOgRekalkulerInntekt(
 ) {
   const fPerioder = finnFravaersperioder(sykmeldingsperioder, egenmeldingsperioder);
   if (fPerioder) {
-    const agp = finnArbeidsgiverperiode(fPerioder.toSorted(sorterFomStigende));
+    const agp = finnArbeidsgiverperiode([...fPerioder].sort(sorterFomStigende));
     state.arbeidsgiverperioder = agp;
     const bestemmende = finnBestemmendeFravaersdag(
       fPerioder,
@@ -209,6 +209,6 @@ export function finnFravaersperioder<T extends TidPeriode>(
     return [];
   }
 
-  const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom).toSorted(sorterFomStigende);
+  const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom).sort(sorterFomStigende);
   return fPerioder;
 }
