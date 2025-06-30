@@ -165,7 +165,7 @@ function oppdaterOgRekalkulerInntekt(
 ) {
   const fPerioder = finnFravaersperioder(sykmeldingsperioder, egenmeldingsperioder);
   if (fPerioder) {
-    const agp = finnArbeidsgiverperiode(fPerioder.toSorted(sorterFomStigende));
+    const agp = finnArbeidsgiverperiode([...fPerioder].sort(sorterFomStigende));
     state.arbeidsgiverperioder = agp;
     const bestemmende = finnBestemmendeFravaersdag(
       fPerioder,

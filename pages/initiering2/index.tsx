@@ -377,7 +377,7 @@ const Initiering2: NextPage = () => {
       .flatMap((periode: any) => {
         const sorterteEgenmeldingsdager =
           Array.isArray(periode.egenmeldingsdagerFraSykmelding) && periode.egenmeldingsdagerFraSykmelding.length > 0
-            ? [...periode.egenmeldingsdagerFraSykmelding].sort()
+            ? [...periode.egenmeldingsdagerFraSykmelding].sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
             : [];
         const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
           (accumulator: any, currentValue: any) => {
