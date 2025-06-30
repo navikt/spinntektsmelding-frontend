@@ -95,7 +95,7 @@ export default z
     if (value.refusjon.harEndringer === 'Ja') {
       const sorterteEndringer =
         Array.isArray(value.refusjon.refusjonEndringer) && value.refusjon.refusjonEndringer.length > 0
-          ? value.refusjon.refusjonEndringer.toSorted((a, b) => {
+          ? [...value.refusjon.refusjonEndringer].sort((a, b) => {
               if (a.dato && b.dato) {
                 return a.dato > b.dato ? 1 : -1;
               }
