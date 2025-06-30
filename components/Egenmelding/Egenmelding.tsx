@@ -110,7 +110,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
       }, 0) ?? 0;
 
     let egenmeldingDag =
-      egenmeldingsperioder?.filter((periode) => periode.fom && periode.tom).toSorted(sorterFomStigende)?.[0]?.tom ||
+      egenmeldingsperioder?.filter((periode) => periode.fom && periode.tom).sort(sorterFomStigende)?.[0]?.tom ||
       new Date();
     egenmeldingDag = addDays(
       egenmeldingDag,

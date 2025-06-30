@@ -220,7 +220,7 @@ const Initiering2: NextPage = () => {
   const valgteSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
     finnSorterteUnikePerioder(
       sykepengePeriodeId
-        ? sykepengePerioder.filter((periode) => sykepengePeriodeId.includes(periode.id)).toSorted(sorterFomStigende)
+        ? sykepengePerioder.filter((periode) => sykepengePeriodeId.includes(periode.id)).sort(sorterFomStigende)
         : []
     )
   );
@@ -377,7 +377,7 @@ const Initiering2: NextPage = () => {
       .flatMap((periode: any) => {
         const sorterteEgenmeldingsdager =
           Array.isArray(periode.egenmeldingsdagerFraSykmelding) && periode.egenmeldingsdagerFraSykmelding.length > 0
-            ? periode.egenmeldingsdagerFraSykmelding.toSorted()
+            ? [...periode.egenmeldingsdagerFraSykmelding].sort()
             : [];
         const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
           (accumulator: any, currentValue: any) => {

@@ -54,13 +54,13 @@ export default function RefusjonArbeidsgiver({
 
   const fravaer = sykmeldingsperioder ? sykmeldingsperioder.concat(egenmeldingsperioder ?? []) : [];
 
-  const fravaerSortert = fravaer.toSorted(sorterFomStigende);
+  const fravaerSortert = [...fravaer].sort(sorterFomStigende);
 
   const foersteFravaersdag = fravaerSortert[0]?.fom;
 
   const sisteArbeidsgiverperiode =
     Array.isArray(arbeidsgiverperioder) && arbeidsgiverperioder.length > 0
-      ? arbeidsgiverperioder?.toSorted(sorterFomStigende)
+      ? [...arbeidsgiverperioder].sort(sorterFomStigende)
       : arbeidsgiverperioder;
 
   const addIsDirtyForm = (fn: (param: any) => void) => {

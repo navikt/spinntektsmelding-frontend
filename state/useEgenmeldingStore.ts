@@ -209,6 +209,6 @@ export function finnFravaersperioder<T extends TidPeriode>(
     return [];
   }
 
-  const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom).toSorted(sorterFomStigende);
+  const fPerioder = perioder?.filter((periode) => periode.fom && periode.tom).sort(sorterFomStigende);
   return fPerioder;
 }
