@@ -20,7 +20,7 @@ import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,
-  aarsakInnsending: z.enum(['UnntattAARegisteret', 'Annet', 'Behandlingsdager'], {
+  aarsakInnsending: z.enum(['UnntattAARegisteret', 'Annet', 'Behandlingsdager', 'Fiskere'], {
     errorMap: () => ({ message: 'Du må velge en årsak til at du vil opprette inntektsmelding.' })
   })
 });
@@ -47,6 +47,10 @@ const Initiering: NextPage = () => {
     setAarsakSelvbestemtInnsending(skjemaData.aarsakInnsending);
     if (skjemaData.aarsakInnsending === 'UnntattAARegisteret') {
       router.push('/initieringFritatt', { scroll: false });
+      return;
+    }
+    if (skjemaData.aarsakInnsending === 'Fiskere') {
+      router.push('/initieringFiskere', { scroll: false });
       return;
     }
     if (skjemaData.aarsakInnsending === 'Behandlingsdager') {

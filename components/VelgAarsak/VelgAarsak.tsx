@@ -32,9 +32,12 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
           <Radio
             value='UnntattAARegisteret'
             id={field.name + '_UnntattAARegisteret'}
-            description='Ambassadepersonell, fiskerer og utenlandske arbeidstakere'
+            description='Ambassadepersonell og utenlandske arbeidstakere'
           >
             Unntatt registrering i Aa-registeret
+          </Radio>
+          <Radio value='Fiskere' id={field.name + '_Fiskere'} description='Fiskere'>
+            Fiskere
           </Radio>
           <Radio
             value='Annet'
