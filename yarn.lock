@@ -1054,11 +1054,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/next-logger@npm:4.0.0":
-  version: 4.0.0
-  resolution: "@navikt/next-logger@npm:4.0.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fnext-logger%2F4.0.0%2F993247f36d3c21420d975580a853fbc4ddb3f03b"
+"@navikt/next-logger@npm:4.0.1":
+  version: 4.0.1
+  resolution: "@navikt/next-logger@npm:4.0.1::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fnext-logger%2F4.0.1%2F89a848c53c1e0972e318e5b15a93ddf86fc0175f"
   dependencies:
-    "@navikt/pino-logger": "npm:^4.0.0"
+    "@navikt/pino-logger": "npm:^4.0.1"
     pino-roll: "npm:3"
   peerDependencies:
     next: 14 || 15
@@ -1066,7 +1066,7 @@ __metadata:
   dependenciesMeta:
     pino-roll:
       optional: true
-  checksum: 10c0/2d0dc8fc60a9766c7734c60779cb776f3404f2dffc3465eed7c8796b38e9d418f79ec115df85f56a8ff6f1dcc5a9f5502b03675e473136d1280bc6db9f896ab0
+  checksum: 10c0/380e049745e6e117c5f181e0df0d83c02b62cefb7f1919d4596d4ab313629cc6ee43acf91788a7909e0bd1f791a8ccc71c63f19424c5fbe4f6316c89374cd5e7
   languageName: node
   linkType: hard
 
@@ -1081,9 +1081,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/pino-logger@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@navikt/pino-logger@npm:4.0.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fpino-logger%2F4.0.0%2F28916aae63db0cc403ae10cb177c07136ccd6599"
+"@navikt/pino-logger@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@navikt/pino-logger@npm:4.0.1::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fpino-logger%2F4.0.1%2Fc76b0b39809f3f2e545803b10cbaac02f02adaff"
   dependencies:
     pino-roll: "npm:3"
   peerDependencies:
@@ -1091,7 +1091,7 @@ __metadata:
   dependenciesMeta:
     pino-roll:
       optional: true
-  checksum: 10c0/b11df8a6dbaf3b15674cf218cd27a010e78ea71ba59f16135a1657261edc4475fab6dfd098ea09d5d99c353d3467533b454089ea103775b5026164d1b06674fc
+  checksum: 10c0/b9585d5b8aeccbe69917f727d1f78188ef6e40329d95ecc3d3b1b759622eb4e5f86143f8e2b0064883a60e32b361bcfb04a5c2a8e43e84747443e232a45da0a0
   languageName: node
   linkType: hard
 
@@ -7402,7 +7402,7 @@ __metadata:
     "@navikt/ds-react": "npm:^7.24.0"
     "@navikt/fnrvalidator": "npm:2.1.5"
     "@navikt/nav-dekoratoren-moduler": "npm:^3.3.0"
-    "@navikt/next-logger": "npm:4.0.0"
+    "@navikt/next-logger": "npm:4.0.1"
     "@navikt/oasis": "npm:^3.8.0"
     "@next/bundle-analyzer": "npm:15.3.4"
     "@playwright/test": "npm:^1.53.1"
