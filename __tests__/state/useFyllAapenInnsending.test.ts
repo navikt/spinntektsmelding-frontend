@@ -231,6 +231,105 @@ describe('useFyllAapenInnsending', () => {
       });
     }
   });
+
+  it('should fill the state stuff with refusjonendringer - uten agp', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: kvittInit } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = kvittInit.current;
+
+    act(() => {
+      kvitteringInit(mottattKvittering as unknown as KvitteringData);
+
+      result.current.initBruttoinntekt(
+        500000,
+        new Map([
+          ['2022-10', 500000],
+          ['2022-11', 500000],
+          ['2022-12', 500000]
+        ]),
+        new Date()
+      );
+
+      result.current.setEndringAarsaker([{ aarsak: 'Bonus' }]);
+
+      result.current.setInnsenderTelefon('12345678');
+      result.current.setVedtaksperiodeId('8d50ef20-37b5-4829-ad83-56219e70b375');
+      result.current.initRefusjonEndringer([
+        { beloep: 1234, dato: parseIsoDate('2023-04-13') },
+        { beloep: 12345, dato: parseIsoDate('2023-04-20') }
+      ]);
+
+      result.current.initLonnISykefravaeret({
+        beloep: 5000,
+        status: 'Ja'
+      });
+
+      result.current.slettAlleNaturalytelser();
+
+      result.current.setBareNyMaanedsinntekt(500000);
+
+      result.current.setHarRefusjonEndringer('Ja');
+
+      result.current.initRefusjonEndringer([
+        { beloep: 1234, dato: parseIsoDate('2023-04-13') },
+        { beloep: 12345, dato: parseIsoDate('2023-04-20') }
+      ]);
+
+      result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
+
+      result.current.setArbeidsgiverperiodeDisabled(true);
+    });
+
+    const { result: fyller } = renderHook(() => useFyllAapenInnsending());
+
+    const fyllInnsending = fyller.current;
+
+    let innsending: { data: InnsendingSkjema };
+
+    act(() => {
+      innsending = fyllInnsending(mockSkjema);
+    });
+
+    if (innsending) {
+      expect(innsending.data).toEqual({
+        agp: {
+          perioder: [],
+          egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+          redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
+        },
+        inntekt: {
+          beloep: 500000,
+          inntektsdato: '2023-02-14',
+          naturalytelser: [],
+
+          endringAarsaker: [{ aarsak: 'Bonus' }]
+        },
+        refusjon: {
+          beloepPerMaaned: 5000,
+          endringer: [
+            {
+              beloep: 1234,
+              startdato: '2023-04-13'
+            },
+            {
+              beloep: 12345,
+              startdato: '2023-04-20'
+            }
+          ],
+          sluttdato: null
+        },
+        vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+        sykmeldtFnr: '25087327879',
+        avsender: { orgnr: '911206722', tlf: '12345678' },
+        sykmeldingsperioder: [
+          { fom: '2023-02-20', tom: '2023-03-03' },
+          { fom: '2023-03-05', tom: '2023-03-06' }
+        ]
+      });
+    }
+  });
 });
 
 describe('skalSendeArbeidsgiverperiode', () => {

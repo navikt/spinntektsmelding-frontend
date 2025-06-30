@@ -28,6 +28,7 @@ export default function useFyllAapenInnsending() {
   ]);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
@@ -81,10 +82,12 @@ export default function useFyllAapenInnsending() {
         .filter((periode) => periode.fom && periode.tom)
         .map((periode) => ({ fom: formatDateForSubmit(periode.fom), tom: formatDateForSubmit(periode.tom) })),
       agp: {
-        perioder: arbeidsgiverperioder!.map((periode) => ({
-          fom: formatDateForSubmit(periode.fom),
-          tom: formatDateForSubmit(periode.tom)
-        })),
+        perioder: arbeidsgiverperiodeDisabled
+          ? []
+          : arbeidsgiverperioder!.map((periode) => ({
+              fom: formatDateForSubmit(periode.fom),
+              tom: formatDateForSubmit(periode.tom)
+            })),
         egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
         redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
       },
