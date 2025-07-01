@@ -69,7 +69,6 @@ export default function Bruttoinntekt({
       tittel: 'Endre beregnet månedsinntekt',
       component: amplitudeComponent
     });
-    console.log('handleStartEditingMaanedsinntekt');
     setEndreMaanedsinntekt(true);
   };
 
@@ -77,7 +76,6 @@ export default function Bruttoinntekt({
 
   useEffect(() => {
     if (harEndringAarsak(endringAarsaker)) {
-      console.log('endringAarsaker', endringAarsaker);
       setEndreMaanedsinntekt(true);
     }
   }, [endringAarsaker]);
