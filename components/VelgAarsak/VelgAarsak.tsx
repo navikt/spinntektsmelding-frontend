@@ -36,7 +36,11 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
           >
             Unntatt registrering i Aa-registeret
           </Radio>
-          <Radio value='Fiskere' id={field.name + '_Fiskere'} description='Fiskere'>
+          <Radio
+            value='Fiskere'
+            id={field.name + '_Fiskere'}
+            description='Personer bosatt i Norge og som har fiske eller fangst i havet som hovednæring (blad B) eller binæring (blad A).'
+          >
             Fiskere
           </Radio>
           <Radio
