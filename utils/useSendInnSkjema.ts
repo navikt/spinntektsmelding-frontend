@@ -6,11 +6,9 @@ import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/navigation';
 import { logger } from '@navikt/next-logger';
-import validerInntektsmelding from './validerInntektsmelding';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { z } from 'zod';
 import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
-import forespoerselType from '../config/forespoerselType';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
 
@@ -22,7 +20,7 @@ export default function useSendInnSkjema(
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllInnsending();
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
-  const state = useBoundStore((state) => state);
+  // const state = useBoundStore((state) => state);
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
@@ -39,7 +37,7 @@ export default function useSendInnSkjema(
       tittel: 'Har trykket send',
       component: amplitudeComponent
     });
-    const kunInntektOgRefusjon = !forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
+
     if (!isDirtyForm) {
       logEvent('skjema fullført', {
         tittel: 'Innsending uten endringer i skjema',
@@ -63,140 +61,141 @@ export default function useSendInnSkjema(
       return false;
     }
 
-    const errorStatus = validerInntektsmelding(state, opplysningerBekreftet, kunInntektOgRefusjon, formData);
+    type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
-    const hasErrors = errorStatus.errorTexts && errorStatus.errorTexts.length > 0;
+    const skjemaData: FullInnsending = fyllInnsending(
+      opplysningerBekreftet,
+      pathSlug,
+      forespurteOpplysningstyper,
+      formData
+    );
 
-    if (hasErrors) {
-      fyllFeilmeldinger(errorStatus.errorTexts!);
+    const validerteData = FullInnsendingSchema.safeParse(skjemaData);
 
+    if (validerteData.success === false) {
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',
         component: amplitudeComponent
       });
-    } else {
-      type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
-      const skjemaData: FullInnsending = fyllInnsending(
-        opplysningerBekreftet,
-        pathSlug,
-        forespurteOpplysningstyper,
-        formData
+      logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
+      logger.error(validerteData.error);
+
+      fyllFeilmeldinger(
+        validerteData.error.errors.map((error) => ({
+          felt: error.path.join('.'),
+          text: error.message
+        }))
       );
 
-      const validerteData = FullInnsendingSchema.safeParse(skjemaData);
-
-      if (validerteData.success === false) {
-        logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
-        logger.error(validerteData.error);
-      }
-
-      fyllFeilmeldinger([]);
-
-      if (!isValidUUID(pathSlug)) {
-        const errors: Array<ErrorResponse> = [
-          {
-            value: 'Innsending av skjema feilet',
-            error: 'Innsending av skjema feilet. Ugyldig identifikator',
-            property: 'server'
-          }
-        ];
-
-        logEvent('skjema validering feilet', {
-          tittel: 'Ugyldig UUID ved innsending',
-          component: amplitudeComponent
-        });
-        errorResponse(errors);
-
-        return false;
-      }
-
-      return fetch(`${environment.innsendingUrl}`, {
-        method: 'POST',
-        body: JSON.stringify(skjemaData),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then((data) => {
-        switch (data.status) {
-          case 201:
-            setKvitteringInnsendt(new Date());
-            router.push(`/kvittering/${pathSlug}`, undefined);
-            break;
-
-          case 500: {
-            const errors: Array<ErrorResponse> = [
-              {
-                value: 'Innsending av skjema feilet',
-                error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-                property: 'server'
-              }
-            ];
-            errorResponse(errors);
-
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet - serverfeil',
-              component: amplitudeComponent
-            });
-
-            logger.error('Feil ved innsending av skjema - 500', data);
-            logger.error(data);
-
-            break;
-          }
-
-          case 404: {
-            const errors: Array<ErrorResponse> = [
-              {
-                value: 'Innsending av skjema feilet',
-                error: 'Fant ikke endepunktet for innsending',
-                property: 'server'
-              }
-            ];
-            errorResponse(errors);
-
-            logger.error('Feil ved innsending av skjema - 404', data);
-            logger.error(data);
-
-            break;
-          }
-
-          case 401: {
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet - ingen tilgang',
-              component: amplitudeComponent
-            });
-
-            innsendingFeiletIngenTilgang(true);
-            break;
-          }
-
-          default:
-            return data.json().then((resultat) => {
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet',
-                component: amplitudeComponent
-              });
-
-              if (resultat.error) {
-                const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
-                if (feilResultat.success === true) {
-                  const feil = feilResultat.data;
-                  let errors: Array<ErrorResponse> = [];
-
-                  errors = mapValidationErrors(feil, errors, resultat);
-
-                  errorResponse(errors);
-                  setSkalViseFeilmeldinger(true);
-
-                  logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
-                  logger.error(data);
-                }
-              }
-            });
-        }
-      });
+      return false;
     }
+
+    fyllFeilmeldinger([]);
+
+    if (!isValidUUID(pathSlug)) {
+      const errors: Array<ErrorResponse> = [
+        {
+          value: 'Innsending av skjema feilet',
+          error: 'Innsending av skjema feilet. Ugyldig identifikator',
+          property: 'server'
+        }
+      ];
+
+      logEvent('skjema validering feilet', {
+        tittel: 'Ugyldig UUID ved innsending',
+        component: amplitudeComponent
+      });
+      errorResponse(errors);
+
+      return false;
+    }
+
+    return fetch(`${environment.innsendingUrl}`, {
+      method: 'POST',
+      body: JSON.stringify(skjemaData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((data) => {
+      switch (data.status) {
+        case 201:
+          setKvitteringInnsendt(new Date());
+          router.push(`/kvittering/${pathSlug}`, undefined);
+          break;
+
+        case 500: {
+          const errors: Array<ErrorResponse> = [
+            {
+              value: 'Innsending av skjema feilet',
+              error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+              property: 'server'
+            }
+          ];
+          errorResponse(errors);
+
+          logEvent('skjema innsending feilet', {
+            tittel: 'Innsending feilet - serverfeil',
+            component: amplitudeComponent
+          });
+
+          logger.error('Feil ved innsending av skjema - 500', data);
+          logger.error(data);
+
+          break;
+        }
+
+        case 404: {
+          const errors: Array<ErrorResponse> = [
+            {
+              value: 'Innsending av skjema feilet',
+              error: 'Fant ikke endepunktet for innsending',
+              property: 'server'
+            }
+          ];
+          errorResponse(errors);
+
+          logger.error('Feil ved innsending av skjema - 404', data);
+          logger.error(data);
+
+          break;
+        }
+
+        case 401: {
+          logEvent('skjema innsending feilet', {
+            tittel: 'Innsending feilet - ingen tilgang',
+            component: amplitudeComponent
+          });
+
+          innsendingFeiletIngenTilgang(true);
+          break;
+        }
+
+        default:
+          return data.json().then((resultat) => {
+            logEvent('skjema innsending feilet', {
+              tittel: 'Innsending feilet',
+              component: amplitudeComponent
+            });
+
+            if (resultat.error) {
+              const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
+              if (feilResultat.success === true) {
+                const feil = feilResultat.data;
+                let errors: Array<ErrorResponse> = [];
+
+                errors = mapValidationErrors(feil, errors, resultat);
+
+                errorResponse(errors);
+                setSkalViseFeilmeldinger(true);
+
+                logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
+                logger.error(data);
+              }
+            }
+          });
+      }
+    });
   };
 }
 

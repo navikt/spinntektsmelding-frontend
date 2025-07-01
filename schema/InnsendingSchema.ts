@@ -88,7 +88,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
   if (val.refusjon) {
     const agpSluttdato = val.agp?.perioder?.[val.agp.perioder.length - 1]?.tom ?? undefined;
     val.refusjon?.endringer.forEach((endring, index) => {
-      if (endring.beloep > (val.inntekt?.beloep ?? 0)) {
+      if (endring.beloep > (val.inntekt?.beloep ?? endring.beloep)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Refusjon kan ikke være høyere enn inntekt.',
