@@ -4,13 +4,15 @@ import useFyllInnsending from '../state/useFyllInnsending';
 import isValidUUID from './isValidUUID';
 import environment from '../config/environment';
 import useErrorRespons, { ErrorResponse } from './useErrorResponse';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { z } from 'zod';
 import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
+import feiltekster from './feiltekster';
+import forespoerselType from '../config/forespoerselType';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -20,6 +22,9 @@ export default function useSendInnSkjema(
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllInnsending();
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
+  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   // const state = useBoundStore((state) => state);
   const errorResponse = useErrorRespons();
   const router = useRouter();
@@ -69,9 +74,9 @@ export default function useSendInnSkjema(
       forespurteOpplysningstyper,
       formData
     );
-
+    const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
-
+    console.log('validerteData', validerteData);
     if (validerteData.success === false) {
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',
@@ -90,8 +95,46 @@ export default function useSendInnSkjema(
 
       return false;
     }
+    const errors = [];
+    if (!fullLonnIArbeidsgiverPerioden?.status && harForespurtArbeidsgiverperiode) {
+      errors.push({
+        text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN,
+        felt: 'lia-radio'
+      });
+    }
 
-    fyllFeilmeldinger([]);
+    if (!lonnISykefravaeret?.status) {
+      errors.push({
+        text: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
+        felt: 'lus-radio'
+      });
+    }
+
+    if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
+      errors.push({
+        text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
+        felt: 'refusjon.endringer'
+      });
+    }
+
+    if (!opplysningerBekreftet) {
+      errors.push({
+        text: feiltekster.BEKREFT_OPPLYSNINGER,
+        felt: 'bekreft-opplysninger'
+      });
+    }
+
+    // if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
+    //   errors.push({
+    //     text: feiltekster.INNTEKT_UNDER_REFUSJON,
+    //     felt: 'agp.redusertLoennIAgp.beloep'
+    //   });
+    // }
+    fyllFeilmeldinger(errors);
+    console.log('errors', errors);
+    if (errors.length > 0) {
+      return false;
+    }
 
     if (!isValidUUID(pathSlug)) {
       const errors: Array<ErrorResponse> = [
@@ -118,9 +161,11 @@ export default function useSendInnSkjema(
         'Content-Type': 'application/json'
       }
     }).then((data) => {
+      console.log('Innsending av skjema', data);
       switch (data.status) {
         case 201:
           setKvitteringInnsendt(new Date());
+          console.log('Innsending av skjema vellykket', data);
           router.push(`/kvittering/${pathSlug}`, undefined);
           break;
 
