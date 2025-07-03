@@ -7,11 +7,66 @@ import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSche
 import { ApiNaturalytelserSchema } from './ApiNaturalytelserSchema';
 import { isBefore } from 'date-fns';
 
+function langtGapIPerioder(perioder: Array<{ fom: string; tom: string }>): boolean {
+  if (perioder.length < 2) return false;
+  const sortedPerioder = perioder.sort((a, b) => new Date(a.fom).getTime() - new Date(b.fom).getTime());
+  for (let i = 1; i < sortedPerioder.length; i++) {
+    const gap = new Date(sortedPerioder[i].fom).getTime() - new Date(sortedPerioder[i - 1].tom).getTime();
+    if (gap > 16 * 24 * 60 * 60 * 1000) {
+      // mer enn 16 dager
+      return true;
+    }
+  }
+  return false;
+}
+
+function perioderHarOverlapp(perioder: Array<{ fom: string; tom: string }>): boolean {
+  for (let i = 0; i < perioder.length; i++) {
+    for (let j = i + 1; j < perioder.length; j++) {
+      if (
+        new Date(perioder[i].fom) <= new Date(perioder[j].tom) &&
+        new Date(perioder[i].tom) >= new Date(perioder[j].fom)
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 export const InnsendingSchema = z.object({
   agp: z
     .object({
-      perioder: z.array(ApiPeriodeSchema),
-      egenmeldinger: z.union([z.array(ApiPeriodeSchema), z.tuple([])]),
+      perioder: z.array(ApiPeriodeSchema).superRefine((val, ctx) => {
+        if (langtGapIPerioder(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.'
+          });
+        }
+
+        if (perioderHarOverlapp(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.'
+          });
+        }
+      }),
+      egenmeldinger: z.union([z.array(ApiPeriodeSchema), z.tuple([])]).superRefine((val, ctx) => {
+        if (langtGapIPerioder(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Det kan ikke være opphold over 16 dager mellom egenmeldingsperiodene.'
+          });
+        }
+
+        if (perioderHarOverlapp(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Det kan ikke være overlapp mellom egenmeldingsperiodene.'
+          });
+        }
+      }),
       redusertLoennIAgp: z.nullable(
         z.object({
           beloep: z.number().min(0),
@@ -88,7 +143,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
   if (val.refusjon) {
     const agpSluttdato = val.agp?.perioder?.[val.agp.perioder.length - 1]?.tom ?? undefined;
     val.refusjon?.endringer.forEach((endring, index) => {
-      if (endring.beloep > (val.inntekt?.beloep ?? 0)) {
+      if (endring.beloep > (val.inntekt?.beloep ?? endring.beloep)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Refusjon kan ikke være høyere enn inntekt.',

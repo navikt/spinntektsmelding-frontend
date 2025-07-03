@@ -92,6 +92,11 @@ export class FormPage {
     await expect(el).toBeVisible();
   }
 
+  async assertVisibleTextAtLeastOnce(text: string): Promise<void> {
+    const el = this.page.getByText(text, { exact: false }).first();
+    await expect(el).toBeVisible();
+  }
+
   async assertSelectedOption(label: string, expected: string): Promise<void> {
     const select = this.page.getByLabel(label);
     await expect(select).toBeVisible();

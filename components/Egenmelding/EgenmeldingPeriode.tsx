@@ -70,8 +70,8 @@ export default function EgenmeldingPeriode({
         toDate={toDate}
         disabled={disabled}
         defaultMonth={defaultMnd}
-        fomError={visFeilmeldingTekst(`egenmeldingsperioder[${rad}].fom`)}
-        tomError={visFeilmeldingTekst(`egenmeldingsperioder[${rad}].tom`)}
+        fomError={visFeilmeldingTekst(`agp.egenmeldinger.${rad}.fom`)}
+        tomError={visFeilmeldingTekst(`agp.egenmeldinger.${rad}.tom`)}
       />
     </div>
   );
