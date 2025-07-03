@@ -16,7 +16,6 @@ import {
 import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSchema';
 import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
-import { isValid } from 'date-fns/isValid';
 
 export default function useFyllAapenInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
