@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     setTimeout(() => res.status(200).json(simpleTree), 100);
     return;
   }
-
+  console.log('Prod environment detected, proceeding with token validation and access check');
   const token = getToken(req);
   if (!token) {
     console.error('Mangler token i header');
