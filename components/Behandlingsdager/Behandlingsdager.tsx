@@ -12,7 +12,7 @@ export function Behandlingsdager({ behandlingsdager }: Readonly<Behandlingsdager
     return null;
   }
 
-  const sorterteDager = behandlingsdager.toSorted();
+  const sorterteDager = [...behandlingsdager].sort((a, b) => a.localeCompare(b));
 
   return (
     <div className={styling.behandlingsdager}>

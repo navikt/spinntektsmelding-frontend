@@ -1,4 +1,4 @@
-import { Button, Alert, Link, Heading, Box, RadioGroup, Radio } from '@navikt/ds-react';
+import { Button, Alert, Link, RadioGroup, Radio } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
@@ -302,8 +302,8 @@ const InitieringBehandlingsdager: NextPage = () => {
       .map((dag: string, index: number) => {
         if (index < 12) {
           return {
-            fom: dag as TDateISODate,
-            tom: dag as TDateISODate
+            fom: dag,
+            tom: dag
           };
         }
       })
@@ -313,9 +313,7 @@ const InitieringBehandlingsdager: NextPage = () => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     const valgtSykmeldingsperiode = getSykmeldingsperioder(sykmeldingsperiode);
     initFravaersperiode(valgtSykmeldingsperiode);
-    // initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
-    // setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
     setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
     setBehandlingsdager(sykmeldingsperiode.behandlingsdager);
     initArbeidsgiverperioder(arbeidsgiverperioder);
@@ -325,8 +323,8 @@ const InitieringBehandlingsdager: NextPage = () => {
   const getSykmeldingsperioder = (periode: any) => {
     return [
       {
-        fom: periode.fom as TDateISODate,
-        tom: periode.tom as TDateISODate
+        fom: periode.fom,
+        tom: periode.tom
       }
     ];
   };

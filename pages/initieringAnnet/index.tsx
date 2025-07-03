@@ -53,7 +53,6 @@ type SykepengePeriode = {
   forlengelseAv?: string;
 };
 
-// type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
 
 const Initiering2: NextPage = () => {
@@ -113,8 +112,6 @@ const Initiering2: NextPage = () => {
     });
 
   type Skjema = z.infer<typeof skjemaSchema>;
-  // type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
-  // type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
 
   const methods = useForm<Skjema>({
     resolver: zodResolver(skjemaSchema)
@@ -340,7 +337,7 @@ const Initiering2: NextPage = () => {
       }
 
       if (periode) {
-        sykmeldingsperiode.push(periode as EndepunktSykepengesoeknad);
+        sykmeldingsperiode.push(periode);
       }
     });
 
