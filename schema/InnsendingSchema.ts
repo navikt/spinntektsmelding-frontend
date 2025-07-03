@@ -7,11 +7,38 @@ import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSche
 import { ApiNaturalytelserSchema } from './ApiNaturalytelserSchema';
 import { isBefore } from 'date-fns';
 
+function langtGapIPerioder(perioder: Array<{ fom: string; tom: string }>): boolean {
+  if (perioder.length < 2) return false;
+  const sortedPerioder = perioder.sort((a, b) => new Date(a.fom).getTime() - new Date(b.fom).getTime());
+  for (let i = 1; i < sortedPerioder.length; i++) {
+    const gap = new Date(sortedPerioder[i].fom).getTime() - new Date(sortedPerioder[i - 1].tom).getTime();
+    if (gap > 16 * 24 * 60 * 60 * 1000) {
+      // mer enn 16 dager
+      return true;
+    }
+  }
+  return false;
+}
+
 export const InnsendingSchema = z.object({
   agp: z
     .object({
-      perioder: z.array(ApiPeriodeSchema),
-      egenmeldinger: z.union([z.array(ApiPeriodeSchema), z.tuple([])]),
+      perioder: z.array(ApiPeriodeSchema).superRefine((val, ctx) => {
+        if (langtGapIPerioder(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.'
+          });
+        }
+      }),
+      egenmeldinger: z.union([z.array(ApiPeriodeSchema), z.tuple([])]).superRefine((val, ctx) => {
+        if (langtGapIPerioder(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Det kan ikke være opphold over 16 dager mellom egenmeldingsperiodene.'
+          });
+        }
+      }),
       redusertLoennIAgp: z.nullable(
         z.object({
           beloep: z.number().min(0),
