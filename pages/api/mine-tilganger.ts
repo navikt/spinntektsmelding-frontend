@@ -47,6 +47,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(401);
   }
 
+  console.error('Fant token i header');
+
   const validation = await validateToken(token);
   if (!validation.ok) {
     console.log('Validering feilet: ', validation.error);
