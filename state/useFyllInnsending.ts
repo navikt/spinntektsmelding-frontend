@@ -23,11 +23,9 @@ export default function useFyllInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const [fullLonnIArbeidsgiverPerioden, lonnISykefravaeret, ForespurtDataSchema] = useBoundStore((state) => [
-    state.fullLonnIArbeidsgiverPerioden,
-    state.lonnISykefravaeret,
-    state.ForespurtDataSchema
-  ]);
+  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
+  const forespurtData = useBoundStore((state) => state.forespurtData);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
@@ -85,14 +83,14 @@ export default function useFyllInnsending() {
           );
 
     let kreverAgp = true;
-    if (ForespurtDataSchema?.arbeidsgiverperiode?.paakrevd === false || !harForespurtArbeidsgiverperiode) {
+    if (forespurtData?.arbeidsgiverperiode?.paakrevd === false || !harForespurtArbeidsgiverperiode) {
       kreverAgp = false;
       setSkjaeringstidspunkt(
-        ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
+        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
       );
 
       beregnetSkjaeringstidspunkt = parseIsoDate(
-        ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
+        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
       );
     }
     const bestemmendeFraværsdag = kreverAgp
@@ -106,7 +104,7 @@ export default function useFyllInnsending() {
           undefined,
           beregnetSkjaeringstidspunkt
         )
-      : ForespurtDataSchema?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
+      : forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
 
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
@@ -218,7 +216,10 @@ function hentBestemmendeFraværsdag(
   }
 }
 
-function concatPerioder(sykmeldingsperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
+export function concatPerioder(
+  sykmeldingsperioder: Periode[] | undefined,
+  egenmeldingsperioder: Periode[] | undefined
+) {
   let perioder;
   if (sykmeldingsperioder) {
     perioder = sykmeldingsperioder.concat(egenmeldingsperioder ?? []);
@@ -240,7 +241,7 @@ export function konverterPerioderFraMottattTilInterntFormat(
     : undefined;
 }
 
-function finnInnsendbareArbeidsgiverperioder<T extends TidPeriode>(
+export function finnInnsendbareArbeidsgiverperioder<T extends TidPeriode>(
   arbeidsgiverperioder: T[] | undefined,
   harForespurtArbeidsgiverperiode: boolean
 ): SendtPeriode[] | [] {

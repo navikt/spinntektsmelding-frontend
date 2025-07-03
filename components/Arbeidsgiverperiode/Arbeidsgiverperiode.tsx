@@ -399,6 +399,9 @@ export default function Arbeidsgiverperiode({
       {advarselLangPeriode.length > 0 && (
         <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{advarselLangPeriode}</Feilmelding>
       )}
+      {visFeilmelding('agp.perioder') && (
+        <Feilmelding id='agp.perioder'>{visFeilmeldingTekst('agp.perioder')}</Feilmelding>
+      )}
       {advarselKortPeriode.length > 0 && (
         <span className={lokalStyles.arbeidsgiverKortPeriode} id='arbeidsgiverperiode-kort-feil'>
           {advarselKortPeriode}

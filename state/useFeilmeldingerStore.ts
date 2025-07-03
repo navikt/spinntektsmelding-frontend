@@ -101,7 +101,7 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
   oppdaterFeilmeldinger: (feilmeldinger: Array<ValiderResultat>, prefix: string): Array<ValiderTekster> => {
     const gamleFeilmeldinger = get().feilmeldinger;
     const rensedeFeilmeldinger = gamleFeilmeldinger.filter(
-      (melding: ValiderTekster) => !melding.felt.startsWith(prefix)
+      (melding: ValiderTekster) => Array.isArray(melding.felt) && !melding.felt.startsWith(prefix)
     );
 
     const feilmeldingtekster = feilmeldinger.map((error: any) => ({

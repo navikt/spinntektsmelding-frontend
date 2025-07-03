@@ -200,6 +200,9 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
           )}
         </div>
 
+        {visFeilmelding('agp.egenmeldinger') && (
+          <Feilmelding id='agp.egenmeldinger'>{visFeilmeldingTekst('agp.egenmeldinger')}</Feilmelding>
+        )}
         {visFeilmelding('egenmeldingsperioder-feil') && (
           <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingTekst('egenmeldingsperioder-feil')}</Feilmelding>
         )}

@@ -104,4 +104,74 @@ describe('Egenmelding', () => {
 
     expect(results).toHaveNoViolations();
   });
+
+  it('should show errormessage for agp.egenmeldinger', async () => {
+    const mockFn = vi.fn();
+
+    // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
+    vi.mock('../../components/Datovelger', () => ({
+      default: () => <div>Datovelger</div>
+    }));
+
+    const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initEgenmeldingsperiode(egenmeldingsperioder);
+    });
+
+    act(() => {
+      result.current.fyllFeilmeldinger([
+        {
+          felt: 'agp.egenmeldinger',
+          text: 'Egenmeldingsperioder er påkrevd'
+        }
+      ]);
+    });
+
+    act(() => {
+      result.current.setSkalViseFeilmeldinger(true);
+    });
+
+    const { container } = render(<Egenmelding setIsDirtyForm={mockFn} />);
+
+    expect(await screen.findAllByText('Egenmeldingsperioder er påkrevd')).toHaveLength(1);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+  it('should show errormessage for egenmeldingsperioder-feil', async () => {
+    const mockFn = vi.fn();
+
+    // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
+    vi.mock('../../components/Datovelger', () => ({
+      default: () => <div>Datovelger</div>
+    }));
+
+    const { result } = renderHook(() => useBoundStore((state) => state));
+    act(() => {
+      result.current.initEgenmeldingsperiode(egenmeldingsperioder);
+    });
+
+    act(() => {
+      result.current.fyllFeilmeldinger([
+        {
+          felt: 'egenmeldingsperioder-feil',
+          text: 'Egenmeldingsperioder er påkrevd'
+        }
+      ]);
+    });
+
+    act(() => {
+      result.current.setSkalViseFeilmeldinger(true);
+    });
+
+    const { container } = render(<Egenmelding setIsDirtyForm={mockFn} />);
+
+    expect(await screen.findAllByText('Egenmeldingsperioder er påkrevd')).toHaveLength(1);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
 });
