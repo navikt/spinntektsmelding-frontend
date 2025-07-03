@@ -21,7 +21,6 @@ import InitieringSchema from '../../schema/InitieringSchema';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { TDateISODate } from '../../schema/ForespurtDataSchema';
 import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/router';
@@ -111,7 +110,6 @@ const InitieringFritatt: NextPage = () => {
 
   const {
     register,
-    watch,
     setError,
     handleSubmit,
     formState: { errors }
@@ -172,8 +170,8 @@ const InitieringFritatt: NextPage = () => {
 
   const getFravaersperioder = (sykmeldingsperiode: any) => {
     return sykmeldingsperiode.map((periode: any) => ({
-      fom: periode.fom as TDateISODate,
-      tom: periode.tom as TDateISODate
+      fom: periode.fom,
+      tom: periode.tom
     }));
   };
 
@@ -187,16 +185,16 @@ const InitieringFritatt: NextPage = () => {
             const currentTom = new Date(accumulator[accumulator.length - 1].tom);
 
             if (differenceInDays(tom, currentTom) <= 1) {
-              accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
+              accumulator[accumulator.length - 1].tom = currentValue;
             } else {
-              accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
+              accumulator.push({ fom: currentValue, tom: currentValue });
             }
             return accumulator;
           },
           [
             {
-              fom: sorterteEgenmeldingsdager[0] as TDateISODate,
-              tom: sorterteEgenmeldingsdager[0] as TDateISODate
+              fom: sorterteEgenmeldingsdager[0],
+              tom: sorterteEgenmeldingsdager[0]
             }
           ]
         );
