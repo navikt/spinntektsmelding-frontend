@@ -20,6 +20,20 @@ function langtGapIPerioder(perioder: Array<{ fom: string; tom: string }>): boole
   return false;
 }
 
+function perioderHarOverlapp(perioder: Array<{ fom: string; tom: string }>): boolean {
+  for (let i = 0; i < perioder.length; i++) {
+    for (let j = i + 1; j < perioder.length; j++) {
+      if (
+        new Date(perioder[i].fom) <= new Date(perioder[j].tom) &&
+        new Date(perioder[i].tom) >= new Date(perioder[j].fom)
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 export const InnsendingSchema = z.object({
   agp: z
     .object({
@@ -30,12 +44,26 @@ export const InnsendingSchema = z.object({
             message: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.'
           });
         }
+
+        if (perioderHarOverlapp(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.'
+          });
+        }
       }),
       egenmeldinger: z.union([z.array(ApiPeriodeSchema), z.tuple([])]).superRefine((val, ctx) => {
         if (langtGapIPerioder(val)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Det kan ikke være opphold over 16 dager mellom egenmeldingsperiodene.'
+          });
+        }
+
+        if (perioderHarOverlapp(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Det kan ikke være overlapp mellom egenmeldingsperiodene.'
           });
         }
       }),
