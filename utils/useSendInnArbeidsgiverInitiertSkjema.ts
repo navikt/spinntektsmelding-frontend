@@ -9,7 +9,6 @@ import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
-import validerLonnUnderSykefravaeret from '../validators/validerLonnUnderSykefravaeret';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -62,7 +61,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     } else {
       skjemaData.aarsakInnsending = 'Ny';
     }
-    const validerteData = fyllAapenInnsending(skjemaData);
+    const validerteData = fyllAapenInnsending(skjemaData, pathSlug);
 
     if (validerteData.success !== true) {
       logger.error('Feil ved validering av skjema - Åpen innsending');
@@ -134,10 +133,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
       fyllFeilmeldinger([]);
 
-      const innsending =
-        pathSlug !== 'arbeidsgiverInitiertInnsending'
-          ? { ...validerteData.data, selvbestemtId: pathSlug }
-          : { ...validerteData.data, selvbestemtId: null };
+      const innsending = isValidUUID(pathSlug)
+        ? { ...validerteData.data, selvbestemtId: pathSlug }
+        : { ...validerteData.data, selvbestemtId: null };
 
       const URI = environment.innsendingAGInitiertUrl;
 

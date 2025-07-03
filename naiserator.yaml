@@ -56,6 +56,8 @@ spec:
           namespace: helsearbeidsgiver
         - application: sykepengesoknad-backend
           namespace: flex
+        - application: arbeidsgiver-altinn-tilganger
+          namespace: fager
   env:
     - name: API_URL
       value: '{{{api-url}}}'
