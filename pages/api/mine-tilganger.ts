@@ -31,9 +31,6 @@ function extractOrgStructure(hierarki: any[]): OrgNode[] {
   }));
 }
 
-const simpleTree = extractOrgStructure(testdata.hierarki);
-console.log(simpleTree);
-
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
@@ -80,6 +77,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   }
 
   const accessData: EndepunktAltinnTilganger = (await safelyParseJSON(accessResponse)) as EndepunktAltinnTilganger;
+
+  console.log('Tilganger: ', accessData);
 
   return res.status(accessResponse.status).json(accessData.hierarki || []);
 };
