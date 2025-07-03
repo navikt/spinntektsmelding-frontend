@@ -16,6 +16,7 @@ import {
 import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSchema';
 import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import isValidUUID from '../utils/isValidUUID';
 
 export default function useFyllAapenInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
@@ -53,7 +54,7 @@ export default function useFyllAapenInnsending() {
 
   type SkjemaData = z.infer<typeof HovedskjemaSchema>;
 
-  return (skjemaData: SkjemaData) => {
+  return (skjemaData: SkjemaData, arbeidsforhold: string) => {
     const bestemmendeFravaersdag =
       perioder && perioder.length > 0
         ? finnBestemmendeFravaersdag(
@@ -78,8 +79,18 @@ export default function useFyllAapenInnsending() {
 
     const formattedAgpPerioder = getFormattedAgpPerioder(arbeidsgiverperiodeDisabled, arbeidsgiverperioder);
 
+    const arbeidsforholdType = {
+      type: 'MedArbeidsforhold',
+      vedtaksperiodeId: isValidUUID(vedtaksperiodeId) ? vedtaksperiodeId : undefined
+    };
+    if (arbeidsforhold === 'unntattAaRegisteret') {
+      arbeidsforholdType.type = 'UtenArbeidsforhold';
+    } else if (arbeidsforhold === 'Fisker') {
+      arbeidsforholdType.type = 'Fisker';
+    }
+    console.log('vedtaksperiodeId', vedtaksperiodeId, arbeidsforholdType);
+
     const innsending = validerAapenInnsending({
-      vedtaksperiodeId: vedtaksperiodeId,
       sykmeldtFnr: sykmeldt.fnr,
       avsender: {
         orgnr: avsender.orgnr!,
@@ -107,7 +118,8 @@ export default function useFyllAapenInnsending() {
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,
-      aarsakInnsending: skjemaData.aarsakInnsending
+      aarsakInnsending: skjemaData.aarsakInnsending,
+      arbeidsforholdType: arbeidsforholdType
     });
 
     return innsending;
