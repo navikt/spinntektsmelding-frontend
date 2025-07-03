@@ -31,6 +31,8 @@ function extractOrgStructure(hierarki: any[]): OrgNode[] {
   }));
 }
 
+console.log('Base path for Altinn access:', basePath);
+
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
