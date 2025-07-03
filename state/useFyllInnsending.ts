@@ -216,7 +216,10 @@ function hentBestemmendeFraværsdag(
   }
 }
 
-function concatPerioder(sykmeldingsperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
+export function concatPerioder(
+  sykmeldingsperioder: Periode[] | undefined,
+  egenmeldingsperioder: Periode[] | undefined
+) {
   let perioder;
   if (sykmeldingsperioder) {
     perioder = sykmeldingsperioder.concat(egenmeldingsperioder ?? []);
@@ -238,7 +241,7 @@ export function konverterPerioderFraMottattTilInterntFormat(
     : undefined;
 }
 
-function finnInnsendbareArbeidsgiverperioder<T extends TidPeriode>(
+export function finnInnsendbareArbeidsgiverperioder<T extends TidPeriode>(
   arbeidsgiverperioder: T[] | undefined,
   harForespurtArbeidsgiverperiode: boolean
 ): SendtPeriode[] | [] {

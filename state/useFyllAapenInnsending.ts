@@ -5,6 +5,8 @@ import useBoundStore from './useBoundStore';
 import validerAapenInnsending from '../validators/validerAapenInnsending';
 import {
   SendtPeriode,
+  concatPerioder,
+  finnInnsendbareArbeidsgiverperioder,
   formaterRedusertLoennIAgp,
   konverterPerioderFraMottattTilInterntFormat,
   konverterRefusjonEndringer,
@@ -118,16 +120,6 @@ function getFormattedAgpPerioder(arbeidsgiverperiodeDisabled: boolean, arbeidsgi
       }));
 }
 
-function concatPerioder(sykmeldingsperioder: Periode[] | undefined, egenmeldingsperioder: Periode[] | undefined) {
-  let perioder;
-  if (sykmeldingsperioder) {
-    perioder = sykmeldingsperioder.concat(egenmeldingsperioder ?? []);
-  } else {
-    perioder = egenmeldingsperioder;
-  }
-  return perioder;
-}
-
 export function skalSendeArbeidsgiverperiode(begrunnelse?: Begrunnelse, perioder?: Periode[]): boolean {
   if (begrunnelse && (!perioder || perioder.filter((periode) => periode.fom && periode.tom).length === 0)) {
     return false;
@@ -141,19 +133,4 @@ function formatDateForSubmit(date?: Date | string): string {
   }
 
   return date ?? '';
-}
-
-function finnInnsendbareArbeidsgiverperioder(
-  arbeidsgiverperioder: Periode[] | undefined,
-  skalSendeArbeidsgiverperiode: boolean
-): SendtPeriode[] | [] {
-  if (!skalSendeArbeidsgiverperiode) {
-    return [];
-  }
-
-  return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
-    ? arbeidsgiverperioder
-        ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
-        .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
-    : [];
 }

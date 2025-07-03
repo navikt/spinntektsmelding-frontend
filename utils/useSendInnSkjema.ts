@@ -124,14 +124,8 @@ export default function useSendInnSkjema(
       });
     }
 
-    // if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
-    //   errors.push({
-    //     text: feiltekster.INNTEKT_UNDER_REFUSJON,
-    //     felt: 'agp.redusertLoennIAgp.beloep'
-    //   });
-    // }
     fyllFeilmeldinger(errors);
-    console.log('errors', errors);
+
     if (errors.length > 0) {
       return false;
     }
@@ -161,11 +155,9 @@ export default function useSendInnSkjema(
         'Content-Type': 'application/json'
       }
     }).then((data) => {
-      console.log('Innsending av skjema', data);
       switch (data.status) {
         case 201:
           setKvitteringInnsendt(new Date());
-          console.log('Innsending av skjema vellykket', data);
           router.push(`/kvittering/${pathSlug}`, undefined);
           break;
 
