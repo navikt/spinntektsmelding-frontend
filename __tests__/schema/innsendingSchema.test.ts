@@ -250,4 +250,156 @@ describe('InnsendingSchema', () => {
       }
     ]);
   });
+
+  it('should validate InnsendingSchema and fail when tom date is missing in agp', () => {
+    const data = {
+      agp: {
+        perioder: [
+          { fom: '2023-02-16', tom: '2023-02-17' },
+          { fom: '2023-02-18', tom: undefined }
+        ],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        message: 'Vennligst fyll inn til dato',
+        path: ['agp', 'perioder', 1, 'tom'],
+        received: 'undefined'
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema and fail when tom date is empty in agp', () => {
+    const data = {
+      agp: {
+        perioder: [
+          { fom: '2023-02-16', tom: '2023-02-17' },
+          { fom: '2023-02-18', tom: '' }
+        ],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'custom',
+        message: 'Ugyldig dato',
+        path: ['agp', 'perioder', 1, 'tom']
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema and fail when fom date is missing in agp', () => {
+    const data = {
+      agp: {
+        perioder: [
+          { fom: '2023-02-16', tom: '2023-02-17' },
+          { fom: undefined, tom: '2023-02-19' }
+        ],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        message: 'Vennligst fyll inn fra dato',
+        path: ['agp', 'perioder', 1, 'fom'],
+        received: 'undefined'
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema and fail when fom date is empty in agp', () => {
+    const data = {
+      agp: {
+        perioder: [
+          { fom: '2023-02-16', tom: '2023-02-17' },
+          { fom: '', tom: '2023-02-19' }
+        ],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'custom',
+        message: 'Ugyldig dato',
+        path: ['agp', 'perioder', 1, 'fom']
+      }
+    ]);
+  });
 });

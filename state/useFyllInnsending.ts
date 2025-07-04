@@ -173,7 +173,7 @@ function mapArbeidsgiverPerioder(
 export function mapEgenmeldingsperioder(egenmeldingsperioder: Periode[] | undefined) {
   return egenmeldingsperioder
     ? egenmeldingsperioder
-        .filter((periode) => periode.fom && periode.tom)
+        .filter((periode) => periode.fom || periode.tom)
         .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
     : [];
 }
