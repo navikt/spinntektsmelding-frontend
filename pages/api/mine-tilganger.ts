@@ -31,8 +31,6 @@ function extractOrgStructure(hierarki: any[]): OrgNode[] {
   }));
 }
 
-console.log('Base path for Altinn access:', basePath);
-
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
@@ -40,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     setTimeout(() => res.status(200).json(simpleTree), 100);
     return;
   }
-  console.log('Prod environment detected, proceeding with token validation and access check');
+
   const token = getToken(req);
   if (!token) {
     console.error('Mangler token i header');
@@ -52,7 +50,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const validation = await validateToken(token);
   if (!validation.ok) {
     console.log('Validering feilet: ', validation.error);
-    return res.status(401);
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const obo = await requestOboToken(token, process.env.FAGER_TILGANG_CLIENT_ID!);
@@ -81,8 +79,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   }
 
   const accessData: EndepunktAltinnTilganger = (await safelyParseJSON(accessResponse)) as EndepunktAltinnTilganger;
-
-  console.log('Tilganger: ', accessData);
 
   return res.status(accessResponse.status).json(accessData.hierarki || []);
 };
