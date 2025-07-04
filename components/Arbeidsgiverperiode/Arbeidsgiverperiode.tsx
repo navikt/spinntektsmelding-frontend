@@ -304,19 +304,13 @@ export default function Arbeidsgiverperiode({
             <div className={lokalStyles.endrearbeidsgiverperiode}>
               <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-fra`}>Fra</TextLabel>
-                <div
-                  data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}
-                  id={`arbeidsgiverperioder[${periodeIndex}].fom`}
-                >
+                <div data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`} id={`agp.perioder.${periodeIndex}.fom`}>
                   {formatDate(periode.fom)}
                 </div>
               </div>
               <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-til`}>Til</TextLabel>
-                <div
-                  data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}
-                  id={`arbeidsgiverperioder[${periodeIndex}].tom`}
-                >
+                <div data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`} id={`agp.perioder.${periodeIndex}.tom`}>
                   {formatDate(periode.tom)}
                 </div>
               </div>
@@ -325,11 +319,11 @@ export default function Arbeidsgiverperiode({
           {endretArbeidsgiverperiode && (
             <Periodevelger
               fomTekst='Fra'
-              fomID={`arbeidsgiverperioder[${periodeIndex}].fom`}
-              fomError={visFeilmeldingTekst(`arbeidsgiverperioder[${periodeIndex}].fom`)}
+              fomID={`agp.perioder.${periodeIndex}.fom`}
+              fomError={visFeilmeldingTekst(`agp.perioder.${periodeIndex}.fom`)}
               tomTekst='Til'
-              tomID={`arbeidsgiverperioder[${periodeIndex}].tom`}
-              tomError={visFeilmeldingTekst(`arbeidsgiverperioder[${periodeIndex}].tom`)}
+              tomID={`agp.perioder.${periodeIndex}.tom`}
+              tomError={visFeilmeldingTekst(`agp.perioder.${periodeIndex}.tom`)}
               onRangeChange={(oppdatertPeriode) => setArbeidsgiverperiodeDatofelt(oppdatertPeriode, periode.id)}
               defaultRange={periode}
               kanSlettes={periodeIndex > 0}
