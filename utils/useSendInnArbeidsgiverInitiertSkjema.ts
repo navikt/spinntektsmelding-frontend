@@ -224,6 +224,14 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
                   errors = resultat.valideringsfeil.map((error: any) => ({
                     error: error
                   }));
+                } else if (resultat.error) {
+                  errors = [
+                    {
+                      value: 'Innsending av skjema feilet',
+                      error: resultat.error,
+                      property: 'server'
+                    }
+                  ];
                 } else {
                   errors = [
                     {
