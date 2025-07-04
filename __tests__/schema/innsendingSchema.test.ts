@@ -399,11 +399,6 @@ describe('InnsendingSchema', () => {
         code: 'custom',
         message: 'Ugyldig dato',
         path: ['agp', 'perioder', 1, 'fom']
-      },
-      {
-        code: 'custom',
-        message: 'Fra dato må være før til dato',
-        path: ['agp', 'perioder', 1, 'fom']
       }
     ]);
   });

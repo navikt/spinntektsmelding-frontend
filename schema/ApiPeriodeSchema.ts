@@ -38,7 +38,7 @@ export const ApiPeriodeSchema = z
         { message: 'Ugyldig dato' }
       )
   })
-  .refine((val) => val.fom ?? val.tom <= val.tom ?? val.fom, {
+  .refine((val) => !val.fom || !val.tom || val.fom <= val.tom, {
     message: 'Fra dato må være før til dato',
     path: ['fom']
   });
