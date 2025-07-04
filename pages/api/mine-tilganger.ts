@@ -44,7 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const token = getToken(req);
   if (!token) {
     console.error('Mangler token i header');
-    return res.status(401);
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   console.error('Fant token i header');

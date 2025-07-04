@@ -6,6 +6,7 @@ import { UseFormSetError } from 'react-hook-form';
 export default function useArbeidsgiverListe(setError: UseFormSetError<any>) {
   return useSWRImmutable([environment.mineTilgangerUrl], ([url]) => fetcherArbeidsgiverListe(url), {
     onError: (err) => {
+      console.error('Feil ved henting av arbeidsgiverliste:', err);
       if (err.status === 401) {
         const ingress = window.location.hostname + environment.baseUrl;
 
