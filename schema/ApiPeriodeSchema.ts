@@ -1,3 +1,4 @@
+import { isDate } from 'date-fns';
 import { z } from 'zod';
 
 export const ApiPeriodeSchema = z
@@ -9,6 +10,11 @@ export const ApiPeriodeSchema = z
       })
       .refine(
         (val) => {
+          if (!val) return false;
+          if (val.length < 10) return false;
+          if (val.length > 10) return false;
+          if (isNaN(Date.parse(val))) return false;
+          if (!isDate(new Date(val))) return false;
           const date = new Date(val);
           return !isNaN(date.getTime());
         },
@@ -21,10 +27,18 @@ export const ApiPeriodeSchema = z
       })
       .refine(
         (val) => {
+          if (!val) return false;
+          if (val.length < 10) return false;
+          if (val.length > 10) return false;
+          if (isNaN(Date.parse(val))) return false;
+          if (!isDate(new Date(val))) return false;
           const date = new Date(val);
           return !isNaN(date.getTime());
         },
         { message: 'Ugyldig dato' }
       )
   })
-  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
+  .refine((val) => val.fom ?? val.tom <= val.tom ?? val.fom, {
+    message: 'Fra dato må være før til dato',
+    path: ['fom']
+  });
