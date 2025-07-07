@@ -1,4 +1,4 @@
-// import testdata from '../../../mockdata/selvbestemt-kvittering.json';
+import testdata from '../../../mockdata/selvbestemt-kvittering-fisker.json';
 import { Fragment, useEffect } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
@@ -439,9 +439,9 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         kvittid: context.query.kvittid,
-        kvittering: null,
-        kvitteringStatus: 404,
-        dataFraBackend: false
+        kvittering: testdata,
+        kvitteringStatus: 200,
+        dataFraBackend: true
       }
     };
   }
