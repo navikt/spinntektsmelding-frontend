@@ -34,6 +34,32 @@ function perioderHarOverlapp(perioder: Array<{ fom: string; tom: string }>): boo
   return false;
 }
 
+function perioderErOver16dagerTotalt(perioder: Array<{ fom: string; tom: string }>): boolean {
+  const totaltAntallDager = perioder.reduce((current: number, periode: { fom: string; tom: string }) => {
+    const fom = new Date(periode.fom);
+    const tom = new Date(periode.tom);
+    return current + (tom.getTime() - fom.getTime()) / (1000 * 60 * 60 * 24) + 1; // +1 for å inkludere både start- og sluttdag
+  }, 0);
+
+  if (totaltAntallDager > 16) {
+    return true;
+  }
+  return false;
+}
+
+function perioderErUnder16dagerTotalt(perioder: Array<{ fom: string; tom: string }>): boolean {
+  const totaltAntallDager = perioder.reduce((current: number, periode: { fom: string; tom: string }) => {
+    const fom = new Date(periode.fom);
+    const tom = new Date(periode.tom);
+    return current + (tom.getTime() - fom.getTime()) / (1000 * 60 * 60 * 24) + 1; // +1 for å inkludere både start- og sluttdag
+  }, 0);
+
+  if (totaltAntallDager < 16) {
+    return true;
+  }
+  return false;
+}
+
 export const InnsendingSchema = z.object({
   agp: z
     .object({
@@ -49,6 +75,13 @@ export const InnsendingSchema = z.object({
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.'
+          });
+        }
+
+        if (perioderErOver16dagerTotalt(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.'
           });
         }
       }),
@@ -69,14 +102,57 @@ export const InnsendingSchema = z.object({
       }),
       redusertLoennIAgp: z.nullable(
         z.object({
-          beloep: z.number().min(0),
+          beloep: z.number({ required_error: 'Beløp utbetalt under arbeidsgiverperioden mangler.' }).min(0),
           begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
             required_error: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
           })
         })
       )
     })
-    .nullable(),
+    .nullable()
+    .superRefine((val, ctx) => {
+      if (!val) {
+        console.log('Ingen arbeidsgiverperiode registrert', val);
+        return;
+      }
+      console.log('Validerer arbeidsgiverperiode', val);
+      if (
+        perioderErUnder16dagerTotalt(val.perioder) &&
+        val.redusertLoennIAgp?.beloep === undefined &&
+        val.redusertLoennIAgp?.begrunnelse !== undefined
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Angi beløp utbetalt arbeidsgiverperioden.',
+          path: ['redusertLoennIAgp', 'beloep']
+        });
+        return;
+      }
+
+      if (
+        perioderErUnder16dagerTotalt(val.perioder) &&
+        val.redusertLoennIAgp?.beloep !== undefined &&
+        val.redusertLoennIAgp?.begrunnelse === undefined
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Angi årsak til forkortet arbeidsgiverperiode.',
+          path: ['redusertLoennIAgp', 'begrunnelse']
+        });
+        return;
+      }
+
+      if (
+        perioderErUnder16dagerTotalt(val.perioder) &&
+        !(val.redusertLoennIAgp?.beloep !== undefined && val.redusertLoennIAgp?.begrunnelse)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Angi en årsak og beløp for redusert lønn i arbeidsgiverperioden.',
+          path: ['redusertLoennIAgp', 'beloep']
+        });
+      }
+    }),
   inntekt: z.nullable(
     z.object({
       beloep: z

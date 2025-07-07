@@ -145,7 +145,7 @@ describe('InnsendingSchema', () => {
       agp: {
         perioder: [
           { fom: '2023-01-10', tom: '2023-01-11' },
-          { fom: '2023-02-17', tom: '2023-03-04' }
+          { fom: '2023-02-17', tom: '2023-03-02' }
         ],
         egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
         redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
@@ -246,6 +246,11 @@ describe('InnsendingSchema', () => {
       {
         code: 'custom',
         message: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
+        path: ['agp', 'perioder']
+      },
+      {
+        code: 'custom',
+        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
         path: ['agp', 'perioder']
       }
     ]);
@@ -401,5 +406,151 @@ describe('InnsendingSchema', () => {
         path: ['agp', 'perioder', 1, 'fom']
       }
     ]);
+  });
+
+  it('should validate InnsendingSchema and fail when agp is longer than 16 days', () => {
+    const data = {
+      agp: {
+        perioder: [
+          { fom: '2023-02-17', tom: '2023-03-01' },
+          { fom: '2023-03-06', tom: '2023-03-09' }
+        ],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'custom',
+        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        path: ['agp', 'perioder']
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema and fail when agp is shorter than 16 days and redusertLoennIAgp has missing beloep', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: undefined, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'number',
+        message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
+        path: ['agp', 'redusertLoennIAgp', 'beloep'],
+        received: 'undefined'
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema and fail when agp is shorter than 16 days and redusertLoennIAgp has missing begrunnelse', () => {
+    const data = {
+      agp: {
+        perioder: [
+          { fom: '2023-02-17', tom: '2023-03-01' },
+          { fom: '2023-03-06', tom: '2023-03-09' }
+        ],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 1234, begrunnelse: undefined }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'custom',
+        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        path: ['agp', 'perioder']
+      },
+      {
+        code: 'invalid_type',
+        expected:
+          "'ArbeidOpphoert' | 'BeskjedGittForSent' | 'BetvilerArbeidsufoerhet' | 'FerieEllerAvspasering' | 'FiskerMedHyre' | 'FravaerUtenGyldigGrunn' | 'IkkeFravaer' | 'IkkeFullStillingsandel' | 'IkkeLoenn' | 'LovligFravaer' | 'ManglerOpptjening' | 'Permittering' | 'Saerregler' | 'StreikEllerLockout' | 'TidligereVirksomhet'",
+        message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
+        path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
+        received: 'undefined'
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema and not fail when agp is shorter than 16 days and redusertLoennIAgp has beloep=0', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 0, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(true);
+    expect(InnsendingSchema.safeParse(data).error).toBeUndefined();
   });
 });
