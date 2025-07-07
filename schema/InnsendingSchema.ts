@@ -7,6 +7,12 @@ import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSche
 import { ApiNaturalytelserSchema } from './ApiNaturalytelserSchema';
 import { isBefore } from 'date-fns';
 
+function kalkulerAntallDagerIMellom(fom: string, tom: string): number {
+  const fomDate = new Date(fom);
+  const tomDate = new Date(tom);
+  return Math.ceil((tomDate.getTime() - fomDate.getTime()) / (1000 * 60 * 60 * 24)) + 1; // +1 for å inkludere både start- og sluttdag
+}
+
 function langtGapIPerioder(perioder: Array<{ fom: string; tom: string }>): boolean {
   if (perioder.length < 2) return false;
   const sortedPerioder = perioder.sort((a, b) => new Date(a.fom).getTime() - new Date(b.fom).getTime());
@@ -36,9 +42,7 @@ function perioderHarOverlapp(perioder: Array<{ fom: string; tom: string }>): boo
 
 function perioderErOver16dagerTotalt(perioder: Array<{ fom: string; tom: string }>): boolean {
   const totaltAntallDager = perioder.reduce((current: number, periode: { fom: string; tom: string }) => {
-    const fom = new Date(periode.fom);
-    const tom = new Date(periode.tom);
-    return current + (tom.getTime() - fom.getTime()) / (1000 * 60 * 60 * 24) + 1; // +1 for å inkludere både start- og sluttdag
+    return kalkulerAntallDagerIMellom(periode.fom, periode.tom) + current;
   }, 0);
 
   if (totaltAntallDager > 16) {
@@ -49,9 +53,7 @@ function perioderErOver16dagerTotalt(perioder: Array<{ fom: string; tom: string 
 
 function perioderErUnder16dagerTotalt(perioder: Array<{ fom: string; tom: string }>): boolean {
   const totaltAntallDager = perioder.reduce((current: number, periode: { fom: string; tom: string }) => {
-    const fom = new Date(periode.fom);
-    const tom = new Date(periode.tom);
-    return current + (tom.getTime() - fom.getTime()) / (1000 * 60 * 60 * 24) + 1; // +1 for å inkludere både start- og sluttdag
+    return kalkulerAntallDagerIMellom(periode.fom, periode.tom) + current;
   }, 0);
 
   if (totaltAntallDager < 16) {
@@ -112,10 +114,9 @@ export const InnsendingSchema = z.object({
     .nullable()
     .superRefine((val, ctx) => {
       if (!val) {
-        console.log('Ingen arbeidsgiverperiode registrert', val);
         return;
       }
-      console.log('Validerer arbeidsgiverperiode', val);
+
       if (
         perioderErUnder16dagerTotalt(val.perioder) &&
         val.redusertLoennIAgp?.beloep === undefined &&
