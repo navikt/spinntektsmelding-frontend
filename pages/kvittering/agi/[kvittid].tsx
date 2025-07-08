@@ -77,6 +77,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
   const lagretEndringAarsaker = useBoundStore((state) => state.bruttoinntekt.endringAarsaker);
+  const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
 
   const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
 
@@ -203,6 +204,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     if (kvitteringDokument?.vedtaksperiodeId) {
       setVedtaksperiodeId(kvitteringDokument?.vedtaksperiodeId);
     }
+    if (kvitteringDokument?.type?.type) {
+      setSelvbestemtType(kvitteringDokument?.type?.type);
+    }
   } else {
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
     fullLoennIArbeidsgiverPerioden.status = kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
@@ -289,6 +293,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
+    setSelvbestemtType('Fisker');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const visningEndringAarsaker = maserEndringAarsaker(endringAarsak, endringAarsaker);

@@ -23,6 +23,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
+  const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
   const errorResponse = useErrorRespons();
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
@@ -60,6 +61,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       skjemaData.aarsakInnsending = 'Endring';
     } else {
       skjemaData.aarsakInnsending = 'Ny';
+      setSelvbestemtType(pathSlug);
     }
     const validerteData = fyllAapenInnsending(skjemaData, pathSlug);
 

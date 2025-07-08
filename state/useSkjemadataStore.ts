@@ -29,6 +29,7 @@ export interface SkjemadataState {
   setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
+  setSelvbestemtType: (type: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker') => void;
   setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
   setVedtaksperiodeId: (id: string) => void;
   setAarsakSelvbestemtInnsending: (aarsak: string) => void;
@@ -46,6 +47,7 @@ export interface SkjemadataState {
   vedtaksperiodeId?: string;
   aarsakSelvbestemtInnsending?: string;
   behandlingsdager?: string[];
+  selvbestemtType?: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker';
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -58,6 +60,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   kvitteringData: undefined,
   aarsakSelvbestemtInnsending: undefined,
   behandlingsdager: undefined,
+  selvbestemtType: 'MedArbeidsforhold',
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
@@ -154,6 +157,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.behandlingsdager = behandlingsdager;
+      })
+    );
+  },
+  setSelvbestemtType: (type: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker') => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.selvbestemtType = type;
       })
     );
   }
