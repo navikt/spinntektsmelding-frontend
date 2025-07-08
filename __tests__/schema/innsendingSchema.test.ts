@@ -82,7 +82,7 @@ describe('InnsendingSchema', () => {
                     expected: 'array',
                     received: 'undefined',
                     path: ['refusjon', 'endringer'],
-                    message: 'Required'
+                    message: 'Vennligst fyll inn dato og beløp for endringer'
                   }
                 ],
                 name: 'ZodError'
