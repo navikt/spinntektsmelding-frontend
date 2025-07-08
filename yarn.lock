@@ -3128,10 +3128,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js-pure@npm:3.43.0":
-  version: 3.43.0
-  resolution: "core-js-pure@npm:3.43.0"
-  checksum: 10c0/b888513800543af7aac13b8e33eb5153d5a8304f11fe0ec7a331878df830dcb428c723ebd5266ae52b047ffb4a86750b384aed24de731b23bc5ebdbcf05aeec5
+"core-js-pure@npm:3.44.0":
+  version: 3.44.0
+  resolution: "core-js-pure@npm:3.44.0"
+  checksum: 10c0/543d4743edcdf2371289c202a373a81ad30f78082999b464e787760f13c5b05cf2c6c99a134b73ffe0ac3c5086df8cd9c5ab575a29a8d40b1d85f6b3cafbca37
   languageName: node
   linkType: hard
 
@@ -7488,7 +7488,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^3.2.4"
     "@vitest/ui": "npm:^3.2.4"
     classnames: "npm:2.5.1"
-    core-js-pure: "npm:3.43.0"
+    core-js-pure: "npm:3.44.0"
     cross-env: "npm:7.0.3"
     csp-header: "npm:^6.1.0"
     date-fns: "npm:4.1.0"
