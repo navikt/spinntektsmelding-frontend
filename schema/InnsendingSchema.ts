@@ -7,9 +7,15 @@ import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSche
 import { ApiNaturalytelserSchema } from './ApiNaturalytelserSchema';
 import { isBefore } from 'date-fns';
 
+function beregnTotaltAntallDager(fom: string, tom: string): number {
+  const fomDate = new Date(fom);
+  const tomDate = new Date(tom);
+  return Math.ceil((tomDate.getTime() - fomDate.getTime()) / (1000 * 60 * 60 * 24)) + 1; // +1 for å inkludere både start- og sluttdag
+}
+
 function langtGapIPerioder(perioder: Array<{ fom: string; tom: string }>): boolean {
   if (perioder.length < 2) return false;
-  const sortedPerioder = perioder.sort((a, b) => new Date(a.fom).getTime() - new Date(b.fom).getTime());
+  const sortedPerioder = [...perioder].sort((a, b) => new Date(a.fom).getTime() - new Date(b.fom).getTime());
   for (let i = 1; i < sortedPerioder.length; i++) {
     const gap = new Date(sortedPerioder[i].fom).getTime() - new Date(sortedPerioder[i - 1].tom).getTime();
     if (gap > 16 * 24 * 60 * 60 * 1000) {
@@ -34,6 +40,28 @@ function perioderHarOverlapp(perioder: Array<{ fom: string; tom: string }>): boo
   return false;
 }
 
+function perioderErOver16dagerTotalt(perioder: Array<{ fom: string; tom: string }>): boolean {
+  const totaltAntallDager = perioder.reduce((current: number, periode: { fom: string; tom: string }) => {
+    return beregnTotaltAntallDager(periode.fom, periode.tom) + current;
+  }, 0);
+
+  if (totaltAntallDager > 16) {
+    return true;
+  }
+  return false;
+}
+
+function perioderErUnder16dagerTotalt(perioder: Array<{ fom: string; tom: string }>): boolean {
+  const totaltAntallDager = perioder.reduce((current: number, periode: { fom: string; tom: string }) => {
+    return beregnTotaltAntallDager(periode.fom, periode.tom) + current;
+  }, 0);
+
+  if (totaltAntallDager < 16) {
+    return true;
+  }
+  return false;
+}
+
 export const InnsendingSchema = z.object({
   agp: z
     .object({
@@ -49,6 +77,13 @@ export const InnsendingSchema = z.object({
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.'
+          });
+        }
+
+        if (perioderErOver16dagerTotalt(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.'
           });
         }
       }),
@@ -69,14 +104,56 @@ export const InnsendingSchema = z.object({
       }),
       redusertLoennIAgp: z.nullable(
         z.object({
-          beloep: z.number().min(0),
+          beloep: z.number({ required_error: 'Beløp utbetalt under arbeidsgiverperioden mangler.' }).min(0),
           begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
             required_error: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
           })
         })
       )
     })
-    .nullable(),
+    .nullable()
+    .superRefine((val, ctx) => {
+      if (!val) {
+        return;
+      }
+
+      if (
+        perioderErUnder16dagerTotalt(val.perioder) &&
+        val.redusertLoennIAgp?.beloep === undefined &&
+        val.redusertLoennIAgp?.begrunnelse !== undefined
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Angi beløp utbetalt arbeidsgiverperioden.',
+          path: ['redusertLoennIAgp', 'beloep']
+        });
+        return;
+      }
+
+      if (
+        perioderErUnder16dagerTotalt(val.perioder) &&
+        val.redusertLoennIAgp?.beloep !== undefined &&
+        val.redusertLoennIAgp?.begrunnelse === undefined
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Angi årsak til forkortet arbeidsgiverperiode.',
+          path: ['redusertLoennIAgp', 'begrunnelse']
+        });
+        return;
+      }
+
+      if (
+        perioderErUnder16dagerTotalt(val.perioder) &&
+        !(val.redusertLoennIAgp?.beloep !== undefined && val.redusertLoennIAgp?.begrunnelse)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Angi en årsak og beløp for redusert lønn i arbeidsgiverperioden.',
+          path: ['redusertLoennIAgp', 'beloep']
+        });
+      }
+    }),
   inntekt: z.nullable(
     z.object({
       beloep: z
@@ -92,7 +169,12 @@ export const InnsendingSchema = z.object({
       beloepPerMaaned: z
         .number({ required_error: 'Vennligst angi hvor mye du refundere per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-      endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])]),
+      endringer: z.union([
+        z.array(RefusjonEndringSchema),
+        z.tuple([], {
+          errorMap: (iss) => ({ message: 'Vennligst fyll inn dato og beløp for endringer' })
+        })
+      ]),
       sluttdato: z
         .string({
           required_error: 'Vennligst fyll inn til dato',
