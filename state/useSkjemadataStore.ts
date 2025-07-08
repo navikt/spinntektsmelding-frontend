@@ -47,7 +47,7 @@ export interface SkjemadataState {
   vedtaksperiodeId?: string;
   aarsakSelvbestemtInnsending?: string;
   behandlingsdager?: string[];
-  selvbestemtType?: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker';
+  selvbestemtType: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker';
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({

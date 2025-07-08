@@ -257,7 +257,6 @@ const InitieringBehandlingsdager: NextPage = () => {
       fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
       personnummer: sykmeldt.fnr
     };
-    console.log('sykmeldingsperiode', mottatteSykepengesoeknader, formData);
 
     const validationResult = InitieringSchema.safeParse(skjemaData);
     const sykmeldingsperiode = getBehandlingsdager(formData, mottatteSykepengesoeknader);

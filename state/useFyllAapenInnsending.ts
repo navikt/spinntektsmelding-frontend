@@ -54,7 +54,11 @@ export default function useFyllAapenInnsending() {
 
   type SkjemaData = z.infer<typeof HovedskjemaSchema>;
 
-  return (skjemaData: SkjemaData, arbeidsforhold: string) => {
+  return (
+    skjemaData: SkjemaData,
+    arbeidsforhold: string,
+    selvbestemtType: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker'
+  ) => {
     const bestemmendeFravaersdag =
       perioder && perioder.length > 0
         ? finnBestemmendeFravaersdag(
@@ -79,16 +83,15 @@ export default function useFyllAapenInnsending() {
 
     const formattedAgpPerioder = getFormattedAgpPerioder(arbeidsgiverperiodeDisabled, arbeidsgiverperioder);
 
-    const arbeidsforholdType = {
+    let arbeidsforholdType = {
       type: 'MedArbeidsforhold',
       vedtaksperiodeId: isValidUUID(vedtaksperiodeId) ? vedtaksperiodeId : undefined
     };
-    if (arbeidsforhold === 'unntattAaRegisteret') {
-      arbeidsforholdType.type = 'UtenArbeidsforhold';
-    } else if (arbeidsforhold === 'Fisker') {
-      arbeidsforholdType.type = 'Fisker';
+    if (selvbestemtType === 'UtenArbeidsforhold') {
+      arbeidsforholdType = { type: 'UtenArbeidsforhold' };
+    } else if (selvbestemtType === 'Fisker') {
+      arbeidsforholdType = { type: 'Fisker' };
     }
-    console.log('vedtaksperiodeId', vedtaksperiodeId, arbeidsforholdType);
 
     const innsending = validerAapenInnsending({
       sykmeldtFnr: sykmeldt.fnr,

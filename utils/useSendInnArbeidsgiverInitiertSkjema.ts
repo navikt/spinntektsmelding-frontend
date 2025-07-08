@@ -24,6 +24,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
   const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
+  const selvbestemtType = useBoundStore((state) => state.selvbestemtType);
   const errorResponse = useErrorRespons();
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
@@ -63,7 +64,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       skjemaData.aarsakInnsending = 'Ny';
       setSelvbestemtType(pathSlug);
     }
-    const validerteData = fyllAapenInnsending(skjemaData, pathSlug);
+    const validerteData = fyllAapenInnsending(skjemaData, pathSlug, selvbestemtType);
 
     if (validerteData.success !== true) {
       logger.error('Feil ved validering av skjema - Åpen innsending');

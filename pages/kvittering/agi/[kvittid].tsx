@@ -204,9 +204,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     if (kvitteringDokument?.vedtaksperiodeId) {
       setVedtaksperiodeId(kvitteringDokument?.vedtaksperiodeId);
     }
-    if (kvitteringDokument?.type?.type) {
-      setSelvbestemtType(kvitteringDokument?.type?.type);
-    }
   } else {
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
     fullLoennIArbeidsgiverPerioden.status = kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
@@ -293,7 +290,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   useEffect(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-    setSelvbestemtType('Fisker');
+
+    if (dataFraBackend && kvitteringDokument?.type?.type) {
+      setSelvbestemtType(kvitteringDokument?.type?.type);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const visningEndringAarsaker = maserEndringAarsaker(endringAarsak, endringAarsaker);
