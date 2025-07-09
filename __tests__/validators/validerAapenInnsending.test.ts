@@ -29,7 +29,10 @@ describe('validerAapenInnsending', () => {
         endringer: [],
         sluttdato: '2002-02-02'
       },
-      vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      arbeidsforholdType: {
+        type: 'MedArbeidsforhold',
+        vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      }
     };
 
     expect(validerAapenInnsending(data).success).toBe(true);
@@ -63,7 +66,10 @@ describe('validerAapenInnsending', () => {
         endringer: [],
         sluttdato: '2002-02-02'
       },
-      vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      arbeidsforholdType: {
+        type: 'MedArbeidsforhold',
+        vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      }
     };
 
     expect(validerAapenInnsending(data).success).toBe(true);
