@@ -222,7 +222,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       ],
       selvbestemtId: null,
       arbeidsforholdType: {
-        type: 'UtenArbeidsforhold',
+        type: 'MedArbeidsforhold',
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       }
     });
