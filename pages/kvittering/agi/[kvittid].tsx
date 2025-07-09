@@ -445,7 +445,7 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         kvittid: context.query.kvittid,
-        kvittering: undefined,
+        kvittering: null,
         kvitteringStatus: 404,
         dataFraBackend: false
       }
