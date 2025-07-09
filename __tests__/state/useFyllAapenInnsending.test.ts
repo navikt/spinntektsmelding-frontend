@@ -130,7 +130,11 @@ describe('useFyllAapenInnsending', () => {
         sykmeldingsperioder: [
           { fom: '2023-02-20', tom: '2023-03-03' },
           { fom: '2023-03-05', tom: '2023-03-06' }
-        ]
+        ],
+        arbeidsforholdType: {
+          type: 'MedArbeidsforhold',
+          vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
+        }
       });
     }
   });
@@ -227,7 +231,11 @@ describe('useFyllAapenInnsending', () => {
         sykmeldingsperioder: [
           { fom: '2023-02-20', tom: '2023-03-03' },
           { fom: '2023-03-05', tom: '2023-03-06' }
-        ]
+        ],
+        arbeidsforholdType: {
+          type: 'MedArbeidsforhold',
+          vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
+        }
       });
     }
   });
@@ -321,7 +329,11 @@ describe('useFyllAapenInnsending', () => {
         sykmeldingsperioder: [
           { fom: '2023-02-20', tom: '2023-03-03' },
           { fom: '2023-03-05', tom: '2023-03-06' }
-        ]
+        ],
+        arbeidsforholdType: {
+          type: 'MedArbeidsforhold',
+          vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
+        }
       });
     }
   });
