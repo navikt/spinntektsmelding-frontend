@@ -124,7 +124,6 @@ describe('useFyllAapenInnsending', () => {
           endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: null,
-        vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
         sykmeldtFnr: '25087327879',
         avsender: { orgnr: '911206722', tlf: '12345678' },
         sykmeldingsperioder: [
@@ -225,7 +224,6 @@ describe('useFyllAapenInnsending', () => {
           ],
           sluttdato: null
         },
-        vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
         sykmeldtFnr: '25087327879',
         avsender: { orgnr: '911206722', tlf: '12345678' },
         sykmeldingsperioder: [
@@ -323,7 +321,6 @@ describe('useFyllAapenInnsending', () => {
           ],
           sluttdato: null
         },
-        vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
         sykmeldtFnr: '25087327879',
         avsender: { orgnr: '911206722', tlf: '12345678' },
         sykmeldingsperioder: [
