@@ -227,4 +227,181 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       }
     });
   });
+
+  test('selvbestemt fisker med varig lønnsendring', async ({ page }) => {
+    // fill personnummer and next
+    const formPage = new FormPage(page);
+    await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
+    await formPage.checkRadioButton('Årsak til at du vil opprette inntektsmelding.', 'Fisker med hyre');
+    await page.getByRole('button', { name: 'Neste' }).click();
+
+    await page.waitForURL('**/initieringFiskere');
+
+    // select both periods
+    // await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
+    // await page.getByLabel('16.09.2024 - 17.09.2024').check();
+    await formPage.selectOption(
+      'Hvilken underenhet er personen sykmeldt fra',
+      'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
+    );
+    await page.getByRole('button', { name: 'Neste' }).click();
+
+    // fill phone and utbetalt
+    await page.getByLabel('Telefon innsender').fill('12345678');
+
+    await page.getByRole('textbox', { name: 'Fra' }).first().fill('06.09.24');
+    await page.getByRole('textbox', { name: 'Til' }).first().fill('08.09.24');
+    await page.getByRole('textbox', { name: 'Fra' }).nth(1).fill('10.09.24');
+    await page.getByRole('textbox', { name: 'Til' }).nth(1).fill('17.09.24');
+
+    await page.getByLabel('Telefon innsender').fill('12345678');
+
+    await page.getByLabel('Utbetalt under arbeidsgiverperiode').fill('5000');
+    // short AGP reason
+    await page
+      .getByLabel('Velg begrunnelse for kort arbeidsgiverperiode')
+      .selectOption({ label: 'Det er ikke fire ukers opptjeningstid' });
+    // click last Endre and change amount
+    await page.getByRole('button', { name: 'Endre' }).last().click();
+    const amtInput = page.locator('[data-cy="inntekt-beloep-input"]');
+    await amtInput.fill('7500');
+    // select endringsårsak Varig lønnsendring
+    await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Varig lønnsendring' });
+    await page.getByLabel('Lønnsendring gjelder fra').fill('30.06.24');
+    // refusjon = Nei
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
+    // confirm + send
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
+
+    // assert payload
+    const req2Promise = page.waitForRequest('*/**/api/selvbestemt-inntektsmelding');
+    await formPage.clickButton('Send');
+    const req2 = await req2Promise;
+    expect(JSON.parse(req2.postData()!)).toEqual({
+      agp: {
+        perioder: [
+          { fom: '2024-09-06', tom: '2024-09-08' },
+          { fom: '2024-09-10', tom: '2024-09-17' }
+        ],
+        egenmeldinger: [],
+        redusertLoennIAgp: {
+          beloep: 5000,
+          begrunnelse: 'ManglerOpptjening'
+        }
+      },
+      inntekt: {
+        beloep: 7500,
+        inntektsdato: '2024-09-10',
+        naturalytelser: [],
+        endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2024-06-30' }]
+      },
+      refusjon: null,
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '810007842', tlf: '12345678' },
+      sykmeldingsperioder: [
+        {
+          fom: '2024-09-06',
+          tom: '2024-09-08'
+        },
+        {
+          fom: '2024-09-10',
+          tom: '2024-09-17'
+        }
+      ],
+      selvbestemtId: null,
+      arbeidsforholdType: {
+        type: 'Fisker'
+      }
+    });
+  });
+
+  test('selvbestemt ambassadepersonell e.l. med varig lønnsendring', async ({ page }) => {
+    // fill personnummer and next
+    const formPage = new FormPage(page);
+    await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
+    await formPage.checkRadioButton(
+      'Årsak til at du vil opprette inntektsmelding.',
+      'Unntatt registrering i Aa-registeret'
+    );
+    await page.getByRole('button', { name: 'Neste' }).click();
+
+    await page.waitForURL('**/initieringFritatt');
+
+    // select both periods
+    // await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
+    // await page.getByLabel('16.09.2024 - 17.09.2024').check();
+    await formPage.selectOption(
+      'Hvilken underenhet er personen sykmeldt fra',
+      'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
+    );
+    await page.getByRole('button', { name: 'Neste' }).click();
+
+    // fill phone and utbetalt
+    await page.getByLabel('Telefon innsender').fill('12345678');
+
+    await page.getByRole('textbox', { name: 'Fra' }).first().fill('06.09.24');
+    await page.getByRole('textbox', { name: 'Til' }).first().fill('08.09.24');
+    await page.getByRole('textbox', { name: 'Fra' }).nth(1).fill('10.09.24');
+    await page.getByRole('textbox', { name: 'Til' }).nth(1).fill('17.09.24');
+
+    await page.getByLabel('Telefon innsender').fill('12345678');
+
+    await page.getByLabel('Utbetalt under arbeidsgiverperiode').fill('5000');
+    // short AGP reason
+    await page
+      .getByLabel('Velg begrunnelse for kort arbeidsgiverperiode')
+      .selectOption({ label: 'Det er ikke fire ukers opptjeningstid' });
+    // click last Endre and change amount
+    await page.getByRole('button', { name: 'Endre' }).last().click();
+    const amtInput = page.locator('[data-cy="inntekt-beloep-input"]');
+    await amtInput.fill('7500');
+    // select endringsårsak Varig lønnsendring
+    await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Varig lønnsendring' });
+    await page.getByLabel('Lønnsendring gjelder fra').fill('30.06.24');
+    // refusjon = Nei
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
+    // confirm + send
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
+
+    // assert payload
+    const req2Promise = page.waitForRequest('*/**/api/selvbestemt-inntektsmelding');
+    await formPage.clickButton('Send');
+    const req2 = await req2Promise;
+    expect(JSON.parse(req2.postData()!)).toEqual({
+      agp: {
+        perioder: [
+          { fom: '2024-09-06', tom: '2024-09-08' },
+          { fom: '2024-09-10', tom: '2024-09-17' }
+        ],
+        egenmeldinger: [],
+        redusertLoennIAgp: {
+          beloep: 5000,
+          begrunnelse: 'ManglerOpptjening'
+        }
+      },
+      inntekt: {
+        beloep: 7500,
+        inntektsdato: '2024-09-10',
+        naturalytelser: [],
+        endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2024-06-30' }]
+      },
+      refusjon: null,
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '810007842', tlf: '12345678' },
+      sykmeldingsperioder: [
+        {
+          fom: '2024-09-06',
+          tom: '2024-09-08'
+        },
+        {
+          fom: '2024-09-10',
+          tom: '2024-09-17'
+        }
+      ],
+      selvbestemtId: null,
+      arbeidsforholdType: {
+        type: 'UtenArbeidsforhold'
+      }
+    });
+  });
 });
