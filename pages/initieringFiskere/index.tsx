@@ -25,7 +25,7 @@ import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/router';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
-import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
+import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
 

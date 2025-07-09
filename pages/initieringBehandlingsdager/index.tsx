@@ -38,7 +38,7 @@ import environment from '../../config/environment';
 import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
 import sorterFomStigende from '../../utils/sorterFomStigende';
-import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
+import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
 
