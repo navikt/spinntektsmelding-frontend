@@ -3,7 +3,7 @@ import environment from '../config/environment';
 import fetcherArbeidsgiverListe from './fetcherArbeidsgiverListe';
 import { UseFormSetError } from 'react-hook-form';
 
-export default function useArbeidsgiverListe(setError: UseFormSetError<any>) {
+export default function useMineTilganger(setError: UseFormSetError<any>) {
   return useSWRImmutable([environment.mineTilgangerUrl], ([url]) => fetcherArbeidsgiverListe(url), {
     onError: (err) => {
       console.error('Feil ved henting av arbeidsgiverliste:', err);
