@@ -1,6 +1,6 @@
 import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
-import fetcherBehandlingsdager from './fetcherBehandlingsdager';
+import fetcherSykepengesoeknader from './fetcherSykepengesoeknader';
 
 export default function useBehandlingsdager(
   identitetsnummer: string | undefined,
@@ -11,7 +11,7 @@ export default function useBehandlingsdager(
   return useSWRImmutable(
     [environment.hentBehandlingsdagerUrl, identitetsnummer, orgNummer, eldsteFom],
     ([url, identitetsnummer, orgNummer, eldsteFom]) =>
-      fetcherBehandlingsdager(
+      fetcherSykepengesoeknader(
         !!identitetsnummer && !!orgNummer && !!eldsteFom ? url : null,
         identitetsnummer,
         orgNummer,
