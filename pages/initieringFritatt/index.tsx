@@ -220,10 +220,10 @@ const InitieringFritatt: NextPage = () => {
             <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
               <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
               <div className={lokalStyles.persondata}>
-                <div className={lokalStyles.navn}>
+                {/* <div className={lokalStyles.navn}>
                   <TextLabel>Navn</TextLabel>
                   <p>{fulltNavn}</p>
-                </div>
+                </div> */}
                 <div>
                   <TextLabel>Personnummer</TextLabel>
                   <p>{sykmeldt.fnr}</p>
