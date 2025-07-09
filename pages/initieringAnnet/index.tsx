@@ -363,7 +363,7 @@ const Initiering2: NextPage = () => {
     initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
     setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
-    setSelvbestemtType('UtenArbeidsforhold');
+    setSelvbestemtType('MedArbeidsforhold');
     router.push('/arbeidsgiverInitiertInnsending');
   };
 

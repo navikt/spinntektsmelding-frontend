@@ -136,7 +136,10 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       avsender: { orgnr: '810007842', tlf: '12345678' },
       sykmeldingsperioder: [{ fom: '2024-09-11', tom: '2024-09-15' }],
       selvbestemtId: null,
-      vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      arbeidsforholdType: {
+        type: 'MedArbeidsforhold',
+        vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      }
     });
   });
 
@@ -218,7 +221,10 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         { fom: '2024-09-16', tom: '2024-09-17' }
       ],
       selvbestemtId: null,
-      vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      arbeidsforholdType: {
+        type: 'UtenArbeidsforhold',
+        vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      }
     });
   });
 });
