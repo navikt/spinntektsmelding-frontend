@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
 import testdata from '../../mockdata/endepunktAltinnTilganger.json';
-import { EndepunktAltinnTilgangerSchema } from '../../schema/EndepunktAltinnTilgangerSchema';
+import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 
@@ -14,8 +14,6 @@ export const config = {
     externalResolver: true
   }
 };
-
-type EndepunktAltinnTilganger = z.infer<typeof EndepunktAltinnTilgangerSchema>;
 
 type OrgNode = {
   orgnr: string;
