@@ -20,7 +20,7 @@ const UnderenhetSchema: z.ZodType<Underenhet> = z.object({
   organisasjonsform: z.string()
 });
 
-const EndepunktAltinnTilgangerSchema = z.object({
+export const EndepunktAltinnTilgangerSchema = z.object({
   hierarki: z.array(
     z.object({
       orgnr: z.string(),
