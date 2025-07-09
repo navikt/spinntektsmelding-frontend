@@ -41,7 +41,7 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
             id={field.name + '_Fiskere'}
             description='Personer bosatt i Norge og som har fiske eller fangst i havet som hovednæring (blad B) eller binæring (blad A).'
           >
-            Fiskere
+            Fisker med hyre
           </Radio>
           <Radio
             value='Annet'

@@ -63,6 +63,7 @@ const Initiering2: NextPage = () => {
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
+  const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -362,6 +363,7 @@ const Initiering2: NextPage = () => {
     initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
     setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
+    setSelvbestemtType('UtenArbeidsforhold');
     router.push('/arbeidsgiverInitiertInnsending');
   };
 

@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
-import { SkjemaStatus } from '../state/useSkjemadataStore';
+import { SelvbestemtType, SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
@@ -23,7 +23,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
-  const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
   const selvbestemtType = useBoundStore((state) => state.selvbestemtType);
   const errorResponse = useErrorRespons();
   const router = useRouter();
@@ -62,7 +61,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       skjemaData.aarsakInnsending = 'Endring';
     } else {
       skjemaData.aarsakInnsending = 'Ny';
-      setSelvbestemtType(pathSlug);
     }
     const validerteData = fyllAapenInnsending(skjemaData, pathSlug, selvbestemtType);
 

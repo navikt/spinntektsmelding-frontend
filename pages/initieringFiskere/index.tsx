@@ -56,6 +56,7 @@ const InitieringFritatt: NextPage = () => {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -165,6 +166,7 @@ const InitieringFritatt: NextPage = () => {
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
     initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
+    setSelvbestemtType('Fisker');
     router.push('/Fisker');
   };
 
@@ -218,10 +220,10 @@ const InitieringFritatt: NextPage = () => {
             <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
               <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
               <div className={lokalStyles.persondata}>
-                <div className={lokalStyles.navn}>
+                {/* <div className={lokalStyles.navn}>
                   <TextLabel>Navn</TextLabel>
                   <p>{fulltNavn}</p>
-                </div>
+                </div> */}
                 <div>
                   <TextLabel>Personnummer</TextLabel>
                   <p>{sykmeldt.fnr}</p>

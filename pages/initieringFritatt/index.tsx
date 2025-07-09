@@ -21,7 +21,7 @@ import InitieringSchema from '../../schema/InitieringSchema';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, set } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/router';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
@@ -56,6 +56,7 @@ const InitieringFritatt: NextPage = () => {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
+  const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -165,6 +166,7 @@ const InitieringFritatt: NextPage = () => {
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
     initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
+    setSelvbestemtType('UtenArbeidsforhold');
     router.push('/unntattAaRegisteret');
   };
 

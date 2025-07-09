@@ -16,6 +16,7 @@ export enum SkjemaStatus {
 type KvitteringEkstern = z.infer<typeof KvitteringEksternSchema>;
 type KvitteringFullInnsending = z.infer<typeof FullInnsendingSchema>;
 type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
+export type SelvbestemtType = 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker';
 
 export interface SkjemadataState {
   nyInnsending: boolean;
@@ -29,7 +30,7 @@ export interface SkjemadataState {
   setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
-  setSelvbestemtType: (type: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker') => void;
+  setSelvbestemtType: (type: SelvbestemtType) => void;
   setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
   setVedtaksperiodeId: (id: string) => void;
   setAarsakSelvbestemtInnsending: (aarsak: string) => void;
@@ -47,7 +48,7 @@ export interface SkjemadataState {
   vedtaksperiodeId?: string;
   aarsakSelvbestemtInnsending?: string;
   behandlingsdager?: string[];
-  selvbestemtType: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker';
+  selvbestemtType: SelvbestemtType;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
