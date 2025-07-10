@@ -124,13 +124,16 @@ describe('useFyllAapenInnsending', () => {
           endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: null,
-        vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
         sykmeldtFnr: '25087327879',
         avsender: { orgnr: '911206722', tlf: '12345678' },
         sykmeldingsperioder: [
           { fom: '2023-02-20', tom: '2023-03-03' },
           { fom: '2023-03-05', tom: '2023-03-06' }
-        ]
+        ],
+        arbeidsforholdType: {
+          type: 'MedArbeidsforhold',
+          vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
+        }
       });
     }
   });
@@ -221,13 +224,16 @@ describe('useFyllAapenInnsending', () => {
           ],
           sluttdato: null
         },
-        vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
         sykmeldtFnr: '25087327879',
         avsender: { orgnr: '911206722', tlf: '12345678' },
         sykmeldingsperioder: [
           { fom: '2023-02-20', tom: '2023-03-03' },
           { fom: '2023-03-05', tom: '2023-03-06' }
-        ]
+        ],
+        arbeidsforholdType: {
+          type: 'MedArbeidsforhold',
+          vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
+        }
       });
     }
   });
@@ -315,13 +321,16 @@ describe('useFyllAapenInnsending', () => {
           ],
           sluttdato: null
         },
-        vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
         sykmeldtFnr: '25087327879',
         avsender: { orgnr: '911206722', tlf: '12345678' },
         sykmeldingsperioder: [
           { fom: '2023-02-20', tom: '2023-03-03' },
           { fom: '2023-03-05', tom: '2023-03-06' }
-        ]
+        ],
+        arbeidsforholdType: {
+          type: 'MedArbeidsforhold',
+          vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
+        }
       });
     }
   });

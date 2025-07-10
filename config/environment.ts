@@ -61,6 +61,10 @@ class Environment {
     return this.publicRuntimeConfig.innsendingSelvbestemtInntektsmeldingApi;
   }
 
+  get arbeidsgiverListe() {
+    return this.publicRuntimeConfig.arbeidsgiverListe;
+  }
+
   public baseUrl = '/im-dialog';
 
   public skjemadataUrl = '/im-dialog/api/hent-forespoersel';
@@ -83,6 +87,9 @@ class Environment {
   public innsendingAGInitiertUrl = '/im-dialog/api/selvbestemt-inntektsmelding';
 
   public hentSykepengesoknaderUrl = '/im-dialog/api/sp-soeknader';
+  public hentBehandlingsdagerUrl = '/im-dialog/api/sp-behandlingsdager';
+
+  public mineTilgangerUrl = '/im-dialog/api/mine-tilganger';
 
   get environment() {
     return this.publicRuntimeConfig.environment;

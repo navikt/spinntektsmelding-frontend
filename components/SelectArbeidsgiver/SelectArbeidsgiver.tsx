@@ -11,13 +11,26 @@ interface SelectArbeidsgiverProps {
   id: string;
   register: any;
   error?: string;
+  label?: string;
+  description?: string;
+  descriptionLabel?: string;
 }
 
-export default function SelectArbeidsgiver({ arbeidsforhold, id, register, error }: Readonly<SelectArbeidsgiverProps>) {
+export default function SelectArbeidsgiver({
+  arbeidsforhold,
+  id,
+  register,
+  error,
+  label,
+  description,
+  descriptionLabel
+}: Readonly<SelectArbeidsgiverProps>) {
+  const visningLabel = label ?? 'Arbeidsgiver';
+  const selectLabel = descriptionLabel ?? 'Organisasjon';
   if (arbeidsforhold.length === 1) {
     return (
       <>
-        <TextLabel>Arbeidsgiver</TextLabel>
+        <TextLabel>{visningLabel}</TextLabel>
         <p>{`Orgnr. ${arbeidsforhold[0].orgnrUnderenhet} - ${arbeidsforhold[0].virksomhetsnavn}`}</p>
         <input type='hidden' value={arbeidsforhold[0].orgnrUnderenhet} name='organisasjonsnummer' {...register(id)} />
       </>
@@ -25,7 +38,7 @@ export default function SelectArbeidsgiver({ arbeidsforhold, id, register, error
   }
 
   return (
-    <Select label='Organisasjon' error={error} {...register(id)}>
+    <Select label={selectLabel} error={error} description={description} {...register(id)}>
       <option value='-'>Velg organisasjon</option>
       {arbeidsforhold.map((arbeidsgiver) => (
         <option value={arbeidsgiver.orgnrUnderenhet} key={arbeidsgiver.orgnrUnderenhet}>

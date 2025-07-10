@@ -16,6 +16,7 @@ export enum SkjemaStatus {
 type KvitteringEkstern = z.infer<typeof KvitteringEksternSchema>;
 type KvitteringFullInnsending = z.infer<typeof FullInnsendingSchema>;
 type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
+export type SelvbestemtType = 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker';
 
 export interface SkjemadataState {
   nyInnsending: boolean;
@@ -29,8 +30,11 @@ export interface SkjemadataState {
   setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
+  setSelvbestemtType: (type: SelvbestemtType) => void;
   setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
   setVedtaksperiodeId: (id: string) => void;
+  setAarsakSelvbestemtInnsending: (aarsak: string) => void;
+  setBehandlingsdager: (behandlingsdager: string[]) => void;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
@@ -42,6 +46,9 @@ export interface SkjemadataState {
   skjemastatus: SkjemaStatus;
   kvitteringData?: KvitteringFullInnsending | KvitteringSelvbestemtInnsending;
   vedtaksperiodeId?: string;
+  aarsakSelvbestemtInnsending?: string;
+  behandlingsdager?: string[];
+  selvbestemtType: SelvbestemtType;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -52,6 +59,9 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   skjemaFeilet: false,
   skjemastatus: SkjemaStatus.FULL,
   kvitteringData: undefined,
+  aarsakSelvbestemtInnsending: undefined,
+  behandlingsdager: undefined,
+  selvbestemtType: 'MedArbeidsforhold',
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
@@ -134,6 +144,27 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.vedtaksperiodeId = id;
+      })
+    );
+  },
+  setAarsakSelvbestemtInnsending: (aarsak: string) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.aarsakSelvbestemtInnsending = aarsak;
+      })
+    );
+  },
+  setBehandlingsdager: (behandlingsdager: string[]) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.behandlingsdager = behandlingsdager;
+      })
+    );
+  },
+  setSelvbestemtType: (type: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker') => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.selvbestemtType = type;
       })
     );
   }

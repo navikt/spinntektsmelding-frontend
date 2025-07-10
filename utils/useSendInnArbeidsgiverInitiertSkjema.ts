@@ -7,9 +7,8 @@ import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
-import { SkjemaStatus } from '../state/useSkjemadataStore';
+import { SelvbestemtType, SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
-import validerLonnUnderSykefravaeret from '../validators/validerLonnUnderSykefravaeret';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -24,6 +23,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
+  const selvbestemtType = useBoundStore((state) => state.selvbestemtType);
   const errorResponse = useErrorRespons();
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
@@ -62,7 +62,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     } else {
       skjemaData.aarsakInnsending = 'Ny';
     }
-    const validerteData = fyllAapenInnsending(skjemaData);
+    const validerteData = fyllAapenInnsending(skjemaData, pathSlug, selvbestemtType);
 
     if (validerteData.success !== true) {
       logger.error('Feil ved validering av skjema - Åpen innsending');
@@ -134,10 +134,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
       fyllFeilmeldinger([]);
 
-      const innsending =
-        pathSlug !== 'arbeidsgiverInitiertInnsending'
-          ? { ...validerteData.data, selvbestemtId: pathSlug }
-          : { ...validerteData.data, selvbestemtId: null };
+      const innsending = isValidUUID(pathSlug)
+        ? { ...validerteData.data, selvbestemtId: pathSlug }
+        : { ...validerteData.data, selvbestemtId: null };
 
       const URI = environment.innsendingAGInitiertUrl;
 
@@ -226,6 +225,14 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
                   errors = resultat.valideringsfeil.map((error: any) => ({
                     error: error
                   }));
+                } else if (resultat.error) {
+                  errors = [
+                    {
+                      value: 'Innsending av skjema feilet',
+                      error: resultat.error,
+                      property: 'server'
+                    }
+                  ];
                 } else {
                   errors = [
                     {

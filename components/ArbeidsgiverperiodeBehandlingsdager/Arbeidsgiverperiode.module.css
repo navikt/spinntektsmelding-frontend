@@ -1,0 +1,82 @@
+.datowrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.endreknapp {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.leggTilKnapp {
+  height: 3rem;
+  display: inline-block;
+  min-width: 10rem;
+}
+
+.endreknapper {
+  display: flex;
+  padding-top: 1rem;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.endrearbeidsgiverperiode {
+  display: flex;
+  gap: 2rem;
+}
+
+.datepickerEscape {
+  display: inline-block;
+  margin-right: 2rem;
+}
+
+.dateWrapper {
+  margin: 1rem 0;
+}
+
+.selectbegrunnelsekortagp {
+  margin-top: 1rem;
+}
+
+.wrapperUtbetaling {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.refusjonBeloep {
+  min-width: fit-content;
+  align-content: baseline;
+  max-width: 18rem;
+}
+
+.refusjonBeloep > input {
+  max-width: 18rem;
+  max-height: 3rem;
+}
+
+.refusjonBeloep > div {
+  max-width: 18rem;
+}
+
+.arbeidsgiverKortPeriode {
+  margin-top: 1rem;
+  display: inline-block;
+}
+
+@media screen and (max-width: 500px) {
+  .endreknapper {
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .wrapperUtbetaling {
+    flex-direction: column;
+  }
+}

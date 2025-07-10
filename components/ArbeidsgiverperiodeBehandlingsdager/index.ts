@@ -1,0 +1,3 @@
+import ArbeidsgiverperiodeBehandlingsdager from './ArbeidsgiverperiodeBehandlingsdager';
+
+export default ArbeidsgiverperiodeBehandlingsdager;

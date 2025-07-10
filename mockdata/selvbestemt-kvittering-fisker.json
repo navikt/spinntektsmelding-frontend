@@ -1,0 +1,36 @@
+{
+  "selvbestemtInntektsmelding": {
+    "id": "1b7b8686-2ddc-42ce-97bb-d688bdf982f1",
+    "type": {
+      "type": "Fisker",
+      "id": "e4200dcc-1624-487f-87b4-193ef12a5921",
+      "avsenderSystem": {
+        "orgnr": "889640782",
+        "navn": "NAV_PORTAL",
+        "versjon": "1.0"
+      }
+    },
+    "sykmeldt": { "fnr": "17488920561", "navn": "MATEMATISK VOTT" },
+    "avsender": {
+      "orgnr": "810007842",
+      "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+      "navn": "BERØMT FLYTTELASS",
+      "tlf": "12345678"
+    },
+    "sykmeldingsperioder": [{ "fom": "2025-06-01", "tom": "2025-06-30" }],
+    "agp": {
+      "perioder": [{ "fom": "2025-06-01", "tom": "2025-06-16" }],
+      "egenmeldinger": [],
+      "redusertLoennIAgp": null
+    },
+    "inntekt": {
+      "beloep": 100000,
+      "inntektsdato": "2025-06-01",
+      "naturalytelser": [],
+      "endringAarsaker": [{ "aarsak": "Feilregistrert" }]
+    },
+    "refusjon": null,
+    "aarsakInnsending": "Ny",
+    "mottatt": "2025-07-04T14:50:48.451148365+02:00"
+  }
+}
