@@ -19,7 +19,7 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
     <Controller
       name={name}
       defaultValue={''}
-      rules={{ required: 'Du velge årsaken til at du vil sende inn her.' }}
+      rules={{ required: 'Du må velge årsaken til at du vil sende inn her.' }}
       render={({ field }) => (
         <RadioGroup {...field} legend={legend} error={error} id={name}>
           {/* <Radio
