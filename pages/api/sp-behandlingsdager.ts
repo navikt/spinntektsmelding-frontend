@@ -92,14 +92,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   }
 
   const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
-  const aktiveSoeknader = soeknadData.filter((soeknad) => soeknad.soknadstype === 'BEHANDLINGSDAGER');
+  const aktiveSoeknader = [...(soeknadData ?? [])].filter((soeknad) => soeknad.soknadstype === 'BEHANDLINGSDAGER');
 
   if (aktiveSoeknader.length === 0) {
     console.log(
       'Ingen aktive behandlingsdager funnet for orgnr:',
       orgnr,
       ' selv om antall poster var:',
-      soeknadData.length
+      soeknadData?.length ?? 0
     );
     return res.status(200).json([]);
   }
