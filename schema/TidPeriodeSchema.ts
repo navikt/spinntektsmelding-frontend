@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const TidPeriodeSchema = z.object({
+export const TidPeriodeSchema = z.object({
   fom: z.date().optional(),
   tom: z.date().optional()
 });
