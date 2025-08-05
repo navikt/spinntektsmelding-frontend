@@ -5,16 +5,16 @@
 
 version: 2
 updates:
-# Maintain dependencies for Yarn
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # Maintain dependencies for Yarn
+  - package-ecosystem: 'npm' # See documentation for possible values
+    directory: '/' # Location of package manifests
     registries: '*'
     open-pull-requests-limit: 20
     ignore:
       - dependency-name: 'eslint'
         versions: ['9.x']
     schedule:
-      interval: "daily"
+      interval: 'daily'
     groups:
       aksel:
         patterns:
@@ -33,19 +33,24 @@ updates:
       grafana:
         patterns:
           - '@grafana/*'
+      playwright:
+        patterns:
+          - 'playwright'
+          - '@playwright/*'
+          - 'playwright-core'
+          - '@axe-core/playwright'
 
-# Maintain dependencies for Docker
-  - package-ecosystem: "docker" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # Maintain dependencies for Docker
+  - package-ecosystem: 'docker' # See documentation for possible values
+    directory: '/' # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
 
-# Maintain dependencies for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-
+      interval: 'weekly'
 
 registries:
   npm-github:

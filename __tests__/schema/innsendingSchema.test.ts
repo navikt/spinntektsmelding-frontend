@@ -1,4 +1,4 @@
-import { InnsendingSchema } from '../../schema/InnsendingSchema';
+import { InnsendingSchema, superRefineInnsending } from '../../schema/InnsendingSchema';
 
 import { z } from 'zod/v4';
 
@@ -557,5 +557,409 @@ describe('InnsendingSchema', () => {
 
     expect(InnsendingSchema.safeParse(data).success).toBe(true);
     expect(InnsendingSchema.safeParse(data).error).toBeUndefined();
+  });
+
+  it('should validate InnsendingSchema and refusjon endringer startdato is before inntektsdato', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 0, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [
+          { startdato: '2023-02-01', beloep: 50000 },
+          { startdato: '2023-02-15', beloep: 60000 }
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const mockAddIssue = vi.fn();
+    const mockCtx = { addIssue: mockAddIssue };
+
+    superRefineInnsending(data, mockCtx);
+
+    expect(mockAddIssue).toHaveBeenCalledWith({
+      code: z.ZodIssueCode.custom,
+      message: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
+      path: ['refusjon', 'endringer', 1, 'startdato']
+    });
+  });
+
+  it('should validate InnsendingSchema and fail if refusjon beloep < 0', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 0, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [
+          { startdato: '2023-03-25', beloep: 50000 },
+          { startdato: '2023-03-26', beloep: -60000 } // Negative amount
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const mockAddIssue = vi.fn();
+    const mockCtx = { addIssue: mockAddIssue };
+
+    superRefineInnsending(data, mockCtx);
+
+    expect(mockAddIssue).toHaveBeenCalledWith({
+      code: z.ZodIssueCode.custom,
+      message: 'Refusjon må være større eller lik 0.',
+      path: ['refusjon', 'endringer', 1, 'beloep']
+    });
+  });
+
+  it('should validate InnsendingSchema and fail if refusjon beloep > inntekt', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 0, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [
+          { startdato: '2023-03-25', beloep: 50000 },
+          { startdato: '2023-03-26', beloep: 6000000 }
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const mockAddIssue = vi.fn();
+    const mockCtx = { addIssue: mockAddIssue };
+
+    superRefineInnsending(data, mockCtx);
+
+    expect(mockAddIssue).toHaveBeenCalledWith({
+      code: z.ZodIssueCode.custom,
+      message: 'Refusjon kan ikke være høyere enn inntekt.',
+      path: ['refusjon', 'endringer', 1, 'beloep']
+    });
+  });
+
+  it('should validate InnsendingSchema and fail if inntekt > 1000000', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 0, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 1500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [
+          { startdato: '2023-03-25', beloep: 50000 },
+          { startdato: '2023-03-26', beloep: 600000 }
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const mockAddIssue = vi.fn();
+    const mockCtx = { addIssue: mockAddIssue };
+
+    superRefineInnsending(data, mockCtx);
+
+    expect(mockAddIssue).toHaveBeenCalledWith({
+      code: z.ZodIssueCode.custom,
+      message: 'Inntekten kan ikke være over 1 million.',
+      path: ['inntekt', 'beloep']
+    });
+  });
+
+  it('should validate InnsendingSchema and fail if inntekt < refusjon', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 0, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 750000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: {
+        beloepPerMaaned: 850000,
+        endringer: [
+          { startdato: '2023-03-25', beloep: 50000 },
+          { startdato: '2023-03-26', beloep: 600000 }
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const mockAddIssue = vi.fn();
+    const mockCtx = { addIssue: mockAddIssue };
+
+    superRefineInnsending(data, mockCtx);
+
+    expect(mockAddIssue).toHaveBeenCalledWith({
+      code: z.ZodIssueCode.custom,
+      message: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
+      path: ['refusjon', 'beloepPerMaaned']
+    });
+  });
+
+  it('should validate InnsendingSchema and fail if inntekt < utbetaling under fravær', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 800000, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 750000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: {
+        beloepPerMaaned: 750000,
+        endringer: [
+          { startdato: '2023-03-25', beloep: 50000 },
+          { startdato: '2023-03-26', beloep: 600000 }
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const mockAddIssue = vi.fn();
+    const mockCtx = { addIssue: mockAddIssue };
+
+    superRefineInnsending(data, mockCtx);
+
+    expect(mockAddIssue).toHaveBeenCalledWith({
+      code: z.ZodIssueCode.custom,
+      message: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+      path: ['agp', 'redusertLoennIAgp', 'beloep']
+    });
+  });
+
+  it('should validate InnsendingSchema and fail if redusertLoennIAgp beloep is set, but not begrunnelse', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 750000, begrunnelse: undefined }
+      },
+      inntekt: {
+        beloep: 750000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: {
+        beloepPerMaaned: 750000,
+        endringer: [
+          { startdato: '2023-03-25', beloep: 50000 },
+          { startdato: '2023-03-26', beloep: 600000 }
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected:
+          "'ArbeidOpphoert' | 'BeskjedGittForSent' | 'BetvilerArbeidsufoerhet' | 'FerieEllerAvspasering' | 'FiskerMedHyre' | 'FravaerUtenGyldigGrunn' | 'IkkeFravaer' | 'IkkeFullStillingsandel' | 'IkkeLoenn' | 'LovligFravaer' | 'ManglerOpptjening' | 'Permittering' | 'Saerregler' | 'StreikEllerLockout' | 'TidligereVirksomhet'",
+        message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
+        path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
+        received: 'undefined'
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema and fail if redusertLoennIAgp is missing with short agp', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-02-27' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: undefined, begrunnelse: undefined }
+      },
+      inntekt: {
+        beloep: 750000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: {
+        beloepPerMaaned: 750000,
+        endringer: [
+          { startdato: '2023-03-25', beloep: 50000 },
+          { startdato: '2023-03-26', beloep: 600000 }
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'number',
+        message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
+        path: ['agp', 'redusertLoennIAgp', 'beloep'],
+        received: 'undefined'
+      },
+      {
+        code: 'invalid_type',
+        expected:
+          "'ArbeidOpphoert' | 'BeskjedGittForSent' | 'BetvilerArbeidsufoerhet' | 'FerieEllerAvspasering' | 'FiskerMedHyre' | 'FravaerUtenGyldigGrunn' | 'IkkeFravaer' | 'IkkeFullStillingsandel' | 'IkkeLoenn' | 'LovligFravaer' | 'ManglerOpptjening' | 'Permittering' | 'Saerregler' | 'StreikEllerLockout' | 'TidligereVirksomhet'",
+        message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
+        path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
+        received: 'undefined'
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema and fail if redusertLoennIAgp begrunnelse is missing with short agp', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-02-27' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: undefined, begrunnelse: undefined }
+      },
+      inntekt: {
+        beloep: 750000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: {
+        beloepPerMaaned: 750000,
+        endringer: [
+          { startdato: '2023-03-25', beloep: 50000 },
+          { startdato: '2023-03-26', beloep: 600000 }
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'number',
+        message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
+        path: ['agp', 'redusertLoennIAgp', 'beloep'],
+        received: 'undefined'
+      },
+      {
+        code: 'invalid_type',
+        expected:
+          "'ArbeidOpphoert' | 'BeskjedGittForSent' | 'BetvilerArbeidsufoerhet' | 'FerieEllerAvspasering' | 'FiskerMedHyre' | 'FravaerUtenGyldigGrunn' | 'IkkeFravaer' | 'IkkeFullStillingsandel' | 'IkkeLoenn' | 'LovligFravaer' | 'ManglerOpptjening' | 'Permittering' | 'Saerregler' | 'StreikEllerLockout' | 'TidligereVirksomhet'",
+        message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
+        path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
+        received: 'undefined'
+      }
+    ]);
   });
 });
