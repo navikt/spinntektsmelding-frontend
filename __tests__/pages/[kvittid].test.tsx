@@ -7,7 +7,16 @@ import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import forespoerselType from '../../config/forespoerselType';
-import { Opplysningstype } from '../../state/useForespurtDataStore';
+import { Opplysningstype } from '../../schema/ForespurtDataSchema';
+
+global.window = Object.create(window);
+Object.defineProperty(global.window, 'location', {
+  value: {
+    ...window.location,
+    replace: vi.fn()
+  },
+  writable: true
+});
 
 // vi.mock('next/router', () => require('next-router-mock'));
 const mockPush = vi.fn();
@@ -40,7 +49,7 @@ describe('kvittering', () => {
   it('renders a title text', () => {
     const spy = vi.spyOn(window, 'print');
 
-    render(<Kvittering />);
+    render(<Kvittering kvittid='' />);
 
     const buttonTitle = screen.getByRole('button', {
       name: /Skriv ut/i
@@ -70,7 +79,7 @@ describe('kvittering', () => {
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
-    render(<Kvittering />);
+    render(<Kvittering kvittid='' />);
 
     const textBlock = screen.getByText(/Arbeidsgiver er ansvarlig for/i);
 
@@ -94,7 +103,7 @@ describe('kvittering', () => {
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
-    render(<Kvittering />);
+    render(<Kvittering kvittid='' />);
 
     const textBlock = screen.queryByText(/Arbeidsgiver er ansvarlig for/i);
 
@@ -104,7 +113,7 @@ describe('kvittering', () => {
   it('should have no violations', async () => {
     let container: string | Element;
 
-    await act(async () => ({ container } = render(<Kvittering />)));
+    await act(async () => ({ container } = render(<Kvittering kvittid='' />)));
 
     const results = await axe(container);
 
