@@ -5,7 +5,7 @@ import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 import testdata from '../../mockdata/sp-soeknad.json';
 import isMod11Number from '../../utils/isMod10Number';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import safelyParseJSON from '../../utils/safelyParseJson';
 
 type forespoerselIdListeEnhet = {

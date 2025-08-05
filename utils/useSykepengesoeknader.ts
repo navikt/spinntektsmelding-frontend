@@ -22,19 +22,19 @@ export default function useSykepengesoeknader(
         if (err.status === 401) {
           setError('sykepengePeriodeId', {
             type: 'manual',
-            message: 'Mangler tilgang til den aktuelle organisasjonen'
+            error: 'Mangler tilgang til den aktuelle organisasjonen'
           });
         }
 
         if (err.status === 404) {
           setError('sykepengePeriodeId', {
             type: 'manual',
-            message: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+            error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
           });
         } else if (err.status !== 200) {
           setError('sykepengePeriodeId', {
             type: 'manual',
-            message: 'Kunne ikke hente sykepengesøknader'
+            error: 'Kunne ikke hente sykepengesøknader'
           });
         }
       },

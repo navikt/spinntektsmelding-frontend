@@ -6,8 +6,8 @@ export default function findErrorInRHFErrors(name: string, errors: FieldErrors<F
   const errorKey = errorName.split('.');
   const error = errorKey.reduce((acc: FieldErrors<FieldValues> | string | undefined, key: string) => {
     if (typeof acc !== 'string') {
-      if (acc?.[key]?.message) {
-        return acc[key]?.message as string;
+      if (acc?.[key]?.error) {
+        return acc[key]?.error as string;
       } else {
         return acc?.[key];
       }

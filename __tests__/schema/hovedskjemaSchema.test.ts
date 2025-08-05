@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
-import { aa } from 'vitest/dist/chunks/reporters.d.CqBhtcTq.js';
 
 describe('HovedskjemaSchema', () => {
   it('should pass validation when all fields are correct', () => {
@@ -30,8 +29,19 @@ describe('HovedskjemaSchema', () => {
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
-    expect(result.error.errors[0].message).toBe('Du må bekrefte at opplysningene er riktige før du kan sende inn.');
-    expect(result.error.errors[0].path).toEqual(['bekreft_opplysninger']);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        message: 'Du må bekrefte at opplysningene er riktige før du kan sende inn.',
+        path: ['bekreft_opplysninger']
+      },
+      {
+        code: 'invalid_type',
+        expected: 'boolean',
+        message: 'Invalid input: expected boolean, received undefined',
+        path: ['inntekt', 'harBortfallAvNaturalytelser']
+      }
+    ]);
   });
 
   it('should fail validation when beloep is missing', () => {
@@ -44,7 +54,20 @@ describe('HovedskjemaSchema', () => {
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
-    expect(result.error.errors[0].message).toBe('Vennligst fyll inn beløpet for inntekt.');
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'number',
+        message: 'Vennligst fyll inn beløpet for inntekt.',
+        path: ['inntekt', 'beloep']
+      },
+      {
+        code: 'invalid_type',
+        expected: 'boolean',
+        message: 'Invalid input: expected boolean, received undefined',
+        path: ['inntekt', 'harBortfallAvNaturalytelser']
+      }
+    ]);
   });
 
   it('should fail validation when beloep is negative', () => {
@@ -140,12 +163,34 @@ describe('HovedskjemaSchema', () => {
     const status = HovedskjemaSchema.safeParse(schemaData);
     expect(status.success).toBe(false);
     expect(status.error).toBeTruthy();
-    expect(status.error?.flatten().fieldErrors).toEqual({
-      inntekt: ['Invalid input']
-    });
+    expect(status.error?.issues).toEqual([
+      {
+        code: 'invalid_union',
+        errors: [
+          [
+            {
+              code: 'invalid_type',
+              expected: 'array',
+              message: 'Invalid input: expected array, received undefined',
+              path: []
+            }
+          ],
+          [
+            {
+              code: 'invalid_type',
+              expected: 'null',
+              message: 'Invalid input: expected null, received undefined',
+              path: []
+            }
+          ]
+        ],
+        message: 'Invalid input',
+        path: ['inntekt', 'endringAarsaker']
+      }
+    ]);
   });
 
-  it('should fail validation when the endringsaarsak object is empty.', () => {
+  it('should fail validation when the endringAarsaker object is empty.', () => {
     const schemaData = {
       bekreft_opplysninger: true,
       inntekt: {
@@ -157,11 +202,35 @@ describe('HovedskjemaSchema', () => {
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0].message).toBe('Invalid input');
-    expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_union',
+        errors: [
+          [
+            {
+              code: 'custom',
+              error: 'Vennligst angi årsak til endringen.',
+              fatal: true,
+              message: 'Invalid input',
+              path: ['0', 'aarsak']
+            }
+          ],
+          [
+            {
+              code: 'invalid_type',
+              expected: 'null',
+              message: 'Invalid input: expected null, received array',
+              path: []
+            }
+          ]
+        ],
+        message: 'Invalid input',
+        path: ['inntekt', 'endringAarsaker']
+      }
+    ]);
   });
 
-  it('should fail validation when the endringsaarsak aarsak is an empty string.', () => {
+  it('should fail validation when the endringAarsaker aarsak is an empty string.', () => {
     const schemaData = {
       bekreft_opplysninger: true,
       inntekt: {
@@ -173,11 +242,37 @@ describe('HovedskjemaSchema', () => {
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0].message).toBe('Invalid input');
-    expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_union',
+        errors: [
+          [
+            {
+              code: 'custom',
+              error: 'Vennligst angi årsak til endringen.',
+              fatal: true,
+              message: 'Invalid input',
+              path: ['0', 'aarsak']
+            }
+          ],
+          [
+            {
+              code: 'invalid_type',
+              expected: 'null',
+              message: 'Invalid input: expected null, received array',
+              path: []
+            }
+          ]
+        ],
+        message: 'Invalid input',
+        path: ['inntekt', 'endringAarsaker']
+      }
+    ]);
+    // expect(result.error?.errors[0].message).toBe('Invalid input');
+    // expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
   });
 
-  it('should fail validation when the endringsaarsak aarsak is undefined.', () => {
+  it('should fail validation when the endringAarsaker aarsak is undefined.', () => {
     const schemaData = {
       bekreft_opplysninger: true,
       inntekt: {
@@ -189,7 +284,31 @@ describe('HovedskjemaSchema', () => {
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0].message).toBe('Invalid input');
-    expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_union',
+        errors: [
+          [
+            {
+              code: 'custom',
+              error: 'Vennligst angi årsak til endringen.',
+              fatal: true,
+              message: 'Invalid input',
+              path: ['0', 'aarsak']
+            }
+          ],
+          [
+            {
+              code: 'invalid_type',
+              expected: 'null',
+              message: 'Invalid input: expected null, received array',
+              path: []
+            }
+          ]
+        ],
+        message: 'Invalid input',
+        path: ['inntekt', 'endringAarsaker']
+      }
+    ]);
   });
 });

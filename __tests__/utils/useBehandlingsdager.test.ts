@@ -62,7 +62,7 @@ describe('useBehandlingsdager', () => {
       onError({ status: 401 });
       expect(setError).toHaveBeenCalledWith('sykepengerBehandlingsdager', {
         type: 'manual',
-        message: 'Mangler tilgang til den aktuelle organisasjonen'
+        error: 'Mangler tilgang til den aktuelle organisasjonen'
       });
     });
 
@@ -70,7 +70,7 @@ describe('useBehandlingsdager', () => {
       onError({ status: 404 });
       expect(setError).toHaveBeenCalledWith('sykepengerBehandlingsdager', {
         type: 'manual',
-        message: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+        error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
       });
     });
 
@@ -78,7 +78,7 @@ describe('useBehandlingsdager', () => {
       onError({ status: 500 });
       expect(setError).toHaveBeenCalledWith('sykepengerBehandlingsdager', {
         type: 'manual',
-        message: 'Kunne ikke hente sykepengesøknader'
+        error: 'Kunne ikke hente sykepengesøknader'
       });
     });
 

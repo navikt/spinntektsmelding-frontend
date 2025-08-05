@@ -1,10 +1,12 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 export const RefusjonEndringSchema = z.object({
-  startdato: z
-    .string({ required_error: 'Vennligst fyll inn dato for endring i refusjon' })
-    .date('Dato er ikke gyldig.'),
+  startdato: z.iso.date({
+    error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn dato for endring i refusjon' : undefined)
+  }),
   beloep: z
-    .number({ required_error: 'Vennligst fyll inn beløpet for endret refusjon.' })
-    .min(0, { message: 'Beløpet må være større enn eller lik 0' })
+    .number({
+      error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn beløpet for endret refusjon.' : undefined)
+    })
+    .min(0, { error: 'Beløpet må være større enn eller lik 0' })
 });

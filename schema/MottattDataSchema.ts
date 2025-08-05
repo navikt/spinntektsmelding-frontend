@@ -1,4 +1,4 @@
-import z from 'zod';
+import z from 'zod/v4';
 import { DateISODateSchema, MottattForespurtDataSchema, MottattPeriodeSchema } from './ForespurtDataSchema';
 import { ForespurtHistoriskInntektSchema } from './ForespurtHistoriskInntektSchema';
 import { SykmeldtSchema } from './SykmeldtSchema';
@@ -17,7 +17,7 @@ const MottattAvsenderSchema = AvsenderSchema.extend({
 export const MottattDataSchema = z.object({
   sykmeldt: MottattSykmeldtSchema,
   avsender: MottattAvsenderSchema,
-  egenmeldingsperioder: z.array(MottattPeriodeSchema).default([]),
+  egenmeldingsperioder: z.array(MottattPeriodeSchema).prefault([]),
   sykmeldingsperioder: z.array(MottattPeriodeSchema).min(1, 'Sykmeldingsperioder må ha minst en periode.'),
   bestemmendeFravaersdag: DateISODateSchema,
   eksternInntektsdato: DateISODateSchema.nullable(),

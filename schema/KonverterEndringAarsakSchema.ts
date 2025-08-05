@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { PeriodeSchema } from './KonverterPeriodeSchema';
 import { toLocalIso } from '../utils/toLocalIso';
 import {
@@ -24,8 +24,7 @@ const KonverterEndringAarsakFerieSchema = EndringAarsakFerieSchema.extend({
 const KonverterEndringAarsakNyStillingSchema = EndringAarsakNyStillingSchema.extend({
   gjelderFra: z
     .date({
-      required_error: 'Vennligst fyll inn fra dato',
-      invalid_type_error: 'Dette er ikke en dato'
+      error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
     })
     .transform((val) => toLocalIso(val))
 });
@@ -33,8 +32,7 @@ const KonverterEndringAarsakNyStillingSchema = EndringAarsakNyStillingSchema.ext
 const KonverterEndringAarsakNyStillingsprosentSchema = EndringAarsakNyStillingsprosentSchema.extend({
   gjelderFra: z
     .date({
-      required_error: 'Vennligst fyll inn fra dato',
-      invalid_type_error: 'Dette er ikke en dato'
+      error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
     })
     .transform((val) => toLocalIso(val))
 });
@@ -54,14 +52,12 @@ const KonverterEndringAarsakSykefravaerSchema = EndringAarsakSykefravaerSchema.e
 const KonverterEndringAarsakTariffendringSchema = EndringAarsakTariffendringSchema.extend({
   gjelderFra: z
     .date({
-      required_error: 'Vennligst fyll inn fra dato',
-      invalid_type_error: 'Dette er ikke en dato'
+      error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
     })
     .transform((val) => toLocalIso(val)),
   bleKjent: z
     .date({
-      required_error: 'Vennligst fyll inn fra dato',
-      invalid_type_error: 'Dette er ikke en dato'
+      error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
     })
     .transform((val) => toLocalIso(val))
 });
@@ -69,8 +65,7 @@ const KonverterEndringAarsakTariffendringSchema = EndringAarsakTariffendringSche
 const KonverterEndringAarsakVarigLoennsendringSchema = EndringAarsakVarigLoennsendringSchema.extend({
   gjelderFra: z
     .date({
-      required_error: 'Vennligst fyll inn fra dato',
-      invalid_type_error: 'Dette er ikke en dato'
+      error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
     })
     .transform((val) => toLocalIso(val))
 });
@@ -93,6 +88,6 @@ export const KonverterEndringAarsakSchema = z.discriminatedUnion(
     EndringAarsakSammeSomSistSchema
   ],
   {
-    errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak til endringen.' })
+    error: (issue) => ({ error: 'Vennligst angi årsak til endringen.' })
   }
 );

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import { PersonnummerSchema } from './PersonnummerSchema';
 import { OrganisasjonsnummerSchema } from './OrganisasjonsnummerSchema';
@@ -35,24 +35,21 @@ export const KvitteringNavNoSchema = z.object({
     inntekt: z.object({
       beloep: z.number(),
       endringAarsak: ApiEndringAarsakSchema,
-      inntektsdato: z.string().date(),
+      inntektsdato: z.iso.date(),
       naturalytelser: ApiNaturalytelserSchema,
       endringAarsaker: z.array(ApiEndringAarsakSchema)
     }),
     refusjon: z
       .object({
         beloepPerMaaned: z.number(),
-        sluttdato: z
-          .string({
-            required_error: 'Sluttdato mangler',
-            invalid_type_error: 'Ugyldig sluttdato'
-          })
-          .date(),
+        sluttdato: z.iso.date({
+          error: (issue) => (issue.input === undefined ? 'Sluttdato mangler' : 'Ugyldig sluttdato')
+        }),
         endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])])
       })
       .nullable()
   }),
-  mottatt: z.string().date()
+  mottatt: z.iso.date()
 });
 
 export const KvitteringEksternSchema = z.object({

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 export const NaturalytelseEnumSchema = z.enum(
   [
@@ -23,6 +23,6 @@ export const NaturalytelseEnumSchema = z.enum(
     'YRKEBILTJENESTLIGBEHOVLISTEPRIS'
   ],
   {
-    errorMap: (issue, ctx) => ({ message: 'Vennligst velg ytelse.' })
+    error: (issue) => ({ error: 'Vennligst velg ytelse.' })
   }
 );

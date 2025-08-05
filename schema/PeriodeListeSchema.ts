@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import feiltekster from '../utils/feiltekster';
 
@@ -9,10 +9,11 @@ export const PeriodeListeSchema = z.array(ApiPeriodeSchema).superRefine((val, ct
     const forskjellMs = Number(tom) - Number(fom);
     const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
     if (forskjellDager > 16) {
-      ctx.addIssue({
+      ctx.issues.push({
         code: z.ZodIssueCode.custom,
-        message: feiltekster.FOR_MANGE_DAGER_MELLOM,
-        path: [i.toString(), 'tom']
+        error: feiltekster.FOR_MANGE_DAGER_MELLOM,
+        path: [i.toString(), 'tom'],
+        input: ''
       });
     }
   }

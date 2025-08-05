@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import {
   EndringAarsakBonusSchema,
@@ -16,79 +16,64 @@ import {
   EndringAarsakVarigLoennsendringSchema
 } from './EndringAarsakSchema';
 
-const apiEndringAarsakFerieSchema = EndringAarsakFerieSchema.merge(
+const apiEndringAarsakFerieSchema = EndringAarsakFerieSchema.extend(
   z.object({
     ferier: z.array(ApiPeriodeSchema)
-  })
+  }).shape
 );
 
-const apiEndringAarsakPermisjonSchema = EndringAarsakPermisjonSchema.merge(
+const apiEndringAarsakPermisjonSchema = EndringAarsakPermisjonSchema.extend(
   z.object({
     permisjoner: z.array(ApiPeriodeSchema)
-  })
+  }).shape
 );
 
-const apiEndringAarsakPermitteringSchema = EndringAarsakPermitteringSchema.merge(
+const apiEndringAarsakPermitteringSchema = EndringAarsakPermitteringSchema.extend(
   z.object({
     permitteringer: z.array(ApiPeriodeSchema)
-  })
+  }).shape
 );
 
-const apiEndringAarsakSykefravaerSchema = EndringAarsakSykefravaerSchema.merge(
+const apiEndringAarsakSykefravaerSchema = EndringAarsakSykefravaerSchema.extend(
   z.object({
     sykefravaer: z.array(ApiPeriodeSchema)
-  })
+  }).shape
 );
 
-const apiEndringAarsakNyStillingSchema = EndringAarsakNyStillingSchema.merge(
+const apiEndringAarsakNyStillingSchema = EndringAarsakNyStillingSchema.extend(
   z.object({
-    gjelderFra: z
-      .string({
-        required_error: 'Dato mangler',
-        invalid_type_error: 'Ugyldig dato'
-      })
-      .date()
-  })
+    gjelderFra: z.iso.date({
+      error: (issue) => (issue.input === undefined ? 'Dato mangler' : 'Ugyldig dato')
+    })
+  }).shape
 );
 
-const apiEndringAarsakNyStillingsprosentSchema = EndringAarsakNyStillingsprosentSchema.merge(
+const apiEndringAarsakNyStillingsprosentSchema = EndringAarsakNyStillingsprosentSchema.extend(
   z.object({
-    gjelderFra: z
-      .string({
-        required_error: 'Dato mangler',
-        invalid_type_error: 'Ugyldig dato'
-      })
-      .date()
-  })
+    gjelderFra: z.iso.date({
+      error: (issue) => (issue.input === undefined ? 'Dato mangler' : 'Ugyldig dato')
+    })
+  }).shape
 );
 
-const apiEndringAarsakTariffendringSchema = EndringAarsakTariffendringSchema.merge(
+const apiEndringAarsakTariffendringSchema = EndringAarsakTariffendringSchema.extend(
   z.object({
-    gjelderFra: z
-      .string({
-        required_error: 'Dato mangler',
-        invalid_type_error: 'Ugyldig dato'
-      })
-      .date(),
-    bleKjent: z
-      .string({
-        required_error: 'Dato mangler',
-        invalid_type_error: 'Ugyldig dato'
-      })
-      .date()
-  })
+    gjelderFra: z.iso.date({
+      error: (issue) => (issue.input === undefined ? 'Dato mangler' : 'Ugyldig dato')
+    }),
+    bleKjent: z.iso.date({
+      error: (issue) => (issue.input === undefined ? 'Dato mangler' : 'Ugyldig dato')
+    })
+  }).shape
 );
 
-const apiEndringAarsakVarigLoennsendringSchema = EndringAarsakVarigLoennsendringSchema.merge(
+const apiEndringAarsakVarigLoennsendringSchema = EndringAarsakVarigLoennsendringSchema.extend(
   z.object({
     aarsak: z.literal('VarigLoennsendring'),
-    gjelderFra: z
-      .string({
-        required_error: 'Dato mangler',
-        invalid_type_error: 'Ugyldig dato'
-      })
-      .date()
-  })
+    gjelderFra: z.iso.date({
+      error: (issue) => (issue.input === undefined ? 'Dato mangler' : 'Ugyldig dato')
+    })
+  }).shape
 );
 
 export const ApiEndringAarsakSchema = z.discriminatedUnion(
@@ -109,6 +94,6 @@ export const ApiEndringAarsakSchema = z.discriminatedUnion(
     EndringAarsakSammeSomSistSchema
   ],
   {
-    errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak til endringen.' })
+    error: (issue) => ({ error: 'Vennligst angi årsak til endringen.' })
   }
 );

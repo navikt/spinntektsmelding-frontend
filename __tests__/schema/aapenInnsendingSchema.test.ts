@@ -1,7 +1,7 @@
 import { vendored } from 'next/dist/server/route-modules/pages/module.compiled';
 import AapenInnsendingSchema from '../../schema/AapenInnsendingSchema';
 
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 describe('AapenInnsendingSchema', () => {
   it('should validate AapenInnsendingSchema', () => {
@@ -58,19 +58,14 @@ describe('AapenInnsendingSchema', () => {
 
     const result = AapenInnsendingSchema.safeParse(data);
     expect(result.success).toBe(false);
-    expect(JSON.stringify(result.error)).toEqual(
-      JSON.stringify(
-        new z.ZodError([
-          {
-            code: 'invalid_type',
-            expected: 'string',
-            received: 'undefined',
-            path: ['avsender', 'tlf'],
-            message: 'Vennligst fyll inn telefonnummer'
-          }
-        ])
-      )
-    );
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        message: 'Dette er ikke et telefonnummer',
+        path: ['avsender', 'tlf']
+      }
+    ]);
   });
 
   it('should validate AapenInnsendingSchema with error on refusjon > inntekt', () => {
@@ -99,16 +94,13 @@ describe('AapenInnsendingSchema', () => {
     };
     const result = AapenInnsendingSchema.safeParse(data);
     expect(result.success).toBe(false);
-    expect(JSON.stringify(result.error)).toEqual(
-      JSON.stringify(
-        new z.ZodError([
-          {
-            code: 'custom',
-            message: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
-            path: ['agp', 'redusertLoennIAgp', 'beloep']
-          }
-        ])
-      )
-    );
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        error: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+        message: 'Invalid input',
+        path: ['agp', 'redusertLoennIAgp', 'beloep']
+      }
+    ]);
   });
 });

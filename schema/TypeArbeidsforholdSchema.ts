@@ -1,8 +1,10 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 const ArbeidsforholdMedArbeidsforholdSchema = z.object({
   type: z.literal('MedArbeidsforhold'),
-  vedtaksperiodeId: z.string({ required_error: 'Data er på gammelt format og ikke mulig å sende inn' }).uuid()
+  vedtaksperiodeId: z.uuid({
+    error: (issue) => (issue.input === undefined ? 'Data er på gammelt format og ikke mulig å sende inn' : undefined)
+  })
 });
 
 const ArbeidsforholdUtenArbeidsforholdSchema = z.object({

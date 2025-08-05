@@ -2,6 +2,9 @@ import { Feilmelding } from '../components/Feilsammendrag/FeilListe';
 
 export default function formatRHFFeilmeldinger(validationResult: any): Feilmelding[] {
   let seen: any[] = [];
+
+  console.log('formatRHFFeilmeldinger', validationResult);
+
   const errorObject = JSON.parse(
     JSON.stringify(validationResult, function (key, val) {
       if (val != null && typeof val == 'object') {
@@ -24,7 +27,7 @@ function traverseAndFindMessages(obj: any, path: string[] = []): Feilmelding[] {
       const newPath = path.concat(key);
       if (typeof obj[key] === 'object' && key !== 'ref') {
         messages = messages.concat(traverseAndFindMessages(obj[key], newPath));
-      } else if (key === 'message') {
+      } else if (key === 'message' && typeof obj[key] === 'string') {
         messages.push({
           text: obj[key],
           felt: path.join('.')

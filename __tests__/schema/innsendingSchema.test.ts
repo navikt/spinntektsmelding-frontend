@@ -1,6 +1,6 @@
 import { InnsendingSchema } from '../../schema/InnsendingSchema';
 
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 describe('InnsendingSchema', () => {
   it('should validate InnsendingSchema', () => {
@@ -57,50 +57,37 @@ describe('InnsendingSchema', () => {
     const result = InnsendingSchema.safeParse(data);
 
     expect(result.success).toBe(false);
-    expect(JSON.stringify(result.error)).toEqual(
-      JSON.stringify(
-        new z.ZodError([
-          {
-            code: 'invalid_union',
-            unionErrors: [
-              {
-                issues: [
-                  {
-                    code: 'invalid_type',
-                    expected: 'array',
-                    received: 'undefined',
-                    path: ['refusjon', 'endringer'],
-                    message: 'Required'
-                  }
-                ],
-                name: 'ZodError'
-              },
-              {
-                issues: [
-                  {
-                    code: 'invalid_type',
-                    expected: 'array',
-                    received: 'undefined',
-                    path: ['refusjon', 'endringer'],
-                    message: 'Vennligst fyll inn dato og beløp for endringer'
-                  }
-                ],
-                name: 'ZodError'
-              }
-            ],
-            path: ['refusjon', 'endringer'],
-            message: 'Invalid input'
-          },
-          {
-            code: 'invalid_type',
-            expected: 'string',
-            received: 'undefined',
-            path: ['refusjon', 'sluttdato'],
-            message: 'Vennligst fyll inn til dato'
-          }
-        ])
-      )
-    );
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_union',
+        errors: [
+          [
+            {
+              code: 'invalid_type',
+              expected: 'array',
+              message: 'Invalid input: expected array, received undefined',
+              path: []
+            }
+          ],
+          [
+            {
+              code: 'invalid_type',
+              expected: 'tuple',
+              message: 'Invalid input: expected tuple, received undefined',
+              path: []
+            }
+          ]
+        ],
+        message: 'Invalid input',
+        path: ['refusjon', 'endringer']
+      },
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        message: 'Vennligst fyll inn til dato',
+        path: ['refusjon', 'sluttdato']
+      }
+    ]);
   });
 
   it('should validate InnsendingSchema and fail with gap in perioder', () => {
@@ -134,7 +121,8 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Det kan ikke være opphold over 16 dager mellom egenmeldingsperiodene.',
+        error: 'Det kan ikke være opphold over 16 dager mellom egenmeldingsperiodene.',
+        message: 'Invalid input',
         path: ['agp', 'egenmeldinger']
       }
     ]);
@@ -171,7 +159,8 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.',
+        error: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       }
     ]);
@@ -208,7 +197,8 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Det kan ikke være overlapp mellom egenmeldingsperiodene.',
+        error: 'Det kan ikke være overlapp mellom egenmeldingsperiodene.',
+        message: 'Invalid input',
         path: ['agp', 'egenmeldinger']
       }
     ]);
@@ -245,12 +235,14 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
+        error: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       },
       {
         code: 'custom',
-        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       }
     ]);
@@ -289,8 +281,7 @@ describe('InnsendingSchema', () => {
         code: 'invalid_type',
         expected: 'string',
         message: 'Vennligst fyll inn til dato',
-        path: ['agp', 'perioder', 1, 'tom'],
-        received: 'undefined'
+        path: ['agp', 'perioder', 1, 'tom']
       }
     ]);
   });
@@ -365,8 +356,7 @@ describe('InnsendingSchema', () => {
         code: 'invalid_type',
         expected: 'string',
         message: 'Vennligst fyll inn fra dato',
-        path: ['agp', 'perioder', 1, 'fom'],
-        received: 'undefined'
+        path: ['agp', 'perioder', 1, 'fom']
       }
     ]);
   });
@@ -439,7 +429,8 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       }
     ]);
@@ -475,8 +466,7 @@ describe('InnsendingSchema', () => {
         code: 'invalid_type',
         expected: 'number',
         message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
-        path: ['agp', 'redusertLoennIAgp', 'beloep'],
-        received: 'undefined'
+        path: ['agp', 'redusertLoennIAgp', 'beloep']
       }
     ]);
   });
@@ -512,16 +502,31 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       },
       {
-        code: 'invalid_type',
-        expected:
-          "'ArbeidOpphoert' | 'BeskjedGittForSent' | 'BetvilerArbeidsufoerhet' | 'FerieEllerAvspasering' | 'FiskerMedHyre' | 'FravaerUtenGyldigGrunn' | 'IkkeFravaer' | 'IkkeFullStillingsandel' | 'IkkeLoenn' | 'LovligFravaer' | 'ManglerOpptjening' | 'Permittering' | 'Saerregler' | 'StreikEllerLockout' | 'TidligereVirksomhet'",
+        code: 'invalid_value',
         message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
         path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
-        received: 'undefined'
+        values: [
+          'ArbeidOpphoert',
+          'BeskjedGittForSent',
+          'BetvilerArbeidsufoerhet',
+          'FerieEllerAvspasering',
+          'FiskerMedHyre',
+          'FravaerUtenGyldigGrunn',
+          'IkkeFravaer',
+          'IkkeFullStillingsandel',
+          'IkkeLoenn',
+          'LovligFravaer',
+          'ManglerOpptjening',
+          'Permittering',
+          'Saerregler',
+          'StreikEllerLockout',
+          'TidligereVirksomhet'
+        ]
       }
     ]);
   });

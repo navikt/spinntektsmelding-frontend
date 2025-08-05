@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { MottattDataSchema } from '../../schema/MottattDataSchema';
 import testFnr from '../../mockdata/testFnr';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 type MottattData = z.infer<typeof MottattDataSchema>;
 
@@ -58,12 +58,14 @@ describe('MottattDataSchema', () => {
     expect(parsed?.telefonnummer).toBe('+4712345678');
   });
 
-  it.skip('should pass when telefonnummer is an empty string', () => {
+  it('should pass when telefonnummer is an empty string', () => {
     const data = { ...baseValid, telefonnummer: '' };
     const { success, data: parsed, error } = MottattDataSchema.safeParse(data);
-    expect(success).toBe(true);
-    expect(error).toBeUndefined();
-    expect(parsed?.telefonnummer).toBe('');
+    expect(success).toBe(false);
+    // expect(error).toBeUndefined();
+    expect(error?.issues[0].path).toEqual(['telefonnummer']);
+    expect(error?.issues[0].message).toContain('Telefonnummeret er for kort, det må være 8 siffer');
+    expect(parsed?.telefonnummer).toBeUndefined();
   });
 
   it('should fail when telefonnummer is the wrong type', () => {
@@ -71,8 +73,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['telefonnummer']);
-      expect(result.error.errors[0].message).toContain('Dette er ikke et telefonnummer');
+      expect(result.error.issues[0].path).toEqual(['telefonnummer']);
+      expect(result.error.issues[0].message).toContain('Dette er ikke et telefonnummer');
     }
   });
 
@@ -87,8 +89,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['inntekt']);
-      expect(result.error.errors[0].message).toContain('Expected object');
+      expect(result.error.issues[0].path).toEqual(['inntekt']);
+      expect(result.error.issues[0].message).toContain('Invalid input: expected object, received number');
     }
   });
   it('should fail when inntekt is missing gjennomsnitt', () => {
@@ -96,8 +98,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['inntekt', 'gjennomsnitt']);
-      expect(result.error.errors[0].message).toContain('Required');
+      expect(result.error.issues[0].path).toEqual(['inntekt', 'gjennomsnitt']);
+      expect(result.error.issues[0].message).toContain('Invalid input: expected number, received undefined');
     }
   });
   it('should fail when inntekt is missing historikk', () => {
@@ -105,8 +107,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['inntekt', 'historikk']);
-      expect(result.error.errors[0].message).toContain('Required');
+      expect(result.error.issues[0].path).toEqual(['inntekt', 'historikk']);
+      expect(result.error.issues[0].message).toContain('Invalid input: expected map, received undefined');
     }
   });
   it('should fail when inntekt is missing gjennomsnitt and historikk', () => {
@@ -114,8 +116,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['inntekt', 'gjennomsnitt']);
-      expect(result.error.errors[0].message).toContain('Required');
+      expect(result.error.issues[0].path).toEqual(['inntekt', 'gjennomsnitt']);
+      expect(result.error.issues[0].message).toContain('Invalid input: expected number, received undefined');
     }
   });
   it('should fail when sykmeldingsperioder is not an array', () => {
@@ -123,8 +125,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['sykmeldingsperioder']);
-      expect(result.error.errors[0].message).toContain('Expected array');
+      expect(result.error.issues[0].path).toEqual(['sykmeldingsperioder']);
+      expect(result.error.issues[0].message).toContain('Invalid input: expected array, received string');
     }
   });
   it('should fail when egenmeldingsperioder is not an array', () => {
@@ -132,8 +134,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['egenmeldingsperioder']);
-      expect(result.error.errors[0].message).toContain('Expected array');
+      expect(result.error.issues[0].path).toEqual(['egenmeldingsperioder']);
+      expect(result.error.issues[0].message).toContain('Invalid input: expected array, received string');
     }
   });
   it('should fail when sykmeldingsperioder is an empty array', () => {
@@ -141,8 +143,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['sykmeldingsperioder']);
-      expect(result.error.errors[0].message).toContain('Sykmeldingsperioder må ha minst en periode.');
+      expect(result.error.issues[0].path).toEqual(['sykmeldingsperioder']);
+      expect(result.error.issues[0].message).toContain('Sykmeldingsperioder må ha minst en periode.');
     }
   });
   it('should not fail when egenmeldingsperioder is an empty array', () => {
@@ -156,8 +158,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['sykmeldingsperioder', 0, 'fom']);
-      expect(result.error.errors[0].message).toContain('Invalid date');
+      expect(result.error.issues[0].path).toEqual(['sykmeldingsperioder', 0, 'fom']);
+      expect(result.error.issues[0].message).toContain('Invalid ISO date');
     }
   });
   it('should fail when sykmeldingsperioder is an array of objects with missing fom', () => {
@@ -165,8 +167,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['sykmeldingsperioder', 0, 'fom']);
-      expect(result.error.errors[0].message).toContain('Required');
+      expect(result.error.issues[0].path).toEqual(['sykmeldingsperioder', 0, 'fom']);
+      expect(result.error.issues[0].message).toContain('Invalid input: expected string, received undefined');
     }
   });
   it('should fail when sykmeldingsperioder is an array of objects with missing tom', () => {
@@ -174,8 +176,8 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['sykmeldingsperioder', 0, 'tom']);
-      expect(result.error.errors[0].message).toContain('Required');
+      expect(result.error.issues[0].path).toEqual(['sykmeldingsperioder', 0, 'tom']);
+      expect(result.error.issues[0].message).toContain('Invalid input: expected string, received undefined');
     }
   });
   it('should fail when sykmeldingsperioder is an array of objects with invalid fom and tom', () => {
@@ -183,10 +185,10 @@ describe('MottattDataSchema', () => {
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].path).toEqual(['sykmeldingsperioder', 0, 'fom']);
-      expect(result.error.errors[0].message).toContain('Invalid date');
-      expect(result.error.errors[1].path).toEqual(['sykmeldingsperioder', 0, 'tom']);
-      expect(result.error.errors[1].message).toContain('Invalid date');
+      expect(result.error.issues[0].path).toEqual(['sykmeldingsperioder', 0, 'fom']);
+      expect(result.error.issues[0].message).toContain('Invalid ISO date');
+      expect(result.error.issues[1].path).toEqual(['sykmeldingsperioder', 0, 'tom']);
+      expect(result.error.issues[1].message).toContain('Invalid ISO date');
     }
   });
 });

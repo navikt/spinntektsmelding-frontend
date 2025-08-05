@@ -3,7 +3,7 @@ import useBoundStore from '../../state/useBoundStore';
 import FeilListe from './FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
-import z from 'zod';
+import z from 'zod/v4';
 
 type HovedSkjema = z.infer<typeof HovedskjemaSchema>;
 

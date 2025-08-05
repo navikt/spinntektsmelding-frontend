@@ -1,6 +1,6 @@
 import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { SafeParseReturnType, z } from 'zod';
+import { SafeParseReturnType, z } from 'zod/v4';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -78,36 +78,41 @@ const Initiering2: NextPage = () => {
     .object({
       organisasjonsnummer: z
         .string({
-          required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+          error: (issue) =>
+            issue.input === undefined
+              ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+              : undefined
         })
         .transform((val) => val.replace(/\s/g, ''))
         .pipe(
           z
             .string({
-              required_error: 'Organisasjon er ikke valgt'
+              error: (issue) => (issue.input === undefined ? 'Organisasjon er ikke valgt' : undefined)
             })
 
-            .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
+            .refine((val) => isMod11Number(val), { error: 'Organisasjon er ikke valgt' })
         ),
       navn: z.string().nullable().optional(),
       personnummer: PersonnummerSchema.optional(),
-      sykepengePeriodeId: z.array(z.string().uuid()).optional(),
+      sykepengePeriodeId: z.array(z.uuid()).optional(),
       endreRefusjon: z.string().optional()
     })
     .superRefine((value, ctx) => {
       if (value.endreRefusjon === 'Ja') {
-        ctx.addIssue({
+        ctx.issues.push({
           code: z.ZodIssueCode.custom,
-          message: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
-          path: ['endreRefusjon']
+          error: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
+          path: ['endreRefusjon'],
+          input: ''
         });
       }
 
       if (value.endreRefusjon === 'Nei') {
-        ctx.addIssue({
+        ctx.issues.push({
           code: z.ZodIssueCode.custom,
-          message: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
-          path: ['endreRefusjon']
+          error: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
+          path: ['endreRefusjon'],
+          input: ''
         });
       }
     });
@@ -275,7 +280,7 @@ const Initiering2: NextPage = () => {
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     if (harValgtPeriodeMedForlengelse && !endreRefusjon) {
       setError('endreRefusjon', {
-        message: 'Angi om det skal endres refusjon for den ansatte.',
+        error: 'Angi om det skal endres refusjon for den ansatte.',
         type: 'manual'
       });
       return;
@@ -307,7 +312,7 @@ const Initiering2: NextPage = () => {
 
     if (sykmeldingsperiode.length === 0) {
       setError('sykepengePeriodeId', {
-        message: 'Ingen sykmeldingsperioder valgt',
+        error: 'Ingen sykmeldingsperioder valgt',
         type: 'manual'
       });
       return;

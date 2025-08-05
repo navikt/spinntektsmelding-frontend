@@ -5,18 +5,18 @@ describe.concurrent('mapErrorsObjectToFeilmeldinger', () => {
     const errors = {
       nested: {
         field: {
-          message: 'Nested field error'
+          error: 'Nested field error'
         }
       },
       field: {
-        message: 'Field error'
+        error: 'Field error'
       },
       otherField: {
-        message: 'Other field error'
+        error: 'Other field error'
       },
       subField: {
         subSubField: {
-          message: 'Sub sub field error'
+          error: 'Sub sub field error'
         }
       }
     };

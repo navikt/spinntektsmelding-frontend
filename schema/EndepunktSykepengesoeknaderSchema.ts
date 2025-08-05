@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 const soeknadStatus = z.enum([
   'NY',
@@ -14,17 +14,17 @@ const soeknadStatus = z.enum([
 export const ISO_DATE_REGEX = /\d{4}-[01]\d-[0-3]\d/;
 
 export const EndepunktSykepengesoeknadSchema = z.object({
-  sykepengesoknadUuid: z.string().uuid(),
+  sykepengesoknadUuid: z.uuid(),
   fom: z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'),
   tom: z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'),
-  sykmeldingId: z.string().uuid(),
+  sykmeldingId: z.uuid(),
   status: soeknadStatus,
   startSykeforlop: z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'),
   egenmeldingsdagerFraSykmelding: z
     .array(z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format'))
     .or(z.tuple([])),
-  vedtaksperiodeId: z.string().uuid().nullable(),
-  forespoerselId: z.string().uuid().optional(),
+  vedtaksperiodeId: z.uuid().nullable(),
+  forespoerselId: z.uuid().optional(),
   soknadstype: z.string().optional(),
   behandlingsdager: z.array(z.string().regex(ISO_DATE_REGEX, 'Dato er ikke i ISO-format')).or(z.tuple([])).optional()
 });
