@@ -19,7 +19,7 @@ describe('formatRHFFeilmeldinger', () => {
         },
         {
           field2: {
-            message: 'Error 2'
+            error: 'Error 2'
           }
         }
       ]

@@ -1,9 +1,12 @@
+import z from 'zod/v4';
 import { Feilmelding } from '../components/Feilsammendrag/FeilListe';
 
 export default function formatRHFFeilmeldinger(validationResult: any): Feilmelding[] {
   let seen: any[] = [];
 
-  console.log('formatRHFFeilmeldinger', validationResult);
+  if (!validationResult || typeof validationResult !== 'object') {
+    return [];
+  }
 
   const errorObject = JSON.parse(
     JSON.stringify(validationResult, function (key, val) {
@@ -27,9 +30,9 @@ function traverseAndFindMessages(obj: any, path: string[] = []): Feilmelding[] {
       const newPath = path.concat(key);
       if (typeof obj[key] === 'object' && key !== 'ref') {
         messages = messages.concat(traverseAndFindMessages(obj[key], newPath));
-      } else if (key === 'message' && typeof obj[key] === 'string') {
+      } else if ((key === 'message' || key === 'error') && typeof obj[key] === 'string') {
         messages.push({
-          text: obj[key],
+          text: obj['error'] ?? obj['message'],
           felt: path.join('.')
         } as Feilmelding);
       }

@@ -189,12 +189,10 @@ export const InnsendingSchema = z.object({
       beloepPerMaaned: z
         .number({ error: 'Vennligst angi hvor mye du refundere per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-      endringer: z.union([
-        z.array(RefusjonEndringSchema),
-        z.tuple([], {
-          error: (iss) => ({ message: 'Vennligst fyll inn dato og beløp for endringer' })
-        })
-      ]),
+      endringer: z.union(
+        [z.array(RefusjonEndringSchema), z.tuple([], { error: 'Vennligst fyll inn dato og beløp for endringer' })],
+        { error: 'Vennligst fyll inn dato og beløp for endringer' }
+      ),
       sluttdato: z.iso
         .date({
           error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn til dato' : 'Dette er ikke en gyldig dato')

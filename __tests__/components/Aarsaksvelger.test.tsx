@@ -396,7 +396,7 @@ describe('Aarsaksvelger', () => {
             inntekt: {
               endringAarsaker: {
                 root: {
-                  message: 'Dette er feil'
+                  error: 'Dette er feil'
                 }
               }
             }

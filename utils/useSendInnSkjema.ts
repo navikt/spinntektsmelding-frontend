@@ -76,7 +76,7 @@ export default function useSendInnSkjema(
     );
     const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
-    console.log('validerteData', validerteData);
+
     if (validerteData.success === false) {
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',
@@ -89,7 +89,7 @@ export default function useSendInnSkjema(
       fyllFeilmeldinger(
         validerteData.error!.issues.map((error) => ({
           felt: error.path.join('.'),
-          text: error.message
+          text: error.error ?? error.message
         }))
       );
 

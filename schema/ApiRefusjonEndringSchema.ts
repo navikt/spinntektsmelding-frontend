@@ -2,7 +2,7 @@ import { z } from 'zod/v4';
 
 export const RefusjonEndringSchema = z.object({
   startdato: z.iso.date({
-    error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn dato for endring i refusjon' : undefined)
+    error: 'Vennligst fyll inn dato for endring i refusjon'
   }),
   beloep: z
     .number({
