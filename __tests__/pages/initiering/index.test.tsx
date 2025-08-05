@@ -7,6 +7,15 @@ import { Mock, vi } from 'vitest';
 import testFnr from '../../../mockdata/testFnr';
 import useBoundStore from '../../../state/useBoundStore';
 
+global.window = Object.create(window);
+Object.defineProperty(global.window, 'location', {
+  value: {
+    ...window.location,
+    replace: vi.fn()
+  },
+  writable: true
+});
+
 vi.mock('next/navigation', () => ({ useRouter: vi.fn() }));
 const setIdentitetsnummerMock = vi.fn();
 const setAarsakMock = vi.fn();
