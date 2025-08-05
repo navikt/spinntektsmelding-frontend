@@ -68,7 +68,7 @@ export const InnsendingSchema = z.object({
       perioder: z.array(ApiPeriodeSchema).superRefine((val, ctx) => {
         if (langtGapIPerioder(val)) {
           ctx.issues.push({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             error: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.',
             input: ''
           });
@@ -76,7 +76,7 @@ export const InnsendingSchema = z.object({
 
         if (perioderHarOverlapp(val)) {
           ctx.issues.push({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             error: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
             input: ''
           });
@@ -84,7 +84,7 @@ export const InnsendingSchema = z.object({
 
         if (perioderErOver16dagerTotalt(val)) {
           ctx.issues.push({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
             input: ''
           });
@@ -93,7 +93,7 @@ export const InnsendingSchema = z.object({
       egenmeldinger: z.union([z.array(ApiPeriodeSchema), z.tuple([])]).superRefine((val, ctx) => {
         if (langtGapIPerioder(val)) {
           ctx.issues.push({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             error: 'Det kan ikke være opphold over 16 dager mellom egenmeldingsperiodene.',
             input: ''
           });
@@ -101,7 +101,7 @@ export const InnsendingSchema = z.object({
 
         if (perioderHarOverlapp(val)) {
           ctx.issues.push({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             error: 'Det kan ikke være overlapp mellom egenmeldingsperiodene.',
             input: ''
           });
@@ -136,7 +136,7 @@ export const InnsendingSchema = z.object({
         val.redusertLoennIAgp?.begrunnelse !== undefined
       ) {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Angi beløp utbetalt arbeidsgiverperioden.',
           path: ['redusertLoennIAgp', 'beloep'],
           input: ''
@@ -150,7 +150,7 @@ export const InnsendingSchema = z.object({
         val.redusertLoennIAgp?.begrunnelse === undefined
       ) {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Angi årsak til forkortet arbeidsgiverperiode.',
           path: ['redusertLoennIAgp', 'begrunnelse'],
           input: ''
@@ -163,7 +163,7 @@ export const InnsendingSchema = z.object({
         !(val.redusertLoennIAgp?.beloep !== undefined && val.redusertLoennIAgp?.begrunnelse)
       ) {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Angi en årsak og beløp for redusert lønn i arbeidsgiverperioden.',
           path: ['redusertLoennIAgp', 'beloep'],
           input: ''
@@ -187,13 +187,14 @@ export const InnsendingSchema = z.object({
   refusjon: z.nullable(
     z.object({
       beloepPerMaaned: z
-        .number({
-          error: (issue) => (issue.input === undefined ? 'Vennligst angi hvor mye du refundere per måned' : undefined)
-        })
+        .number({ error: 'Vennligst angi hvor mye du refundere per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-      endringer: z.array(RefusjonEndringSchema, {
-        error: 'Vennligst fyll inn dato og beløp for endringer'
-      }),
+      endringer: z.union([
+        z.array(RefusjonEndringSchema),
+        z.tuple([], {
+          error: (iss) => ({ message: 'Vennligst fyll inn dato og beløp for endringer' })
+        })
+      ]),
       sluttdato: z.iso
         .date({
           error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn til dato' : 'Dette er ikke en gyldig dato')
@@ -205,7 +206,7 @@ export const InnsendingSchema = z.object({
 // .superRefine((val, ctx) => {
 //   if (val.inntekt?.beloep && val.refusjon?.beloepPerMaaned && val.inntekt?.beloep < val.refusjon?.beloepPerMaaned) {
 //     ctx.addIssue({
-//       code: z.ZodIssueCode.custom,
+//       code: "custom",
 //       error: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
 //       path: ['refusjon', 'beloepPerMaaned']
 //     });
@@ -217,7 +218,7 @@ type TInnsendingSchema = z.infer<typeof InnsendingSchema>;
 export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementCtx) {
   if (val.inntekt?.beloep && val.refusjon?.beloepPerMaaned && val.inntekt?.beloep < val.refusjon?.beloepPerMaaned) {
     ctx.issues.push({
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       error: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
       path: ['refusjon', 'beloepPerMaaned'],
       input: ''
@@ -226,7 +227,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
 
   if ((val.inntekt?.beloep ?? 0) < (val.agp?.redusertLoennIAgp?.beloep ?? 0)) {
     ctx.issues.push({
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       error: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
       path: ['agp', 'redusertLoennIAgp', 'beloep'],
       input: ''
@@ -235,7 +236,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
 
   if ((val.inntekt?.beloep ?? 0) > 1000000) {
     ctx.issues.push({
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       error: 'Inntekten kan ikke være over 1 million.',
       path: ['inntekt', 'beloep'],
       input: ''
@@ -247,7 +248,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
     val.refusjon?.endringer.forEach((endring, index) => {
       if (endring.beloep > (val.inntekt?.beloep ?? endring.beloep)) {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Refusjon kan ikke være høyere enn inntekt.',
           path: ['refusjon', 'endringer', index, 'beloep'],
           input: ''
@@ -255,7 +256,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
       }
       if (endring.beloep < 0) {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Refusjon må være større eller lik 0.',
           path: ['refusjon', 'endringer', index, 'beloep'],
           input: ''
@@ -264,7 +265,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
 
       if (isBefore(endring.startdato, agpSluttdato ?? '')) {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
           path: ['refusjon', 'endringer', index, 'startdato'],
           input: ''
@@ -273,7 +274,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
 
       if (isBefore(endring.startdato, val.inntekt?.inntektsdato ?? '')) {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Startdato for refusjonsendringer må være etter dato for rapportert inntekt.',
           path: ['refusjon', 'endringer', index, 'startdato'],
           input: ''

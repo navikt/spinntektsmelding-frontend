@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import { z } from 'zod/v4';
 // import environment from '../config/environment';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
-import { Opplysningstype } from '../../state/useForespurtDataStore';
+
 // import forespoerselType from '../config/forespoerselType';
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
 import logEvent from '../../utils/logEvent';
 import validerInntektsmelding from '../../utils/validerInntektsmelding';
+import { Opplysningstype } from '../../schema/ForespurtDataSchema';
 // const pushMock = vi.fn();
 
 type FullInnsending = z.infer<typeof HovedskjemaSchema>;
