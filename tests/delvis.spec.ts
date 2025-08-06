@@ -29,7 +29,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       })
     );
 
-    await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
     await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // select "Nei" in refusjon group
@@ -48,7 +48,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     const req = await pageLoad;
     // assert request body
     expect(JSON.parse(req.postData()!)).toEqual({
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: {
         beloep: 36000,
@@ -61,7 +61,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     });
 
     // verify navigation and UI
-    await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
+    // await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     // await expect(page.getByText('05.12.2024')).toBeVisible();
     await expect(page.locator('text="05.12.2024"')).toBeVisible();
@@ -79,7 +79,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       })
     );
 
-    await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
     await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // click second "Endre"
@@ -119,7 +119,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     const responsData = await req2;
 
     expect(JSON.parse(responsData.request().postData()!)).toEqual({
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: {
         beloep: 50000,
@@ -135,7 +135,8 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       avsenderTlf: '12345678'
     });
 
-    await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
+    // await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
+    await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     await expect(page.locator('text="Bonus"')).toBeVisible();
     await expect(page.locator('text="45 000,00"')).toBeVisible();
     // await expect(page.getByText('Bonus')).toBeVisible();

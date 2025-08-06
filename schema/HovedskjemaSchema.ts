@@ -18,7 +18,7 @@ export const HovedskjemaSchema = z.object({
         })
         .min(0),
       endringAarsaker: z
-        .array(EndringAarsakSchema.or(z.object({})))
+        .array(EndringAarsakSchema)
         .superRefine((val, ctx) => {
           if (JSON.stringify(val) === JSON.stringify([{}])) {
             ctx.issues.push({

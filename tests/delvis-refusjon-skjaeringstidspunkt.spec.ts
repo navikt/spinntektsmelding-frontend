@@ -30,7 +30,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
         body: JSON.stringify({ name: 'Nothing' })
       })
     );
-    await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
     await page.waitForResponse('*/**/api/hent-forespoersel/*');
   });
 
@@ -52,7 +52,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     const req = await reqPromise;
 
     expect(JSON.parse(req.postData()!)).toEqual({
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: {
         beloep: 55000,
@@ -64,7 +64,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       avsenderTlf: '12345678'
     });
     // confirmation page
-    await page.waitForURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+    await page.waitForURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     // the old bfd date should not appear
     await expect(await formPage.getByText('24.01.2023')).toHaveCount(0);
@@ -77,7 +77,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     const formPage = new FormPage(page);
     // click second "Endre"
     await page.getByRole('button', { name: 'Endre' }).nth(1).click();
-    await page.waitForURL('**/im-dialog/12345678-3456-5678-2457-123456789012');
+    await page.waitForURL('**/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
     // update salary
     const salary = page.getByLabel('Månedslønn 18.09.2023');
     await expect(salary).toHaveValue('55000');
@@ -110,7 +110,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     const req2 = await reqPromise;
     // assert payload
     expect(JSON.parse(req2.postData()!)).toEqual({
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: {
         beloep: 60000,
@@ -123,7 +123,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     });
     // final confirmation
 
-    await page.waitForURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+    await page.waitForURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/18\.09\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     await expect(page.locator('text="Bonus"')).toBeVisible();

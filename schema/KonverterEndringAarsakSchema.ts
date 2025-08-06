@@ -88,6 +88,6 @@ export const KonverterEndringAarsakSchema = z.discriminatedUnion(
     EndringAarsakSammeSomSistSchema
   ],
   {
-    error: (issue) => ({ error: 'Vennligst angi årsak til endringen.' })
+    error: 'Vennligst angi årsak til endringen.'
   }
 );

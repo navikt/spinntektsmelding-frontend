@@ -208,11 +208,11 @@ describe('HovedskjemaSchema', () => {
         errors: [
           [
             {
-              code: 'custom',
-              error: 'Vennligst angi årsak til endringen.',
-              fatal: true,
-              message: 'Invalid input',
-              path: ['0', 'aarsak']
+              code: 'invalid_union',
+              errors: [],
+              message: 'Vennligst angi årsak til endringen.',
+              note: 'No matching discriminator',
+              path: [0, 'aarsak']
             }
           ],
           [
@@ -248,11 +248,11 @@ describe('HovedskjemaSchema', () => {
         errors: [
           [
             {
-              code: 'custom',
-              error: 'Vennligst angi årsak til endringen.',
-              fatal: true,
-              message: 'Invalid input',
-              path: ['0', 'aarsak']
+              code: 'invalid_union',
+              errors: [],
+              message: 'Vennligst angi årsak til endringen.',
+              note: 'No matching discriminator',
+              path: [0, 'aarsak']
             }
           ],
           [
@@ -290,11 +290,11 @@ describe('HovedskjemaSchema', () => {
         errors: [
           [
             {
-              code: 'custom',
-              error: 'Vennligst angi årsak til endringen.',
-              fatal: true,
-              message: 'Invalid input',
-              path: ['0', 'aarsak']
+              code: 'invalid_union',
+              errors: [],
+              message: 'Vennligst angi årsak til endringen.',
+              note: 'No matching discriminator',
+              path: [0, 'aarsak']
             }
           ],
           [

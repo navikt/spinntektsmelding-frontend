@@ -93,7 +93,5 @@ export const ApiEndringAarsakSchema = z.discriminatedUnion(
     apiEndringAarsakVarigLoennsendringSchema,
     EndringAarsakSammeSomSistSchema
   ],
-  {
-    error: (issue) => ({ error: 'Vennligst angi årsak til endringen.' })
-  }
+  'Vennligst angi årsak til endringen.'
 );

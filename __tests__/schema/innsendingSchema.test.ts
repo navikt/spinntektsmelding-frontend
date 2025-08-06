@@ -627,18 +627,17 @@ describe('InnsendingSchema', () => {
       ]
     };
 
-    const mockAddIssue = vi.fn();
-    const mockCtx = { addIssue: mockAddIssue, issues: [] };
-
-    superRefineInnsending(data, mockCtx);
-
-    expect(mockCtx.issues).toHaveLength(1);
-    expect(mockCtx.issues[0]).toEqual({
-      code: 'custom',
-      error: 'Refusjon må være større eller lik 0.',
-      input: '',
-      path: ['refusjon', 'endringer', 1, 'beloep']
-    });
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'too_small',
+        inclusive: true,
+        message: 'Beløpet må være større enn eller lik 0',
+        minimum: 0,
+        origin: 'number',
+        path: ['refusjon', 'endringer', 1, 'beloep']
+      }
+    ]);
   });
 
   it('should validate InnsendingSchema and fail if refusjon beloep > inntekt', () => {

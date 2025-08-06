@@ -181,7 +181,7 @@ export const InnsendingSchema = z.object({
         error: (issue) => (issue.input === undefined ? 'Bestemmende fraværsdag mangler' : undefined)
       }),
       naturalytelser: ApiNaturalytelserSchema,
-      endringAarsaker: z.nullable(z.array(ApiEndringAarsakSchema))
+      endringAarsaker: z.array(ApiEndringAarsakSchema).nullable()
     })
   ),
   refusjon: z.nullable(
@@ -189,10 +189,7 @@ export const InnsendingSchema = z.object({
       beloepPerMaaned: z
         .number({ error: 'Vennligst angi hvor mye du refundere per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-      endringer: z.union(
-        [z.array(RefusjonEndringSchema), z.tuple([], { error: 'Vennligst fyll inn dato og beløp for endringer' })],
-        { error: 'Vennligst fyll inn dato og beløp for endringer' }
-      ),
+      endringer: z.array(RefusjonEndringSchema).nullable(),
       sluttdato: z.iso
         .date({
           error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn til dato' : 'Dette er ikke en gyldig dato')
@@ -243,19 +240,11 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
 
   if (val.refusjon) {
     const agpSluttdato = val.agp?.perioder?.[val.agp.perioder.length - 1]?.tom ?? undefined;
-    val.refusjon?.endringer.forEach((endring, index) => {
+    val?.refusjon?.endringer?.forEach((endring, index) => {
       if (endring.beloep > (val.inntekt?.beloep ?? endring.beloep)) {
         ctx.issues.push({
           code: 'custom',
           error: 'Refusjon kan ikke være høyere enn inntekt.',
-          path: ['refusjon', 'endringer', index, 'beloep'],
-          input: ''
-        });
-      }
-      if (endring.beloep < 0) {
-        ctx.issues.push({
-          code: 'custom',
-          error: 'Refusjon må være større eller lik 0.',
           path: ['refusjon', 'endringer', index, 'beloep'],
           input: ''
         });

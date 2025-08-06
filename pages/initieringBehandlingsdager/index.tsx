@@ -88,13 +88,13 @@ const InitieringBehandlingsdager: NextPage = () => {
         ),
       navn: z.string().nullable().optional(),
       personnummer: PersonnummerSchema.optional(),
-      sykmeldingId: z.uuid(),
+      sykmeldingId: z.uuid('Du må velge en periode for behandlingsdager'),
       endreRefusjon: z.string().optional()
     })
     .superRefine((value, ctx) => {
       if (value.endreRefusjon === 'Ja') {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
           path: ['endreRefusjon'],
           input: ''
@@ -103,7 +103,7 @@ const InitieringBehandlingsdager: NextPage = () => {
 
       if (value.endreRefusjon === 'Nei') {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
           path: ['endreRefusjon'],
           input: ''
@@ -281,10 +281,7 @@ const InitieringBehandlingsdager: NextPage = () => {
 
   const getBehandlingsdager = (
     formData: Skjema,
-    mottatteSykepengesoeknader: z.SafeParseReturnType<
-      typeof EndepunktSykepengesoeknaderSchema,
-      EndepunktSykepengesoeknad[]
-    >
+    mottatteSykepengesoeknader: z.ZodSafeParseResult<typeof EndepunktSykepengesoeknaderSchema>
   ): EndepunktSykepengesoeknad | boolean => {
     const sykmeldingsperiode =
       mottatteSykepengesoeknader?.success &&

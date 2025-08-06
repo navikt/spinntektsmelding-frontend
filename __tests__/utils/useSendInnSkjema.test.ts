@@ -117,10 +117,10 @@ describe('useSendInnSkjema', () => {
   it.skip('should handle successful submission', async () => {
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
-    const pathSlug = '12345678-3456-5678-2457-123456789012';
+    const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
     const formData: FullInnsending = {
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
       refusjon: null,
@@ -143,10 +143,10 @@ describe('useSendInnSkjema', () => {
   it.skip('should handle server error 500', async () => {
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
-    const pathSlug = '12345678-3456-5678-2457-123456789012';
+    const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
     const formData: FullInnsending = {
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
       refusjon: null,
@@ -173,10 +173,10 @@ describe('useSendInnSkjema', () => {
   it.skip('should handle unauthorized error 401', async () => {
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
-    const pathSlug = '12345678-3456-5678-2457-123456789012';
+    const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
     const formData: FullInnsending = {
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
       refusjon: null,
