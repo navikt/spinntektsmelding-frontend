@@ -179,7 +179,7 @@ describe('HovedskjemaSchema', () => {
             {
               code: 'invalid_type',
               expected: 'null',
-              message: 'Invalid input: expected null, received undefined',
+              message: 'Vennligst angi årsak til endringen.',
               path: []
             }
           ]
@@ -209,6 +209,7 @@ describe('HovedskjemaSchema', () => {
           [
             {
               code: 'invalid_union',
+              discriminator: 'aarsak',
               errors: [],
               message: 'Vennligst angi årsak til endringen.',
               note: 'No matching discriminator',
@@ -219,7 +220,7 @@ describe('HovedskjemaSchema', () => {
             {
               code: 'invalid_type',
               expected: 'null',
-              message: 'Invalid input: expected null, received array',
+              message: 'Vennligst angi årsak til endringen.',
               path: []
             }
           ]
@@ -249,6 +250,7 @@ describe('HovedskjemaSchema', () => {
           [
             {
               code: 'invalid_union',
+              discriminator: 'aarsak',
               errors: [],
               message: 'Vennligst angi årsak til endringen.',
               note: 'No matching discriminator',
@@ -259,7 +261,7 @@ describe('HovedskjemaSchema', () => {
             {
               code: 'invalid_type',
               expected: 'null',
-              message: 'Invalid input: expected null, received array',
+              message: 'Vennligst angi årsak til endringen.',
               path: []
             }
           ]
@@ -291,6 +293,7 @@ describe('HovedskjemaSchema', () => {
           [
             {
               code: 'invalid_union',
+              discriminator: 'aarsak',
               errors: [],
               message: 'Vennligst angi årsak til endringen.',
               note: 'No matching discriminator',
@@ -301,7 +304,7 @@ describe('HovedskjemaSchema', () => {
             {
               code: 'invalid_type',
               expected: 'null',
-              message: 'Invalid input: expected null, received array',
+              message: 'Vennligst angi årsak til endringen.',
               path: []
             }
           ]
