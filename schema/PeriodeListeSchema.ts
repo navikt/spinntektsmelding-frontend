@@ -10,7 +10,7 @@ export const PeriodeListeSchema = z.array(ApiPeriodeSchema).superRefine((val, ct
     const forskjellDager = Math.abs(Math.floor(forskjellMs / 1000 / 60 / 60 / 24));
     if (forskjellDager > 16) {
       ctx.issues.push({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         error: feiltekster.FOR_MANGE_DAGER_MELLOM,
         path: [i.toString(), 'tom'],
         input: ''

@@ -18,23 +18,23 @@ export const HovedskjemaSchema = z.object({
         })
         .min(0),
       endringAarsaker: z
-        .array(EndringAarsakSchema)
+        .union([z.array(EndringAarsakSchema), z.null('Vennligst angi årsak til endringen.')])
         .superRefine((val, ctx) => {
           if (JSON.stringify(val) === JSON.stringify([{}])) {
             ctx.issues.push({
-              code: z.ZodIssueCode.custom,
-              error: 'Vennligst angi årsak til endringen.',
+              code: 'custom',
+              error: 'Vennligst angi årsak til endringen.sr1',
               path: ['0', 'aarsak'],
               fatal: true,
               input: ''
             });
             return z.NEVER;
           }
-          const aarsaker = val.map((v) => v.aarsak);
+          const aarsaker = val?.map((v) => v.aarsak);
           const uniqueAarsaker = new Set(aarsaker);
-          if (aarsaker.length > 0 && uniqueAarsaker.size !== aarsaker.length) {
+          if (aarsaker && aarsaker.length > 0 && uniqueAarsaker.size !== aarsaker.length) {
             ctx.issues.push({
-              code: z.ZodIssueCode.custom,
+              code: 'custom',
               error: 'Det kan ikke være flere like begrunnelser.',
               path: ['root'],
               fatal: true,
@@ -42,19 +42,18 @@ export const HovedskjemaSchema = z.object({
             });
             return z.NEVER;
           }
-          val.forEach((v, index) => {
+          val?.forEach((v, index) => {
             if (v.aarsak === '' || v.aarsak === undefined) {
               ctx.issues.push({
-                code: z.ZodIssueCode.custom,
-                error: 'Vennligst angi årsak til endringen.',
+                code: 'custom',
+                error: 'Vennligst angi årsak til endringen.sr2',
                 path: [index, 'aarsak'],
                 fatal: true,
                 input: ''
               });
             }
           });
-        })
-        .or(z.null()),
+        }),
       harBortfallAvNaturalytelser: z.boolean(),
       naturalytelser: z.array(NaturalytelserSchema).optional()
     })

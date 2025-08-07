@@ -16,7 +16,7 @@ export default z
       .superRefine((value, ctx) => {
         if (value.ingenEndringBruttoloenn === 'Nei' && value.beloep === undefined) {
           ctx.issues.push({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             error: 'Vennligst angi månedsinntekt.',
             path: ['beloep'],
             input: ''
@@ -67,7 +67,7 @@ export default z
 
         if (value.refusjonOpphoerer === undefined && value.kravetOpphoerer === 'Ja') {
           ctx.issues.push({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             error: 'Vennligst angi sluttdato for refusjonskravet.',
             path: ['refusjonOpphoerer'],
             input: ''
@@ -78,7 +78,7 @@ export default z
   .superRefine((value, ctx) => {
     if (typeof value.refusjon.refusjonPrMnd === 'undefined' && value.refusjon.kreverRefusjon === 'Ja') {
       ctx.issues.push({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         error: 'Refusjonsbeløp mangler selv om det kreves refusjon.',
         path: ['refusjon', 'refusjonPrMnd'],
         input: ''
@@ -87,7 +87,7 @@ export default z
 
     if ((value.inntekt.beloep ?? 0) < (value.refusjon.refusjonPrMnd ?? 0)) {
       ctx.issues.push({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         error: 'Refusjon kan ikke være høyere enn brutto lønn.',
         path: ['refusjon', 'refusjonPrMnd'],
         input: ''
@@ -130,7 +130,7 @@ export default z
       value.refusjon.refusjonEndringer?.map((endring, index) => {
         if ((endring.beloep ?? 0) > (value.inntekt?.beloep ?? 0)) {
           ctx.issues.push({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             error: 'Refusjon kan ikke være høyere enn brutto lønn.',
             path: ['refusjon', 'refusjonEndringer', index, 'beloep'],
             input: ''

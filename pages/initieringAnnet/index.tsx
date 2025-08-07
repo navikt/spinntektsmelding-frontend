@@ -100,7 +100,7 @@ const Initiering2: NextPage = () => {
     .superRefine((value, ctx) => {
       if (value.endreRefusjon === 'Ja') {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
           path: ['endreRefusjon'],
           input: ''
@@ -109,7 +109,7 @@ const Initiering2: NextPage = () => {
 
       if (value.endreRefusjon === 'Nei') {
         ctx.issues.push({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           error: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
           path: ['endreRefusjon'],
           input: ''

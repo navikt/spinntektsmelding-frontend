@@ -1,4 +1,3 @@
-import z from 'zod/v4';
 import { Feilmelding } from '../components/Feilsammendrag/FeilListe';
 
 export default function formatRHFFeilmeldinger(validationResult: any): Feilmelding[] {

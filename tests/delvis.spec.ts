@@ -103,7 +103,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // validation error for missing årsak
     // await expect(page.getByText('Vennligst angi årsak til endringen.')).toBeVisible();
     const elements = page.locator('text="Vennligst angi årsak til endringen."');
-    await expect(elements).toHaveCount(3);
+    await expect(elements).toHaveCount(4);
     // await expect(page.locator('text="Vennligst angi årsak til endringen."')).toBe(3);
     await page.getByLabel('Velg endringsårsak').selectOption('Bonus');
 
