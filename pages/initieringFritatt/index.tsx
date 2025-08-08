@@ -23,7 +23,7 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { differenceInDays, set } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import useMineTilganger from '../../utils/useMineTilganger';
@@ -155,7 +155,6 @@ const InitieringFritatt: NextPage = () => {
     };
 
     const validationResult = InitieringSchema.safeParse(skjemaData);
-
     if (validationResult.success) {
       setIsLoading(true);
       handleValidFormData(validationResult.data, []);
