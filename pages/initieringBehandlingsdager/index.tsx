@@ -23,7 +23,7 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useBehandlingsdager from '../../utils/useBehandlingsdager';
 import formatIsoDate from '../../utils/formatIsoDate';
@@ -138,7 +138,6 @@ const InitieringBehandlingsdager: NextPage = () => {
 
   if (data) {
     const mottatteData = EndepunktArbeidsforholdSchema.safeParse(data);
-
     if (mottatteData.success) {
       fulltNavn = mottatteData.data.fulltNavn;
 
@@ -178,7 +177,6 @@ const InitieringBehandlingsdager: NextPage = () => {
     if (!spData) return [];
 
     const mottatteBehandlingsdager = EndepunktSykepengesoeknaderSchema.safeParse(spData);
-
     if (!mottatteBehandlingsdager.success) {
       logger.error('Feil ved validering av sykepengesøknader', mottatteBehandlingsdager.error.errors);
       return [];

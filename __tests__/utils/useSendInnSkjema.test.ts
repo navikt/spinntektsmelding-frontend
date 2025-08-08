@@ -1,26 +1,17 @@
 import { describe, it, expect, vi, Mock } from 'vitest';
-// import useSendInnSkjema from './useSendInnSkjema';
 import { renderHook, act } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod/v4';
-// import environment from '../config/environment';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 
-// import forespoerselType from '../config/forespoerselType';
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
 import logEvent from '../../utils/logEvent';
 import validerInntektsmelding from '../../utils/validerInntektsmelding';
 import { Opplysningstype } from '../../schema/ForespurtDataSchema';
-// const pushMock = vi.fn();
 
 type FullInnsending = z.infer<typeof HovedskjemaSchema>;
 
 vi.mock('next/navigation', { spy: true });
-// .mockReturnValue({
-//   useRouter: {
-//     push: pushMock
-//   }
-// });
 
 vi.mock('../state/useBoundStore', () => ({
   __esModule: true,
@@ -70,7 +61,6 @@ describe('useSendInnSkjema', () => {
   const innsendingFeiletIngenTilgang = vi.fn();
   const amplitudeComponent = 'testComponent';
   const router = { push: vi.fn() };
-  // vi.mock('next/navigation').mockReturnValue({ useRouter: { push: vi.fn() } });
   (useRouter as Mock).mockReturnValue(router);
 
   const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
