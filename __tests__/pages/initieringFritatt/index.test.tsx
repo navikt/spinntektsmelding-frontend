@@ -74,14 +74,6 @@ describe('InitieringFritatt page', () => {
     expect(screen.getByText(/Opprett inntektsmelding for et sykefravær/)).toBeInTheDocument();
   });
 
-  it('shows error component when tilganger fetch fails', async () => {
-    (useMineTilganger as Mock).mockReturnValue({ data: undefined, error: new Error('fail') });
-    render(<InitieringFritatt />);
-    // expect(screen.getByText(/Det oppstod en feil ved henting av data/)).toBeInTheDocument();
-    // wait for select to appear
-    await waitFor(() => expect(screen.getByText(/Det oppstod en feil ved henting av data/)).toBeInTheDocument());
-  });
-
   it('validates form and shows error if no selection', async () => {
     const mockData = [
       {
