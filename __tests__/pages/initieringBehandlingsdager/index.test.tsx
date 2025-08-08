@@ -8,6 +8,15 @@ import { useRouter } from 'next/navigation';
 import useBoundStore from '../../../state/useBoundStore';
 import testFnr from '../../../mockdata/testFnr';
 
+global.window = Object.create(window);
+Object.defineProperty(global.window, 'location', {
+  value: {
+    ...window.location,
+    replace: vi.fn()
+  },
+  writable: true
+});
+
 // Mock next/navigation
 vi.mock('next/navigation', { spy: true });
 
