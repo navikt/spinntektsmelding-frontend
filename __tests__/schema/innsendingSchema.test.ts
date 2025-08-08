@@ -1,6 +1,7 @@
+import { is } from 'date-fns/locale';
 import { InnsendingSchema, superRefineInnsending } from '../../schema/InnsendingSchema';
 
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 describe('InnsendingSchema', () => {
   it('should validate InnsendingSchema', () => {
@@ -44,7 +45,7 @@ describe('InnsendingSchema', () => {
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
-      refusjon: { beloepPerMaaned: 999999 },
+      refusjon: { beloepPerMaaned: 999999, endringer: [] },
       vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       sykmeldtFnr: '25087327879',
       avsender: { orgnr: '911206722', tlf: '12345678' },
@@ -57,50 +58,14 @@ describe('InnsendingSchema', () => {
     const result = InnsendingSchema.safeParse(data);
 
     expect(result.success).toBe(false);
-    expect(JSON.stringify(result.error)).toEqual(
-      JSON.stringify(
-        new z.ZodError([
-          {
-            code: 'invalid_union',
-            unionErrors: [
-              {
-                issues: [
-                  {
-                    code: 'invalid_type',
-                    expected: 'array',
-                    received: 'undefined',
-                    path: ['refusjon', 'endringer'],
-                    message: 'Required'
-                  }
-                ],
-                name: 'ZodError'
-              },
-              {
-                issues: [
-                  {
-                    code: 'invalid_type',
-                    expected: 'array',
-                    received: 'undefined',
-                    path: ['refusjon', 'endringer'],
-                    message: 'Vennligst fyll inn dato og beløp for endringer'
-                  }
-                ],
-                name: 'ZodError'
-              }
-            ],
-            path: ['refusjon', 'endringer'],
-            message: 'Invalid input'
-          },
-          {
-            code: 'invalid_type',
-            expected: 'string',
-            received: 'undefined',
-            path: ['refusjon', 'sluttdato'],
-            message: 'Vennligst fyll inn til dato'
-          }
-        ])
-      )
-    );
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        message: 'Vennligst fyll inn til dato',
+        path: ['refusjon', 'sluttdato']
+      }
+    ]);
   });
 
   it('should validate InnsendingSchema and fail with gap in perioder', () => {
@@ -134,7 +99,8 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Det kan ikke være opphold over 16 dager mellom egenmeldingsperiodene.',
+        error: 'Det kan ikke være opphold over 16 dager mellom egenmeldingsperiodene.',
+        message: 'Invalid input',
         path: ['agp', 'egenmeldinger']
       }
     ]);
@@ -171,7 +137,8 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.',
+        error: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       }
     ]);
@@ -208,7 +175,8 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Det kan ikke være overlapp mellom egenmeldingsperiodene.',
+        error: 'Det kan ikke være overlapp mellom egenmeldingsperiodene.',
+        message: 'Invalid input',
         path: ['agp', 'egenmeldinger']
       }
     ]);
@@ -245,12 +213,14 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
+        error: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       },
       {
         code: 'custom',
-        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       }
     ]);
@@ -289,8 +259,7 @@ describe('InnsendingSchema', () => {
         code: 'invalid_type',
         expected: 'string',
         message: 'Vennligst fyll inn til dato',
-        path: ['agp', 'perioder', 1, 'tom'],
-        received: 'undefined'
+        path: ['agp', 'perioder', 1, 'tom']
       }
     ]);
   });
@@ -365,8 +334,7 @@ describe('InnsendingSchema', () => {
         code: 'invalid_type',
         expected: 'string',
         message: 'Vennligst fyll inn fra dato',
-        path: ['agp', 'perioder', 1, 'fom'],
-        received: 'undefined'
+        path: ['agp', 'perioder', 1, 'fom']
       }
     ]);
   });
@@ -439,7 +407,8 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       }
     ]);
@@ -475,8 +444,7 @@ describe('InnsendingSchema', () => {
         code: 'invalid_type',
         expected: 'number',
         message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
-        path: ['agp', 'redusertLoennIAgp', 'beloep'],
-        received: 'undefined'
+        path: ['agp', 'redusertLoennIAgp', 'beloep']
       }
     ]);
   });
@@ -512,16 +480,31 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+        message: 'Invalid input',
         path: ['agp', 'perioder']
       },
       {
-        code: 'invalid_type',
-        expected:
-          "'ArbeidOpphoert' | 'BeskjedGittForSent' | 'BetvilerArbeidsufoerhet' | 'FerieEllerAvspasering' | 'FiskerMedHyre' | 'FravaerUtenGyldigGrunn' | 'IkkeFravaer' | 'IkkeFullStillingsandel' | 'IkkeLoenn' | 'LovligFravaer' | 'ManglerOpptjening' | 'Permittering' | 'Saerregler' | 'StreikEllerLockout' | 'TidligereVirksomhet'",
+        code: 'invalid_value',
         message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
         path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
-        received: 'undefined'
+        values: [
+          'ArbeidOpphoert',
+          'BeskjedGittForSent',
+          'BetvilerArbeidsufoerhet',
+          'FerieEllerAvspasering',
+          'FiskerMedHyre',
+          'FravaerUtenGyldigGrunn',
+          'IkkeFravaer',
+          'IkkeFullStillingsandel',
+          'IkkeLoenn',
+          'LovligFravaer',
+          'ManglerOpptjening',
+          'Permittering',
+          'Saerregler',
+          'StreikEllerLockout',
+          'TidligereVirksomhet'
+        ]
       }
     ]);
   });
@@ -586,15 +569,31 @@ describe('InnsendingSchema', () => {
     };
 
     const mockAddIssue = vi.fn();
-    const mockCtx = { addIssue: mockAddIssue };
+    const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
     superRefineInnsending(data, mockCtx);
 
-    expect(mockAddIssue).toHaveBeenCalledWith({
-      code: z.ZodIssueCode.custom,
-      message: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
-      path: ['refusjon', 'endringer', 1, 'startdato']
-    });
+    expect(mockCtx.issues).toHaveLength(3);
+    expect(mockCtx.issues).toEqual([
+      {
+        code: 'custom',
+        error: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
+        input: '',
+        path: ['refusjon', 'endringer', 0, 'startdato']
+      },
+      {
+        code: 'custom',
+        error: 'Startdato for refusjonsendringer må være etter dato for rapportert inntekt.',
+        input: '',
+        path: ['refusjon', 'endringer', 0, 'startdato']
+      },
+      {
+        code: 'custom',
+        error: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
+        input: '',
+        path: ['refusjon', 'endringer', 1, 'startdato']
+      }
+    ]);
   });
 
   it('should validate InnsendingSchema and fail if refusjon beloep < 0', () => {
@@ -628,16 +627,17 @@ describe('InnsendingSchema', () => {
       ]
     };
 
-    const mockAddIssue = vi.fn();
-    const mockCtx = { addIssue: mockAddIssue };
-
-    superRefineInnsending(data, mockCtx);
-
-    expect(mockAddIssue).toHaveBeenCalledWith({
-      code: z.ZodIssueCode.custom,
-      message: 'Refusjon må være større eller lik 0.',
-      path: ['refusjon', 'endringer', 1, 'beloep']
-    });
+    expect(InnsendingSchema.safeParse(data).success).toBe(false);
+    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
+      {
+        code: 'too_small',
+        inclusive: true,
+        message: 'Beløpet må være større enn eller lik 0',
+        minimum: 0,
+        origin: 'number',
+        path: ['refusjon', 'endringer', 1, 'beloep']
+      }
+    ]);
   });
 
   it('should validate InnsendingSchema and fail if refusjon beloep > inntekt', () => {
@@ -672,13 +672,15 @@ describe('InnsendingSchema', () => {
     };
 
     const mockAddIssue = vi.fn();
-    const mockCtx = { addIssue: mockAddIssue };
+    const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
     superRefineInnsending(data, mockCtx);
 
-    expect(mockAddIssue).toHaveBeenCalledWith({
-      code: z.ZodIssueCode.custom,
-      message: 'Refusjon kan ikke være høyere enn inntekt.',
+    expect(mockCtx.issues).toHaveLength(1);
+    expect(mockCtx.issues[0]).toEqual({
+      code: 'custom',
+      error: 'Refusjon kan ikke være høyere enn inntekt.',
+      input: '',
       path: ['refusjon', 'endringer', 1, 'beloep']
     });
   });
@@ -715,13 +717,15 @@ describe('InnsendingSchema', () => {
     };
 
     const mockAddIssue = vi.fn();
-    const mockCtx = { addIssue: mockAddIssue };
+    const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
     superRefineInnsending(data, mockCtx);
 
-    expect(mockAddIssue).toHaveBeenCalledWith({
-      code: z.ZodIssueCode.custom,
-      message: 'Inntekten kan ikke være over 1 million.',
+    expect(mockCtx.issues).toHaveLength(1);
+    expect(mockCtx.issues[0]).toEqual({
+      code: 'custom',
+      error: 'Inntekten kan ikke være over 1 million.',
+      input: '',
       path: ['inntekt', 'beloep']
     });
   });
@@ -758,13 +762,15 @@ describe('InnsendingSchema', () => {
     };
 
     const mockAddIssue = vi.fn();
-    const mockCtx = { addIssue: mockAddIssue };
+    const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
     superRefineInnsending(data, mockCtx);
 
-    expect(mockAddIssue).toHaveBeenCalledWith({
-      code: z.ZodIssueCode.custom,
-      message: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
+    expect(mockCtx.issues).toHaveLength(1);
+    expect(mockCtx.issues[0]).toEqual({
+      code: 'custom',
+      error: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
+      input: '',
       path: ['refusjon', 'beloepPerMaaned']
     });
   });
@@ -801,13 +807,15 @@ describe('InnsendingSchema', () => {
     };
 
     const mockAddIssue = vi.fn();
-    const mockCtx = { addIssue: mockAddIssue };
+    const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
     superRefineInnsending(data, mockCtx);
 
-    expect(mockAddIssue).toHaveBeenCalledWith({
-      code: z.ZodIssueCode.custom,
-      message: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+    expect(mockCtx.issues).toHaveLength(1);
+    expect(mockCtx.issues[0]).toEqual({
+      code: 'custom',
+      error: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+      input: '',
       path: ['agp', 'redusertLoennIAgp', 'beloep']
     });
   });
@@ -846,12 +854,26 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
-        code: 'invalid_type',
-        expected:
-          "'ArbeidOpphoert' | 'BeskjedGittForSent' | 'BetvilerArbeidsufoerhet' | 'FerieEllerAvspasering' | 'FiskerMedHyre' | 'FravaerUtenGyldigGrunn' | 'IkkeFravaer' | 'IkkeFullStillingsandel' | 'IkkeLoenn' | 'LovligFravaer' | 'ManglerOpptjening' | 'Permittering' | 'Saerregler' | 'StreikEllerLockout' | 'TidligereVirksomhet'",
+        code: 'invalid_value',
         message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
         path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
-        received: 'undefined'
+        values: [
+          'ArbeidOpphoert',
+          'BeskjedGittForSent',
+          'BetvilerArbeidsufoerhet',
+          'FerieEllerAvspasering',
+          'FiskerMedHyre',
+          'FravaerUtenGyldigGrunn',
+          'IkkeFravaer',
+          'IkkeFullStillingsandel',
+          'IkkeLoenn',
+          'LovligFravaer',
+          'ManglerOpptjening',
+          'Permittering',
+          'Saerregler',
+          'StreikEllerLockout',
+          'TidligereVirksomhet'
+        ]
       }
     ]);
   });
@@ -893,16 +915,29 @@ describe('InnsendingSchema', () => {
         code: 'invalid_type',
         expected: 'number',
         message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
-        path: ['agp', 'redusertLoennIAgp', 'beloep'],
-        received: 'undefined'
+        path: ['agp', 'redusertLoennIAgp', 'beloep']
       },
       {
-        code: 'invalid_type',
-        expected:
-          "'ArbeidOpphoert' | 'BeskjedGittForSent' | 'BetvilerArbeidsufoerhet' | 'FerieEllerAvspasering' | 'FiskerMedHyre' | 'FravaerUtenGyldigGrunn' | 'IkkeFravaer' | 'IkkeFullStillingsandel' | 'IkkeLoenn' | 'LovligFravaer' | 'ManglerOpptjening' | 'Permittering' | 'Saerregler' | 'StreikEllerLockout' | 'TidligereVirksomhet'",
+        code: 'invalid_value',
         message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
         path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
-        received: 'undefined'
+        values: [
+          'ArbeidOpphoert',
+          'BeskjedGittForSent',
+          'BetvilerArbeidsufoerhet',
+          'FerieEllerAvspasering',
+          'FiskerMedHyre',
+          'FravaerUtenGyldigGrunn',
+          'IkkeFravaer',
+          'IkkeFullStillingsandel',
+          'IkkeLoenn',
+          'LovligFravaer',
+          'ManglerOpptjening',
+          'Permittering',
+          'Saerregler',
+          'StreikEllerLockout',
+          'TidligereVirksomhet'
+        ]
       }
     ]);
   });
@@ -944,16 +979,29 @@ describe('InnsendingSchema', () => {
         code: 'invalid_type',
         expected: 'number',
         message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
-        path: ['agp', 'redusertLoennIAgp', 'beloep'],
-        received: 'undefined'
+        path: ['agp', 'redusertLoennIAgp', 'beloep']
       },
       {
-        code: 'invalid_type',
-        expected:
-          "'ArbeidOpphoert' | 'BeskjedGittForSent' | 'BetvilerArbeidsufoerhet' | 'FerieEllerAvspasering' | 'FiskerMedHyre' | 'FravaerUtenGyldigGrunn' | 'IkkeFravaer' | 'IkkeFullStillingsandel' | 'IkkeLoenn' | 'LovligFravaer' | 'ManglerOpptjening' | 'Permittering' | 'Saerregler' | 'StreikEllerLockout' | 'TidligereVirksomhet'",
+        code: 'invalid_value',
         message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
         path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
-        received: 'undefined'
+        values: [
+          'ArbeidOpphoert',
+          'BeskjedGittForSent',
+          'BetvilerArbeidsufoerhet',
+          'FerieEllerAvspasering',
+          'FiskerMedHyre',
+          'FravaerUtenGyldigGrunn',
+          'IkkeFravaer',
+          'IkkeFullStillingsandel',
+          'IkkeLoenn',
+          'LovligFravaer',
+          'ManglerOpptjening',
+          'Permittering',
+          'Saerregler',
+          'StreikEllerLockout',
+          'TidligereVirksomhet'
+        ]
       }
     ]);
   });

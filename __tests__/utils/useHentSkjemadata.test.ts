@@ -55,11 +55,11 @@ describe('useHentSkjemadata', () => {
     vi.mocked(fetchInntektskjemaForNotifikasjon).mockResolvedValue(mockSkjemadata);
 
     const useHentSkjemadataFn = useHentSkjemadata();
-    await useHentSkjemadataFn('12345678-3456-5678-2457-123456789012', true);
+    await useHentSkjemadataFn('8d50ef20-37b5-4829-ad83-56219e70b375', true);
 
     expect(fetchInntektskjemaForNotifikasjon).toHaveBeenCalledWith(
       expect.any(String),
-      '12345678-3456-5678-2457-123456789012'
+      '8d50ef20-37b5-4829-ad83-56219e70b375'
     );
     expect(mockInitState).toHaveBeenCalledWith(mockSkjemadata);
   });
@@ -74,7 +74,7 @@ describe('useHentSkjemadata', () => {
     });
 
     const useHentSkjemadataFn = useHentSkjemadata();
-    await useHentSkjemadataFn('12345678-3456-5678-2457-123456789012', true);
+    await useHentSkjemadataFn('8d50ef20-37b5-4829-ad83-56219e70b375', true);
 
     expect(mockInitState).not.toHaveBeenCalled();
     expect(mockLocationReplace).toHaveBeenCalledWith('https://some-hostname/im-dialog/oauth2/login?redirect=some-href');
@@ -85,7 +85,7 @@ describe('useHentSkjemadata', () => {
     vi.mocked(fetchInntektskjemaForNotifikasjon).mockRejectedValue(mockError);
 
     const useHentSkjemadataFn = useHentSkjemadata();
-    await useHentSkjemadataFn('12345678-3456-5678-2457-123456789012', true);
+    await useHentSkjemadataFn('8d50ef20-37b5-4829-ad83-56219e70b375', true);
 
     expect(mockSetSkjemaFeilet).toHaveBeenCalled();
     expect(mockLeggTilFeilmelding).toHaveBeenCalledWith('ukjent', expect.any(String));
@@ -97,7 +97,7 @@ describe('useHentSkjemadata', () => {
     vi.mocked(fetchInntektskjemaForNotifikasjon).mockRejectedValue(mockError);
 
     const useHentSkjemadataFn = useHentSkjemadata();
-    await useHentSkjemadataFn('12345678-3456-5678-2457-123456789012', true);
+    await useHentSkjemadataFn('8d50ef20-37b5-4829-ad83-56219e70b375', true);
 
     expect(mockSetSkjemaFeilet).toHaveBeenCalled();
     expect(mockLeggTilFeilmelding).toHaveBeenCalledWith('ukjent', expect.any(String));
@@ -109,7 +109,7 @@ describe('useHentSkjemadata', () => {
     vi.mocked(fetchInntektskjemaForNotifikasjon).mockRejectedValue(mockError);
 
     const useHentSkjemadataFn = useHentSkjemadata();
-    const data = await useHentSkjemadataFn(['12345678-3456-5678-2457-123456789012', 'hei'], true);
+    const data = await useHentSkjemadataFn(['8d50ef20-37b5-4829-ad83-56219e70b375', 'hei'], true);
 
     expect(data).toEqual({});
   });
@@ -120,9 +120,9 @@ describe('useHentSkjemadata', () => {
     vi.mocked(fetchInntektskjemaForNotifikasjon).mockResolvedValue(mockSkjemadata);
 
     const useHentSkjemadataFn = useHentSkjemadata();
-    await useHentSkjemadataFn('12345678-3456-5678-2457-123456789012', false);
+    await useHentSkjemadataFn('8d50ef20-37b5-4829-ad83-56219e70b375', false);
 
-    expect(mockRouterReplace).toHaveBeenCalledWith('/kvittering/12345678-3456-5678-2457-123456789012', undefined);
+    expect(mockRouterReplace).toHaveBeenCalledWith('/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375', undefined);
   });
 
   it('should resolve a promise to {} if forespoerselID is undefined', async () => {

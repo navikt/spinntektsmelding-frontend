@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, Mock } from 'vitest';
 import { renderHook, act, cleanup } from '@testing-library/react';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsgiverInitiertSkjema';
 import logEvent from '../../utils/logEvent';
@@ -83,7 +83,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     (useFyllAapenInnsending as Mock).mockReturnValue(
       vi.fn().mockReturnValue({
         success: false,
-        error: { issues: [{ message: 'test error', path: ['test', 'test2'] }] }
+        error: { issues: [{ error: 'test error', path: ['test', 'test2'] }] }
       })
     );
 
@@ -91,7 +91,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
     );
 
-    (validerInntektsmelding as Mock).mockReturnValueOnce({ errorTexts: [{ message: 'test error' }] });
+    (validerInntektsmelding as Mock).mockReturnValueOnce({ errorTexts: [{ error: 'test error' }] });
 
     await act(async () => {
       await result.current(true, pathSlug, true, defaultFormData);

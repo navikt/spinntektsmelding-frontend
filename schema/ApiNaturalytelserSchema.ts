@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { NaturalytelseEnumSchema } from './NaturalytelseEnumSchema';
 
 export const ApiNaturalytelserSchema = z.union([
@@ -6,12 +6,9 @@ export const ApiNaturalytelserSchema = z.union([
     z.object({
       naturalytelse: NaturalytelseEnumSchema,
       verdiBeloep: z.number().min(0),
-      sluttdato: z
-        .string({
-          required_error: 'Sluttdato mangler',
-          invalid_type_error: 'Ugyldig sluttdato'
-        })
-        .date()
+      sluttdato: z.iso.date({
+        error: (issue) => (issue.input === undefined ? 'Sluttdato mangler' : 'Ugyldig sluttdato')
+      })
     })
   ),
   z.tuple([])

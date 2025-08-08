@@ -7,7 +7,7 @@ import useBoundStore from './useBoundStore';
 import forespoerselType from '../config/forespoerselType';
 import parseIsoDate from '../utils/parseIsoDate';
 import { RefusjonEndring } from '../validators/validerAapenInnsending';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
 import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSchema';

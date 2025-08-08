@@ -8,7 +8,7 @@ import mottattKvittering from '../../mockdata/kvittering.json';
 import inntektData from '../../mockdata/inntektData.json';
 import useKvitteringInit from '../../state/useKvitteringInit';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
 import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
 import { Opplysningstype } from '../../state/useForespurtDataStore';

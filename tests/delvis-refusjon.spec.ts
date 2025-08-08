@@ -3,7 +3,7 @@ import apiData from '../mockdata/trenger-delvis-refusjon.json';
 import { FormPage } from './utils/formPage';
 
 test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', () => {
-  const uuid = '12345678-3456-5678-2457-123456789012';
+  const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
   const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
   test.beforeEach(async ({ page }) => {
@@ -125,7 +125,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     const req2 = await reqPromise;
     // assert payload
     expect(JSON.parse(req2.postData()!)).toEqual({
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: {
         beloep: 50000,
@@ -143,7 +143,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
       avsenderTlf: '12345678'
     });
     // final confirmation
-    await expect(page).toHaveURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+    await expect(page).toHaveURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
 
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/01\.07\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
@@ -212,7 +212,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     const req2 = await reqPromise;
     // assert payload
     expect(JSON.parse(req2.postData()!)).toEqual({
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: {
         beloep: 50000,
@@ -235,7 +235,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
       avsenderTlf: '12345678'
     });
     // final confirmation
-    await expect(page).toHaveURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+    await expect(page).toHaveURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
 
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/01\.07\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();

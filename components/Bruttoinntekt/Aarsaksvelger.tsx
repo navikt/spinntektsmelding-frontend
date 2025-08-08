@@ -59,7 +59,6 @@ export default function Aarsaksvelger({
       initialiserEndringsaarsaker([{}]);
     }
   }, [fields, initialiserEndringsaarsaker]);
-
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       {fields.map((aarsak, key) => (
@@ -79,7 +78,7 @@ export default function Aarsaksvelger({
               />
             )}
             <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
-              {errors?.inntekt?.endringAarsaker?.root && key === 1 && (
+              {errors?.inntekt?.endringAarsaker?.root && (key === 1 || fields.length === 1) && (
                 <p
                   className='navds-error-message navds-label navds-error-message--show-icon'
                   id='inntekt.endringAarsaker.root'

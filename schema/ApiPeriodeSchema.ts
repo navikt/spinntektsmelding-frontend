@@ -1,5 +1,5 @@
 import { isDate } from 'date-fns';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 function isValidISODateString(dateString: string): boolean {
   if (!dateString) return false;
@@ -13,18 +13,16 @@ export const ApiPeriodeSchema = z
   .object({
     fom: z
       .string({
-        required_error: 'Vennligst fyll inn fra dato',
-        invalid_type_error: 'Dette er ikke en dato'
+        error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
       })
-      .refine((val) => isValidISODateString(val), { message: 'Ugyldig dato' }),
+      .refine((val) => isValidISODateString(val), { error: 'Ugyldig dato' }),
     tom: z
       .string({
-        required_error: 'Vennligst fyll inn til dato',
-        invalid_type_error: 'Dette er ikke en dato'
+        error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn til dato' : 'Dette er ikke en dato')
       })
-      .refine((val) => isValidISODateString(val), { message: 'Ugyldig dato' })
+      .refine((val) => isValidISODateString(val), { error: 'Ugyldig dato' })
   })
   .refine((val) => !val.fom || !val.tom || val.fom <= val.tom, {
-    message: 'Fra dato må være før til dato',
+    error: 'Fra dato må være før til dato',
     path: ['fom']
   });

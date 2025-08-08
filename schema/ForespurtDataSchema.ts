@@ -1,7 +1,7 @@
-import z from 'zod';
+import z from 'zod/v4';
 import forespoerselType from '../config/forespoerselType';
 
-export const DateISODateSchema = z.string().date();
+export const DateISODateSchema = z.iso.date();
 
 export type TDateISODate = z.infer<typeof DateISODateSchema>;
 

@@ -16,12 +16,12 @@ export default function useMineTilganger(setError: UseFormSetError<any>) {
       if (err.status === 404) {
         setError('arbeidsgiverListe', {
           type: 'manual',
-          message: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+          error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
         });
       } else if (err.status !== 200) {
         setError('arbeidsgiverListe', {
           type: 'manual',
-          message: 'Kunne ikke hente arbeidsforhold'
+          error: 'Kunne ikke hente arbeidsforhold'
         });
       }
     },

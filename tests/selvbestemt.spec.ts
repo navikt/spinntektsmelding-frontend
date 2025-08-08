@@ -87,8 +87,9 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByRole('button', { name: 'Endre' }).last().click();
 
     // clear and fill new inntekt
-    const beløpInput = page.locator('[data-cy="inntekt-beloep-input"]');
-    await beløpInput.fill('7500');
+    // const beløpInput = page.locator('[data-cy="inntekt-beloep-input"]');
+    // await beløpInput.fill('7500');
+    await page.getByLabel('Månedslønn 10.09.2024').fill('7500');
     // select endringsårsak Ferie
     await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Ferie' });
     // fill ferie-perioder
@@ -141,6 +142,9 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       }
     });
+
+    // confirm receipt page
+    await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
   });
 
   test('selvbestemt med varig lønnsendring', async ({ page }) => {

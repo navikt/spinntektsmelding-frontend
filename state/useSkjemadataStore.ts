@@ -3,7 +3,7 @@ import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { YesNo } from './state';
 import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
-import z from 'zod';
+import z from 'zod/v4';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import AapenInnsendingSchema from '../schema/AapenInnsendingSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';

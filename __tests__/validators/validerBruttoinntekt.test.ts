@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import { CompleteState } from '../../state/useBoundStore';

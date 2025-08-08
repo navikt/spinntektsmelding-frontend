@@ -1,6 +1,5 @@
 import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
-
-import { z } from 'zod';
+import { expect } from 'vitest';
 
 import kvittering from '../../mockdata/kvittering-data.json';
 
@@ -18,16 +17,12 @@ describe('MottattKvitteringSchema', () => {
     const result = MottattKvitteringSchema.safeParse(data);
 
     expect(result.success).toBe(false);
-    expect(JSON.stringify(result.error)).toEqual(
-      JSON.stringify(
-        new z.ZodError([
-          {
-            code: 'custom',
-            message: 'Ugyldig personnummer',
-            path: ['kvitteringDokument', 'identitetsnummer']
-          }
-        ])
-      )
-    );
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        message: 'Ugyldig personnummer',
+        path: ['kvitteringDokument', 'identitetsnummer']
+      }
+    ]);
   });
 });

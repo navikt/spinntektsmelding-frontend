@@ -5,7 +5,7 @@ describe('findErrorInRHFErrors', () => {
     const errors = {
       nested: {
         field: {
-          message: 'Nested field error'
+          error: 'Nested field error'
         }
       }
     };
@@ -43,12 +43,12 @@ describe('findErrorInRHFErrors', () => {
             first: [
               {
                 cheese: {
-                  message: 'Nested field error'
+                  error: 'Nested field error'
                 }
               },
               {
                 last: {
-                  message: 'Last nested field error'
+                  error: 'Last nested field error'
                 }
               }
             ]
@@ -68,12 +68,12 @@ describe('findErrorInRHFErrors', () => {
             first: [
               {
                 cheese: {
-                  message: 'Nested field error'
+                  error: 'Nested field error'
                 }
               },
               {
                 last: {
-                  message: 'Last nested field error'
+                  error: 'Last nested field error'
                 }
               }
             ]

@@ -17,7 +17,7 @@ describe('useSendInnFeedback', () => {
   });
 
   it('should send feedback successfully', async () => {
-    const feedback = { message: 'This is a feedback' };
+    const feedback = { error: 'This is a feedback' };
     const fetchMock = vi.fn().mockResolvedValue({ ok: true });
     global.fetch = fetchMock;
 
@@ -34,7 +34,7 @@ describe('useSendInnFeedback', () => {
   });
 
   it('should handle failed feedback sending', async () => {
-    const feedback = { message: 'This is a feedback' };
+    const feedback = { error: 'This is a feedback' };
     const fetchMock = vi.fn().mockResolvedValue({ ok: false });
     global.fetch = fetchMock;
 

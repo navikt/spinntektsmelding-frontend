@@ -1,10 +1,16 @@
-import z from 'zod';
+import z from 'zod/v4';
 import { NaturalytelseEnumSchema } from './NaturalytelseEnumSchema';
 
 const NaturalytelserSchema = z.object({
   naturalytelse: NaturalytelseEnumSchema,
-  verdiBeloep: z.number({ required_error: 'Vennligst fyll inn beløpet.' }).min(0),
-  sluttdato: z.date({ required_error: 'Vennligst fyll inn dato.' })
+  verdiBeloep: z
+    .number({
+      error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn beløpet.' : undefined)
+    })
+    .min(0),
+  sluttdato: z.date({
+    error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn dato.' : undefined)
+  })
 });
 
 export default NaturalytelserSchema;

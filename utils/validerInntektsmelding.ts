@@ -18,7 +18,7 @@ import validerTelefon, { TelefonFeilkode } from '../validators/validerTelefon';
 import validerPeriodeFravaer, { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
 import validerPeriodeOverlapp, { PeriodeOverlappFeilkode } from '../validators/validerPeriodeOverlapp';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import finnBestemmendeFravaersdag from './finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import parseIsoDate from './parseIsoDate';

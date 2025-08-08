@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { PeriodeSchema } from './PeriodeSchema';
 
 export const EndringAarsakBonusSchema = z.object({
@@ -29,16 +29,14 @@ export const EndringAarsakNyansattSchema = z.object({
 export const EndringAarsakNyStillingSchema = z.object({
   aarsak: z.literal('NyStilling'),
   gjelderFra: z.date({
-    required_error: 'Vennligst fyll inn fra dato',
-    invalid_type_error: 'Dette er ikke en dato'
+    error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
   })
 });
 
 export const EndringAarsakNyStillingsprosentSchema = z.object({
   aarsak: z.literal('NyStillingsprosent'),
   gjelderFra: z.date({
-    required_error: 'Vennligst fyll inn fra dato',
-    invalid_type_error: 'Dette er ikke en dato'
+    error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
   })
 });
 
@@ -60,20 +58,17 @@ export const EndringAarsakSykefravaerSchema = z.object({
 export const EndringAarsakTariffendringSchema = z.object({
   aarsak: z.literal('Tariffendring'),
   gjelderFra: z.date({
-    required_error: 'Vennligst fyll inn fra dato',
-    invalid_type_error: 'Dette er ikke en dato'
+    error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
   }),
   bleKjent: z.date({
-    required_error: 'Vennligst fyll inn fra dato',
-    invalid_type_error: 'Dette er ikke en dato'
+    error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
   })
 });
 
 export const EndringAarsakVarigLoennsendringSchema = z.object({
   aarsak: z.literal('VarigLoennsendring'),
   gjelderFra: z.date({
-    required_error: 'Vennligst fyll inn fra dato',
-    invalid_type_error: 'Dette er ikke en dato'
+    error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
   })
 });
 
@@ -95,6 +90,6 @@ export const EndringAarsakSchema = z.discriminatedUnion(
     EndringAarsakSammeSomSistSchema
   ],
   {
-    errorMap: (issue, ctx) => ({ message: 'Vennligst angi årsak til endringen.' })
+    error: 'Vennligst angi årsak til endringen.'
   }
 );

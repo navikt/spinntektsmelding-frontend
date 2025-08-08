@@ -42,7 +42,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     // intercept collect
     await page.route('**/collect', (route) => route.fulfill({ status: 202, contentType: 'text/plain', body: 'OK' }));
 
-    await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+    await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
     // await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // Person data
@@ -95,7 +95,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     await page.getByRole('button', { name: 'Send' }).click();
     await pageLoad;
     // await expect(page.getByText('Kvittering - innsendt inntektsmelding')).toBeVisible();
-    await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
+    await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
 
     const accessibilityScanResultsKvittering = await new AxeBuilder({ page }).analyze();
     expect(accessibilityScanResultsKvittering.violations).toEqual([]);

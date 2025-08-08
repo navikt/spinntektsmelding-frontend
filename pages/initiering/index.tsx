@@ -1,6 +1,6 @@
 import { Alert, Button, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,7 +21,7 @@ import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,
   aarsakInnsending: z.enum(['UnntattAARegisteret', 'Annet', 'Behandlingsdager', 'Fiskere'], {
-    errorMap: () => ({ message: 'Du må velge en årsak til at du vil opprette inntektsmelding.' })
+    error: () => ({ error: 'Du må velge en årsak til at du vil opprette inntektsmelding.' })
   })
 });
 

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import NetworkError from './NetworkError';
 import { EndepunktSykepengesoeknaderSchema } from '../schema/EndepunktSykepengesoeknaderSchema';
 

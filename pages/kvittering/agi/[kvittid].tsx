@@ -46,7 +46,7 @@ import useKvitteringInit from '../../../state/useKvitteringInit';
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 import { getToken, validateToken } from '@navikt/oasis';
 import environment from '../../../config/environment';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import { EndringAarsak } from '../../../validators/validerAapenInnsending';
 import { EndringsBeloep } from '../../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';

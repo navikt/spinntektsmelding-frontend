@@ -80,7 +80,7 @@ describe('SelectNaturalytelser', () => {
         formState: {
           errors: {
             naturalytelse: {
-              message: 'This is an error'
+              error: 'This is an error'
             }
           }
         }
