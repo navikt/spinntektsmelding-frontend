@@ -23,7 +23,7 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import useMineTilganger from '../../utils/useMineTilganger';
