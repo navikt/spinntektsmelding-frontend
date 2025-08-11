@@ -55,7 +55,7 @@ type SykepengePeriode = {
 
 type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
 
-const Initiering2: NextPage = () => {
+const InitieringAnnet: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
   const initPerson = useBoundStore((state) => state.initPerson);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
@@ -617,4 +617,4 @@ const visFomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, per
 
 const visTomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, perioder, 'tom');
 
-export default Initiering2;
+export default InitieringAnnet;

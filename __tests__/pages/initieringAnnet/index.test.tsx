@@ -199,4 +199,78 @@ describe('InitieringAnnet page', () => {
 
     // });
   });
+
+  it('submits valid form and error on endre refusjon show 3 egenmeldingsdager', async () => {
+    // mock arbeidsgiver data
+    const arbData = {
+      fulltNavn: 'OLA NORDMANN',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [
+        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Test Barnehage' },
+        { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Test Barnehage2' }
+      ],
+      perioder: [
+        { id: 'a', fom: '2023-01-01', tom: '2023-01-10' },
+        { id: 'b', fom: '2023-01-11', tom: '2023-01-20' }
+      ]
+    };
+    (useArbeidsforhold as Mock).mockReturnValue({ data: arbData, error: undefined });
+
+    // mock sykepengesøknader data
+    const spData = [
+      {
+        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174000',
+        sykmeldingId: '123e4567-e89b-12d3-a456-426614174000',
+        fom: '2023-01-01',
+        tom: '2023-01-10',
+        egenmeldingsdagerFraSykmelding: [],
+        status: 'NY',
+        startSykeforlop: '2023-01-01',
+        forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
+        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000',
+        egenmeldingsdager: ['']
+      },
+      {
+        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174001',
+        sykmeldingId: '123e4567-e89b-12d3-a456-426614174001',
+        fom: '2023-01-11',
+        tom: '2023-01-20',
+        egenmeldingsdagerFraSykmelding: ['2023-01-01', '2023-01-02', '2023-01-03'],
+        status: 'NY',
+        startSykeforlop: '2023-01-11',
+        forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
+        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
+      }
+    ];
+    (useSykepengesoeknader as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+
+    render(<InitieringAnnet />);
+
+    // wait for arbeidsgiver select to appear
+    await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
+
+    // select the underenhet
+    fireEvent.change(screen.getByLabelText(/Organisasjon/), {
+      target: { value: testOrganisasjoner[0].organizationNumber }
+    });
+
+    // wait for arbeidsgiver select to appear
+    await waitFor(() => expect(screen.getByLabelText(/3 egenmeldingsdager/)).toBeInTheDocument());
+
+    // wait for sykmeldingsperiode checkbox
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: /11.01.2023 - 20.01.2023/ })).toBeInTheDocument());
+
+    // choose the periode
+    fireEvent.click(screen.getByRole('checkbox', { name: /11.01.2023 - 20.01.2023/ }));
+
+    // Skal du endre refusjon for den ansatte?
+    fireEvent.click(screen.getByRole('radio', { name: /Ja/ }));
+
+    // click "Neste" to submit
+    fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
+    await waitFor(() =>
+      expect(screen.getByText(/Du må korrigere tidligere innsendt inntektsmeldingen/)).toBeInTheDocument()
+    );
+  });
 });

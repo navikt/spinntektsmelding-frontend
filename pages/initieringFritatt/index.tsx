@@ -21,7 +21,7 @@ import InitieringSchema from '../../schema/InitieringSchema';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { differenceInDays, set } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/navigation';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
