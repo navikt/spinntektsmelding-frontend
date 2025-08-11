@@ -8,14 +8,14 @@ import { useRouter } from 'next/navigation';
 import testFnr from '../../../mockdata/testFnr';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
 
-global.window = Object.create(window);
-Object.defineProperty(global.window, 'location', {
-  value: {
-    hostname: 'localhost',
-    replace: vi.fn()
-  },
-  writable: true
-});
+// global.window = Object.create(window);
+// Object.defineProperty(global.window, 'location', {
+//   value: {
+//     hostname: 'localhost',
+//     replace: vi.fn()
+//   },
+//   writable: true
+// });
 
 // Mock next/navigation
 vi.mock('next/navigation', { spy: true });
