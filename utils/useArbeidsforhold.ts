@@ -12,7 +12,7 @@ export default function useArbeidsforhold(
     ([url, idToken]) => fetcherArbeidsforhold(identitetsnummer ? url : null, idToken),
     {
       onError: (err) => {
-        if (err.status === 401) {
+        if (err.status === 401 && typeof window !== 'undefined') {
           const ingress = window.location.hostname + environment.baseUrl;
 
           window.location.replace(`https://${ingress}/oauth2/login?redirect=${ingress}/initiering`);
