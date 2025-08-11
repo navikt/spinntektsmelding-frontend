@@ -485,7 +485,7 @@ const Initiering2: NextPage = () => {
                 </>
               )}
               {harValgtPeriodeMedForlengelse && (
-                <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte? ' name='endreRefusjon' />
+                <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
               )}
               {endreRefusjon === 'Ja' && (
                 <>
