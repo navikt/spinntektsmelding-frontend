@@ -55,7 +55,7 @@ jobs:
       id-token: write
       security-events: 'write'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build and push image and SBOM to OCI registry
         uses: nais/docker-build-push@v0
         id: docker-build-push
