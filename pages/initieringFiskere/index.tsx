@@ -28,6 +28,7 @@ import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
+import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
 
 type OrgNode = {
   orgnr: string;
@@ -169,7 +170,7 @@ const InitieringFritatt: NextPage = () => {
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
-    initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
+    initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
     setSelvbestemtType('Fisker');
     router.push('/Fisker');
@@ -180,34 +181,6 @@ const InitieringFritatt: NextPage = () => {
       fom: periode.fom,
       tom: periode.tom
     }));
-  };
-
-  const getEgenmeldingsperioder = (sykmeldingsperiode: any) => {
-    return sykmeldingsperiode
-      .flatMap((periode: any) => {
-        const sorterteEgenmeldingsdager = periode.egenmeldingsdagerFraSykmelding.toSorted();
-        const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
-          (accumulator: any, currentValue: any) => {
-            const tom = new Date(currentValue);
-            const currentTom = new Date(accumulator[accumulator.length - 1].tom);
-
-            if (differenceInDays(tom, currentTom) <= 1) {
-              accumulator[accumulator.length - 1].tom = currentValue;
-            } else {
-              accumulator.push({ fom: currentValue, tom: currentValue });
-            }
-            return accumulator;
-          },
-          [
-            {
-              fom: sorterteEgenmeldingsdager[0],
-              tom: sorterteEgenmeldingsdager[0]
-            }
-          ]
-        );
-        return egenmeldingsperiode;
-      })
-      .filter((element: any) => !!element.fom && !!element.tom);
   };
 
   return (

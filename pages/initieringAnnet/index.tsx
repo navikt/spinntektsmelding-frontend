@@ -43,6 +43,7 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
+import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
 
 type SykepengePeriode = {
   id: string;
@@ -365,7 +366,7 @@ const InitieringAnnet: NextPage = () => {
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
-    initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
+    initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
     setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
     setSelvbestemtType('MedArbeidsforhold');
@@ -377,37 +378,6 @@ const InitieringAnnet: NextPage = () => {
       fom: periode.fom as TDateISODate,
       tom: periode.tom as TDateISODate
     }));
-  };
-
-  const getEgenmeldingsperioder = (sykmeldingsperiode: any) => {
-    return sykmeldingsperiode
-      .flatMap((periode: any) => {
-        const sorterteEgenmeldingsdager =
-          Array.isArray(periode.egenmeldingsdagerFraSykmelding) && periode.egenmeldingsdagerFraSykmelding.length > 0
-            ? [...periode.egenmeldingsdagerFraSykmelding].sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
-            : [];
-        const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
-          (accumulator: any, currentValue: any) => {
-            const tom = new Date(currentValue);
-            const currentTom = new Date(accumulator[accumulator.length - 1].tom);
-
-            if (differenceInDays(tom, currentTom) <= 1) {
-              accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
-            } else {
-              accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
-            }
-            return accumulator;
-          },
-          [
-            {
-              fom: sorterteEgenmeldingsdager[0] as TDateISODate,
-              tom: sorterteEgenmeldingsdager[0] as TDateISODate
-            }
-          ]
-        );
-        return egenmeldingsperiode;
-      })
-      .filter((element: any) => !!element.fom && !!element.tom);
   };
 
   useEffect(() => {
