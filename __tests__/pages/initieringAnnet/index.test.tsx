@@ -9,14 +9,14 @@ import { useRouter } from 'next/router';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
 import testFnr from '../../../mockdata/testFnr';
 
-global.window = Object.create(window);
-Object.defineProperty(global.window, 'location', {
-  value: {
-    ...window.location,
-    replace: vi.fn()
-  },
-  writable: true
-});
+// global.window = Object.create(window);
+// Object.defineProperty(global.window, 'location', {
+//   value: {
+//     ...window.location,
+//     replace: vi.fn()
+//   },
+//   writable: true
+// });
 
 // Mock next/router
 vi.mock('next/router', () => ({ useRouter: vi.fn() }));
