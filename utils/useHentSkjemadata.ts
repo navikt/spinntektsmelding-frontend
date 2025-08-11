@@ -33,12 +33,15 @@ export default function useHentSkjemadata() {
         })
         .catch((error: any) => {
           if (error.status === 401) {
-            const ingress = window.location.hostname + environment.baseUrl;
-            const currentPath = window.location.href;
             logger.info('Mangler tilgang til å hente skjemadata i useHentSkjemadata', error.status);
             logger.info(error.status, error.message, error.info);
 
-            window.location.replace(`https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`);
+            if (window !== undefined) {
+              const ingress = window.location.hostname + environment.baseUrl;
+              const currentPath = window.location.href;
+
+              window.location.replace(`https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`);
+            }
             return Promise.resolve({});
           }
 
