@@ -11,7 +11,7 @@ import testFnr from '../../../mockdata/testFnr';
 global.window = Object.create(window);
 Object.defineProperty(global.window, 'location', {
   value: {
-    ...window.location,
+    hostname: 'localhost',
     replace: vi.fn()
   },
   writable: true
