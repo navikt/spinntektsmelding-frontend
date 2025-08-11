@@ -36,24 +36,12 @@ describe('InitieringFritatt page', () => {
   const router = { push: push };
   const initPerson = vi.fn();
   const setSelvbestemtType = vi.fn();
-  // Prepare a fake store state and spies
-  // const fakeStore = {
-  //   sykmeldt: { fnr: testFnr.GyldigeFraDolly.TestPerson1 },
-  //   initPerson: initPerson,
-  //   setSkjemaStatus: vi.fn(),
-  //   initFravaersperiode: vi.fn(),
-  //   initEgenmeldingsperiode: vi.fn(),
-  //   tilbakestillArbeidsgiverperiode: vi.fn(),
-  //   setSelvbestemtType: vi.fn()
-  // };
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn({
-        // __esModule: true,
-        // default: vi.fn(),
         sykmeldt: { fnr: testFnr.GyldigeFraDolly.TestPerson1 },
         initPerson: initPerson,
         setSkjemaStatus: vi.fn(),
