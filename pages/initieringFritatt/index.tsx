@@ -69,19 +69,22 @@ const InitieringFritatt: NextPage = () => {
     .object({
       organisasjonsnummer: z
         .string({
-          error: (issue) =>
-            issue.input === undefined
+          error: (issue) => {
+            return issue.input === undefined
               ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
-              : undefined
+              : undefined;
+          }
         })
         .transform((val) => val.replace(/\s/g, ''))
         .pipe(
           z
             .string({
-              error: (issue) => (issue.input === undefined ? 'Organisasjon er ikke valgt' : undefined)
+              error: (issue) => (issue.input === undefined ? 'Organisasjon er ikke valgt.' : undefined)
             })
 
-            .refine((val) => isMod11Number(val), { error: 'Organisasjon er ikke valgt' })
+            .refine((val) => isMod11Number(val), {
+              error: 'Organisasjon er ikke valgt.'
+            })
         ),
       navn: z.string().nullable().optional(),
       personnummer: PersonnummerSchema.optional(),

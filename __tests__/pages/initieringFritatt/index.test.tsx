@@ -90,7 +90,37 @@ describe('InitieringFritatt page', () => {
     // wait for select to mount
     await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
-    expect(await screen.findAllByText('Organisasjon er ikke valgt')).toHaveLength(2);
+    expect(await screen.findAllByText('Organisasjon er ikke valgt.')).toHaveLength(2);
+  });
+
+  it('validates form and shows error if no underenhet', async () => {
+    const mockData = [
+      {
+        orgnr: '1',
+        navn: 'Top Org',
+        underenheter: []
+      }
+    ];
+    (useMineTilganger as Mock).mockReturnValue({ data: mockData, error: undefined });
+    render(<InitieringFritatt />);
+    // wait for button to mount
+    await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
+    expect(await screen.findAllByText('Organisasjon er ikke valgt.')).toHaveLength(2);
+  });
+
+  it('validates form and shows error if no enhet', async () => {
+    const mockData = [];
+    (useMineTilganger as Mock).mockReturnValue({ data: mockData, error: undefined });
+    render(<InitieringFritatt />);
+    // wait for select to mount
+    // await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
+    // fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+    await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
+    expect(await screen.findAllByText('Organisasjon er ikke valgt.')).toHaveLength(2);
   });
 
   it('submits valid form and navigates correctly', async () => {
