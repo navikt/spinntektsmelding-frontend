@@ -40,7 +40,7 @@ COPY ${BUILDMODE}.env .env
 RUN yarn build && rm -f .npmrc
 
 # Production image, copy all the files and run next
-FROM gcr.io/distroless/nodejs24-debian12@sha256:ca801d691284502b3b433d9fbd13f85b5c222f62b3716e2fa8838f72a8f5c17c AS runner
+FROM gcr.io/distroless/nodejs24-debian12@sha256:767b6dcea4bbc0ad1f1893c7444e44e7d8a3bc64d53fcd0cddc35b4264c4834a AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
