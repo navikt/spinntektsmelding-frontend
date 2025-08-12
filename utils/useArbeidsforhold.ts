@@ -12,7 +12,7 @@ export default function useArbeidsforhold(
     ([url, idToken]) => fetcherArbeidsforhold(identitetsnummer ? url : null, idToken),
     {
       onError: (err) => {
-        if (err.status === 401) {
+        if (err.status === 401 && typeof window !== 'undefined') {
           const ingress = window.location.hostname + environment.baseUrl;
 
           window.location.replace(`https://${ingress}/oauth2/login?redirect=${ingress}/initiering`);
@@ -21,12 +21,12 @@ export default function useArbeidsforhold(
         if (err.status === 404) {
           setError('sykepengePeriodeId', {
             type: 'manual',
-            message: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+            error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
           });
         } else if (err.status !== 200) {
           setError('sykepengePeriodeId', {
             type: 'manual',
-            message: 'Kunne ikke hente arbeidsforhold'
+            error: 'Kunne ikke hente arbeidsforhold'
           });
         }
       },

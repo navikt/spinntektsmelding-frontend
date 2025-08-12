@@ -4,7 +4,7 @@ import inntektData from '../mockdata/inntektData.json';
 import kvitteringData from '../mockdata/kvittering-delvis.json';
 import { FormPage } from './utils/formPage';
 
-const uuid = '12345678-3456-5678-2457-123456789012';
+const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
@@ -38,7 +38,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     await test.step('Gå til kvitteringsside og trykk Endre', async () => {
       await page.waitForResponse(`**/api/hentKvittering/${uuid}`);
-      await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
+      await expect(page).toHaveURL(/\/im-dialog\/kvittering\/8d50ef20-37b5-4829-ad83-56219e70b375/);
       await page.getByRole('button', { name: /Endre/ }).first().click();
       await expect(page).toHaveURL(baseUrl);
     });

@@ -80,7 +80,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         validerteData.success === false
           ? validerteData.error.issues.map((issue) => {
               return {
-                text: issue.message,
+                text: issue.error ?? issue.message,
                 felt: issue.path.join('.')
               };
             })

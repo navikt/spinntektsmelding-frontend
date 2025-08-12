@@ -62,8 +62,14 @@ describe.concurrent('ValideringDelvisInnsendingSchema', () => {
     const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
-    expect(result.error.issues[0].message).toBe('Refusjon kan ikke være høyere enn brutto lønn.');
-    expect(result.error.issues[0].path).toEqual(['refusjon', 'refusjonPrMnd']);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        error: 'Refusjon kan ikke være høyere enn brutto lønn.',
+        message: 'Invalid input',
+        path: ['refusjon', 'refusjonPrMnd']
+      }
+    ]);
   });
 
   it('should return an error if ingenEndringBruttoloenn is Ja and inntekt.beloep is not set', () => {
@@ -94,8 +100,14 @@ describe.concurrent('ValideringDelvisInnsendingSchema', () => {
     const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
-    expect(result.error.issues[0].message).toBe('Vennligst angi månedsinntekt.');
-    expect(result.error.issues[0].path).toEqual(['inntekt', 'beloep']);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        error: 'Vennligst angi månedsinntekt.',
+        message: 'Invalid input',
+        path: ['inntekt', 'beloep']
+      }
+    ]);
   });
 
   it('should return an error if kreverRefusjon is not Ja or Nei', () => {
@@ -126,10 +138,15 @@ describe.concurrent('ValideringDelvisInnsendingSchema', () => {
     const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
-    expect(result.error.issues[0].message).toBe(
-      'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.'
-    );
-    expect(result.error.issues[0].path).toEqual(['refusjon', 'kreverRefusjon']);
+
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_value',
+        values: ['Ja', 'Nei'],
+        message: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
+        path: ['refusjon', 'kreverRefusjon']
+      }
+    ]);
   });
 
   it('should return an error if kreverRefusjon is Ja and refusjonPrMnd is undefined', () => {
@@ -160,8 +177,14 @@ describe.concurrent('ValideringDelvisInnsendingSchema', () => {
     const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe('Refusjonsbeløp mangler selv om det kreves refusjon.');
-    expect(result.error?.issues[0].path).toEqual(['refusjon', 'refusjonPrMnd']);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        error: 'Refusjonsbeløp mangler selv om det kreves refusjon.',
+        message: 'Invalid input',
+        path: ['refusjon', 'refusjonPrMnd']
+      }
+    ]);
   });
 
   it('should return an error if kreverRefusjon is Ja and refusjonEndringer has entries with identical dates.', () => {
@@ -196,8 +219,14 @@ describe.concurrent('ValideringDelvisInnsendingSchema', () => {
     const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe('Det kan ikke være flere endringer av refusjon samme dag.');
-    expect(result.error?.issues[0].path).toEqual(['refusjon', 'harEndringer']);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        error: 'Det kan ikke være flere endringer av refusjon samme dag.',
+        message: 'Invalid input',
+        path: ['refusjon', 'harEndringer']
+      }
+    ]);
   });
 
   it('should not return an error if kreverRefusjon is Ja and refusjonEndringer has entries without identical dates.', () => {
@@ -266,8 +295,14 @@ describe.concurrent('ValideringDelvisInnsendingSchema', () => {
     const result = ValideringDelvisInnsendingSchema.safeParse(invalidInput);
 
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe('Vennligst angi sluttdato for refusjonskravet.');
-    expect(result.error?.issues[0].path).toEqual(['refusjon', 'refusjonOpphoerer']);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        error: 'Vennligst angi sluttdato for refusjonskravet.',
+        message: 'Invalid input',
+        path: ['refusjon', 'refusjonOpphoerer']
+      }
+    ]);
   });
 
   it('should not return an error if erDetEndringRefusjon is Nei and refusjonOpphoerer is undefined', () => {

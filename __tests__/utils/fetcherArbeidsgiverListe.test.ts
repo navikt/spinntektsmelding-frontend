@@ -35,7 +35,7 @@ describe('fetcherArbeidsgiverListe', () => {
   });
 
   it('throws NetworkError with server error message on non-OK response', async () => {
-    const errorBody = { message: 'Server failure' };
+    const errorBody = { error: 'Server failure' };
     const mockJson = vi.fn().mockResolvedValue(errorBody);
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,

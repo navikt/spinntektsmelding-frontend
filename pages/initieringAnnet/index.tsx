@@ -1,6 +1,6 @@
 import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { SafeParseReturnType, z } from 'zod';
+import { SafeParseReturnType, z } from 'zod/v4';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -43,6 +43,7 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
+import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
 
 type SykepengePeriode = {
   id: string;
@@ -55,7 +56,7 @@ type SykepengePeriode = {
 
 type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
 
-const Initiering2: NextPage = () => {
+const InitieringAnnet: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
   const initPerson = useBoundStore((state) => state.initPerson);
   const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
@@ -78,36 +79,41 @@ const Initiering2: NextPage = () => {
     .object({
       organisasjonsnummer: z
         .string({
-          required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+          error: (issue) =>
+            issue.input === undefined
+              ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+              : undefined
         })
         .transform((val) => val.replace(/\s/g, ''))
         .pipe(
           z
             .string({
-              required_error: 'Organisasjon er ikke valgt'
+              error: (issue) => (issue.input === undefined ? 'Organisasjon er ikke valgt' : undefined)
             })
 
-            .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
+            .refine((val) => isMod11Number(val), { error: 'Organisasjon er ikke valgt' })
         ),
       navn: z.string().nullable().optional(),
       personnummer: PersonnummerSchema.optional(),
-      sykepengePeriodeId: z.array(z.string().uuid()).optional(),
+      sykepengePeriodeId: z.array(z.uuid()).optional(),
       endreRefusjon: z.string().optional()
     })
     .superRefine((value, ctx) => {
       if (value.endreRefusjon === 'Ja') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
-          path: ['endreRefusjon']
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
+          path: ['endreRefusjon'],
+          input: ''
         });
       }
 
       if (value.endreRefusjon === 'Nei') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
-          path: ['endreRefusjon']
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
+          path: ['endreRefusjon'],
+          input: ''
         });
       }
     });
@@ -275,7 +281,7 @@ const Initiering2: NextPage = () => {
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     if (harValgtPeriodeMedForlengelse && !endreRefusjon) {
       setError('endreRefusjon', {
-        message: 'Angi om det skal endres refusjon for den ansatte.',
+        error: 'Angi om det skal endres refusjon for den ansatte.',
         type: 'manual'
       });
       return;
@@ -307,7 +313,7 @@ const Initiering2: NextPage = () => {
 
     if (sykmeldingsperiode.length === 0) {
       setError('sykepengePeriodeId', {
-        message: 'Ingen sykmeldingsperioder valgt',
+        error: 'Ingen sykmeldingsperioder valgt',
         type: 'manual'
       });
       return;
@@ -360,7 +366,7 @@ const Initiering2: NextPage = () => {
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
-    initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
+    initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
     setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
     setSelvbestemtType('MedArbeidsforhold');
@@ -372,37 +378,6 @@ const Initiering2: NextPage = () => {
       fom: periode.fom as TDateISODate,
       tom: periode.tom as TDateISODate
     }));
-  };
-
-  const getEgenmeldingsperioder = (sykmeldingsperiode: any) => {
-    return sykmeldingsperiode
-      .flatMap((periode: any) => {
-        const sorterteEgenmeldingsdager =
-          Array.isArray(periode.egenmeldingsdagerFraSykmelding) && periode.egenmeldingsdagerFraSykmelding.length > 0
-            ? [...periode.egenmeldingsdagerFraSykmelding].sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
-            : [];
-        const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
-          (accumulator: any, currentValue: any) => {
-            const tom = new Date(currentValue);
-            const currentTom = new Date(accumulator[accumulator.length - 1].tom);
-
-            if (differenceInDays(tom, currentTom) <= 1) {
-              accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
-            } else {
-              accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
-            }
-            return accumulator;
-          },
-          [
-            {
-              fom: sorterteEgenmeldingsdager[0] as TDateISODate,
-              tom: sorterteEgenmeldingsdager[0] as TDateISODate
-            }
-          ]
-        );
-        return egenmeldingsperiode;
-      })
-      .filter((element: any) => !!element.fom && !!element.tom);
   };
 
   useEffect(() => {
@@ -480,7 +455,7 @@ const Initiering2: NextPage = () => {
                 </>
               )}
               {harValgtPeriodeMedForlengelse && (
-                <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte? ' name='endreRefusjon' />
+                <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
               )}
               {endreRefusjon === 'Ja' && (
                 <>
@@ -612,4 +587,4 @@ const visFomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, per
 
 const visTomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, perioder, 'tom');
 
-export default Initiering2;
+export default InitieringAnnet;

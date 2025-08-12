@@ -1,25 +1,17 @@
 import { describe, it, expect, vi, Mock } from 'vitest';
-// import useSendInnSkjema from './useSendInnSkjema';
 import { renderHook, act } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-// import environment from '../config/environment';
+import { z } from 'zod/v4';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
-import { Opplysningstype } from '../../state/useForespurtDataStore';
-// import forespoerselType from '../config/forespoerselType';
+
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
 import logEvent from '../../utils/logEvent';
 import validerInntektsmelding from '../../utils/validerInntektsmelding';
-// const pushMock = vi.fn();
+import { Opplysningstype } from '../../schema/ForespurtDataSchema';
 
 type FullInnsending = z.infer<typeof HovedskjemaSchema>;
 
 vi.mock('next/navigation', { spy: true });
-// .mockReturnValue({
-//   useRouter: {
-//     push: pushMock
-//   }
-// });
 
 vi.mock('../state/useBoundStore', () => ({
   __esModule: true,
@@ -69,7 +61,6 @@ describe('useSendInnSkjema', () => {
   const innsendingFeiletIngenTilgang = vi.fn();
   const amplitudeComponent = 'testComponent';
   const router = { push: vi.fn() };
-  // vi.mock('next/navigation').mockReturnValue({ useRouter: { push: vi.fn() } });
   (useRouter as Mock).mockReturnValue(router);
 
   const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
@@ -100,7 +91,7 @@ describe('useSendInnSkjema', () => {
     const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     (validerInntektsmelding as Mock).mockReturnValueOnce({
-      errorTexts: [{ message: 'test error' }]
+      errorTexts: [{ error: 'test error' }]
     });
 
     await act(async () => {
@@ -116,10 +107,10 @@ describe('useSendInnSkjema', () => {
   it.skip('should handle successful submission', async () => {
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
-    const pathSlug = '12345678-3456-5678-2457-123456789012';
+    const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
     const formData: FullInnsending = {
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
       refusjon: null,
@@ -142,10 +133,10 @@ describe('useSendInnSkjema', () => {
   it.skip('should handle server error 500', async () => {
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
-    const pathSlug = '12345678-3456-5678-2457-123456789012';
+    const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
     const formData: FullInnsending = {
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
       refusjon: null,
@@ -172,10 +163,10 @@ describe('useSendInnSkjema', () => {
   it.skip('should handle unauthorized error 401', async () => {
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
-    const pathSlug = '12345678-3456-5678-2457-123456789012';
+    const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
     const formData: FullInnsending = {
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
       refusjon: null,

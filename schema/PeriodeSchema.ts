@@ -1,14 +1,12 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 export const PeriodeSchema = z
   .object({
     fom: z.date({
-      required_error: 'Vennligst fyll inn fra dato',
-      invalid_type_error: 'Dette er ikke en dato'
+      error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn fra dato' : 'Dette er ikke en dato')
     }),
     tom: z.date({
-      required_error: 'Vennligst fyll inn til dato',
-      invalid_type_error: 'Dette er ikke en dato'
+      error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn til dato' : 'Dette er ikke en dato')
     })
   })
-  .refine((val) => val.fom <= val.tom, { message: 'Fra dato må være før til dato', path: ['fom'] });
+  .refine((val) => val.fom <= val.tom, { error: 'Fra dato må være før til dato', path: ['fom'] });

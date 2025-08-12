@@ -25,17 +25,17 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
       r.fulfill({ status: 201, body: JSON.stringify({ name: 'Nothing' }), contentType: 'application/json' })
     );
     // navigate to receipt page
-    await page.goto('http://localhost:3000/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+    await page.goto('http://localhost:3000/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
     await page.waitForResponse('**/hentKvittering/**');
   });
 
   test('Changes income and submits', async ({ page }) => {
     // verify on receipt URL
-    await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
+    await expect(page).toHaveURL(/\/im-dialog\/kvittering\/8d50ef20-37b5-4829-ad83-56219e70b375/);
 
     // click first "Endre"
     await page.getByRole('button', { name: 'Endre' }).first().click();
-    await page.waitForURL('**/im-dialog/12345678-3456-5678-2457-123456789012');
+    await page.waitForURL('**/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
 
     // adjust income
     const input = page.getByLabel('Månedslønn 02.01.2023');
@@ -65,7 +65,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
 
     const body = JSON.parse(req.request().postData()!);
     expect(body).toEqual({
-      forespoerselId: '12345678-3456-5678-2457-123456789012',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: {
         beloep: 50000,

@@ -5,7 +5,7 @@ import trengerDelvis from '../mockdata/trenger-delvis-enkel-variant.json';
 test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request }) => {
   const formPage = new FormPage(page);
   // Intercept API calls
-  await page.route('*/**/api/hentKvittering/12345678-3456-5678-2457-123456789012', (route) => {
+  await page.route('*/**/api/hentKvittering/8d50ef20-37b5-4829-ad83-56219e70b375', (route) => {
     route.fulfill({
       status: 404,
       body: JSON.stringify({
@@ -31,7 +31,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   });
 
   // Visit the page
-  await page.goto('http://localhost:3000/im-dialog/12345678-3456-5678-2457-123456789012');
+  await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
 
   // Wait for the API to be loaded
   await page.waitForResponse('*/**/api/hent-forespoersel/*');
@@ -80,7 +80,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   // Verify request body
   const requestBody = JSON.parse(response.postData()!);
   expect(requestBody).toEqual({
-    forespoerselId: '12345678-3456-5678-2457-123456789012',
+    forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
     agp: {
       egenmeldinger: [],
       perioder: [
@@ -111,7 +111,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   });
 
   // Check final page
-  await page.waitForURL('/im-dialog/kvittering/12345678-3456-5678-2457-123456789012');
+  await page.waitForURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
 
   await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/05.12.2024/);
   await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();

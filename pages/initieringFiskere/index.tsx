@@ -1,6 +1,6 @@
 import { Button } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -23,11 +23,12 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
+import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
 
 type OrgNode = {
   orgnr: string;
@@ -69,36 +70,41 @@ const InitieringFritatt: NextPage = () => {
     .object({
       organisasjonsnummer: z
         .string({
-          required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+          error: (issue) =>
+            issue.input === undefined
+              ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+              : undefined
         })
         .transform((val) => val.replace(/\s/g, ''))
         .pipe(
           z
             .string({
-              required_error: 'Organisasjon er ikke valgt'
+              error: (issue) => (issue.input === undefined ? 'Organisasjon er ikke valgt' : undefined)
             })
 
-            .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
+            .refine((val) => isMod11Number(val), { error: 'Organisasjon er ikke valgt' })
         ),
       navn: z.string().nullable().optional(),
       personnummer: PersonnummerSchema.optional(),
-      sykepengePeriodeId: z.array(z.string().uuid()).optional(),
+      sykepengePeriodeId: z.array(z.uuid()).optional(),
       endreRefusjon: z.string().optional()
     })
     .superRefine((value, ctx) => {
       if (value.endreRefusjon === 'Ja') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
-          path: ['endreRefusjon']
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
+          path: ['endreRefusjon'],
+          input: ''
         });
       }
 
       if (value.endreRefusjon === 'Nei') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
-          path: ['endreRefusjon']
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
+          path: ['endreRefusjon'],
+          input: ''
         });
       }
     });
@@ -164,7 +170,7 @@ const InitieringFritatt: NextPage = () => {
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
-    initEgenmeldingsperiode(getEgenmeldingsperioder(sykmeldingsperiode));
+    initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
     setSelvbestemtType('Fisker');
     router.push('/Fisker');
@@ -175,34 +181,6 @@ const InitieringFritatt: NextPage = () => {
       fom: periode.fom,
       tom: periode.tom
     }));
-  };
-
-  const getEgenmeldingsperioder = (sykmeldingsperiode: any) => {
-    return sykmeldingsperiode
-      .flatMap((periode: any) => {
-        const sorterteEgenmeldingsdager = periode.egenmeldingsdagerFraSykmelding.toSorted();
-        const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
-          (accumulator: any, currentValue: any) => {
-            const tom = new Date(currentValue);
-            const currentTom = new Date(accumulator[accumulator.length - 1].tom);
-
-            if (differenceInDays(tom, currentTom) <= 1) {
-              accumulator[accumulator.length - 1].tom = currentValue;
-            } else {
-              accumulator.push({ fom: currentValue, tom: currentValue });
-            }
-            return accumulator;
-          },
-          [
-            {
-              fom: sorterteEgenmeldingsdager[0],
-              tom: sorterteEgenmeldingsdager[0]
-            }
-          ]
-        );
-        return egenmeldingsperiode;
-      })
-      .filter((element: any) => !!element.fom && !!element.tom);
   };
 
   return (

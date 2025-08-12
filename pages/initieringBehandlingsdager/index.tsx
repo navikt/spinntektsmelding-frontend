@@ -1,6 +1,6 @@
 import { Button, Alert, Link, RadioGroup, Radio } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -23,7 +23,7 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useBehandlingsdager from '../../utils/useBehandlingsdager';
 import formatIsoDate from '../../utils/formatIsoDate';
@@ -72,36 +72,41 @@ const InitieringBehandlingsdager: NextPage = () => {
     .object({
       organisasjonsnummer: z
         .string({
-          required_error: 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+          error: (issue) =>
+            issue.input === undefined
+              ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
+              : undefined
         })
         .transform((val) => val.replace(/\s/g, ''))
         .pipe(
           z
             .string({
-              required_error: 'Organisasjon er ikke valgt'
+              error: (issue) => (issue.input === undefined ? 'Organisasjon er ikke valgt' : undefined)
             })
 
-            .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
+            .refine((val) => isMod11Number(val), { error: 'Organisasjon er ikke valgt' })
         ),
       navn: z.string().nullable().optional(),
       personnummer: PersonnummerSchema.optional(),
-      sykmeldingId: z.string().uuid(),
+      sykmeldingId: z.uuid('Du må velge en periode for behandlingsdager'),
       endreRefusjon: z.string().optional()
     })
     .superRefine((value, ctx) => {
       if (value.endreRefusjon === 'Ja') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
-          path: ['endreRefusjon']
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
+          path: ['endreRefusjon'],
+          input: ''
         });
       }
 
       if (value.endreRefusjon === 'Nei') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
-          path: ['endreRefusjon']
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
+          path: ['endreRefusjon'],
+          input: ''
         });
       }
     });
@@ -133,7 +138,6 @@ const InitieringBehandlingsdager: NextPage = () => {
 
   if (data) {
     const mottatteData = EndepunktArbeidsforholdSchema.safeParse(data);
-
     if (mottatteData.success) {
       fulltNavn = mottatteData.data.fulltNavn;
 
@@ -173,7 +177,6 @@ const InitieringBehandlingsdager: NextPage = () => {
     if (!spData) return [];
 
     const mottatteBehandlingsdager = EndepunktSykepengesoeknaderSchema.safeParse(spData);
-
     if (!mottatteBehandlingsdager.success) {
       logger.error('Feil ved validering av sykepengesøknader', mottatteBehandlingsdager.error.errors);
       return [];
@@ -262,7 +265,7 @@ const InitieringBehandlingsdager: NextPage = () => {
     const sykmeldingsperiode = getBehandlingsdager(formData, mottatteSykepengesoeknader);
     if (!sykmeldingsperiode) {
       setError('sykmeldingId', {
-        message: 'Ingen periode for behandlingsdager valgt',
+        error: 'Ingen periode for behandlingsdager valgt',
         type: 'manual'
       });
       return;
@@ -276,10 +279,7 @@ const InitieringBehandlingsdager: NextPage = () => {
 
   const getBehandlingsdager = (
     formData: Skjema,
-    mottatteSykepengesoeknader: z.SafeParseReturnType<
-      typeof EndepunktSykepengesoeknaderSchema,
-      EndepunktSykepengesoeknad[]
-    >
+    mottatteSykepengesoeknader: z.ZodSafeParseResult<typeof EndepunktSykepengesoeknaderSchema>
   ): EndepunktSykepengesoeknad | boolean => {
     const sykmeldingsperiode =
       mottatteSykepengesoeknader?.success &&

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import toArbeidsforhold from '../mockdata/trenger-to-arbeidsforhold.json';
 
-const uuid = '12345678-3456-5678-2457-123456789012';
+const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test.describe('Utfylling og innsending av skjema – to arbeidsforhold', () => {

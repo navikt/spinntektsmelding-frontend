@@ -3,7 +3,7 @@ import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoinntektTekster';
 import { useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
-import z from 'zod';
+import z from 'zod/v4';
 import { EndringAarsakSchema } from '../../schema/EndringAarsakSchema';
 
 interface SelectEndringBruttoinntektProps extends Partial<SelectProps> {

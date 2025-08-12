@@ -7,7 +7,7 @@ import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
@@ -76,7 +76,7 @@ export default function useSendInnSkjema(
     );
     const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
-    console.log('validerteData', validerteData);
+
     if (validerteData.success === false) {
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',
@@ -87,9 +87,9 @@ export default function useSendInnSkjema(
       logger.error(validerteData.error);
 
       fyllFeilmeldinger(
-        validerteData.error.errors.map((error) => ({
+        validerteData.error!.issues.map((error) => ({
           felt: error.path.join('.'),
-          text: error.message
+          text: error.error ?? error.message
         }))
       );
 

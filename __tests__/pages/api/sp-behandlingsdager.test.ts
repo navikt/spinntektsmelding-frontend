@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import testdata from '../../../mockdata/sp-soeknad.json';
+import testdata from '../../../mockdata/behandlingsdager.json';
 import handler from '../../../pages/api/sp-behandlingsdager';
 import isMod11Number from '../../../utils/isMod10Number';
 import safelyParseJSON from '../../../utils/safelyParseJson';

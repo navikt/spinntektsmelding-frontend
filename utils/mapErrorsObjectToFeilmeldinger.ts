@@ -7,17 +7,17 @@ export default function mapErrorsObjectToFeilmeldinger(errors) {
         if (typeof errors[key] === 'string') {
           return {
             key: subKey ? `${subKey}.${key}` : key,
-            message: errors[key]
+            error: errors[key]
           };
         }
 
-        if (!errors[key]?.message) {
+        if (!errors[key]?.error) {
           return mapErrorsObject(errors[key], subKey ? `${subKey}.${key}` : key);
         }
 
         return {
           key: subKey ? `${subKey}.${key}` : key,
-          message: errors[key]?.message
+          error: errors[key]?.error
         };
       });
     }
@@ -30,7 +30,7 @@ export default function mapErrorsObjectToFeilmeldinger(errors) {
       if (error) {
         return {
           felt: error.key,
-          text: error.message
+          text: error.error
         };
       }
     });

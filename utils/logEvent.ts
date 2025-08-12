@@ -22,7 +22,7 @@ type validEventNames =
   | 'filtervalg'; //Bruk kun navn fra taksonomien
 
 export default function logEvent(eventName: validEventNames, eventData: Record<string, string | boolean>) {
-  if (window) {
+  if (typeof window !== 'undefined') {
     if (env.amplitudeEnabled) {
       logAmplitudeEvent({
         origin: 'spinntektsmelding-frontend',

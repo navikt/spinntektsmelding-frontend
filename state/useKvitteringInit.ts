@@ -9,7 +9,7 @@ import { konverterBegrunnelseFullLonnIArbeidsgiverperiode } from '../utils/konve
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnFravaersperioder } from './useEgenmeldingStore';
 import { isBefore } from 'date-fns';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
 import { Naturalytelse } from './state';
 
