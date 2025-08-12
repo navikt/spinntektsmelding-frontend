@@ -33,7 +33,7 @@
     "html-react-parser": "^5.2.6",
     "immer": "10.1.1",
     "nanoid": "5.1.5",
-    "next": "15.4.5",
+    "next": "15.4.6",
     "next-http-proxy-middleware": "1.2.7",
     "pino": "9.8.0",
     "playwright-core": "^1.54.2",
