@@ -1,24 +1,30 @@
+// Mock next/navigation
+const router = {
+  push: vi.fn(),
+  replace: vi.fn(),
+  prefetch: vi.fn()
+};
+
+vi.mock('next/navigation', () => {
+  const push = vi.fn();
+  const replace = vi.fn();
+  const prefetch = vi.fn();
+  const router = { push, replace, prefetch };
+  return {
+    useRouter: () => router,
+    __mockedRouter: router
+  };
+});
+
 import React from 'react';
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import InitieringBehandlingsdager from '../../../pages/initieringBehandlingsdager/index';
 import useArbeidsforhold from '../../../utils/useArbeidsforhold';
 import useBehandlingsdager from '../../../utils/useBehandlingsdager';
-import { useRouter } from 'next/navigation';
+import { __mockedRouter as mockedRouter } from 'next/navigation';
 import useBoundStore from '../../../state/useBoundStore';
 import testFnr from '../../../mockdata/testFnr';
-
-// global.window = Object.create(window);
-// Object.defineProperty(global.window, 'location', {
-//   value: {
-//     hostname: 'localhost',
-//     replace: vi.fn()
-//   },
-//   writable: true
-// });
-
-// Mock next/navigation
-vi.mock('next/navigation', { spy: true });
 
 // Mock store and hooks
 vi.mock('../../../state/useBoundStore', () => ({
@@ -30,7 +36,6 @@ vi.mock('../../../utils/useArbeidsforhold');
 vi.mock('../../../utils/useBehandlingsdager');
 
 describe('InitieringBehandlingsdager', () => {
-  const push = vi.fn();
   const setError = vi.fn();
   const initPerson = vi.fn();
   const setSkjemaStatus = vi.fn();
@@ -39,14 +44,12 @@ describe('InitieringBehandlingsdager', () => {
   const tilbakestillArbeidsgiverperiode = vi.fn();
   const setForeslaattBestemmendeFravaersdag = vi.fn();
   const initArbeidsgiverperioder = vi.fn();
-  const router = { push: push };
 
   beforeEach(() => {
     // reset mocks
     vi.clearAllMocks();
 
-    // router mock
-    (useRouter as Mock).mockReturnValue(router);
+    mockedRouter.push.mockClear();
 
     (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn({
@@ -148,7 +151,7 @@ describe('InitieringBehandlingsdager', () => {
     await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
     await waitFor(() => {
-      expect(push).toHaveBeenCalledWith('/behandlingsdager');
+      expect(mockedRouter.push).toHaveBeenCalledWith('/behandlingsdager');
     });
   });
 });

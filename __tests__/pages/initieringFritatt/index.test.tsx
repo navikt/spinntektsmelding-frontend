@@ -1,15 +1,30 @@
+// Mock next/navigation
+const router = {
+  push: vi.fn(),
+  replace: vi.fn(),
+  prefetch: vi.fn()
+};
+
+vi.mock('next/navigation', () => {
+  const push = vi.fn();
+  const replace = vi.fn();
+  const prefetch = vi.fn();
+  const router = { push, replace, prefetch };
+  return {
+    useRouter: () => router,
+    __mockedRouter: router
+  };
+});
+
 import React from 'react';
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import InitieringFritatt from '../../../pages/initieringFritatt/index';
 import useMineTilganger from '../../../utils/useMineTilganger';
 import useBoundStore from '../../../state/useBoundStore';
-import { useRouter } from 'next/navigation';
+import { __mockedRouter as mockedRouter } from 'next/navigation';
 import testFnr from '../../../mockdata/testFnr';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
-
-// Mock next/navigation
-vi.mock('next/navigation', { spy: true });
 
 // Mock useBoundStore to apply selector on fakeStore
 // Mock store and hooks
@@ -23,13 +38,15 @@ vi.mock('../../../utils/useMineTilganger', () => ({
 }));
 
 describe('InitieringFritatt page', () => {
-  const push = vi.fn();
-  const router = { push: push };
+  // const push = vi.fn();
+  // const router = { push: push };
   const initPerson = vi.fn();
   const setSelvbestemtType = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    mockedRouter.push.mockClear();
 
     (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn({
@@ -44,7 +61,7 @@ describe('InitieringFritatt page', () => {
     );
 
     // router
-    (useRouter as Mock).mockReturnValue(router);
+    // (useRouter as Mock).mockReturnValue(router);
   });
 
   it('shows loading spinner before tilganger arrive', () => {
@@ -124,7 +141,7 @@ describe('InitieringFritatt page', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
     await waitFor(() => {
-      expect(push).toHaveBeenCalledWith('/unntattAaRegisteret');
+      expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret');
     });
 
     // store setters called
@@ -136,6 +153,6 @@ describe('InitieringFritatt page', () => {
     );
     expect(setSelvbestemtType).toHaveBeenCalledWith('UtenArbeidsforhold');
     // navigation
-    await waitFor(() => expect(push).toHaveBeenCalledWith('/unntattAaRegisteret'));
+    await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret'));
   });
 });

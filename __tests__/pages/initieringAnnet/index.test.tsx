@@ -1,3 +1,21 @@
+// Mock next/navigation
+const router = {
+  push: vi.fn(),
+  replace: vi.fn(),
+  prefetch: vi.fn()
+};
+
+vi.mock('next/navigation', () => {
+  const push = vi.fn();
+  const replace = vi.fn();
+  const prefetch = vi.fn();
+  const router = { push, replace, prefetch };
+  return {
+    useRouter: () => router,
+    __mockedRouter: router
+  };
+});
+
 import React from 'react';
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -5,21 +23,10 @@ import InitieringAnnet from '../../../pages/initieringAnnet/index';
 import useBoundStore from '../../../state/useBoundStore';
 import useArbeidsforhold from '../../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../../utils/useSykepengesoeknader';
-import { useRouter } from 'next/router';
+import { __mockedRouter as mockedRouter } from 'next/navigation';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
 import testFnr from '../../../mockdata/testFnr';
 
-// global.window = Object.create(window);
-// Object.defineProperty(global.window, 'location', {
-//   value: {
-//     ...window.location,
-//     replace: vi.fn()
-//   },
-//   writable: true
-// });
-
-// Mock next/router
-vi.mock('next/router', () => ({ useRouter: vi.fn() }));
 // Mock state and hooks
 vi.mock('../../../state/useBoundStore', () => ({ default: vi.fn() }));
 vi.mock('../../../utils/useArbeidsforhold', () => ({ default: vi.fn() }));
@@ -30,7 +37,6 @@ vi.mock('../../../utils/formatRHFFeilmeldinger', () => ({
 }));
 
 describe('InitieringAnnet page', () => {
-  const push = vi.fn();
   const fakeStore = {
     sykmeldt: { fnr: testFnr.GyldigeFraDolly.TestPerson1 },
     initPerson: vi.fn(),
@@ -45,7 +51,7 @@ describe('InitieringAnnet page', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // router mock
-    (useRouter as Mock).mockReturnValue({ push });
+    mockedRouter.push.mockClear();
     // store selector returns from fakeStore
     (useBoundStore as Mock).mockImplementation((selector: any) => selector(fakeStore));
   });
@@ -124,7 +130,7 @@ describe('InitieringAnnet page', () => {
       expect(fakeStore.setVedtaksperiodeId).toHaveBeenCalledWith('123e4567-e89b-12d3-a456-426614174000');
       expect(fakeStore.setSelvbestemtType).toHaveBeenCalledWith('MedArbeidsforhold');
       // final navigation
-      expect(push).toHaveBeenCalledWith('/arbeidsgiverInitiertInnsending');
+      expect(mockedRouter.push).toHaveBeenCalledWith('/arbeidsgiverInitiertInnsending');
     });
   });
 
