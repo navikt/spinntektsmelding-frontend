@@ -1,3 +1,6 @@
+// Mock next/navigation
+vi.mock('next/navigation', { spy: true });
+
 import React from 'react';
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -7,9 +10,6 @@ import useBoundStore from '../../../state/useBoundStore';
 import { useRouter } from 'next/navigation';
 import testFnr from '../../../mockdata/testFnr';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
-
-// Mock next/navigation
-vi.mock('next/navigation', { spy: true });
 
 // Mock useBoundStore to apply selector on fakeStore
 // Mock store and hooks
