@@ -24,7 +24,7 @@ import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { TDateISODate } from '../../schema/ForespurtDataSchema';
 import { differenceInCalendarDays, differenceInDays, subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
 import formatIsoDate from '../../utils/formatIsoDate';
