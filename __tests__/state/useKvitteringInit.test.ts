@@ -363,4 +363,25 @@ describe('useKvitteringInit', () => {
     ]);
     expect(result.current.lonnISykefravaeret.beloep).toBe(0.0);
   });
+
+  it('should set the refusjon to No if there are no endringer', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    kvitteringMedRefusjonSluttdato.kvitteringNavNo.skjema.refusjon = {
+      beloepPerMaaned: 0.0,
+      endringer: []
+    };
+
+    act(() => {
+      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+    });
+
+    expect(result.current.harRefusjonEndringer).toBe('Nei');
+    expect(result.current.refusjonEndringer).toEqual([]);
+    expect(result.current.lonnISykefravaeret.beloep).toBe(0.0);
+  });
 });
