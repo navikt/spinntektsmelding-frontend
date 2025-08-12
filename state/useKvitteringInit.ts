@@ -118,7 +118,11 @@ export default function useKvitteringInit() {
 
   function handleRefusjon(jsonData: KvitteringNavNoSchema) {
     initLonnISykefravaeret({
-      status: jsonData.skjema.refusjon?.beloepPerMaaned ? 'Ja' : 'Nei',
+      status:
+        jsonData.skjema.refusjon?.beloepPerMaaned ||
+        (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0)
+          ? 'Ja'
+          : 'Nei',
       beloep: jsonData.skjema.refusjon?.beloepPerMaaned
     });
 
