@@ -36,7 +36,7 @@ export default function useHentSkjemadata() {
             logger.info('Mangler tilgang til å hente skjemadata i useHentSkjemadata', error.status);
             logger.info(error.status, error.message, error.info);
 
-            if (window !== undefined) {
+            if (typeof window !== 'undefined') {
               const ingress = window.location.hostname + environment.baseUrl;
               const currentPath = window.location.href;
 
