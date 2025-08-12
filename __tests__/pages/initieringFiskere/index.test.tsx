@@ -1,15 +1,30 @@
+// Mock next/navigation
+const router = {
+  push: vi.fn(),
+  replace: vi.fn(),
+  prefetch: vi.fn()
+};
+
+vi.mock('next/navigation', () => {
+  const push = vi.fn();
+  const replace = vi.fn();
+  const prefetch = vi.fn();
+  const router = { push, replace, prefetch };
+  return {
+    useRouter: () => router,
+    __mockedRouter: router
+  };
+});
+
 import React from 'react';
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import InitieringFritatt from '../../../pages/initieringFiskere/index';
 import useBoundStore from '../../../state/useBoundStore';
 import useMineTilganger from '../../../utils/useMineTilganger';
-import { useRouter } from 'next/navigation';
+import { __mockedRouter as mockedRouter } from 'next/navigation';
 import testFnr from '../../../mockdata/testFnr';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
-
-// Mock next/navigation
-vi.mock('next/navigation', { spy: true });
 
 // Mock store and hook
 vi.mock('../../../state/useBoundStore', () => ({
@@ -20,20 +35,18 @@ vi.mock('../../../utils/useMineTilganger', () => ({
 }));
 
 describe('InitieringFiskere page', () => {
-  const push = vi.fn();
   const initPerson = vi.fn();
   const setSkjemaStatus = vi.fn();
   const initFravaersperiode = vi.fn();
   const initEgenmeldingsperiode = vi.fn();
   const tilbakestillArbeidsgiverperiode = vi.fn();
   const setSelvbestemtType = vi.fn();
-  const router = { push: push };
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     // router mock
-    (useRouter as Mock).mockReturnValue(router);
+    mockedRouter.push.mockClear();
 
     (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn({
@@ -102,7 +115,7 @@ describe('InitieringFiskere page', () => {
 
     // expect navigation
     await waitFor(() => {
-      expect(push).toHaveBeenCalledWith('/Fisker');
+      expect(mockedRouter.push).toHaveBeenCalledWith('/Fisker');
     });
 
     // expect store setters called
