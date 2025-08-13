@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           corepack enable
-          yarn install --immutable --immutable-cache --cached
+          yarn install --immutable
       # - name: Install Playwright Browsers
       #   run: yarn playwright install --with-deps
       - name: Run Playwright tests
