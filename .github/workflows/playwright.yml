@@ -18,7 +18,7 @@ jobs:
   playwright-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.46.0-jammy # match your Playwright version
+    container: mcr.microsoft.com/playwright:v1.54.2-jammy # match your Playwright version
     strategy:
       fail-fast: false
       matrix:
@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           corepack enable
-          yarn install --frozen-lockfile --prefer-offline
+          yarn install --immutable --immutable-cache --cached
       # - name: Install Playwright Browsers
       #   run: yarn playwright install --with-deps
       - name: Run Playwright tests
