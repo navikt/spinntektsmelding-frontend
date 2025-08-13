@@ -12,14 +12,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - run: npm ci
+          node-version: '24.0'
+          cache: 'yarn'
+          registry-url: 'https://npm.pkg.github.com'
+      - run: yarn install --immutable
       - name: Run shard ${{ matrix.shard }}
         env:
           # unique sonar test execution file per shard (vitest-sonar-reporter)
           VITEST_SONAR_FILE: sonar-report-${{ matrix.shard }}.xml
         run: |
-          npx vitest run \
+          yarn test \
             --shard ${{ matrix.shard }}/4 \
             --threads=false \
             --reporter=default
@@ -59,7 +61,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.organization=YOUR_ORG_KEY
-            -Dsonar.projectKey=YOUR_PROJECT_KEY
             -Dsonar.javascript.lcov.reportPaths=reports/lcov.info
             -Dsonar.testExecutionReportPaths=${{ env.SONAR_TEST_REPORTS }}
