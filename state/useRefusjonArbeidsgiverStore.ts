@@ -91,6 +91,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
   beloepArbeidsgiverBetalerISykefravaeret: (beloep: string | number | undefined) =>
     set(
       produce((state) => {
+        console.log('beloepArbeidsgiverBetalerISykefravaeret', beloep);
         if (!state.lonnISykefravaeret) {
           state.lonnISykefravaeret = { beloep: stringishToNumber(beloep) };
         } else {

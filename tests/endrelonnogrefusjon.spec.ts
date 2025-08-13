@@ -61,7 +61,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     // override refusjon-beloep
     await page.locator('[data-cy="endre-refusjon-arbeidsgiver-beloep"]').click();
     await salaryInput.fill('75000');
-    await expect(page.locator('[data-cy="refusjon-arbeidsgiver-beloep-input"]')).toHaveValue('75000');
+    await expect(page.getByLabel('Oppgi refusjonsbeløpet per måned')).toHaveValue('70000');
 
     // select årsak
     await page.getByLabel('Velg endringsårsak').selectOption('Bonus');
@@ -103,7 +103,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
         naturalytelser: [],
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
-      refusjon: { beloepPerMaaned: 84333.33, sluttdato: null, endringer: [] },
+      refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
       avsenderTlf: '12345678'
     });
 
@@ -170,7 +170,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
         naturalytelser: [],
         endringAarsaker: [{ aarsak: 'Ferie', ferier: [{ fom: '2022-12-25', tom: '2022-12-30' }] }]
       },
-      refusjon: { beloepPerMaaned: 75000, sluttdato: null, endringer: [] },
+      refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
       avsenderTlf: '12345678'
     });
 
@@ -241,7 +241,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
         naturalytelser: [],
         endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2022-12-30' }]
       },
-      refusjon: { beloepPerMaaned: 84333.33, sluttdato: null, endringer: [] },
+      refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
       avsenderTlf: '12345678'
     });
 

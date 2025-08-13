@@ -332,4 +332,56 @@ describe('useKvitteringInit', () => {
     expect(result.current.kvitteringInnsendt).toEqual(new Date(kvitteringMedRefusjonSluttdato.kvitteringNavNo.mottatt));
     expect(result.current.kvitteringInnsendt).toBeInstanceOf(Date);
   });
+
+  it('should set the refusjon to yes if there are endringer', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    kvitteringMedRefusjonSluttdato.kvitteringNavNo.skjema.refusjon = {
+      beloepPerMaaned: 0.0,
+      endringer: [
+        {
+          beloep: 41000.4,
+          startdato: '2024-08-05'
+        }
+      ]
+    };
+
+    act(() => {
+      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+    });
+
+    expect(result.current.harRefusjonEndringer).toBe('Ja');
+    expect(result.current.refusjonEndringer).toEqual([
+      {
+        beloep: 41000.4,
+        dato: parseIsoDate('2024-08-05')
+      }
+    ]);
+    expect(result.current.lonnISykefravaeret.beloep).toBe(0.0);
+  });
+
+  it('should set the refusjon to No if there are no endringer', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    kvitteringMedRefusjonSluttdato.kvitteringNavNo.skjema.refusjon = {
+      beloepPerMaaned: 0.0,
+      endringer: []
+    };
+
+    act(() => {
+      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+    });
+
+    expect(result.current.harRefusjonEndringer).toBe('Nei');
+    expect(result.current.refusjonEndringer).toEqual([]);
+    expect(result.current.lonnISykefravaeret.beloep).toBe(0.0);
+  });
 });

@@ -37,7 +37,8 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
     await page.locator('#bekreft-opplysninger').check();
 
     // skriv ugyldig beløp
-    const incomeInput = page.locator('[data-cy="inntekt-beloep-input"]');
+
+    const incomeInput = page.getByLabel('Månedslønn 15.03.2023');
     await incomeInput.fill('70000kroner');
 
     // send for validering
@@ -58,6 +59,6 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
     // endre refusjonsbeløp
     await page.locator('[data-cy="endre-refusjon-arbeidsgiver-beloep"]').click();
     await incomeInput.fill('75000');
-    await expect(page.locator('[data-cy="refusjon-arbeidsgiver-beloep-input"]')).toHaveValue('75000');
+    await expect(page.getByLabel('Oppgi refusjonsbeløpet per måned')).toHaveValue('70000');
   });
 });
