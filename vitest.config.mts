@@ -22,6 +22,11 @@ export default defineConfig({
       modules: {
         classNameStrategy: 'non-scoped'
       }
+    },
+    poolOptions: {
+      threads: {
+        singleThread: true
+      }
     }
   }
 });
