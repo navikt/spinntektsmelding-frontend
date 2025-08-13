@@ -29,7 +29,6 @@ jobs:
         run: |
           yarn test \
             --shard ${{ matrix.shard }}/4 \
-            --threads=false \
             --reporter=default
       - uses: actions/upload-artifact@v4
         with:
