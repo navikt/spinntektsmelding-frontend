@@ -10,8 +10,14 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    exclude: [...configDefaults.exclude, './__tests__/setup.ts', '**/__mocks__/**.*', 'tests/**'],
-    setupFiles: './__tests__/setup.ts',
+    exclude: [
+      ...configDefaults.exclude,
+      './__tests__/setup.ts',
+      '**/__mocks__/**.*',
+      'tests/**',
+      './__tests__/mock-dekoratoren-moduler.ts'
+    ],
+    setupFiles: ['./__tests__/setup.ts', './__tests__/mock-dekoratoren-moduler.ts'],
     coverage: {
       reporter: ['text', 'lcov', 'html'],
       provider: 'v8'
