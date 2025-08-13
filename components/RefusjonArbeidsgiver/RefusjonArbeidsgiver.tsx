@@ -38,6 +38,8 @@ export default function RefusjonArbeidsgiver({
     (state) => state.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret
   );
   const begrunnelseRedusertUtbetaling = useBoundStore((state) => state.begrunnelseRedusertUtbetaling);
+  const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
+
   const beloepArbeidsgiverBetalerISykefravaeret = useBoundStore(
     (state) => state.beloepArbeidsgiverBetalerISykefravaeret
   );
@@ -84,6 +86,7 @@ export default function RefusjonArbeidsgiver({
     arbeidsgiverperiodeKort && !behandlingsdager
       ? 'Betaler arbeidsgiver ut full lønn de første 16 dagene?'
       : 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?';
+
   return (
     <>
       <Heading3 unPadded>Utbetaling og refusjon</Heading3>
@@ -163,10 +166,11 @@ export default function RefusjonArbeidsgiver({
         {lonnISykefravaeret?.status === 'Ja' && (
           <>
             <RefusjonArbeidsgiverBelop
-              bruttoinntekt={lonnISykefravaeret.beloep! || 0}
+              bruttoinntekt={lonnISykefravaeret.beloep || 0}
               onOppdaterBelop={addIsDirtyForm(beloepArbeidsgiverBetalerISykefravaeret)}
               visFeilmeldingTekst={visFeilmeldingTekst}
               arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
+              onEditerbarChange={() => setEndringerAvRefusjon('Ja')}
             />
 
             <RefusjonUtbetalingEndring

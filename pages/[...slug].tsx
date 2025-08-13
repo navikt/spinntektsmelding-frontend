@@ -81,7 +81,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sykmeldt,
     naturalytelser,
     forespurtData,
-    behandlingsdager
+    behandlingsdager,
+    endringerAvRefusjon
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -92,7 +93,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.sykmeldt,
     state.naturalytelser,
     state.forespurtData,
-    state.behandlingsdager
+    state.behandlingsdager,
+    state.endringerAvRefusjon
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -174,10 +176,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   });
 
   useEffect(() => {
-    if (inntektBeloep !== undefined) {
+    if (inntektBeloep !== undefined && endringerAvRefusjon !== 'Ja') {
       beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
     }
-  }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep]);
+  }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep, endringerAvRefusjon]);
 
   useEffect(() => {
     if (avsender.tlf !== undefined) {

@@ -43,6 +43,7 @@ export default function useKvitteringInit() {
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
+  const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
 
   return async (kvitteringsData: MottattKvittering) => {
     if (!kvitteringsData) return;
@@ -125,6 +126,13 @@ export default function useKvitteringInit() {
           : 'Nei',
       beloep: jsonData.skjema.refusjon?.beloepPerMaaned
     });
+
+    setEndringerAvRefusjon(
+      jsonData.skjema.refusjon?.beloepPerMaaned !== jsonData.skjema.inntekt.beloep ||
+        (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0)
+        ? 'Ja'
+        : 'Nei'
+    );
 
     if (jsonData.skjema.refusjon?.sluttdato) {
       if (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0) {
