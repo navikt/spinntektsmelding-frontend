@@ -64,10 +64,14 @@ jobs:
         with:
           node-version: lts/*
           cache: 'yarn'
+          cache-dependency-path: |
+            **/yarn.lock
+            **/package.json
           registry-url: 'https://npm.pkg.github.com'
       - name: Install dependencies
-        run: npm install -g yarn && yarn
-
+        run: |
+          corepack enable
+          yarn install --immutable
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v5
         with:
