@@ -64,6 +64,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   if (!tokenResponse.ok) {
     console.error('Feil ved kontroll av tilgang: ', tokenResponse.statusText);
+    console.error('Kallet var: ', tokenResponse.url);
     return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
   }
 
