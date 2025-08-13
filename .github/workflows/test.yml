@@ -1,0 +1,65 @@
+name: test
+on: [push, pull_request]
+
+jobs:
+  vitest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4] # number of shards
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - name: Run shard ${{ matrix.shard }}
+        env:
+          # unique sonar test execution file per shard (vitest-sonar-reporter)
+          VITEST_SONAR_FILE: sonar-report-${{ matrix.shard }}.xml
+        run: |
+          npx vitest run \
+            --shard ${{ matrix.shard }}/4 \
+            --threads=false \
+            --reporter=default
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.shard }}
+          path: |
+            coverage
+            sonar-report-*.xml
+
+  sonar:
+    name: SonarCloud
+    needs: vitest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Download all shard artifacts into the workspace
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+
+      # Merge coverage and gather test execution reports
+      - name: Merge coverage and collect reports
+        run: |
+          mkdir -p reports/sonar
+          # Merge LCOVs from all shards
+          npx --yes lcov-result-merger 'coverage/**/lcov.info' 'reports/lcov.info'
+          # Collect Generic Test Execution XMLs (from vitest-sonar-reporter)
+          mv sonar-report-*.xml reports/sonar/ || true
+          echo "SONAR_TEST_REPORTS=$(ls reports/sonar/*.xml 2>/dev/null | paste -sd, -)" >> $GITHUB_ENV
+
+      # Run SonarCloud analysis (requires SONAR_TOKEN secret).
+      - uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=YOUR_ORG_KEY
+            -Dsonar.projectKey=YOUR_PROJECT_KEY
+            -Dsonar.javascript.lcov.reportPaths=reports/lcov.info
+            -Dsonar.testExecutionReportPaths=${{ env.SONAR_TEST_REPORTS }}
