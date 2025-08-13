@@ -10,13 +10,15 @@ interface RefusjonArbeidsgiverBelopProps {
   onOppdaterBelop: (beloep: string) => void;
   visFeilmeldingTekst: (feilmelding: string) => string;
   arbeidsgiverperiodeDisabled?: boolean;
+  onEditerbarChange: (editerbar: boolean) => void;
 }
 
 export default function RefusjonArbeidsgiverBelop({
   bruttoinntekt,
   onOppdaterBelop,
   visFeilmeldingTekst,
-  arbeidsgiverperiodeDisabled = false
+  arbeidsgiverperiodeDisabled = false,
+  onEditerbarChange
 }: Readonly<RefusjonArbeidsgiverBelopProps>) {
   const [editerbar, setEditerbar] = useState<boolean>(false);
 
@@ -26,6 +28,7 @@ export default function RefusjonArbeidsgiverBelop({
 
   const handleButtonEndreBeloepClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault();
+    onEditerbarChange(true);
     setEditerbar(true);
   };
 

@@ -34,6 +34,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
         onOppdaterBelop={onOppdaterBelop}
         visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={true}
+        onEditerbarChange={vi.fn()}
       />
     );
 
@@ -53,6 +54,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
         onOppdaterBelop={onOppdaterBelop}
         visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
+        onEditerbarChange={vi.fn()}
       />
     );
 
@@ -66,6 +68,7 @@ describe('RefusjonArbeidsgiverBelop', () => {
         onOppdaterBelop={onOppdaterBelop}
         visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
+        onEditerbarChange={vi.fn()}
       />
     );
 
@@ -75,12 +78,14 @@ describe('RefusjonArbeidsgiverBelop', () => {
   });
 
   it('should call onOppdaterBelop when the input field is changed', () => {
+    const onEditerbarChange = vi.fn();
     render(
       <RefusjonArbeidsgiverBelop
         bruttoinntekt={bruttoinntekt}
         onOppdaterBelop={onOppdaterBelop}
         visFeilmeldingTekst={visFeilmeldingTekst}
         arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
+        onEditerbarChange={onEditerbarChange}
       />
     );
 
@@ -89,5 +94,6 @@ describe('RefusjonArbeidsgiverBelop', () => {
     fireEvent.blur(screen.getByRole('textbox'));
 
     expect(onOppdaterBelop).toHaveBeenCalledWith('600000');
+    expect(onEditerbarChange).toHaveBeenCalledWith(true);
   });
 });

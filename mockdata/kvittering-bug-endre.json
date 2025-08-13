@@ -1,0 +1,51 @@
+{
+  "kvitteringNavNo": {
+    "sykmeldt": {
+      "fnr": "10486535275",
+      "navn": "Ultrafiolett Damesykkel"
+    },
+    "avsender": {
+      "orgnr": "810007842",
+      "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+      "navn": "Test Navn Testesen-Navnesen Jr.",
+      "tlf": "12345678"
+    },
+    "sykmeldingsperioder": [
+      {
+        "fom": "2025-06-17",
+        "tom": "2025-07-08"
+      }
+    ],
+    "skjema": {
+      "avsenderTlf": "12345678",
+      "agp": {
+        "perioder": [
+          {
+            "fom": "2025-06-17",
+            "tom": "2025-07-02"
+          }
+        ],
+        "egenmeldinger": [],
+        "redusertLoennIAgp": null
+      },
+      "inntekt": {
+        "beloep": 41000.4,
+        "inntektsdato": "2025-06-17",
+        "naturalytelser": [],
+        "endringAarsaker": []
+      },
+      "refusjon": {
+        "beloepPerMaaned": 0.0,
+        "endringer": [
+          {
+            "beloep": 41000.4,
+            "startdato": "2025-08-05"
+          }
+        ]
+      },
+      "mottatt": "2023-04-26T08:01:31.170336157+02:00"
+    }
+  },
+  "kvitteringEkstern": null,
+  "kvitteringDokument": null
+}
