@@ -18,6 +18,7 @@ jobs:
   playwright-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.54.2-jammy # match your Playwright version
     strategy:
       fail-fast: false
       matrix:
@@ -29,12 +30,20 @@ jobs:
         with:
           node-version: lts/*
           cache: 'yarn'
+          cache-dependency-path: |
+            **/yarn.lock
+            **/package.json
           registry-url: 'https://npm.pkg.github.com'
       - name: Install dependencies
-        run: npm install -g yarn && yarn
-      - name: Install Playwright Browsers
-        run: yarn playwright install --with-deps
+        run: |
+          corepack enable
+          yarn install --immutable
+      # - name: Install Playwright Browsers
+      #   run: yarn playwright install --with-deps
       - name: Run Playwright tests
+        env:
+          HOME: /root
+          CI: 'true'
         run: yarn playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
@@ -56,10 +65,14 @@ jobs:
         with:
           node-version: lts/*
           cache: 'yarn'
+          cache-dependency-path: |
+            **/yarn.lock
+            **/package.json
           registry-url: 'https://npm.pkg.github.com'
       - name: Install dependencies
-        run: npm install -g yarn && yarn
-
+        run: |
+          corepack enable
+          yarn install --immutable
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v5
         with:
