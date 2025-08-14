@@ -327,8 +327,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             )}
             {behandlingsdagerInnsending && (
               <>
-                <Behandlingsdager behandlingsdager={behandlingsdager} />
-                <Skillelinje />
+                <Behandlingsdager behandlingsdager={behandlingsdager} arbeidsgiverperioder={arbeidsgiverperioder} />
+                {/* <Skillelinje /> */}
               </>
             )}
             {skalViseArbeidsgiverperiode && !behandlingsdagerInnsending && (
@@ -353,13 +353,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 </Button>
               </>
             )}
-            {behandlingsdagerInnsending && (
+            {/* {behandlingsdagerInnsending && (
               <ArbeidsgiverperiodeBehandlingsdager
                 arbeidsgiverperioder={arbeidsgiverperioder}
                 skjemastatus={skjemastatus}
                 skalViseArbeidsgiverperiode={overstyrSkalViseAgp}
               />
-            )}
+            )} */}
 
             <Skillelinje />
 
