@@ -17,6 +17,7 @@ import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSc
 import { z } from 'zod/v4';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import isValidUUID from '../utils/isValidUUID';
+import { TypeArbeidsforholdSchema } from '../schema/TypeArbeidsforholdSchema';
 
 export default function useFyllAapenInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
@@ -53,11 +54,12 @@ export default function useFyllAapenInnsending() {
   const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
   type SkjemaData = z.infer<typeof HovedskjemaSchema>;
+  type ArbeidsforholdType = z.infer<typeof TypeArbeidsforholdSchema>;
 
   return (
     skjemaData: SkjemaData,
     arbeidsforhold: string,
-    selvbestemtType: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker'
+    selvbestemtType: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker' | 'Behandlingsdager'
   ) => {
     const bestemmendeFravaersdag =
       perioder && perioder.length > 0
@@ -83,14 +85,16 @@ export default function useFyllAapenInnsending() {
 
     const formattedAgpPerioder = getFormattedAgpPerioder(arbeidsgiverperiodeDisabled, arbeidsgiverperioder);
 
-    let arbeidsforholdType = {
+    let arbeidsforholdType: ArbeidsforholdType = {
       type: 'MedArbeidsforhold',
-      vedtaksperiodeId: isValidUUID(vedtaksperiodeId) ? vedtaksperiodeId : undefined
+      vedtaksperiodeId: isValidUUID(vedtaksperiodeId) ? vedtaksperiodeId! : ''
     };
     if (selvbestemtType === 'UtenArbeidsforhold') {
       arbeidsforholdType = { type: 'UtenArbeidsforhold' };
     } else if (selvbestemtType === 'Fisker') {
       arbeidsforholdType = { type: 'Fisker' };
+    } else if (selvbestemtType === 'Behandlingsdager') {
+      arbeidsforholdType = { type: 'Behandlingsdager' };
     }
 
     const innsending = validerAapenInnsending({

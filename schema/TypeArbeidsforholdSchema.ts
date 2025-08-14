@@ -15,8 +15,13 @@ const ArbeidsforholdFiskerSchema = z.object({
   type: z.literal('Fisker')
 });
 
+const ArbeidsforholdBehandlingsdagerSchema = z.object({
+  type: z.literal('Behandlingsdager')
+});
+
 export const TypeArbeidsforholdSchema = z.discriminatedUnion('type', [
   ArbeidsforholdMedArbeidsforholdSchema,
   ArbeidsforholdUtenArbeidsforholdSchema,
-  ArbeidsforholdFiskerSchema
+  ArbeidsforholdFiskerSchema,
+  ArbeidsforholdBehandlingsdagerSchema
 ]);

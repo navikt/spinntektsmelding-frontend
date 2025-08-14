@@ -16,7 +16,7 @@ export enum SkjemaStatus {
 type KvitteringEkstern = z.infer<typeof KvitteringEksternSchema>;
 type KvitteringFullInnsending = z.infer<typeof FullInnsendingSchema>;
 type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
-export type SelvbestemtType = 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker';
+export type SelvbestemtType = 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker' | 'Behandlingsdager';
 
 export interface SkjemadataState {
   nyInnsending: boolean;

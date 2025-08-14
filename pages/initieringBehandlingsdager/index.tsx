@@ -58,6 +58,7 @@ const InitieringBehandlingsdager: NextPage = () => {
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
   const initArbeidsgiverperioder = useBoundStore((state) => state.initArbeidsgiverperioder);
+  const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -315,6 +316,7 @@ const InitieringBehandlingsdager: NextPage = () => {
     setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
     setBehandlingsdager(sykmeldingsperiode.behandlingsdager);
     initArbeidsgiverperioder(arbeidsgiverperioder);
+    setSelvbestemtType('Behandlingsdager');
     router.push('/behandlingsdager');
   };
 
