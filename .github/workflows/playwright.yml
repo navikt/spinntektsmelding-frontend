@@ -42,6 +42,7 @@ jobs:
       #   run: yarn playwright install --with-deps
       - name: Run Playwright tests
         env:
+          HOME: /root
           CI: 'true'
         run: yarn playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload blob report to GitHub Actions Artifacts
