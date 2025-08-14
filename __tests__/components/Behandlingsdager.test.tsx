@@ -27,13 +27,13 @@ describe('Behandlingsdager', () => {
     render(<Behandlingsdager behandlingsdager={dates} />);
 
     // Heading
-    expect(screen.getByText('Behandlingsdager')).toBeInTheDocument();
+    expect(screen.getByText('Behandlingsdager med arbeidsgiverperiode')).toBeInTheDocument();
 
     // Formatted dates
     const items = screen.getAllByText(/^formatted-parsed-/);
     expect(items).toHaveLength(3);
-    expect(items[0].textContent).toBe('formatted-parsed-2022-01-01');
-    expect(items[1].textContent).toBe('formatted-parsed-2023-01-01');
-    expect(items[2].textContent).toBe('formatted-parsed-2023-02-01');
+    expect(items[0].textContent.trim()).toBe('formatted-parsed-2022-01-01');
+    expect(items[1].textContent.trim()).toBe('formatted-parsed-2023-01-01');
+    expect(items[2].textContent.trim()).toBe('formatted-parsed-2023-02-01');
   });
 });

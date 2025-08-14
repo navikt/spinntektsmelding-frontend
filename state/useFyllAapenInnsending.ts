@@ -109,7 +109,10 @@ export default function useFyllAapenInnsending() {
       agp: {
         perioder: formattedAgpPerioder,
         egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
-        redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
+        redusertLoennIAgp:
+          arbeidsforholdType.type !== 'Behandlingsdager'
+            ? formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
+            : null
       },
       inntekt: {
         beloep: skjemaData.inntekt?.beloep ?? 0,

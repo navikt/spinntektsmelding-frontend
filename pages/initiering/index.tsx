@@ -21,7 +21,7 @@ import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,
   aarsakInnsending: z.enum(['UnntattAARegisteret', 'Annet', 'Behandlingsdager', 'Fiskere'], {
-    error: () => ({ error: 'Du må velge en årsak til at du vil opprette inntektsmelding.' })
+    error: 'Du må velge en årsak til at du vil opprette inntektsmelding.'
   })
 });
 
