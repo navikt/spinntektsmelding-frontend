@@ -44,7 +44,7 @@ describe('InitieringBehandlingsdager', () => {
   const tilbakestillArbeidsgiverperiode = vi.fn();
   const setForeslaattBestemmendeFravaersdag = vi.fn();
   const initArbeidsgiverperioder = vi.fn();
-
+  const setSelvbestemtType = vi.fn();
   beforeEach(() => {
     // reset mocks
     vi.clearAllMocks();
@@ -64,7 +64,8 @@ describe('InitieringBehandlingsdager', () => {
         setForeslaattBestemmendeFravaersdag: setForeslaattBestemmendeFravaersdag,
         initArbeidsgiverperioder: initArbeidsgiverperioder,
         setIdentitetsnummer: vi.fn(),
-        setAarsakSelvbestemtInnsending: vi.fn()
+        setAarsakSelvbestemtInnsending: vi.fn(),
+        setSelvbestemtType: setSelvbestemtType
       })
     );
 
@@ -153,5 +154,7 @@ describe('InitieringBehandlingsdager', () => {
     await waitFor(() => {
       expect(mockedRouter.push).toHaveBeenCalledWith('/behandlingsdager');
     });
+
+    expect(setSelvbestemtType).toHaveBeenCalledWith('Behandlingsdager');
   });
 });

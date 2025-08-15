@@ -48,7 +48,6 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
-import ArbeidsgiverperiodeBehandlingsdager from '../components/ArbeidsgiverperiodeBehandlingsdager';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -327,8 +326,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             )}
             {behandlingsdagerInnsending && (
               <>
-                <Behandlingsdager behandlingsdager={behandlingsdager} />
-                <Skillelinje />
+                <Behandlingsdager behandlingsdager={behandlingsdager} arbeidsgiverperioder={arbeidsgiverperioder} />
+                {/* <Skillelinje /> */}
               </>
             )}
             {skalViseArbeidsgiverperiode && !behandlingsdagerInnsending && (
@@ -352,13 +351,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                   Endre
                 </Button>
               </>
-            )}
-            {behandlingsdagerInnsending && (
-              <ArbeidsgiverperiodeBehandlingsdager
-                arbeidsgiverperioder={arbeidsgiverperioder}
-                skjemastatus={skjemastatus}
-                skalViseArbeidsgiverperiode={overstyrSkalViseAgp}
-              />
             )}
 
             <Skillelinje />

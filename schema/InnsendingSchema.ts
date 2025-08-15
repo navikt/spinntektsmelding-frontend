@@ -159,6 +159,7 @@ export const InnsendingSchema = z.object({
       }
 
       if (
+        val.redusertLoennIAgp &&
         perioderErUnder16dagerTotalt(val.perioder) &&
         !(val.redusertLoennIAgp?.beloep !== undefined && val.redusertLoennIAgp?.begrunnelse)
       ) {
