@@ -3,7 +3,6 @@ import formatDate from '../../utils/formatDate';
 import styling from './Behandlingsdager.module.css';
 import Heading3 from '../Heading3';
 import { Periode } from '../../state/state';
-import { da } from 'date-fns/locale';
 
 interface BehandlingsdagerProps {
   behandlingsdager?: string[];
