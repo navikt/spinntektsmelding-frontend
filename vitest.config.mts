@@ -29,5 +29,10 @@ export default defineConfig({
         classNameStrategy: 'non-scoped'
       }
     }
+    // poolOptions: {
+    //   threads: {
+    //     singleThread: true
+    //   }
+    // }
   }
 });
