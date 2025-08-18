@@ -7,6 +7,7 @@ import env from '../../../config/environment';
 import kvitteringsdata from '../../../mockdata/selvbestemt-kvittering.json';
 import kvitteringsdataUtenAgp from '../../../mockdata/selvbestemt-kvittering-uten-agp.json';
 import kvitteringsdataEksterntSystem from '../../../mockdata/kvittering-eksternt-system.json';
+import kvitteringsdataBehandlingsdager from '../../../mockdata/kvittering-behandlingsdager.json';
 
 const mockPush = vi.fn();
 const mockGet = vi.fn();
@@ -105,5 +106,19 @@ describe('Kvittering', () => {
     const textBlock = screen.getByText(/AR123456/i);
 
     expect(textBlock).toBeInTheDocument();
+  });
+  it('renders without behandlingsdager', () => {
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={kvitteringsdataBehandlingsdager}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const textBlock = screen.queryAllByText('Fra');
+
+    expect(textBlock).toHaveLength(13);
   });
 });
