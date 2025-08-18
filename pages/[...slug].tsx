@@ -81,7 +81,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     naturalytelser,
     forespurtData,
     behandlingsdager,
-    endringerAvRefusjon
+    endringerAvRefusjon,
+    selvbestemtType
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -93,7 +94,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.naturalytelser,
     state.forespurtData,
     state.behandlingsdager,
-    state.endringerAvRefusjon
+    state.endringerAvRefusjon,
+    state.selvbestemtType
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -122,7 +124,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const selvbestemtInnsending =
     pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
 
-  const behandlingsdagerInnsending = pathSlug === 'behandlingsdager';
+  const behandlingsdagerInnsending = pathSlug === 'behandlingsdager' || selvbestemtType === 'Behandlingsdager';
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
@@ -294,7 +296,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
   const sbTidligereInntekt = !error && data?.historikk ? data?.historikk : undefined;
-
+  console.log('behandlingsdagerInnsending', behandlingsdagerInnsending);
   return (
     <div className={styles.container}>
       <Head>
