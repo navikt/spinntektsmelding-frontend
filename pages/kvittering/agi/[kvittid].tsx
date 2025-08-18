@@ -122,7 +122,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     kvitteringInit({ kvitteringNavNo: kvittering });
     // Må lagre data som kan endres i hovedskjema - Slutt
 
-    if (input.agp.perioder) {
+    if (input.agp && input.agp.perioder) {
       setBehandlingsdager(input.agp.perioder.map((periode: MottattPeriode) => periode.fom));
     }
 
