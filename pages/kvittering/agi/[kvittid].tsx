@@ -1,4 +1,4 @@
-import testdata from '../../../mockdata/selvbestemt-kvittering-fisker.json';
+import testdata from '../../../mockdata/kvittering-behandlingsdager.json';
 import { Fragment, useEffect } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
@@ -78,6 +78,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
   const lagretEndringAarsaker = useBoundStore((state) => state.bruttoinntekt.endringAarsaker);
   const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
+  const setBehandlingsdager = useBoundStore((state) => state.setBehandlingsdager);
 
   const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
 
@@ -120,6 +121,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     const kvittering = prepareForInitiering(input);
     kvitteringInit({ kvitteringNavNo: kvittering });
     // Må lagre data som kan endres i hovedskjema - Slutt
+
+    if (input?.agp?.perioder) {
+      setBehandlingsdager(input.agp.perioder.map((periode: MottattPeriode) => periode.fom));
+    }
 
     if (isValidUUID(kvitteringSlug)) {
       router.push(`/${kvitteringSlug}`);
@@ -445,9 +450,9 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         kvittid: context.query.kvittid,
-        kvittering: null,
-        kvitteringStatus: 404,
-        dataFraBackend: false
+        kvittering: testdata,
+        kvitteringStatus: 200,
+        dataFraBackend: true
       }
     };
   }
