@@ -296,7 +296,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
   const sbTidligereInntekt = !error && data?.historikk ? data?.historikk : undefined;
-  console.log('behandlingsdagerInnsending', behandlingsdagerInnsending);
+  
   return (
     <div className={styles.container}>
       <Head>
