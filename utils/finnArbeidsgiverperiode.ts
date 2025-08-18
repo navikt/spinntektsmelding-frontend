@@ -7,7 +7,7 @@ import {
 } from './finnBestemmendeFravaersdag';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
 
-function finnPeriodeMedAntallDager<T extends TidPeriode>(perioder: Array<T>, antallDager: number) {
+export function finnPeriodeMedAntallDager<T extends TidPeriode>(perioder: Array<T>, antallDager: number) {
   let dagerTotalt = 0;
   const arbPeriode: Array<T> = [];
 

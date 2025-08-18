@@ -68,7 +68,7 @@ export function tilstoetendePeriodeManuellJustering<T extends TidPeriode>(ene: T
  * Funksjonen finner bestemmende fraværsdag for gitte fraværsperiode.
  * Hvis det er flere perioder vil fom for den siste perioden være bestemmende.
  * Perioder som starter etter arbeidsgiverperioden (16 første dagene) vil ikke bli tatt med i beregningen,
- * med mindre de ikke stater etter dag 17
+ * med mindre de ikke stater etter dag 17, eller det er snakk om en delvis forespørsel
  */
 function finnBestemmendeFravaersdag<T extends TidPeriode>(
   fravaerPerioder?: Array<T>,
@@ -77,7 +77,8 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   arbeidsgiverKanFlytteBFD?: boolean,
   mottattBestemmendeFravaersdag?: TDateISODate,
   mottattEksternInntektsdato?: TDateISODate,
-  laastTilMottattPeriode?: boolean
+  laastTilMottattPeriode?: boolean,
+  delvisForespurt?: boolean
 ): string | undefined {
   if (laastTilMottattPeriode && mottattBestemmendeFravaersdag) {
     if (!mottattEksternInntektsdato) return mottattBestemmendeFravaersdag;
