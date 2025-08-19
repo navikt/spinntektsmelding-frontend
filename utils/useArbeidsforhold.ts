@@ -2,7 +2,6 @@ import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherArbeidsforhold from './fetcherArbeidsforhold';
 import { UseFormSetError } from 'react-hook-form';
-import { buildFormOnError } from './buildFormOnError';
 import { commonSWRFormOptions } from './commonSWRFormOptions';
 import { buildSWRFormErrorHandler } from './buildSWRFormErrorHandler';
 import { redirectToLogin } from './redirectToLogin';
