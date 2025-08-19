@@ -2,6 +2,7 @@ import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherSykepengesoeknader from './fetcherSykepengesoeknader';
 import { commonSWRFormOptions } from './commonSWRFormOptions';
+import { buildSWRFormErrorHandler } from './buildSWRFormErrorHandler';
 
 export default function useSykepengesoeknader(
   identitetsnummer: string | undefined,
@@ -19,26 +20,15 @@ export default function useSykepengesoeknader(
         eldsteFom
       ),
     {
-      onError: (err) => {
-        if (err.status === 401) {
-          setError('sykepengePeriodeId', {
-            type: 'manual',
-            error: 'Mangler tilgang til den aktuelle organisasjonen'
-          });
+      onError: buildSWRFormErrorHandler({
+        setError,
+        field: 'sykepengePeriodeId',
+        messages: {
+          unauthorized: 'Mangler tilgang til den aktuelle organisasjonen',
+          notFound: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer',
+          default: 'Kunne ikke hente sykepengesøknader'
         }
-
-        if (err.status === 404) {
-          setError('sykepengePeriodeId', {
-            type: 'manual',
-            error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer'
-          });
-        } else if (err.status !== 200) {
-          setError('sykepengePeriodeId', {
-            type: 'manual',
-            error: 'Kunne ikke hente sykepengesøknader'
-          });
-        }
-      },
+      }),
       ...commonSWRFormOptions
     }
   );
