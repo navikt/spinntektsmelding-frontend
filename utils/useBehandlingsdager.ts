@@ -1,6 +1,7 @@
 import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherSykepengesoeknader from './fetcherSykepengesoeknader';
+import { commonSWRFormOptions } from './commonSWRFormOptions';
 
 export default function useBehandlingsdager(
   identitetsnummer: string | undefined,
@@ -38,8 +39,7 @@ export default function useBehandlingsdager(
           });
         }
       },
-      refreshInterval: 0,
-      shouldRetryOnError: false
+      ...commonSWRFormOptions
     }
   );
 }

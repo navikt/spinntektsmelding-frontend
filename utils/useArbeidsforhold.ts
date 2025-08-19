@@ -2,6 +2,8 @@ import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherArbeidsforhold from './fetcherArbeidsforhold';
 import { UseFormSetError } from 'react-hook-form';
+import { buildFormOnError } from './buildFormOnError';
+import { commonSWRFormOptions } from './commonSWRFormOptions';
 
 export default function useArbeidsforhold(
   identitetsnummer: string | undefined,
@@ -11,27 +13,14 @@ export default function useArbeidsforhold(
     [environment.initierBlankSkjemaUrl, identitetsnummer],
     ([url, idToken]) => fetcherArbeidsforhold(identitetsnummer ? url : null, idToken),
     {
-      onError: (err) => {
-        if (err.status === 401 && typeof window !== 'undefined') {
-          const ingress = window.location.hostname + environment.baseUrl;
-
-          window.location.replace(`https://${ingress}/oauth2/login?redirect=${ingress}/initiering`);
-        }
-
-        if (err.status === 404) {
-          setError('sykepengePeriodeId', {
-            type: 'manual',
-            error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer'
-          });
-        } else if (err.status !== 200) {
-          setError('sykepengePeriodeId', {
-            type: 'manual',
-            error: 'Kunne ikke hente arbeidsforhold'
-          });
-        }
-      },
-      refreshInterval: 0,
-      shouldRetryOnError: false
+      onError: buildFormOnError({
+        setError,
+        field: 'arbeidsgiverListe',
+        notFoundMsg: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer',
+        genericMsg: 'Kunne ikke hente arbeidsforhold',
+        redirectPath: '/initiering'
+      }),
+      ...commonSWRFormOptions
     }
   );
 }
