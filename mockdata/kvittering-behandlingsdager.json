@@ -1,45 +1,40 @@
 {
   "selvbestemtInntektsmelding": {
-    "id": "7f69f85c-14c4-46ea-9216-79bd9100273c",
+    "id": "03707f01-141c-422f-879b-1cdf58c8fdda",
     "type": {
       "type": "Behandlingsdager",
-      "id": "f6ad743c-d4b9-4364-81f9-3041e153b06b",
+      "id": "ce218a9b-f0d2-4199-a6f2-148f54e0d2c8",
       "avsenderSystem": { "orgnr": "889640782", "navn": "NAV_PORTAL", "versjon": "1.0" }
     },
-    "sykmeldt": { "fnr": "17488920561", "navn": "MATEMATISK VOTT" },
+    "sykmeldt": { "fnr": "22486740160", "navn": "INNSIKTSFULL FROKOSTBLANDING" },
     "avsender": {
-      "orgnr": "315609267",
+      "orgnr": "315881528",
       "orgNavn": "UKJENT ARBEIDSGIVER",
-      "navn": "FRYKTSOM RADIOSTASJON",
-      "tlf": "12345678"
+      "navn": "USYMMETRISK HYMNE",
+      "tlf": "95039233"
     },
-    "sykmeldingsperioder": [{ "fom": "2025-02-03", "tom": "2025-05-16" }],
+    "sykmeldingsperioder": [{ "fom": "2025-04-01", "tom": "2025-07-31" }],
     "agp": {
       "perioder": [
-        { "fom": "2025-02-04", "tom": "2025-02-04" },
-        { "fom": "2025-02-11", "tom": "2025-02-11" },
-        { "fom": "2025-02-18", "tom": "2025-02-18" },
-        { "fom": "2025-02-25", "tom": "2025-02-25" },
-        { "fom": "2025-03-04", "tom": "2025-03-04" },
-        { "fom": "2025-03-11", "tom": "2025-03-11" },
-        { "fom": "2025-03-18", "tom": "2025-03-18" },
-        { "fom": "2025-03-25", "tom": "2025-03-25" },
-        { "fom": "2025-04-01", "tom": "2025-04-01" },
-        { "fom": "2025-04-08", "tom": "2025-04-08" },
-        { "fom": "2025-04-15", "tom": "2025-04-15" },
-        { "fom": "2025-04-22", "tom": "2025-04-22" }
+        { "fom": "2025-04-03", "tom": "2025-04-03" },
+        { "fom": "2025-04-10", "tom": "2025-04-10" },
+        { "fom": "2025-04-17", "tom": "2025-04-17" },
+        { "fom": "2025-04-24", "tom": "2025-04-24" },
+        { "fom": "2025-05-01", "tom": "2025-05-01" },
+        { "fom": "2025-05-08", "tom": "2025-05-08" },
+        { "fom": "2025-05-15", "tom": "2025-05-15" },
+        { "fom": "2025-05-22", "tom": "2025-05-22" },
+        { "fom": "2025-05-29", "tom": "2025-05-29" },
+        { "fom": "2025-06-05", "tom": "2025-06-05" },
+        { "fom": "2025-06-12", "tom": "2025-06-12" },
+        { "fom": "2025-06-19", "tom": "2025-06-19" }
       ],
       "egenmeldinger": [],
       "redusertLoennIAgp": null
     },
-    "inntekt": {
-      "beloep": 27000,
-      "inntektsdato": "2025-04-22",
-      "naturalytelser": [],
-      "endringAarsaker": [{ "aarsak": "Bonus" }]
-    },
+    "inntekt": { "beloep": 64300, "inntektsdato": "2025-06-19", "naturalytelser": [], "endringAarsaker": [] },
     "refusjon": null,
-    "aarsakInnsending": "Endring",
-    "mottatt": "2025-08-18T11:10:07.914880778+02:00"
+    "aarsakInnsending": "Ny",
+    "mottatt": "2025-08-19T13:03:48.593181293+02:00"
   }
 }
