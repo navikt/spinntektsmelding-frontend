@@ -7,7 +7,7 @@ export const PersonnummerSchema = z
   .pipe(
     z
       .string()
-      .min(11, { error: 'Personnummeret er for kort, det må være 11 siffer' })
-      .max(11, { error: 'Personnummeret er for langt, det må være 11 siffer' })
-      .refine((val) => isFnrNumber(val), { error: 'Ugyldig personnummer' })
+      .min(11, { error: 'Fødselsnummeret er for kort, det må være 11 siffer' })
+      .max(11, { error: 'Fødselsnummeret er for langt, det må være 11 siffer' })
+      .refine((val) => isFnrNumber(val), { error: 'Ugyldig fødselsnummer' })
   );

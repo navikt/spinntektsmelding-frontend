@@ -205,7 +205,7 @@ const InitieringFritatt: NextPage = () => {
                   <p>{fulltNavn}</p>
                 </div> */}
                 <div>
-                  <TextLabel>Personnummer</TextLabel>
+                  <TextLabel>Fødselsnummer</TextLabel>
                   <p>{sykmeldt.fnr}</p>
                 </div>
               </div>

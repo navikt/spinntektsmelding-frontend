@@ -29,7 +29,7 @@ export default function useBehandlingsdager(
         if (err.status === 404) {
           setError('sykepengerBehandlingsdager', {
             type: 'manual',
-            error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+            error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer'
           });
         } else if (err.status !== 200) {
           setError('sykepengerBehandlingsdager', {

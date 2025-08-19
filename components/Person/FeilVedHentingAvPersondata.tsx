@@ -21,7 +21,7 @@ export default function FeilVedHentingAvPersondata({ sykmeldt, avsender }: Reado
     hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
   } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'bedriften' : ''}`;
 
-  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'personnummer' : ''} ${
+  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'fødselsnummer' : ''} ${
     hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'og' : ''
   } ${hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`;
 

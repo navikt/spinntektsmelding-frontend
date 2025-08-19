@@ -70,7 +70,7 @@ describe('useBehandlingsdager', () => {
       onError({ status: 404 });
       expect(setError).toHaveBeenCalledWith('sykepengerBehandlingsdager', {
         type: 'manual',
-        error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+        error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer'
       });
     });
 

@@ -105,7 +105,7 @@ describe('Person component', () => {
 
     expect(
       getByText(
-        'Vi klarer ikke hente navn på den ansatte og bedriften akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at personnummer og organisasjonsnummer stemmer.'
+        'Vi klarer ikke hente navn på den ansatte og bedriften akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at fødselsnummer og organisasjonsnummer stemmer.'
       )
     ).toBeInTheDocument();
   });

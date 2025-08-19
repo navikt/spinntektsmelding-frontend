@@ -28,7 +28,7 @@ export default function AnsattDataVisning({ sykmeldt }: Readonly<AnsattDataVisni
           </div>
         )}
         <div className={lokalStyles.ansattWrapper}>
-          <TextLabel>Personnummer</TextLabel>
+          <TextLabel>Fødselsnummer</TextLabel>
           <div data-cy='identitetsnummer'>
             <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={sykmeldt.fnr} />
           </div>

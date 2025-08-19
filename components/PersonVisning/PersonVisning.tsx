@@ -31,7 +31,7 @@ export default function PersonVisning({
           </div>
 
           <div className={lokalStyles.ansattWrapper}>
-            <TextLabel>Personnummer</TextLabel>
+            <TextLabel>Fødselsnummer</TextLabel>
             <div data-cy='identitetsnummer'>{identitetsnummer}</div>
           </div>
         </div>

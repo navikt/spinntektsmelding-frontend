@@ -21,7 +21,7 @@ export default function useArbeidsforhold(
         if (err.status === 404) {
           setError('sykepengePeriodeId', {
             type: 'manual',
-            error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig personnummer'
+            error: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer'
           });
         } else if (err.status !== 200) {
           setError('sykepengePeriodeId', {
