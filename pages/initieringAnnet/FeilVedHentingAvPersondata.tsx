@@ -16,7 +16,7 @@ export default function FeilVedHentingAvPersondata({
     hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? ' og ' : ''
   }${hentingAvArbeidsgiverdataFeilet ? 'bedriften' : ''}`.trim();
 
-  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'personnummer' : ''}${
+  const hvilkenSjekk = `${hentingAvPersondataFeilet ? 'fødselsnummer' : ''}${
     hentingAvPersondataFeilet && hentingAvArbeidsgiverdataFeilet ? ' og ' : ''
   }${hentingAvArbeidsgiverdataFeilet ? 'organisasjonsnummer' : ''}`.trim();
 

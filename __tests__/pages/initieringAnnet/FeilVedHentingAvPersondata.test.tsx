@@ -11,7 +11,7 @@ describe('FeilVedHentingAvPersondata', () => {
   it('renders persondata error only', () => {
     render(<FeilVedHentingAvPersondata fulltNavnMangler={true} orgNavnMangler={false} />);
     const text = screen.getByText(
-      'Vi klarer ikke hente navn på den ansatte akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at personnummer stemmer.'
+      'Vi klarer ikke hente navn på den ansatte akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at fødselsnummer stemmer.'
     );
     expect(text).toBeInTheDocument();
   });
@@ -27,7 +27,7 @@ describe('FeilVedHentingAvPersondata', () => {
   it('renders both person- and orgdata errors', () => {
     render(<FeilVedHentingAvPersondata fulltNavnMangler={true} orgNavnMangler={true} />);
     const text = screen.getByText(
-      'Vi klarer ikke hente navn på den ansatte og bedriften akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at personnummer og organisasjonsnummer stemmer.'
+      'Vi klarer ikke hente navn på den ansatte og bedriften akkurat nå. Du kan sende inn inntektsmeldingen uansett, men kontroller at fødselsnummer og organisasjonsnummer stemmer.'
     );
     expect(text).toBeInTheDocument();
   });

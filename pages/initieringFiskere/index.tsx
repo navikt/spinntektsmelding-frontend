@@ -21,7 +21,6 @@ import InitieringSchema from '../../schema/InitieringSchema';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { differenceInDays } from 'date-fns';
 import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/navigation';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
@@ -29,26 +28,7 @@ import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPerso
 import useMineTilganger from '../../utils/useMineTilganger';
 import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
 import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
-
-type OrgNode = {
-  orgnr: string;
-  navn: string;
-  underenheter: OrgNode[];
-};
-
-function collectNestedOrgs(nodes: OrgNode[]): { orgnr: string; navn: string }[] {
-  const result: { orgnr: string; navn: string }[] = [];
-  function walk(node: OrgNode) {
-    for (const child of node.underenheter) {
-      result.push({ orgnr: child.orgnr, navn: child.navn });
-      walk(child);
-    }
-  }
-  for (const n of nodes) {
-    walk(n);
-  }
-  return result;
-}
+import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
 
 const InitieringFritatt: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -203,7 +183,7 @@ const InitieringFritatt: NextPage = () => {
                   <p>{fulltNavn}</p>
                 </div> */}
                 <div>
-                  <TextLabel>Personnummer</TextLabel>
+                  <TextLabel>Fødselsnummer</TextLabel>
                   <p>{sykmeldt.fnr}</p>
                 </div>
               </div>

@@ -27,7 +27,7 @@ describe('InitieringSchema', () => {
     expect(result.error?.issues).toEqual([
       {
         code: 'custom',
-        message: 'Ugyldig personnummer',
+        message: 'Ugyldig fødselsnummer',
         path: ['personnummer']
       }
     ]);

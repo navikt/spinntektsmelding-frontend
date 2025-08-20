@@ -1,6 +1,7 @@
 import useSWRImmutable from 'swr/immutable';
 import environment from '../config/environment';
 import fetcherInntektsdataSelvbestemt from './fetcherInntektsdataSelvbestemt';
+import { commonSWRFormOptions } from './commonSWRFormOptions';
 
 function useTidligereInntektsdata(
   identitetsnummer: string,
@@ -16,8 +17,7 @@ function useTidligereInntektsdata(
       onError: (err) => {
         console.error('Kunne ikke hente arbeidsforhold', err);
       },
-      refreshInterval: 0,
-      shouldRetryOnError: false
+      ...commonSWRFormOptions
     }
   );
 }
