@@ -35,9 +35,10 @@ describe('VelgAarsak', () => {
     expect(screen.getByRole('group', { name: legend })).toBeInTheDocument();
 
     // Each radio option by its label
-    expect(screen.getByLabelText('Unntatt registrering i Aa-registeret')).toBeInTheDocument();
-    expect(screen.getByLabelText('Fisker med hyre')).toBeInTheDocument();
-    expect(screen.getByLabelText('Annen årsak')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Unntatt registrering i Aa-registeret/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Fisker med hyre/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Annen årsak/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Enkeltstående behandlingsdager/)).toBeInTheDocument();
   });
 
   it.skip('allows selecting a radio option', async () => {
