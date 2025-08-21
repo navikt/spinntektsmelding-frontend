@@ -78,7 +78,7 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   mottattBestemmendeFravaersdag?: TDateISODate,
   mottattEksternInntektsdato?: TDateISODate,
   laastTilMottattPeriode?: boolean,
-  delvisForespurt?: boolean
+  erBegrensetForespoersel?: boolean
 ): string | undefined {
   if (laastTilMottattPeriode && mottattBestemmendeFravaersdag) {
     if (!mottattEksternInntektsdato) return mottattBestemmendeFravaersdag;
@@ -96,6 +96,23 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   const sorterteSykmeldingPerioder = finnSammenhengendePeriode(
     finnSorterteUnikePerioder(fravaerPerioder.filter((periode) => periode.fom && periode.tom))
   );
+
+  if (erBegrensetForespoersel) {
+    const sistePeriode = sorterteSykmeldingPerioder[sorterteSykmeldingPerioder.length - 1];
+    console.log(
+      'Den datoen beregnet...',
+      formatISO9075(sistePeriode.fom as Date, {
+        representation: 'date'
+      })
+    );
+    if (sistePeriode) {
+      return formatISO9075(sistePeriode.fom as Date, {
+        representation: 'date'
+      });
+    }
+  } else {
+    console.log('Ikke begrenset');
+  }
 
   const sisteDagArbeidsgiverperiode =
     Array.isArray(arbeidsgiverperiode) && arbeidsgiverperiode.length > 0

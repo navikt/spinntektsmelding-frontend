@@ -48,7 +48,6 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
-import finnBestemmendeFravaersdagDelvisForespoersel from '../utils/finnBestemmendeFravaersdagDelvisForespoersel';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -130,7 +129,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
-  const erDelvisForespoersel = true; // Assuming this is a constant for the sake of this example
+  const erBegrensetForespoersel = true; // Assuming this is a constant for the sake of this example
 
   type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -195,7 +194,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setSenderInn(true);
 
     if (pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      sendInnArbeidsgiverInitiertSkjema(true, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
+      sendInnArbeidsgiverInitiertSkjema(
+        true,
+        pathSlug,
+        isDirtyForm || isDirty,
+        formData,
+        erBegrensetForespoersel
+      ).finally(() => {
         setSenderInn(false);
       });
 
@@ -217,7 +222,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       opplysningstyper,
       pathSlug,
       isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
-      formData
+      formData,
+      erBegrensetForespoersel
     ).finally(() => {
       setSenderInn(false);
     });
@@ -237,7 +243,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       arbeidsgiverKanFlytteSkjæringstidspunkt(),
       undefined,
       undefined,
-      erDelvisForespoersel
+      undefined,
+      erBegrensetForespoersel
     );
     return parseIsoDate(beregnetBestemmendeFraværsdagISO);
   }, [
@@ -248,10 +255,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     harForespurtArbeidsgiverperiode,
     forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt,
-    erDelvisForespoersel
+    erBegrensetForespoersel
   ]);
-
-  console.log('Den datoen...', finnBestemmendeFravaersdagDelvisForespoersel(sykmeldingsperioder));
 
   const beregnetBestemmendeFraværsdag = behandlingsdagerInnsending
     ? foreslaattBestemmendeFravaersdag
@@ -305,7 +310,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
   const sbTidligereInntekt = !error && data?.historikk ? data?.historikk : undefined;
-  
+
   return (
     <div className={styles.container}>
       <Head>

@@ -58,8 +58,8 @@ export default function useFyllAapenInnsending() {
 
   return (
     skjemaData: SkjemaData,
-    arbeidsforhold: string,
-    selvbestemtType: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker' | 'Behandlingsdager'
+    selvbestemtType: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker' | 'Behandlingsdager',
+    erBegrensetForespoersel: boolean
   ) => {
     const bestemmendeFravaersdag =
       perioder && perioder.length > 0
@@ -67,7 +67,11 @@ export default function useFyllAapenInnsending() {
             perioder,
             formatertePerioder,
             skjaeringstidspunkt,
-            arbeidsgiverKanFlytteSkjæringstidspunkt()
+            arbeidsgiverKanFlytteSkjæringstidspunkt(),
+            undefined,
+            undefined,
+            undefined,
+            erBegrensetForespoersel
           )
         : undefined;
 

@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
-import { SelvbestemtType, SkjemaStatus } from '../state/useSkjemadataStore';
+import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
@@ -28,7 +28,13 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
 
-  return async (opplysningerBekreftet: boolean, pathSlug: string, isDirtyForm: boolean, skjemaData: any) => {
+  return async (
+    opplysningerBekreftet: boolean,
+    pathSlug: string,
+    isDirtyForm: boolean,
+    skjemaData: any,
+    erBegrensetForespoersel: boolean
+  ) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
       component: amplitudeComponent
@@ -62,7 +68,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     } else {
       skjemaData.aarsakInnsending = 'Ny';
     }
-    const validerteData = fyllAapenInnsending(skjemaData, pathSlug, selvbestemtType);
+    const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
 
     if (validerteData.success !== true) {
       logger.error('Feil ved validering av skjema - Åpen innsending');
