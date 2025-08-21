@@ -42,7 +42,7 @@
     "react-hook-form": "7.62.0",
     "swr": "2.3.6",
     "zod": "^4.0.17",
-    "zustand": "5.0.7"
+    "zustand": "5.0.8"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
