@@ -70,6 +70,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
+  const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
+
   const [
     hentPaakrevdOpplysningstyper,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -128,8 +130,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
-
-  const erBegrensetForespoersel = true; // Assuming this is a constant for the sake of this example
 
   type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -199,7 +199,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         pathSlug,
         isDirtyForm || isDirty,
         formData,
-        erBegrensetForespoersel
+        begrensetForespoersel
       ).finally(() => {
         setSenderInn(false);
       });
@@ -223,7 +223,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       pathSlug,
       isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
       formData,
-      erBegrensetForespoersel
+      begrensetForespoersel
     ).finally(() => {
       setSenderInn(false);
     });
@@ -244,7 +244,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       undefined,
       undefined,
       undefined,
-      erBegrensetForespoersel
+      begrensetForespoersel
     );
     return parseIsoDate(beregnetBestemmendeFraværsdagISO);
   }, [
@@ -255,7 +255,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     harForespurtArbeidsgiverperiode,
     forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt,
-    erBegrensetForespoersel
+    begrensetForespoersel
   ]);
 
   const beregnetBestemmendeFraværsdag = behandlingsdagerInnsending

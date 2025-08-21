@@ -11,10 +11,9 @@ export default function useStateInit() {
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
   const initForespurtData = useBoundStore((state) => state.initForespurtData);
-  const [setForeslaattBestemmendeFravaersdag, setSkjaeringstidspunkt] = useBoundStore((state) => [
-    state.setForeslaattBestemmendeFravaersdag,
-    state.setSkjaeringstidspunkt
-  ]);
+  const [setForeslaattBestemmendeFravaersdag, setSkjaeringstidspunkt, setBegrensetForespoersel] = useBoundStore(
+    (state) => [state.setForeslaattBestemmendeFravaersdag, state.setSkjaeringstidspunkt, state.setBegrensetForespoersel]
+  );
   const [setMottattBestemmendeFravaersdag, setMottattEksternInntektsdato] = useBoundStore((state) => [
     state.setMottattBestemmendeFravaersdag,
     state.setMottattEksternInntektsdato
@@ -54,7 +53,7 @@ export default function useStateInit() {
     const bestemmendeFravaersdag = finnBestemmendeFravaersdag(
       perioder,
       arbeidsgiverperiode,
-      jsonData.eksternInntektsdato,
+      jsonData.eksternInntektsdato ?? undefined,
       arbeidsgiverKanFlytteSkjæringstidspunkt()
     );
 
@@ -77,6 +76,10 @@ export default function useStateInit() {
         jsonData.inntekt?.gjennomsnitt ?? null,
         jsonData.inntekt?.historikk ?? null
       );
+    }
+
+    if (jsonData.begrensetForespoersel) {
+      setBegrensetForespoersel(jsonData.begrensetForespoersel);
     }
   };
 }

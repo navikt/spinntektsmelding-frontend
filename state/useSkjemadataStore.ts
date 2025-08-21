@@ -35,6 +35,7 @@ export interface SkjemadataState {
   setVedtaksperiodeId: (id: string) => void;
   setAarsakSelvbestemtInnsending: (aarsak: string) => void;
   setBehandlingsdager: (behandlingsdager: string[]) => void;
+  setBegrensetForespoersel: (begrenset: boolean) => void;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
@@ -49,6 +50,7 @@ export interface SkjemadataState {
   aarsakSelvbestemtInnsending?: string;
   behandlingsdager?: string[];
   selvbestemtType: SelvbestemtType;
+  begrensetForespoersel: boolean;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -62,6 +64,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   aarsakSelvbestemtInnsending: undefined,
   behandlingsdager: undefined,
   selvbestemtType: 'MedArbeidsforhold',
+  begrensetForespoersel: false,
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
@@ -165,6 +168,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.selvbestemtType = type;
+      })
+    );
+  },
+  setBegrensetForespoersel: (begrenset: boolean) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.begrensetForespoersel = begrenset;
       })
     );
   }
