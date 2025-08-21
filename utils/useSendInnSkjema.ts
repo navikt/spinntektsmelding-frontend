@@ -85,7 +85,7 @@ export default function useSendInnSkjema(
         component: amplitudeComponent
       });
 
-      logger.error('Feil ved validering ved innsending av skjema med id ' + pathSlug);
+      logger.error(`Feil ved validering ved innsending av skjema med id ${pathSlug}`);
       logger.error(validerteData.error);
 
       fyllFeilmeldinger(

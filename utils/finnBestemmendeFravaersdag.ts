@@ -99,19 +99,12 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
 
   if (erBegrensetForespoersel) {
     const sistePeriode = sorterteSykmeldingPerioder[sorterteSykmeldingPerioder.length - 1];
-    console.log(
-      'Den datoen beregnet...',
-      formatISO9075(sistePeriode.fom as Date, {
-        representation: 'date'
-      })
-    );
+
     if (sistePeriode) {
       return formatISO9075(sistePeriode.fom as Date, {
         representation: 'date'
       });
     }
-  } else {
-    console.log('Ikke begrenset');
   }
 
   const sisteDagArbeidsgiverperiode =
