@@ -27,7 +27,7 @@
     "@navikt/oasis": "^3.8.0",
     "@testing-library/dom": "10.4.1",
     "classnames": "2.5.1",
-    "core-js-pure": "3.45.0",
+    "core-js-pure": "3.45.1",
     "csp-header": "^6.1.0",
     "date-fns": "4.1.0",
     "html-react-parser": "^5.2.6",
