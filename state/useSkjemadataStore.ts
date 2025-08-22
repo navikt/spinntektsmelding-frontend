@@ -16,7 +16,15 @@ export enum SkjemaStatus {
 type KvitteringEkstern = z.infer<typeof KvitteringEksternSchema>;
 type KvitteringFullInnsending = z.infer<typeof FullInnsendingSchema>;
 type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
-export type SelvbestemtType = 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker' | 'Behandlingsdager';
+
+export const SelvbestemtTypeConst = {
+  MedArbeidsforhold: 'MedArbeidsforhold',
+  UtenArbeidsforhold: 'UtenArbeidsforhold',
+  Fisker: 'Fisker',
+  Behandlingsdager: 'Behandlingsdager'
+} as const;
+
+export type SelvbestemtType = (typeof SelvbestemtTypeConst)[keyof typeof SelvbestemtTypeConst];
 
 export interface SkjemadataState {
   nyInnsending: boolean;
@@ -164,7 +172,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setSelvbestemtType: (type: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker') => {
+  setSelvbestemtType: (type: SelvbestemtType) => {
     set(
       produce((state: SkjemadataState) => {
         state.selvbestemtType = type;
