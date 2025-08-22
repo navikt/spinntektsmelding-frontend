@@ -1177,4 +1177,38 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
       finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, undefined, true, undefined, undefined, false)
     ).toEqual('2024-09-12');
   });
+
+  it('should return correct bfd (2024-09-27) when there is a weekend gap between agp and fraværsdager and there are begrenset forespoersel', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+
+        fom: parseISO('2024-09-01'),
+        tom: parseISO('2024-09-12')
+      },
+      {
+        id: '2',
+        fom: parseISO('2024-09-13'),
+        tom: parseISO('2024-09-18')
+      },
+
+      {
+        id: '3',
+        fom: parseISO('2024-09-27'),
+        tom: parseISO('2024-09-30')
+      }
+    ];
+
+    const arbeidsgiverperiode: Periode[] = [
+      {
+        id: 'a1',
+        fom: parseISO('2024-09-01'),
+        tom: parseISO('2024-09-16')
+      }
+    ];
+
+    expect(
+      finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, undefined, true, undefined, undefined, false, true)
+    ).toEqual('2024-09-27');
+  });
 });
