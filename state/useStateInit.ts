@@ -78,8 +78,8 @@ export default function useStateInit() {
       );
     }
 
-    if (jsonData.begrensetForespoersel) {
-      setBegrensetForespoersel(jsonData.begrensetForespoersel);
+    if (jsonData.erBegrenset) {
+      setBegrensetForespoersel(jsonData.erBegrenset);
     }
   };
 }
