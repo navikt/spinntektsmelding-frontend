@@ -18,6 +18,7 @@ import { z } from 'zod/v4';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import isValidUUID from '../utils/isValidUUID';
 import { TypeArbeidsforholdSchema } from '../schema/TypeArbeidsforholdSchema';
+import { SelvbestemtType } from './useSkjemadataStore';
 
 export default function useFyllAapenInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
@@ -56,11 +57,7 @@ export default function useFyllAapenInnsending() {
   type SkjemaData = z.infer<typeof HovedskjemaSchema>;
   type ArbeidsforholdType = z.infer<typeof TypeArbeidsforholdSchema>;
 
-  return (
-    skjemaData: SkjemaData,
-    selvbestemtType: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker' | 'Behandlingsdager',
-    erBegrensetForespoersel: boolean
-  ) => {
+  return (skjemaData: SkjemaData, selvbestemtType: SelvbestemtType, erBegrensetForespoersel: boolean) => {
     const bestemmendeFravaersdag =
       perioder && perioder.length > 0
         ? finnBestemmendeFravaersdag(
