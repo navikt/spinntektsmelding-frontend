@@ -12,9 +12,6 @@ test.describe('Begrenset forespørsel', () => {
         body: JSON.stringify({ name: 'Nothing' })
       })
     );
-    // inject a11y checks
-    // await page.addInitScript(() => {
-    //   // require('@axe-core/playwright').injectAxe();
   });
 
   test('should display information on the person and the submitter', async ({ page }) => {
@@ -42,7 +39,6 @@ test.describe('Begrenset forespørsel', () => {
     await page.route('**/collect', (route) => route.fulfill({ status: 202, contentType: 'text/plain', body: 'OK' }));
 
     await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-    // await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // Person data
     await expect(page.locator('[data-cy="navn"]')).toHaveText('Test Navn Testesen-Navnesen Jr.');
@@ -51,12 +47,6 @@ test.describe('Begrenset forespørsel', () => {
     await expect(page.locator('[data-cy="orgnummer"]')).toHaveText('911206722');
     await expect(page.locator('[data-cy="innsendernavn"]')).toHaveText('Test Testesen');
     await expect(page.getByLabel('Telefon innsender')).toHaveValue('12345678');
-
-    // Egenmelding periods
-    // await expect(page.locator('[data-cy="egenmelding"] .navds-label').first()).toHaveText('Fra');
-    // await expect(page.locator('[data-cy="egenmelding"] .navds-label').last()).toHaveText('Til');
-    // await expect(page.locator('[data-cy="egenmelding-fra"]')).toHaveText('01.02.2023');
-    // await expect(page.locator('[data-cy="egenmelding-til"]')).toHaveText('03.02.2023');
 
     // Sykmelding periods
     await expect(page.locator('[data-cy="sykmelding-0-fra"]')).toHaveText('Fra');
@@ -121,7 +111,6 @@ test.describe('Begrenset forespørsel', () => {
       avsenderTlf: '12345678'
     });
 
-    // await expect(page.getByText('Kvittering - innsendt inntektsmelding')).toBeVisible();
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
 
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText('25.03.2023');
