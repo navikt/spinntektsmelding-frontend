@@ -15,7 +15,6 @@ test.describe('Begrenset forespørsel', () => {
     // inject a11y checks
     // await page.addInitScript(() => {
     //   // require('@axe-core/playwright').injectAxe();
-    // });
   });
 
   test('should display information on the person and the submitter', async ({ page }) => {
