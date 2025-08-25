@@ -51,4 +51,16 @@ describe('useSkjemadataStore', () => {
 
     expect(result.current.vedtaksperiodeId).toBe('true');
   });
+
+  it('should set setBegrensetForespoersel.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    expect(result.current.begrensetForespoersel).toBeFalsy();
+
+    act(() => {
+      result.current.setBegrensetForespoersel(true);
+    });
+
+    expect(result.current.begrensetForespoersel).toBe(true);
+  });
 });

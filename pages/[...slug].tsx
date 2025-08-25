@@ -70,6 +70,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
+  const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
+
   const [
     hentPaakrevdOpplysningstyper,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -192,7 +194,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setSenderInn(true);
 
     if (pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      sendInnArbeidsgiverInitiertSkjema(true, pathSlug, isDirtyForm || isDirty, formData).finally(() => {
+      sendInnArbeidsgiverInitiertSkjema(
+        true,
+        pathSlug,
+        isDirtyForm || isDirty,
+        formData,
+        begrensetForespoersel
+      ).finally(() => {
         setSenderInn(false);
       });
 
@@ -214,7 +222,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       opplysningstyper,
       pathSlug,
       isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
-      formData
+      formData,
+      begrensetForespoersel
     ).finally(() => {
       setSenderInn(false);
     });
@@ -231,7 +240,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       altFravaer,
       arbeidsgiverperioder,
       foreslaattBestemmendeFravaersdag,
-      arbeidsgiverKanFlytteSkjæringstidspunkt()
+      arbeidsgiverKanFlytteSkjæringstidspunkt(),
+      begrensetForespoersel
     );
     return parseIsoDate(beregnetBestemmendeFraværsdagISO);
   }, [
@@ -241,7 +251,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sykmeldingsperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     harForespurtArbeidsgiverperiode,
-    forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt
+    forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt,
+    begrensetForespoersel
   ]);
 
   const beregnetBestemmendeFraværsdag = behandlingsdagerInnsending
@@ -296,7 +307,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
   const sbTidligereInntekt = !error && data?.historikk ? data?.historikk : undefined;
-  
+
   return (
     <div className={styles.container}>
       <Head>

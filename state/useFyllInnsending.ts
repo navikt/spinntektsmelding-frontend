@@ -54,7 +54,8 @@ export default function useFyllInnsending() {
     opplysningerBekreftet: boolean,
     forespoerselId: string,
     forespurteOpplysningstyper: Opplysningstype[],
-    skjemaData: Skjema
+    skjemaData: Skjema,
+    erBegrensetForespoersel: boolean
   ): FullInnsending => {
     setSkalViseFeilmeldinger(true);
 
@@ -78,7 +79,8 @@ export default function useFyllInnsending() {
               perioder,
               formatertePerioder,
               skjaeringstidspunkt,
-              arbeidsgiverKanFlytteSkjæringstidspunkt()
+              arbeidsgiverKanFlytteSkjæringstidspunkt(),
+              erBegrensetForespoersel
             )
           );
 
@@ -102,7 +104,8 @@ export default function useFyllInnsending() {
           arbeidsgiverKanFlytteSkjæringstidspunkt(),
           inngangFraKvittering,
           undefined,
-          beregnetSkjaeringstidspunkt
+          beregnetSkjaeringstidspunkt,
+          erBegrensetForespoersel
         )
       : forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
 
@@ -196,11 +199,18 @@ function hentBestemmendeFraværsdag(
   arbeidsgiverKanFlytteSkjæringstidspunkt: boolean,
   inngangFraKvittering: boolean,
   bestemmendeFravaersdag: Date | undefined,
-  beregnetSkjaeringstidspunkt: Date | undefined
+  beregnetSkjaeringstidspunkt: Date | undefined,
+  erBegrensetForespoersel: boolean
 ) {
   if (!isValid(beregnetSkjaeringstidspunkt)) {
     beregnetSkjaeringstidspunkt = parseIsoDate(
-      finnBestemmendeFravaersdag(perioder, undefined, undefined, arbeidsgiverKanFlytteSkjæringstidspunkt)
+      finnBestemmendeFravaersdag(
+        perioder,
+        undefined,
+        undefined,
+        arbeidsgiverKanFlytteSkjæringstidspunkt,
+        erBegrensetForespoersel
+      )
     );
   }
 
@@ -209,7 +219,8 @@ function hentBestemmendeFraværsdag(
       perioder,
       formatertePerioder,
       skjaeringstidspunkt,
-      arbeidsgiverKanFlytteSkjæringstidspunkt
+      arbeidsgiverKanFlytteSkjæringstidspunkt,
+      erBegrensetForespoersel
     );
   } else {
     return inngangFraKvittering ? formatIsoDate(bestemmendeFravaersdag) : formatIsoDate(beregnetSkjaeringstidspunkt);

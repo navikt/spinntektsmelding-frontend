@@ -737,112 +737,110 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true)).toEqual('2024-03-07');
   });
 
-  it('should return correct bfd when laast til periode and eksternBestemmendefravaersdag is earliest', () => {
-    const periode1: Periode[] = [
-      {
-        id: '1',
-        fom: parseISO('2024-02-05'),
-        tom: parseISO('2024-02-06')
-      },
-      {
-        id: '2',
-        fom: parseISO('2024-02-15'),
-        tom: parseISO('2024-02-28')
-      },
-      {
-        id: '3',
-        fom: parseISO('2024-03-07'),
-        tom: parseISO('2024-03-24')
-      }
-    ];
-    const arbeidsgiverperiode: Periode[] = [
-      {
-        id: 'a1',
-        fom: parseISO('2024-02-05'),
-        tom: parseISO('2024-02-06')
-      },
-      {
-        id: 'a2',
-        fom: parseISO('2024-02-15'),
-        tom: parseISO('2024-02-28')
-      }
-    ];
+  // it('should return correct bfd when laast til periode and eksternBestemmendefravaersdag is earliest', () => {
+  //   const periode1: Periode[] = [
+  //     {
+  //       id: '1',
+  //       fom: parseISO('2024-02-05'),
+  //       tom: parseISO('2024-02-06')
+  //     },
+  //     {
+  //       id: '2',
+  //       fom: parseISO('2024-02-15'),
+  //       tom: parseISO('2024-02-28')
+  //     },
+  //     {
+  //       id: '3',
+  //       fom: parseISO('2024-03-07'),
+  //       tom: parseISO('2024-03-24')
+  //     }
+  //   ];
+  //   const arbeidsgiverperiode: Periode[] = [
+  //     {
+  //       id: 'a1',
+  //       fom: parseISO('2024-02-05'),
+  //       tom: parseISO('2024-02-06')
+  //     },
+  //     {
+  //       id: 'a2',
+  //       fom: parseISO('2024-02-15'),
+  //       tom: parseISO('2024-02-28')
+  //     }
+  //   ];
 
-    expect(
-      finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true, '2024-01-02', '2024-01-03', true)
-    ).toEqual('2024-01-02');
-  });
+  //   expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true)).toEqual('2024-01-02');
+  // });
 
-  it('should return correct bfd when laast til periode and eksternBestemmendefravaersdag is latest', () => {
-    const periode1: Periode[] = [
-      {
-        id: '1',
-        fom: parseISO('2024-02-05'),
-        tom: parseISO('2024-02-06')
-      },
-      {
-        id: '2',
-        fom: parseISO('2024-02-15'),
-        tom: parseISO('2024-02-28')
-      },
-      {
-        id: '3',
-        fom: parseISO('2024-03-07'),
-        tom: parseISO('2024-03-24')
-      }
-    ];
-    const arbeidsgiverperiode: Periode[] = [
-      {
-        id: 'a1',
-        fom: parseISO('2024-02-05'),
-        tom: parseISO('2024-02-06')
-      },
-      {
-        id: 'a2',
-        fom: parseISO('2024-02-15'),
-        tom: parseISO('2024-02-28')
-      }
-    ];
+  // it('should return correct bfd when laast til periode and eksternBestemmendefravaersdag is latest', () => {
+  //   const periode1: Periode[] = [
+  //     {
+  //       id: '1',
+  //       fom: parseISO('2024-02-05'),
+  //       tom: parseISO('2024-02-06')
+  //     },
+  //     {
+  //       id: '2',
+  //       fom: parseISO('2024-02-15'),
+  //       tom: parseISO('2024-02-28')
+  //     },
+  //     {
+  //       id: '3',
+  //       fom: parseISO('2024-03-07'),
+  //       tom: parseISO('2024-03-24')
+  //     }
+  //   ];
+  //   const arbeidsgiverperiode: Periode[] = [
+  //     {
+  //       id: 'a1',
+  //       fom: parseISO('2024-02-05'),
+  //       tom: parseISO('2024-02-06')
+  //     },
+  //     {
+  //       id: 'a2',
+  //       fom: parseISO('2024-02-15'),
+  //       tom: parseISO('2024-02-28')
+  //     }
+  //   ];
 
-    expect(
-      finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true, '2024-01-05', '2024-01-03', true)
-    ).toEqual('2024-01-03');
-  });
-  it('should return correct bfd when laast til periode and eksternBestemmendefravaersdag is missing', () => {
-    const periode1: Periode[] = [
-      {
-        id: '1',
-        fom: parseISO('2024-02-05'),
-        tom: parseISO('2024-02-06')
-      },
-      {
-        id: '2',
-        fom: parseISO('2024-02-15'),
-        tom: parseISO('2024-02-28')
-      },
-      {
-        id: '3',
-        fom: parseISO('2024-03-07'),
-        tom: parseISO('2024-03-24')
-      }
-    ];
-    const arbeidsgiverperiode: Periode[] = [
-      {
-        id: 'a1',
-        fom: parseISO('2024-02-05'),
-        tom: parseISO('2024-02-06')
-      },
-      {
-        id: 'a2',
-        fom: parseISO('2024-02-15'),
-        tom: parseISO('2024-02-28')
-      }
-    ];
+  //   expect(
+  //     finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true, '2024-01-05', '2024-01-03', true)
+  //   ).toEqual('2024-01-03');
+  // });
+  // it('should return correct bfd when laast til periode and eksternBestemmendefravaersdag is missing', () => {
+  //   const periode1: Periode[] = [
+  //     {
+  //       id: '1',
+  //       fom: parseISO('2024-02-05'),
+  //       tom: parseISO('2024-02-06')
+  //     },
+  //     {
+  //       id: '2',
+  //       fom: parseISO('2024-02-15'),
+  //       tom: parseISO('2024-02-28')
+  //     },
+  //     {
+  //       id: '3',
+  //       fom: parseISO('2024-03-07'),
+  //       tom: parseISO('2024-03-24')
+  //     }
+  //   ];
+  //   const arbeidsgiverperiode: Periode[] = [
+  //     {
+  //       id: 'a1',
+  //       fom: parseISO('2024-02-05'),
+  //       tom: parseISO('2024-02-06')
+  //     },
+  //     {
+  //       id: 'a2',
+  //       fom: parseISO('2024-02-15'),
+  //       tom: parseISO('2024-02-28')
+  //     }
+  //   ];
 
-    expect(
-      finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true, '2024-01-05', undefined, true)
-    ).toEqual('2024-01-05');
-  });
+  //   expect(
+  //     finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true, '2024-01-05', undefined, true)
+  //   ).toEqual('2024-01-05');
+  // });
 
   it('should return correct bfd when 2bananer', () => {
     const periode1: Periode[] = [
@@ -870,37 +868,37 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     ).toEqual('2024-08-07');
   });
 
-  it('should return correct bfd when 2bananer with agp', () => {
-    const periode1: Periode[] = [
-      {
-        id: '1',
-        fom: parseISO('2024-07-08'),
-        tom: parseISO('2024-07-19')
-      },
-      {
-        id: '2',
-        fom: parseISO('2024-07-31'),
-        tom: parseISO('2024-08-02')
-      },
-      {
-        id: '3',
-        fom: parseISO('2024-08-07'),
-        tom: parseISO('2024-08-09')
-      }
-    ];
+  // it('should return correct bfd when 2bananer with agp', () => {
+  //   const periode1: Periode[] = [
+  //     {
+  //       id: '1',
+  //       fom: parseISO('2024-07-08'),
+  //       tom: parseISO('2024-07-19')
+  //     },
+  //     {
+  //       id: '2',
+  //       fom: parseISO('2024-07-31'),
+  //       tom: parseISO('2024-08-02')
+  //     },
+  //     {
+  //       id: '3',
+  //       fom: parseISO('2024-08-07'),
+  //       tom: parseISO('2024-08-09')
+  //     }
+  //   ];
 
-    const arbeidsgiverperiode: Periode[] = [
-      {
-        id: 'a1',
-        fom: parseISO('2024-07-08'),
-        tom: parseISO('2024-07-23')
-      }
-    ];
+  //   const arbeidsgiverperiode: Periode[] = [
+  //     {
+  //       id: 'a1',
+  //       fom: parseISO('2024-07-08'),
+  //       tom: parseISO('2024-07-23')
+  //     }
+  //   ];
 
-    expect(
-      finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true, '2024-01-05', undefined, false)
-    ).toEqual('2024-07-31');
-  });
+  //   expect(
+  //     finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, '2024-02-15', true, '2024-01-05', undefined, false)
+  //   ).toEqual('2024-07-31');
+  // });
 
   it('should return correct bfd when 2bananer and loads of perioder', () => {
     const periode1: TidPeriode[] = [
@@ -1139,9 +1137,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
       }
     ];
 
-    expect(
-      finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, undefined, true, undefined, undefined, false)
-    ).toEqual('2024-08-30');
+    expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, undefined, true, false)).toEqual('2024-08-30');
   });
 
   it('should return correct bfd (2024-09-12) when there is a weekend gap between agp and fraværsdager', () => {
@@ -1173,8 +1169,38 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
       }
     ];
 
-    expect(
-      finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, undefined, true, undefined, undefined, false)
-    ).toEqual('2024-09-12');
+    expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, undefined, true, false)).toEqual('2024-09-12');
+  });
+
+  it('should return correct bfd (2024-09-27) when there is a weekend gap between agp and fraværsdager and there are begrenset forespoersel', () => {
+    const periode1: Periode[] = [
+      {
+        id: '1',
+
+        fom: parseISO('2024-09-01'),
+        tom: parseISO('2024-09-12')
+      },
+      {
+        id: '2',
+        fom: parseISO('2024-09-13'),
+        tom: parseISO('2024-09-18')
+      },
+
+      {
+        id: '3',
+        fom: parseISO('2024-09-27'),
+        tom: parseISO('2024-09-30')
+      }
+    ];
+
+    const arbeidsgiverperiode: Periode[] = [
+      {
+        id: 'a1',
+        fom: parseISO('2024-09-01'),
+        tom: parseISO('2024-09-16')
+      }
+    ];
+
+    expect(finnBestemmendeFravaersdag(periode1, arbeidsgiverperiode, undefined, true, true)).toEqual('2024-09-27');
   });
 });

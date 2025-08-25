@@ -2,6 +2,7 @@ import { Radio, RadioGroup } from '@navikt/ds-react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import { SelvbestemtTypeConst } from '../../state/useSkjemadataStore';
 
 interface VelgAarsakProps {
   legend: string;
@@ -23,29 +24,29 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
       render={({ field }) => (
         <RadioGroup {...field} legend={legend} error={error} id={name}>
           <Radio
-            value='Behandlingsdager'
+            value={SelvbestemtTypeConst.Behandlingsdager}
             id={field.name + '_Behandlingsdager'}
             description='Du har en ansatt som har godkjent sykmelding og sendt søknad for enkeltstående behandlingsdager'
           >
             Enkeltstående behandlingsdager
           </Radio>
           <Radio
-            value='UnntattAARegisteret'
-            id={field.name + '_UnntattAARegisteret'}
+            value={SelvbestemtTypeConst.UtenArbeidsforhold}
+            id={field.name + '_UtenArbeidsforhold'}
             description='Ambassadepersonell og utenlandske arbeidstakere'
           >
             Unntatt registrering i Aa-registeret
           </Radio>
           <Radio
-            value='Fiskere'
-            id={field.name + '_Fiskere'}
+            value={SelvbestemtTypeConst.Fisker}
+            id={field.name + '_Fisker'}
             description='Personer bosatt i Norge og som har fiske eller fangst i havet som hovednæring (blad B) eller binæring (blad A).'
           >
             Fisker med hyre
           </Radio>
           <Radio
-            value='Annet'
-            id={field.name + '_Annet'}
+            value={SelvbestemtTypeConst.MedArbeidsforhold}
+            id={field.name + '_MedArbeidsforhold'}
             description='Det skal ikke være arbeidsgiverperiode, eller det er andre grunner til at Nav ikke har etterspurt en inntektsmelding'
           >
             Annen årsak

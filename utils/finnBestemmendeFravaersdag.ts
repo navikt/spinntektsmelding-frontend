@@ -3,7 +3,6 @@ import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
 import sorterFomStigende from './sorterFomStigende';
 import sorterFomSynkende from './sorterFomSynkende';
-import { TDateISODate } from '../schema/ForespurtDataSchema';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
 
 export function overlappendePeriode<T extends TidPeriode>(ene: T, andre: T): T | null {
@@ -68,26 +67,15 @@ export function tilstoetendePeriodeManuellJustering<T extends TidPeriode>(ene: T
  * Funksjonen finner bestemmende fraværsdag for gitte fraværsperiode.
  * Hvis det er flere perioder vil fom for den siste perioden være bestemmende.
  * Perioder som starter etter arbeidsgiverperioden (16 første dagene) vil ikke bli tatt med i beregningen,
- * med mindre de ikke stater etter dag 17
+ * med mindre de ikke starter etter dag 17, eller det er snakk om en delvis forespørsel
  */
 function finnBestemmendeFravaersdag<T extends TidPeriode>(
   fravaerPerioder?: Array<T>,
   arbeidsgiverperiode?: Array<T>,
   forespurtBestemmendeFraværsdag?: string | Date,
   arbeidsgiverKanFlytteBFD?: boolean,
-  mottattBestemmendeFravaersdag?: TDateISODate,
-  mottattEksternInntektsdato?: TDateISODate,
-  laastTilMottattPeriode?: boolean
+  erBegrensetForespoersel?: boolean
 ): string | undefined {
-  if (laastTilMottattPeriode && mottattBestemmendeFravaersdag) {
-    if (!mottattEksternInntektsdato) return mottattBestemmendeFravaersdag;
-    if (isBefore(parseIsoDate(mottattBestemmendeFravaersdag)!, parseIsoDate(mottattEksternInntektsdato)!)) {
-      return mottattBestemmendeFravaersdag;
-    } else {
-      return mottattEksternInntektsdato;
-    }
-  }
-
   if (!fravaerPerioder || !fravaerPerioder[0] || !fravaerPerioder?.[0]?.fom) {
     return undefined;
   }
@@ -95,6 +83,16 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   const sorterteSykmeldingPerioder = finnSammenhengendePeriode(
     finnSorterteUnikePerioder(fravaerPerioder.filter((periode) => periode.fom && periode.tom))
   );
+
+  if (erBegrensetForespoersel) {
+    const sistePeriode = sorterteSykmeldingPerioder[sorterteSykmeldingPerioder.length - 1];
+
+    if (sistePeriode) {
+      return formatISO9075(sistePeriode.fom as Date, {
+        representation: 'date'
+      });
+    }
+  }
 
   const sisteDagArbeidsgiverperiode =
     Array.isArray(arbeidsgiverperiode) && arbeidsgiverperiode.length > 0

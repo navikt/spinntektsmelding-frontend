@@ -17,10 +17,11 @@ import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
+import { SelvbestemtTypeConst } from '../../state/useSkjemadataStore';
 
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,
-  aarsakInnsending: z.enum(['UnntattAARegisteret', 'Annet', 'Behandlingsdager', 'Fiskere'], {
+  aarsakInnsending: z.enum(['UtenArbeidsforhold', 'MedArbeidsforhold', 'Behandlingsdager', 'Fisker'], {
     error: 'Du må velge en årsak til at du vil opprette inntektsmelding.'
   })
 });
@@ -45,15 +46,15 @@ const Initiering: NextPage = () => {
   const submitForm: SubmitHandler<SkjemaFnr> = (skjemaData: SkjemaFnr) => {
     setIdentitetsnummer(skjemaData.identitetsnummer);
     setAarsakSelvbestemtInnsending(skjemaData.aarsakInnsending);
-    if (skjemaData.aarsakInnsending === 'UnntattAARegisteret') {
+    if (skjemaData.aarsakInnsending === SelvbestemtTypeConst.UtenArbeidsforhold) {
       router.push('/initieringFritatt', { scroll: false });
       return;
     }
-    if (skjemaData.aarsakInnsending === 'Fiskere') {
+    if (skjemaData.aarsakInnsending === SelvbestemtTypeConst.Fisker) {
       router.push('/initieringFiskere', { scroll: false });
       return;
     }
-    if (skjemaData.aarsakInnsending === 'Behandlingsdager') {
+    if (skjemaData.aarsakInnsending === SelvbestemtTypeConst.Behandlingsdager) {
       router.push('/initieringBehandlingsdager', { scroll: false });
       return;
     }
