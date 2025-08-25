@@ -28,6 +28,151 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
 
+  // Helpers
+  const showErrors = (errors: Array<ErrorResponse | ValiderTekster>) => {
+    // Reset then set
+    fyllFeilmeldinger([]);
+    errorResponse(errors as Array<ErrorResponse>);
+    setSkalViseFeilmeldinger(true);
+  };
+
+  const setAarsakInnsending = (data: any, pathSlug: string) => {
+    data.aarsakInnsending = isValidUUID(pathSlug) ? 'Endring' : 'Ny';
+  };
+
+  const buildClientSideErrors = (
+    validerteData: ReturnType<typeof fyllAapenInnsending> extends infer R
+      ? R extends { success: boolean; error?: any; data?: any }
+        ? R
+        : any
+      : any,
+    opplysningerBekreftet: boolean
+  ): ValiderTekster[] => {
+    const errors: ValiderTekster[] = [];
+
+    if (validerteData.success === false) {
+      errors.push(
+        ...validerteData.error.issues.map((issue: any) => ({
+          text: issue.error ?? issue.message,
+          felt: issue.path.join('.')
+        }))
+      );
+    }
+
+    if (!fullLonnIArbeidsgiverPerioden?.status) {
+      errors.push({ text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN, felt: 'lia-radio' });
+    }
+
+    if (!lonnISykefravaeret?.status) {
+      errors.push({
+        text: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
+        felt: 'lus-radio'
+      });
+    }
+
+    if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
+      errors.push({
+        text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
+        felt: 'refusjon.endringer'
+      });
+    }
+
+    if (!opplysningerBekreftet) {
+      errors.push({ text: feiltekster.BEKREFT_OPPLYSNINGER, felt: 'bekreft-opplysninger' });
+    }
+
+    if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
+      errors.push({ text: feiltekster.INNTEKT_UNDER_REFUSJON, felt: 'agp.redusertLoennIAgp.beloep' });
+    }
+
+    return errors;
+  };
+
+  const handleInnsendingResponse = async (response: Response, pathSlug: string) => {
+    switch (response.status) {
+      case 200:
+      case 201: {
+        const body = await response.json();
+        if (body.selvbestemtId) pathSlug = body.selvbestemtId;
+
+        setKvitteringInnsendt(new Date());
+        if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
+          router.push(`/kvittering/agi/${pathSlug}`, undefined, { shallow: true });
+        } else {
+          router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
+        }
+        return;
+      }
+      case 500: {
+        const errors: Array<ErrorResponse> = [
+          {
+            value: 'Innsending av skjema feilet',
+            error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+            property: 'server'
+          }
+        ];
+        errorResponse(errors);
+
+        logEvent('skjema innsending feilet', {
+          tittel: 'Innsending feilet - serverfeil',
+          component: amplitudeComponent
+        });
+        logger.error(`Feil ved innsending av skjema - 500 (status: ${response.status})`);
+        return;
+      }
+      case 404: {
+        const errors: Array<ErrorResponse> = [
+          { value: 'Innsending av skjema feilet', error: 'Fant ikke endepunktet for innsending', property: 'server' }
+        ];
+        errorResponse(errors);
+        logger.error(`Feil ved innsending av skjema - 404 (status: ${response.status})`);
+        return;
+      }
+      case 401: {
+        logEvent('skjema innsending feilet', {
+          tittel: 'Innsending feilet - ingen tilgang',
+          component: amplitudeComponent
+        });
+        innsendingFeiletIngenTilgang(true);
+        return;
+      }
+      case 400: {
+        const resultat = await response.json();
+        logEvent('skjema innsending feilet', { tittel: 'Innsending feilet', component: amplitudeComponent });
+
+        if (resultat.error) {
+          let errors: Array<ErrorResponse> = [];
+          if (resultat.valideringsfeil) {
+            errors = resultat.valideringsfeil.map((error: any) => ({ error }));
+          } else if (resultat.error) {
+            errors = [{ value: 'Innsending av skjema feilet', error: resultat.error, property: 'server' }];
+          } else {
+            errors = [
+              {
+                value: 'Innsending av skjema feilet',
+                error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+                property: 'server'
+              }
+            ];
+          }
+          errorResponse(errors);
+          setSkalViseFeilmeldinger(true);
+          logger.error(`Feil ved innsending av skjema - 400 - BadRequest (status: ${response.status})`);
+        }
+        return;
+      }
+      default: {
+        const resultat = await response.json();
+        logEvent('skjema innsending feilet', { tittel: 'Innsending feilet', component: amplitudeComponent });
+        if (resultat.errors) {
+          const errors: Array<ErrorResponse> = resultat.errors;
+          errorResponse(errors);
+        }
+        return;
+      }
+    }
+  };
+
   return async (
     opplysningerBekreftet: boolean,
     pathSlug: string,
@@ -48,26 +193,17 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
       logger.info('Innsending uten endringer i skjema');
 
-      const errors: Array<ErrorResponse> = [
+      showErrors([
         {
           value: 'Innsending av skjema feilet',
           error: 'Innsending feilet, det er ikke gjort endringer i skjema.',
           property: 'knapp-innsending'
         }
-      ];
-      fyllFeilmeldinger([]);
-
-      errorResponse(errors);
-      setSkalViseFeilmeldinger(true);
-
+      ]);
       return false;
     }
 
-    if (isValidUUID(pathSlug)) {
-      skjemaData.aarsakInnsending = 'Endring';
-    } else {
-      skjemaData.aarsakInnsending = 'Ny';
-    }
+    setAarsakInnsending(skjemaData, pathSlug);
     const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
 
     if (validerteData.success !== true) {
@@ -75,203 +211,36 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       logger.error(validerteData.error);
     }
 
-    if (
+    const shouldShowErrors =
       validerteData.success === false ||
       !opplysningerBekreftet ||
       (!harRefusjonEndringer && lonnISykefravaeret?.status === 'Ja') ||
       !fullLonnIArbeidsgiverPerioden?.status ||
-      !lonnISykefravaeret?.status
-    ) {
-      const errors: ValiderTekster[] =
-        validerteData.success === false
-          ? validerteData.error.issues.map((issue) => {
-              return {
-                text: issue.error ?? issue.message,
-                felt: issue.path.join('.')
-              };
-            })
-          : [];
+      !lonnISykefravaeret?.status;
 
-      if (!fullLonnIArbeidsgiverPerioden?.status) {
-        errors.push({
-          text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN,
-          felt: 'lia-radio'
-        });
-      }
-
-      if (!lonnISykefravaeret?.status) {
-        errors.push({
-          text: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
-          felt: 'lus-radio'
-        });
-      }
-
-      if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
-        errors.push({
-          text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
-          felt: 'refusjon.endringer'
-        });
-      }
-
-      if (!opplysningerBekreftet) {
-        errors.push({
-          text: feiltekster.BEKREFT_OPPLYSNINGER,
-          felt: 'bekreft-opplysninger'
-        });
-      }
-
-      if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
-        errors.push({
-          text: feiltekster.INNTEKT_UNDER_REFUSJON,
-          felt: 'agp.redusertLoennIAgp.beloep'
-        });
-      }
-
+    if (shouldShowErrors) {
+      const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
       fyllFeilmeldinger(errors);
-
-      logEvent('skjema validering feilet', {
-        tittel: 'Validering feilet',
-        component: amplitudeComponent
-      });
-
+      logEvent('skjema validering feilet', { tittel: 'Validering feilet', component: amplitudeComponent });
       setSkalViseFeilmeldinger(true);
-    } else {
-      setKvitteringData(validerteData.data);
-
-      fyllFeilmeldinger([]);
-
-      const innsending = isValidUUID(pathSlug)
-        ? { ...validerteData.data, selvbestemtId: pathSlug }
-        : { ...validerteData.data, selvbestemtId: null };
-
-      const URI = environment.innsendingAGInitiertUrl;
-
-      return fetch(URI, {
-        method: 'POST',
-        body: JSON.stringify(innsending),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then((data) => {
-        switch (data.status) {
-          case 200:
-          case 201:
-            data.json().then((response) => {
-              if (response.selvbestemtId) {
-                pathSlug = response.selvbestemtId;
-              }
-
-              setKvitteringInnsendt(new Date());
-              if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-                router.push(`/kvittering/agi/${pathSlug}`, undefined, { shallow: true });
-              } else {
-                router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
-              }
-            });
-            break;
-
-          case 500: {
-            const errors: Array<ErrorResponse> = [
-              {
-                value: 'Innsending av skjema feilet',
-                error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-                property: 'server'
-              }
-            ];
-            errorResponse(errors);
-
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet - serverfeil',
-              component: amplitudeComponent
-            });
-
-            logger.error('Feil ved innsending av skjema - 500', data);
-            logger.error(data);
-
-            break;
-          }
-
-          case 404: {
-            const errors: Array<ErrorResponse> = [
-              {
-                value: 'Innsending av skjema feilet',
-                error: 'Fant ikke endepunktet for innsending',
-                property: 'server'
-              }
-            ];
-            errorResponse(errors);
-
-            logger.error('Feil ved innsending av skjema - 404', data);
-            logger.error(data);
-
-            break;
-          }
-
-          case 401: {
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet - ingen tilgang',
-              component: amplitudeComponent
-            });
-
-            innsendingFeiletIngenTilgang(true);
-            break;
-          }
-
-          case 400: {
-            return data.json().then((resultat) => {
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet',
-                component: amplitudeComponent
-              });
-
-              if (resultat.error) {
-                let errors: Array<ErrorResponse> = [];
-
-                if (resultat.valideringsfeil) {
-                  errors = resultat.valideringsfeil.map((error: any) => ({
-                    error: error
-                  }));
-                } else if (resultat.error) {
-                  errors = [
-                    {
-                      value: 'Innsending av skjema feilet',
-                      error: resultat.error,
-                      property: 'server'
-                    }
-                  ];
-                } else {
-                  errors = [
-                    {
-                      value: 'Innsending av skjema feilet',
-                      error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-                      property: 'server'
-                    }
-                  ];
-                }
-
-                errorResponse(errors);
-                setSkalViseFeilmeldinger(true);
-
-                logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
-                logger.error(data);
-              }
-            });
-          }
-
-          default:
-            return data.json().then((resultat) => {
-              logEvent('skjema innsending feilet', {
-                tittel: 'Innsending feilet',
-                component: amplitudeComponent
-              });
-
-              if (resultat.errors) {
-                const errors: Array<ErrorResponse> = resultat.errors;
-                errorResponse(errors);
-              }
-            });
-        }
-      });
+      return;
     }
+
+    // Success path
+    setKvitteringData(validerteData.data);
+    fyllFeilmeldinger([]);
+
+    const innsending = isValidUUID(pathSlug)
+      ? { ...validerteData.data, selvbestemtId: pathSlug }
+      : { ...validerteData.data, selvbestemtId: null };
+
+    const URI = environment.innsendingAGInitiertUrl;
+    const response = await fetch(URI, {
+      method: 'POST',
+      body: JSON.stringify(innsending),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    await handleInnsendingResponse(response, pathSlug);
   };
 }
