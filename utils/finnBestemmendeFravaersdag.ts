@@ -3,7 +3,6 @@ import differenceInBusinessDays from './differenceInBusinessDays';
 import parseIsoDate from './parseIsoDate';
 import sorterFomStigende from './sorterFomStigende';
 import sorterFomSynkende from './sorterFomSynkende';
-import { TDateISODate } from '../schema/ForespurtDataSchema';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
 
 export function overlappendePeriode<T extends TidPeriode>(ene: T, andre: T): T | null {
