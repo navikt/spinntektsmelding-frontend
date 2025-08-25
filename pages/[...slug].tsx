@@ -241,9 +241,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       arbeidsgiverperioder,
       foreslaattBestemmendeFravaersdag,
       arbeidsgiverKanFlytteSkjæringstidspunkt(),
-      undefined,
-      undefined,
-      undefined,
       begrensetForespoersel
     );
     return parseIsoDate(beregnetBestemmendeFraværsdagISO);

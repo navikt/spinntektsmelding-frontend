@@ -80,9 +80,6 @@ export default function useFyllInnsending() {
               formatertePerioder,
               skjaeringstidspunkt,
               arbeidsgiverKanFlytteSkjæringstidspunkt(),
-              undefined,
-              undefined,
-              undefined,
               erBegrensetForespoersel
             )
           );
@@ -212,9 +209,6 @@ function hentBestemmendeFraværsdag(
         undefined,
         undefined,
         arbeidsgiverKanFlytteSkjæringstidspunkt,
-        undefined,
-        undefined,
-        undefined,
         erBegrensetForespoersel
       )
     );
@@ -226,9 +220,6 @@ function hentBestemmendeFraværsdag(
       formatertePerioder,
       skjaeringstidspunkt,
       arbeidsgiverKanFlytteSkjæringstidspunkt,
-      undefined,
-      undefined,
-      undefined,
       erBegrensetForespoersel
     );
   } else {

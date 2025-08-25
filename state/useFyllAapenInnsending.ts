@@ -65,9 +65,6 @@ export default function useFyllAapenInnsending() {
             formatertePerioder,
             skjaeringstidspunkt,
             arbeidsgiverKanFlytteSkjæringstidspunkt(),
-            undefined,
-            undefined,
-            undefined,
             erBegrensetForespoersel
           )
         : undefined;

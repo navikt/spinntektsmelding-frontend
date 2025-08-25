@@ -75,20 +75,8 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   arbeidsgiverperiode?: Array<T>,
   forespurtBestemmendeFraværsdag?: string | Date,
   arbeidsgiverKanFlytteBFD?: boolean,
-  mottattBestemmendeFravaersdag?: TDateISODate,
-  mottattEksternInntektsdato?: TDateISODate,
-  laastTilMottattPeriode?: boolean,
   erBegrensetForespoersel?: boolean
 ): string | undefined {
-  if (laastTilMottattPeriode && mottattBestemmendeFravaersdag) {
-    if (!mottattEksternInntektsdato) return mottattBestemmendeFravaersdag;
-    if (isBefore(parseIsoDate(mottattBestemmendeFravaersdag)!, parseIsoDate(mottattEksternInntektsdato)!)) {
-      return mottattBestemmendeFravaersdag;
-    } else {
-      return mottattEksternInntektsdato;
-    }
-  }
-
   if (!fravaerPerioder || !fravaerPerioder[0] || !fravaerPerioder?.[0]?.fom) {
     return undefined;
   }
