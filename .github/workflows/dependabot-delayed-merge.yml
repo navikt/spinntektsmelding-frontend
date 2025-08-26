@@ -1,0 +1,46 @@
+name: Merge Dependabot PRs after 5 days
+on:
+  schedule:
+    - cron: '0 6 * * 1-5' # weekdays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge eligible PRs
+        uses: actions/github-script@7b7c6e2b7e2e0e2c1a2b1e1e1e1e1e1e1e1e1e1e
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const label = 'automerge:delayed';
+            // 5 days in milliseconds
+            const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+            const cutoffMs = FIVE_DAYS_MS;
+            const now = Date.now();
+
+            const prs = await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', per_page: 100 });
+            for (const pr of prs) {
+              if (pr.user?.login !== 'dependabot[bot]') continue;
+              if (!pr.labels?.some(l => l.name === label)) continue;
+              if (pr.draft) continue;
+              if (now - new Date(pr.created_at).getTime() < cutoffMs) continue;
+
+              // Refresh mergeability
+              const { data: full } = await github.rest.pulls.get({ owner, repo, pull_number: pr.number });
+              if (full.mergeable_state !== 'clean') continue; // checks/reviews not satisfied
+
+              try {
+                await github.rest.pulls.merge({
+                  owner, repo, pull_number: pr.number,
+                  merge_method: 'squash'
+                });
+                core.info(`Merged #${pr.number}`);
+              } catch (e) {
+                core.warning(`Could not merge #${pr.number}: ${e.message}`);
+              }
+            }
