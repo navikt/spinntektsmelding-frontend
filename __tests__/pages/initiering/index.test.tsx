@@ -60,7 +60,7 @@ describe('Initiering Page', () => {
     await userEvent.click(nextButton);
 
     // assertions
-    expect(setAarsakMock).toHaveBeenCalledWith('Fiskere');
+    expect(setAarsakMock).toHaveBeenCalledWith('Fisker');
     expect(setIdentitetsnummerMock).toHaveBeenCalledWith(testFnr.GyldigeFraDolly.TestPerson1);
     expect(pushMock).toHaveBeenCalledWith('/initieringFiskere', { scroll: false });
   });

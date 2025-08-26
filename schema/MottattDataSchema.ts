@@ -24,6 +24,7 @@ export const MottattDataSchema = z.object({
   inntekt: ForespurtHistoriskInntektSchema.nullable(),
   forespurtData: MottattForespurtDataSchema.optional(),
   erBesvart: z.boolean(),
+  erBegrenset: z.boolean().optional(),
   telefonnummer: TelefonNummerSchema.optional()
 });
 

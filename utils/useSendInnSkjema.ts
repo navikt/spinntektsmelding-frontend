@@ -36,7 +36,8 @@ export default function useSendInnSkjema(
     forespurteOpplysningstyper: Opplysningstype[],
     pathSlug: string,
     isDirtyForm: boolean,
-    formData: Skjema
+    formData: Skjema,
+    erBegrensetForespoersel: boolean
   ) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
@@ -72,7 +73,8 @@ export default function useSendInnSkjema(
       opplysningerBekreftet,
       pathSlug,
       forespurteOpplysningstyper,
-      formData
+      formData,
+      erBegrensetForespoersel
     );
     const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
@@ -83,7 +85,7 @@ export default function useSendInnSkjema(
         component: amplitudeComponent
       });
 
-      logger.error('Feil ved validering ved innsending av skjema med id ', pathSlug);
+      logger.error(`Feil ved validering ved innsending av skjema med id ${pathSlug}`);
       logger.error(validerteData.error);
 
       fyllFeilmeldinger(

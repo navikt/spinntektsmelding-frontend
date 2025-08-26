@@ -16,7 +16,15 @@ export enum SkjemaStatus {
 type KvitteringEkstern = z.infer<typeof KvitteringEksternSchema>;
 type KvitteringFullInnsending = z.infer<typeof FullInnsendingSchema>;
 type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
-export type SelvbestemtType = 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker' | 'Behandlingsdager';
+
+export const SelvbestemtTypeConst = {
+  MedArbeidsforhold: 'MedArbeidsforhold',
+  UtenArbeidsforhold: 'UtenArbeidsforhold',
+  Fisker: 'Fisker',
+  Behandlingsdager: 'Behandlingsdager'
+} as const;
+
+export type SelvbestemtType = (typeof SelvbestemtTypeConst)[keyof typeof SelvbestemtTypeConst];
 
 export interface SkjemadataState {
   nyInnsending: boolean;
@@ -35,6 +43,7 @@ export interface SkjemadataState {
   setVedtaksperiodeId: (id: string) => void;
   setAarsakSelvbestemtInnsending: (aarsak: string) => void;
   setBehandlingsdager: (behandlingsdager: string[]) => void;
+  setBegrensetForespoersel: (begrenset: boolean) => void;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
@@ -49,6 +58,7 @@ export interface SkjemadataState {
   aarsakSelvbestemtInnsending?: string;
   behandlingsdager?: string[];
   selvbestemtType: SelvbestemtType;
+  begrensetForespoersel: boolean;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -62,6 +72,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   aarsakSelvbestemtInnsending: undefined,
   behandlingsdager: undefined,
   selvbestemtType: 'MedArbeidsforhold',
+  begrensetForespoersel: false,
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
@@ -161,10 +172,17 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setSelvbestemtType: (type: 'MedArbeidsforhold' | 'UtenArbeidsforhold' | 'Fisker') => {
+  setSelvbestemtType: (type: SelvbestemtType) => {
     set(
       produce((state: SkjemadataState) => {
         state.selvbestemtType = type;
+      })
+    );
+  },
+  setBegrensetForespoersel: (begrenset: boolean) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.begrensetForespoersel = begrenset;
       })
     );
   }
