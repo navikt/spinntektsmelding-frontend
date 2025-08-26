@@ -62,6 +62,27 @@ function perioderErUnder16dagerTotalt(perioder: Array<{ fom: string; tom: string
   return false;
 }
 
+function perioderEr12Dager(perioder: Array<{ fom: string; tom: string }>): boolean {
+  const totaltAntallDager = perioder.reduce((current: number, periode: { fom: string; tom: string }) => {
+    return beregnTotaltAntallDager(periode.fom, periode.tom) + current;
+  }, 0);
+
+  if (totaltAntallDager === 12) {
+    return true;
+  }
+  return false;
+}
+
+function perioderErSannsynligvisBehandlingsdager(perioder: Array<{ fom: string; tom: string }>): boolean {
+  if (!perioderEr12Dager(perioder)) return false;
+  const erEnkeltdager = perioder.every((periode) => {
+    const totaltAntallDager = beregnTotaltAntallDager(periode.fom, periode.tom);
+    return totaltAntallDager === 1;
+  });
+
+  return erEnkeltdager;
+}
+
 export const InnsendingSchema = z.object({
   agp: z
     .object({
@@ -153,6 +174,27 @@ export const InnsendingSchema = z.object({
           code: 'custom',
           error: 'Angi årsak til forkortet arbeidsgiverperiode.',
           path: ['redusertLoennIAgp', 'begrunnelse'],
+          input: ''
+        });
+        return;
+      }
+
+      if (
+        perioderErUnder16dagerTotalt(val.perioder) &&
+        !val.redusertLoennIAgp &&
+        !perioderErSannsynligvisBehandlingsdager(val.perioder)
+      ) {
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Angi årsak til forkortet arbeidsgiverperiode.',
+          path: ['redusertLoennIAgp', 'begrunnelse'],
+          input: ''
+        });
+
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Angi beløp utbetalt arbeidsgiverperioden.',
+          path: ['redusertLoennIAgp', 'beloep'],
           input: ''
         });
         return;
