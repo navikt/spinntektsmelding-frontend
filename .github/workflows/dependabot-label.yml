@@ -23,7 +23,7 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const updateType = '${{ steps.meta.outputs.update-type }}'; // e.g. version-update:semver-minor
-            const ensureLabel = async (name, color = '0E8A16', description = '') => {
+            const ensureLabel = async (name, color = 'FFFF00', description = '') => {
               try {
                 await github.rest.issues.getLabel({ owner, repo, name });
               } catch (e) {
@@ -36,7 +36,7 @@ jobs:
             };
 
             // Ensure the automerge label exists
-            await ensureLabel('automerge:delayed', '0E8A16', 'Auto-merge Dependabot after delay');
+            await ensureLabel('automerge:delayed', 'FFFF00', 'Auto-merge Dependabot after delay');
 
             // Only include updateType if that label already exists (no auto-create)
             let labels = ['automerge:delayed'];
