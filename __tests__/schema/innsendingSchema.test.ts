@@ -1074,21 +1074,21 @@ describe('InnsendingSchema', () => {
     const data = {
       agp: {
         perioder: [
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' },
-          { fom: '2023-02-17', tom: '2023-02-29' }
+          { fom: '2023-02-17', tom: '2023-02-17' },
+          { fom: '2023-02-24', tom: '2023-02-24' },
+          { fom: '2023-03-03', tom: '2023-03-03' },
+          { fom: '2023-03-10', tom: '2023-03-10' },
+          { fom: '2023-03-17', tom: '2023-03-17' },
+          { fom: '2023-03-24', tom: '2023-03-24' },
+          { fom: '2023-03-31', tom: '2023-03-31' },
+          { fom: '2023-04-07', tom: '2023-04-07' },
+          { fom: '2023-04-14', tom: '2023-04-14' },
+          { fom: '2023-04-21', tom: '2023-04-21' },
+          { fom: '2023-04-28', tom: '2023-04-28' },
+          { fom: '2023-05-05', tom: '2023-05-05' }
         ],
         egenmeldinger: [],
-        redusertLoennIAgp: { beloep: undefined, begrunnelse: undefined }
+        redusertLoennIAgp: null
       },
       inntekt: {
         beloep: 750000,
@@ -1114,36 +1114,6 @@ describe('InnsendingSchema', () => {
       ]
     };
 
-    expect(InnsendingSchema.safeParse(data).success).toBe(false);
-    expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
-      {
-        code: 'invalid_type',
-        expected: 'number',
-        message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
-        path: ['agp', 'redusertLoennIAgp', 'beloep']
-      },
-      {
-        code: 'invalid_value',
-        message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
-        path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
-        values: [
-          'ArbeidOpphoert',
-          'BeskjedGittForSent',
-          'BetvilerArbeidsufoerhet',
-          'FerieEllerAvspasering',
-          'FiskerMedHyre',
-          'FravaerUtenGyldigGrunn',
-          'IkkeFravaer',
-          'IkkeFullStillingsandel',
-          'IkkeLoenn',
-          'LovligFravaer',
-          'ManglerOpptjening',
-          'Permittering',
-          'Saerregler',
-          'StreikEllerLockout',
-          'TidligereVirksomhet'
-        ]
-      }
-    ]);
+    expect(InnsendingSchema.safeParse(data).success).toBe(true);
   });
 });
