@@ -1006,7 +1006,7 @@ describe('InnsendingSchema', () => {
     ]);
   });
 
-  it('should validate InnsendingSchema and fail if 12 dager agp, begrunnelse is missing and not singel day agps', () => {
+  it('should validate InnsendingSchema and fail if 12 dager agp, begrunnelse is missing and not single day agps', () => {
     const data = {
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-02-29' }],
@@ -1070,7 +1070,7 @@ describe('InnsendingSchema', () => {
     ]);
   });
 
-  it('should validate InnsendingSchema and not fail if 12 dager agp, begrunnelse is missing and singel day agps', () => {
+  it('should validate InnsendingSchema and not fail if 12 dager agp, begrunnelse is missing and single day agps', () => {
     const data = {
       agp: {
         perioder: [
