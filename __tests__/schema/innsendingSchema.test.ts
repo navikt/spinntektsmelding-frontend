@@ -1266,7 +1266,7 @@ describe('InnsendingSchema', () => {
     };
 
     const mockAddIssue = vi.fn();
-    const mockCtx = { addIssue: mockAddIssue, issues: [] as any[] };
+    const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
     // Should not throw and should not add issues when AGP is null and other constraints are respected
     superRefineInnsending(data as any, mockCtx as any);
