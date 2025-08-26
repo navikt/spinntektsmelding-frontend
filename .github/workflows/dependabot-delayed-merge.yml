@@ -18,7 +18,9 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const label = 'automerge:delayed';
-            const cutoffMs = 5 * 24 * 60 * 60 * 1000;
+            // 5 days in milliseconds
+            const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+            const cutoffMs = FIVE_DAYS_MS;
             const now = Date.now();
 
             const prs = await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', per_page: 100 });
