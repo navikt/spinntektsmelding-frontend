@@ -1175,10 +1175,10 @@ describe('InnsendingSchema', () => {
     ]);
   });
 
-  it('should validate InnsendingSchema and fail if 12 dager agp, begrunnelse is missing and not single day agps, given beloep', () => {
+  it('should validate InnsendingSchema and fail if < 16 dager agp, begrunnelse is missing and not single day agps, given beloep', () => {
     const data = {
       agp: {
-        perioder: [{ fom: '2023-02-17', tom: '2023-02-29' }],
+        perioder: [{ fom: '2023-02-17', tom: '2023-02-30' }],
         egenmeldinger: [],
         redusertLoennIAgp: { beloep: undefined, begrunnelse: 'ArbeidOpphoert' }
       },
