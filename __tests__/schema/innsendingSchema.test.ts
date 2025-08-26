@@ -571,7 +571,7 @@ describe('InnsendingSchema', () => {
     const mockAddIssue = vi.fn();
     const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
-    superRefineInnsending(data, mockCtx);
+    superRefineInnsending(data as any, mockCtx as any);
 
     expect(mockCtx.issues).toHaveLength(3);
     expect(mockCtx.issues).toEqual([
@@ -674,7 +674,7 @@ describe('InnsendingSchema', () => {
     const mockAddIssue = vi.fn();
     const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
-    superRefineInnsending(data, mockCtx);
+    superRefineInnsending(data as any, mockCtx as any);
 
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
@@ -719,7 +719,7 @@ describe('InnsendingSchema', () => {
     const mockAddIssue = vi.fn();
     const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
-    superRefineInnsending(data, mockCtx);
+    superRefineInnsending(data as any, mockCtx as any);
 
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
@@ -764,7 +764,7 @@ describe('InnsendingSchema', () => {
     const mockAddIssue = vi.fn();
     const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
-    superRefineInnsending(data, mockCtx);
+    superRefineInnsending(data as any, mockCtx as any);
 
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
@@ -809,7 +809,7 @@ describe('InnsendingSchema', () => {
     const mockAddIssue = vi.fn();
     const mockCtx = { addIssue: mockAddIssue, issues: [] };
 
-    superRefineInnsending(data, mockCtx);
+    superRefineInnsending(data as any, mockCtx as any);
 
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
@@ -1215,6 +1215,62 @@ describe('InnsendingSchema', () => {
         path: ['agp', 'redusertLoennIAgp', 'beloep']
       }
     ]);
+  });
+
+  it('should validate InnsendingSchema when agp is null', () => {
+    const data = {
+      agp: null,
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsaker: null
+      },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const result = InnsendingSchema.safeParse(data);
+    expect(result.success).toBe(true);
+  });
+
+  it('superRefineInnsending handles agp=null without AGP-related issues', () => {
+    const data = {
+      agp: null,
+      inntekt: {
+        beloep: 500000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsaker: null
+      },
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [
+          { startdato: '2023-03-01', beloep: 50000 } // after inntektsdato, should not trigger issues
+        ],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const mockAddIssue = vi.fn();
+    const mockCtx = { addIssue: mockAddIssue, issues: [] as any[] };
+
+    // Should not throw and should not add issues when AGP is null and other constraints are respected
+    superRefineInnsending(data as any, mockCtx as any);
+    expect(mockCtx.issues).toHaveLength(0);
   });
 
   it('should validate InnsendingSchema and give an error if inntekt.beloep is < 0', () => {
