@@ -6,7 +6,7 @@ import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
 import logEvent from '../../utils/logEvent';
-import validerInntektsmelding from '../../utils/validerInntektsmelding';
+// import validerInntektsmelding from '../../utils/validerInntektsmelding';
 import { Opplysningstype } from '../../schema/ForespurtDataSchema';
 
 type FullInnsending = z.infer<typeof HovedskjemaSchema>;
@@ -35,7 +35,7 @@ vi.mock('../../utils/isValidUUID', () => ({
   default: vi.fn().mockReturnValue(true)
 }));
 
-vi.mock('../../utils/validerInntektsmelding', { spy: true });
+// vi.mock('../../utils/validerInntektsmelding', { spy: true });
 
 vi.mock('./useErrorResponse', () => ({
   __esModule: true,
@@ -90,9 +90,9 @@ describe('useSendInnSkjema', () => {
     const isDirtyForm = true;
     const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
-    (validerInntektsmelding as Mock).mockReturnValueOnce({
-      errorTexts: [{ error: 'test error' }]
-    });
+    // (validerInntektsmelding as Mock).mockReturnValueOnce({
+    //   errorTexts: [{ error: 'test error' }]
+    // });
 
     await act(async () => {
       await result.current(opplysningerBekreftet, forespurteOpplysningstyper, pathSlug, isDirtyForm, formData);
@@ -122,7 +122,7 @@ describe('useSendInnSkjema', () => {
       json: vi.fn().mockResolvedValue({})
     });
 
-    (validerInntektsmelding as Mock).mockReturnValueOnce([]);
+    // (validerInntektsmelding as Mock).mockReturnValueOnce([]);
     await act(async () => {
       await result.current(opplysningerBekreftet, forespurteOpplysningstyper, pathSlug, isDirtyForm, formData);
     });
@@ -148,7 +148,7 @@ describe('useSendInnSkjema', () => {
       json: vi.fn().mockResolvedValue({})
     });
 
-    (validerInntektsmelding as Mock).mockReturnValueOnce([]);
+    // (validerInntektsmelding as Mock).mockReturnValueOnce([]);
 
     await act(async () => {
       await result.current(opplysningerBekreftet, forespurteOpplysningstyper, pathSlug, isDirtyForm, formData);
@@ -173,7 +173,7 @@ describe('useSendInnSkjema', () => {
       avsenderTlf: '12345678'
     };
 
-    (validerInntektsmelding as Mock).mockReturnValueOnce([]);
+    // (validerInntektsmelding as Mock).mockReturnValueOnce([]);
 
     global.fetch = vi.fn().mockResolvedValue({
       status: 401,
