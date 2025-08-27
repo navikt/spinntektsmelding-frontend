@@ -19,12 +19,23 @@ jobs:
   Bygg:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: '24.0'
-          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
+      - name: Enable corepack (Yarn 2+)
+        run: corepack enable
+      - name: Cache Yarn 2 files
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/install-state.gz
+            .yarn/build-state.yml
+          key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn2-
       - run: yarn install --immutable
       - run: yarn build
       - uses: actions/upload-artifact@v4
@@ -35,14 +46,25 @@ jobs:
   Kodekvalitet:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24.0'
-          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
+      - name: Enable corepack (Yarn 2+)
+        run: corepack enable
+      - name: Cache Yarn 2 files
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/install-state.gz
+            .yarn/build-state.yml
+          key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn2-
       - run: yarn install --immutable
       - run: yarn test
       - name: SonarCloud Scan
@@ -55,12 +77,23 @@ jobs:
   Eslint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: '24.0'
-          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
+      - name: Enable corepack (Yarn 2+)
+        run: corepack enable
+      - name: Cache Yarn 2 files
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/install-state.gz
+            .yarn/build-state.yml
+          key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn2-
       - run: yarn install --immutable
       - run: yarn lint
 
@@ -74,12 +107,23 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: '24.0'
-          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
+      - name: Enable corepack (Yarn 2+)
+        run: corepack enable
+      - name: Cache Yarn 2 files
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/install-state.gz
+            .yarn/build-state.yml
+          key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn2-
       - name: Install dependencies
         run: yarn install --immutable
       - uses: codex-/knip-reporter@v2
