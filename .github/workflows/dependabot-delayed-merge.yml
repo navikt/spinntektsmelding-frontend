@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Merge eligible PRs
-        uses: actions/github-script@7b7c6e2b7e2e0e2c1a2b1e1e1e1e1e1e1e1e1e1e
+        uses: actions/github-script@v7.0.1
         with:
           script: |
             const { owner, repo } = context.repo;
