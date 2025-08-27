@@ -9,6 +9,10 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: pr-${{ github.event.pull_request.head.repo.full_name }}-${{ github.event.pull_request.head.ref }}
+  cancel-in-progress: true
+
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -33,10 +37,21 @@ jobs:
             .yarn/cache
             .yarn/install-state.gz
             .yarn/build-state.yml
+            .yarn/plugins
+            .yarn/releases
+            .yarn/patches
+            .yarn/unplugged
           key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn2-
-      - run: yarn install --immutable
+      - run: yarn install --immutable --inline-builds
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock', 'next.config.js', 'tsconfig.json') }}
+          restore-keys: |
+            ${{ runner.os }}-next-cache-
       - run: yarn build
       - uses: actions/upload-artifact@v4
         with:
@@ -62,10 +77,22 @@ jobs:
             .yarn/cache
             .yarn/install-state.gz
             .yarn/build-state.yml
+            .yarn/plugins
+            .yarn/releases
+            .yarn/patches
+            .yarn/unplugged
           key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn2-
-      - run: yarn install --immutable
+      - run: yarn install --immutable --inline-builds
+      - name: Cache tool caches (Vitest/ESLint/etc)
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules/.cache
+          key: ${{ runner.os }}-tools-cache-${{ github.ref_name }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-tools-cache-
       - run: yarn test
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
@@ -91,10 +118,22 @@ jobs:
             .yarn/cache
             .yarn/install-state.gz
             .yarn/build-state.yml
+            .yarn/plugins
+            .yarn/releases
+            .yarn/patches
+            .yarn/unplugged
           key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn2-
-      - run: yarn install --immutable
+      - run: yarn install --immutable --inline-builds
+      - name: Cache tool caches (ESLint)
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules/.cache
+          key: ${{ runner.os }}-tools-cache-${{ github.ref_name }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-tools-cache-
       - run: yarn lint
 
   Knip:
@@ -121,9 +160,13 @@ jobs:
             .yarn/cache
             .yarn/install-state.gz
             .yarn/build-state.yml
+            .yarn/plugins
+            .yarn/releases
+            .yarn/patches
+            .yarn/unplugged
           key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn2-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --inline-builds
       - uses: codex-/knip-reporter@v2

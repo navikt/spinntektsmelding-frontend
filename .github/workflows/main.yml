@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
   pull-requests: write
@@ -42,15 +45,20 @@ jobs:
         with:
           path: |
             .yarn/cache
+            .yarn/plugins
+            .yarn/releases
+            .yarn/patches
             .yarn/install-state.gz
             .yarn/build-state.yml
           key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn2-
       - name: Install dependencies
-        run: yarn install --immutable
-      - run: yarn test
+        run: yarn install --immutable --inline-builds
+      - name: Run tests
+        run: yarn test
       - name: SonarCloud Scan
+        if: ${{ github.actor != 'dependabot[bot]' }}
         uses: SonarSource/sonarqube-scan-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -71,13 +79,16 @@ jobs:
         with:
           path: |
             .yarn/cache
+            .yarn/plugins
+            .yarn/releases
+            .yarn/patches
             .yarn/install-state.gz
             .yarn/build-state.yml
           key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn2-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --inline-builds
       - run: yarn lint
 
   # Snyk:
