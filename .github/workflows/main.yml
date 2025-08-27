@@ -44,7 +44,6 @@ jobs:
             .yarn/cache
             .yarn/install-state.gz
             .yarn/build-state.yml
-            yarn.lock
           key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn2-
