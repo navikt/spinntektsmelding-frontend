@@ -6,12 +6,13 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc ./
-RUN corepack enable && yarn set version berry
+RUN corepack enable
 
 COPY .yarnrc.yml yarn.lock ./
 COPY .yarn ./.yarn
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
+    --mount=type=cache,target=/app/.yarn/cache \
     echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc && \
     export NPM_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) && \
     yarn install --immutable
@@ -37,7 +38,8 @@ RUN echo "BUILDMODE" ${BUILDMODE}
 
 COPY ${BUILDMODE}.env .env
 
-RUN yarn build && rm -f .npmrc
+RUN --mount=type=cache,target=/app/.next/cache \
+    yarn build && rm -f .npmrc
 
 # Production image, copy all the files and run next
 FROM gcr.io/distroless/nodejs24-debian12@sha256:0993f91d94989f7eaf1e3215c133f6ef0686ae51f53df304f94b8483b4f37b93 AS runner

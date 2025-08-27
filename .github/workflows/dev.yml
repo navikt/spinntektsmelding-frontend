@@ -31,6 +31,8 @@ jobs:
         id: docker-build-push
         with:
           team: helsearbeidsgiver
+          cache_from: type=gha
+          cache_to: type=gha,mode=max
           build_secrets: |
             NODE_AUTH_TOKEN=${{ secrets.READER_TOKEN }}
           build_args: |

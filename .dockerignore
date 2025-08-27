@@ -5,3 +5,12 @@ npm-debug.log
 README.md
 .next
 .git
+# Yarn 2 cache
+.yarn/cache
+# Local env and logs
+.env
+*.log
+# Test/coverage artifacts
+coverage
+playwright-report
+blob-report
