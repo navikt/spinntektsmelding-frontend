@@ -25,7 +25,6 @@ export default function useSendInnSkjema(
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  // const state = useBoundStore((state) => state);
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
@@ -89,7 +88,7 @@ export default function useSendInnSkjema(
       logger.error(validerteData.error);
 
       fyllFeilmeldinger(
-        validerteData.error!.issues.map((error) => ({
+        validerteData.error.issues.map((error) => ({
           felt: error.path.join('.'),
           text: error.error ?? error.message
         }))
@@ -160,7 +159,7 @@ export default function useSendInnSkjema(
       switch (data.status) {
         case 201:
           setKvitteringInnsendt(new Date());
-          router.push(`/kvittering/${pathSlug}`, undefined);
+          router.push(`/kvittering/${pathSlug}`);
           break;
 
         case 500: {

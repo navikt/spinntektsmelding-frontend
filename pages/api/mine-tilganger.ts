@@ -4,7 +4,6 @@ import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 
 import testdata from '../../mockdata/endepunktAltinnTilganger.json';
 import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerSchema';
-import { z } from 'zod/v4';
 import safelyParseJSON from '../../utils/safelyParseJson';
 
 const basePath = 'http://' + global.process.env.FAGER_TILGANG_INGRESS + global.process.env.FAGER_TILGANG_URL;
