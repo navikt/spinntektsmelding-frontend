@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import logEvent from '../../utils/logEvent';
 import env from '../../config/environment';
 
-const mockLogAmplitudeEvent = vi.hoisted(() => {
+const mockLogAnalyticsEvent = vi.hoisted(() => {
   return vi.fn();
 });
 
@@ -23,7 +23,7 @@ const mockEventData = {
 };
 
 vi.mock('@navikt/nav-dekoratoren-moduler', () => ({
-  logAmplitudeEvent: mockLogAmplitudeEvent,
+  logAnalyticsEvent: mockLogAnalyticsEvent,
   default: vi.fn()
 }));
 vi.mock('@navikt/next-logger', () => ({
@@ -40,7 +40,7 @@ const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 describe.skip('logEvent', () => {
   beforeEach(() => {
     consoleSpy.mockClear();
-    mockLogAmplitudeEvent.mockClear();
+    mockLogAnalyticsEvent.mockClear();
     mockLoggerWarn.mockClear();
     envSpy.mockClear();
   });
@@ -49,7 +49,7 @@ describe.skip('logEvent', () => {
     logEvent(mockEventName, mockEventData);
     expect(consoleSpy).not.toHaveBeenCalled();
     expect(mockLoggerWarn).not.toHaveBeenCalled();
-    expect(mockLogAmplitudeEvent).toHaveBeenCalledWith({
+    expect(mockLogAnalyticsEvent).toHaveBeenCalledWith({
       origin: 'spinntektsmelding-frontend',
       eventName: mockEventName,
       eventData: mockEventData
@@ -61,7 +61,7 @@ describe.skip('logEvent', () => {
 
     logEvent(mockEventName, mockEventData);
 
-    expect(mockLogAmplitudeEvent).not.toHaveBeenCalled();
+    expect(mockLogAnalyticsEvent).not.toHaveBeenCalled();
     expect(mockLoggerWarn).not.toHaveBeenCalled();
     expect(consoleSpy).toHaveBeenCalledWith(
       `Logger ${mockEventName} - Event properties: ${JSON.stringify(mockEventData)}!`
@@ -73,7 +73,7 @@ describe.skip('logEvent', () => {
   it('should not log event data if window is undefined', () => {
     logEvent(mockEventName, mockEventData);
 
-    expect(mockLogAmplitudeEvent).not.toHaveBeenCalled();
+    expect(mockLogAnalyticsEvent).not.toHaveBeenCalled();
     expect(mockLoggerWarn).not.toHaveBeenCalled();
   });
 });

@@ -18,7 +18,8 @@ vi.mock('@navikt/nav-dekoratoren-moduler', () => ({
   logAmplitudeEvent: vi.fn(() => Promise.resolve()),
   trackEvent: vi.fn(),
   withNavContext: (component: any) => component,
-  setBreadcrumbs: vi.fn()
+  setBreadcrumbs: vi.fn(),
+  logAnalyticsEvent: vi.fn(() => Promise.resolve())
 }));
 
 // Optional: mock next/head to avoid DOM access
