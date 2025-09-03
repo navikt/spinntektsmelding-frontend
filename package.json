@@ -31,7 +31,7 @@
     "csp-header": "^6.1.0",
     "date-fns": "4.1.0",
     "html-react-parser": "^5.2.6",
-    "immer": "10.1.1",
+    "immer": "10.1.3",
     "nanoid": "5.1.5",
     "next": "15.5.2",
     "next-http-proxy-middleware": "1.2.7",
