@@ -1,4 +1,4 @@
-import { logAmplitudeEvent } from '@navikt/nav-dekoratoren-moduler';
+import { logAnalyticsEvent } from '@navikt/nav-dekoratoren-moduler';
 import { logger } from '@navikt/next-logger';
 
 import env from '../config/environment';
@@ -24,8 +24,8 @@ type validEventNames =
 export default function logEvent(eventName: validEventNames, eventData: Record<string, string | boolean>) {
   if (typeof window !== 'undefined') {
     if (env.amplitudeEnabled) {
-      logAmplitudeEvent({
-        origin: 'spinntektsmelding-frontend',
+      logAnalyticsEvent({
+        origin: 'inntektsmelding-sykepenger',
         eventName,
         eventData
       }).catch((e) => logger.warn(`Feil ved amplitude logging`, e));

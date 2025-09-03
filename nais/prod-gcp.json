@@ -6,5 +6,7 @@
   "api-url": "https://helsearbeidsgiver-im-api.intern.nav.no/api",
   "outbound-external-host": "helsearbeidsgiver-im-api.intern.nav.no",
   "api-basepath": "/im-dialog-api",
-  "amplitude-enabled": true
+  "amplitude-enabled": true,
+  "umamiWebsiteId": "4c9f8264-9a4d-465d-9023-77646166f083",
+  "umamiDataDomains": ["arbeidsgiver.nav.no"]
 }

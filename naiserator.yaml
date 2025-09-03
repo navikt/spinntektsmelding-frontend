@@ -65,4 +65,7 @@ spec:
       value: '{{{api-basepath}}}'
     - name: AMPLITUDE_ENABLED
       value: '{{{amplitude-enabled}}}'
-   
+    - name: UMAMI_WEBSITE_ID
+      value: '{{{umamiWebsiteId}}}'
+    - name: UMAMI_DATA_DOMAINS
+      value: '{{{umamiDataDomains}}}'
