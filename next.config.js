@@ -59,7 +59,9 @@ const nextConfig = {
     tokenXClientId: process.env.TOKEN_X_CLIENT_ID,
     flexjarBackendClientId: process.env.FLEXJAR_BACKEND_CLIENT_ID,
     idportenWellKnownUrl: process.env.IDPORTEN_WELL_KNOWN_URL,
-    idportenClientId: process.env.IDPORTEN_CLIENT_ID
+    idportenClientId: process.env.IDPORTEN_CLIENT_ID,
+    umamiWebsiteId: process.env.UMAMI_WEBSITE_ID,
+    umamiDataDomains: process.env.UMAMI_DATA_DOMAINS
   },
   publicRuntimeConfig: {
     environment: process.env.ENVIRONMENT,

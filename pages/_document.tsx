@@ -1,6 +1,7 @@
 import NextDocument, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
 import { DecoratorComponentsReact, fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr';
 import getConfig from 'next/config';
+import Script from 'next/script';
 
 const { serverRuntimeConfig } = getConfig();
 
@@ -13,7 +14,17 @@ const Document = ({ Decorator }: DocumentProps) => {
 
   return (
     <Html lang='no'>
-      <Head>{viseDekoratoren ? <Decorator.HeadAssets /> : null}</Head>
+      <Head>
+        {viseDekoratoren ? <Decorator.HeadAssets /> : null}
+        <Script
+          defer
+          strategy='afterInteractive'
+          src='https://cdn.nav.no/team-researchops/sporing/sporing.js'
+          data-host-url='https://umami.nav.no'
+          data-website-id={serverRuntimeConfig.umamiWebsiteId}
+          data-domains={serverRuntimeConfig.umamiDataDomains}
+        ></Script>
+      </Head>
       <body id='body'>
         {viseDekoratoren ? <Decorator.Header /> : null}
         <Main />
