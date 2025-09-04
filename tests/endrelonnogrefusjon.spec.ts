@@ -27,15 +27,15 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       r.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ name: 'Nothing' }) })
     );
 
+    // wait for initial data
+    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     // go to form
     await page.goto(baseUrl);
+    await response;
   });
 
   test('refusjon uten perioder', async ({ page }) => {
     const formPage = new FormPage(page);
-
-    // wait for initial data
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     // select full lønn & refusjon = Ja
     await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
@@ -117,8 +117,6 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     const formPage = new FormPage(page);
     // stub data calls
 
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
-
     await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
@@ -180,8 +178,6 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
 
   test('refusjon med varig lønnsendring', async ({ page }) => {
     const formPage = new FormPage(page);
-
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 

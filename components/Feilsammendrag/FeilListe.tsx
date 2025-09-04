@@ -1,5 +1,6 @@
 import { ErrorSummary } from '@navikt/ds-react';
 import styles from './Feilsammendrag.module.css';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 export interface Feilmelding {
   felt: string;
@@ -24,7 +25,7 @@ export default function FeilListe({ feilmeldinger, skalViseFeilmeldinger }: Read
           className={styles.mainwrapper}
         >
           {feilmeldinger?.map((melding) => (
-            <ErrorSummary.Item key={melding.felt} href={`#${melding.felt}`}>
+            <ErrorSummary.Item key={melding.felt} href={'#' + ensureValidHtmlId(`${melding.felt}`)}>
               {melding.text}
             </ErrorSummary.Item>
           ))}

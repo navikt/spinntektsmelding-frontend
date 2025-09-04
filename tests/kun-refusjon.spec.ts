@@ -33,8 +33,9 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     );
 
     // navigate to form
+    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
+    await response;
   });
 
   test('submit inntektsmelding that only requires refusjon', async ({ page }) => {

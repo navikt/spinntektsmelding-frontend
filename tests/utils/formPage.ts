@@ -36,6 +36,12 @@ export class FormPage {
     await input.fill(value);
   }
 
+  async fillInputLast(label: string, value: string): Promise<void> {
+    const input = await this.page.getByRole('textbox', { name: label }).last();
+    await input.fill('');
+    await input.fill(value);
+  }
+
   async clickButton(buttonText: string, index: number = 0): Promise<void> {
     const buttons = this.page.getByRole('button', { name: buttonText });
     const button = index > 0 ? buttons.nth(index) : buttons.first();

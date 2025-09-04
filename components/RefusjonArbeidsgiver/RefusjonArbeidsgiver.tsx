@@ -11,6 +11,7 @@ import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerA
 import { addDays } from 'date-fns';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import sorterFomStigende from '../../utils/sorterFomStigende';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -120,7 +121,7 @@ export default function RefusjonArbeidsgiver({
                         onChange={addIsDirtyForm((event) =>
                           setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value)
                         )}
-                        id={'agp.redusertLoennIAgp.beloep'}
+                        id={ensureValidHtmlId('agp.redusertLoennIAgp.beloep')}
                         error={visFeilmeldingTekst('agp.redusertLoennIAgp.beloep')}
                         defaultValue={
                           Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)

@@ -15,6 +15,7 @@ import { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import PeriodeType from '../../config/PeriodeType';
 import sorterFomStigende from '../../utils/sorterFomStigende';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface EgenmeldingProps {
   lasterData?: boolean;
@@ -201,10 +202,14 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
         </div>
 
         {visFeilmelding('agp.egenmeldinger') && (
-          <Feilmelding id='agp.egenmeldinger'>{visFeilmeldingTekst('agp.egenmeldinger')}</Feilmelding>
+          <Feilmelding id={ensureValidHtmlId('agp.egenmeldinger')}>
+            {visFeilmeldingTekst('agp.egenmeldinger')}
+          </Feilmelding>
         )}
         {visFeilmelding('egenmeldingsperioder-feil') && (
-          <Feilmelding id='egenmeldingsperioder-feil'>{visFeilmeldingTekst('egenmeldingsperioder-feil')}</Feilmelding>
+          <Feilmelding id={ensureValidHtmlId('egenmeldingsperioder-feil')}>
+            {visFeilmeldingTekst('egenmeldingsperioder-feil')}
+          </Feilmelding>
         )}
         {!kanEndreEgenmeldingPeriode && skjemastatus !== SkjemaStatus.SELVBESTEMT && (
           <div className={localStyles.endresykemeldingknapper}>

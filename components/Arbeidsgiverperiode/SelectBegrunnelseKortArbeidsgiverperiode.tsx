@@ -3,6 +3,7 @@ import { Select } from '@navikt/ds-react';
 import localStyles from './SelectBegrunnelseKortArbeidsgiverperiode.module.css';
 import begrunnelseIngenEllerRedusertUtbetalingListe from '../RefusjonArbeidsgiver/begrunnelseIngenEllerRedusertUtbetalingListe';
 import filterBegrunnelseKortArbeidsgiverperiode from './filterBegrunnelseKortArbeidsgiverperiode';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface SelectBegrunnelseKortArbeidsgiverperiodeProps {
   onChangeBegrunnelse: (verdi: string) => void;
@@ -34,7 +35,7 @@ export default function SelectBegrunnelseKortArbeidsgiverperiode(
     <Select
       label={label}
       onChange={(event) => props.onChangeBegrunnelse(event.target.value)}
-      id={'agp.redusertLoennIAgp.begrunnelse'}
+      id={ensureValidHtmlId('agp.redusertLoennIAgp.begrunnelse')}
       className={localStyles.selectbegrunnelse}
       defaultValue={props.defaultValue}
       error={props.error}

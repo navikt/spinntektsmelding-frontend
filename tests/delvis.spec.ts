@@ -13,9 +13,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     );
     // intercept collect
     await page.route('**/collect', (route) => route.fulfill({ status: 202, body: 'OK' }));
-  });
 
-  test('No changes and submit', async ({ page }) => {
     // intercept forespoersel → fixture
     await page.route('*/**/api/hent-forespoersel/*', (route) =>
       route.fulfill({ status: 200, body: JSON.stringify(apiData), headers: { 'Content-Type': 'application/json' } })
@@ -29,9 +27,12 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       })
     );
 
+    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
+    await response;
+  });
 
+  test('No changes and submit', async ({ page }) => {
     // select "Nei" in refusjon group
     await page
       .locator('fieldset:has-text("Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?")')
@@ -68,20 +69,6 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   });
 
   test('Changes and submit', async ({ page }) => {
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({ status: 200, body: JSON.stringify(apiData), headers: { 'Content-Type': 'application/json' } })
-    );
-    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
-      route.fulfill({
-        status: 201,
-        body: JSON.stringify({ name: 'Nothing' }),
-        headers: { 'Content-Type': 'application/json' }
-      })
-    );
-
-    await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
-
     // click second "Endre"
     await page.getByRole('button', { name: 'Endre' }).nth(1).click();
 

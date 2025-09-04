@@ -91,14 +91,14 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // await beløpInput.fill('7500');
     await page.getByLabel('Månedslønn 10.09.2024').fill('7500');
     // select endringsårsak Ferie
-    await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Ferie' });
+    await page.getByLabel('Velg endringsårsak').selectOption({ index: 2 }); // { label: 'Ferie' }
     // fill ferie-perioder
-    await page.getByLabel('Ferie til').last().fill('07.07.24');
-    await page.getByLabel('Ferie fra').last().fill('01.07.24');
+    await formPage.fillInputLast('Ferie til', '07.07.24');
+    await formPage.fillInputLast('Ferie fra', '01.07.24');
     // select refusjon under sykefraværet = Nei
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
     // fill phone and confirm
-    await page.getByLabel('Telefon innsender').last().fill('12345678');
+    await formPage.fillInputLast('Telefon innsender', '12345678');
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
     // send
 
