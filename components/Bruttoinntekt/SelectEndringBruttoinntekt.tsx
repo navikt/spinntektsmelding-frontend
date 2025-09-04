@@ -1,6 +1,7 @@
 import { Select, SelectProps } from '@navikt/ds-react';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoinntektTekster';
+import deriveBegrunnelseKeys from './deriveBegrunnelseKeys';
 import { useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import z from 'zod/v4';
@@ -30,29 +31,11 @@ export default function SelectEndringBruttoinntekt({
   const valgteBegrunnelser: EndringAarsak[] = watch(begrunnelserId);
   const denneBegrunnelsen = watch(id);
 
-  const begrunnelser: string[] =
-    valgteBegrunnelser && valgteBegrunnelser.length > 0
-      ? valgteBegrunnelser?.map((valgtBegrunnelse) => valgtBegrunnelse.aarsak)
-      : [];
-
-  let begrunnelseKeys = Object.keys(begrunnelseEndringBruttoinntekt).filter(
-    (endring) =>
-      (endring !== 'Tariffendring' && nyInnsending === true && !begrunnelser.includes(endring)) ||
-      (nyInnsending === false && !begrunnelser.includes(endring))
-  );
-
-  console.log('denneBegrunnelsen', denneBegrunnelsen);
-  console.log('begrunnelseKeys før', begrunnelseKeys);
-  // Legg til valgt begrunnelse hvis den ikke er i listen
-  if (denneBegrunnelsen && denneBegrunnelsen !== '') {
-    begrunnelseKeys.push(denneBegrunnelsen);
-  }
-
-  begrunnelseKeys = [...new Set(begrunnelseKeys)];
-
-  console.log('begrunnelseKeys etter', begrunnelseKeys);
-  console.log('valgteBegrunnelser', valgteBegrunnelser);
-  console.log('begrunnelserId', begrunnelserId, id);
+  const begrunnelseKeys = deriveBegrunnelseKeys({
+    valgteBegrunnelser,
+    currentBegrunnelse: denneBegrunnelsen,
+    nyInnsending
+  });
 
   const error = findErrorInRHFErrors(id, errors);
   return (
