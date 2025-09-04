@@ -33,7 +33,7 @@ export type HtmlIdOptions = {
  * - Ensures it starts with a letter (prefixes if not)
  * - Optionally lowercases and truncates to maxLength
  */
-export default function ensureValidHtmlId(input: unknown, opts: HtmlIdOptions = {}): string {
+export default function ensureValidHtmlId(input: string, opts: HtmlIdOptions = {}): string {
   const { replacement = '-', prefixIfNeeded = 'id-', lowercase = true, maxLength, allowedClass = 'a-z0-9_-' } = opts;
 
   const str = (input ?? '').toString();
