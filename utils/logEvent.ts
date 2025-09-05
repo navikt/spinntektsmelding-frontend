@@ -1,4 +1,3 @@
-import { logAnalyticsEvent } from '@navikt/nav-dekoratoren-moduler';
 import { logger } from '@navikt/next-logger';
 
 import env from '../config/environment';
@@ -24,11 +23,12 @@ type validEventNames =
 export default function logEvent(eventName: validEventNames, eventData: Record<string, string | boolean>) {
   if (typeof window !== 'undefined') {
     if (env.amplitudeEnabled) {
-      logAnalyticsEvent({
-        origin: 'inntektsmelding-sykepenger',
-        eventName,
-        eventData
-      }).catch((e) => logger.warn(`Feil ved amplitude logging`, e));
+      const umami: any = window.umami;
+      if (!umami || typeof umami.track !== 'function') {
+        logger.warn('Umami eller umami.track ikke tilgjengelig på window');
+        return;
+      }
+      umami.track(eventName, { ...eventData, app: 'inntektsmelding-sykepenger' });
     } else {
       // eslint-disable-next-line no-console
       console.log(`Logger ${eventName} - Event properties: ${JSON.stringify(eventData)}!`);

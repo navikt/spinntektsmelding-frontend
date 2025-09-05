@@ -1,79 +1,93 @@
-import { vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import logEvent from '../../utils/logEvent';
+
+// Mock environment so we can toggle amplitudeEnabled
+vi.mock('../../config/environment', () => ({
+  default: { amplitudeEnabled: true }
+}));
 import env from '../../config/environment';
 
-const mockLogAnalyticsEvent = vi.hoisted(() => {
-  return vi.fn();
-});
-
-const mockLoggerWarn = vi.hoisted(() => {
-  return vi.fn();
-});
-
-const mockWindow = {
-  location: {
-    href: 'http://localhost:3000'
-  }
-};
-
-const mockEventName = 'knapp klikket';
-const mockEventData = {
-  buttonName: 'Lagre',
-  formName: 'Opprett bruker'
-};
-
-vi.mock('@navikt/nav-dekoratoren-moduler', () => ({
-  logAnalyticsEvent: mockLogAnalyticsEvent,
-  default: vi.fn()
-}));
+// Mock logger
+const warnSpy = vi.fn();
 vi.mock('@navikt/next-logger', () => ({
-  logger: {
-    warn: mockLoggerWarn
-  }
+  logger: { warn: (...args: any[]) => warnSpy(...args) }
 }));
-vi.spyOn(global, 'window', 'get').mockImplementation(() => mockWindow);
 
-const envSpy = vi.spyOn(env, 'amplitudeEnabled', 'get').mockImplementation(() => true);
+// Utility to ensure window exists in jsdom environment
+function ensureWindow() {
+  // @ts-ignore
+  if (typeof window === 'undefined') global.window = {} as any;
+}
 
-const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+describe('logEvent (umami)', () => {
+  const eventName = 'knapp klikket' as const;
+  const eventData = { button: 'Lagre', steg: '1' };
 
-describe.skip('logEvent', () => {
   beforeEach(() => {
-    consoleSpy.mockClear();
-    mockLogAnalyticsEvent.mockClear();
-    mockLoggerWarn.mockClear();
-    envSpy.mockClear();
+    warnSpy.mockClear();
+    ensureWindow();
   });
 
-  it('should log event data to Amplitude if amplitudeEnabled is true', () => {
-    logEvent(mockEventName, mockEventData);
-    expect(consoleSpy).not.toHaveBeenCalled();
-    expect(mockLoggerWarn).not.toHaveBeenCalled();
-    expect(mockLogAnalyticsEvent).toHaveBeenCalledWith({
-      origin: 'spinntektsmelding-frontend',
-      eventName: mockEventName,
-      eventData: mockEventData
+  afterEach(() => {
+    // @ts-ignore
+    if (window) delete (window as any).umami;
+  });
+
+  it('kaller umami.track når amplitudeEnabled=true og umami er tilgjengelig', () => {
+    // @ts-ignore mutate mocked env
+    env.amplitudeEnabled = true;
+    const track = vi.fn();
+    // @ts-ignore
+    window.umami = { track };
+
+    logEvent(eventName, eventData);
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith(eventName, {
+      ...eventData,
+      app: 'inntektsmelding-sykepenger'
     });
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 
-  it('should log event data to console if amplitudeEnabled is false', () => {
-    // const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+  it('logger warning og avbryter når umami.track mangler', () => {
+    // @ts-ignore
+    env.amplitudeEnabled = true;
+    // @ts-ignore
+    window.umami = {}; // mangler track
 
-    logEvent(mockEventName, mockEventData);
+    logEvent(eventName, eventData);
 
-    expect(mockLogAnalyticsEvent).not.toHaveBeenCalled();
-    expect(mockLoggerWarn).not.toHaveBeenCalled();
-    expect(consoleSpy).toHaveBeenCalledWith(
-      `Logger ${mockEventName} - Event properties: ${JSON.stringify(mockEventData)}!`
-    );
-
-    consoleSpy.mockRestore();
+    expect(warnSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should not log event data if window is undefined', () => {
-    logEvent(mockEventName, mockEventData);
+  it('bruker console.log fallback når amplitudeEnabled=false', () => {
+    // @ts-ignore
+    env.amplitudeEnabled = false;
+    const track = vi.fn();
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    // @ts-ignore
+    window.umami = { track };
 
-    expect(mockLogAnalyticsEvent).not.toHaveBeenCalled();
-    expect(mockLoggerWarn).not.toHaveBeenCalled();
+    logEvent(eventName, eventData);
+
+    expect(track).not.toHaveBeenCalled();
+    expect(logSpy).toHaveBeenCalledTimes(1);
+    expect(logSpy.mock.calls[0][0]).toContain('Logger knapp klikket');
+    logSpy.mockRestore();
+  });
+
+  it('gjør ingenting uten window (Node miljø)', () => {
+    // Simuler manglende window
+    // @ts-ignore
+    const win = global.window;
+    // @ts-ignore
+    delete global.window;
+    const track = vi.fn();
+    logEvent(eventName, eventData); // skal ikke kaste
+    // Re-set window
+    // @ts-ignore
+    global.window = win;
+    expect(track).not.toHaveBeenCalled();
   });
 });
