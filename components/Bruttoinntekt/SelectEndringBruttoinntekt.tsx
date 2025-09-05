@@ -1,5 +1,4 @@
 import { Select, SelectProps } from '@navikt/ds-react';
-import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoinntektTekster';
 import deriveBegrunnelseKeys from './deriveBegrunnelseKeys';
 import { useFormContext } from 'react-hook-form';
