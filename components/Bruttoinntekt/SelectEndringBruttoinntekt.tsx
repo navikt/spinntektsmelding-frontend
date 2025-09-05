@@ -1,6 +1,6 @@
 import { Select, SelectProps } from '@navikt/ds-react';
 import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoinntektTekster';
-import deriveBegrunnelseKeys from './deriveBegrunnelseKeys';
+import { deriveBegrunnelseKeys } from './deriveBegrunnelseKeys';
 import { useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import z from 'zod/v4';

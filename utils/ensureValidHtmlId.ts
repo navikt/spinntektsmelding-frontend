@@ -1,4 +1,4 @@
-export type HtmlIdOptions = {
+type HtmlIdOptions = {
   /**
    * Replacement string for disallowed characters.
    * Default: '-'
