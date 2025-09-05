@@ -29,15 +29,16 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       r.fulfill({ status: 201, body: JSON.stringify({ name: 'Nothing' }), contentType: 'application/json' })
     );
 
+    const response = page.waitForResponse('**/api/hent-forespoersel/*');
+    const kvitteringResponse = page.waitForResponse(`**/api/hentKvittering/${uuid}`);
     await page.goto(baseUrl);
-    await page.waitForResponse('**/api/hent-forespoersel/*');
+    const [forespoerselResp, kvitteringResp] = await Promise.all([response, kvitteringResponse]);
   });
 
   test('Changes and submit', async ({ page }) => {
     const formPage = new FormPage(page);
 
     await test.step('Gå til kvitteringsside og trykk Endre', async () => {
-      await page.waitForResponse(`**/api/hentKvittering/${uuid}`);
       await expect(page).toHaveURL(/\/im-dialog\/kvittering\/8d50ef20-37b5-4829-ad83-56219e70b375/);
       await page.getByRole('button', { name: /Endre/ }).first().click();
       await expect(page).toHaveURL(baseUrl);
