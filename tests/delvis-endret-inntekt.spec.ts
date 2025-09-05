@@ -25,8 +25,9 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
       r.fulfill({ status: 201, body: JSON.stringify({ name: 'Nothing' }), contentType: 'application/json' })
     );
     // navigate to receipt page
+    const response = page.waitForResponse('**/hentKvittering/**');
     await page.goto('http://localhost:3000/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
-    await page.waitForResponse('**/hentKvittering/**');
+    await response;
   });
 
   test('Changes income and submits', async ({ page }) => {
