@@ -1,4 +1,3 @@
-import { logAnalyticsEvent } from '@navikt/nav-dekoratoren-moduler';
 import { logger } from '@navikt/next-logger';
 
 import env from '../config/environment';
