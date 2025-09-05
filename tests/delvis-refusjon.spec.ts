@@ -17,11 +17,6 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
         body: JSON.stringify({ name: 'Nothing' })
       })
     );
-  });
-
-  test('No changes and submit', async ({ page }) => {
-    const formPage = new FormPage(page);
-
     // stub hent-forespoersel
     await page.route('*/**/api/hent-forespoersel/*', (route) =>
       route.fulfill({
@@ -40,8 +35,13 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     );
 
     // visit form
+    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
+    await response;
+  });
+
+  test('No changes and submit', async ({ page }) => {
+    const formPage = new FormPage(page);
 
     // choose "Nei" for refusjon
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
@@ -71,27 +71,6 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
 
   test('Changes and submit', async ({ page }) => {
     const formPage = new FormPage(page);
-
-    // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(apiData)
-      })
-    );
-    // stub innsendingInntektsmelding
-    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
-      route.fulfill({
-        status: 201,
-        contentType: 'application/json',
-        body: JSON.stringify({ name: 'Nothing' })
-      })
-    );
-
-    // visit form
-    await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     await page.getByRole('button', { name: 'Endre' }).nth(1).click();
 
@@ -154,27 +133,6 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
 
   test('Changes to ferie and submit', async ({ page }) => {
     const formPage = new FormPage(page);
-
-    // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(apiData)
-      })
-    );
-    // stub innsendingInntektsmelding
-    await page.route('*/**/api/innsendingInntektsmelding', (route) =>
-      route.fulfill({
-        status: 201,
-        contentType: 'application/json',
-        body: JSON.stringify({ name: 'Nothing' })
-      })
-    );
-
-    // visit form
-    await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
 
     await page.getByRole('button', { name: 'Endre' }).nth(1).click();
 

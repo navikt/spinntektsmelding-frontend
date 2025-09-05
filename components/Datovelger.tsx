@@ -1,5 +1,6 @@
 import { DatePicker, useDatepicker } from '@navikt/ds-react';
 import { isValid } from 'date-fns';
+import ensureValidHtmlId from '../utils/ensureValidHtmlId';
 
 interface DatovelgerProps {
   onDateChange?: (val?: Date | undefined) => void;
@@ -40,7 +41,14 @@ export default function Datovelger({
 
   return (
     <DatePicker {...datepickerProps}>
-      <DatePicker.Input {...inputProps} label={label} id={id} hideLabel={hideLabel} disabled={disabled} error={error} />
+      <DatePicker.Input
+        {...inputProps}
+        label={label}
+        id={ensureValidHtmlId(id)}
+        hideLabel={hideLabel}
+        disabled={disabled}
+        error={error}
+      />
     </DatePicker>
   );
 }

@@ -3,6 +3,7 @@ import { isValid } from 'date-fns';
 import { useEffect } from 'react';
 import { FieldPath, FieldValues, useController, useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface DatoVelgerProps {
   defaultSelected?: Date;
@@ -64,7 +65,7 @@ export default function DatoVelger({
       <DatePicker.Input
         {...inputProps}
         label={label}
-        id={name}
+        id={ensureValidHtmlId(name)}
         hideLabel={hideLabel}
         disabled={disabled}
         error={error}

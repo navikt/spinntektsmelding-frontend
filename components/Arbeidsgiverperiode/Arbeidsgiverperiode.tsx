@@ -22,6 +22,7 @@ import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbei
 import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeopphold';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { finnSammenhengendePeriode } from '../../utils/finnBestemmendeFravaersdag';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -304,13 +305,19 @@ export default function Arbeidsgiverperiode({
             <div className={lokalStyles.endrearbeidsgiverperiode}>
               <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-fra`}>Fra</TextLabel>
-                <div data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`} id={`agp.perioder.${periodeIndex}.fom`}>
+                <div
+                  data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}
+                  id={ensureValidHtmlId(`agp.perioder.${periodeIndex}.fom`)}
+                >
                   {formatDate(periode.fom)}
                 </div>
               </div>
               <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-til`}>Til</TextLabel>
-                <div data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`} id={`agp.perioder.${periodeIndex}.tom`}>
+                <div
+                  data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}
+                  id={ensureValidHtmlId(`agp.perioder.${periodeIndex}.tom`)}
+                >
                   {formatDate(periode.tom)}
                 </div>
               </div>
@@ -342,13 +349,13 @@ export default function Arbeidsgiverperiode({
             <div className={lokalStyles.endrearbeidsgiverperiode}>
               <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-1-fra`}>Fra</TextLabel>
-                <div data-cy={`arbeidsgiverperiode-1-fra-dato`} id={`arbeidsgiverperioder[1].fom`}>
+                <div data-cy={`arbeidsgiverperiode-1-fra-dato`} id={ensureValidHtmlId(`arbeidsgiverperioder[1].fom`)}>
                   -
                 </div>
               </div>
               <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-1-til`}>Til</TextLabel>
-                <div data-cy={`arbeidsgiverperiode-1-til-dato`} id={`arbeidsgiverperioder[1].tom`}>
+                <div data-cy={`arbeidsgiverperiode-1-til-dato`} id={ensureValidHtmlId(`arbeidsgiverperioder[1].tom`)}>
                   -
                 </div>
               </div>
@@ -383,21 +390,23 @@ export default function Arbeidsgiverperiode({
         </div>
       )}
       {visFeilmelding('arbeidsgiverperioder-feil') && (
-        <Feilmelding id='arbeidsgiverperioder-feil'>{visFeilmeldingTekst('arbeidsgiverperioder-feil')}</Feilmelding>
+        <Feilmelding id={ensureValidHtmlId('arbeidsgiverperioder-feil')}>
+          {visFeilmeldingTekst('arbeidsgiverperioder-feil')}
+        </Feilmelding>
       )}
       {advarselOppholdHelg.length > 0 && (
-        <Alert variant='info' id='arbeidsgiverperioder-helg'>
+        <Alert variant='info' id={ensureValidHtmlId('arbeidsgiverperioder-helg')}>
           {advarselOppholdHelg}
         </Alert>
       )}
       {advarselLangPeriode.length > 0 && (
-        <Feilmelding id='arbeidsgiverperiode-lokal-feil'>{advarselLangPeriode}</Feilmelding>
+        <Feilmelding id={ensureValidHtmlId('arbeidsgiverperiode-lokal-feil')}>{advarselLangPeriode}</Feilmelding>
       )}
       {visFeilmelding('agp.perioder') && (
-        <Feilmelding id='agp.perioder'>{visFeilmeldingTekst('agp.perioder')}</Feilmelding>
+        <Feilmelding id={ensureValidHtmlId('agp.perioder')}>{visFeilmeldingTekst('agp.perioder')}</Feilmelding>
       )}
       {advarselKortPeriode.length > 0 && (
-        <span className={lokalStyles.arbeidsgiverKortPeriode} id='arbeidsgiverperiode-kort-feil'>
+        <span className={lokalStyles.arbeidsgiverKortPeriode} id={ensureValidHtmlId('arbeidsgiverperiode-kort-feil')}>
           {advarselKortPeriode}
         </span>
       )}
@@ -408,7 +417,7 @@ export default function Arbeidsgiverperiode({
               className={lokalStyles.refusjonBeloep}
               label='Utbetalt under arbeidsgiverperiode'
               onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
-              id={'agp.redusertLoennIAgp.beloep'}
+              id={ensureValidHtmlId('agp.redusertLoennIAgp.beloep')}
               error={visFeilmeldingTekst('agp.redusertLoennIAgp.beloep')}
               defaultValue={
                 !fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)

@@ -23,7 +23,7 @@ export const HovedskjemaSchema = z.object({
           if (JSON.stringify(val) === JSON.stringify([{}])) {
             ctx.issues.push({
               code: 'custom',
-              error: 'Vennligst angi årsak til endringen.sr1',
+              error: 'Vennligst angi årsak til endringen.',
               path: ['0', 'aarsak'],
               fatal: true,
               input: ''
@@ -46,7 +46,7 @@ export const HovedskjemaSchema = z.object({
             if (v.aarsak === '' || v.aarsak === undefined) {
               ctx.issues.push({
                 code: 'custom',
-                error: 'Vennligst angi årsak til endringen.sr2',
+                error: 'Vennligst angi årsak til endringen.',
                 path: [index, 'aarsak'],
                 fatal: true,
                 input: ''

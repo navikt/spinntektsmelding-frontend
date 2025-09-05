@@ -16,8 +16,9 @@ test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(originalData) })
     );
     // navigate
+    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
+    await response;
   });
 
   test('Det er ikke arbeidsgiverperiode toggle works', async ({ page }) => {

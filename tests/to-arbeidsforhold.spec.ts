@@ -32,8 +32,9 @@ test.describe('Utfylling og innsending av skjema – to arbeidsforhold', () => {
     );
 
     // navigate to form
+    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
+    await response;
   });
 
   test('can check the radioboxes for refusjon and submit', async ({ page }) => {

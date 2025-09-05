@@ -12,6 +12,7 @@ import stringishToNumber from '../../utils/stringishToNumber';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import ButtonSlette from '../ButtonSlette';
 import { ExclamationmarkTriangleFillIcon } from '@navikt/aksel-icons';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
@@ -68,7 +69,7 @@ export default function Aarsaksvelger({
               <TextField
                 label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
                 defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
-                id='inntekt.beregnetInntekt'
+                id={ensureValidHtmlId('inntekt.beregnetInntekt')}
                 error={beloepError}
                 className={lokalStyles.bruttoinntektendringsbeloep}
                 data-cy='inntekt-beloep-input'
@@ -81,7 +82,7 @@ export default function Aarsaksvelger({
               {errors?.inntekt?.endringAarsaker?.root && (key === 1 || fields.length === 1) && (
                 <p
                   className='navds-error-message navds-label navds-error-message--show-icon'
-                  id='inntekt.endringAarsaker.root'
+                  id={ensureValidHtmlId('inntekt.endringAarsaker.root')}
                 >
                   <ExclamationmarkTriangleFillIcon />
                   {errors?.inntekt?.endringAarsaker?.root?.message}
