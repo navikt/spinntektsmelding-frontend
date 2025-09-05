@@ -30,11 +30,11 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
     });
   });
 
+  // Wait for the API to be loaded
+  const apiResponse = page.waitForResponse('*/**/api/hent-forespoersel/*');
   // Visit the page
   await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-
-  // Wait for the API to be loaded
-  await page.waitForResponse('*/**/api/hent-forespoersel/*');
+  await apiResponse;
 
   // Simulate interaction
   await page.waitForTimeout(5000);

@@ -30,8 +30,9 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
         body: JSON.stringify({ name: 'Nothing' })
       })
     );
+    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-    await page.waitForResponse('*/**/api/hent-forespoersel/*');
+    await response;
   });
 
   test('No changes and submit', async ({ page }) => {

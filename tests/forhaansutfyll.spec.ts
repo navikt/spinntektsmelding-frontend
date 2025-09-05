@@ -42,8 +42,9 @@ test.describe('Utfylling og innsending av skjema', () => {
     // intercept collect
     await page.route('**/collect', (route) => route.fulfill({ status: 202, contentType: 'text/plain', body: 'OK' }));
 
+    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-    // await page.waitForResponse('*/**/api/hent-forespoersel/*');
+    await response;
 
     // Person data
     await expect(page.locator('[data-cy="navn"]')).toHaveText('Test Navn Testesen-Navnesen Jr.');
