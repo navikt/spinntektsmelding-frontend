@@ -18,7 +18,10 @@ describe('Feilsammendrag', () => {
   });
 
   it('should render FeilListe if there are errors', () => {
-    const mockErrors = [{ text: 'Error 1' }, { text: 'Error 2' }];
+    const mockErrors = [
+      { text: 'Error 1', felt: 'field1' },
+      { text: 'Error 2', felt: 'field2' }
+    ];
     (formatRHFFeilmeldinger as Mock).mockReturnValue(mockErrors);
     (useBoundStore as Mock).mockReturnValueOnce([]).mockReturnValueOnce(true);
 
@@ -28,8 +31,8 @@ describe('Feilsammendrag', () => {
   });
 
   it('should combine errors from state and props', () => {
-    const mockErrors = [{ text: 'Error 1' }];
-    const stateErrors = [{ text: 'State Error' }];
+    const mockErrors = [{ text: 'Error 1', felt: 'field1' }];
+    const stateErrors = [{ text: 'State Error', felt: 'field2' }];
     (formatRHFFeilmeldinger as Mock).mockReturnValue(mockErrors);
     (useBoundStore as Mock).mockReturnValueOnce(stateErrors).mockReturnValueOnce(true);
 

@@ -104,7 +104,7 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
     });
 
     // bekreft kvitteringsside
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+    // await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 });

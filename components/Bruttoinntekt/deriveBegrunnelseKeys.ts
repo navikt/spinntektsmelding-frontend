@@ -30,6 +30,10 @@ export function deriveBegrunnelseKeys({
   currentBegrunnelse,
   nyInnsending
 }: DeriveBegrunnelseKeysParams): string[] {
+  if (!begrunnelseEndringBruttoinntekt) return [];
+  if (typeof begrunnelseEndringBruttoinntekt !== 'object') return [];
+  if (Array.isArray(valgteBegrunnelser) === false) valgteBegrunnelser = [];
+  if (valgteBegrunnelser === null) valgteBegrunnelser = [];
   const alreadyChosen = (valgteBegrunnelser ?? []).map((b) => b.aarsak);
 
   const baseKeys = Object.keys(begrunnelseEndringBruttoinntekt).filter(
