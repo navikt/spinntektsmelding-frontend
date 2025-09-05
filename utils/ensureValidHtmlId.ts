@@ -39,7 +39,7 @@ export default function ensureValidHtmlId(input: string, opts: HtmlIdOptions = {
   const str = (input ?? '').toString();
   // Fast-path for already-valid simple ids
   const simpleValidRe = new RegExp(`^[${allowedClass}]+$`, 'i');
-  if (str && simpleValidRe.test(str) && /[a-z]/i.test(str[0])) {
+  if (str && simpleValidRe.test(str) && /[A-Za-z]/i.test(str[0])) {
     const out = lowercase ? str.toLowerCase() : str;
     return maxLength ? trimTrailing(replacement, out).slice(0, maxLength) : trimTrailing(replacement, out);
   }

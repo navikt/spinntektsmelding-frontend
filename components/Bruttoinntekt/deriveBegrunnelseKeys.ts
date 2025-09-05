@@ -3,7 +3,7 @@ import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 /**
  * Representerer et valgt endringsårsak-objekt fra skjemaet. Vi bryr oss kun om `aarsak`.
  */
-interface EndringAarsakLike {
+export interface EndringAarsakLike {
   aarsak: string;
   // Tillat ekstra felter uten å bry oss om dem
   [key: string]: unknown;
