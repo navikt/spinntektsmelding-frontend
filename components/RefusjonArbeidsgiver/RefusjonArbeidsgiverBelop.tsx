@@ -4,6 +4,7 @@ import formatCurrency from '../../utils/formatCurrency';
 import TextLabel from '../TextLabel';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import ButtonEndre from '../ButtonEndre';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface RefusjonArbeidsgiverBelopProps {
   bruttoinntekt: number;
@@ -62,7 +63,7 @@ export default function RefusjonArbeidsgiverBelop({
           label='Oppgi refusjonsbeløpet per måned'
           value={bruttoinntekt}
           onChange={(event) => onOppdaterBelop(event.target.value)}
-          id={'refusjon.beloepPerMaaned'}
+          id={ensureValidHtmlId('refusjon.beloepPerMaaned')}
           error={visFeilmeldingTekst('refusjon.beloepPerMaaned')}
           data-cy='refusjon-arbeidsgiver-beloep-input'
         />

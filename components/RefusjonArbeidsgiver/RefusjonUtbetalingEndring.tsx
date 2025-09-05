@@ -7,6 +7,7 @@ import ButtonSlette from '../ButtonSlette';
 import Datovelger from '../Datovelger';
 import useBoundStore from '../../state/useBoundStore';
 import { YesNo } from '../../state/state';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 export interface EndringsBeloep {
   beloep?: number;
@@ -93,7 +94,7 @@ export default function RefusjonUtbetalingEndring({
     <>
       <RadioGroup
         legend='Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?'
-        id={'refusjon.endringer'}
+        id={ensureValidHtmlId('refusjon.endringer')}
         className={styles.radiobuttonWrapper}
         error={visFeilmeldingTekst('refusjon.endringer')}
         onChange={changeHarEndringerHandler}
@@ -114,7 +115,7 @@ export default function RefusjonUtbetalingEndring({
                 label='Endret beløp/måned'
                 onChange={(event) => changeBelopHandler(event, key)}
                 defaultValue={endring.beloep ?? ''}
-                id={`refusjon.endringer.${key}.beloep`}
+                id={ensureValidHtmlId(`refusjon.endringer.${key}.beloep`)}
                 error={visFeilmeldingTekst(`refusjon.endringer.${key}.beloep`)}
                 className={lokalStyles.endringsboks}
               />
@@ -122,7 +123,7 @@ export default function RefusjonUtbetalingEndring({
                 fromDate={minDate}
                 toDate={maxDate}
                 onDateChange={(val: Date | undefined) => changeDatoHandler(val, key)}
-                id={`refusjon.endringer.${key}.startdato`}
+                id={ensureValidHtmlId(`refusjon.endringer.${key}.startdato`)}
                 label='Dato for endring'
                 error={visFeilmeldingTekst(`refusjon.endringer.${key}.startdato`)}
                 defaultSelected={endring.dato}

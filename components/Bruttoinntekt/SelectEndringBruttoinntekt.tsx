@@ -1,10 +1,11 @@
 import { Select, SelectProps } from '@navikt/ds-react';
-import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoinntektTekster';
+import { deriveBegrunnelseKeys } from './deriveBegrunnelseKeys';
 import { useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import z from 'zod/v4';
 import { EndringAarsakSchema } from '../../schema/EndringAarsakSchema';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface SelectEndringBruttoinntektProps extends Partial<SelectProps> {
   nyInnsending: boolean;
@@ -29,23 +30,15 @@ export default function SelectEndringBruttoinntekt({
   const valgteBegrunnelser: EndringAarsak[] = watch(begrunnelserId);
   const denneBegrunnelsen = watch(id);
 
-  const begrunnelser: string[] =
-    valgteBegrunnelser && valgteBegrunnelser.length > 0
-      ? valgteBegrunnelser?.map((valgtBegrunnelse) => valgtBegrunnelse.aarsak)
-      : [];
-
-  const begrunnelseKeys = Object.keys(begrunnelseEndringBruttoinntekt).filter(
-    (endring) =>
-      (endring !== 'Tariffendring' && nyInnsending === true && !begrunnelser.includes(endring)) ||
-      (nyInnsending === false && !begrunnelser.includes(endring))
-  );
-  if (denneBegrunnelsen && denneBegrunnelsen !== '') {
-    begrunnelseKeys.push(denneBegrunnelsen);
-  }
+  const begrunnelseKeys = deriveBegrunnelseKeys({
+    valgteBegrunnelser,
+    currentBegrunnelse: denneBegrunnelsen,
+    nyInnsending
+  });
 
   const error = findErrorInRHFErrors(id, errors);
   return (
-    <Select label={label ?? 'Velg endringsårsak'} error={error} id={id} {...register(id)}>
+    <Select label={label ?? 'Velg endringsårsak'} error={error} id={ensureValidHtmlId(id)} {...register(id)}>
       <option value=''>Velg begrunnelse</option>
       {begrunnelseKeys.map((begrunnelseKey) => (
         <option value={begrunnelseKey} key={begrunnelseKey}>
