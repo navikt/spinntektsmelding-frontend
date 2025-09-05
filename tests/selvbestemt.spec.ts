@@ -91,7 +91,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // await beløpInput.fill('7500');
     await page.getByLabel('Månedslønn 10.09.2024').fill('7500');
     // select endringsårsak Ferie
-    await page.getByLabel('Velg endringsårsak').selectOption({ index: 2 }); // { label: 'Ferie' }
+    await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Ferie' });
     // fill ferie-perioder
     await formPage.fillInputLast('Ferie til', '07.07.24');
     await formPage.fillInputLast('Ferie fra', '01.07.24');
