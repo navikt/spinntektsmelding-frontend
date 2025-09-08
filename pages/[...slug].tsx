@@ -6,7 +6,7 @@ import { z } from 'zod/v4';
 import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { BodyLong, Button, Checkbox, CheckboxGroup, ConfirmationPanel, Link } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox, CheckboxGroup, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 
