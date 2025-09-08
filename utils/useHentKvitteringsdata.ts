@@ -18,7 +18,7 @@ export default function useHentKvitteringsdata() {
         .then((skjemadata) => {
           if (skjemadata.status === 404) {
             setSkjemaFeilet();
-            logger.warn('Fant ikke kvittering for ', pathSlug);
+            logger.warn('Fant ikke kvittering for ' + pathSlug);
           }
           if (skjemadata.data !== undefined) {
             initState(skjemadata.data);
@@ -34,7 +34,7 @@ export default function useHentKvitteringsdata() {
 
           if (error.status !== 200) {
             setSkjemaFeilet();
-            logger.warn('Fant ikke kvittering for ', pathSlug);
+            logger.warn('Fant ikke kvittering for ' + pathSlug);
           }
         });
     }
