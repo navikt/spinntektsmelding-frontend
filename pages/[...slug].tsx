@@ -6,7 +6,7 @@ import { z } from 'zod/v4';
 import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { BodyLong, Button, ConfirmationPanel, Link } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox, CheckboxGroup, ConfirmationPanel, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 
@@ -397,13 +397,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 <Naturalytelser />
               </>
             )}
-            <ConfirmationPanel
-              className={styles.confirmationPanel}
-              label='Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
-              id='bekreft-opplysninger'
+            <Skillelinje />
+            <CheckboxGroup
+              legend='Vennligst bekrefter at opplysningene som er gitt, er riktige og fullstendige.'
               error={errors.bekreft_opplysninger?.message}
-              {...register('bekreft_opplysninger')}
-            ></ConfirmationPanel>
+              hideLegend
+            >
+              <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
+                Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
+              </Checkbox>
+            </CheckboxGroup>
             <Feilsammendrag skjemafeil={errors} />
             <div className={styles.outerButtonWrapper}>
               <div className={styles.buttonWrapper}>
