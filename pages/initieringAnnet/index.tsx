@@ -188,9 +188,7 @@ const InitieringAnnet: NextPage = () => {
     const mottatteSykepengesoknader = EndepunktSykepengesoeknaderSchema.safeParse(spData);
 
     if (!mottatteSykepengesoknader.success) {
-      logger.warn(
-        'Feil ved validering av sykepengesøknader' + JSON.stringify(mottatteSykepengesoknader.error.errors ?? '')
-      );
+      logger.warn('Feil ved validering av sykepengesøknader' + JSON.stringify(mottatteSykepengesoknader.error.errors));
       return [];
     }
 

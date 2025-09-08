@@ -178,7 +178,7 @@ export default function useSendInnSkjema(
             component: amplitudeComponent
           });
 
-          logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(data));
+          logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(data.text));
 
           break;
         }
@@ -226,7 +226,7 @@ export default function useSendInnSkjema(
                 errorResponse(errors);
                 setSkalViseFeilmeldinger(true);
 
-                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + JSON.stringify(data));
+                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + JSON.stringify(data.text));
               }
             }
           });
