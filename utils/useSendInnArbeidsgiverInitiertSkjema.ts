@@ -117,7 +117,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
           tittel: 'Innsending feilet - serverfeil',
           component: amplitudeComponent
         });
-        logger.error(`Feil ved innsending av skjema - 500 (status: ${response.status})`);
+        logger.warn(`Feil ved innsending av skjema - 500 (status: ${response.status})`);
         return;
       }
       case 404: {
@@ -125,7 +125,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
           { value: 'Innsending av skjema feilet', error: 'Fant ikke endepunktet for innsending', property: 'server' }
         ];
         errorResponse(errors);
-        logger.error(`Feil ved innsending av skjema - 404 (status: ${response.status})`);
+        logger.warn(`Feil ved innsending av skjema - 404 (status: ${response.status})`);
         return;
       }
       case 401: {
@@ -157,7 +157,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
           }
           errorResponse(errors);
           setSkalViseFeilmeldinger(true);
-          logger.error(`Feil ved innsending av skjema - 400 - BadRequest (status: ${response.status})`);
+          logger.warn(`Feil ved innsending av skjema - 400 - BadRequest (status: ${response.status})`);
         }
         return;
       }
@@ -207,8 +207,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
 
     if (validerteData.success !== true) {
-      logger.error('Feil ved validering av skjema - Åpen innsending');
-      logger.error(validerteData.error);
+      logger.warn('Feil ved validering av skjema - Åpen innsending ' + JSON.stringify(validerteData.error));
     }
 
     const shouldShowErrors =

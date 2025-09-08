@@ -34,7 +34,7 @@ export default function useHentSkjemadata() {
         .catch((error: any) => {
           if (error.status === 401) {
             logger.info('Mangler tilgang til å hente skjemadata i useHentSkjemadata', error.status);
-            logger.info(error.status, error.message, error.info);
+            // logger.info(error.status, error.message, error.info);
 
             if (typeof window !== 'undefined') {
               const ingress = window.location.hostname + environment.baseUrl;
@@ -47,8 +47,8 @@ export default function useHentSkjemadata() {
 
           setSkjemaFeilet();
 
-          logger.error('Feil ved henting av skjemadata i useHentSkjemadata', error.status);
-          logger.error(error.status, error.message, error.info);
+          logger.warn('Feil ved henting av skjemadata i useHentSkjemadata', error.status);
+          // logger.warn(error.status, error.message, error.info);
 
           slettFeilmelding('ukjent');
           leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
