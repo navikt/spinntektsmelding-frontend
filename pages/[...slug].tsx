@@ -287,8 +287,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             initBruttoinntekt(inntektSisteTreMnd.data.gjennomsnitt, tidligereInntekt, inntektsdato);
           })
           .catch((error) => {
-            logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema', error);
-            logger.warn(error);
+            logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema' + JSON.stringify(error));
           });
       }
       setSisteInntektsdato(inntektsdato);

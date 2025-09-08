@@ -84,8 +84,9 @@ export default function useSendInnSkjema(
         component: amplitudeComponent
       });
 
-      logger.error(`Feil ved validering ved innsending av skjema med id ${pathSlug}`);
-      logger.error(validerteData.error);
+      logger.warn(
+        `Feil ved validering ved innsending av skjema med id ${pathSlug}. Valideringsfeil: ${JSON.stringify(validerteData.error)}`
+      );
 
       fyllFeilmeldinger(
         validerteData.error.issues.map((error) => ({
@@ -177,8 +178,7 @@ export default function useSendInnSkjema(
             component: amplitudeComponent
           });
 
-          logger.error('Feil ved innsending av skjema - 500', data);
-          logger.error(data);
+          logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(data.text));
 
           break;
         }
@@ -193,8 +193,7 @@ export default function useSendInnSkjema(
           ];
           errorResponse(errors);
 
-          logger.error('Feil ved innsending av skjema - 404', data);
-          logger.error(data);
+          logger.warn('Feil ved innsending av skjema - 404' + JSON.stringify(data));
 
           break;
         }
@@ -227,8 +226,7 @@ export default function useSendInnSkjema(
                 errorResponse(errors);
                 setSkalViseFeilmeldinger(true);
 
-                logger.error('Feil ved innsending av skjema - 400 - BadRequest', data);
-                logger.error(data);
+                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + JSON.stringify(data.text));
               }
             }
           });
