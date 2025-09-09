@@ -7,7 +7,7 @@
     "dev:decoratorless": "cross-env DISABLE_DECORATOR=true next dev --turbopack | pino-pretty",
     "build": "NODE_ENV=production next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
     "prepare": "husky install",
@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
+    "@eslint/eslintrc": "^3",
     "@next/bundle-analyzer": "15.5.2",
     "@playwright/test": "^1.55.0",
     "@testing-library/jest-dom": "6.8.0",

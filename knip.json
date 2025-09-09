@@ -1,3 +1,4 @@
 {
-  "ignore": ["next-logger.config.js", "__mocks__/**", "components/FlexJarResponse", "mockdata/**"]
+  "ignore": ["next-logger.config.js", "__mocks__/**", "components/FlexJarResponse", "mockdata/**"],
+  "ignoreDependencies": ["@eslint/eslintrc"]
 }
