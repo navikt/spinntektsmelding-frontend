@@ -128,7 +128,7 @@ export default function useKvitteringInit() {
     });
 
     setEndringerAvRefusjon(
-      jsonData.skjema.refusjon?.beloepPerMaaned !== jsonData.skjema.inntekt.beloep ||
+      jsonData.skjema.refusjon?.beloepPerMaaned !== jsonData.skjema.inntekt?.beloep ||
         (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0)
         ? 'Ja'
         : 'Nei'
