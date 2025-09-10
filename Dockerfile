@@ -15,7 +15,8 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     --mount=type=cache,target=/app/.yarn/cache \
     echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc && \
     export NPM_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) && \
-    yarn install --immutable
+    yarn install --immutable \
+    rm -f .npmrc || true
 
 # Rebuild the source code only when needed
 FROM node:24.7-alpine AS builder
@@ -23,6 +24,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+RUN if [ -f .npmrc ]; then \
+    echo "Fjerner .npmrc" && \
+    rm .npmrc; \
+    else \
+    echo "Ingen .npmrc fil funnet, fortsetter uten den"; \
+    fi;
 
 ARG BUILDMODE
 ENV BUILDMODE=${BUILDMODE}
