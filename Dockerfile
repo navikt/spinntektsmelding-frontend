@@ -15,7 +15,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     --mount=type=cache,target=/app/.yarn/cache \
     echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc && \
     export NPM_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) && \
-    yarn install --immutable \
+    yarn install --immutable && \
     rm -f .npmrc || true
 
 # Rebuild the source code only when needed
