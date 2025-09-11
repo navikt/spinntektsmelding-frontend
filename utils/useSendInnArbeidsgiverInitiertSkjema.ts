@@ -165,9 +165,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
             if (body.selvbestemtId) pathSlug = body.selvbestemtId;
             setKvitteringInnsendt(new Date());
             if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-              router.push(`/kvittering/agi/${pathSlug}`, undefined, { shallow: true });
+              router.push(`/kvittering/agi/${pathSlug}`);
             } else {
-              router.push(`/kvittering/${pathSlug}`, undefined, { shallow: true });
+              router.push(`/kvittering/${pathSlug}`);
             }
           });
 
