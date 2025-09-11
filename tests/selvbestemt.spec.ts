@@ -143,7 +143,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       }
     });
 
-    await page.waitForURL('/im-dialog/kvittering/agi/*');
     // confirm receipt page
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
   });
@@ -231,6 +230,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       }
     });
+
+    await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
   });
 
   test('selvbestemt fisker med varig lønnsendring', async ({ page }) => {
@@ -318,6 +319,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         type: 'Fisker'
       }
     });
+
+    await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
   });
 
   test('selvbestemt ambassadepersonell e.l. med varig lønnsendring', async ({ page }) => {
@@ -408,5 +411,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         type: 'UtenArbeidsforhold'
       }
     });
+
+    await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
   });
 });

@@ -221,7 +221,7 @@ export default function useSendInnSkjema(
                 const feil = feilResultat.data;
                 let errors: Array<ErrorResponse> = [];
 
-                errors = mapValidationErrors(feil, errors, resultat);
+                errors = mapValidationErrors(feil, errors);
 
                 errorResponse(errors);
                 setSkalViseFeilmeldinger(true);
@@ -235,15 +235,16 @@ export default function useSendInnSkjema(
   };
 }
 
-function mapValidationErrors(
-  feil: { error: string; valideringsfeil: string[] },
-  errors: ErrorResponse[],
-  resultat: any
-) {
+export function mapValidationErrors(feil: { error: string; valideringsfeil: string[] }, errors: ErrorResponse[]) {
   if (feil.valideringsfeil) {
-    errors = resultat.valideringsfeil.map((error: any) => ({
-      error: error
-    }));
+    errors = feil.valideringsfeil.map(
+      (error: any) =>
+        ({
+          error: error,
+          property: 'server',
+          value: 'Innsending av skjema feilet'
+        }) as ErrorResponse
+    );
   } else {
     errors = [
       {

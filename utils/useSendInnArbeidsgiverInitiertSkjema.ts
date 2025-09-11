@@ -9,6 +9,8 @@ import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
+import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
+import { mapValidationErrors } from './useSendInnSkjema';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -137,29 +139,27 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         return;
       }
       case 400: {
-        const resultat = await response.json();
-        logEvent('skjema innsending feilet', { tittel: 'Innsending feilet', component: amplitudeComponent });
+        return response.json().then((resultat) => {
+          logEvent('skjema innsending feilet', {
+            tittel: 'Innsending feilet',
+            component: amplitudeComponent
+          });
 
-        if (resultat.error) {
-          let errors: Array<ErrorResponse> = [];
-          if (resultat.valideringsfeil) {
-            errors = resultat.valideringsfeil.map((error: any) => ({ error }));
-          } else if (resultat.error) {
-            errors = [{ value: 'Innsending av skjema feilet', error: resultat.error, property: 'server' }];
-          } else {
-            errors = [
-              {
-                value: 'Innsending av skjema feilet',
-                error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-                property: 'server'
-              }
-            ];
+          if (resultat.error) {
+            const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
+            if (feilResultat.success === true) {
+              const feil = feilResultat.data;
+              let errors: Array<ErrorResponse> = [];
+
+              errors = mapValidationErrors(feil, errors);
+
+              errorResponse(errors);
+              setSkalViseFeilmeldinger(true);
+
+              logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + JSON.stringify(response.text));
+            }
           }
-          errorResponse(errors);
-          setSkalViseFeilmeldinger(true);
-          logger.warn(`Feil ved innsending av skjema - 400 - BadRequest (status: ${response.status})`);
-        }
-        return;
+        });
       }
       default: {
         const resultat = await response.json();
@@ -234,12 +234,97 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       : { ...validerteData.data, selvbestemtId: null };
 
     const URI = environment.innsendingAGInitiertUrl;
-    const response = await fetch(URI, {
+    // const response = await fetch(URI, {
+    //   method: 'POST',
+    //   body: JSON.stringify(innsending),
+    //   headers: { 'Content-Type': 'application/json' }
+    // });
+
+    // await handleInnsendingResponse(response, pathSlug);
+    return fetch(URI, {
       method: 'POST',
       body: JSON.stringify(innsending),
-      headers: { 'Content-Type': 'application/json' }
-    });
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((data) => {
+      switch (data.status) {
+        case 201:
+          setKvitteringInnsendt(new Date());
+          router.push(`/kvittering/${pathSlug}`);
+          break;
 
-    await handleInnsendingResponse(response, pathSlug);
+        case 500: {
+          const errors: Array<ErrorResponse> = [
+            {
+              value: 'Innsending av skjema feilet',
+              error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+              property: 'server'
+            }
+          ];
+          errorResponse(errors);
+
+          logEvent('skjema innsending feilet', {
+            tittel: 'Innsending feilet - serverfeil',
+            component: amplitudeComponent
+          });
+
+          logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(data.text));
+
+          break;
+        }
+
+        case 404: {
+          const errors: Array<ErrorResponse> = [
+            {
+              value: 'Innsending av skjema feilet',
+              error: 'Fant ikke endepunktet for innsending',
+              property: 'server'
+            }
+          ];
+          errorResponse(errors);
+
+          logger.warn('Feil ved innsending av skjema - 404' + JSON.stringify(data));
+
+          break;
+        }
+
+        case 401: {
+          logEvent('skjema innsending feilet', {
+            tittel: 'Innsending feilet - ingen tilgang',
+            component: amplitudeComponent
+          });
+
+          innsendingFeiletIngenTilgang(true);
+          break;
+        }
+
+        default:
+          return data.json().then((resultat) => {
+            logEvent('skjema innsending feilet', {
+              tittel: 'Innsending feilet',
+              component: amplitudeComponent
+            });
+
+            console.log(resultat);
+
+            if (resultat.error) {
+              console.log(resultat.error);
+              const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
+              if (feilResultat.success === true) {
+                const feil = feilResultat.data;
+                let errors: Array<ErrorResponse> = [];
+
+                errors = mapValidationErrors(feil, errors);
+                console.log(errors);
+                errorResponse(errors);
+                setSkalViseFeilmeldinger(true);
+
+                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + JSON.stringify(data.text));
+              }
+            }
+          });
+      }
+    });
   };
 }
