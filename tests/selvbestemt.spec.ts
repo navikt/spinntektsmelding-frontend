@@ -52,7 +52,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       r.fulfill({
         status: 201,
         contentType: 'application/json',
-        body: JSON.stringify({ selvbestemtId: '1234-5678-1234-5678-123456789012' })
+        body: JSON.stringify({ selvbestemtId: 'f32852af-888e-4d0c-ad67-081f22ee5c12' })
       })
     );
     // stub organisasjoner
@@ -87,8 +87,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByRole('button', { name: 'Endre' }).last().click();
 
     // clear and fill new inntekt
-    // const beløpInput = page.locator('[data-cy="inntekt-beloep-input"]');
-    // await beløpInput.fill('7500');
     await page.getByLabel('Månedslønn 10.09.2024').fill('7500');
     // select endringsårsak Ferie
     await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Ferie' });
@@ -145,6 +143,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     // confirm receipt page
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
+    await expect(page).toHaveURL('/im-dialog/kvittering/agi/f32852af-888e-4d0c-ad67-081f22ee5c12');
   });
 
   test('selvbestemt med varig lønnsendring', async ({ page }) => {
