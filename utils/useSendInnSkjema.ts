@@ -13,6 +13,7 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import feiltekster from './feiltekster';
 import forespoerselType from '../config/forespoerselType';
+import { postInnsending, BackendValidationError } from './postInnsending';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -91,7 +92,7 @@ export default function useSendInnSkjema(
       fyllFeilmeldinger(
         validerteData.error.issues.map((error) => ({
           felt: error.path.join('.'),
-          text: error.error ?? error.message
+          text: (error as any).error ?? error.message
         }))
       );
 
@@ -150,93 +151,23 @@ export default function useSendInnSkjema(
       return false;
     }
 
-    return fetch(`${environment.innsendingUrl}`, {
-      method: 'POST',
-      body: JSON.stringify(skjemaData),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then((data) => {
-      switch (data.status) {
-        case 200:
-        case 201:
-          setKvitteringInnsendt(new Date());
-          router.push(`/kvittering/${pathSlug}`);
-          break;
-
-        case 500: {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-              property: 'server'
-            }
-          ];
-          errorResponse(errors);
-
-          logEvent('skjema innsending feilet', {
-            tittel: 'Innsending feilet - serverfeil',
-            component: amplitudeComponent
-          });
-
-          logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(data.text));
-
-          break;
-        }
-
-        case 404: {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Fant ikke endepunktet for innsending',
-              property: 'server'
-            }
-          ];
-          errorResponse(errors);
-
-          logger.warn('Feil ved innsending av skjema - 404' + JSON.stringify(data));
-
-          break;
-        }
-
-        case 401: {
-          logEvent('skjema innsending feilet', {
-            tittel: 'Innsending feilet - ingen tilgang',
-            component: amplitudeComponent
-          });
-
-          innsendingFeiletIngenTilgang(true);
-          break;
-        }
-
-        default:
-          return data.json().then((resultat) => {
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet',
-              component: amplitudeComponent
-            });
-
-            if (resultat.error) {
-              const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
-              if (feilResultat.success === true) {
-                const feil = feilResultat.data;
-                let errors: Array<ErrorResponse> = [];
-
-                errors = mapValidationErrors(feil, errors);
-
-                errorResponse(errors);
-                setSkalViseFeilmeldinger(true);
-
-                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + JSON.stringify(data.text));
-              }
-            }
-          });
-      }
+    return postInnsending<typeof skjemaData, null>({
+      url: `${environment.innsendingUrl}`,
+      body: skjemaData,
+      amplitudeComponent,
+      onUnauthorized: () => innsendingFeiletIngenTilgang(true),
+      onSuccess: async () => {
+        setKvitteringInnsendt(new Date());
+        router.push(`/kvittering/${pathSlug}`);
+      },
+      mapValidationErrors,
+      errorResponse,
+      setSkalViseFeilmeldinger
     });
   };
 }
 
-export function mapValidationErrors(feil: { error: string; valideringsfeil: string[] }, errors: ErrorResponse[]) {
+export function mapValidationErrors(feil: BackendValidationError, errors: ErrorResponse[]) {
   if (feil.valideringsfeil) {
     errors = feil.valideringsfeil.map(
       (error: any) =>

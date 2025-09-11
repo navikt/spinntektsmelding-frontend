@@ -11,6 +11,7 @@ import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
 import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
 import { mapValidationErrors } from './useSendInnSkjema';
+import { postInnsending } from './postInnsending';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -152,95 +153,24 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
     const URI = environment.innsendingAGInitiertUrl;
 
-    return fetch(URI, {
-      method: 'POST',
-      body: JSON.stringify(innsending),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then((data) => {
-      switch (data.status) {
-        case 200:
-        case 201:
-          data.json().then((body) => {
-            if (body.selvbestemtId) pathSlug = body.selvbestemtId;
-            setKvitteringInnsendt(new Date());
-            if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-              router.push(`/kvittering/agi/${pathSlug}`);
-            } else {
-              router.push(`/kvittering/${pathSlug}`);
-            }
-          });
-
-          break;
-
-        case 500: {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-              property: 'server'
-            }
-          ];
-          errorResponse(errors);
-
-          logEvent('skjema innsending feilet', {
-            tittel: 'Innsending feilet - serverfeil',
-            component: amplitudeComponent
-          });
-
-          logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(data.text));
-
-          break;
+    type SuccessBody = { selvbestemtId?: string } | null;
+    return postInnsending<typeof innsending, SuccessBody>({
+      url: URI,
+      body: innsending,
+      amplitudeComponent,
+      onUnauthorized: () => innsendingFeiletIngenTilgang(true),
+      onSuccess: async (body) => {
+        if (body?.selvbestemtId) pathSlug = body.selvbestemtId;
+        setKvitteringInnsendt(new Date());
+        if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
+          router.push(`/kvittering/agi/${pathSlug}`);
+        } else {
+          router.push(`/kvittering/${pathSlug}`);
         }
-
-        case 404: {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Fant ikke endepunktet for innsending',
-              property: 'server'
-            }
-          ];
-          errorResponse(errors);
-
-          logger.warn('Feil ved innsending av skjema - 404' + JSON.stringify(data));
-
-          break;
-        }
-
-        case 401: {
-          logEvent('skjema innsending feilet', {
-            tittel: 'Innsending feilet - ingen tilgang',
-            component: amplitudeComponent
-          });
-
-          innsendingFeiletIngenTilgang(true);
-          break;
-        }
-
-        default:
-          return data.json().then((resultat) => {
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet',
-              component: amplitudeComponent
-            });
-
-            if (resultat.error) {
-              const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
-              if (feilResultat.success === true) {
-                const feil = feilResultat.data;
-                let errors: Array<ErrorResponse> = [];
-
-                errors = mapValidationErrors(feil, errors);
-                errorResponse(errors);
-                setSkalViseFeilmeldinger(true);
-
-                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + JSON.stringify(data.text));
-              }
-            }
-          });
-      }
+      },
+      mapValidationErrors,
+      errorResponse,
+      setSkalViseFeilmeldinger
     });
   };
 }
