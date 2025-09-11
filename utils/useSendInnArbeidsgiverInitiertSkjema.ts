@@ -160,6 +160,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       }
     }).then((data) => {
       switch (data.status) {
+        case 200:
         case 201:
           data.json().then((body) => {
             if (body.selvbestemtId) pathSlug = body.selvbestemtId;
