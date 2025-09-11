@@ -400,15 +400,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
               </>
             )}
             <Skillelinje />
-            <CheckboxGroup
-              legend='Vennligst bekrefter at opplysningene som er gitt, er riktige og fullstendige.'
-              error={errors.bekreft_opplysninger?.message}
-              hideLegend
-            >
-              <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
-                Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
-              </Checkbox>
-            </CheckboxGroup>
+            <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
+              Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
+            </Checkbox>
             {visFeilmelding('bekreft_opplysninger') && (
               <Feilmelding id={'errors.bekreft_opplysninger'}>
                 {visFeilmeldingTekst('bekreft_opplysninger')}

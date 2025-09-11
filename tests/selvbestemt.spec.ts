@@ -143,6 +143,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       }
     });
 
+    await page.waitForURL('/im-dialog/kvittering/agi/*');
     // confirm receipt page
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
   });
