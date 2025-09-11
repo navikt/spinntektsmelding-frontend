@@ -6,6 +6,7 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
 import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsgiverInitiertSkjema';
 import useBoundStore from '../../state/useBoundStore';
+import visFeilmeldingTekst from '../../utils/visFeilmeldingTekst';
 
 // Mock all necessary modules
 vi.mock('next/head', () => ({
@@ -83,7 +84,9 @@ vi.mock('../../state/useBoundStore', () => ({
     bruttoinntekt: { bruttoInntekt: 10000, endringAarsaker: null },
     beloepArbeidsgiverBetalerISykefravaeret: vi.fn(),
     avsender: { tlf: '12345678', orgnr: '123456789' },
-    sykmeldt: { fnr: '12345678910' }
+    sykmeldt: { fnr: '12345678910' },
+    visFeilmeldingTekst: vi.fn((key) => `Feilmelding for ${key}`),
+    visFeilmelding: vi.fn((key) => true)
   })
 );
 

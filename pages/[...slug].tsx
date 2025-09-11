@@ -48,6 +48,7 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
+import Feilmelding from '../components/Feilmelding';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -99,6 +100,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.endringerAvRefusjon,
     state.selvbestemtType
   ]);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
+  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
   const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
@@ -406,6 +409,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
               </Checkbox>
             </CheckboxGroup>
+            {visFeilmelding('bekreft_opplysninger') && (
+              <Feilmelding id={'errors.bekreft_opplysninger'}>
+                {visFeilmeldingTekst('bekreft_opplysninger')}
+              </Feilmelding>
+            )}
             <Feilsammendrag skjemafeil={errors} />
             <div className={styles.outerButtonWrapper}>
               <div className={styles.buttonWrapper}>
