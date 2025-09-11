@@ -272,7 +272,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
     });
   }
 
-  if ((val.inntekt?.beloep ?? 0) > 1000000) {
+  if ((val.inntekt?.beloep ?? 0) >= 1000000) {
     ctx.issues.push({
       code: 'custom',
       error: 'Inntekten kan ikke være over 1 million.',
