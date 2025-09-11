@@ -6,7 +6,7 @@ import { z } from 'zod/v4';
 import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { BodyLong, Button, Checkbox, CheckboxGroup, Link } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 
@@ -404,9 +404,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
               Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
             </Checkbox>
             {visFeilmelding('bekreft_opplysninger') && (
-              <Feilmelding id={'errors.bekreft_opplysninger'}>
-                {visFeilmeldingTekst('bekreft_opplysninger')}
-              </Feilmelding>
+              <Feilmelding id='errors.bekreft_opplysninger'>{visFeilmeldingTekst('bekreft_opplysninger')}</Feilmelding>
             )}
             <Feilsammendrag skjemafeil={errors} />
             <div className={styles.outerButtonWrapper}>
