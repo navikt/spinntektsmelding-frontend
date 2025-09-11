@@ -1310,12 +1310,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:15.5.2":
-  version: 15.5.2
-  resolution: "@next/bundle-analyzer@npm:15.5.2"
+"@next/bundle-analyzer@npm:15.5.3":
+  version: 15.5.3
+  resolution: "@next/bundle-analyzer@npm:15.5.3"
   dependencies:
     webpack-bundle-analyzer: "npm:4.10.1"
-  checksum: 10c0/3614051e86ee6782202f8bd7ae8dcdfc8f06eb3180d4d2e26dda3b3437d25e8bd1ca149c742f73ef71b02ffae8727156e76f17d2d823709a30fffde62fcbd1d5
+  checksum: 10c0/a2550c937d199b21128df8337ef835a1ebec39542cdb2d48f9a75ffc3ed739822eb9b56442782ec32dcdece2425593df4df1703f381c56dae50a2e7eacf494fe
   languageName: node
   linkType: hard
 
@@ -8226,7 +8226,7 @@ __metadata:
     "@navikt/nav-dekoratoren-moduler": "npm:^3.4.0"
     "@navikt/next-logger": "npm:4.1.5"
     "@navikt/oasis": "npm:^3.8.0"
-    "@next/bundle-analyzer": "npm:15.5.2"
+    "@next/bundle-analyzer": "npm:15.5.3"
     "@playwright/test": "npm:^1.55.0"
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.8.0"
