@@ -724,7 +724,7 @@ describe('InnsendingSchema', () => {
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
       code: 'custom',
-      error: 'Inntekten kan ikke være over 1 million.',
+      error: 'Inntekten kan ikke være 1 million eller over.',
       input: '',
       path: ['inntekt', 'beloep']
     });
