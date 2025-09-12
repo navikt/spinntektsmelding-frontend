@@ -6,7 +6,7 @@ import { z } from 'zod/v4';
 
 export type BackendValidationError = z.infer<typeof ResponseBackendErrorSchema>;
 
-export interface PostInnsendingOptions<B, S> {
+interface PostInnsendingOptions<B, S> {
   /** Absolutt eller relativ URL til innsending-endepunkt */
   url: string;
   /** Request body (serialiseres som JSON) */
@@ -20,9 +20,9 @@ export interface PostInnsendingOptions<B, S> {
   /** Mapper backend-valideringsfeil til ErrorResponse[] */
   mapValidationErrors: (feil: BackendValidationError, errors: ErrorResponse[]) => ErrorResponse[];
   /** Setter feilmeldinger i global/state */
-  errorResponse: (errors: ErrorResponse[]) => void;
+  setErrorResponse: (errors: ErrorResponse[]) => void;
   /** Flagg for å trigge visning av feilliste i UI */
-  setSkalViseFeilmeldinger: (v: boolean) => void;
+  setShowErrorList: (v: boolean) => void;
 }
 
 /**
@@ -36,8 +36,8 @@ export async function postInnsending<B = unknown, S = unknown>({
   onUnauthorized,
   onSuccess,
   mapValidationErrors,
-  errorResponse,
-  setSkalViseFeilmeldinger
+  setErrorResponse,
+  setShowErrorList
 }: PostInnsendingOptions<B, S>): Promise<void> {
   return fetch(url, {
     method: 'POST',
@@ -66,7 +66,7 @@ export async function postInnsending<B = unknown, S = unknown>({
               property: 'server'
             }
           ];
-          errorResponse(errors);
+          setErrorResponse(errors);
           logEvent('skjema innsending feilet', {
             tittel: 'Innsending feilet - serverfeil',
             component: amplitudeComponent
@@ -82,7 +82,7 @@ export async function postInnsending<B = unknown, S = unknown>({
               property: 'server'
             }
           ];
-          errorResponse(errors);
+          setErrorResponse(errors);
           logger.warn('Feil ved innsending av skjema - 404 ' + JSON.stringify(data));
           break;
         }
@@ -108,8 +108,8 @@ export async function postInnsending<B = unknown, S = unknown>({
                 const feil = feilResultat.data;
                 let mappedErrors: Array<ErrorResponse> = [];
                 mappedErrors = mapValidationErrors(feil, mappedErrors);
-                errorResponse(mappedErrors);
-                setSkalViseFeilmeldinger(true);
+                setErrorResponse(mappedErrors);
+                setShowErrorList(true);
                 logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText);
               }
             }
@@ -127,8 +127,8 @@ export async function postInnsending<B = unknown, S = unknown>({
           property: 'server'
         }
       ];
-      errorResponse(errors);
-      setSkalViseFeilmeldinger(true);
+      setErrorResponse(errors);
+      setShowErrorList(true);
       logger.warn('Feil ved innsending av skjema - network error ' + err);
     });
 }
