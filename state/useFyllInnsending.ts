@@ -33,7 +33,7 @@ export default function useFyllInnsending() {
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const setShowErrorList = useBoundStore((state) => state.setShowErrorList);
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
@@ -57,7 +57,7 @@ export default function useFyllInnsending() {
     skjemaData: Skjema,
     erBegrensetForespoersel: boolean
   ): FullInnsending => {
-    setSkalViseFeilmeldinger(true);
+    setShowErrorList(true);
 
     const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     const harForespurtInntekt = forespurteOpplysningstyper.includes(forespoerselType.inntekt);

@@ -24,7 +24,7 @@ vi.mock('../../state/useStateInit', () => ({
 
 describe('useHentSkjemadata', () => {
   const mockLeggTilFeilmelding = vi.fn();
-  const mockSetSkalViseFeilmeldinger = vi.fn();
+  const mockSetShowErrorList = vi.fn();
   const mockSetSkjemaFeilet = vi.fn();
   const mockHentPaakrevdOpplysningstyper = vi.fn(() => ['Arbeidsgiverperiode']);
   const mockSlettFeilmelding = vi.fn();
@@ -33,7 +33,7 @@ describe('useHentSkjemadata', () => {
   const mockStore = {
     leggTilFeilmelding: mockLeggTilFeilmelding,
     slettFeilmelding: mockSlettFeilmelding,
-    setSkalViseFeilmeldinger: mockSetSkalViseFeilmeldinger,
+    setShowErrorList: mockSetShowErrorList,
     setSkjemaFeilet: mockSetSkjemaFeilet,
     hentPaakrevdOpplysningstyper: mockHentPaakrevdOpplysningstyper
   };
@@ -89,7 +89,7 @@ describe('useHentSkjemadata', () => {
 
     expect(mockSetSkjemaFeilet).toHaveBeenCalled();
     expect(mockLeggTilFeilmelding).toHaveBeenCalledWith('ukjent', expect.any(String));
-    expect(mockSetSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
+    expect(mockSetShowErrorList).toHaveBeenCalledWith(true);
   });
 
   it('should handle other errors by setting skjemaFeilet and showing error message', async () => {
@@ -101,7 +101,7 @@ describe('useHentSkjemadata', () => {
 
     expect(mockSetSkjemaFeilet).toHaveBeenCalled();
     expect(mockLeggTilFeilmelding).toHaveBeenCalledWith('ukjent', expect.any(String));
-    expect(mockSetSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
+    expect(mockSetShowErrorList).toHaveBeenCalledWith(true);
   });
 
   it('should resolve a promise to {} if forespoerselID is an array', async () => {

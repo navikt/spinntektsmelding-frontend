@@ -26,7 +26,7 @@ export interface FeilmeldingerState {
   visFeilmelding: (feilmelding: string | undefined) => boolean;
   leggTilFeilmelding: (felt: string, melding: string) => void;
   slettFeilmelding: (felt: string) => void;
-  setSkalViseFeilmeldinger: (status: boolean) => void;
+  setShowErrorList: (status: boolean) => void;
   fyllFeilmeldinger: (feilmeldinger: Array<ValiderTekster>) => void;
   oppdaterFeilmeldinger: (feilmeldinger: Array<ValiderResultat>, prefix: string) => Array<ValiderTekster>;
 }
@@ -80,7 +80,7 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
     );
   },
 
-  setSkalViseFeilmeldinger: (status) => {
+  setShowErrorList: (status) => {
     set(
       produce((state) => {
         state.skalViseFeilmeldinger = status;

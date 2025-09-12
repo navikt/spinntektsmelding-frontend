@@ -19,13 +19,13 @@ export default function useSendInnSkjema(
   amplitudeComponent: string
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
-  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const setShowErrorList = useBoundStore((state) => state.setShowErrorList);
   const fyllInnsending = useFyllInnsending();
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const errorResponse = useErrorRespons();
+  const setErrorResponse = useErrorRespons();
   const router = useRouter();
 
   type Skjema = z.infer<typeof HovedskjemaSchema>;
@@ -60,8 +60,8 @@ export default function useSendInnSkjema(
       ];
       fyllFeilmeldinger([]);
 
-      errorResponse(errors);
-      setSkalViseFeilmeldinger(true);
+      setErrorResponse(errors);
+      setShowErrorList(true);
 
       return false;
     }
@@ -145,7 +145,7 @@ export default function useSendInnSkjema(
         tittel: 'Ugyldig UUID ved innsending',
         component: amplitudeComponent
       });
-      errorResponse(errors);
+      setErrorResponse(errors);
 
       return false;
     }
@@ -160,8 +160,8 @@ export default function useSendInnSkjema(
         router.push(`/kvittering/${pathSlug}`);
       },
       mapValidationErrors,
-      setErrorResponse: errorResponse,
-      setShowErrorList: setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
   };
 }

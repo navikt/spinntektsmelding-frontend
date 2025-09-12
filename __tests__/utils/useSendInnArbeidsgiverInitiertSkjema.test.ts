@@ -39,7 +39,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
         avsender: { orgnr: '987654321', orgNavn: 'Example Company', navn: 'Jane Doe', tlf: '12345678' },
         feilVedLasting: { persondata: null, arbeidsgiverdata: null },
         fyllFeilmeldinger: vi.fn(),
-        setSkalViseFeilmeldinger: vi.fn(),
+        setShowErrorList: vi.fn(),
         setKvitteringInnsendt: vi.fn(),
         harRefusjonEndringer: vi.fn(),
         arbeidsgiverKanFlytteSkjæringstidspunkt: vi.fn(),

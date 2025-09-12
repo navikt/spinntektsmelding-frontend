@@ -13,7 +13,7 @@ export default function useHentSkjemadata() {
     state.leggTilFeilmelding,
     state.slettFeilmelding
   ]);
-  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const setShowErrorList = useBoundStore((state) => state.setShowErrorList);
   const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
   const router = useRouter();
 
@@ -52,7 +52,7 @@ export default function useHentSkjemadata() {
 
           slettFeilmelding('ukjent');
           leggTilFeilmelding('ukjent', feiltekster.SERVERFEIL_IM);
-          setSkalViseFeilmeldinger(true);
+          setShowErrorList(true);
         });
     } else {
       return Promise.resolve({});

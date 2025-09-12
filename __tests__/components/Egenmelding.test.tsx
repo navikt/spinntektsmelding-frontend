@@ -128,7 +128,7 @@ describe('Egenmelding', () => {
     });
 
     act(() => {
-      result.current.setSkalViseFeilmeldinger(true);
+      result.current.setShowErrorList(true);
     });
 
     const { container } = render(<Egenmelding setIsDirtyForm={mockFn} />);
@@ -163,7 +163,7 @@ describe('Egenmelding', () => {
     });
 
     act(() => {
-      result.current.setSkalViseFeilmeldinger(true);
+      result.current.setShowErrorList(true);
     });
 
     const { container } = render(<Egenmelding setIsDirtyForm={mockFn} />);

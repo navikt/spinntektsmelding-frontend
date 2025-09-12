@@ -17,7 +17,7 @@ vi.mock('../state/useBoundStore', () => ({
   __esModule: true,
   default: vi.fn().mockImplementation((selector) => {
     if (selector.name === 'fyllFeilmeldinger') return vi.fn();
-    if (selector.name === 'setSkalViseFeilmeldinger') return vi.fn();
+    if (selector.name === 'setShowErrorList') return vi.fn();
     if (selector.name === 'setKvitteringInnsendt') return vi.fn();
     return {};
   })

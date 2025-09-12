@@ -85,7 +85,7 @@ describe('useFeilmeldingerStore', () => {
     });
 
     act(() => {
-      result.current.setSkalViseFeilmeldinger(true);
+      result.current.setShowErrorList(true);
     });
 
     resultat = result.current.visFeilmelding('felt2');
@@ -102,7 +102,7 @@ describe('useFeilmeldingerStore', () => {
     });
 
     act(() => {
-      result.current.setSkalViseFeilmeldinger(false);
+      result.current.setShowErrorList(false);
     });
 
     resultat = result.current.visFeilmelding('felt2');
@@ -119,7 +119,7 @@ describe('useFeilmeldingerStore', () => {
     });
 
     act(() => {
-      result.current.setSkalViseFeilmeldinger(true);
+      result.current.setShowErrorList(true);
     });
 
     resultat = result.current.visFeilmeldingTekst('felt2');
@@ -145,7 +145,7 @@ describe('useFeilmeldingerStore', () => {
     let resultat: string;
 
     act(() => {
-      result.current.setSkalViseFeilmeldinger(true);
+      result.current.setShowErrorList(true);
     });
 
     resultat = result.current.visFeilmeldingTekst('felt2');

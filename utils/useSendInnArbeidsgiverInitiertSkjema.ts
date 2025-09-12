@@ -18,7 +18,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   skjemastatus: SkjemaStatus
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
-  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
+  const setShowErrorList = useBoundStore((state) => state.setShowErrorList);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
@@ -26,7 +26,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
   const selvbestemtType = useBoundStore((state) => state.selvbestemtType);
-  const errorResponse = useErrorRespons();
+  const setErrorResponse = useErrorRespons();
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
 
@@ -34,8 +34,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const showErrors = (errors: Array<ErrorResponse | ValiderTekster>) => {
     // Reset then set
     fyllFeilmeldinger([]);
-    errorResponse(errors as Array<ErrorResponse>);
-    setSkalViseFeilmeldinger(true);
+    setErrorResponse(errors as Array<ErrorResponse>);
+    setShowErrorList(true);
   };
 
   const setAarsakInnsending = (data: any, pathSlug: string) => {
@@ -138,7 +138,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
       fyllFeilmeldinger(errors);
       logEvent('skjema validering feilet', { tittel: 'Validering feilet', component: amplitudeComponent });
-      setSkalViseFeilmeldinger(true);
+      setShowErrorList(true);
       return;
     }
 
@@ -168,8 +168,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         }
       },
       mapValidationErrors,
-      setErrorResponse: errorResponse,
-      setShowErrorList: setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
   };
 }
