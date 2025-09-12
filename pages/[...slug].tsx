@@ -6,7 +6,7 @@ import { z } from 'zod/v4';
 import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { BodyLong, Button, Checkbox, CheckboxGroup, Link } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 
@@ -48,6 +48,7 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
+import Feilmelding from '../components/Feilmelding';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -99,6 +100,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.endringerAvRefusjon,
     state.selvbestemtType
   ]);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
+  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
   const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
@@ -397,15 +400,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
               </>
             )}
             <Skillelinje />
-            <CheckboxGroup
-              legend='Vennligst bekrefter at opplysningene som er gitt, er riktige og fullstendige.'
-              error={errors.bekreft_opplysninger?.message}
-              hideLegend
-            >
-              <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
-                Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
-              </Checkbox>
-            </CheckboxGroup>
+            <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
+              Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
+            </Checkbox>
+            {visFeilmelding('bekreft_opplysninger') && (
+              <Feilmelding id='errors.bekreft_opplysninger'>{visFeilmeldingTekst('bekreft_opplysninger')}</Feilmelding>
+            )}
             <Feilsammendrag skjemafeil={errors} />
             <div className={styles.outerButtonWrapper}>
               <div className={styles.buttonWrapper}>
