@@ -9,7 +9,6 @@ import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
-import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
 import { mapValidationErrors } from './useSendInnSkjema';
 import { postInnsending } from './postInnsending';
 
