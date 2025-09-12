@@ -24,8 +24,8 @@ describe('postInnsending', () => {
   let unauthorized: any;
   let success: any;
   let mapValidationErrors: any;
-  let errorResponse: any;
-  let setSkalViseFeilmeldinger: any;
+  let setErrorResponse: any;
+  let setShowErrorList: any;
 
   beforeEach(() => {
     unauthorized = vi.fn();
@@ -37,8 +37,8 @@ describe('postInnsending', () => {
         value: 'Innsending av skjema feilet'
       }))
     );
-    errorResponse = vi.fn();
-    setSkalViseFeilmeldinger = vi.fn();
+    setErrorResponse = vi.fn();
+    setShowErrorList = vi.fn();
     warnSpy.mockClear();
   });
 
@@ -52,8 +52,8 @@ describe('postInnsending', () => {
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
 
     expect(success).toHaveBeenCalledWith({ ok: true });
@@ -70,15 +70,15 @@ describe('postInnsending', () => {
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
 
     expect(unauthorized).toHaveBeenCalledTimes(1);
     expect(success).not.toHaveBeenCalled();
   });
 
-  it('returnerer serverfeil (500) med errorResponse', async () => {
+  it('returnerer serverfeil (500) med setErrorResponse', async () => {
     global.fetch = vi.fn().mockResolvedValue(buildResponse(500));
 
     await postInnsending({
@@ -88,12 +88,12 @@ describe('postInnsending', () => {
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
 
-    expect(errorResponse).toHaveBeenCalledTimes(1);
-    const errs = errorResponse.mock.calls[0][0];
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    const errs = setErrorResponse.mock.calls[0][0];
     expect(errs[0].error).toContain('akkurat nå en feil');
   });
 
@@ -113,13 +113,13 @@ describe('postInnsending', () => {
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
 
     expect(mapValidationErrors).toHaveBeenCalled();
-    expect(errorResponse).toHaveBeenCalled();
-    expect(setSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
+    expect(setErrorResponse).toHaveBeenCalled();
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
   });
 
   it('logger 404 feil', async () => {
@@ -132,8 +132,8 @@ describe('postInnsending', () => {
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
 
     expect(warnSpy).toHaveBeenCalled();
@@ -155,8 +155,8 @@ describe('postInnsending', () => {
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
 
     expect(success).toHaveBeenCalledWith(null); // fallback når parsing feiler
@@ -172,12 +172,12 @@ describe('postInnsending', () => {
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
 
-    expect(errorResponse).toHaveBeenCalled();
-    expect(setSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
+    expect(setErrorResponse).toHaveBeenCalled();
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
   });
 
   it('ignorerer ugyldig JSON i default-case uten crash', async () => {
@@ -196,11 +196,11 @@ describe('postInnsending', () => {
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse,
+      setShowErrorList
     });
 
     // Ingen validation errors trigget fordi parsing feilet
-    expect(errorResponse).not.toHaveBeenCalled();
+    expect(setErrorResponse).not.toHaveBeenCalled();
   });
 });

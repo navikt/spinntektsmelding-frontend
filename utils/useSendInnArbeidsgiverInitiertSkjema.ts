@@ -168,8 +168,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         }
       },
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse: errorResponse,
+      setShowErrorList: setSkalViseFeilmeldinger
     });
   };
 }

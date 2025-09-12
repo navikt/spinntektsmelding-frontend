@@ -160,8 +160,8 @@ export default function useSendInnSkjema(
         router.push(`/kvittering/${pathSlug}`);
       },
       mapValidationErrors,
-      errorResponse,
-      setSkalViseFeilmeldinger
+      setErrorResponse: errorResponse,
+      setShowErrorList: setSkalViseFeilmeldinger
     });
   };
 }
