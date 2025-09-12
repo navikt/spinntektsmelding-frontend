@@ -110,7 +110,7 @@ export async function postInnsending<B = unknown, S = unknown>({
                 mappedErrors = mapValidationErrors(feil, mappedErrors);
                 errorResponse(mappedErrors);
                 setSkalViseFeilmeldinger(true);
-                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + JSON.stringify(await safeText(data)));
+                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText);
               }
             }
           } catch (err) {
