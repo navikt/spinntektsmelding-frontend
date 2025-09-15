@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Heading1 from '../../components/Heading1/Heading1';
+import { Heading1 } from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';

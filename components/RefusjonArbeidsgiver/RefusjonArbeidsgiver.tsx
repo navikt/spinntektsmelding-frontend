@@ -1,5 +1,5 @@
 import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
-import Heading3 from '../Heading3';
+import { Heading3 } from '../Heading';
 
 import useBoundStore from '../../state/useBoundStore';
 import SelectBegrunnelse from './SelectBegrunnelse';

@@ -42,7 +42,7 @@ import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import useHentSkjemadata from '../utils/useHentSkjemadata';
-import Heading3 from '../components/Heading3';
+import { Heading3 } from '../components/Heading3/Heading3';
 import forespoerselType from '../config/forespoerselType';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';

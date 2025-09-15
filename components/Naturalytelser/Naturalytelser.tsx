@@ -1,6 +1,6 @@
 import { Button, Checkbox, TextField } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
-import Heading3 from '../Heading3';
+import { Heading3 } from '../Heading';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
 import lokalStyles from './Naturalytelser.module.css';
 

@@ -1,20 +1,22 @@
-import { Heading } from '@navikt/ds-react';
-import { ReactNode } from 'react';
+import { Heading, type HeadingProps } from '@navikt/ds-react';
+import type { ReactNode } from 'react';
+import clsx from 'classnames';
 import styles from './Heading2.module.css';
 
-interface Heading2Props {
+type AllowedHeading2Sizes = Extract<HeadingProps['size'], 'small' | 'medium' | 'large'>;
+
+export interface Heading2Props {
   children: ReactNode;
-  className?: any;
-  size?: 'small' | 'medium' | 'large';
+  className?: string;
+  size?: AllowedHeading2Sizes; // default 'medium'
+  id?: string;
 }
 
-export default function Heading2(props: Heading2Props) {
-  const classes = props.className ? `${styles.heading} ${props.className}` : styles.heading;
-  const size = props.size ?? 'medium';
-
+export function Heading2({ children, className, size = 'medium', id }: Readonly<Heading2Props>) {
+  const classes = clsx(styles.heading, className);
   return (
-    <Heading size={size} level='2' className={classes}>
-      {props.children}
+    <Heading size={size} level='2' className={classes} id={id}>
+      {children}
     </Heading>
   );
 }
