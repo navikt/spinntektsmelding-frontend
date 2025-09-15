@@ -7,7 +7,7 @@ import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 // Restrict size to the variants design allows for H1 (adjust if design changes)
 type AllowedHeading1Sizes = Extract<HeadingProps['size'], 'medium' | 'large'>; // example restriction
 
-export interface Heading1Props {
+interface Heading1Props {
   children: ReactNode;
   className?: string;
   id?: string;

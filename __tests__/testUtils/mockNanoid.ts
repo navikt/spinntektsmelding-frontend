@@ -41,12 +41,4 @@ export function mockNanoidConstant(id: string) {
   spy.mockImplementation(() => id);
 }
 
-export function resetNanoidMock() {
-  const spy = ensureSpy();
-  if (typeof (spy as any).mockReset === 'function') spy.mockReset();
-  spy.mockImplementation(() => 'id');
-}
-
-// Expose helpers (default already returns 'id')
-const api = { mockNanoidSequence, mockNanoidConstant, resetNanoidMock };
-export default api;
+// No default export (keep named for tree-shaking clarity)

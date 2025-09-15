@@ -5,7 +5,7 @@ import styles from './Heading3.module.css';
 // Limit sizes for H3 if design restricts (adjust if needed)
 type AllowedHeading3Sizes = Extract<HeadingProps['size'], 'small' | 'medium'>;
 
-export interface Heading3Props {
+interface Heading3Props {
   children: HeadingProps['children'];
   className?: string;
   size?: AllowedHeading3Sizes; // default 'medium'

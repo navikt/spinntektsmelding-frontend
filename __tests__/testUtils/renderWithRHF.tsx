@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { FormProvider, useForm, UseFormProps, UseFormReturn, FieldValues } from 'react-hook-form';
+import { FormProvider, useForm, UseFormProps, UseFormReturn } from 'react-hook-form';
 
 /**
  * Renders children inside a react-hook-form FormProvider with sensible defaults.
@@ -26,11 +26,4 @@ export function renderWithRHF<TFieldValues extends Record<string, any> = Record<
   return { ...utils, methods: methodsRef };
 }
 
-/** Convenience helper for quickly updating a field value and triggering validation */
-export function setFieldValue<TFieldValues extends FieldValues>(
-  methods: UseFormReturn<TFieldValues>,
-  name: keyof TFieldValues & string,
-  value: any
-) {
-  methods.setValue(name as any, value, { shouldDirty: true, shouldValidate: true });
-}
+// setFieldValue helper removed (unused) – rely directly on methods.setValue in tests when needed.

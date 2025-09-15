@@ -5,7 +5,7 @@ import styles from './Heading2.module.css';
 
 type AllowedHeading2Sizes = Extract<HeadingProps['size'], 'small' | 'medium' | 'large'>;
 
-export interface Heading2Props {
+interface Heading2Props {
   children: ReactNode;
   className?: string;
   size?: AllowedHeading2Sizes; // default 'medium'
