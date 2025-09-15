@@ -1,9 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import { expect, vi } from 'vitest';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { FormProvider, useForm } from 'react-hook-form';
+import { renderWithRHF } from '../testUtils/renderWithRHF';
 
 // Mock the ResizeObserver
 const ResizeObserverMock = vi.fn(() => ({
@@ -27,53 +27,7 @@ vi.stubGlobal('ResizeObserver', IntersectionObserverMock);
 
 const perioder = [{ fom: new Date('2022-01-01'), tom: new Date('2022-01-05') }];
 
-vi.mock('react-hook-form', () => ({
-  useController: () => ({
-    // field: { value: 'test' },
-    formState: { errors: {} }
-  }),
-  useFieldArray: () => ({
-    fields: [{}],
-    append: vi.fn(),
-    remove: vi.fn(),
-    replace: vi.fn()
-  }),
-  useFormContext: () => ({
-    handleSubmit: () => vi.fn(),
-    control: {
-      register: vi.fn(),
-      unregister: vi.fn(),
-      getFieldState: vi.fn(),
-      _names: {
-        array: new Set('test'),
-        mount: new Set('test'),
-        unMount: new Set('test'),
-        watch: new Set('test'),
-        focus: 'test',
-        watchAll: false
-      },
-      _subjects: {
-        watch: vi.fn(),
-        array: vi.fn(),
-        state: vi.fn()
-      },
-      _getWatch: vi.fn(),
-      _formValues: ['test'],
-      _defaultValues: ['test']
-    },
-    getValues: () => {
-      return [];
-    },
-    setValue: () => vi.fn(),
-    formState: () => vi.fn(),
-    watch: () => vi.fn(),
-    register: vi.fn()
-  }),
-  Controller: () => [],
-  useSubscribe: () => ({
-    r: { current: { subject: { subscribe: () => vi.fn() } } }
-  })
-}));
+// Removed broad react-hook-form mock in favor of real form provider via helper.
 
 describe('Aarsaksvelger', () => {
   const changeMaanedsintektHandler = vi.fn();
@@ -90,13 +44,14 @@ describe('Aarsaksvelger', () => {
   });
 
   it('renders the component', () => {
-    render(
+    renderWithRHF(
       <Aarsaksvelger
         bruttoinntekt={undefined}
         handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
-      />
+      />,
+      { defaultValues: { inntekt: { endringAarsaker: [{}], beloep: '' } } }
     );
     expect(screen.getByLabelText('Månedslønn')).toBeInTheDocument();
     expect(
@@ -386,80 +341,7 @@ describe('Aarsaksvelger', () => {
   });
 
   it('shows an error message', async () => {
-    const setPerioder = vi.fn();
-
-    vi.mock('react-hook-form', () => ({
-      useController: () => ({
-        // field: { value: 'test' },
-        formState: {
-          errors: {
-            inntekt: {
-              endringAarsaker: {
-                root: {
-                  message: 'Dette er feil'
-                }
-              }
-            }
-          }
-        }
-      }),
-      useFieldArray: () => ({
-        fields: [
-          { id: 'test', aarsak: 'Bonus' },
-          { id: 'test2', aarsak: 'Ferietrekk' }
-        ],
-        append: vi.fn(),
-        remove: vi.fn(),
-        replace: vi.fn()
-      }),
-      useFormContext: () => ({
-        handleSubmit: () => vi.fn(),
-        control: {
-          register: vi.fn(),
-          unregister: vi.fn(),
-          getFieldState: vi.fn(),
-          _names: {
-            array: new Set('test'),
-            mount: new Set('test'),
-            unMount: new Set('test'),
-            watch: new Set('test'),
-            focus: 'test',
-            watchAll: false
-          },
-          _subjects: {
-            watch: vi.fn(),
-            array: vi.fn(),
-            state: vi.fn()
-          },
-          _getWatch: vi.fn(),
-          _formValues: ['test'],
-          _defaultValues: ['test']
-        },
-        getValues: () => {
-          return [];
-        },
-        setValue: () => vi.fn(),
-        formState: {
-          errors: {
-            inntekt: {
-              endringAarsaker: {
-                root: {
-                  message: 'Dette er feil'
-                }
-              }
-            }
-          }
-        },
-        watch: () => vi.fn(),
-        register: vi.fn()
-      }),
-      Controller: () => [],
-      useSubscribe: () => ({
-        r: { current: { subject: { subscribe: () => vi.fn() } } }
-      })
-    }));
-
-    render(
+    const { methods } = renderWithRHF(
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
@@ -469,9 +351,11 @@ describe('Aarsaksvelger', () => {
         handleResetMaanedsinntekt={handleResetMaanedsinntekt}
         visFeilmeldingTekst={visFeilmeldingTekst}
         nyInnsending={false}
-      />
+      />,
+      { defaultValues: { inntekt: { endringAarsaker: [{}], beloep: '' } } }
     );
-
-    expect(screen.getByText('Dette er feil')).toBeInTheDocument();
+    // Inject error dynamically
+    methods.setError('inntekt.endringAarsaker.root' as any, { type: 'manual', message: 'Dette er feil' });
+    expect(await screen.findByText('Dette er feil')).toBeInTheDocument();
   });
 });

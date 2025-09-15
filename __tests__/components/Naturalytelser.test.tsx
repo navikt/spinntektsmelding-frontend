@@ -1,26 +1,13 @@
 import Naturalytelser from '../../components/Naturalytelser';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { FormProvider, useForm } from 'react-hook-form';
-
-function renderWithForm(defaultValues: any) {
-  let methodsRef: any;
-  function Wrapper() {
-    const methods = useForm({ defaultValues });
-    methodsRef = methods;
-    return (
-      <FormProvider {...methods}>
-        <Naturalytelser />
-      </FormProvider>
-    );
-  }
-  const utils = render(<Wrapper />);
-  return { ...utils, methods: methodsRef };
-}
+import { renderWithRHF } from '../testUtils/renderWithRHF';
 
 describe('Naturalytelser', () => {
   it('renders heading and checkbox', () => {
-    renderWithForm({ inntekt: { harBortfallAvNaturalytelser: false, naturalytelser: [] } });
+    renderWithRHF(<Naturalytelser />, {
+      defaultValues: { inntekt: { harBortfallAvNaturalytelser: false, naturalytelser: [] } }
+    });
     expect(screen.getByText('Naturalytelser')).toBeInTheDocument();
     expect(
       screen.getByLabelText('Har den ansatte naturalytelser som faller bort under sykefraværet?')
@@ -28,17 +15,21 @@ describe('Naturalytelser', () => {
   });
 
   it('initialises one row when checkbox toggled on', () => {
-    renderWithForm({ inntekt: { harBortfallAvNaturalytelser: false, naturalytelser: [] } });
+    renderWithRHF(<Naturalytelser />, {
+      defaultValues: { inntekt: { harBortfallAvNaturalytelser: false, naturalytelser: [] } }
+    });
     const checkbox = screen.getByLabelText('Har den ansatte naturalytelser som faller bort under sykefraværet?');
     fireEvent.click(checkbox); // turn on
     expect(screen.getByText('Legg til naturalytelse')).toBeInTheDocument();
   });
 
   it('adds a new row when "Legg til naturalytelse" clicked', () => {
-    renderWithForm({
-      inntekt: {
-        harBortfallAvNaturalytelser: true,
-        naturalytelser: [{ naturalytelse: '', sluttdato: undefined, verdiBeloep: '' }]
+    renderWithRHF(<Naturalytelser />, {
+      defaultValues: {
+        inntekt: {
+          harBortfallAvNaturalytelser: true,
+          naturalytelser: [{ naturalytelse: '', sluttdato: undefined, verdiBeloep: '' }]
+        }
       }
     });
     const addButton = screen.getByText('Legg til naturalytelse');
@@ -48,13 +39,15 @@ describe('Naturalytelser', () => {
   });
 
   it('removes a row when "Slett ytelse" clicked', () => {
-    renderWithForm({
-      inntekt: {
-        harBortfallAvNaturalytelser: true,
-        naturalytelser: [
-          { naturalytelse: '', sluttdato: undefined, verdiBeloep: '' },
-          { naturalytelse: '', sluttdato: undefined, verdiBeloep: '' }
-        ]
+    renderWithRHF(<Naturalytelser />, {
+      defaultValues: {
+        inntekt: {
+          harBortfallAvNaturalytelser: true,
+          naturalytelser: [
+            { naturalytelse: '', sluttdato: undefined, verdiBeloep: '' },
+            { naturalytelse: '', sluttdato: undefined, verdiBeloep: '' }
+          ]
+        }
       }
     });
     const deleteButtons = screen.getAllByTitle('Slett ytelse');

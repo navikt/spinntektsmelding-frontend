@@ -1,20 +1,10 @@
-import { render, screen } from '@testing-library/react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { screen } from '@testing-library/react';
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
-// import OrdinaryJaNei from './OrdinaryJaNei';
-
-const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  const methods = useForm();
-  return <FormProvider {...methods}>{children}</FormProvider>;
-};
+import { renderWithRHF } from '../testUtils/renderWithRHF';
 
 describe('OrdinaryJaNei', () => {
   it('renders the component with given legend and name', () => {
-    render(
-      <Wrapper>
-        <OrdinaryJaNei legend='Test Legend' name='testName' />
-      </Wrapper>
-    );
+    renderWithRHF(<OrdinaryJaNei legend='Test Legend' name='testName' />, { defaultValues: { testName: undefined } });
 
     expect(screen.getByText('Test Legend')).toBeInTheDocument();
     expect(screen.getByLabelText('Ja')).toBeInTheDocument();
