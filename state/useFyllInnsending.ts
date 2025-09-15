@@ -115,13 +115,14 @@ export default function useFyllInnsending() {
         })
       : [];
 
-    setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
+    // Normaliser undefined/null til tom array for å tilfredsstille store sitt forventede array-type
+    setEndringAarsaker(skjemaData.inntekt?.endringAarsaker ?? []);
 
     setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
 
     setInnsenderTelefon(skjemaData.avsenderTlf);
 
-    initNaturalytelser(skjemaData.inntekt?.naturalytelser);
+    initNaturalytelser(skjemaData.inntekt?.naturalytelser ?? []);
 
     const innsendingSkjema: FullInnsending = {
       forespoerselId,
@@ -296,13 +297,12 @@ export function konverterRefusjonEndringer(
 
 export function formaterRedusertLoennIAgp(
   fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined
-): { beloep: number; begrunnelse: string } | null {
-  return fullLonnIArbeidsgiverPerioden?.begrunnelse !== undefined &&
-    fullLonnIArbeidsgiverPerioden?.begrunnelse !== '' &&
-    fullLonnIArbeidsgiverPerioden?.status === 'Nei'
-    ? {
-        beloep: fullLonnIArbeidsgiverPerioden.utbetalt ?? 0,
-        begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse
-      }
-    : null;
+): { beloep: number; begrunnelse: NonNullable<LonnIArbeidsgiverperioden['begrunnelse']> } | null {
+  if (fullLonnIArbeidsgiverPerioden?.status === 'Nei' && fullLonnIArbeidsgiverPerioden.begrunnelse !== undefined) {
+    return {
+      beloep: fullLonnIArbeidsgiverPerioden.utbetalt ?? 0,
+      begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse
+    };
+  }
+  return null;
 }

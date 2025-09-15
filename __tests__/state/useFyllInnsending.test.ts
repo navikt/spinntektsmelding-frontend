@@ -202,10 +202,10 @@ describe('formaterRedusertLoennIAgp', () => {
     expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
   });
 
-  it('should return null, when begrunnelse is empty string', async () => {
+  it('should return null, when begrunnelse is undefined', async () => {
     const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
       status: 'Nei',
-      begrunnelse: '',
+      begrunnelse: undefined,
       utbetalt: 1234
     };
 
