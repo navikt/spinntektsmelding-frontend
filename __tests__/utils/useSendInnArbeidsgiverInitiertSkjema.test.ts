@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, Mock } from 'vitest';
 import { renderHook, act, cleanup } from '@testing-library/react';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsgiverInitiertSkjema';
 import logEvent from '../../utils/logEvent';

@@ -1,5 +1,4 @@
-import { isValid } from 'date-fns/isValid';
-import { format } from 'date-fns/format';
+import { isValid, format } from 'date-fns';
 
 export default function formatDate(date?: Date): string {
   if (!date || !isValid(date)) {

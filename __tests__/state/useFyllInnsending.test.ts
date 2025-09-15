@@ -10,7 +10,7 @@ import delvisRefusjon from '../../mockdata/kvittering-delvis-refusjon.json';
 import useKvitteringInit from '../../state/useKvitteringInit';
 import { LonnIArbeidsgiverperioden } from '../../state/state';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';

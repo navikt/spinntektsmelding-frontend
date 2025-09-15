@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { SelvbestemtTypeConst } from '../state/useSkjemadataStore';
 
 const ArbeidsforholdMedArbeidsforholdSchema = z.object({

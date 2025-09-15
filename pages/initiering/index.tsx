@@ -1,6 +1,6 @@
 import { Alert, Button, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

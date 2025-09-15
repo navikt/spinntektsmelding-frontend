@@ -14,7 +14,7 @@ import {
   mapNaturalytelserToData
 } from './useFyllInnsending';
 import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSchema';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import isValidUUID from '../utils/isValidUUID';
 import { TypeArbeidsforholdSchema } from '../schema/TypeArbeidsforholdSchema';

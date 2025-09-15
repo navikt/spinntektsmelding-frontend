@@ -7,7 +7,7 @@ import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import feiltekster from './feiltekster';

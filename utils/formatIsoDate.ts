@@ -1,5 +1,4 @@
-import formatISO from 'date-fns/formatISO';
-import { isValid } from 'date-fns';
+import { formatISO, isValid } from 'date-fns';
 import { TDateISODate } from '../schema/ForespurtDataSchema';
 
 export default function formatIsoDate(date?: Date): TDateISODate | '' {

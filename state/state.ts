@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 import { BegrunnelseRedusertLoennIAgp } from '../schema/BegrunnelseRedusertLoennIAgpSchema';

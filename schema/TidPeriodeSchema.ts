@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 export const TidPeriodeSchema = z.object({
   fom: z.date().optional(),
