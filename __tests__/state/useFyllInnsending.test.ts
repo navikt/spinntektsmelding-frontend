@@ -2,7 +2,7 @@ import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import useFyllInnsending, { formaterRedusertLoennIAgp } from '../../state/useFyllInnsending';
-import { nanoid } from 'nanoid';
+import { mockNanoidConstant } from '../testUtils/mockNanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 
 import inntektData from '../../mockdata/inntektData.json';
@@ -12,14 +12,12 @@ import { LonnIArbeidsgiverperioden } from '../../state/state';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
 import { z } from 'zod';
 
-import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
+import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
-
-vi.mock('nanoid');
 
 const initialState = useBoundStore.getState();
 
@@ -51,7 +49,7 @@ describe('useFyllInnsending', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
     vi.spyOn(global, 'fetch').mockImplementation(fetchMock);
-    nanoid.mockReturnValue('uuid');
+    mockNanoidConstant('uuid');
   });
 
   afterEach(() => {

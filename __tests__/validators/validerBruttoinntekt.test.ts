@@ -6,13 +6,12 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import validerBruttoinntekt from '../../validators/validerBruttoinntekt';
 import timezone_mock from 'timezone-mock';
 import { describe } from 'vitest';
-import { nanoid } from 'nanoid';
+import { mockNanoidConstant } from '../testUtils/mockNanoid';
 
 timezone_mock.register('UTC');
 type Skjema = z.infer<typeof HovedskjemaSchema>;
-vi.mock('nanoid');
 
-nanoid.mockReturnValue('uuid');
+mockNanoidConstant('uuid');
 
 describe.concurrent('validerBruttoinntekt', () => {
   it('should return an empty array when everything is OK', () => {

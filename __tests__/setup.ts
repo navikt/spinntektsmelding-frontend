@@ -13,6 +13,9 @@ vi.mock('next/router', () => require('next-router-mock'));
 
 vi.mock('zustand');
 
+// Centralized nanoid mock (provides deterministic default + helpers)
+import './testUtils/mockNanoid';
+
 // Extend the functionality to support axe
 expect.extend(toHaveNoViolations);
 
