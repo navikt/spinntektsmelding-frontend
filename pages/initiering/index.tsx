@@ -17,7 +17,7 @@ import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
-import { SelvbestemtTypeConst } from '../../state/useSkjemadataStore';
+import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,

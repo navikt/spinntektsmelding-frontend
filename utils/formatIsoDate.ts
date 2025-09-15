@@ -10,5 +10,5 @@ export default function formatIsoDate(date?: Date): TDateISODate | '' {
     return '';
   }
 
-  return formatISO(date, { representation: 'date' }) as TDateISODate;
+  return formatISO(date, { representation: 'date' });
 }

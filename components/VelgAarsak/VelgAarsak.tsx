@@ -2,7 +2,7 @@ import { Radio, RadioGroup } from '@navikt/ds-react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
-import { SelvbestemtTypeConst } from '../../state/useSkjemadataStore';
+import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface VelgAarsakProps {

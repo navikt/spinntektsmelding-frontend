@@ -27,8 +27,8 @@ export default function findErrorInRHFErrors(path: string, errors: FieldErrors<F
   // RHF FieldError shape
   if ((current as FieldError)?.message) return (current as FieldError).message as string;
   // Legacy { error: string }
-  if (typeof current === 'object' && current && 'error' in current && typeof (current as any).error === 'string') {
-    return (current as any).error as string;
+  if (typeof current === 'object' && current && 'error' in current && typeof current.error === 'string') {
+    return current.error as string;
   }
   // Direct string leaf
   if (typeof current === 'string') return current;
