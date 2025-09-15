@@ -18,7 +18,7 @@ import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import isValidUUID from '../utils/isValidUUID';
 import { TypeArbeidsforholdSchema } from '../schema/TypeArbeidsforholdSchema';
-import { SelvbestemtType } from './useSkjemadataStore';
+import { SelvbestemtType } from '../schema/konstanter/selvbestemtType';
 
 export default function useFyllAapenInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
@@ -73,13 +73,13 @@ export default function useFyllAapenInnsending() {
       ? skjemaData.inntekt.endringAarsaker.map((endringAarsak) => KonverterEndringAarsakSchema.parse(endringAarsak))
       : null;
 
-    setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
+    setEndringAarsaker(skjemaData.inntekt?.endringAarsaker ?? []);
 
     setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
 
     setInnsenderTelefon(skjemaData.avsenderTlf);
 
-    initNaturalytelser(skjemaData.inntekt?.naturalytelser);
+    initNaturalytelser(skjemaData.inntekt?.naturalytelser ?? []);
 
     const formattedAgpPerioder = getFormattedAgpPerioder(arbeidsgiverperiodeDisabled, arbeidsgiverperioder);
 

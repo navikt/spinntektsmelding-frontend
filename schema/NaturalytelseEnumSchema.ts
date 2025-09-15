@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-export const NaturalytelseEnumSchema = z.enum(
-  [
+export const NaturalytelseEnumSchema = z
+  .enum([
     'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
     'ANNET',
     'BEDRIFTSBARNEHAGEPLASS',
@@ -21,8 +21,5 @@ export const NaturalytelseEnumSchema = z.enum(
     'TILSKUDDBARNEHAGEPLASS',
     'YRKEBILTJENESTLIGBEHOVKILOMETER',
     'YRKEBILTJENESTLIGBEHOVLISTEPRIS'
-  ],
-  {
-    error: (issue) => ({ error: 'Vennligst velg ytelse.' })
-  }
-);
+  ])
+  .describe('Vennligst velg ytelse.');
