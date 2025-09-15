@@ -43,7 +43,7 @@ export const HovedskjemaSchema = z.object({
             return z.NEVER;
           }
           val?.forEach((v, index) => {
-            if (v.aarsak === '' || v.aarsak === undefined) {
+            if (v.aarsak === undefined) {
               ctx.issues.push({
                 code: 'custom',
                 error: 'Vennligst angi årsak til endringen.',

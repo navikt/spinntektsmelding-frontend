@@ -53,7 +53,7 @@ export default function validerBruttoinntekt(
     if (bruttoinntekt.manueltKorrigert) {
       const endringAarsaker = skjemaData.inntekt?.endringAarsaker;
       endringAarsaker?.forEach((endringAarsak, index) => {
-        if (!endringAarsak?.aarsak || endringAarsak.aarsak === '') {
+        if (!endringAarsak?.aarsak) {
           valideringstatus.push({
             felt: `bruttoinntekt-endringsaarsak-${index}`,
             code: BruttoinntektFeilkode.ENDRINGSAARSAK_MANGLER

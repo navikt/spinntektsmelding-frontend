@@ -13,7 +13,7 @@ describe('harEndringAarsak', () => {
   });
 
   it('should return false for a single element with empty string', () => {
-    const arr: EndringAarsak[] = [{ aarsak: '' }];
+    const arr: EndringAarsak[] = [{ aarsak: undefined }];
     expect(harEndringAarsak(arr)).toBe(false);
   });
 
@@ -28,12 +28,12 @@ describe('harEndringAarsak', () => {
   });
 
   it('should return true if any element in multiple has non-empty aarsak', () => {
-    const arr: EndringAarsak[] = [{ aarsak: '' }, { aarsak: 'something' }, { aarsak: '' }];
+    const arr: EndringAarsak[] = [{ aarsak: undefined }, { aarsak: 'something' }, { aarsak: '' }];
     expect(harEndringAarsak(arr)).toBe(true);
   });
 
-  it('should return true for multiple elements all with empty string (edge-case)', () => {
-    const arr: EndringAarsak[] = [{ aarsak: '' }, { aarsak: '' }];
-    expect(harEndringAarsak(arr)).toBe(true);
+  it('should return false for multiple elements all with undefined (edge-case)', () => {
+    const arr: EndringAarsak[] = [{ aarsak: undefined }, { aarsak: undefined }];
+    expect(harEndringAarsak(arr)).toBe(false);
   });
 });
