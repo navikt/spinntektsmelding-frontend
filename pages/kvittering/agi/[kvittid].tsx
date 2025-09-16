@@ -463,13 +463,13 @@ export async function getServerSideProps(context: any) {
   const token = getToken(context.req);
   if (!token) {
     /* håndter manglende token */
-    console.error('Mangler token i header');
+    console.warn('Mangler token i header');
   }
 
   const validation = await validateToken(token);
   if (!validation.ok) {
     /* håndter valideringsfeil */
-    console.error('Valideringsfeil');
+    console.warn('Valideringsfeil');
     const ingress = context.req.headers.host + environment.baseUrl;
     const currentPath = `https://${ingress}${context.resolvedUrl}`;
 
@@ -486,7 +486,7 @@ export async function getServerSideProps(context: any) {
     kvittering = await hentKvitteringsdataSSR(kvittid, token);
     kvittering!.status = 200;
   } catch (error: any) {
-    console.error('Error fetching selvbestemt kvittering:', error);
+    console.warn('Error fetching selvbestemt kvittering:', error);
     kvittering = { data: { success: null }, status: error.status };
 
     if (error.status === 404) {
