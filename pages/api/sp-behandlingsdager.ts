@@ -3,11 +3,10 @@ import testdata from '../../mockdata/behandlingsdager.json';
 import isMod11Number from '../../utils/isMod10Number';
 import { createHandler } from '../../server/http/handlerFactory';
 import { ApiError } from '../../server/auth/token';
-import { fetchSoeknader, mapBehandlingsdager } from '../../server/domain/soeknaderService';
+import { mapBehandlingsdager } from '../../server/domain/soeknaderService';
+import { SoeknadBody, validateSoeknadBody, sjekkTilgang, hentSoeknader } from '../../server/domain/spCommon';
 
-const basePath =
-  'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
-const authApi = 'http://' + global.process.env.IM_API_URI + global.process.env.AUTH_SYKEPENGESOEKNAD_API;
+// basePath & authApi are now derived within shared helpers
 
 export const config = {
   api: {
@@ -15,19 +14,8 @@ export const config = {
   }
 };
 
-interface BodyShape {
-  orgnummer: string;
-  fnr: string;
-  eldsteFom?: string;
-}
-
-function validateBody(body: unknown): asserts body is BodyShape {
-  if (!body || typeof body !== 'object') throw new ApiError(400, 'BAD_REQUEST', 'Ugyldig body');
-  const b = body as any;
-  if (typeof b.orgnummer !== 'string' || typeof b.fnr !== 'string') {
-    throw new ApiError(400, 'BAD_REQUEST', 'Ugyldig body');
-  }
-}
+type BodyShape = SoeknadBody;
+const validateBody = validateSoeknadBody;
 
 export default createHandler<BodyShape, any>({
   devMock: () => testdata,
@@ -38,16 +26,8 @@ export default createHandler<BodyShape, any>({
     if (!isMod11Number(body.orgnummer)) {
       throw new ApiError(400, 'UGYLDIG_ORGNR', 'Ugyldig organisasjonsnummer');
     }
-
-    const tilgang = await fetch(authApi + '/' + body.orgnummer, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-    });
-    if (!tilgang.ok) {
-      throw new ApiError(403, 'TILGANGSFEIL', 'Feil ved kontroll av tilgang');
-    }
-
-    const data = await fetchSoeknader({ basePath, token: oboToken!, requestBody: body });
+    await sjekkTilgang(body.orgnummer, token!);
+    const data = await hentSoeknader({ body, oboToken: oboToken! });
     const mapped = mapBehandlingsdager(data);
     if (mapped.length === 0) return [];
     return mapped;
