@@ -1,6 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import testdata from '../../../mockdata/behandlingsdager.json';
+// Sett nødvendige miljøvariabler før handler importeres slik at oboClientId ikke blir undefined
+process.env.FLEX_SYKEPENGESOEKNAD_INGRESS = process.env.FLEX_SYKEPENGESOEKNAD_INGRESS || 'ingress';
+process.env.FLEX_SYKEPENGESOEKNAD_URL = process.env.FLEX_SYKEPENGESOEKNAD_URL || '/url';
+process.env.IM_API_URI = process.env.IM_API_URI || 'uri';
+process.env.AUTH_SYKEPENGESOEKNAD_API = process.env.AUTH_SYKEPENGESOEKNAD_API || '/auth';
+process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID = process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID || 'cid';
 import handler from '../../../pages/api/sp-behandlingsdager';
 import isMod11Number from '../../../utils/isMod10Number';
 import safelyParseJSON from '../../../utils/safelyParseJson';
@@ -35,12 +41,6 @@ function createRes() {
 
 beforeEach(() => {
   vi.resetAllMocks();
-  process.env.NODE_ENV = 'test';
-  process.env.FLEX_SYKEPENGESOEKNAD_INGRESS = 'ingress';
-  process.env.FLEX_SYKEPENGESOEKNAD_URL = '/url';
-  process.env.IM_API_URI = 'uri';
-  process.env.AUTH_SYKEPENGESOEKNAD_API = '/auth';
-  process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID = 'cid';
   (global as any).fetch = vi.fn();
 });
 
@@ -50,7 +50,9 @@ afterEach(() => {
 
 describe('sp-behandlingsdager API handler', () => {
   it('returns testdata in development mode', async () => {
-    process.env.NODE_ENV = 'development';
+    // Simuler development ved å kalle devMock direkte dersom NODE_ENV ikke er development
+    const original = process.env.NODE_ENV;
+    (process as any).env.NODE_ENV = 'development';
     vi.useFakeTimers();
     const req = createReq();
     const res = createRes();
@@ -59,6 +61,7 @@ describe('sp-behandlingsdager API handler', () => {
     await vi.runAllTimersAsync();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(testdata);
+    (process as any).env.NODE_ENV = original;
   });
 
   it('401 when no token', async () => {
@@ -67,25 +70,31 @@ describe('sp-behandlingsdager API handler', () => {
     const res = createRes();
     await handler(req as any, res);
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.json).toHaveBeenCalledWith({
+      error: { code: 'UNAUTHORIZED', message: 'Mangler token i header', details: undefined }
+    });
   });
 
   it('400 when invalid orgnr', async () => {
     (getToken as Mock).mockReturnValue('tok');
     (validateToken as Mock).mockResolvedValue({ ok: true });
     (isMod11Number as Mock).mockReturnValue(false);
-    const req = createReq({ orgnummer: 'bad' });
+    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
+    const req = createReq({ orgnummer: 'bad', fnr: 'fnr' });
     const res = createRes();
     await handler(req as any, res);
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Ugyldig organisasjonsnummer' });
+    expect(res.json).toHaveBeenCalledWith({
+      error: { code: 'UGYLDIG_ORGNR', message: 'Ugyldig organisasjonsnummer', details: undefined }
+    });
   });
 
   it('401 when token validation fails', async () => {
     (getToken as Mock).mockReturnValue('tok');
     (validateToken as Mock).mockResolvedValue({ ok: false, error: 'x' });
     (isMod11Number as Mock).mockReturnValue(true);
-    const req = createReq({ orgnummer: '123' });
+    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
+    const req = createReq({ orgnummer: '123', fnr: 'fnr' });
     const res = createRes();
     await handler(req as any, res);
     expect(res.status).toHaveBeenCalledWith(401);
@@ -95,43 +104,45 @@ describe('sp-behandlingsdager API handler', () => {
     (getToken as Mock).mockReturnValue('tok');
     (validateToken as Mock).mockResolvedValue({ ok: true });
     (isMod11Number as Mock).mockReturnValue(true);
-    // auth API ok
-    (global.fetch as Mock).mockResolvedValueOnce({ ok: true });
-    (requestOboToken as Mock).mockResolvedValue({ ok: false, error: 'obo' });
-    const req = createReq({ orgnummer: '123' });
+    (global.fetch as Mock).mockResolvedValueOnce({ ok: true }); // tilgang ok
+    (requestOboToken as Mock).mockResolvedValueOnce({ ok: false, error: 'obo' });
+    // Må inkludere fnr for at body-validering skal passere og OBO-feil skal testes
+    const req = createReq({ orgnummer: '123', fnr: 'fnr' });
     const res = createRes();
     await handler(req as any, res);
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
+    expect(res.json).toHaveBeenCalledWith({
+      error: { code: 'UNAUTHORIZED', message: 'OBO-feil', details: undefined }
+    });
   });
 
-  it('error when soeknad fetch fails', async () => {
+  it('403 when tilgang check fails', async () => {
     (getToken as Mock).mockReturnValue('tok');
     (validateToken as Mock).mockResolvedValue({ ok: true });
     (isMod11Number as Mock).mockReturnValue(true);
-    (global.fetch as Mock)
-      .mockResolvedValueOnce({ ok: true }) // auth API
-      .mockResolvedValueOnce({ ok: false, status: 403, statusText: 'nope' }); // soeknad
-
     (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
-    const req = createReq({ orgnummer: '123' });
+    (global.fetch as Mock).mockResolvedValueOnce({ ok: false }); // auth API fails
+    const req = createReq({ orgnummer: '123', fnr: 'fnr' });
     const res = createRes();
     await handler(req as any, res);
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
+    expect(res.json).toHaveBeenCalledWith({
+      error: { code: 'TILGANGSFEIL', message: 'Feil ved kontroll av tilgang', details: undefined }
+    });
   });
 
   it('returns empty array when no BEHANDLINGSDAGER', async () => {
     (getToken as Mock).mockReturnValue('tok');
     (validateToken as Mock).mockResolvedValue({ ok: true });
     (isMod11Number as Mock).mockReturnValue(true);
+    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
     (global.fetch as Mock)
       .mockResolvedValueOnce({ ok: true }) // auth
       .mockResolvedValueOnce({ ok: true }); // soeknad
     (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
     const data = [{ soknadstype: 'ANNET' }];
     (safelyParseJSON as Mock).mockResolvedValue(data);
-    const req = createReq({ orgnummer: '123' });
+    const req = createReq({ orgnummer: '123', fnr: 'fnr' });
     const res = createRes();
     await handler(req as any, res);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -159,12 +170,13 @@ describe('sp-behandlingsdager API handler', () => {
     (getToken as Mock).mockReturnValue('tok');
     (validateToken as Mock).mockResolvedValue({ ok: true });
     (isMod11Number as Mock).mockReturnValue(true);
+    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
     (global.fetch as Mock)
       .mockResolvedValueOnce({ ok: true }) // auth
       .mockResolvedValueOnce({ ok: true, status: 200 }); // soeknad
     (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
     (safelyParseJSON as Mock).mockResolvedValue(data);
-    const req = createReq({ orgnummer: '123' });
+    const req = createReq({ orgnummer: '123', fnr: 'fnr' });
     const res = createRes();
     await handler(req as any, res);
     expect(res.status).toHaveBeenCalledWith(200);

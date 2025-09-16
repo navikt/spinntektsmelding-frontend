@@ -32,7 +32,8 @@ export default function validerEndringAvMaanedslonn(
   }
   if (harRefusjonEndringer === 'Ja' && refusjonEndringer) {
     const unikeEndringer: Array<EndringsBeloep> = [...refusjonEndringer]
-      .sort((a, b) => (a.dato > b.dato ? 1 : -1))
+      .filter((e) => e.dato)
+      .sort((a, b) => ((a.dato as Date) > (b.dato as Date) ? 1 : -1))
       .reduce((acc: Array<EndringsBeloep>, endring, index) => {
         if (index === 0) {
           acc.push(endring);

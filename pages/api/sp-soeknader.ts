@@ -1,129 +1,67 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
-
 import testdata from '../../mockdata/sp-soeknad.json';
 import isMod11Number from '../../utils/isMod10Number';
-import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
-import { z } from 'zod';
+import { createHandler } from '../../server/http/handlerFactory';
+import { ApiError } from '../../server/auth/token';
+import { fetchSoeknader, mapAktiveSoeknader } from '../../server/domain/soeknaderService';
 import safelyParseJSON from '../../utils/safelyParseJson';
 
-type forespoerselIdListeEnhet = {
-  vedtaksperiodeId: string;
-  forespoerselId: string;
-};
+type ForespoerselIdEnhet = { vedtaksperiodeId: string; forespoerselId: string };
 
 const basePath =
   'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
 const authApi = 'http://' + global.process.env.IM_API_URI + global.process.env.AUTH_SYKEPENGESOEKNAD_API;
 const forespoerselIdListeApi = 'http://' + global.process.env.IM_API_URI + global.process.env.FORESPOERSEL_ID_LISTE_API;
 
-export const config = {
-  api: {
-    externalResolver: true
+export const config = { api: { externalResolver: true } };
+
+interface BodyShape {
+  orgnummer: string;
+  fnr: string;
+  eldsteFom?: string;
+}
+
+function validateBody(body: unknown): asserts body is BodyShape {
+  if (!body || typeof body !== 'object') throw new ApiError(400, 'BAD_REQUEST', 'Ugyldig body');
+  const b = body as any;
+  if (typeof b.orgnummer !== 'string' || typeof b.fnr !== 'string') {
+    throw new ApiError(400, 'BAD_REQUEST', 'Ugyldig body');
   }
-};
+}
 
-type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
-
-const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
-  const env = process.env.NODE_ENV;
-  if (env === 'development') {
-    setTimeout(() => res.status(200).json(testdata), 100);
-    return;
-  }
-
-  const token = getToken(req);
-  if (!token) {
-    console.error('Mangler token i header');
-    return res.status(401);
-  }
-
-  const validation = await validateToken(token);
-  if (!validation.ok) {
-    console.log('Validering feilet: ', validation.error);
-    return res.status(401);
-  }
-
-  const requestBody = await req.body;
-  const orgnr = requestBody.orgnummer;
-
-  if (!isMod11Number(orgnr)) {
-    console.error('Ugyldig orgnr: ', orgnr);
-    return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
-  }
-
-  const tokenResponse = await fetch(authApi + '/' + orgnr, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+export default createHandler<BodyShape, any>({
+  devMock: () => testdata,
+  requireAuth: true,
+  oboClientId: process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!,
+  validateBody,
+  action: async ({ body, token, oboToken }) => {
+    if (!isMod11Number(body.orgnummer)) {
+      throw new ApiError(400, 'UGYLDIG_ORGNR', 'Ugyldig organisasjonsnummer');
     }
-  });
+    // tilgangskontroll
+    const tilgang = await fetch(authApi + '/' + body.orgnummer, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+    });
+    if (!tilgang.ok) {
+      throw new ApiError(403, 'TILGANGSFEIL', 'Feil ved kontroll av tilgang');
+    }
 
-  if (!tokenResponse.ok) {
-    console.error('Feil ved kontroll av tilgang: ', tokenResponse.statusText);
-    return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
+    const soeknader = await fetchSoeknader({ basePath, token: oboToken!, requestBody: body });
+    const aktive = mapAktiveSoeknader(soeknader);
+    if (aktive.length === 0) return [];
+
+    const idListe = aktive.map((s) => s.vedtaksperiodeId);
+    const forespoerselResp = await fetch(forespoerselIdListeApi, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ vedtaksperiodeIdListe: idListe })
+    });
+    if (!forespoerselResp.ok) throw new ApiError(403, 'FORESPOERSEL_IDER_FEIL', 'Feil ved henting av forespørselIder');
+    const forespoerselData: ForespoerselIdEnhet[] = (await safelyParseJSON(forespoerselResp)) as ForespoerselIdEnhet[];
+
+    return aktive.map((s) => ({
+      ...s,
+      forespoerselId: forespoerselData.find((f) => f.vedtaksperiodeId === s.vedtaksperiodeId)?.forespoerselId
+    }));
   }
-
-  const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
-  if (!obo.ok) {
-    console.error('OBO-feil: ', obo.error);
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const soeknadResponse = await fetch(basePath, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${obo.token}`
-    },
-    body: JSON.stringify({
-      orgnummer: requestBody.orgnummer,
-      fnr: requestBody.fnr,
-      eldsteFom: requestBody.eldsteFom
-    })
-  });
-
-  if (!soeknadResponse.ok) {
-    console.error('Feil ved henting av sykepengesøknader ', soeknadResponse.statusText);
-    return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
-  }
-
-  const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
-  const aktiveSoeknader = soeknadData.filter((soeknad) => soeknad.vedtaksperiodeId);
-
-  if (aktiveSoeknader.length === 0) {
-    return res.status(200).json([]);
-  }
-
-  const idListe = aktiveSoeknader.map((soeknad) => soeknad.vedtaksperiodeId);
-  const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ vedtaksperiodeIdListe: idListe })
-  });
-
-  if (!forespoerselIdListe.ok) {
-    console.error('Feil ved henting av forespørselIder ', forespoerselIdListe.statusText);
-    return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
-  }
-
-  const forespoerselIdListeData: forespoerselIdListeEnhet[] = (await safelyParseJSON(
-    forespoerselIdListe
-  )) as forespoerselIdListeEnhet[];
-
-  const soeknadResponseData = aktiveSoeknader.map((soeknad) => ({
-    ...soeknad,
-    forespoerselId: forespoerselIdListeData.find(
-      (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
-    )?.forespoerselId
-  }));
-
-  return res.status(soeknadResponse.status).json(soeknadResponseData);
-};
-
-export default handler;
+});

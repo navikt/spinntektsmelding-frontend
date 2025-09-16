@@ -2,6 +2,7 @@ import { vi, expect, beforeAll } from 'vitest';
 import handler from '../../../pages/api/sp-soeknader';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
+import type { Mock } from 'vitest';
 import testFnr from '../../../mockdata/testFnr';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
 import createFetchMock from 'vitest-fetch-mock';
@@ -45,18 +46,23 @@ describe('sp-soeknader', () => {
         eldsteFom: '2021-01-01'
       }
     } as unknown as NextApiRequest;
-    const res = {
-      status: vi.fn(),
-      json: vi.fn()
-    } as unknown as NextApiResponse<unknown>;
+    const res = (() => {
+      const r: any = {};
+      r.status = vi.fn(() => r);
+      r.json = vi.fn(() => r);
+      return r;
+    })();
 
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({
+      error: { code: 'UNAUTHORIZED', message: 'Mangler token i header', details: undefined }
+    });
   });
 
   it('should return 401 when we have a invalid token', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: false, error: 'error' });
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: false, error: 'error' });
 
     const req = {
       headers: {
@@ -68,18 +74,23 @@ describe('sp-soeknader', () => {
         eldsteFom: '2021-01-01'
       }
     } as unknown as NextApiRequest;
-    const res = {
-      status: vi.fn(),
-      json: vi.fn()
-    } as unknown as NextApiResponse<unknown>;
+    const res = (() => {
+      const r: any = {};
+      r.status = vi.fn(() => r);
+      r.json = vi.fn(() => r);
+      return r;
+    })();
 
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({
+      error: { code: 'UNAUTHORIZED', message: 'Validering av token feilet', details: undefined }
+    });
   });
 
   it('should return 400 when we dont have a token', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: true });
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
 
     const req = {
       headers: {
@@ -96,22 +107,24 @@ describe('sp-soeknader', () => {
         eldsteFom: '2021-01-01'
       })
     } as unknown as NextApiRequest;
-    const res = {
-      status: vi.fn(() => ({
-        json: vi.fn()
-      })),
-
-      json: vi.fn()
-    } as unknown as NextApiResponse<unknown>;
+    const res = (() => {
+      const r: any = {};
+      r.status = vi.fn(() => r);
+      r.json = vi.fn(() => r);
+      return r;
+    })();
 
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      error: { code: 'UGYLDIG_ORGNR', message: 'Ugyldig organisasjonsnummer', details: undefined }
+    });
   });
 
   it('should return 200 when we have a token', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: true });
-    requestOboToken.mockResolvedValue({ ok: true });
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true });
 
     const req = {
       headers: {
@@ -128,26 +141,24 @@ describe('sp-soeknader', () => {
         eldsteFom: '2021-01-01'
       })
     } as unknown as NextApiRequest;
-    const mockJson = vi.fn();
-    const res = {
-      status: vi.fn(() => ({
-        json: mockJson
-      })),
-
-      json: vi.fn()
-    } as unknown as NextApiResponse<unknown>;
+    const res = (() => {
+      const r: any = {};
+      r.status = vi.fn(() => r);
+      r.json = vi.fn(() => r);
+      return r;
+    })();
 
     fetchMocker.mockResponse(JSON.stringify([]), { status: 200 });
 
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(mockJson).toHaveBeenCalledWith([]);
+    expect(res.json).toHaveBeenCalledWith([]);
   });
 
   it('should return 200 when we have a token and vedtaksperiodeliste', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: true });
-    requestOboToken.mockResolvedValue({ ok: true });
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true });
 
     const req = {
       headers: {
@@ -164,14 +175,12 @@ describe('sp-soeknader', () => {
         eldsteFom: '2021-01-01'
       })
     } as unknown as NextApiRequest;
-    const mockJson = vi.fn();
-    const res = {
-      status: vi.fn(() => ({
-        json: mockJson
-      })),
-
-      json: vi.fn()
-    } as unknown as NextApiResponse<unknown>;
+    const res = (() => {
+      const r: any = {};
+      r.status = vi.fn(() => r);
+      r.json = vi.fn(() => r);
+      return r;
+    })();
 
     fetchMocker.mockResponses(
       [JSON.stringify(['token OK']), { status: 200 }],
@@ -182,7 +191,7 @@ describe('sp-soeknader', () => {
     await handler(req, res);
     // expect(fetch.requests().length).toEqual(2);
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(mockJson).toHaveBeenCalledWith([
+    expect(res.json).toHaveBeenCalledWith([
       {
         forespoerselId: '54321',
         vedtaksperiodeId: '12345'

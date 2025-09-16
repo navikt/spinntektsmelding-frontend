@@ -1,19 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
-
 import testdata from '../../mockdata/behandlingsdager.json';
 import isMod11Number from '../../utils/isMod10Number';
-import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
-import { z } from 'zod';
-import safelyParseJSON from '../../utils/safelyParseJson';
-
-function minDate(date1: string, date2: string): string {
-  return date1 < date2 ? date1 : date2;
-}
-function maxDate(date1: string, date2: string): string {
-  return date1 > date2 ? date1 : date2;
-}
+import { createHandler } from '../../server/http/handlerFactory';
+import { ApiError } from '../../server/auth/token';
+import { fetchSoeknader, mapBehandlingsdager } from '../../server/domain/soeknaderService';
 
 const basePath =
   'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
@@ -25,115 +15,41 @@ export const config = {
   }
 };
 
-type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
+interface BodyShape {
+  orgnummer: string;
+  fnr: string;
+  eldsteFom?: string;
+}
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
-  const env = process.env.NODE_ENV;
-  if (env === 'development') {
-    setTimeout(() => res.status(200).json(testdata), 100);
-    return;
+function validateBody(body: unknown): asserts body is BodyShape {
+  if (!body || typeof body !== 'object') throw new ApiError(400, 'BAD_REQUEST', 'Ugyldig body');
+  const b = body as any;
+  if (typeof b.orgnummer !== 'string' || typeof b.fnr !== 'string') {
+    throw new ApiError(400, 'BAD_REQUEST', 'Ugyldig body');
   }
+}
 
-  const token = getToken(req);
-  if (!token) {
-    console.error('Mangler token i header');
-    return res.status(401);
-  }
-
-  const validation = await validateToken(token);
-  if (!validation.ok) {
-    console.log('Validering feilet: ', validation.error);
-    return res.status(401);
-  }
-
-  const requestBody = await req.body;
-  const orgnr = requestBody.orgnummer;
-
-  if (!isMod11Number(orgnr)) {
-    console.error('Ugyldig orgnr: ', orgnr);
-    return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
-  }
-
-  const tokenResponse = await fetch(authApi + '/' + orgnr, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+export default createHandler<BodyShape, any>({
+  devMock: () => testdata,
+  requireAuth: true,
+  oboClientId: process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID || 'cid',
+  validateBody,
+  action: async ({ body, token, oboToken }) => {
+    if (!isMod11Number(body.orgnummer)) {
+      throw new ApiError(400, 'UGYLDIG_ORGNR', 'Ugyldig organisasjonsnummer');
     }
-  });
 
-  if (!tokenResponse.ok) {
-    console.error('Feil ved kontroll av tilgang: ', tokenResponse.statusText);
-    console.error('Kallet var: ', tokenResponse.url);
-    return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
-  }
-
-  const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
-  if (!obo.ok) {
-    console.error('OBO-feil: ', obo.error);
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const soeknadResponse = await fetch(basePath, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${obo.token}`
-    },
-    body: JSON.stringify({
-      orgnummer: requestBody.orgnummer,
-      fnr: requestBody.fnr,
-      eldsteFom: requestBody.eldsteFom
-    })
-  });
-
-  if (!soeknadResponse.ok) {
-    console.error('Feil ved henting av sykepengesøknader ', soeknadResponse.statusText);
-    return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
-  }
-
-  const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
-  const aktiveSoeknader = [...(soeknadData ?? [])].filter((soeknad) => soeknad.soknadstype === 'BEHANDLINGSDAGER');
-
-  if (aktiveSoeknader.length === 0) {
-    console.log(
-      'Ingen aktive behandlingsdager funnet for orgnr:',
-      orgnr,
-      ' selv om antall poster var:',
-      soeknadData?.length ?? 0
-    );
-    return res.status(200).json([]);
-  }
-
-  let sykmeldingPerioder = [aktiveSoeknader[0]];
-
-  aktiveSoeknader.forEach((soeknad) => {
-    if (!sykmeldingPerioder.some((periode) => periode.sykmeldingId === soeknad.sykmeldingId)) {
-      sykmeldingPerioder.push(soeknad);
-    }
-    sykmeldingPerioder = sykmeldingPerioder.map((periode) => {
-      if (periode.sykmeldingId === soeknad.sykmeldingId) {
-        return {
-          ...periode,
-          behandlingsdager: [...new Set([...(periode.behandlingsdager ?? []), ...(soeknad.behandlingsdager ?? [])])],
-          fom: minDate(periode.fom, soeknad.fom),
-          tom: maxDate(periode.tom, soeknad.tom)
-        };
-      }
-      return periode;
+    const tilgang = await fetch(authApi + '/' + body.orgnummer, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
     });
-  });
+    if (!tilgang.ok) {
+      throw new ApiError(403, 'TILGANGSFEIL', 'Feil ved kontroll av tilgang');
+    }
 
-  console.log(
-    'Hentet aktive behandlingsdager for orgnr:',
-    orgnr,
-    'antall:',
-    sykmeldingPerioder.length,
-    'fra:',
-    aktiveSoeknader.length
-  );
-
-  return res.status(soeknadResponse.status).json(sykmeldingPerioder);
-};
-
-export default handler;
+    const data = await fetchSoeknader({ basePath, token: oboToken!, requestBody: body });
+    const mapped = mapBehandlingsdager(data);
+    if (mapped.length === 0) return [];
+    return mapped;
+  }
+});

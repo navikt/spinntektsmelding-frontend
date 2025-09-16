@@ -118,7 +118,8 @@ export default function EndringAarsakVisning({ endringAarsak }: Readonly<Endring
   }
 }
 
-function enforceDate(dato: Date | string): Date {
+function enforceDate(dato: Date | string | undefined): Date | undefined {
+  if (dato === undefined) return undefined;
   if (typeof dato === 'string') {
     return parseIsoDate(dato);
   }
