@@ -159,29 +159,54 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
 
     const body = JSON.parse(req.request().postData()!);
     expect(body).toEqual({
-      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: {
-        egenmeldinger: [],
-        perioder: [
+        egenmeldinger: [
           {
-            fom: '2023-02-20',
-            tom: '2023-03-04'
-          },
-          {
-            fom: '2023-03-15',
-            tom: '2023-03-17'
+            fom: '2023-02-01',
+            tom: '2023-02-03'
           }
         ],
-        redusertLoennIAgp: null
+        perioder: [
+          {
+            fom: '2023-02-01',
+            tom: '2023-02-15'
+          },
+          {
+            fom: '2023-02-18',
+            tom: '2023-02-18'
+          }
+        ],
+
+        redusertLoennIAgp: {
+          begrunnelse: 'IkkeFravaer',
+          beloep: 50000
+        }
       },
+      avsenderTlf: '12345678',
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       inntekt: {
         beloep: 77000,
         endringAarsaker: [],
-        inntektsdato: '2023-03-25',
-        naturalytelser: []
+
+        inntektsdato: '2023-02-18',
+        naturalytelser: [
+          {
+            naturalytelse: 'OPSJONER',
+            sluttdato: '2023-05-01',
+            verdiBeloep: 45000
+          }
+        ]
       },
-      refusjon: null,
-      avsenderTlf: '12345678'
+      refusjon: {
+        beloepPerMaaned: 77000,
+        endringer: [
+          {
+            beloep: 45000,
+            startdato: '2023-04-04'
+          }
+        ],
+        sluttdato: null
+      }
     });
 
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
