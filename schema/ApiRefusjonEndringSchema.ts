@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const RefusjonEndringSchema = z.object({
-  startdato: z.iso.date('Vennligst fyll inn gyldig dato for endring i refusjon.'),
+  startdato: z.date('Vennligst fyll inn gyldig dato for endring i refusjon.'),
   beloep: z
     .number({
       error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn beløpet for endret refusjon.' : undefined)

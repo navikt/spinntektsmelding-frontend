@@ -13,6 +13,7 @@ import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import feiltekster from './feiltekster';
 import forespoerselType from '../config/forespoerselType';
 import { postInnsending, BackendValidationError } from './postInnsending';
+import validerFullLonnIArbeidsgiverPerioden from '../validators/validerFullLonnIArbeidsgiverPerioden';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -102,6 +103,19 @@ export default function useSendInnSkjema(
       errors.push({
         text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN,
         felt: 'lia-radio'
+      });
+    }
+
+    if (fullLonnIArbeidsgiverPerioden) {
+      const valErrors = validerFullLonnIArbeidsgiverPerioden(fullLonnIArbeidsgiverPerioden);
+
+      const mapValErrors = valErrors.map((err) => ({
+        felt: err.felt,
+        text: feiltekster[err.code] ?? err.text
+      }));
+
+      mapValErrors.forEach((el) => {
+        errors.push(el);
       });
     }
 

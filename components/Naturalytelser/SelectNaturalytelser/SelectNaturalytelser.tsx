@@ -16,7 +16,7 @@ export default function SelectNaturalytelser({ name, defaultValue }: Readonly<Se
   const ytelsesKeys = Object.keys(naturalytelser);
   const defaultYtelse = field.value ? field.value.toString().toUpperCase() : '';
   return (
-    <Select label={''} onChange={field.onChange} defaultValue={defaultYtelse} error={error}>
+    <Select label={'Naturalytelser'} onChange={field.onChange} defaultValue={defaultYtelse} error={error} hideLabel>
       <option value=''>Velg naturalytelse</option>
       {ytelsesKeys.map((ytelseKey) => (
         <option value={ytelseKey} key={ytelseKey}>

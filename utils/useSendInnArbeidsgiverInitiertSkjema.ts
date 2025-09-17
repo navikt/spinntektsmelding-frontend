@@ -11,6 +11,7 @@ import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
 import { mapValidationErrors } from './useSendInnSkjema';
 import { postInnsending } from './postInnsending';
+import validerFullLonnIArbeidsgiverPerioden from '../validators/validerFullLonnIArbeidsgiverPerioden';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -63,6 +64,19 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
     if (!fullLonnIArbeidsgiverPerioden?.status) {
       errors.push({ text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN, felt: 'lia-radio' });
+    }
+
+    if (fullLonnIArbeidsgiverPerioden) {
+      const valErrors = validerFullLonnIArbeidsgiverPerioden(fullLonnIArbeidsgiverPerioden);
+
+      const mapValErrors = valErrors.map((err) => ({
+        felt: err.felt,
+        text: feiltekster[err.code] ?? err.text
+      }));
+
+      mapValErrors.forEach((el) => {
+        errors.push(el);
+      });
     }
 
     if (!lonnISykefravaeret?.status) {
