@@ -38,10 +38,4 @@ export function createProxyHandler<T>(options: CreateProxyHandlerOptions<T>) {
   };
 }
 
-// Export Next.js route config convenience
-export const proxyRouteConfig = {
-  api: {
-    externalResolver: true,
-    bodyParser: false
-  }
-};
+// (Tidligere eksport proxyRouteConfig fjernet som ubrukt etter inline config i ruter)
