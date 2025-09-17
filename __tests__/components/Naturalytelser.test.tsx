@@ -52,6 +52,6 @@ describe('Naturalytelser', () => {
     });
     const deleteButtons = screen.getAllByTitle('Slett ytelse');
     fireEvent.click(deleteButtons[0]);
-    expect(screen.getByText('Naturalytelser')).toBeInTheDocument();
+    expect(screen.getAllByText('Naturalytelser')).toHaveLength(2);
   });
 });

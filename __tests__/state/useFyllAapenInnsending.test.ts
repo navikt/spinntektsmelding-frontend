@@ -102,13 +102,17 @@ describe('useFyllAapenInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
-    let innsending: InnsendingSkjema;
+    let innsending: ReturnType<typeof fyllInnsending> | undefined;
 
     act(() => {
       innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
     });
 
-    if (innsending) {
+    if (!innsending) {
+      throw new Error('Innsending ble ikke satt');
+    }
+
+    if (innsending.success) {
       expect(innsending.data).toEqual({
         agp: {
           perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
@@ -134,6 +138,8 @@ describe('useFyllAapenInnsending', () => {
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         }
       });
+    } else {
+      throw new Error('Forventet vellykket parsing av innsending');
     }
   });
 
@@ -171,6 +177,8 @@ describe('useFyllAapenInnsending', () => {
         status: 'Ja'
       });
 
+      result.current.setMottattEksternInntektsdato('2023-03-03');
+
       result.current.slettAlleNaturalytelser();
 
       result.current.setBareNyMaanedsinntekt(500000);
@@ -186,16 +194,15 @@ describe('useFyllAapenInnsending', () => {
     });
 
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());
-
     const fyllInnsending = fyller.current;
 
-    let innsending: { data: InnsendingSkjema };
+    let innsending: ReturnType<typeof fyllInnsending>;
 
     act(() => {
       innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
     });
 
-    if (innsending) {
+    if (innsending.success) {
       expect(innsending.data).toEqual({
         agp: {
           perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
@@ -234,6 +241,8 @@ describe('useFyllAapenInnsending', () => {
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         }
       });
+    } else {
+      throw new Error('Forventet vellykket parsing av innsending');
     }
   });
 
@@ -271,28 +280,34 @@ describe('useFyllAapenInnsending', () => {
         status: 'Ja'
       });
 
+      result.current.setArbeidsgiverperiodeDisabled(true);
+
       result.current.slettAlleNaturalytelser();
 
       result.current.setBareNyMaanedsinntekt(500000);
 
       result.current.setHarRefusjonEndringer('Ja');
-
-      result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
-
-      result.current.setArbeidsgiverperiodeDisabled(true);
     });
 
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());
 
     const fyllInnsending = fyller.current;
 
-    let innsending: { data: InnsendingSkjema };
+    let innsending: ReturnType<typeof fyllInnsending> | undefined;
 
     act(() => {
       innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
     });
 
-    if (innsending) {
+    if (!innsending) {
+      throw new Error('Innsending ble ikke satt');
+    }
+
+    if (innsending.success) {
+      innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
+    }
+
+    if (innsending.success) {
       expect(innsending.data).toEqual({
         agp: {
           perioder: [],
@@ -331,6 +346,8 @@ describe('useFyllAapenInnsending', () => {
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         }
       });
+    } else {
+      throw new Error('Forventet vellykket parsing av innsending');
     }
   });
 });
