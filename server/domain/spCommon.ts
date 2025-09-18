@@ -15,7 +15,7 @@ export function validateSoeknadBody(body: unknown): asserts body is SoeknadBody 
   }
 }
 
-export function getBasePath(): string {
+function getBasePath(): string {
   return 'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
 }
 
