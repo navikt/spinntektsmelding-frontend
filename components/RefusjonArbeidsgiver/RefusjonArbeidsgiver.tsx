@@ -151,7 +151,7 @@ export default function RefusjonArbeidsgiver({
           onChange={(status) => {
             // Mark form dirty and invoke handler. Original code passed return value into addIsDirtyForm wrapper expecting a function.
             setIsDirtyForm(true);
-            arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status as any, inntekt);
+            arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt);
           }}
           defaultValue={lonnISykefravaeret?.status}
         >

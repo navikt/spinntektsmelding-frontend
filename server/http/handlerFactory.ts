@@ -55,7 +55,7 @@ export function createHandler<I, O>(config: HandlerConfig<I, O>) {
       let headers: Record<string, string> | undefined;
       let payload: any = output;
       if (output && typeof output === 'object') {
-        const maybe = output as any;
+        const maybe = output;
         const hasMeta = '__status' in maybe || '__headers' in maybe || '__body' in maybe;
         if (hasMeta) {
           if (maybe.__status) status = maybe.__status;
@@ -71,8 +71,9 @@ export function createHandler<I, O>(config: HandlerConfig<I, O>) {
           if (typeof v === 'string') {
             try {
               res.setHeader(k, v);
-            } catch (_) {
-              /* ignorer header-set feil */
+            } catch (err) {
+              // Logger i stedet for å svelge unntaket helt for å unngå lint-feil om ignorert exception
+              console.warn('Kunne ikke sette header', k, err);
             }
           }
         });
