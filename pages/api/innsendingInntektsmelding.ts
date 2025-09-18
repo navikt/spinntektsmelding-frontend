@@ -33,7 +33,13 @@ export default createHandler<any, any>({
       if (ct.includes('application/json')) {
         try {
           details = await resp.json();
-        } catch (_) {}
+        } catch (err) {
+          // Kunne ikke parse feildetaljer som JSON; behold details = undefined
+          if (process.env.NODE_ENV !== 'test') {
+            // eslint-disable-next-line no-console
+            console.warn('Failed to parse error details from innsendingInntektsmelding response', err);
+          }
+        }
       }
       throw new ApiError(resp.status, 'INNSENDING_FEIL', 'Innsending feilet', details);
     }

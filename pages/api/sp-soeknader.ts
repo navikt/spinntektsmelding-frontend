@@ -4,13 +4,7 @@ import { createHandler } from '../../server/http/handlerFactory';
 import { ApiError } from '../../server/auth/token';
 import { mapAktiveSoeknader } from '../../server/domain/soeknaderService';
 import safelyParseJSON from '../../utils/safelyParseJson';
-import {
-  SoeknadBody,
-  validateSoeknadBody,
-  getBasePath,
-  sjekkTilgang,
-  hentSoeknader
-} from '../../server/domain/spCommon';
+import { SoeknadBody, validateSoeknadBody, sjekkTilgang, hentSoeknader } from '../../server/domain/spCommon';
 
 type ForespoerselIdEnhet = { vedtaksperiodeId: string; forespoerselId: string };
 
