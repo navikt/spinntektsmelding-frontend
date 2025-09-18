@@ -17,7 +17,7 @@ export default function Feilsammendrag({ skjemafeil }: Readonly<FeilsammendragPr
   const feilmeldinger = useBoundStore((state) => state.feilmeldinger);
   const skalViseFeilmeldinger = useBoundStore((state) => state.skalViseFeilmeldinger);
 
-  const combinedFeilmeldinger = [...feilmeldinger, ...feil];
+  const combinedFeilmeldinger = [...new Set([...feilmeldinger, ...feil])];
 
   const harFeilmeldinger = combinedFeilmeldinger && combinedFeilmeldinger.length > 0;
   if (!harFeilmeldinger) return null;

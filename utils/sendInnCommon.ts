@@ -32,6 +32,7 @@ export function byggFellesFeil({
 
   if (fullLonnIArbeidsgiverPerioden) {
     const valErrors = validerFullLonnIArbeidsgiverPerioden(fullLonnIArbeidsgiverPerioden);
+    console.log(valErrors);
     valErrors.forEach((err) => {
       const key = err.code as keyof typeof feiltekster;
       errors.push({ felt: err.felt, text: feiltekster[key] ?? err.text });
