@@ -10,10 +10,9 @@ import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
-import feiltekster from './feiltekster';
 import forespoerselType from '../config/forespoerselType';
-import { postInnsending, BackendValidationError } from './postInnsending';
-import validerFullLonnIArbeidsgiverPerioden from '../validators/validerFullLonnIArbeidsgiverPerioden';
+import { postInnsending } from './postInnsending';
+import { byggFellesFeil, byggIngenEndringFeil, mapValidationErrors } from './sendInnCommon';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -45,25 +44,11 @@ export default function useSendInnSkjema(
     });
 
     if (!isDirtyForm) {
-      logEvent('skjema fullført', {
-        tittel: 'Innsending uten endringer i skjema',
-        component: amplitudeComponent
-      });
-
+      logEvent('skjema fullført', { tittel: 'Innsending uten endringer i skjema', component: amplitudeComponent });
       logger.info('Innsending uten endringer i skjema');
-
-      const errors: Array<ErrorResponse> = [
-        {
-          value: 'Innsending av skjema feilet',
-          error: 'Innsending feilet, det er ikke gjort endringer i skjema.',
-          property: 'knapp-innsending'
-        }
-      ];
       fyllFeilmeldinger([]);
-
-      errorResponse(errors);
+      errorResponse(byggIngenEndringFeil());
       setSkalViseFeilmeldinger(true);
-
       return false;
     }
 
@@ -98,47 +83,15 @@ export default function useSendInnSkjema(
 
       return false;
     }
-    const errors = [];
-    if (!fullLonnIArbeidsgiverPerioden?.status && harForespurtArbeidsgiverperiode) {
-      errors.push({
-        text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN,
-        felt: 'lia-radio'
-      });
-    }
+    const harRefusjonEndringerTriState = harRefusjonEndringer === undefined ? undefined : harRefusjonEndringer === 'Ja';
 
-    if (fullLonnIArbeidsgiverPerioden) {
-      const valErrors = validerFullLonnIArbeidsgiverPerioden(fullLonnIArbeidsgiverPerioden);
-
-      const mapValErrors = valErrors.map((err) => ({
-        felt: err.felt,
-        text: feiltekster[err.code] ?? err.text
-      }));
-
-      mapValErrors.forEach((el) => {
-        errors.push(el);
-      });
-    }
-
-    if (!lonnISykefravaeret?.status) {
-      errors.push({
-        text: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
-        felt: 'lus-radio'
-      });
-    }
-
-    if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
-      errors.push({
-        text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
-        felt: 'refusjon.endringer'
-      });
-    }
-
-    if (!opplysningerBekreftet) {
-      errors.push({
-        text: feiltekster.BEKREFT_OPPLYSNINGER,
-        felt: 'bekreft-opplysninger'
-      });
-    }
+    const errors = byggFellesFeil({
+      fullLonnIArbeidsgiverPerioden,
+      lonnISykefravaeret,
+      harRefusjonEndringer: harRefusjonEndringerTriState,
+      opplysningerBekreftet,
+      harForespurtArbeidsgiverperiode
+    });
 
     fyllFeilmeldinger(errors);
 
@@ -180,24 +133,4 @@ export default function useSendInnSkjema(
   };
 }
 
-export function mapValidationErrors(feil: BackendValidationError, errors: ErrorResponse[]) {
-  if (feil.valideringsfeil) {
-    errors = feil.valideringsfeil.map(
-      (error: any) =>
-        ({
-          error: error,
-          property: 'server',
-          value: 'Innsending av skjema feilet'
-        }) as ErrorResponse
-    );
-  } else {
-    errors = [
-      {
-        value: 'Innsending av skjema feilet',
-        error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-        property: 'server'
-      }
-    ];
-  }
-  return errors;
-}
+// mapValidationErrors flyttet til sendInnCommon.ts
