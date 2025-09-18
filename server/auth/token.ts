@@ -1,7 +1,7 @@
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 import type { NextApiRequest } from 'next';
 
-export interface AuthResult {
+interface AuthResult {
   token: string;
 }
 
@@ -17,7 +17,7 @@ export async function extractAndValidateToken(req: NextApiRequest): Promise<Auth
   return { token };
 }
 
-export interface OboResult {
+interface OboResult {
   oboToken: string;
 }
 

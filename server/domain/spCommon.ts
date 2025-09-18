@@ -19,7 +19,7 @@ export function getBasePath(): string {
   return 'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
 }
 
-export function getAuthApi(): string {
+function getAuthApi(): string {
   return 'http://' + global.process.env.IM_API_URI + global.process.env.AUTH_SYKEPENGESOEKNAD_API;
 }
 

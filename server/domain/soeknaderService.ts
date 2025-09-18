@@ -2,9 +2,9 @@ import safelyParseJSON from '../../utils/safelyParseJson';
 import { z } from 'zod';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 
-export type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
+type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 
-export interface FetchSoeknaderInput {
+interface FetchSoeknaderInput {
   basePath: string;
   token: string;
   requestBody: { orgnummer: string; fnr: string; eldsteFom?: string };
@@ -61,8 +61,4 @@ export function mapBehandlingsdager(data: Sykepengesoeknader) {
     });
   });
   return samlet;
-}
-
-export function mapBehandlingsdagerAktive(data: Sykepengesoeknader) {
-  return mapBehandlingsdager(data);
 }

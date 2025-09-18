@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ApiError, extractAndValidateToken, getObo } from '../auth/token';
 
-export interface HandlerConfig<I = any, O = any> {
+interface HandlerConfig<I = any, O = any> {
   devMock?: () => O | Promise<O>;
   devStatus?: number; // custom HTTP status in development when devMock is used
   requireAuth?: boolean;

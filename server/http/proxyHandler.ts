@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-export interface CreateProxyHandlerOptions<T> {
+interface CreateProxyHandlerOptions<T> {
   /** Base target URL (no trailing slash) */
   target: string;
   /** API route prefix to strip, e.g. /api/arbeidsgivere */
