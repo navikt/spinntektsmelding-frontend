@@ -3,6 +3,7 @@ import { cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../schema/ForespurtDataSchema';
 import { vi } from 'vitest';
+import { mockNanoidSequence } from '../testUtils/mockNanoid';
 import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
 
 vi.mock('next/router', () => require('next-router-mock'));
@@ -18,6 +19,7 @@ const initialState = useBoundStore.getState();
 describe('useBoundStore', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
+    mockNanoidSequence(['frav1', 'frav2', 'frav3', 'frav4']);
   });
 
   afterEach(() => {

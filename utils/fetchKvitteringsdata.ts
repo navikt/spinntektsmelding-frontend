@@ -1,7 +1,7 @@
 import { MottattKvitteringSchema } from '../schema/MottattKvitteringSchema';
 import NetworkError from './NetworkError';
 import isValidUUID from './isValidUUID';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 type MottattKvittering = z.infer<typeof MottattKvitteringSchema>;
 

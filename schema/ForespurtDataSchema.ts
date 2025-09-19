@@ -1,4 +1,4 @@
-import z from 'zod/v4';
+import { z } from 'zod';
 import forespoerselType from '../config/forespoerselType';
 
 export const DateISODateSchema = z.iso.date();

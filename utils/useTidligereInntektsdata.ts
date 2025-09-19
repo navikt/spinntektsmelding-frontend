@@ -15,7 +15,7 @@ function useTidligereInntektsdata(
       fetcherInntektsdataSelvbestemt(skalHenteInntektsdata ? url : null, idToken, orgnrUnderenhet, inntektsdato),
     {
       onError: (err) => {
-        console.error('Kunne ikke hente arbeidsforhold', err);
+        console.warn('Kunne ikke hente arbeidsforhold', err);
       },
       ...commonSWRFormOptions
     }

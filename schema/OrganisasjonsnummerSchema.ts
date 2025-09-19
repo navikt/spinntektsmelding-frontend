@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import isMod11Number from '../utils/isMod10Number';
 
 export const OrganisasjonsnummerSchema = z

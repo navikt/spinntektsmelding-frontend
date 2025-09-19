@@ -79,20 +79,23 @@ export default function Aarsaksvelger({
               />
             )}
             <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
-              {errors?.inntekt?.endringAarsaker?.root && (key === 1 || fields.length === 1) && (
-                <p
-                  className='navds-error-message navds-label navds-error-message--show-icon'
-                  id={ensureValidHtmlId('inntekt.endringAarsaker.root')}
-                >
-                  <ExclamationmarkTriangleFillIcon />
-                  {errors?.inntekt?.endringAarsaker?.root?.message}
-                </p>
-              )}
+              {/* Guard: errors.inntekt may be FieldError; narrow before indexing endringAarsaker */}
+              {typeof errors?.inntekt === 'object' &&
+                'endringAarsaker' in (errors?.inntekt as any) &&
+                (errors as any)?.inntekt?.endringAarsaker?.root &&
+                (key === 1 || fields.length === 1) && (
+                  <p
+                    className='navds-error-message navds-label navds-error-message--show-icon'
+                    id={ensureValidHtmlId('inntekt.endringAarsaker.root')}
+                  >
+                    <ExclamationmarkTriangleFillIcon />
+                    {(errors as any)?.inntekt?.endringAarsaker?.root?.message}
+                  </p>
+                )}
               <SelectEndringBruttoinntekt
                 error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
                 id={`inntekt.endringAarsaker.${key}.aarsak`}
                 nyInnsending={nyInnsending}
-                register={register}
                 begrunnelserId={`inntekt.endringAarsaker`}
               />
             </div>

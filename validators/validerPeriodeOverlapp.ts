@@ -10,7 +10,10 @@ export default function validerPeriodeOverlapp(perioder: Array<Periode>): Array<
 
   for (let i = 0; i < perioder.length; i++) {
     for (let j = i + 1; j < perioder.length; j++) {
-      if (perioder[i].fom <= perioder[j].tom && perioder[i].tom >= perioder[j].fom) {
+      const a = perioder[i];
+      const b = perioder[j];
+      if (!a?.fom || !a?.tom || !b?.fom || !b?.tom) continue; // skip incomplete
+      if (a.fom <= b.tom && a.tom >= b.fom) {
         feilkoder.push({
           felt: 'arbeidsgiverperioder-feil',
           code: PeriodeOverlappFeilkode.PERIODE_OVERLAPPER

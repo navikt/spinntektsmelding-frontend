@@ -2,7 +2,7 @@ import { logger } from '@navikt/next-logger';
 import logEvent from './logEvent';
 import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
 import { ErrorResponse } from './useErrorResponse';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 export type BackendValidationError = z.infer<typeof ResponseBackendErrorSchema>;
 

@@ -1,7 +1,6 @@
 import { Select } from '@navikt/ds-react';
 import naturalytelser from './naturalytelser';
 import { useController, useFormContext } from 'react-hook-form';
-import findErrorInRHFErrors from '../../../utils/findErrorInRHFErrors';
 
 type Naturalytelser = keyof typeof naturalytelser;
 
@@ -12,19 +11,12 @@ interface SelectNaturalytelserProps {
 
 export default function SelectNaturalytelser({ name, defaultValue }: Readonly<SelectNaturalytelserProps>) {
   const { control } = useFormContext();
-  const {
-    field,
-    formState: { errors }
-  } = useController({
-    name,
-    control
-  });
-
-  const error = findErrorInRHFErrors(name, errors);
+  const { field, fieldState } = useController({ name, control });
+  const error = fieldState.error?.message;
   const ytelsesKeys = Object.keys(naturalytelser);
   const defaultYtelse = field.value ? field.value.toString().toUpperCase() : '';
   return (
-    <Select label={''} onChange={field.onChange} defaultValue={defaultYtelse} error={error}>
+    <Select label={'Naturalytelser'} onChange={field.onChange} defaultValue={defaultYtelse} error={error} hideLabel>
       <option value=''>Velg naturalytelse</option>
       {ytelsesKeys.map((ytelseKey) => (
         <option value={ytelseKey} key={ytelseKey}>

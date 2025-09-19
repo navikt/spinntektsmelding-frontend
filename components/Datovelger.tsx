@@ -44,7 +44,7 @@ export default function Datovelger({
       <DatePicker.Input
         {...inputProps}
         label={label}
-        id={ensureValidHtmlId(id)}
+        id={ensureValidHtmlId(id ?? 'date-input')}
         hideLabel={hideLabel}
         disabled={disabled}
         error={error}

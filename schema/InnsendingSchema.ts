@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 import { ApiEndringAarsakSchema } from './ApiEndringAarsakSchema';
 import { ApiPeriodeSchema } from './ApiPeriodeSchema';

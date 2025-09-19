@@ -5,7 +5,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 import validerPeriode from './validerPeriode';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { periodeMapper } from '../utils/periodeMapper';
 
@@ -53,7 +53,7 @@ export default function validerBruttoinntekt(
     if (bruttoinntekt.manueltKorrigert) {
       const endringAarsaker = skjemaData.inntekt?.endringAarsaker;
       endringAarsaker?.forEach((endringAarsak, index) => {
-        if (!endringAarsak?.aarsak || endringAarsak.aarsak === '') {
+        if (!endringAarsak?.aarsak) {
           valideringstatus.push({
             felt: `bruttoinntekt-endringsaarsak-${index}`,
             code: BruttoinntektFeilkode.ENDRINGSAARSAK_MANGLER

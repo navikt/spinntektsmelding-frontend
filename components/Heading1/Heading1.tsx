@@ -1,20 +1,26 @@
-import { Heading } from '@navikt/ds-react';
-import { ReactNode } from 'react';
+import { Heading, type HeadingProps } from '@navikt/ds-react';
+import type { ReactNode } from 'react';
+import clsx from 'classnames';
 import styles from './Heading1.module.css';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
+// Restrict size to the variants design allows for H1 (adjust if design changes)
+type AllowedHeading1Sizes = Extract<HeadingProps['size'], 'medium' | 'large'>; // example restriction
+
 interface Heading1Props {
   children: ReactNode;
-  className?: any;
+  className?: string;
   id?: string;
+  size?: AllowedHeading1Sizes; // default 'medium'
 }
 
-export default function Heading1(props: Readonly<Heading1Props>) {
-  const classes = props.className ? `${styles.heading} ${props.className}` : styles.heading;
+export function Heading1({ children, className, id, size = 'medium' }: Readonly<Heading1Props>) {
+  const classes = clsx(styles.heading, className);
+  const safeId = id ? ensureValidHtmlId(id) : undefined;
 
   return (
-    <Heading size='medium' level='1' className={classes} id={ensureValidHtmlId(props.id)}>
-      {props.children}
+    <Heading size={size} level='1' className={classes} id={safeId}>
+      {children}
     </Heading>
   );
 }

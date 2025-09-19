@@ -6,7 +6,7 @@ import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 import { LonnIArbeidsgiverperioden, Periode } from '../../state/state';
-import Heading3 from '../Heading3';
+import { Heading3 } from '../Heading';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';

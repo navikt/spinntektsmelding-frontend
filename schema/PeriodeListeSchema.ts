@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import feiltekster from '../utils/feiltekster';
 

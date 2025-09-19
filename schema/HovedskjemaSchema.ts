@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { EndringAarsakSchema } from './EndringAarsakSchema';
 import NaturalytelserSchema from './NaturalytelserSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
@@ -43,7 +43,7 @@ export const HovedskjemaSchema = z.object({
             return z.NEVER;
           }
           val?.forEach((v, index) => {
-            if (v.aarsak === '' || v.aarsak === undefined) {
+            if (v.aarsak === undefined) {
               ctx.issues.push({
                 code: 'custom',
                 error: 'Vennligst angi årsak til endringen.',

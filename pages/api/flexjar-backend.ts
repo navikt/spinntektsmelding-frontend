@@ -1,58 +1,59 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
-import httpProxyMiddleware from 'next-http-proxy-middleware';
-
-import handleProxyInit from '../../utils/api/handleProxyInit';
-import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
+// Refaktorert til createHandler for konsistent auth / OBO-håndtering og testbarhet
+import { createHandler } from '../../server/http/handlerFactory';
+import { ApiError } from '../../server/auth/token';
 
 const basePath = 'http://' + global.process.env.FLEXJAR_URL + '/api/v1/feedback';
 
 export const config = {
   api: {
     externalResolver: true,
-    bodyParser: false
+    bodyParser: true // vi sender JSON videre; opprinnelig var false for streaming, men ikke påkrevd her
   }
 };
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
-  const env = process.env.NODE_ENV;
-  if (env == 'development') {
-    setTimeout(() => {
-      return res.status(201);
-    }, 100);
-  } else if (env == 'production') {
-    const token = getToken(req);
-    if (!token) {
-      /* håndter manglende token */
-      console.error('Mangler token i header');
-      return res.status(401);
+// Ingen body-validering; route fungerer som en transparent POST/GET videresender
+export default createHandler<any, any>({
+  devMock: () => ({}),
+  devStatus: 201,
+  requireAuth: true,
+  oboClientId: process.env.FLEXJAR_BACKEND_CLIENT_ID!,
+  allowedMethods: ['POST', 'GET'],
+  action: async ({ req, body, oboToken }) => {
+    // Konstruer under-path etter /api/flexjar-backend
+    const originalPath = req.url || '';
+    const subPath = originalPath.replace(/.*\/api\/flexjar-backend/, '') || '';
+    const url = basePath + subPath;
+
+    const method = req.method || 'POST';
+    const outgoingHeaders: Record<string, string> = {
+      Authorization: `Bearer ${oboToken}`,
+      'Content-Type': 'application/json'
+    };
+
+    const fetchInit: RequestInit = { method, headers: outgoingHeaders };
+    if (method !== 'GET' && method !== 'HEAD') {
+      fetchInit.body = JSON.stringify(body ?? {});
     }
 
-    const validation = await validateToken(token);
-    if (!validation.ok) {
-      console.log('Validering feilet: ', validation.error);
-      return res.status(401);
+    const resp = await fetch(url, fetchInit);
+    if (!resp.ok) {
+      throw new ApiError(resp.status, 'FLEXJAR_PROXY_FEIL', 'Kall mot flexjar feilet');
     }
 
-    const obo = await requestOboToken(token, process.env.FLEXJAR_BACKEND_CLIENT_ID!);
-    if (!obo.ok) {
-      /* håndter obo-feil */
-      console.error('OBO-feil: ', obo.error);
-      return res.status(401);
+    const contentType = resp.headers.get('content-type') || '';
+    const location = resp.headers.get('location');
+    let responseBody: any;
+    if (contentType.includes('application/json')) {
+      responseBody = await resp.json();
+    } else {
+      responseBody = await resp.text();
     }
-
-    return httpProxyMiddleware(req, res, {
-      target: basePath,
-      onProxyInit: handleProxyInit,
-      headers: { Authorization: `bearer ${obo.token}` },
-      pathRewrite: [
-        {
-          patternStr: '^/api/flexjar-backend',
-          replaceStr: ''
-        }
-      ]
-    });
+    const passHeaders: Record<string, string> = {};
+    if (location) passHeaders['Location'] = location;
+    // Bare sett content-type videre dersom den ikke er JSON (Next vil sette application/json for json())
+    if (contentType && !contentType.includes('application/json')) {
+      passHeaders['Content-Type'] = contentType;
+    }
+    return { __status: resp.status, __headers: passHeaders, __body: responseBody };
   }
-};
-
-export default handler;
+});

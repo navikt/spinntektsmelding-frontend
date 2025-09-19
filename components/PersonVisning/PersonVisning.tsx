@@ -1,4 +1,4 @@
-import Heading3 from '../Heading3';
+import { Heading3 } from '../Heading';
 import TextLabel from '../TextLabel';
 
 import lokalStyles from './Person.module.css';

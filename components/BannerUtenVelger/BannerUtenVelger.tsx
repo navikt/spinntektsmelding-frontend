@@ -1,5 +1,5 @@
 import React, { type JSX } from 'react';
-import Heading1 from '../Heading1/Heading1';
+import { Heading1 } from '../Heading';
 
 interface Props {
   tittelMedUnderTittel: string | JSX.Element;

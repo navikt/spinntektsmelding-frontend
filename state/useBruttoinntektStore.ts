@@ -14,7 +14,7 @@ import Router from 'next/router';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 import isValidUUID from '../utils/isValidUUID';
 import { ApiEndringAarsakSchema } from '../schema/ApiEndringAarsakSchema';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
 import { HistoriskInntekt } from '../schema/HistoriskInntektSchema';
@@ -220,7 +220,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
         tidligereInntekt = oppdaterteInntekter.historikk;
         snittInntekter = oppdaterteInntekter.gjennomsnitt;
       } catch (error: unknown) {
-        console.error('Error fetching inntektsdata:', error);
+        console.warn('Error fetching inntektsdata:', error);
         const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
         const arrInntekter = Array.from(aktuelleInntekter);
         const sumInntekter = arrInntekter.reduce((prev, cur) => {

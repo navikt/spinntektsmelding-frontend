@@ -2,7 +2,7 @@ import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import useKvitteringInit from '../../state/useKvitteringInit';
-import { nanoid } from 'nanoid';
+import { mockNanoidConstant } from '../testUtils/mockNanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 import annenMottattKvittering from '../../mockdata/kvittering-lang.json';
 import ferieKvittering from '../../mockdata/kvittering-ferie.json';
@@ -14,15 +14,13 @@ import nyStillingKvittering from '../../mockdata/kvittering-NyStilling.json';
 import nyStillingsprosentKvittering from '../../mockdata/kvittering-NyStillingsprosent.json';
 import inntektData from '../../mockdata/inntektData.json';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { KvitteringNavNoSchema, MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 import eksterntSystem from '../../mockdata/kvittering-eksternt-system.json';
 import kvitteringMedRefusjonSluttdato from '../../mockdata/kvittering-delvis-refusjon.json';
 
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 type KvitteringNavNo = z.infer<typeof KvitteringNavNoSchema>;
-
-vi.mock('nanoid');
 
 const initialState = useBoundStore.getState();
 
@@ -46,7 +44,7 @@ describe('useKvitteringInit', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
     vi.spyOn(global, 'fetch').mockImplementation(fetchMock);
-    nanoid.mockReturnValue('uuid');
+    mockNanoidConstant('uuid');
   });
 
   afterEach(() => {

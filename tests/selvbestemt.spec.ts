@@ -320,6 +320,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     });
 
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
+    await expect(page).toHaveURL('/im-dialog/kvittering/agi/f32852af-888e-4d0c-ad67-081f22ee5c12');
   });
 
   test('selvbestemt ambassadepersonell e.l. med varig lønnsendring', async ({ page }) => {

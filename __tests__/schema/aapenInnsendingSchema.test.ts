@@ -1,7 +1,7 @@
 import { vendored } from 'next/dist/server/route-modules/pages/module.compiled';
 import AapenInnsendingSchema from '../../schema/AapenInnsendingSchema';
 
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 describe('AapenInnsendingSchema', () => {
   it('should validate AapenInnsendingSchema', () => {

@@ -1,6 +1,6 @@
 import { Button, Checkbox, TextField } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
-import Heading3 from '../Heading3';
+import { Heading3 } from '../Heading';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
 import lokalStyles from './Naturalytelser.module.css';
 
@@ -78,12 +78,17 @@ export default function Naturalytelser() {
                   </td>
 
                   <td className={lokalStyles.tddatepickernatural}>
-                    <DatoVelger name={`inntekt.naturalytelser.${index}.sluttdato`} />
+                    <DatoVelger
+                      name={`inntekt.naturalytelser.${index}.sluttdato`}
+                      label='Dato naturalytelse faller bort'
+                      hideLabel
+                    />
                   </td>
 
                   <td>
                     <TextField
-                      label={''}
+                      label='Verdi naturalytelse - kr/måned'
+                      hideLabel
                       className={styles.fnr}
                       error={findErrorInRHFErrors(`inntekt.naturalytelser.${index}.verdiBeloep`, errors)}
                       {...register(`inntekt.naturalytelser.${index}.verdiBeloep`, {
