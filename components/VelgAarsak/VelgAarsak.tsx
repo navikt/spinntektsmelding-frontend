@@ -34,7 +34,7 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
           <Radio
             value={SelvbestemtTypeConst.UtenArbeidsforhold}
             id={ensureValidHtmlId(field.name + '_UtenArbeidsforhold')}
-            description='Ambassadepersonell og utenlandske arbeidstakere'
+            description='Ansatte med varig tilrettelagt arbeid, ambassadepersonell og utenlandske arbeidstakere'
           >
             Unntatt registrering i Aa-registeret
           </Radio>
