@@ -8,23 +8,20 @@ export interface FeltFeil {
  * Bevarer rekkefølgen (første forekomst vinner).
  */
 export function dedupeFeilmeldinger<T extends string | FeltFeil>(list: readonly T[]): T[] {
-  const seenStrings = new Set<string>();
-  const seenObjects = new Set<string>();
+  const seenKeys = new Set<string>();
 
   const result: T[] = [];
   for (const entry of list) {
     if (entry == null) continue;
     let key: string;
     if (typeof entry === 'string') {
-      if (seenStrings.has(entry)) continue;
-      seenStrings.add(entry);
-      result.push(entry);
+      key = entry;
     } else {
       key = `${entry.felt ?? ''}::${entry.text}`;
-      if (seenObjects.has(key)) continue;
-      seenObjects.add(key);
-      result.push(entry);
     }
+    if (seenKeys.has(key)) continue;
+    seenKeys.add(key);
+    result.push(entry);
   }
   return result;
 }
