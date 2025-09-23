@@ -238,7 +238,10 @@ const InitieringAnnet: NextPage = () => {
 
   for (const periode of valgteSykepengePerioder) {
     const aktivPeriode = mergedSykmeldingsperioder.at(-1);
-    const oppdatertPeriode = overlappendePeriode(aktivPeriode!, periode);
+    let oppdatertPeriode = null;
+    if (aktivPeriode) {
+      oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
+    }
 
     if (oppdatertPeriode && mergedSykmeldingsperioder.length > 0) {
       mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = {
