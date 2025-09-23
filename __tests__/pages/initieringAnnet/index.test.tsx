@@ -338,4 +338,85 @@ describe('InitieringAnnet page', () => {
     await waitFor(() => expect(screen.getByLabelText(/forlengelse/)).toBeInTheDocument());
     expect(screen.getByText(/Inntektsmelding er allerede forespurt/)).toBeInTheDocument();
   });
+
+  it(`should detekterer forlengelse av sykepengeperiode and refuse to submit if "Skal du endre refusjon for den ansatte?
+" is nei`, async () => {
+    // mock arbeidsgiver data
+    const arbData = {
+      fulltNavn: 'OLA NORDMANN',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Test Barnehage' }],
+      perioder: [
+        { id: 'a', fom: '2023-01-01', tom: '2023-01-10' },
+        { id: 'b', fom: '2023-01-11', tom: '2023-01-20' }
+      ]
+    };
+    (useArbeidsforhold as Mock).mockReturnValue({ data: arbData, error: undefined });
+
+    // mock sykepengesøknader data
+    const spData = [
+      {
+        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174000',
+        sykmeldingId: '123e4567-e89b-12d3-a456-426614174000',
+        fom: '2023-01-01',
+        tom: '2023-01-20',
+        egenmeldingsdagerFraSykmelding: [],
+        status: 'NY',
+        startSykeforlop: '2023-01-01',
+        forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
+        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000',
+        egenmeldingsdager: ['']
+      },
+      {
+        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174001',
+        sykmeldingId: '123e4567-e89b-12d3-a456-426614174001',
+        fom: '2023-01-21',
+        tom: '2023-01-30',
+        egenmeldingsdagerFraSykmelding: [],
+        status: 'NY',
+        startSykeforlop: '2023-01-11',
+        // forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
+        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
+      },
+      {
+        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174002',
+        sykmeldingId: '123e4567-e89b-12d3-a456-426614174002',
+        fom: '2023-02-21',
+        tom: '2023-02-28',
+        egenmeldingsdagerFraSykmelding: [],
+        status: 'NY',
+        startSykeforlop: '2023-02-21',
+        // forespoerselId: '123e4567-e89b-12d3-a456-426614174002',
+        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174002'
+      }
+    ];
+    (useSykepengesoeknader as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+
+    render(<InitieringAnnet />);
+
+    // wait for arbeidsgiver select to appear
+    await waitFor(() => expect(screen.getByLabelText(/forlengelse/)).toBeInTheDocument());
+    expect(screen.getByText(/Inntektsmelding er allerede forespurt/)).toBeInTheDocument();
+
+    screen.getByLabelText(/forlengelse/).click();
+    await waitFor(() => expect(screen.getByLabelText(/Skal du endre refusjon for den ansatte/)).toBeInTheDocument());
+
+    const positiveRadio = screen.getByRole('radio', { name: /Ja/i });
+
+    positiveRadio.click();
+
+    await waitFor(() =>
+      expect(screen.getByText(/Gå inn på den tidligere innsendte inntektsmeldingen nedenfor/)).toBeInTheDocument()
+    );
+
+    const negativeRadio = screen.getByRole('radio', { name: /Nei/i });
+
+    negativeRadio.click();
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/Så lenge sykepengesøknaden er en forlengelse med en tidligere innsendt inntektsmelding/)
+      ).toBeInTheDocument()
+    );
+  });
 });
