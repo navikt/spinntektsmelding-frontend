@@ -35,7 +35,7 @@
     "nanoid": "5.1.5",
     "next": "15.5.3",
     "next-http-proxy-middleware": "1.2.7",
-    "pino": "9.9.5",
+    "pino": "9.11.0",
     "playwright-core": "^1.55.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
