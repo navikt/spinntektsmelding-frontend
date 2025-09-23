@@ -188,7 +188,7 @@ const InitieringAnnet: NextPage = () => {
     const mottatteSykepengesoknader = EndepunktSykepengesoeknaderSchema.safeParse(spData);
 
     if (!mottatteSykepengesoknader.success) {
-      logger.warn('Feil ved validering av sykepengesøknader' + JSON.stringify(mottatteSykepengesoknader.error.errors));
+      logger.warn('Feil ved validering av sykepengesøknader' + JSON.stringify(mottatteSykepengesoknader.error.issues));
       return [];
     }
 
@@ -210,7 +210,7 @@ const InitieringAnnet: NextPage = () => {
       }
       if (
         (acc[acc.length - 1].forespoerselId || acc[acc.length - 1].forlengelseAv) &&
-        differenceInCalendarDays(current.fom, acc[acc.length - 1].tom) >= 1
+        differenceInCalendarDays(current.fom, acc[acc.length - 1].tom) === 1
       ) {
         acc.push({
           ...current,
