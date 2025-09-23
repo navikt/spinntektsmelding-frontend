@@ -1,56 +1,99 @@
-import NextDocument, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
-import { DecoratorComponentsReact, fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr';
+import Document, { Html, Head, Main, NextScript, DocumentContext, type DocumentInitialProps } from 'next/document';
 import getConfig from 'next/config';
 import Script from 'next/script';
+import React from 'react';
 
-const { serverRuntimeConfig } = getConfig();
+type DecoratorBundle = {
+  Header: React.ComponentType<any>;
+  Footer: React.ComponentType<any>;
+  Scripts: React.ComponentType<any>;
+};
 
-interface DocumentProps {
-  Decorator: DecoratorComponentsReact;
+const DisabledDecorator: DecoratorBundle = {
+  Header: () => null,
+  Footer: () => null,
+  Scripts: () => null
+};
+
+const DECORATOR_DISABLED =
+  process.env.DISABLE_DECORATOR === 'true' || process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT === 'true';
+
+let cachedDecorator: DecoratorBundle | null = null;
+
+async function loadDecorator(): Promise<DecoratorBundle> {
+  if (DECORATOR_DISABLED) return DisabledDecorator;
+  if (cachedDecorator) return cachedDecorator;
+  try {
+    const mod = await import('@navikt/nav-dekoratoren-moduler/ssr');
+    const env = process.env.NAIS_CLUSTER_NAME === 'prod-gcp' ? 'prod' : 'dev';
+    // Bruker bestemt env (unngår mod.serverRuntimeConfig for stabilitet)
+    const bundle = await mod.fetchDecoratorReact({
+      env,
+      params: {
+        context: 'arbeidsgiver',
+        chatbot: false,
+        feedback: false
+      }
+    });
+    cachedDecorator = {
+      Header: bundle.Header,
+      Footer: bundle.Footer,
+      Scripts: bundle.Scripts
+    };
+    return cachedDecorator;
+  } catch {
+    return DisabledDecorator;
+  }
 }
 
-const Document = ({ Decorator }: DocumentProps) => {
-  const viseDekoratoren = !serverRuntimeConfig.decoratorDisabled;
+interface CustomDocumentProps extends DocumentInitialProps {
+  decorator: DecoratorBundle;
+}
+
+function CustomDocument(props: CustomDocumentProps) {
+  const { publicRuntimeConfig } = getConfig();
+  const { decorator } = props;
+  const { Header, Footer, Scripts } = decorator;
 
   return (
     <Html lang='no'>
       <Head>
-        {viseDekoratoren ? <Decorator.HeadAssets /> : null}
         <Script
           defer
           strategy='afterInteractive'
           src='https://cdn.nav.no/team-researchops/sporing/sporing.js'
           data-host-url='https://umami.nav.no'
-          data-website-id={serverRuntimeConfig.umamiWebsiteId}
-          data-domains={serverRuntimeConfig.umamiDataDomains}
-        ></Script>
+          data-website-id={publicRuntimeConfig.umamiWebsiteId}
+          data-domains={publicRuntimeConfig.umamiDataDomains}
+        />
       </Head>
       <body id='body'>
-        {viseDekoratoren ? <Decorator.Header /> : null}
-        <Main />
-        {viseDekoratoren ? <Decorator.Footer /> : null}
-        {viseDekoratoren ? <Decorator.Scripts /> : null}
+        <div suppressHydrationWarning>
+          <Header />
+        </div>
+        <div>
+          <Main />
+        </div>
+        <div suppressHydrationWarning>
+          <Footer />
+        </div>
+        <div suppressHydrationWarning>
+          <Scripts />
+        </div>
         <NextScript />
       </body>
     </Html>
   );
-};
+}
 
-Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> => {
-  const initialProps = await NextDocument.getInitialProps(ctx);
-  const Decorator = await fetchDecoratorReact({
-    env: serverRuntimeConfig.decoratorEnv,
-    params: {
-      context: 'arbeidsgiver',
-      chatbot: false,
-      feedback: false
-    }
-  });
-
+// Henter initial props (Next krever fortsatt å bruke Document.getInitialProps)
+CustomDocument.getInitialProps = async (ctx: DocumentContext): Promise<CustomDocumentProps> => {
+  const initial = await Document.getInitialProps(ctx);
+  const decorator = await loadDecorator();
   return {
-    ...initialProps,
-    Decorator
+    ...initial,
+    decorator
   };
 };
 
-export default Document;
+export default CustomDocument;
