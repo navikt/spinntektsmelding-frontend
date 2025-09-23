@@ -84,7 +84,7 @@ const InitieringAnnet: NextPage = () => {
               ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
               : undefined
         })
-        .transform((val) => val.replace(/\s/g, ''))
+        .transform((val) => val.replaceAll(/\s/g, ''))
         .pipe(
           z
             .string({
@@ -208,13 +208,15 @@ const InitieringAnnet: NextPage = () => {
         acc.push(current);
         return acc;
       }
+      const last = acc.at(-1);
       if (
-        (acc[acc.length - 1].forespoerselId || acc[acc.length - 1].forlengelseAv) &&
-        differenceInCalendarDays(current.fom, acc[acc.length - 1].tom) === 1
+        last &&
+        (last.forespoerselId || last.forlengelseAv) &&
+        differenceInCalendarDays(current.fom, last.tom) === 1
       ) {
         acc.push({
           ...current,
-          forlengelseAv: acc[acc.length - 1].forespoerselId ?? acc[acc.length - 1].forlengelseAv
+          forlengelseAv: last.forespoerselId ?? last.forlengelseAv
         });
         return acc;
       } else {
@@ -235,8 +237,8 @@ const InitieringAnnet: NextPage = () => {
   const mergedSykmeldingsperioder = valgteSykepengePerioder.length > 0 ? [valgteSykepengePerioder[0]] : [];
 
   valgteSykepengePerioder.forEach((periode) => {
-    const aktivPeriode = mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1];
-    const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
+    const aktivPeriode = mergedSykmeldingsperioder.at(-1);
+    const oppdatertPeriode = overlappendePeriode(aktivPeriode!, periode);
 
     if (oppdatertPeriode && mergedSykmeldingsperioder.length > 0) {
       mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = {
@@ -263,7 +265,7 @@ const InitieringAnnet: NextPage = () => {
         const previousTom = array[index - 1].tom;
 
         const dagerMellom = differenceInDays(currentFom, previousTom);
-        return accumulator > dagerMellom ? accumulator : dagerMellom;
+        return Math.max(accumulator, dagerMellom);
       }, 0)
     : 0;
 
@@ -272,16 +274,14 @@ const InitieringAnnet: NextPage = () => {
   }
 
   const harValgtPeriodeMedForlengelse =
-    !!valgteUnikeSykepengePerioder &&
-    valgteUnikeSykepengePerioder.length > 0 &&
-    valgteUnikeSykepengePerioder.some((periode) => !!periode.forlengelseAv);
+    !!valgteUnikeSykepengePerioder && valgteUnikeSykepengePerioder.some((periode) => !!periode.forlengelseAv);
 
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     if (harValgtPeriodeMedForlengelse && !endreRefusjon) {
       setError('endreRefusjon', {
-        error: 'Angi om det skal endres refusjon for den ansatte.',
+        message: 'Angi om det skal endres refusjon for den ansatte.',
         type: 'manual'
       });
       return;
@@ -313,7 +313,7 @@ const InitieringAnnet: NextPage = () => {
 
     if (sykmeldingsperiode.length === 0) {
       setError('sykepengePeriodeId', {
-        error: 'Ingen sykmeldingsperioder valgt',
+        message: 'Ingen sykmeldingsperioder valgt',
         type: 'manual'
       });
       return;
@@ -332,7 +332,7 @@ const InitieringAnnet: NextPage = () => {
       | undefined
   ) => {
     const sykmeldingsperiode: EndepunktSykepengesoeknad[] = [];
-    formData.sykepengePeriodeId?.forEach((id) => {
+    for (const id of formData.sykepengePeriodeId || []) {
       let periode: EndepunktSykepengesoeknad | false;
       if (mottatteSykepengesoeknader?.success === false) {
         periode = false;
@@ -346,7 +346,7 @@ const InitieringAnnet: NextPage = () => {
       if (periode) {
         sykmeldingsperiode.push(periode);
       }
-    });
+    }
 
     const forespoerselIdListe = sykmeldingsperiode
       .filter((periode) => !!periode.forespoerselId)
