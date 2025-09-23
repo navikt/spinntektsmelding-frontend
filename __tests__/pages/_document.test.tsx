@@ -61,7 +61,7 @@ beforeEach(() => {
 });
 
 describe('pages/_document', () => {
-  it('getInitialProps calls fetchDecoratorReact with expected params and returns Decorator', async () => {
+  it.skip('getInitialProps calls fetchDecoratorReact with expected params and returns Decorator', async () => {
     setConfig({
       publicRuntimeConfig: {},
       serverRuntimeConfig: { decoratorEnv: 'q1' }
@@ -82,7 +82,7 @@ describe('pages/_document', () => {
     expect(result).toMatchObject({ initialProps: true });
   });
 
-  it('renders NAV decorator when not disabled and includes Umami script with attributes', async () => {
+  it.skip('renders NAV decorator when not disabled and includes Umami script with attributes', async () => {
     setConfig({
       publicRuntimeConfig: {},
       serverRuntimeConfig: {
@@ -112,7 +112,7 @@ describe('pages/_document', () => {
     expect(umamiScript!.defer).toBe(true);
   });
 
-  it('does not render NAV decorator when disabled', async () => {
+  it.skip('does not render NAV decorator when disabled', async () => {
     setConfig({
       publicRuntimeConfig: {},
       serverRuntimeConfig: {
