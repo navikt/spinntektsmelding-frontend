@@ -236,7 +236,7 @@ const InitieringAnnet: NextPage = () => {
 
   const mergedSykmeldingsperioder = valgteSykepengePerioder.length > 0 ? [valgteSykepengePerioder[0]] : [];
 
-  valgteSykepengePerioder.forEach((periode) => {
+  for (const periode of valgteSykepengePerioder) {
     const aktivPeriode = mergedSykmeldingsperioder.at(-1);
     const oppdatertPeriode = overlappendePeriode(aktivPeriode!, periode);
 
@@ -247,7 +247,7 @@ const InitieringAnnet: NextPage = () => {
     } else {
       mergedSykmeldingsperioder.push(periode);
     }
-  });
+  }
 
   const valgteUnikeSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
     finnSorterteUnikePerioder(mergedSykmeldingsperioder)
