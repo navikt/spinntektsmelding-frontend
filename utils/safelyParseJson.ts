@@ -5,7 +5,7 @@ async function safelyParseJSON(possibleJsonData: Response): Promise<unknown> {
     parsed = await possibleJsonData.json();
   } catch (e) {
     // eslint-disable-next-line no-undef
-    console.warn('Failed to parse JSON:', e.message);
+    console.error('Failed to parse JSON:', e.message);
     parsed = [];
   }
 

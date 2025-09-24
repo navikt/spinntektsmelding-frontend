@@ -4,7 +4,7 @@ import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
-import { Heading3 } from '../Heading';
+import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
 import TidligereInntekt from './TidligereInntekt';
 import ButtonEndre from '../ButtonEndre';

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { InnsendingSchema, superRefineInnsending } from './InnsendingSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
 

@@ -7,7 +7,7 @@ import useBoundStore from './useBoundStore';
 import forespoerselType from '../config/forespoerselType';
 import parseIsoDate from '../utils/parseIsoDate';
 import { RefusjonEndring } from '../validators/validerAapenInnsending';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { skalSendeArbeidsgiverperiode } from './useFyllAapenInnsending';
 import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSchema';
@@ -115,14 +115,13 @@ export default function useFyllInnsending() {
         })
       : [];
 
-    // Normaliser undefined/null til tom array for å tilfredsstille store sitt forventede array-type
-    setEndringAarsaker(skjemaData.inntekt?.endringAarsaker ?? []);
+    setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
 
     setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
 
     setInnsenderTelefon(skjemaData.avsenderTlf);
 
-    initNaturalytelser(skjemaData.inntekt?.naturalytelser ?? []);
+    initNaturalytelser(skjemaData.inntekt?.naturalytelser);
 
     const innsendingSkjema: FullInnsending = {
       forespoerselId,
@@ -297,12 +296,13 @@ export function konverterRefusjonEndringer(
 
 export function formaterRedusertLoennIAgp(
   fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined
-): { beloep: number; begrunnelse: NonNullable<LonnIArbeidsgiverperioden['begrunnelse']> } | null {
-  if (fullLonnIArbeidsgiverPerioden?.status === 'Nei' && fullLonnIArbeidsgiverPerioden.begrunnelse !== undefined) {
-    return {
-      beloep: fullLonnIArbeidsgiverPerioden.utbetalt ?? 0,
-      begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse
-    };
-  }
-  return null;
+): { beloep: number; begrunnelse: string } | null {
+  return fullLonnIArbeidsgiverPerioden?.begrunnelse !== undefined &&
+    fullLonnIArbeidsgiverPerioden?.begrunnelse !== '' &&
+    fullLonnIArbeidsgiverPerioden?.status === 'Nei'
+    ? {
+        beloep: fullLonnIArbeidsgiverPerioden.utbetalt ?? 0,
+        begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse
+      }
+    : null;
 }

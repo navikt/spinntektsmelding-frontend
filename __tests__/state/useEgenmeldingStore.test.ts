@@ -2,7 +2,6 @@ import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../schema/ForespurtDataSchema';
 import { vi } from 'vitest';
-import { mockNanoidSequence } from '../testUtils/mockNanoid';
 import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
 import PeriodeType from '../../config/PeriodeType';
 
@@ -19,8 +18,6 @@ vi.mock('next/router', () => require('next-router-mock'));
 describe('useEgenmeldingStore', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
-    // Ensure unique IDs per periode so deletions target a single element
-    mockNanoidSequence(['egen1', 'egen2', 'egen3', 'egen4', 'egen5']);
   });
 
   afterEach(() => {

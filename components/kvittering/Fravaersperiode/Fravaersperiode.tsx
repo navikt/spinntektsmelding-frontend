@@ -1,7 +1,7 @@
 import forespoerselType from '../../../config/forespoerselType';
 import { Periode } from '../../../state/state';
-import { Heading2 } from '../../Heading2/Heading2';
-import { Heading3 } from '../../Heading3/Heading3';
+import Heading2 from '../../Heading2/Heading2';
+import Heading3 from '../../Heading3';
 import PeriodeFraTil from '../../PeriodeFraTil/PeriodeFraTil';
 import lokalStyles from './Fravaersperiode.module.css';
 import classNames from 'classnames/bind';

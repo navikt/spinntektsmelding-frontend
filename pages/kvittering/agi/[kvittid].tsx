@@ -9,7 +9,7 @@ import PageContent from '../../../components/PageContent/PageContent';
 import lokalStyles from '../Kvittering.module.css';
 import styles from '../../../styles/Home.module.css';
 
-import { Heading2 } from '../../../components/Heading2/Heading2';
+import Heading2 from '../../../components/Heading2/Heading2';
 import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
 
 import Skillelinje from '../../../components/Skillelinje/Skillelinje';
@@ -46,7 +46,7 @@ import useKvitteringInit from '../../../state/useKvitteringInit';
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 import { getToken, validateToken } from '@navikt/oasis';
 import environment from '../../../config/environment';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import { EndringAarsak } from '../../../validators/validerAapenInnsending';
 import { EndringsBeloep } from '../../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
@@ -463,13 +463,13 @@ export async function getServerSideProps(context: any) {
   const token = getToken(context.req);
   if (!token) {
     /* håndter manglende token */
-    console.warn('Mangler token i header');
+    console.error('Mangler token i header');
   }
 
   const validation = await validateToken(token);
   if (!validation.ok) {
     /* håndter valideringsfeil */
-    console.warn('Valideringsfeil');
+    console.error('Valideringsfeil');
     const ingress = context.req.headers.host + environment.baseUrl;
     const currentPath = `https://${ingress}${context.resolvedUrl}`;
 
@@ -486,7 +486,7 @@ export async function getServerSideProps(context: any) {
     kvittering = await hentKvitteringsdataSSR(kvittid, token);
     kvittering!.status = 200;
   } catch (error: any) {
-    console.warn('Error fetching selvbestemt kvittering:', error);
+    console.error('Error fetching selvbestemt kvittering:', error);
     kvittering = { data: { success: null }, status: error.status };
 
     if (error.status === 404) {

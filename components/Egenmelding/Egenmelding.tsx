@@ -1,7 +1,7 @@
 import { Alert, BodyLong, Button } from '@navikt/ds-react';
 import styles from '../../styles/Home.module.css';
 import localStyles from './Egenmelding.module.css';
-import { Heading3 } from '../Heading';
+import Heading3 from '../Heading3/Heading3';
 import useBoundStore from '../../state/useBoundStore';
 import EgenmeldingPeriode from './EgenmeldingPeriode';
 import ButtonEndre from '../ButtonEndre';

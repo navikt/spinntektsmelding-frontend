@@ -3,7 +3,7 @@ import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoin
 import { deriveBegrunnelseKeys } from './deriveBegrunnelseKeys';
 import { useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
-import { z } from 'zod';
+import z from 'zod/v4';
 import { EndringAarsakSchema } from '../../schema/EndringAarsakSchema';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Heading3 } from '../../components/Heading3/Heading3';
+import Heading3 from '../../components/Heading3/Heading3';
 
 describe('Heading3', () => {
   it('renders a title text', () => {

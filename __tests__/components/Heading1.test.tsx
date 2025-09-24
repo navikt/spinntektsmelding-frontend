@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import { Heading1 } from '../../components/Heading1/Heading1';
+import Heading1 from '../../components/Heading1/Heading1';
 
 describe('Heading1', () => {
   it('renders a title text', async () => {

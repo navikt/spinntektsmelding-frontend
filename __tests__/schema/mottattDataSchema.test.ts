@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { MottattDataSchema } from '../../schema/MottattDataSchema';
 import testFnr from '../../mockdata/testFnr';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 type MottattData = z.infer<typeof MottattDataSchema>;
 

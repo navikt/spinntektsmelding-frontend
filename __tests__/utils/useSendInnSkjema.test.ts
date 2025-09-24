@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, Mock } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 
 import useSendInnSkjema from '../../utils/useSendInnSkjema';

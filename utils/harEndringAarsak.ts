@@ -1,8 +1,14 @@
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 
-// Returnerer true dersom det finnes minst én definert aarsak.
-export const harEndringAarsak = (endringAarsaker: EndringAarsak[] | undefined): boolean => {
-  if (!endringAarsaker || endringAarsaker.length === 0) return false;
-  // Filtrer ut entries uten aarsak (undefined). Tom streng forekommer ikke for enums og testes derfor ikke.
-  return endringAarsaker.some((e) => e.aarsak !== undefined);
+export const harEndringAarsak = (endringAarsaker: EndringAarsak[] | undefined) => {
+  if (!endringAarsaker) {
+    return false;
+  }
+  if (endringAarsaker.length === 0) {
+    return false;
+  }
+  if (endringAarsaker.length === 1 && (endringAarsaker[0].aarsak === '' || !endringAarsaker[0].aarsak)) {
+    return false;
+  }
+  return endringAarsaker.some((aarsak) => aarsak.aarsak !== '' || !aarsak.aarsak);
 };

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 export const RefusjonEndringSchema = z.object({
   startdato: z.iso.date('Vennligst fyll inn gyldig dato for endring i refusjon.'),

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import z from 'zod/v4';
 import { DateISODateSchema, MottattForespurtDataSchema, MottattPeriodeSchema } from './ForespurtDataSchema';
 import { ForespurtHistoriskInntektSchema } from './ForespurtHistoriskInntektSchema';
 import { SykmeldtSchema } from './SykmeldtSchema';

@@ -1,59 +1,40 @@
+// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import type { NextApiRequest, NextApiResponse } from 'next';
+import httpProxyMiddleware from 'next-http-proxy-middleware';
 import environment from '../../config/environment';
+
 import feilRespons from '../../mockdata/respons-backendfeil.json';
-import { createHandler } from '../../server/http/handlerFactory';
-import { ApiError } from '../../server/auth/token';
+import handleProxyInit from '../../utils/api/handleProxyInit';
 
 const basePath = 'http://' + global.process.env.IM_API_URI + environment.innsendingInntektsmeldingAPI;
+
+type FeilRespons = { valideringsfeil: string[]; error: string };
 
 export const config = {
   api: {
     externalResolver: true,
-    bodyParser: true
+    bodyParser: false
   }
 };
 
-export default createHandler<any, any>({
-  devMock: () => feilRespons,
-  devStatus: 201,
-  successStatus: 201,
-  allowedMethods: ['POST'],
-  action: async ({ req, body }) => {
-    // Stripp prefix fra path
-    const subPath = (req.url || '').replace(/.*\/api\/innsendingInntektsmelding/, '') || '';
-    const url = basePath + subPath;
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body || {})
-    });
-    if (!resp.ok) {
-      // Forsøker å hente feildetaljer hvis JSON
-      let details: any = undefined;
-      const ct = resp.headers.get('content-type') || '';
-      if (ct.includes('application/json')) {
-        try {
-          details = await resp.json();
-        } catch (err) {
-          // Kunne ikke parse feildetaljer som JSON; behold details = undefined
-          if (process.env.NODE_ENV !== 'test') {
-            // eslint-disable-next-line no-console
-            console.warn('Failed to parse error details from innsendingInntektsmelding response', err);
-          }
+const handler = (req: NextApiRequest, res: NextApiResponse<FeilRespons>) => {
+  const env = process.env.NODE_ENV;
+  if (env == 'development') {
+    setTimeout(() => {
+      return res.status(201).json(feilRespons);
+    }, 100);
+  } else if (env == 'production') {
+    return httpProxyMiddleware(req, res, {
+      target: basePath,
+      onProxyInit: handleProxyInit,
+      pathRewrite: [
+        {
+          patternStr: '^/api/innsendingInntektsmelding',
+          replaceStr: ''
         }
-      }
-      throw new ApiError(resp.status, 'INNSENDING_FEIL', 'Innsending feilet', details);
-    }
-    const ct = resp.headers.get('content-type') || '';
-    const location = resp.headers.get('location');
-    let responseBody: any;
-    if (ct.includes('application/json')) {
-      responseBody = await resp.json();
-    } else {
-      responseBody = await resp.text();
-    }
-    const headers: Record<string, string> = {};
-    if (location) headers['Location'] = location;
-    if (ct && !ct.includes('application/json')) headers['Content-Type'] = ct;
-    return { __status: resp.status, __headers: headers, __body: responseBody };
+      ]
+    });
   }
-});
+};
+
+export default handler;

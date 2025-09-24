@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { isTlfNumber } from '../utils/isTlfNumber';
 
 export const TelefonNummerSchema = z

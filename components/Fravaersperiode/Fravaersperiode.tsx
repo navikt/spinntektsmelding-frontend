@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import useBoundStore from '../../state/useBoundStore';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import EgenmeldingLoader from '../Egenmelding/EgenmeldingLoader';
-import { Heading3 } from '../Heading';
+import Heading3 from '../Heading3/Heading3';
 import FravaerEnkeltAnsattforhold from './FravaerEnkeltAnsattforhold';
 
 interface FravaersperiodeProps {

@@ -1,4 +1,4 @@
-import { differenceInDays } from 'date-fns';
+import { differenceInDays } from 'date-fns/differenceInDays';
 import { Periode } from '../state/state';
 import sorterFomStigende from './sorterFomStigende';
 

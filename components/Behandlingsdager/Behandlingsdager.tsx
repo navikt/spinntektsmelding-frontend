@@ -1,7 +1,7 @@
 import parseIsoDate from '../../utils/parseIsoDate';
 import formatDate from '../../utils/formatDate';
 import styling from './Behandlingsdager.module.css';
-import { Heading3 } from '../Heading';
+import Heading3 from '../Heading3';
 import { Periode } from '../../state/state';
 
 interface BehandlingsdagerProps {

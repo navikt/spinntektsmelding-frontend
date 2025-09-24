@@ -1,5 +1,5 @@
 import { isDate } from 'date-fns';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 function isValidISODateString(dateString: string): boolean {
   if (!dateString) return false;
