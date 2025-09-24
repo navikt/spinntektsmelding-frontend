@@ -1,5 +1,5 @@
-import { z } from 'zod/v4';
-import { SelvbestemtTypeConst } from '../state/useSkjemadataStore';
+import { z } from 'zod';
+import { SelvbestemtTypeConst } from './konstanter/selvbestemtType';
 
 const ArbeidsforholdMedArbeidsforholdSchema = z.object({
   type: z.literal(SelvbestemtTypeConst.MedArbeidsforhold),

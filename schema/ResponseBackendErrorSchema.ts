@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 export default z.object({
   valideringsfeil: z.array(z.string()),

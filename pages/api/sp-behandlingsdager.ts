@@ -5,7 +5,7 @@ import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 import testdata from '../../mockdata/behandlingsdager.json';
 import isMod11Number from '../../utils/isMod10Number';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 
 function minDate(date1: string, date2: string): string {

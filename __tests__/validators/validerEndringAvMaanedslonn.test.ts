@@ -23,6 +23,10 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
   it('should return error when harRefusjonEndringer is Ja and refusjonEndringer is empty', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{}])).toEqual([
       {
+        code: 'DUPLISERT_VALG_ENDRING_MAANEDSLONN_I_PERIODEN',
+        felt: 'refusjon.endringer'
+      },
+      {
         code: 'MANGLER_BELOP',
         felt: 'refusjon.endringer.0.beloep'
       },

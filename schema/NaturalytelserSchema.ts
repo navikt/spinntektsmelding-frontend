@@ -1,4 +1,4 @@
-import z from 'zod/v4';
+import z from 'zod';
 import { NaturalytelseEnumSchema } from './NaturalytelseEnumSchema';
 
 const NaturalytelserSchema = z.object({

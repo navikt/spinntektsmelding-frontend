@@ -20,6 +20,7 @@ export interface ValiderTekster {
 export interface ValiderResultat {
   felt: string;
   code: codeUnion;
+  text?: string;
 }
 
 export enum ErrorCodes {

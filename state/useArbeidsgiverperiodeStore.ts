@@ -14,7 +14,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import PeriodeType from '../config/PeriodeType';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 type ApiPeriodeSchema = z.infer<typeof ApiPeriodeSchema>;
 

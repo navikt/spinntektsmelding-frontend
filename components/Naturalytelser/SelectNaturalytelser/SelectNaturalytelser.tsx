@@ -12,19 +12,14 @@ interface SelectNaturalytelserProps {
 
 export default function SelectNaturalytelser({ name, defaultValue }: Readonly<SelectNaturalytelserProps>) {
   const { control } = useFormContext();
-  const {
-    field,
-    formState: { errors }
-  } = useController({
-    name,
-    control
-  });
+  const { field, fieldState } = useController({ name, control });
+  const error = fieldState.error?.message;
 
-  const error = findErrorInRHFErrors(name, errors);
+  // const error = findErrorInRHFErrors(name, errors);
   const ytelsesKeys = Object.keys(naturalytelser);
   const defaultYtelse = field.value ? field.value.toString().toUpperCase() : '';
   return (
-    <Select label={''} onChange={field.onChange} defaultValue={defaultYtelse} error={error}>
+    <Select label={'Naturalytelser'} onChange={field.onChange} defaultValue={defaultYtelse} error={error} hideLabel>
       <option value=''>Velg naturalytelse</option>
       {ytelsesKeys.map((ytelseKey) => (
         <option value={ytelseKey} key={ytelseKey}>
