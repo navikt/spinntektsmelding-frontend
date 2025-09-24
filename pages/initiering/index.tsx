@@ -1,11 +1,11 @@
 import { Alert, Button, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Heading1 } from '../../components/Heading1/Heading1';
+import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -17,7 +17,7 @@ import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
-import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
+import { SelvbestemtTypeConst } from '../../state/useSkjemadataStore';
 
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,

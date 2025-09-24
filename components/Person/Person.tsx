@@ -2,7 +2,7 @@ import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
 import lokalStyles from './Person.module.css';
 import { TextField } from '@navikt/ds-react';
-import { Heading2 } from '../Heading';
+import Heading2 from '../Heading2/Heading2';
 import Skillelinje from '../Skillelinje/Skillelinje';
 import { useFormContext } from 'react-hook-form';
 import DelvisInnsendingInfo from './DelvisInnsendingInfo';

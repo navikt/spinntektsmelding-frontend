@@ -2,7 +2,7 @@ import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import useFyllInnsending, { formaterRedusertLoennIAgp } from '../../state/useFyllInnsending';
-import { mockNanoidConstant } from '../testUtils/mockNanoid';
+import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 
 import inntektData from '../../mockdata/inntektData.json';
@@ -10,14 +10,16 @@ import delvisRefusjon from '../../mockdata/kvittering-delvis-refusjon.json';
 import useKvitteringInit from '../../state/useKvitteringInit';
 import { LonnIArbeidsgiverperioden } from '../../state/state';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
+import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
-import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
+
+vi.mock('nanoid');
 
 const initialState = useBoundStore.getState();
 
@@ -49,7 +51,7 @@ describe('useFyllInnsending', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
     vi.spyOn(global, 'fetch').mockImplementation(fetchMock);
-    mockNanoidConstant('uuid');
+    nanoid.mockReturnValue('uuid');
   });
 
   afterEach(() => {
@@ -202,10 +204,10 @@ describe('formaterRedusertLoennIAgp', () => {
     expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
   });
 
-  it('should return null, when begrunnelse is undefined', async () => {
+  it('should return null, when begrunnelse is empty string', async () => {
     const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
       status: 'Nei',
-      begrunnelse: undefined,
+      begrunnelse: '',
       utbetalt: 1234
     };
 

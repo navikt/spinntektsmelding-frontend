@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { OrgNodeSchema } from '../../schema/OrgNodeSchema';
 import testOrganisasjoner from '../../mockdata/testOrganisasjoner';
 

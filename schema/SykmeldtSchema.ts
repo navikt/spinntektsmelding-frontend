@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import z from 'zod/v4';
 import { PersonnummerSchema } from './PersonnummerSchema';
 
 export const SykmeldtSchema = z.object({

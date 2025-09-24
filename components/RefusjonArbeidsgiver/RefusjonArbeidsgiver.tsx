@@ -1,5 +1,5 @@
 import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
-import { Heading3 } from '../Heading';
+import Heading3 from '../Heading3';
 
 import useBoundStore from '../../state/useBoundStore';
 import SelectBegrunnelse from './SelectBegrunnelse';
@@ -148,11 +148,7 @@ export default function RefusjonArbeidsgiver({
           className={localStyles.radiobuttonInnerWrapper}
           id={'lus-radio'}
           error={visFeilmeldingTekst('lus-radio')}
-          onChange={(status) => {
-            // Mark form dirty and invoke handler. Original code passed return value into addIsDirtyForm wrapper expecting a function.
-            setIsDirtyForm(true);
-            arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt);
-          }}
+          onChange={(status) => addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt))}
           defaultValue={lonnISykefravaeret?.status}
         >
           <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>

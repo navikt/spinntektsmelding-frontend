@@ -9,9 +9,8 @@ import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import feiltekster from './feiltekster';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
-import { byggFellesFeil, byggIngenEndringFeil, mapValidationErrors } from './sendInnCommon';
+import { mapValidationErrors } from './useSendInnSkjema';
 import { postInnsending } from './postInnsending';
-import validerFullLonnIArbeidsgiverPerioden from '../validators/validerFullLonnIArbeidsgiverPerioden';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -33,6 +32,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
   // Helpers
   const showErrors = (errors: Array<ErrorResponse | ValiderTekster>) => {
+    // Reset then set
     fyllFeilmeldinger([]);
     errorResponse(errors as Array<ErrorResponse>);
     setSkalViseFeilmeldinger(true);
@@ -63,22 +63,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
     if (!fullLonnIArbeidsgiverPerioden?.status) {
       errors.push({ text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN, felt: 'lia-radio' });
-    }
-
-    if (fullLonnIArbeidsgiverPerioden) {
-      const valErrors = validerFullLonnIArbeidsgiverPerioden(fullLonnIArbeidsgiverPerioden);
-
-      const mapValErrors = valErrors.map((err) => {
-        const key = err.code as keyof typeof feiltekster;
-        return {
-          felt: err.felt,
-          text: feiltekster[key] ?? err.text
-        };
-      });
-
-      mapValErrors.forEach((el) => {
-        errors.push(el);
-      });
     }
 
     if (!lonnISykefravaeret?.status) {
@@ -119,9 +103,20 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     });
 
     if (!isDirtyForm) {
-      logEvent('skjema fullført', { tittel: 'Innsending uten endringer i skjema', component: amplitudeComponent });
+      logEvent('skjema fullført', {
+        tittel: 'Innsending uten endringer i skjema',
+        component: amplitudeComponent
+      });
+
       logger.info('Innsending uten endringer i skjema');
-      showErrors(byggIngenEndringFeil());
+
+      showErrors([
+        {
+          value: 'Innsending av skjema feilet',
+          error: 'Innsending feilet, det er ikke gjort endringer i skjema.',
+          property: 'knapp-innsending'
+        }
+      ]);
       return false;
     }
 
@@ -131,19 +126,16 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     if (validerteData.success !== true) {
       logger.warn('Feil ved validering av skjema - Åpen innsending ' + JSON.stringify(validerteData.error));
     }
-    const harRefusjonEndringerTriState = harRefusjonEndringer === undefined ? undefined : harRefusjonEndringer === 'Ja';
 
-    const fellesFeil = byggFellesFeil({
-      fullLonnIArbeidsgiverPerioden,
-      lonnISykefravaeret,
-      harRefusjonEndringer: harRefusjonEndringerTriState,
-      opplysningerBekreftet
-    });
-
-    const shouldShowErrors = validerteData.success === false || fellesFeil.length > 0;
+    const shouldShowErrors =
+      validerteData.success === false ||
+      !opplysningerBekreftet ||
+      (!harRefusjonEndringer && lonnISykefravaeret?.status === 'Ja') ||
+      !fullLonnIArbeidsgiverPerioden?.status ||
+      !lonnISykefravaeret?.status;
 
     if (shouldShowErrors) {
-      const errors = buildClientSideErrors(validerteData, opplysningerBekreftet).concat(fellesFeil);
+      const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
       fyllFeilmeldinger(errors);
       logEvent('skjema validering feilet', { tittel: 'Validering feilet', component: amplitudeComponent });
       setSkalViseFeilmeldinger(true);

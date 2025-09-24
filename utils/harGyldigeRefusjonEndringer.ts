@@ -1,4 +1,4 @@
-import { isValid } from 'date-fns';
+import isValid from 'date-fns/isValid';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 
 export function harGyldigeRefusjonEndringer(refusjonEndringer: Array<EndringsBeloep> | undefined): boolean {

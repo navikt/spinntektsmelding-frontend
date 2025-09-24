@@ -1,6 +1,7 @@
 import React from 'react';
 import { BodyLong, BodyShort, Link } from '@navikt/ds-react';
-import { Heading1, Heading2 } from '../Heading';
+import Heading1 from '../Heading1/Heading1';
+import Heading2 from '../Heading2/Heading2';
 import lokalStyles from './KvitteringAnnetSystem.module.css';
 import environment from '../../config/environment';
 

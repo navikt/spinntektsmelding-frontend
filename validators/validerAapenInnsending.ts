@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 import { EndringAarsakSchema } from '../schema/EndringAarsakSchema';
 import { RefusjonEndringSchema } from '../schema/ApiRefusjonEndringSchema';

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import { PersonnummerSchema } from './PersonnummerSchema';
 import { OrganisasjonsnummerSchema } from './OrganisasjonsnummerSchema';

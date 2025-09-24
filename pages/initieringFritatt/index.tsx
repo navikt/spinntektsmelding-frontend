@@ -1,10 +1,10 @@
 import { Button } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Heading1 } from '../../components/Heading1/Heading1';
+import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import styles from '../../styles/Home.module.css';

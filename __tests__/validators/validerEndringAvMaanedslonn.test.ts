@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { expect, it, describe } from 'vitest';
 import valdiderEndringAvMaanedslonn from '../../validators/validerEndringAvMaanedslonn';
 
@@ -24,10 +23,6 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
   it('should return error when harRefusjonEndringer is Ja and refusjonEndringer is empty', () => {
     expect(valdiderEndringAvMaanedslonn('Ja', [{}])).toEqual([
       {
-        code: 'DUPLISERT_VALG_ENDRING_MAANEDSLONN_I_PERIODEN',
-        felt: 'refusjon.endringer'
-      },
-      {
         code: 'MANGLER_BELOP',
         felt: 'refusjon.endringer.0.beloep'
       },
@@ -48,7 +43,6 @@ describe.concurrent('valdiderEndringAvMaanedslonn', () => {
   });
 
   it('should return error when harRefusjonEndringer is Ja and beloep is a string', () => {
-    // @ts-expect-error intentional wrong type to test validation
     expect(valdiderEndringAvMaanedslonn('Ja', [{ beloep: 'string', dato: new Date() }])).toEqual([
       {
         code: 'MANGLER_BELOP',

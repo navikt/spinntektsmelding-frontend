@@ -4,12 +4,13 @@ import useBoundStore from '../../state/useBoundStore';
 import { MottattPeriode } from '../../schema/ForespurtDataSchema';
 import { Periode } from '../../state/state';
 import { nanoid } from 'nanoid';
-import { mockNanoidSequence, mockNanoidConstant } from '../testUtils/mockNanoid';
 import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { parse } from 'path';
 
-// nanoid mocked globally; use helper functions for deterministic IDs
+vi.mock('nanoid');
+
+const mocked_nanoid = vi.mocked(nanoid);
 
 vi.mock('next/router', () => require('next-router-mock'));
 
@@ -57,7 +58,7 @@ describe('useBoundStore', () => {
   it('should add empty arbeidsgiver periode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidConstant('2');
+    mocked_nanoid.mockReturnValue('2');
 
     const datoSpenn: Periode[] = [
       {
@@ -201,7 +202,7 @@ describe('useBoundStore', () => {
   it('should init Arbeidsgiverperiode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -235,7 +236,7 @@ describe('useBoundStore', () => {
   it('should init Arbeidsgiverperiode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -269,7 +270,7 @@ describe('useBoundStore', () => {
   it('should delete an arbeidsgiverperiode for a given ID.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -315,7 +316,7 @@ describe('useBoundStore', () => {
   it('should reset Arbeidsgiverperiode to its initial value.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -378,7 +379,7 @@ describe('useBoundStore', () => {
   it('should set the date for a arbeidsgiverperiode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -434,7 +435,7 @@ describe('useBoundStore', () => {
   it('should set the date for a arbeidsgiverperiode 2.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -500,7 +501,7 @@ describe('useBoundStore', () => {
   it('should set the date for a arbeidsgiverperiode uten andre perioder.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '3', '4']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3').mockReturnValueOnce('4');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -566,7 +567,7 @@ describe('useBoundStore', () => {
   it('should set the har blitt endret flag.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -623,7 +624,7 @@ describe('useBoundStore', () => {
   it('should not set the har blitt endret flag.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -680,7 +681,7 @@ describe('useBoundStore', () => {
   it('should delete an arbeidsgiverperiode for a given ID.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -789,7 +790,7 @@ describe('useBoundStore', () => {
   it('should set the date for a arbeidsgiverperiode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -845,7 +846,7 @@ describe('useBoundStore', () => {
   it('should set the date for a arbeidsgiverperiode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -911,7 +912,7 @@ describe('useBoundStore', () => {
   it('should set the date for a arbeidsgiverperiode uten andre perioder.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1034,7 +1035,7 @@ describe('useBoundStore', () => {
   it('should not set the har blitt endret flag.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1091,7 +1092,7 @@ describe('useBoundStore', () => {
   it('should delete a periode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1137,7 +1138,7 @@ describe('useBoundStore', () => {
   it('should update a periode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1181,7 +1182,7 @@ describe('useBoundStore', () => {
   it('should delete all periode.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '3']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1211,7 +1212,7 @@ describe('useBoundStore', () => {
   it('should check if arbeidsgiverperiode has not been changed', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '3']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1238,7 +1239,7 @@ describe('useBoundStore', () => {
   it('should check if arbeidsgiverperiode has been changed', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '3']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1276,7 +1277,7 @@ describe('useBoundStore', () => {
   it('should check if arbeidsgiverperiode has been changed and we have egenmeldingsperiode', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '3']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1326,7 +1327,7 @@ describe('useBoundStore', () => {
   it('should check if arbeidsgiverperiode has been changed and we only have egenmeldingsperiode', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '3']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1364,7 +1365,7 @@ describe('useBoundStore', () => {
   it('should not change status if arbeidsgiverperiode is missing', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '3']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3');
 
     const mottattFravaersperiode: Array<MottattPeriode> = [
       {
@@ -1416,7 +1417,7 @@ describe('useBoundStore', () => {
   it('should reset arbeidsgiverperiode and bestemmende fraværsdag when tilbakestillArbeidsgiverperiode is run', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2', '3', '4']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2').mockReturnValueOnce('3').mockReturnValueOnce('4');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
@@ -1466,7 +1467,7 @@ describe('useBoundStore', () => {
   it('should set the har blitt endret flag. Perioder mangler', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    mockNanoidSequence(['1', '2']);
+    mocked_nanoid.mockReturnValueOnce('1').mockReturnValueOnce('2');
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
         fom: '2021-10-01',

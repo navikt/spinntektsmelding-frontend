@@ -2,23 +2,24 @@ import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import useFyllAapenInnsending, { skalSendeArbeidsgiverperiode } from '../../state/useFyllAapenInnsending';
-
-import { mockNanoidConstant } from '../testUtils/mockNanoid';
+import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 
 import inntektData from '../../mockdata/inntektData.json';
 import useKvitteringInit from '../../state/useKvitteringInit';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
+import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
+import { Opplysningstype } from '../../state/useForespurtDataStore';
 import forespoerselType from '../../config/forespoerselType';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
-import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
-import { Opplysningstype } from '../../schema/ForespurtDataSchema';
 
 type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 type SkjemaData = z.infer<typeof HovedskjemaSchema>;
+
+vi.mock('nanoid');
 
 const mockSkjema: SkjemaData = {
   bekreft_opplysninger: true,
@@ -48,7 +49,7 @@ describe('useFyllAapenInnsending', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
     vi.spyOn(global, 'fetch').mockImplementation(fetchMock);
-    mockNanoidConstant('uuid');
+    nanoid.mockReturnValue('uuid');
   });
 
   afterEach(() => {
@@ -102,17 +103,13 @@ describe('useFyllAapenInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
-    let innsending: ReturnType<typeof fyllInnsending> | undefined;
+    let innsending: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
+      innsending = fyllInnsending(mockSkjema);
     });
 
-    if (!innsending) {
-      throw new Error('Innsending ble ikke satt');
-    }
-
-    if (innsending.success) {
+    if (innsending) {
       expect(innsending.data).toEqual({
         agp: {
           perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
@@ -138,8 +135,6 @@ describe('useFyllAapenInnsending', () => {
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         }
       });
-    } else {
-      throw new Error('Forventet vellykket parsing av innsending');
     }
   });
 
@@ -177,8 +172,6 @@ describe('useFyllAapenInnsending', () => {
         status: 'Ja'
       });
 
-      result.current.setMottattEksternInntektsdato('2023-03-03');
-
       result.current.slettAlleNaturalytelser();
 
       result.current.setBareNyMaanedsinntekt(500000);
@@ -194,15 +187,16 @@ describe('useFyllAapenInnsending', () => {
     });
 
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());
+
     const fyllInnsending = fyller.current;
 
-    let innsending: ReturnType<typeof fyllInnsending>;
+    let innsending: { data: InnsendingSkjema };
 
     act(() => {
-      innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
+      innsending = fyllInnsending(mockSkjema);
     });
 
-    if (innsending.success) {
+    if (innsending) {
       expect(innsending.data).toEqual({
         agp: {
           perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
@@ -241,8 +235,6 @@ describe('useFyllAapenInnsending', () => {
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         }
       });
-    } else {
-      throw new Error('Forventet vellykket parsing av innsending');
     }
   });
 
@@ -280,34 +272,28 @@ describe('useFyllAapenInnsending', () => {
         status: 'Ja'
       });
 
-      result.current.setArbeidsgiverperiodeDisabled(true);
-
       result.current.slettAlleNaturalytelser();
 
       result.current.setBareNyMaanedsinntekt(500000);
 
       result.current.setHarRefusjonEndringer('Ja');
+
+      result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
+
+      result.current.setArbeidsgiverperiodeDisabled(true);
     });
 
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());
 
     const fyllInnsending = fyller.current;
 
-    let innsending: ReturnType<typeof fyllInnsending> | undefined;
+    let innsending: { data: InnsendingSkjema };
 
     act(() => {
-      innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
+      innsending = fyllInnsending(mockSkjema);
     });
 
-    if (!innsending) {
-      throw new Error('Innsending ble ikke satt');
-    }
-
-    if (innsending.success) {
-      innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
-    }
-
-    if (innsending.success) {
+    if (innsending) {
       expect(innsending.data).toEqual({
         agp: {
           perioder: [],
@@ -346,8 +332,6 @@ describe('useFyllAapenInnsending', () => {
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         }
       });
-    } else {
-      throw new Error('Forventet vellykket parsing av innsending');
     }
   });
 });

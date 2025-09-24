@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Naturalytelse } from '../../state/state';
 import validerNaturalytelser from '../../validators/validerNaturalytelser';
 import { expect, it, describe } from 'vitest';
