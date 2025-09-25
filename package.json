@@ -1,6 +1,6 @@
 {
   "name": "spinntektsmelding-frontend",
-  "version": "0.3.44",
+  "version": "0.3.45",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack | pino-pretty --messageKey=message",
