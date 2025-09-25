@@ -148,7 +148,10 @@ export default function RefusjonArbeidsgiver({
           className={localStyles.radiobuttonInnerWrapper}
           id={'lus-radio'}
           error={visFeilmeldingTekst('lus-radio')}
-          onChange={(status) => addIsDirtyForm(arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt))}
+          onChange={(status) => {
+            setIsDirtyForm(true);
+            arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt);
+          }}
           defaultValue={lonnISykefravaeret?.status}
         >
           <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>

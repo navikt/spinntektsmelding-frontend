@@ -32,7 +32,7 @@ export class FormPage {
 
   async fillInput(label: string, value: string): Promise<void> {
     const input = await this.getInput(label);
-    await input.fill('');
+    // await input.fill('');
     await input.fill(value);
   }
 
@@ -73,13 +73,13 @@ export class FormPage {
   }
 
   async selectOption(label: string, value: string): Promise<void> {
-    const select = this.page.getByLabel(label);
+    const select = this.page.getByRole('combobox', { name: label });
     await expect(select).toBeVisible();
     await select.selectOption(value);
   }
 
   async getSelectedOption(label: string): Promise<string> {
-    const select = this.page.getByLabel(label);
+    const select = this.page.getByRole('combobox', { name: label });
     await expect(select).toBeVisible();
     return await select.inputValue();
   }

@@ -3,10 +3,11 @@ import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
 import { YesNo } from './state';
 import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
-import z from 'zod/v4';
+import z from 'zod';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import AapenInnsendingSchema from '../schema/AapenInnsendingSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
+import { SelvbestemtType } from '../schema/konstanter/selvbestemtType';
 
 export enum SkjemaStatus {
   FULL = 'FULL',
@@ -16,15 +17,6 @@ export enum SkjemaStatus {
 type KvitteringEkstern = z.infer<typeof KvitteringEksternSchema>;
 type KvitteringFullInnsending = z.infer<typeof FullInnsendingSchema>;
 type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
-
-export const SelvbestemtTypeConst = {
-  MedArbeidsforhold: 'MedArbeidsforhold',
-  UtenArbeidsforhold: 'UtenArbeidsforhold',
-  Fisker: 'Fisker',
-  Behandlingsdager: 'Behandlingsdager'
-} as const;
-
-export type SelvbestemtType = (typeof SelvbestemtTypeConst)[keyof typeof SelvbestemtTypeConst];
 
 export interface SkjemadataState {
   nyInnsending: boolean;

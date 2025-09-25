@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { EndringAarsakSchema } from './EndringAarsakSchema';
 import NaturalytelserSchema from './NaturalytelserSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';

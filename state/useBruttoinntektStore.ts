@@ -14,7 +14,7 @@ import Router from 'next/router';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 import isValidUUID from '../utils/isValidUUID';
 import { ApiEndringAarsakSchema } from '../schema/ApiEndringAarsakSchema';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
 import { HistoriskInntekt } from '../schema/HistoriskInntektSchema';

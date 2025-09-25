@@ -15,7 +15,8 @@ const mockRemove = vi.fn();
 vi.mock('react-hook-form', () => ({
   useController: () => ({
     field: { value: new Date(), onChange: vi.fn() },
-    formState: { errors: {} }
+    formState: { errors: {} },
+    fieldState: { error: {} }
   }),
   useFieldArray: () => ({
     fields: [{ naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() }],
@@ -77,7 +78,7 @@ describe('Naturalytelser', () => {
 
   it('renders the component', () => {
     render(<Naturalytelser />);
-    expect(screen.getByText('Naturalytelser')).toBeInTheDocument();
+    expect(screen.getAllByText('Naturalytelser')).toHaveLength(3);
     expect(
       screen.getByLabelText('Har den ansatte naturalytelser som faller bort under sykefraværet?')
     ).toBeInTheDocument();
@@ -87,7 +88,8 @@ describe('Naturalytelser', () => {
     vi.mock('react-hook-form', () => ({
       useController: () => ({
         field: { value: new Date(), onChange: vi.fn() },
-        formState: { errors: {} }
+        formState: { errors: {} },
+        fieldState: { error: {} }
       }),
       useFieldArray: () => ({
         fields: [],
@@ -123,6 +125,7 @@ describe('Naturalytelser', () => {
         },
         setValue: () => vi.fn(),
         formState: () => vi.fn(),
+        fieldState: () => vi.fn(),
         watch: () => vi.fn().mockReturnValue(false),
         register: vi.fn()
       }),
@@ -179,6 +182,7 @@ describe('Naturalytelser', () => {
         },
         setValue: () => vi.fn(),
         formState: () => vi.fn(),
+        fieldState: () => vi.fn(),
         watch: () => vi.fn().mockReturnValue(true),
         register: vi.fn()
       }),
@@ -199,7 +203,8 @@ describe('Naturalytelser', () => {
     vi.mock('react-hook-form', () => ({
       useController: () => ({
         field: { value: new Date(), onChange: vi.fn() },
-        formState: { errors: {} }
+        formState: { errors: {} },
+        fieldState: { error: {} }
       }),
       useFieldArray: () => ({
         fields: [{ naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() }],
@@ -235,6 +240,7 @@ describe('Naturalytelser', () => {
         },
         setValue: () => vi.fn(),
         formState: () => vi.fn(),
+        fieldState: () => vi.fn(),
         watch: () => vi.fn().mockReturnValue(true),
         register: vi.fn()
       }),
@@ -255,7 +261,8 @@ describe('Naturalytelser', () => {
     vi.mock('react-hook-form', () => ({
       useController: () => ({
         field: { value: new Date(), onChange: vi.fn() },
-        formState: { errors: {} }
+        formState: { errors: {} },
+        fieldState: { error: {} }
       }),
       useFieldArray: () => ({
         fields: [
@@ -294,6 +301,7 @@ describe('Naturalytelser', () => {
         },
         setValue: () => vi.fn(),
         formState: () => vi.fn(),
+        fieldState: () => vi.fn(),
         watch: () => vi.fn().mockReturnValue(true),
         register: vi.fn()
       }),

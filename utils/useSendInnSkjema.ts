@@ -7,12 +7,13 @@ import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import feiltekster from './feiltekster';
 import forespoerselType from '../config/forespoerselType';
 import { postInnsending, BackendValidationError } from './postInnsending';
+import validerFullLonnIArbeidsgiverPerioden from '../validators/validerFullLonnIArbeidsgiverPerioden';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -102,6 +103,22 @@ export default function useSendInnSkjema(
       errors.push({
         text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN,
         felt: 'lia-radio'
+      });
+    }
+
+    if (fullLonnIArbeidsgiverPerioden) {
+      const valErrors = validerFullLonnIArbeidsgiverPerioden(fullLonnIArbeidsgiverPerioden);
+
+      const mapValErrors = valErrors.map((err) => {
+        const key = err.code as keyof typeof feiltekster;
+        return {
+          felt: err.felt,
+          text: feiltekster[key] ?? err.text
+        };
+      });
+
+      mapValErrors.forEach((el) => {
+        errors.push(el);
       });
     }
 

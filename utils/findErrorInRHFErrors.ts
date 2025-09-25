@@ -1,5 +1,5 @@
 import { FieldErrors, FieldValues } from 'react-hook-form';
-import z from 'zod/v4';
+import z from 'zod';
 
 export default function findErrorInRHFErrors(name: string, errors: FieldErrors<FieldValues>) {
   const errorName = name.replace(/\[/g, '.').replace(/\]/g, '');

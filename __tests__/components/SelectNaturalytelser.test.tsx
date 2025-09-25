@@ -5,7 +5,8 @@ import { vi } from 'vitest';
 vi.mock('react-hook-form', () => ({
   useController: () => ({
     field: { value: 'BIL', onChange: vi.fn() },
-    formState: { errors: {} }
+    formState: { errors: {} },
+    fieldState: { error: {} }
   }),
   useFieldArray: () => ({
     fields: [
@@ -82,6 +83,11 @@ describe('SelectNaturalytelser', () => {
             naturalytelse: {
               error: 'This is an error'
             }
+          }
+        },
+        fieldState: {
+          error: {
+            message: 'This is an error'
           }
         }
       }),

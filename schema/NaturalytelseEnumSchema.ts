@@ -1,28 +1,30 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
-export const NaturalytelseEnumSchema = z.enum(
-  [
-    'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
-    'ANNET',
-    'BEDRIFTSBARNEHAGEPLASS',
-    'BESOEKSREISERHJEMMETANNET',
-    'BIL',
-    'BOLIG',
-    'ELEKTRONISKKOMMUNIKASJON',
-    'FRITRANSPORT',
-    'INNBETALINGTILUTENLANDSKPENSJONSORDNING',
-    'KOSTBESPARELSEIHJEMMET',
-    'KOSTDAGER',
-    'KOSTDOEGN',
-    'LOSJI',
-    'OPSJONER',
-    'RENTEFORDELLAAN',
-    'SKATTEPLIKTIGDELFORSIKRINGER',
-    'TILSKUDDBARNEHAGEPLASS',
-    'YRKEBILTJENESTLIGBEHOVKILOMETER',
-    'YRKEBILTJENESTLIGBEHOVLISTEPRIS'
-  ],
-  {
-    error: (issue) => ({ error: 'Vennligst velg ytelse.' })
-  }
-);
+export const NaturalytelseEnumSchema = z
+  .enum(
+    [
+      'AKSJERGRUNNFONDSBEVISTILUNDERKURS',
+      'ANNET',
+      'BEDRIFTSBARNEHAGEPLASS',
+      'BESOEKSREISERHJEMMETANNET',
+      'BIL',
+      'BOLIG',
+      'ELEKTRONISKKOMMUNIKASJON',
+      'FRITRANSPORT',
+      'INNBETALINGTILUTENLANDSKPENSJONSORDNING',
+      'KOSTBESPARELSEIHJEMMET',
+      'KOSTDAGER',
+      'KOSTDOEGN',
+      'LOSJI',
+      'OPSJONER',
+      'RENTEFORDELLAAN',
+      'SKATTEPLIKTIGDELFORSIKRINGER',
+      'TILSKUDDBARNEHAGEPLASS',
+      'YRKEBILTJENESTLIGBEHOVKILOMETER',
+      'YRKEBILTJENESTLIGBEHOVLISTEPRIS'
+    ],
+    {
+      error: 'Vennligst velg ytelse.'
+    }
+  )
+  .describe('Vennligst velg ytelse.');

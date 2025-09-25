@@ -1,4 +1,4 @@
-import z from 'zod/v4';
+import z from 'zod';
 import { OrganisasjonsnummerSchema } from './OrganisasjonsnummerSchema';
 
 export const AvsenderSchema = z.object({
