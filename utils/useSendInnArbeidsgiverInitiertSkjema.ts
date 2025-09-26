@@ -6,12 +6,10 @@ import useErrorRespons, { ErrorResponse } from './useErrorResponse';
 import { useRouter } from 'next/router';
 import { logger } from '@navikt/next-logger';
 import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
-import feiltekster from './feiltekster';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
-import { mapValidationErrors } from './useSendInnSkjema';
 import { postInnsending } from './postInnsending';
-import validerFullLonnIArbeidsgiverPerioden from '../validators/validerFullLonnIArbeidsgiverPerioden';
+import { byggIngenEndringFeil, checkCommonValidations, mapValidationErrors } from './sendInnCommon';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -62,47 +60,20 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       );
     }
 
-    if (!fullLonnIArbeidsgiverPerioden?.status) {
-      errors.push({ text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN, felt: 'lia-radio' });
-    }
-
-    if (fullLonnIArbeidsgiverPerioden) {
-      const valErrors = validerFullLonnIArbeidsgiverPerioden(fullLonnIArbeidsgiverPerioden);
-
-      const mapValErrors = valErrors.map((err) => {
-        const key = err.code as keyof typeof feiltekster;
-        return {
-          felt: err.felt,
-          text: feiltekster[key] ?? err.text
-        };
-      });
-
-      mapValErrors.forEach((el) => {
-        errors.push(el);
-      });
-    }
-
-    if (!lonnISykefravaeret?.status) {
-      errors.push({
-        text: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
-        felt: 'lus-radio'
-      });
-    }
-
-    if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
-      errors.push({
-        text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
-        felt: 'refusjon.endringer'
-      });
-    }
-
-    if (!opplysningerBekreftet) {
-      errors.push({ text: feiltekster.BEKREFT_OPPLYSNINGER, felt: 'bekreft-opplysninger' });
-    }
-
-    if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
-      errors.push({ text: feiltekster.INNTEKT_UNDER_REFUSJON, felt: 'agp.redusertLoennIAgp.beloep' });
-    }
+    // if (!fullLonnIArbeidsgiverPerioden?.status) {
+    //   errors.push({ text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN, felt: 'lia-radio' });
+    // }
+    const harForespurtArbeidsgiverperiode = true; // Alltid true for selvbestemt
+    errors.concat(
+      checkCommonValidations(
+        fullLonnIArbeidsgiverPerioden,
+        harForespurtArbeidsgiverperiode,
+        lonnISykefravaeret,
+        harRefusjonEndringer,
+        opplysningerBekreftet,
+        validerteData
+      )
+    );
 
     return errors;
   };
@@ -127,13 +98,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
       logger.info('Innsending uten endringer i skjema');
 
-      showErrors([
-        {
-          value: 'Innsending av skjema feilet',
-          error: 'Innsending feilet, det er ikke gjort endringer i skjema.',
-          property: 'knapp-innsending'
-        }
-      ]);
+      showErrors(byggIngenEndringFeil());
       return false;
     }
 
