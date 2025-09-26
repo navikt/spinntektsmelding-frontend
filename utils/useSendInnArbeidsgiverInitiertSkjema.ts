@@ -64,8 +64,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     //   errors.push({ text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN, felt: 'lia-radio' });
     // }
     const harForespurtArbeidsgiverperiode = true; // Alltid true for selvbestemt
-    errors.concat(
-      checkCommonValidations(
+    errors.push(
+      ...checkCommonValidations(
         fullLonnIArbeidsgiverPerioden,
         harForespurtArbeidsgiverperiode,
         lonnISykefravaeret,
