@@ -679,7 +679,7 @@ describe('InnsendingSchema', () => {
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
       code: 'custom',
-      error: 'Refusjon kan ikke være høyere enn inntekt.',
+      error: 'Refusjon kan ikke være høyere enn beregnet månedslønn.',
       input: '',
       path: ['refusjon', 'endringer', 1, 'beloep']
     });
@@ -814,7 +814,7 @@ describe('InnsendingSchema', () => {
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
       code: 'custom',
-      error: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+      error: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
       input: '',
       path: ['agp', 'redusertLoennIAgp', 'beloep']
     });

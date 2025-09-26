@@ -110,7 +110,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     );
     await formPage.clickButton('Send');
     await formPage.assertVisibleTextAtLeastOnce(
-      'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.'
+      'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.'
     );
 
     await formPage.fillInput('Utbetalt under arbeidsgiverperiode', '50000');

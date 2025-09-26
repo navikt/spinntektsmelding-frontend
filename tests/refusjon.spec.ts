@@ -125,8 +125,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     // submit
     await formPage.clickButton('Send');
 
-    // 'Refusjon kan ikke være høyere enn inntekt.'
-    await formPage.assertVisibleTextAtLeastOnce('Refusjon kan ikke være høyere enn inntekt.');
+    // 'Refusjon kan ikke være høyere enn beregnet månedslønn.'
+    await formPage.assertVisibleTextAtLeastOnce('Refusjon kan ikke være høyere enn beregnet månedslønn.');
 
     await formPage.fillInput('Endret beløp/måned', '60000');
 
@@ -193,7 +193,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     // submit
     await formPage.clickButton('Send');
 
-    // 'Refusjon kan ikke være høyere enn inntekt.'
+    // 'Refusjon kan ikke være høyere enn beregnet månedslønn.'
     await formPage.assertVisibleTextAtLeastOnce('Vennligst fyll inn gyldig dato for endring i refusjon.');
 
     await formPage.fillInput('Dato for endring', '15.04.23');
