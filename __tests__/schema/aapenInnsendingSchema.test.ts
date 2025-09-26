@@ -97,7 +97,7 @@ describe('AapenInnsendingSchema', () => {
     expect(result.error?.issues).toEqual([
       {
         code: 'custom',
-        error: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+        error: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
         message: 'Invalid input',
         path: ['agp', 'redusertLoennIAgp', 'beloep']
       }

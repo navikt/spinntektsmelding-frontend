@@ -10,10 +10,10 @@ import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
-import feiltekster from './feiltekster';
 import forespoerselType from '../config/forespoerselType';
-import { postInnsending, BackendValidationError } from './postInnsending';
-import validerFullLonnIArbeidsgiverPerioden from '../validators/validerFullLonnIArbeidsgiverPerioden';
+import { postInnsending } from './postInnsending';
+import { byggIngenEndringFeil, checkCommonValidations, mapValidationErrors } from './sendInnCommon';
+import { ValiderTekster } from './validerInntektsmelding';
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -30,6 +30,14 @@ export default function useSendInnSkjema(
   const router = useRouter();
 
   type Skjema = z.infer<typeof HovedskjemaSchema>;
+
+  // Helpers
+  const showErrors = (errors: Array<ErrorResponse | ValiderTekster>) => {
+    // Reset then set
+    fyllFeilmeldinger([]);
+    errorResponse(errors as Array<ErrorResponse>);
+    setSkalViseFeilmeldinger(true);
+  };
 
   return async (
     opplysningerBekreftet: boolean,
@@ -52,17 +60,7 @@ export default function useSendInnSkjema(
 
       logger.info('Innsending uten endringer i skjema');
 
-      const errors: Array<ErrorResponse> = [
-        {
-          value: 'Innsending av skjema feilet',
-          error: 'Innsending feilet, det er ikke gjort endringer i skjema.',
-          property: 'knapp-innsending'
-        }
-      ];
-      fyllFeilmeldinger([]);
-
-      errorResponse(errors);
-      setSkalViseFeilmeldinger(true);
+      showErrors(byggIngenEndringFeil());
 
       return false;
     }
@@ -98,50 +96,14 @@ export default function useSendInnSkjema(
 
       return false;
     }
-    const errors = [];
-    if (!fullLonnIArbeidsgiverPerioden?.status && harForespurtArbeidsgiverperiode) {
-      errors.push({
-        text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN,
-        felt: 'lia-radio'
-      });
-    }
-
-    if (fullLonnIArbeidsgiverPerioden) {
-      const valErrors = validerFullLonnIArbeidsgiverPerioden(fullLonnIArbeidsgiverPerioden);
-
-      const mapValErrors = valErrors.map((err) => {
-        const key = err.code as keyof typeof feiltekster;
-        return {
-          felt: err.felt,
-          text: feiltekster[key] ?? err.text
-        };
-      });
-
-      mapValErrors.forEach((el) => {
-        errors.push(el);
-      });
-    }
-
-    if (!lonnISykefravaeret?.status) {
-      errors.push({
-        text: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
-        felt: 'lus-radio'
-      });
-    }
-
-    if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
-      errors.push({
-        text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
-        felt: 'refusjon.endringer'
-      });
-    }
-
-    if (!opplysningerBekreftet) {
-      errors.push({
-        text: feiltekster.BEKREFT_OPPLYSNINGER,
-        felt: 'bekreft-opplysninger'
-      });
-    }
+    const errors = checkCommonValidations(
+      fullLonnIArbeidsgiverPerioden,
+      harForespurtArbeidsgiverperiode,
+      lonnISykefravaeret,
+      harRefusjonEndringer,
+      opplysningerBekreftet,
+      validerteData
+    );
 
     fyllFeilmeldinger(errors);
 
@@ -181,26 +143,4 @@ export default function useSendInnSkjema(
       setShowErrorList: setSkalViseFeilmeldinger
     });
   };
-}
-
-export function mapValidationErrors(feil: BackendValidationError, errors: ErrorResponse[]) {
-  if (feil.valideringsfeil) {
-    errors = feil.valideringsfeil.map(
-      (error: any) =>
-        ({
-          error: error,
-          property: 'server',
-          value: 'Innsending av skjema feilet'
-        }) as ErrorResponse
-    );
-  } else {
-    errors = [
-      {
-        value: 'Innsending av skjema feilet',
-        error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-        property: 'server'
-      }
-    ];
-  }
-  return errors;
 }
