@@ -78,9 +78,9 @@ export function checkCommonValidations<D extends MinimalData, R extends SafePars
       };
     });
 
-    mapValErrors.forEach((el) => {
+    for (const el of mapValErrors) {
       errors.push(el);
-    });
+    }
   }
 
   if (!lonnISykefravaeret?.status) {
@@ -104,7 +104,10 @@ export function checkCommonValidations<D extends MinimalData, R extends SafePars
     });
   }
 
-  if ((validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)) {
+  if (
+    validerteData.success === true &&
+    (validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)
+  ) {
     errors.push({ text: feiltekster.INNTEKT_UNDER_REFUSJON, felt: 'agp.redusertLoennIAgp.beloep' });
   }
   return errors;
