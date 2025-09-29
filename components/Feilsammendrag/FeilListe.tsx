@@ -1,6 +1,7 @@
 import { ErrorSummary } from '@navikt/ds-react';
 import styles from './Feilsammendrag.module.css';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
+import { dedupeFeilmeldinger } from '../../utils/dedupeFeilmeldinger';
 
 export interface Feilmelding {
   felt: string;
@@ -22,6 +23,8 @@ export default function FeilListe({ feilmeldinger, skalViseFeilmeldinger }: Read
   const harSynligeFeilmeldinger = synligeFeilmeldinger.length > 0;
   if (!harSynligeFeilmeldinger) return null;
 
+  const enkleFeilmeldinger = dedupeFeilmeldinger(synligeFeilmeldinger);
+
   return (
     <>
       {skalViseFeilmeldinger && harSynligeFeilmeldinger && (
@@ -30,7 +33,7 @@ export default function FeilListe({ feilmeldinger, skalViseFeilmeldinger }: Read
           heading='Du må rette disse feilene før du kan sende inn.'
           className={styles.mainwrapper}
         >
-          {synligeFeilmeldinger.map((melding) => (
+          {enkleFeilmeldinger.map((melding) => (
             <ErrorSummary.Item key={melding.felt} href={'#' + ensureValidHtmlId(`${melding.felt}`)}>
               {melding.text}
             </ErrorSummary.Item>

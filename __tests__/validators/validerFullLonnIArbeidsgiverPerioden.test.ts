@@ -49,7 +49,7 @@ describe('validerFullLonnIArbeidsgiverPerioden', () => {
       {
         code: 'MANGLER_BEGRUNNELSE_LONN_I_ARBEIDSGIVERPERIODEN',
         felt: 'agp.redusertLoennIAgp.beloep',
-        text: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut'
+        text: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.'
       }
     ]);
   });
@@ -66,7 +66,7 @@ describe('validerFullLonnIArbeidsgiverPerioden', () => {
       {
         code: 'MANGLER_BEGRUNNELSE_LONN_I_ARBEIDSGIVERPERIODEN',
         felt: 'agp.redusertLoennIAgp.beloep',
-        text: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut'
+        text: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.'
       }
     ]);
   });

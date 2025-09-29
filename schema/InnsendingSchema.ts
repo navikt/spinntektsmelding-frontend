@@ -158,7 +158,7 @@ export const InnsendingSchema = z.object({
       ) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Angi beløp utbetalt arbeidsgiverperioden.',
+          error: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
           path: ['redusertLoennIAgp', 'beloep'],
           input: ''
         });
@@ -193,7 +193,7 @@ export const InnsendingSchema = z.object({
 
         ctx.issues.push({
           code: 'custom',
-          error: 'Angi beløp utbetalt arbeidsgiverperioden.',
+          error: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
           path: ['redusertLoennIAgp', 'beloep'],
           input: ''
         });

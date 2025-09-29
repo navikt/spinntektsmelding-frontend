@@ -93,7 +93,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
 
     await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Nei');
     await formPage.clickButton('Send');
-    await formPage.assertVisibleTextAtLeastOnce('Beløp utbetalt i arbeidsgiverperioden må fylles ut');
+    await formPage.assertVisibleTextAtLeastOnce('Beløp utbetalt i arbeidsgiverperioden må fylles ut.');
     await formPage.assertVisibleTextAtLeastOnce(
       'Begrunnelse for redusert utbetaling i arbeidsgiverperioden må fylles ut'
     );

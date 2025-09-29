@@ -3,7 +3,6 @@ import { BackendValidationError } from './postInnsending';
 import feiltekster from './feiltekster';
 import validerFullLonnIArbeidsgiverPerioden from '../validators/validerFullLonnIArbeidsgiverPerioden';
 import { LonnIArbeidsgiverperioden, LonnISykefravaeret } from '../state/state';
-import { ZodSafeParseSuccess } from 'zod';
 
 export function byggIngenEndringFeil(): ErrorResponse[] {
   return [
@@ -37,20 +36,30 @@ export function mapValidationErrors(feil: BackendValidationError, errors: ErrorR
   return errors;
 }
 
-type minimalValiderteData = ZodSafeParseSuccess<{
-  inntekt?: { beloep?: number } | null;
-  agp: { redusertLoennIAgp?: { beloep?: number } | null };
-}>;
+export type MinimalData = {
+  inntekt?: { beloep?: number | null } | null;
+  agp?: { redusertLoennIAgp?: { beloep?: number | null } | null };
+};
 
-export function checkCommonValidations<T extends minimalValiderteData>(
+export type SafeParseMinimal<D extends MinimalData = MinimalData> =
+  | { success: true; data: D }
+  | { success: false; error: any };
+
+interface FeltFeil {
+  text: string;
+  felt: string;
+}
+
+export function checkCommonValidations<D extends MinimalData, R extends SafeParseMinimal<D>>(
   fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined,
   harForespurtArbeidsgiverperiode: boolean,
   lonnISykefravaeret: LonnISykefravaeret | undefined,
   harRefusjonEndringer: string | undefined,
   opplysningerBekreftet: boolean,
-  validerteData: T
-) {
-  const errors = [];
+  validerteData: R
+): FeltFeil[] {
+  const errors: FeltFeil[] = [];
+
   if (!fullLonnIArbeidsgiverPerioden?.status && harForespurtArbeidsgiverperiode) {
     errors.push({
       text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN,
@@ -81,7 +90,7 @@ export function checkCommonValidations<T extends minimalValiderteData>(
     });
   }
 
-  if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
+  if (lonnISykefravaeret?.status === 'Ja' && harRefusjonEndringer === undefined) {
     errors.push({
       text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
       felt: 'refusjon.endringer'

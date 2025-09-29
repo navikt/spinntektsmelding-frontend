@@ -71,7 +71,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         validerteData
       )
     );
-
     return errors;
   };
 
