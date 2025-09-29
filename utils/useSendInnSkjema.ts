@@ -12,7 +12,13 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import forespoerselType from '../config/forespoerselType';
 import { postInnsending } from './postInnsending';
-import { byggIngenEndringFeil, checkCommonValidations, mapValidationErrors } from './sendInnCommon';
+import {
+  byggIngenEndringFeil,
+  checkCommonValidations,
+  mapValidationErrors,
+  MinimalData,
+  SafeParseMinimal
+} from './sendInnCommon';
 import { ValiderTekster } from './validerInntektsmelding';
 
 export default function useSendInnSkjema(
@@ -102,7 +108,7 @@ export default function useSendInnSkjema(
       lonnISykefravaeret,
       harRefusjonEndringer,
       opplysningerBekreftet,
-      validerteData
+      validerteData as SafeParseMinimal<MinimalData>
     );
 
     fyllFeilmeldinger(errors);
