@@ -9,7 +9,13 @@ import useFyllAapenInnsending from '../state/useFyllAapenInnsending';
 import { SkjemaStatus } from '../state/useSkjemadataStore';
 import isValidUUID from './isValidUUID';
 import { postInnsending } from './postInnsending';
-import { byggIngenEndringFeil, checkCommonValidations, mapValidationErrors } from './sendInnCommon';
+import {
+  byggIngenEndringFeil,
+  checkCommonValidations,
+  mapValidationErrors,
+  MinimalData,
+  SafeParseMinimal
+} from './sendInnCommon';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -68,7 +74,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         lonnISykefravaeret,
         harRefusjonEndringer,
         opplysningerBekreftet,
-        validerteData
+        validerteData as SafeParseMinimal<MinimalData>
       )
     );
     return errors;
