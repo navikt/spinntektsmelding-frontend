@@ -28,7 +28,7 @@ async function loadDecorator(): Promise<DecoratorBundle> {
   try {
     const mod = await import('@navikt/nav-dekoratoren-moduler/ssr');
     const env = process.env.NAIS_CLUSTER_NAME === 'prod-gcp' ? 'prod' : 'dev';
-    // Bruker bestemt env (unngår mod.serverRuntimeConfig for stabilitet)
+    // Uses specific env (avoids mod.serverRuntimeConfig for stability)
     const bundle = await mod.fetchDecoratorReact({
       env,
       params: {
