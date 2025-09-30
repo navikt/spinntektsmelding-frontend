@@ -7,12 +7,14 @@ type DecoratorBundle = {
   Header: React.ComponentType<any>;
   Footer: React.ComponentType<any>;
   Scripts: React.ComponentType<any>;
+  HeadAssets: React.ComponentType<any>;
 };
 
 const DisabledDecorator: DecoratorBundle = {
   Header: () => null,
   Footer: () => null,
-  Scripts: () => null
+  Scripts: () => null,
+  HeadAssets: () => null
 };
 
 const DECORATOR_DISABLED =
@@ -38,7 +40,8 @@ async function loadDecorator(): Promise<DecoratorBundle> {
     cachedDecorator = {
       Header: bundle.Header,
       Footer: bundle.Footer,
-      Scripts: bundle.Scripts
+      Scripts: bundle.Scripts,
+      HeadAssets: bundle.HeadAssets
     };
     return cachedDecorator;
   } catch {
@@ -53,7 +56,7 @@ interface CustomDocumentProps extends DocumentInitialProps {
 function CustomDocument(props: CustomDocumentProps) {
   const { publicRuntimeConfig } = getConfig();
   const { decorator } = props;
-  const { Header, Footer, Scripts } = decorator;
+  const { Header, Footer, Scripts, HeadAssets } = decorator;
 
   return (
     <Html lang='no'>
@@ -66,6 +69,7 @@ function CustomDocument(props: CustomDocumentProps) {
           data-website-id={publicRuntimeConfig.umamiWebsiteId}
           data-domains={publicRuntimeConfig.umamiDataDomains}
         />
+        <HeadAssets />
       </Head>
       <body id='body'>
         <div suppressHydrationWarning>
