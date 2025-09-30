@@ -90,7 +90,7 @@ function CustomDocument(props: CustomDocumentProps) {
   );
 }
 
-// Henter initial props (Next krever fortsatt å bruke Document.getInitialProps)
+// Fetch initial props (Next still requires using Document.getInitialProps)
 CustomDocument.getInitialProps = async (ctx: DocumentContext): Promise<CustomDocumentProps> => {
   const initial = await Document.getInitialProps(ctx);
   const decorator = await loadDecorator();
