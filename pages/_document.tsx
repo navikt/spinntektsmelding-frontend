@@ -4,10 +4,10 @@ import Script from 'next/script';
 import React from 'react';
 
 type DecoratorBundle = {
-  Header: React.ComponentType<any>;
-  Footer: React.ComponentType<any>;
-  Scripts: React.ComponentType<any>;
-  HeadAssets: React.ComponentType<any>;
+  Header: React.ComponentType<{}>;
+  Footer: React.ComponentType<{}>;
+  Scripts: React.ComponentType<{}>;
+  HeadAssets: React.ComponentType<{}>;
 };
 
 const DisabledDecorator: DecoratorBundle = {
