@@ -78,9 +78,7 @@ export function checkCommonValidations<D extends MinimalData, R extends SafePars
       };
     });
 
-    for (const el of mapValErrors) {
-      errors.push(el);
-    }
+    errors.push(...mapValErrors);
   }
 
   if (!lonnISykefravaeret?.status) {
@@ -90,7 +88,7 @@ export function checkCommonValidations<D extends MinimalData, R extends SafePars
     });
   }
 
-  if (lonnISykefravaeret?.status === 'Ja' && harRefusjonEndringer === undefined) {
+  if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
     errors.push({
       text: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
       felt: 'refusjon.endringer'
