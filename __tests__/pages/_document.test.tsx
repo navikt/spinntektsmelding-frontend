@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
+import { loadDecorator } from '../../pages/_document';
 
 // Mock next/config først
 vi.mock('next/config', () => ({
@@ -27,6 +28,16 @@ vi.mock('next/document', () => ({
   Main: () => React.createElement('div', { id: '__next' }),
   NextScript: () => React.createElement('script', { id: '__next-script' })
 }));
+
+function mockDecoratorModule(shouldThrow = false) {
+  vi.doMock('@navikt/nav-dekoratoren-moduler/ssr', () => ({
+    __esModule: true,
+    fetchDecoratorReact: fetchDecoratorMock.mockImplementation(async () => {
+      if (shouldThrow) throw new Error('Import-feil');
+      return mockDecoratorComponents;
+    })
+  }));
+}
 
 // Mock next/script
 vi.mock('next/script', () => ({
@@ -61,6 +72,10 @@ afterEach(() => {
 });
 
 describe('_document.tsx (unit tests)', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    mockDecoratorModule(false);
+  });
   it('har riktige env-flagg for å deaktivere dekoratør', () => {
     // Test env-logikken direkte
     process.env.DISABLE_DECORATOR = 'true';
@@ -100,5 +115,58 @@ describe('_document.tsx (unit tests)', () => {
       // Disabled decorator returnerer null-komponenter
       expect(React.isValidElement(React.createElement(result.Header))).toBe(true);
     }
+  });
+
+  it('loadDecorator returnerer disabled når DISABLE_DECORATOR=true', async () => {
+    process.env.DISABLE_DECORATOR = 'true';
+
+    const result = await loadDecorator();
+
+    expect(result.Header).toBeDefined();
+    expect(result.Footer).toBeDefined();
+    expect(result.Scripts).toBeDefined();
+    expect(result.HeadAssets).toBeDefined();
+
+    // Disabled decorator returnerer null-komponenter
+    const headerElement = React.createElement(result.Header);
+    expect(React.isValidElement(headerElement)).toBe(true);
+  });
+
+  it('loadDecorator bruker cache på påfølgende kall', async () => {
+    delete process.env.DISABLE_DECORATOR;
+    delete process.env.NODE_ENV;
+    delete process.env.PLAYWRIGHT;
+
+    // Reset modules så vi kan re-mock
+    vi.resetModules();
+    mockDecoratorModule(false);
+
+    // Re-import for å få fresh module med nye mocks
+    const { loadDecorator } = await import('../../pages/_document');
+
+    const first = await loadDecorator();
+    const second = await loadDecorator();
+
+    expect(first).toBe(second); // Same reference (cached)
+    expect(fetchDecoratorMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('loadDecorator håndterer feil gracefully', async () => {
+    delete process.env.DISABLE_DECORATOR;
+    delete process.env.NODE_ENV;
+    delete process.env.PLAYWRIGHT;
+
+    vi.resetModules();
+    mockDecoratorModule(true); // shouldThrow = true
+
+    const { loadDecorator } = await import('../../pages/_document');
+
+    const result = await loadDecorator();
+
+    expect(fetchDecoratorMock).toHaveBeenCalledTimes(1);
+    expect(result.Header).toBeDefined();
+    // Fallback til disabled når feil oppstår
+    const headerElement = React.createElement(result.Header);
+    expect(React.isValidElement(headerElement)).toBe(true);
   });
 });

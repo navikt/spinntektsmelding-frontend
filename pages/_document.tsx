@@ -22,7 +22,7 @@ const DECORATOR_DISABLED =
 
 let cachedDecorator: DecoratorBundle | null = null;
 
-async function loadDecorator(): Promise<DecoratorBundle> {
+export async function loadDecorator(): Promise<DecoratorBundle> {
   if (DECORATOR_DISABLED) return DisabledDecorator;
   if (cachedDecorator) return cachedDecorator;
   try {
