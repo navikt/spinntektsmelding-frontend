@@ -93,7 +93,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
 
     await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Nei');
     await formPage.clickButton('Send');
-    await formPage.assertVisibleTextAtLeastOnce('Beløp utbetalt i arbeidsgiverperioden må fylles ut');
+    await formPage.assertVisibleTextAtLeastOnce('Beløp utbetalt i arbeidsgiverperioden må fylles ut.');
     await formPage.assertVisibleTextAtLeastOnce(
       'Begrunnelse for redusert utbetaling i arbeidsgiverperioden må fylles ut'
     );
@@ -110,7 +110,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     );
     await formPage.clickButton('Send');
     await formPage.assertVisibleTextAtLeastOnce(
-      'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.'
+      'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.'
     );
 
     await formPage.fillInput('Utbetalt under arbeidsgiverperiode', '50000');

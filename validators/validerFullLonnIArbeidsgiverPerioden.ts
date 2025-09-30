@@ -28,7 +28,7 @@ export default function validerFullLonnIArbeidsgiverPerioden(lonn: LonnIArbeidsg
     feilkoder.push({
       felt: 'agp.redusertLoennIAgp.beloep',
       code: FullLonnIArbeidsgiverPerioden.MANGLER_BEGRUNNELSE_LONN_I_ARBEIDSGIVERPERIODEN,
-      text: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut'
+      text: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.'
     });
   }
   return feilkoder;

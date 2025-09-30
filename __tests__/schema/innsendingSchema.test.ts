@@ -679,7 +679,7 @@ describe('InnsendingSchema', () => {
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
       code: 'custom',
-      error: 'Refusjon kan ikke være høyere enn inntekt.',
+      error: 'Refusjon kan ikke være høyere enn beregnet månedslønn.',
       input: '',
       path: ['refusjon', 'endringer', 1, 'beloep']
     });
@@ -814,7 +814,7 @@ describe('InnsendingSchema', () => {
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
       code: 'custom',
-      error: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+      error: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
       input: '',
       path: ['agp', 'redusertLoennIAgp', 'beloep']
     });
@@ -1352,6 +1352,124 @@ describe('InnsendingSchema', () => {
         expected: 'string',
         message: 'Vennligst fyll inn til dato',
         path: ['refusjon', 'sluttdato']
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema with error when agp is short n redusertloennIAGP is missing', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
+        egenmeldinger: [],
+        redusertLoennIAgp: {}
+      },
+      inntekt: {
+        beloep: 50000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: { beloepPerMaaned: 50000, endringer: [], sluttdato: '2023-03-31' },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const result = InnsendingSchema.safeParse(data);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'number',
+        message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
+        path: ['agp', 'redusertLoennIAgp', 'beloep']
+      },
+      {
+        code: 'invalid_value',
+        message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
+        path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
+        values: [
+          'ArbeidOpphoert',
+          'BeskjedGittForSent',
+          'BetvilerArbeidsufoerhet',
+          'FerieEllerAvspasering',
+          'FiskerMedHyre',
+          'FravaerUtenGyldigGrunn',
+          'IkkeFravaer',
+          'IkkeFullStillingsandel',
+          'IkkeLoenn',
+          'LovligFravaer',
+          'ManglerOpptjening',
+          'Permittering',
+          'Saerregler',
+          'StreikEllerLockout',
+          'TidligereVirksomhet'
+        ]
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema with error when agp is short and redusertloennIAGP is missing', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-02-24' }],
+        egenmeldinger: [],
+        redusertLoennIAgp: {}
+      },
+      inntekt: {
+        beloep: 50000,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: { beloepPerMaaned: 50000, endringer: [], sluttdato: '2023-03-31' },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ]
+    };
+
+    const result = InnsendingSchema.safeParse(data);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'number',
+        message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
+        path: ['agp', 'redusertLoennIAgp', 'beloep']
+      },
+      {
+        code: 'invalid_value',
+        message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
+        path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
+        values: [
+          'ArbeidOpphoert',
+          'BeskjedGittForSent',
+          'BetvilerArbeidsufoerhet',
+          'FerieEllerAvspasering',
+          'FiskerMedHyre',
+          'FravaerUtenGyldigGrunn',
+          'IkkeFravaer',
+          'IkkeFullStillingsandel',
+          'IkkeLoenn',
+          'LovligFravaer',
+          'ManglerOpptjening',
+          'Permittering',
+          'Saerregler',
+          'StreikEllerLockout',
+          'TidligereVirksomhet'
+        ]
       }
     ]);
   });

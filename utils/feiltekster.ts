@@ -60,7 +60,7 @@ const feiltekster = {
   UGYLDIG_TELEFON: 'Telefonnummer er ugyldig. Et telefonnummer består av 8-siffer',
   TELEFON_MANGLER: 'Telefonnummer mangler',
   PERIODE_OVERLAPPER: 'Arbeidsgiverperiodene kan ikke overlappe',
-  INNTEKT_UNDER_REFUSJON: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+  INNTEKT_UNDER_REFUSJON: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
   ENDRING_DATO_ETTER_SLUTTDATO: 'Dato er etter siste dag det kreves refusjon for'
 };
 

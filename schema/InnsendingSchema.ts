@@ -158,7 +158,7 @@ export const InnsendingSchema = z.object({
       ) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Angi beløp utbetalt arbeidsgiverperioden.',
+          error: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
           path: ['redusertLoennIAgp', 'beloep'],
           input: ''
         });
@@ -193,7 +193,7 @@ export const InnsendingSchema = z.object({
 
         ctx.issues.push({
           code: 'custom',
-          error: 'Angi beløp utbetalt arbeidsgiverperioden.',
+          error: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
           path: ['redusertLoennIAgp', 'beloep'],
           input: ''
         });
@@ -266,7 +266,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
   if ((val.inntekt?.beloep ?? 0) < (val.agp?.redusertLoennIAgp?.beloep ?? 0)) {
     ctx.issues.push({
       code: 'custom',
-      error: 'Inntekten kan ikke være lavere enn utbetalingen under arbeidsgiverperioden.',
+      error: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
       path: ['agp', 'redusertLoennIAgp', 'beloep'],
       input: ''
     });
@@ -287,7 +287,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
       if (endring.beloep > (val.inntekt?.beloep ?? endring.beloep)) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Refusjon kan ikke være høyere enn inntekt.',
+          error: 'Refusjon kan ikke være høyere enn beregnet månedslønn.',
           path: ['refusjon', 'endringer', index, 'beloep'],
           input: ''
         });
