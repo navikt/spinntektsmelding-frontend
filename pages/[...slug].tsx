@@ -49,6 +49,7 @@ import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
 import Feilmelding from '../components/Feilmelding';
+import { SelvbestemtTypeConst } from '../schema/konstanter/selvbestemtType';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -85,7 +86,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     forespurtData,
     behandlingsdager,
     endringerAvRefusjon,
-    selvbestemtType
+    selvbestemtType,
+    visFeilmeldingTekst,
+    visFeilmelding
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -98,10 +101,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.forespurtData,
     state.behandlingsdager,
     state.endringerAvRefusjon,
-    state.selvbestemtType
+    state.selvbestemtType,
+    state.visFeilmeldingTekst,
+    state.visFeilmelding
   ]);
-  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
-  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
   const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
@@ -120,16 +123,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
 
-  const pathSlug = slug;
-
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.saksoversiktUrl;
   };
 
-  const selvbestemtInnsending =
-    pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
+  const selvbestemtInnsending = slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
 
-  const behandlingsdagerInnsending = pathSlug === 'behandlingsdager' || selvbestemtType === 'Behandlingsdager';
+  const behandlingsdagerInnsending =
+    slug === 'behandlingsdager' || selvbestemtType === SelvbestemtTypeConst.Behandlingsdager;
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
@@ -151,30 +152,25 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const {
     register,
-    setValue,
     control,
     handleSubmit,
     formState: { errors, isDirty, dirtyFields }
   } = methods;
 
   useEffect(() => {
-    if (naturalytelser !== undefined) {
-      setValue('inntekt.harBortfallAvNaturalytelser', naturalytelser.length !== 0);
-      setValue('inntekt.naturalytelser', naturalytelser);
+    if (avsender.tlf !== undefined || naturalytelser !== undefined || bruttoinntekt.bruttoInntekt !== undefined) {
+      methods.reset({
+        inntekt: {
+          beloep: bruttoinntekt.bruttoInntekt,
+          endringAarsaker: harEndringAarsak(bruttoinntekt.endringAarsaker) ? bruttoinntekt.endringAarsaker : [],
+          naturalytelser: naturalytelser ?? [],
+          harBortfallAvNaturalytelser: (naturalytelser?.length ?? 0) > 0
+        },
+        avsenderTlf: avsender.tlf,
+        bekreft_opplysninger: false
+      });
     }
-  }, [naturalytelser, setValue]);
-
-  useEffect(() => {
-    if (bruttoinntekt.bruttoInntekt !== undefined) {
-      setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
-    }
-  }, [bruttoinntekt.bruttoInntekt, setValue]);
-
-  useEffect(() => {
-    if (harEndringAarsak(bruttoinntekt.endringAarsaker)) {
-      setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
-    }
-  }, [bruttoinntekt.endringAarsaker, setValue]);
+  }, [avsender.tlf, naturalytelser, bruttoinntekt.bruttoInntekt, bruttoinntekt.endringAarsaker, methods]);
 
   const inntektBeloep = useWatch({
     control: control,
@@ -187,25 +183,15 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep, endringerAvRefusjon]);
 
-  useEffect(() => {
-    if (avsender.tlf !== undefined) {
-      setValue('avsenderTlf', avsender.tlf);
-    }
-  }, [avsender.tlf, setValue]);
-
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
 
-    if (pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      sendInnArbeidsgiverInitiertSkjema(
-        true,
-        pathSlug,
-        isDirtyForm || isDirty,
-        formData,
-        begrensetForespoersel
-      ).finally(() => {
-        setSenderInn(false);
-      });
+    if (selvbestemtInnsending) {
+      sendInnArbeidsgiverInitiertSkjema(true, slug, isDirtyForm || isDirty, formData, begrensetForespoersel).finally(
+        () => {
+          setSenderInn(false);
+        }
+      );
 
       return;
     }
@@ -223,7 +209,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sendInnSkjema(
       true,
       opplysningstyper,
-      pathSlug,
+      slug,
       isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
       formData,
       begrensetForespoersel
@@ -270,19 +256,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
       return;
     }
-    if (!isValidUUID(pathSlug)) {
+    if (!isValidUUID(slug)) {
       return;
     }
     if (!sykmeldingsperioder) {
       setLasterData(true);
-      hentSkjemadata(pathSlug, erEndring)?.finally(() => {
+      hentSkjemadata(slug, erEndring)?.finally(() => {
         setLasterData(false);
       });
     } else if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-      if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(pathSlug)) {
+      if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(slug)) {
         setHentInntektEnGang(false);
 
-        fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
+        fetchInntektsdata(environment.inntektsdataUrl, slug, inntektsdato)
           .then((inntektSisteTreMnd) => {
             const tidligereInntekt = new Map<string, number>(inntektSisteTreMnd.data.historikk);
 
@@ -298,7 +284,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug, skjemastatus, inntektsdato, sykmeldingsperioder]);
+  }, [slug, skjemastatus, inntektsdato, sykmeldingsperioder]);
 
   const { data, error } = useTidligereInntektsdata(
     sykmeldt.fnr!,
@@ -340,10 +326,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
               </>
             )}
             {behandlingsdagerInnsending && (
-              <>
-                <Behandlingsdager behandlingsdager={behandlingsdager} arbeidsgiverperioder={arbeidsgiverperioder} />
-                {/* <Skillelinje /> */}
-              </>
+              <Behandlingsdager behandlingsdager={behandlingsdager} arbeidsgiverperioder={arbeidsgiverperioder} />
             )}
             {skalViseArbeidsgiverperiode && !behandlingsdagerInnsending && (
               <Arbeidsgiverperiode
