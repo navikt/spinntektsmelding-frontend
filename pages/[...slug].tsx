@@ -85,7 +85,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     forespurtData,
     behandlingsdager,
     endringerAvRefusjon,
-    selvbestemtType
+    selvbestemtType,
+    visFeilmeldingTekst,
+    visFeilmelding
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -98,10 +100,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.forespurtData,
     state.behandlingsdager,
     state.endringerAvRefusjon,
-    state.selvbestemtType
+    state.selvbestemtType,
+    state.visFeilmeldingTekst,
+    state.visFeilmelding
   ]);
-  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
-  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
   const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
@@ -176,6 +178,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   }, [bruttoinntekt.endringAarsaker, setValue]);
 
+  useEffect(() => {
+    if (avsender.tlf !== undefined) {
+      setValue('avsenderTlf', avsender.tlf);
+    }
+  }, [avsender.tlf, setValue]);
+
   const inntektBeloep = useWatch({
     control: control,
     name: 'inntekt.beloep'
@@ -186,12 +194,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
     }
   }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep, endringerAvRefusjon]);
-
-  useEffect(() => {
-    if (avsender.tlf !== undefined) {
-      setValue('avsenderTlf', avsender.tlf);
-    }
-  }, [avsender.tlf, setValue]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
