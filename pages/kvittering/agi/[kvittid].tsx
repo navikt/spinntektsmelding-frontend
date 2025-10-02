@@ -30,7 +30,7 @@ import formatDate from '../../../utils/formatDate';
 import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
-import { isBefore, isEqual, isValid } from 'date-fns';
+import { isEqual, isValid } from 'date-fns';
 import { LonnISykefravaeret, Periode } from '../../../state/state';
 
 import isValidUUID from '../../../utils/isValidUUID';
@@ -50,7 +50,9 @@ import { z } from 'zod';
 import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import { EndringAarsak } from '../../../validators/validerAapenInnsending';
 import { EndringsBeloep } from '../../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import maserEndringAarsaker from '../../../utils/maserEndringAarsaker';
+import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
+import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
+import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 
 type PersonData = {
   navn: string;
@@ -81,8 +83,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setBehandlingsdager = useBoundStore((state) => state.setBehandlingsdager);
 
   const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
-
-  const kvitteringSlug = kvittid ?? searchParams.get('kvittid');
 
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
 
@@ -126,8 +126,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       setBehandlingsdager(input.agp.perioder.map((periode: MottattPeriode) => periode.fom));
     }
 
-    if (isValidUUID(kvitteringSlug)) {
-      router.push(`/${kvitteringSlug}`);
+    if (isValidUUID(kvittid)) {
+      router.push(`/${kvittid}`);
     }
   };
 
@@ -231,10 +231,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   let refusjonEndringer: EndringsBeloep[] = [];
   if (dataFraBackend) {
-    refusjonEndringer = kvitteringDokument?.refusjon?.endringer?.map((endring) => ({
-      dato: parseIsoDate(endring.startdato),
-      beloep: endring.beloep
-    }));
+    refusjonEndringer = kvitteringDokument?.refusjon?.endringer?.map(
+      (endring: z.infer<typeof RefusjonEndringSchema>) => ({
+        dato: parseIsoDate(endring.startdato),
+        beloep: endring.beloep
+      })
+    );
   } else {
     refusjonEndringer = kvitteringData?.refusjon?.endringer
       ? kvitteringData?.refusjon?.endringer.map((endring) => ({
@@ -257,8 +259,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       dato: parseIsoDate(kvittering.refusjon?.sluttdato)
     });
   }
-
-  let refusjonEndringerUtenSkjaeringstidspunkt = [];
+  const innsendtRefusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
+  let refusjonEndringerUtenSkjaeringstidspunkt: EndringsBeloep[] | undefined = [];
   if (dataFraBackend) {
     refusjonEndringerUtenSkjaeringstidspunkt = refusjonEndringer?.filter((endring) => {
       return (
@@ -269,27 +271,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       );
     });
   } else {
-    refusjonEndringerUtenSkjaeringstidspunkt =
-      gammeltSkjaeringstidspunkt && refusjonEndringer
-        ? refusjonEndringer
-            ?.filter((endring) => {
-              if (!endring.dato) return false;
-              return !isBefore(endring.dato, gammeltSkjaeringstidspunkt);
-            })
-            .map((endring) => {
-              return {
-                beloep: endring.beloep ?? endring.beloep,
-                dato: endring.dato
-              };
-            })
-        : refusjonEndringer;
+    refusjonEndringerUtenSkjaeringstidspunkt = innsendtRefusjonEndringerUtenSkjaeringstidspunkt;
   }
 
-  const endringAarsak = dataFraBackend
-    ? kvitteringDokument.inntekt.endringAarsak
-    : kvitteringData?.inntekt?.endringAarsak;
-
-  const endringAarsaker = dataFraBackend
+  const visningEndringAarsaker = dataFraBackend
     ? kvitteringDokument.inntekt.endringAarsaker
     : (kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringAarsaker);
 
@@ -302,7 +287,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const visningEndringAarsaker = maserEndringAarsaker(endringAarsak, endringAarsaker);
 
   return (
     <div className={styles.container}>
@@ -359,7 +343,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                       </BodyLong>
                     )}
                     {ingenArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
-                    {arbeidsgiverperioder?.map((periode) => (
+                    {arbeidsgiverperioder?.map((periode: z.infer<typeof PeriodeSchema>) => (
                       <PeriodeFraTil
                         fom={parseIsoDate(periode.fom)}
                         tom={parseIsoDate(periode.tom)}
