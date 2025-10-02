@@ -49,6 +49,7 @@ import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
 import Feilmelding from '../components/Feilmelding';
+import { SelvbestemtTypeConst } from '../schema/konstanter/selvbestemtType';
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -122,16 +123,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
 
-  const pathSlug = slug;
-
   const lukkHentingFeiletModal = () => {
     window.location.href = environment.saksoversiktUrl;
   };
 
-  const selvbestemtInnsending =
-    pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
+  const selvbestemtInnsending = slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
 
-  const behandlingsdagerInnsending = pathSlug === 'behandlingsdager' || selvbestemtType === 'Behandlingsdager';
+  const behandlingsdagerInnsending =
+    slug === 'behandlingsdager' || selvbestemtType === SelvbestemtTypeConst.Behandlingsdager;
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
@@ -198,16 +197,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
 
-    if (pathSlug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      sendInnArbeidsgiverInitiertSkjema(
-        true,
-        pathSlug,
-        isDirtyForm || isDirty,
-        formData,
-        begrensetForespoersel
-      ).finally(() => {
-        setSenderInn(false);
-      });
+    if (selvbestemtInnsending) {
+      sendInnArbeidsgiverInitiertSkjema(true, slug, isDirtyForm || isDirty, formData, begrensetForespoersel).finally(
+        () => {
+          setSenderInn(false);
+        }
+      );
 
       return;
     }
@@ -225,7 +220,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sendInnSkjema(
       true,
       opplysningstyper,
-      pathSlug,
+      slug,
       isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
       formData,
       begrensetForespoersel
@@ -272,19 +267,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
       return;
     }
-    if (!isValidUUID(pathSlug)) {
+    if (!isValidUUID(slug)) {
       return;
     }
     if (!sykmeldingsperioder) {
       setLasterData(true);
-      hentSkjemadata(pathSlug, erEndring)?.finally(() => {
+      hentSkjemadata(slug, erEndring)?.finally(() => {
         setLasterData(false);
       });
     } else if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-      if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(pathSlug)) {
+      if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(slug)) {
         setHentInntektEnGang(false);
 
-        fetchInntektsdata(environment.inntektsdataUrl, pathSlug, inntektsdato)
+        fetchInntektsdata(environment.inntektsdataUrl, slug, inntektsdato)
           .then((inntektSisteTreMnd) => {
             const tidligereInntekt = new Map<string, number>(inntektSisteTreMnd.data.historikk);
 
@@ -300,7 +295,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathSlug, skjemastatus, inntektsdato, sykmeldingsperioder]);
+  }, [slug, skjemastatus, inntektsdato, sykmeldingsperioder]);
 
   const { data, error } = useTidligereInntektsdata(
     sykmeldt.fnr!,
