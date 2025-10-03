@@ -14,7 +14,7 @@ import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
 import PeriodeFraTil from '../../components/PeriodeFraTil/PeriodeFraTil';
 import formatCurrency from '../../utils/formatCurrency';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import BortfallNaturalytelser from '../../components/BortfallNaturalytelser/BortfallNaturalytelser';
 import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
