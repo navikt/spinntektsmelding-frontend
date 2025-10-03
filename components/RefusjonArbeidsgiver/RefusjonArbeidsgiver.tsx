@@ -12,6 +12,8 @@ import { addDays } from 'date-fns';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
+import { useCallback, useMemo } from 'react';
+import { YesNo } from '../../state/state';
 
 interface RefusjonArbeidsgiverProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -68,12 +70,6 @@ export default function RefusjonArbeidsgiver({
       ? [...arbeidsgiverperioder].sort(sorterFomStigende)
       : arbeidsgiverperioder;
 
-  const addIsDirtyForm = (fn: (param: any) => void) => {
-    return (param: any) => {
-      setIsDirtyForm(true);
-      fn(param);
-    };
-  };
   const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
 
@@ -83,10 +79,74 @@ export default function RefusjonArbeidsgiver({
 
   const betalerArbeidsgiverEtterAgpLegend = 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?';
 
-  const betalerArbeidsgiverFullLonnLegend =
-    arbeidsgiverperiodeKort && !behandlingsdager
-      ? 'Betaler arbeidsgiver ut full lønn de første 16 dagene?'
-      : 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?';
+  const betalerArbeidsgiverFullLonnLegend = useMemo(
+    () =>
+      arbeidsgiverperiodeKort && !behandlingsdager
+        ? 'Betaler arbeidsgiver ut full lønn de første 16 dagene?'
+        : 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?',
+    [arbeidsgiverperiodeKort, behandlingsdager]
+  );
+
+  // Stable callbacks - lages kun én gang eller når dependencies endres
+  const handleArbeidsgiverBetalerFullLonn = useCallback(
+    (status: YesNo) => {
+      setIsDirtyForm(true);
+      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(status);
+    },
+    [setIsDirtyForm, arbeidsgiverBetalerFullLonnIArbeidsgiverperioden]
+  );
+
+  const handleBeloepUtbetaltChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setIsDirtyForm(true);
+      setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value);
+    },
+    [setIsDirtyForm, setBeloepUtbetaltUnderArbeidsgiverperioden]
+  );
+
+  const handleBegrunnelseChange = useCallback(
+    (begrunnelse: string) => {
+      setIsDirtyForm(true);
+      begrunnelseRedusertUtbetaling(begrunnelse);
+    },
+    [setIsDirtyForm, begrunnelseRedusertUtbetaling]
+  );
+
+  const handleRefusjonStatusChange = useCallback(
+    (status: YesNo) => {
+      setIsDirtyForm(true);
+      arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt);
+    },
+    [setIsDirtyForm, arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret, inntekt]
+  );
+
+  const handleBelopUpdate = useCallback(
+    (belop: string) => {
+      setIsDirtyForm(true);
+      beloepArbeidsgiverBetalerISykefravaeret(belop);
+    },
+    [setIsDirtyForm, beloepArbeidsgiverBetalerISykefravaeret]
+  );
+
+  const handleHarRefusjonEndringer = useCallback(
+    (harEndringer: YesNo) => {
+      setIsDirtyForm(true);
+      setHarRefusjonEndringer(harEndringer);
+    },
+    [setIsDirtyForm, setHarRefusjonEndringer]
+  );
+
+  const handleOppdaterRefusjonEndringer = useCallback(
+    (endringer: any) => {
+      setIsDirtyForm(true);
+      oppdaterRefusjonEndringer(endringer);
+    },
+    [setIsDirtyForm, oppdaterRefusjonEndringer]
+  );
+
+  const handleEditerbarChange = useCallback(() => {
+    setEndringerAvRefusjon('Ja');
+  }, [setEndringerAvRefusjon]);
 
   return (
     <>
@@ -99,7 +159,7 @@ export default function RefusjonArbeidsgiver({
               className={localStyles.radiobuttonWrapper}
               id={'lia-radio'}
               error={visFeilmeldingTekst('lia-radio')}
-              onChange={addIsDirtyForm(arbeidsgiverBetalerFullLonnIArbeidsgiverperioden)}
+              onChange={handleArbeidsgiverBetalerFullLonn}
               value={fullLonnIArbeidsgiverPerioden?.status ?? null}
               disabled={arbeidsgiverperiodeDisabled || (arbeidsgiverperiodeKort && !behandlingsdager)}
             >
@@ -118,9 +178,7 @@ export default function RefusjonArbeidsgiver({
                       <TextField
                         className={localStyles.refusjonBeloep}
                         label='Utbetalt under arbeidsgiverperiode'
-                        onChange={addIsDirtyForm((event) =>
-                          setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value)
-                        )}
+                        onChange={handleBeloepUtbetaltChange}
                         id={ensureValidHtmlId('agp.redusertLoennIAgp.beloep')}
                         error={visFeilmeldingTekst('agp.redusertLoennIAgp.beloep')}
                         defaultValue={
@@ -130,7 +188,7 @@ export default function RefusjonArbeidsgiver({
                         }
                       />
                       <SelectBegrunnelse
-                        onChangeBegrunnelse={addIsDirtyForm(begrunnelseRedusertUtbetaling)}
+                        onChangeBegrunnelse={handleBegrunnelseChange}
                         defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
                         error={visFeilmeldingTekst('agp.redusertLoennIAgp.begrunnelse')}
                       />
@@ -148,10 +206,7 @@ export default function RefusjonArbeidsgiver({
           className={localStyles.radiobuttonInnerWrapper}
           id={'lus-radio'}
           error={visFeilmeldingTekst('lus-radio')}
-          onChange={(status) => {
-            setIsDirtyForm(true);
-            arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt);
-          }}
+          onChange={handleRefusjonStatusChange}
           defaultValue={lonnISykefravaeret?.status}
         >
           <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>
@@ -171,18 +226,18 @@ export default function RefusjonArbeidsgiver({
           <>
             <RefusjonArbeidsgiverBelop
               bruttoinntekt={lonnISykefravaeret.beloep || 0}
-              onOppdaterBelop={addIsDirtyForm(beloepArbeidsgiverBetalerISykefravaeret)}
+              onOppdaterBelop={handleBelopUpdate}
               visFeilmeldingTekst={visFeilmeldingTekst}
               arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
-              onEditerbarChange={() => setEndringerAvRefusjon('Ja')}
+              onEditerbarChange={handleEditerbarChange}
             />
 
             <RefusjonUtbetalingEndring
               endringer={refusjonEndringer || []}
               // maxDate={refusjonskravetOpphoerer?.opphoersdato}
               minDate={foersteMuligeRefusjonOpphoer}
-              onHarEndringer={addIsDirtyForm(setHarRefusjonEndringer)}
-              onOppdaterEndringer={addIsDirtyForm(oppdaterRefusjonEndringer)}
+              onHarEndringer={handleHarRefusjonEndringer}
+              onOppdaterEndringer={handleOppdaterRefusjonEndringer}
               harRefusjonEndringer={harRefusjonEndringer}
               harRefusjonEndringerDefault={harRefusjonEndringer}
             />
