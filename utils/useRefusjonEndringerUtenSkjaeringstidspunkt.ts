@@ -14,7 +14,7 @@ const useRefusjonEndringerUtenSkjaeringstidspunkt = (): EndringsBeloep[] | undef
         })
         .map((endring) => {
           return {
-            beloep: endring.beloep ?? endring.beloep,
+            beloep: endring.beloep,
             dato: endring.dato
           };
         })
