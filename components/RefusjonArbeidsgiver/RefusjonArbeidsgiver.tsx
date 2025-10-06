@@ -6,7 +6,7 @@ import SelectBegrunnelse from './SelectBegrunnelse';
 import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import formatCurrency from '../../utils/formatCurrency';
-import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
+import RefusjonUtbetalingEndring, { EndringsBeloep } from './RefusjonUtbetalingEndring';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { addDays } from 'date-fns';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
@@ -137,7 +137,7 @@ export default function RefusjonArbeidsgiver({
   );
 
   const handleOppdaterRefusjonEndringer = useCallback(
-    (endringer: any) => {
+    (endringer: Array<EndringsBeloep>) => {
       setIsDirtyForm(true);
       oppdaterRefusjonEndringer(endringer);
     },
