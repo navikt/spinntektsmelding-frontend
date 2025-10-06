@@ -14,7 +14,7 @@ import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
 import PeriodeFraTil from '../../components/PeriodeFraTil/PeriodeFraTil';
 import formatCurrency from '../../utils/formatCurrency';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import BortfallNaturalytelser from '../../components/BortfallNaturalytelser/BortfallNaturalytelser';
 import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
@@ -30,7 +30,7 @@ import { Fragment, useEffect } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
-import { isBefore, isValid } from 'date-fns';
+import { isValid } from 'date-fns';
 import env from '../../config/environment';
 import { Periode } from '../../state/state';
 import forespoerselType from '../../config/forespoerselType';
@@ -43,12 +43,12 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import PersonVisning from '../../components/Person/PersonVisning';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
+import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const hentKvitteringsdata = useHentKvitteringsdata();
 
@@ -62,36 +62,21 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
-  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
 
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
-  const kvitteringSlug = kvittid ?? searchParams.get('kvittid');
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const kvitteringData = useBoundStore((state) => state.kvitteringData);
 
-  const refusjonEndringerUtenSkjaeringstidspunkt =
-    gammeltSkjaeringstidspunkt && refusjonEndringer
-      ? refusjonEndringer
-          ?.filter((endring) => {
-            if (!endring.dato) return false;
-            return !isBefore(endring.dato, gammeltSkjaeringstidspunkt);
-          })
-          .map((endring) => {
-            return {
-              beloep: endring.beloep ?? endring.beloep,
-              dato: endring.dato
-            };
-          })
-      : refusjonEndringer;
+  const refusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
 
   const clickEndre = () => {
-    if (isValidUUID(kvitteringSlug)) {
-      router.push(`/${kvitteringSlug}`);
+    if (isValidUUID(kvittid)) {
+      router.push(`/${kvittid}`);
     }
   };
 
@@ -100,14 +85,14 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     window.location.href = env.saksoversiktUrl;
   };
 
-  let innsendingstidspunkt =
+  let innsendingTidspunkt =
     kvitteringInnsendt && isValid(kvitteringInnsendt)
       ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
       : '';
 
   if (kvitteringEksterntSystem?.tidspunkt) {
     const tidspunkt = new Date(kvitteringEksterntSystem.tidspunkt);
-    innsendingstidspunkt =
+    innsendingTidspunkt =
       tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
   }
 
@@ -126,12 +111,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   useEffect(() => {
     if (!sykmeldingsperioder && !kvitteringEksterntSystem?.avsenderSystem) {
-      if (!kvitteringSlug || kvitteringSlug === '') return;
-      hentKvitteringsdata(kvitteringSlug);
+      if (!kvittid || kvittid === '') return;
+      hentKvitteringsdata(kvittid);
     }
     setNyInnsending(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kvitteringSlug]);
+  }, [hentKvitteringsdata, kvitteringEksterntSystem?.avsenderSystem, kvittid, setNyInnsending, sykmeldingsperioder]);
 
   useEffect(() => {
     setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -166,8 +150,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             <KvitteringAnnetSystem
               arkivreferanse={kvitteringEksterntSystem.referanse}
               eksterntSystem={kvitteringEksterntSystem.avsenderSystem}
-              mottattDato={innsendingstidspunkt}
-              kvitteringId={kvitteringSlug}
+              mottattDato={innsendingTidspunkt}
+              kvitteringId={kvittid}
             />
           )}
           {!kvitteringEksterntSystem?.avsenderSystem && (
@@ -271,7 +255,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <Skillelinje />
             </>
           )}
-          <BodyShort>Kvittering - innsendt inntektsmelding{innsendingstidspunkt}</BodyShort>
+          <BodyShort>Kvittering - innsendt inntektsmelding{innsendingTidspunkt}</BodyShort>
           <div className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}
