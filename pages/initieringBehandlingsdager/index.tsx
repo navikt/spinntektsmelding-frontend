@@ -22,7 +22,7 @@ import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { subYears } from 'date-fns';
-import isMod11Number from '../../utils/isMod10Number';
+import isMod11Number from '../../utils/isMod11Number';
 import { useRouter } from 'next/navigation';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useBehandlingsdager from '../../utils/useBehandlingsdager';

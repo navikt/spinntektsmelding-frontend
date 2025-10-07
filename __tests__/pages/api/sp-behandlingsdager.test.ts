@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import testdata from '../../../mockdata/behandlingsdager.json';
 import handler from '../../../pages/api/sp-behandlingsdager';
-import isMod11Number from '../../../utils/isMod10Number';
+import isMod11Number from '../../../utils/isMod11Number';
 import safelyParseJSON from '../../../utils/safelyParseJson';
 import { getToken, validateToken, requestOboToken } from '@navikt/oasis';
 
@@ -11,7 +11,7 @@ vi.mock('@navikt/oasis', () => ({
   validateToken: vi.fn(),
   requestOboToken: vi.fn()
 }));
-vi.mock('../../../utils/isMod10Number', () => ({
+vi.mock('../../../utils/isMod11Number', () => ({
   __esModule: true,
   default: vi.fn()
 }));

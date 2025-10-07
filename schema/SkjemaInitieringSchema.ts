@@ -1,5 +1,5 @@
 import z from 'zod';
-import isMod11Number from '../utils/isMod10Number';
+import isMod11Number from '../utils/isMod11Number';
 import { PersonnummerSchema } from './PersonnummerSchema';
 
 const SkjemaInitieringSchema = z

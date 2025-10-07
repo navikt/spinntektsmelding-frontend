@@ -14,6 +14,10 @@ export function finnAntallDagerMellomSykmeldingsperioder<T extends TidPeriode>(v
         const currentFom = currentValue.fom;
         const previousTom = array[index - 1].tom;
 
+        if (!previousTom) {
+          return accumulator;
+        }
+
         const dagerMellom = differenceInDays(currentFom, previousTom!);
         return accumulator > dagerMellom ? accumulator : dagerMellom;
       }, 0)
