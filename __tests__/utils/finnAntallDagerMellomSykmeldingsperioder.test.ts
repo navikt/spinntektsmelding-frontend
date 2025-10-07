@@ -57,6 +57,28 @@ describe('finnAntallDagerMellomSykmeldingsperioder', () => {
     const c = p(new Date(2023, 0, 15), new Date(2023, 0, 16)); // gap 10
     mockedSorter.mockReturnValue([a, b, c]);
     const result = finnAntallDagerMellomSykmeldingsperioder([a, b, c]);
+    // gaps considered: index 0: diff between b.fom (4) and a.tom (2) = 2; index 1: diff between c.fom (15) and b.tom (5) = 10
     expect(result).toBe(10);
+  });
+
+  it('skips periods missing tom (currentValue) in calculation', () => {
+    const first = p(new Date(2023, 0, 1), new Date(2023, 0, 5));
+    const incomplete = p(new Date(2023, 0, 10), undefined); // skipped
+    const third = p(new Date(2023, 0, 20), new Date(2023, 0, 22));
+    mockedSorter.mockReturnValue([first, incomplete, third]);
+    const result = finnAntallDagerMellomSykmeldingsperioder([first, incomplete, third]);
+    // gaps considered: index 2 skipped; no gap between first and third as incomplete.tom is missing
+    expect(result).toBe(0);
+  });
+
+  it('skips periods missing tom (currentValue) in calculation. Four entries', () => {
+    const first = p(new Date(2023, 0, 1), new Date(2023, 0, 5));
+    const incomplete = p(new Date(2023, 0, 10), undefined); // skipped
+    const third = p(new Date(2023, 0, 20), new Date(2023, 0, 22));
+    const fourth = p(new Date(2023, 0, 30), new Date(2023, 0, 31));
+    mockedSorter.mockReturnValue([first, incomplete, third, fourth]);
+    const result = finnAntallDagerMellomSykmeldingsperioder([first, incomplete, third, fourth]);
+    // gaps considered: index 2 skipped; index 3: diff between fourth.fom (30) and third.tom (22) = 8
+    expect(result).toBe(8);
   });
 });
