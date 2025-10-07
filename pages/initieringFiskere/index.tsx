@@ -28,6 +28,7 @@ import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
 import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
 import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
+import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 
 const InitieringFritatt: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -99,28 +100,21 @@ const InitieringFritatt: NextPage = () => {
 
     if (validationResult.success) {
       setIsLoading(true);
-      handleValidFormData(validationResult.data, []);
+      handleValidFormData(validationResult.data);
     }
   };
 
-  const handleValidFormData = (validerteData: any, sykmeldingsperiode: any) => {
+  const handleValidFormData = (validerteData: any) => {
     const orgNavn = arbeidsforhold.find(
       (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
     )?.virksomhetsnavn!;
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-    initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
-    initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
+    initFravaersperiode([]);
+    initEgenmeldingsperiode([]);
     tilbakestillArbeidsgiverperiode();
-    setSelvbestemtType('Fisker');
+    setSelvbestemtType(SelvbestemtTypeConst.Fisker);
     router.push('/Fisker');
-  };
-
-  const getFravaersperioder = (sykmeldingsperiode: any) => {
-    return sykmeldingsperiode.map((periode: any) => ({
-      fom: periode.fom,
-      tom: periode.tom
-    }));
   };
 
   return (

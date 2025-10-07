@@ -44,6 +44,7 @@ import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforh
 import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import { finnAntallDagerMellomSykmeldingsperioder } from '../../utils/finnAntallDagerMellomSykmeldingsperioder';
+import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 
 type SykepengePeriode = {
   id: string;
@@ -313,7 +314,7 @@ const InitieringAnnet: NextPage = () => {
     initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
     setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
-    setSelvbestemtType('MedArbeidsforhold');
+    setSelvbestemtType(SelvbestemtTypeConst.MedArbeidsforhold);
     router.push('/arbeidsgiverInitiertInnsending');
   };
 
