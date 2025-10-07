@@ -21,14 +21,13 @@ import InitieringSchema from '../../schema/InitieringSchema';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import isMod11Number from '../../utils/isMod10Number';
 import { useRouter } from 'next/navigation';
-import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
 import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
 import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
+import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 
 const InitieringFritatt: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -46,48 +45,9 @@ const InitieringFritatt: NextPage = () => {
   let fulltNavn = '';
   let blokkerInnsending = false;
 
-  const skjemaSchema = z
-    .object({
-      organisasjonsnummer: z
-        .string({
-          error: (issue) =>
-            issue.input === undefined
-              ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
-              : undefined
-        })
-        .transform((val) => val.replace(/\s/g, ''))
-        .pipe(
-          z
-            .string({
-              error: (issue) => (issue.input === undefined ? 'Organisasjon er ikke valgt' : undefined)
-            })
-
-            .refine((val) => isMod11Number(val), { error: 'Organisasjon er ikke valgt' })
-        ),
-      navn: z.string().nullable().optional(),
-      personnummer: PersonnummerSchema.optional(),
-      sykepengePeriodeId: z.array(z.uuid()).optional(),
-      endreRefusjon: z.string().optional()
-    })
-    .superRefine((value, ctx) => {
-      if (value.endreRefusjon === 'Ja') {
-        ctx.issues.push({
-          code: 'custom',
-          error: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
-          path: ['endreRefusjon'],
-          input: ''
-        });
-      }
-
-      if (value.endreRefusjon === 'Nei') {
-        ctx.issues.push({
-          code: 'custom',
-          error: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
-          path: ['endreRefusjon'],
-          input: ''
-        });
-      }
-    });
+  const skjemaSchema = SkjemaInitieringSchema.safeExtend({
+    sykepengePeriodeId: z.array(z.uuid()).optional()
+  });
 
   type Skjema = z.infer<typeof skjemaSchema>;
 

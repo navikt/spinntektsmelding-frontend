@@ -94,7 +94,7 @@ describe('InitieringFiskere page', () => {
     // Attempt to submit without selection
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
     // expect validation error message
-    const errorMessages = await screen.findAllByText(/Organisasjon er ikke valgt/);
+    const errorMessages = await screen.findAllByText(/Organisasjon er ikke valgt./);
     expect(errorMessages).toHaveLength(2);
   });
 
