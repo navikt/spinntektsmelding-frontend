@@ -18,8 +18,8 @@ export function finnAntallDagerMellomSykmeldingsperioder<T extends TidPeriode>(v
           return accumulator;
         }
 
-        const dagerMellom = differenceInDays(currentFom, previousTom!);
-        return accumulator > dagerMellom ? accumulator : dagerMellom;
+        const dagerMellom = differenceInDays(currentFom, previousTom);
+        return Math.max(accumulator, dagerMellom);
       }, 0)
     : 0;
   return antallDagerMellomSykmeldingsperioder;

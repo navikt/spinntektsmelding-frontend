@@ -7,9 +7,9 @@ export default function isMod11Number(number: string): boolean {
     return false;
   }
 
-  const checkDigit = parseInt(number[number.length - 1], 10);
+  const checkDigit = Number.parseInt(number.at(-1)!, 10);
 
-  if (isNaN(checkDigit)) {
+  if (Number.isNaN(checkDigit)) {
     return false;
   }
 
@@ -19,8 +19,8 @@ export default function isMod11Number(number: string): boolean {
     .split('')
     .reverse()
     .map((value, index) => {
-      const digit = parseInt(value, 10);
-      if (isNaN(digit)) {
+      const digit = Number.parseInt(value, 10);
+      if (Number.isNaN(digit)) {
         return 0;
       }
       const factor = (index % 6) + 2; // Weights: 2,3,4,5,6,7,2,3,4...

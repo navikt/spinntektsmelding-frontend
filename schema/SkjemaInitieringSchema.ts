@@ -11,7 +11,7 @@ const SkjemaInitieringSchema = z
             ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren.'
             : undefined
       })
-      .transform((val) => val.replace(/\s/g, ''))
+      .transform((val) => val.replaceAll(/\s/g, ''))
       .pipe(
         z
           .string({

@@ -216,7 +216,6 @@ const InitieringAnnet: NextPage = () => {
   const valgteUnikeSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
     finnSorterteUnikePerioder(mergedSykmeldingsperioder)
   ).filter((periode) => !!periode);
-  valgteUnikeSykepengePerioder;
 
   antallDagerMellomSykmeldingsperioder = finnAntallDagerMellomSykmeldingsperioder(valgteUnikeSykepengePerioder);
 
@@ -246,7 +245,7 @@ const InitieringAnnet: NextPage = () => {
     }
   };
 
-  const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any | undefined) => {
+  const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any) => {
     const skjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',

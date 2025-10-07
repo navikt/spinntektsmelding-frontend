@@ -86,11 +86,6 @@ describe('next.config core config and headers', () => {
         })
       ])
     );
-
-    // Ensure our mock was invoked
-    // expect(buildCspHeader).toHaveBeenCalledTimes(1);
-    // // Called with an object of directives and the env option
-    // expect(buildCspHeader).toHaveBeenCalledWith(expect.any(Object), { env: 'dev-gcp' });
   });
 
   it('reads UMAMI_WEBSITE_ID and UMAMI_DATA_DOMAINS from environment', async () => {
