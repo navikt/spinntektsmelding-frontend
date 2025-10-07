@@ -226,14 +226,10 @@ const InitieringBehandlingsdager: NextPage = () => {
     }
   };
 
-  type SafeParseMinimal<D extends EndepunktSykepengesoeknad[] = EndepunktSykepengesoeknad[]> =
-    | { success: true; data: D }
-    | { success: false; error: any };
-
-  function getBehandlingsdager<D extends EndepunktSykepengesoeknad[], R extends SafeParseMinimal<D>>(
+  function getBehandlingsdager(
     formData: Skjema,
-    mottatteSykepengesoeknader: z.ZodSafeParseResult<typeof EndepunktSykepengesoeknaderSchema>
-  ): EndepunktSykepengesoeknad | boolean {
+    mottatteSykepengesoeknader: z.ZodSafeParseResult<EndepunktSykepengesoeknad[]>
+  ): EndepunktSykepengesoeknad | false {
     const sykmeldingsperiode =
       mottatteSykepengesoeknader?.success &&
       mottatteSykepengesoeknader?.data?.find(
