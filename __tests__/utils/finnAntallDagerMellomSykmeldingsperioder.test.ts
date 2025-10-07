@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { finnAntallDagerMellomSykmeldingsperioder } from '../../utils/finnAntallDagerMellomSykmeldingsperioder';
 
-vi.mock('./finnBestemmendeFravaersdag', () => ({
+vi.mock('../../utils/finnBestemmendeFravaersdag', () => ({
   finnSorterteUnikePerioder: vi.fn()
 }));
 
 const mockedSorter = () =>
-  (require('./finnBestemmendeFravaersdag') as any).finnSorterteUnikePerioder as ReturnType<typeof vi.fn>;
+  (require('../../utils/finnBestemmendeFravaersdag') as any).finnSorterteUnikePerioder as ReturnType<typeof vi.fn>;
 
 function p(fom: Date | undefined, tom: Date | undefined) {
   return { fom, tom };
