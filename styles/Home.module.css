@@ -157,6 +157,10 @@
   .datepickerEscape {
     width: 100%;
   }
+
+  .padded {
+    padding: 0.5rem 0.25rem;
+  }
 }
 
 .container {
