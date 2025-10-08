@@ -80,11 +80,7 @@ describe('isMod11Number', () => {
   });
 
   it('returns true for another valid number with remainder 0', () => {
-    // 923609016 calculation:
-    // Digits: 92360901, reversed: 10963929
-    // 1*2 + 0*3 + 9*4 + 6*5 + 3*6 + 9*7 + 2*2 + 9*3 = 2+0+36+30+18+63+4+27 = 180
-    // 180 % 11 = 4, so check digit = 11-4 = 7, but actual is 6
-    // Let me verify: maybe I have it backwards
+    // 923609016 is a valid Norwegian organization number with correct mod11 check digit.
     const validOrgNr = '923609016';
     expect(isMod11Number(validOrgNr)).toBe(true);
   });
