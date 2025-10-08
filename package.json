@@ -23,7 +23,7 @@
     "@navikt/ds-react": "^7.32.1",
     "@navikt/fnrvalidator": "2.1.5",
     "@navikt/nav-dekoratoren-moduler": "^3.4.0",
-    "@navikt/next-logger": "4.1.5",
+    "@navikt/next-logger": "4.3.3",
     "@navikt/oasis": "^3.8.0",
     "@testing-library/dom": "10.4.1",
     "classnames": "2.5.1",
