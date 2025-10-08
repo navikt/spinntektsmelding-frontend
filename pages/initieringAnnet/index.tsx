@@ -1,6 +1,6 @@
 import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { SafeParseReturnType, z } from 'zod';
+import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -22,13 +22,11 @@ import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { TDateISODate } from '../../schema/ForespurtDataSchema';
-import { differenceInCalendarDays, differenceInDays, subYears } from 'date-fns';
-import isMod11Number from '../../utils/isMod10Number';
+import { differenceInCalendarDays, subYears } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
 import formatIsoDate from '../../utils/formatIsoDate';
-import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import {
   EndepunktSykepengesoeknaderSchema,
   EndepunktSykepengesoeknadSchema
@@ -44,6 +42,9 @@ import sorterFomStigende from '../../utils/sorterFomStigende';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
+import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
+import { finnAntallDagerMellomSykmeldingsperioder } from '../../utils/finnAntallDagerMellomSykmeldingsperioder';
+import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 
 type SykepengePeriode = {
   id: string;
@@ -55,6 +56,26 @@ type SykepengePeriode = {
 };
 
 type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
+
+function addForlengelseAvInfo(perioder: SykepengePeriode[]): SykepengePeriode[] {
+  return perioder.reduce((acc, current) => {
+    if (acc.length === 0) {
+      acc.push(current);
+      return acc;
+    }
+    const last = acc.at(-1);
+    if (last && (last.forespoerselId || last.forlengelseAv) && differenceInCalendarDays(current.fom, last.tom) === 1) {
+      acc.push({
+        ...current,
+        forlengelseAv: last.forespoerselId ?? last.forlengelseAv
+      });
+      return acc;
+    } else {
+      acc.push({ ...current, forlengelseAv: undefined });
+      return acc;
+    }
+  }, [] as SykepengePeriode[]);
+}
 
 const InitieringAnnet: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -75,48 +96,9 @@ const InitieringAnnet: NextPage = () => {
   let antallDagerMellomSykmeldingsperioder = 0;
   let blokkerInnsending = false;
 
-  const skjemaSchema = z
-    .object({
-      organisasjonsnummer: z
-        .string({
-          error: (issue) =>
-            issue.input === undefined
-              ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren'
-              : undefined
-        })
-        .transform((val) => val.replaceAll(/\s/g, ''))
-        .pipe(
-          z
-            .string({
-              error: (issue) => (issue.input === undefined ? 'Organisasjon er ikke valgt' : undefined)
-            })
-
-            .refine((val) => isMod11Number(val), { error: 'Organisasjon er ikke valgt' })
-        ),
-      navn: z.string().nullable().optional(),
-      personnummer: PersonnummerSchema.optional(),
-      sykepengePeriodeId: z.array(z.uuid()).optional(),
-      endreRefusjon: z.string().optional()
-    })
-    .superRefine((value, ctx) => {
-      if (value.endreRefusjon === 'Ja') {
-        ctx.issues.push({
-          code: 'custom',
-          error: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
-          path: ['endreRefusjon'],
-          input: ''
-        });
-      }
-
-      if (value.endreRefusjon === 'Nei') {
-        ctx.issues.push({
-          code: 'custom',
-          error: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
-          path: ['endreRefusjon'],
-          input: ''
-        });
-      }
-    });
+  const skjemaSchema = SkjemaInitieringSchema.safeExtend({
+    sykepengePeriodeId: z.array(z.uuid()).optional()
+  });
 
   type Skjema = z.infer<typeof skjemaSchema>;
 
@@ -188,7 +170,7 @@ const InitieringAnnet: NextPage = () => {
     const mottatteSykepengesoknader = EndepunktSykepengesoeknaderSchema.safeParse(spData);
 
     if (!mottatteSykepengesoknader.success) {
-      logger.warn('Feil ved validering av sykepengesøknader' + JSON.stringify(mottatteSykepengesoknader.error.issues));
+      logger.error('Feil ved validering av sykepengesøknader' + JSON.stringify(mottatteSykepengesoknader.error.issues));
       return [];
     }
 
@@ -203,27 +185,7 @@ const InitieringAnnet: NextPage = () => {
           }))
         : [];
 
-    return perioder.reduce((acc, current) => {
-      if (acc.length === 0) {
-        acc.push(current);
-        return acc;
-      }
-      const last = acc.at(-1);
-      if (
-        last &&
-        (last.forespoerselId || last.forlengelseAv) &&
-        differenceInCalendarDays(current.fom, last.tom) === 1
-      ) {
-        acc.push({
-          ...current,
-          forlengelseAv: last.forespoerselId ?? last.forlengelseAv
-        });
-        return acc;
-      } else {
-        acc.push({ ...current, forlengelseAv: undefined });
-        return acc;
-      }
-    }, [] as SykepengePeriode[]);
+    return addForlengelseAvInfo(perioder);
   }, [spData]);
 
   const valgteSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
@@ -256,21 +218,7 @@ const InitieringAnnet: NextPage = () => {
     finnSorterteUnikePerioder(mergedSykmeldingsperioder)
   ).filter((periode) => !!periode);
 
-  antallDagerMellomSykmeldingsperioder = valgteUnikeSykepengePerioder
-    ? finnSorterteUnikePerioder(valgteUnikeSykepengePerioder).reduce((accumulator, currentValue, index, array) => {
-        if (index === 0) {
-          return 0;
-        }
-        if (!currentValue?.fom || !currentValue?.tom) {
-          return accumulator;
-        }
-        const currentFom = currentValue.fom;
-        const previousTom = array[index - 1].tom;
-
-        const dagerMellom = differenceInDays(currentFom, previousTom);
-        return Math.max(accumulator, dagerMellom);
-      }, 0)
-    : 0;
+  antallDagerMellomSykmeldingsperioder = finnAntallDagerMellomSykmeldingsperioder(valgteUnikeSykepengePerioder);
 
   if (antallDagerMellomSykmeldingsperioder > 16) {
     blokkerInnsending = true;
@@ -298,13 +246,7 @@ const InitieringAnnet: NextPage = () => {
     }
   };
 
-  const handleValidData = (
-    formData: Skjema,
-    mottatteData: any,
-    mottatteSykepengesoeknader:
-      | SafeParseReturnType<EndepunktSykepengesoeknad[], typeof EndepunktSykepengesoeknaderSchema>
-      | undefined
-  ) => {
+  const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any) => {
     const skjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
@@ -372,7 +314,7 @@ const InitieringAnnet: NextPage = () => {
     initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
     setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
-    setSelvbestemtType('MedArbeidsforhold');
+    setSelvbestemtType(SelvbestemtTypeConst.MedArbeidsforhold);
     router.push('/arbeidsgiverInitiertInnsending');
   };
 
