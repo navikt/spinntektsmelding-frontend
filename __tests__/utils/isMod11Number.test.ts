@@ -44,7 +44,7 @@ describe('isMod11Number', () => {
   });
 
   // Test for line 35: remainder === 1 → return false
-  it('returns false when remainder is 1 - impossible mod11 case (line 35)', () => {
+  it('returns false when remainder is 1 (impossible mod11 case)', () => {
     // Need to craft a number where (sum of weighted digits) % 11 === 1
     // Example calculation:
     // Digits: 1000000, weights: [2,3,4,5,6,7,2]
