@@ -26,19 +26,9 @@ describe('isMod11Number', () => {
     expect(isMod11Number(mismatchedCheckDigit)).toBe(false);
   });
 
-  // Test for line 32: remainder === 0 → calculatedCheckDigit = 0
-  it('returns true when remainder is 0 and check digit is 0 (line 32)', () => {
-    // Need a number where (sum of weighted digits) % 11 === 0
-    // Manually calculated: digits "1111111" with weights [2,3,4,5,6,7,2]
-    // Sum = 1*2 + 1*3 + 1*4 + 1*5 + 1*6 + 1*7 + 1*2 = 29
-    // 29 % 11 = 7, so remainder != 0
-    // Let's use a known valid org number: 810305282
-    // Calculation for 81030528:
-    // 8*2 + 2*3 + 5*4 + 0*5 + 3*6 + 0*7 + 1*2 + 8*3 = 16+6+20+0+18+0+2+24 = 86
-    // 86 % 11 = 9, so check digit = 11-9 = 2 ✓
-
-    // Better: craft one where sum % 11 = 0
-    // Try: 0000000 → sum = 0, 0 % 11 = 0, check digit = 0
+  // Test: returns true when the weighted sum of digits modulo 11 is 0 and the check digit is 0
+  it('returns true when the weighted sum modulo 11 is 0 and the check digit is 0', () => {
+    // Example: "00000000" has a weighted sum of 0, so remainder is 0 and check digit is 0
     const numberWithRemainderZero = '00000000';
     expect(isMod11Number(numberWithRemainderZero)).toBe(true);
   });
