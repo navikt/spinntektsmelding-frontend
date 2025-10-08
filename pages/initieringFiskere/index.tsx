@@ -25,7 +25,6 @@ import { useRouter } from 'next/navigation';
 import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
-import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
 import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
@@ -85,11 +84,11 @@ const InitieringFritatt: NextPage = () => {
     const mottatteData = data ? InitieringAnnetSchema.safeParse(formData) : undefined;
 
     if (mottatteData?.success) {
-      handleValidData(formData, mottatteData.data, []);
+      handleValidData(formData, mottatteData.data);
     }
   };
 
-  const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any) => {
+  const handleValidData = (formData: Skjema, mottatteData: any) => {
     const skjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
