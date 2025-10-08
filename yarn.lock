@@ -7221,9 +7221,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:9.12.0":
-  version: 9.12.0
-  resolution: "pino@npm:9.12.0"
+"pino@npm:10.0.0":
+  version: 10.0.0
+  resolution: "pino@npm:10.0.0"
   dependencies:
     atomic-sleep: "npm:^1.0.0"
     on-exit-leak-free: "npm:^2.1.0"
@@ -7238,7 +7238,7 @@ __metadata:
     thread-stream: "npm:^3.0.0"
   bin:
     pino: bin.js
-  checksum: 10c0/5cfe093e972a8471a90f7f380c01379eed3fd937038acb97d1de9180f097c044855ca89a2e70baa699aec3e8dcaec037d03e2c90dde235102a3e17b40f54cc1f
+  checksum: 10c0/f95fcc51523310e9ece1822f8ef4d8e6c2b35f67eca9805fe18fdef21dfac81fa128f1ebaa3c9a11571120854391b10b3b339f2e5836f805edaf6936781c6e6f
   languageName: node
   linkType: hard
 
@@ -8346,7 +8346,7 @@ __metadata:
     next: "npm:15.5.4"
     next-http-proxy-middleware: "npm:1.2.7"
     next-router-mock: "npm:1.0.2"
-    pino: "npm:9.12.0"
+    pino: "npm:10.0.0"
     pino-pretty: "npm:^13.1.1"
     playwright-core: "npm:^1.55.1"
     prettier: "npm:^3.6.2"
