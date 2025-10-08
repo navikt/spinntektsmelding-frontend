@@ -1,5 +1,5 @@
 /**
- * Validates a number using the mod11 algorithm (Luhn mod 11)
+ * Validates a number using the Mod11 checksum algorithm.
  * Used for Norwegian organization numbers and other identifiers
  */
 export default function isMod11Number(number: string): boolean {
