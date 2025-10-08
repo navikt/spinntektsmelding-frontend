@@ -33,33 +33,13 @@ describe('isMod11Number', () => {
     expect(isMod11Number(numberWithRemainderZero)).toBe(true);
   });
 
-  // Test for line 35: remainder === 1 → return false
+  // Test for remainder === 1 → return false
   it('returns false when remainder is 1 (impossible mod11 case)', () => {
-    // Need to craft a number where (sum of weighted digits) % 11 === 1
-    // Example calculation:
-    // Digits: 1000000, weights: [2,3,4,5,6,7,2]
-    // Sum = 0*2 + 0*3 + 0*4 + 0*5 + 0*6 + 0*7 + 0*2 + 1*3 = 3
-    // We need sum % 11 = 1
-    // Try: 5000000 → 0*2 + 0*3 + 0*4 + 0*5 + 0*6 + 0*7 + 0*2 + 5*3 = 15, 15%11 = 4
-    // Try: 4000000 → 0*2 + 0*3 + 0*4 + 0*5 + 0*6 + 0*7 + 0*2 + 4*3 = 12, 12%11 = 1 ✓
     const numberWithRemainderOne = '40000001'; // Last digit is check digit, doesn't matter
     expect(isMod11Number(numberWithRemainderOne)).toBe(false);
   });
 
-  it('returns false when remainder is 1 with another example (line 35)', () => {
-    // Another crafted case: sum % 11 = 1
-    // Digits: 6000000, weights reversed: [2,3,4,5,6,7,2]
-    // 0*2 + 0*3 + 0*4 + 0*5 + 0*6 + 0*7 + 0*2 + 6*3 = 18, 18%11 = 7
-    // Try: 1111110
-    // 0*2 + 1*3 + 1*4 + 1*5 + 1*6 + 1*7 + 1*2 + 1*3 = 0+3+4+5+6+7+2+3 = 30, 30%11 = 8
-    // Try simpler: 0100000
-    // 0*2 + 0*3 + 0*4 + 0*5 + 0*6 + 0*7 + 1*2 + 0*3 = 2, 2%11 = 2
-    // Need sum = 12 or 23 or 34... (1 mod 11)
-    // 6*2 = 12 → try 6000000
-    // 0*2 + 0*3 + 0*4 + 0*5 + 0*6 + 0*7 + 0*2 + 6*3 = 18 % 11 = 7
-    // Try: 2200000 → 0*2 + 0*3 + 0*4 + 0*5 + 0*6 + 2*7 + 2*2 + 0*3 = 14+4 = 18 % 11 = 7
-    // Try: 3100000 → 0*2 + 0*3 + 0*4 + 0*5 + 1*6 + 3*7 + 0*2 + 0*3 = 6+21 = 27 % 11 = 5
-    // Try: 1300000 → 0*2 + 0*3 + 0*4 + 0*5 + 0*6 + 3*7 + 1*2 + 0*3 = 21+2 = 23 % 11 = 1 ✓
+  it('returns false when remainder is 1 with another example', () => {
     const anotherRemainderOne = '13000009'; // Any check digit works since it will fail
     expect(isMod11Number(anotherRemainderOne)).toBe(false);
   });
