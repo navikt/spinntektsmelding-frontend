@@ -39,7 +39,7 @@
     "playwright-core": "^1.56.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "react-hook-form": "7.63.0",
+    "react-hook-form": "7.64.0",
     "swr": "2.3.6",
     "zod": "^4.1.11",
     "zustand": "5.0.8"
