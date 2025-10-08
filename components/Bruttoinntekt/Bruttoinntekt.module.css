@@ -117,12 +117,37 @@
 
 @media screen and (max-width: 500px) {
   .endremaaanedsinntekt {
-    flex-direction: column;
+    display: grid;
+    grid-template: 'inntekt inntekt' 'maaned maaned' 'slett tilbakestill'/ 50% 50%;
+    gap: 1rem;
     border: 1px solid darkgray;
     border-radius: 5px;
     background-color: var(--a-bg-subtle);
     padding: 0.5rem;
     box-shadow: 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
     margin: 0.25rem 0;
+  }
+
+  .bruttoinntektendringsbeloep {
+    grid-area: inntekt;
+    width: calc(100% - 1rem);
+  }
+
+  .selectEndringBruttoinntektWrapper {
+    grid-area: maaned;
+    width: calc(100% - 1rem);
+    align-self: start;
+  }
+
+  .sletteknapp {
+    grid-area: slett;
+    margin-top: 0;
+    justify-self: start;
+  }
+
+  .kontrollerknapp {
+    grid-area: tilbakestill;
+    margin-top: 0;
+    justify-self: end;
   }
 }
