@@ -5,7 +5,7 @@ import { Button, TextField } from '@navikt/ds-react';
 import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import { Inntekt } from '../../state/state';
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useMemo } from 'react';
 import AarsakDetaljer from './AarsakDetaljer';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import stringishToNumber from '../../utils/stringishToNumber';
@@ -55,11 +55,20 @@ export default function Aarsaksvelger({
   const beloepFeltnavn = 'inntekt.beloep';
   const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
 
+  // Extract root error safely (cast since RHF error typing is a union without nested keys)
+  const rootError = useMemo(() => {
+    const endringAarsakerErrors = (errors as any)?.inntekt?.endringAarsaker;
+    if (endringAarsakerErrors?.root?.message && typeof endringAarsakerErrors.root.message === 'string') {
+      return endringAarsakerErrors.root.message as string;
+    }
+    return undefined;
+  }, [errors]);
+
   useEffect(() => {
     if (fields.length === 0) {
       initialiserEndringsaarsaker([{}]);
     }
-  }, [fields, initialiserEndringsaarsaker]);
+  }, [fields.length, initialiserEndringsaarsaker]);
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
       {fields.map((aarsak, key) => (
@@ -79,13 +88,13 @@ export default function Aarsaksvelger({
               />
             )}
             <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
-              {errors?.inntekt?.endringAarsaker?.root && (key === 1 || fields.length === 1) && (
+              {rootError && (key === 1 || fields.length === 1) && (
                 <p
                   className='navds-error-message navds-label navds-error-message--show-icon'
                   id={ensureValidHtmlId('inntekt.endringAarsaker.root')}
                 >
                   <ExclamationmarkTriangleFillIcon />
-                  {errors?.inntekt?.endringAarsaker?.root?.message}
+                  {rootError}
                 </p>
               )}
               <SelectEndringBruttoinntekt
