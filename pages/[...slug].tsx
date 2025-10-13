@@ -88,7 +88,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     endringerAvRefusjon,
     selvbestemtType,
     visFeilmeldingTekst,
-    visFeilmelding
+    visFeilmelding,
+    feilmeldinger
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -103,7 +104,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.endringerAvRefusjon,
     state.selvbestemtType,
     state.visFeilmeldingTekst,
-    state.visFeilmelding
+    state.visFeilmelding,
+    state.feilmeldinger
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -397,8 +399,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
               Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
             </Checkbox>
-            {visFeilmelding('bekreft_opplysninger') && (
-              <Feilmelding id='errors.bekreft_opplysninger'>{visFeilmeldingTekst('bekreft_opplysninger')}</Feilmelding>
+            {errors.bekreft_opplysninger && (
+              <Feilmelding id='errors.bekreft_opplysninger'>{errors.bekreft_opplysninger.message}</Feilmelding>
             )}
             <Feilsammendrag skjemafeil={errors} />
             <div className={styles.outerButtonWrapper}>

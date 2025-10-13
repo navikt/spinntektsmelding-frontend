@@ -13,6 +13,7 @@ import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import ButtonSlette from '../ButtonSlette';
 import { ExclamationmarkTriangleFillIcon } from '@navikt/aksel-icons';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
+import Feilmelding from '../Feilmelding';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
@@ -89,19 +90,12 @@ export default function Aarsaksvelger({
             )}
             <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
               {rootError && (key === 1 || fields.length === 1) && (
-                <p
-                  className='navds-error-message navds-label navds-error-message--show-icon'
-                  id={ensureValidHtmlId('inntekt.endringAarsaker.root')}
-                >
-                  <ExclamationmarkTriangleFillIcon />
-                  {rootError}
-                </p>
+                <Feilmelding id='inntekt.endringAarsaker.root'>{rootError}</Feilmelding>
               )}
               <SelectEndringBruttoinntekt
                 error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
                 id={`inntekt.endringAarsaker.${key}.aarsak`}
                 nyInnsending={nyInnsending}
-                register={register}
                 begrunnelserId={`inntekt.endringAarsaker`}
               />
             </div>
@@ -128,3 +122,11 @@ export default function Aarsaksvelger({
     </div>
   );
 }
+// function Feilmelding({ feilmelding, feilId }: { feilmelding: string; feilId: string }): React.ReactNode {
+//   return (
+//     <p className='navds-error-message navds-label navds-error-message--show-icon' id={ensureValidHtmlId(feilId)}>
+//       <ExclamationmarkTriangleFillIcon />
+//       {feilmelding}
+//     </p>
+//   );
+// }
