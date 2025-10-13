@@ -55,11 +55,11 @@ export default function Aarsaksvelger({
   const beloepFeltnavn = 'inntekt.beloep';
   const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
 
-  // Extract root error safely (cast since RHF error typing is a union without nested keys)
   const rootError = useMemo(() => {
     const endringAarsakerErrors = (errors as any)?.inntekt?.endringAarsaker;
-    if (endringAarsakerErrors?.root?.message && typeof endringAarsakerErrors.root.message === 'string') {
-      return endringAarsakerErrors.root.message as string;
+    if (endringAarsakerErrors && typeof endringAarsakerErrors === 'object' && 'root' in endringAarsakerErrors) {
+      const root = (endringAarsakerErrors as any).root;
+      return root?.message as string | undefined;
     }
     return undefined;
   }, [errors]);
