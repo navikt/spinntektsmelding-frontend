@@ -5,6 +5,10 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 type Hovedskjema = z.infer<typeof HovedskjemaSchema>;
 
 function transformErrors(errors: FieldErrors<Hovedskjema>): FieldErrors<Hovedskjema> | undefined {
+  if (!errors || Object.keys(errors).length === 0) {
+    return undefined;
+  }
+
   const compositeErrors = Object.keys(errors)
     .filter((key) => /^\d+$/.test(key))
     .map((key) => (errors as any)[key]);

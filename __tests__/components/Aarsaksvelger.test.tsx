@@ -395,8 +395,10 @@ describe('Aarsaksvelger', () => {
           errors: {
             inntekt: {
               endringAarsaker: {
-                root: {
-                  message: 'Dette er feil'
+                0: {
+                  aarsak: {
+                    message: 'Dette er feil'
+                  }
                 }
               }
             }
@@ -443,8 +445,10 @@ describe('Aarsaksvelger', () => {
           errors: {
             inntekt: {
               endringAarsaker: {
-                root: {
-                  message: 'Dette er feil'
+                0: {
+                  aarsak: {
+                    message: 'Dette er feil'
+                  }
                 }
               }
             }

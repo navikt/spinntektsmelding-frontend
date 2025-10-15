@@ -87,7 +87,6 @@ export const InnsendingSchema = z.object({
   agp: z
     .object({
       perioder: z.array(ApiPeriodeSchema).superRefine((val, ctx) => {
-        console.log('val', val);
         if (langtGapIPerioder(val)) {
           ctx.issues.push({
             code: 'custom',
