@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import transformErrors from '../../utils/transformErrors';
-// import transformErrors from './transformErrors';
 
 // Mock schema import used only for types
 vi.mock('../schema/HovedskjemaSchema', () => ({ HovedskjemaSchema: {} as any }));

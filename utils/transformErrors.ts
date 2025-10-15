@@ -1,5 +1,5 @@
 import { FieldErrors } from 'react-hook-form';
-import z from 'zod';
+import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 
 type Hovedskjema = z.infer<typeof HovedskjemaSchema>;

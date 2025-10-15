@@ -135,13 +135,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
   const methods = useForm<Skjema>({
-    resolver: async (data, context, options) => {
-      // you can debug your validation schema here
-      console.log('formData', data);
-      console.log('validation result', await zodResolver(HovedskjemaSchema)(data, context, options));
-      return zodResolver(HovedskjemaSchema)(data, context, options);
-    },
-    // resolver: zodResolver(HovedskjemaSchema),
+    resolver: zodResolver(HovedskjemaSchema),
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,

@@ -23,8 +23,6 @@ export default function Feilsammendrag({ skjemafeil }: Readonly<FeilsammendragPr
   const harFeilmeldinger = combinedFeilmeldinger && combinedFeilmeldinger.length > 0;
   if (!harFeilmeldinger) return null;
 
-  console.log('combinedFeilmeldinger', combinedFeilmeldinger);
-
   return (
     <FeilListe
       feilmeldinger={combinedFeilmeldinger}
