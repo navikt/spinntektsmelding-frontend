@@ -6,7 +6,7 @@ type Hovedskjema = z.infer<typeof HovedskjemaSchema>;
 
 function transformErrors(errors: FieldErrors<Hovedskjema>): FieldErrors<Hovedskjema> | undefined {
   if (!errors || Object.keys(errors).length === 0) {
-    return undefined;
+    return {};
   }
 
   const compositeErrors = Object.keys(errors)
