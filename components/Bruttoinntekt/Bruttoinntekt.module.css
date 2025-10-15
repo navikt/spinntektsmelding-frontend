@@ -115,6 +115,16 @@
   max-width: fit-content;
 }
 
+.bruttoinntektendringsbeloep {
+  position: relative;
+}
+
+.bruttoinntektendringsbeloep > input {
+  max-height: 3rem;
+  position: absolute;
+  top: 2rem;
+}
+
 @media screen and (max-width: 500px) {
   .endremaaanedsinntekt {
     display: grid;
