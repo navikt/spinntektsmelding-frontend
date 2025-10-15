@@ -37,7 +37,7 @@ export default function SelectEndringBruttoinntekt({
   });
 
   const error = findErrorInRHFErrors(id, errors);
-  console.log({ error });
+
   return (
     <Select label={label ?? 'Velg endringsårsak'} error={error} id={ensureValidHtmlId(id)} {...register(id)}>
       <option value=''>Velg begrunnelse</option>

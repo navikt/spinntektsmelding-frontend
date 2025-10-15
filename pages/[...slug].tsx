@@ -3,7 +3,7 @@ import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
 import { z } from 'zod';
-import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider, useWatch, FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { BodyLong, Button, Checkbox, Link } from '@navikt/ds-react';
@@ -50,6 +50,9 @@ import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
 import Feilmelding from '../components/Feilmelding';
 import { SelvbestemtTypeConst } from '../schema/konstanter/selvbestemtType';
+import transformErrors from '../utils/transformErrors';
+
+type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -86,10 +89,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     forespurtData,
     behandlingsdager,
     endringerAvRefusjon,
-    selvbestemtType,
-    visFeilmeldingTekst,
-    visFeilmelding,
-    feilmeldinger
+    selvbestemtType
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -102,10 +102,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.forespurtData,
     state.behandlingsdager,
     state.endringerAvRefusjon,
-    state.selvbestemtType,
-    state.visFeilmeldingTekst,
-    state.visFeilmelding,
-    state.feilmeldinger
+    state.selvbestemtType
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -137,10 +134,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
-  type Skjema = z.infer<typeof HovedskjemaSchema>;
-
   const methods = useForm<Skjema>({
-    resolver: zodResolver(HovedskjemaSchema),
+    resolver: async (data, context, options) => {
+      // you can debug your validation schema here
+      console.log('formData', data);
+      console.log('validation result', await zodResolver(HovedskjemaSchema)(data, context, options));
+      return zodResolver(HovedskjemaSchema)(data, context, options);
+    },
+    // resolver: zodResolver(HovedskjemaSchema),
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
@@ -159,6 +160,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     handleSubmit,
     formState: { errors, isDirty, dirtyFields }
   } = methods;
+
+  const memoErrors = useMemo(() => transformErrors(errors), [errors]);
 
   useEffect(() => {
     if (naturalytelser !== undefined) {
@@ -402,7 +405,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             {errors.bekreft_opplysninger && (
               <Feilmelding id='errors.bekreft_opplysninger'>{errors.bekreft_opplysninger.message}</Feilmelding>
             )}
-            <Feilsammendrag skjemafeil={errors} />
+            <Feilsammendrag skjemafeil={memoErrors} />
             <div className={styles.outerButtonWrapper}>
               <div className={styles.buttonWrapper}>
                 <Button className={styles.sendButton} loading={senderInn} id='knapp-innsending'>
