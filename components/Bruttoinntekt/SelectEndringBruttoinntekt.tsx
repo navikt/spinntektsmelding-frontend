@@ -1,11 +1,13 @@
 import { Select, SelectProps } from '@navikt/ds-react';
 import begrunnelseEndringBruttoinntektTekster from './begrunnelseEndringBruttoinntektTekster';
 import { deriveBegrunnelseKeys } from './deriveBegrunnelseKeys';
-import { useFormContext } from 'react-hook-form';
+import { FieldErrors, useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import z from 'zod';
 import { EndringAarsakSchema } from '../../schema/EndringAarsakSchema';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
+import { useMemo } from 'react';
+import transformErrors from '../../utils/transformErrors';
 
 interface SelectEndringBruttoinntektProps extends Partial<SelectProps> {
   nyInnsending: boolean;
@@ -36,7 +38,9 @@ export default function SelectEndringBruttoinntekt({
     nyInnsending
   });
 
-  const error = findErrorInRHFErrors(id, errors);
+  const feilmeldinger = useMemo(() => transformErrors(errors), [errors]);
+
+  const error = findErrorInRHFErrors(id, feilmeldinger as FieldErrors);
 
   return (
     <Select label={label ?? 'Velg endringsårsak'} error={error} id={ensureValidHtmlId(id)} {...register(id)}>

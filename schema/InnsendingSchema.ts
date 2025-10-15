@@ -87,6 +87,7 @@ export const InnsendingSchema = z.object({
   agp: z
     .object({
       perioder: z.array(ApiPeriodeSchema).superRefine((val, ctx) => {
+        console.log('val', val);
         if (langtGapIPerioder(val)) {
           ctx.issues.push({
             code: 'custom',
@@ -135,7 +136,7 @@ export const InnsendingSchema = z.object({
               error: (issue) =>
                 issue.input === undefined ? 'Beløp utbetalt under arbeidsgiverperioden mangler.' : undefined
             })
-            .min(0),
+            .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.'),
           begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
             error: (issue) =>
               issue.input === undefined
@@ -191,12 +192,12 @@ export const InnsendingSchema = z.object({
           input: ''
         });
 
-        ctx.issues.push({
-          code: 'custom',
-          error: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
-          path: ['redusertLoennIAgp', 'beloep'],
-          input: ''
-        });
+        // ctx.issues.push({
+        //   code: 'custom',
+        //   error: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
+        //   path: ['redusertLoennIAgp', 'beloep'],
+        //   input: ''
+        // });
         return;
       }
 

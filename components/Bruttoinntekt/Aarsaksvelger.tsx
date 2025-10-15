@@ -11,9 +11,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import stringishToNumber from '../../utils/stringishToNumber';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import ButtonSlette from '../ButtonSlette';
-import { ExclamationmarkTriangleFillIcon } from '@navikt/aksel-icons';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
-import Feilmelding from '../Feilmelding';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
@@ -27,7 +25,6 @@ interface AarsaksvelgerProps {
 export default function Aarsaksvelger({
   bruttoinntekt,
   handleResetMaanedsinntekt,
-  visFeilmeldingTekst,
   bestemmendeFravaersdag,
   nyInnsending,
   kanIkkeTilbakestilles
@@ -56,15 +53,6 @@ export default function Aarsaksvelger({
   const beloepFeltnavn = 'inntekt.beloep';
   const beloepError = findErrorInRHFErrors(beloepFeltnavn, errors);
 
-  const rootError = useMemo(() => {
-    const endringAarsakerErrors = (errors as any)?.inntekt?.endringAarsaker;
-    if (endringAarsakerErrors && typeof endringAarsakerErrors === 'object' && 'root' in endringAarsakerErrors) {
-      const root = (endringAarsakerErrors as any).root;
-      return root?.message as string | undefined;
-    }
-    return undefined;
-  }, [errors]);
-
   useEffect(() => {
     if (fields.length === 0) {
       initialiserEndringsaarsaker([{}]);
@@ -89,11 +77,7 @@ export default function Aarsaksvelger({
               />
             )}
             <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
-              {rootError && (key === 1 || fields.length === 1) && (
-                <Feilmelding id='inntekt.endringAarsaker.root'>{rootError}</Feilmelding>
-              )}
               <SelectEndringBruttoinntekt
-                error={visFeilmeldingTekst('bruttoinntekt-endringsaarsak')}
                 id={`inntekt.endringAarsaker.${key}.aarsak`}
                 nyInnsending={nyInnsending}
                 begrunnelserId={`inntekt.endringAarsaker`}
