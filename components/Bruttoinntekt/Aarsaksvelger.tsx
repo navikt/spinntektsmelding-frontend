@@ -122,11 +122,3 @@ export default function Aarsaksvelger({
     </div>
   );
 }
-// function Feilmelding({ feilmelding, feilId }: { feilmelding: string; feilId: string }): React.ReactNode {
-//   return (
-//     <p className='navds-error-message navds-label navds-error-message--show-icon' id={ensureValidHtmlId(feilId)}>
-//       <ExclamationmarkTriangleFillIcon />
-//       {feilmelding}
-//     </p>
-//   );
-// }
