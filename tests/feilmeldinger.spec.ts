@@ -81,7 +81,8 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
 
     await formPage.clickButton('Send');
     // Validation errors
-    await expect(page.getByText('Du må bekrefte at opplysningene er riktige før du kan sende inn.')).toBeVisible();
+    // await expect(page.getByText('Du må bekrefte at opplysningene er riktige før du kan sende inn.')).toBeVisible();
+    await formPage.assertVisibleTextAtLeastOnce('Du må bekrefte at opplysningene er riktige før du kan sende inn.');
 
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
     await formPage.clickButton('Send');
