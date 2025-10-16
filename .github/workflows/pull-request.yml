@@ -155,7 +155,7 @@ jobs:
             ${{ runner.os }}-vitest-
 
       - name: Run tests with coverage
-        run: yarn test --coverage
+        run: yarn test'
 
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
