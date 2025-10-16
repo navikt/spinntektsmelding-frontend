@@ -3,7 +3,7 @@ import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
 import { z } from 'zod';
-import { useForm, SubmitHandler, FormProvider, useWatch, FieldErrors } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { BodyLong, Button, Checkbox, Link } from '@navikt/ds-react';

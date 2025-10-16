@@ -190,13 +190,6 @@ export const InnsendingSchema = z.object({
           path: ['redusertLoennIAgp', 'begrunnelse'],
           input: ''
         });
-
-        // ctx.issues.push({
-        //   code: 'custom',
-        //   error: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
-        //   path: ['redusertLoennIAgp', 'beloep'],
-        //   input: ''
-        // });
         return;
       }
 
@@ -241,15 +234,6 @@ export const InnsendingSchema = z.object({
     })
   )
 });
-// .superRefine((val, ctx) => {
-//   if (val.inntekt?.beloep && val.refusjon?.beloepPerMaaned && val.inntekt?.beloep < val.refusjon?.beloepPerMaaned) {
-//     ctx.addIssue({
-//       code: "custom",
-//       error: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
-//       path: ['refusjon', 'beloepPerMaaned']
-//     });
-//   }
-// });
 
 type TInnsendingSchema = z.infer<typeof InnsendingSchema>;
 

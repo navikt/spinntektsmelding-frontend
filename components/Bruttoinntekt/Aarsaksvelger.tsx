@@ -5,7 +5,7 @@ import { Button, TextField } from '@navikt/ds-react';
 import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import { Inntekt } from '../../state/state';
-import React, { Fragment, useEffect, useMemo } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import AarsakDetaljer from './AarsakDetaljer';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import stringishToNumber from '../../utils/stringishToNumber';

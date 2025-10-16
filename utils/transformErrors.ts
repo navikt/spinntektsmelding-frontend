@@ -32,7 +32,7 @@ function transformErrors(errors: FieldErrors<Hovedskjema>): FieldErrors<Hovedskj
         return false;
       }
 
-      if (Object.prototype.hasOwnProperty.call(obj, key) && !isWritable(obj, key)) {
+      if (Object.hasOwn(obj, key) && !isWritable(obj, key)) {
         console.warn(`transformErrors: Property "${key}" is read-only`);
         return false;
       }
@@ -82,33 +82,38 @@ function transformErrors(errors: FieldErrors<Hovedskjema>): FieldErrors<Hovedskj
       return;
     }
 
-    if (Object.prototype.hasOwnProperty.call(node, 'root')) {
+    if (Object.hasOwn(node, 'root')) {
       if (parent !== undefined && key !== undefined) {
         safeSet(parent, key, compositeErrors);
       } else {
-        Object.keys(node).forEach((k) => safeDelete(node, k));
+        for (const k of Object.keys(node)) {
+          safeDelete(node, k);
+        }
 
-        compositeErrors.forEach((ce, idx) => {
+        for (let idx = 0; idx < compositeErrors.length; idx++) {
+          const ce = compositeErrors[idx];
           safeSet(node, idx, ce);
-        });
+        }
       }
       return;
     }
 
     if (Array.isArray(node)) {
       const indices = [...node.keys()];
-      indices.forEach((idx) => traverse(node[idx], node, idx, depth + 1));
+      for (const idx of indices) {
+        traverse(node[idx], node, idx, depth + 1);
+      }
       return;
     }
 
     const keys = Object.keys(node);
-    keys.forEach((k) => {
+    for (const k of keys) {
       try {
         traverse(node[k], node, k, depth + 1);
       } catch (error) {
         console.warn(`transformErrors: Error traversing key "${k}"`, error);
       }
-    });
+    }
   };
 
   try {
@@ -123,11 +128,10 @@ function transformErrors(errors: FieldErrors<Hovedskjema>): FieldErrors<Hovedskj
     traverse(errorsCopy);
 
     const filteredErrorObject: Record<string, any> = {};
-    Object.keys(errorsCopy)
-      .filter((key) => key !== '' && !/^\d+$/.test(key))
-      .forEach((key) => {
-        filteredErrorObject[key] = errorsCopy[key];
-      });
+    for (const key of Object.keys(errorsCopy)) {
+      if (key === '' || /^\d+$/.test(key)) continue;
+      filteredErrorObject[key] = errorsCopy[key];
+    }
 
     return filteredErrorObject;
   } catch (error) {
