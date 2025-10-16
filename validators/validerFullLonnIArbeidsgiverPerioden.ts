@@ -24,7 +24,7 @@ export default function validerFullLonnIArbeidsgiverPerioden(lonn: LonnIArbeidsg
     });
   }
 
-  if (lonn.status === 'Nei' && !lonn.utbetalt) {
+  if (lonn.status === 'Nei' && (lonn.utbetalt === undefined || lonn.utbetalt === null)) {
     feilkoder.push({
       felt: 'agp.redusertLoennIAgp.beloep',
       code: FullLonnIArbeidsgiverPerioden.MANGLER_BEGRUNNELSE_LONN_I_ARBEIDSGIVERPERIODEN,

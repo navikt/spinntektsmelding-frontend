@@ -50,6 +50,9 @@ import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
 import Feilmelding from '../components/Feilmelding';
 import { SelvbestemtTypeConst } from '../schema/konstanter/selvbestemtType';
+import transformErrors from '../utils/transformErrors';
+
+type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -86,9 +89,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     forespurtData,
     behandlingsdager,
     endringerAvRefusjon,
-    selvbestemtType,
-    visFeilmeldingTekst,
-    visFeilmelding
+    selvbestemtType
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -101,9 +102,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.forespurtData,
     state.behandlingsdager,
     state.endringerAvRefusjon,
-    state.selvbestemtType,
-    state.visFeilmeldingTekst,
-    state.visFeilmelding
+    state.selvbestemtType
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -135,8 +134,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
-  type Skjema = z.infer<typeof HovedskjemaSchema>;
-
   const methods = useForm<Skjema>({
     resolver: zodResolver(HovedskjemaSchema),
     defaultValues: {
@@ -157,6 +154,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     handleSubmit,
     formState: { errors, isDirty, dirtyFields }
   } = methods;
+
+  const memoErrors = useMemo(() => transformErrors(errors), [errors]);
 
   useEffect(() => {
     if (naturalytelser !== undefined) {
@@ -397,10 +396,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
               Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
             </Checkbox>
-            {visFeilmelding('bekreft_opplysninger') && (
-              <Feilmelding id='errors.bekreft_opplysninger'>{visFeilmeldingTekst('bekreft_opplysninger')}</Feilmelding>
+            {errors.bekreft_opplysninger && (
+              <Feilmelding id='errors.bekreft_opplysninger'>{errors.bekreft_opplysninger.message}</Feilmelding>
             )}
-            <Feilsammendrag skjemafeil={errors} />
+            <Feilsammendrag skjemafeil={memoErrors} />
             <div className={styles.outerButtonWrapper}>
               <div className={styles.buttonWrapper}>
                 <Button className={styles.sendButton} loading={senderInn} id='knapp-innsending'>

@@ -1,3 +1,4 @@
+import { ExclamationmarkTriangleFillIcon } from '@navikt/aksel-icons';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface FeilmeldingProps {
@@ -13,7 +14,8 @@ export default function Feilmelding({ children, id }: Readonly<FeilmeldingProps>
       aria-live='polite'
       className='navds-fieldset__error'
     >
-      <p className='navds-error-message navds-label' id={ensureValidHtmlId(id)}>
+      <p className='navds-error-message navds-label navds-error-message--show-icon' id={ensureValidHtmlId(id)}>
+        <ExclamationmarkTriangleFillIcon aria-hidden />
         {children}
       </p>
     </div>

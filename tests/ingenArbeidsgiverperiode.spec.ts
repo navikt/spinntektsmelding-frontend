@@ -83,5 +83,21 @@ test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
     // // original arbeidsgiverperiode dates
     // await expect(page.locator('[data-cy="arbeidsgiverperiode-0-fra-dato"]')).toHaveText('17.02.2023');
     // await expect(page.locator('[data-cy="arbeidsgiverperiode-0-til-dato"]')).toHaveText('04.03.2023');
+    // Submit and confirm
+
+    await formPage.selectOption('Velg begrunnelse', 'Det er ikke fire ukers opptjeningstid');
+
+    await formPage.checkRadioButton(
+      'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
+      'Nei'
+    );
+
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
+
+    const pageLoad = page.waitForResponse('*/**/api/innsendingInntektsmelding');
+    await page.getByRole('button', { name: 'Send' }).click();
+    await pageLoad;
+    // await expect(page.getByText('Kvittering - innsendt inntektsmelding')).toBeVisible();
+    await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
   });
 });

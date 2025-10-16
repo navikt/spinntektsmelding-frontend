@@ -135,7 +135,7 @@ export const InnsendingSchema = z.object({
               error: (issue) =>
                 issue.input === undefined ? 'Beløp utbetalt under arbeidsgiverperioden mangler.' : undefined
             })
-            .min(0),
+            .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.'),
           begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
             error: (issue) =>
               issue.input === undefined
@@ -190,13 +190,6 @@ export const InnsendingSchema = z.object({
           path: ['redusertLoennIAgp', 'begrunnelse'],
           input: ''
         });
-
-        ctx.issues.push({
-          code: 'custom',
-          error: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
-          path: ['redusertLoennIAgp', 'beloep'],
-          input: ''
-        });
         return;
       }
 
@@ -241,15 +234,6 @@ export const InnsendingSchema = z.object({
     })
   )
 });
-// .superRefine((val, ctx) => {
-//   if (val.inntekt?.beloep && val.refusjon?.beloepPerMaaned && val.inntekt?.beloep < val.refusjon?.beloepPerMaaned) {
-//     ctx.addIssue({
-//       code: "custom",
-//       error: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
-//       path: ['refusjon', 'beloepPerMaaned']
-//     });
-//   }
-// });
 
 type TInnsendingSchema = z.infer<typeof InnsendingSchema>;
 

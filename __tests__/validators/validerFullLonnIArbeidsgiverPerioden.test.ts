@@ -18,7 +18,7 @@ describe('validerFullLonnIArbeidsgiverPerioden', () => {
   it('should return an array with MANGLER_VALG_AV_LONN_I_ARBEIDSGIVERPERIODEN code if lonn.status is falsy', () => {
     const lonn: LonnIArbeidsgiverperioden = {
       status: undefined,
-      begrunnelse: 'fiskerMedHyre'
+      begrunnelse: 'FiskerMedHyre'
     };
 
     const result = validerFullLonnIArbeidsgiverPerioden(lonn);
@@ -58,6 +58,24 @@ describe('validerFullLonnIArbeidsgiverPerioden', () => {
     const lonn: LonnIArbeidsgiverperioden = {
       status: 'Nei',
       begrunnelse: 'FiskerMedHyre'
+    };
+
+    const result = validerFullLonnIArbeidsgiverPerioden(lonn);
+
+    expect(result).toEqual([
+      {
+        code: 'MANGLER_BEGRUNNELSE_LONN_I_ARBEIDSGIVERPERIODEN',
+        felt: 'agp.redusertLoennIAgp.beloep',
+        text: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.'
+      }
+    ]);
+  });
+
+  it('should return an error if lonn.status is "Nei", begrunnelse is not empty and utbetalt is null', () => {
+    const lonn: LonnIArbeidsgiverperioden = {
+      status: 'Nei',
+      begrunnelse: 'FiskerMedHyre',
+      utbetalt: null
     };
 
     const result = validerFullLonnIArbeidsgiverPerioden(lonn);
