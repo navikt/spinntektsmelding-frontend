@@ -39,6 +39,10 @@ updates:
           - '@playwright/*'
           - 'playwright-core'
           - '@axe-core/playwright'
+      next:
+        patterns:
+          - 'next'
+          - '@next/*'
 
   # Maintain dependencies for Docker
   - package-ecosystem: 'docker' # See documentation for possible values
