@@ -26,8 +26,8 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: '24.0'
-          registry-url: 'https://npm.pkg.github.com'
+          node-version: "24.0"
+          registry-url: "https://npm.pkg.github.com"
       - name: Enable corepack (Yarn 2+)
         run: corepack enable
       - name: Cache Yarn 2 files
@@ -66,8 +66,8 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v5
         with:
-          node-version: '24.0'
-          registry-url: 'https://npm.pkg.github.com'
+          node-version: "24.0"
+          registry-url: "https://npm.pkg.github.com"
       - name: Enable corepack (Yarn 2+)
         run: corepack enable
       - name: Cache Yarn 2 files
@@ -90,7 +90,7 @@ jobs:
         with:
           path: |
             node_modules/.cache
-          key: ${{ runner.os }}-tools-cache-${{ github.ref_name }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-tools-cache-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-tools-cache-
       - run: yarn test
@@ -107,8 +107,8 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: '24.0'
-          registry-url: 'https://npm.pkg.github.com'
+          node-version: "24.0"
+          registry-url: "https://npm.pkg.github.com"
       - name: Enable corepack (Yarn 2+)
         run: corepack enable
       - name: Cache Yarn 2 files
@@ -131,7 +131,7 @@ jobs:
         with:
           path: |
             node_modules/.cache
-          key: ${{ runner.os }}-tools-cache-${{ github.ref_name }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-tools-cache-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-tools-cache-
       - run: yarn lint
@@ -149,8 +149,8 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: '24.0'
-          registry-url: 'https://npm.pkg.github.com'
+          node-version: "24.0"
+          registry-url: "https://npm.pkg.github.com"
       - name: Enable corepack (Yarn 2+)
         run: corepack enable
       - name: Cache Yarn 2 files
