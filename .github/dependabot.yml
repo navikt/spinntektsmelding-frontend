@@ -43,6 +43,7 @@ updates:
         patterns:
           - 'next'
           - '@next/*'
+          - 'eslint-config-next'
 
   # Maintain dependencies for Docker
   - package-ecosystem: 'docker' # See documentation for possible values
