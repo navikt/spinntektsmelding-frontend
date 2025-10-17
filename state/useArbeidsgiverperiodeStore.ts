@@ -114,15 +114,9 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     slettAlleArbeidsgiverperioder: () =>
       set(
         produce((state) => {
-          state.arbeidsgiverperioder = [{ id: nanoid() }];
+          state.arbeidsgiverperioder = [];
           state.endretArbeidsgiverperiode = true;
 
-          const feilkoderArbeidsgiverperioder: Array<ValiderResultat> = validerPeriodeFravaer(
-            state.arbeidsgiverperioder,
-            'arbeidsgiverperioder'
-          );
-
-          state.feilmeldinger = state.oppdaterFeilmeldinger(feilkoderArbeidsgiverperioder, 'arbeidsgiverperioder');
           return state;
         })
       ),
