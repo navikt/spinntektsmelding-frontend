@@ -18,7 +18,9 @@ const DisabledDecorator: DecoratorBundle = {
 };
 
 const DECORATOR_DISABLED =
-  process.env.DISABLE_DECORATOR === 'true' || process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT === 'true';
+  process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
+  process.env.NODE_ENV === 'test' ||
+  process.env.PLAYWRIGHT === 'true';
 
 let cachedDecorator: DecoratorBundle | null = null;
 
@@ -66,8 +68,8 @@ function CustomDocument(props: CustomDocumentProps) {
           strategy='afterInteractive'
           src='https://cdn.nav.no/team-researchops/sporing/sporing.js'
           data-host-url='https://umami.nav.no'
-          data-website-id={publicRuntimeConfig.umamiWebsiteId}
-          data-domains={publicRuntimeConfig.umamiDataDomains}
+          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          data-domains={process.env.NEXT_PUBLIC_UMAMI_DATA_DOMAINS}
         />
         <HeadAssets />
       </Head>

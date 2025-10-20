@@ -16,7 +16,7 @@ describe('/api/hent-forespoersel API', () => {
   beforeEach(() => {
     vi.stubEnv('NODE_ENV', 'production');
     vi.stubEnv('IM_API_URI', 'im-api-uri');
-    vi.stubEnv('PREUTFYLT_INNTEKTSMELDING_API', '/preutfylt-inntektsmelding');
+    vi.stubEnv('NEXT_PUBLIC_PREUTFYLT_INNTEKTSMELDING_API', '/preutfylt-inntektsmelding');
     fetchMocker.resetMocks();
   });
 

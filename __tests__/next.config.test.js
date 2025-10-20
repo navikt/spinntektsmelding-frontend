@@ -37,13 +37,13 @@ describe('next.config core config and headers', () => {
     expect(config.experimental?.optimizePackageImports).toContain('@navikt/aksel-icons');
 
     // Public runtime config contains version from package.json
-    const { version } = require('../package.json');
-    expect(config.publicRuntimeConfig.version).toBe(version);
+    // const { version } = require('../package.json');
+    // expect(config.publicRuntimeConfig.version).toBe(version);
   });
 
   it('headers() returns CSP and cache-control headers using buildCspHeader', async () => {
     // const { buildCspHeader } = await vi.importMock('@navikt/nav-dekoratoren-moduler/ssr');
-    process.env.ENVIRONMENT = 'dev-gcp';
+    process.env.NEXT_PUBLIC_ENVIRONMENT = 'dev-gcp';
 
     clearNextConfigCache();
     const config = require('../next.config.js');
@@ -88,25 +88,25 @@ describe('next.config core config and headers', () => {
     );
   });
 
-  it('reads UMAMI_WEBSITE_ID and UMAMI_DATA_DOMAINS from environment', async () => {
-    process.env.UMAMI_WEBSITE_ID = 'test-website-id-1234';
-    process.env.UMAMI_DATA_DOMAINS = 'example.com,foo.no';
+  // it('reads UMAMI_WEBSITE_ID and UMAMI_DATA_DOMAINS from environment', async () => {
+  //   process.env.UMAMI_WEBSITE_ID = 'test-website-id-1234';
+  //   process.env.UMAMI_DATA_DOMAINS = 'example.com,foo.no';
 
-    clearNextConfigCache();
-    const config = require('../next.config.js');
+  //   clearNextConfigCache();
+  //   const config = require('../next.config.js');
 
-    expect(config.serverRuntimeConfig.umamiWebsiteId).toBe('test-website-id-1234');
-    expect(config.serverRuntimeConfig.umamiDataDomains).toBe('example.com,foo.no');
-  });
+  //   expect(config.serverRuntimeConfig.umamiWebsiteId).toBe('test-website-id-1234');
+  //   expect(config.serverRuntimeConfig.umamiDataDomains).toBe('example.com,foo.no');
+  // });
 
-  it('leaves fields undefined when env vars are not set', async () => {
-    delete process.env.UMAMI_WEBSITE_ID;
-    delete process.env.UMAMI_DATA_DOMAINS;
+  // it('leaves fields undefined when env vars are not set', async () => {
+  //   delete process.env.UMAMI_WEBSITE_ID;
+  //   delete process.env.UMAMI_DATA_DOMAINS;
 
-    clearNextConfigCache();
-    const config = require('../next.config.js');
+  //   clearNextConfigCache();
+  //   const config = require('../next.config.js');
 
-    expect(config.serverRuntimeConfig.umamiWebsiteId).toBeUndefined();
-    expect(config.serverRuntimeConfig.umamiDataDomains).toBeUndefined();
-  });
+  //   expect(config.serverRuntimeConfig.umamiWebsiteId).toBeUndefined();
+  //   expect(config.serverRuntimeConfig.umamiDataDomains).toBeUndefined();
+  // });
 });

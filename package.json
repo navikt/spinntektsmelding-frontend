@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack | pino-pretty --messageKey=message",
-    "dev:decoratorless": "cross-env DISABLE_DECORATOR=true next dev --turbopack | pino-pretty",
+    "dev:decoratorless": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --turbopack | pino-pretty",
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "eslint .",

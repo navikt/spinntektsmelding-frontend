@@ -3,15 +3,15 @@ import React from 'react';
 import { loadDecorator } from '../../pages/_document';
 
 // Mock next/config først
-vi.mock('next/config', () => ({
-  __esModule: true,
-  default: () => ({
-    publicRuntimeConfig: {
-      umamiWebsiteId: 'test-website-id',
-      umamiDataDomains: 'test-domain'
-    }
-  })
-}));
+// vi.mock('next/config', () => ({
+//   __esModule: true,
+//   default: () => ({
+//     publicRuntimeConfig: {
+//       umamiWebsiteId: 'test-website-id',
+//       umamiDataDomains: 'test-domain'
+//     }
+//   })
+// }));
 
 // Mock next/document
 vi.mock('next/document', () => ({
@@ -78,9 +78,11 @@ describe('_document.tsx (unit tests)', () => {
   });
   it('har riktige env-flagg for å deaktivere dekoratør', () => {
     // Test env-logikken direkte
-    process.env.DISABLE_DECORATOR = 'true';
+    process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
     const shouldDisable =
-      process.env.DISABLE_DECORATOR === 'true' || process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT === 'true';
+      process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
+      process.env.NODE_ENV === 'test' ||
+      process.env.PLAYWRIGHT === 'true';
 
     expect(shouldDisable).toBe(true);
   });
@@ -88,7 +90,9 @@ describe('_document.tsx (unit tests)', () => {
   it('NODE_ENV=test deaktiverer dekoratør', () => {
     process.env.NODE_ENV = 'test';
     const shouldDisable =
-      process.env.DISABLE_DECORATOR === 'true' || process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT === 'true';
+      process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
+      process.env.NODE_ENV === 'test' ||
+      process.env.PLAYWRIGHT === 'true';
 
     expect(shouldDisable).toBe(true);
   });
@@ -96,7 +100,9 @@ describe('_document.tsx (unit tests)', () => {
   it('PLAYWRIGHT=true deaktiverer dekoratør', () => {
     process.env.PLAYWRIGHT = 'true';
     const shouldDisable =
-      process.env.DISABLE_DECORATOR === 'true' || process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT === 'true';
+      process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
+      process.env.NODE_ENV === 'test' ||
+      process.env.PLAYWRIGHT === 'true';
 
     expect(shouldDisable).toBe(true);
   });
@@ -104,7 +110,7 @@ describe('_document.tsx (unit tests)', () => {
   // Test av loadDecorator-funksjonen direkte (hvis eksportert)
   it('loadDecorator returnerer disabled når flagg er satt', async () => {
     // Hvis du eksporterer loadDecorator fra _document, kan vi teste den:
-    process.env.DISABLE_DECORATOR = 'true';
+    process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
 
     // Mock import for å teste logikken
     const { loadDecorator } = await import('../../pages/_document');
@@ -117,8 +123,8 @@ describe('_document.tsx (unit tests)', () => {
     }
   });
 
-  it('loadDecorator returnerer disabled når DISABLE_DECORATOR=true', async () => {
-    process.env.DISABLE_DECORATOR = 'true';
+  it('loadDecorator returnerer disabled når NEXT_PUBLIC_DISABLE_DECORATOR=true', async () => {
+    process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
 
     const result = await loadDecorator();
 
@@ -133,7 +139,7 @@ describe('_document.tsx (unit tests)', () => {
   });
 
   it('loadDecorator bruker cache på påfølgende kall', async () => {
-    delete process.env.DISABLE_DECORATOR;
+    delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
     delete process.env.NODE_ENV;
     delete process.env.PLAYWRIGHT;
 
@@ -152,7 +158,7 @@ describe('_document.tsx (unit tests)', () => {
   });
 
   it('loadDecorator håndterer feil gracefully', async () => {
-    delete process.env.DISABLE_DECORATOR;
+    delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
     delete process.env.NODE_ENV;
     delete process.env.PLAYWRIGHT;
 

@@ -16,13 +16,13 @@ vi.mock('zustand');
 // Extend the functionality to support axe
 expect.extend(toHaveNoViolations);
 
-setConfig({
-  // ...config,
-  publicRuntimeConfig: {
-    BASE_PATH: '/',
-    SOME_KEY: 'your_value'
-  },
-  serverRuntimeConfig: {
-    YOUR_KEY: 'your_value'
-  }
-});
+// setConfig({
+//   // ...config,
+//   publicRuntimeConfig: {
+//     BASE_PATH: '/',
+//     SOME_KEY: 'your_value'
+//   },
+//   serverRuntimeConfig: {
+//     YOUR_KEY: 'your_value'
+//   }
+// });
