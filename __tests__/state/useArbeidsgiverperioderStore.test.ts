@@ -1202,11 +1202,7 @@ describe('useBoundStore', () => {
     act(() => {
       result.current.slettAlleArbeidsgiverperioder();
     });
-    expect(result.current.arbeidsgiverperioder).toEqual([
-      {
-        id: '3'
-      }
-    ]);
+    expect(result.current.arbeidsgiverperioder).toEqual([]);
   });
 
   it('should check if arbeidsgiverperiode has not been changed', () => {

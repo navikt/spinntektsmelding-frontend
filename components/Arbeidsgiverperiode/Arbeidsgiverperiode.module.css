@@ -68,6 +68,10 @@
   display: inline-block;
 }
 
+.refusjonBeloep {
+  grid-template-rows: [title] min-content [select];
+}
+
 @media screen and (max-width: 500px) {
   .endreknapper {
     flex-direction: column;

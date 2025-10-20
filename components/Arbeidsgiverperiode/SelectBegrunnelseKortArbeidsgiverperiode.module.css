@@ -1,3 +1,7 @@
+.selectbegrunnelse {
+  grid-template-rows: [title] min-content [select];
+}
+
 .selectbegrunnelse > div {
   height: 48px;
 }

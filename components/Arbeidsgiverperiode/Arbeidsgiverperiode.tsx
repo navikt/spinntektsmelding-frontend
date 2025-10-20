@@ -86,6 +86,10 @@ export default function Arbeidsgiverperiode({
       return 0;
     }
 
+    if (perioder.length === 0) {
+      return 0;
+    }
+
     let dagerTotalt = 0;
 
     const mergeDatePeriods = finnSammenhengendePeriodeManuellJustering(perioder);
