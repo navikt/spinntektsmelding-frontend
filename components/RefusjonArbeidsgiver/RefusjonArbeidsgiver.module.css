@@ -13,15 +13,12 @@
   margin-bottom: auto;
 }
 
-.selectbegrunnelse > div {
-  height: 48px;
+.selectbegrunnelse {
+  grid-template-rows: [title] min-content [select];
 }
 
-.beloepperiode,
-.wrapperUtbetaling {
-  display: flex;
-  flex-direction: row;
-  gap: 2rem;
+.selectbegrunnelse > div {
+  height: 48px;
 }
 
 .beloepperiode {
