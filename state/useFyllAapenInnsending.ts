@@ -18,7 +18,7 @@ import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import isValidUUID from '../utils/isValidUUID';
 import { TypeArbeidsforholdSchema } from '../schema/TypeArbeidsforholdSchema';
-import { SelvbestemtType } from './useSkjemadataStore';
+import { SelvbestemtType } from '../schema/konstanter/selvbestemtType';
 
 export default function useFyllAapenInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
