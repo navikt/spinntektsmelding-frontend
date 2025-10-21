@@ -7,7 +7,7 @@ import org from '../../mockdata/testOrganisasjoner';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 import { MottattArbeidsgiver } from '../../schema/MottattArbeidsgiverSchema';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + process.env.NEXT_PUBLIC_ARBEIDSGIVERLISTE_API;
+const basePath = 'http://' + global.process.env.IM_API_URI + process.env.ARBEIDSGIVERLISTE_API;
 
 export const config = {
   api: {
