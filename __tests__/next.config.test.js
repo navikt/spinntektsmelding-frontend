@@ -87,26 +87,4 @@ describe('next.config core config and headers', () => {
       ])
     );
   });
-
-  // it('reads UMAMI_WEBSITE_ID and UMAMI_DATA_DOMAINS from environment', async () => {
-  //   process.env.UMAMI_WEBSITE_ID = 'test-website-id-1234';
-  //   process.env.UMAMI_DATA_DOMAINS = 'example.com,foo.no';
-
-  //   clearNextConfigCache();
-  //   const config = require('../next.config.js');
-
-  //   expect(config.serverRuntimeConfig.umamiWebsiteId).toBe('test-website-id-1234');
-  //   expect(config.serverRuntimeConfig.umamiDataDomains).toBe('example.com,foo.no');
-  // });
-
-  // it('leaves fields undefined when env vars are not set', async () => {
-  //   delete process.env.UMAMI_WEBSITE_ID;
-  //   delete process.env.UMAMI_DATA_DOMAINS;
-
-  //   clearNextConfigCache();
-  //   const config = require('../next.config.js');
-
-  //   expect(config.serverRuntimeConfig.umamiWebsiteId).toBeUndefined();
-  //   expect(config.serverRuntimeConfig.umamiDataDomains).toBeUndefined();
-  // });
 });

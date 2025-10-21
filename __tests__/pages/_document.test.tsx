@@ -2,17 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import { loadDecorator } from '../../pages/_document';
 
-// Mock next/config først
-// vi.mock('next/config', () => ({
-//   __esModule: true,
-//   default: () => ({
-//     publicRuntimeConfig: {
-//       umamiWebsiteId: 'test-website-id',
-//       umamiDataDomains: 'test-domain'
-//     }
-//   })
-// }));
-
 // Mock next/document
 vi.mock('next/document', () => ({
   __esModule: true,
