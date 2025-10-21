@@ -107,23 +107,20 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     setAarsakInnsending(skjemaData, pathSlug);
     const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
 
-    if (validerteData.success !== true) {
-      logger.warn('Feil ved validering av skjema - Åpen innsending ' + JSON.stringify(validerteData.error));
-    }
+    const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
 
-    const shouldShowErrors =
-      validerteData.success === false ||
-      !opplysningerBekreftet ||
-      (!harRefusjonEndringer && lonnISykefravaeret?.status === 'Ja') ||
-      !fullLonnIArbeidsgiverPerioden?.status ||
-      !lonnISykefravaeret?.status;
+    setSkalViseFeilmeldinger(true);
 
-    if (shouldShowErrors) {
-      const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
+    if (errors.length > 0 || validerteData.success !== true) {
       fyllFeilmeldinger(errors);
+      logger.warn(
+        'Feil ved validering av skjema - Åpen innsending ' +
+          JSON.stringify(validerteData.error) +
+          ' ' +
+          JSON.stringify(errors)
+      );
       logEvent('skjema validering feilet', { tittel: 'Validering feilet', component: amplitudeComponent });
-      setSkalViseFeilmeldinger(true);
-      return;
+      return false;
     }
 
     // Success path
