@@ -1,5 +1,4 @@
 import Document, { Html, Head, Main, NextScript, DocumentContext, type DocumentInitialProps } from 'next/document';
-import getConfig from 'next/config';
 import Script from 'next/script';
 import React from 'react';
 
@@ -56,7 +55,6 @@ interface CustomDocumentProps extends DocumentInitialProps {
 }
 
 function CustomDocument(props: CustomDocumentProps) {
-  const { publicRuntimeConfig } = getConfig();
   const { decorator } = props;
   const { Header, Footer, Scripts, HeadAssets } = decorator;
 
