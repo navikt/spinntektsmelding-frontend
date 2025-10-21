@@ -107,14 +107,12 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     setAarsakInnsending(skjemaData, pathSlug);
     const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
 
-    if (validerteData.success !== true) {
-    }
-
     const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
 
-    fyllFeilmeldinger(errors);
     setSkalViseFeilmeldinger(true);
+
     if (errors.length > 0 || validerteData.success !== true) {
+      fyllFeilmeldinger(errors);
       logger.warn(
         'Feil ved validering av skjema - Åpen innsending ' +
           JSON.stringify(validerteData.error) +
