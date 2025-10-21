@@ -35,15 +35,11 @@ describe('next.config core config and headers', () => {
 
     // Experimental optimizePackageImports configured
     expect(config.experimental?.optimizePackageImports).toContain('@navikt/aksel-icons');
-
-    // Public runtime config contains version from package.json
-    // const { version } = require('../package.json');
-    // expect(config.publicRuntimeConfig.version).toBe(version);
   });
 
   it('headers() returns CSP and cache-control headers using buildCspHeader', async () => {
     // const { buildCspHeader } = await vi.importMock('@navikt/nav-dekoratoren-moduler/ssr');
-    process.env.NEXT_PUBLIC_ENVIRONMENT = 'dev-gcp';
+    process.env.ENVIRONMENT = 'dev-gcp';
 
     clearNextConfigCache();
     const config = require('../next.config.js');

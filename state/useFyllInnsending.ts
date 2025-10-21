@@ -2,7 +2,7 @@ import { isValid } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { LonnIArbeidsgiverperioden, Naturalytelse, Periode, YesNo } from './state';
+import { Begrunnelse, LonnIArbeidsgiverperioden, Naturalytelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import forespoerselType from '../config/forespoerselType';
 import parseIsoDate from '../utils/parseIsoDate';
@@ -296,7 +296,7 @@ export function konverterRefusjonEndringer(
 
 export function formaterRedusertLoennIAgp(
   fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined
-): { beloep: number; begrunnelse: string } | null {
+): { beloep: number; begrunnelse: Begrunnelse } | null {
   return fullLonnIArbeidsgiverPerioden?.begrunnelse !== undefined &&
     fullLonnIArbeidsgiverPerioden?.begrunnelse !== '' &&
     fullLonnIArbeidsgiverPerioden?.status === 'Nei'

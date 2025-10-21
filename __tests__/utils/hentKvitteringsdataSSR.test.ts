@@ -18,7 +18,7 @@ describe('hentKvitteringsdataSSR', () => {
   });
 
   it('should call fetchKvitteringsdataSSR with the correct arguments', async () => {
-    const expectedUrl = `http://${process.env.IM_API_URI}${process.env.NEXT_PUBLIC_INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API}`;
+    const expectedUrl = `http://${process.env.IM_API_URI}${process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API}`;
     await hentKvitteringsdataSSR(pathSlug, token);
     expect(fetchKvitteringsdata).toHaveBeenCalledWith(expectedUrl, pathSlug, token);
   });

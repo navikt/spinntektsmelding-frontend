@@ -13,10 +13,6 @@ class Environment {
     return process.env.NEXT_PUBLIC_LOGOUT_SERVICE_URL;
   }
 
-  get arbeidsgiverAPI() {
-    return process.env.NEXT_PUBLIC_ARBEIDSGIVERLISTE_API;
-  }
-
   get innsendingInntektsmeldingAPI() {
     return process.env.NEXT_PUBLIC_INNSENDING_INNTEKTSMELDING_API;
   }
@@ -49,14 +45,6 @@ class Environment {
     return process.env.NEXT_PUBLIC_AKTIVE_ORGNR_API;
   }
 
-  get innsendingSelvbestemtInntektsmeldingApi() {
-    return process.env.NEXT_PUBLIC_INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API;
-  }
-
-  get arbeidsgiverListe() {
-    return process.env.NEXT_PUBLIC_ARBEIDSGIVERLISTE_API;
-  }
-
   public baseUrl = '/im-dialog';
 
   public skjemadataUrl = '/im-dialog/api/hent-forespoersel';
@@ -82,10 +70,6 @@ class Environment {
   public hentBehandlingsdagerUrl = '/im-dialog/api/sp-behandlingsdager';
 
   public mineTilgangerUrl = '/im-dialog/api/mine-tilganger';
-
-  get environment() {
-    return process.env.NEXT_PUBLIC_ENVIRONMENT;
-  }
 
   get telemetryUrl() {
     return process.env.NEXT_PUBLIC_TELEMETRY_URL;

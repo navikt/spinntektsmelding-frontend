@@ -56,18 +56,6 @@ describe('Environment', () => {
     });
   });
 
-  describe('arbeidsgiverAPI', () => {
-    it('should return arbeidsgiver API URL', () => {
-      process.env.NEXT_PUBLIC_ARBEIDSGIVERLISTE_API = 'https://api.example.com/arbeidsgiver';
-      expect(env.arbeidsgiverAPI).toBe('https://api.example.com/arbeidsgiver');
-    });
-
-    it('should handle undefined arbeidsgiver API', () => {
-      delete process.env.NEXT_PUBLIC_ARBEIDSGIVERLISTE_API;
-      expect(env.arbeidsgiverAPI).toBeUndefined();
-    });
-  });
-
   describe('innsendingInntektsmeldingAPI', () => {
     it('should return innsending inntektsmelding API URL', () => {
       process.env.NEXT_PUBLIC_INNSENDING_INNTEKTSMELDING_API = 'https://api.example.com/innsending';
@@ -164,48 +152,6 @@ describe('Environment', () => {
     });
   });
 
-  describe('innsendingSelvbestemtInntektsmeldingApi', () => {
-    it('should return selvbestemt innsending API URL', () => {
-      process.env.NEXT_PUBLIC_INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API =
-        'https://api.example.com/selvbestemt-innsending';
-      expect(env.innsendingSelvbestemtInntektsmeldingApi).toBe('https://api.example.com/selvbestemt-innsending');
-    });
-
-    it('should handle undefined selvbestemt innsending API', () => {
-      delete process.env.NEXT_PUBLIC_INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API;
-      expect(env.innsendingSelvbestemtInntektsmeldingApi).toBeUndefined();
-    });
-  });
-
-  describe('arbeidsgiverListe', () => {
-    it('should return arbeidsgiverliste API URL', () => {
-      process.env.NEXT_PUBLIC_ARBEIDSGIVERLISTE_API = 'https://api.example.com/liste';
-      expect(env.arbeidsgiverListe).toBe('https://api.example.com/liste');
-    });
-
-    it('should handle undefined arbeidsgiverliste API', () => {
-      delete process.env.NEXT_PUBLIC_ARBEIDSGIVERLISTE_API;
-      expect(env.arbeidsgiverListe).toBeUndefined();
-    });
-  });
-
-  describe('environment', () => {
-    it('should return environment name', () => {
-      process.env.NEXT_PUBLIC_ENVIRONMENT = 'production';
-      expect(env.environment).toBe('production');
-    });
-
-    it('should handle development environment', () => {
-      process.env.NEXT_PUBLIC_ENVIRONMENT = 'development';
-      expect(env.environment).toBe('development');
-    });
-
-    it('should handle undefined environment', () => {
-      delete process.env.NEXT_PUBLIC_ENVIRONMENT;
-      expect(env.environment).toBeUndefined();
-    });
-  });
-
   describe('telemetryUrl', () => {
     it('should return telemetry URL', () => {
       process.env.NEXT_PUBLIC_TELEMETRY_URL = 'https://telemetry.example.com';
@@ -286,21 +232,6 @@ describe('Environment', () => {
     });
   });
 
-  // describe('Singleton instance', () => {
-  //   it('should return same instance', () => {
-  //     const env1 = require('../../config/environment').default;
-  //     const env2 = require('../../config/environment').default;
-  //     expect(env1).toBe(env2);
-  //   });
-
-  //   it('should maintain state across imports', () => {
-  //     process.env.NEXT_PUBLIC_ENVIRONMENT = 'test-state';
-  //     const env1 = require('../../config/environment').default;
-  //     const env2 = require('../../config/environment').default;
-  //     expect(env1.environment).toBe(env2.environment);
-  //   });
-  // });
-
   describe('Edge cases', () => {
     it('should handle special characters in URLs', () => {
       process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL = 'https://login.example.com?param=value&other=test';
@@ -316,30 +247,15 @@ describe('Environment', () => {
       process.env.NEXT_PUBLIC_TELEMETRY_URL = '';
       expect(env.telemetryUrl).toBe('');
     });
-
-    it('should handle whitespace in environment variables', () => {
-      process.env.NEXT_PUBLIC_ENVIRONMENT = '  production  ';
-      expect(env.environment).toBe('  production  ');
-    });
   });
 
   describe('Multiple getters interaction', () => {
     it('should handle multiple environment variables set at once', () => {
       process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL = 'https://login.example.com';
       process.env.NEXT_PUBLIC_LOGOUT_SERVICE_URL = 'https://logout.example.com';
-      process.env.NEXT_PUBLIC_ENVIRONMENT = 'production';
 
       expect(env.loginServiceUrl).toBe('https://login.example.com?redirect=XXX');
       expect(env.logoutServiceUrl).toBe('https://logout.example.com');
-      expect(env.environment).toBe('production');
-    });
-
-    it('should handle arbeidsgiverAPI and arbeidsgiverListe pointing to same URL', () => {
-      const apiUrl = 'https://api.example.com/arbeidsgiver';
-      process.env.NEXT_PUBLIC_ARBEIDSGIVERLISTE_API = apiUrl;
-
-      expect(env.arbeidsgiverAPI).toBe(apiUrl);
-      expect(env.arbeidsgiverListe).toBe(apiUrl);
     });
   });
 });
