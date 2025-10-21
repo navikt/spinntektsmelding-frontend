@@ -56,66 +56,6 @@ describe('Environment', () => {
     });
   });
 
-  describe('innsendingInntektsmeldingAPI', () => {
-    it('should return innsending inntektsmelding API URL', () => {
-      process.env.NEXT_PUBLIC_INNSENDING_INNTEKTSMELDING_API = 'https://api.example.com/innsending';
-      expect(env.innsendingInntektsmeldingAPI).toBe('https://api.example.com/innsending');
-    });
-
-    it('should handle undefined innsending API', () => {
-      delete process.env.NEXT_PUBLIC_INNSENDING_INNTEKTSMELDING_API;
-      expect(env.innsendingInntektsmeldingAPI).toBeUndefined();
-    });
-  });
-
-  describe('inntektsmeldingUuidAPI', () => {
-    it('should return preutfylt inntektsmelding API URL', () => {
-      process.env.NEXT_PUBLIC_PREUTFYLT_INNTEKTSMELDING_API = 'https://api.example.com/preutfylt';
-      expect(env.inntektsmeldingUuidAPI).toBe('https://api.example.com/preutfylt');
-    });
-
-    it('should handle undefined preutfylt API', () => {
-      delete process.env.NEXT_PUBLIC_PREUTFYLT_INNTEKTSMELDING_API;
-      expect(env.inntektsmeldingUuidAPI).toBeUndefined();
-    });
-  });
-
-  describe('inntektsdataAPI', () => {
-    it('should return inntektsdata API URL', () => {
-      process.env.NEXT_PUBLIC_INNTEKTSDATA_API = 'https://api.example.com/inntektsdata';
-      expect(env.inntektsdataAPI).toBe('https://api.example.com/inntektsdata');
-    });
-
-    it('should handle undefined inntektsdata API', () => {
-      delete process.env.NEXT_PUBLIC_INNTEKTSDATA_API;
-      expect(env.inntektsdataAPI).toBeUndefined();
-    });
-  });
-
-  describe('inntektsdataSelvbestemtAPI', () => {
-    it('should return selvbestemt inntektsdata API URL', () => {
-      process.env.NEXT_PUBLIC_INNTEKTSDATA_SELVBESTEMT_API = 'https://api.example.com/selvbestemt';
-      expect(env.inntektsdataSelvbestemtAPI).toBe('https://api.example.com/selvbestemt');
-    });
-
-    it('should handle undefined selvbestemt API', () => {
-      delete process.env.NEXT_PUBLIC_INNTEKTSDATA_SELVBESTEMT_API;
-      expect(env.inntektsdataSelvbestemtAPI).toBeUndefined();
-    });
-  });
-
-  describe('hentKvitteringAPI', () => {
-    it('should return kvittering API URL', () => {
-      process.env.NEXT_PUBLIC_KVITTERINGDATA_API = 'https://api.example.com/kvittering';
-      expect(env.hentKvitteringAPI).toBe('https://api.example.com/kvittering');
-    });
-
-    it('should handle undefined kvittering API', () => {
-      delete process.env.NEXT_PUBLIC_KVITTERINGDATA_API;
-      expect(env.hentKvitteringAPI).toBeUndefined();
-    });
-  });
-
   describe('minSideArbeidsgiver', () => {
     it('should return min side arbeidsgiver URL', () => {
       process.env.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER = 'https://arbeidsgiver.example.com';
@@ -137,18 +77,6 @@ describe('Environment', () => {
     it('should handle undefined saksoversikt URL', () => {
       delete process.env.NEXT_PUBLIC_SAKSOVERSIKT_URL;
       expect(env.saksoversiktUrl).toBeUndefined();
-    });
-  });
-
-  describe('aktiveOrgnrApi', () => {
-    it('should return aktive orgnr API URL', () => {
-      process.env.NEXT_PUBLIC_AKTIVE_ORGNR_API = 'https://api.example.com/orgnr';
-      expect(env.aktiveOrgnrApi).toBe('https://api.example.com/orgnr');
-    });
-
-    it('should handle undefined aktive orgnr API', () => {
-      delete process.env.NEXT_PUBLIC_AKTIVE_ORGNR_API;
-      expect(env.aktiveOrgnrApi).toBeUndefined();
     });
   });
 

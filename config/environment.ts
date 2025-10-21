@@ -13,36 +13,12 @@ class Environment {
     return process.env.NEXT_PUBLIC_LOGOUT_SERVICE_URL;
   }
 
-  get innsendingInntektsmeldingAPI() {
-    return process.env.NEXT_PUBLIC_INNSENDING_INNTEKTSMELDING_API;
-  }
-
-  get inntektsmeldingUuidAPI() {
-    return process.env.NEXT_PUBLIC_PREUTFYLT_INNTEKTSMELDING_API;
-  }
-
-  get inntektsdataAPI() {
-    return process.env.NEXT_PUBLIC_INNTEKTSDATA_API;
-  }
-
-  get inntektsdataSelvbestemtAPI() {
-    return process.env.NEXT_PUBLIC_INNTEKTSDATA_SELVBESTEMT_API;
-  }
-
-  get hentKvitteringAPI() {
-    return process.env.NEXT_PUBLIC_KVITTERINGDATA_API;
-  }
-
   get minSideArbeidsgiver() {
     return process.env.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER;
   }
 
   get saksoversiktUrl() {
     return process.env.NEXT_PUBLIC_SAKSOVERSIKT_URL;
-  }
-
-  get aktiveOrgnrApi() {
-    return process.env.NEXT_PUBLIC_AKTIVE_ORGNR_API;
   }
 
   public baseUrl = '/im-dialog';
