@@ -1322,10 +1322,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/ds-css@npm:^7.32.2":
-  version: 7.32.2
-  resolution: "@navikt/ds-css@npm:7.32.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-css%2F7.32.2%2F100b27808970f7005d122dfcdeddf7aa1fc1d173"
-  checksum: 10c0/f6499302cba54a30ea501118d758ce39ecdfc7246b093200582c4766cfa09ad01f386e316ae53c908c72b95293e76c139559799c8c511208f22b738658ba84eb
+"@navikt/ds-css@npm:^7.32.3":
+  version: 7.32.3
+  resolution: "@navikt/ds-css@npm:7.32.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-css%2F7.32.3%2F6be2189f2bb288fba3acc03425281b1aed86f4aa"
+  checksum: 10c0/8ab28fba7c91eccfeb8dca46461b422eba262afc2d8b6108dd71b32bb413ccde0c5eb163503f618e0e8bd325e3f66a4135f13f62be6de16d9c8376cdcec29c52
   languageName: node
   linkType: hard
 
@@ -8335,7 +8335,7 @@ __metadata:
     "@grafana/faro-web-tracing": "npm:1.19.0"
     "@hookform/resolvers": "npm:5.2.2"
     "@navikt/aksel-icons": "npm:^7.32.2"
-    "@navikt/ds-css": "npm:^7.32.2"
+    "@navikt/ds-css": "npm:^7.32.3"
     "@navikt/ds-react": "npm:^7.32.2"
     "@navikt/fnrvalidator": "npm:2.1.5"
     "@navikt/nav-dekoratoren-moduler": "npm:^3.4.0"
