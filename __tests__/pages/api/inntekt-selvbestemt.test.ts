@@ -63,9 +63,9 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
     beforeEach(async () => {
       process.env.NODE_ENV = 'development';
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      handler = module.default;
-      config = module.config;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      handler = apiModule.default;
+      config = apiModule.config;
     });
 
     it('should return mock data', async () => {
@@ -80,73 +80,7 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
 
       await vi.advanceTimersByTimeAsync(500);
 
-      expect(jsonMock).toHaveBeenCalledWith(
-        expect.objectContaining([
-          {
-            name: 'ANSTENDIG BJØRN KOMMUNE',
-            organizationForm: 'KOMM',
-            organizationNumber: '810007672',
-            parentOrganizationNumber: null,
-            socialSecurityNumber: null,
-            status: 'Active',
-            type: 'Enterprise'
-          },
-          {
-            name: 'ANSTENDIG PIGGSVIN BRANNVESEN',
-            organizationForm: 'BEDR',
-            organizationNumber: '810008032',
-            parentOrganizationNumber: '810007702',
-            socialSecurityNumber: null,
-            status: 'Active',
-            type: 'Business'
-          },
-          {
-            name: 'ANSTENDIG PIGGSVIN BARNEHAGE',
-            organizationForm: 'BEDR',
-            organizationNumber: '810007842',
-            parentOrganizationNumber: '810007702',
-            socialSecurityNumber: null,
-            status: 'Active',
-            type: 'Business'
-          },
-          {
-            name: 'ANSTENDIG PIGGSVIN BYDEL',
-            organizationForm: 'ORGL',
-            organizationNumber: '810007702',
-            parentOrganizationNumber: null,
-            socialSecurityNumber: null,
-            status: 'Active',
-            type: 'Enterprise'
-          },
-          {
-            name: 'ANSTENDIG PIGGSVIN SYKEHJEM',
-            organizationForm: 'BEDR',
-            organizationNumber: '810007982',
-            parentOrganizationNumber: '810007702',
-            socialSecurityNumber: null,
-            status: 'Active',
-            type: 'Business'
-          },
-          {
-            name: 'SKOPPUM OG SANDØY',
-            organizationForm: 'BEDR',
-            organizationNumber: '911206722',
-            parentOrganizationNumber: null,
-            socialSecurityNumber: null,
-            status: 'Active',
-            type: 'Business'
-          },
-          {
-            name: 'SKJERSTAD OG KJØRSVIKBUGEN',
-            organizationForm: 'AS',
-            organizationNumber: '911212218',
-            parentOrganizationNumber: null,
-            socialSecurityNumber: null,
-            status: 'Active',
-            type: 'Enterprise'
-          }
-        ])
-      );
+      expect(jsonMock).toHaveBeenCalledWith(expect.objectContaining(org));
     });
 
     it('should handle multiple concurrent requests', async () => {
@@ -196,11 +130,11 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
     beforeEach(async () => {
       process.env.NODE_ENV = 'production';
       process.env.IM_API_URI = 'api.example.com';
-      process.env.ARBEIDSGIVERLISTE_API = '/arbeidsgivere';
+      process.env.INNTEKTSDATA_SELVBESTEMT_API = '/inntekt-selvbestemt';
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      handler = module.default;
-      config = module.config;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      handler = apiModule.default;
+      config = apiModule.config;
     });
 
     it('should proxy request to backend', () => {
@@ -210,7 +144,7 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
         mockReq,
         mockRes,
         expect.objectContaining({
-          target: 'http://api.example.com/arbeidsgivere',
+          target: 'http://api.example.com/inntekt-selvbestemt',
           onProxyInit: mockHandleProxyInit
         })
       );
@@ -221,7 +155,7 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
 
       const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2];
 
-      expect(proxyConfig.target).toBe('http://api.example.com/arbeidsgivere');
+      expect(proxyConfig.target).toBe('http://api.example.com/inntekt-selvbestemt');
       expect(proxyConfig.onProxyInit).toBe(mockHandleProxyInit);
       expect(proxyConfig.pathRewrite).toEqual([
         {
@@ -265,11 +199,11 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
 
     it('should construct basePath from environment variables', async () => {
       process.env.IM_API_URI = 'backend.service.local';
-      process.env.ARBEIDSGIVERLISTE_API = '/v1/orgnr';
+      process.env.INNTEKTSDATA_SELVBESTEMT_API = '/v1/orgnr';
 
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      const updatedHandler = module.default;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      const updatedHandler = apiModule.default;
 
       updatedHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -298,9 +232,9 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
     beforeEach(async () => {
       process.env.NODE_ENV = 'production';
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      handler = module.default;
-      config = module.config;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      handler = apiModule.default;
+      config = apiModule.config;
     });
 
     it('should have externalResolver enabled', () => {
@@ -321,8 +255,8 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
     it('should handle undefined NODE_ENV', async () => {
       delete process.env.NODE_ENV;
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      const testHandler = module.default;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      const testHandler = apiModule.default;
 
       testHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -333,8 +267,8 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
     it('should handle test environment', async () => {
       process.env.NODE_ENV = 'test';
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      const testHandler = module.default;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      const testHandler = apiModule.default;
 
       testHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -345,8 +279,8 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
     it('should be case-sensitive for environment check', async () => {
       process.env.NODE_ENV = 'Development';
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      const testHandler = module.default;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      const testHandler = apiModule.default;
 
       testHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -359,10 +293,10 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
     beforeEach(async () => {
       process.env.NODE_ENV = 'production';
       process.env.IM_API_URI = 'api.example.com';
-      process.env.ARBEIDSGIVERLISTE_API = '/aktive-orgnr';
+      process.env.INNTEKTSDATA_SELVBESTEMT_API = '/aktive-orgnr';
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      handler = module.default;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      handler = apiModule.default;
     });
 
     it('should handle requests with headers in production', () => {
@@ -403,10 +337,10 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
     beforeEach(async () => {
       process.env.NODE_ENV = 'production';
       process.env.IM_API_URI = 'api.example.com';
-      process.env.ARBEIDSGIVERLISTE_API = '/aktive-orgnr';
+      process.env.INNTEKTSDATA_SELVBESTEMT_API = '/aktive-orgnr';
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      handler = module.default;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      handler = apiModule.default;
     });
 
     it('should have pathRewrite as array with single element', () => {
@@ -449,8 +383,8 @@ describe('API Route: /api/inntekt-selvbestemt', () => {
     it('should return undefined when no environment matches', async () => {
       process.env.NODE_ENV = 'test';
       vi.resetModules();
-      const module = await import('../../../pages/api/inntekt-selvbestemt');
-      const testHandler = module.default;
+      const apiModule = await import('../../../pages/api/inntekt-selvbestemt');
+      const testHandler = apiModule.default;
 
       const result = testHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 

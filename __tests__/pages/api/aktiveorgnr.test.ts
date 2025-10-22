@@ -63,9 +63,9 @@ describe('API Route: /api/aktiveorgnr', () => {
     beforeEach(async () => {
       process.env.NODE_ENV = 'development';
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      handler = module.default;
-      config = module.config;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      handler = apiModule.default;
+      config = apiModule.config;
     });
 
     it('should return mock data after 500ms delay', async () => {
@@ -159,9 +159,9 @@ describe('API Route: /api/aktiveorgnr', () => {
       process.env.IM_API_URI = 'api.example.com';
       process.env.AKTIVE_ORGNR_API = '/aktive-orgnr';
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      handler = module.default;
-      config = module.config;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      handler = apiModule.default;
+      config = apiModule.config;
     });
 
     it('should proxy request to backend', () => {
@@ -229,8 +229,8 @@ describe('API Route: /api/aktiveorgnr', () => {
       process.env.AKTIVE_ORGNR_API = '/v1/orgnr';
 
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      const updatedHandler = module.default;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      const updatedHandler = apiModule.default;
 
       updatedHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -259,9 +259,9 @@ describe('API Route: /api/aktiveorgnr', () => {
     beforeEach(async () => {
       process.env.NODE_ENV = 'production';
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      handler = module.default;
-      config = module.config;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      handler = apiModule.default;
+      config = apiModule.config;
     });
 
     it('should have externalResolver enabled', () => {
@@ -282,8 +282,8 @@ describe('API Route: /api/aktiveorgnr', () => {
     it('should handle undefined NODE_ENV', async () => {
       delete process.env.NODE_ENV;
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      const testHandler = module.default;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      const testHandler = apiModule.default;
 
       testHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -294,8 +294,8 @@ describe('API Route: /api/aktiveorgnr', () => {
     it('should handle test environment', async () => {
       process.env.NODE_ENV = 'test';
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      const testHandler = module.default;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      const testHandler = apiModule.default;
 
       testHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -306,8 +306,8 @@ describe('API Route: /api/aktiveorgnr', () => {
     it('should be case-sensitive for environment check', async () => {
       process.env.NODE_ENV = 'Development';
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      const testHandler = module.default;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      const testHandler = apiModule.default;
 
       testHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
@@ -322,8 +322,8 @@ describe('API Route: /api/aktiveorgnr', () => {
       process.env.IM_API_URI = 'api.example.com';
       process.env.AKTIVE_ORGNR_API = '/aktive-orgnr';
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      handler = module.default;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      handler = apiModule.default;
     });
 
     it('should handle requests with headers in production', () => {
@@ -366,8 +366,8 @@ describe('API Route: /api/aktiveorgnr', () => {
       process.env.IM_API_URI = 'api.example.com';
       process.env.AKTIVE_ORGNR_API = '/aktive-orgnr';
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      handler = module.default;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      handler = apiModule.default;
     });
 
     it('should have pathRewrite as array with single element', () => {
@@ -410,8 +410,8 @@ describe('API Route: /api/aktiveorgnr', () => {
     it('should return undefined when no environment matches', async () => {
       process.env.NODE_ENV = 'test';
       vi.resetModules();
-      const module = await import('../../../pages/api/aktiveorgnr');
-      const testHandler = module.default;
+      const apiModule = await import('../../../pages/api/aktiveorgnr');
+      const testHandler = apiModule.default;
 
       const result = testHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
