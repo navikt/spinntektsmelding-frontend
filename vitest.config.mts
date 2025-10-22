@@ -15,7 +15,9 @@ export default defineConfig({
       './__tests__/setup.ts',
       '**/__mocks__/**.*',
       'tests/**',
-      './__tests__/mock-dekoratoren-moduler.ts'
+      './__tests__/mock-dekoratoren-moduler.ts',
+      'playwright-report/**',
+      'playwright.config.ts'
     ],
     setupFiles: ['./__tests__/setup.ts', './__tests__/mock-dekoratoren-moduler.ts'],
     coverage: {
