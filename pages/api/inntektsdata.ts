@@ -1,12 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
-import environment from '../../config/environment';
 
 import org from '../../mockdata/inntektData.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + environment.inntektsdataAPI;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNTEKTSDATA_API;
 
 type Data = typeof org;
 

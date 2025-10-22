@@ -1,12 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
-import environment from '../../config/environment';
 
 import org from '../../mockdata/blank-to-arbaidsforhold.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + environment.aktiveOrgnrApi;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.AKTIVE_ORGNR_API;
 
 type Data = typeof org;
 

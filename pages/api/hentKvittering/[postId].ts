@@ -1,11 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
-import environment from '../../../config/environment';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 import org from '../../../mockdata/kvittering-bug-endre.json';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + environment.hentKvitteringAPI;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.KVITTERINGDATA_API;
 
 type Data = typeof org;
 

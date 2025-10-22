@@ -2,9 +2,6 @@ import { Faro, getWebInstrumentations, initializeFaro, LogLevel } from '@grafana
 import { TracingInstrumentation } from '@grafana/faro-web-tracing';
 
 import env from '../config/environment';
-import getConfig from 'next/config';
-
-const { publicRuntimeConfig } = getConfig();
 
 let faro: Faro | null = null;
 export function initInstrumentation(): void {
@@ -16,7 +13,7 @@ export function initInstrumentation(): void {
 export function getFaro(): Faro | null {
   if (faro != null) return faro;
 
-  if (publicRuntimeConfig.loggingDisabled) {
+  if (process.env.NEXT_PUBLIC_DISABLE_DECORATOR) {
     return null;
   }
 

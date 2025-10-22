@@ -1,68 +1,24 @@
-import getConfig from 'next/config';
+import { version } from '../package.json';
 
 class Environment {
-  publicRuntimeConfig: any;
-
-  constructor() {
-    const { publicRuntimeConfig } = getConfig();
-
-    this.publicRuntimeConfig = publicRuntimeConfig;
-  }
-
   get loginServiceUrl() {
-    return this.publicRuntimeConfig.loginServiceUrl + '?redirect=XXX';
+    return process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL + '?redirect=XXX';
   }
 
   get loginServiceUrlUtenRedirect() {
-    return this.publicRuntimeConfig.loginServiceUrl;
+    return process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL;
   }
 
   get logoutServiceUrl() {
-    return this.publicRuntimeConfig.logoutServiceUrl;
-  }
-
-  get arbeidsgiverAPI() {
-    return this.publicRuntimeConfig.arbeidsgiverListe;
-  }
-
-  get innsendingInntektsmeldingAPI() {
-    return this.publicRuntimeConfig.innsendingInntektsmeldingApi;
-  }
-
-  get inntektsmeldingUuidAPI() {
-    return this.publicRuntimeConfig.inntektsmeldingKjenteDataApi;
-  }
-
-  get inntektsdataAPI() {
-    return this.publicRuntimeConfig.tidligereInntekterApi;
-  }
-
-  get inntektsdataSelvbestemtAPI() {
-    return this.publicRuntimeConfig.tidligereInntekterSelvbestemtApi;
-  }
-
-  get hentKvitteringAPI() {
-    return this.publicRuntimeConfig.kvitteringDataApi;
+    return process.env.NEXT_PUBLIC_LOGOUT_SERVICE_URL;
   }
 
   get minSideArbeidsgiver() {
-    return this.publicRuntimeConfig.minSideArbeidsgiver;
+    return process.env.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER;
   }
 
   get saksoversiktUrl() {
-    return this.publicRuntimeConfig.saksoversiktUrl;
-  }
-
-  get aktiveOrgnrApi() {
-    return this.publicRuntimeConfig.aktiveOrgnrApi;
-  }
-
-  get innsendingSelvbestemtInntektsmeldingApi() {
-    return this.publicRuntimeConfig.innsendingSelvbestemtInntektsmeldingApi;
-  }
-
-  get arbeidsgiverListe() {
-    return this.publicRuntimeConfig.arbeidsgiverListe;
+    return process.env.NEXT_PUBLIC_SAKSOVERSIKT_URL;
   }
 
   public baseUrl = '/im-dialog';
@@ -91,16 +47,12 @@ class Environment {
 
   public mineTilgangerUrl = '/im-dialog/api/mine-tilganger';
 
-  get environment() {
-    return this.publicRuntimeConfig.environment;
-  }
-
   get telemetryUrl() {
-    return this.publicRuntimeConfig.telemetryUrl;
+    return process.env.NEXT_PUBLIC_TELEMETRY_URL;
   }
 
   get version() {
-    return this.publicRuntimeConfig.version;
+    return version;
   }
 }
 

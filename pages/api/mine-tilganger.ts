@@ -6,7 +6,7 @@ import testdata from '../../mockdata/endepunktAltinnTilganger.json';
 import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerSchema';
 import safelyParseJSON from '../../utils/safelyParseJson';
 
-const basePath = 'http://' + global.process.env.FAGER_TILGANG_INGRESS + global.process.env.FAGER_TILGANG_URL;
+const basePath = 'http://' + globalThis.process.env.FAGER_TILGANG_INGRESS + globalThis.process.env.FAGER_TILGANG_URL;
 
 export const config = {
   api: {

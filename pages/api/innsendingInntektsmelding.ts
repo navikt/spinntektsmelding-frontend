@@ -1,12 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
-import environment from '../../config/environment';
 
 import feilRespons from '../../mockdata/respons-backendfeil.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + environment.innsendingInntektsmeldingAPI;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNSENDING_INNTEKTSMELDING_API;
 
 type FeilRespons = { valideringsfeil: string[]; error: string };
 
