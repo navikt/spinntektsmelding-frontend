@@ -66,7 +66,7 @@
     "jest-axe": "10.0.0",
     "jsdom": "27.0.1",
     "knip": "5.66.2",
-    "lint-staged": "16.2.4",
+    "lint-staged": "16.2.5",
     "next-router-mock": "1.0.2",
     "pino-pretty": "^13.1.2",
     "prettier": "^3.6.2",
