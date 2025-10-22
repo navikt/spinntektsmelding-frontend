@@ -5,7 +5,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import org from '../../../mockdata/trenger-originalen-begrenset.json';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + process.env.PREUTFYLT_INNTEKTSMELDING_API;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.PREUTFYLT_INNTEKTSMELDING_API;
 
 type Data = typeof org;
 

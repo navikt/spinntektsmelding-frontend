@@ -5,7 +5,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import feilRespons from '../../mockdata/respons-backendfeil.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + process.env.INNSENDING_INNTEKTSMELDING_API;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNSENDING_INNTEKTSMELDING_API;
 
 type FeilRespons = { valideringsfeil: string[]; error: string };
 

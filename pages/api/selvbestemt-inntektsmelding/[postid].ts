@@ -6,7 +6,7 @@ import org from '../../../mockdata/respons-selvbestemt.json';
 
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API;
 
 type Data = typeof org;
 

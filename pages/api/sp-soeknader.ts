@@ -14,9 +14,10 @@ type forespoerselIdListeEnhet = {
 };
 
 const basePath =
-  'http://' + global.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + global.process.env.FLEX_SYKEPENGESOEKNAD_URL;
-const authApi = 'http://' + global.process.env.IM_API_URI + global.process.env.AUTH_SYKEPENGESOEKNAD_API;
-const forespoerselIdListeApi = 'http://' + global.process.env.IM_API_URI + global.process.env.FORESPOERSEL_ID_LISTE_API;
+  'http://' + globalThis.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + globalThis.process.env.FLEX_SYKEPENGESOEKNAD_URL;
+const authApi = 'http://' + globalThis.process.env.IM_API_URI + globalThis.process.env.AUTH_SYKEPENGESOEKNAD_API;
+const forespoerselIdListeApi =
+  'http://' + globalThis.process.env.IM_API_URI + globalThis.process.env.FORESPOERSEL_ID_LISTE_API;
 
 export const config = {
   api: {

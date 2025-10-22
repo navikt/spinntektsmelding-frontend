@@ -5,7 +5,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import org from '../../mockdata/inntektData.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + process.env.INNTEKTSDATA_SELVBESTEMT_API;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNTEKTSDATA_SELVBESTEMT_API;
 
 type Data = typeof org;
 

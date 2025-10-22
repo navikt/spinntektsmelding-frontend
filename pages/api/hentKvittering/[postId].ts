@@ -4,7 +4,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 import org from '../../../mockdata/kvittering-bug-endre.json';
 
-const basePath = 'http://' + global.process.env.IM_API_URI + process.env.KVITTERINGDATA_API;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.KVITTERINGDATA_API;
 
 type Data = typeof org;
 
