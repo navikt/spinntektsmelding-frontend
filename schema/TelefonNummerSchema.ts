@@ -7,9 +7,6 @@ export const TelefonNummerSchema = z
       if (iss.code === 'invalid_type') {
         return 'Dette er ikke et telefonnummer';
       }
-      if (iss.code === 'required') {
-        return 'Vennligst fyll inn telefonnummer';
-      }
 
       return 'Ugyldig telefonnummer';
     }
