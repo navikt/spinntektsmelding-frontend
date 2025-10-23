@@ -103,10 +103,6 @@
   max-width: 100%;
 }
 
-/* .selectEndringBruttoinntektWrapper {
-  align-self: end;
-} */
-
 .endrePadding {
   margin-top: 1.5rem;
 }
@@ -119,12 +115,6 @@
 .bruttoinntektendringsbeloep {
   grid-template-rows: [title] min-content[select];
 }
-
-/* .bruttoinntektendringsbeloep>input {
-  max-height: 3rem;
-  position  : absolute;
-  top       : 2rem;
-} */
 
 @media screen and (max-width: 500px) {
   .endremaaanedsinntekt {
