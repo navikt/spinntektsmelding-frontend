@@ -106,7 +106,7 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
 
     const feilmeldingtekster = feilmeldinger.map((error: any) => ({
       felt: error.felt,
-      // eslint-disable-next-line
+
       // @ts-ignore
       text: error.code && feiltekster[[error.code]] ? (feiltekster[[error.code]] as string) : error.code
     }));

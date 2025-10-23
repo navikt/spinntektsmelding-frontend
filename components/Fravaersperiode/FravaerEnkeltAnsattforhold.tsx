@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import formatDate from '../../utils/formatDate';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
@@ -20,7 +20,7 @@ export default function FravaerEnkeltAnsattforhold({
   skjemastatus,
   setIsDirtyForm
 }: Readonly<FravaerEnkeltAnsattforholdProps>) {
-  const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
+  const [requestEndreSykemelding, setRequestEndreSykemelding] = useState<boolean>(false);
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
@@ -40,14 +40,21 @@ export default function FravaerEnkeltAnsattforhold({
   const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setIsDirtyForm(true);
-    setEndreSykemelding(!endreSykemelding);
+    setRequestEndreSykemelding(!requestEndreSykemelding);
   };
 
-  useEffect(() => {
-    if (fravaerPerioder && !fravaerPerioder[0].fom && !endreSykemelding) {
-      setEndreSykemelding(true);
+  const endreSykemelding: boolean = useMemo(() => {
+    if (fravaerPerioder && !fravaerPerioder[0].fom && !requestEndreSykemelding) {
+      return true;
     }
-  }, [endreSykemelding, fravaerPerioder]);
+    return !!requestEndreSykemelding;
+  }, [requestEndreSykemelding, fravaerPerioder]);
+
+  // useEffect(() => {
+  //   if (fravaerPerioder && !fravaerPerioder[0].fom && !endreSykemelding) {
+  //     setEndreSykemelding(true);
+  //   }
+  // }, [endreSykemelding, fravaerPerioder]);
 
   const sortertePerioder = fravaerPerioder
     ? [...fravaerPerioder].sort((a, b) => {
