@@ -9,6 +9,7 @@ import DelvisInnsendingInfo from './DelvisInnsendingInfo';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import AnsattDataVisning from './AnsattDataVisning';
 import ArbeidsgiverDataVisning from './ArbeidsgiverDataVisning';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface PersonProps {
   erDelvisInnsending?: boolean;
@@ -20,8 +21,6 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
     formState: { errors },
     register
   } = useFormContext();
-
-  const skjemadataErLastet = !!sykmeldt.fnr;
 
   return (
     <>
@@ -44,9 +43,9 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
             label='Telefon innsender'
             type='tel'
             autoComplete='tel'
-            readOnly={!skjemadataErLastet}
             {...register('avsenderTlf')}
             error={errors.avsenderTlf?.message as string}
+            id={ensureValidHtmlId('avsenderTlf')}
           />
         </ArbeidsgiverDataVisning>
       </div>

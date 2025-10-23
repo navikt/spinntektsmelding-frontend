@@ -103,10 +103,6 @@
   max-width: 100%;
 }
 
-.selectEndringBruttoinntektWrapper {
-  align-self: end;
-}
-
 .endrePadding {
   margin-top: 1.5rem;
 }
@@ -115,14 +111,9 @@
   max-width: fit-content;
 }
 
+.selectEndringBruttoinntektWrapper,
 .bruttoinntektendringsbeloep {
-  position: relative;
-}
-
-.bruttoinntektendringsbeloep > input {
-  max-height: 3rem;
-  position: absolute;
-  top: 2rem;
+  grid-template-rows: [title] min-content[select];
 }
 
 @media screen and (max-width: 500px) {
