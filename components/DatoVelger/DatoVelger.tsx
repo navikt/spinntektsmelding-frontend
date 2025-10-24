@@ -1,6 +1,6 @@
 import { DatePicker, useDatepicker } from '@navikt/ds-react';
 import { isValid } from 'date-fns';
-import { useEffect } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 import { FieldPath, FieldValues, useController, useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
@@ -54,11 +54,15 @@ export default function DatoVelger({
     defaultMonth: defaultMonth
   });
 
+  const onReset = useEffectEvent(() => {
+    reset();
+  });
+
   useEffect(() => {
     if (typeof defaultSelected === 'undefined') {
-      reset();
+      onReset();
     }
-  }, [defaultSelected]); // eslint-disable-line
+  }, [defaultSelected]);
 
   return (
     <DatePicker {...datepickerProps}>

@@ -1,5 +1,5 @@
 import testdata from '../../../mockdata/kvittering-behandlingsdager.json';
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useEffectEvent } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -144,9 +144,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? parseIsoDate(kvitteringDokument.inntekt.inntektsdato)
     : parseIsoDate(kvitteringData?.inntekt?.inntektsdato);
 
-  useEffect(() => {
+  const onSetNyInnsending = useEffectEvent(() => {
     setNyInnsending(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  useEffect(() => {
+    onSetNyInnsending();
   }, [searchParams]);
 
   const visNaturalytelser = true;
@@ -278,14 +281,16 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? kvitteringDokument.inntekt.endringAarsaker
     : (kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringAarsaker);
 
-  useEffect(() => {
+  const onsetSkjemaStatus = useEffectEvent(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
 
     if (dataFraBackend && kvitteringDokument?.type?.type) {
       setSelvbestemtType(kvitteringDokument?.type?.type);
     }
+  });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    onsetSkjemaStatus();
   }, []);
 
   return (

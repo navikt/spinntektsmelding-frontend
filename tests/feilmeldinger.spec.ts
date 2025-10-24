@@ -136,7 +136,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     await formPage.clickButton('Send');
 
     await formPage.assertVisibleTextAtLeastOnce('Vennligst fyll inn beløpet for endret refusjon.');
-    await formPage.assertVisibleTextAtLeastOnce('Vennligst fyll inn gyldig dato for endring i refusjon.');
+    await formPage.assertVisibleTextAtLeastOnce('Vennligst fyll inn gyldig dato for endring av refusjon.');
 
     await formPage.fillInput('Endret beløp/måned', '45000');
     await formPage.fillInput('Dato for endring', '04.04.2023');

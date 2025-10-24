@@ -1,5 +1,5 @@
 import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -29,7 +29,7 @@ export default function Bruttoinntekt({
   sbTidligereInntekt,
   erSelvbestemt
 }: Readonly<BruttoinntektProps>) {
-  const [endreMaanedsinntekt, setEndreMaanedsinntekt] = useState<boolean>(false);
+  const [requestEndreMaanedsinntekt, setRequestEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: HistoriskInntekt | undefined = useBoundStore((state) => state.tidligereInntekt);
   const [setBareNyMaanedsinntekt] = useBoundStore((state) => [state.setBareNyMaanedsinntekt]);
@@ -55,7 +55,7 @@ export default function Bruttoinntekt({
       component: amplitudeComponent
     });
 
-    setEndreMaanedsinntekt(false);
+    setRequestEndreMaanedsinntekt(false);
     setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
     setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? []);
 
@@ -69,18 +69,10 @@ export default function Bruttoinntekt({
       tittel: 'Endre beregnet månedsinntekt',
       component: amplitudeComponent
     });
-    setEndreMaanedsinntekt(true);
+    setRequestEndreMaanedsinntekt(true);
   };
 
   const endringAarsaker = watch('inntekt.endringAarsaker');
-
-  useEffect(() => {
-    if (harEndringAarsak(endringAarsaker)) {
-      setEndreMaanedsinntekt(true);
-    }
-  }, [endringAarsaker]);
-
-  const endringAvBelop = endreMaanedsinntekt;
 
   const gjennomsnittligInntekt = erSelvbestemt
     ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
@@ -94,9 +86,15 @@ export default function Bruttoinntekt({
   useEffect(() => {
     if (sbBruttoinntekt !== undefined) {
       setBareNyMaanedsinntekt(sbBruttoinntekt);
-      setEndreMaanedsinntekt(false);
     }
   }, [sbBruttoinntekt, setBareNyMaanedsinntekt]);
+
+  const endreMaanedsinntekt = useMemo(() => {
+    if (harEndringAarsak(endringAarsaker)) {
+      return true;
+    }
+    return requestEndreMaanedsinntekt;
+  }, [requestEndreMaanedsinntekt, endringAarsaker]);
 
   return (
     <>
@@ -121,11 +119,11 @@ export default function Bruttoinntekt({
         </>
       )}
       <AvvikAdvarselInntekt tidligereInntekter={sisteTreMndTidligereinntekt} />
-      {!endringAvBelop && !erBlanktSkjema && (
+      {!endreMaanedsinntekt && !erBlanktSkjema && (
         <TextLabel className={lokalStyles.tbmargin}>Dette gir en beregnet månedslønn på:</TextLabel>
       )}
       <div className={lokalStyles.beloepwrapper}>
-        {!endringAvBelop && !erBlanktSkjema && (
+        {!endreMaanedsinntekt && !erBlanktSkjema && (
           <>
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
               {formatCurrency(gjennomsnittligInntekt ?? 0)} kr/måned
@@ -137,7 +135,7 @@ export default function Bruttoinntekt({
             />
           </>
         )}
-        {(endringAvBelop || erBlanktSkjema) && (
+        {(endreMaanedsinntekt || erBlanktSkjema) && (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
             visFeilmeldingTekst={visFeilmeldingTekst}

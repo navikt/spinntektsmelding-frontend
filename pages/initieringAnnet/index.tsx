@@ -1,7 +1,7 @@
 import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
-import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Heading1 from '../../components/Heading1/Heading1';
@@ -108,7 +108,6 @@ const InitieringAnnet: NextPage = () => {
 
   const {
     register,
-    watch,
     setValue,
     resetField,
     setError,
@@ -116,9 +115,9 @@ const InitieringAnnet: NextPage = () => {
     formState: { errors }
   } = methods;
 
-  const orgnr = watch('organisasjonsnummer');
-  const sykepengePeriodeId: string[] | undefined = watch('sykepengePeriodeId');
-  const endreRefusjon: string | undefined = watch('endreRefusjon');
+  const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
+  const sykepengePeriodeId: string[] | undefined = useWatch({ name: 'sykepengePeriodeId', control: methods.control });
+  const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
 
   const { data, error } = useArbeidsforhold(sykmeldt.fnr, setError);
   let orgNavnMangler = false;

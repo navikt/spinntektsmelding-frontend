@@ -51,7 +51,8 @@ const nextConfig = {
   //   defaultLocale: 'no'
   // },
   experimental: {
-    optimizePackageImports: ['@navikt/aksel-icons']
+    optimizePackageImports: ['@navikt/aksel-icons'],
+    turbopackFileSystemCacheForDev: true
   }
 };
 

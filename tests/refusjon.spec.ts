@@ -194,7 +194,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.clickButton('Send');
 
     // 'Refusjon kan ikke være høyere enn beregnet månedslønn.'
-    await formPage.assertVisibleTextAtLeastOnce('Vennligst fyll inn gyldig dato for endring i refusjon.');
+    await formPage.assertVisibleTextAtLeastOnce('Vennligst fyll inn gyldig dato for endring av refusjon.');
 
     await formPage.fillInput('Dato for endring', '15.04.23');
 

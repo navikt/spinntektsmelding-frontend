@@ -30,7 +30,6 @@ export default function logEvent(eventName: validEventNames, eventData: Record<s
       }
       umami.track(eventName, { ...eventData, app: 'inntektsmelding-sykepenger' });
     } else {
-      // eslint-disable-next-line no-console
       console.log(`Logger ${eventName} - Event properties: ${JSON.stringify(eventData)}!`);
     }
   }

@@ -1,4 +1,3 @@
-import '@navikt/ds-css';
 import { ReactNode } from 'react';
 import env from '../../config/environment';
 import { setBreadcrumbs } from '@navikt/nav-dekoratoren-moduler';
