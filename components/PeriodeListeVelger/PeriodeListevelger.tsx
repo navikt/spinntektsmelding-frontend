@@ -3,7 +3,7 @@ import lokalStyles from './PeriodeListevelger.module.css';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import DatoVelger from '../DatoVelger/DatoVelger';
 import ButtonSlette from '../ButtonSlette';
-import { useEffect } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 import parseIsoDate from '../../utils/parseIsoDate';
 
 interface PeriodeListevelgerProps {
@@ -51,11 +51,15 @@ export default function PeriodeListevelger({
     }
   }, [leggTilPeriode, defaultRange, erstattPeriode]);
 
-  useEffect(() => {
+  const onSlettPeriode = useEffectEvent(() => {
     if (fields.length === 0) {
       erstattPeriode({});
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  });
+
+  useEffect(() => {
+    onSlettPeriode();
+  }, []);
 
   const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     event.preventDefault();
