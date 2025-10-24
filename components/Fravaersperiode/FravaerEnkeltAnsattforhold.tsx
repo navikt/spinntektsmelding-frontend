@@ -47,7 +47,7 @@ export default function FravaerEnkeltAnsattforhold({
 
   const endreSykemelding: boolean = useMemo(() => {
     if (
-      (fravaerPerioder && !!fravaerPerioder.find((perioder) => !perioder.fom || !perioder.tom)) ||
+      (fravaerPerioder && !!fravaerPerioder.some((perioder) => !perioder.fom || !perioder.tom)) ||
       selvbestemtType === SelvbestemtTypeConst.UtenArbeidsforhold ||
       selvbestemtType === SelvbestemtTypeConst.Fisker ||
       requestEndreSykemelding
