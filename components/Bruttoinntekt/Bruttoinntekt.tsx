@@ -74,12 +74,6 @@ export default function Bruttoinntekt({
 
   const endringAarsaker = watch('inntekt.endringAarsaker');
 
-  // useEffect(() => {
-  //   if (harEndringAarsak(endringAarsaker)) {
-  //     setRequestEndreMaanedsinntekt(true);
-  //   }
-  // }, [endringAarsaker]);
-
   const gjennomsnittligInntekt = erSelvbestemt
     ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
     : bruttoinntekt?.bruttoInntekt;

@@ -63,7 +63,7 @@ export default function Arbeidsgiverperiode({
   );
 
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
-  // const [advarselOppholdHelg, setAdvarselOppholdHelg] = useState<string>('');
+
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
   const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled, setArbeidsgiverperiodeKort] = useBoundStore(
