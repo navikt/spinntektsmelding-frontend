@@ -45,18 +45,11 @@ export default function FravaerEnkeltAnsattforhold({
     setRequestEndreSykemelding(!requestEndreSykemelding);
   };
 
-  const endreSykemelding: boolean = useMemo(() => {
-    if (
-      (fravaerPerioder && !!fravaerPerioder.some((perioder) => !perioder.fom || !perioder.tom)) ||
-      selvbestemtType === SelvbestemtTypeConst.UtenArbeidsforhold ||
-      selvbestemtType === SelvbestemtTypeConst.Fisker ||
-      requestEndreSykemelding
-    ) {
-      return true;
-    } else {
-      return !!requestEndreSykemelding;
-    }
-  }, [requestEndreSykemelding, fravaerPerioder, selvbestemtType]);
+  const harUfullstendigePerioder = fravaerPerioder?.some((perioder) => !perioder.fom || !perioder.tom) ?? false;
+  const erArbeidtakerUtenforAAregisteret =
+    selvbestemtType === SelvbestemtTypeConst.UtenArbeidsforhold || selvbestemtType === SelvbestemtTypeConst.Fisker;
+
+  const endreSykemelding = harUfullstendigePerioder || erArbeidtakerUtenforAAregisteret || requestEndreSykemelding;
 
   const sortertePerioder = fravaerPerioder
     ? [...fravaerPerioder].sort((a, b) => {
