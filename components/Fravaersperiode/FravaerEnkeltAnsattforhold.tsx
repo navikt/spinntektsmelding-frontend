@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import formatDate from '../../utils/formatDate';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';

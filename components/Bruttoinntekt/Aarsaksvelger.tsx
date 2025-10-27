@@ -60,47 +60,46 @@ export default function Aarsaksvelger({
   }, [fields.length, initialiserEndringsaarsaker]);
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
-      {fields &&
-        fields.map((aarsak, key) => (
-          <Fragment key={aarsak.id}>
-            <div className={lokalStyles.endremaaanedsinntekt}>
-              {key === 0 && (
-                <TextField
-                  label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
-                  defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
-                  id={ensureValidHtmlId('inntekt.beregnetInntekt')}
-                  error={beloepError}
-                  className={lokalStyles.bruttoinntektendringsbeloep}
-                  data-cy='inntekt-beloep-input'
-                  {...register('inntekt.beloep', {
-                    setValueAs: (value) => stringishToNumber(value)
-                  })}
-                />
-              )}
-              <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
-                <SelectEndringBruttoinntekt
-                  id={`inntekt.endringAarsaker.${key}.aarsak`}
-                  nyInnsending={nyInnsending}
-                  begrunnelserId={`inntekt.endringAarsaker`}
-                />
-              </div>
-
-              <div>
-                <ButtonSlette
-                  className={lokalStyles.kontrollerknapp}
-                  onClick={() => slettEndringsaarsak(key)}
-                  title={'Slett'}
-                />
-              </div>
-              {!kanIkkeTilbakestilles && key === 0 && (
-                <div>
-                  <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={handleResetMaanedsinntekt} />
-                </div>
-              )}
+      {fields?.map((aarsak, key) => (
+        <Fragment key={aarsak.id}>
+          <div className={lokalStyles.endremaaanedsinntekt}>
+            {key === 0 && (
+              <TextField
+                label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
+                defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
+                id={ensureValidHtmlId('inntekt.beregnetInntekt')}
+                error={beloepError}
+                className={lokalStyles.bruttoinntektendringsbeloep}
+                data-cy='inntekt-beloep-input'
+                {...register('inntekt.beloep', {
+                  setValueAs: (value) => stringishToNumber(value)
+                })}
+              />
+            )}
+            <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
+              <SelectEndringBruttoinntekt
+                id={`inntekt.endringAarsaker.${key}.aarsak`}
+                nyInnsending={nyInnsending}
+                begrunnelserId={`inntekt.endringAarsaker`}
+              />
             </div>
-            <AarsakDetaljer bestemmendeFravaersdag={bestemmendeFravaersdag} id={key.toString()} />
-          </Fragment>
-        ))}
+
+            <div>
+              <ButtonSlette
+                className={lokalStyles.kontrollerknapp}
+                onClick={() => slettEndringsaarsak(key)}
+                title={'Slett'}
+              />
+            </div>
+            {!kanIkkeTilbakestilles && key === 0 && (
+              <div>
+                <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={handleResetMaanedsinntekt} />
+              </div>
+            )}
+          </div>
+          <AarsakDetaljer bestemmendeFravaersdag={bestemmendeFravaersdag} id={key.toString()} />
+        </Fragment>
+      ))}
       <Button variant='secondary' onClick={handleLeggTilEndringAarsak} className={lokalStyles.leggTilAarsak}>
         Legg til annen endringsårsak
       </Button>
