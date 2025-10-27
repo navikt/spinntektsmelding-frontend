@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import formatDate from '../../utils/formatDate';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
@@ -8,6 +8,7 @@ import { Periode } from '../../state/state';
 import Periodevelger from '../Bruttoinntekt/Periodevelger';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import ButtonEndre from '../ButtonEndre';
+import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 
 interface FravaerEnkeltAnsattforholdProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -20,11 +21,12 @@ export default function FravaerEnkeltAnsattforhold({
   skjemastatus,
   setIsDirtyForm
 }: Readonly<FravaerEnkeltAnsattforholdProps>) {
-  const [endreSykemelding, setEndreSykemelding] = useState<boolean>(false);
+  const [requestEndreSykemelding, setRequestEndreSykemelding] = useState<boolean>(false);
   const slettFravaersperiode = useBoundStore((state) => state.slettFravaersperiode);
   const leggTilFravaersperiode = useBoundStore((state) => state.leggTilFravaersperiode);
   const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
   const setFravaersperiodeDato = useBoundStore((state) => state.setFravaersperiodeDato);
+  const selvbestemtType = useBoundStore((state) => state.selvbestemtType);
 
   const clickTilbakestillFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -40,14 +42,14 @@ export default function FravaerEnkeltAnsattforhold({
   const clickEndreFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setIsDirtyForm(true);
-    setEndreSykemelding(!endreSykemelding);
+    setRequestEndreSykemelding(!requestEndreSykemelding);
   };
 
-  useEffect(() => {
-    if (fravaerPerioder && !fravaerPerioder[0].fom && !endreSykemelding) {
-      setEndreSykemelding(true);
-    }
-  }, [endreSykemelding, fravaerPerioder]);
+  const harUfullstendigePerioder = fravaerPerioder?.some((perioder) => !perioder.fom || !perioder.tom) ?? false;
+  const erArbeidtakerUtenforAAregisteret =
+    selvbestemtType === SelvbestemtTypeConst.UtenArbeidsforhold || selvbestemtType === SelvbestemtTypeConst.Fisker;
+
+  const endreSykemelding = harUfullstendigePerioder || erArbeidtakerUtenforAAregisteret || requestEndreSykemelding;
 
   const sortertePerioder = fravaerPerioder
     ? [...fravaerPerioder].sort((a, b) => {

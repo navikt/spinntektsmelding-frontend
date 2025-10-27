@@ -63,7 +63,7 @@ export default function Arbeidsgiverperiode({
   );
 
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
-  const [advarselOppholdHelg, setAdvarselOppholdHelg] = useState<string>('');
+
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
   const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled, setArbeidsgiverperiodeKort] = useBoundStore(
@@ -252,18 +252,6 @@ export default function Arbeidsgiverperiode({
         slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       }
     }
-
-    if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 1) {
-      if (perioderInneholderHelgeopphold(arbeidsgiverperioder)) {
-        setAdvarselOppholdHelg(
-          'Normalt inkluderes lørdag og søndag i arbeidsgiverperioden uansett om arbeid  i helgen har vært planlagt eller ikke. Du skal kun legge inn opphold i arbeidsgiverperioden i helgen de dagene den ansatte har vært på jobb.'
-        );
-      } else {
-        setAdvarselOppholdHelg('');
-      }
-    } else {
-      setAdvarselOppholdHelg('');
-    }
   }, [
     antallDager,
     setArbeidsgiverperiodeKort,
@@ -273,6 +261,15 @@ export default function Arbeidsgiverperiode({
     manuellEndring,
     arbeidsgiverperiodeDisabled
   ]);
+
+  const advarselOppholdHelg = useMemo(() => {
+    if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 1) {
+      if (perioderInneholderHelgeopphold(arbeidsgiverperioder)) {
+        return 'Normalt inkluderes lørdag og søndag i arbeidsgiverperioden uansett om arbeid  i helgen har vært planlagt eller ikke. Du skal kun legge inn opphold i arbeidsgiverperioden i helgen de dagene den ansatte har vært på jobb.';
+      }
+    }
+    return '';
+  }, [arbeidsgiverperioder]);
 
   useEffect(() => {
     if (inngangFraKvittering && arbeidsgiverperioder?.length === 0) {

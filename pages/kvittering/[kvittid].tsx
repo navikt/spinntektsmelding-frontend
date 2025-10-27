@@ -26,7 +26,7 @@ import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useEffectEvent } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
@@ -117,8 +117,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     setNyInnsending(false);
   }, [hentKvitteringsdata, kvitteringEksterntSystem?.avsenderSystem, kvittid, setNyInnsending, sykmeldingsperioder]);
 
+  const onSetOpprinneligNyMaanedsinntekt = useEffectEvent(() => {
+    setOpprinneligNyMaanedsinntekt();
+  });
+
   useEffect(() => {
-    setOpprinneligNyMaanedsinntekt(); // eslint-disable-next-line react-hooks/exhaustive-deps
+    onSetOpprinneligNyMaanedsinntekt();
   }, []);
 
   const visNaturalytelser = paakrevdeOpplysninger?.includes(forespoerselType.inntekt);

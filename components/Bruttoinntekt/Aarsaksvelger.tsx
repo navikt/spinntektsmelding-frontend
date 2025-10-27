@@ -60,7 +60,7 @@ export default function Aarsaksvelger({
   }, [fields.length, initialiserEndringsaarsaker]);
   return (
     <div className={lokalStyles.endremaaanedsinntektwrapper}>
-      {fields.map((aarsak, key) => (
+      {fields?.map((aarsak, key) => (
         <Fragment key={aarsak.id}>
           <div className={lokalStyles.endremaaanedsinntekt}>
             {key === 0 && (

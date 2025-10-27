@@ -1,7 +1,7 @@
 import { Button, Alert, Link, RadioGroup, Radio } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
-import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Heading1 from '../../components/Heading1/Heading1';
@@ -84,15 +84,14 @@ const InitieringBehandlingsdager: NextPage = () => {
 
   const {
     register,
-    watch,
     setValue,
     setError,
     handleSubmit,
     formState: { errors }
   } = methods;
 
-  const orgnr = watch('organisasjonsnummer');
-  const sykmeldingId: string | undefined = watch('sykmeldingId');
+  const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
+  const sykmeldingId: string | undefined = useWatch({ name: 'sykmeldingId', control: methods.control });
 
   const { data, error } = useArbeidsforhold(sykmeldt.fnr, setError);
   let orgNavnMangler = false;
