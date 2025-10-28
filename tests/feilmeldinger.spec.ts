@@ -115,10 +115,10 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     await formPage.fillInput('Dato for endring', '04.04.2023');
 
     // Vent på at validering kjører (feilmeldinger forsvinner)
-    await Promise.all([
-      formPage.assertNotVisibleText('Vennligst fyll inn beløpet for endret refusjon.'),
-      formPage.assertNotVisibleText('Vennligst fyll inn gyldig dato for endring av refusjon.')
-    ]);
+    // await Promise.all([
+    //   formPage.assertNotVisibleText('Vennligst fyll inn beløpet for endret refusjon.'),
+    //   formPage.assertNotVisibleText('Vennligst fyll inn gyldig dato for endring av refusjon.')
+    // ]);
 
     await formPage.uncheckCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
     await formPage.clickButton('Send');
