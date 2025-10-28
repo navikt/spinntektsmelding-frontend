@@ -32,7 +32,7 @@ export default function Bruttoinntekt({
   const [requestEndreMaanedsinntekt, setRequestEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const tidligereinntekt: HistoriskInntekt | undefined = useBoundStore((state) => state.tidligereInntekt);
-  const [setBareNyMaanedsinntekt] = useBoundStore((state) => [state.setBareNyMaanedsinntekt]);
+  const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
@@ -99,7 +99,7 @@ export default function Bruttoinntekt({
   return (
     <>
       <Heading3 unPadded>Beregnet månedslønn</Heading3>
-      <BodyLong spacing={true}>
+      <BodyLong spacing>
         Beregnet månedslønn skal som hovedregel være et gjennomsnitt av den inntekten som er rapportert til a-ordningen
         i de tre siste kalendermånedene før sykefraværet startet.
       </BodyLong>
@@ -119,11 +119,11 @@ export default function Bruttoinntekt({
         </>
       )}
       <AvvikAdvarselInntekt tidligereInntekter={sisteTreMndTidligereinntekt} />
-      {!endreMaanedsinntekt && !erBlanktSkjema && (
+      {!endreMaanedsinntekt && (
         <TextLabel className={lokalStyles.tbmargin}>Dette gir en beregnet månedslønn på:</TextLabel>
       )}
       <div className={lokalStyles.beloepwrapper}>
-        {!endreMaanedsinntekt && !erBlanktSkjema && (
+        {!endreMaanedsinntekt ? (
           <>
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
               {formatCurrency(gjennomsnittligInntekt ?? 0)} kr/måned
@@ -134,8 +134,7 @@ export default function Bruttoinntekt({
               className={lokalStyles.endrePadding}
             />
           </>
-        )}
-        {(endreMaanedsinntekt || erBlanktSkjema) && (
+        ) : (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
             visFeilmeldingTekst={visFeilmeldingTekst}
