@@ -1,35 +1,46 @@
 import { differenceInDays } from 'date-fns';
 import { TDateISODate } from '../schema/ForespurtDataSchema';
 
-const getEgenmeldingsperioderFromSykmelding = (sykmeldingsperiode: any) => {
+interface Egenmeldingsperiode {
+  fom: TDateISODate;
+  tom: TDateISODate;
+}
+
+interface Sykmeldingsperiode {
+  egenmeldingsdagerFraSykmelding?: TDateISODate[];
+}
+
+const getEgenmeldingsperioderFromSykmelding = (sykmeldingsperiode: Sykmeldingsperiode[]) => {
   return sykmeldingsperiode
-    .flatMap((periode: any) => {
+    .flatMap((periode: Sykmeldingsperiode) => {
       const sorterteEgenmeldingsdager =
         Array.isArray(periode.egenmeldingsdagerFraSykmelding) && periode.egenmeldingsdagerFraSykmelding.length > 0
           ? [...periode.egenmeldingsdagerFraSykmelding].sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
           : [];
+
+      const startDato = sorterteEgenmeldingsdager[0];
       const egenmeldingsperiode = sorterteEgenmeldingsdager.reduce(
-        (accumulator: any, currentValue: any) => {
-          const tom = new Date(currentValue);
-          const currentTom = new Date(accumulator[accumulator.length - 1].tom);
+        (periode: Egenmeldingsperiode[], currentDate: TDateISODate) => {
+          const tom = new Date(currentDate);
+          const currentTom = new Date(periode[periode.length - 1].tom);
 
           if (differenceInDays(tom, currentTom) <= 1) {
-            accumulator[accumulator.length - 1].tom = currentValue as TDateISODate;
+            periode[periode.length - 1].tom = currentDate as TDateISODate;
           } else {
-            accumulator.push({ fom: currentValue as TDateISODate, tom: currentValue as TDateISODate });
+            periode.push({ fom: currentDate as TDateISODate, tom: currentDate as TDateISODate });
           }
-          return accumulator;
+          return periode;
         },
         [
           {
-            fom: sorterteEgenmeldingsdager[0] as TDateISODate,
-            tom: sorterteEgenmeldingsdager[0] as TDateISODate
+            fom: startDato,
+            tom: startDato
           }
         ]
       );
       return egenmeldingsperiode;
     })
-    .filter((element: any) => !!element.fom && !!element.tom);
+    .filter((periode: Egenmeldingsperiode) => !!periode.fom && !!periode.tom);
 };
 
 export default getEgenmeldingsperioderFromSykmelding;
