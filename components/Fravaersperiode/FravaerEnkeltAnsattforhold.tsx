@@ -61,53 +61,48 @@ export default function FravaerEnkeltAnsattforhold({
     : [];
   return (
     <>
-      {sortertePerioder?.map((periode, periodeIndex) => (
+      {sortertePerioder.map((periode, periodeIndex) => (
         <div className={styles.periodewrapper} key={periode.id}>
-          {!endreSykemelding && (
-            <div>
-              <div className={styles.datepickerEscape}>
-                <TextLabel data-cy={`sykmelding-${periodeIndex}-fra`}>Fra</TextLabel>
-                <div data-cy={`sykmelding-${periodeIndex}-fra-dato`}>{formatDate?.(periode.fom)}</div>
-              </div>
-              <div className={styles.datepickerEscape}>
-                <TextLabel data-cy={`sykmelding-${periodeIndex}-til`}>Til</TextLabel>
-                <div data-cy={`sykmelding-${periodeIndex}-til-dato`}>{formatDate?.(periode.tom)}</div>
-              </div>
-            </div>
-          )}
-          {endreSykemelding && (
+          {endreSykemelding ? (
             <Periodevelger
               fomTekst='Fra'
               fomID={`fom-${periode.id}`}
               tomTekst='Til'
               tomID={`tom-${periode.id}`}
-              onRangeChange={(oppdatertPeriode) => setFravaersperiodeDato?.(periode.id, oppdatertPeriode)}
+              onRangeChange={(oppdatertPeriode) => setFravaersperiodeDato(periode.id, oppdatertPeriode)}
               defaultRange={periode}
               kanSlettes={periodeIndex > 0}
               periodeId={periode.id}
-              onSlettRad={() => slettFravaersperiode?.(periode.id)}
+              onSlettRad={() => slettFravaersperiode(periode.id)}
               toDate={new Date()}
             />
+          ) : (
+            <div>
+              <div className={styles.datepickerEscape}>
+                <TextLabel data-cy={`sykmelding-${periodeIndex}-fra`}>Fra</TextLabel>
+                <div data-cy={`sykmelding-${periodeIndex}-fra-dato`}>{formatDate(periode.fom)}</div>
+              </div>
+              <div className={styles.datepickerEscape}>
+                <TextLabel data-cy={`sykmelding-${periodeIndex}-til`}>Til</TextLabel>
+                <div data-cy={`sykmelding-${periodeIndex}-til-dato`}>{formatDate(periode.tom)}</div>
+              </div>
+            </div>
           )}
         </div>
       ))}
       {skjemastatus !== SkjemaStatus.SELVBESTEMT && endreSykemelding && (
-        <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />
+        <ButtonEndre onClick={clickEndreFravaersperiodeHandler} />
       )}
       {endreSykemelding && (
         <div className={styles.endresykemeldingknapper}>
-          <Button
-            variant='secondary'
-            className={styles.kontrollerknapp}
-            onClick={(event) => clickLeggTilFravaersperiodeHandler(event)}
-          >
+          <Button variant='secondary' className={styles.kontrollerknapp} onClick={clickLeggTilFravaersperiodeHandler}>
             Legg til periode
           </Button>
 
           <Button
             variant='tertiary'
             className={styles.kontrollerknapp}
-            onClick={(event) => clickTilbakestillFravaersperiodeHandler(event)}
+            onClick={clickTilbakestillFravaersperiodeHandler}
           >
             Tilbakestill
           </Button>

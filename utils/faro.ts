@@ -11,9 +11,9 @@ export function initInstrumentation(): void {
 }
 
 export function getFaro(): Faro | null {
-  if (faro != null) return faro;
+  if (faro !== null) return faro;
 
-  if (process.env.NEXT_PUBLIC_DISABLE_DECORATOR) {
+  if (process.env.NEXT_PUBLIC_DISABLE_DECORATOR || typeof window === 'undefined') {
     return null;
   }
 
@@ -34,18 +34,18 @@ export function getFaro(): Faro | null {
 }
 
 export function pinoLevelToFaroLevel(pinoLevel: string): LogLevel {
-  switch (pinoLevel) {
-    case 'trace':
-      return LogLevel.TRACE;
-    case 'debug':
-      return LogLevel.DEBUG;
-    case 'info':
-      return LogLevel.INFO;
-    case 'warn':
-      return LogLevel.WARN;
-    case 'error':
-      return LogLevel.ERROR;
-    default:
-      throw new Error(`Unknown level: ${pinoLevel}`);
+  const levelMap: Record<string, LogLevel> = {
+    trace: LogLevel.TRACE,
+    debug: LogLevel.DEBUG,
+    info: LogLevel.INFO,
+    warn: LogLevel.WARN,
+    error: LogLevel.ERROR
+  };
+
+  const level = levelMap[pinoLevel];
+  if (level === undefined) {
+    throw new Error(`Unknown level: ${pinoLevel}`);
   }
+
+  return level;
 }
