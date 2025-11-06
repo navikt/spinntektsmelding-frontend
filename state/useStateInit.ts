@@ -4,24 +4,37 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import useBoundStore from './useBoundStore';
 import { MottattData } from '../schema/MottattDataSchema';
+import { useShallow } from 'zustand/react/shallow';
 
 export default function useStateInit() {
-  const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
-  const initBruttoinntekt = useBoundStore((state) => state.initBruttoinntekt);
-  const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
-  const initPerson = useBoundStore((state) => state.initPerson);
-  const initForespurtData = useBoundStore((state) => state.initForespurtData);
-  const [setForeslaattBestemmendeFravaersdag, setSkjaeringstidspunkt, setBegrensetForespoersel] = useBoundStore(
-    (state) => [state.setForeslaattBestemmendeFravaersdag, state.setSkjaeringstidspunkt, state.setBegrensetForespoersel]
-  );
-  const [setMottattBestemmendeFravaersdag, setMottattEksternInntektsdato] = useBoundStore((state) => [
-    state.setMottattBestemmendeFravaersdag,
-    state.setMottattEksternInntektsdato
-  ]);
-
-  const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
-  const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
-    (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
+  const {
+    initFravaersperiode,
+    initBruttoinntekt,
+    initEgenmeldingsperiode,
+    initPerson,
+    initForespurtData,
+    setForeslaattBestemmendeFravaersdag,
+    setSkjaeringstidspunkt,
+    setBegrensetForespoersel,
+    setMottattBestemmendeFravaersdag,
+    setMottattEksternInntektsdato,
+    setArbeidsgiverperioder,
+    arbeidsgiverKanFlytteSkjæringstidspunkt
+  } = useBoundStore(
+    useShallow((state) => ({
+      initFravaersperiode: state.initFravaersperiode,
+      initBruttoinntekt: state.initBruttoinntekt,
+      initEgenmeldingsperiode: state.initEgenmeldingsperiode,
+      initPerson: state.initPerson,
+      initForespurtData: state.initForespurtData,
+      setForeslaattBestemmendeFravaersdag: state.setForeslaattBestemmendeFravaersdag,
+      setSkjaeringstidspunkt: state.setSkjaeringstidspunkt,
+      setBegrensetForespoersel: state.setBegrensetForespoersel,
+      setMottattBestemmendeFravaersdag: state.setMottattBestemmendeFravaersdag,
+      setMottattEksternInntektsdato: state.setMottattEksternInntektsdato,
+      setArbeidsgiverperioder: state.setArbeidsgiverperioder,
+      arbeidsgiverKanFlytteSkjæringstidspunkt: state.arbeidsgiverKanFlytteSkjæringstidspunkt
+    }))
   );
 
   return (jsonData: MottattData) => {
@@ -72,7 +85,7 @@ export default function useStateInit() {
     if (jsonData.forespurtData) {
       initForespurtData(
         jsonData.forespurtData,
-        jsonData.bestemmendeFravaersdag ?? parseIsoDate(bestemmendeFravaersdag)!,
+        jsonData.bestemmendeFravaersdag ?? parseIsoDate(bestemmendeFravaersdag),
         jsonData.inntekt?.gjennomsnitt ?? null,
         jsonData.inntekt?.historikk ?? null
       );

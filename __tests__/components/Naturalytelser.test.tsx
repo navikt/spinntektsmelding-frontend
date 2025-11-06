@@ -207,7 +207,7 @@ describe('Naturalytelser', () => {
         fieldState: { error: {} }
       }),
       useFieldArray: () => ({
-        fields: [{ naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() }],
+        fields: [{ naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 'uuid-1', onChange: vi.fn() }],
         append: mockAppend,
         remove: mockRemove,
         replace: mockReplace

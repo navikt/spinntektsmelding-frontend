@@ -5,15 +5,64 @@ import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 import useBoundStore from '../../../state/useBoundStore';
+import useTidligereInntektsdata from '../../../utils/useTidligereInntektsdata';
 
 // Mock Zustand store
-vi.mock('../../../state/useBoundStore');
+vi.mock('../../../state/useBoundStore', () => ({
+  __esModule: true,
+  default: vi.fn()
+}));
+
+const mockedUseBoundStore = useBoundStore as unknown as ReturnType<typeof vi.fn>;
+
+const createStoreState = (overrides: Partial<Record<string, unknown>> = {}) => ({
+  bruttoinntekt: mockBruttoinntekt,
+  tidligereInntekt: new Map(mockTidligereInntekt),
+  setBareNyMaanedsinntekt: vi.fn(),
+  tilbakestillMaanedsinntekt: vi.fn(),
+  visFeilmeldingTekst: false,
+  nyInnsending: false,
+  skjemastatus: 'MOTTATT',
+  henterData: false,
+  sykmeldt: { fnr: '12345678901' },
+  avsender: { orgnr: '987654321' },
+  inngangFraKvittering: false,
+  ...overrides
+});
+
+const setupUseBoundStoreMock = (overrides: Partial<Record<string, unknown>> = {}) => {
+  const state = createStoreState(overrides);
+  mockedUseBoundStore.mockImplementation((selector: any) => selector(state));
+  return state;
+};
 
 // Mock logEvent
 vi.mock('../../../utils/logEvent', () => ({
   default: vi.fn(),
   logEvent: vi.fn()
 }));
+
+vi.mock('../../../utils/useTidligereInntektsdata', () => ({
+  __esModule: true,
+  default: vi.fn()
+}));
+
+const mockedUseTidligereInntektsdata = vi.mocked(useTidligereInntektsdata);
+
+const defaultTidligereInntektsdata = () => ({
+  data: {},
+  error: null,
+  bruttoinntekt: {
+    bruttoInntekt: 45000,
+    manueltKorrigert: false,
+    endringAarsaker: []
+  },
+  tidligereInntekt: new Map([
+    ['2024-07', 44000],
+    ['2024-08', 45000],
+    ['2024-09', 46000]
+  ])
+});
 
 const mockBruttoinntekt = {
   bruttoInntekt: 45000,
@@ -42,24 +91,16 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
 describe('Bruttoinntekt', () => {
   beforeEach(() => {
-    vi.mocked(useBoundStore).mockImplementation((selector: any) =>
-      selector({
-        bruttoinntekt: mockBruttoinntekt,
-        tidligereInntekt: mockTidligereInntekt,
-        setBareNyMaanedsinntekt: vi.fn(),
-        tilbakestillMaanedsinntekt: vi.fn(),
-        visFeilmeldingTekst: false,
-        nyInnsending: false,
-        skjemastatus: 'MOTTATT',
-        henterData: false
-      })
-    );
+    mockedUseBoundStore.mockReset();
+    mockedUseTidligereInntektsdata.mockReset();
+    setupUseBoundStoreMock();
+    mockedUseTidligereInntektsdata.mockReturnValue(defaultTidligereInntektsdata());
   });
 
   it('should have no violations', async () => {
     const { container } = render(
       <Wrapper>
-        <Bruttoinntekt />
+        <Bruttoinntekt forespoerselId='uuid' />
       </Wrapper>
     );
 
@@ -70,7 +111,7 @@ describe('Bruttoinntekt', () => {
   it('should display the heading', () => {
     render(
       <Wrapper>
-        <Bruttoinntekt />
+        <Bruttoinntekt forespoerselId='uuid' />
       </Wrapper>
     );
 
@@ -80,7 +121,7 @@ describe('Bruttoinntekt', () => {
   it('should display previous income data when available', () => {
     render(
       <Wrapper>
-        <Bruttoinntekt bestemmendeFravaersdag={new Date('2024-10-01')} />
+        <Bruttoinntekt forespoerselId='uuid' bestemmendeFravaersdag={new Date('2024-10-01')} />
       </Wrapper>
     );
 
@@ -93,7 +134,7 @@ describe('Bruttoinntekt', () => {
   it('should show edit button when not in edit mode', () => {
     render(
       <Wrapper>
-        <Bruttoinntekt />
+        <Bruttoinntekt forespoerselId='uuid' />
       </Wrapper>
     );
 
@@ -106,7 +147,7 @@ describe('Bruttoinntekt', () => {
 
     render(
       <Wrapper>
-        <Bruttoinntekt />
+        <Bruttoinntekt forespoerselId='uuid' />
       </Wrapper>
     );
 
@@ -123,7 +164,7 @@ describe('Bruttoinntekt', () => {
 
     render(
       <Wrapper>
-        <Bruttoinntekt />
+        <Bruttoinntekt forespoerselId='uuid' />
       </Wrapper>
     );
 
@@ -138,23 +179,11 @@ describe('Bruttoinntekt', () => {
   it('should call tilbakestillMaanedsinntekt when reset button is clicked', async () => {
     const user = userEvent.setup();
     const tilbakestillMock = vi.fn();
-
-    vi.mocked(useBoundStore).mockImplementation((selector: any) =>
-      selector({
-        bruttoinntekt: mockBruttoinntekt,
-        tidligereInntekt: mockTidligereInntekt,
-        setBareNyMaanedsinntekt: vi.fn(),
-        tilbakestillMaanedsinntekt: tilbakestillMock,
-        visFeilmeldingTekst: false,
-        nyInnsending: false,
-        skjemastatus: 'MOTTATT',
-        henterData: false
-      })
-    );
+    setupUseBoundStoreMock({ tilbakestillMaanedsinntekt: tilbakestillMock });
 
     render(
       <Wrapper>
-        <Bruttoinntekt />
+        <Bruttoinntekt forespoerselId='uuid' bestemmendeFravaersdag={new Date(2024, 9, 11)} />
       </Wrapper>
     );
 
@@ -167,89 +196,15 @@ describe('Bruttoinntekt', () => {
     expect(tilbakestillMock).toHaveBeenCalled();
   });
 
-  it('should update store when sbBruttoinntekt changes', () => {
-    const setBareNyMaanedsinntektMock = vi.fn();
-
-    vi.mocked(useBoundStore).mockImplementation((selector: any) =>
-      selector({
-        bruttoinntekt: mockBruttoinntekt,
-        tidligereInntekt: mockTidligereInntekt,
-        setBareNyMaanedsinntekt: setBareNyMaanedsinntektMock,
-        tilbakestillMaanedsinntekt: vi.fn(),
-        visFeilmeldingTekst: false,
-        nyInnsending: false,
-        skjemastatus: 'MOTTATT',
-        henterData: false
-      })
-    );
-
-    const { rerender } = render(
-      <Wrapper>
-        <Bruttoinntekt sbBruttoinntekt={45000} />
-      </Wrapper>
-    );
-
-    rerender(
-      <Wrapper>
-        <Bruttoinntekt sbBruttoinntekt={50000} />
-      </Wrapper>
-    );
-
-    expect(setBareNyMaanedsinntektMock).toHaveBeenCalledWith(50000);
-  });
-
   it('should show error message when feilHentingAvInntektsdata is true', () => {
-    vi.mocked(useBoundStore).mockImplementation((selector: any) =>
-      selector({
-        bruttoinntekt: mockBruttoinntekt,
-        tidligereInntekt: null,
-        setBareNyMaanedsinntekt: vi.fn(),
-        tilbakestillMaanedsinntekt: vi.fn(),
-        visFeilmeldingTekst: false,
-        nyInnsending: false,
-        skjemastatus: 'MOTTATT',
-        henterData: false
-      })
-    );
+    setupUseBoundStoreMock({ tidligereInntekt: null });
 
     render(
       <Wrapper>
-        <Bruttoinntekt />
+        <Bruttoinntekt forespoerselId='uuid' bestemmendeFravaersdag={new Date(2024, 9, 11)} />
       </Wrapper>
     );
 
     expect(screen.getByText(/Vi har problemer med å hente inntektsopplysninger/)).toBeInTheDocument();
-  });
-
-  it('should use sbBruttoinntekt when erSelvbestemt is true', () => {
-    render(
-      <Wrapper>
-        <Bruttoinntekt sbBruttoinntekt={50000} erSelvbestemt={true} />
-      </Wrapper>
-    );
-
-    expect(screen.getByText(/50.*000/)).toBeInTheDocument();
-  });
-
-  it('should use sbTidligereInntekt when erSelvbestemt is true', () => {
-    const sbTidligereInntekt = {
-      '2024-07': 40000,
-      '2024-08': 41000,
-      '2024-09': 42000
-    };
-
-    render(
-      <Wrapper>
-        <Bruttoinntekt
-          sbTidligereInntekt={sbTidligereInntekt}
-          erSelvbestemt={true}
-          bestemmendeFravaersdag={new Date('2024-10-01')}
-        />
-      </Wrapper>
-    );
-
-    expect(screen.getByText(/40.*000/)).toBeInTheDocument();
-    expect(screen.getByText(/41.*000/)).toBeInTheDocument();
-    expect(screen.getByText(/42.*000/)).toBeInTheDocument();
   });
 });

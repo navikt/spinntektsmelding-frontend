@@ -3,8 +3,8 @@
   "version": "0.3.50",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack | pino-pretty --messageKey=message",
-    "dev:decoratorless": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --turbopack | pino-pretty",
+    "dev": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --turbopack | pino-pretty --messageKey=message",
+    "dev:decorator": "next dev --turbopack | pino-pretty --messageKey=message",
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "eslint .",
@@ -12,7 +12,7 @@
     "test:watch": "vitest",
     "prepare": "husky install",
     "knip": "knip --no-exit-code --reporter json",
-    "bundleanalyze": "ANALYZE=true yarn build"
+    "bundleanalyze": "ANALYZE=true yarn build --webpack"
   },
   "dependencies": {
     "@grafana/faro-web-sdk": "1.19.0",

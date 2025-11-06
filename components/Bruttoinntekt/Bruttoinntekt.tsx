@@ -1,5 +1,5 @@
 import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useEffectEvent, useMemo, useState } from 'react';
 import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import useBoundStore from '../../state/useBoundStore';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -15,37 +15,72 @@ import Aarsaksvelger from './Aarsaksvelger';
 import AvvikAdvarselInntekt from '../AvvikAdvarselInntekt';
 import { useFormContext } from 'react-hook-form';
 import { harEndringAarsak } from '../../utils/harEndringAarsak';
+import { useShallow } from 'zustand/shallow';
+import useTidligereInntektsdataSelvbestemt from '../../utils/useTidligereInntektsdataSelvbestemt';
+import { SkjemaStatus } from '../../state/useSkjemadataStore';
+import useTidligereInntektsdataForespurt from '../../utils/useTidligereInntektsdataForespurt';
+import { startOfMonth } from 'date-fns';
+import useTidligereInntektsdata from '../../utils/useTidligereInntektsdata';
 
 interface BruttoinntektProps {
   bestemmendeFravaersdag?: Date;
-  sbBruttoinntekt?: number;
-  sbTidligereInntekt?: HistoriskInntekt;
   erSelvbestemt?: boolean;
+  inntektsdato?: Date;
+  forespoerselId: string;
 }
 
 export default function Bruttoinntekt({
   bestemmendeFravaersdag,
-  sbBruttoinntekt,
-  sbTidligereInntekt,
-  erSelvbestemt
+  erSelvbestemt,
+  inntektsdato,
+  forespoerselId
 }: Readonly<BruttoinntektProps>) {
   const [requestEndreMaanedsinntekt, setRequestEndreMaanedsinntekt] = useState<boolean>(false);
-  const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-  const tidligereinntekt: HistoriskInntekt | undefined = useBoundStore((state) => state.tidligereInntekt);
-  const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
-  const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
-  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
-  const nyInnsending = useBoundStore((state) => state.nyInnsending);
-  const skjemastatus = useBoundStore((state) => state.skjemastatus);
-  const henterData = useBoundStore((state) => state.henterData);
+  const {
+    bruttoinntekt,
+    tidligereInntekt,
+    setBareNyMaanedsinntekt,
+    tilbakestillMaanedsinntekt,
+    visFeilmeldingTekst,
+    nyInnsending,
+    skjemastatus,
+    henterData,
+    sykmeldt,
+    avsender,
+    inngangFraKvittering
+  } = useBoundStore(
+    useShallow((state) => ({
+      bruttoinntekt: state.bruttoinntekt,
+      tidligereInntekt: state.tidligereInntekt,
+      setBareNyMaanedsinntekt: state.setBareNyMaanedsinntekt,
+      tilbakestillMaanedsinntekt: state.tilbakestillMaanedsinntekt,
+      visFeilmeldingTekst: state.visFeilmeldingTekst,
+      nyInnsending: state.nyInnsending,
+      skjemastatus: state.skjemastatus,
+      henterData: state.henterData,
+      sykmeldt: state.sykmeldt,
+      avsender: state.avsender,
+      inngangFraKvittering: state.inngangFraKvittering
+    }))
+  );
   const amplitudeComponent = 'BeregnetMånedslønn';
 
   const { watch, setValue } = useFormContext();
-  const feilHentingAvInntektsdata = tidligereinntekt === null;
+  const feilHentingAvInntektsdata = tidligereInntekt === null;
 
-  const arrayTidligereInntekt: [string, number | null][] = sbTidligereInntekt
-    ? Object.entries(sbTidligereInntekt).map(([key, value]) => [key, value] as [string, number | null])
-    : [];
+  const {
+    data,
+    error,
+    bruttoinntekt: hentetBruttoinntekt,
+    tidligereInntekt: hentetTidligereInntekt
+  } = useTidligereInntektsdata(
+    sykmeldt.fnr!,
+    avsender.orgnr!,
+    inntektsdato!,
+    skjemastatus,
+    forespoerselId,
+    inngangFraKvittering
+  );
 
   const handleResetMaanedsinntekt = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -73,21 +108,20 @@ export default function Bruttoinntekt({
   };
 
   const endringAarsaker = watch('inntekt.endringAarsaker');
-
-  const gjennomsnittligInntekt = erSelvbestemt
-    ? (sbBruttoinntekt ?? bruttoinntekt?.bruttoInntekt)
-    : bruttoinntekt?.bruttoInntekt;
-  const sisteTreMndTidligereinntekt = erSelvbestemt ? new Map(arrayTidligereInntekt) : tidligereinntekt;
+  const gjennomsnittligInntekt = hentetBruttoinntekt ?? bruttoinntekt?.bruttoInntekt;
+  const sisteTreMndTidligereinntekt = hentetTidligereInntekt ?? tidligereInntekt;
 
   const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.size > 0;
 
-  const erBlanktSkjema = false;
+  const onSetBareNyMaanedsinntekt = useEffectEvent((beloep: number) => {
+    setBareNyMaanedsinntekt(beloep);
+  });
 
   useEffect(() => {
-    if (sbBruttoinntekt !== undefined) {
-      setBareNyMaanedsinntekt(sbBruttoinntekt);
+    if (gjennomsnittligInntekt !== undefined) {
+      onSetBareNyMaanedsinntekt(gjennomsnittligInntekt);
     }
-  }, [sbBruttoinntekt, setBareNyMaanedsinntekt]);
+  }, [gjennomsnittligInntekt]);
 
   const endreMaanedsinntekt = useMemo(() => {
     if (harEndringAarsak(endringAarsaker)) {
@@ -141,7 +175,7 @@ export default function Bruttoinntekt({
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}
             handleResetMaanedsinntekt={handleResetMaanedsinntekt}
-            kanIkkeTilbakestilles={erBlanktSkjema}
+            kanIkkeTilbakestilles={false}
           />
         )}
       </div>

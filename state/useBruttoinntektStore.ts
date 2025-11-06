@@ -6,7 +6,7 @@ import feiltekster from '../utils/feiltekster';
 import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldingerStore';
 import { CompleteState } from './useBoundStore';
 import { subMonths, startOfMonth } from 'date-fns';
-import fetchInntektsdata from '../utils/fetchInntektsdata';
+// import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 import roundTwoDecimals from '../utils/roundTwoDecimals';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
@@ -208,30 +208,28 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       isValidUUID(forespoerselId) &&
       harForespurtArbeidsgiverperiode
     ) {
-      henterData = true;
-      try {
-        const inntektsdata = await fetchInntektsdata(
-          environment.inntektsdataUrl,
-          forespoerselId,
-          bestemmendeFravaersdag
-        );
-        const oppdaterteInntekter = inntektsdata.data;
-
-        tidligereInntekt = oppdaterteInntekter.historikk;
-        snittInntekter = oppdaterteInntekter.gjennomsnitt;
-      } catch (error: unknown) {
-        console.error('Error fetching inntektsdata:', error);
-        const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
-        const arrInntekter = Array.from(aktuelleInntekter);
-        const sumInntekter = arrInntekter.reduce((prev, cur) => {
-          prev += (cur[1] as number) ?? 0;
-          return prev;
-        }, 0);
-
-        snittInntekter = arrInntekter.length > 0 ? sumInntekter / arrInntekter.length : 0;
-      } finally {
-        henterData = false;
-      }
+      // henterData = true;
+      // try {
+      //   const inntektsdata = await fetchInntektsdata(
+      //     environment.inntektsdataUrl,
+      //     forespoerselId,
+      //     bestemmendeFravaersdag
+      //   );
+      //   const oppdaterteInntekter = inntektsdata.data;
+      //   tidligereInntekt = oppdaterteInntekter.historikk;
+      //   snittInntekter = oppdaterteInntekter.gjennomsnitt;
+      // } catch (error: unknown) {
+      //   console.error('Error fetching inntektsdata:', error);
+      //   const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
+      //   const arrInntekter = Array.from(aktuelleInntekter);
+      //   const sumInntekter = arrInntekter.reduce((prev, cur) => {
+      //     prev += (cur[1] as number) ?? 0;
+      //     return prev;
+      //   }, 0);
+      //   snittInntekter = arrInntekter.length > 0 ? sumInntekter / arrInntekter.length : 0;
+      // } finally {
+      //   henterData = false;
+      // }
     } else {
       const aktuelleInntekter = finnAktuelleInntekter(tidligereInntekt as HistoriskInntekt, bestemmendeFravaersdag);
       const arrInntekter = Array.from(aktuelleInntekter);
@@ -246,7 +244,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.henterData = henterData;
-        state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
+        // state.sisteLonnshentedato = startOfMonth(bestemmendeFravaersdag);
         if (!bruttoinntekt.manueltKorrigert) {
           state.bruttoinntekt = {
             bruttoInntekt: snittInntekter,

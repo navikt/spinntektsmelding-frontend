@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 
-import org from '../../../mockdata/trenger-originalen-begrenset.json';
+import org from '../../../mockdata/trenger-originalen.json';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
 
 const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.PREUTFYLT_INNTEKTSMELDING_API;
