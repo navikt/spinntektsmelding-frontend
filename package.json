@@ -30,7 +30,7 @@
     "core-js-pure": "3.46.0",
     "csp-header": "^6.2.0",
     "date-fns": "4.1.0",
-    "html-react-parser": "^5.2.7",
+    "html-react-parser": "^5.2.8",
     "immer": "10.2.0",
     "nanoid": "5.1.6",
     "next": "16.0.1",
