@@ -186,8 +186,6 @@ describe('_document.tsx', () => {
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
       process.env.NODE_ENV = 'production';
 
-      process.env = { ...process.env, NODE_ENV: 'production' };
-
       vi.resetModules();
       fetchDecoratorMock.mockRejectedValueOnce(new Error('Network error'));
 
