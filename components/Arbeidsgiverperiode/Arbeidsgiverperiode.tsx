@@ -5,13 +5,13 @@ import { Alert, BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
-import { LonnIArbeidsgiverperioden, Periode } from '../../state/state';
+import { LonnIArbeidsgiverperioden, Periode, YesNo } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useEffectEvent, useMemo, useState } from 'react';
 import logEvent from '../../utils/logEvent';
 import { differenceInCalendarDays, differenceInDays } from 'date-fns';
 import PeriodeType from '../../config/PeriodeType';
@@ -23,6 +23,7 @@ import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeo
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { finnSammenhengendePeriode } from '../../utils/finnBestemmendeFravaersdag';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
+import { useShallow } from 'zustand/react/shallow';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -39,40 +40,52 @@ export default function Arbeidsgiverperiode({
   onTilbakestillArbeidsgiverperiode,
   skalViseArbeidsgiverperiode
 }: Readonly<ArbeidsgiverperiodeProps>) {
-  const leggTilArbeidsgiverperiode = useBoundStore((state) => state.leggTilArbeidsgiverperiode);
-  const slettArbeidsgiverperiode = useBoundStore((state) => state.slettArbeidsgiverperiode);
-  const setArbeidsgiverperiodeDato = useBoundStore((state) => state.setArbeidsgiverperiodeDato);
-  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
-  const setEndreArbeidsgiverperiode = useBoundStore((state) => state.setEndreArbeidsgiverperiode);
-  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
-  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
-  const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
-  const slettAlleArbeidsgiverperioder = useBoundStore((state) => state.slettAlleArbeidsgiverperioder);
-  const setBeloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
-    (state) => state.setBeloepUtbetaltUnderArbeidsgiverperioden
-  );
-  const begrunnelseRedusertUtbetaling = useBoundStore((state) => state.begrunnelseRedusertUtbetaling);
-  const [arbeidsgiverBetalerFullLonnIArbeidsgiverperioden, slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden] =
-    useBoundStore((state) => [
-      state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
-      state.slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden
-    ]);
-  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
-  const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined = useBoundStore(
-    (state) => state.fullLonnIArbeidsgiverPerioden
+  const {
+    leggTilArbeidsgiverperiode,
+    slettArbeidsgiverperiode,
+    setArbeidsgiverperiodeDato,
+    endretArbeidsgiverperiode,
+    setEndreArbeidsgiverperiode,
+    visFeilmeldingTekst,
+    visFeilmelding,
+    tilbakestillArbeidsgiverperiode,
+    slettAlleArbeidsgiverperioder,
+    setBeloepUtbetaltUnderArbeidsgiverperioden,
+    begrunnelseRedusertUtbetaling,
+    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+    inngangFraKvittering,
+    fullLonnIArbeidsgiverPerioden,
+    arbeidsgiverperiodeDisabled,
+    setArbeidsgiverperiodeDisabled,
+    setArbeidsgiverperiodeKort
+  } = useBoundStore(
+    useShallow((state) => ({
+      leggTilArbeidsgiverperiode: state.leggTilArbeidsgiverperiode,
+      slettArbeidsgiverperiode: state.slettArbeidsgiverperiode,
+      setArbeidsgiverperiodeDato: state.setArbeidsgiverperiodeDato,
+      endretArbeidsgiverperiode: state.endretArbeidsgiverperiode,
+      setEndreArbeidsgiverperiode: state.setEndreArbeidsgiverperiode,
+      visFeilmeldingTekst: state.visFeilmeldingTekst,
+      visFeilmelding: state.visFeilmelding,
+      tilbakestillArbeidsgiverperiode: state.tilbakestillArbeidsgiverperiode,
+      slettAlleArbeidsgiverperioder: state.slettAlleArbeidsgiverperioder,
+      setBeloepUtbetaltUnderArbeidsgiverperioden: state.setBeloepUtbetaltUnderArbeidsgiverperioden,
+      begrunnelseRedusertUtbetaling: state.begrunnelseRedusertUtbetaling,
+      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+      slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden:
+        state.slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
+      inngangFraKvittering: state.inngangFraKvittering,
+      fullLonnIArbeidsgiverPerioden: state.fullLonnIArbeidsgiverPerioden,
+      arbeidsgiverperiodeDisabled: state.arbeidsgiverperiodeDisabled,
+      setArbeidsgiverperiodeDisabled: state.setArbeidsgiverperiodeDisabled,
+      setArbeidsgiverperiodeKort: state.setArbeidsgiverperiodeKort
+    }))
   );
 
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
 
   const amplitudeComponent = 'Arbeidsgiverperiode';
-
-  const [arbeidsgiverperiodeDisabled, setArbeidsgiverperiodeDisabled, setArbeidsgiverperiodeKort] = useBoundStore(
-    (state) => [
-      state.arbeidsgiverperiodeDisabled,
-      state.setArbeidsgiverperiodeDisabled,
-      state.setArbeidsgiverperiodeKort
-    ]
-  );
 
   const addIsDirtyForm = (func: (event: React.ChangeEvent<HTMLInputElement>) => void) => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,50 +230,58 @@ export default function Arbeidsgiverperiode({
       : '';
 
   const advarselKortPeriode =
-    antallDager < 16 && !arbeidsgiverperiodeDisabled
+    antallDager < 16
       ? `Du har lagt inn arbeidsgiverperiode på ${antallDager} dager. Angi begrunnelse for kort arbeidsgiverperiode hvis dette er korrekt.`
       : '';
 
-  useEffect(() => {
-    if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      setArbeidsgiverperiodeKort(antallDager < 16 && !arbeidsgiverperiodeDisabled);
-      if (antallDager < 16) {
-        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
-      } else {
-        slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
-      }
-    }
-  }, [
-    antallDager,
-    setArbeidsgiverperiodeKort,
-    skjemastatus,
-    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
-    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
-    arbeidsgiverperiodeDisabled
-  ]);
+  const onArbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useEffectEvent((value: YesNo) => {
+    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(value);
+  });
+
+  const onSlettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useEffectEvent(() => {
+    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+  });
+
+  const onSetArbeidsgiverperiodeKort = useEffectEvent((disabled: boolean) => {
+    setArbeidsgiverperiodeKort(disabled);
+  });
+
+  const onSetArbeidsgiverperiodeDisabled = useEffectEvent((disabled: boolean) => {
+    setArbeidsgiverperiodeDisabled(disabled);
+  });
 
   useEffect(() => {
+    if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
+      onSetArbeidsgiverperiodeKort(antallDager < 16 && !arbeidsgiverperiodeDisabled);
+      if (antallDager < 16) {
+        onArbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
+      } else {
+        onSlettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+      }
+    }
+  }, [antallDager, skjemastatus, arbeidsgiverperiodeDisabled]);
+
+  useEffect(() => {
+    if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
+      if (antallDager < 16) {
+        onSetArbeidsgiverperiodeKort(true);
+      } else {
+        onSetArbeidsgiverperiodeKort(false);
+      }
+    }
     if (!manuellEndring) {
       return;
     }
 
     if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
-      setArbeidsgiverperiodeKort(antallDager < 16 && !arbeidsgiverperiodeDisabled);
+      onSetArbeidsgiverperiodeKort(antallDager < 16 && !arbeidsgiverperiodeDisabled);
       if (antallDager < 16) {
-        arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
+        onArbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       } else {
-        slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+        onSlettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       }
     }
-  }, [
-    antallDager,
-    setArbeidsgiverperiodeKort,
-    arbeidsgiverperioder,
-    arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
-    slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
-    manuellEndring,
-    arbeidsgiverperiodeDisabled
-  ]);
+  }, [antallDager, arbeidsgiverperioder, manuellEndring, arbeidsgiverperiodeDisabled]);
 
   const advarselOppholdHelg = useMemo(() => {
     if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 1) {
@@ -273,9 +294,9 @@ export default function Arbeidsgiverperiode({
 
   useEffect(() => {
     if (inngangFraKvittering && arbeidsgiverperioder?.length === 0) {
-      setArbeidsgiverperiodeDisabled(true);
+      onSetArbeidsgiverperiodeDisabled(true);
     }
-  }, [inngangFraKvittering, arbeidsgiverperioder, setArbeidsgiverperiodeDisabled]);
+  }, [inngangFraKvittering, arbeidsgiverperioder]);
 
   const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
 
@@ -338,7 +359,7 @@ export default function Arbeidsgiverperiode({
               periodeId={periodeIndex.toString()}
               onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
               toDate={new Date()}
-              disabled={arbeidsgiverperiodeDisabled}
+              // disabled={arbeidsgiverperiodeDisabled}
               defaultMonth={periodeIndex > 0 ? arbeidsgiverperioder?.[periodeIndex - 1].tom : undefined}
             />
           )}
@@ -466,7 +487,7 @@ export default function Arbeidsgiverperiode({
             variant='secondary'
             className={lokalStyles.leggTilKnapp}
             onClick={(event) => clickLeggTilArbeidsgiverperiodeHandler(event)}
-            disabled={arbeidsgiverperiodeDisabled}
+            // disabled={arbeidsgiverperiodeDisabled}
           >
             Legg til periode
           </Button>
