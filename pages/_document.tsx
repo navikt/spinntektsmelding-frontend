@@ -45,7 +45,7 @@ export async function loadDecorator(): Promise<DecoratorBundle> {
     cachedDecorator = { Header, Footer, Scripts, HeadAssets };
 
     return cachedDecorator;
-  } catch (e) {
+  } catch {
     return DisabledDecorator;
   }
 }
