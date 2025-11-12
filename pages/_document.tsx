@@ -16,10 +16,7 @@ const DisabledDecorator: DecoratorBundle = {
   HeadAssets: () => null
 };
 
-const DECORATOR_DISABLED =
-  process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
-  process.env.NODE_ENV === 'test' ||
-  process.env.PLAYWRIGHT === 'true';
+const DECORATOR_DISABLED = process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' || process.env.PLAYWRIGHT === 'true';
 
 let cachedDecorator: DecoratorBundle | null = null;
 
