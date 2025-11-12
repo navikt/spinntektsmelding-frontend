@@ -474,4 +474,47 @@ describe('_document.tsx', () => {
       expect(decorator.HeadAssets({})).toBeNull();
     });
   });
+  describe('loadDecorator', () => {
+    beforeEach(() => {
+      vi.resetModules();
+      mockDecoratorModule(false);
+    });
+
+    it('returnerer disabled når NEXT_PUBLIC_DISABLE_DECORATOR=true', async () => {
+      const importDocument = async () => import('../../pages/_document.js');
+      process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
+      const { loadDecorator } = await importDocument();
+      const decorator = await loadDecorator();
+
+      expect(fetchDecoratorMock).not.toHaveBeenCalled();
+      expect(decorator.Header({})).toBeNull();
+      expect(decorator.Footer({})).toBeNull();
+      expect(decorator.Scripts({})).toBeNull();
+      expect(decorator.HeadAssets({})).toBeNull();
+    });
+
+    it('returnerer disabled når NODE_ENV=test', async () => {
+      const importDocument = async () => import('../../pages/_document.js');
+      process.env.NODE_ENV = 'test';
+      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
+
+      const { loadDecorator } = await importDocument();
+      const decorator = await loadDecorator();
+
+      expect(fetchDecoratorMock).not.toHaveBeenCalled();
+      expect(decorator.Header({})).toBeNull();
+    });
+
+    it('should cache disabled decorator components', async () => {
+      const importDocument = async () => import('../../pages/_document.js');
+      process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
+      const { loadDecorator } = await importDocument();
+
+      const first = await loadDecorator();
+      const second = await loadDecorator();
+
+      expect(first).toBe(second);
+      expect(fetchDecoratorMock).not.toHaveBeenCalled();
+    });
+  });
 });
