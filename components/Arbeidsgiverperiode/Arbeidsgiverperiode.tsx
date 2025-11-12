@@ -5,7 +5,7 @@ import { Alert, BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
-import { LonnIArbeidsgiverperioden, Periode, YesNo } from '../../state/state';
+import { Periode, YesNo } from '../../state/state';
 import Heading3 from '../Heading3';
 import lokalStyles from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
@@ -263,18 +263,13 @@ export default function Arbeidsgiverperiode({
 
   useEffect(() => {
     if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
-      if (antallDager < 16) {
-        onSetArbeidsgiverperiodeKort(true);
-      } else {
-        onSetArbeidsgiverperiodeKort(false);
-      }
+      onSetArbeidsgiverperiodeKort(antallDager < 16);
     }
     if (!manuellEndring) {
       return;
     }
 
     if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
-      onSetArbeidsgiverperiodeKort(antallDager < 16 && !arbeidsgiverperiodeDisabled);
       if (antallDager < 16) {
         onArbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       } else {
@@ -359,7 +354,6 @@ export default function Arbeidsgiverperiode({
               periodeId={periodeIndex.toString()}
               onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
               toDate={new Date()}
-              // disabled={arbeidsgiverperiodeDisabled}
               defaultMonth={periodeIndex > 0 ? arbeidsgiverperioder?.[periodeIndex - 1].tom : undefined}
             />
           )}
@@ -487,7 +481,6 @@ export default function Arbeidsgiverperiode({
             variant='secondary'
             className={lokalStyles.leggTilKnapp}
             onClick={(event) => clickLeggTilArbeidsgiverperiodeHandler(event)}
-            // disabled={arbeidsgiverperiodeDisabled}
           >
             Legg til periode
           </Button>

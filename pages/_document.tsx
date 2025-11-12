@@ -28,7 +28,7 @@ export async function loadDecorator(): Promise<DecoratorBundle> {
   if (cachedDecorator) return cachedDecorator;
 
   try {
-    const { fetchDecoratorReact } = await require('@navikt/nav-dekoratoren-moduler/ssr');
+    const { fetchDecoratorReact } = require('@navikt/nav-dekoratoren-moduler/ssr');
 
     const env =
       process.env.NEXT_PUBLIC_DECORATOR_ENV ?? (process.env.NAIS_CLUSTER_NAME === 'prod-gcp' ? 'prod' : 'dev');

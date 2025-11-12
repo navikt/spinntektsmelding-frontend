@@ -88,7 +88,7 @@ describe('_document.tsx', () => {
     });
 
     it('NODE_ENV=test deaktiverer dekoratør', () => {
-      process.env = { ...process.env, NODE_ENV: 'test' };
+      process.env.NODE_ENV = 'test';
       const shouldDisable =
         process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
         process.env.NODE_ENV === 'test' ||
@@ -134,7 +134,7 @@ describe('_document.tsx', () => {
     });
 
     it('returnerer disabled når NODE_ENV=test', async () => {
-      process.env = { ...process.env, NODE_ENV: 'test' };
+      process.env.NODE_ENV = 'test';
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
 
       const result = await loadDecorator();
