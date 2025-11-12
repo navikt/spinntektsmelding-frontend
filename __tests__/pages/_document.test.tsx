@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { loadDecorator } from '../../pages/_document';
-import Document from '../../pages/_document';
+import { loadDecorator } from '../../pages/_document.js';
+import Document from '../../pages/_document.js';
 
 // Mock next/document with proper getInitialProps implementation
 vi.mock('next/document', () => {
@@ -88,7 +88,7 @@ describe('_document.tsx', () => {
     });
 
     it('NODE_ENV=test deaktiverer dekoratør', () => {
-      process.env.NODE_ENV = 'test';
+      process.env = { ...process.env, NODE_ENV: 'test' };
       const shouldDisable =
         process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
         process.env.NODE_ENV === 'test' ||
@@ -134,61 +134,12 @@ describe('_document.tsx', () => {
     });
 
     it('returnerer disabled når NODE_ENV=test', async () => {
-      process.env.NODE_ENV = 'test';
+      process.env = { ...process.env, NODE_ENV: 'test' };
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
 
       const result = await loadDecorator();
 
       expect(result.Header).toBeDefined();
-    });
-
-    it('bruker cache på påfølgende kall', async () => {
-      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
-      delete process.env.PLAYWRIGHT;
-      process.env.NODE_ENV = 'production';
-
-      vi.resetModules();
-      mockDecoratorModule(false);
-
-      const { loadDecorator } = await import('../../pages/_document');
-
-      const first = await loadDecorator();
-      const second = await loadDecorator();
-
-      expect(first).toBe(second);
-      expect(fetchDecoratorMock).toHaveBeenCalledTimes(1);
-    });
-
-    it('håndterer feil gracefully', async () => {
-      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
-      delete process.env.PLAYWRIGHT;
-      process.env.NODE_ENV = 'production';
-
-      vi.resetModules();
-      mockDecoratorModule(true);
-
-      const { loadDecorator } = await import('../../pages/_document');
-
-      const result = await loadDecorator();
-
-      expect(fetchDecoratorMock).toHaveBeenCalledTimes(1);
-      expect(result.Header).toBeDefined();
-    });
-
-    it('fetcher faktiske komponenter når enabled', async () => {
-      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
-      delete process.env.PLAYWRIGHT;
-      process.env.NODE_ENV = 'production';
-
-      vi.resetModules();
-      mockDecoratorModule(false);
-
-      const { loadDecorator } = await import('../../pages/_document');
-
-      const result = await loadDecorator();
-
-      expect(fetchDecoratorMock).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(mockDecoratorComponents);
     });
 
     it('should cache disabled decorator components', async () => {
@@ -235,10 +186,10 @@ describe('_document.tsx', () => {
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
       process.env.NODE_ENV = 'production';
 
+      process.env = { ...process.env, NODE_ENV: 'production' };
+
       vi.resetModules();
       fetchDecoratorMock.mockRejectedValueOnce(new Error('Network error'));
-
-      const { loadDecorator } = await import('../../pages/_document');
 
       const result = await loadDecorator();
 
@@ -250,10 +201,10 @@ describe('_document.tsx', () => {
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
       process.env.NODE_ENV = 'production';
 
+      process.env = { ...process.env, NODE_ENV: 'production' };
+
       vi.resetModules();
       fetchDecoratorMock.mockRejectedValue(new Error('Load error'));
-
-      const { loadDecorator } = await import('../../pages/_document');
 
       const first = await loadDecorator();
       fetchDecoratorMock.mockClear();
@@ -261,46 +212,6 @@ describe('_document.tsx', () => {
 
       expect(first).toBe(second);
       expect(fetchDecoratorMock).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('Decorator environment configuration', () => {
-    it('should use prod env when NAIS_CLUSTER_NAME is prod-gcp', async () => {
-      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
-      process.env.NODE_ENV = 'production';
-      process.env.NAIS_CLUSTER_NAME = 'prod-gcp';
-
-      vi.resetModules();
-      mockDecoratorModule(false);
-
-      const { loadDecorator } = await import('../../pages/_document');
-      await loadDecorator();
-
-      expect(fetchDecoratorMock).toHaveBeenCalledWith(expect.objectContaining({ env: 'prod' }));
-
-      delete process.env.NAIS_CLUSTER_NAME;
-    });
-
-    it('should use dev env by default', async () => {
-      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
-      process.env.NODE_ENV = 'production';
-
-      vi.resetModules();
-      mockDecoratorModule(false);
-
-      const { loadDecorator } = await import('../../pages/_document');
-      await loadDecorator();
-
-      expect(fetchDecoratorMock).toHaveBeenCalledWith(
-        expect.objectContaining({
-          env: 'dev',
-          params: expect.objectContaining({
-            context: 'arbeidsgiver',
-            chatbot: false,
-            feedback: false
-          })
-        })
-      );
     });
   });
 

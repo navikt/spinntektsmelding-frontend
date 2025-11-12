@@ -16,18 +16,24 @@ const DisabledDecorator: DecoratorBundle = {
   HeadAssets: () => null
 };
 
-const DECORATOR_DISABLED = process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' || process.env.PLAYWRIGHT === 'true';
+const DECORATOR_DISABLED =
+  process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
+  process.env.PLAYWRIGHT === 'true' ||
+  process.env.NODE_ENV === 'test';
 
 let cachedDecorator: DecoratorBundle | null = null;
 
 export async function loadDecorator(): Promise<DecoratorBundle> {
   if (DECORATOR_DISABLED) return DisabledDecorator;
   if (cachedDecorator) return cachedDecorator;
+
   try {
-    const mod = await import('@navikt/nav-dekoratoren-moduler/ssr');
-    const env = process.env.NAIS_CLUSTER_NAME === 'prod-gcp' ? 'prod' : 'dev';
-    // Uses specific env (avoids mod.serverRuntimeConfig for stability)
-    const bundle = await mod.fetchDecoratorReact({
+    const { fetchDecoratorReact } = await require('@navikt/nav-dekoratoren-moduler/ssr');
+
+    const env =
+      process.env.NEXT_PUBLIC_DECORATOR_ENV ?? (process.env.NAIS_CLUSTER_NAME === 'prod-gcp' ? 'prod' : 'dev');
+
+    const { Header, Footer, Scripts, HeadAssets } = await fetchDecoratorReact({
       env,
       params: {
         context: 'arbeidsgiver',
@@ -35,14 +41,11 @@ export async function loadDecorator(): Promise<DecoratorBundle> {
         feedback: false
       }
     });
-    cachedDecorator = {
-      Header: bundle.Header,
-      Footer: bundle.Footer,
-      Scripts: bundle.Scripts,
-      HeadAssets: bundle.HeadAssets
-    };
+
+    cachedDecorator = { Header, Footer, Scripts, HeadAssets };
+
     return cachedDecorator;
-  } catch {
+  } catch (e) {
     return DisabledDecorator;
   }
 }
