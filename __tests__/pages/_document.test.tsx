@@ -433,4 +433,47 @@ describe('_document.tsx', () => {
       expect(mainIndex).toBeLessThan(footerIndex);
     });
   });
+
+  describe('loadDecorator – disabled branch', () => {
+    it('returnerer DisabledDecorator når NEXT_PUBLIC_DISABLE_DECORATOR=true', async () => {
+      process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
+      vi.resetModules();
+
+      const fetchSpy = vi.fn();
+      vi.doMock('@navikt/nav-dekoratoren-moduler/ssr', () => ({
+        __esModule: true,
+        fetchDecoratorReact: fetchSpy
+      }));
+
+      const { loadDecorator } = await import('../../pages/_document');
+      const decorator = await loadDecorator();
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(decorator.Header({})).toBeNull();
+      expect(decorator.Footer({})).toBeNull();
+      expect(decorator.Scripts({})).toBeNull();
+      expect(decorator.HeadAssets({})).toBeNull();
+    });
+
+    it('returnerer DisabledDecorator når NODE_ENV=test', async () => {
+      process.env.NODE_ENV = 'test';
+      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
+      vi.resetModules();
+
+      const fetchSpy = vi.fn();
+      vi.doMock('@navikt/nav-dekoratoren-moduler/ssr', () => ({
+        __esModule: true,
+        fetchDecoratorReact: fetchSpy
+      }));
+
+      const { loadDecorator } = await import('../../pages/_document');
+      const decorator = await loadDecorator();
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(decorator.Header({})).toBeNull();
+      expect(decorator.Footer({})).toBeNull();
+      expect(decorator.Scripts({})).toBeNull();
+      expect(decorator.HeadAssets({})).toBeNull();
+    });
+  });
 });
