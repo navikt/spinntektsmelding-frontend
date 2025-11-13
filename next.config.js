@@ -50,6 +50,7 @@ const nextConfig = {
   //   locales: ['no'],
   //   defaultLocale: 'no'
   // },
+  reactCompiler: true,
   experimental: {
     optimizePackageImports: ['@navikt/aksel-icons'],
     turbopackFileSystemCacheForDev: true
