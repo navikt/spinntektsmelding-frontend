@@ -11,12 +11,13 @@ interface EgenmeldingPeriodeInterface {
   egenmeldingsperiode: Periode;
   kanEndreEgenmeldingPeriode: boolean;
   setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
-  toDate: Date;
+  toDate?: Date;
   kanSlettes: boolean;
   onSlettRad: () => void;
   disabled?: boolean;
   rad: number;
   visFeilmeldingTekst: (feilmelding: string) => string;
+  defaultMonth?: Date;
 }
 
 export default function EgenmeldingPeriode({
@@ -29,7 +30,8 @@ export default function EgenmeldingPeriode({
   onSlettRad,
   disabled,
   rad,
-  visFeilmeldingTekst
+  visFeilmeldingTekst,
+  defaultMonth
 }: Readonly<EgenmeldingPeriodeInterface>) {
   const rangeChangeHandler = (dateRange: PeriodeParam | undefined) => {
     setEgenmeldingDato(dateRange, periodeId);
@@ -54,7 +56,7 @@ export default function EgenmeldingPeriode({
     );
   }
 
-  const defaultMnd = toDate || new Date();
+  const defaultMnd = defaultMonth || toDate || new Date();
 
   return (
     <div data-cy='egenmelding' className={localStyles.datepickerytrewrapper}>
