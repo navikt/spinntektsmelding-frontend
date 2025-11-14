@@ -25,6 +25,15 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
+  const slettEgenmeldingsperiode = useBoundStore((state) => state.slettEgenmeldingsperiode);
+  const leggTilEgenmeldingsperiode = useBoundStore((state) => state.leggTilEgenmeldingsperiode);
+  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
+  const kanEndreEgenmeldingPeriode = useBoundStore((state) => state.kanEndreEgenmeldingPeriode);
+  const setEndreEgenmelding = useBoundStore((state) => state.setEndreEgenmelding);
+  const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
+  const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
+  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
 
   const foersteFravaersdag = useMemo(
     () =>
@@ -51,16 +60,6 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
             ),
     [sykmeldingsperioder]
   );
-
-  const slettEgenmeldingsperiode = useBoundStore((state) => state.slettEgenmeldingsperiode);
-  const leggTilEgenmeldingsperiode = useBoundStore((state) => state.leggTilEgenmeldingsperiode);
-  const endretArbeidsgiverperiode = useBoundStore((state) => state.endretArbeidsgiverperiode);
-  const kanEndreEgenmeldingPeriode = useBoundStore((state) => state.kanEndreEgenmeldingPeriode);
-  const setEndreEgenmelding = useBoundStore((state) => state.setEndreEgenmelding);
-  const setEgenmeldingDato = useBoundStore((state) => state.setEgenmeldingDato);
-  const tilbakestillEgenmelding = useBoundStore((state) => state.tilbakestillEgenmelding);
-  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
-  const visFeilmelding = useBoundStore((state) => state.visFeilmelding);
 
   const clickSlettEgenmeldingsperiode = (periode: string) => {
     logEvent('knapp klikket', {
