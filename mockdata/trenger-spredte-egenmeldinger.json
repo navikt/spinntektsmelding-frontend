@@ -1,0 +1,23 @@
+{
+  "sykmeldt": { "fnr": "04498234440", "navn": "FJÅNG KANNE" },
+  "avsender": { "orgnr": "314459474", "orgNavn": "UKJENT ARBEIDSGIVER", "navn": "SIKKER KONSONANT" },
+  "egenmeldingsperioder": [
+    { "fom": "2025-09-19", "tom": "2025-09-19" },
+    { "fom": "2025-10-22", "tom": "2025-10-24" }
+  ],
+  "sykmeldingsperioder": [
+    { "fom": "2025-10-02", "tom": "2025-10-03" },
+    { "fom": "2025-10-17", "tom": "2025-10-17" },
+    { "fom": "2025-10-27", "tom": "2025-11-05" }
+  ],
+  "bestemmendeFravaersdag": "2025-10-22",
+  "eksternInntektsdato": null,
+  "inntekt": { "gjennomsnitt": 65000.0, "historikk": { "2025-07": 65000.0, "2025-08": 65000.0, "2025-09": 65000.0 } },
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": true },
+    "inntekt": { "paakrevd": true, "forslag": null },
+    "refusjon": { "paakrevd": true, "forslag": { "perioder": [], "opphoersdato": null } }
+  },
+  "erBesvart": false,
+  "erBegrenset": false
+}

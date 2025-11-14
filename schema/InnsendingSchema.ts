@@ -112,14 +112,6 @@ export const InnsendingSchema = z.object({
         }
       }),
       egenmeldinger: z.union([z.array(ApiPeriodeSchema), z.tuple([])]).superRefine((val, ctx) => {
-        if (langtGapIPerioder(val)) {
-          ctx.issues.push({
-            code: 'custom',
-            error: 'Det kan ikke være opphold over 16 dager mellom egenmeldingsperiodene.',
-            input: ''
-          });
-        }
-
         if (perioderHarOverlapp(val)) {
           ctx.issues.push({
             code: 'custom',
