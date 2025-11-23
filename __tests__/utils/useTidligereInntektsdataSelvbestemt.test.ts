@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import useTidligereInntektsdata from '../../utils/useTidligereInntektsdata';
+import useTidligereInntektsdataSelvbestemt from '../../utils/useTidligereInntektsdataSelvbestemt';
 
-describe('useTidligereInntektsdata', () => {
+describe('useTidligereInntektsdataSelvbestemt', () => {
   it('should fetch inntektsdata when skalHenteInntektsdata is true', async () => {
     const identitetsnummer = '123456789';
     const orgnrUnderenhet = '987654321';
@@ -9,7 +9,7 @@ describe('useTidligereInntektsdata', () => {
     const skalHenteInntektsdata = true;
 
     const { result } = renderHook(() =>
-      useTidligereInntektsdata(identitetsnummer, orgnrUnderenhet, inntektsdato, skalHenteInntektsdata)
+      useTidligereInntektsdataSelvbestemt(identitetsnummer, orgnrUnderenhet, inntektsdato, skalHenteInntektsdata)
     );
 
     await waitFor(() => expect(result.current.data).toBeUndefined());
@@ -22,7 +22,7 @@ describe('useTidligereInntektsdata', () => {
     const skalHenteInntektsdata = false;
 
     const { result } = renderHook(() =>
-      useTidligereInntektsdata(identitetsnummer, orgnrUnderenhet, inntektsdato, skalHenteInntektsdata)
+      useTidligereInntektsdataSelvbestemt(identitetsnummer, orgnrUnderenhet, inntektsdato, skalHenteInntektsdata)
     );
 
     await waitFor(() => expect(result.current.data).toEqual([]));
