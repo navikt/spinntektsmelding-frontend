@@ -13,7 +13,7 @@ export interface NaturalytelserState {
   naturalytelser?: Array<Naturalytelse>;
   hasBortfallAvNaturalytelser?: YesNo;
   slettAlleNaturalytelser: () => void;
-  initNaturalytelser: (naturalytelser: Array<Naturalytelse>) => void;
+  initNaturalytelser: (naturalytelser?: Array<Naturalytelse>) => void;
 }
 
 const useNaturalytelserStore: StateCreator<

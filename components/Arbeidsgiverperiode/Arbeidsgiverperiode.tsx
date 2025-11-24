@@ -426,7 +426,7 @@ export default function Arbeidsgiverperiode({
           {advarselKortPeriode}
         </span>
       )}
-      {advarselKortPeriode.length > 0 && (
+      {advarselKortPeriode.length > 0 && !arbeidsgiverperiodeDisabled && (
         <>
           <div className={lokalStyles.wrapperUtbetaling}>
             <TextField
