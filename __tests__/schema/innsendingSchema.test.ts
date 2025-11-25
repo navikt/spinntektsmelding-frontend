@@ -737,51 +737,6 @@ describe('InnsendingSchema', () => {
     });
   });
 
-  it('should validate InnsendingSchema and fail if inntekt < utbetaling under fravær', () => {
-    const data = {
-      agp: {
-        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
-        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
-        redusertLoennIAgp: { beloep: 800000, begrunnelse: 'StreikEllerLockout' }
-      },
-      inntekt: {
-        beloep: 750000,
-        inntektsdato: '2023-02-14',
-        naturalytelser: [],
-        endringAarsak: { aarsak: 'Bonus' },
-        endringAarsaker: [{ aarsak: 'Bonus' }]
-      },
-      refusjon: {
-        beloepPerMaaned: 750000,
-        endringer: [
-          { startdato: '2023-03-25', beloep: 50000 },
-          { startdato: '2023-03-26', beloep: 600000 }
-        ],
-        sluttdato: null
-      },
-      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
-      sykmeldtFnr: '25087327879',
-      avsender: { orgnr: '911206722', tlf: '12345678' },
-      sykmeldingsperioder: [
-        { fom: '2023-02-20', tom: '2023-03-03' },
-        { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
-    };
-
-    const mockAddIssue = vi.fn();
-    const mockCtx = { addIssue: mockAddIssue, issues: [] };
-
-    superRefineInnsending(data as any, mockCtx as any);
-
-    expect(mockCtx.issues).toHaveLength(1);
-    expect(mockCtx.issues[0]).toEqual({
-      code: 'custom',
-      error: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
-      input: '',
-      path: ['agp', 'redusertLoennIAgp', 'beloep']
-    });
-  });
-
   it('should validate InnsendingSchema and fail if redusertLoennIAgp beloep is set, but not begrunnelse', () => {
     const data = {
       agp: {

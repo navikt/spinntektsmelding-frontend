@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import originalData from '../mockdata/trenger-originalen.json';
 import { FormPage } from './utils/formPage';
+import { promise } from 'zod';
 
 const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
@@ -43,11 +44,13 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
     await incomeInput.fill('70000kroner');
 
     // send for validering
-    await page.getByRole('button', { name: 'Send' }).click();
+    await formPage.clickButton('Send');
 
     // feilmeldinger vises
-    await expect(page.getByText('Vennligst angi bruttoinntekt på formatet 1234,50').first()).toBeVisible();
-    await expect(page.getByText('Vennligst angi årsak til endringen.').first()).toBeVisible();
+    await Promise.all([
+      formPage.assertVisibleTextAtLeastOnce('Vennligst angi bruttoinntekt på formatet 1234,50'),
+      formPage.assertVisibleTextAtLeastOnce('Vennligst angi årsak til endringen.')
+    ]);
 
     // skriv gyldig beløp
     await incomeInput.fill('70000');

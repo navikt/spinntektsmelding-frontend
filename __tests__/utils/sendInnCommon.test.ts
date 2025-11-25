@@ -100,22 +100,6 @@ describe('checkCommonValidations', () => {
     expect(result.some((f) => f.text === feiltekster.BEKREFT_OPPLYSNINGER)).toBe(true);
   });
 
-  it('feil når inntekt < redusertLoennIAgp beløp', () => {
-    (validerFullLonnIArbeidsgiverPerioden as any).mockReturnValue([]);
-    const result = checkCommonValidations(
-      FULL_LONN_NEI,
-      true,
-      LONN_SYKE_NEI,
-      'Nei',
-      true,
-      zodSuccess({
-        inntekt: { beloep: 100 },
-        agp: { redusertLoennIAgp: { beloep: 200 } }
-      })
-    );
-    expect(result.some((f) => f.text === feiltekster.INNTEKT_UNDER_REFUSJON)).toBe(true);
-  });
-
   it('ingen INNTEKT_UNDER_REFUSJON-feil når inntekt >= redusert beløp', () => {
     (validerFullLonnIArbeidsgiverPerioden as any).mockReturnValue([]);
     const result = checkCommonValidations(

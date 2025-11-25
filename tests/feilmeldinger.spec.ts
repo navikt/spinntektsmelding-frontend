@@ -155,7 +155,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     await formPage.fillInput('Verdi naturalytelse - kr/måned	', '45000');
 
     const pageLoad = page.waitForResponse('*/**/api/innsendingInntektsmelding');
-    await page.getByRole('button', { name: 'Send' }).click();
+    await formPage.clickButton('Send');
     const req = await pageLoad;
 
     const body = JSON.parse(req.request().postData()!);

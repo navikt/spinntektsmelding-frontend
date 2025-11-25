@@ -104,7 +104,8 @@ export function checkCommonValidations<D extends MinimalData, R extends SafePars
 
   if (
     validerteData.success === true &&
-    (validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0)
+    (validerteData.data?.inntekt?.beloep ?? 0) < (validerteData.data?.agp?.redusertLoennIAgp?.beloep ?? 0) &&
+    validerteData.data?.inntekt?.beloep !== 0
   ) {
     errors.push({ text: feiltekster.INNTEKT_UNDER_REFUSJON, felt: 'agp.redusertLoennIAgp.beloep' });
   }
