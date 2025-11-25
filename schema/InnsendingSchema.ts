@@ -239,7 +239,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
     });
   }
 
-  if ((val.inntekt?.beloep ?? 0) < (val.agp?.redusertLoennIAgp?.beloep ?? 0)) {
+  if ((val.inntekt?.beloep ?? 0) < (val.agp?.redusertLoennIAgp?.beloep ?? 0) && (val.inntekt?.beloep ?? 0) !== 0) {
     ctx.issues.push({
       code: 'custom',
       error: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
