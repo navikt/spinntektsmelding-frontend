@@ -147,7 +147,8 @@ export default function useFyllInnsending() {
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,
-      avsenderTlf: skjemaData.avsenderTlf ?? ''
+      avsenderTlf: skjemaData.avsenderTlf ?? '',
+      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser)
     };
 
     if (!harForespurtArbeidsgiverperiode) {

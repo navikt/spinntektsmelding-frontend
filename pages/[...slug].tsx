@@ -379,19 +379,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             )}
 
             <Skillelinje />
-
             <RefusjonArbeidsgiver
               setIsDirtyForm={setIsDirtyForm}
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
               inntekt={inntektBeloep}
               behandlingsdager={behandlingsdagerInnsending}
             />
-            {harForespurtInntekt && (
-              <>
-                <Skillelinje />
-                <Naturalytelser />
-              </>
-            )}
+
+            <Skillelinje />
+            <Naturalytelser />
+
             <Skillelinje />
             <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
               Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.

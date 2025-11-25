@@ -13,7 +13,8 @@ const AapenInnsendingSchema = InnsendingSchema.extend({
     tlf: TelefonNummerSchema
   }),
   sykmeldingsperioder: PeriodeListeSchema,
-  arbeidsforholdType: TypeArbeidsforholdSchema
+  arbeidsforholdType: TypeArbeidsforholdSchema,
+  aarsakInnsending: z.enum(['Ny', 'Endring'])
 }).superRefine(superRefineInnsending);
 
 export default AapenInnsendingSchema;

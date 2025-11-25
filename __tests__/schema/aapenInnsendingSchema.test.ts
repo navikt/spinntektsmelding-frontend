@@ -26,7 +26,9 @@ describe('AapenInnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' }
+      arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' },
+      aarsakInnsending: 'Ny',
+      naturalytelser: []
     };
 
     expect(AapenInnsendingSchema.safeParse(data).success).toBe(true);
@@ -53,7 +55,9 @@ describe('AapenInnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' }
+      arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' },
+      aarsakInnsending: 'Ny',
+      naturalytelser: []
     };
 
     const result = AapenInnsendingSchema.safeParse(data);
@@ -90,7 +94,9 @@ describe('AapenInnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' }
+      arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' },
+      aarsakInnsending: 'Ny',
+      naturalytelser: []
     };
     const result = AapenInnsendingSchema.safeParse(data);
     expect(result.success).toBe(false);

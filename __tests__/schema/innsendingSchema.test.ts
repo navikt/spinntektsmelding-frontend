@@ -25,7 +25,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(true);
@@ -52,7 +53,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const result = InnsendingSchema.safeParse(data);
@@ -92,7 +94,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -130,7 +133,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -168,7 +172,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -212,7 +217,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -250,7 +256,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -287,7 +294,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -325,7 +333,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -362,7 +371,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -397,7 +407,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -435,7 +446,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -492,7 +504,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(true);
@@ -527,7 +540,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const mockAddIssue = vi.fn();
@@ -586,7 +600,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -630,7 +645,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const mockAddIssue = vi.fn();
@@ -675,7 +691,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const mockAddIssue = vi.fn();
@@ -720,7 +737,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const mockAddIssue = vi.fn();
@@ -765,7 +783,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -823,7 +842,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -887,7 +907,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -951,7 +972,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -1028,7 +1050,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(true);
@@ -1062,7 +1085,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -1120,7 +1144,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -1150,7 +1175,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const result = InnsendingSchema.safeParse(data);
@@ -1179,7 +1205,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const mockAddIssue = vi.fn();
@@ -1211,7 +1238,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -1249,7 +1277,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const result = InnsendingSchema.safeParse(data);
@@ -1294,7 +1323,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const result = InnsendingSchema.safeParse(data);
@@ -1353,7 +1383,8 @@ describe('InnsendingSchema', () => {
       sykmeldingsperioder: [
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
-      ]
+      ],
+      naturalytelser: []
     };
 
     const result = InnsendingSchema.safeParse(data);

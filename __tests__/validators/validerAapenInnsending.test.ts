@@ -21,7 +21,6 @@ describe('validerAapenInnsending', () => {
         beloep: 1000,
         inntektsdato: '2002-02-02',
         naturalytelser: [],
-        endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: {
@@ -32,7 +31,9 @@ describe('validerAapenInnsending', () => {
       arbeidsforholdType: {
         type: 'MedArbeidsforhold',
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
-      }
+      },
+      naturalytelser: [],
+      aarsakInnsending: 'Ny'
     };
 
     expect(validerAapenInnsending(data).success).toBe(true);
@@ -69,9 +70,12 @@ describe('validerAapenInnsending', () => {
       arbeidsforholdType: {
         type: 'MedArbeidsforhold',
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
-      }
+      },
+      naturalytelser: [],
+      aarsakInnsending: 'Ny'
     };
 
+    expect(validerAapenInnsending(data).error).toBeUndefined();
     expect(validerAapenInnsending(data).success).toBe(true);
   });
 });

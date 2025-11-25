@@ -54,7 +54,11 @@ export default function useFyllAapenInnsending() {
   );
   const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
-  type SkjemaData = z.infer<typeof HovedskjemaSchema>;
+  const AapenInnsendingSchema = HovedskjemaSchema.extend({
+    aarsakInnsending: z.enum(['Ny', 'Endring'])
+  });
+
+  type SkjemaData = z.infer<typeof AapenInnsendingSchema>;
   type ArbeidsforholdType = z.infer<typeof TypeArbeidsforholdSchema>;
 
   return (skjemaData: SkjemaData, selvbestemtType: SelvbestemtType, erBegrensetForespoersel: boolean) => {
@@ -124,7 +128,8 @@ export default function useFyllAapenInnsending() {
             }
           : null,
       aarsakInnsending: skjemaData.aarsakInnsending,
-      arbeidsforholdType: arbeidsforholdType
+      arbeidsforholdType: arbeidsforholdType,
+      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser)
     });
 
     return innsending;
