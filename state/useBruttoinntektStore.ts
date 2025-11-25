@@ -50,7 +50,7 @@ export interface BruttoinntektState {
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
   slettBruttoinntekt: () => void;
-  setEndringAarsaker: (endringAarsaker: Array<EndringAarsak | ApiEndringAarsak>) => void;
+  setEndringAarsaker: (endringAarsaker?: Array<EndringAarsak | ApiEndringAarsak> | null) => void;
 }
 
 const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektState> = (set, get) => ({
@@ -286,7 +286,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
       })
     );
   },
-  setEndringAarsaker: (endringAarsaker: Array<EndringAarsak | ApiEndringAarsak>) => {
+  setEndringAarsaker: (endringAarsaker?: Array<EndringAarsak | ApiEndringAarsak> | null) => {
     const normalisertEndringAarsaker = endringAarsaker ? endringAarsaker.map(normaliserEndringAarsak) : [];
     set(
       produce((state) => {
