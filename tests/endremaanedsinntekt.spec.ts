@@ -40,8 +40,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
 
     // skriv ugyldig beløp
 
-    const incomeInput = page.getByLabel('Månedslønn 15.03.2023');
-    await incomeInput.fill('70000kroner');
+    await formPage.fillInput('Månedslønn 15.03.2023', '70000kroner');
 
     // send for validering
     await formPage.clickButton('Send');
@@ -53,7 +52,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
     ]);
 
     // skriv gyldig beløp
-    await incomeInput.fill('70000');
+    await formPage.fillInput('Månedslønn 15.03.2023', '70000');
     await expect(page.getByText('Vennligst angi bruttoinntekt på formatet 1234,50')).toHaveCount(0);
 
     // sjekk at refusjon beløp oppdateres
@@ -62,7 +61,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
 
     // endre refusjonsbeløp
     await page.locator('[data-cy="endre-refusjon-arbeidsgiver-beloep"]').click();
-    await incomeInput.fill('75000');
+    await formPage.fillInput('Månedslønn 15.03.2023', '75000');
     await expect(page.getByLabel('Oppgi refusjonsbeløpet per måned')).toHaveValue('70000');
   });
 });
