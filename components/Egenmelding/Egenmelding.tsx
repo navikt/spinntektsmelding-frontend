@@ -50,7 +50,7 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
 
   const sisteFravaersdag = useMemo(
     () =>
-      !sykmeldingsperioder
+      !sykmeldingsperioder || sykmeldingsperioder.length === 0
         ? new Date()
         : sykmeldingsperioder
             .map((periode) => periode.tom)
