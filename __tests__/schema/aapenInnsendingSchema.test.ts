@@ -27,7 +27,6 @@ describe('AapenInnsendingSchema', () => {
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
       arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' },
-      aarsakInnsending: 'Ny',
       naturalytelser: []
     };
 
@@ -56,7 +55,6 @@ describe('AapenInnsendingSchema', () => {
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
       arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' },
-      aarsakInnsending: 'Ny',
       naturalytelser: []
     };
 
@@ -95,7 +93,6 @@ describe('AapenInnsendingSchema', () => {
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
       arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' },
-      aarsakInnsending: 'Ny',
       naturalytelser: []
     };
     const result = AapenInnsendingSchema.safeParse(data);

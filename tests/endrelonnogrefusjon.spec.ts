@@ -104,7 +104,8 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // confirm receipt page
@@ -169,7 +170,8 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
         endringAarsaker: [{ aarsak: 'Ferie', ferier: [{ fom: '2022-12-25', tom: '2022-12-30' }] }]
       },
       refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
@@ -238,7 +240,8 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
         endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2022-12-30' }]
       },
       refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);

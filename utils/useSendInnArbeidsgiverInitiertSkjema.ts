@@ -43,9 +43,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     setSkalViseFeilmeldinger(true);
   };
 
-  const setAarsakInnsending = (data: any, pathSlug: string) => {
-    data.aarsakInnsending = isValidUUID(pathSlug) ? 'Endring' : 'Ny';
-  };
+  // const setAarsakInnsending = (data: any, pathSlug: string) => {
+  //   data.aarsakInnsending = isValidUUID(pathSlug) ? 'Endring' : 'Ny';
+  // };
 
   const buildClientSideErrors = (
     validerteData: ReturnType<typeof fyllAapenInnsending> extends infer R
@@ -104,7 +104,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       return false;
     }
 
-    setAarsakInnsending(skjemaData, pathSlug);
+    // setAarsakInnsending(skjemaData, pathSlug);
     const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
 
     const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
@@ -114,10 +114,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     if (errors.length > 0 || validerteData.success !== true) {
       fyllFeilmeldinger(errors);
       logger.warn(
-        'Feil ved validering av skjema - Åpen innsending ' +
-          JSON.stringify(validerteData.error) +
-          ' ' +
-          JSON.stringify(errors)
+        `Feil ved validering av skjema - Åpen innsending ${JSON.stringify(validerteData.error)} ${JSON.stringify(errors)}`
       );
       logEvent('skjema validering feilet', { tittel: 'Validering feilet', component: amplitudeComponent });
       return false;

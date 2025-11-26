@@ -61,7 +61,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       agp: null,
       inntekt: null,
       refusjon: null,
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // verify receipt page
@@ -117,7 +118,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
         ],
         sluttdato: null
       },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // verify receipt page
@@ -173,7 +175,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
         ],
         sluttdato: null
       },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // verify receipt page

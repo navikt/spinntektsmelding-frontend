@@ -54,11 +54,7 @@ export default function useFyllAapenInnsending() {
   );
   const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
 
-  const AapenInnsendingSchema = HovedskjemaSchema.extend({
-    aarsakInnsending: z.enum(['Ny', 'Endring'])
-  });
-
-  type SkjemaData = z.infer<typeof AapenInnsendingSchema>;
+  type SkjemaData = z.infer<typeof HovedskjemaSchema>;
   type ArbeidsforholdType = z.infer<typeof TypeArbeidsforholdSchema>;
 
   return (skjemaData: SkjemaData, selvbestemtType: SelvbestemtType, erBegrensetForespoersel: boolean) => {

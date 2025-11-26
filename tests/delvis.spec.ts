@@ -58,7 +58,8 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         endringAarsaker: []
       },
       refusjon: null,
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // verify navigation and UI
@@ -118,7 +119,8 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         sluttdato: null,
         endringer: [{ beloep: 45000, startdato: '2025-09-30' }]
       },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);

@@ -78,7 +78,8 @@ test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
         endringAarsaker: []
       },
       refusjon: null,
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // final confirmation
