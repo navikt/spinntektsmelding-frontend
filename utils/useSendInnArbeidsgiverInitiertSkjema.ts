@@ -43,10 +43,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     setSkalViseFeilmeldinger(true);
   };
 
-  // const setAarsakInnsending = (data: any, pathSlug: string) => {
-  //   data.aarsakInnsending = isValidUUID(pathSlug) ? 'Endring' : 'Ny';
-  // };
-
   const buildClientSideErrors = (
     validerteData: ReturnType<typeof fyllAapenInnsending> extends infer R
       ? R extends { success: boolean; error?: any; data?: any }
@@ -104,7 +100,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       return false;
     }
 
-    // setAarsakInnsending(skjemaData, pathSlug);
     const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
 
     const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
