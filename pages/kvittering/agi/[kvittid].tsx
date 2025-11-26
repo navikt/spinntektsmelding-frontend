@@ -53,6 +53,8 @@ import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../../utils/useRefus
 import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
 import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 import { useShallow } from 'zustand/react/shallow';
+import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema';
+import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
 
 type PersonData = {
   navn: string;
@@ -64,6 +66,8 @@ type PersonData = {
 };
 
 function mapPerioderTilInterntFormat(perioder: z.infer<typeof PeriodeSchema>[]): Periode[] {
+  if (!perioder || perioder.length === 0) return [];
+
   return perioder.map((periode) => ({
     fom: parseIsoDate(periode.fom),
     tom: parseIsoDate(periode.tom),
@@ -71,8 +75,11 @@ function mapPerioderTilInterntFormat(perioder: z.infer<typeof PeriodeSchema>[]):
   }));
 }
 
-function mapNaturalytelserTilInterntFormat(naturalytelser: z.infer<typeof KvitteringNavNoSchema>['naturalytelser']) {
-  return naturalytelser.map((ytelse) => ({
+function mapNaturalytelserTilInterntFormat(
+  naturalytelser: z.infer<typeof ApiNaturalytelserSchema> | undefined
+): z.infer<typeof NaturalytelserSchema>[] {
+  if (!naturalytelser || naturalytelser.length === 0) return [];
+  return naturalytelser.map((ytelse: z.infer<typeof ApiNaturalytelserSchema>[number]) => ({
     naturalytelse: ytelse.naturalytelse,
     sluttdato: parseIsoDate(ytelse.sluttdato)!,
     verdiBeloep: ytelse.verdiBeloep
