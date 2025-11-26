@@ -47,7 +47,8 @@ export const KvitteringNavNoSchema = z.object({
         }),
         endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])])
       })
-      .nullable()
+      .nullable(),
+    naturalytelser: ApiNaturalytelserSchema
   }),
   mottatt: z.iso.date()
 });

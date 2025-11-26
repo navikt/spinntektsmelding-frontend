@@ -166,10 +166,10 @@ export default function useKvitteringInit() {
   }
 
   function handleNaturalytelser(jsonData: KvitteringNavNoSchema) {
-    if (!jsonData.skjema.inntekt) return;
+    if (!jsonData.skjema.naturalytelser) return;
 
-    if (jsonData.skjema.inntekt.naturalytelser) {
-      const ytelser: Array<Naturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
+    if (jsonData.skjema.naturalytelser) {
+      const ytelser: Array<Naturalytelse> = jsonData.skjema.naturalytelser.map((ytelse) => ({
         naturalytelse: ytelse.naturalytelse,
         sluttdato: parseIsoDate(ytelse.sluttdato)!,
         verdiBeloep: ytelse.verdiBeloep
