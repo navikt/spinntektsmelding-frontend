@@ -1,4 +1,4 @@
-import testdata from '../../../mockdata/kvittering-behandlingsdager.json';
+import testdata from '../../../mockdata/kvittering-selvbestemt-format.json';
 import { Fragment, useEffect, useEffectEvent } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
@@ -204,6 +204,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   let fullLoennIArbeidsgiverPerioden;
 
+  let visningNaturalytelser = naturalytelser;
+
   if (dataFraBackend) {
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
     fullLoennIArbeidsgiverPerioden.status = kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
@@ -212,11 +214,21 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     if (kvitteringDokument?.vedtaksperiodeId) {
       setVedtaksperiodeId(kvitteringDokument?.vedtaksperiodeId);
     }
+    visningNaturalytelser = kvitteringDokument?.naturalytelser.map((ytelse) => ({
+      naturalytelse: ytelse.naturalytelse,
+      sluttdato: parseIsoDate(ytelse.sluttdato)!,
+      verdiBeloep: ytelse.verdiBeloep
+    }));
   } else {
     fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
     fullLoennIArbeidsgiverPerioden.status = kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
     fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData?.agp?.redusertLoennIAgp?.beloep;
     fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse;
+    visningNaturalytelser = kvitteringData?.naturalytelser.map((ytelse) => ({
+      naturalytelse: ytelse.naturalytelse,
+      sluttdato: parseIsoDate(ytelse.sluttdato)!,
+      verdiBeloep: ytelse.verdiBeloep
+    }));
   }
 
   let loenn: LonnISykefravaeret;
@@ -392,7 +404,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             <>
               <Skillelinje />
               <Heading2>Eventuelle naturalytelser</Heading2>
-              <BortfallNaturalytelser ytelser={naturalytelser!} />
+              <BortfallNaturalytelser ytelser={visningNaturalytelser!} />
             </>
           )}
           <Skillelinje />
