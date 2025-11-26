@@ -30,7 +30,7 @@ import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunne
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isEqual, isValid } from 'date-fns';
-import { LonnISykefravaeret, Periode } from '../../../state/state';
+import { LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../../state/state';
 
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
@@ -222,24 +222,27 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     infoboks: visArbeidsgiverperiode
   });
 
-  let fullLoennIArbeidsgiverPerioden;
+  let fullLoennIArbeidsgiverPerioden: LonnIArbeidsgiverperioden;
 
   let visningNaturalytelser = naturalytelser;
 
   if (dataFraBackend) {
-    fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
-    fullLoennIArbeidsgiverPerioden.status = kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
-    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringDokument?.agp?.redusertLoennIAgp?.beloep;
-    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringDokument?.agp.redusertLoennIAgp?.begrunnelse;
+    fullLoennIArbeidsgiverPerioden = {
+      status: kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
+      utbetalt: kvitteringDokument?.agp?.redusertLoennIAgp?.beloep,
+      begrunnelse: kvitteringDokument?.agp.redusertLoennIAgp?.begrunnelse
+    };
+
     if (kvitteringDokument?.vedtaksperiodeId) {
       setVedtaksperiodeId(kvitteringDokument?.vedtaksperiodeId);
     }
     visningNaturalytelser = mapNaturalytelserTilInterntFormat(kvitteringDokument?.naturalytelser);
   } else {
-    fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
-    fullLoennIArbeidsgiverPerioden.status = kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
-    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData?.agp?.redusertLoennIAgp?.beloep!;
-    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse!;
+    fullLoennIArbeidsgiverPerioden = {
+      status: kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
+      utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep,
+      begrunnelse: kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse
+    };
     visningNaturalytelser = mapNaturalytelserTilInterntFormat(kvitteringData?.naturalytelser);
   }
 
