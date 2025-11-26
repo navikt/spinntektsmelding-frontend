@@ -45,7 +45,7 @@ export default function useKvitteringInit() {
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
 
-  return async (kvitteringsData: MottattKvittering) => {
+  return (kvitteringsData: MottattKvittering) => {
     if (!kvitteringsData) return;
 
     if (kvitteringsData.kvitteringEkstern && kvitteringsData.kvitteringEkstern !== null) {
