@@ -9,7 +9,7 @@ import lokalStyles from '../Kvittering.module.css';
 import styles from '../../../styles/Home.module.css';
 
 import Heading2 from '../../../components/Heading2/Heading2';
-import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
+import { BodyLong, BodyShort } from '@navikt/ds-react';
 
 import Skillelinje from '../../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
@@ -353,13 +353,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                   <div className={lokalStyles.fravaerwrapper}>
                     <div className={lokalStyles.fravaertid}>Dato</div>
-                    <div data-cy='bestemmendefravaersdag'>
-                      {visningBestemmendeFravaersdag ? (
-                        formatDate(visningBestemmendeFravaersdag)
-                      ) : (
-                        <Skeleton variant='text' />
-                      )}{' '}
-                    </div>
+                    <div data-cy='bestemmendefravaersdag'>{formatDate(visningBestemmendeFravaersdag)} </div>
                   </div>
                 </div>
                 {visArbeidsgiverperiode && (
@@ -425,7 +419,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <div className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               <ButtonEndre onClick={clickEndre} />
-              <Link className={lokalStyles.lukkelenke} href={environment.saksoversiktUrl}>
+              <Link className={lokalStyles.lukkelenke} href={environment.saksoversiktUrl!}>
                 Lukk
               </Link>
             </div>
