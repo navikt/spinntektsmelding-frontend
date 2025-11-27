@@ -171,14 +171,12 @@ export default function useKvitteringInit() {
       return;
     }
 
-    if (jsonData.skjema.naturalytelser) {
-      const ytelser: Array<Naturalytelse> = jsonData.skjema.naturalytelser.map((ytelse) => ({
-        naturalytelse: ytelse.naturalytelse,
-        sluttdato: parseIsoDate(ytelse.sluttdato)!,
-        verdiBeloep: ytelse.verdiBeloep
-      }));
-      initNaturalytelser(ytelser);
-    }
+    const ytelser: Array<Naturalytelse> = jsonData.skjema.naturalytelser.map((ytelse) => ({
+      naturalytelse: ytelse.naturalytelse,
+      sluttdato: parseIsoDate(ytelse.sluttdato)!,
+      verdiBeloep: ytelse.verdiBeloep
+    }));
+    initNaturalytelser(ytelser);
   }
 
   function handleArbeidsgiverperioder(jsonData: KvitteringNavNoSchema) {
