@@ -384,4 +384,565 @@ describe('useKvitteringInit', () => {
     expect(result.current.refusjonEndringer).toEqual([]);
     expect(result.current.lonnISykefravaeret.beloep).toBe(0.0);
   });
+
+  it('should set naturalytelser when present in kvittering', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    const kvitteringMedNaturalytelser = {
+      ...mottattKvittering,
+      kvitteringNavNo: {
+        ...mottattKvittering.kvitteringNavNo,
+        skjema: {
+          ...mottattKvittering.kvitteringNavNo.skjema,
+          inntekt: {
+            ...mottattKvittering.kvitteringNavNo.skjema.inntekt
+          },
+          naturalytelser: [
+            {
+              naturalytelse: 'ELEKTRONISKKOMMUNIKASJON',
+              verdiBeloep: 500,
+              sluttdato: '2023-03-01'
+            },
+            {
+              naturalytelse: 'BIL',
+              verdiBeloep: 3000,
+              sluttdato: '2023-03-15'
+            }
+          ]
+        }
+      }
+    };
+
+    act(() => {
+      kvitteringInit(kvitteringMedNaturalytelser as unknown as KvitteringData);
+    });
+
+    expect(result.current.naturalytelser).toEqual([
+      {
+        naturalytelse: 'ELEKTRONISKKOMMUNIKASJON',
+        verdiBeloep: 500,
+        sluttdato: parseIsoDate('2023-03-01')
+      },
+      {
+        naturalytelse: 'BIL',
+        verdiBeloep: 3000,
+        sluttdato: parseIsoDate('2023-03-15')
+      }
+    ]);
+  });
+
+  it('should set empty naturalytelser array when none present', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    const kvitteringUtenNaturalytelser = {
+      ...mottattKvittering,
+      kvitteringNavNo: {
+        ...mottattKvittering.kvitteringNavNo,
+        skjema: {
+          ...mottattKvittering.kvitteringNavNo.skjema,
+          inntekt: {
+            ...mottattKvittering.kvitteringNavNo.skjema.inntekt
+          },
+          naturalytelser: []
+        }
+      }
+    };
+
+    act(() => {
+      kvitteringInit(kvitteringUtenNaturalytelser as unknown as KvitteringData);
+    });
+
+    expect(result.current.naturalytelser).toEqual([]);
+  });
+
+  it('should set empty naturalytelser array when naturalytelser is undefined', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    const kvitteringUndefinedNaturalytelser = {
+      ...mottattKvittering,
+      kvitteringNavNo: {
+        ...mottattKvittering.kvitteringNavNo,
+        skjema: {
+          ...mottattKvittering.kvitteringNavNo.skjema,
+          inntekt: {
+            ...mottattKvittering.kvitteringNavNo.skjema.inntekt
+          },
+          naturalytelser: undefined
+        }
+      }
+    };
+
+    act(() => {
+      kvitteringInit(kvitteringUndefinedNaturalytelser as unknown as KvitteringData);
+    });
+
+    expect(result.current.naturalytelser).toEqual([]);
+  });
+
+  it('should handle single naturalytelse correctly', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    const kvitteringMedEnNaturalytelse = {
+      ...mottattKvittering,
+      kvitteringNavNo: {
+        ...mottattKvittering.kvitteringNavNo,
+        skjema: {
+          ...mottattKvittering.kvitteringNavNo.skjema,
+          inntekt: {
+            ...mottattKvittering.kvitteringNavNo.skjema.inntekt
+          },
+          naturalytelser: [
+            {
+              naturalytelse: 'KOSTDOEGN',
+              verdiBeloep: 1500,
+              sluttdato: '2023-04-01'
+            }
+          ]
+        }
+      }
+    };
+
+    act(() => {
+      kvitteringInit(kvitteringMedEnNaturalytelse as unknown as KvitteringData);
+    });
+
+    expect(result.current.naturalytelser).toHaveLength(1);
+    expect(result.current.naturalytelser[0]).toEqual({
+      naturalytelse: 'KOSTDOEGN',
+      verdiBeloep: 1500,
+      sluttdato: parseIsoDate('2023-04-01')
+    });
+  });
+
+  it('should handle naturalytelse with zero value', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    const kvitteringMedNullverdi = {
+      ...mottattKvittering,
+      kvitteringNavNo: {
+        ...mottattKvittering.kvitteringNavNo,
+        skjema: {
+          ...mottattKvittering.kvitteringNavNo.skjema,
+          inntekt: {
+            ...mottattKvittering.kvitteringNavNo.skjema.inntekt
+          },
+          naturalytelser: [
+            {
+              naturalytelse: 'LOSJI',
+              verdiBeloep: 0,
+              sluttdato: '2023-05-01'
+            }
+          ]
+        }
+      }
+    };
+
+    act(() => {
+      kvitteringInit(kvitteringMedNullverdi as unknown as KvitteringData);
+    });
+
+    expect(result.current.naturalytelser).toEqual([
+      {
+        naturalytelse: 'LOSJI',
+        verdiBeloep: 0,
+        sluttdato: parseIsoDate('2023-05-01')
+      }
+    ]);
+  });
+
+  it('should handle all naturalytelse types', async () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
+
+    const { result: resp } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = resp.current;
+
+    const kvitteringMedAlleTyper = {
+      ...mottattKvittering,
+      kvitteringNavNo: {
+        ...mottattKvittering.kvitteringNavNo,
+        skjema: {
+          ...mottattKvittering.kvitteringNavNo.skjema,
+          inntekt: {
+            ...mottattKvittering.kvitteringNavNo.skjema.inntekt
+          },
+          naturalytelser: [
+            { naturalytelse: 'ELEKTRONISKKOMMUNIKASJON', verdiBeloep: 500, sluttdato: '2023-03-01' },
+            { naturalytelse: 'AKSJERGRUNNFONDSBEVISTITILUNDERKURS', verdiBeloep: 1000, sluttdato: '2023-03-02' },
+            { naturalytelse: 'LOSJI', verdiBeloep: 2000, sluttdato: '2023-03-03' },
+            { naturalytelse: 'KOSTDOEGN', verdiBeloep: 150, sluttdato: '2023-03-04' },
+            { naturalytelse: 'BESØKSREISERHJABORTETIANSEN', verdiBeloep: 800, sluttdato: '2023-03-05' },
+            { naturalytelse: 'KOSTBESPARELSEIHJEMMET', verdiBeloep: 600, sluttdato: '2023-03-06' },
+            { naturalytelse: 'RENTEFORDELLAN', verdiBeloep: 400, sluttdato: '2023-03-07' },
+            { naturalytelse: 'BIL', verdiBeloep: 5000, sluttdato: '2023-03-08' },
+            { naturalytelse: 'KOSTDAGER', verdiBeloep: 75, sluttdato: '2023-03-09' },
+            { naturalytelse: 'BOLIG', verdiBeloep: 8000, sluttdato: '2023-03-10' },
+            { naturalytelse: 'SKATTEPLIKTIGDELFORSIKRINGER', verdiBeloep: 300, sluttdato: '2023-03-11' },
+            { naturalytelse: 'FRITRANSPORT', verdiBeloep: 1200, sluttdato: '2023-03-12' },
+            { naturalytelse: 'OPSJONER', verdiBeloep: 10000, sluttdato: '2023-03-13' },
+            { naturalytelse: 'TILSKUDDFINANSTAB', verdiBeloep: 250, sluttdato: '2023-03-14' },
+            { naturalytelse: 'INNBETALINGPENSJONSTILATJENESTEPENSJON', verdiBeloep: 3500, sluttdato: '2023-03-15' },
+            { naturalytelse: 'YRKESBIL', verdiBeloep: 4000, sluttdato: '2023-03-16' },
+            { naturalytelse: 'ANNET', verdiBeloep: 100, sluttdato: '2023-03-17' }
+          ]
+        }
+      }
+    };
+
+    act(() => {
+      kvitteringInit(kvitteringMedAlleTyper as unknown as KvitteringData);
+    });
+
+    expect(result.current.naturalytelser).toHaveLength(17);
+    expect(result.current.naturalytelser[0].naturalytelse).toBe('ELEKTRONISKKOMMUNIKASJON');
+    expect(result.current.naturalytelser[16].naturalytelse).toBe('ANNET');
+  });
+
+  describe('handleInntekt - endringAarsaker', () => {
+    it('should set single endringAarsak when present', async () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      const { result: resp } = renderHook(() => useKvitteringInit());
+
+      const kvitteringInit = resp.current;
+
+      const kvitteringMedEnkelAarsak = {
+        ...mottattKvittering,
+        kvitteringNavNo: {
+          ...mottattKvittering.kvitteringNavNo,
+          skjema: {
+            ...mottattKvittering.kvitteringNavNo.skjema,
+            inntekt: {
+              ...mottattKvittering.kvitteringNavNo.skjema.inntekt,
+              endringAarsak: { aarsak: 'Ferie', ferier: [{ fom: '2023-02-24', tom: '2023-03-31' }] },
+              endringAarsaker: undefined
+            }
+          }
+        }
+      };
+
+      act(() => {
+        kvitteringInit(kvitteringMedEnkelAarsak as unknown as KvitteringData);
+      });
+
+      expect(result.current.bruttoinntekt.endringAarsaker).toEqual([
+        { aarsak: 'Ferie', ferier: [{ fom: parseIsoDate('2023-02-24'), tom: parseIsoDate('2023-03-31') }] }
+      ]);
+    });
+
+    it('should set multiple endringAarsaker when present', async () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      const { result: resp } = renderHook(() => useKvitteringInit());
+
+      const kvitteringInit = resp.current;
+
+      const kvitteringMedFlereAarsaker = {
+        ...mottattKvittering,
+        kvitteringNavNo: {
+          ...mottattKvittering.kvitteringNavNo,
+          skjema: {
+            ...mottattKvittering.kvitteringNavNo.skjema,
+            inntekt: {
+              ...mottattKvittering.kvitteringNavNo.skjema.inntekt,
+              endringAarsak: undefined,
+              endringAarsaker: [
+                { aarsak: 'Ferie', ferier: [{ fom: '2023-02-24', tom: '2023-03-31' }] },
+                { aarsak: 'Permisjon', permisjoner: [{ fom: '2023-02-24', tom: '2023-03-31' }] },
+                { aarsak: 'Sykefravaer', sykefravaer: [{ fom: '2023-02-24', tom: '2023-03-31' }] }
+              ]
+            }
+          }
+        }
+      };
+
+      act(() => {
+        kvitteringInit(kvitteringMedFlereAarsaker as unknown as KvitteringData);
+      });
+
+      expect(result.current.bruttoinntekt.endringAarsaker).toEqual([
+        { aarsak: 'Ferie', ferier: [{ fom: parseIsoDate('2023-02-24'), tom: parseIsoDate('2023-03-31') }] },
+        { aarsak: 'Permisjon', permisjoner: [{ fom: parseIsoDate('2023-02-24'), tom: parseIsoDate('2023-03-31') }] },
+        { aarsak: 'Sykefravaer', sykefravaer: [{ fom: parseIsoDate('2023-02-24'), tom: parseIsoDate('2023-03-31') }] }
+      ]);
+    });
+
+    it('should prioritize endringAarsaker over endringAarsak when both present', async () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      const { result: resp } = renderHook(() => useKvitteringInit());
+
+      const kvitteringInit = resp.current;
+
+      const kvitteringMedBegge = {
+        ...mottattKvittering,
+        kvitteringNavNo: {
+          ...mottattKvittering.kvitteringNavNo,
+          skjema: {
+            ...mottattKvittering.kvitteringNavNo.skjema,
+            inntekt: {
+              ...mottattKvittering.kvitteringNavNo.skjema.inntekt,
+              endringAarsak: { aarsak: 'Ferie', ferier: [{ fom: '2023-02-24', tom: '2023-03-31' }] },
+              endringAarsaker: [
+                { aarsak: 'Permisjon', permisjoner: [{ fom: '2023-02-24', tom: '2023-03-31' }] },
+                { aarsak: 'Bonus' }
+              ]
+            }
+          }
+        }
+      };
+
+      act(() => {
+        kvitteringInit(kvitteringMedBegge as unknown as KvitteringData);
+      });
+
+      expect(result.current.bruttoinntekt.endringAarsaker).toEqual([
+        { aarsak: 'Permisjon', permisjoner: [{ fom: parseIsoDate('2023-02-24'), tom: parseIsoDate('2023-03-31') }] },
+        { aarsak: 'Bonus' }
+      ]);
+    });
+
+    it('should not set endringAarsaker when neither is present', async () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      const { result: resp } = renderHook(() => useKvitteringInit());
+
+      const kvitteringInit = resp.current;
+
+      const kvitteringUtenAarsaker = {
+        ...mottattKvittering,
+        kvitteringNavNo: {
+          ...mottattKvittering.kvitteringNavNo,
+          skjema: {
+            ...mottattKvittering.kvitteringNavNo.skjema,
+            inntekt: {
+              ...mottattKvittering.kvitteringNavNo.skjema.inntekt,
+              endringAarsak: undefined,
+              endringAarsaker: undefined
+            }
+          }
+        }
+      };
+
+      const initialAarsaker = result.current.bruttoinntekt.endringAarsaker;
+
+      act(() => {
+        kvitteringInit(kvitteringUtenAarsaker as unknown as KvitteringData);
+      });
+
+      expect(result.current.bruttoinntekt.endringAarsaker).toEqual(initialAarsaker);
+    });
+
+    it('should handle empty endringAarsaker array', async () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      const { result: resp } = renderHook(() => useKvitteringInit());
+
+      const kvitteringInit = resp.current;
+
+      const kvitteringMedTomArray = {
+        ...mottattKvittering,
+        kvitteringNavNo: {
+          ...mottattKvittering.kvitteringNavNo,
+          skjema: {
+            ...mottattKvittering.kvitteringNavNo.skjema,
+            inntekt: {
+              ...mottattKvittering.kvitteringNavNo.skjema.inntekt,
+              endringAarsak: undefined,
+              endringAarsaker: []
+            }
+          }
+        }
+      };
+
+      act(() => {
+        kvitteringInit(kvitteringMedTomArray as unknown as KvitteringData);
+      });
+
+      expect(result.current.bruttoinntekt.endringAarsaker).toEqual([]);
+    });
+
+    it('should handle endringAarsak with Tariffendring type', async () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      const { result: resp } = renderHook(() => useKvitteringInit());
+
+      const kvitteringInit = resp.current;
+
+      const kvitteringMedTariff = {
+        ...mottattKvittering,
+        kvitteringNavNo: {
+          ...mottattKvittering.kvitteringNavNo,
+          skjema: {
+            ...mottattKvittering.kvitteringNavNo.skjema,
+            inntekt: {
+              ...mottattKvittering.kvitteringNavNo.skjema.inntekt,
+              endringAarsak: {
+                aarsak: 'Tariffendring',
+                gjelderFra: '2023-01-01',
+                bleKjent: '2023-02-01'
+              },
+              endringAarsaker: undefined
+            }
+          }
+        }
+      };
+
+      act(() => {
+        kvitteringInit(kvitteringMedTariff as unknown as KvitteringData);
+      });
+
+      expect(result.current.bruttoinntekt.endringAarsaker).toEqual([
+        {
+          aarsak: 'Tariffendring',
+          gjelderFra: parseIsoDate('2023-01-01'),
+          bleKjent: parseIsoDate('2023-02-01')
+        }
+      ]);
+    });
+
+    it('should handle endringAarsaker with mixed types', async () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      const { result: resp } = renderHook(() => useKvitteringInit());
+
+      const kvitteringInit = resp.current;
+
+      const kvitteringMedMiksedeTyper = {
+        ...mottattKvittering,
+        kvitteringNavNo: {
+          ...mottattKvittering.kvitteringNavNo,
+          skjema: {
+            ...mottattKvittering.kvitteringNavNo.skjema,
+            inntekt: {
+              ...mottattKvittering.kvitteringNavNo.skjema.inntekt,
+              endringAarsak: undefined,
+              endringAarsaker: [
+                {
+                  aarsak: 'Ferie',
+                  ferier: [
+                    {
+                      fom: '2023-02-24',
+                      tom: '2023-03-31'
+                    }
+                  ]
+                },
+                {
+                  aarsak: 'Tariffendring',
+                  gjelderFra: '2023-01-01',
+                  bleKjent: '2023-02-01'
+                },
+                {
+                  aarsak: 'VarigLoennsendring',
+                  gjelderFra: '2023-03-01'
+                }
+              ]
+            }
+          }
+        }
+      };
+
+      act(() => {
+        kvitteringInit(kvitteringMedMiksedeTyper as unknown as KvitteringData);
+      });
+
+      expect(result.current.bruttoinntekt.endringAarsaker).toEqual([
+        {
+          aarsak: 'Ferie',
+          ferier: [
+            {
+              fom: parseIsoDate('2023-02-24'),
+              tom: parseIsoDate('2023-03-31')
+            }
+          ]
+        },
+        {
+          aarsak: 'Tariffendring',
+          gjelderFra: parseIsoDate('2023-01-01'),
+          bleKjent: parseIsoDate('2023-02-01')
+        },
+        {
+          aarsak: 'VarigLoennsendring',
+          gjelderFra: parseIsoDate('2023-03-01')
+        }
+      ]);
+    });
+
+    it('should not set endringAarsaker when inntekt is missing', async () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      const { result: resp } = renderHook(() => useKvitteringInit());
+
+      const kvitteringInit = resp.current;
+
+      const kvitteringUtenInntekt = {
+        ...mottattKvittering,
+        kvitteringNavNo: {
+          ...mottattKvittering.kvitteringNavNo,
+          skjema: {
+            ...mottattKvittering.kvitteringNavNo.skjema,
+            inntekt: undefined
+          }
+        }
+      };
+
+      const initialAarsaker = result.current.bruttoinntekt.endringAarsaker;
+
+      act(() => {
+        kvitteringInit(kvitteringUtenInntekt as unknown as KvitteringData);
+      });
+
+      expect(result.current.bruttoinntekt.endringAarsaker).toEqual(initialAarsaker);
+    });
+
+    it('should not set endringAarsaker when beloep is missing', async () => {
+      const { result } = renderHook(() => useBoundStore((state) => state));
+
+      const { result: resp } = renderHook(() => useKvitteringInit());
+
+      const kvitteringInit = resp.current;
+
+      const kvitteringUtenBeloep = {
+        ...mottattKvittering,
+        kvitteringNavNo: {
+          ...mottattKvittering.kvitteringNavNo,
+          skjema: {
+            ...mottattKvittering.kvitteringNavNo.skjema,
+            inntekt: {
+              beloep: undefined,
+              endringAarsaker: [{ aarsak: 'Ferie' }]
+            }
+          }
+        }
+      };
+
+      const initialAarsaker = result.current.bruttoinntekt.endringAarsaker;
+
+      act(() => {
+        kvitteringInit(kvitteringUtenBeloep as unknown as KvitteringData);
+      });
+
+      expect(result.current.bruttoinntekt.endringAarsaker).toEqual(initialAarsaker);
+    });
+  });
 });
