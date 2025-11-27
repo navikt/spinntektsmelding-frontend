@@ -3,6 +3,7 @@ import fetchKvitteringsdata from './fetchKvitteringsdata';
 import useKvitteringInit from '../state/useKvitteringInit';
 import { logger } from '@navikt/next-logger';
 import useBoundStore from '../state/useBoundStore';
+import isValidUUID from './isValidUUID';
 
 export default function useHentKvitteringsdata() {
   const initState = useKvitteringInit();
@@ -10,7 +11,14 @@ export default function useHentKvitteringsdata() {
 
   return (pathSlug?: string | Array<string>) => {
     if (Array.isArray(pathSlug)) {
+      logger.warn(`Ugyldig pathSlug ${JSON.stringify(pathSlug)}. Forventet en enkelt verdi.`);
       return Promise.resolve({});
+    }
+
+    if (!isValidUUID(pathSlug || '')) {
+      setSkjemaFeilet();
+      logger.warn(`Ugyldig UUID for kvittering: ${pathSlug}`);
+      return Promise.resolve();
     }
 
     if (pathSlug) {
