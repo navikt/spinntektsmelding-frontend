@@ -27,7 +27,8 @@ const mockSkjema: SkjemaData = {
     beloep: 500000,
     endringAarsaker: [{ aarsak: 'Bonus' }]
   },
-  avsenderTlf: '12345678'
+  avsenderTlf: '12345678',
+  aarsakInnsending: 'Ny'
 };
 
 const initialState = useBoundStore.getState();
@@ -133,7 +134,8 @@ describe('useFyllAapenInnsending', () => {
         arbeidsforholdType: {
           type: 'MedArbeidsforhold',
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
-        }
+        },
+        naturalytelser: []
       });
     }
   });
@@ -233,7 +235,8 @@ describe('useFyllAapenInnsending', () => {
         arbeidsforholdType: {
           type: 'MedArbeidsforhold',
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
-        }
+        },
+        naturalytelser: []
       });
     }
   });
@@ -330,7 +333,8 @@ describe('useFyllAapenInnsending', () => {
         arbeidsforholdType: {
           type: 'MedArbeidsforhold',
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
-        }
+        },
+        naturalytelser: []
       });
     }
   });

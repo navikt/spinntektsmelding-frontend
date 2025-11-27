@@ -207,7 +207,14 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
           }
         ],
         sluttdato: null
-      }
+      },
+      naturalytelser: [
+        {
+          naturalytelse: 'OPSJONER',
+          sluttdato: '2023-05-01',
+          verdiBeloep: 45000
+        }
+      ]
     });
 
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();

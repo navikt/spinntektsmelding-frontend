@@ -32,7 +32,7 @@ export default function useKvitteringInit() {
 
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
-  const [setEndringAarsaker] = useBoundStore((state) => [state.setEndringAarsaker]);
+  const setEndringAarsaker = useBoundStore((state) => state.setEndringAarsaker);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
 
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
@@ -45,10 +45,10 @@ export default function useKvitteringInit() {
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
 
-  return async (kvitteringsData: MottattKvittering) => {
+  return (kvitteringsData: MottattKvittering) => {
     if (!kvitteringsData) return;
 
-    if (kvitteringsData.kvitteringEkstern && kvitteringsData.kvitteringEkstern !== null) {
+    if (kvitteringsData.kvitteringEkstern) {
       setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);
       return;
     }
@@ -109,11 +109,13 @@ export default function useKvitteringInit() {
     if (!beregnetInntekt) return;
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
     setOpprinneligNyMaanedsinntekt();
-    if (jsonData.skjema.inntekt?.endringAarsak) {
-      setEndringAarsaker([jsonData.skjema.inntekt.endringAarsak]);
-    }
-    if (jsonData.skjema.inntekt?.endringAarsaker) {
-      setEndringAarsaker(jsonData.skjema.inntekt?.endringAarsaker);
+
+    const endringAarsaker =
+      jsonData.skjema.inntekt?.endringAarsaker ??
+      (jsonData.skjema.inntekt?.endringAarsak ? [jsonData.skjema.inntekt.endringAarsak] : undefined);
+
+    if (endringAarsaker) {
+      setEndringAarsaker(endringAarsaker);
     }
   }
 
@@ -166,16 +168,17 @@ export default function useKvitteringInit() {
   }
 
   function handleNaturalytelser(jsonData: KvitteringNavNoSchema) {
-    if (!jsonData.skjema.inntekt) return;
-
-    if (jsonData.skjema.inntekt.naturalytelser) {
-      const ytelser: Array<Naturalytelse> = jsonData.skjema.inntekt.naturalytelser.map((ytelse) => ({
-        naturalytelse: ytelse.naturalytelse,
-        sluttdato: parseIsoDate(ytelse.sluttdato)!,
-        verdiBeloep: ytelse.verdiBeloep
-      }));
-      initNaturalytelser(ytelser);
+    if (!jsonData.skjema.naturalytelser) {
+      initNaturalytelser([]);
+      return;
     }
+
+    const ytelser: Array<Naturalytelse> = jsonData.skjema.naturalytelser.map((ytelse) => ({
+      naturalytelse: ytelse.naturalytelse,
+      sluttdato: parseIsoDate(ytelse.sluttdato)!,
+      verdiBeloep: ytelse.verdiBeloep
+    }));
+    initNaturalytelser(ytelser);
   }
 
   function handleArbeidsgiverperioder(jsonData: KvitteringNavNoSchema) {

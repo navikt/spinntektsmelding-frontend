@@ -224,7 +224,8 @@ export const InnsendingSchema = z.object({
         })
         .nullable()
     })
-  )
+  ),
+  naturalytelser: ApiNaturalytelserSchema
 });
 
 type TInnsendingSchema = z.infer<typeof InnsendingSchema>;

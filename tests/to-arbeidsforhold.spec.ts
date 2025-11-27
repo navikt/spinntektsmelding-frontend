@@ -76,7 +76,8 @@ test.describe('Utfylling og innsending av skjema – to arbeidsforhold', () => {
         endringAarsaker: []
       },
       refusjon: null,
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // verify receipt page

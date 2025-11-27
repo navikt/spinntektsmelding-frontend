@@ -81,7 +81,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
         endringAarsaker: []
       },
       refusjon: { beloepPerMaaned: 77000, sluttdato: null, endringer: [] },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // verify receipt page
@@ -149,7 +150,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
         endringAarsaker: []
       },
       refusjon: { beloepPerMaaned: 77000, sluttdato: null, endringer: [{ beloep: 60000, startdato: '2023-03-15' }] },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // verify receipt page
@@ -217,7 +219,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
         endringAarsaker: []
       },
       refusjon: { beloepPerMaaned: 77000, sluttdato: null, endringer: [{ beloep: 60000, startdato: '2023-04-15' }] },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      naturalytelser: []
     });
 
     // verify receipt page

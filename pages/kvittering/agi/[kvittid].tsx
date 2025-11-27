@@ -1,4 +1,3 @@
-import testdata from '../../../mockdata/kvittering-behandlingsdager.json';
 import { Fragment, useEffect, useEffectEvent } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
@@ -10,7 +9,7 @@ import lokalStyles from '../Kvittering.module.css';
 import styles from '../../../styles/Home.module.css';
 
 import Heading2 from '../../../components/Heading2/Heading2';
-import { BodyLong, BodyShort, Skeleton } from '@navikt/ds-react';
+import { BodyLong, BodyShort } from '@navikt/ds-react';
 
 import Skillelinje from '../../../components/Skillelinje/Skillelinje';
 import Link from 'next/link';
@@ -31,7 +30,7 @@ import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunne
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isEqual, isValid } from 'date-fns';
-import { LonnISykefravaeret, Periode } from '../../../state/state';
+import { LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../../state/state';
 
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
@@ -53,6 +52,9 @@ import { EndringsBeloep } from '../../../components/RefusjonArbeidsgiver/Refusjo
 import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
 import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
 import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
+import { useShallow } from 'zustand/react/shallow';
+import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema';
+import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
 
 type PersonData = {
   navn: string;
@@ -63,6 +65,29 @@ type PersonData = {
   innsenderTelefonNr: string;
 };
 
+function mapPerioderTilInterntFormat(perioder: z.infer<typeof PeriodeSchema>[]): Periode[] {
+  if (!perioder || perioder.length === 0) return [];
+
+  return perioder.map((periode) => ({
+    fom: parseIsoDate(periode.fom),
+    tom: parseIsoDate(periode.tom),
+    id: periode.fom + periode.tom
+  }));
+}
+
+function mapNaturalytelserTilInterntFormat(
+  naturalytelser: z.infer<typeof ApiNaturalytelserSchema> | undefined
+): z.infer<typeof NaturalytelserSchema>[] {
+  if (!naturalytelser || naturalytelser.length === 0) return [];
+  return naturalytelser.map((ytelse: z.infer<typeof ApiNaturalytelserSchema>[number]) => ({
+    naturalytelse: ytelse.naturalytelse,
+    sluttdato: parseIsoDate(ytelse.sluttdato)!,
+    verdiBeloep: ytelse.verdiBeloep
+  }));
+}
+
+const cx = classNames.bind(lokalStyles);
+
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
   kvittering,
@@ -72,20 +97,33 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const naturalytelser = useBoundStore((state) => state.naturalytelser);
-  const kvitteringData = useBoundStore((state) => state.kvitteringData);
-
-  const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
-  const setSkjemaStatus = useBoundStore((state) => state.setSkjemaStatus);
-  const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
-  const lagretEndringAarsaker = useBoundStore((state) => state.bruttoinntekt.endringAarsaker);
-  const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
-  const setBehandlingsdager = useBoundStore((state) => state.setBehandlingsdager);
-
-  const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
-
-  const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
-
+  const [
+    naturalytelser,
+    kvitteringData,
+    setNyInnsending,
+    setSkjemaStatus,
+    setVedtaksperiodeId,
+    lagretEndringAarsaker,
+    setSelvbestemtType,
+    setBehandlingsdager,
+    sykmeldt,
+    avsender,
+    gammeltSkjaeringstidspunkt
+  ] = useBoundStore(
+    useShallow((state) => [
+      state.naturalytelser,
+      state.kvitteringData,
+      state.setNyInnsending,
+      state.setSkjemaStatus,
+      state.setVedtaksperiodeId,
+      state.bruttoinntekt.endringAarsaker,
+      state.setSelvbestemtType,
+      state.setBehandlingsdager,
+      state.sykmeldt,
+      state.avsender,
+      state.gammeltSkjaeringstidspunkt
+    ])
+  );
   const kvitteringInit = useKvitteringInit();
 
   const kvitteringDokument = kvittering?.selvbestemtInntektsmelding ?? kvitteringData;
@@ -164,36 +202,18 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   let sykmeldingsperioder: Periode[] = [];
   let egenmeldingsperioder: Periode[] = [];
   if (dataFraBackend) {
-    sykmeldingsperioder = kvitteringDokument.sykmeldingsperioder?.map((periode: MottattPeriode) => ({
-      fom: parseIsoDate(periode.fom),
-      tom: parseIsoDate(periode.tom),
-      id: periode.fom + periode.tom
-    }));
-
-    egenmeldingsperioder = kvitteringDokument.agp.egenmeldinger?.map((periode: MottattPeriode) => ({
-      fom: parseIsoDate(periode.fom),
-      tom: parseIsoDate(periode.tom),
-      id: periode.fom + periode.tom
-    }));
+    sykmeldingsperioder = mapPerioderTilInterntFormat(kvitteringDokument.sykmeldingsperioder);
+    egenmeldingsperioder = mapPerioderTilInterntFormat(kvitteringDokument.agp.egenmeldinger);
   } else {
     sykmeldingsperioder = kvitteringData?.sykmeldingsperioder
-      ? kvitteringData.sykmeldingsperioder?.map((periode: MottattPeriode) => ({
-          fom: parseIsoDate(periode.fom),
-          tom: parseIsoDate(periode.tom),
-          id: periode.fom + periode.tom
-        }))
+      ? mapPerioderTilInterntFormat(kvitteringData.sykmeldingsperioder)
       : [];
 
     egenmeldingsperioder = kvitteringData?.agp?.egenmeldinger
-      ? kvitteringData?.agp?.egenmeldinger?.map((periode: MottattPeriode) => ({
-          fom: parseIsoDate(periode.fom),
-          tom: parseIsoDate(periode.tom),
-          id: periode.fom + periode.tom
-        }))
+      ? mapPerioderTilInterntFormat(kvitteringData?.agp?.egenmeldinger)
       : [];
   }
 
-  const cx = classNames.bind(lokalStyles);
   const classNameWrapperFravaer = cx({
     fravaerswrapperwrapper: visArbeidsgiverperiode
   });
@@ -202,21 +222,28 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     infoboks: visArbeidsgiverperiode
   });
 
-  let fullLoennIArbeidsgiverPerioden;
+  let fullLoennIArbeidsgiverPerioden: LonnIArbeidsgiverperioden;
+
+  let visningNaturalytelser = naturalytelser;
 
   if (dataFraBackend) {
-    fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
-    fullLoennIArbeidsgiverPerioden.status = kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
-    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringDokument?.agp?.redusertLoennIAgp?.beloep;
-    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringDokument?.agp.redusertLoennIAgp?.begrunnelse;
+    fullLoennIArbeidsgiverPerioden = {
+      status: kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
+      utbetalt: kvitteringDokument?.agp?.redusertLoennIAgp?.beloep,
+      begrunnelse: kvitteringDokument?.agp.redusertLoennIAgp?.begrunnelse
+    };
+
     if (kvitteringDokument?.vedtaksperiodeId) {
       setVedtaksperiodeId(kvitteringDokument?.vedtaksperiodeId);
     }
+    visningNaturalytelser = mapNaturalytelserTilInterntFormat(kvitteringDokument?.naturalytelser);
   } else {
-    fullLoennIArbeidsgiverPerioden = { status: '', utbetalt: 0, begrunnelse: '' };
-    fullLoennIArbeidsgiverPerioden.status = kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja';
-    fullLoennIArbeidsgiverPerioden.utbetalt = kvitteringData?.agp?.redusertLoennIAgp?.beloep;
-    fullLoennIArbeidsgiverPerioden.begrunnelse = kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse;
+    fullLoennIArbeidsgiverPerioden = {
+      status: kvitteringData?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
+      utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep,
+      begrunnelse: kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse
+    };
+    visningNaturalytelser = mapNaturalytelserTilInterntFormat(kvitteringData?.naturalytelser);
   }
 
   let loenn: LonnISykefravaeret;
@@ -329,13 +356,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
                   <div className={lokalStyles.fravaerwrapper}>
                     <div className={lokalStyles.fravaertid}>Dato</div>
-                    <div data-cy='bestemmendefravaersdag'>
-                      {visningBestemmendeFravaersdag ? (
-                        formatDate(visningBestemmendeFravaersdag)
-                      ) : (
-                        <Skeleton variant='text' />
-                      )}{' '}
-                    </div>
+                    <div data-cy='bestemmendefravaersdag'>{formatDate(visningBestemmendeFravaersdag)} </div>
                   </div>
                 </div>
                 {visArbeidsgiverperiode && (
@@ -392,7 +413,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             <>
               <Skillelinje />
               <Heading2>Eventuelle naturalytelser</Heading2>
-              <BortfallNaturalytelser ytelser={naturalytelser!} />
+              <BortfallNaturalytelser ytelser={visningNaturalytelser!} />
             </>
           )}
           <Skillelinje />
@@ -401,7 +422,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <div className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               <ButtonEndre onClick={clickEndre} />
-              <Link className={lokalStyles.lukkelenke} href={environment.saksoversiktUrl}>
+              <Link className={lokalStyles.lukkelenke} href={environment.saksoversiktUrl!}>
                 Lukk
               </Link>
             </div>
@@ -425,7 +446,8 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
     skjema: {
       agp: kvitteringData.agp ?? null,
       inntekt: { ...kvitteringData.inntekt },
-      refusjon: kvitteringData.refusjon ?? null
+      refusjon: kvitteringData.refusjon ?? null,
+      naturalytelser: kvitteringData.naturalytelser ?? null
     },
     mottatt: kvitteringData.tidspunkt
   };
@@ -435,11 +457,13 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
 
 export async function getServerSideProps(context: any) {
   const env = process.env.NODE_ENV;
-  if (env == 'development') {
+  if (env === 'development') {
+    const testdata = await import('../../../mockdata/kvittering-selvbestemt-format.json');
+
     return {
       props: {
         kvittid: context.query.kvittid,
-        kvittering: testdata,
+        kvittering: testdata.default,
         kvitteringStatus: 200,
         dataFraBackend: true
       }
@@ -453,22 +477,14 @@ export async function getServerSideProps(context: any) {
   if (!token) {
     /* håndter manglende token */
     console.error('Mangler token i header');
+    return redirectTilLogin(context);
   }
 
   const validation = await validateToken(token);
   if (!validation.ok) {
     /* håndter valideringsfeil */
-    console.error('Valideringsfeil');
-    const ingress = context.req.headers.host + environment.baseUrl;
-    const currentPath = `https://${ingress}${context.resolvedUrl}`;
-
-    const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
-    return {
-      redirect: {
-        destination: destination,
-        permanent: false
-      }
-    };
+    console.error('Validering av token feilet');
+    return redirectTilLogin(context);
   }
 
   try {
@@ -491,6 +507,19 @@ export async function getServerSideProps(context: any) {
       kvittering: kvittering?.data?.success,
       kvitteringStatus: kvittering?.status,
       dataFraBackend: !!kvittering?.data?.success?.selvbestemtInntektsmelding
+    }
+  };
+}
+
+function redirectTilLogin(context: any) {
+  const ingress = context.req.headers.host + environment.baseUrl;
+  const currentPath = `https://${ingress}${context.resolvedUrl}`;
+
+  const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
+  return {
+    redirect: {
+      destination: destination,
+      permanent: false
     }
   };
 }

@@ -1,0 +1,62 @@
+{
+  "selvbestemtInntektsmelding": {
+    "id": "b324d558-96bf-4b70-ad2f-db5aa15c6a15",
+    "type": {
+      "type": "Fisker",
+      "id": "5764511a-57d2-48b7-b85c-de886283aaf9"
+    },
+    "sykmeldt": {
+      "fnr": "10107400090",
+      "navn": "Ukjent navn"
+    },
+    "avsender": {
+      "orgnr": "315609267",
+      "orgNavn": "UKJENT ARBEIDSGIVER",
+      "navn": "FRYKTSOM RADIOSTASJON",
+      "tlf": "12345678"
+    },
+    "sykmeldingsperioder": [
+      {
+        "fom": "2025-11-01",
+        "tom": "2025-11-26"
+      }
+    ],
+    "agp": {
+      "perioder": [
+        {
+          "fom": "2025-11-01",
+          "tom": "2025-11-16"
+        }
+      ],
+      "egenmeldinger": [],
+      "redusertLoennIAgp": null
+    },
+    "inntekt": {
+      "beloep": 12345,
+      "inntektsdato": "2025-11-01",
+      "naturalytelser": [
+        {
+          "naturalytelse": "FRITRANSPORT",
+          "verdiBeloep": 2000,
+          "sluttdato": "2025-11-01"
+        }
+      ],
+      "endringAarsaker": [
+        {
+          "aarsak": "NyStilling",
+          "gjelderFra": "2025-11-01"
+        }
+      ]
+    },
+    "refusjon": null,
+    "naturalytelser": [
+      {
+        "naturalytelse": "FRITRANSPORT",
+        "verdiBeloep": 2000,
+        "sluttdato": "2025-11-01"
+      }
+    ],
+    "aarsakInnsending": "Endring",
+    "mottatt": "2025-11-26T11:02:31.453093293+01:00"
+  }
+}

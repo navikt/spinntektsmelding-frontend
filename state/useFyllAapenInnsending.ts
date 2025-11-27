@@ -123,8 +123,8 @@ export default function useFyllAapenInnsending() {
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
             }
           : null,
-      aarsakInnsending: skjemaData.aarsakInnsending,
-      arbeidsforholdType: arbeidsforholdType
+      arbeidsforholdType: arbeidsforholdType,
+      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser)
     });
 
     return innsending;

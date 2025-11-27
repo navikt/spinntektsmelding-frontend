@@ -107,7 +107,8 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
         }
       ]
     },
-    avsenderTlf: '12345678'
+    avsenderTlf: '12345678',
+    naturalytelser: []
   });
 
   // Check final page
