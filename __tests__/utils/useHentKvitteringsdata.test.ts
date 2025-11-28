@@ -80,6 +80,15 @@ describe('useHentKvitteringsdata', () => {
 
       expect(mockedFetchKvitteringsdata).toHaveBeenCalledWith('https://test.nav.no/kvittering', uuid);
     });
+
+    it('should call setSkjemaFeilet and log warning when pathSlug is not a valid UUID', async () => {
+      const { result } = renderHook(() => useHentKvitteringsdata());
+      await result.current('invalid-uuid');
+
+      expect(mockSetSkjemaFeilet).toHaveBeenCalled();
+      expect(logger.warn).toHaveBeenCalledWith('Ugyldig UUID for kvittering: invalid-uuid');
+      expect(mockedFetchKvitteringsdata).not.toHaveBeenCalled();
+    });
   });
 
   describe('successful responses', () => {
