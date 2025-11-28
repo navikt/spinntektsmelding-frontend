@@ -1,4 +1,6 @@
-import { version } from '../package.json';
+import pkg from '../package.json';
+
+const version = pkg.version;
 
 class Environment {
   get loginServiceUrl() {
@@ -52,7 +54,7 @@ class Environment {
   }
 
   get version() {
-    return version;
+    return process.env.NEXT_PUBLIC_APP_VERSION;
   }
 }
 

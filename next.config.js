@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const { buildCspHeader } = require('@navikt/nav-dekoratoren-moduler/ssr');
+const { version } = require('./package.json');
 
 const appDirectives = {
   'connect-src': ["'self'", process.env.NEXT_PUBLIC_TELEMETRY_URL],
@@ -53,11 +54,18 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@navikt/aksel-icons'],
     turbopackFileSystemCacheForDev: true
+  },
+  env: {
+    NEXT_PUBLIC_APP_VERSION: version
   }
 };
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true'
-});
+const withBundleAnalyzer =
+  process.env.ANALYZE === 'true'
+    ? require('@next/bundle-analyzer')({
+        enabled: true,
+        openAnalyzer: false
+      })
+    : (config) => config;
 
 module.exports = withBundleAnalyzer(nextConfig);

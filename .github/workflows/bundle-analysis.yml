@@ -1,0 +1,203 @@
+name: Bundle Analysis
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: bundle-${{ github.event.pull_request.head.repo.full_name }}-${{ github.event.pull_request.head.ref }}
+  cancel-in-progress: true
+
+env:
+  NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.0"
+          registry-url: "https://npm.pkg.github.com"
+
+      - name: Enable corepack (Yarn 2+)
+        run: corepack enable
+
+      - name: Cache Yarn 2 files
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/install-state.gz
+          key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn2-
+
+      - run: yarn install --immutable --inline-builds
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock', 'next.config.js', 'tsconfig.json') }}
+          restore-keys: |
+            ${{ runner.os }}-next-cache-
+
+      - name: Build and analyze
+        run: yarn build
+        env:
+          ANALYZE: true
+
+      - name: Upload bundle stats
+        uses: actions/upload-artifact@v5
+        with:
+          name: bundle-stats
+          path: .next/analyze/
+
+      - name: Download base bundle stats
+        uses: dawidd6/action-download-artifact@v6
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        with:
+          workflow: bundle-analysis.yml
+          branch: main
+          name: bundle-stats
+          path: .next/analyze-base/
+
+      - name: Compare bundle sizes
+        if: github.event_name == 'pull_request'
+        id: compare
+        run: |
+          node << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          function readStats(dir) {
+            const statsPath = path.join(dir, 'client.json');
+            if (!fs.existsSync(statsPath)) return null;
+            return JSON.parse(fs.readFileSync(statsPath, 'utf-8'));
+          }
+
+          function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB'];
+            const i = Math.floor(Math.log(Math.abs(bytes)) / Math.log(k));
+            const sign = bytes < 0 ? '-' : '+';
+            return `${sign}${Math.abs(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+          }
+
+          function getChunkSizes(stats) {
+            if (!stats?.assets) return {};
+            return stats.assets.reduce((acc, asset) => {
+              if (asset.name.endsWith('.js')) {
+                acc[asset.name] = asset.size;
+              }
+              return acc;
+            }, {});
+          }
+
+          const current = readStats('.next/analyze');
+          const base = readStats('.next/analyze-base');
+
+          if (!current) {
+            console.log('No current stats found');
+            process.exit(0);
+          }
+
+          const currentSizes = getChunkSizes(current);
+          const baseSizes = base ? getChunkSizes(base) : {};
+
+          const currentTotal = Object.values(currentSizes).reduce((a, b) => a + b, 0);
+          const baseTotal = Object.values(baseSizes).reduce((a, b) => a + b, 0);
+
+          let report = '## 📦 Bundle Size Report\n\n';
+
+          if (base) {
+            const diff = currentTotal - baseTotal;
+            const emoji = diff > 0 ? '📈' : diff < 0 ? '📉' : '➡️';
+            report += `| Metric | Base | Current | Change |\n`;
+            report += `|--------|------|---------|--------|\n`;
+            report += `| Total JS | ${formatBytes(baseTotal).replace(/^[+-]/, '')} | ${formatBytes(currentTotal).replace(/^[+-]/, '')} | ${emoji} ${formatBytes(diff)} |\n\n`;
+
+            report += `### Chunk Details\n\n`;
+            report += `| Chunk | Base | Current | Change |\n`;
+            report += `|-------|------|---------|--------|\n`;
+
+            const allChunks = new Set([...Object.keys(currentSizes), ...Object.keys(baseSizes)]);
+            const sortedChunks = [...allChunks].sort((a, b) => {
+              const diffA = (currentSizes[a] || 0) - (baseSizes[a] || 0);
+              const diffB = (currentSizes[b] || 0) - (baseSizes[b] || 0);
+              return Math.abs(diffB) - Math.abs(diffA);
+            });
+
+            for (const chunk of sortedChunks.slice(0, 15)) {
+              const currSize = currentSizes[chunk] || 0;
+              const baseSize = baseSizes[chunk] || 0;
+              const chunkDiff = currSize - baseSize;
+              const chunkEmoji = chunkDiff > 0 ? '📈' : chunkDiff < 0 ? '📉' : '➡️';
+              
+              report += `| ${chunk.substring(0, 40)} | ${formatBytes(baseSize).replace(/^[+-]/, '')} | ${formatBytes(currSize).replace(/^[+-]/, '')} | ${chunkEmoji} ${formatBytes(chunkDiff)} |\n`;
+            }
+          } else {
+            report += `| Metric | Size |\n`;
+            report += `|--------|------|\n`;
+            report += `| Total JS | ${formatBytes(currentTotal).replace(/^[+-]/, '')} |\n\n`;
+            report += `> ℹ️ No baseline found for comparison (first run on main branch)\n`;
+          }
+
+          fs.writeFileSync('bundle-report.md', report);
+          console.log(report);
+          EOF
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'bundle-report.md';
+
+            if (!fs.existsSync(reportPath)) {
+              console.log('No report found');
+              return;
+            }
+
+            const report = fs.readFileSync(reportPath, 'utf-8');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+
+            const botComment = comments.find(c => 
+              c.user.type === 'Bot' && c.body.includes('Bundle Size Report')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: report
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: report
+              });
+            }
