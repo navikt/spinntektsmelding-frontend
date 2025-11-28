@@ -1,7 +1,3 @@
-import pkg from '../package.json';
-
-const version = pkg.version;
-
 class Environment {
   get loginServiceUrl() {
     return process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL + '?redirect=XXX';

@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import env from '../../config/environment';
-import { version } from '../../package.json';
 
 describe('Environment', () => {
   const originalEnv = process.env;
@@ -168,6 +167,23 @@ describe('Environment', () => {
 
       process.env.NEXT_PUBLIC_TELEMETRY_URL = 'https://second.example.com';
       expect(env.telemetryUrl).toBe('https://second.example.com');
+    });
+  });
+
+  describe('version', () => {
+    it('should return version from environment variable', () => {
+      process.env.NEXT_PUBLIC_APP_VERSION = '1.2.3';
+      expect(env.version).toBe('1.2.3');
+    });
+
+    it('should handle undefined version', () => {
+      delete process.env.NEXT_PUBLIC_APP_VERSION;
+      expect(env.version).toBeUndefined();
+    });
+
+    it('should handle prerelease version', () => {
+      process.env.NEXT_PUBLIC_APP_VERSION = '1.0.0-beta.1';
+      expect(env.version).toBe('1.0.0-beta.1');
     });
   });
 
