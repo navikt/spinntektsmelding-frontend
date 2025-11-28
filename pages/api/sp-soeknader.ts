@@ -1,12 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
-
-import testdata from '../../mockdata/sp-soeknad.json';
+import fs from 'fs';
 import isMod11Number from '../../utils/isMod11Number';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
+import path from 'path';
 
 type forespoerselIdListeEnhet = {
   vedtaksperiodeId: string;
@@ -30,8 +30,15 @@ type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
-    setTimeout(() => res.status(200).json(testdata), 100);
-    return;
+    const mockdata = 'sp-soeknad';
+    const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'Mock not found' });
+    }
+
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    return res.status(200).json(data);
   }
 
   const token = getToken(req);

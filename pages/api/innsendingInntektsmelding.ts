@@ -2,12 +2,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 
-import feilRespons from '../../mockdata/respons-backendfeil.json';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 
 const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNSENDING_INNTEKTSMELDING_API;
 
-type FeilRespons = { valideringsfeil: string[]; error: string };
+type FeilRespons = { valideringsfeil: string[]; error: string } | { status: 'OK' };
 
 export const config = {
   api: {
@@ -20,7 +19,9 @@ const handler = (req: NextApiRequest, res: NextApiResponse<FeilRespons>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
     setTimeout(() => {
-      return res.status(201).json(feilRespons);
+      return res.status(201).json({
+        status: 'OK'
+      });
     }, 100);
   } else if (env == 'production') {
     return httpProxyMiddleware(req, res, {

@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import env from '../../config/environment';
-import { version } from '../../package.json';
 
 describe('Environment', () => {
   const originalEnv = process.env;
@@ -150,13 +149,41 @@ describe('Environment', () => {
     });
   });
 
-  describe('version', () => {
-    it('should return version from package.json', () => {
-      expect(env.version).toBe(version);
+  describe('Getter consistency', () => {
+    it('should return consistent values on multiple calls', () => {
+      process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL = 'https://login.example.com';
+
+      const first = env.loginServiceUrl;
+      const second = env.loginServiceUrl;
+      const third = env.loginServiceUrl;
+
+      expect(first).toBe(second);
+      expect(second).toBe(third);
     });
 
-    it('should be a valid semver string', () => {
-      expect(env.version).toMatch(/^\d+\.\d+\.\d+/);
+    it('should reflect environment variable changes', () => {
+      process.env.NEXT_PUBLIC_TELEMETRY_URL = 'https://first.example.com';
+      expect(env.telemetryUrl).toBe('https://first.example.com');
+
+      process.env.NEXT_PUBLIC_TELEMETRY_URL = 'https://second.example.com';
+      expect(env.telemetryUrl).toBe('https://second.example.com');
+    });
+  });
+
+  describe('version', () => {
+    it('should return version from environment variable', () => {
+      process.env.NEXT_PUBLIC_APP_VERSION = '1.2.3';
+      expect(env.version).toBe('1.2.3');
+    });
+
+    it('should handle undefined version', () => {
+      delete process.env.NEXT_PUBLIC_APP_VERSION;
+      expect(env.version).toBeUndefined();
+    });
+
+    it('should handle prerelease version', () => {
+      process.env.NEXT_PUBLIC_APP_VERSION = '1.0.0-beta.1';
+      expect(env.version).toBe('1.0.0-beta.1');
     });
   });
 

@@ -68,33 +68,11 @@ describe('API Route: /api/aktiveorgnr', () => {
       config = apiModule.config;
     });
 
-    it('should return mock data after 500ms delay', async () => {
+    it('should return mock data', async () => {
       handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
-
-      expect(jsonMock).not.toHaveBeenCalled();
-
-      await vi.advanceTimersByTimeAsync(500);
 
       expect(statusMock).toHaveBeenCalledWith(200);
       expect(jsonMock).toHaveBeenCalledWith(org);
-    });
-
-    it('should not respond before timeout completes', async () => {
-      handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
-
-      await vi.advanceTimersByTimeAsync(400);
-
-      expect(jsonMock).not.toHaveBeenCalled();
-    });
-
-    it('should respond after exactly 500ms', async () => {
-      handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
-
-      await vi.advanceTimersByTimeAsync(499);
-      expect(jsonMock).not.toHaveBeenCalled();
-
-      await vi.advanceTimersByTimeAsync(1);
-      expect(jsonMock).toHaveBeenCalled();
     });
 
     it('should return correct mock data structure', async () => {

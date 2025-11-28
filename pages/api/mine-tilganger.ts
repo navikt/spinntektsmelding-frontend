@@ -1,10 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
-
-import testdata from '../../mockdata/endepunktAltinnTilganger.json';
+import fs from 'fs';
 import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerSchema';
 import safelyParseJSON from '../../utils/safelyParseJson';
+import path from 'path';
 
 const basePath = 'http://' + globalThis.process.env.FAGER_TILGANG_INGRESS + globalThis.process.env.FAGER_TILGANG_URL;
 
@@ -31,7 +31,15 @@ function extractOrgStructure(hierarki: any[]): OrgNode[] {
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
-    const simpleTree = extractOrgStructure(testdata.hierarki);
+    const mockdata = 'endepunktAltinnTilganger';
+    const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'Mock not found' });
+    }
+
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    const simpleTree = extractOrgStructure(data.hierarki);
     setTimeout(() => res.status(200).json(simpleTree), 100);
     return;
   }
