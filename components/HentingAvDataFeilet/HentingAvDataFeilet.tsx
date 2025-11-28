@@ -1,6 +1,5 @@
 import { ExclamationmarkTriangleIcon } from '@navikt/aksel-icons';
 import { Alert, BodyLong, Button, Modal } from '@navikt/ds-react';
-import { title } from 'process';
 
 interface HentingAvDataFeiletProps {
   handleCloseModal: () => void;
