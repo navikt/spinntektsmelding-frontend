@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
+const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
 
 vi.mock('../../config/environment', () => ({
   default: {
@@ -75,9 +76,9 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockResolvedValue({ status: 200, data: { foo: 'bar' } });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
-      expect(mockedFetchKvitteringsdata).toHaveBeenCalledWith('https://test.nav.no/kvittering', 'test-slug');
+      expect(mockedFetchKvitteringsdata).toHaveBeenCalledWith('https://test.nav.no/kvittering', uuid);
     });
   });
 
@@ -87,7 +88,7 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockResolvedValue({ status: 200, data: mockData });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
       expect(mockInitState).toHaveBeenCalledWith(mockData);
       expect(mockSetSkjemaFeilet).not.toHaveBeenCalled();
@@ -97,7 +98,7 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockResolvedValue({ status: 200, data: undefined });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
       expect(mockInitState).not.toHaveBeenCalled();
     });
@@ -108,10 +109,12 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockResolvedValue({ status: 404, data: undefined });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
       expect(mockSetSkjemaFeilet).toHaveBeenCalled();
-      expect(logger.warn).toHaveBeenCalledWith('Fant ikke kvittering for test-slug. Feilkode:404.');
+      expect(logger.warn).toHaveBeenCalledWith(
+        'Fant ikke kvittering for 8d50ef20-37b5-4829-ad83-56219e70b375. Feilkode:404.'
+      );
     });
   });
 
@@ -120,7 +123,7 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockRejectedValue({ status: 401, message: 'Unauthorized' });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
       expect(window.location.replace).toHaveBeenCalledWith(
         'https://test.nav.no/im-dialog/oauth2/login?redirect=https://test.nav.no/kvittering/agi/123'
@@ -131,12 +134,12 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockRejectedValue({ status: 401, message: 'Unauthorized' });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
       expect(window.location.replace).toHaveBeenCalled();
       expect(mockSetSkjemaFeilet).toHaveBeenCalled();
       expect(logger.warn).toHaveBeenCalledWith(
-        'Fant ikke kvittering for test-slug. Feilkode:401. Feiltekst: Unauthorized'
+        'Fant ikke kvittering for 8d50ef20-37b5-4829-ad83-56219e70b375. Feilkode:401. Feiltekst: Unauthorized'
       );
     });
   });
@@ -146,11 +149,11 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockRejectedValue({ status: 500, message: 'Internal Server Error' });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
       expect(mockSetSkjemaFeilet).toHaveBeenCalled();
       expect(logger.warn).toHaveBeenCalledWith(
-        'Fant ikke kvittering for test-slug. Feilkode:500. Feiltekst: Internal Server Error'
+        'Fant ikke kvittering for 8d50ef20-37b5-4829-ad83-56219e70b375. Feilkode:500. Feiltekst: Internal Server Error'
       );
     });
 
@@ -158,11 +161,11 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockRejectedValue({ status: 404, message: 'Not Found' });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
       expect(mockSetSkjemaFeilet).toHaveBeenCalled();
       expect(logger.warn).toHaveBeenCalledWith(
-        'Fant ikke kvittering for test-slug. Feilkode:404. Feiltekst: Not Found'
+        'Fant ikke kvittering for 8d50ef20-37b5-4829-ad83-56219e70b375. Feilkode:404. Feiltekst: Not Found'
       );
     });
 
@@ -170,11 +173,11 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockRejectedValue({ status: 403, message: 'Forbidden' });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
       expect(mockSetSkjemaFeilet).toHaveBeenCalled();
       expect(logger.warn).toHaveBeenCalledWith(
-        'Fant ikke kvittering for test-slug. Feilkode:403. Feiltekst: Forbidden'
+        'Fant ikke kvittering for 8d50ef20-37b5-4829-ad83-56219e70b375. Feilkode:403. Feiltekst: Forbidden'
       );
     });
 
@@ -182,7 +185,7 @@ describe('useHentKvitteringsdata', () => {
       mockedFetchKvitteringsdata.mockRejectedValue({ status: 200, message: 'OK' });
 
       const { result } = renderHook(() => useHentKvitteringsdata());
-      await result.current('test-slug');
+      await result.current(uuid);
 
       expect(mockSetSkjemaFeilet).not.toHaveBeenCalled();
       expect(logger.warn).not.toHaveBeenCalled();

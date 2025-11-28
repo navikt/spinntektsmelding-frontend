@@ -21,31 +21,28 @@ export default function useHentKvitteringsdata() {
       return Promise.resolve();
     }
 
-    if (pathSlug) {
-      return fetchKvitteringsdata(environment.hentKvitteringUrl, pathSlug)
-        .then((skjemadata) => {
-          if (skjemadata.status === 404) {
-            setSkjemaFeilet();
-            logger.warn(`Fant ikke kvittering for ${pathSlug}. Feilkode:${skjemadata.status}.`);
-          }
-          if (skjemadata.data !== undefined) {
-            initState(skjemadata.data);
-          }
-        })
-        .catch((error: any) => {
-          if (error.status === 401) {
-            const ingress = window.location.hostname + environment.baseUrl;
-            const currentPath = window.location.href;
+    return fetchKvitteringsdata(environment.hentKvitteringUrl, pathSlug!)
+      .then((skjemadata) => {
+        if (skjemadata.status === 404) {
+          setSkjemaFeilet();
+          logger.warn(`Fant ikke kvittering for ${pathSlug}. Feilkode:${skjemadata.status}.`);
+        }
+        if (skjemadata.data !== undefined) {
+          initState(skjemadata.data);
+        }
+      })
+      .catch((error: any) => {
+        if (error.status === 401) {
+          const ingress = window.location.hostname + environment.baseUrl;
+          const currentPath = window.location.href;
 
-            window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
-          }
+          window.location.replace(`https://${ingress}/oauth2/login?redirect=${currentPath}`);
+        }
 
-          if (error.status !== 200) {
-            setSkjemaFeilet();
-            logger.warn(`Fant ikke kvittering for ${pathSlug}. Feilkode:${error.status}. Feiltekst: ${error.message}`);
-          }
-        });
-    }
-    return Promise.resolve();
+        if (error.status !== 200) {
+          setSkjemaFeilet();
+          logger.warn(`Fant ikke kvittering for ${pathSlug}. Feilkode:${error.status}. Feiltekst: ${error.message}`);
+        }
+      });
   };
 }
