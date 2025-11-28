@@ -54,16 +54,59 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-next-cache-
 
-      - name: Build and analyze
+      - name: Build with stats
         run: yarn build
         env:
           ANALYZE: true
+
+      - name: Generate bundle stats JSON
+        run: |
+          mkdir -p .next/analyze
+          node << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          // Les .next/build-manifest.json for chunk-info
+          const buildManifestPath = '.next/build-manifest.json';
+          const appBuildManifestPath = '.next/app-build-manifest.json';
+
+          const stats = { assets: [], timestamp: Date.now() };
+
+          // Samle alle JS-filer fra .next/static
+          function collectJsFiles(dir, assets) {
+            if (!fs.existsSync(dir)) return;
+            const files = fs.readdirSync(dir, { withFileTypes: true });
+            for (const file of files) {
+              const fullPath = path.join(dir, file.name);
+              if (file.isDirectory()) {
+                collectJsFiles(fullPath, assets);
+              } else if (file.name.endsWith('.js')) {
+                const stat = fs.statSync(fullPath);
+                assets.push({
+                  name: path.relative('.next', fullPath),
+                  size: stat.size
+                });
+              }
+            }
+          }
+
+          collectJsFiles('.next/static', stats.assets);
+
+          // Sorter etter størrelse
+          stats.assets.sort((a, b) => b.size - a.size);
+
+          // Total størrelse
+          stats.totalSize = stats.assets.reduce((sum, a) => sum + a.size, 0);
+
+          fs.writeFileSync('.next/analyze/bundle-stats.json', JSON.stringify(stats, null, 2));
+          console.log(`Generated stats for ${stats.assets.length} assets, total: ${(stats.totalSize / 1024 / 1024).toFixed(2)} MB`);
+          EOF
 
       - name: Upload bundle stats
         uses: actions/upload-artifact@v5
         with:
           name: bundle-stats
-          path: .next/analyze/
+          path: .next/analyze/bundle-stats.json
 
       - name: Download base bundle stats
         uses: dawidd6/action-download-artifact@v6
@@ -83,10 +126,9 @@ jobs:
           const fs = require('fs');
           const path = require('path');
 
-          function readStats(dir) {
-            const statsPath = path.join(dir, 'client.json');
-            if (!fs.existsSync(statsPath)) return null;
-            return JSON.parse(fs.readFileSync(statsPath, 'utf-8'));
+          function readStats(filePath) {
+            if (!fs.existsSync(filePath)) return null;
+            return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
           }
 
           function formatBytes(bytes) {
@@ -94,67 +136,95 @@ jobs:
             const k = 1024;
             const sizes = ['B', 'KB', 'MB'];
             const i = Math.floor(Math.log(Math.abs(bytes)) / Math.log(k));
-            const sign = bytes < 0 ? '-' : '+';
-            return `${sign}${Math.abs(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+            const prefix = bytes > 0 ? '+' : '';
+            return `${prefix}${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
           }
 
-          function getChunkSizes(stats) {
-            if (!stats?.assets) return {};
-            return stats.assets.reduce((acc, asset) => {
-              if (asset.name.endsWith('.js')) {
-                acc[asset.name] = asset.size;
-              }
-              return acc;
-            }, {});
+          function formatSize(bytes) {
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB'];
+            const i = Math.floor(Math.log(Math.abs(bytes)) / Math.log(k));
+            return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
           }
 
-          const current = readStats('.next/analyze');
-          const base = readStats('.next/analyze-base');
+          const current = readStats('.next/analyze/bundle-stats.json');
+          const base = readStats('.next/analyze-base/bundle-stats.json');
 
           if (!current) {
             console.log('No current stats found');
             process.exit(0);
           }
 
-          const currentSizes = getChunkSizes(current);
-          const baseSizes = base ? getChunkSizes(base) : {};
+          const currentSizes = current.assets.reduce((acc, a) => { acc[a.name] = a.size; return acc; }, {});
+          const baseSizes = base ? base.assets.reduce((acc, a) => { acc[a.name] = a.size; return acc; }, {}) : {};
 
-          const currentTotal = Object.values(currentSizes).reduce((a, b) => a + b, 0);
-          const baseTotal = Object.values(baseSizes).reduce((a, b) => a + b, 0);
+          const currentTotal = current.totalSize;
+          const baseTotal = base ? base.totalSize : 0;
 
           let report = '## 📦 Bundle Size Report\n\n';
 
           if (base) {
             const diff = currentTotal - baseTotal;
+            const pctChange = baseTotal > 0 ? ((diff / baseTotal) * 100).toFixed(1) : '∞';
             const emoji = diff > 0 ? '📈' : diff < 0 ? '📉' : '➡️';
+            
             report += `| Metric | Base | Current | Change |\n`;
             report += `|--------|------|---------|--------|\n`;
-            report += `| Total JS | ${formatBytes(baseTotal).replace(/^[+-]/, '')} | ${formatBytes(currentTotal).replace(/^[+-]/, '')} | ${emoji} ${formatBytes(diff)} |\n\n`;
+            report += `| **Total JS** | ${formatSize(baseTotal)} | ${formatSize(currentTotal)} | ${emoji} ${formatBytes(diff)} (${pctChange}%) |\n\n`;
 
-            report += `### Chunk Details\n\n`;
-            report += `| Chunk | Base | Current | Change |\n`;
-            report += `|-------|------|---------|--------|\n`;
-
+            // Finn nye, fjernede og endrede chunks
             const allChunks = new Set([...Object.keys(currentSizes), ...Object.keys(baseSizes)]);
-            const sortedChunks = [...allChunks].sort((a, b) => {
-              const diffA = (currentSizes[a] || 0) - (baseSizes[a] || 0);
-              const diffB = (currentSizes[b] || 0) - (baseSizes[b] || 0);
-              return Math.abs(diffB) - Math.abs(diffA);
-            });
-
-            for (const chunk of sortedChunks.slice(0, 15)) {
+            const changes = [];
+            
+            for (const chunk of allChunks) {
               const currSize = currentSizes[chunk] || 0;
               const baseSize = baseSizes[chunk] || 0;
               const chunkDiff = currSize - baseSize;
-              const chunkEmoji = chunkDiff > 0 ? '📈' : chunkDiff < 0 ? '📉' : '➡️';
               
-              report += `| ${chunk.substring(0, 40)} | ${formatBytes(baseSize).replace(/^[+-]/, '')} | ${formatBytes(currSize).replace(/^[+-]/, '')} | ${chunkEmoji} ${formatBytes(chunkDiff)} |\n`;
+              if (chunkDiff !== 0) {
+                changes.push({ chunk, currSize, baseSize, diff: chunkDiff });
+              }
+            }
+            
+            // Sorter etter absolutt endring
+            changes.sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
+
+            if (changes.length > 0) {
+              report += `### Biggest Changes\n\n`;
+              report += `| Chunk | Base | Current | Change |\n`;
+              report += `|-------|------|---------|--------|\n`;
+
+              for (const { chunk, currSize, baseSize, diff } of changes.slice(0, 10)) {
+                const chunkEmoji = diff > 0 ? '📈' : '📉';
+                const shortName = chunk.length > 50 ? '...' + chunk.slice(-47) : chunk;
+                const baseStr = baseSize > 0 ? formatSize(baseSize) : '_new_';
+                const currStr = currSize > 0 ? formatSize(currSize) : '_removed_';
+                
+                report += `| \`${shortName}\` | ${baseStr} | ${currStr} | ${chunkEmoji} ${formatBytes(diff)} |\n`;
+              }
+            } else {
+              report += `> ✅ No changes in bundle sizes\n`;
+            }
+
+            // Advarsel ved stor økning
+            if (diff > 50 * 1024) {
+              report += `\n> ⚠️ **Warning:** Bundle size increased by more than 50KB\n`;
             }
           } else {
             report += `| Metric | Size |\n`;
             report += `|--------|------|\n`;
-            report += `| Total JS | ${formatBytes(currentTotal).replace(/^[+-]/, '')} |\n\n`;
-            report += `> ℹ️ No baseline found for comparison (first run on main branch)\n`;
+            report += `| **Total JS** | ${formatSize(currentTotal)} |\n\n`;
+
+            report += `### Largest Chunks\n\n`;
+            report += `| Chunk | Size |\n`;
+            report += `|-------|------|\n`;
+            
+            for (const asset of current.assets.slice(0, 10)) {
+              const shortName = asset.name.length > 50 ? '...' + asset.name.slice(-47) : asset.name;
+              report += `| \`${shortName}\` | ${formatSize(asset.size)} |\n`;
+            }
+
+            report += `\n> ℹ️ No baseline found for comparison (first run on main branch)\n`;
           }
 
           fs.writeFileSync('bundle-report.md', report);
