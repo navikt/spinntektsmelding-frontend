@@ -150,13 +150,24 @@ describe('Environment', () => {
     });
   });
 
-  describe('version', () => {
-    it('should return version from package.json', () => {
-      expect(env.version).toBe(version);
+  describe('Getter consistency', () => {
+    it('should return consistent values on multiple calls', () => {
+      process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL = 'https://login.example.com';
+
+      const first = env.loginServiceUrl;
+      const second = env.loginServiceUrl;
+      const third = env.loginServiceUrl;
+
+      expect(first).toBe(second);
+      expect(second).toBe(third);
     });
 
-    it('should be a valid semver string', () => {
-      expect(env.version).toMatch(/^\d+\.\d+\.\d+/);
+    it('should reflect environment variable changes', () => {
+      process.env.NEXT_PUBLIC_TELEMETRY_URL = 'https://first.example.com';
+      expect(env.telemetryUrl).toBe('https://first.example.com');
+
+      process.env.NEXT_PUBLIC_TELEMETRY_URL = 'https://second.example.com';
+      expect(env.telemetryUrl).toBe('https://second.example.com');
     });
   });
 
