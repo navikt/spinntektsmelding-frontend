@@ -52,12 +52,18 @@ const nextConfig = {
   //   defaultLocale: 'no'
   // },
   experimental: {
-    optimizePackageImports: ['@navikt/aksel-icons'],
+    optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-react'],
     turbopackFileSystemCacheForDev: true
   },
   env: {
     NEXT_PUBLIC_APP_VERSION: version
   }
+  // modularizeImports: {
+  //   '@navikt/ds-react': {
+  //     transform: '@navikt/ds-react/esm/{{lowerCase member}}/index.js',
+  //     skipDefaultConversion: true
+  //   }
+  // }
 };
 
 const withBundleAnalyzer =
