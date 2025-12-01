@@ -1211,10 +1211,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/fnrvalidator@npm:2.1.5":
-  version: 2.1.5
-  resolution: "@navikt/fnrvalidator@npm:2.1.5::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Ffnrvalidator%2F2.1.5%2Fe33cbc5693b14419bbcf4d5daee2ac9eeec532e5"
-  checksum: 10c0/eef0c2dcfc8007a4411726daa737f9f6e2a07c3ae3974f026ed19526c44f724877d1368e6b293031203de6cd99103d02726244386cd42d2b19fe3c04cd2355f6
+"@navikt/fnrvalidator@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@navikt/fnrvalidator@npm:2.2.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Ffnrvalidator%2F2.2.0%2F4886b1ab78dabbca087adf379b81ba0ef27ebbd9"
+  checksum: 10c0/5626fb39ec28c79935b9758c0194cfcfe5eaeb3b97b83b6ae1a8be356aed1e1974734ca48f7f0c30d0ba9b6ef429070bce0d56acd0dd1edd3880cc4cfc3e9fb6
   languageName: node
   linkType: hard
 
@@ -7688,7 +7688,7 @@ __metadata:
     "@navikt/aksel-icons": "npm:^7.34.0"
     "@navikt/ds-css": "npm:^7.34.0"
     "@navikt/ds-react": "npm:^7.34.0"
-    "@navikt/fnrvalidator": "npm:2.1.5"
+    "@navikt/fnrvalidator": "npm:2.2.0"
     "@navikt/nav-dekoratoren-moduler": "npm:^3.6.0"
     "@navikt/next-logger": "npm:4.4.1"
     "@navikt/oasis": "npm:^4.1.1"
