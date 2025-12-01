@@ -52,7 +52,7 @@ const nextConfig = {
   //   defaultLocale: 'no'
   // },
   experimental: {
-    optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-react'],
+    optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-react', '@navikt/nav-dekoratoren-moduler'],
     turbopackFileSystemCacheForDev: true
   },
   env: {
