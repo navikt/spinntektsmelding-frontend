@@ -1,5 +1,3 @@
-import { version } from '../package.json';
-
 class Environment {
   get loginServiceUrl() {
     return process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL + '?redirect=XXX';
@@ -52,7 +50,7 @@ class Environment {
   }
 
   get version() {
-    return version;
+    return process.env.NEXT_PUBLIC_APP_VERSION;
   }
 }
 

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const { buildCspHeader } = require('@navikt/nav-dekoratoren-moduler/ssr');
+const { version } = require('./package.json');
 
 const appDirectives = {
   'connect-src': ["'self'", process.env.NEXT_PUBLIC_TELEMETRY_URL],
@@ -51,13 +52,26 @@ const nextConfig = {
   //   defaultLocale: 'no'
   // },
   experimental: {
-    optimizePackageImports: ['@navikt/aksel-icons'],
+    optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-react', '@navikt/nav-dekoratoren-moduler'],
     turbopackFileSystemCacheForDev: true
+  },
+  env: {
+    NEXT_PUBLIC_APP_VERSION: version
   }
+  // modularizeImports: {
+  //   '@navikt/ds-react': {
+  //     transform: '@navikt/ds-react/esm/{{lowerCase member}}/index.js',
+  //     skipDefaultConversion: true
+  //   }
+  // }
 };
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true'
-});
+const withBundleAnalyzer =
+  process.env.ANALYZE === 'true'
+    ? require('@next/bundle-analyzer')({
+        enabled: true,
+        openAnalyzer: false
+      })
+    : (config) => config;
 
 module.exports = withBundleAnalyzer(nextConfig);

@@ -55,6 +55,8 @@ import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 import { useShallow } from 'zustand/react/shallow';
 import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema';
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
+import path from 'path';
+import fs from 'fs';
 
 type PersonData = {
   navn: string;
@@ -458,12 +460,19 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
 export async function getServerSideProps(context: any) {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
-    const testdata = await import('../../../mockdata/kvittering-selvbestemt-format.json');
+    let testdata = { default: null };
+    const mockdata = 'kvittering-selvbestemt-format';
+
+    const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
+
+    if (fs.existsSync(filePath)) {
+      testdata = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    }
 
     return {
       props: {
         kvittid: context.query.kvittid,
-        kvittering: testdata.default,
+        kvittering: testdata,
         kvitteringStatus: 200,
         dataFraBackend: true
       }
