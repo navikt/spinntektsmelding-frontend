@@ -1,7 +1,11 @@
 import '../styles/globals.css';
 import '@navikt/ds-css';
 import '../styles/bedriftsmeny.css';
-import 'core-js-pure/actual/structured-clone';
+// import 'core-js-pure/actual/structured-clone';
+import structuredClone from '@ungap/structured-clone';
+if (!('structuredClone' in globalThis)) {
+  globalThis.structuredClone = structuredClone as unknown as typeof globalThis.structuredClone;
+}
 import { getFaro, initInstrumentation, pinoLevelToFaroLevel } from '../utils/faro';
 import type { AppProps } from 'next/app';
 import { enableMapSet } from 'immer';
