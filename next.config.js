@@ -52,7 +52,13 @@ const nextConfig = {
   //   defaultLocale: 'no'
   // },
   experimental: {
-    optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-react', '@navikt/nav-dekoratoren-moduler'],
+    optimizePackageImports: [
+      '@navikt/aksel-icons',
+      '@navikt/ds-react',
+      '@navikt/nav-dekoratoren-moduler',
+      'date-fns',
+      '@grafana/faro-web-sdk'
+    ],
     turbopackFileSystemCacheForDev: true
   },
   env: {
