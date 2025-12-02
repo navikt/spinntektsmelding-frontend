@@ -208,7 +208,6 @@ export const InnsendingSchema = z.object({
       inntektsdato: z.string({
         error: (issue) => (issue.input === undefined ? 'Bestemmende fraværsdag mangler' : undefined)
       }),
-      naturalytelser: ApiNaturalytelserSchema,
       endringAarsaker: z.array(ApiEndringAarsakSchema).nullable()
     })
   ),

@@ -58,7 +58,6 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       inntekt: {
         beloep: 55000,
         inntektsdato: '2023-09-18',
-        naturalytelser: [],
         endringAarsaker: []
       },
       refusjon: null,
@@ -117,7 +116,6 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       inntekt: {
         beloep: 60000,
         inntektsdato: '2023-09-18',
-        naturalytelser: [],
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: { beloepPerMaaned: 55000, sluttdato: null, endringer: [] },

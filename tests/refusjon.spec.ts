@@ -77,7 +77,6 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       inntekt: {
         beloep: 77000,
         inntektsdato: '2023-03-15',
-        naturalytelser: [],
         endringAarsaker: []
       },
       refusjon: { beloepPerMaaned: 77000, sluttdato: null, endringer: [] },
@@ -146,7 +145,6 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       inntekt: {
         beloep: 77000,
         inntektsdato: '2023-03-15',
-        naturalytelser: [],
         endringAarsaker: []
       },
       refusjon: { beloepPerMaaned: 77000, sluttdato: null, endringer: [{ beloep: 60000, startdato: '2023-03-15' }] },
@@ -215,7 +213,6 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       inntekt: {
         beloep: 77000,
         inntektsdato: '2023-03-15',
-        naturalytelser: [],
         endringAarsaker: []
       },
       refusjon: { beloepPerMaaned: 77000, sluttdato: null, endringer: [{ beloep: 60000, startdato: '2023-04-15' }] },

@@ -54,7 +54,6 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       inntekt: {
         beloep: 36000,
         inntektsdato: '2024-12-05',
-        naturalytelser: [],
         endringAarsaker: []
       },
       refusjon: null,
@@ -111,7 +110,6 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       inntekt: {
         beloep: 50000,
         inntektsdato: '2024-12-05',
-        naturalytelser: [],
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: {

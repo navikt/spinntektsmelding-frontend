@@ -134,7 +134,6 @@ export default function useFyllInnsending() {
         ? {
             beloep: skjemaData.inntekt?.beloep ?? 0,
             inntektsdato: bestemmendeFraværsdag ?? formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
-            naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
             endringAarsaker: endringAarsakerParsed
           }
         : null,

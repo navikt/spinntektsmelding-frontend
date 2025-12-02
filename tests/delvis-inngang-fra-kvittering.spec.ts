@@ -85,7 +85,6 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         inntekt: {
           beloep: 50000,
           inntektsdato: '2023-01-02',
-          naturalytelser: [],
           endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: {

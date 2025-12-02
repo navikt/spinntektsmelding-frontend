@@ -189,14 +189,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
         beloep: 77000,
         endringAarsaker: [],
 
-        inntektsdato: '2023-02-18',
-        naturalytelser: [
-          {
-            naturalytelse: 'OPSJONER',
-            sluttdato: '2023-05-01',
-            verdiBeloep: 45000
-          }
-        ]
+        inntektsdato: '2023-02-18'
       },
       refusjon: {
         beloepPerMaaned: 77000,

@@ -100,7 +100,6 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       inntekt: {
         beloep: 84333.33,
         inntektsdato: '2023-01-30',
-        naturalytelser: [],
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
       refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
@@ -166,7 +165,6 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       inntekt: {
         beloep: 75000,
         inntektsdato: '2023-02-02',
-        naturalytelser: [],
         endringAarsaker: [{ aarsak: 'Ferie', ferier: [{ fom: '2022-12-25', tom: '2022-12-30' }] }]
       },
       refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
@@ -236,7 +234,6 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       inntekt: {
         beloep: 84333.33,
         inntektsdato: '2023-01-30',
-        naturalytelser: [],
         endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2022-12-30' }]
       },
       refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
