@@ -112,7 +112,6 @@ export default function useFyllAapenInnsending() {
       inntekt: {
         beloep: skjemaData.inntekt?.beloep ?? 0,
         inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
-        naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
         endringAarsaker: endringAarsakerParsed ?? []
       },
       refusjon:

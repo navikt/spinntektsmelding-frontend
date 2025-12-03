@@ -104,8 +104,7 @@ test.describe('Begrenset forespørsel', () => {
       inntekt: {
         beloep: 77000,
         endringAarsaker: [],
-        inntektsdato: '2023-03-25',
-        naturalytelser: []
+        inntektsdato: '2023-03-25'
       },
       refusjon: null,
       avsenderTlf: '12345678',

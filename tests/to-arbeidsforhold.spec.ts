@@ -72,7 +72,6 @@ test.describe('Utfylling og innsending av skjema – to arbeidsforhold', () => {
       inntekt: {
         beloep: 45000,
         inntektsdato: '2023-08-23',
-        naturalytelser: [],
         endringAarsaker: []
       },
       refusjon: null,

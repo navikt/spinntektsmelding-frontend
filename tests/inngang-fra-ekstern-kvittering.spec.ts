@@ -74,7 +74,6 @@ test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
       inntekt: {
         beloep: 77000,
         inntektsdato: '2023-03-15',
-        naturalytelser: [],
         endringAarsaker: []
       },
       refusjon: null,

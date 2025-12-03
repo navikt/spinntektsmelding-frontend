@@ -94,7 +94,6 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
     inntekt: {
       beloep: 50000,
       inntektsdato: '2024-12-05',
-      naturalytelser: [],
       endringAarsaker: [{ aarsak: 'Bonus' }]
     },
     refusjon: {

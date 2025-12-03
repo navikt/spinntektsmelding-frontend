@@ -122,7 +122,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       inntekt: {
         beloep: 7500,
         inntektsdato: '2024-09-10',
-        naturalytelser: [],
         endringAarsaker: [
           {
             aarsak: 'Ferie',
@@ -214,7 +213,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       inntekt: {
         beloep: 7500,
         inntektsdato: '2024-09-10',
-        naturalytelser: [],
         endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2024-06-30' }]
       },
       refusjon: null,
@@ -299,7 +297,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       inntekt: {
         beloep: 7500,
         inntektsdato: '2024-09-10',
-        naturalytelser: [],
         endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2024-06-30' }]
       },
       refusjon: null,
@@ -392,7 +389,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       inntekt: {
         beloep: 7500,
         inntektsdato: '2024-09-10',
-        naturalytelser: [],
         endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2024-06-30' }]
       },
       refusjon: null,

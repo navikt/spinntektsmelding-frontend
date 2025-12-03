@@ -10,10 +10,10 @@ import useKvitteringInit from '../../state/useKvitteringInit';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { z } from 'zod/v4';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
-import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
-import { Opplysningstype } from '../../state/useForespurtDataStore';
 import forespoerselType from '../../config/forespoerselType';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
+import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
+import { Opplysningstype } from '../../schema/ForespurtDataSchema';
 
 type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
@@ -120,8 +120,6 @@ describe('useFyllAapenInnsending', () => {
         inntekt: {
           beloep: 500000,
           inntektsdato: '2023-02-14',
-          naturalytelser: [],
-
           endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: null,
@@ -208,8 +206,6 @@ describe('useFyllAapenInnsending', () => {
         inntekt: {
           beloep: 500000,
           inntektsdato: '2023-02-14',
-          naturalytelser: [],
-
           endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: {
@@ -306,8 +302,6 @@ describe('useFyllAapenInnsending', () => {
         inntekt: {
           beloep: 500000,
           inntektsdato: '2023-02-14',
-          naturalytelser: [],
-
           endringAarsaker: [{ aarsak: 'Bonus' }]
         },
         refusjon: {

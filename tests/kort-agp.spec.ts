@@ -96,7 +96,6 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
       inntekt: {
         beloep: 77000,
         inntektsdato: '2023-03-15',
-        naturalytelser: [],
         endringAarsaker: []
       },
       refusjon: null,
