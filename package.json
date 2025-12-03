@@ -2,6 +2,9 @@
   "name": "spinntektsmelding-frontend",
   "version": "0.3.57",
   "private": true,
+  "resolutions": {
+    "jsdom": "26.1.0"
+  },
   "scripts": {
     "dev": "next dev --turbopack | pino-pretty --messageKey=message",
     "dev:decoratorless": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --turbopack | pino-pretty",
