@@ -70,6 +70,7 @@ function CustomDocument(props: CustomDocumentProps) {
           data-domains={process.env.NEXT_PUBLIC_UMAMI_DATA_DOMAINS}
         />
         <HeadAssets />
+        <meta name='decorator-env' content={process.env.NEXT_PUBLIC_DECORATOR_ENV || ''} />
       </Head>
       <body id='body'>
         <div suppressHydrationWarning>
