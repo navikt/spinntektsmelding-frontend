@@ -516,5 +516,149 @@ describe('_document.tsx', () => {
       expect(first).toBe(second);
       expect(fetchDecoratorMock).not.toHaveBeenCalled();
     });
+
+    describe('decorator enabled', () => {
+      beforeEach(() => {
+        delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
+        delete process.env.PLAYWRIGHT;
+        process.env.NODE_ENV = 'production';
+        vi.resetModules();
+        fetchDecoratorMock.mockClear();
+        mockDecoratorModule(false);
+      });
+
+      it('fetcher dekoratør når alle disable-flagg er false', async () => {
+        const { loadDecorator } = await import('../../pages/_document.js');
+        const decorator = await loadDecorator();
+
+        expect(fetchDecoratorMock).toHaveBeenCalledTimes(1);
+        expect(decorator.Header).toBeDefined();
+        expect(decorator.Footer).toBeDefined();
+        expect(decorator.Scripts).toBeDefined();
+        expect(decorator.HeadAssets).toBeDefined();
+      });
+
+      it('cacher dekoratør-komponenter ved gjentatte kall', async () => {
+        const { loadDecorator } = await import('../../pages/_document.js');
+
+        const first = await loadDecorator();
+        const second = await loadDecorator();
+
+        expect(fetchDecoratorMock).toHaveBeenCalledTimes(1);
+        expect(first).toBe(second);
+      });
+
+      it('sender riktig env=dev når NAIS_CLUSTER_NAME ikke er prod-gcp', async () => {
+        process.env.NAIS_CLUSTER_NAME = 'dev-gcp';
+        delete process.env.NEXT_PUBLIC_DECORATOR_ENV;
+
+        const { loadDecorator } = await import('../../pages/_document.js');
+        await loadDecorator();
+
+        expect(fetchDecoratorMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            env: 'dev'
+          })
+        );
+      });
+
+      it('sender riktig env=prod når NAIS_CLUSTER_NAME er prod-gcp', async () => {
+        vi.resetModules();
+        fetchDecoratorMock.mockClear();
+        mockDecoratorModule(false);
+
+        process.env.NAIS_CLUSTER_NAME = 'prod-gcp';
+        delete process.env.NEXT_PUBLIC_DECORATOR_ENV;
+
+        const { loadDecorator } = await import('../../pages/_document.js');
+        await loadDecorator();
+
+        expect(fetchDecoratorMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            env: 'prod'
+          })
+        );
+      });
+
+      it('bruker NEXT_PUBLIC_DECORATOR_ENV når satt', async () => {
+        vi.resetModules();
+        fetchDecoratorMock.mockClear();
+        mockDecoratorModule(false);
+
+        process.env.NEXT_PUBLIC_DECORATOR_ENV = 'staging';
+
+        const { loadDecorator } = await import('../../pages/_document.js');
+        await loadDecorator();
+
+        expect(fetchDecoratorMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            env: 'staging'
+          })
+        );
+      });
+
+      it('sender riktig params til fetchDecoratorReact', async () => {
+        vi.resetModules();
+        fetchDecoratorMock.mockClear();
+        mockDecoratorModule(false);
+
+        const { loadDecorator } = await import('../../pages/_document.js');
+        await loadDecorator();
+
+        expect(fetchDecoratorMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            params: expect.objectContaining({
+              context: 'arbeidsgiver',
+              chatbot: false,
+              feedback: false
+            })
+          })
+        );
+      });
+
+      it('returnerer DisabledDecorator ved fetch-feil', async () => {
+        vi.resetModules();
+        mockDecoratorModule(true); // shouldThrow = true
+
+        const { loadDecorator } = await import('../../pages/_document.js');
+        const decorator = await loadDecorator();
+
+        expect(decorator.Header({})).toBeNull();
+        expect(decorator.Footer({})).toBeNull();
+        expect(decorator.Scripts({})).toBeNull();
+        expect(decorator.HeadAssets({})).toBeNull();
+      });
+
+      it('cacher feil-tilstand og returnerer DisabledDecorator ved gjentatte kall', async () => {
+        vi.resetModules();
+        mockDecoratorModule(true);
+        process.env = { ...process.env, NODE_ENV: 'test' };
+
+        const { loadDecorator } = await import('../../pages/_document.js');
+
+        const first = await loadDecorator();
+        fetchDecoratorMock.mockClear();
+        const second = await loadDecorator();
+
+        expect(first).toBe(second);
+
+        expect(fetchDecoratorMock).not.toHaveBeenCalled();
+      });
+
+      it('returnerer fungerende komponenter fra fetchDecoratorReact', async () => {
+        vi.resetModules();
+        fetchDecoratorMock.mockClear();
+        mockDecoratorModule(false);
+
+        const { loadDecorator } = await import('../../pages/_document.js');
+        const decorator = await loadDecorator();
+
+        const headerElement = decorator.Header({});
+        const footerElement = decorator.Footer({});
+
+        expect(headerElement).not.toBeNull();
+        expect(footerElement).not.toBeNull();
+      });
+    });
   });
 });
