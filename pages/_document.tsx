@@ -1,15 +1,7 @@
 import Document, { Html, Head, Main, NextScript, DocumentContext, type DocumentInitialProps } from 'next/document';
-import Script from 'next/script';
-import React from 'react';
+import { DecoratorComponentsReact } from '@navikt/nav-dekoratoren-moduler/ssr';
 
-type DecoratorBundle = {
-  Header: React.ComponentType<{}>;
-  Footer: React.ComponentType<{}>;
-  Scripts: React.ComponentType<{}>;
-  HeadAssets: React.ComponentType<{}>;
-};
-
-const DisabledDecorator: DecoratorBundle = {
+const DisabledDecorator: DecoratorComponentsReact = {
   Header: () => null,
   Footer: () => null,
   Scripts: () => null,
@@ -21,14 +13,14 @@ const DECORATOR_DISABLED =
   process.env.PLAYWRIGHT === 'true' ||
   process.env.NODE_ENV === 'test';
 
-let cachedDecorator: DecoratorBundle | null = null;
+let cachedDecorator: DecoratorComponentsReact | null = null;
 
-export async function loadDecorator(): Promise<DecoratorBundle> {
+export async function loadDecorator(): Promise<DecoratorComponentsReact> {
   if (DECORATOR_DISABLED) return DisabledDecorator;
   if (cachedDecorator) return cachedDecorator;
 
   try {
-    const { fetchDecoratorReact } = require('@navikt/nav-dekoratoren-moduler/ssr');
+    const { fetchDecoratorReact } = await import('@navikt/nav-dekoratoren-moduler/ssr');
 
     const env =
       process.env.NEXT_PUBLIC_DECORATOR_ENV ?? (process.env.NAIS_CLUSTER_NAME === 'prod-gcp' ? 'prod' : 'dev');
@@ -51,7 +43,7 @@ export async function loadDecorator(): Promise<DecoratorBundle> {
 }
 
 interface CustomDocumentProps extends DocumentInitialProps {
-  decorator: DecoratorBundle;
+  decorator: DecoratorComponentsReact;
 }
 
 function CustomDocument(props: CustomDocumentProps) {
@@ -61,14 +53,6 @@ function CustomDocument(props: CustomDocumentProps) {
   return (
     <Html lang='no'>
       <Head>
-        <Script
-          defer
-          strategy='afterInteractive'
-          src='https://cdn.nav.no/team-researchops/sporing/sporing.js'
-          data-host-url='https://umami.nav.no'
-          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-          data-domains={process.env.NEXT_PUBLIC_UMAMI_DATA_DOMAINS}
-        />
         <HeadAssets />
         <meta name='decorator-env' content={process.env.NEXT_PUBLIC_DECORATOR_ENV || ''} />
       </Head>
@@ -86,6 +70,13 @@ function CustomDocument(props: CustomDocumentProps) {
           <Scripts />
         </div>
         <NextScript />
+        <script
+          defer
+          src='https://cdn.nav.no/team-researchops/sporing/sporing.js'
+          data-host-url='https://umami.nav.no'
+          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          data-domains={process.env.NEXT_PUBLIC_UMAMI_DATA_DOMAINS}
+        />
       </body>
     </Html>
   );
