@@ -1,9 +1,9 @@
 import '../styles/globals.css';
 import '@navikt/ds-css';
 import '../styles/bedriftsmeny.css';
-import { getFaro, initInstrumentation, pinoLevelToFaroLevel } from '../utils/faro';
 import type { AppProps } from 'next/app';
 import { enableMapSet } from 'immer';
+import { useEffect, useRef } from 'react';
 enableMapSet();
 
 import '../components/PageContent/PageContent.css';
@@ -11,20 +11,36 @@ import '../components/PageContent/PageContent.css';
 import { configureLogger } from '@navikt/next-logger';
 import env from '../config/environment';
 
-initInstrumentation();
+// Faro lastes lazy for å redusere initial bundle størrelse
+let faroModule: typeof import('../utils/faro') | null = null;
+
 configureLogger({
   basePath: env.baseUrl,
   onLog: (log) => {
-    const faro = getFaro();
-    if (faro) {
-      return faro.api.pushLog(log.messages, {
-        level: pinoLevelToFaroLevel(log.level.label)
-      });
+    if (faroModule) {
+      const faro = faroModule.getFaro();
+      if (faro) {
+        return faro.api.pushLog(log.messages, {
+          level: faroModule.pinoLevelToFaroLevel(log.level.label)
+        });
+      }
     }
   }
 });
 
 function App({ Component, pageProps }: AppProps) {
+  const faroInitialized = useRef(false);
+
+  useEffect(() => {
+    if (faroInitialized.current) return;
+    faroInitialized.current = true;
+
+    import('../utils/faro').then((module) => {
+      faroModule = module;
+      module.initInstrumentation();
+    });
+  }, []);
+
   return <Component {...pageProps} />;
 }
 
