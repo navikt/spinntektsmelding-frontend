@@ -109,13 +109,21 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
 
+  const onHentKvitteringsdata = useEffectEvent((kvittid: string) => {
+    hentKvitteringsdata(kvittid);
+  });
+
+  const onSetNyInnsending = useEffectEvent((endring: boolean) => {
+    setNyInnsending(endring);
+  });
+
   useEffect(() => {
     if (!sykmeldingsperioder && !kvitteringEksterntSystem?.avsenderSystem) {
       if (!kvittid || kvittid === '') return;
-      hentKvitteringsdata(kvittid);
+      onHentKvitteringsdata(kvittid);
     }
-    setNyInnsending(false);
-  }, [hentKvitteringsdata, kvitteringEksterntSystem?.avsenderSystem, kvittid, setNyInnsending, sykmeldingsperioder]);
+    onSetNyInnsending(false);
+  }, [kvitteringEksterntSystem?.avsenderSystem, kvittid, sykmeldingsperioder]);
 
   const onSetOpprinneligNyMaanedsinntekt = useEffectEvent(() => {
     setOpprinneligNyMaanedsinntekt();
