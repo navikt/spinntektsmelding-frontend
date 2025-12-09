@@ -45,6 +45,8 @@ import PersonVisning from '../../components/Person/PersonVisning';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
 
+const cx = classNames.bind(lokalStyles);
+
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -138,7 +140,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const visRefusjon = paakrevdeOpplysninger?.includes(forespoerselType.refusjon);
 
-  const cx = classNames.bind(lokalStyles);
   const classNameWrapperFravaer = cx({
     fravaerswrapperwrapper: visArbeidsgiverperiode
   });
