@@ -12,12 +12,13 @@ interface FravaersperiodeProps {
   paakrevdeOpplysninger: string[];
 }
 
+const cx = classNames.bind(lokalStyles);
+
 export default function Fravaersperiode({
   sykmeldingsperioder,
   egenmeldingsperioder,
   paakrevdeOpplysninger
 }: Readonly<FravaersperiodeProps>) {
-  const cx = classNames.bind(lokalStyles);
   const classNameHeadingSykmelding = cx({
     sykfravaerstyper: paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode)
   });

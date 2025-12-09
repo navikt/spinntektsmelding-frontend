@@ -45,6 +45,8 @@ import PersonVisning from '../../components/Person/PersonVisning';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
 
+const cx = classNames.bind(lokalStyles);
+
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -109,13 +111,21 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
 
+  const onHentKvitteringsdata = useEffectEvent((kvittid: string) => {
+    hentKvitteringsdata(kvittid);
+  });
+
+  const onSetNyInnsending = useEffectEvent((endring: boolean) => {
+    setNyInnsending(endring);
+  });
+
   useEffect(() => {
     if (!sykmeldingsperioder && !kvitteringEksterntSystem?.avsenderSystem) {
       if (!kvittid || kvittid === '') return;
-      hentKvitteringsdata(kvittid);
+      onHentKvitteringsdata(kvittid);
     }
-    setNyInnsending(false);
-  }, [hentKvitteringsdata, kvitteringEksterntSystem?.avsenderSystem, kvittid, setNyInnsending, sykmeldingsperioder]);
+    onSetNyInnsending(false);
+  }, [kvitteringEksterntSystem?.avsenderSystem, kvittid, sykmeldingsperioder]);
 
   const onSetOpprinneligNyMaanedsinntekt = useEffectEvent(() => {
     setOpprinneligNyMaanedsinntekt();
@@ -130,7 +140,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const visRefusjon = paakrevdeOpplysninger?.includes(forespoerselType.refusjon);
 
-  const cx = classNames.bind(lokalStyles);
   const classNameWrapperFravaer = cx({
     fravaerswrapperwrapper: visArbeidsgiverperiode
   });
