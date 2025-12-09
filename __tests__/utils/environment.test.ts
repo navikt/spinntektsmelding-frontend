@@ -17,21 +17,18 @@ describe('Environment', () => {
 
   describe('loginServiceUrl', () => {
     it('should return login service URL with redirect placeholder', async () => {
-      vi.resetModules();
       process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL = 'https://login.example.com';
       const { default: env } = await import('../../config/environment');
       expect(env.loginServiceUrl).toBe('https://login.example.com?redirect=XXX');
     });
 
     it('should handle undefined login service URL', async () => {
-      vi.resetModules();
       delete process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL;
       const { default: env } = await import('../../config/environment');
       expect(env.loginServiceUrl).toBe('undefined?redirect=XXX');
     });
 
     it('should handle empty login service URL', async () => {
-      vi.resetModules();
       process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL = '';
       const { default: env } = await import('../../config/environment');
       expect(env.loginServiceUrl).toBe('?redirect=XXX');
@@ -40,7 +37,6 @@ describe('Environment', () => {
 
   describe('loginServiceUrlUtenRedirect', () => {
     it('should return login service URL without redirect', async () => {
-      vi.resetModules();
       process.env.NEXT_PUBLIC_LOGIN_SERVICE_URL = 'https://login.example.com';
       const { default: env } = await import('../../config/environment');
       expect(env.loginServiceUrlUtenRedirect).toBe('https://login.example.com');
