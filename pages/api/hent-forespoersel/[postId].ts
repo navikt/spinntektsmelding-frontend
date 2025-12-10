@@ -17,7 +17,7 @@ export const config = {
 const handler = (req: NextApiRequest, res: NextApiResponse<any>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
-    const mockdata = 'trenger-originalen-16dager';
+    const mockdata = 'trenger-ikke-agp';
     const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
     if (!fs.existsSync(filePath)) {
