@@ -1,7 +1,7 @@
 import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
-import { Alert, BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
+import { Alert, BodyLong, Button, Checkbox } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
@@ -24,6 +24,7 @@ import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerA
 import { finnSammenhengendePeriode } from '../../utils/finnBestemmendeFravaersdag';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { useShallow } from 'zustand/react/shallow';
+import NumberField from '../NumberField/NumberField';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -436,7 +437,7 @@ export default function Arbeidsgiverperiode({
       {advarselKortPeriode.length > 0 && !arbeidsgiverperiodeDisabled && (
         <>
           <div className={lokalStyles.wrapperUtbetaling}>
-            <TextField
+            <NumberField
               className={lokalStyles.refusjonBeloep}
               label='Utbetalt under arbeidsgiverperiode'
               onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}

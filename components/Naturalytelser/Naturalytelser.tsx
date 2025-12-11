@@ -1,4 +1,4 @@
-import { Button, Checkbox, TextField } from '@navikt/ds-react';
+import { Button, Checkbox } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
@@ -10,6 +10,7 @@ import { useEffect, useMemo } from 'react';
 import DatoVelger from '../DatoVelger/DatoVelger';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import stringishToNumber from '../../utils/stringishToNumber';
+import NumberField from '../NumberField/NumberField';
 
 export default function Naturalytelser() {
   const {
@@ -86,7 +87,7 @@ export default function Naturalytelser() {
                   </td>
 
                   <td>
-                    <TextField
+                    <NumberField
                       label='Verdi naturalytelse - kr/måned'
                       hideLabel
                       className={styles.fnr}
