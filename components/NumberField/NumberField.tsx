@@ -7,7 +7,13 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     const sanitizedValue = value.replace(/[^0-9,]/g, '');
     e.target.value = sanitizedValue;
     if (props.onChange) {
-      props.onChange(e);
+      props.onChange({
+        ...e,
+        target: {
+          ...e.target,
+          value: sanitizedValue
+        }
+      });
     }
   };
 
