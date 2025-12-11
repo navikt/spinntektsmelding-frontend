@@ -12,6 +12,7 @@ import stringishToNumber from '../../utils/stringishToNumber';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import ButtonSlette from '../ButtonSlette';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
+import NumberField from '../NumberField/NumberField';
 
 interface AarsaksvelgerProps {
   bruttoinntekt?: Inntekt;
@@ -64,7 +65,7 @@ export default function Aarsaksvelger({
         <Fragment key={aarsak.id}>
           <div className={lokalStyles.endremaaanedsinntekt}>
             {key === 0 && (
-              <TextField
+              <NumberField
                 label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
                 defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
                 id={ensureValidHtmlId('inntekt.beregnetInntekt')}

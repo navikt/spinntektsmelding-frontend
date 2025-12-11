@@ -1,10 +1,11 @@
-import { Alert, BodyLong, TextField } from '@navikt/ds-react';
+import { Alert, BodyLong } from '@navikt/ds-react';
 import { useState } from 'react';
 import formatCurrency from '../../utils/formatCurrency';
 import TextLabel from '../TextLabel';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import ButtonEndre from '../ButtonEndre';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
+import NumberField from '../NumberField/NumberField';
 
 interface RefusjonArbeidsgiverBelopProps {
   bruttoinntekt: number;
@@ -58,7 +59,7 @@ export default function RefusjonArbeidsgiverBelop({
   return (
     <>
       <div className={localStyles.beloepswrapper}>
-        <TextField
+        <NumberField
           className={localStyles.refusjonBeloep}
           label='Oppgi refusjonsbeløpet per måned'
           value={bruttoinntekt}
