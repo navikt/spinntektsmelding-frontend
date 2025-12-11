@@ -1,7 +1,7 @@
 import lokalStyles from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
-import { Button, TextField } from '@navikt/ds-react';
+import { Button } from '@navikt/ds-react';
 import SelectEndringBruttoinntekt from './SelectEndringBruttoinntekt';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import { Inntekt } from '../../state/state';

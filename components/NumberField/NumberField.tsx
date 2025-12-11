@@ -4,9 +4,9 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Tillat kun tall og komma
-    let sanitizedValue = value.replace(/[^0-9,]/g, '');
+    let sanitizedValue = value.replaceAll(/[^0-9,]/g, '');
     const parts = sanitizedValue.split(',');
-    sanitizedValue = parts[0] + (parts.length > 1 ? ',' + parts.slice(1).join('').replace(/,/g, '') : '');
+    sanitizedValue = parts[0] + (parts.length > 1 ? ',' + parts.slice(1).join('').replaceAll(',', '') : '');
 
     e.target.value = sanitizedValue;
     if (props.onChange) {
@@ -22,7 +22,7 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
 
   // Konverter value til norsk tallformat (punktum blir komma) og behold kun ett komma
   const formatValue = (val: string | number): string => {
-    const str = String(val).replace('.', ',');
+    const str = String(val).replaceAll('.', ',');
     const parts = str.split(',');
     return parts[0] + (parts.length > 1 ? ',' + parts.slice(1).join('') : '');
   };
