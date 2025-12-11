@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import NumberField from '../../components/NumberField/NumberField';
 
@@ -30,6 +29,13 @@ describe('NumberField', () => {
 
     const input = screen.getByLabelText(/Beløp/i);
     expect(input).toHaveValue('1234,56');
+  });
+
+  it('displays value with just one comma', () => {
+    render(<NumberField label='Beløp' value='12,34,56' />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    expect(input).toHaveValue('12,3456');
   });
 
   it('allows only numbers and comma in input', async () => {
