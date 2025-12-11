@@ -1,12 +1,20 @@
 import { TextField } from '@navikt/ds-react';
 
+const sanitizeToSingleComma = (value: string): string => {
+  const parts = value.split(',');
+  return parts[0] + (parts.length > 1 ? ',' + parts.slice(1).join('') : '');
+};
+
+const formatToNorwegianNumber = (val: string | number): string => {
+  const str = String(val).replaceAll('.', ',');
+  return sanitizeToSingleComma(str);
+};
+
 export default function NumberField({ ...props }: React.ComponentProps<typeof TextField>) {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
-    let sanitizedValue = value.replaceAll(/[^0-9,]/g, '');
-    const parts = sanitizedValue.split(',');
-    sanitizedValue = parts[0] + (parts.length > 1 ? ',' + parts.slice(1).join('').replaceAll(',', '') : '');
+    const sanitizedValue = sanitizeToSingleComma(value.replaceAll(/[^0-9,]/g, ''));
 
     e.target.value = sanitizedValue;
 
@@ -15,14 +23,10 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     }
   };
 
-  const formatValue = (val: string | number): string => {
-    const str = String(val).replaceAll('.', ',');
-    const parts = str.split(',');
-    return parts[0] + (parts.length > 1 ? ',' + parts.slice(1).join('') : '');
-  };
-
   const formattedValue =
-    typeof props.value === 'string' || typeof props.value === 'number' ? formatValue(props.value) : props.value;
+    typeof props.value === 'string' || typeof props.value === 'number'
+      ? formatToNorwegianNumber(props.value)
+      : props.value;
 
   return <TextField inputMode='decimal' {...props} value={formattedValue} onChange={onChange} />;
 }
