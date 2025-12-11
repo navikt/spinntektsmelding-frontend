@@ -85,7 +85,7 @@ export default function useFyllInnsending() {
           );
 
     let kreverAgp = true;
-    if (forespurtData?.arbeidsgiverperiode?.paakrevd === false || !harForespurtArbeidsgiverperiode) {
+    if (!harForespurtArbeidsgiverperiode) {
       kreverAgp = false;
       setSkjaeringstidspunkt(
         forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
@@ -108,7 +108,6 @@ export default function useFyllInnsending() {
           erBegrensetForespoersel
         )
       : forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
-
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
           return KonverterEndringAarsakSchema.parse(endringAarsak);

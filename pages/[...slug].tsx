@@ -229,7 +229,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   };
 
   const mellomregningBeregnetBestemmendeFraværsdag = useMemo(() => {
-    if (!harForespurtArbeidsgiverperiode) {
+    if (!harForespurtArbeidsgiverperiode && !overstyrSkalViseAgp) {
       return parseIsoDate(
         forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
       );
@@ -251,7 +251,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     harForespurtArbeidsgiverperiode,
     forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt,
-    begrensetForespoersel
+    begrensetForespoersel,
+    overstyrSkalViseAgp
   ]);
 
   const beregnetBestemmendeFraværsdag = behandlingsdagerInnsending

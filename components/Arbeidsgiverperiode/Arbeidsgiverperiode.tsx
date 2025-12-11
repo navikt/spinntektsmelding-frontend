@@ -58,7 +58,8 @@ export default function Arbeidsgiverperiode({
     fullLonnIArbeidsgiverPerioden,
     arbeidsgiverperiodeDisabled,
     setArbeidsgiverperiodeDisabled,
-    setArbeidsgiverperiodeKort
+    setArbeidsgiverperiodeKort,
+    sykmeldingsperioder
   } = useBoundStore(
     useShallow((state) => ({
       leggTilArbeidsgiverperiode: state.leggTilArbeidsgiverperiode,
@@ -79,7 +80,8 @@ export default function Arbeidsgiverperiode({
       fullLonnIArbeidsgiverPerioden: state.fullLonnIArbeidsgiverPerioden,
       arbeidsgiverperiodeDisabled: state.arbeidsgiverperiodeDisabled,
       setArbeidsgiverperiodeDisabled: state.setArbeidsgiverperiodeDisabled,
-      setArbeidsgiverperiodeKort: state.setArbeidsgiverperiodeKort
+      setArbeidsgiverperiodeKort: state.setArbeidsgiverperiodeKort,
+      sykmeldingsperioder: state.sykmeldingsperioder
     }))
   );
 
@@ -354,7 +356,11 @@ export default function Arbeidsgiverperiode({
               periodeId={periodeIndex.toString()}
               onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
               toDate={new Date()}
-              defaultMonth={periodeIndex > 0 ? arbeidsgiverperioder?.[periodeIndex - 1].tom : undefined}
+              defaultMonth={
+                periodeIndex > 0
+                  ? arbeidsgiverperioder?.[periodeIndex - 1].tom
+                  : (sykmeldingsperioder?.[0].fom ?? undefined)
+              }
             />
           )}
         </div>
@@ -393,6 +399,7 @@ export default function Arbeidsgiverperiode({
               onSlettRad={() => clickSlettArbeidsgiverperiode(PeriodeType.NY_PERIODE)}
               toDate={new Date()}
               disabled={arbeidsgiverperiodeDisabled}
+              defaultMonth={sykmeldingsperioder?.[0].fom ?? undefined}
             />
           )}
         </>
