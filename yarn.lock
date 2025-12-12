@@ -1251,12 +1251,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:^16.0.8":
-  version: 16.0.8
-  resolution: "@next/bundle-analyzer@npm:16.0.8"
+"@next/bundle-analyzer@npm:^16.0.10":
+  version: 16.0.10
+  resolution: "@next/bundle-analyzer@npm:16.0.10"
   dependencies:
     webpack-bundle-analyzer: "npm:4.10.1"
-  checksum: 10c0/4e30a51e64828f0ec24bfa70264013e6d5da6c2752b87076d7f521e53f4d67620b04a421e21d231c925e72dc2518075111c6deab93e338b6c6afddabeeb26b53
+  checksum: 10c0/0b5d43c3915ef518a0b52741cc3ca60faea08b7ef594fc25d4552b7e091cd2140d25d68bfe0537dc428eaf44aa875643a4848c75f925a2f3834291ae2e1756ae
   languageName: node
   linkType: hard
 
@@ -1267,12 +1267,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:16.0.8":
-  version: 16.0.8
-  resolution: "@next/eslint-plugin-next@npm:16.0.8"
+"@next/eslint-plugin-next@npm:16.0.10":
+  version: 16.0.10
+  resolution: "@next/eslint-plugin-next@npm:16.0.10"
   dependencies:
     fast-glob: "npm:3.3.1"
-  checksum: 10c0/36e06c68e9e665fcb65faadffe8b34952dc15348fe0a2e123f6f96d08435286497ff56dbc2e0c2e5deb7f821fbd5e7317565dedd28a7f150bb3fae59fcfb78c0
+  checksum: 10c0/fc9836536deacb095c442c67c22d963871c24e47d07721c2d08511cc8fa422b5aa19bf84dbd0d90b1b37783727e710d2cb6e16e0fd0d1ad4eee35f34cdf78785
   languageName: node
   linkType: hard
 
@@ -3935,11 +3935,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-next@npm:^16.0.8":
-  version: 16.0.8
-  resolution: "eslint-config-next@npm:16.0.8"
+"eslint-config-next@npm:^16.0.10":
+  version: 16.0.10
+  resolution: "eslint-config-next@npm:16.0.10"
   dependencies:
-    "@next/eslint-plugin-next": "npm:16.0.8"
+    "@next/eslint-plugin-next": "npm:16.0.10"
     eslint-import-resolver-node: "npm:^0.3.6"
     eslint-import-resolver-typescript: "npm:^3.5.2"
     eslint-plugin-import: "npm:^2.32.0"
@@ -3954,7 +3954,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/0aa69d1564e30d269251fa4fa7f4219db6e87685c61411ed35f21cc15c96397a5bf39b2c77205e1561d4cecda61e6c34db54e3d20c32a9a8173377b7ef66b8cd
+  checksum: 10c0/9a5650c91dfdf6853822e1d2062e1c4d10cee76187cf7723de87a0e44d3d26877a29af55cd2d453ccb8bc46708fa7261db786e852e0c51d9a8a80058c33b009d
   languageName: node
   linkType: hard
 
@@ -7608,7 +7608,7 @@ __metadata:
     "@navikt/nav-dekoratoren-moduler": "npm:^3.6.0"
     "@navikt/next-logger": "npm:4.4.4"
     "@navikt/oasis": "npm:^4.1.1"
-    "@next/bundle-analyzer": "npm:^16.0.8"
+    "@next/bundle-analyzer": "npm:^16.0.10"
     "@playwright/test": "npm:^1.57.0"
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
@@ -7626,7 +7626,7 @@ __metadata:
     csp-header: "npm:^6.2.0"
     date-fns: "npm:4.1.0"
     eslint: "npm:^9.38.0"
-    eslint-config-next: "npm:^16.0.8"
+    eslint-config-next: "npm:^16.0.10"
     html-react-parser: "npm:^5.2.10"
     husky: "npm:^9.1.7"
     immer: "npm:11.0.1"
