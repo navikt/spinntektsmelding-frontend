@@ -36,7 +36,7 @@ import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
 import classNames from 'classnames/bind';
 import { harGyldigeRefusjonEndringer } from '../../../utils/harGyldigeRefusjonEndringer';
-import hentKvitteringsdataSSR from '../../../utils/hentKvitteringsdataSSR';
+import hentKvitteringsdataAgiSSR from '../../../utils/hentKvitteringsdataAgiSSR';
 import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../schema/ForespurtDataSchema';
@@ -57,6 +57,7 @@ import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
 import path from 'path';
 import fs from 'fs';
+import { redirectTilLogin } from '../../../utils/redirectTilLogin';
 
 type PersonData = {
   navn: string;
@@ -497,7 +498,7 @@ export async function getServerSideProps(context: any) {
   }
 
   try {
-    kvittering = await hentKvitteringsdataSSR(kvittid, token);
+    kvittering = await hentKvitteringsdataAgiSSR(kvittid, token);
     kvittering!.status = 200;
   } catch (error: any) {
     console.error('Error fetching selvbestemt kvittering:', error);
@@ -516,19 +517,6 @@ export async function getServerSideProps(context: any) {
       kvittering: kvittering?.data?.success,
       kvitteringStatus: kvittering?.status,
       dataFraBackend: !!kvittering?.data?.success?.selvbestemtInntektsmelding
-    }
-  };
-}
-
-function redirectTilLogin(context: any) {
-  const ingress = context.req.headers.host + environment.baseUrl;
-  const currentPath = `https://${ingress}${context.resolvedUrl}`;
-
-  const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
-  return {
-    redirect: {
-      destination: destination,
-      permanent: false
     }
   };
 }

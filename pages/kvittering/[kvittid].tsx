@@ -20,13 +20,13 @@ import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgive
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../state/useBoundStore';
-import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
+// import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 
 import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import { Fragment, useEffect, useEffectEvent } from 'react';
+import { Fragment, useEffect, useEffectEvent, useRef } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
@@ -44,15 +44,26 @@ import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import PersonVisning from '../../components/Person/PersonVisning';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
+import useKvitteringInit from '../../state/useKvitteringInit';
+import path from 'path';
+import fs from 'fs';
+import { getToken, validateToken } from '@navikt/oasis';
+import { redirectTilLogin } from '../../utils/redirectTilLogin';
+import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
 
 const cx = classNames.bind(lokalStyles);
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  kvittid
+  kvittid,
+  kvittering,
+  kvitteringStatus,
+  dataFraBackend = false
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
 
-  const hentKvitteringsdata = useHentKvitteringsdata();
+  // const hentKvitteringsdata = useHentKvitteringsdata();
+  const kvitteringInit = useKvitteringInit();
+  const storeInitialized = useRef(false);
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
@@ -75,6 +86,19 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringData = useBoundStore((state) => state.kvitteringData);
 
   const refusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
+
+  // Initialiser Zustand-store med SSR-data ved første klient-render
+  // Dette sikrer at store har data selv ved page refresh
+  const onKvitteringInit = useEffectEvent(() => {
+    if (dataFraBackend && kvittering && !storeInitialized.current) {
+      kvitteringInit(kvittering);
+      storeInitialized.current = true;
+    }
+  });
+
+  useEffect(() => {
+    onKvitteringInit();
+  }, []);
 
   const clickEndre = () => {
     if (isValidUUID(kvittid)) {
@@ -111,21 +135,21 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
 
-  const onHentKvitteringsdata = useEffectEvent((kvittid: string) => {
-    hentKvitteringsdata(kvittid);
-  });
+  // const onHentKvitteringsdata = useEffectEvent((kvittid: string) => {
+  //   hentKvitteringsdata(kvittid);
+  // });
 
-  const onSetNyInnsending = useEffectEvent((endring: boolean) => {
-    setNyInnsending(endring);
-  });
+  // const onSetNyInnsending = useEffectEvent((endring: boolean) => {
+  //   setNyInnsending(endring);
+  // });
 
-  useEffect(() => {
-    if (!sykmeldingsperioder && !kvitteringEksterntSystem?.avsenderSystem) {
-      if (!kvittid || kvittid === '') return;
-      onHentKvitteringsdata(kvittid);
-    }
-    onSetNyInnsending(false);
-  }, [kvitteringEksterntSystem?.avsenderSystem, kvittid, sykmeldingsperioder]);
+  // useEffect(() => {
+  //   if (!sykmeldingsperioder && !kvitteringEksterntSystem?.avsenderSystem) {
+  //     if (!kvittid || kvittid === '') return;
+  //     onHentKvitteringsdata(kvittid);
+  //   }
+  //   onSetNyInnsending(false);
+  // }, [kvitteringEksterntSystem?.avsenderSystem, kvittid, sykmeldingsperioder]);
 
   const onSetOpprinneligNyMaanedsinntekt = useEffectEvent(() => {
     setOpprinneligNyMaanedsinntekt();
@@ -301,11 +325,65 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
 }
 
 export async function getServerSideProps(context: any) {
+  const env = process.env.NODE_ENV;
+  if (env === 'development') {
+    let testdata = { default: null };
+    const mockdata = 'kvittering-bug-endre';
+
+    const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
+
+    if (fs.existsSync(filePath)) {
+      testdata = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    }
+
+    return {
+      props: {
+        kvittid: context.query.kvittid,
+        kvittering: testdata,
+        kvitteringStatus: 200,
+        dataFraBackend: true
+      }
+    };
+  }
   const kvittid = context.query.kvittid;
+
+  let kvittering: { status: number; data: { success: any } };
+
+  const token = getToken(context.req);
+  if (!token) {
+    /* håndter manglende token */
+    console.error('Mangler token i header');
+    return redirectTilLogin(context);
+  }
+
+  const validation = await validateToken(token);
+  if (!validation.ok) {
+    /* håndter valideringsfeil */
+    console.error('Validering av token feilet');
+    return redirectTilLogin(context);
+  }
+
+  try {
+    kvittering = await hentKvitteringsdataSSR(kvittid, token);
+    console.log('kvittering:', JSON.stringify(kvittering, null, 2));
+    kvittering!.status = 200;
+  } catch (error: any) {
+    console.error('Error fetching selvbestemt kvittering:', error);
+    kvittering = { data: { success: null }, status: error.status };
+
+    if (error.status === 404) {
+      return {
+        notFound: true
+      };
+    }
+  }
 
   return {
     props: {
-      kvittid
+      kvittid,
+      kvittering: kvittering?.data,
+      kvitteringStatus: kvittering?.status,
+      dataFraBackend: !!kvittering?.data?.kvitteringNavNo
     }
   };
 }

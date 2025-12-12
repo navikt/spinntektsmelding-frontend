@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import fetchKvitteringsdata from '../../utils/fetchKvitteringsdataSSR';
-import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
+import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataAgiSSR';
 
 vi.mock('../../utils/fetchKvitteringsdataSSR');
 
