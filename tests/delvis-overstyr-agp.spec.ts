@@ -40,16 +40,16 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   await page.waitForTimeout(5000);
   await page.locator('button:has-text("Endre")').first().click();
 
-  await formPage.fillInput('Fra', '01.02.2023');
-  await formPage.fillInput('Til', '16.02.2023');
+  await formPage.fillInput('Fra', '06.12.2024');
+  await formPage.fillInput('Til', '21.12.2024');
 
   const endreKnapp2 = page.locator('button:has-text("Endre")').nth(0);
   await endreKnapp2.click();
 
-  const maanedslonn = page.locator('label:has-text("Månedslønn 05.12.2024")');
+  const maanedslonn = page.locator('label:has-text("Månedslønn 06.12.2024")');
   await expect(maanedslonn).toHaveValue('36000');
 
-  await formPage.fillInput('Månedslønn 05.12.2024', '50000');
+  await formPage.fillInput('Månedslønn 06.12.2024', '50000');
 
   await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
@@ -85,15 +85,15 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
       egenmeldinger: [],
       perioder: [
         {
-          fom: '2023-02-01',
-          tom: '2023-02-16'
+          fom: '2024-12-06',
+          tom: '2024-12-21'
         }
       ],
       redusertLoennIAgp: null
     },
     inntekt: {
       beloep: 50000,
-      inntektsdato: '2024-12-05',
+      inntektsdato: '2024-12-06',
       endringAarsaker: [{ aarsak: 'Bonus' }]
     },
     refusjon: {
@@ -112,7 +112,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
 
   // Check final page
 
-  await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/05.12.2024/);
+  await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/06.12.2024/);
   await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   await expect(page.locator('text="12345678"')).toBeVisible();
   await expect(page.locator('text="Bonus"')).toBeVisible();
