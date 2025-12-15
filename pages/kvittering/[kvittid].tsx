@@ -172,6 +172,14 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     infoboks: visArbeidsgiverperiode
   });
 
+  const aktiveSykmeldingsperioder = dataFraBackend
+    ? kvittering?.kvitteringNavNo?.sykmeldingsperioder
+    : sykmeldingsperioder;
+
+  const aktiveEgenmeldinger = dataFraBackend
+    ? kvittering?.kvitteringNavNo?.skjema.agp.egenmeldinger
+    : egenmeldingsperioder;
+
   return (
     <div className={styles.container}>
       <Head>
@@ -205,8 +213,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (
                   <Fravaersperiode
-                    sykmeldingsperioder={sykmeldingsperioder}
-                    egenmeldingsperioder={egenmeldingsperioder}
+                    sykmeldingsperioder={aktiveSykmeldingsperioder}
+                    egenmeldingsperioder={aktiveEgenmeldinger}
                     paakrevdeOpplysninger={paakrevdeOpplysninger}
                   />
                 )}
@@ -365,7 +373,6 @@ export async function getServerSideProps(context: any) {
 
   try {
     kvittering = await hentKvitteringsdataSSR(kvittid, token);
-    console.log('kvittering:', JSON.stringify(kvittering, null, 2));
     kvittering!.status = 200;
   } catch (error: any) {
     console.error('Error fetching selvbestemt kvittering:', error);
