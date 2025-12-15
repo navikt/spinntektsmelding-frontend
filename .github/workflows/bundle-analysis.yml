@@ -35,7 +35,7 @@ jobs:
         run: corepack enable
 
       - name: Cache Yarn 2 files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .yarn/cache
@@ -47,7 +47,7 @@ jobs:
       - run: yarn install --immutable --inline-builds
 
       - name: Cache Next.js build cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock', 'next.config.js', 'tsconfig.json') }}

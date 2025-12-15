@@ -31,7 +31,7 @@ jobs:
       - name: Enable corepack (Yarn 2+)
         run: corepack enable
       - name: Cache Yarn 2 files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .yarn/cache
@@ -41,7 +41,7 @@ jobs:
             ${{ runner.os }}-yarn2-
       - run: yarn install --immutable --inline-builds
       - name: Cache Next.js build cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock', 'next.config.js', 'tsconfig.json') }}
@@ -66,7 +66,7 @@ jobs:
       - name: Enable corepack (Yarn 2+)
         run: corepack enable
       - name: Cache Yarn 2 files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .yarn/cache
@@ -76,7 +76,7 @@ jobs:
             ${{ runner.os }}-yarn2-
       - run: yarn install --immutable --inline-builds
       - name: Cache Vitest
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: node_modules/.vitest
           key: ${{ runner.os }}-vitest-${{ hashFiles('yarn.lock') }}
@@ -101,7 +101,7 @@ jobs:
       - name: Enable corepack (Yarn 2+)
         run: corepack enable
       - name: Cache Yarn 2 files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .yarn/cache
@@ -112,7 +112,7 @@ jobs:
       - run: yarn install --immutable --inline-builds
       - run: yarn lint
       - name: Cache ESLint
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: node_modules/.cache/eslint
           key: ${{ runner.os }}-eslint-${{ hashFiles('yarn.lock', '.eslintrc*') }}
@@ -137,7 +137,7 @@ jobs:
       - name: Enable corepack (Yarn 2+)
         run: corepack enable
       - name: Cache Yarn 2 files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .yarn/cache
