@@ -172,13 +172,56 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     infoboks: visArbeidsgiverperiode
   });
 
-  const aktiveSykmeldingsperioder = dataFraBackend
-    ? kvittering?.kvitteringNavNo?.sykmeldingsperioder
-    : sykmeldingsperioder;
+  // Bruk SSR-data direkte ved første render for å unngå CLS
+  const ssrData = kvittering?.kvitteringNavNo;
 
-  const aktiveEgenmeldinger = dataFraBackend
-    ? kvittering?.kvitteringNavNo?.skjema.agp.egenmeldinger
-    : egenmeldingsperioder;
+  const aktiveSykmeldingsperioder = dataFraBackend ? ssrData?.sykmeldingsperioder : sykmeldingsperioder;
+
+  const aktiveEgenmeldinger = dataFraBackend ? ssrData?.skjema?.agp?.egenmeldinger : egenmeldingsperioder;
+
+  const aktiveArbeidsgiverperioder = dataFraBackend
+    ? ssrData?.skjema?.agp?.perioder?.map((p: any, i: number) => ({
+        fom: parseIsoDate(p.fom),
+        tom: parseIsoDate(p.tom),
+        id: `agp-${i}`
+      }))
+    : arbeidsgiverperioder;
+
+  const aktivBruttoinntekt = dataFraBackend
+    ? {
+        bruttoInntekt: ssrData?.skjema?.inntekt?.beloep,
+        endringAarsaker: ssrData?.skjema?.inntekt?.endringAarsaker ?? []
+      }
+    : bruttoinntekt;
+
+  const aktivBestemmendeFravaersdag = dataFraBackend
+    ? parseIsoDate(ssrData?.skjema?.inntekt?.inntektsdato)
+    : visningBestemmendeFravaersdag;
+
+  const aktiveNaturalytelser = dataFraBackend ? (ssrData?.skjema?.naturalytelser ?? []) : naturalytelser;
+
+  const aktivFullLonnIArbeidsgiverPerioden = dataFraBackend
+    ? {
+        status: (ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep !== undefined ? 'Nei' : 'Ja') as 'Ja' | 'Nei',
+        begrunnelse: ssrData?.skjema?.agp?.redusertLoennIAgp?.begrunnelse,
+        utbetalt: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep
+      }
+    : fullLonnIArbeidsgiverPerioden;
+
+  const aktivLonnISykefravaeret = dataFraBackend
+    ? {
+        status: (ssrData?.skjema?.refusjon ? 'Ja' : 'Nei') as 'Ja' | 'Nei',
+        beloep: ssrData?.skjema?.refusjon?.beloepPerMaaned
+      }
+    : lonnISykefravaeret;
+
+  const aktivInnsendingTidspunkt = dataFraBackend
+    ? ssrData?.mottatt
+      ? ` - ${formatDate(new Date(ssrData.mottatt))} kl. ${formatTime(new Date(ssrData.mottatt))}`
+      : ''
+    : innsendingTidspunkt;
+
+  const ingenAktiveArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(aktiveArbeidsgiverperioder);
 
   return (
     <div className={styles.container}>
@@ -228,8 +271,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                         <div className={lokalStyles.fravaerwrapper}>
                           <div className={lokalStyles.fravaertid}>Dato</div>
                           <div data-cy='bestemmendefravaersdag'>
-                            {visningBestemmendeFravaersdag ? (
-                              formatDate(visningBestemmendeFravaersdag)
+                            {aktivBestemmendeFravaersdag ? (
+                              formatDate(aktivBestemmendeFravaersdag)
                             ) : (
                               <Skeleton variant='text' />
                             )}{' '}
@@ -240,14 +283,14 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                     {visArbeidsgiverperiode && (
                       <div className={lokalStyles.arbeidsgiverperiode}>
                         <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
-                        {!ingenArbeidsgiverperioder && (
+                        {!ingenAktiveArbeidsgiverperioder && (
                           <BodyLong>
                             Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
                             Deretter betaler Nav lønn til den syke eller refunderer bedriften.
                           </BodyLong>
                         )}
-                        {ingenArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
-                        {arbeidsgiverperioder?.map((periode) => (
+                        {ingenAktiveArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
+                        {aktiveArbeidsgiverperioder?.map((periode: Periode) => (
                           <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
                         ))}
                       </div>
@@ -260,8 +303,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <Skillelinje />
                   <Heading2>Beregnet månedslønn</Heading2>
                   <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
-                  <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
-                  {bruttoinntekt.endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
+                  <BodyShort>{formatCurrency(aktivBruttoinntekt?.bruttoInntekt)} kr/måned</BodyShort>
+                  {aktivBruttoinntekt?.endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
                     <Fragment key={endring.aarsak + endringIndex}>
                       <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
@@ -280,11 +323,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                       <div className={lokalStyles.uthevet}>
                         Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
                       </div>
-                      <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden} />
+                      <FullLonnIArbeidsgiverperioden lonnIPerioden={aktivFullLonnIArbeidsgiverPerioden} />
                     </>
                   )}
                   <LonnUnderSykefravaeret
-                    loenn={lonnISykefravaeret!}
+                    loenn={aktivLonnISykefravaeret!}
                     harRefusjonEndringer={harRefusjonEndringer}
                     refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
                   />
@@ -294,17 +337,17 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 <>
                   <Skillelinje />
                   <Heading2>Naturalytelser</Heading2>
-                  <BortfallNaturalytelser ytelser={naturalytelser!} />
+                  <BortfallNaturalytelser ytelser={aktiveNaturalytelser!} />
                 </>
               )}
               <Skillelinje />
             </>
           )}
-          <BodyShort>Kvittering - innsendt inntektsmelding{innsendingTidspunkt}</BodyShort>
+          <BodyShort>Kvittering - innsendt inntektsmelding{aktivInnsendingTidspunkt}</BodyShort>
           <div className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}
-              <Link className={lokalStyles.lukkelenke} href={env.saksoversiktUrl}>
+              <Link className={lokalStyles.lukkelenke} href={env.saksoversiktUrl!}>
                 Lukk
               </Link>
             </div>
