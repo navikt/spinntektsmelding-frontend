@@ -13,7 +13,7 @@ import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useEffect, useEffectEvent, useMemo, useState } from 'react';
 import logEvent from '../../utils/logEvent';
-import { differenceInCalendarDays, differenceInDays } from 'date-fns';
+import { addDays, differenceInCalendarDays, differenceInDays } from 'date-fns';
 import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
@@ -298,6 +298,15 @@ export default function Arbeidsgiverperiode({
 
   const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
 
+  const minFomDate = useMemo(() => {
+    if (skalViseArbeidsgiverperiode) {
+      return sykmeldingsperioder && sykmeldingsperioder.length > 0
+        ? addDays(sykmeldingsperioder[0].fom!, 1)
+        : undefined;
+    }
+    return undefined;
+  }, [skalViseArbeidsgiverperiode, sykmeldingsperioder]);
+
   return (
     <>
       <Heading3 unPadded id='arbeidsgiverperioder'>
@@ -313,11 +322,23 @@ export default function Arbeidsgiverperiode({
         </BodyLong>
       )}
       {skalViseArbeidsgiverperiode && (
-        <BodyLong>
-          Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen. Sykemeldingen er en forlengelse av
-          en tidligere sykeperiode. Hvis du mener dette er feil og at det skal være arbeidsgiverperiode kan du endre
-          dette.
-        </BodyLong>
+        <>
+          <BodyLong>
+            Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen. Sykemeldingen er en forlengelse
+            av en tidligere sykeperiode. Hvis du mener dette er feil og at det skal være arbeidsgiverperiode kan du
+            endre dette.
+          </BodyLong>
+          <Alert variant='info' className={lokalStyles.infoAlert}>
+            <p>
+              Arbeidsgiverperiode skal fylles ut hvis sykmeldt har arbeidet i sykmeldingsperioden slik at første dag med
+              sykefravær er mer enn 16 dager etter forrige sykefravær.
+            </p>
+            <p>
+              Hvis arbeidsgiverperioden er den samme som tidligere sykmeldingsperiode så skal arbeidsgiverperioden ikke
+              fylles ut. Da skal inntekstmeldingen sendes uten arbeidsgiverperiode.
+            </p>
+          </Alert>
+        </>
       )}
       {arbeidsgiverperioder?.map((periode, periodeIndex) => (
         <div key={periode.id} className={lokalStyles.dateWrapper}>
@@ -357,6 +378,7 @@ export default function Arbeidsgiverperiode({
               periodeId={periodeIndex.toString()}
               onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
               toDate={new Date()}
+              fromDate={minFomDate}
               defaultMonth={
                 periodeIndex > 0
                   ? arbeidsgiverperioder?.[periodeIndex - 1].tom
@@ -401,6 +423,7 @@ export default function Arbeidsgiverperiode({
               toDate={new Date()}
               disabled={arbeidsgiverperiodeDisabled}
               defaultMonth={sykmeldingsperioder?.[0].fom ?? undefined}
+              fromDate={minFomDate}
             />
           )}
         </>

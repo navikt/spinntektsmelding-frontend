@@ -17,7 +17,7 @@ export const config = {
 const handler = (req: NextApiRequest, res: NextApiResponse<any>) => {
   const env = process.env.NODE_ENV;
   if (env == 'development') {
-    const mockdata = 'kvittering-bug-endre';
+    const mockdata = 'kvittering';
     const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
     if (!fs.existsSync(filePath)) {
