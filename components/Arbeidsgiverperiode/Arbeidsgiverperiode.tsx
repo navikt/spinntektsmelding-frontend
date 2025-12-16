@@ -307,6 +307,15 @@ export default function Arbeidsgiverperiode({
     return undefined;
   }, [skalViseArbeidsgiverperiode, sykmeldingsperioder]);
 
+  const maxTomDate = useMemo(() => {
+    if (skalViseArbeidsgiverperiode) {
+      return sykmeldingsperioder && sykmeldingsperioder.length > 0
+        ? sykmeldingsperioder[sykmeldingsperioder.length - 1].tom!
+        : undefined;
+    }
+    return undefined;
+  }, [skalViseArbeidsgiverperiode, sykmeldingsperioder]);
+
   return (
     <>
       <Heading3 unPadded id='arbeidsgiverperioder'>
@@ -377,7 +386,7 @@ export default function Arbeidsgiverperiode({
               kanSlettes={periodeIndex > 0}
               periodeId={periodeIndex.toString()}
               onSlettRad={() => clickSlettArbeidsgiverperiode(periode.id)}
-              toDate={new Date()}
+              toDate={maxTomDate ?? new Date()}
               fromDate={minFomDate}
               defaultMonth={
                 periodeIndex > 0
@@ -420,7 +429,7 @@ export default function Arbeidsgiverperiode({
               kanSlettes={false}
               periodeId={PeriodeType.NY_PERIODE.toString()}
               onSlettRad={() => clickSlettArbeidsgiverperiode(PeriodeType.NY_PERIODE)}
-              toDate={new Date()}
+              toDate={maxTomDate ?? new Date()}
               disabled={arbeidsgiverperiodeDisabled}
               defaultMonth={sykmeldingsperioder?.[0].fom ?? undefined}
               fromDate={minFomDate}
