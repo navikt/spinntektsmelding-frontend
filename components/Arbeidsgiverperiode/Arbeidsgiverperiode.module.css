@@ -72,6 +72,11 @@
   grid-template-rows: [title] min-content [select];
 }
 
+.infoAlert {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 @media screen and (max-width: 500px) {
   .endreknapper {
     flex-direction: column;
