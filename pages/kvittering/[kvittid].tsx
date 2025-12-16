@@ -71,6 +71,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
+  const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
@@ -90,6 +91,19 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringData = useBoundStore((state) => state.kvitteringData);
 
   const refusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
+
+  const onSetSkjemaFeilet = useEffectEvent(() => {
+    setSkjemaFeilet();
+  });
+
+  useEffect(() => {
+    if (kvitteringStatus === 500) {
+      const harDataIStore = sykmeldingsperioder && sykmeldingsperioder.length > 0;
+      if (!harDataIStore) {
+        onSetSkjemaFeilet();
+      }
+    }
+  }, [kvitteringStatus, sykmeldingsperioder]);
 
   // Initialiser Zustand-store med SSR-data ved første klient-render
   // Dette sikrer at store har data selv ved page refresh
@@ -232,6 +246,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const ingenAktiveArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(aktiveArbeidsgiverperioder);
 
+  const aktivAvsender = dataFraBackend ? ssrData?.avsender : undefined;
+  const aktivSykmeldt = dataFraBackend ? ssrData?.sykmeldt : undefined;
+
   return (
     <div className={styles.container}>
       <Head>
@@ -260,7 +277,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 </div>
               </div>
 
-              <PersonVisning />
+              <PersonVisning sykmeldt={aktivSykmeldt} avsender={aktivAvsender} />
               {(harForespurtInntekt || harForespurtArbeidsgiverperiode) && <Skillelinje />}
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (
