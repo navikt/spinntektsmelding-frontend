@@ -50,8 +50,12 @@ import fs from 'fs';
 import { getToken, validateToken } from '@navikt/oasis';
 import { redirectTilLogin } from '../../utils/redirectTilLogin';
 import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
+import { ApiPeriodeSchema } from '../../schema/ApiPeriodeSchema';
+import z from 'zod';
 
 const cx = classNames.bind(lokalStyles);
+
+type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -175,7 +179,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   // Bruk SSR-data direkte ved første render for å unngå CLS
   const ssrData = kvittering?.kvitteringNavNo;
 
-  const aktiveSykmeldingsperioder = dataFraBackend ? ssrData?.sykmeldingsperioder : sykmeldingsperioder;
+  const aktiveSykmeldingsperioder = dataFraBackend
+    ? ssrData?.sykmeldingsperioder.map((periode: ApiPeriode) => ({
+        fom: parseIsoDate(periode.fom),
+        tom: parseIsoDate(periode.tom)
+      }))
+    : sykmeldingsperioder;
 
   const aktiveEgenmeldinger = dataFraBackend ? ssrData?.skjema?.agp?.egenmeldinger : egenmeldingsperioder;
 
