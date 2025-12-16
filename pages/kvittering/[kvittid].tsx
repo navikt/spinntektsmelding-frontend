@@ -20,7 +20,6 @@ import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgive
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../state/useBoundStore';
-// import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 
 import ButtonPrint from '../../components/ButtonPrint';
 
@@ -51,11 +50,13 @@ import { getToken, validateToken } from '@navikt/oasis';
 import { redirectTilLogin } from '../../utils/redirectTilLogin';
 import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
 import { ApiPeriodeSchema } from '../../schema/ApiPeriodeSchema';
+import { ApiNaturalytelserSchema } from '../../schema/ApiNaturalytelserSchema';
 import z from 'zod';
 
 const cx = classNames.bind(lokalStyles);
 
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
+type ApiNaturalytelse = z.infer<typeof ApiNaturalytelserSchema>;
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -65,7 +66,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
 
-  // const hentKvitteringsdata = useHentKvitteringsdata();
   const kvitteringInit = useKvitteringInit();
   const storeInitialized = useRef(false);
 
@@ -221,7 +221,15 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? parseIsoDate(ssrData?.skjema?.inntekt?.inntektsdato)
     : visningBestemmendeFravaersdag;
 
-  const aktiveNaturalytelser = dataFraBackend ? (ssrData?.skjema?.naturalytelser ?? []) : naturalytelser;
+  const aktiveNaturalytelser =
+    dataFraBackend && ssrData?.skjema?.naturalytelser
+      ? ssrData?.skjema?.naturalytelser && ssrData?.skjema?.naturalytelser.length() > 0
+        ? ssrData?.skjema?.naturalytelser.map((ytelse: ApiNaturalytelse) => ({
+            ...ytelse,
+            sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
+          }))
+        : []
+      : naturalytelser;
 
   const aktivFullLonnIArbeidsgiverPerioden = dataFraBackend
     ? {
