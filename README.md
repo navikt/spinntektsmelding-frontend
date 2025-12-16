@@ -2,7 +2,21 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+
+```bash
+yarn install
+```
+
+**Important:** Due to security hardening (enableScripts: false in .yarnrc.yml), Git hooks are not installed automatically. After your first install, run:
+
+```bash
+yarn husky install
+```
+
+This sets up Git hooks for code quality checks (linting, formatting) before commits.
+
+Then, run the development server:
 
 ```bash
 npm run dev
