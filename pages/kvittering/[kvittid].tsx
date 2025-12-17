@@ -37,7 +37,6 @@ import forespoerselType from '../../config/forespoerselType';
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
-import classNames from 'classnames/bind';
 import parseIsoDate from '../../utils/parseIsoDate';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import PersonVisning from '../../components/Person/PersonVisning';
@@ -52,8 +51,6 @@ import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
 import { ApiPeriodeSchema } from '../../schema/ApiPeriodeSchema';
 import { ApiNaturalytelserSchema } from '../../schema/ApiNaturalytelserSchema';
 import z from 'zod';
-
-const cx = classNames.bind(lokalStyles);
 
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 type ApiNaturalytelse = z.infer<typeof ApiNaturalytelserSchema>;
@@ -79,7 +76,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
+  // const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
 
   const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
 
@@ -140,7 +137,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
   }
 
-  const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
+  // const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
 
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
@@ -182,13 +179,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const visRefusjon = paakrevdeOpplysninger?.includes(forespoerselType.refusjon);
 
-  const classNameWrapperFravaer = cx({
-    fravaerswrapperwrapper: visArbeidsgiverperiode
-  });
-
-  const classNameWrapperSkjaeringstidspunkt = cx({
-    infoboks: visArbeidsgiverperiode
-  });
+  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyles.fravaerswrapperwrapper : '';
+  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyles.infoboks : '';
 
   // Bruk SSR-data direkte ved første render for å unngå CLS
   const ssrData = kvittering?.kvitteringNavNo;
