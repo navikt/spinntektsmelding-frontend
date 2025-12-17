@@ -45,8 +45,8 @@ export type SafeParseMinimal<D extends MinimalData = MinimalData> =
   | { success: true; data: D }
   | { success: false; error: any };
 
-interface FeltFeil {
-  text: string;
+export interface FeltFeil {
+  text?: string;
   felt: string;
 }
 

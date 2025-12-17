@@ -4,7 +4,7 @@ import { EndringAarsakSchema } from '../schema/EndringAarsakSchema';
 import { RefusjonEndringSchema } from '../schema/ApiRefusjonEndringSchema';
 import AapenInnsendingSchema from '../schema/AapenInnsendingSchema';
 
-export type AapenInnsending = z.infer<typeof AapenInnsendingSchema>;
+type AapenInnsending = z.infer<typeof AapenInnsendingSchema>;
 
 export default function validerAapenInnsending(data: Partial<AapenInnsending>) {
   return AapenInnsendingSchema.safeParse(data);
