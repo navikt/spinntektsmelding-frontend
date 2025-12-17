@@ -42,7 +42,7 @@
     "react-dom": "19.2.3",
     "react-hook-form": "7.68.0",
     "swr": "2.3.7",
-    "zod": "^4.2.0",
+    "zod": "4.1.13",
     "zustand": "5.0.9"
   },
   "devDependencies": {
