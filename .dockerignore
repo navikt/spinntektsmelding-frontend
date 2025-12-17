@@ -5,12 +5,47 @@ npm-debug.log
 README.md
 .next
 .git
+
 # Yarn 2 cache
 .yarn/cache
+.yarn/install-state.gz
+
 # Local env and logs
 .env
 *.log
+
 # Test/coverage artifacts
 coverage
 playwright-report
 blob-report
+test-results
+screenshots
+
+# Test files
+__tests__
+__mocks__
+tests
+*.test.ts
+*.test.tsx
+*.spec.ts
+vitest.config.mts
+playwright.config.ts
+
+# Dev tools
+.husky
+.vscode
+.idea
+eslint.config.mjs
+knip.json
+sonar-project.properties
+sonar-report.xml
+
+# Mock data (not needed for prod build)
+mockdata
+
+# Nais config
+nais
+naiserator.yaml
+
+# Documentation
+Files

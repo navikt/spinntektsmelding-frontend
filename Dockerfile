@@ -1,14 +1,11 @@
 # Install dependencies only when needed
 FROM node:24@sha256:20988bcdc6dc76690023eb2505dd273bdeefddcd0bde4bfd1efe4ebf8707f747 AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-# RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc ./
 RUN corepack enable
 
-COPY .yarnrc.yml yarn.lock ./
+# Copy only dependency-related files for better layer caching
+COPY package.json yarn.lock .yarnrc.yml .npmrc ./
 COPY .yarn ./.yarn
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
@@ -21,8 +18,21 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
 FROM node:24@sha256:20988bcdc6dc76690023eb2505dd273bdeefddcd0bde4bfd1efe4ebf8707f747 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY --from=deps /app/.yarn ./.yarn
+COPY --from=deps /app/.yarnrc.yml ./
 
+# Copy source files (tests excluded via .dockerignore)
+COPY package.json yarn.lock next.config.js tsconfig.json ./
+COPY public ./public
+COPY pages ./pages
+COPY components ./components
+COPY state ./state
+COPY utils ./utils
+COPY validators ./validators
+COPY schema ./schema
+COPY config ./config
+COPY styles ./styles
+COPY next-logger.config.js next-env.d.ts ./
 
 ARG BUILDMODE
 ENV BUILDMODE=${BUILDMODE}
