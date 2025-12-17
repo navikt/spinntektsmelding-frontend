@@ -93,6 +93,7 @@
   gap: 1rem;
 }
 
+.beloepperiode,
 .wrapperUtbetaling {
   display: flex;
   flex-direction: row;
