@@ -22,7 +22,7 @@ COPY --from=deps /app/.yarn ./.yarn
 COPY --from=deps /app/.yarnrc.yml ./
 
 # Copy source files (tests excluded via .dockerignore)
-COPY package.json next.config.js tsconfig.json ./
+COPY package.json yarn.lock next.config.js tsconfig.json ./
 COPY public ./public
 COPY pages ./pages
 COPY components ./components
