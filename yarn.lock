@@ -3397,13 +3397,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:2.5.1":
-  version: 2.5.1
-  resolution: "classnames@npm:2.5.1"
-  checksum: 10c0/afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
-  languageName: node
-  linkType: hard
-
 "cli-cursor@npm:^5.0.0":
   version: 5.0.0
   resolution: "cli-cursor@npm:5.0.0"
@@ -3521,10 +3514,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csp-header@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "csp-header@npm:6.3.0"
-  checksum: 10c0/3a57688cff42f78bf29771421a8f3283edd6334d1d8e81ea1e8bd6569e38cd80da127d246233ad952865c524d94090d55c9f48fb248e96f453e03cd34fa8cdb6
+"csp-header@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "csp-header@npm:6.2.1"
+  checksum: 10c0/098c3144b31013ee0bcc6b3dc3e8237296aafd764dc35fe7e91c153800258f1ef9b1614b2273dbe5fdfd3b88d741dfb39df423c8c91dd5658fc0e2946c7713d3
   languageName: node
   linkType: hard
 
@@ -7902,9 +7895,8 @@ __metadata:
     "@vitejs/plugin-react": "npm:^5.1.2"
     "@vitest/coverage-v8": "npm:^4.0.16"
     "@vitest/ui": "npm:^4.0.16"
-    classnames: "npm:2.5.1"
     cross-env: "npm:10.1.0"
-    csp-header: "npm:^6.3.0"
+    csp-header: "npm:^6.2.1"
     date-fns: "npm:4.1.0"
     eslint: "npm:^9.39.2"
     eslint-config-next: "npm:^16.1.1"
