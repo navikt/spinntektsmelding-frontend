@@ -1,12 +1,5 @@
-export interface FeltFeil {
-  felt?: string;
-  text: string;
-}
+import { FeltFeil } from './sendInnCommon';
 
-/**
- * Dedupliserer feilmeldinger (strenger eller FeltFeil-objekter) basert på (felt,text)-par.
- * Bevarer rekkefølgen (første forekomst vinner).
- */
 export function dedupeFeilmeldinger<T extends string | FeltFeil>(list: readonly T[]): T[] {
   const seenKeys = new Set<string>();
 
