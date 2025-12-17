@@ -34,7 +34,6 @@ import { LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../..
 
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
-import classNames from 'classnames/bind';
 import { harGyldigeRefusjonEndringer } from '../../../utils/harGyldigeRefusjonEndringer';
 import hentKvitteringsdataAgiSSR from '../../../utils/hentKvitteringsdataAgiSSR';
 import parseIsoDate from '../../../utils/parseIsoDate';
@@ -88,8 +87,6 @@ function mapNaturalytelserTilInterntFormat(
     verdiBeloep: ytelse.verdiBeloep
   }));
 }
-
-const cx = classNames.bind(lokalStyles);
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -217,13 +214,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       : [];
   }
 
-  const classNameWrapperFravaer = cx({
-    fravaerswrapperwrapper: visArbeidsgiverperiode
-  });
-
-  const classNameWrapperSkjaeringstidspunkt = cx({
-    infoboks: visArbeidsgiverperiode
-  });
+  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyles.fravaerswrapperwrapper : '';
+  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyles.infoboks : '';
 
   let fullLoennIArbeidsgiverPerioden: LonnIArbeidsgiverperioden;
 
