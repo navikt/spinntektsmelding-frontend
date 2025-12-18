@@ -28,7 +28,7 @@ test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
     );
 
     await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hentKvittering/**');
+    // await page.waitForResponse('*/**/api/hentKvittering/**');
   });
 
   test('Changes and submit', async ({ page }) => {

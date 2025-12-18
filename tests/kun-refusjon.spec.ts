@@ -8,13 +8,13 @@ const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 test.describe('Utfylling og innsending av skjema – refusjon', () => {
   test.beforeEach(async ({ page }) => {
     // stub hentKvittering → 404
-    await page.route('*/**/api/hentKvittering/**', (route) =>
-      route.fulfill({
-        status: 404,
-        contentType: 'application/json',
-        body: JSON.stringify({ name: 'Nothing' })
-      })
-    );
+    // await page.route('*/**/api/hentKvittering/**', (route) =>
+    //   route.fulfill({
+    //     status: 404,
+    //     contentType: 'application/json',
+    //     body: JSON.stringify({ name: 'Nothing' })
+    //   })
+    // );
     // stub hent-forespoersel
     await page.route('*/**/api/hent-forespoersel/*', (route) =>
       route.fulfill({
@@ -66,8 +66,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -123,8 +123,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -180,8 +180,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 });

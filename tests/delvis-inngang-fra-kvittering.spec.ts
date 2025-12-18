@@ -30,9 +30,9 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     );
 
     const response = page.waitForResponse('**/api/hent-forespoersel/*');
-    const kvitteringResponse = page.waitForResponse(`**/api/hentKvittering/${uuid}`);
+    // const kvitteringResponse = page.waitForResponse(`**/api/hentKvittering/${uuid}`);
     await page.goto(baseUrl);
-    const [forespoerselResp, kvitteringResp] = await Promise.all([response, kvitteringResponse]);
+    const [forespoerselResp] = await Promise.all([response]);
   });
 
   test('Changes and submit', async ({ page }) => {

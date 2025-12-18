@@ -239,10 +239,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     : lonnISykefravaeret;
 
   const aktivInnsendingTidspunkt = dataFraBackend
-    ? ssrData?.mottatt
-      ? ` - ${formatDate(new Date(ssrData.mottatt))} kl. ${formatTime(new Date(ssrData.mottatt))}`
+    ? ssrData?.skjema.mottatt
+      ? ` - ${formatDate(new Date(ssrData.skjema.mottatt))} kl. ${formatTime(new Date(ssrData.skjema.mottatt))}`
       : ''
     : innsendingTidspunkt;
+
+  console.log('aktivInnsendingTidspunkt', aktivInnsendingTidspunkt);
 
   const ingenAktiveArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(aktiveArbeidsgiverperioder);
 
@@ -402,6 +404,7 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
 }
 
 export async function getServerSideProps(context: any) {
+  const { kvittid, fromSubmit } = context.query;
   const env = process.env.NODE_ENV;
   if (env === 'development') {
     let testdata = { default: null };
@@ -412,7 +415,16 @@ export async function getServerSideProps(context: any) {
     if (fs.existsSync(filePath)) {
       testdata = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     }
-
+    if (fromSubmit) {
+      return {
+        props: {
+          kvittid: context.query.kvittid,
+          kvittering: null,
+          kvitteringStatus: 200,
+          dataFraBackend: false
+        }
+      };
+    }
     return {
       props: {
         kvittid: context.query.kvittid,
@@ -422,7 +434,6 @@ export async function getServerSideProps(context: any) {
       }
     };
   }
-  const kvittid = context.query.kvittid;
 
   let kvittering: { status: number; data: { success: any } };
 
@@ -441,8 +452,12 @@ export async function getServerSideProps(context: any) {
   }
 
   try {
-    kvittering = await hentKvitteringsdataSSR(kvittid, token);
-    kvittering!.status = 200;
+    if (!fromSubmit) {
+      kvittering = await hentKvitteringsdataSSR(kvittid, token);
+      kvittering!.status = 200;
+    } else {
+      kvittering = { data: { success: null }, status: 200 };
+    }
   } catch (error: any) {
     console.error('Error fetching selvbestemt kvittering:', error);
     kvittering = { data: { success: null }, status: error.status };
@@ -457,9 +472,9 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       kvittid,
-      kvittering: kvittering?.data,
+      kvittering: !fromSubmit ? kvittering?.data : null,
       kvitteringStatus: kvittering?.status,
-      dataFraBackend: !!kvittering?.data?.kvitteringNavNo
+      dataFraBackend: !fromSubmit && !!kvittering?.data?.kvitteringNavNo
     }
   };
 }
