@@ -215,7 +215,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const aktiveNaturalytelser =
     dataFraBackend && ssrData?.skjema?.naturalytelser
-      ? ssrData?.skjema?.naturalytelser && ssrData?.skjema?.naturalytelser.length() > 0
+      ? ssrData?.skjema?.naturalytelser && ssrData?.skjema?.naturalytelser.length > 0
         ? ssrData?.skjema?.naturalytelser.map((ytelse: ApiNaturalytelse) => ({
             ...ytelse,
             sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
