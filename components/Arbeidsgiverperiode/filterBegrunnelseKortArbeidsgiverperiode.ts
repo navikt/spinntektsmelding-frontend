@@ -9,7 +9,8 @@ const filterBegrunnelseKortArbeidsgiverperiode = [
   'TidligereVirksomhet',
   'IkkeFullStillingsandel',
   'FerieEllerAvspasering',
-  'IkkeFravaer'
+  'IkkeFravaer',
+  'LovligFravaer'
 ];
 
 export default filterBegrunnelseKortArbeidsgiverperiode;
