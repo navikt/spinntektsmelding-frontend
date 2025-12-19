@@ -406,36 +406,37 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
 export async function getServerSideProps(context: any) {
   const { kvittid, fromSubmit } = context.query;
   const env = process.env.NODE_ENV;
+  let kvittering: { status: number; data: { success: any } };
+
   if (env === 'development') {
-    let testdata = { default: null };
-    const mockdata = 'kvittering-bug-endre';
+    try {
+      const token = 'mock-token';
+      if (!fromSubmit) {
+        kvittering = await hentKvitteringsdataSSR(kvittid, token);
+        kvittering!.status = 200;
+      } else {
+        kvittering = { data: { success: null }, status: 200 };
+      }
+    } catch (error: any) {
+      console.error('Error fetching selvbestemt kvittering:', error);
+      kvittering = { data: { success: null }, status: error.status };
 
-    const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
+      if (error.status === 404) {
+        return {
+          notFound: true
+        };
+      }
+    }
 
-    if (fs.existsSync(filePath)) {
-      testdata = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    }
-    if (fromSubmit) {
-      return {
-        props: {
-          kvittid: context.query.kvittid,
-          kvittering: null,
-          kvitteringStatus: 200,
-          dataFraBackend: false
-        }
-      };
-    }
     return {
       props: {
-        kvittid: context.query.kvittid,
-        kvittering: testdata,
-        kvitteringStatus: 200,
-        dataFraBackend: true
+        kvittid,
+        kvittering: !fromSubmit ? kvittering?.data : null,
+        kvitteringStatus: kvittering?.status,
+        dataFraBackend: !fromSubmit && !!(kvittering?.data?.kvitteringNavNo || kvittering?.data?.kvitteringEkstern)
       }
     };
   }
-
-  let kvittering: { status: number; data: { success: any } };
 
   const token = getToken(context.req);
   if (!token) {
@@ -474,7 +475,7 @@ export async function getServerSideProps(context: any) {
       kvittid,
       kvittering: !fromSubmit ? kvittering?.data : null,
       kvitteringStatus: kvittering?.status,
-      dataFraBackend: !fromSubmit && !!kvittering?.data?.kvitteringNavNo
+      dataFraBackend: !fromSubmit && !!(kvittering?.data?.kvitteringNavNo || kvittering?.data?.kvitteringEkstern)
     }
   };
 }
