@@ -1,6 +1,6 @@
 import { DatePicker, useDatepicker } from '@navikt/ds-react';
 import { isValid } from 'date-fns';
-import { useEffect, useEffectEvent } from 'react';
+import { useEffect, useEffectEvent, useState, useCallback, useRef } from 'react';
 import { FieldPath, FieldValues, useController, useFormContext } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
@@ -32,6 +32,8 @@ export default function DatoVelger({
   }
 
   const { control } = useFormContext();
+  const [isOpen, setIsOpen] = useState(false);
+  const preventCloseRef = useRef(false);
 
   const {
     field,
@@ -46,10 +48,42 @@ export default function DatoVelger({
   });
   const error = findErrorInRHFErrors(name, errors);
 
+  const handleDateChange = useCallback(
+    (date?: Date) => {
+      field.onChange(date);
+      if (date) {
+        setIsOpen(false);
+      }
+    },
+    [field]
+  );
+
+  const handleClose = useCallback(() => {
+    if (!preventCloseRef.current) {
+      setIsOpen(false);
+    }
+    preventCloseRef.current = false;
+  }, []);
+
+  const handleMouseDownCapture = useCallback((e: React.MouseEvent) => {
+    // Sjekk om klikket er på navigasjonsknapper eller select
+    const target = e.target as HTMLElement;
+    if (
+      target.closest('button[class*="caption"]') ||
+      target.closest('button[name="previous-month"]') ||
+      target.closest('button[name="next-month"]') ||
+      target.closest('select') ||
+      target.closest('.rdp-nav') ||
+      target.closest('.rdp-dropdown')
+    ) {
+      preventCloseRef.current = true;
+    }
+  }, []);
+
   const { datepickerProps, inputProps, reset } = useDatepicker({
     toDate: toDate,
     fromDate: fromDate,
-    onDateChange: field.onChange,
+    onDateChange: handleDateChange,
     defaultSelected: defaultSelected ?? field.value,
     defaultMonth: defaultMonth
   });
@@ -65,15 +99,23 @@ export default function DatoVelger({
   }, [defaultSelected]);
 
   return (
-    <DatePicker {...datepickerProps}>
-      <DatePicker.Input
-        {...inputProps}
-        label={label}
-        id={ensureValidHtmlId(name)}
-        hideLabel={hideLabel}
-        disabled={disabled}
-        error={error}
-      />
-    </DatePicker>
+    <div onMouseDownCapture={handleMouseDownCapture}>
+      <DatePicker
+        {...datepickerProps}
+        strategy='fixed'
+        open={isOpen}
+        onOpenToggle={() => setIsOpen((prev) => !prev)}
+        onClose={handleClose}
+      >
+        <DatePicker.Input
+          {...inputProps}
+          label={label}
+          id={ensureValidHtmlId(name)}
+          hideLabel={hideLabel}
+          disabled={disabled}
+          error={error}
+        />
+      </DatePicker>
+    </div>
   );
 }
