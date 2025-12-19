@@ -109,7 +109,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
 
     // confirm receipt page
     // await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
