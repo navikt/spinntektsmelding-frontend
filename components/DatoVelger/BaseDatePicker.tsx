@@ -3,7 +3,7 @@ import { isValid } from 'date-fns';
 import { useState, useCallback, useRef, useEffect, ReactNode } from 'react';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
-export interface BaseDatePickerProps {
+interface BaseDatePickerProps {
   defaultSelected?: Date;
   toDate?: Date;
   fromDate?: Date;
