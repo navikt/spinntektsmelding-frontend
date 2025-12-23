@@ -1,8 +1,12 @@
+import { SelvbestemtKvittering } from '../schema/SelvbestemtKvitteringSchema';
 import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
 
-export default function hentKvitteringsdataAgiSSR(pathSlug?: string | Array<string>, token?: string) {
+export default function hentKvitteringsdataAgiSSR(
+  pathSlug?: string | Array<string>,
+  token?: string
+): Promise<{ data: SelvbestemtKvittering | null }> {
   if (Array.isArray(pathSlug)) {
-    return Promise.resolve({});
+    return Promise.resolve({ data: null });
   }
 
   if (pathSlug) {
@@ -12,4 +16,5 @@ export default function hentKvitteringsdataAgiSSR(pathSlug?: string | Array<stri
       token
     );
   }
+  return Promise.resolve({ data: null });
 }

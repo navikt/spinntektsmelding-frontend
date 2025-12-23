@@ -14,7 +14,9 @@ describe('hentKvitteringsdataSSR', () => {
 
   it('should return an empty object if pathSlug is an array', async () => {
     const result = await hentKvitteringsdataSSR(['slug1', 'slug2'], token);
-    expect(result).toEqual({});
+    expect(result).toEqual({
+      data: null
+    });
   });
 
   it('should call fetchKvitteringsdataSSR with the correct arguments', async () => {

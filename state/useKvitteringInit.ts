@@ -14,7 +14,7 @@ import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
 import { Naturalytelse } from './state';
 
 type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
-type MottattKvittering = z.infer<typeof MottattKvitteringSchema>;
+export type MottattKvittering = z.infer<typeof MottattKvitteringSchema>;
 type RefusjonEndring = z.infer<typeof RefusjonEndringSchema>;
 
 export default function useKvitteringInit() {

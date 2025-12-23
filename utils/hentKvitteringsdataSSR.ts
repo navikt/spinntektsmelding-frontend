@@ -1,8 +1,12 @@
+import { MottattKvittering } from '../state/useKvitteringInit';
 import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
 
-export default function hentKvitteringsdataSSR(pathSlug?: string | Array<string>, token?: string) {
+export default function hentKvitteringsdataSSR(
+  pathSlug?: string | Array<string>,
+  token?: string
+): Promise<{ data: MottattKvittering | null }> {
   if (Array.isArray(pathSlug)) {
-    return Promise.resolve({});
+    return Promise.resolve({ data: null });
   }
 
   if (pathSlug) {
@@ -12,4 +16,5 @@ export default function hentKvitteringsdataSSR(pathSlug?: string | Array<string>
       token
     );
   }
+  return Promise.resolve({ data: null });
 }
