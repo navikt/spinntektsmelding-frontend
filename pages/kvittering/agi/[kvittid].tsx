@@ -34,13 +34,12 @@ import { LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../..
 
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
-import classNames from 'classnames/bind';
 import { harGyldigeRefusjonEndringer } from '../../../utils/harGyldigeRefusjonEndringer';
-import hentKvitteringsdataSSR from '../../../utils/hentKvitteringsdataSSR';
+import hentKvitteringsdataAgiSSR from '../../../utils/hentKvitteringsdataAgiSSR';
 import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../schema/ForespurtDataSchema';
-import useKvitteringInit from '../../../state/useKvitteringInit';
+import useKvitteringInit, { MottattKvittering } from '../../../state/useKvitteringInit';
 
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 import { getToken, validateToken } from '@navikt/oasis';
@@ -57,6 +56,8 @@ import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
 import path from 'path';
 import fs from 'fs';
+import { redirectTilLogin } from '../../../utils/redirectTilLogin';
+import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 
 type PersonData = {
   navn: string;
@@ -87,8 +88,6 @@ function mapNaturalytelserTilInterntFormat(
     verdiBeloep: ytelse.verdiBeloep
   }));
 }
-
-const cx = classNames.bind(lokalStyles);
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -159,7 +158,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input);
-    kvitteringInit({ kvitteringNavNo: kvittering });
+    kvitteringInit({ kvitteringNavNo: kvittering, kvitteringDokument: null, kvitteringEkstern: null });
     // Må lagre data som kan endres i hovedskjema - Slutt
 
     if (input?.agp?.perioder) {
@@ -216,13 +215,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       : [];
   }
 
-  const classNameWrapperFravaer = cx({
-    fravaerswrapperwrapper: visArbeidsgiverperiode
-  });
-
-  const classNameWrapperSkjaeringstidspunkt = cx({
-    infoboks: visArbeidsgiverperiode
-  });
+  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyles.fravaerswrapperwrapper : '';
+  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyles.infoboks : '';
 
   let fullLoennIArbeidsgiverPerioden: LonnIArbeidsgiverperioden;
 
@@ -288,7 +282,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   } else if (kvitteringData?.refusjon?.sluttdato) {
     refusjonEndringer.push({
       beloep: 0,
-      dato: parseIsoDate(kvittering.refusjon?.sluttdato)
+      dato: parseIsoDate(kvitteringData?.refusjon?.sluttdato)
     });
   }
   const innsendtRefusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
@@ -458,7 +452,11 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
 }
 
 export async function getServerSideProps(context: any) {
+  const { kvittid, fromSubmit } = context.query;
   const env = process.env.NODE_ENV;
+  let kvittering: { data: SelvbestemtKvittering | null };
+  let kvitteringStatus = 500;
+
   if (env === 'development') {
     let testdata = { default: null };
     const mockdata = 'kvittering-selvbestemt-format';
@@ -478,9 +476,6 @@ export async function getServerSideProps(context: any) {
       }
     };
   }
-  const kvittid = context.query.kvittid;
-
-  let kvittering: { status: number; data: { success: any } };
 
   const token = getToken(context.req);
   if (!token) {
@@ -497,13 +492,15 @@ export async function getServerSideProps(context: any) {
   }
 
   try {
-    kvittering = await hentKvitteringsdataSSR(kvittid, token);
-    kvittering!.status = 200;
+    kvittering = await hentKvitteringsdataAgiSSR(kvittid, token);
+    kvitteringStatus = 200;
   } catch (error: any) {
     console.error('Error fetching selvbestemt kvittering:', error);
-    kvittering = { data: { success: null }, status: error.status };
+    kvittering = { data: null };
+    kvitteringStatus = error.status;
 
     if (error.status === 404) {
+      kvitteringStatus = error.status;
       return {
         notFound: true
       };
@@ -513,22 +510,9 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       kvittid,
-      kvittering: kvittering?.data?.success,
-      kvitteringStatus: kvittering?.status,
-      dataFraBackend: !!kvittering?.data?.success?.selvbestemtInntektsmelding
-    }
-  };
-}
-
-function redirectTilLogin(context: any) {
-  const ingress = context.req.headers.host + environment.baseUrl;
-  const currentPath = `https://${ingress}${context.resolvedUrl}`;
-
-  const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
-  return {
-    redirect: {
-      destination: destination,
-      permanent: false
+      kvittering: kvittering?.data,
+      kvitteringStatus: kvitteringStatus,
+      dataFraBackend: !!kvittering?.data?.selvbestemtInntektsmelding
     }
   };
 }

@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import fetchKvitteringsdata from '../../utils/fetchKvitteringsdataSSR';
-import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
+import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataAgiSSR';
 
 vi.mock('../../utils/fetchKvitteringsdataSSR');
 
@@ -14,7 +14,9 @@ describe('hentKvitteringsdataSSR', () => {
 
   it('should return an empty object if pathSlug is an array', async () => {
     const result = await hentKvitteringsdataSSR(['slug1', 'slug2'], token);
-    expect(result).toEqual({});
+    expect(result).toEqual({
+      data: null
+    });
   });
 
   it('should call fetchKvitteringsdataSSR with the correct arguments', async () => {

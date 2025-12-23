@@ -1,5 +1,4 @@
 import { Heading, HeadingProps } from '@navikt/ds-react';
-import classNames from 'classnames/bind';
 import styles from './Heading3.module.css';
 
 interface Heading3Props extends Partial<HeadingProps> {
@@ -7,10 +6,10 @@ interface Heading3Props extends Partial<HeadingProps> {
   topPadded?: boolean;
 }
 
-const cx = classNames.bind(styles);
-
 export default function Heading3(props: Heading3Props) {
-  const className = cx({ heading: !props.unPadded, heading_top: props.topPadded }, props.className);
+  const className = [!props.unPadded && styles.heading, props.topPadded && styles.heading_top, props.className]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <Heading size='medium' level='3' className={className}>

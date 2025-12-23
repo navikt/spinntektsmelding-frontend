@@ -4,7 +4,6 @@ import Heading2 from '../../Heading2/Heading2';
 import Heading3 from '../../Heading3';
 import PeriodeFraTil from '../../PeriodeFraTil/PeriodeFraTil';
 import lokalStyles from './Fravaersperiode.module.css';
-import classNames from 'classnames/bind';
 
 interface FravaersperiodeProps {
   sykmeldingsperioder?: Periode[];
@@ -12,16 +11,14 @@ interface FravaersperiodeProps {
   paakrevdeOpplysninger: string[];
 }
 
-const cx = classNames.bind(lokalStyles);
-
 export default function Fravaersperiode({
   sykmeldingsperioder,
   egenmeldingsperioder,
   paakrevdeOpplysninger
 }: Readonly<FravaersperiodeProps>) {
-  const classNameHeadingSykmelding = cx({
-    sykfravaerstyper: paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode)
-  });
+  const classNameHeadingSykmelding = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode)
+    ? lokalStyles.sykfravaerstyper
+    : '';
   const harAktiveEgenmeldingsperioder = () => {
     return egenmeldingsperioder
       ? egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined

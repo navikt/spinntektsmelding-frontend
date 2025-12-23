@@ -65,7 +65,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       naturalytelser: []
     });
     // confirmation page
-    await page.waitForURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
+    await page.waitForURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375?fromSubmit=true');
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     // the old bfd date should not appear
     await expect(await formPage.getByText('24.01.2023')).toHaveCount(0);
@@ -124,7 +124,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     });
     // final confirmation
 
-    await page.waitForURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
+    await page.waitForURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375?fromSubmit=true');
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/18\.09\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     await expect(page.locator('text="Bonus"')).toBeVisible();

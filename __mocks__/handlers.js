@@ -1,43 +1,34 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
+import fs from 'fs';
+import path from 'path';
+
+// Funksjon for å lese mockdata fra fil
+function readMockdata(filename) {
+  const filePath = path.join(process.cwd(), 'mockdata', `${filename}.json`);
+  if (fs.existsSync(filePath)) {
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  }
+  return null;
+}
+
+// Map fra kvittid til mockdata-fil (kan utvides etter behov)
+const kvitteringMockdataMap = {
+  '8d50ef20-37b5-4829-ad83-56219e70b375': 'kvittering-delvis-endret-inntekt',
+  'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-eksternt-system',
+  'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63': 'kvittering-delvis'
+};
 
 export const handlers = [
-  rest.post('/login', (req, res, ctx) => {
-    // Persist user's authentication in the session
+  // Hent kvitteringsdata - matcher alle kall til kvittering API
+  // Brukes av SSR i development for å mocke backend
+  http.get('*/api/v1/kvittering/:kvittid', ({ params }) => {
+    const { kvittid } = params;
+    const mockdataFile = kvitteringMockdataMap[kvittid] || 'kvittering-bug-endre';
+    const data = readMockdata(mockdataFile);
 
-    sessionStorage.setItem('is-authenticated', 'true');
-
-    return res(
-      // Respond with a 200 status code
-
-      ctx.status(200)
-    );
-  }),
-
-  rest.get('/user', (req, res, ctx) => {
-    // Check if the user is authenticated in this session
-
-    const isAuthenticated = sessionStorage.getItem('is-authenticated');
-
-    if (!isAuthenticated) {
-      // If not authenticated, respond with a 403 error
-
-      return res(
-        ctx.status(403),
-
-        ctx.json({
-          errorMessage: 'Not authorized'
-        })
-      );
+    if (data) {
+      return HttpResponse.json(data);
     }
-
-    // If authenticated, return a mocked user details
-
-    return res(
-      ctx.status(200),
-
-      ctx.json({
-        username: 'admin'
-      })
-    );
+    return new HttpResponse(null, { status: 404 });
   })
 ];

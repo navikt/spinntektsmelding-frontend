@@ -9,21 +9,25 @@ import ArbeidsgiverDataVisning from './ArbeidsgiverDataVisning';
 
 interface PersonProps {
   erDelvisInnsending?: boolean;
+  sykmeldt?: any;
+  avsender?: any;
 }
 
-export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
-  const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender], shallow);
+export default function Person({ erDelvisInnsending, sykmeldt, avsender }: Readonly<PersonProps>) {
+  const [storeSykmeldt, storeAvsender] = useBoundStore((state) => [state.sykmeldt, state.avsender], shallow);
 
+  const aktivSykmeldt = sykmeldt || storeSykmeldt;
+  const aktivAvsender = avsender || storeAvsender;
   return (
     <>
       <DelvisInnsendingInfo erDelvisInnsending={erDelvisInnsending} />
-      <FeilVedHentingAvPersondata sykmeldt={sykmeldt} avsender={avsender} />
+      <FeilVedHentingAvPersondata sykmeldt={aktivSykmeldt} avsender={aktivAvsender} />
       <div className={lokalStyles.personInfoWrapper}>
-        <AnsattDataVisning sykmeldt={sykmeldt} />
+        <AnsattDataVisning sykmeldt={aktivSykmeldt} />
 
-        <ArbeidsgiverDataVisning avsender={avsender}>
+        <ArbeidsgiverDataVisning avsender={aktivAvsender}>
           <TextLabel>Telefon innsender</TextLabel>
-          <div className={lokalStyles.virksomhetsnavn}>{avsender.tlf}</div>
+          <div className={lokalStyles.virksomhetsnavn}>{aktivAvsender.tlf}</div>
         </ArbeidsgiverDataVisning>
       </div>
     </>

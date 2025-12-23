@@ -20,13 +20,12 @@ import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgive
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../state/useBoundStore';
-import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 
 import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import { Fragment, useEffect, useEffectEvent } from 'react';
+import { Fragment, useEffect, useEffectEvent, useRef } from 'react';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
@@ -38,24 +37,36 @@ import forespoerselType from '../../config/forespoerselType';
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
-import classNames from 'classnames/bind';
 import parseIsoDate from '../../utils/parseIsoDate';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import PersonVisning from '../../components/Person/PersonVisning';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
+import useKvitteringInit, { MottattKvittering } from '../../state/useKvitteringInit';
+import { getToken, validateToken } from '@navikt/oasis';
+import { redirectTilLogin } from '../../utils/redirectTilLogin';
+import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
+import { ApiPeriodeSchema } from '../../schema/ApiPeriodeSchema';
+import { ApiNaturalytelserSchema } from '../../schema/ApiNaturalytelserSchema';
+import z from 'zod';
 
-const cx = classNames.bind(lokalStyles);
+type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
+type ApiNaturalytelse = z.infer<typeof ApiNaturalytelserSchema>;
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  kvittid
+  kvittid,
+  kvittering,
+  kvitteringStatus,
+  dataFraBackend = false
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
 
-  const hentKvitteringsdata = useHentKvitteringsdata();
+  const kvitteringInit = useKvitteringInit();
+  const storeInitialized = useRef(false);
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
+  const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
@@ -76,6 +87,32 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const refusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
 
+  const onSetSkjemaFeilet = useEffectEvent(() => {
+    setSkjemaFeilet();
+  });
+
+  useEffect(() => {
+    if (kvitteringStatus === 500) {
+      const harDataIStore = sykmeldingsperioder && sykmeldingsperioder.length > 0;
+      if (!harDataIStore) {
+        onSetSkjemaFeilet();
+      }
+    }
+  }, [kvitteringStatus, sykmeldingsperioder]);
+
+  // Initialiser Zustand-store med SSR-data ved første klient-render
+  // Dette sikrer at store har data selv ved page refresh
+  const onKvitteringInit = useEffectEvent(() => {
+    if (dataFraBackend && kvittering && !storeInitialized.current) {
+      kvitteringInit(kvittering);
+      storeInitialized.current = true;
+    }
+  });
+
+  useEffect(() => {
+    onKvitteringInit();
+  }, []);
+
   const clickEndre = () => {
     if (isValidUUID(kvittid)) {
       router.push(`/${kvittid}`);
@@ -84,7 +121,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const lukkHentingFeiletModal = () => {
     if (typeof window === 'undefined') return;
-    window.location.href = env.saksoversiktUrl;
+    window.location.href = env.saksoversiktUrl!;
   };
 
   let innsendingTidspunkt =
@@ -98,7 +135,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
   }
 
-  const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
+  // const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
 
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
@@ -111,21 +148,17 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
 
-  const onHentKvitteringsdata = useEffectEvent((kvittid: string) => {
-    hentKvitteringsdata(kvittid);
-  });
+  // const onHentKvitteringsdata = useEffectEvent((kvittid: string) => {
+  //   hentKvitteringsdata(kvittid);
+  // });
 
   const onSetNyInnsending = useEffectEvent((endring: boolean) => {
     setNyInnsending(endring);
   });
 
   useEffect(() => {
-    if (!sykmeldingsperioder && !kvitteringEksterntSystem?.avsenderSystem) {
-      if (!kvittid || kvittid === '') return;
-      onHentKvitteringsdata(kvittid);
-    }
     onSetNyInnsending(false);
-  }, [kvitteringEksterntSystem?.avsenderSystem, kvittid, sykmeldingsperioder]);
+  }, []);
 
   const onSetOpprinneligNyMaanedsinntekt = useEffectEvent(() => {
     setOpprinneligNyMaanedsinntekt();
@@ -140,13 +173,77 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const visRefusjon = paakrevdeOpplysninger?.includes(forespoerselType.refusjon);
 
-  const classNameWrapperFravaer = cx({
-    fravaerswrapperwrapper: visArbeidsgiverperiode
-  });
+  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyles.fravaerswrapperwrapper : '';
+  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyles.infoboks : '';
 
-  const classNameWrapperSkjaeringstidspunkt = cx({
-    infoboks: visArbeidsgiverperiode
-  });
+  // Bruk SSR-data direkte ved første render for å unngå CLS
+  const ssrData = kvittering?.kvitteringNavNo;
+
+  const aktiveSykmeldingsperioder = dataFraBackend
+    ? (ssrData?.sykmeldingsperioder.map((periode: ApiPeriode) => ({
+        fom: parseIsoDate(periode.fom),
+        tom: parseIsoDate(periode.tom)
+      })) as Periode[])
+    : sykmeldingsperioder;
+
+  const aktiveEgenmeldinger = dataFraBackend ? ssrData?.skjema?.agp?.egenmeldinger : egenmeldingsperioder;
+
+  const aktiveArbeidsgiverperioder = dataFraBackend
+    ? ssrData?.skjema?.agp?.perioder?.map((p: any, i: number) => ({
+        fom: parseIsoDate(p.fom),
+        tom: parseIsoDate(p.tom),
+        id: `agp-${i}`
+      }))
+    : arbeidsgiverperioder;
+
+  const aktivBruttoinntekt = dataFraBackend
+    ? {
+        bruttoInntekt: ssrData?.skjema?.inntekt?.beloep,
+        endringAarsaker: ssrData?.skjema?.inntekt?.endringAarsaker ?? []
+      }
+    : bruttoinntekt;
+
+  const aktivBestemmendeFravaersdag = dataFraBackend
+    ? parseIsoDate(ssrData?.skjema?.inntekt?.inntektsdato)
+    : visningBestemmendeFravaersdag;
+
+  const aktiveNaturalytelser =
+    dataFraBackend && ssrData?.skjema?.naturalytelser
+      ? ssrData?.skjema?.naturalytelser && ssrData?.skjema?.naturalytelser.length > 0
+        ? ssrData?.skjema?.naturalytelser.map((ytelse: ApiNaturalytelse) => ({
+            ...ytelse,
+            sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
+          }))
+        : []
+      : naturalytelser;
+
+  const aktivFullLonnIArbeidsgiverPerioden = dataFraBackend
+    ? {
+        status: (ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep !== undefined ? 'Nei' : 'Ja') as 'Ja' | 'Nei',
+        begrunnelse: ssrData?.skjema?.agp?.redusertLoennIAgp?.begrunnelse,
+        utbetalt: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep
+      }
+    : fullLonnIArbeidsgiverPerioden;
+
+  const aktivLonnISykefravaeret = dataFraBackend
+    ? {
+        status: (ssrData?.skjema?.refusjon ? 'Ja' : 'Nei') as 'Ja' | 'Nei',
+        beloep: ssrData?.skjema?.refusjon?.beloepPerMaaned
+      }
+    : lonnISykefravaeret;
+
+  const aktivInnsendingTidspunkt = dataFraBackend
+    ? ssrData?.skjema.mottatt
+      ? ` - ${formatDate(new Date(ssrData.skjema.mottatt))} kl. ${formatTime(new Date(ssrData.skjema.mottatt))}`
+      : ''
+    : innsendingTidspunkt;
+
+  console.log('aktivInnsendingTidspunkt', aktivInnsendingTidspunkt);
+
+  const ingenAktiveArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(aktiveArbeidsgiverperioder);
+
+  const aktivAvsender = dataFraBackend ? ssrData?.avsender : undefined;
+  const aktivSykmeldt = dataFraBackend ? ssrData?.sykmeldt : undefined;
 
   return (
     <div className={styles.container}>
@@ -176,13 +273,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 </div>
               </div>
 
-              <PersonVisning />
+              <PersonVisning sykmeldt={aktivSykmeldt} avsender={aktivAvsender} />
               {(harForespurtInntekt || harForespurtArbeidsgiverperiode) && <Skillelinje />}
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (
                   <Fravaersperiode
-                    sykmeldingsperioder={sykmeldingsperioder}
-                    egenmeldingsperioder={egenmeldingsperioder}
+                    sykmeldingsperioder={aktiveSykmeldingsperioder}
+                    egenmeldingsperioder={aktiveEgenmeldinger}
                     paakrevdeOpplysninger={paakrevdeOpplysninger}
                   />
                 )}
@@ -196,8 +293,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                         <div className={lokalStyles.fravaerwrapper}>
                           <div className={lokalStyles.fravaertid}>Dato</div>
                           <div data-cy='bestemmendefravaersdag'>
-                            {visningBestemmendeFravaersdag ? (
-                              formatDate(visningBestemmendeFravaersdag)
+                            {aktivBestemmendeFravaersdag ? (
+                              formatDate(aktivBestemmendeFravaersdag)
                             ) : (
                               <Skeleton variant='text' />
                             )}{' '}
@@ -208,14 +305,14 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                     {visArbeidsgiverperiode && (
                       <div className={lokalStyles.arbeidsgiverperiode}>
                         <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
-                        {!ingenArbeidsgiverperioder && (
+                        {!ingenAktiveArbeidsgiverperioder && (
                           <BodyLong>
                             Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
                             Deretter betaler Nav lønn til den syke eller refunderer bedriften.
                           </BodyLong>
                         )}
-                        {ingenArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
-                        {arbeidsgiverperioder?.map((periode) => (
+                        {ingenAktiveArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
+                        {aktiveArbeidsgiverperioder?.map((periode: Periode) => (
                           <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
                         ))}
                       </div>
@@ -228,8 +325,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <Skillelinje />
                   <Heading2>Beregnet månedslønn</Heading2>
                   <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
-                  <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
-                  {bruttoinntekt.endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
+                  <BodyShort>{formatCurrency(aktivBruttoinntekt?.bruttoInntekt)} kr/måned</BodyShort>
+                  {aktivBruttoinntekt?.endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
                     <Fragment key={endring.aarsak + endringIndex}>
                       <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
@@ -248,11 +345,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                       <div className={lokalStyles.uthevet}>
                         Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
                       </div>
-                      <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden} />
+                      <FullLonnIArbeidsgiverperioden lonnIPerioden={aktivFullLonnIArbeidsgiverPerioden} />
                     </>
                   )}
                   <LonnUnderSykefravaeret
-                    loenn={lonnISykefravaeret!}
+                    loenn={aktivLonnISykefravaeret!}
                     harRefusjonEndringer={harRefusjonEndringer}
                     refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
                   />
@@ -262,17 +359,17 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 <>
                   <Skillelinje />
                   <Heading2>Naturalytelser</Heading2>
-                  <BortfallNaturalytelser ytelser={naturalytelser!} />
+                  <BortfallNaturalytelser ytelser={aktiveNaturalytelser!} />
                 </>
               )}
               <Skillelinje />
             </>
           )}
-          <BodyShort>Kvittering - innsendt inntektsmelding{innsendingTidspunkt}</BodyShort>
+          <BodyShort>Kvittering - innsendt inntektsmelding{aktivInnsendingTidspunkt}</BodyShort>
           <div className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}
-              <Link className={lokalStyles.lukkelenke} href={env.saksoversiktUrl}>
+              <Link className={lokalStyles.lukkelenke} href={env.saksoversiktUrl!}>
                 Lukk
               </Link>
             </div>
@@ -301,11 +398,82 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
 }
 
 export async function getServerSideProps(context: any) {
-  const kvittid = context.query.kvittid;
+  const { kvittid, fromSubmit } = context.query;
+  const env = process.env.NODE_ENV;
+  let kvittering: { data: MottattKvittering | null };
+  let kvitteringStatus = 500;
+
+  if (env === 'development') {
+    try {
+      const token = 'mock-token';
+      if (!fromSubmit) {
+        kvittering = await hentKvitteringsdataSSR(kvittid, token);
+        kvitteringStatus = 200;
+      } else {
+        kvitteringStatus = 200;
+        kvittering = { data: null };
+      }
+    } catch (error: any) {
+      console.error('Error fetching selvbestemt kvittering:', error);
+      kvittering = { data: null };
+      kvitteringStatus = error.status;
+
+      if (error.status === 404) {
+        return {
+          notFound: true
+        };
+      }
+    }
+
+    return {
+      props: {
+        kvittid,
+        kvittering: !fromSubmit ? kvittering?.data : null,
+        kvitteringStatus: kvitteringStatus,
+        dataFraBackend: !fromSubmit && !!(kvittering?.data?.kvitteringNavNo || kvittering?.data?.kvitteringEkstern)
+      }
+    };
+  }
+
+  const token = getToken(context.req);
+  if (!token) {
+    /* håndter manglende token */
+    console.error('Mangler token i header');
+    return redirectTilLogin(context);
+  }
+
+  const validation = await validateToken(token);
+  if (!validation.ok) {
+    /* håndter valideringsfeil */
+    console.error('Validering av token feilet');
+    return redirectTilLogin(context);
+  }
+
+  try {
+    if (!fromSubmit) {
+      kvittering = await hentKvitteringsdataSSR(kvittid, token);
+      kvitteringStatus = 200;
+    } else {
+      kvittering = { data: null };
+      kvitteringStatus = 200;
+    }
+  } catch (error: any) {
+    console.error('Error fetching selvbestemt kvittering:', error);
+    kvittering = { data: null };
+    if (error.status === 404) {
+      kvitteringStatus = error.status;
+      return {
+        notFound: true
+      };
+    }
+  }
 
   return {
     props: {
-      kvittid
+      kvittid,
+      kvittering: !fromSubmit ? kvittering?.data : null,
+      kvitteringStatus: kvitteringStatus,
+      dataFraBackend: !fromSubmit && !!(kvittering?.data?.kvitteringNavNo || kvittering?.data?.kvitteringEkstern)
     }
   };
 }
