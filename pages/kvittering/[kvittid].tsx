@@ -180,10 +180,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const ssrData = kvittering?.kvitteringNavNo;
 
   const aktiveSykmeldingsperioder = dataFraBackend
-    ? ssrData?.sykmeldingsperioder.map((periode: ApiPeriode) => ({
+    ? (ssrData?.sykmeldingsperioder.map((periode: ApiPeriode) => ({
         fom: parseIsoDate(periode.fom),
         tom: parseIsoDate(periode.tom)
-      }))
+      })) as Periode[])
     : sykmeldingsperioder;
 
   const aktiveEgenmeldinger = dataFraBackend ? ssrData?.skjema?.agp?.egenmeldinger : egenmeldingsperioder;
