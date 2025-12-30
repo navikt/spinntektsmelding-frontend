@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import apiData from '../mockdata/trenger-originalen-begrenset.json';
 import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('Begrenset forespørsel', () => {
@@ -15,14 +14,6 @@ test.describe('Begrenset forespørsel', () => {
   });
 
   test('should display information on the person and the submitter', async ({ page }) => {
-    // intercept forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(apiData)
-      })
-    );
     // intercept inntektsdata → 404
     await page.route('*/**/api/inntektsdata', (route) =>
       route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ name: 'Nothing' }) })
@@ -38,7 +29,7 @@ test.describe('Begrenset forespørsel', () => {
     // intercept collect
     await page.route('**/collect', (route) => route.fulfill({ status: 202, contentType: 'text/plain', body: 'OK' }));
 
-    await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
+    await page.goto('http://localhost:3000/im-dialog/52ce04ad-0919-49ee-86f0-40c0e040dc0e');
 
     // Person data
     await expect(page.locator('[data-cy="navn"]')).toHaveText('Test Navn Testesen-Navnesen Jr.');
@@ -86,7 +77,7 @@ test.describe('Begrenset forespørsel', () => {
 
     const body = JSON.parse(req.request().postData()!);
     expect(body).toEqual({
-      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      forespoerselId: '52ce04ad-0919-49ee-86f0-40c0e040dc0e',
       agp: {
         egenmeldinger: [],
         perioder: [

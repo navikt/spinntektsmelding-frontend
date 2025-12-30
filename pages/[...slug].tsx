@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -51,12 +51,17 @@ import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdage
 import Feilmelding from '../components/Feilmelding';
 import { SelvbestemtTypeConst } from '../schema/konstanter/selvbestemtType';
 import transformErrors from '../utils/transformErrors';
+import hentForespoerselSSR from '../utils/hentForespoerselSSR';
+import useStateInit from '../state/useStateInit';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
-  erEndring
+  erEndring,
+  forespurt,
+  forespurtStatus,
+  dataFraBackend
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const [lasterData, setLasterData] = useState<boolean>(false);
@@ -108,7 +113,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
   const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
 
+  const storeInitialized = useRef(false);
+
   const hentSkjemadata = useHentSkjemadata();
+  const initState = useStateInit();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
@@ -156,6 +164,18 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   } = methods;
 
   const memoErrors = useMemo(() => transformErrors(errors), [errors]);
+
+  const onForespurtInit = useEffectEvent(() => {
+    console.log('onForespurtInit called with dataFraBackend:', forespurt);
+    if (dataFraBackend && forespurt && !storeInitialized.current) {
+      initState(forespurt.data);
+      storeInitialized.current = true;
+    }
+  });
+
+  useEffect(() => {
+    onForespurtInit();
+  }, []);
 
   useEffect(() => {
     if (naturalytelser !== undefined) {
@@ -271,10 +291,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       return;
     }
     if (!sykmeldingsperioder) {
-      setLasterData(true);
-      hentSkjemadata(slug, erEndring)?.finally(() => {
-        setLasterData(false);
-      });
+      // setLasterData(true);
+      // hentSkjemadata(slug, erEndring)?.finally(() => {
+      //   setLasterData(false);
+      // });
     } else if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
       if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(slug)) {
         setHentInntektEnGang(false);
@@ -421,12 +441,43 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 export default Home;
 
 export async function getServerSideProps(context: any) {
-  const slug = context.query.slug;
+  const { slug, update, endre } = context.query;
+  const uuid = slug[0];
+  let forespurt = null;
+  let forespurtStatus = null;
+  const overskriv = slug[1] && slug[1] === 'overskriv';
+
+  console.log('slug:', slug);
+  console.log('update:', update);
+  console.log('uuid:', uuid);
+  if (isValidUUID(uuid) && !endre) {
+    const basePath = `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}/${uuid}`;
+    console.log('basePath:', basePath);
+    forespurtStatus = 200;
+    try {
+      forespurt = await hentForespoerselSSR(uuid);
+
+      forespurtStatus = 200;
+    } catch (error: any) {
+      console.error('Error fetching forespurt:', error);
+      forespurt = { data: null };
+      forespurtStatus = error.status || 500;
+
+      if (error.status === 404) {
+        return {
+          notFound: true
+        };
+      }
+    }
+  }
 
   return {
     props: {
       slug: slug[0],
-      erEndring: Boolean(slug[1] && slug[1] === 'overskriv')
+      erEndring: Boolean(slug[1] && slug[1] === 'overskriv'),
+      forespurt: forespurt,
+      forespurtStatus: forespurtStatus,
+      dataFraBackend: !!forespurt && !endre
     }
   };
 }

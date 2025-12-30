@@ -5,6 +5,7 @@ import inntektData from '../mockdata/inntektData.json';
 import { FormPage } from './utils/formPage';
 
 const uuid = 'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63';
+const startUrl = `http://localhost:3000/im-dialog/kvittering/${uuid}`;
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
@@ -13,12 +14,12 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await page.route('**/collect', (r) => r.fulfill({ status: 202, body: 'OK' }));
 
     // mark as besvart
-    trengerDelvis.erBesvart = true;
+    // trengerDelvis.erBesvart = true;
 
     // stub API
-    await page.route('**/api/hent-forespoersel/*', (r) =>
-      r.fulfill({ status: 200, body: JSON.stringify(trengerDelvis), contentType: 'application/json' })
-    );
+    // await page.route('**/api/hent-forespoersel/*', (r) =>
+    //   r.fulfill({ status: 200, body: JSON.stringify(trengerDelvis), contentType: 'application/json' })
+    // );
     await page.route('**/api/inntektsdata', (r) =>
       r.fulfill({ status: 200, body: JSON.stringify(inntektData), contentType: 'application/json' })
     );
@@ -29,10 +30,10 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       r.fulfill({ status: 201, body: JSON.stringify({ name: 'Nothing' }), contentType: 'application/json' })
     );
 
-    const response = page.waitForResponse('**/api/hent-forespoersel/*');
+    // const response = page.waitForResponse('**/api/hent-forespoersel/*');
     // const kvitteringResponse = page.waitForResponse(`**/api/hentKvittering/${uuid}`);
-    await page.goto(baseUrl);
-    const [forespoerselResp] = await Promise.all([response]);
+    await page.goto(startUrl);
+    // const [forespoerselResp] = await Promise.all([response]);
   });
 
   test('Changes and submit', async ({ page }) => {
@@ -41,7 +42,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await test.step('Gå til kvitteringsside og trykk Endre', async () => {
       await expect(page).toHaveURL(/\/im-dialog\/kvittering\/b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63/);
       await page.getByRole('button', { name: /Endre/ }).first().click();
-      await expect(page).toHaveURL(baseUrl);
+      await expect(page).toHaveURL(baseUrl + '?endre=true');
     });
 
     await test.step('Oppdater månedslønn', async () => {

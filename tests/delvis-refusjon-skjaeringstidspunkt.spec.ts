@@ -14,14 +14,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
         body: JSON.stringify({ name: 'Nothing' })
       })
     );
-    // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(trengerDelvis)
-      })
-    );
+
     // stub innsending
     await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
@@ -30,9 +23,8 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
         body: JSON.stringify({ name: 'Nothing' })
       })
     );
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
-    await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-    await response;
+
+    await page.goto('http://localhost:3000/im-dialog/60c85231-d13c-49a2-bef3-1cb493d33f3b');
   });
 
   test('No changes and submit', async ({ page }) => {
@@ -53,7 +45,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     const req = await reqPromise;
 
     expect(JSON.parse(req.postData()!)).toEqual({
-      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      forespoerselId: '60c85231-d13c-49a2-bef3-1cb493d33f3b',
       agp: null,
       inntekt: {
         beloep: 55000,
@@ -65,7 +57,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       naturalytelser: []
     });
     // confirmation page
-    await page.waitForURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375?fromSubmit=true');
+    await page.waitForURL('/im-dialog/kvittering/60c85231-d13c-49a2-bef3-1cb493d33f3b?fromSubmit=true');
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     // the old bfd date should not appear
     await expect(await formPage.getByText('24.01.2023')).toHaveCount(0);
@@ -78,7 +70,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     const formPage = new FormPage(page);
     // click second "Endre"
     await page.getByRole('button', { name: 'Endre' }).nth(1).click();
-    await page.waitForURL('**/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
+    await page.waitForURL('**/im-dialog/60c85231-d13c-49a2-bef3-1cb493d33f3b');
     // update salary
     const salary = page.getByLabel('Månedslønn 18.09.2023');
     await expect(salary).toHaveValue('55000');
@@ -111,7 +103,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     const req2 = await reqPromise;
     // assert payload
     expect(JSON.parse(req2.postData()!)).toEqual({
-      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      forespoerselId: '60c85231-d13c-49a2-bef3-1cb493d33f3b',
       agp: null,
       inntekt: {
         beloep: 60000,
@@ -124,7 +116,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     });
     // final confirmation
 
-    await page.waitForURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375?fromSubmit=true');
+    await page.waitForURL('/im-dialog/kvittering/60c85231-d13c-49a2-bef3-1cb493d33f3b?fromSubmit=true');
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/18\.09\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     await expect(page.locator('text="Bonus"')).toBeVisible();

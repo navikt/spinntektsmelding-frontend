@@ -1,18 +1,15 @@
 import { test, expect } from '@playwright/test';
-import hentForespoersel from '../mockdata/trenger-originalen-16dager-innsendt.json';
+// import hentForespoersel from '../mockdata/trenger-originalen-16dager-innsendt.json';
 import inntektData from '../mockdata/inntektData.json';
 
 test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
-  const uuid = 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91';
-  const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
+  const uuid = '66f1188a-5cb7-4741-bd60-c9070835633c';
+  const baseUrl = `http://localhost:3000/im-dialog/kvittering/${uuid}`;
 
   test.beforeEach(async ({ page }) => {
     // stub collect beacon
     await page.route('**/collect', (r) => r.fulfill({ status: 202, body: 'OK' }));
-    // stub hent-forespoersel (client-side)
-    await page.route('**/hent-forespoersel/**', (r) =>
-      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(hentForespoersel) })
-    );
+
     // stub inntektsdata
     await page.route('**/inntektsdata', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(inntektData) })

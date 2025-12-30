@@ -115,7 +115,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const clickEndre = () => {
     if (isValidUUID(kvittid)) {
-      router.push(`/${kvittid}`);
+      router.push(`/${kvittid}?endre=true`);
     }
   };
 

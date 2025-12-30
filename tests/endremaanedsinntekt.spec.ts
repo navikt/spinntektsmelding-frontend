@@ -1,25 +1,13 @@
 import { test, expect } from '@playwright/test';
-import originalData from '../mockdata/trenger-originalen.json';
+// import originalData from '../mockdata/trenger-originalen.json';
 import { FormPage } from './utils/formPage';
-import { promise } from 'zod';
 
-const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
+const uuid = '588e055c-5d72-449b-b88f-56aa43457668';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () => {
   test.beforeEach(async ({ page }) => {
-    // stub hentKvittering → 404
-    await page.route('*/**/api/hentKvittering/**', (r) =>
-      r.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ name: 'Nothing' }) })
-    );
-    // stub forespørsel
-    await page.route('*/**/api/hent-forespoersel/*', (r) =>
-      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(originalData) })
-    );
-    // navigate to form
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await response;
   });
 
   test('kan endre bruttoinntekt og refusjon', async ({ page }) => {

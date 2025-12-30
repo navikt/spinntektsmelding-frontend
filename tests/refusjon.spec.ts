@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test';
-import originalData from '../mockdata/trenger-originalen.json';
 import { FormPage } from './utils/formPage';
 
-const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
+const uuid = '588e055c-5d72-449b-b88f-56aa43457668';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test.describe('Utfylling og innsending av skjema – refusjon', () => {
@@ -15,15 +14,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
         body: JSON.stringify({ name: 'Nothing' })
       })
     );
-    // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(originalData)
-      })
-    );
-    // stub innsendingInntektsmelding
+
     await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
@@ -33,9 +24,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     );
 
     // navigate to form
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await response;
   });
 
   test('can check radios for refusjon and submit', async ({ page }) => {

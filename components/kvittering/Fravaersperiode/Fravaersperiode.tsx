@@ -41,7 +41,7 @@ export default function Fravaersperiode({
         <div className={lokalStyles.ytrefravaerswrapper}>
           <Heading3 className={classNameHeadingSykmelding}>Sykmelding</Heading3>
           {sykmeldingsperioder?.map((periode) => (
-            <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'fperiode' + periode.id} />
+            <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'fperiode' + (periode.id ?? periode.fom)} />
           ))}
         </div>
       </div>

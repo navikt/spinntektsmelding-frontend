@@ -1,9 +1,8 @@
 import { test, expect } from '@playwright/test';
-import apiData from '../mockdata/trenger-delvis-refusjon.json';
 import { FormPage } from './utils/formPage';
 
 test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', () => {
-  const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
+  const uuid = 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91';
   const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
   test.beforeEach(async ({ page }) => {
@@ -17,15 +16,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
         body: JSON.stringify({ name: 'Nothing' })
       })
     );
-    // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(apiData)
-      })
-    );
-    // stub innsendingInntektsmelding
+
     await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
@@ -35,9 +26,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     );
 
     // visit form
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await response;
   });
 
   test('No changes and submit', async ({ page }) => {
@@ -104,7 +93,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     const req2 = await reqPromise;
     // assert payload
     expect(JSON.parse(req2.postData()!)).toEqual({
-      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      forespoerselId: 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91',
       agp: null,
       inntekt: {
         beloep: 50000,
@@ -122,7 +111,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
       naturalytelser: []
     });
     // final confirmation
-    await expect(page).toHaveURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375?fromSubmit=true');
+    await expect(page).toHaveURL('/im-dialog/kvittering/f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91?fromSubmit=true');
 
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/01\.07\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
@@ -170,7 +159,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     const req2 = await reqPromise;
     // assert payload
     expect(JSON.parse(req2.postData()!)).toEqual({
-      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      forespoerselId: 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91',
       agp: null,
       inntekt: {
         beloep: 50000,
@@ -192,7 +181,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
       naturalytelser: []
     });
     // final confirmation
-    await expect(page).toHaveURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375?fromSubmit=true');
+    await expect(page).toHaveURL('/im-dialog/kvittering/f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91?fromSubmit=true');
 
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/01\.07\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();

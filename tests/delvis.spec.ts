@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import apiData from '../mockdata/trenger-delvis-enkel-variant.json';
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,10 +13,6 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // intercept collect
     await page.route('**/collect', (route) => route.fulfill({ status: 202, body: 'OK' }));
 
-    // intercept forespoersel → fixture
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({ status: 200, body: JSON.stringify(apiData), headers: { 'Content-Type': 'application/json' } })
-    );
     // intercept innsendingInntektsmelding → success
     await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
@@ -27,9 +22,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       })
     );
 
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
-    await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-    await response;
+    await page.goto('http://localhost:3000/im-dialog/ac33a4ae-e1bd-4cab-9170-b8a01a13471e');
   });
 
   test('No changes and submit', async ({ page }) => {
@@ -49,7 +42,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     const req = await pageLoad;
     // assert request body
     expect(JSON.parse(req.postData()!)).toEqual({
-      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      forespoerselId: 'ac33a4ae-e1bd-4cab-9170-b8a01a13471e',
       agp: null,
       inntekt: {
         beloep: 36000,
@@ -105,7 +98,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     const responsData = await req2;
 
     expect(JSON.parse(responsData.request().postData()!)).toEqual({
-      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      forespoerselId: 'ac33a4ae-e1bd-4cab-9170-b8a01a13471e',
       agp: null,
       inntekt: {
         beloep: 50000,

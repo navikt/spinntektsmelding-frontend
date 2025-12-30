@@ -8,22 +8,6 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
   const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
   test.beforeEach(async ({ page }) => {
-    // stub hentKvittering → 404
-    await page.route('*/**/api/hentKvittering/**', (route) =>
-      route.fulfill({
-        status: 404,
-        contentType: 'application/json',
-        body: JSON.stringify({ name: 'Nothing' })
-      })
-    );
-    // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(originalData)
-      })
-    );
     // stub inntektsdata
     await page.route('*/**/api/inntektsdata', (route) =>
       route.fulfill({
@@ -41,9 +25,7 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
       })
     );
 
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await response;
   });
 
   test('can check the radioboxes for refusjon and submit', async ({ page }) => {

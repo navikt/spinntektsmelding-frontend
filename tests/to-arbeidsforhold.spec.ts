@@ -1,27 +1,10 @@
 import { test, expect } from '@playwright/test';
-import toArbeidsforhold from '../mockdata/trenger-to-arbeidsforhold.json';
 
-const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
+const uuid = '342dfa81-c05e-4477-9214-d007c403b60a';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test.describe('Utfylling og innsending av skjema – to arbeidsforhold', () => {
   test.beforeEach(async ({ page }) => {
-    // stub hentKvittering → 404
-    await page.route('*/**/api/hentKvittering/**', (route) =>
-      route.fulfill({
-        status: 404,
-        contentType: 'application/json',
-        body: JSON.stringify({ name: 'Nothing' })
-      })
-    );
-    // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(toArbeidsforhold)
-      })
-    );
     // stub innsendingInntektsmelding
     await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
@@ -32,9 +15,7 @@ test.describe('Utfylling og innsending av skjema – to arbeidsforhold', () => {
     );
 
     // navigate to form
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await response;
   });
 
   test('can check the radioboxes for refusjon and submit', async ({ page }) => {
