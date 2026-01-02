@@ -53,6 +53,8 @@ import { SelvbestemtTypeConst } from '../schema/konstanter/selvbestemtType';
 import transformErrors from '../utils/transformErrors';
 import hentForespoerselSSR from '../utils/hentForespoerselSSR';
 import useStateInit from '../state/useStateInit';
+import { getToken, validateToken } from '@navikt/oasis';
+import { redirectTilLogin } from '../utils/redirectTilLogin';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -454,8 +456,23 @@ export async function getServerSideProps(context: any) {
     const basePath = `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}/${uuid}`;
     console.log('basePath:', basePath);
     forespurtStatus = 200;
+
+    const token = getToken(context.req);
+    if (!token) {
+      /* håndter manglende token */
+      console.error('Mangler token i header');
+      return redirectTilLogin(context);
+    }
+
+    const validation = await validateToken(token);
+    if (!validation.ok) {
+      /* håndter valideringsfeil */
+      console.error('Validering av token feilet');
+      return redirectTilLogin(context);
+    }
+
     try {
-      forespurt = await hentForespoerselSSR(uuid);
+      forespurt = await hentForespoerselSSR(uuid, token);
 
       forespurtStatus = 200;
     } catch (error: any) {
