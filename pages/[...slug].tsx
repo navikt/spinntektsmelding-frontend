@@ -66,7 +66,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   dataFraBackend
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
-  const [lasterData, setLasterData] = useState<boolean>(false);
+  const lasterData = false;
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
@@ -117,7 +117,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const storeInitialized = useRef(false);
 
-  const hentSkjemadata = useHentSkjemadata();
+  // const hentSkjemadata = useHentSkjemadata();
   const initState = useStateInit();
 
   const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
@@ -294,12 +294,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (!isValidUUID(slug)) {
       return;
     }
-    if (!sykmeldingsperioder) {
-      // setLasterData(true);
-      // hentSkjemadata(slug, erEndring)?.finally(() => {
-      //   setLasterData(false);
-      // });
-    } else if (sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
+
+    if (sykmeldingsperioder && sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
       if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(slug)) {
         setHentInntektEnGang(false);
 
@@ -445,12 +441,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 export default Home;
 
 export async function getServerSideProps(context: any) {
-  const { slug, update, endre } = context.query;
+  const { slug, endre } = context.query;
   const uuid = slug[0];
   const isDevelopment = process.env.NODE_ENV === 'development';
   let forespurt = null;
   let forespurtStatus = null;
-  const overskriv = slug[1] && slug[1] === 'overskriv';
 
   if (isValidUUID(uuid) && !endre) {
     const basePath = `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}/${uuid}`;
