@@ -287,6 +287,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     return beregnetBestemmendeFraværsdag ? startOfMonth(beregnetBestemmendeFraværsdag) : undefined;
   }, [beregnetBestemmendeFraværsdag]);
 
+  const onSetHentInntektEnGang = useEffectEvent((status: boolean) => {
+    setHentInntektEnGang(status);
+  });
+
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
       return;
@@ -297,7 +301,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     if (sykmeldingsperioder && sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
       if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(slug)) {
-        setHentInntektEnGang(false);
+        onSetHentInntektEnGang(false);
 
         fetchInntektsdata(environment.inntektsdataUrl, slug, inntektsdato)
           .then((inntektSisteTreMnd) => {
@@ -468,8 +472,6 @@ export async function getServerSideProps(context: any) {
 
     try {
       forespurt = await hentForespoerselSSR(uuid, token);
-
-      forespurtStatus = 200;
     } catch (error: any) {
       console.error('Error fetching forespurt:', error);
       forespurt = { data: null };

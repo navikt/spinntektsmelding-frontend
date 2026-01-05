@@ -65,4 +65,3 @@ export const SelvbestemtKvitteringSchema = z.object({
 });
 
 export type SelvbestemtKvittering = z.infer<typeof SelvbestemtKvitteringSchema>;
-export type SelvbestemtInntektsmelding = z.infer<typeof SelvbestemtInntektsmeldingSchema>;
