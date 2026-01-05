@@ -170,7 +170,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const onForespurtInit = useEffectEvent(() => {
     console.log('onForespurtInit called with dataFraBackend:', forespurt);
     if (dataFraBackend && forespurt && !storeInitialized.current) {
-      initState(forespurt.data);
+      if (forespurt.data !== null) {
+        initState(forespurt.data);
+      }
       storeInitialized.current = true;
     }
   });
@@ -445,27 +447,25 @@ export default Home;
 export async function getServerSideProps(context: any) {
   const { slug, update, endre } = context.query;
   const uuid = slug[0];
+  const isDevelopment = process.env.NODE_ENV === 'development';
   let forespurt = null;
   let forespurtStatus = null;
   const overskriv = slug[1] && slug[1] === 'overskriv';
 
-  console.log('slug:', slug);
-  console.log('update:', update);
-  console.log('uuid:', uuid);
   if (isValidUUID(uuid) && !endre) {
     const basePath = `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}/${uuid}`;
     console.log('basePath:', basePath);
     forespurtStatus = 200;
 
     const token = getToken(context.req);
-    if (!token) {
+    if (!token && !isDevelopment) {
       /* håndter manglende token */
       console.error('Mangler token i header');
       return redirectTilLogin(context);
     }
 
     const validation = await validateToken(token);
-    if (!validation.ok) {
+    if (!validation.ok && !isDevelopment) {
       /* håndter valideringsfeil */
       console.error('Validering av token feilet');
       return redirectTilLogin(context);
