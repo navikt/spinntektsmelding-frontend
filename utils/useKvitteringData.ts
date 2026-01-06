@@ -1,12 +1,12 @@
 import { isValid } from 'date-fns';
 import { useMemo } from 'react';
-import { Periode } from '../../state/state';
-import parseIsoDate from '../../utils/parseIsoDate';
-import formatDate from '../../utils/formatDate';
-import formatTime from '../../utils/formatTime';
-import { ApiPeriodeSchema } from '../../schema/ApiPeriodeSchema';
+import { Periode } from '../state/state';
+import parseIsoDate from './parseIsoDate';
+import formatDate from './formatDate';
+import formatTime from './formatTime';
+import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import z from 'zod';
-import { MottattKvittering } from '../../state/useKvitteringInit';
+import { MottattKvittering } from '../state/useKvitteringInit';
 
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 

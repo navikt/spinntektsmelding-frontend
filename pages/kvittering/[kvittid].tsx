@@ -44,7 +44,7 @@ import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../utils/useRefusjon
 import useKvitteringInit, { MottattKvittering } from '../../state/useKvitteringInit';
 import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
 import { getKvitteringServerSideProps } from '../../utils/getKvitteringServerSideProps';
-import { useKvitteringData } from './useKvitteringData';
+import { useKvitteringData } from '../../utils/useKvitteringData';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
