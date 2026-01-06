@@ -212,7 +212,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const aktivFullLonnIArbeidsgiverPerioden = dataFraBackend
     ? {
-        status: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep !== undefined ? 'Nei' : 'Ja',
+        status: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep === undefined ? 'Ja' : 'Nei',
         begrunnelse: ssrData?.skjema?.agp?.redusertLoennIAgp?.begrunnelse,
         utbetalt: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep
       }
