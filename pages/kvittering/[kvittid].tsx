@@ -135,8 +135,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
   }
 
-  // const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
-
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
   const harForespurtArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
@@ -147,10 +145,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     : parseIsoDate(gammeltSkjaeringstidspunkt);
 
   const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
-
-  // const onHentKvitteringsdata = useEffectEvent((kvittid: string) => {
-  //   hentKvitteringsdata(kvittid);
-  // });
 
   const onSetNyInnsending = useEffectEvent((endring: boolean) => {
     setNyInnsending(endring);
@@ -219,7 +213,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const aktivFullLonnIArbeidsgiverPerioden = dataFraBackend
     ? {
-        status: (ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep !== undefined ? 'Nei' : 'Ja') as 'Ja' | 'Nei',
+        status: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep !== undefined ? 'Nei' : 'Ja',
         begrunnelse: ssrData?.skjema?.agp?.redusertLoennIAgp?.begrunnelse,
         utbetalt: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep
       }
@@ -227,7 +221,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const aktivLonnISykefravaeret = dataFraBackend
     ? {
-        status: (ssrData?.skjema?.refusjon ? 'Ja' : 'Nei') as 'Ja' | 'Nei',
+        status: ssrData?.skjema?.refusjon ? 'Ja' : 'Nei',
         beloep: ssrData?.skjema?.refusjon?.beloepPerMaaned
       }
     : lonnISykefravaeret;
@@ -399,66 +393,34 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
 
 export async function getServerSideProps(context: any) {
   const { kvittid, fromSubmit } = context.query;
-  const env = process.env.NODE_ENV;
   let kvittering: { data: MottattKvittering | null };
   let kvitteringStatus = 500;
-
-  if (env === 'development') {
-    try {
-      const token = 'mock-token';
-      if (!fromSubmit) {
-        kvittering = await hentKvitteringsdataSSR(kvittid, token);
-        kvitteringStatus = 200;
-      } else {
-        kvitteringStatus = 200;
-        kvittering = { data: null };
-      }
-    } catch (error: any) {
-      console.error('Error fetching selvbestemt kvittering:', error);
-      kvittering = { data: null };
-      kvitteringStatus = error.status;
-
-      if (error.status === 404) {
-        return {
-          notFound: true
-        };
-      }
-    }
-
-    return {
-      props: {
-        kvittid,
-        kvittering: !fromSubmit ? kvittering?.data : null,
-        kvitteringStatus: kvitteringStatus,
-        dataFraBackend: !fromSubmit && !!(kvittering?.data?.kvitteringNavNo || kvittering?.data?.kvitteringEkstern)
-      }
-    };
-  }
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   const token = getToken(context.req);
-  if (!token) {
+  if (!token && !isDevelopment) {
     /* håndter manglende token */
     console.error('Mangler token i header');
     return redirectTilLogin(context);
   }
 
   const validation = await validateToken(token);
-  if (!validation.ok) {
+  if (!validation.ok && !isDevelopment) {
     /* håndter valideringsfeil */
     console.error('Validering av token feilet');
     return redirectTilLogin(context);
   }
 
   try {
-    if (!fromSubmit) {
-      kvittering = await hentKvitteringsdataSSR(kvittid, token);
+    if (fromSubmit) {
+      kvittering = { data: null };
       kvitteringStatus = 200;
     } else {
-      kvittering = { data: null };
+      kvittering = await hentKvitteringsdataSSR(kvittid, token);
       kvitteringStatus = 200;
     }
   } catch (error: any) {
-    console.error('Error fetching selvbestemt kvittering:', error);
+    console.error('Error fetching kvittering:', error);
     kvittering = { data: null };
     if (error.status === 404) {
       kvitteringStatus = error.status;
@@ -471,7 +433,7 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       kvittid,
-      kvittering: !fromSubmit ? kvittering?.data : null,
+      kvittering: fromSubmit ? null : kvittering?.data,
       kvitteringStatus: kvitteringStatus,
       dataFraBackend: !fromSubmit && !!(kvittering?.data?.kvitteringNavNo || kvittering?.data?.kvitteringEkstern)
     }

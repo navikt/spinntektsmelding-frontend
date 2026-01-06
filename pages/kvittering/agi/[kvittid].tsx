@@ -453,54 +453,38 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
 
 export async function getServerSideProps(context: any) {
   const { kvittid, fromSubmit } = context.query;
-  const env = process.env.NODE_ENV;
   let kvittering: { data: SelvbestemtKvittering | null };
   let kvitteringStatus = 500;
-
-  if (env === 'development') {
-    let testdata = { default: null };
-    const mockdata = 'kvittering-selvbestemt-format';
-
-    const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
-
-    if (fs.existsSync(filePath)) {
-      testdata = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    }
-
-    return {
-      props: {
-        kvittid: context.query.kvittid,
-        kvittering: testdata,
-        kvitteringStatus: 200,
-        dataFraBackend: true
-      }
-    };
-  }
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   const token = getToken(context.req);
-  if (!token) {
+  if (!token && !isDevelopment) {
     /* håndter manglende token */
     console.error('Mangler token i header');
     return redirectTilLogin(context);
   }
 
   const validation = await validateToken(token);
-  if (!validation.ok) {
+  if (!validation.ok && !isDevelopment) {
     /* håndter valideringsfeil */
     console.error('Validering av token feilet');
     return redirectTilLogin(context);
   }
 
   try {
-    kvittering = await hentKvitteringsdataAgiSSR(kvittid, token);
-    kvitteringStatus = 200;
+    if (fromSubmit) {
+      kvittering = { data: null };
+      kvitteringStatus = 200;
+    } else {
+      kvittering = await hentKvitteringsdataAgiSSR(kvittid, token);
+      kvitteringStatus = 200;
+    }
   } catch (error: any) {
     console.error('Error fetching selvbestemt kvittering:', error);
     kvittering = { data: null };
     kvitteringStatus = error.status;
 
     if (error.status === 404) {
-      kvitteringStatus = error.status;
       return {
         notFound: true
       };
@@ -512,7 +496,7 @@ export async function getServerSideProps(context: any) {
       kvittid,
       kvittering: kvittering?.data,
       kvitteringStatus: kvitteringStatus,
-      dataFraBackend: !!kvittering?.data?.selvbestemtInntektsmelding
+      dataFraBackend: !fromSubmit && !!kvittering?.data?.selvbestemtInntektsmelding
     }
   };
 }

@@ -2,7 +2,6 @@ import { http, HttpResponse } from 'msw';
 import fs from 'fs';
 import path from 'path';
 
-// Funksjon for å lese mockdata fra fil
 function readMockdata(filename) {
   const filePath = path.join(process.cwd(), 'mockdata', `${filename}.json`);
   if (fs.existsSync(filePath)) {
@@ -11,13 +10,21 @@ function readMockdata(filename) {
   return null;
 }
 
-// Map fra kvittid til mockdata-fil (kan utvides etter behov)
 const kvitteringMockdataMap = {
   '8d50ef20-37b5-4829-ad83-56219e70b375': 'kvittering-delvis-endret-inntekt',
   'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-eksternt-system',
   'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63': 'kvittering-delvis',
   'b24baf59-55c9-48df-b8c1-7d93e098a95d': 'kvittering-delvis-endret-inntekt',
   '66f1188a-5cb7-4741-bd60-c9070835633c': 'kvittering-eksternt-system'
+};
+
+const kvitteringAgiMockdataMap = {
+  '8d50ef20-37b5-4829-ad83-56219e70b375': 'kvittering-selvbestemt-format',
+  'f32852af-888e-4d0c-ad67-081f22ee5c12': 'kvittering-selvbestemt-format'
+  // 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-eksternt-system',
+  // 'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63': 'kvittering-delvis',
+  // 'b24baf59-55c9-48df-b8c1-7d93e098a95d': 'kvittering-delvis-endret-inntekt',
+  // '66f1188a-5cb7-4741-bd60-c9070835633c': 'kvittering-eksternt-system'
 };
 
 const forespoerselMockdataMap = {
@@ -36,8 +43,6 @@ const forespoerselMockdataMap = {
 };
 
 export const handlers = [
-  // Hent kvitteringsdata - matcher alle kall til kvittering API
-  // Brukes av SSR i development for å mocke backend
   http.get('*/api/v1/kvittering/:kvittid', ({ params }) => {
     const { kvittid } = params;
     const mockdataFile = kvitteringMockdataMap[kvittid] || 'kvittering-bug-endre';
@@ -52,6 +57,17 @@ export const handlers = [
   http.get('*/api/v1/hent-forespoersel/:foresporselid', ({ params }) => {
     const { foresporselid } = params;
     const mockdataFile = forespoerselMockdataMap[foresporselid] || 'kvittering-bug-endre';
+    const data = readMockdata(mockdataFile);
+
+    if (data) {
+      return HttpResponse.json(data);
+    }
+    return new HttpResponse(null, { status: 404 });
+  }),
+
+  http.get('*/api/v1/selvbestemt-inntektsmelding/:foresporselid', ({ params }) => {
+    const { foresporselid } = params;
+    const mockdataFile = kvitteringAgiMockdataMap[foresporselid] || 'kvittering-bug-endre';
     const data = readMockdata(mockdataFile);
 
     if (data) {
