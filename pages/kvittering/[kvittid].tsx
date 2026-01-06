@@ -202,12 +202,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const aktiveNaturalytelser =
     dataFraBackend && ssrData?.skjema?.naturalytelser
-      ? ssrData?.skjema?.naturalytelser && ssrData?.skjema?.naturalytelser.length > 0
-        ? ssrData?.skjema?.naturalytelser.map((ytelse: ApiNaturalytelse) => ({
-            ...ytelse,
-            sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
-          }))
-        : []
+      ? ssrData.skjema.naturalytelser.map((ytelse: ApiNaturalytelse) => ({
+          ...ytelse,
+          sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
+        }))
       : naturalytelser;
 
   const aktivFullLonnIArbeidsgiverPerioden = dataFraBackend
@@ -225,11 +223,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       }
     : lonnISykefravaeret;
 
-  const aktivInnsendingTidspunkt = dataFraBackend
-    ? ssrData?.skjema.mottatt
-      ? ` - ${formatDate(new Date(ssrData.skjema.mottatt))} kl. ${formatTime(new Date(ssrData.skjema.mottatt))}`
-      : ''
-    : innsendingTidspunkt;
+  const ssrInnsendingTidspunkt = ssrData?.skjema?.mottatt
+    ? ` - ${formatDate(new Date(ssrData.skjema.mottatt))} kl. ${formatTime(new Date(ssrData.skjema.mottatt))}`
+    : '';
+
+  const aktivInnsendingTidspunkt = dataFraBackend ? ssrInnsendingTidspunkt : innsendingTidspunkt;
 
   console.log('aktivInnsendingTidspunkt', aktivInnsendingTidspunkt);
 
