@@ -294,7 +294,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                     </>
                   )}
                   <LonnUnderSykefravaeret
-                    loenn={aktivLonnISykefravaeret!}
+                    loenn={aktivLonnISykefravaeret}
                     harRefusjonEndringer={harRefusjonEndringer}
                     refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
                   />
@@ -304,7 +304,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 <>
                   <Skillelinje />
                   <Heading2>Naturalytelser</Heading2>
-                  <BortfallNaturalytelser ytelser={aktiveNaturalytelser!} />
+                  <BortfallNaturalytelser ytelser={aktiveNaturalytelser} />
                 </>
               )}
               <Skillelinje />
