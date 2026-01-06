@@ -55,7 +55,7 @@ jobs:
             ${{ runner.os }}-next-cache-
 
       - name: Build with stats
-        run: yarn build
+        run: yarn build --webpack
         env:
           ANALYZE: true
 
