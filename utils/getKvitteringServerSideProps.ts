@@ -1,7 +1,7 @@
 import { getToken, validateToken } from '@navikt/oasis';
 import { redirectTilLogin } from './redirectTilLogin';
 
-type KvitteringFetcher<T> = (kvittid: string, token: string | null) => Promise<{ data: T | null }>;
+type KvitteringFetcher<T> = (kvittid: string, token?: string) => Promise<{ data: T | null }>;
 
 type DataFraBackendChecker<T> = (data: T | null, fromSubmit: boolean) => boolean;
 
@@ -40,7 +40,7 @@ export async function getKvitteringServerSideProps<T>({
       kvittering = { data: null };
       kvitteringStatus = 200;
     } else {
-      kvittering = await fetchKvittering(kvittid, token);
+      kvittering = await fetchKvittering(kvittid, token ?? undefined);
       kvitteringStatus = 200;
     }
   } catch (error: any) {
