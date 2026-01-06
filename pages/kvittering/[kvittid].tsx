@@ -119,8 +119,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   };
 
   const lukkHentingFeiletModal = () => {
-    if (typeof window === 'undefined') return;
-    window.location.href = env.saksoversiktUrl!;
+    if (typeof globalThis === 'undefined') return;
+    globalThis.location.href = env.saksoversiktUrl!;
   };
 
   let innsendingTidspunkt =

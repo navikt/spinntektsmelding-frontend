@@ -39,7 +39,7 @@ import hentKvitteringsdataAgiSSR from '../../../utils/hentKvitteringsdataAgiSSR'
 import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../schema/ForespurtDataSchema';
-import useKvitteringInit, { MottattKvittering } from '../../../state/useKvitteringInit';
+import useKvitteringInit from '../../../state/useKvitteringInit';
 
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 import environment from '../../../config/environment';
@@ -54,8 +54,6 @@ import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 import { useShallow } from 'zustand/react/shallow';
 import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema';
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
-import path from 'path';
-import fs from 'fs';
 import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 
 type PersonData = {

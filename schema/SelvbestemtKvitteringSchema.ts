@@ -57,7 +57,7 @@ export const SelvbestemtInntektsmeldingSchema = z.object({
   refusjon: SelvbestemtRefusjonSchema,
   naturalytelser: ApiNaturalytelserSchema,
   aarsakInnsending: AarsakInnsendingSchema,
-  mottatt: z.string().datetime({ offset: true })
+  mottatt: z.iso.datetime({ offset: true })
 });
 
 export const SelvbestemtKvitteringSchema = z.object({
