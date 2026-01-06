@@ -43,9 +43,8 @@ import PersonVisning from '../../components/Person/PersonVisning';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
 import useKvitteringInit, { MottattKvittering } from '../../state/useKvitteringInit';
-import { getToken, validateToken } from '@navikt/oasis';
-import { redirectTilLogin } from '../../utils/redirectTilLogin';
 import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
+import { getKvitteringServerSideProps } from '../../utils/getKvitteringServerSideProps';
 import { ApiPeriodeSchema } from '../../schema/ApiPeriodeSchema';
 import { ApiNaturalytelserSchema } from '../../schema/ApiNaturalytelserSchema';
 import z from 'zod';
@@ -392,50 +391,10 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
 }
 
 export async function getServerSideProps(context: any) {
-  const { kvittid, fromSubmit } = context.query;
-  let kvittering: { data: MottattKvittering | null };
-  let kvitteringStatus = 500;
-  const isDevelopment = process.env.NODE_ENV === 'development';
-
-  const token = getToken(context.req);
-  if (!token && !isDevelopment) {
-    /* håndter manglende token */
-    console.error('Mangler token i header');
-    return redirectTilLogin(context);
-  }
-
-  const validation = await validateToken(token);
-  if (!validation.ok && !isDevelopment) {
-    /* håndter valideringsfeil */
-    console.error('Validering av token feilet');
-    return redirectTilLogin(context);
-  }
-
-  try {
-    if (fromSubmit) {
-      kvittering = { data: null };
-      kvitteringStatus = 200;
-    } else {
-      kvittering = await hentKvitteringsdataSSR(kvittid, token);
-      kvitteringStatus = 200;
-    }
-  } catch (error: any) {
-    console.error('Error fetching kvittering:', error);
-    kvittering = { data: null };
-    if (error.status === 404) {
-      kvitteringStatus = error.status;
-      return {
-        notFound: true
-      };
-    }
-  }
-
-  return {
-    props: {
-      kvittid,
-      kvittering: fromSubmit ? null : kvittering?.data,
-      kvitteringStatus: kvitteringStatus,
-      dataFraBackend: !fromSubmit && !!(kvittering?.data?.kvitteringNavNo || kvittering?.data?.kvitteringEkstern)
-    }
-  };
+  return getKvitteringServerSideProps<MottattKvittering>({
+    context,
+    fetchKvittering: hentKvitteringsdataSSR,
+    checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!(data?.kvitteringNavNo || data?.kvitteringEkstern),
+    errorLogMessage: 'Error fetching kvittering:'
+  });
 }

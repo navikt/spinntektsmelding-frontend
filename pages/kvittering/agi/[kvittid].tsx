@@ -42,8 +42,8 @@ import { MottattPeriode } from '../../../schema/ForespurtDataSchema';
 import useKvitteringInit, { MottattKvittering } from '../../../state/useKvitteringInit';
 
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
-import { getToken, validateToken } from '@navikt/oasis';
 import environment from '../../../config/environment';
+import { getKvitteringServerSideProps } from '../../../utils/getKvitteringServerSideProps';
 import { z } from 'zod';
 import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import { EndringAarsak } from '../../../validators/validerAapenInnsending';
@@ -56,7 +56,6 @@ import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
 import path from 'path';
 import fs from 'fs';
-import { redirectTilLogin } from '../../../utils/redirectTilLogin';
 import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 
 type PersonData = {
@@ -452,51 +451,10 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
 }
 
 export async function getServerSideProps(context: any) {
-  const { kvittid, fromSubmit } = context.query;
-  let kvittering: { data: SelvbestemtKvittering | null };
-  let kvitteringStatus = 500;
-  const isDevelopment = process.env.NODE_ENV === 'development';
-
-  const token = getToken(context.req);
-  if (!token && !isDevelopment) {
-    /* håndter manglende token */
-    console.error('Mangler token i header');
-    return redirectTilLogin(context);
-  }
-
-  const validation = await validateToken(token);
-  if (!validation.ok && !isDevelopment) {
-    /* håndter valideringsfeil */
-    console.error('Validering av token feilet');
-    return redirectTilLogin(context);
-  }
-
-  try {
-    if (fromSubmit) {
-      kvittering = { data: null };
-      kvitteringStatus = 200;
-    } else {
-      kvittering = await hentKvitteringsdataAgiSSR(kvittid, token);
-      kvitteringStatus = 200;
-    }
-  } catch (error: any) {
-    console.error('Error fetching selvbestemt kvittering:', error);
-    kvittering = { data: null };
-    kvitteringStatus = error.status;
-
-    if (error.status === 404) {
-      return {
-        notFound: true
-      };
-    }
-  }
-
-  return {
-    props: {
-      kvittid,
-      kvittering: kvittering?.data,
-      kvitteringStatus: kvitteringStatus,
-      dataFraBackend: !fromSubmit && !!kvittering?.data?.selvbestemtInntektsmelding
-    }
-  };
+  return getKvitteringServerSideProps<SelvbestemtKvittering>({
+    context,
+    fetchKvittering: hentKvitteringsdataAgiSSR,
+    checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!data?.selvbestemtInntektsmelding,
+    errorLogMessage: 'Error fetching selvbestemt kvittering:'
+  });
 }
