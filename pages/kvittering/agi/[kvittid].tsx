@@ -30,7 +30,7 @@ import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunne
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isEqual, isValid } from 'date-fns';
-import { LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../../state/state';
+import { Begrunnelse, LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../../state/state';
 
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
@@ -223,7 +223,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     fullLoennIArbeidsgiverPerioden = {
       status: kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
       utbetalt: kvitteringDokument?.agp?.redusertLoennIAgp?.beloep,
-      begrunnelse: kvitteringDokument?.agp.redusertLoennIAgp?.begrunnelse
+      begrunnelse: kvitteringDokument?.agp?.redusertLoennIAgp?.begrunnelse as Begrunnelse | undefined
     };
 
     if (kvitteringDokument?.vedtaksperiodeId) {
