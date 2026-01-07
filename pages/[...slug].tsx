@@ -53,6 +53,7 @@ import transformErrors from '../utils/transformErrors';
 import hentForespoerselSSR from '../utils/hentForespoerselSSR';
 import useStateInit from '../state/useStateInit';
 import { getToken, validateToken } from '@navikt/oasis';
+import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
@@ -165,12 +166,15 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const memoErrors = useMemo(() => transformErrors(errors), [errors]);
 
+  const removeQueryParam = useRemoveQueryParam();
+
   const onForespurtInit = useEffectEvent(() => {
-    console.log('onForespurtInit called with dataFraBackend:', forespurt);
     if (dataFraBackend && forespurt && !storeInitialized.current) {
       if (forespurt.data !== null) {
         initState(forespurt.data);
       }
+
+      removeQueryParam('fromSubmit');
       storeInitialized.current = true;
     }
   });
