@@ -80,7 +80,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -97,7 +97,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -112,7 +112,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdataUtenAgp }}
+        kvittering={{ ...kvitteringsdataUtenAgp.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -124,10 +124,11 @@ describe('Kvittering', () => {
   });
 
   it.skip('renders without kvittering fra eksternt system', () => {
+    // Skal aldri komme fra eksternt system på dette endepunktet
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdataEksterntSystem }}
+        kvittering={{ ...kvitteringsdataEksterntSystem }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -141,7 +142,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdataBehandlingsdager }}
+        kvittering={{ ...kvitteringsdataBehandlingsdager.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -158,7 +159,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -174,7 +175,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -194,7 +195,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -211,7 +212,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -224,7 +225,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -238,7 +239,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -253,7 +254,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
