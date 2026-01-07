@@ -1,34 +1,26 @@
 import { test, expect } from '@playwright/test';
-import hentForespoersel from '../mockdata/trenger-originalen-16dager-innsendt.json';
+// import hentForespoersel from '../mockdata/trenger-originalen-16dager-innsendt.json';
 import inntektData from '../mockdata/inntektData.json';
-import kvitteringEkstern from '../mockdata/kvittering-eksternt-system.json';
 
 test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
-  const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
-  const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
+  const uuid = '66f1188a-5cb7-4741-bd60-c9070835633c';
+  const baseUrl = `http://localhost:3000/im-dialog/kvittering/${uuid}`;
 
   test.beforeEach(async ({ page }) => {
     // stub collect beacon
     await page.route('**/collect', (r) => r.fulfill({ status: 202, body: 'OK' }));
-    // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (r) =>
-      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(hentForespoersel) })
-    );
+
     // stub inntektsdata
-    await page.route('*/**/api/inntektsdata', (r) =>
+    await page.route('**/inntektsdata', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(inntektData) })
     );
     // stub innsending
-    await page.route('*/**/api/innsendingInntektsmelding', (r) =>
+    await page.route('**/innsendingInntektsmelding', (r) =>
       r.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ name: 'Nothing' }) })
     );
-    // stub hentKvittering → ekstern fixture
-    await page.route('*/**/api/hentKvittering/**', (r) =>
-      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(kvitteringEkstern) })
-    );
+    // Note: kvittering SSR data is mocked by MSW in __mocks__/handlers.js
 
     await page.goto(baseUrl);
-    await page.waitForResponse('*/**/api/hentKvittering/**');
   });
 
   test('Changes and submit', async ({ page }) => {

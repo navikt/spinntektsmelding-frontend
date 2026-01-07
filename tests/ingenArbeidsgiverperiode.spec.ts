@@ -1,24 +1,12 @@
 import { test, expect } from '@playwright/test';
-import originalData from '../mockdata/trenger-originalen.json';
 import { FormPage } from './utils/formPage';
 
-const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
+const uuid = '588e055c-5d72-449b-b88f-56aa43457668';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
   test.beforeEach(async ({ page }) => {
-    // stub hentKvittering → 404
-    await page.route('*/**/api/hentKvittering/**', (r) =>
-      r.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ name: 'Nothing' }) })
-    );
-    // stub forespørsel
-    await page.route('*/**/api/hent-forespoersel/*', (r) =>
-      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(originalData) })
-    );
-    // navigate
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await response;
   });
 
   test('Det er ikke arbeidsgiverperiode toggle works', async ({ page }) => {
@@ -71,19 +59,6 @@ test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
       )
     ).toBeVisible();
     await expect(page.getByRole('button', { name: /Endre/ }).first()).toBeDisabled();
-
-    // await formPage.uncheckCheckbox('Det er ikke arbeidsgiverperiode i dette sykefraværet');
-    // // uncheck override
-    // // full lønn radios now enabled and none selected
-    // const fullLonn = page.getByRole('group', { name: /Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden/ });
-    // await expect(fullLonn.getByRole('radio', { name: 'Ja' })).toBeEnabled();
-    // await expect(fullLonn.getByRole('radio', { name: 'Ja' })).not.toBeChecked();
-    // await expect(fullLonn.getByRole('radio', { name: 'Nei' })).not.toBeChecked();
-
-    // // original arbeidsgiverperiode dates
-    // await expect(page.locator('[data-cy="arbeidsgiverperiode-0-fra-dato"]')).toHaveText('17.02.2023');
-    // await expect(page.locator('[data-cy="arbeidsgiverperiode-0-til-dato"]')).toHaveText('04.03.2023');
-    // Submit and confirm
 
     await formPage.selectOption('Velg begrunnelse', 'Det er ikke fire ukers opptjeningstid');
 

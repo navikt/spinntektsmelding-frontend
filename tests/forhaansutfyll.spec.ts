@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import apiData from '../mockdata/trenger-forhaandsutfyll.json';
 import { AxeBuilder } from '@axe-core/playwright';
 
+const uuid = '8d1b4043-5a9e-4225-9ba8-5dc22f515796';
+const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
+
 test.describe('Utfylling og innsending av skjema', () => {
   test.beforeEach(async ({ page }) => {
     // intercept hentKvittering → 404
@@ -19,14 +22,6 @@ test.describe('Utfylling og innsending av skjema', () => {
   });
 
   test('should display information on the person and the submitter', async ({ page }) => {
-    // intercept forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(apiData)
-      })
-    );
     // intercept inntektsdata → 404
     await page.route('*/**/api/inntektsdata', (route) =>
       route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ name: 'Nothing' }) })
@@ -42,9 +37,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     // intercept collect
     await page.route('**/collect', (route) => route.fulfill({ status: 202, contentType: 'text/plain', body: 'OK' }));
 
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
-    await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-    await response;
+    await page.goto(baseUrl);
 
     // Person data
     await expect(page.locator('[data-cy="navn"]')).toHaveText('Test Navn Testesen-Navnesen Jr.');

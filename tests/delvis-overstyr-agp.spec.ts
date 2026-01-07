@@ -2,24 +2,27 @@ import { test, expect } from '@playwright/test';
 import { FormPage } from './utils/formPage';
 import trengerDelvis from '../mockdata/trenger-delvis-enkel-variant.json';
 
+const uuid = 'ac33a4ae-e1bd-4cab-9170-b8a01a13471e';
+const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
+
 test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request }) => {
   const formPage = new FormPage(page);
   // Intercept API calls
-  await page.route('*/**/api/hentKvittering/8d50ef20-37b5-4829-ad83-56219e70b375', (route) => {
-    route.fulfill({
-      status: 404,
-      body: JSON.stringify({
-        name: 'Nothing'
-      })
-    });
-  });
+  // await page.route('*/**/api/hentKvittering/8d50ef20-37b5-4829-ad83-56219e70b375', (route) => {
+  //   route.fulfill({
+  //     status: 404,
+  //     body: JSON.stringify({
+  //       name: 'Nothing'
+  //     })
+  //   });
+  // });
 
-  await page.route('*/**/api/hent-forespoersel/*', (route) => {
-    route.fulfill({
-      status: 200,
-      body: JSON.stringify(trengerDelvis)
-    });
-  });
+  // await page.route('*/**/api/hent-forespoersel/*', (route) => {
+  //   route.fulfill({
+  //     status: 200,
+  //     body: JSON.stringify(trengerDelvis)
+  //   });
+  // });
 
   await page.route('*/**/api/innsendingInntektsmelding', (route) => {
     route.fulfill({
@@ -31,10 +34,10 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   });
 
   // Wait for the API to be loaded
-  const apiResponse = page.waitForResponse('*/**/api/hent-forespoersel/*');
+  // const apiResponse = page.waitForResponse('*/**/api/hent-forespoersel/*');
   // Visit the page
-  await page.goto('http://localhost:3000/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
-  await apiResponse;
+  await page.goto(baseUrl);
+  // await apiResponse;
 
   // Simulate interaction
   await page.waitForTimeout(5000);
@@ -80,7 +83,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   // Verify request body
   const requestBody = JSON.parse(response.postData()!);
   expect(requestBody).toEqual({
-    forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+    forespoerselId: uuid,
     agp: {
       egenmeldinger: [],
       perioder: [
@@ -118,5 +121,5 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   await expect(page.locator('text="Bonus"')).toBeVisible();
   await expect(page.locator('text="50 000,00 kr/måned"').first()).toBeVisible();
   await expect(page.locator('text="45 000,00"').first()).toBeVisible();
-  await expect(page).toHaveURL('/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
+  await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
 });

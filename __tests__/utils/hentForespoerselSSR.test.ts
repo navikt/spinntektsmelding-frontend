@@ -1,30 +1,30 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
+import hentForespoerselSSR from '../../utils/hentForespoerselSSR';
 import fetchKvitteringsdataSSR from '../../utils/fetchKvitteringsdataSSR';
 
 vi.mock('../../utils/fetchKvitteringsdataSSR');
 
-describe('hentKvitteringsdataSSR', () => {
+describe('hentForespoerselSSR', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     process.env.IM_API_URI = 'api-host';
-    process.env.KVITTERINGDATA_API = '/api/kvittering';
+    process.env.PREUTFYLT_INNTEKTSMELDING_API = '/api/inntektsmelding';
   });
 
   it('should return null data when pathSlug is an array', async () => {
-    const result = await hentKvitteringsdataSSR(['slug1', 'slug2'], 'token');
+    const result = await hentForespoerselSSR(['slug1', 'slug2'], 'token');
     expect(result).toEqual({ data: null });
     expect(fetchKvitteringsdataSSR).not.toHaveBeenCalled();
   });
 
   it('should return null data when pathSlug is undefined', async () => {
-    const result = await hentKvitteringsdataSSR(undefined, 'token');
+    const result = await hentForespoerselSSR(undefined, 'token');
     expect(result).toEqual({ data: null });
     expect(fetchKvitteringsdataSSR).not.toHaveBeenCalled();
   });
 
   it('should return null data when pathSlug is empty string', async () => {
-    const result = await hentKvitteringsdataSSR('', 'token');
+    const result = await hentForespoerselSSR('', 'token');
     expect(result).toEqual({ data: null });
     expect(fetchKvitteringsdataSSR).not.toHaveBeenCalled();
   });
@@ -33,9 +33,13 @@ describe('hentKvitteringsdataSSR', () => {
     const mockData = { data: { id: '123' } };
     vi.mocked(fetchKvitteringsdataSSR).mockResolvedValue(mockData as any);
 
-    const result = await hentKvitteringsdataSSR('test-slug', 'test-token');
+    const result = await hentForespoerselSSR('test-slug', 'test-token');
 
-    expect(fetchKvitteringsdataSSR).toHaveBeenCalledWith('http://api-host/api/kvittering', 'test-slug', 'test-token');
+    expect(fetchKvitteringsdataSSR).toHaveBeenCalledWith(
+      'http://api-host/api/inntektsmelding',
+      'test-slug',
+      'test-token'
+    );
     expect(result).toEqual(mockData);
   });
 
@@ -43,9 +47,9 @@ describe('hentKvitteringsdataSSR', () => {
     const mockData = { data: { id: '456' } };
     vi.mocked(fetchKvitteringsdataSSR).mockResolvedValue(mockData as any);
 
-    const result = await hentKvitteringsdataSSR('test-slug', undefined);
+    const result = await hentForespoerselSSR('test-slug', undefined);
 
-    expect(fetchKvitteringsdataSSR).toHaveBeenCalledWith('http://api-host/api/kvittering', 'test-slug', undefined);
+    expect(fetchKvitteringsdataSSR).toHaveBeenCalledWith('http://api-host/api/inntektsmelding', 'test-slug', undefined);
     expect(result).toEqual(mockData);
   });
 });

@@ -20,15 +20,14 @@ import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgive
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../state/useBoundStore';
-import useHentKvitteringsdata from '../../utils/useHentKvitteringsdata';
 
 import ButtonPrint from '../../components/ButtonPrint';
 
 import ButtonEndre from '../../components/ButtonEndre';
 import formatDate from '../../utils/formatDate';
-import { Fragment, useEffect, useEffectEvent } from 'react';
-import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../utils/formatTime';
+import { Fragment, useEffect, useEffectEvent, useRef } from 'react';
+import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isValid } from 'date-fns';
 import env from '../../config/environment';
@@ -38,24 +37,29 @@ import forespoerselType from '../../config/forespoerselType';
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
-import classNames from 'classnames/bind';
-import parseIsoDate from '../../utils/parseIsoDate';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import PersonVisning from '../../components/Person/PersonVisning';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
-
-const cx = classNames.bind(lokalStyles);
+import useKvitteringInit, { MottattKvittering } from '../../state/useKvitteringInit';
+import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
+import { getKvitteringServerSideProps } from '../../utils/getKvitteringServerSideProps';
+import { useKvitteringData } from '../../utils/useKvitteringData';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  kvittid
+  kvittid,
+  kvittering,
+  kvitteringStatus,
+  dataFraBackend = false
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
 
-  const hentKvitteringsdata = useHentKvitteringsdata();
+  const kvitteringInit = useKvitteringInit();
+  const storeInitialized = useRef(false);
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
+  const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
@@ -76,15 +80,57 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const refusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
 
+  const onSetSkjemaFeilet = useEffectEvent(() => {
+    setSkjemaFeilet();
+  });
+
+  useEffect(() => {
+    if (kvitteringStatus === 500) {
+      const harDataIStore = sykmeldingsperioder && sykmeldingsperioder.length > 0;
+      if (!harDataIStore) {
+        onSetSkjemaFeilet();
+      }
+    }
+  }, [kvitteringStatus, sykmeldingsperioder]);
+
+  // Initialiser Zustand-store med SSR-data ved første klient-render
+  // Dette sikrer at store har data selv ved page refresh
+  const onKvitteringInit = useEffectEvent(() => {
+    if (dataFraBackend && kvittering && !storeInitialized.current) {
+      kvitteringInit(kvittering);
+      storeInitialized.current = true;
+    }
+  });
+
+  useEffect(() => {
+    onKvitteringInit();
+  }, []);
+
+  const onSetNyInnsending = useEffectEvent((endring: boolean) => {
+    setNyInnsending(endring);
+  });
+
+  useEffect(() => {
+    onSetNyInnsending(false);
+  }, []);
+
+  const onSetOpprinneligNyMaanedsinntekt = useEffectEvent(() => {
+    setOpprinneligNyMaanedsinntekt();
+  });
+
+  useEffect(() => {
+    onSetOpprinneligNyMaanedsinntekt();
+  }, []);
+
   const clickEndre = () => {
     if (isValidUUID(kvittid)) {
-      router.push(`/${kvittid}`);
+      router.push(`/${kvittid}?endre=true`);
     }
   };
 
   const lukkHentingFeiletModal = () => {
-    if (typeof window === 'undefined') return;
-    window.location.href = env.saksoversiktUrl;
+    if (typeof globalThis === 'undefined') return;
+    globalThis.location.href = env.saksoversiktUrl!;
   };
 
   let innsendingTidspunkt =
@@ -98,55 +144,51 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
   }
 
-  const ingenArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(arbeidsgiverperioder);
-
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
   const harForespurtArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = paakrevdeOpplysninger?.includes(forespoerselType.inntekt);
-
-  const bestemmendeFravaersdag = kvitteringData
-    ? parseIsoDate(kvitteringData?.inntekt?.inntektsdato)
-    : parseIsoDate(gammeltSkjaeringstidspunkt);
-
-  const visningBestemmendeFravaersdag = bestemmendeFravaersdag;
-
-  const onHentKvitteringsdata = useEffectEvent((kvittid: string) => {
-    hentKvitteringsdata(kvittid);
-  });
-
-  const onSetNyInnsending = useEffectEvent((endring: boolean) => {
-    setNyInnsending(endring);
-  });
-
-  useEffect(() => {
-    if (!sykmeldingsperioder && !kvitteringEksterntSystem?.avsenderSystem) {
-      if (!kvittid || kvittid === '') return;
-      onHentKvitteringsdata(kvittid);
-    }
-    onSetNyInnsending(false);
-  }, [kvitteringEksterntSystem?.avsenderSystem, kvittid, sykmeldingsperioder]);
-
-  const onSetOpprinneligNyMaanedsinntekt = useEffectEvent(() => {
-    setOpprinneligNyMaanedsinntekt();
-  });
-
-  useEffect(() => {
-    onSetOpprinneligNyMaanedsinntekt();
-  }, []);
 
   const visNaturalytelser = paakrevdeOpplysninger?.includes(forespoerselType.inntekt);
   const visArbeidsgiverperiode = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const visFullLonnIArbeidsgiverperioden = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode);
   const visRefusjon = paakrevdeOpplysninger?.includes(forespoerselType.refusjon);
 
-  const classNameWrapperFravaer = cx({
-    fravaerswrapperwrapper: visArbeidsgiverperiode
+  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyles.fravaerswrapperwrapper : '';
+  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyles.infoboks : '';
+
+  // Bruk custom hook for å håndtere data fra enten SSR eller store
+  const {
+    aktiveSykmeldingsperioder,
+    aktiveEgenmeldinger,
+    aktiveArbeidsgiverperioder,
+    aktivBruttoinntekt,
+    aktivBestemmendeFravaersdag,
+    aktiveNaturalytelser,
+    aktivFullLonnIArbeidsgiverPerioden,
+    aktivLonnISykefravaeret,
+    aktivInnsendingTidspunkt,
+    aktivAvsender,
+    aktivSykmeldt
+  } = useKvitteringData({
+    kvittering,
+    dataFraBackend,
+    storeData: {
+      bruttoinntekt,
+      lonnISykefravaeret,
+      fullLonnIArbeidsgiverPerioden,
+      sykmeldingsperioder,
+      egenmeldingsperioder,
+      naturalytelser,
+      arbeidsgiverperioder,
+      kvitteringInnsendt,
+      kvitteringEksterntSystem,
+      gammeltSkjaeringstidspunkt,
+      kvitteringData
+    }
   });
 
-  const classNameWrapperSkjaeringstidspunkt = cx({
-    infoboks: visArbeidsgiverperiode
-  });
+  const ingenAktiveArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(aktiveArbeidsgiverperioder);
 
   return (
     <div className={styles.container}>
@@ -176,13 +218,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 </div>
               </div>
 
-              <PersonVisning />
+              <PersonVisning sykmeldt={aktivSykmeldt} avsender={aktivAvsender} />
               {(harForespurtInntekt || harForespurtArbeidsgiverperiode) && <Skillelinje />}
               <div className={classNameWrapperFravaer}>
                 {visArbeidsgiverperiode && (
                   <Fravaersperiode
-                    sykmeldingsperioder={sykmeldingsperioder}
-                    egenmeldingsperioder={egenmeldingsperioder}
+                    sykmeldingsperioder={aktiveSykmeldingsperioder}
+                    egenmeldingsperioder={aktiveEgenmeldinger}
                     paakrevdeOpplysninger={paakrevdeOpplysninger}
                   />
                 )}
@@ -196,8 +238,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                         <div className={lokalStyles.fravaerwrapper}>
                           <div className={lokalStyles.fravaertid}>Dato</div>
                           <div data-cy='bestemmendefravaersdag'>
-                            {visningBestemmendeFravaersdag ? (
-                              formatDate(visningBestemmendeFravaersdag)
+                            {aktivBestemmendeFravaersdag ? (
+                              formatDate(aktivBestemmendeFravaersdag)
                             ) : (
                               <Skeleton variant='text' />
                             )}{' '}
@@ -208,14 +250,14 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                     {visArbeidsgiverperiode && (
                       <div className={lokalStyles.arbeidsgiverperiode}>
                         <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
-                        {!ingenArbeidsgiverperioder && (
+                        {!ingenAktiveArbeidsgiverperioder && (
                           <BodyLong>
                             Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
                             Deretter betaler Nav lønn til den syke eller refunderer bedriften.
                           </BodyLong>
                         )}
-                        {ingenArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
-                        {arbeidsgiverperioder?.map((periode) => (
+                        {ingenAktiveArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
+                        {aktiveArbeidsgiverperioder?.map((periode: Periode) => (
                           <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
                         ))}
                       </div>
@@ -228,8 +270,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <Skillelinje />
                   <Heading2>Beregnet månedslønn</Heading2>
                   <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
-                  <BodyShort>{formatCurrency(bruttoinntekt.bruttoInntekt)} kr/måned</BodyShort>
-                  {bruttoinntekt.endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
+                  <BodyShort>{formatCurrency(aktivBruttoinntekt?.bruttoInntekt)} kr/måned</BodyShort>
+                  {aktivBruttoinntekt?.endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
                     <Fragment key={endring.aarsak + endringIndex}>
                       <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
@@ -248,11 +290,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                       <div className={lokalStyles.uthevet}>
                         Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
                       </div>
-                      <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLonnIArbeidsgiverPerioden} />
+                      <FullLonnIArbeidsgiverperioden lonnIPerioden={aktivFullLonnIArbeidsgiverPerioden} />
                     </>
                   )}
                   <LonnUnderSykefravaeret
-                    loenn={lonnISykefravaeret!}
+                    loenn={aktivLonnISykefravaeret}
                     harRefusjonEndringer={harRefusjonEndringer}
                     refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
                   />
@@ -262,17 +304,17 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 <>
                   <Skillelinje />
                   <Heading2>Naturalytelser</Heading2>
-                  <BortfallNaturalytelser ytelser={naturalytelser!} />
+                  <BortfallNaturalytelser ytelser={aktiveNaturalytelser} />
                 </>
               )}
               <Skillelinje />
             </>
           )}
-          <BodyShort>Kvittering - innsendt inntektsmelding{innsendingTidspunkt}</BodyShort>
+          <BodyShort>Kvittering - innsendt inntektsmelding{aktivInnsendingTidspunkt}</BodyShort>
           <div className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
             <div className={lokalStyles.innerbuttonwrapper}>
               {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}
-              <Link className={lokalStyles.lukkelenke} href={env.saksoversiktUrl}>
+              <Link className={lokalStyles.lukkelenke} href={env.saksoversiktUrl!}>
                 Lukk
               </Link>
             </div>
@@ -301,11 +343,10 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
 }
 
 export async function getServerSideProps(context: any) {
-  const kvittid = context.query.kvittid;
-
-  return {
-    props: {
-      kvittid
-    }
-  };
+  return getKvitteringServerSideProps<MottattKvittering>({
+    context,
+    fetchKvittering: hentKvitteringsdataSSR,
+    checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!(data?.kvitteringNavNo || data?.kvitteringEkstern),
+    errorLogMessage: 'Error fetching kvittering:'
+  });
 }

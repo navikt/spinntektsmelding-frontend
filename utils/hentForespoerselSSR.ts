@@ -1,7 +1,7 @@
 import { MottattKvittering } from '../state/useKvitteringInit';
 import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
 
-export default function hentKvitteringsdataSSR(
+export default function hentForespoerselSSR(
   pathSlug?: string | Array<string>,
   token?: string
 ): Promise<{ data: MottattKvittering | null }> {
@@ -11,7 +11,7 @@ export default function hentKvitteringsdataSSR(
 
   if (pathSlug) {
     return fetchKvitteringsdataSSR(
-      'http://' + globalThis.process.env.IM_API_URI + process.env.KVITTERINGDATA_API,
+      `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}`,
       pathSlug,
       token
     );

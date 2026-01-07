@@ -30,21 +30,20 @@ import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunne
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isEqual, isValid } from 'date-fns';
-import { LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../../state/state';
+import { Begrunnelse, LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../../state/state';
 
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
-import classNames from 'classnames/bind';
 import { harGyldigeRefusjonEndringer } from '../../../utils/harGyldigeRefusjonEndringer';
-import hentKvitteringsdataSSR from '../../../utils/hentKvitteringsdataSSR';
+import hentKvitteringsdataAgiSSR from '../../../utils/hentKvitteringsdataAgiSSR';
 import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../schema/ForespurtDataSchema';
 import useKvitteringInit from '../../../state/useKvitteringInit';
 
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
-import { getToken, validateToken } from '@navikt/oasis';
 import environment from '../../../config/environment';
+import { getKvitteringServerSideProps } from '../../../utils/getKvitteringServerSideProps';
 import { z } from 'zod';
 import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import { EndringAarsak } from '../../../validators/validerAapenInnsending';
@@ -55,8 +54,7 @@ import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 import { useShallow } from 'zustand/react/shallow';
 import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema';
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
-import path from 'path';
-import fs from 'fs';
+import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 
 type PersonData = {
   navn: string;
@@ -87,8 +85,6 @@ function mapNaturalytelserTilInterntFormat(
     verdiBeloep: ytelse.verdiBeloep
   }));
 }
-
-const cx = classNames.bind(lokalStyles);
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -159,7 +155,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input);
-    kvitteringInit({ kvitteringNavNo: kvittering });
+    kvitteringInit({ kvitteringNavNo: kvittering, kvitteringDokument: null, kvitteringEkstern: null });
     // Må lagre data som kan endres i hovedskjema - Slutt
 
     if (input?.agp?.perioder) {
@@ -167,7 +163,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     }
 
     if (isValidUUID(kvittid)) {
-      router.push(`/${kvittid}`);
+      router.push(`/${kvittid}?endre=true`);
     }
   };
 
@@ -216,13 +212,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       : [];
   }
 
-  const classNameWrapperFravaer = cx({
-    fravaerswrapperwrapper: visArbeidsgiverperiode
-  });
-
-  const classNameWrapperSkjaeringstidspunkt = cx({
-    infoboks: visArbeidsgiverperiode
-  });
+  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyles.fravaerswrapperwrapper : '';
+  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyles.infoboks : '';
 
   let fullLoennIArbeidsgiverPerioden: LonnIArbeidsgiverperioden;
 
@@ -232,7 +223,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     fullLoennIArbeidsgiverPerioden = {
       status: kvitteringDokument?.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
       utbetalt: kvitteringDokument?.agp?.redusertLoennIAgp?.beloep,
-      begrunnelse: kvitteringDokument?.agp.redusertLoennIAgp?.begrunnelse
+      begrunnelse: kvitteringDokument?.agp?.redusertLoennIAgp?.begrunnelse as Begrunnelse | undefined
     };
 
     if (kvitteringDokument?.vedtaksperiodeId) {
@@ -288,7 +279,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   } else if (kvitteringData?.refusjon?.sluttdato) {
     refusjonEndringer.push({
       beloep: 0,
-      dato: parseIsoDate(kvittering.refusjon?.sluttdato)
+      dato: parseIsoDate(kvitteringData?.refusjon?.sluttdato)
     });
   }
   const innsendtRefusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
@@ -458,77 +449,10 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
 }
 
 export async function getServerSideProps(context: any) {
-  const env = process.env.NODE_ENV;
-  if (env === 'development') {
-    let testdata = { default: null };
-    const mockdata = 'kvittering-selvbestemt-format';
-
-    const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
-
-    if (fs.existsSync(filePath)) {
-      testdata = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    }
-
-    return {
-      props: {
-        kvittid: context.query.kvittid,
-        kvittering: testdata,
-        kvitteringStatus: 200,
-        dataFraBackend: true
-      }
-    };
-  }
-  const kvittid = context.query.kvittid;
-
-  let kvittering: { status: number; data: { success: any } };
-
-  const token = getToken(context.req);
-  if (!token) {
-    /* håndter manglende token */
-    console.error('Mangler token i header');
-    return redirectTilLogin(context);
-  }
-
-  const validation = await validateToken(token);
-  if (!validation.ok) {
-    /* håndter valideringsfeil */
-    console.error('Validering av token feilet');
-    return redirectTilLogin(context);
-  }
-
-  try {
-    kvittering = await hentKvitteringsdataSSR(kvittid, token);
-    kvittering!.status = 200;
-  } catch (error: any) {
-    console.error('Error fetching selvbestemt kvittering:', error);
-    kvittering = { data: { success: null }, status: error.status };
-
-    if (error.status === 404) {
-      return {
-        notFound: true
-      };
-    }
-  }
-
-  return {
-    props: {
-      kvittid,
-      kvittering: kvittering?.data?.success,
-      kvitteringStatus: kvittering?.status,
-      dataFraBackend: !!kvittering?.data?.success?.selvbestemtInntektsmelding
-    }
-  };
-}
-
-function redirectTilLogin(context: any) {
-  const ingress = context.req.headers.host + environment.baseUrl;
-  const currentPath = `https://${ingress}${context.resolvedUrl}`;
-
-  const destination = `https://${ingress}/oauth2/login?redirect=${currentPath}`;
-  return {
-    redirect: {
-      destination: destination,
-      permanent: false
-    }
-  };
+  return getKvitteringServerSideProps<SelvbestemtKvittering>({
+    context,
+    fetchKvittering: hentKvitteringsdataAgiSSR,
+    checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!data?.selvbestemtInntektsmelding,
+    errorLogMessage: 'Error fetching selvbestemt kvittering:'
+  });
 }

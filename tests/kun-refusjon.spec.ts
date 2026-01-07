@@ -1,29 +1,11 @@
 import { test, expect } from '@playwright/test';
-import originalData from '../mockdata/trenger-refusjon.json';
 import { FormPage } from './utils/formPage';
 
-const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
+const uuid = 'f46623ac-fe65-403c-9b91-41db41d3a232';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test.describe('Utfylling og innsending av skjema – refusjon', () => {
   test.beforeEach(async ({ page }) => {
-    // stub hentKvittering → 404
-    await page.route('*/**/api/hentKvittering/**', (route) =>
-      route.fulfill({
-        status: 404,
-        contentType: 'application/json',
-        body: JSON.stringify({ name: 'Nothing' })
-      })
-    );
-    // stub hent-forespoersel
-    await page.route('*/**/api/hent-forespoersel/*', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(originalData)
-      })
-    );
-    // stub innsendingInntektsmelding
     await page.route('*/**/api/innsendingInntektsmelding', (route) =>
       route.fulfill({
         status: 201,
@@ -33,9 +15,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     );
 
     // navigate to form
-    const response = page.waitForResponse('*/**/api/hent-forespoersel/*');
     await page.goto(baseUrl);
-    await response;
   });
 
   test('submit inntektsmelding that only requires refusjon', async ({ page }) => {
@@ -66,8 +46,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -123,8 +103,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -180,8 +160,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 });

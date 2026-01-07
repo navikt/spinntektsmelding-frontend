@@ -1,42 +1,31 @@
 import { test, expect } from '@playwright/test';
-import trengerDelvis from '../mockdata/trenger-delvis.json';
 import inntektData from '../mockdata/inntektData.json';
-import kvitteringData from '../mockdata/kvittering-delvis-endret-inntekt.json';
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt)', () => {
   test.beforeEach(async ({ page }) => {
     // stub collect beacon
     await page.route('**/collect', (r) => r.fulfill({ status: 202, body: 'OK' }));
-    // stub hent-forespoersel
-    trengerDelvis.erBesvart = true;
-    await page.route('*/**/api/hent-forespoersel/*', (r) =>
-      r.fulfill({ status: 200, body: JSON.stringify(trengerDelvis), contentType: 'application/json' })
-    );
+
     // stub inntektsdata
     await page.route('*/**/api/inntektsdata', (r) =>
       r.fulfill({ status: 200, body: JSON.stringify(inntektData), contentType: 'application/json' })
     );
-    // stub hentKvittering
-    await page.route('*/**/api/hentKvittering/**', (r) =>
-      r.fulfill({ status: 200, body: JSON.stringify(kvitteringData), contentType: 'application/json' })
-    );
+
     // stub innsending
     await page.route('*/**/api/innsendingInntektsmelding', (r) =>
       r.fulfill({ status: 201, body: JSON.stringify({ name: 'Nothing' }), contentType: 'application/json' })
     );
     // navigate to receipt page
-    const response = page.waitForResponse('**/hentKvittering/**');
-    await page.goto('http://localhost:3000/im-dialog/kvittering/8d50ef20-37b5-4829-ad83-56219e70b375');
-    await response;
+    await page.goto('http://localhost:3000/im-dialog/kvittering/b24baf59-55c9-48df-b8c1-7d93e098a95d');
   });
 
   test('Changes income and submits', async ({ page }) => {
     // verify on receipt URL
-    await expect(page).toHaveURL(/\/im-dialog\/kvittering\/8d50ef20-37b5-4829-ad83-56219e70b375/);
+    await expect(page).toHaveURL(/\/im-dialog\/kvittering\/b24baf59-55c9-48df-b8c1-7d93e098a95d/);
 
     // click first "Endre"
     await page.getByRole('button', { name: 'Endre' }).first().click();
-    await page.waitForURL('**/im-dialog/8d50ef20-37b5-4829-ad83-56219e70b375');
+    await page.waitForURL('**/im-dialog/b24baf59-55c9-48df-b8c1-7d93e098a95d?endre=true');
 
     // adjust income
     const input = page.getByLabel('Månedslønn 02.01.2023');
@@ -66,7 +55,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
 
     const body = JSON.parse(req.request().postData()!);
     expect(body).toEqual({
-      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      forespoerselId: 'b24baf59-55c9-48df-b8c1-7d93e098a95d',
       agp: null,
       inntekt: {
         beloep: 50000,

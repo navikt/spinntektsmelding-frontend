@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import trengerDelvis from '../mockdata/trenger-delvis.json';
 import inntektData from '../mockdata/inntektData.json';
-import kvitteringData from '../mockdata/kvittering-delvis.json';
+// import kvitteringData from '../mockdata/kvittering-delvis.json';
 import { FormPage } from './utils/formPage';
 
-const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
+const uuid = 'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63';
+const startUrl = `http://localhost:3000/im-dialog/kvittering/${uuid}`;
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
@@ -13,35 +14,35 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await page.route('**/collect', (r) => r.fulfill({ status: 202, body: 'OK' }));
 
     // mark as besvart
-    trengerDelvis.erBesvart = true;
+    // trengerDelvis.erBesvart = true;
 
     // stub API
-    await page.route('**/api/hent-forespoersel/*', (r) =>
-      r.fulfill({ status: 200, body: JSON.stringify(trengerDelvis), contentType: 'application/json' })
-    );
+    // await page.route('**/api/hent-forespoersel/*', (r) =>
+    //   r.fulfill({ status: 200, body: JSON.stringify(trengerDelvis), contentType: 'application/json' })
+    // );
     await page.route('**/api/inntektsdata', (r) =>
       r.fulfill({ status: 200, body: JSON.stringify(inntektData), contentType: 'application/json' })
     );
-    await page.route('**/api/hentKvittering/**', (r) =>
-      r.fulfill({ status: 200, body: JSON.stringify(kvitteringData), contentType: 'application/json' })
-    );
+    // await page.route('**/api/hentKvittering/**', (r) =>
+    //   r.fulfill({ status: 200, body: JSON.stringify(kvitteringData), contentType: 'application/json' })
+    // );
     await page.route('**/api/innsendingInntektsmelding', (r) =>
       r.fulfill({ status: 201, body: JSON.stringify({ name: 'Nothing' }), contentType: 'application/json' })
     );
 
-    const response = page.waitForResponse('**/api/hent-forespoersel/*');
-    const kvitteringResponse = page.waitForResponse(`**/api/hentKvittering/${uuid}`);
-    await page.goto(baseUrl);
-    const [forespoerselResp, kvitteringResp] = await Promise.all([response, kvitteringResponse]);
+    // const response = page.waitForResponse('**/api/hent-forespoersel/*');
+    // const kvitteringResponse = page.waitForResponse(`**/api/hentKvittering/${uuid}`);
+    await page.goto(startUrl);
+    // const [forespoerselResp] = await Promise.all([response]);
   });
 
   test('Changes and submit', async ({ page }) => {
     const formPage = new FormPage(page);
 
     await test.step('Gå til kvitteringsside og trykk Endre', async () => {
-      await expect(page).toHaveURL(/\/im-dialog\/kvittering\/8d50ef20-37b5-4829-ad83-56219e70b375/);
+      await expect(page).toHaveURL(/\/im-dialog\/kvittering\/b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63/);
       await page.getByRole('button', { name: /Endre/ }).first().click();
-      await expect(page).toHaveURL(baseUrl);
+      await expect(page).toHaveURL(baseUrl + '?endre=true');
     });
 
     await test.step('Oppdater månedslønn', async () => {
