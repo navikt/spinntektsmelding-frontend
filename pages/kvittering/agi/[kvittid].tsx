@@ -124,7 +124,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   );
   const kvitteringInit = useKvitteringInit();
 
-  const kvitteringDokument = kvittering?.selvbestemtInntektsmelding ?? kvitteringData;
+  const kvitteringDokument = kvittering?.success?.selvbestemtInntektsmelding ?? kvitteringData;
 
   const kvitteringInnsendt = new Date(kvitteringDokument?.tidspunkt);
   const bestemmendeFravaersdag = dataFraBackend
