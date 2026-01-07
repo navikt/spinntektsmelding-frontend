@@ -19,14 +19,16 @@ vi.mock('../../../utils/hentKvitteringsdataAgiSSR', () => ({
   default: vi.fn(() =>
     Promise.resolve({
       data: {
-        selvbestemtInntektsmelding: {
-          sykmeldt: { navn: 'Test Person', fnr: '12345678910' },
-          avsender: { orgnr: '123456789', orgNavn: 'Test Org', navn: 'Avsender', tlf: '12345678' },
-          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-15' }],
-          agp: { perioder: [], egenmeldinger: [] },
-          inntekt: { beloep: 50000, inntektsdato: '2023-01-01' },
-          refusjon: { beloepPerMaaned: 50000 },
-          tidspunkt: '2023-01-20T10:00:00Z'
+        success: {
+          selvbestemtInntektsmelding: {
+            sykmeldt: { navn: 'Test Person', fnr: '12345678910' },
+            avsender: { orgnr: '123456789', orgNavn: 'Test Org', navn: 'Avsender', tlf: '12345678' },
+            sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-15' }],
+            agp: { perioder: [], egenmeldinger: [] },
+            inntekt: { beloep: 50000, inntektsdato: '2023-01-01' },
+            refusjon: { beloepPerMaaned: 50000 },
+            tidspunkt: '2023-01-20T10:00:00Z'
+          }
         }
       }
     })
@@ -78,7 +80,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdata}
+        kvittering={{ success: kvitteringsdata }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -95,7 +97,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdata}
+        kvittering={{ success: kvitteringsdata }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -110,7 +112,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdataUtenAgp}
+        kvittering={{ success: kvitteringsdataUtenAgp }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -125,7 +127,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdataEksterntSystem}
+        kvittering={{ success: kvitteringsdataEksterntSystem }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -139,7 +141,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdataBehandlingsdager}
+        kvittering={{ success: kvitteringsdataBehandlingsdager }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -156,7 +158,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdata}
+        kvittering={{ success: kvitteringsdata }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -172,7 +174,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdata}
+        kvittering={{ success: kvitteringsdata }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -192,7 +194,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdata}
+        kvittering={{ success: kvitteringsdata }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -209,7 +211,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdata}
+        kvittering={{ success: kvitteringsdata }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -222,7 +224,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdata}
+        kvittering={{ success: kvitteringsdata }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -236,7 +238,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdata}
+        kvittering={{ success: kvitteringsdata }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -251,7 +253,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={kvitteringsdata}
+        kvittering={{ success: kvitteringsdata }}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -281,16 +283,16 @@ describe('getServerSideProps', () => {
 
   it('returns props in development mode', async () => {
     process.env.NODE_ENV = 'development';
-
+    const hentKvitteringsdataAgiSSR = await import('../../../utils/hentKvitteringsdataAgiSSR');
     const context = {
-      query: { kvittid: 'test-uuid' },
+      query: { kvittid: '8d50ef20-37b5-4829-ad83-56219e70b375' },
       req: {}
     };
 
     const result = await getServerSideProps(context);
 
     expect(result).toHaveProperty('props');
-    expect(result.props.kvittid).toBe('test-uuid');
+    expect(result.props.kvittid).toBe('8d50ef20-37b5-4829-ad83-56219e70b375');
     expect(result.props.dataFraBackend).toBe(true);
   });
 
