@@ -452,7 +452,7 @@ export async function getServerSideProps(context: any) {
   return getKvitteringServerSideProps<SelvbestemtKvittering>({
     context,
     fetchKvittering: hentKvitteringsdataAgiSSR,
-    checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!data?.selvbestemtInntektsmelding,
+    checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!data?.success?.selvbestemtInntektsmelding,
     errorLogMessage: 'Error fetching selvbestemt kvittering:'
   });
 }
