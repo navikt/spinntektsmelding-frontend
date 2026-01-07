@@ -1,3 +1,36 @@
 .alertEscape {
   display: block;
 }
+
+.periodewrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin: 1rem 0;
+}
+
+@media screen and (max-width: 600px) {
+  .datepickerEscape {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .periodewrapper {
+    flex-direction: column;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    background-color: var(--a-bg-subtle);
+    padding: 0.5rem;
+    box-shadow: 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
+    margin: 1rem 0;
+  }
+
+  .datepickerEscape {
+    width: 100%;
+  }
+
+  .padded {
+    padding: 0.5rem 0.25rem;
+  }
+}

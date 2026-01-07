@@ -47,17 +47,17 @@ export default function useFyllAapenInnsending() {
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
 
-  const perioder = concatPerioder(sykmeldingsperioder, egenmeldingsperioder);
-  const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(
-    arbeidsgiverperioder,
-    true
-  );
-  const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
-
   type SkjemaData = z.infer<typeof HovedskjemaSchema>;
   type ArbeidsforholdType = z.infer<typeof TypeArbeidsforholdSchema>;
 
   return (skjemaData: SkjemaData, selvbestemtType: SelvbestemtType, erBegrensetForespoersel: boolean) => {
+    const perioder = concatPerioder(sykmeldingsperioder, egenmeldingsperioder);
+    const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(
+      arbeidsgiverperioder,
+      true
+    );
+    const formatertePerioder = konverterPerioderFraMottattTilInterntFormat(innsendbarArbeidsgiverperioder);
+
     const bestemmendeFravaersdag =
       perioder && perioder.length > 0
         ? finnBestemmendeFravaersdag(
@@ -67,7 +67,7 @@ export default function useFyllAapenInnsending() {
             arbeidsgiverKanFlytteSkjæringstidspunkt(),
             erBegrensetForespoersel
           )
-        : undefined;
+        : skjaeringstidspunkt;
 
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt.endringAarsaker.map((endringAarsak) => KonverterEndringAarsakSchema.parse(endringAarsak))
@@ -111,7 +111,9 @@ export default function useFyllAapenInnsending() {
       },
       inntekt: {
         beloep: skjemaData.inntekt?.beloep ?? 0,
-        inntektsdato: bestemmendeFravaersdag!, // Skjæringstidspunkt?
+        inntektsdato: isValidDateForSubmit(bestemmendeFravaersdag)
+          ? formatDateForSubmit(bestemmendeFravaersdag)
+          : formatDateForSubmit(skjaeringstidspunkt), // Skjæringstidspunkt?
         endringAarsaker: endringAarsakerParsed ?? []
       },
       refusjon:
@@ -152,4 +154,12 @@ function formatDateForSubmit(date?: Date | string): string {
   }
 
   return date ?? '';
+}
+
+function isValidDateForSubmit(date?: Date | string): boolean {
+  if (date instanceof Date) {
+    return true;
+  }
+
+  return date !== undefined && date !== '';
 }

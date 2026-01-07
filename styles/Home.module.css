@@ -84,12 +84,6 @@
   gap: 2rem;
 }
 
-.periodewrapper {
-  display: flex;
-  gap: 2rem;
-  margin: 1rem 0;
-}
-
 .radiobuttonWrapper > div {
   display: flex;
   gap: 2rem;
@@ -144,16 +138,6 @@
 }
 
 @media screen and (max-width: 500px) {
-  .periodewrapper {
-    flex-direction: column;
-    border: 1px solid darkgray;
-    border-radius: 5px;
-    background-color: var(--a-bg-subtle);
-    padding: 0.5rem;
-    box-shadow: 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
-    margin: 1rem 0;
-  }
-
   .datepickerEscape {
     width: 100%;
   }

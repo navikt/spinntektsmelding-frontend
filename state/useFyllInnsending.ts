@@ -297,7 +297,7 @@ export function formaterRedusertLoennIAgp(
   fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined
 ): { beloep: number; begrunnelse: Begrunnelse } | null {
   return fullLonnIArbeidsgiverPerioden?.begrunnelse !== undefined &&
-    fullLonnIArbeidsgiverPerioden?.begrunnelse !== '' &&
+    (fullLonnIArbeidsgiverPerioden?.begrunnelse as string) !== '' &&
     fullLonnIArbeidsgiverPerioden?.status === 'Nei'
     ? {
         beloep: fullLonnIArbeidsgiverPerioden.utbetalt ?? 0,

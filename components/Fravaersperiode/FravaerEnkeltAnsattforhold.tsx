@@ -2,6 +2,7 @@ import { useState } from 'react';
 import formatDate from '../../utils/formatDate';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
+import lokalStyles from './FravaerEnkeltAnsattforhold.module.css';
 import { Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import { Periode } from '../../state/state';
@@ -9,6 +10,7 @@ import Periodevelger from '../Bruttoinntekt/Periodevelger';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import ButtonEndre from '../ButtonEndre';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
+import ButtonTilbakestill from '../ButtonTilbakestill';
 
 interface FravaerEnkeltAnsattforholdProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -62,18 +64,18 @@ export default function FravaerEnkeltAnsattforhold({
   return (
     <>
       {sortertePerioder?.map((periode, periodeIndex) => (
-        <div className={styles.periodewrapper} key={periode.id}>
+        <div className={lokalStyles.periodewrapper} key={periode.id}>
           {!endreSykemelding && (
-            <div>
-              <div className={styles.datepickerEscape}>
+            <>
+              <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`sykmelding-${periodeIndex}-fra`}>Fra</TextLabel>
                 <div data-cy={`sykmelding-${periodeIndex}-fra-dato`}>{formatDate?.(periode.fom)}</div>
               </div>
-              <div className={styles.datepickerEscape}>
+              <div className={lokalStyles.datepickerEscape}>
                 <TextLabel data-cy={`sykmelding-${periodeIndex}-til`}>Til</TextLabel>
                 <div data-cy={`sykmelding-${periodeIndex}-til-dato`}>{formatDate?.(periode.tom)}</div>
               </div>
-            </div>
+            </>
           )}
           {endreSykemelding && (
             <Periodevelger
@@ -104,13 +106,7 @@ export default function FravaerEnkeltAnsattforhold({
             Legg til periode
           </Button>
 
-          <Button
-            variant='tertiary'
-            className={styles.kontrollerknapp}
-            onClick={(event) => clickTilbakestillFravaersperiodeHandler(event)}
-          >
-            Tilbakestill
-          </Button>
+          <ButtonTilbakestill onClick={(event) => clickTilbakestillFravaersperiodeHandler(event)} />
         </div>
       )}
     </>
