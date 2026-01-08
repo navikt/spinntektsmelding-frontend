@@ -124,7 +124,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   );
   const kvitteringInit = useKvitteringInit();
 
-  const kvitteringDokument = kvittering?.success?.selvbestemtInntektsmelding ?? kvitteringData;
+  const kvitteringDokument = kvittering ?? kvitteringData;
 
   const kvitteringInnsendt = new Date(kvitteringDokument?.tidspunkt);
   const bestemmendeFravaersdag = dataFraBackend
@@ -449,10 +449,14 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
 }
 
 export async function getServerSideProps(context: any) {
-  return getKvitteringServerSideProps<SelvbestemtKvittering>({
+  const result = await getKvitteringServerSideProps<SelvbestemtKvittering>({
     context,
     fetchKvittering: hentKvitteringsdataAgiSSR,
     checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!data?.success?.selvbestemtInntektsmelding,
     errorLogMessage: 'Error fetching selvbestemt kvittering:'
   });
+
+  const props = { ...result.props, kvittering: result.props?.kvittering?.success?.selvbestemtInntektsmelding ?? null };
+
+  return { ...result, props };
 }
