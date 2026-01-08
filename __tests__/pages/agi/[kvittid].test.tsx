@@ -3,6 +3,7 @@ import Kvittering, { getServerSideProps } from '../../../pages/kvittering/agi/[k
 import { expect, vi, describe, it, beforeAll, beforeEach, afterEach } from 'vitest';
 import useBoundStore from '../../../state/useBoundStore';
 import env from '../../../config/environment';
+import { mapKvitteringAgiData } from '../../../utils/mapKvitteringAgiData';
 
 import kvitteringsdata from '../../../mockdata/selvbestemt-kvittering.json';
 import kvitteringsdataUtenAgp from '../../../mockdata/selvbestemt-kvittering-uten-agp.json';
@@ -80,9 +81,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdata as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -97,9 +97,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdata as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -112,9 +111,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdataUtenAgp }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdataUtenAgp as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -127,9 +125,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdataEksterntSystem }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdataEksterntSystem as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -141,9 +138,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdataBehandlingsdager }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdataBehandlingsdager as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -158,9 +154,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdata as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -174,9 +169,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdata as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -194,9 +188,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdata as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -211,9 +204,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdata as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -224,9 +216,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdata as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -238,9 +229,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdata as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -253,9 +243,8 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ success: kvitteringsdata }}
+        mappedData={mapKvitteringAgiData({ success: kvitteringsdata as any })}
         dataFraBackend={true}
-        kvitteringStatus={200}
       />
     );
 
@@ -265,7 +254,7 @@ describe('Kvittering', () => {
   });
 
   it('renders without dataFraBackend - uses store data', () => {
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvitteringStatus={200} dataFraBackend={false} />);
+    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' dataFraBackend={false} />);
 
     // Should still render the page structure
     const kvitteringHeadings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
