@@ -113,7 +113,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       if (refusjon?.perioder?.length === 1 && refusjon.perioder[0].beloep === 0) {
         return false;
       }
-      return Boolean(refusjon.perioder && refusjon?.perioder?.length > 0);
+      return Boolean((refusjon.perioder?.length ?? 0) > 0);
     } else {
       return false;
     }

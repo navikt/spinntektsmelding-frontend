@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect } from 'react';
+import { Fragment, useEffect, useEffectEvent } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -186,13 +186,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? parseIsoDate(kvitteringDokument.inntekt.inntektsdato)
     : parseIsoDate(kvitteringData?.inntekt?.inntektsdato);
 
-  const onSetNyInnsending = useCallback(() => {
+  const onSetNyInnsending = useEffectEvent(() => {
     setNyInnsending(false);
-  }, [setNyInnsending]);
+  });
 
   useEffect(() => {
     onSetNyInnsending();
-  }, [searchParams, onSetNyInnsending]);
+  }, [searchParams]);
 
   const visNaturalytelser = true;
   const visArbeidsgiverperiode = true;
@@ -307,13 +307,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? kvitteringDokument.inntekt.endringAarsaker
     : (kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringAarsaker);
 
-  const onsetSkjemaStatus = useCallback(() => {
+  const onsetSkjemaStatus = useEffectEvent(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
 
     if (dataFraBackend && kvitteringDokument?.type?.type) {
       setSelvbestemtType(kvitteringDokument?.type?.type);
     }
-  }, [setSkjemaStatus, dataFraBackend, kvitteringDokument?.type?.type, setSelvbestemtType]);
+  });
 
   useEffect(() => {
     onsetSkjemaStatus();
