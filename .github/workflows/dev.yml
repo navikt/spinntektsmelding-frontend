@@ -39,7 +39,7 @@ jobs:
             BUILDMODE=development
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
         with:
           image-ref: ${{ steps.docker-build-push.outputs.image }}
           format: "sarif"
