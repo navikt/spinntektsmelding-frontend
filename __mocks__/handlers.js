@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 function readMockdata(filename) {
   const filePath = path.join(process.cwd(), 'mockdata', `${filename}.json`);

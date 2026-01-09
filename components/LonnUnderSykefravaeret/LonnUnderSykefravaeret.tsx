@@ -31,7 +31,7 @@ export default function LonnUnderSykefravaeret({
       <div className={lokalStyles.uthevet}>Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?</div>
       <div className={lokalStyle.oppsummering}>
         <BodyShort>Ja</BodyShort>
-        {loenn && loenn.status === 'Ja' && (
+        {loenn?.status === 'Ja' && (
           <>
             <div className={lokalStyle.uthevet}>Refusjonsbeløp per måned (Nav vil refundere opp til 6G av årslønn)</div>
             <BodyShort className={lokalStyle.svartekster}>{formatCurrency(loenn.beloep)} kr/måned</BodyShort>

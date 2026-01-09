@@ -1,12 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
-import fs from 'fs';
+import fs from 'node:fs';
 import isMod11Number from '../../utils/isMod11Number';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
-import path from 'path';
+import path from 'node:path';
 
 function minDate(date1: string, date2: string): string {
   return date1 < date2 ? date1 : date2;

@@ -9,7 +9,7 @@ interface PageContentProps {
 }
 
 export default function PageContent(props: PageContentProps) {
-  if (typeof window !== 'undefined') {
+  if (typeof globalThis.window !== 'undefined') {
     setBreadcrumbs([
       {
         title: 'Min side - arbeidsgiver',

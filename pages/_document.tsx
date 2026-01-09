@@ -46,7 +46,7 @@ interface CustomDocumentProps extends DocumentInitialProps {
   decorator: DecoratorComponentsReact;
 }
 
-function CustomDocument(props: CustomDocumentProps) {
+function CustomDocument(props: Readonly<CustomDocumentProps>) {
   const { decorator } = props;
   const { Header, Footer, Scripts, HeadAssets } = decorator;
 

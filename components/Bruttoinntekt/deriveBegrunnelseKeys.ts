@@ -34,10 +34,10 @@ export function deriveBegrunnelseKeys({
   if (typeof begrunnelseEndringBruttoinntekt !== 'object') return [];
   if (Array.isArray(valgteBegrunnelser) === false) valgteBegrunnelser = [];
 
-  const alreadyChosen = (valgteBegrunnelser ?? []).map((b) => b.aarsak);
+  const alreadyChosen = new Set((valgteBegrunnelser ?? []).map((b) => b.aarsak));
 
   const baseKeys = Object.keys(begrunnelseEndringBruttoinntekt).filter(
-    (key) => !alreadyChosen.includes(key) && (nyInnsending ? key !== 'Tariffendring' : true)
+    (key) => !alreadyChosen.has(key) && (nyInnsending ? key !== 'Tariffendring' : true)
   );
 
   return Array.from(

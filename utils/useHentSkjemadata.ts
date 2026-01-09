@@ -37,12 +37,15 @@ export default function useHentSkjemadata() {
               'Mangler tilgang til å hente skjemadata i useHentSkjemadata ' + error.status + ' - ' + error.message
             );
 
-            if (typeof window !== 'undefined') {
-              const ingress = window.location.hostname + environment.baseUrl;
-              const currentPath = window.location.href;
+            if (typeof globalThis !== 'undefined' && globalThis.location) {
+              const ingress = globalThis.location.hostname + environment.baseUrl;
+              const currentPath = globalThis.location.href;
 
-              window.location.replace(`https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`);
+              globalThis.location.replace(
+                `https://${ingress}/oauth2/login?redirect=${encodeURIComponent(currentPath)}`
+              );
             }
+
             return Promise.resolve({});
           }
 

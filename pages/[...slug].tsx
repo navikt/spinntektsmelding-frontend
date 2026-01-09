@@ -132,7 +132,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
 
   const lukkHentingFeiletModal = () => {
-    window.location.href = environment.saksoversiktUrl;
+    if (
+      environment.saksoversiktUrl !== undefined &&
+      typeof globalThis !== 'undefined' &&
+      globalThis.location !== undefined
+    ) {
+      globalThis.location.href = environment.saksoversiktUrl;
+    }
   };
 
   const selvbestemtInnsending = slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
