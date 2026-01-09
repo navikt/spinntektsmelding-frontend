@@ -147,4 +147,4 @@ jobs:
             ${{ runner.os }}-yarn2-
       - name: Install dependencies
         run: yarn install --immutable --inline-builds
-      - uses: codex-/knip-reporter@v2
+      - uses: codex-/knip-reporter@398e656c485dd1649f06631a4cd2e602c6ccc4f1
