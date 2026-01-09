@@ -7,6 +7,8 @@ import useSendInnSkjema from '../../utils/useSendInnSkjema';
 import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsgiverInitiertSkjema';
 import useBoundStore from '../../state/useBoundStore';
 import visFeilmeldingTekst from '../../utils/visFeilmeldingTekst';
+import { parse } from 'path';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
@@ -379,12 +381,10 @@ describe('Home Page', () => {
   });
 
   it('fetches inntektsdata when conditions are met with valid UUID', async () => {
-    const fetchInntektsdata = await import('../../utils/fetchInntektsdata');
-
     (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
-          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-15' }],
+          sykmeldingsperioder: [{ fom: parseIsoDate('2023-01-01'), tom: parseIsoDate('2023-01-15') }],
           hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt', 'arbeidsgiverperiode']),
           foreslaattBestemmendeFravaersdag: '2023-02-01',
           inngangFraKvittering: false

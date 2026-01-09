@@ -48,7 +48,7 @@ function safeSet(obj: any, key: string | number, value: any): boolean {
 function safeDelete(obj: any, key: string | number): boolean {
   try {
     const descriptor = Object.getOwnPropertyDescriptor(obj, key);
-    if (descriptor && descriptor.configurable === false) {
+    if (descriptor?.configurable === false) {
       console.warn(`transformErrors: Property "${key}" is not configurable, cannot delete`);
       return false;
     }
@@ -133,7 +133,7 @@ function traverseNode(
 
 function cloneErrors(errors: any): any {
   try {
-    return JSON.parse(JSON.stringify(errors));
+    return structuredClone(errors);
   } catch {
     console.warn('transformErrors: Could not clone errors, working with original');
     return errors;

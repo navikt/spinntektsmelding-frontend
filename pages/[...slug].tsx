@@ -132,12 +132,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
 
   const lukkHentingFeiletModal = () => {
-    if (
-      environment.saksoversiktUrl !== undefined &&
-      typeof globalThis !== 'undefined' &&
-      globalThis.location !== undefined
-    ) {
-      globalThis.location.href = environment.saksoversiktUrl;
+    if (environment.saksoversiktUrl !== undefined && globalThis.window?.location !== undefined) {
+      globalThis.window.location.href = environment.saksoversiktUrl;
     }
   };
 

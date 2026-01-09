@@ -206,9 +206,10 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
   slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden: () =>
     set(
       produce((state) => {
-        if (!state.fullLonnIArbeidsgiverPerioden) {
+        if (state.fullLonnIArbeidsgiverPerioden) state.fullLonnIArbeidsgiverPerioden.status = undefined;
+        else {
           state.fullLonnIArbeidsgiverPerioden = { status: undefined };
-        } else state.fullLonnIArbeidsgiverPerioden.status = undefined;
+        }
 
         state = slettFeilmeldingFraState(state, 'lia-radio');
         state = slettFeilmeldingFraState(state, 'agp.redusertLoennIAgp.beloep');
