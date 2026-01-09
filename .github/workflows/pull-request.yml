@@ -5,10 +5,6 @@ on:
     branches:
       - main
 
-permissions:
-  contents: read
-  pull-requests: write
-
 concurrency:
   group: pr-${{ github.event.pull_request.head.repo.full_name }}-${{ github.event.pull_request.head.ref }}
   cancel-in-progress: true
@@ -22,6 +18,8 @@ env:
 jobs:
   Bygg:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -55,6 +53,8 @@ jobs:
 
   Kodekvalitet:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
         with:
@@ -85,13 +85,15 @@ jobs:
       - run: yarn test
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: SonarSource/sonarqube-scan-action@master
+        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   Eslint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -147,4 +149,4 @@ jobs:
             ${{ runner.os }}-yarn2-
       - name: Install dependencies
         run: yarn install --immutable --inline-builds
-      - uses: codex-/knip-reporter@v2
+      - uses: codex-/knip-reporter@398e656c485dd1649f06631a4cd2e602c6ccc4f1
