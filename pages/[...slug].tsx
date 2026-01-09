@@ -456,8 +456,6 @@ export async function getServerSideProps(context: any) {
   let forespurtStatus = null;
 
   if (isValidUUID(uuid) && !endre) {
-    const basePath = `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}/${uuid}`;
-    console.log('basePath:', basePath);
     forespurtStatus = 200;
 
     const token = getToken(context.req);
