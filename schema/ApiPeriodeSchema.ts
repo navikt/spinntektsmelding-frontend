@@ -4,9 +4,9 @@ import { z } from 'zod';
 function isValidISODateString(dateString: string): boolean {
   if (!dateString) return false;
   if (dateString.length !== 10) return false;
-  if (isNaN(Date.parse(dateString))) return false;
+  if (Number.isNaN(Date.parse(dateString))) return false;
   const date = new Date(dateString);
-  return !isNaN(date.getTime()) && isDate(date);
+  return !Number.isNaN(date.getTime()) && isDate(date);
 }
 
 export const ApiPeriodeSchema = z

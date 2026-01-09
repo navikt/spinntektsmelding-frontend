@@ -37,14 +37,14 @@ export default function Egenmelding({ lasterData, setIsDirtyForm, selvbestemtInn
 
   const foersteFravaersdag = useMemo(
     () =>
-      !sykmeldingsperioder
-        ? new Date()
-        : sykmeldingsperioder
+      sykmeldingsperioder
+        ? sykmeldingsperioder
             .map((periode) => periode.fom)
             .reduce(
               (prevDate, curDate) => ((curDate || new Date()) <= (prevDate || new Date()) ? curDate : prevDate),
               new Date()
-            ),
+            )
+        : new Date(),
     [sykmeldingsperioder]
   );
 

@@ -98,7 +98,7 @@ export default function Arbeidsgiverperiode({
   };
 
   const antallDagerIArbeidsgiverperioderManuellJustering = (perioder: Array<Periode> | undefined) => {
-    if (typeof perioder === 'undefined') {
+    if (perioder === undefined) {
       return 0;
     }
 
@@ -184,11 +184,11 @@ export default function Arbeidsgiverperiode({
       tittel: 'Tilbakestill arbeidsgiverperiode',
       component: amplitudeComponent
     });
-    if (!skalViseArbeidsgiverperiode) {
+    if (skalViseArbeidsgiverperiode) {
+      onTilbakestillArbeidsgiverperiode();
+    } else {
       setArbeidsgiverperiodeDisabled(false);
       tilbakestillArbeidsgiverperiode();
-    } else {
-      onTilbakestillArbeidsgiverperiode();
     }
   };
 
@@ -309,9 +309,7 @@ export default function Arbeidsgiverperiode({
 
   const maxTomDate = useMemo(() => {
     if (skalViseArbeidsgiverperiode) {
-      return sykmeldingsperioder && sykmeldingsperioder.length > 0
-        ? sykmeldingsperioder[sykmeldingsperioder.length - 1].tom!
-        : undefined;
+      return sykmeldingsperioder && sykmeldingsperioder.length > 0 ? sykmeldingsperioder.at(-1)?.tom! : undefined;
     }
     return undefined;
   }, [skalViseArbeidsgiverperiode, sykmeldingsperioder]);

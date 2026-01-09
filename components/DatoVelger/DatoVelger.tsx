@@ -93,7 +93,7 @@ export default function DatoVelger({
   });
 
   useEffect(() => {
-    if (typeof defaultSelected === 'undefined') {
+    if (defaultSelected === undefined) {
       onReset();
     }
   }, [defaultSelected]);

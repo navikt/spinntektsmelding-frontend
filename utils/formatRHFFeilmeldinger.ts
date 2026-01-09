@@ -10,7 +10,7 @@ export default function formatRHFFeilmeldinger(validationResult: any): Feilmeldi
   const errorObject = JSON.parse(
     JSON.stringify(validationResult, function (key, val) {
       if (val != null && typeof val == 'object') {
-        if (seen.indexOf(val) >= 0) {
+        if (seen.includes(val)) {
           return;
         }
         seen.push(val);

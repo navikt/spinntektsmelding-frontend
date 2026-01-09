@@ -166,8 +166,8 @@ function mapArbeidsgiverPerioder(
   return skalSendeArbeidsgiverperiode(fullLonnIArbeidsgiverPerioden?.begrunnelse, arbeidsgiverperioder) &&
     arbeidsgiverperioder
     ? arbeidsgiverperioder.map((periode) => ({
-        fom: formatIsoDate(periode.fom),
-        tom: formatIsoDate(periode.tom)
+        fom: formatIsoDate(periode.fom)!,
+        tom: formatIsoDate(periode.tom)!
       }))
     : [];
 }
@@ -262,7 +262,7 @@ export function finnInnsendbareArbeidsgiverperioder<T extends TidPeriode>(
   return arbeidsgiverperioder && arbeidsgiverperioder.length > 0
     ? arbeidsgiverperioder
         ?.filter((periode) => (periode.fom && isValid(periode.fom)) || (periode.tom && isValid(periode.tom)))
-        .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
+        .map((periode) => ({ fom: formatIsoDate(periode.fom)!, tom: formatIsoDate(periode.tom)! }))
     : [];
 }
 
@@ -282,7 +282,7 @@ export function konverterRefusjonEndringer(
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
           beloep: endring.beloep!,
-          startdato: formatIsoDate(endring.dato)
+          startdato: formatIsoDate(endring.dato)!
         }))
       : [];
 

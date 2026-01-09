@@ -145,7 +145,7 @@ const InitieringAnnet: NextPage = () => {
               })
             : [];
 
-        if (mottatteData?.data?.underenheter && mottatteData.data.underenheter.length === 1) {
+        if (mottatteData?.data?.underenheter?.length === 1) {
           orgnrUnderenhet = mottatteData?.data?.underenheter[0]?.orgnrUnderenhet;
         }
       }

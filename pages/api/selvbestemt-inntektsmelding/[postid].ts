@@ -1,17 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
-
-// import org from '../../../mockdata/respons-selvbestemt.json';
-
 import handleProxyInit from '../../../utils/api/handleProxyInit';
-// import path from 'path';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNSENDING_SELVBESTEMT_INNTEKTSMELDING_API;
-
-// type Data = typeof org;
 
 export const config = {
   api: {

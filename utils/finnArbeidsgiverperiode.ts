@@ -42,8 +42,8 @@ export function finnSammenhengendePeriodeManuellJustering<T extends TidPeriode>(
 ): Array<T> {
   const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(sykmeldingsperioder);
   mergedSykmeldingsperioder.forEach((periode) => {
-    const aktivPeriode = tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1];
-    const oppdatertPeriode = tilstoetendePeriodeManuellJustering(aktivPeriode, periode);
+    const aktivPeriode = tilstoetendeSykmeldingsperioder.at(-1);
+    const oppdatertPeriode = tilstoetendePeriodeManuellJustering(aktivPeriode!, periode);
 
     if (oppdatertPeriode) {
       tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1] = oppdatertPeriode;

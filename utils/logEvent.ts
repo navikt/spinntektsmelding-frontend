@@ -21,9 +21,9 @@ type validEventNames =
   | 'filtervalg'; //Bruk kun navn fra taksonomien
 
 export default function logEvent(eventName: validEventNames, eventData: Record<string, string | boolean>) {
-  if (typeof window !== 'undefined') {
+  if (globalThis.window !== undefined) {
     if (env.amplitudeEnabled) {
-      const umami: any = window.umami;
+      const umami: any = (globalThis.window as any).umami;
       if (!umami || typeof umami.track !== 'function') {
         logger.warn('Umami eller umami.track ikke tilgjengelig på window');
         return;

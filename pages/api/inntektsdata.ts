@@ -1,9 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
-import fs from 'fs';
 import handleProxyInit from '../../utils/api/handleProxyInit';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNTEKTSDATA_API;
 

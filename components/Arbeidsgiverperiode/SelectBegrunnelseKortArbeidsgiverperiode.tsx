@@ -16,8 +16,8 @@ interface SelectBegrunnelseKortArbeidsgiverperiodeProps {
 export default function SelectBegrunnelseKortArbeidsgiverperiode(
   props: Readonly<SelectBegrunnelseKortArbeidsgiverperiodeProps>
 ) {
-  const begrunnelseKeys = Object.keys(begrunnelseIngenEllerRedusertUtbetalingListe).filter(
-    (begrunnelse) => filterBegrunnelseKortArbeidsgiverperiode.indexOf(begrunnelse) > -1
+  const begrunnelseKeys = Object.keys(begrunnelseIngenEllerRedusertUtbetalingListe).filter((begrunnelse) =>
+    filterBegrunnelseKortArbeidsgiverperiode.includes(begrunnelse)
   );
   const label = props.label ?? 'Velg begrunnelse for kort arbeidsgiverperiode';
 

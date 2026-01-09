@@ -1,15 +1,14 @@
-import formatISO from 'date-fns/formatISO';
-import { isValid } from 'date-fns';
+import { formatISO, isValid } from 'date-fns';
 import { TDateISODate } from '../schema/ForespurtDataSchema';
 
-export default function formatIsoDate(date?: Date): TDateISODate | '' {
+export default function formatIsoDate(date?: Date): TDateISODate | undefined {
   if (!date) {
-    return '';
+    return undefined;
   }
 
   if (!isValid(date)) {
-    return '';
+    return undefined;
   }
 
-  return formatISO(date, { representation: 'date' }) as TDateISODate;
+  return formatISO(date, { representation: 'date' });
 }

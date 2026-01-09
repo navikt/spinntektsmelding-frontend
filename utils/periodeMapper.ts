@@ -21,7 +21,7 @@ export function periodeMapper(perioder: { fom: Date; tom: Date }[] | { fom: stri
 
 function isoDate(date: Date | string): string {
   if (typeof date !== 'string') {
-    return formatIsoDate(date);
+    return formatIsoDate(date)!;
   }
   return date;
 }

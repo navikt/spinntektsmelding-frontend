@@ -6,7 +6,7 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import useSendInnSkjema from '../../utils/useSendInnSkjema';
 import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsgiverInitiertSkjema';
 import useBoundStore from '../../state/useBoundStore';
-import visFeilmeldingTekst from '../../utils/visFeilmeldingTekst';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
@@ -46,34 +46,6 @@ vi.mock('../../state/useStateInit', () => ({
 vi.mock('../../utils/useTidligereInntektsdata', () => ({
   default: vi.fn(() => ({ data: null, error: null }))
 }));
-
-// // Mock the store with the necessary state values
-// vi.mock('../../state/useBoundStore', () => {
-//   const store = {
-//     slettFeilmelding: vi.fn(),
-//     leggTilFeilmelding: vi.fn(),
-//     foreslaattBestemmendeFravaersdag: '2023-01-01',
-//     sykmeldingsperioder: [],
-//     egenmeldingsperioder: [],
-//     skjemaFeilet: false,
-//     skjemastatus: SkjemaStatus.UNDER_UTFYLLING,
-//     inngangFraKvittering: false,
-//     arbeidsgiverperioder: [],
-//     setTidligereInntekter: vi.fn(),
-//     setPaakrevdeOpplysninger: vi.fn(),
-//     hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt']),
-//     arbeidsgiverKanFlytteSkjæringstidspunkt: vi.fn().mockReturnValue(false),
-//     initBruttoinntekt: vi.fn(),
-//     bruttoinntekt: { bruttoInntekt: 10000, endringAarsaker: null },
-//     beloepArbeidsgiverBetalerISykefravaeret: vi.fn(),
-//     avsender: { tlf: '12345678', orgnr: '123456789' },
-//     sykmeldt: { fnr: '12345678910' }
-//   };
-
-//   return {
-//     default: vi.fn((selector) => selector(store))
-//   };
-// });
 
 vi.mock('../../state/useBoundStore', () => ({
   __esModule: true,
@@ -200,7 +172,6 @@ describe('Home Page', () => {
 
   it('submits the form when confirmed', async () => {
     const mockSendInnSkjema = vi.fn().mockResolvedValue({});
-    // vi.mocked(useSendInnSkjema).mockReturnValue(mockSendInnSkjema);
     (useSendInnSkjema as Mock).mockReturnValue(mockSendInnSkjema);
 
     render(<Home slug='123' erEndring={false} />);
@@ -379,12 +350,10 @@ describe('Home Page', () => {
   });
 
   it('fetches inntektsdata when conditions are met with valid UUID', async () => {
-    const fetchInntektsdata = await import('../../utils/fetchInntektsdata');
-
     (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
-          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-15' }],
+          sykmeldingsperioder: [{ fom: parseIsoDate('2023-01-01'), tom: parseIsoDate('2023-01-15') }],
           hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt', 'arbeidsgiverperiode']),
           foreslaattBestemmendeFravaersdag: '2023-02-01',
           inngangFraKvittering: false

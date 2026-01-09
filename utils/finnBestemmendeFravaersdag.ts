@@ -14,8 +14,8 @@ export function overlappendePeriode<T extends TidPeriode>(ene: T, andre: T): T |
 
   const obj: T = {
     ...ene,
-    fom: ene.fom > andre.fom ? andre.fom : ene.fom,
-    tom: ene.tom > andre.tom ? ene.tom : andre.tom
+    fom: new Date(Math.min(ene.fom.getTime(), andre.fom.getTime())),
+    tom: new Date(Math.max(ene.tom.getTime(), andre.tom.getTime()))
   };
 
   return obj;
@@ -85,7 +85,7 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   );
 
   if (erBegrensetForespoersel) {
-    const sistePeriode = sorterteSykmeldingPerioder[sorterteSykmeldingPerioder.length - 1];
+    const sistePeriode = sorterteSykmeldingPerioder.at(-1);
 
     if (sistePeriode) {
       return formatISO9075(sistePeriode.fom as Date, {
@@ -112,9 +112,9 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   if (
     arbeidsgiverperiode &&
     arbeidsgiverperiode.length > 0 &&
-    differenceInBusinessDays(perioderEtterAgp[0].fom!, arbeidsgiverperiode[arbeidsgiverperiode.length - 1].tom!) <= 1
+    differenceInBusinessDays(perioderEtterAgp[0].fom!, arbeidsgiverperiode.at(-1)!.tom!) <= 1
   ) {
-    perioderEtterAgp[0].fom = arbeidsgiverperiode[arbeidsgiverperiode.length - 1].tom;
+    perioderEtterAgp[0].fom = arbeidsgiverperiode.at(-1)!.tom;
   }
 
   const agpOgSykPerioder = finnSammenhengendePeriode(
@@ -141,7 +141,7 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   });
 
   if (antallDager <= 16) {
-    bestemmendeFravaersdag = formatISO9075(agpOgSykPerioder[agpOgSykPerioder.length - 1].fom as Date, {
+    bestemmendeFravaersdag = formatISO9075(agpOgSykPerioder.at(-1)!.fom as Date, {
       representation: 'date'
     });
   }
@@ -175,7 +175,7 @@ export function finnSorterteUnikePerioder<T extends TidPeriode>(fravaerPerioder:
 export function finnSammenhengendePeriode<T extends TidPeriode>(sykmeldingsperioder: Array<T>): Array<T> {
   const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(sykmeldingsperioder);
   mergedSykmeldingsperioder.forEach((periode) => {
-    const aktivPeriode = tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1];
+    const aktivPeriode = tilstoetendeSykmeldingsperioder.at(-1)!;
     const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
 
     if (oppdatertPeriode) {
@@ -194,7 +194,7 @@ export function joinPerioderMedOverlapp<T extends TidPeriode>(sykmeldingsperiode
   const mergedSykmeldingsperioder = [sorterteSykmeldingsperioder[0]];
 
   sorterteSykmeldingsperioder.forEach((periode) => {
-    const aktivPeriode = mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1];
+    const aktivPeriode = mergedSykmeldingsperioder.at(-1)!;
     const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
 
     if (oppdatertPeriode) {
