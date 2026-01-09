@@ -7,7 +7,7 @@ import { buildSWRFormErrorHandler } from './buildSWRFormErrorHandler';
 export default function useBehandlingsdager(
   identitetsnummer: string | undefined,
   orgNummer: string,
-  eldsteFom: string,
+  eldsteFom: string | undefined,
   setError: any
 ) {
   return useSWRImmutable(
