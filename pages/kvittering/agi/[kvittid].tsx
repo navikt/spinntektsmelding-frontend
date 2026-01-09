@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useEffectEvent } from 'react';
+import { Fragment, useCallback, useEffect } from 'react';
 import { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -30,7 +30,13 @@ import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunne
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isEqual, isValid } from 'date-fns';
-import { Begrunnelse, LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../../state/state';
+import {
+  Begrunnelse,
+  LonnIArbeidsgiverperioden,
+  LonnISykefravaeret,
+  Naturalytelse,
+  Periode
+} from '../../../state/state';
 
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
@@ -172,7 +178,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
       : '';
 
-  const ingenArbeidsgiverperioder = arbeidsgiverperioder && arbeidsgiverperioder.length === 0;
+  const ingenArbeidsgiverperioder = arbeidsgiverperioder?.length === 0;
 
   const paakrevdeOpplysninger = ['arbeidsgiverperiode', 'naturalytelser', 'refusjon'];
 
@@ -180,13 +186,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? parseIsoDate(kvitteringDokument.inntekt.inntektsdato)
     : parseIsoDate(kvitteringData?.inntekt?.inntektsdato);
 
-  const onSetNyInnsending = useEffectEvent(() => {
+  const onSetNyInnsending = useCallback(() => {
     setNyInnsending(false);
-  });
+  }, [setNyInnsending]);
 
   useEffect(() => {
     onSetNyInnsending();
-  }, [searchParams]);
+  }, [searchParams, onSetNyInnsending]);
 
   const visNaturalytelser = true;
   const visArbeidsgiverperiode = true;
@@ -217,7 +223,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   let fullLoennIArbeidsgiverPerioden: LonnIArbeidsgiverperioden;
 
-  let visningNaturalytelser = naturalytelser;
+  let visningNaturalytelser: Naturalytelse[];
 
   if (dataFraBackend) {
     fullLoennIArbeidsgiverPerioden = {
@@ -301,17 +307,17 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ? kvitteringDokument.inntekt.endringAarsaker
     : (kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringAarsaker);
 
-  const onsetSkjemaStatus = useEffectEvent(() => {
+  const onsetSkjemaStatus = useCallback(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
 
     if (dataFraBackend && kvitteringDokument?.type?.type) {
       setSelvbestemtType(kvitteringDokument?.type?.type);
     }
-  });
+  }, [setSkjemaStatus, dataFraBackend, kvitteringDokument?.type?.type, setSelvbestemtType]);
 
   useEffect(() => {
     onsetSkjemaStatus();
-  }, []);
+  }, [onsetSkjemaStatus]);
 
   return (
     <div className={styles.container}>
@@ -406,7 +412,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             <>
               <Skillelinje />
               <Heading2>Eventuelle naturalytelser</Heading2>
-              <BortfallNaturalytelser ytelser={visningNaturalytelser!} />
+              <BortfallNaturalytelser ytelser={visningNaturalytelser} />
             </>
           )}
           <Skillelinje />

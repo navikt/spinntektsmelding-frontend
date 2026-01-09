@@ -118,7 +118,7 @@ const InitieringBehandlingsdager: NextPage = () => {
               })
             : [];
 
-        if (mottatteData?.data?.underenheter && mottatteData.data.underenheter.length === 1) {
+        if (mottatteData?.data?.underenheter?.length === 1) {
           orgnrUnderenhet = mottatteData?.data?.underenheter[0]?.orgnrUnderenhet;
         }
       }
@@ -170,8 +170,8 @@ const InitieringBehandlingsdager: NextPage = () => {
   const mergedSykmeldingsperioder = valgteSykepengePerioder.length > 0 ? [valgteSykepengePerioder[0]] : [];
 
   valgteSykepengePerioder.forEach((periode) => {
-    const aktivPeriode = mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1];
-    const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
+    const aktivPeriode = mergedSykmeldingsperioder.at(-1);
+    const oppdatertPeriode = overlappendePeriode(aktivPeriode!, periode);
 
     if (oppdatertPeriode && mergedSykmeldingsperioder.length > 0) {
       mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = {
