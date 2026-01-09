@@ -7,10 +7,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-permissions:
-  contents: read
-  pull-requests: write
-
 env:
   APP: spinntektsmelding-frontend
   IMAGE: ghcr.io/${{ github.repository }}/spinntektsmelding-frontend:${{ github.sha }}
@@ -21,6 +17,8 @@ env:
 jobs:
   Kodekvalitet:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -58,6 +56,8 @@ jobs:
 
   Eslint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
