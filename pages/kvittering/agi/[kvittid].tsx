@@ -102,7 +102,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const searchParams = useSearchParams();
 
   const [
-    naturalytelser,
     kvitteringData,
     setNyInnsending,
     setSkjemaStatus,
@@ -115,7 +114,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     gammeltSkjaeringstidspunkt
   ] = useBoundStore(
     useShallow((state) => [
-      state.naturalytelser,
       state.kvitteringData,
       state.setNyInnsending,
       state.setSkjemaStatus,
