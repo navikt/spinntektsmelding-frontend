@@ -315,7 +315,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   useEffect(() => {
     onsetSkjemaStatus();
-  }, [onsetSkjemaStatus]);
+  }, []);
 
   return (
     <div className={styles.container}>
