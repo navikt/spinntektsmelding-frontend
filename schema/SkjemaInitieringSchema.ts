@@ -15,7 +15,6 @@ const SkjemaInitieringSchema = z
       .pipe(
         z
           .string('Organisasjon er ikke valgt.')
-
           .refine((val) => isMod11Number(val), { error: 'Organisasjon er ikke valgt.' })
       ),
     navn: z.string().nullable().optional(),

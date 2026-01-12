@@ -6,10 +6,8 @@ export const OrganisasjonsnummerSchema = z
   .transform((val) => val.replaceAll(/\s/g, ''))
   .pipe(
     z
-      .string({
-        message: 'Organisasjon er ikke valgt'
-      })
+      .string('Organisasjon er ikke valgt')
       .min(9, { message: 'Organisasjonsnummeret er for kort, det må være 9 siffer' })
       .max(9, { message: 'Organisasjonsnummeret er for langt, det må være 9 siffer' })
-      .refine((val) => isMod11Number(val), { message: 'Velg arbeidsgiver' })
+      .refine((val) => isMod11Number(val), { message: 'Organisasjon er ikke valgt' })
   );
