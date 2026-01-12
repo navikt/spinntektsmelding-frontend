@@ -53,7 +53,7 @@ describe('InitieringSchema', () => {
       },
       {
         code: 'custom',
-        message: 'Velg arbeidsgiver',
+        message: 'Organisasjon er ikke valgt',
         path: ['organisasjonsnummer']
       }
     ]);

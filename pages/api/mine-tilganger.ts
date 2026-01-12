@@ -1,10 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
-import fs from 'fs';
+import fs from 'node:fs';
 import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerSchema';
 import safelyParseJSON from '../../utils/safelyParseJson';
-import path from 'path';
+import path from 'node:path';
 
 const basePath = 'http://' + globalThis.process.env.FAGER_TILGANG_INGRESS + globalThis.process.env.FAGER_TILGANG_URL;
 

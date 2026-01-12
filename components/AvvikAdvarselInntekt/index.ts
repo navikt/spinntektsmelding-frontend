@@ -1,3 +1,1 @@
-import AvvikAdvarselInntekt from './AvvikAdvarselInntekt';
-
-export default AvvikAdvarselInntekt;
+export { default } from './AvvikAdvarselInntekt';

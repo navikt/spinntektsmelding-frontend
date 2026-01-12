@@ -52,6 +52,7 @@
   min-width: fit-content;
   align-content: baseline;
   max-width: 18rem;
+  grid-template-rows: [title] min-content [select];
 }
 
 .refusjonBeloep > input {
@@ -66,10 +67,6 @@
 .arbeidsgiverKortPeriode {
   margin-top: 1rem;
   display: inline-block;
-}
-
-.refusjonBeloep {
-  grid-template-rows: [title] min-content [select];
 }
 
 .infoAlert {

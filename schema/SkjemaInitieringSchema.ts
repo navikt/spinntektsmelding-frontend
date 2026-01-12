@@ -14,10 +14,7 @@ const SkjemaInitieringSchema = z
       .transform((val) => val.replaceAll(/\s/g, ''))
       .pipe(
         z
-          .string({
-            error: (issue) => (issue.input === undefined ? 'Organisasjon er ikke valgt.' : undefined)
-          })
-
+          .string('Organisasjon er ikke valgt.')
           .refine((val) => isMod11Number(val), { error: 'Organisasjon er ikke valgt.' })
       ),
     navn: z.string().nullable().optional(),

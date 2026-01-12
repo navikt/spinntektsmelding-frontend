@@ -48,7 +48,7 @@ export interface BruttoinntektState {
     tidligereInntekt: HistoriskInntekt | null,
     bestemmendeFravaersdag: Date
   ) => void;
-  rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => void;
+  rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => Promise<void>;
   slettBruttoinntekt: () => void;
   setEndringAarsaker: (endringAarsaker?: Array<EndringAarsak | ApiEndringAarsak> | null) => void;
 }
@@ -325,45 +325,45 @@ function normaliserEndringAarsak(endringAarsak: EndringAarsak | ApiEndringAarsak
     switch (endringAarsak.aarsak) {
       case 'Ferie': {
         endringAarsak.ferier =
-          typeof endringAarsak.ferier[0].fom !== 'string'
-            ? endringAarsak.ferier
-            : endringAarsak.ferier.map((ferie) => ({
+          typeof endringAarsak.ferier[0].fom === 'string'
+            ? endringAarsak.ferier.map((ferie) => ({
                 fom: parseIsoDate(ferie.fom)!,
                 tom: parseIsoDate(ferie.tom)!
-              }));
+              }))
+            : endringAarsak.ferier;
         break;
       }
 
       case 'Permisjon': {
         endringAarsak.permisjoner =
-          typeof endringAarsak.permisjoner[0].fom !== 'string'
-            ? endringAarsak.permisjoner
-            : endringAarsak.permisjoner.map((permisjon) => ({
+          typeof endringAarsak.permisjoner[0].fom === 'string'
+            ? endringAarsak.permisjoner.map((permisjon) => ({
                 fom: parseIsoDate(permisjon.fom)!,
                 tom: parseIsoDate(permisjon.tom)!
-              }));
+              }))
+            : endringAarsak.permisjoner;
         break;
       }
 
       case 'Permittering': {
         endringAarsak.permitteringer =
-          typeof endringAarsak.permitteringer[0].fom !== 'string'
-            ? endringAarsak.permitteringer
-            : endringAarsak.permitteringer.map((permittering) => ({
+          typeof endringAarsak.permitteringer[0].fom === 'string'
+            ? endringAarsak.permitteringer.map((permittering) => ({
                 fom: parseIsoDate(permittering.fom)!,
                 tom: parseIsoDate(permittering.tom)!
-              }));
+              }))
+            : endringAarsak.permitteringer;
         break;
       }
 
       case 'Sykefravaer': {
         endringAarsak.sykefravaer =
-          typeof endringAarsak.sykefravaer[0].fom !== 'string'
-            ? endringAarsak.sykefravaer
-            : endringAarsak.sykefravaer.map((syk) => ({
+          typeof endringAarsak.sykefravaer[0].fom === 'string'
+            ? endringAarsak.sykefravaer.map((syk) => ({
                 fom: parseIsoDate(syk.fom)!,
                 tom: parseIsoDate(syk.tom)!
-              }));
+              }))
+            : endringAarsak.sykefravaer;
         break;
       }
 

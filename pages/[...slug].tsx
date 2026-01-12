@@ -132,7 +132,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
 
   const lukkHentingFeiletModal = () => {
-    window.location.href = environment.saksoversiktUrl;
+    if (environment.saksoversiktUrl !== undefined && globalThis.window?.location !== undefined) {
+      globalThis.window.location.href = environment.saksoversiktUrl;
+    }
   };
 
   const selvbestemtInnsending = slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
@@ -454,8 +456,6 @@ export async function getServerSideProps(context: any) {
   let forespurtStatus = null;
 
   if (isValidUUID(uuid) && !endre) {
-    const basePath = `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}/${uuid}`;
-    console.log('basePath:', basePath);
     forespurtStatus = 200;
 
     const token = getToken(context.req);

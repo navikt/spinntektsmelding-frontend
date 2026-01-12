@@ -150,7 +150,7 @@ export function skalSendeArbeidsgiverperiode(begrunnelse?: Begrunnelse, perioder
 
 function formatDateForSubmit(date?: Date | string): string {
   if (date instanceof Date) {
-    return formatIsoDate(date);
+    return formatIsoDate(date)!;
   }
 
   return date ?? '';

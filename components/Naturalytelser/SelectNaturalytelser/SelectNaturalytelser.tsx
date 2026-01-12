@@ -1,7 +1,6 @@
 import { Select } from '@navikt/ds-react';
 import naturalytelser from './naturalytelser';
 import { useController, useFormContext } from 'react-hook-form';
-import findErrorInRHFErrors from '../../../utils/findErrorInRHFErrors';
 
 type Naturalytelser = keyof typeof naturalytelser;
 
@@ -15,7 +14,6 @@ export default function SelectNaturalytelser({ name, defaultValue }: Readonly<Se
   const { field, fieldState } = useController({ name, control });
   const error = fieldState.error?.message;
 
-  // const error = findErrorInRHFErrors(name, errors);
   const ytelsesKeys = Object.keys(naturalytelser);
   const defaultYtelse = field.value ? field.value.toString().toUpperCase() : '';
   return (
