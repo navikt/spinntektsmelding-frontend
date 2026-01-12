@@ -45,17 +45,17 @@ export default function ensureValidHtmlId(input: string, opts: HtmlIdOptions = {
   }
 
   // Normalize and strip diacritics
-  let s = str.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+  let s = str.normalize('NFKD').replaceAll(/[\u0300-\u036f]/g, '');
   if (lowercase) s = s.toLowerCase();
 
   // Replace any char not allowed with the replacement
   const notAllowedRe = new RegExp(`[^${allowedClass}]`, 'g');
-  s = s.replace(notAllowedRe, replacement);
+  s = s.replaceAll(notAllowedRe, replacement);
 
   // Collapse multiple replacements
   if (replacement) {
     const multiRe = new RegExp(`${escapeRegExp(replacement)}{2,}`, 'g');
-    s = s.replace(multiRe, replacement);
+    s = s.replaceAll(multiRe, replacement);
   }
 
   // Trim replacement from both ends
@@ -80,7 +80,7 @@ export default function ensureValidHtmlId(input: string, opts: HtmlIdOptions = {
 }
 
 function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return s.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
 
 function trimBoth(token: string, s: string): string {
