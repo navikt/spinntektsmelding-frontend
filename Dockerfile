@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:24@sha256:20988bcdc6dc76690023eb2505dd273bdeefddcd0bde4bfd1efe4ebf8707f747 AS deps
+FROM node:25@sha256:6d362f0df70431417ef79c30e47c0515ea9066d8be8011e859c6c3575514a027 AS deps
 WORKDIR /app
 
 RUN corepack enable
@@ -15,7 +15,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     yarn install --immutable
 
 # Rebuild the source code only when needed
-FROM node:24@sha256:20988bcdc6dc76690023eb2505dd273bdeefddcd0bde4bfd1efe4ebf8707f747 AS builder
+FROM node:25@sha256:6d362f0df70431417ef79c30e47c0515ea9066d8be8011e859c6c3575514a027 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/.yarn ./.yarn
