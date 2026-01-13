@@ -24,7 +24,7 @@ export default function fetcherInntektsdataSelvbestemt(
       if (!res.ok) {
         const error = new NetworkError('Kunne ikke hente arbeidsforhold, vennligst prøv igjen senere');
         error.status = res.status;
-        return Promise.reject(error);
+        throw error;
       }
       return res.json();
     })
@@ -32,6 +32,6 @@ export default function fetcherInntektsdataSelvbestemt(
       const newError = new NetworkError('Kunne ikke tolke resultatet fra serveren');
       newError.status = error.status;
       newError.info = error.info;
-      return Promise.reject(newError);
+      throw newError;
     });
 }

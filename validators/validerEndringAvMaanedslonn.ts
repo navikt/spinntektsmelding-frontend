@@ -39,10 +39,7 @@ export default function validerEndringAvMaanedslonn(
           acc.push(endring);
           return acc;
         }
-        if (
-          !isEqual(endring.dato as Date, acc[acc.length - 1].dato as Date) ||
-          endring.beloep !== acc[acc.length - 1].beloep
-        ) {
+        if (!isEqual(endring.dato as Date, acc.at(-1)?.dato as Date) || endring.beloep !== acc.at(-1)?.beloep) {
           acc.push(endring);
         }
         return acc;
@@ -61,7 +58,7 @@ export default function validerEndringAvMaanedslonn(
           acc.push(endring);
           return acc;
         }
-        if (!isEqual(endring.dato as Date, acc[acc.length - 1].dato as Date)) {
+        if (!isEqual(endring.dato as Date, acc.at(-1)?.dato as Date)) {
           acc.push(endring);
         }
         return acc;

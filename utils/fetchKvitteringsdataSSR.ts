@@ -15,15 +15,15 @@ const fetchKvitteringsdataSSR = (url: string, forespoerselId: string, token?: st
   })
     .then((res) => {
       if (!res.ok) {
-        const error = new NetworkError('An error occurred while fetching the data.');
+        const fetchError = new NetworkError('An error occurred while fetching the data.');
         // Attach extra info to the error object.
         try {
-          error.info = res;
-        } catch (errorStatus) {
-          error.info = { errorStatus };
+          fetchError.info = res;
+        } catch (error) {
+          fetchError.info = { error };
         }
-        error.status = res.status;
-        return Promise.reject(error);
+        fetchError.status = res.status;
+        throw fetchError;
       }
 
       return res
@@ -31,19 +31,19 @@ const fetchKvitteringsdataSSR = (url: string, forespoerselId: string, token?: st
         .then((data) => {
           return { status: res.status, data };
         })
-        .catch((res) => {
+        .catch((error) => {
           const jsonError = new NetworkError('An error occurred while decoding the data.');
           // Attach extra info to the error object.
 
-          jsonError.status = res.status;
-          return Promise.reject(jsonError);
+          jsonError.status = error.status;
+          throw jsonError;
         });
     })
     .catch((errorRes) => {
       const error = new NetworkError(errorRes.message ?? 'An error occurred while fetching the data...');
       error.status = errorRes.status;
       error.info = errorRes;
-      return Promise.reject(error);
+      throw error;
     });
 };
 
