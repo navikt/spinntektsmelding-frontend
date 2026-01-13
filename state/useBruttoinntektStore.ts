@@ -19,7 +19,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
 import { HistoriskInntekt } from '../schema/HistoriskInntektSchema';
 
-export const sorterInntekter = (a: [string, number | null], b: [string, number | null]) => {
+const sorterInntekter = (a: [string, number | null], b: [string, number | null]) => {
   if (a[0] < b[0]) {
     return 1;
   } else if (a[0] > b[0]) {
@@ -34,7 +34,7 @@ type ApiEndringAarsak = z.infer<typeof ApiEndringAarsakSchema>;
 export interface BruttoinntektState {
   bruttoinntekt: Inntekt;
   opprinneligbruttoinntekt: Inntekt;
-  tidligereInntekt?: HistoriskInntekt;
+  tidligereInntekt?: Map<string, number | null>;
   opprinneligeInntekt?: HistoriskInntekt;
   sisteLonnshentedato?: Date;
   henterData: boolean;
@@ -123,7 +123,7 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         if (tidligereInntekt) {
-          const merged = new Map([...state.tidligereInntekt, ...tidligereInntekt]);
+          const merged = new Map([...state.tidligereInntekt, ...Object.entries(tidligereInntekt)]);
 
           state.tidligereInntekt = merged;
         }

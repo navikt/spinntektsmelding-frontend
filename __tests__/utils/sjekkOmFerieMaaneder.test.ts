@@ -1,10 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
-import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 
 describe('sjekkOmFerieMaaneder', () => {
   it('should return true if there are months between May and August', () => {
-    const tidligereinntekt: HistoriskInntekt = new Map([
+    const tidligereinntekt = new Map<string, number | null>([
       ['2023-05', 10000],
       ['2023-06', 15000]
     ]);
@@ -12,7 +11,7 @@ describe('sjekkOmFerieMaaneder', () => {
   });
 
   it('should return false if there are no months between May and August', () => {
-    const tidligereinntekt: HistoriskInntekt = new Map([
+    const tidligereinntekt = new Map<string, number | null>([
       ['2023-04', 10000],
       ['2023-09', 15000]
     ]);

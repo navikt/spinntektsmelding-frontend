@@ -32,11 +32,11 @@ const baseValid: MottattData = {
   egenmeldingsperioder: [],
   inntekt: {
     gjennomsnitt: 50000,
-    historikk: new Map([
-      ['2023-01', 50000],
-      ['2023-02', 50000],
-      ['2023-03', 50000]
-    ])
+    historikk: {
+      '2023-01': 50000,
+      '2023-02': 50000,
+      '2023-03': 50000
+    }
   },
   eksternInntektsdato: '2023-02-01',
   bestemmendeFravaersdag: '2023-03-01',
@@ -94,7 +94,7 @@ describe('MottattDataSchema', () => {
     }
   });
   it('should fail when inntekt is missing gjennomsnitt', () => {
-    const data = { ...baseValid, inntekt: { historikk: new Map() } };
+    const data = { ...baseValid, inntekt: { historikk: {} } };
     const result = MottattDataSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -108,7 +108,7 @@ describe('MottattDataSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].path).toEqual(['inntekt', 'historikk']);
-      expect(result.error.issues[0].message).toContain('Invalid input: expected map, received undefined');
+      expect(result.error.issues[0].message).toContain('Invalid input: expected record, received undefined');
     }
   });
   it('should fail when inntekt is missing gjennomsnitt and historikk', () => {

@@ -2,7 +2,7 @@ import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
 import feiltekster from '../../utils/feiltekster';
-import { finnAktuelleInntekter, sorterInntekter } from '../../state/useBruttoinntektStore';
+import { finnAktuelleInntekter } from '../../state/useBruttoinntektStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import { enableMapSet } from 'immer';
@@ -152,7 +152,7 @@ describe('useBoundStore', () => {
       result.current.tilbakestillMaanedsinntekt();
     });
 
-    expect(result.current.bruttoinntekt?.endringAarsaker?.aarsak).toBeUndefined();
+    expect(result.current.bruttoinntekt?.endringAarsaker?.[0]?.aarsak).toBe('Bonus');
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(40000);
   });
@@ -170,13 +170,13 @@ describe('useBoundStore', () => {
   });
 
   it('should find an empty liste when there are no current inntekter', () => {
-    const inntekter = finnAktuelleInntekter(undefined, new Date(2002, 9, 9));
+    const inntekter = finnAktuelleInntekter(null, new Date(2002, 9, 9));
 
     expect(inntekter).toEqual(new Map([]));
   });
 
   it('should find an empty liste when there are no current inntekter', () => {
-    const inntekter = finnAktuelleInntekter(new Map([]), new Date(2002, 9, 9));
+    const inntekter = finnAktuelleInntekter({}, new Date(2002, 9, 9));
 
     expect(inntekter).toEqual(new Map([]));
   });
@@ -226,38 +226,25 @@ describe('useBoundStore', () => {
   });
 
   it('should setTidligereInntekter', () => {
-    const tidligereInntekt: HistoriskInntekt = new Map([
-      ['2002-02', 33000],
-      ['2002-03', 44000],
-      ['2002-04', 55000]
-    ]);
+    const tidligereInntektData: HistoriskInntekt = {
+      '2002-02': 33000,
+      '2002-03': 44000,
+      '2002-04': 55000
+    };
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    const inntekter = new Map([...tidligereInntekt, ['2002-09', 45000], ['2002-10', 55000], ['2002-11', 50000]]);
+    const inntekter = new Map([
+      ...Object.entries(tidligereInntektData),
+      ['2002-09', 45000],
+      ['2002-10', 55000],
+      ['2002-11', 50000]
+    ]);
 
     act(() => {
-      result.current.setTidligereInntekter(tidligereInntekt);
+      result.current.setTidligereInntekter(tidligereInntektData);
     });
 
     expect(result.current.tidligereInntekt).toEqual(inntekter);
-  });
-
-  it('should return 0 when maaned are equal', () => {
-    const sorteringRetning = sorterInntekter(['2002-01', 0], ['2002-01', 0]);
-
-    expect(sorteringRetning).toBe(0);
-  });
-
-  it('should return -1 when first maaned is bigger than last', () => {
-    const sorteringRetning = sorterInntekter(['2002-02', 0], ['2002-01', 0]);
-
-    expect(sorteringRetning).toBe(-1);
-  });
-
-  it('should return 1 when first maaned is smaller than last', () => {
-    const sorteringRetning = sorterInntekter(['2002-02', 0], ['2002-03', 0]);
-
-    expect(sorteringRetning).toBe(1);
   });
 
   it('should setEndringAarsak', () => {
@@ -277,7 +264,8 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Ferie');
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].ferier).toEqual([
+    const endringAarsak1 = result.current.bruttoinntekt.endringAarsaker?.[0];
+    expect(endringAarsak1?.aarsak === 'Ferie' && endringAarsak1.ferier).toEqual([
       { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
     ]);
   });
@@ -299,7 +287,8 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Ferie');
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].ferier).toEqual([
+    const endringAarsak2 = result.current.bruttoinntekt.endringAarsaker?.[0];
+    expect(endringAarsak2?.aarsak === 'Ferie' && endringAarsak2.ferier).toEqual([
       { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
     ]);
   });
@@ -321,7 +310,8 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0]?.aarsak).toBe('Ferie');
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0]?.ferier).toEqual([
+    const endringAarsak3 = result.current.bruttoinntekt.endringAarsaker?.[0];
+    expect(endringAarsak3?.aarsak === 'Ferie' && endringAarsak3.ferier).toEqual([
       { fom: parseIsoDate('2002-11-11'), tom: parseIsoDate('2002-11-11') }
     ]);
   });
@@ -514,5 +504,66 @@ describe('useBoundStore', () => {
     expect(result.current.bruttoinntekt?.bruttoInntekt).toBeUndefined();
     expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
     expect(result.current.bruttoinntekt?.endringAarsaker).toBeUndefined();
+  });
+});
+
+describe('finnAktuelleInntekter sortering', () => {
+  it('should return inntekter sorted in descending order by date', () => {
+    const tidligereInntekt: HistoriskInntekt = {
+      '2023-01': 1000,
+      '2023-03': 3000,
+      '2023-02': 2000
+    };
+    const bestemmendeFravaersdag = new Date(2023, 3, 15); // April 2023
+
+    const result = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
+    const keys = Array.from(result.keys());
+
+    expect(keys).toEqual(['2023-03', '2023-02', '2023-01']);
+  });
+
+  it('should sort correctly across year boundaries', () => {
+    const tidligereInntekt: HistoriskInntekt = {
+      '2022-11': 1000,
+      '2023-01': 3000,
+      '2022-12': 2000
+    };
+    const bestemmendeFravaersdag = new Date(2023, 1, 15); // Februar 2023
+
+    const result = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
+    const keys = Array.from(result.keys());
+
+    expect(keys).toEqual(['2023-01', '2022-12', '2022-11']);
+  });
+
+  it('should handle null values and still sort correctly', () => {
+    const tidligereInntekt: HistoriskInntekt = {
+      '2023-01': null,
+      '2023-03': 3000,
+      '2023-02': null
+    };
+    const bestemmendeFravaersdag = new Date(2023, 3, 15); // April 2023
+
+    const result = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
+    const keys = Array.from(result.keys());
+
+    expect(keys).toEqual(['2023-03', '2023-02', '2023-01']);
+  });
+
+  it('should return max 3 inntekter sorted by date', () => {
+    const tidligereInntekt: HistoriskInntekt = {
+      '2023-01': 1000,
+      '2023-02': 2000,
+      '2023-03': 3000,
+      '2023-04': 4000,
+      '2023-05': 5000
+    };
+    const bestemmendeFravaersdag = new Date(2023, 5, 15); // Juni 2023
+
+    const result = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
+    const keys = Array.from(result.keys());
+
+    expect(keys).toEqual(['2023-05', '2023-04', '2023-03']);
+    expect(result.size).toBe(3);
   });
 });

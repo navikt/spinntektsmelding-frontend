@@ -1,4 +1,3 @@
-import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import formatCurrency from '../../utils/formatCurrency';
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';
 import lokalStyles from './Bruttoinntekt.module.css';
@@ -6,7 +5,7 @@ import { Skeleton } from '@navikt/ds-react';
 import ugyldigEllerNegativtTall from '../../utils/ugyldigEllerNegativtTall';
 
 interface TidligereInntektProps {
-  tidligereinntekt: HistoriskInntekt;
+  tidligereinntekt: Map<string, number | null>;
   henterData: boolean;
 }
 
