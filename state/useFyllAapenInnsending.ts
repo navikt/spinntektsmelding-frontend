@@ -81,7 +81,7 @@ export default function useFyllAapenInnsending() {
 
     initNaturalytelser(skjemaData.inntekt?.naturalytelser);
 
-    const formattedAgpPerioder = getFormattedAgpPerioder(arbeidsgiverperiodeDisabled, arbeidsgiverperioder);
+    const formattedAgpPerioder = arbeidsgiverperiodeDisabled ? [] : getFormattedAgpPerioder(arbeidsgiverperioder);
 
     let arbeidsforholdType: ArbeidsforholdType = {
       type: 'MedArbeidsforhold',
@@ -132,13 +132,11 @@ export default function useFyllAapenInnsending() {
   };
 }
 
-function getFormattedAgpPerioder(arbeidsgiverperiodeDisabled: boolean, arbeidsgiverperioder: Periode[] | undefined) {
-  return arbeidsgiverperiodeDisabled
-    ? []
-    : (arbeidsgiverperioder ?? []).map((periode) => ({
-        fom: formatDateForSubmit(periode.fom),
-        tom: formatDateForSubmit(periode.tom)
-      }));
+function getFormattedAgpPerioder(arbeidsgiverperioder: Periode[] | undefined) {
+  return (arbeidsgiverperioder ?? []).map((periode) => ({
+    fom: formatDateForSubmit(periode.fom),
+    tom: formatDateForSubmit(periode.tom)
+  }));
 }
 
 export function skalSendeArbeidsgiverperiode(begrunnelse?: Begrunnelse, perioder?: Periode[]): boolean {

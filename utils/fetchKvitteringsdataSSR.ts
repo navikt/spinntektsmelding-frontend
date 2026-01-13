@@ -39,11 +39,11 @@ const fetchKvitteringsdataSSR = (url: string, forespoerselId: string, token?: st
           throw jsonError;
         });
     })
-    .catch((errorRes) => {
-      const error = new NetworkError(errorRes.message ?? 'An error occurred while fetching the data...');
-      error.status = errorRes.status;
-      error.info = errorRes;
-      throw error;
+    .catch((error) => {
+      const networkError = new NetworkError(error.message ?? 'An error occurred while fetching the data...');
+      networkError.status = error.status;
+      networkError.info = error;
+      throw networkError;
     });
 };
 
