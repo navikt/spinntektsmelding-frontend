@@ -74,7 +74,6 @@ export default function useSendInnSkjema(
     type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
     const skjemaData: FullInnsending = fyllInnsending(
-      opplysningerBekreftet,
       pathSlug,
       forespurteOpplysningstyper,
       formData,

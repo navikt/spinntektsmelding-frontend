@@ -78,7 +78,6 @@ describe('useFyllInnsending', () => {
 
     act(() => {
       innsending = fyllInnsending(
-        false,
         '8d50ef20-37b5-4829-ad83-56219e70b375',
         ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
         skjemaData
@@ -121,7 +120,6 @@ describe('useFyllInnsending', () => {
 
     act(() => {
       innsending = fyllInnsending(
-        false,
         '8d50ef20-37b5-4829-ad83-56219e70b375',
         ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
         skjemaData

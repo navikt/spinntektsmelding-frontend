@@ -258,9 +258,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const mellomregningBeregnetBestemmendeFraværsdag = useMemo(() => {
     if (!harForespurtArbeidsgiverperiode && !overstyrSkalViseAgp) {
-      return parseIsoDate(
-        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
-      );
+      return parseIsoDate(foreslaattBestemmendeFravaersdag);
     }
     const altFravaer = finnFravaersperioder(sykmeldingsperioder, egenmeldingsperioder);
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
@@ -278,7 +276,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sykmeldingsperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     harForespurtArbeidsgiverperiode,
-    forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt,
     begrensetForespoersel,
     overstyrSkalViseAgp
   ]);

@@ -25,7 +25,6 @@ export default function useFyllInnsending() {
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const forespurtData = useBoundStore((state) => state.forespurtData);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
@@ -51,7 +50,6 @@ export default function useFyllInnsending() {
   type Skjema = z.infer<typeof HovedskjemaSchema>;
 
   return (
-    opplysningerBekreftet: boolean,
     forespoerselId: string,
     forespurteOpplysningstyper: Opplysningstype[],
     skjemaData: Skjema,
@@ -84,30 +82,22 @@ export default function useFyllInnsending() {
             )
           );
 
-    let kreverAgp = true;
     if (!harForespurtArbeidsgiverperiode) {
-      kreverAgp = false;
-      setSkjaeringstidspunkt(
-        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
-      );
+      setSkjaeringstidspunkt(foreslaattBestemmendeFravaersdag);
 
-      beregnetSkjaeringstidspunkt = parseIsoDate(
-        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
-      );
+      beregnetSkjaeringstidspunkt = parseIsoDate(foreslaattBestemmendeFravaersdag);
     }
-    const bestemmendeFraværsdag = kreverAgp
-      ? hentBestemmendeFraværsdag(
-          harForespurtArbeidsgiverperiode,
-          perioder,
-          formatertePerioder,
-          skjaeringstidspunkt,
-          arbeidsgiverKanFlytteSkjæringstidspunkt(),
-          inngangFraKvittering,
-          undefined,
-          beregnetSkjaeringstidspunkt,
-          erBegrensetForespoersel
-        )
-      : forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt;
+    const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
+      harForespurtArbeidsgiverperiode,
+      perioder,
+      formatertePerioder,
+      skjaeringstidspunkt,
+      arbeidsgiverKanFlytteSkjæringstidspunkt(),
+      inngangFraKvittering,
+      undefined,
+      beregnetSkjaeringstidspunkt,
+      erBegrensetForespoersel
+    );
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
           return KonverterEndringAarsakSchema.parse(endringAarsak);

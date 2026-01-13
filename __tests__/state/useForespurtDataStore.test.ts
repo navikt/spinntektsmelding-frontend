@@ -3,7 +3,7 @@ import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { parseISO } from 'date-fns';
 import trengerDelvis from '../../mockdata/trenger-delvis.json';
-import { ForrigeInntekt, Opplysningstype } from '../../schema/ForespurtDataSchema';
+import { Opplysningstype } from '../../schema/ForespurtDataSchema';
 
 const initialState = useBoundStore.getState();
 
@@ -21,14 +21,18 @@ describe('useForespurtDataStore', () => {
   it('should set tidligere inntekter.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    const input: ForrigeInntekt = {
-      skjæringstidspunkt: '2020-01-01',
-      kilde: 'INNTEKTSMELDING',
-      beløp: 1000
-    };
+    act(() => {
+      result.current.setGammeltSkjaeringstidspunkt('2020-01-01');
+    });
+
+    expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2020-01-01'));
+  });
+
+  it('should set tidligere inntekter med date.', () => {
+    const { result } = renderHook(() => useBoundStore((state) => state));
 
     act(() => {
-      result.current.setTidligereInntektsdata(input);
+      result.current.setGammeltSkjaeringstidspunkt(parseISO('2020-01-01'));
     });
 
     expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2020-01-01'));
@@ -179,67 +183,6 @@ describe('useForespurtDataStore', () => {
     // expect(result.current.lonnISykefravaeret?.beloep).toBe(0);
     // expect(result.current.lonnISykefravaeret?.status).toBe('Nei');
     // expect(result.current.harRefusjonEndringer).toBe('Nei');
-  });
-
-  it('should verify that bruttoinntekt can be reset', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-    act(() => {
-      result.current.initForespurtData(
-        {
-          arbeidsgiverperiode: { paakrevd: false },
-          inntekt: {
-            paakrevd: true,
-            forslag: {
-              type: 'ForslagInntektGrunnlag',
-              beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
-              forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
-            }
-          },
-          refusjon: {
-            paakrevd: true,
-            forslag: {
-              perioder: [],
-              opphoersdato: null
-            }
-          }
-        },
-        '2023-08-28',
-        33750.0,
-        undefined
-      );
-    });
-
-    expect(result.current.kanBruttoinntektTilbakebestilles()).toBeTruthy();
-  });
-
-  it('should verify that bruttoinntekt can not be reset', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-    act(() => {
-      result.current.initForespurtData(
-        {
-          arbeidsgiverperiode: { paakrevd: false },
-          inntekt: {
-            paakrevd: true,
-            forslag: {
-              type: 'ForslagInntektGrunnlag',
-              beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
-            }
-          },
-          refusjon: {
-            paakrevd: true,
-            forslag: {
-              perioder: [],
-              opphoersdato: null
-            }
-          }
-        },
-        '2023-08-28',
-        33750.0,
-        undefined
-      );
-    });
-
-    expect(result.current.kanBruttoinntektTilbakebestilles()).toBeFalsy();
   });
 
   it('should hentOpplysningstyper', () => {
