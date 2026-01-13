@@ -1,7 +1,15 @@
 import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import useFyllInnsending, { formaterRedusertLoennIAgp } from '../../state/useFyllInnsending';
+import useFyllInnsending, {
+  formaterRedusertLoennIAgp,
+  mapEgenmeldingsperioder,
+  mapNaturalytelserToData,
+  concatPerioder,
+  konverterPerioderFraMottattTilInterntFormat,
+  finnInnsendbareArbeidsgiverperioder,
+  konverterRefusjonEndringer
+} from '../../state/useFyllInnsending';
 import { nanoid } from 'nanoid';
 import mottattKvittering from '../../mockdata/kvittering.json';
 
@@ -98,6 +106,36 @@ describe('useFyllInnsending', () => {
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
       expect(innsending.inntekt?.beloep).toBe(12345);
       // expect(innsending.inntekt.bekreftet).toBeTruthy();
+    }
+  });
+
+  it('should fill the state without arbeidsgiverperiode', async () => {
+    const { result: kvittInit } = renderHook(() => useKvitteringInit());
+
+    const kvitteringInit = kvittInit.current;
+
+    act(() => {
+      kvitteringInit(mottattKvittering as unknown as KvitteringData);
+    });
+
+    const { result: fyller } = renderHook(() => useFyllInnsending());
+
+    const fyllInnsending = fyller.current;
+
+    let innsending: InnsendingSkjema;
+
+    act(() => {
+      innsending = fyllInnsending(
+        '8d50ef20-37b5-4829-ad83-56219e70b375',
+        ['inntekt', 'refusjon'], // Uten 'arbeidsgiverperiode'
+        skjemaData
+      );
+    });
+
+    if (innsending) {
+      // AGP skal fortsatt ha perioder, men vil bruke foreslaattBestemmendeFravaersdag
+      expect(innsending.inntekt?.beloep).toBe(12345);
+      expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
     }
   });
 
@@ -220,5 +258,143 @@ describe('formaterRedusertLoennIAgp', () => {
     };
 
     expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
+  });
+});
+
+describe('mapEgenmeldingsperioder', () => {
+  it('should return empty array when egenmeldingsperioder is undefined', () => {
+    expect(mapEgenmeldingsperioder(undefined)).toEqual([]);
+  });
+
+  it('should map periods correctly', () => {
+    const perioder = [
+      { fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' },
+      { fom: new Date('2023-01-10'), tom: new Date('2023-01-15'), id: '2' }
+    ];
+    const result = mapEgenmeldingsperioder(perioder);
+    expect(result).toEqual([
+      { fom: '2023-01-01', tom: '2023-01-05' },
+      { fom: '2023-01-10', tom: '2023-01-15' }
+    ]);
+  });
+
+  it('should filter out periods without dates', () => {
+    const perioder = [
+      { fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' },
+      { fom: undefined, tom: undefined, id: '2' }
+    ];
+    const result = mapEgenmeldingsperioder(perioder);
+    expect(result).toHaveLength(1);
+  });
+});
+
+describe('mapNaturalytelserToData', () => {
+  it('should return empty array when naturalytelser is undefined', () => {
+    expect(mapNaturalytelserToData(undefined)).toEqual([]);
+  });
+
+  it('should map naturalytelser correctly', () => {
+    const naturalytelser = [{ naturalytelse: 'AKSJERGRATIS', sluttdato: new Date('2023-06-01'), verdiBeloep: 500 }];
+    const result = mapNaturalytelserToData(naturalytelser as any);
+    expect(result).toEqual([{ naturalytelse: 'AKSJERGRATIS', sluttdato: '2023-06-01', verdiBeloep: 500 }]);
+  });
+});
+
+describe('concatPerioder', () => {
+  it('should return egenmeldingsperioder when sykmeldingsperioder is undefined', () => {
+    const egenmeldinger = [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' }];
+    expect(concatPerioder(undefined, egenmeldinger)).toEqual(egenmeldinger);
+  });
+
+  it('should concatenate both period arrays', () => {
+    const sykmelding = [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' }];
+    const egenmelding = [{ fom: new Date('2023-01-10'), tom: new Date('2023-01-15'), id: '2' }];
+    const result = concatPerioder(sykmelding, egenmelding);
+    expect(result).toHaveLength(2);
+  });
+
+  it('should handle undefined egenmeldingsperioder', () => {
+    const sykmelding = [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' }];
+    const result = concatPerioder(sykmelding, undefined);
+    expect(result).toHaveLength(1);
+  });
+});
+
+describe('konverterPerioderFraMottattTilInterntFormat', () => {
+  it('should return undefined when input is undefined', () => {
+    expect(konverterPerioderFraMottattTilInterntFormat(undefined)).toBeUndefined();
+  });
+
+  it('should convert periods to internal format', () => {
+    const perioder = [
+      { fom: '2023-01-01', tom: '2023-01-05' },
+      { fom: '2023-01-10', tom: '2023-01-15' }
+    ];
+    const result = konverterPerioderFraMottattTilInterntFormat(perioder);
+    expect(result).toHaveLength(2);
+    expect(result![0].fom).toBeInstanceOf(Date);
+    expect(result![0].tom).toBeInstanceOf(Date);
+    expect(result![0].id).toBe('id');
+  });
+});
+
+describe('finnInnsendbareArbeidsgiverperioder', () => {
+  it('should return empty array when harForespurtArbeidsgiverperiode is false', () => {
+    const perioder = [{ fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' }];
+    expect(finnInnsendbareArbeidsgiverperioder(perioder, false)).toEqual([]);
+  });
+
+  it('should return empty array when arbeidsgiverperioder is undefined', () => {
+    expect(finnInnsendbareArbeidsgiverperioder(undefined, true)).toEqual([]);
+  });
+
+  it('should return empty array when arbeidsgiverperioder is empty', () => {
+    expect(finnInnsendbareArbeidsgiverperioder([], true)).toEqual([]);
+  });
+
+  it('should map and filter valid periods', () => {
+    const perioder = [
+      { fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' },
+      { fom: new Date('2023-01-10'), tom: new Date('2023-01-15'), id: '2' }
+    ];
+    const result = finnInnsendbareArbeidsgiverperioder(perioder, true);
+    expect(result).toHaveLength(2);
+    expect(result[0]).toEqual({ fom: '2023-01-01', tom: '2023-01-05' });
+  });
+
+  it('should filter out periods with invalid dates', () => {
+    const perioder = [
+      { fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' },
+      { fom: undefined, tom: undefined, id: '2' }
+    ];
+    const result = finnInnsendbareArbeidsgiverperioder(perioder, true);
+    expect(result).toHaveLength(1);
+  });
+});
+
+describe('konverterRefusjonEndringer', () => {
+  it('should return empty array when harRefusjonEndringer is not Ja', () => {
+    const endringer = [{ beloep: 1000, dato: new Date('2023-06-01') }];
+    expect(konverterRefusjonEndringer('Nei', endringer)).toEqual([]);
+  });
+
+  it('should return empty array when refusjonEndringer is undefined', () => {
+    expect(konverterRefusjonEndringer('Ja', undefined)).toEqual([]);
+  });
+
+  it('should convert refusjon endringer correctly', () => {
+    const endringer = [
+      { beloep: 1000, dato: new Date('2023-06-01') },
+      { beloep: 2000, dato: new Date('2023-07-01') }
+    ];
+    const result = konverterRefusjonEndringer('Ja', endringer);
+    expect(result).toEqual([
+      { beloep: 1000, startdato: '2023-06-01' },
+      { beloep: 2000, startdato: '2023-07-01' }
+    ]);
+  });
+
+  it('should return empty array when result array is empty', () => {
+    expect(konverterRefusjonEndringer('Ja', [])).toEqual([]);
   });
 });
