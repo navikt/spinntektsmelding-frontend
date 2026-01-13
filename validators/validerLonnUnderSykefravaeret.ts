@@ -32,7 +32,7 @@ export default function validerLonnUnderSykefravaeret(
 }
 
 function validerBelop(refusjon: LonnISykefravaeret, errorStatus: ValiderResultat[]) {
-  if (typeof refusjon.beloep === 'undefined' || refusjon.beloep === null) {
+  if (refusjon.beloep === undefined || refusjon.beloep === null) {
     errorStatus.push({
       code: LonnUnderSykefravaeretFeilkode.LONN_UNDER_SYKEFRAVAERET_BELOP,
       felt: 'refusjon.beloepPerMaaned'

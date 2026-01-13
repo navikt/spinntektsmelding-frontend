@@ -77,12 +77,7 @@ function validateLonnIAgpStatus(
   lonnIAP?: LonnIArbeidsgiverperioden,
   bruttoInntekt?: number
 ): Array<ValiderResultat> {
-  if (!lonnIAP?.status) {
-    errorStatus.push({
-      code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_MANGLER,
-      felt: 'lia-radio'
-    });
-  } else {
+  if (lonnIAP?.status) {
     if (lonnIAP.status === 'Nei' && (!lonnIAP.begrunnelse || lonnIAP.begrunnelse?.length === 0)) {
       errorStatus.push({
         code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_BEGRUNNELSE,
@@ -102,6 +97,11 @@ function validateLonnIAgpStatus(
         felt: 'agp.redusertLoennIAgp.beloep'
       });
     }
+  } else {
+    errorStatus.push({
+      code: LonnIArbeidsgiverperiodenFeilkode.LONN_I_ARBEIDSGIVERPERIODEN_MANGLER,
+      felt: 'lia-radio'
+    });
   }
   return errorStatus;
 }
