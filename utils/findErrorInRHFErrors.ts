@@ -1,7 +1,7 @@
 import { FieldErrors, FieldValues } from 'react-hook-form';
 
 export default function findErrorInRHFErrors(name: string, errors: FieldErrors<FieldValues>) {
-  const errorName = name.replaceAll(/\[/g, '.').replaceAll(/\]/g, '');
+  const errorName = name.replaceAll('[', '.').replaceAll(']', '');
 
   const errorKey = errorName.split('.');
   const error = errorKey.reduce((acc: FieldErrors<FieldValues> | string | undefined, key: string) => {
