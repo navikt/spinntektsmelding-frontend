@@ -3,11 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { axe } from 'jest-axe';
-// import { isValid } from 'date-fns';
-
-// vi.mock('../../../components/DatoVelger/DatoVelger.tsx', () => ({
-//   default: ({ label }) => <div>Datovelger {label}</div>
-// }));
 
 const mockReplace = vi.fn();
 const mockAppend = vi.fn();
@@ -63,19 +58,9 @@ vi.mock('react-hook-form', () => ({
 }));
 
 describe('Naturalytelser', () => {
-  const mockStore = {
-    naturalytelser: [],
-
-    slettAlleNaturalytelser: vi.fn()
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  // afterEach(() => {
-  //   vi.clearAllMocks();
-  // });
 
   it('renders the component', () => {
     render(<Naturalytelser />);
@@ -268,7 +253,7 @@ describe('Naturalytelser', () => {
       useFieldArray: () => ({
         fields: [
           { naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() },
-          { naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() }
+          { naturalytelse: 'BÅT', sluttdato: new Date(), verdiBeloep: 123, id: 2, onChange: vi.fn() }
         ],
         append: mockAppend,
         remove: mockRemove,
@@ -281,7 +266,7 @@ describe('Naturalytelser', () => {
           unregister: vi.fn(),
           getFieldState: vi.fn(),
           _names: {
-            array: new Set('BIL'),
+            array: new Set('BÅT'),
             mount: new Set('BIL'),
             unMount: new Set('BIL'),
             watch: new Set('BIL'),
@@ -311,7 +296,7 @@ describe('Naturalytelser', () => {
         r: { current: { subject: { subscribe: () => vi.fn() } } }
       })
     }));
-    // mockStore.naturalytelser = [{ id: '1', type: '', bortfallsdato: '', verdi: '' }];
+
     render(<Naturalytelser />);
     const button = screen.getByTitle('Slett ytelse');
     fireEvent.click(button);
@@ -320,8 +305,6 @@ describe('Naturalytelser', () => {
   });
 
   it('should have no accessibility violations', async () => {
-    // TODO: Komponenten har en tom <th> som mangler tekst for skjermlesere
-    // Se: https://dequeuniversity.com/rules/axe/4.10/empty-table-header
     const { container } = render(<Naturalytelser />);
     const results = await axe(container);
     expect(results).toHaveNoViolations();
