@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { axe } from 'jest-axe';
 import AvvikAdvarselInntekt from '../../components/AvvikAdvarselInntekt/AvvikAdvarselInntekt';
 
 describe('AvvikAdvarselInntekt', () => {
@@ -33,5 +34,16 @@ describe('AvvikAdvarselInntekt', () => {
 
     render(<AvvikAdvarselInntekt tidligereInntekter={tidligereInntekter} />);
     expect(screen.getByText(/Lønnsopplysningene kan inneholde feriepenger/)).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const tidligereInntekter = new Map<string, number | null>([
+      ['2023-01', 10000],
+      ['2023-02', 20000],
+      ['2023-03', 30000]
+    ]);
+    const { container } = render(<AvvikAdvarselInntekt tidligereInntekter={tidligereInntekter} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

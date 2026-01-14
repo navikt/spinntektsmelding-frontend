@@ -1,5 +1,5 @@
-import { BugIcon } from '@navikt/aksel-icons';
 import { BodyShort, Box, Button, Heading, Link, List, Page, VStack } from '@navikt/ds-react';
+import env from '../config/environment';
 
 const NotFound = () => {
   return (
@@ -15,17 +15,13 @@ const NotFound = () => {
               <List>
                 <List.Item>Bruk gjerne søket eller menyen</List.Item>
                 <List.Item>
-                  <Link href='#'>Gå til forsiden</Link>
+                  <Link href='https://arbeidsgiver.nav.no'>Gå til forsiden</Link>
                 </List.Item>
               </List>
             </div>
-            <Button as='a' href='#'>
-              Gå til Min side
+            <Button as='a' href={env.saksoversiktUrl}>
+              Gå til saksoversikten
             </Button>
-            <Link href='#'>
-              <BugIcon aria-hidden />
-              Meld gjerne fra om at lenken ikke virker
-            </Link>
           </VStack>
 
           <div>
@@ -34,7 +30,7 @@ const NotFound = () => {
             </Heading>
             <BodyShort spacing>The page you requested cannot be found.</BodyShort>
             <BodyShort>
-              Go to the <Link href='#'>front page</Link>, or use one of the links in the menu.
+              Go to the <Link href='https://arbeidsgiver.nav.no'>front page</Link>, or use one of the links in the menu.
             </BodyShort>
           </div>
         </VStack>

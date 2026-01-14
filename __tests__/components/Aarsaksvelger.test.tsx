@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { axe } from 'jest-axe';
 import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import { expect, vi } from 'vitest';
 import parseIsoDate from '../../utils/parseIsoDate';
@@ -477,5 +478,18 @@ describe('Aarsaksvelger', () => {
     );
 
     expect(screen.getByText('Dette er feil')).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const { container } = render(
+      <Aarsaksvelger
+        bruttoinntekt={undefined}
+        handleResetMaanedsinntekt={handleResetMaanedsinntekt}
+        visFeilmeldingTekst={visFeilmeldingTekst}
+        nyInnsending={false}
+      />
+    );
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

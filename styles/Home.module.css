@@ -148,6 +148,6 @@
 }
 
 .container {
-  background-color: #efefef;
+  background-color: var(--a-bg-subtle);
   padding-bottom: 1rem;
 }

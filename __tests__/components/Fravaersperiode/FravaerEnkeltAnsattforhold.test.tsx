@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import FravaerEnkeltAnsattforhold from '../../../components/Fravaersperiode/FravaerEnkeltAnsattforhold';
 import { vi } from 'vitest';
 
@@ -53,5 +54,22 @@ describe('FravaerEnkeltAnsattforhold', () => {
     expect(fom2).toBeInTheDocument();
     const tom2 = screen.getByText('15.02.2002');
     expect(tom2).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const sykmeldingsperioder = [
+      { fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' },
+      { fom: new Date(2002, 1, 1), tom: new Date(2002, 1, 15), id: '2' }
+    ];
+    const mockFn = vi.fn();
+    const { container } = render(
+      <FravaerEnkeltAnsattforhold
+        fravaerPerioder={sykmeldingsperioder}
+        sisteAktivePeriode={{ fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' }}
+        setIsDirtyForm={mockFn}
+      />
+    );
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

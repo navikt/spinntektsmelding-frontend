@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import TariffendringDato from '../../components/Bruttoinntekt/TariffendringDato';
 import { vi } from 'vitest';
 import parseIsoDate from '../../utils/parseIsoDate';
@@ -83,5 +84,11 @@ describe('TariffendringDato', () => {
     const secondDatePicker = screen.getAllByRole('textbox')[1];
     fireEvent.change(secondDatePicker, { target: { value: '01.01.2022' } });
     expect(onChangeMock).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
+  });
+
+  it('should have no accessibility violations', async () => {
+    const { container } = render(<TariffendringDato name='test' />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem/KvitteringAnnetSystem';
 
 describe('KvitteringAnnetSystem', () => {
@@ -33,5 +34,18 @@ describe('KvitteringAnnetSystem', () => {
     expect(getByText(/Vi har mottatt denne inntektsmeldingen fra Eksternt system/)).toBeInTheDocument();
     expect(queryByText('Arkivreferanse:')).toBeNull();
     expect(queryByText('Eventuell lenke til kvittering')).toBeNull();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const props = {
+      arkivreferanse: '123456',
+      lenkeTilKvittering: 'Kvittering',
+      lenkeTilKvitteringHref: 'https://example.com/kvittering',
+      eksterntSystem: 'Eksternt system',
+      mottattDato: '2022-01-01'
+    };
+    const { container } = render(<KvitteringAnnetSystem {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

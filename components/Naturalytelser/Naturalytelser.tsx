@@ -65,10 +65,10 @@ export default function Naturalytelser() {
           <table className={lokalStyles.tablenaturalytelse}>
             <thead>
               <tr>
-                <th>Naturalytelse</th>
-                <th>Dato naturalytelse faller bort</th>
-                <th>Verdi naturalytelse - kr/måned</th>
-                <th></th>
+                <th scope='col'>Naturalytelse</th>
+                <th scope='col'>Dato naturalytelse faller bort</th>
+                <th scope='col'>Verdi naturalytelse - kr/måned</th>
+                <td aria-label='Slett naturalytelse'></td>
               </tr>
             </thead>
             <tbody>

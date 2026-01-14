@@ -6,13 +6,15 @@ interface ButtonSletteProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   title: string;
 }
 
-export default function ButtonSlette(props: ButtonSletteProps) {
+export default function ButtonSlette(props: Readonly<ButtonSletteProps>) {
+  const iconTitle = props.title || 'Slette';
+
   return (
     <Button
       className={props.className}
       onClick={props.onClick}
       variant='tertiary'
-      icon={<TrashIcon title={props.title} />}
+      icon={<TrashIcon title={iconTitle} />}
       disabled={props.disabled}
     />
   );

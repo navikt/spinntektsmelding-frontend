@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import TidligereInntekt from '../../components/Bruttoinntekt/TidligereInntekt';
 import { vi } from 'vitest';
 
@@ -124,5 +125,16 @@ describe('TidligereInntekt', () => {
         return;
       }
     });
+  });
+
+  it('should have no accessibility violations', async () => {
+    const tidligereinntekt = new Map<string, number | null>([
+      ['2021-01', 10000],
+      ['2021-02', 20000],
+      ['2021-03', 30000]
+    ]);
+    const { container } = render(<TidligereInntekt tidligereinntekt={tidligereinntekt} henterData={false} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

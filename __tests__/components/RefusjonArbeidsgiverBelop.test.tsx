@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
 import { vi, expect } from 'vitest';
 
@@ -95,5 +96,18 @@ describe('RefusjonArbeidsgiverBelop', () => {
 
     expect(onOppdaterBelop).toHaveBeenCalledWith('600000');
     expect(onEditerbarChange).toHaveBeenCalledWith(true);
+  });
+
+  it('should have no accessibility violations', async () => {
+    const { container } = render(
+      <RefusjonArbeidsgiverBelop
+        bruttoinntekt={bruttoinntekt}
+        onOppdaterBelop={onOppdaterBelop}
+        visFeilmeldingTekst={visFeilmeldingTekst}
+        arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
+      />
+    );
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

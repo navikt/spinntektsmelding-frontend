@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, Mock } from 'vitest';
+import { axe } from 'jest-axe';
 import useBoundStore from '../../state/useBoundStore';
 import RefusjonArbeidsgiver from '../../components/RefusjonArbeidsgiver';
 import parseIsoDate from '../../utils/parseIsoDate';
@@ -192,5 +193,21 @@ describe('RefusjonArbeidsgiver', () => {
       fireEvent.click(jaEndringer);
       expect(mockSetIsDirtyForm).toHaveBeenCalledWith(true);
     }
+  });
+
+  it('should have no accessibility violations', async () => {
+    const state = buildState({
+      refusjonskravetOpphoerer: {
+        status: 'Ja'
+      },
+      harRefusjonEndringer: false
+    });
+    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+
+    const { container } = render(
+      <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1000} />
+    );
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

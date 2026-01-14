@@ -5,7 +5,7 @@
 }
 
 .page-content-header {
-  background-color: #fff;
+  background-color: var(--a-bg-default);
   padding: 1rem 2rem 0;
   display: flex;
   justify-content: space-between;
@@ -13,7 +13,7 @@
 }
 
 .page-content-body {
-  background-color: #fff;
+  background-color: var(--a-bg-default);
 }
 
 .page-content-header-extra {
@@ -25,7 +25,7 @@
 }
 
 .page-kvittering-header {
-  background-color: #fff;
+  background-color: var(--a-bg-default);
   padding: 0 0 1rem 0;
   display: flex;
   justify-content: space-between;

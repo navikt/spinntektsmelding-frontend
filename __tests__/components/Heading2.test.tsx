@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import Heading2 from '../../components/Heading2/Heading2';
 
 describe('Heading2', () => {
@@ -23,5 +24,11 @@ describe('Heading2', () => {
 
     expect(HeadingTitle).toHaveClass('Test');
     expect(HeadingTitle).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const { container } = render(<Heading2>Innholdstekst</Heading2>);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import { axe } from 'jest-axe';
 import { Behandlingsdager } from '../../components/Behandlingsdager/Behandlingsdager';
 import parseIsoDate from '../../utils/parseIsoDate';
 
@@ -51,5 +52,12 @@ describe('Behandlingsdager', () => {
     expect(items[2].textContent.trim()).toBe('01.02.2023 (Arbeidsgiverperiode)');
     expect(items[3].textContent.trim()).toBe('07.02.2023 (Arbeidsgiverperiode)');
     expect(items[4].textContent.trim()).toBe('15.02.2023');
+  });
+
+  it('should have no accessibility violations', async () => {
+    const dates = ['2023-02-01', '2023-01-15', '2023-01-01'];
+    const { container } = render(<Behandlingsdager behandlingsdager={dates} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });
