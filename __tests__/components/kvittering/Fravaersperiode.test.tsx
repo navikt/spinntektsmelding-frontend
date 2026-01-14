@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
 
 const setIsDirtyMock = vi.fn();
@@ -57,5 +58,17 @@ describe('Fravaersperiode', () => {
     render(<Fravaersperiode paakrevdeOpplysninger={[]} egenmeldingsperioder={egenmeldingsperioder} />);
     const heading = screen.getByRole('heading', { name: 'Egenmelding' });
     expect(heading).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const sykmeldingsperioder = [
+      { id: '1', fom: '2024-01-01', tom: '2024-01-05' },
+      { id: '2', fom: '2024-01-10', tom: '2024-01-15' }
+    ];
+    const { container } = render(
+      <Fravaersperiode paakrevdeOpplysninger={[]} sykmeldingsperioder={sykmeldingsperioder} />
+    );
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

@@ -2,6 +2,7 @@ import Naturalytelser from '../../components/Naturalytelser';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
+import { axe } from 'jest-axe';
 // import { isValid } from 'date-fns';
 
 // vi.mock('../../../components/DatoVelger/DatoVelger.tsx', () => ({
@@ -316,5 +317,13 @@ describe('Naturalytelser', () => {
     fireEvent.click(button);
 
     expect(mockRemove).toHaveBeenCalled();
+  });
+
+  it('should have no accessibility violations', async () => {
+    // TODO: Komponenten har en tom <th> som mangler tekst for skjermlesere
+    // Se: https://dequeuniversity.com/rules/axe/4.10/empty-table-header
+    const { container } = render(<Naturalytelser />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

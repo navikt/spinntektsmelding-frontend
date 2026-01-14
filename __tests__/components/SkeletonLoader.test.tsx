@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import { SkeletonLoader } from '../../components/SkeletonLoader/SkeletonLoader';
 
 // Mock the Skeleton component to inspect props
@@ -27,5 +28,11 @@ describe('SkeletonLoader', () => {
   it('renders nothing when laster is true and no tekst is provided', () => {
     const { container } = render(<SkeletonLoader ferdigLastet={true} />);
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const { container } = render(<SkeletonLoader ferdigLastet={true} tekst='Laster innhold...' />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

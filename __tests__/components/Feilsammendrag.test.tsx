@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react';
+import { axe } from 'jest-axe';
 
 import useBoundStore from '../../state/useBoundStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
@@ -39,5 +40,18 @@ describe('Feilsammendrag', () => {
     const { getByText } = render(<Feilsammendrag skjemafeil={mockErrors} />);
     expect(getByText('Error 1')).toBeInTheDocument();
     expect(getByText('State Error')).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const mockErrors = [
+      { text: 'Error 1', felt: 'field1' },
+      { text: 'Error 2', felt: 'field2' }
+    ];
+    (formatRHFFeilmeldinger as Mock).mockReturnValue(mockErrors);
+    (useBoundStore as Mock).mockReturnValueOnce([]).mockReturnValueOnce(true);
+
+    const { container } = render(<Feilsammendrag skjemafeil={mockErrors} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

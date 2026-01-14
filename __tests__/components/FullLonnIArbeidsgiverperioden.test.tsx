@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 
 describe('FullLonnIArbeidsgiverperioden', () => {
@@ -28,5 +29,16 @@ describe('FullLonnIArbeidsgiverperioden', () => {
   it('should render nothing if lonnIPerioden is undefined', () => {
     render(<FullLonnIArbeidsgiverperioden />);
     expect(screen.queryByText(/Ja|Nei/)).not.toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const lonnIPerioden = {
+      status: 'Nei',
+      utbetalt: 1000,
+      begrunnelse: 'TidligereVirksomhet'
+    };
+    const { container } = render(<FullLonnIArbeidsgiverperioden lonnIPerioden={lonnIPerioden} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

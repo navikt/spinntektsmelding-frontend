@@ -68,7 +68,7 @@ export default function Naturalytelser() {
                 <th scope='col'>Naturalytelse</th>
                 <th scope='col'>Dato naturalytelse faller bort</th>
                 <th scope='col'>Verdi naturalytelse - kr/måned</th>
-                <th scope='col' aria-label='Slett naturalytelse'></th>
+                <td aria-label='Slett naturalytelse'></td>
               </tr>
             </thead>
             <tbody>

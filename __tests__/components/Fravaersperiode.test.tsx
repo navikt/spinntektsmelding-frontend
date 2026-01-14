@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import Fravaersperiode from '../../components/Fravaersperiode/Fravaersperiode';
 
 const setIsDirtyMock = vi.fn();
@@ -21,6 +22,12 @@ describe('Fravaersperiode', () => {
     render(<Fravaersperiode selvbestemtInnsending setIsDirtyForm={setIsDirtyMock} />);
     const text = screen.getByText(/Du har angitt sykmeldingsperiode vist under/i);
     expect(text).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const { container } = render(<Fravaersperiode setIsDirtyForm={setIsDirtyMock} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 
   // Add more tests as needed

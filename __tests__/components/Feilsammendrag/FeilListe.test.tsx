@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import FeilListe, { Feilmelding } from '../../../components/Feilsammendrag/FeilListe';
 
 const headingText = 'Du må rette disse feilene før du kan sende inn.';
@@ -38,5 +39,11 @@ describe('FeilListe', () => {
     expect(screen.queryByText(headingText)).toBeNull();
     // Komponent wrapper returneres (fragment) men ingen ErrorSummary
     expect(container.firstChild).toBeNull();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const { container } = render(<FeilListe feilmeldinger={base} skalViseFeilmeldinger={true} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

@@ -1,4 +1,5 @@
 import { render, fireEvent } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import Person from '../../components/Person/Person';
 
 vi.mock('react-hook-form', () => ({
@@ -105,5 +106,11 @@ describe('Person component', () => {
     }));
     const { queryByText } = render(<Person />);
     expect(queryByText('Dette er feil')).not.toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const { container } = render(<Person />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

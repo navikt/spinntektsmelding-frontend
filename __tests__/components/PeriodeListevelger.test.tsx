@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import PeriodeListevelger from '../../components/Bruttoinntekt/PeriodeListevelger';
 import { vi } from 'vitest';
 import parseIsoDate from '../../utils/parseIsoDate';
@@ -105,5 +106,21 @@ describe('PeriodeListevelger', () => {
     fireEvent.click(addButton);
 
     expect(onRangeListChange).toHaveBeenCalledWith([{ id: '1' }, { id: expect.any(String) }]);
+  });
+
+  it('should have no accessibility violations', async () => {
+    const defaultRange = [{ id: '1' }, { id: '2' }];
+    const { container } = render(
+      <PeriodeListevelger
+        onRangeListChange={onRangeListChange}
+        defaultRange={defaultRange}
+        fomTekst={fomTekst}
+        tomTekst={tomTekst}
+        fomIdBase={fomIdBase}
+        tomIdBase={tomIdBase}
+      />
+    );
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

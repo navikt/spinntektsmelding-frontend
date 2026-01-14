@@ -6,7 +6,12 @@ interface ButtonSletteProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   title: string;
 }
 
-export default function ButtonSlette(props: ButtonSletteProps) {
+export default function ButtonSlette(props: Readonly<ButtonSletteProps>) {
+  let ariaLabel = undefined;
+  if (!props.title) {
+    ariaLabel = 'Slette';
+  }
+
   return (
     <Button
       className={props.className}
@@ -14,7 +19,7 @@ export default function ButtonSlette(props: ButtonSletteProps) {
       variant='tertiary'
       icon={<TrashIcon title={props.title} />}
       disabled={props.disabled}
-      aria-label='Slett'
+      aria-label={ariaLabel}
     />
   );
 }

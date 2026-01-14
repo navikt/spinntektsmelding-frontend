@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import SelectNaturalytelser from '../../components/Naturalytelser/SelectNaturalytelser/SelectNaturalytelser';
 import { vi } from 'vitest';
 
@@ -141,5 +142,11 @@ describe('SelectNaturalytelser', () => {
     render(<SelectNaturalytelser name='naturalytelse' />);
     const errorElement = screen.getByText(errorMessage);
     expect(errorElement).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    const { container } = render(<SelectNaturalytelser name='naturalytelse' />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

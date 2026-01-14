@@ -1,4 +1,5 @@
 import { render, configure } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import Person from '../../components/Person/PersonVisning';
 import useBoundStore from '../../state/useBoundStore';
 import { Mock } from 'vitest';
@@ -135,5 +136,31 @@ describe('Person component', () => {
         'Da dette sykefraværet er innenfor samme arbeidsgiverperiode som forrige sykefravær trenger vi bare informasjon om inntekt og refusjon.'
       )
     ).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    (useBoundStore as Mock).mockImplementation((stateFn) =>
+      stateFn({
+        __esModule: true,
+        default: vi.fn(),
+        sykmeldt: {
+          navn: 'John Doe',
+          fnr: '12345678901'
+        },
+        avsender: {
+          orgnr: '987654321',
+          orgNavn: 'Example Company',
+          navn: 'Jane Doe',
+          tlf: '12345678'
+        },
+        feilVedLasting: {
+          persondata: null,
+          arbeidsgiverdata: null
+        }
+      })
+    );
+    const { container } = render(<Person />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

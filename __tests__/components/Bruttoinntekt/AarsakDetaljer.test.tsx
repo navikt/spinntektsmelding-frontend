@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 // import { FormProvider, useForm } from 'react-hook-form';
 import { vi } from 'vitest';
 import AarsakDetaljer from '../../../components/Bruttoinntekt/AarsakDetaljer';
@@ -158,5 +159,16 @@ describe('AarsakDetaljer', () => {
 
     expect(screen.getByText(/Sykefravær fra/)).toBeInTheDocument();
     expect(screen.getByText(/Sykefravær til/)).toBeInTheDocument();
+  });
+
+  it('should have no accessibility violations', async () => {
+    watchMock.mockReturnValue({ aarsak: 'Tariffendring' });
+    const { container } = render(
+      <WithFormProvider>
+        <AarsakDetaljer bestemmendeFravaersdag={bestemmendeFravaersdag} id={id} />
+      </WithFormProvider>
+    );
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });
