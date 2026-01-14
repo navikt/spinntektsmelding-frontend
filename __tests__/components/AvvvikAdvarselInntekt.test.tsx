@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AvvikAdvarselInntekt from '../../components/AvvikAdvarselInntekt/AvvikAdvarselInntekt';
-import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 
 describe('AvvikAdvarselInntekt', () => {
   it('renders null when there are no tidligereInntekter', () => {
@@ -16,7 +15,7 @@ describe('AvvikAdvarselInntekt', () => {
   });
 
   it('renders warning alert when there are manglendeEller0FraAmeldingen', () => {
-    const tidligereInntekter: HistoriskInntekt = new Map([
+    const tidligereInntekter = new Map<string, number | null>([
       ['2023-01', null],
       ['2023-02', null],
       ['2023-03', null]
@@ -26,7 +25,7 @@ describe('AvvikAdvarselInntekt', () => {
   });
 
   it('renders warning alert when there are feriemaaneder', () => {
-    const tidligereInntekter: HistoriskInntekt = new Map([
+    const tidligereInntekter = new Map<string, number | null>([
       ['2023-05', 12028.25],
       ['2023-06', 11730.69],
       ['2023-07', 17659.88]

@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import TidligereInntekt from '../../components/Bruttoinntekt/TidligereInntekt';
-import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import { vi } from 'vitest';
 
 vi.mock('@navikt/ds-react', async () => {
@@ -24,7 +23,7 @@ vi.mock('../../utils/formatMaanedsnavn', async () => {
 });
 
 describe('TidligereInntekt', () => {
-  const tidligereinntekt: HistoriskInntekt = new Map([
+  const tidligereinntekt = new Map<string, number | null>([
     ['2021-01', 10000],
     ['2021-02', 20000],
     ['2021-03', 30000]

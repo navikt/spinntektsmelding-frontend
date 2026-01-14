@@ -1,10 +1,9 @@
 import { Alert, BodyLong } from '@navikt/ds-react';
-import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
 import lokalStyles from './AvvikAdvarselInntekt.module.css';
 
 interface AvvikAdvarselInntektProps {
-  tidligereInntekter?: HistoriskInntekt;
+  tidligereInntekter?: Map<string, number | null>;
 }
 
 const AvvikAdvarselInntekt: React.FunctionComponent<AvvikAdvarselInntektProps> = ({

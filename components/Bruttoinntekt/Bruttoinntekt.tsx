@@ -31,7 +31,7 @@ export default function Bruttoinntekt({
 }: Readonly<BruttoinntektProps>) {
   const [requestEndreMaanedsinntekt, setRequestEndreMaanedsinntekt] = useState<boolean>(false);
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-  const tidligereinntekt: HistoriskInntekt | undefined = useBoundStore((state) => state.tidligereInntekt);
+  const tidligereinntekt = useBoundStore((state) => state.tidligereInntekt);
   const [setBareNyMaanedsinntekt] = useBoundStore((state) => [state.setBareNyMaanedsinntekt]);
   const tilbakestillMaanedsinntekt = useBoundStore((state) => state.tilbakestillMaanedsinntekt);
   const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);

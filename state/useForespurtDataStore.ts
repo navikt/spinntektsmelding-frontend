@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { ForrigeInntekt, MottattForespurtData, Opplysningstype } from '../schema/ForespurtDataSchema';
+import { MottattForespurtData, Opplysningstype } from '../schema/ForespurtDataSchema';
 import parseIsoDate from '../utils/parseIsoDate';
 import forespoerselType from '../config/forespoerselType';
 import { HistoriskInntekt } from '../schema/HistoriskInntektSchema';
@@ -21,10 +21,9 @@ export interface ForespurtDataState {
   hentOpplysningstyper: () => Array<Opplysningstype>;
   hentPaakrevdOpplysningstyper: () => Array<Opplysningstype>;
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
-  setTidligereInntektsdata: (inntekt: ForrigeInntekt) => void;
-  kanBruttoinntektTilbakebestilles: () => boolean;
   arbeidsgiverKreverRefusjon: () => boolean;
   arbeidsgiverRefusjonskravOpphører: () => boolean;
+  setGammeltSkjaeringstidspunkt: (dato: Date | string) => void;
 }
 
 const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataState> = (set, get) => ({
@@ -88,23 +87,14 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       })
     );
   },
-  setTidligereInntektsdata: (inntekt: ForrigeInntekt) => {
+  setGammeltSkjaeringstidspunkt: (dato: Date | string) => {
     set(
       produce((state: ForespurtDataState) => {
-        state.gammeltSkjaeringstidspunkt = parseIsoDate(inntekt.skjæringstidspunkt);
+        state.gammeltSkjaeringstidspunkt = parseIsoDate(dato);
 
         return state;
       })
     );
-  },
-  kanBruttoinntektTilbakebestilles: () => {
-    const inntekt = get().forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp;
-
-    if (inntekt) {
-      return true;
-    } else {
-      return false;
-    }
   },
   arbeidsgiverKreverRefusjon: () => {
     const refusjon = get().forespurtData?.refusjon?.forslag;

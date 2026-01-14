@@ -1,11 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import TidligereInntekt from '../../../components/Bruttoinntekt/TidligereInntekt';
-import { HistoriskInntekt } from '../../../schema/HistoriskInntektSchema';
 
 describe('TidligereInntekt', () => {
   it('renders 3 rows', () => {
-    const tidligereinntekt: HistoriskInntekt = new Map([
+    const tidligereinntekt = new Map<string, number | null>([
       ['2020-12', 234],
       ['2020-11', 123],
       ['2021-01', 345]
@@ -27,7 +26,7 @@ describe('TidligereInntekt', () => {
   });
 
   it('should have no violations', async () => {
-    const tidligereinntekt: HistoriskInntekt = new Map([
+    const tidligereinntekt = new Map<string, number | null>([
       ['2020-12', 234],
       ['2020-11', 123],
       ['2021-01', 345]

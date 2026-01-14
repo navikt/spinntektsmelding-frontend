@@ -93,7 +93,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     avsender,
     sykmeldt,
     naturalytelser,
-    forespurtData,
     behandlingsdager,
     endringerAvRefusjon,
     selvbestemtType
@@ -106,7 +105,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.avsender,
     state.sykmeldt,
     state.naturalytelser,
-    state.forespurtData,
     state.behandlingsdager,
     state.endringerAvRefusjon,
     state.selvbestemtType
@@ -258,9 +256,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const mellomregningBeregnetBestemmendeFraværsdag = useMemo(() => {
     if (!harForespurtArbeidsgiverperiode && !overstyrSkalViseAgp) {
-      return parseIsoDate(
-        forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt ?? foreslaattBestemmendeFravaersdag
-      );
+      return parseIsoDate(foreslaattBestemmendeFravaersdag);
     }
     const altFravaer = finnFravaersperioder(sykmeldingsperioder, egenmeldingsperioder);
     const beregnetBestemmendeFraværsdagISO = finnBestemmendeFravaersdag(
@@ -278,7 +274,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sykmeldingsperioder,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
     harForespurtArbeidsgiverperiode,
-    forespurtData?.inntekt?.forslag?.forrigeInntekt?.skjæringstidspunkt,
     begrensetForespoersel,
     overstyrSkalViseAgp
   ]);
@@ -411,7 +406,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <RefusjonArbeidsgiver
               setIsDirtyForm={setIsDirtyForm}
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
-              inntekt={inntektBeloep}
+              inntekt={inntektBeloep!}
               behandlingsdager={behandlingsdagerInnsending}
             />
 

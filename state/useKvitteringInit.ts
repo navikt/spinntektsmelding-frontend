@@ -36,7 +36,7 @@ export default function useKvitteringInit() {
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
 
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
-  const setTidligereInntektsdata = useBoundStore((state) => state.setTidligereInntektsdata);
+  const setGammeltSkjaeringstidspunkt = useBoundStore((state) => state.setGammeltSkjaeringstidspunkt);
   const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const setSkjemaKvitteringEksterntSystem = useBoundStore((state) => state.setSkjemaKvitteringEksterntSystem);
@@ -203,12 +203,7 @@ export default function useKvitteringInit() {
   function handleTidligereInntektsdata(jsonData: KvitteringNavNoSchema) {
     if (!jsonData.skjema.inntekt) return;
 
-    const beregnetInntekt = jsonData.skjema.inntekt?.beloep;
-    setTidligereInntektsdata({
-      beløp: beregnetInntekt,
-      skjæringstidspunkt: jsonData.skjema.inntekt?.inntektsdato,
-      kilde: 'INNTEKTSMELDING'
-    });
+    setGammeltSkjaeringstidspunkt(jsonData.skjema.inntekt?.inntektsdato);
   }
 
   function handleFravaersperioder(jsonData: KvitteringNavNoSchema) {

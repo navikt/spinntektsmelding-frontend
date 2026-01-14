@@ -12,8 +12,6 @@ export const MottattPeriodeSchema = z.object({
 
 export type MottattPeriode = z.infer<typeof MottattPeriodeSchema>;
 
-const BeregningsmaanedSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
-
 export type Opplysningstype = (typeof forespoerselType)[keyof typeof forespoerselType];
 
 const ForrigeInntektSchema = z.object({
@@ -22,19 +20,8 @@ const ForrigeInntektSchema = z.object({
   beløp: z.number()
 });
 
-// Define ForespurtData schema
 const ForespurtDataSchema = z.object({
   paakrevd: z.boolean()
-});
-
-const ForespurtInntektDataSchema = ForespurtDataSchema.extend({
-  forslag: z
-    .object({
-      type: z.enum(['ForslagInntektFastsatt', 'ForslagInntektGrunnlag']),
-      forrigeInntekt: ForrigeInntektSchema.optional(),
-      beregningsmaaneder: z.array(BeregningsmaanedSchema).optional()
-    })
-    .optional()
 });
 
 const ForespurtRefusjonDataSchema = ForespurtDataSchema.extend({
@@ -60,7 +47,7 @@ const forespurtArbeidsgiverperiodeDataSchema = ForespurtDataSchema.extend({
 });
 
 export const MottattForespurtDataSchema = z.object({
-  inntekt: ForespurtInntektDataSchema,
+  inntekt: ForespurtDataSchema,
   refusjon: ForespurtRefusjonDataSchema,
   arbeidsgiverperiode: forespurtArbeidsgiverperiodeDataSchema
 });
