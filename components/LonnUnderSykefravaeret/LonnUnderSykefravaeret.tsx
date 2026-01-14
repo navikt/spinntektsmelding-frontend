@@ -51,8 +51,12 @@ export default function LonnUnderSykefravaeret({
               <table className={lokalStyle.loennTabell}>
                 <thead>
                   <tr>
-                    <td className={lokalStyle.uthevet}>Dato for endring</td>
-                    <td className={lokalStyle.uthevet}>Endret refusjonsbeløp</td>
+                    <th scope='col' className={lokalStyle.uthevet}>
+                      Dato for endring
+                    </th>
+                    <th scope='col' className={lokalStyle.uthevet}>
+                      Endret refusjonsbeløp
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

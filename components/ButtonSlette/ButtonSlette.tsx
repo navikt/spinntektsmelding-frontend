@@ -14,6 +14,7 @@ export default function ButtonSlette(props: ButtonSletteProps) {
       variant='tertiary'
       icon={<TrashIcon title={props.title} />}
       disabled={props.disabled}
+      aria-label='Slett'
     />
   );
 }
