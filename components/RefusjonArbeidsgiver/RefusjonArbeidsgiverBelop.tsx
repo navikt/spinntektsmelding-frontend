@@ -1,40 +1,58 @@
+import { useCallback } from 'react';
 import { Alert, BodyLong } from '@navikt/ds-react';
-import { useState } from 'react';
+import { useFormContext, useController } from 'react-hook-form';
 import formatCurrency from '../../utils/formatCurrency';
 import TextLabel from '../TextLabel';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import ButtonEndre from '../ButtonEndre';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import NumberField from '../NumberField/NumberField';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import stringishToNumber from '../../utils/stringishToNumber';
 
 interface RefusjonArbeidsgiverBelopProps {
-  bruttoinntekt: number;
-  onOppdaterBelop: (beloep: string) => void;
-  visFeilmeldingTekst: (feilmelding: string) => string;
   arbeidsgiverperiodeDisabled?: boolean;
-  onEditerbarChange: (editerbar: boolean) => void;
 }
 
 export default function RefusjonArbeidsgiverBelop({
-  bruttoinntekt,
-  onOppdaterBelop,
-  visFeilmeldingTekst,
-  arbeidsgiverperiodeDisabled = false,
-  onEditerbarChange
+  arbeidsgiverperiodeDisabled = false
 }: Readonly<RefusjonArbeidsgiverBelopProps>) {
-  const [editerbar, setEditerbar] = useState<boolean>(false);
+  const {
+    control,
+    setValue,
+    watch,
+    formState: { errors }
+  } = useFormContext();
+
+  const { field } = useController({
+    name: 'refusjon.beloepPerMaaned',
+    control
+  });
+
+  const isEditing = watch('refusjon.isEditing');
+  const error = findErrorInRHFErrors('refusjon.beloepPerMaaned', errors);
 
   const refusjonTilArbeidsgiverEtterAgpLegend = arbeidsgiverperiodeDisabled
     ? 'Refusjon til arbeidsgiver i sykefraværet'
     : 'Refusjon til arbeidsgiver etter arbeidsgiverperiode';
 
-  const handleButtonEndreBeloepClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
-    e.preventDefault();
-    onEditerbarChange(true);
-    setEditerbar(true);
-  };
+  const handleButtonEndreBeloepClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>): void => {
+      e.preventDefault();
+      setValue('refusjon.isEditing', true);
+    },
+    [setValue]
+  );
 
-  if (!editerbar) {
+  const handleBeloepChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      field.onChange(value === '' ? undefined : stringishToNumber(value));
+    },
+    [field]
+  );
+
+  if (!isEditing) {
     return (
       <>
         <TextLabel>{refusjonTilArbeidsgiverEtterAgpLegend}</TextLabel>
@@ -44,7 +62,7 @@ export default function RefusjonArbeidsgiverBelop({
         </BodyLong>
         <div className={localStyles.beloepswrapper}>
           <div className={localStyles.beloep} data-cy='refusjon-arbeidsgiver-beloep'>
-            {formatCurrency(bruttoinntekt)}&nbsp;kr/måned
+            {formatCurrency(field.value)}&nbsp;kr/måned
           </div>
           <ButtonEndre
             className={localStyles.endre_knapp}
@@ -62,11 +80,10 @@ export default function RefusjonArbeidsgiverBelop({
         <NumberField
           className={localStyles.refusjonBeloep}
           label='Oppgi refusjonsbeløpet per måned'
-          value={bruttoinntekt}
-          onChange={(event) => onOppdaterBelop(event.target.value)}
+          {...field}
+          onChange={handleBeloepChange}
           id={ensureValidHtmlId('refusjon.beloepPerMaaned')}
-          error={visFeilmeldingTekst('refusjon.beloepPerMaaned')}
-          data-cy='refusjon-arbeidsgiver-beloep-input'
+          error={error}
         />
         <span className={localStyles.alert_span}>
           Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør Nav. Nav vil

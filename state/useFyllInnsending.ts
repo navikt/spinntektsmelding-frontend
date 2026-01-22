@@ -129,7 +129,7 @@ export default function useFyllInnsending() {
       refusjon:
         lonnISykefravaeret?.status === 'Ja'
           ? {
-              beloepPerMaaned: lonnISykefravaeret.beloep!,
+              beloepPerMaaned: skjemaData.refusjon?.beloepPerMaaned,
               sluttdato: null,
 
               endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)

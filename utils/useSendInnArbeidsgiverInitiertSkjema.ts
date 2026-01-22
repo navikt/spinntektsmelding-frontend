@@ -104,6 +104,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 
     const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
 
+    console.log('Sender inn skjema data:', skjemaData);
+    console.log('Validerte data', validerteData.error);
+
     setSkalViseFeilmeldinger(true);
 
     if (errors.length > 0 || validerteData.success !== true) {

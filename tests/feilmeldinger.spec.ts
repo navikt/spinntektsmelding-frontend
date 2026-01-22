@@ -74,7 +74,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '500000');
     await formPage.clickButton('Send');
 
-    await formPage.assertVisibleTextAtLeastOnce('Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.');
+    await formPage.assertVisibleTextAtLeastOnce('Refusjonsbeløpet kan ikke være høyere enn inntekten.');
 
     await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '77000');
 

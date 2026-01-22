@@ -214,7 +214,7 @@ export const InnsendingSchema = z.object({
   refusjon: z.nullable(
     z.object({
       beloepPerMaaned: z
-        .number({ error: 'Vennligst angi hvor mye du refundere per måned' })
+        .number({ error: 'Vennligst angi hvor mye som refunderes per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
       endringer: z.array(RefusjonEndringSchema).nullable(),
       sluttdato: z.iso
@@ -233,7 +233,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
   if (val.inntekt?.beloep && val.refusjon?.beloepPerMaaned && val.inntekt?.beloep < val.refusjon?.beloepPerMaaned) {
     ctx.issues.push({
       code: 'custom',
-      error: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
+      message: 'Refusjonsbeløpet kan ikke være høyere enn inntekten.',
       path: ['refusjon', 'beloepPerMaaned'],
       input: ''
     });
@@ -242,7 +242,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
   if ((val.inntekt?.beloep ?? 0) < (val.agp?.redusertLoennIAgp?.beloep ?? 0) && (val.inntekt?.beloep ?? 0) !== 0) {
     ctx.issues.push({
       code: 'custom',
-      error: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
+      message: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
       path: ['agp', 'redusertLoennIAgp', 'beloep'],
       input: ''
     });
@@ -251,7 +251,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
   if ((val.inntekt?.beloep ?? 0) >= 1000000) {
     ctx.issues.push({
       code: 'custom',
-      error: 'Inntekten kan ikke være 1 million eller over.',
+      message: 'Inntekten kan ikke være 1 million eller over.',
       path: ['inntekt', 'beloep'],
       input: ''
     });
@@ -263,7 +263,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
       if (endring.beloep > (val.inntekt?.beloep ?? endring.beloep)) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Refusjon kan ikke være høyere enn beregnet månedslønn.',
+          message: 'Refusjon kan ikke være høyere enn beregnet månedslønn.',
           path: ['refusjon', 'endringer', index, 'beloep'],
           input: ''
         });
@@ -272,7 +272,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
       if (isBefore(endring.startdato, agpSluttdato ?? '')) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
+          message: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
           path: ['refusjon', 'endringer', index, 'startdato'],
           input: ''
         });
@@ -281,7 +281,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
       if (isBefore(endring.startdato, val.inntekt?.inntektsdato ?? '')) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Startdato for refusjonsendringer må være etter dato for rapportert inntekt.',
+          message: 'Startdato for refusjonsendringer må være etter dato for rapportert inntekt.',
           path: ['refusjon', 'endringer', index, 'startdato'],
           input: ''
         });

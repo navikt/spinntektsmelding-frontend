@@ -4,12 +4,33 @@ import { axe } from 'jest-axe';
 import useBoundStore from '../../state/useBoundStore';
 import RefusjonArbeidsgiver from '../../components/RefusjonArbeidsgiver';
 import parseIsoDate from '../../utils/parseIsoDate';
+import { FormProvider, useForm } from 'react-hook-form';
 
 vi.mock('../../state/useBoundStore', () => ({
   __esModule: true,
   default: vi.fn(),
   useBoundStore: vi.fn()
 }));
+
+// Wrapper-komponent for å gi FormProvider context
+function TestWrapper({
+  children,
+  defaultValues = {}
+}: {
+  children: React.ReactNode;
+  defaultValues?: Record<string, unknown>;
+}) {
+  const methods = useForm({
+    defaultValues: {
+      refusjon: {
+        beloepPerMaaned: 500000,
+        isEditing: false
+      },
+      ...defaultValues
+    }
+  });
+  return <FormProvider {...methods}>{children}</FormProvider>;
+}
 
 function buildState(overrides: Partial<Record<string, any>> = {}) {
   return {
@@ -49,7 +70,9 @@ describe('RefusjonArbeidsgiver', () => {
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
-      <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1000} />
+      <TestWrapper>
+        <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1000} />
+      </TestWrapper>
     );
 
     const radioButton = screen.getAllByLabelText('Ja');
@@ -68,7 +91,9 @@ describe('RefusjonArbeidsgiver', () => {
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
-      <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1000} />
+      <TestWrapper>
+        <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1000} />
+      </TestWrapper>
     );
 
     const textField = screen.getByLabelText('Utbetalt under arbeidsgiverperiode');
@@ -92,7 +117,9 @@ describe('RefusjonArbeidsgiver', () => {
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
-      <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1234} />
+      <TestWrapper>
+        <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1234} />
+      </TestWrapper>
     );
 
     expect(screen.getByText(/Innen 14 dager må du sende et brev til Nav/)).toBeInTheDocument();
@@ -102,7 +129,11 @@ describe('RefusjonArbeidsgiver', () => {
     const state = buildState();
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
-    render(<RefusjonArbeidsgiver inntekt={25000} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(
+      <TestWrapper>
+        <RefusjonArbeidsgiver inntekt={25000} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />
+      </TestWrapper>
+    );
 
     const belopInput = screen.getByLabelText(/Utbetalt under arbeidsgiverperiode/i);
     fireEvent.change(belopInput, { target: { value: '12345' } });
@@ -117,7 +148,11 @@ describe('RefusjonArbeidsgiver', () => {
     });
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
-    render(<RefusjonArbeidsgiver inntekt={15000} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(
+      <TestWrapper>
+        <RefusjonArbeidsgiver inntekt={15000} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />
+      </TestWrapper>
+    );
 
     // Forventer radiogruppe for begrunnelse når status=Nei (juster label om nødvendig)
     const begrunnelseOption = screen.queryByLabelText(/Betviler arbeidsuførhet/i);
@@ -131,7 +166,11 @@ describe('RefusjonArbeidsgiver', () => {
     const state = buildState({ lonnISykefravaeret: { status: 'Ja' }, harRefusjonEndringer: undefined });
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
-    render(<RefusjonArbeidsgiver inntekt={3333} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(
+      <TestWrapper>
+        <RefusjonArbeidsgiver inntekt={3333} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />
+      </TestWrapper>
+    );
 
     // Radioknapp (Ja) for endringer (tekst kan avvike - juster ved behov)
     const jaEndringer = screen.queryByLabelText(/Ja, det blir endringer/i);
@@ -145,7 +184,11 @@ describe('RefusjonArbeidsgiver', () => {
     const state = buildState({ harRefusjonEndringer: undefined });
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
-    render(<RefusjonArbeidsgiver inntekt={9999} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(
+      <TestWrapper>
+        <RefusjonArbeidsgiver inntekt={9999} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />
+      </TestWrapper>
+    );
 
     const neiEndringer = screen.queryByLabelText(/Nei, det blir ikke endringer/i);
     if (neiEndringer) {
@@ -158,7 +201,11 @@ describe('RefusjonArbeidsgiver', () => {
     const state = buildState({ fullLonnIArbeidsgiverPerioden: { status: 'Ja' } });
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
-    render(<RefusjonArbeidsgiver inntekt={5000} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(
+      <TestWrapper>
+        <RefusjonArbeidsgiver inntekt={5000} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />
+      </TestWrapper>
+    );
 
     // Felt som kun vises når Nei skal typisk være borte
     expect(screen.queryByLabelText(/Utbetalt under arbeidsgiverperiode/i)).toBeNull();
@@ -172,7 +219,11 @@ describe('RefusjonArbeidsgiver', () => {
     });
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
-    render(<RefusjonArbeidsgiver inntekt={7777} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(
+      <TestWrapper>
+        <RefusjonArbeidsgiver inntekt={7777} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />
+      </TestWrapper>
+    );
 
     // Hvis komponent har knapp for å legge til endring (tilpass label)
     const leggTil = screen.queryByRole('button', { name: /legg til endring/i });
@@ -186,7 +237,11 @@ describe('RefusjonArbeidsgiver', () => {
     const state = buildState({ harRefusjonEndringer: undefined });
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
-    render(<RefusjonArbeidsgiver inntekt={123} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />);
+    render(
+      <TestWrapper>
+        <RefusjonArbeidsgiver inntekt={123} skalViseArbeidsgiverperiode setIsDirtyForm={mockSetIsDirtyForm} />
+      </TestWrapper>
+    );
 
     const jaEndringer = screen.queryByLabelText(/Ja, det blir endringer/i);
     if (jaEndringer) {
@@ -205,7 +260,9 @@ describe('RefusjonArbeidsgiver', () => {
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
     const { container } = render(
-      <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1000} />
+      <TestWrapper>
+        <RefusjonArbeidsgiver setIsDirtyForm={mockSetIsDirtyForm} skalViseArbeidsgiverperiode={true} inntekt={1000} />
+      </TestWrapper>
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
