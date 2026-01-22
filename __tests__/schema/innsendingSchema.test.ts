@@ -553,19 +553,19 @@ describe('InnsendingSchema', () => {
     expect(mockCtx.issues).toEqual([
       {
         code: 'custom',
-        error: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
+        message: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
         input: '',
         path: ['refusjon', 'endringer', 0, 'startdato']
       },
       {
         code: 'custom',
-        error: 'Startdato for refusjonsendringer må være etter dato for rapportert inntekt.',
+        message: 'Startdato for refusjonsendringer må være etter dato for rapportert inntekt.',
         input: '',
         path: ['refusjon', 'endringer', 0, 'startdato']
       },
       {
         code: 'custom',
-        error: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
+        message: 'Startdato for refusjonsendringer må være etter arbeidsgiverperioden.',
         input: '',
         path: ['refusjon', 'endringer', 1, 'startdato']
       }
@@ -657,7 +657,7 @@ describe('InnsendingSchema', () => {
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
       code: 'custom',
-      error: 'Refusjon kan ikke være høyere enn beregnet månedslønn.',
+      message: 'Refusjon kan ikke være høyere enn beregnet månedslønn.',
       input: '',
       path: ['refusjon', 'endringer', 1, 'beloep']
     });
@@ -703,7 +703,7 @@ describe('InnsendingSchema', () => {
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
       code: 'custom',
-      error: 'Inntekten kan ikke være 1 million eller over.',
+      message: 'Inntekten kan ikke være 1 million eller over.',
       input: '',
       path: ['inntekt', 'beloep']
     });
@@ -749,7 +749,7 @@ describe('InnsendingSchema', () => {
     expect(mockCtx.issues).toHaveLength(1);
     expect(mockCtx.issues[0]).toEqual({
       code: 'custom',
-      error: 'Refusjonsbeløpet per måned må være lavere eller lik månedsinntekt.',
+      message: 'Refusjonsbeløpet kan ikke være høyere enn inntekten.',
       input: '',
       path: ['refusjon', 'beloepPerMaaned']
     });

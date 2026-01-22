@@ -52,6 +52,10 @@ const skjemaData: Skjema = {
 
     inntektsdato: '2021-01-01',
     naturalytelser: []
+  },
+  refusjon: {
+    beloepPerMaaned: 80666.66666666667,
+    isEditing: false
   }
 };
 
