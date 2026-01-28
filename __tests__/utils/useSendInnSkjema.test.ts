@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, Mock, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { z } from 'zod/v4';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 

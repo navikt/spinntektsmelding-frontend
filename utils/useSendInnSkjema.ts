@@ -20,7 +20,6 @@ import {
   SafeParseMinimal
 } from './sendInnCommon';
 import { ValiderTekster } from './validerInntektsmelding';
-import { LonnISykefravaeret } from '../state/state';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -34,7 +33,6 @@ export default function useSendInnSkjema(
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  // const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
@@ -73,12 +71,6 @@ export default function useSendInnSkjema(
     }
 
     type FullInnsending = z.infer<typeof FullInnsendingSchema>;
-
-    // const lonnISykefravaeret: LonnISykefravaeret = {
-    //   status:
-    //     formData.refusjon?.beloepPerMaaned !== undefined && formData.refusjon?.beloepPerMaaned !== null ? 'Ja' : 'Nei',
-    //   beloep: formData.refusjon?.beloepPerMaaned
-    // };
 
     const skjemaData: FullInnsending = fyllInnsending(
       pathSlug,

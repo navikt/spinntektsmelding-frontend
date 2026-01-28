@@ -64,8 +64,6 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
 
   return useMemo(() => {
     if (!dataFraBackend) {
-      console.log('Using store data for kvittering');
-      console.log(JSON.stringify(storeData));
       return {
         aktiveSykmeldingsperioder: sykmeldingsperioder,
         aktiveEgenmeldinger: egenmeldingsperioder,

@@ -238,7 +238,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
     }
     if (!isEditingRefusjonBeloep) {
-      console.log('Setter refusjon.beloepPerMaaned til inntekt.beloep:', inntektBeloep);
       setValue('refusjon.beloepPerMaaned', inntektBeloep || 0);
     }
   });
@@ -249,16 +248,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const onSubmitError = (validationErrors: any) => {
     console.log('Validering feilet!');
-    console.log('Valideringsfeil:', validationErrors);
-    // console.log(JSON.stringify(validationErrors, null, 2));
-    console.log('Nåværende form-verdier:', methods.getValues());
+    console.log(JSON.stringify(validationErrors, null, 2));
+
+    console.log('Nåværende form-verdier:');
     console.log(JSON.stringify(methods.getValues(), null, 2));
   };
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
-    console.log('Sender inn skjema med data:', formData);
-    console.log(JSON.stringify(methods.getValues(), null, 2));
     if (selvbestemtInnsending) {
       sendInnArbeidsgiverInitiertSkjema(true, slug, isDirtyForm || isDirty, formData, begrensetForespoersel).finally(
         () => {
