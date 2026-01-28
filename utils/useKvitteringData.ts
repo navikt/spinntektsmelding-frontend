@@ -45,7 +45,6 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
 
   const {
     bruttoinntekt,
-    lonnISykefravaeret,
     fullLonnIArbeidsgiverPerioden,
     sykmeldingsperioder,
     egenmeldingsperioder,
@@ -73,10 +72,22 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
         aktivBestemmendeFravaersdag: bestemmendeFravaersdag,
         aktiveNaturalytelser: naturalytelser,
         aktivFullLonnIArbeidsgiverPerioden: fullLonnIArbeidsgiverPerioden,
-        aktivLonnISykefravaeret: lonnISykefravaeret,
+        aktivLonnISykefravaeret: {
+          status:
+            kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
+            kvitteringData?.refusjon?.beloepPerMaaned !== null
+              ? 'Ja'
+              : 'Nei',
+          beloep: kvitteringData?.refusjon?.beloepPerMaaned
+        },
         aktivInnsendingTidspunkt: storeInnsendingTidspunkt,
         aktivAvsender: undefined,
-        aktivSykmeldt: undefined
+        aktivSykmeldt: undefined,
+        aktivRefusjonEndringer:
+          kvitteringData?.refusjon?.endringer?.map((endring: any) => ({
+            beloep: endring.beloep,
+            dato: parseIsoDate(endring.dato) ?? parseIsoDate(endring.startdato)
+          })) || []
       };
     }
 
@@ -109,13 +120,20 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
         : [];
 
     const aktivFullLonnIArbeidsgiverPerioden = {
-      status: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep === undefined ? 'Ja' : 'Nei',
+      status:
+        ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep === undefined ||
+        ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep === null
+          ? 'Ja'
+          : 'Nei',
       begrunnelse: ssrData?.skjema?.agp?.redusertLoennIAgp?.begrunnelse,
       utbetalt: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep
     };
 
     const aktivLonnISykefravaeret = {
-      status: ssrData?.skjema?.refusjon ? 'Ja' : 'Nei',
+      status:
+        ssrData?.skjema?.refusjon?.beloepPerMaaned !== undefined && ssrData?.skjema?.refusjon?.beloepPerMaaned !== null
+          ? 'Ja'
+          : 'Nei',
       beloep: ssrData?.skjema?.refusjon?.beloepPerMaaned
     };
 
@@ -124,6 +142,7 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
       ? ` - ${formatDate(new Date(mottatt))} kl. ${formatTime(new Date(mottatt))}`
       : '';
 
+    const aktivRefusjonEndringer = ssrData?.skjema?.refusjon?.endringer || [];
     return {
       aktiveSykmeldingsperioder,
       aktiveEgenmeldinger,
@@ -135,11 +154,13 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
       aktivLonnISykefravaeret,
       aktivInnsendingTidspunkt: ssrInnsendingTidspunkt,
       aktivAvsender: ssrData?.avsender,
-      aktivSykmeldt: ssrData?.sykmeldt
+      aktivSykmeldt: ssrData?.sykmeldt,
+      aktivRefusjonEndringer
     };
   }, [
     dataFraBackend,
     ssrData,
+    kvitteringData,
     sykmeldingsperioder,
     egenmeldingsperioder,
     arbeidsgiverperioder,
@@ -147,7 +168,6 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
     bestemmendeFravaersdag,
     naturalytelser,
     fullLonnIArbeidsgiverPerioden,
-    lonnISykefravaeret,
     storeInnsendingTidspunkt
   ]);
 }

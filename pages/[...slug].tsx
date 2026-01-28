@@ -83,6 +83,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
+  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
   const [
     hentPaakrevdOpplysningstyper,
@@ -152,7 +153,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         naturalytelser: naturalytelser ?? [],
         harBortfallAvNaturalytelser: false
       },
-      avsenderTlf: avsender.tlf
+      avsenderTlf: avsender.tlf,
+      refusjon: {
+        beloepPerMaaned: bruttoinntekt.bruttoInntekt,
+        isEditing: false,
+        harEndringer: undefined,
+        endringer: refusjonEndringer && refusjonEndringer.length > 0 ? refusjonEndringer : []
+      }
     }
   });
 
@@ -190,9 +197,21 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   }, [naturalytelser, setValue]);
 
+  const isEditingRefusjonBeloep = useWatch({
+    control,
+    name: 'refusjon.isEditing'
+  });
+
+  const onIsEditingRefusjonBeloep = useEffectEvent(() => {
+    return isEditingRefusjonBeloep;
+  });
+
   useEffect(() => {
     if (bruttoinntekt.bruttoInntekt !== undefined) {
       setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+      if (!onIsEditingRefusjonBeloep()) {
+        setValue('refusjon.beloepPerMaaned', bruttoinntekt.bruttoInntekt);
+      }
     }
   }, [bruttoinntekt.bruttoInntekt, setValue]);
 
@@ -209,19 +228,34 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [avsender.tlf, setValue]);
 
   const inntektBeloep = useWatch({
-    control: control,
+    control,
     name: 'inntekt.beloep'
   });
 
-  useEffect(() => {
+  const onInntektChange = useEffectEvent(() => {
+    // Her har du tilgang til de siste verdiene
     if (inntektBeloep !== undefined && endringerAvRefusjon !== 'Ja') {
       beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
     }
-  }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep, endringerAvRefusjon]);
+    if (!isEditingRefusjonBeloep) {
+      setValue('refusjon.beloepPerMaaned', inntektBeloep || 0);
+    }
+  });
+
+  useEffect(() => {
+    onInntektChange();
+  }, [inntektBeloep]); // Kun trigger på inntektBeloep-endringer
+
+  const onSubmitError = (validationErrors: any) => {
+    console.log('Validering feilet!');
+    console.log(JSON.stringify(validationErrors, null, 2));
+
+    console.log('Nåværende form-verdier:');
+    console.log(JSON.stringify(methods.getValues(), null, 2));
+  };
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
-
     if (selvbestemtInnsending) {
       sendInnArbeidsgiverInitiertSkjema(true, slug, isDirtyForm || isDirty, formData, begrensetForespoersel).finally(
         () => {
@@ -237,7 +271,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
       setPaakrevdeOpplysninger(opplysningstyper);
     } else if (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode)) {
-      opplysningstyper.splice(opplysningstyper.indexOf(forespoerselType.arbeidsgiverperiode), 1);
+      opplysningstyper = opplysningstyper.filter((t) => t !== forespoerselType.arbeidsgiverperiode);
 
       setPaakrevdeOpplysninger(opplysningstyper);
     }
@@ -341,7 +375,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <PageContent title='Inntektsmelding'>
         <FormProvider {...methods}>
-          <form className={styles.padded} onSubmit={handleSubmit(submitForm)}>
+          <form className={styles.padded} onSubmit={handleSubmit(submitForm, onSubmitError)}>
             <Person />
 
             <Skillelinje />

@@ -6,9 +6,11 @@ export const ApiNaturalytelserSchema = z.union([
     z.object({
       naturalytelse: NaturalytelseEnumSchema,
       verdiBeloep: z.number().min(0),
-      sluttdato: z.iso.date({
-        error: (issue) => (issue.input === undefined ? 'Sluttdato mangler' : 'Ugyldig sluttdato')
-      })
+      sluttdato: z.iso
+        .date({
+          error: (issue) => (issue.input === undefined ? 'Sluttdato mangler' : 'Ugyldig sluttdato')
+        })
+        .optional()
     })
   ),
   z.tuple([])

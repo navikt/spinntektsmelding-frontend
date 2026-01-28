@@ -12,7 +12,7 @@ const formaterBegrunnelse = (begrunnelseskode: string | undefined): string => {
   return begrunnelseskode ? begrunnelseIngenEllerRedusertUtbetalingListe[begrunnelseskode] : '';
 };
 
-export default function FullLonnIArbeidsgiverperioden({ lonnIPerioden }: FullLonnIArbeidsgiverperiodenProps) {
+export default function FullLonnIArbeidsgiverperioden({ lonnIPerioden }: Readonly<FullLonnIArbeidsgiverperiodenProps>) {
   if (!lonnIPerioden) return null;
   return (
     <>

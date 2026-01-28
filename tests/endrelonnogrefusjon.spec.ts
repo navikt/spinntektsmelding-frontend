@@ -119,19 +119,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
       'Nei'
     );
-    // same setup as first...
-    // await page
-    //   .getByRole('group', { name: /ut full lønn/ })
-    //   .getByLabel('Ja')
-    //   .check();
-    // await page
-    //   .getByRole('group', { name: /krever refusjon/ })
-    //   .getByLabel('Ja')
-    //   .check();
-    // await page
-    //   .getByRole('group', { name: /endringer i refusjonsbeløpet/ })
-    //   .getByRole('radio', { name: 'Nei' })
-    //   .check();
+
     await page.locator('[data-cy="endre-beloep"]').click();
     const salaryInput = page.locator('[data-cy="inntekt-beloep-input"]');
     await salaryInput.fill('70000');
@@ -140,9 +128,9 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     // select Ferie
     await page.getByLabel('Velg endringsårsak').selectOption('Ferie');
     // fill ferie period: Fra/til
-    await page.getByLabel('Ferie til').last().fill('30.12.22');
-    await page.getByLabel('Ferie fra').last().fill('25.12.22');
-    await page.getByLabel('Ferie til').last().fill('30.12.22');
+    await page.getByRole('textbox', { name: 'Ferie til' }).last().fill('30.12.22');
+    await page.getByRole('textbox', { name: 'Ferie fra' }).last().fill('25.12.22');
+    // await page.getByLabel('Ferie til').last().fill('30.12.22');
     // confirm and send
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
@@ -181,19 +169,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
       'Nei'
     );
-    // common setup
-    // await page
-    //   .getByRole('group', { name: /ut full lønn/ })
-    //   .getByLabel('Ja')
-    //   .check();
-    // await page
-    //   .getByRole('group', { name: /krever refusjon/ })
-    //   .getByLabel('Ja')
-    //   .check();
-    // await page
-    //   .getByRole('group', { name: /endringer i refusjonsbeløpet/ })
-    //   .getByRole('radio', { name: 'Nei' })
-    //   .check();
+
     await page.locator('[data-cy="endre-beloep"]').click();
     const salaryInput = page.locator('[data-cy="inntekt-beloep-input"]');
     await salaryInput.fill('70000');

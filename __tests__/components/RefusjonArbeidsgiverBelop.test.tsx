@@ -2,21 +2,34 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
 import { vi, expect } from 'vitest';
+import { FormProvider, useForm } from 'react-hook-form';
+
+// Wrapper-komponent for å gi FormProvider context
+function TestWrapper({
+  children,
+  defaultValues = {}
+}: {
+  children: React.ReactNode;
+  defaultValues?: Record<string, unknown>;
+}) {
+  const methods = useForm({
+    defaultValues: {
+      refusjon: {
+        beloepPerMaaned: 500000,
+        isEditing: false
+      },
+      ...defaultValues
+    }
+  });
+  return <FormProvider {...methods}>{children}</FormProvider>;
+}
 
 describe('RefusjonArbeidsgiverBelop', () => {
-  const bruttoinntekt = 500000;
-  const onOppdaterBelop = vi.fn();
-  const visFeilmeldingTekst = vi.fn();
-  const arbeidsgiverperiodeDisabled = false;
-
   it('should render the component with the correct props', () => {
     render(
-      <RefusjonArbeidsgiverBelop
-        bruttoinntekt={bruttoinntekt}
-        onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingTekst={visFeilmeldingTekst}
-        arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
-      />
+      <TestWrapper>
+        <RefusjonArbeidsgiverBelop arbeidsgiverperiodeDisabled={false} />
+      </TestWrapper>
     );
 
     expect(screen.getByText('Refusjon til arbeidsgiver etter arbeidsgiverperiode')).toBeInTheDocument();
@@ -30,13 +43,9 @@ describe('RefusjonArbeidsgiverBelop', () => {
 
   it('should render the component with the correct props when arbeidsgiverperiodeDisabled is true', () => {
     render(
-      <RefusjonArbeidsgiverBelop
-        bruttoinntekt={bruttoinntekt}
-        onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingTekst={visFeilmeldingTekst}
-        arbeidsgiverperiodeDisabled={true}
-        onEditerbarChange={vi.fn()}
-      />
+      <TestWrapper>
+        <RefusjonArbeidsgiverBelop arbeidsgiverperiodeDisabled={true} />
+      </TestWrapper>
     );
 
     expect(screen.getByText('Refusjon til arbeidsgiver i sykefraværet')).toBeInTheDocument();
@@ -50,13 +59,9 @@ describe('RefusjonArbeidsgiverBelop', () => {
 
   it('should render the component with an edit button', () => {
     render(
-      <RefusjonArbeidsgiverBelop
-        bruttoinntekt={bruttoinntekt}
-        onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingTekst={visFeilmeldingTekst}
-        arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
-        onEditerbarChange={vi.fn()}
-      />
+      <TestWrapper>
+        <RefusjonArbeidsgiverBelop />
+      </TestWrapper>
     );
 
     expect(screen.getByRole('button', { name: 'Endre' })).toBeInTheDocument();
@@ -64,13 +69,9 @@ describe('RefusjonArbeidsgiverBelop', () => {
 
   it('should render the component with an editable input field when the edit button is clicked', () => {
     render(
-      <RefusjonArbeidsgiverBelop
-        bruttoinntekt={bruttoinntekt}
-        onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingTekst={visFeilmeldingTekst}
-        arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
-        onEditerbarChange={vi.fn()}
-      />
+      <TestWrapper defaultValues={{ refusjon: { beloepPerMaaned: 500000, isEditing: false } }}>
+        <RefusjonArbeidsgiverBelop />
+      </TestWrapper>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Endre' }));
@@ -78,34 +79,24 @@ describe('RefusjonArbeidsgiverBelop', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
-  it('should call onOppdaterBelop when the input field is changed', () => {
-    const onEditerbarChange = vi.fn();
+  it('should update form value when the input field is changed', () => {
     render(
-      <RefusjonArbeidsgiverBelop
-        bruttoinntekt={bruttoinntekt}
-        onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingTekst={visFeilmeldingTekst}
-        arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
-        onEditerbarChange={onEditerbarChange}
-      />
+      <TestWrapper defaultValues={{ refusjon: { beloepPerMaaned: 500000, isEditing: true } }}>
+        <RefusjonArbeidsgiverBelop />
+      </TestWrapper>
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Endre' }));
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: 600000 } });
-    fireEvent.blur(screen.getByRole('textbox'));
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: '600000' } });
 
-    expect(onOppdaterBelop).toHaveBeenCalledWith('600000');
-    expect(onEditerbarChange).toHaveBeenCalledWith(true);
+    expect(input).toHaveValue('600000');
   });
 
   it('should have no accessibility violations', async () => {
     const { container } = render(
-      <RefusjonArbeidsgiverBelop
-        bruttoinntekt={bruttoinntekt}
-        onOppdaterBelop={onOppdaterBelop}
-        visFeilmeldingTekst={visFeilmeldingTekst}
-        arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
-      />
+      <TestWrapper>
+        <RefusjonArbeidsgiverBelop />
+      </TestWrapper>
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();

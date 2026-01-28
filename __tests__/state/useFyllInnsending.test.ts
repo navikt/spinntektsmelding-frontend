@@ -22,6 +22,7 @@ import { z } from 'zod/v4';
 
 import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
@@ -52,6 +53,19 @@ const skjemaData: Skjema = {
 
     inntektsdato: '2021-01-01',
     naturalytelser: []
+  },
+  refusjon: {
+    beloepPerMaaned: 80666.66666666667,
+    isEditing: false,
+    endringer: [
+      { beloep: 1234, dato: parseIsoDate('2023-04-13')! },
+      { beloep: 12345, dato: parseIsoDate('2023-04-20')! },
+      {
+        beloep: 0,
+        dato: parseIsoDate('2023-04-19')!
+      }
+    ],
+    harEndringer: 'Ja'
   }
 };
 

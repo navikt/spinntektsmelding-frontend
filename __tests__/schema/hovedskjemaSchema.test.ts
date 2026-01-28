@@ -11,6 +11,10 @@ describe('HovedskjemaSchema', () => {
         harBortfallAvNaturalytelser: false,
         naturalytelser: []
       },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 1234.5
+      },
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
@@ -24,6 +28,10 @@ describe('HovedskjemaSchema', () => {
       inntekt: {
         beloep: 1234.5,
         endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 1234.5
       },
       avsenderTlf: '12345678'
     };
@@ -49,6 +57,10 @@ describe('HovedskjemaSchema', () => {
       bekreft_opplysninger: true,
       inntekt: {
         endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 1234.5
       },
       avsenderTlf: '12345678'
     };
@@ -77,6 +89,10 @@ describe('HovedskjemaSchema', () => {
         beloep: -100,
         endringAarsaker: null
       },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: -100
+      },
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
@@ -86,6 +102,10 @@ describe('HovedskjemaSchema', () => {
   it('should pass validation when inntekt is optional and not provided', () => {
     const schemaData = {
       bekreft_opplysninger: true,
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 1234.5
+      },
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
@@ -100,6 +120,10 @@ describe('HovedskjemaSchema', () => {
         harBortfallAvNaturalytelser: false,
         endringAarsaker: [{ aarsak: 'Bonus' }, { aarsak: 'Bonus' }]
       },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 100
+      },
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
@@ -113,6 +137,10 @@ describe('HovedskjemaSchema', () => {
         beloep: 100,
         harBortfallAvNaturalytelser: false,
         endringAarsaker: []
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 100
       },
       avsenderTlf: '12345678'
     };
@@ -129,6 +157,10 @@ describe('HovedskjemaSchema', () => {
         harBortfallAvNaturalytelser: false,
         endringAarsaker: [{ aarsak: 'Bonus' }, { aarsak: 'Ferietrekk' }]
       },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 100
+      },
       avsenderTlf: '12345678'
     };
     const status = HovedskjemaSchema.safeParse(schemaData);
@@ -144,6 +176,10 @@ describe('HovedskjemaSchema', () => {
         harBortfallAvNaturalytelser: false,
         endringAarsaker: null
       },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 100
+      },
       avsenderTlf: '12345678'
     };
     const status = HovedskjemaSchema.safeParse(schemaData);
@@ -157,6 +193,10 @@ describe('HovedskjemaSchema', () => {
         beloep: 100,
         harBortfallAvNaturalytelser: false,
         endringAarsaker: undefined
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 100
       },
       avsenderTlf: '12345678'
     };
@@ -198,6 +238,10 @@ describe('HovedskjemaSchema', () => {
         harBortfallAvNaturalytelser: false,
         endringAarsaker: [{}]
       },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 100
+      },
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
@@ -238,6 +282,10 @@ describe('HovedskjemaSchema', () => {
         beloep: 100,
         harBortfallAvNaturalytelser: false,
         endringAarsaker: [{ aarsak: '' }]
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 100
       },
       avsenderTlf: '12345678'
     };
@@ -281,6 +329,10 @@ describe('HovedskjemaSchema', () => {
         beloep: 100,
         harBortfallAvNaturalytelser: false,
         endringAarsaker: [{ aarsak: undefined }]
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 100
       },
       avsenderTlf: '12345678'
     };

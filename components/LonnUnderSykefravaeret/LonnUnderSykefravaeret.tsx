@@ -19,6 +19,7 @@ export default function LonnUnderSykefravaeret({
   refusjonEndringer
 }: Readonly<LonnUnderSykefravaeretProps>) {
   if (!loenn) return null;
+
   if (loenn.status === 'Nei')
     return (
       <>
