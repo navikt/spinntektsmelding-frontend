@@ -6,7 +6,7 @@ import SelectBegrunnelse from './SelectBegrunnelse';
 import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
 import localStyles from './RefusjonArbeidsgiver.module.css';
 import formatCurrency from '../../utils/formatCurrency';
-import RefusjonUtbetalingEndring, { EndringsBeloep } from './RefusjonUtbetalingEndring';
+import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { addDays } from 'date-fns';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
@@ -45,19 +45,11 @@ export default function RefusjonArbeidsgiver({
   const begrunnelseRedusertUtbetaling = useBoundStore((state) => state.begrunnelseRedusertUtbetaling);
   const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
 
-  // const beloepArbeidsgiverBetalerISykefravaeret = useBoundStore(
-  //   (state) => state.beloepArbeidsgiverBetalerISykefravaeret
-  // );
-
   const setBeloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
     (state) => state.setBeloepUtbetaltUnderArbeidsgiverperioden
   );
   const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
   const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
-  const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
-  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
@@ -120,22 +112,6 @@ export default function RefusjonArbeidsgiver({
       arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt);
     },
     [setIsDirtyForm, arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret, inntekt]
-  );
-
-  const handleHarRefusjonEndringer = useCallback(
-    (harEndringer: YesNo) => {
-      setIsDirtyForm(true);
-      setHarRefusjonEndringer(harEndringer);
-    },
-    [setIsDirtyForm, setHarRefusjonEndringer]
-  );
-
-  const handleOppdaterRefusjonEndringer = useCallback(
-    (endringer: Array<EndringsBeloep>) => {
-      setIsDirtyForm(true);
-      oppdaterRefusjonEndringer(endringer);
-    },
-    [setIsDirtyForm, oppdaterRefusjonEndringer]
   );
 
   // Synkroniser refusjon.isEditing med Zustand
@@ -224,15 +200,7 @@ export default function RefusjonArbeidsgiver({
           <>
             <RefusjonArbeidsgiverBelop arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled} />
 
-            <RefusjonUtbetalingEndring
-              endringer={refusjonEndringer || []}
-              // maxDate={refusjonskravetOpphoerer?.opphoersdato}
-              minDate={foersteMuligeRefusjonOpphoer}
-              onHarEndringer={handleHarRefusjonEndringer}
-              onOppdaterEndringer={handleOppdaterRefusjonEndringer}
-              harRefusjonEndringer={harRefusjonEndringer}
-              harRefusjonEndringerDefault={harRefusjonEndringer}
-            />
+            <RefusjonUtbetalingEndring minDate={foersteMuligeRefusjonOpphoer} />
           </>
         )}
       </div>

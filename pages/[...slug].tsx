@@ -83,6 +83,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
+  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
   const [
     hentPaakrevdOpplysningstyper,
@@ -155,7 +156,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       avsenderTlf: avsender.tlf,
       refusjon: {
         beloepPerMaaned: bruttoinntekt.bruttoInntekt,
-        isEditing: false
+        isEditing: false,
+        harEndringer: undefined,
+        endringer: refusjonEndringer && refusjonEndringer.length > 0 ? refusjonEndringer : []
       }
     }
   });
@@ -254,7 +257,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
-
+    console.log('Sender inn skjema med data:', formData);
+    console.log(JSON.stringify(methods.getValues(), null, 2));
     if (selvbestemtInnsending) {
       sendInnArbeidsgiverInitiertSkjema(true, slug, isDirtyForm || isDirty, formData, begrensetForespoersel).finally(
         () => {

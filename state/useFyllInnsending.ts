@@ -132,7 +132,7 @@ export default function useFyllInnsending() {
               beloepPerMaaned: skjemaData.refusjon?.beloepPerMaaned,
               sluttdato: null,
 
-              endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
+              endringer: konverterRefusjonEndringer(skjemaData.refusjon?.harEndringer, skjemaData.refusjon?.endringer)
             }
           : null,
       avsenderTlf: skjemaData.avsenderTlf ?? '',

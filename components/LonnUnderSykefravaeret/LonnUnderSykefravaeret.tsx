@@ -19,6 +19,10 @@ export default function LonnUnderSykefravaeret({
   refusjonEndringer
 }: Readonly<LonnUnderSykefravaeretProps>) {
   if (!loenn) return null;
+
+  console.log('Refusjon endringer i LonnUnderSykefravaeret:', refusjonEndringer);
+  console.log(JSON.stringify(refusjonEndringer));
+
   if (loenn.status === 'Nei')
     return (
       <>

@@ -63,7 +63,16 @@ export const HovedskjemaSchema = z
       beloepPerMaaned: z
         .number({ error: 'Vennligst angi hvor mye som refunderes per måned.' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-      isEditing: z.boolean()
+      isEditing: z.boolean(),
+      harEndringer: z.enum(['Ja', 'Nei']).or(z.undefined()),
+      endringer: z
+        .array(
+          z.object({
+            beloep: z.number({ error: 'Vennligst fyll inn beløpet for endret refusjon.' }).min(0),
+            dato: z.date({ error: 'Vennligst fyll inn gyldig dato for endring av refusjon.' })
+          })
+        )
+        .optional()
     }),
     avsenderTlf: TelefonNummerSchema
   })
@@ -77,7 +86,7 @@ export const HovedskjemaSchema = z
         code: 'custom',
         message: 'Refusjonsbeløpet kan ikke være høyere enn inntekten.',
         path: ['refusjon', 'beloepPerMaaned'],
-        fatal: true,
+        // fatal: true,
         input: val.refusjon?.beloepPerMaaned
       });
     }

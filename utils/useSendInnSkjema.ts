@@ -20,6 +20,9 @@ import {
   SafeParseMinimal
 } from './sendInnCommon';
 import { ValiderTekster } from './validerInntektsmelding';
+import { LonnISykefravaeret } from '../state/state';
+
+type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -31,11 +34,9 @@ export default function useSendInnSkjema(
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
+  // const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const errorResponse = useErrorRespons();
   const router = useRouter();
-
-  type Skjema = z.infer<typeof HovedskjemaSchema>;
 
   // Helpers
   const showErrors = (errors: Array<ErrorResponse | ValiderTekster>) => {
@@ -73,6 +74,12 @@ export default function useSendInnSkjema(
 
     type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
+    // const lonnISykefravaeret: LonnISykefravaeret = {
+    //   status:
+    //     formData.refusjon?.beloepPerMaaned !== undefined && formData.refusjon?.beloepPerMaaned !== null ? 'Ja' : 'Nei',
+    //   beloep: formData.refusjon?.beloepPerMaaned
+    // };
+
     const skjemaData: FullInnsending = fyllInnsending(
       pathSlug,
       forespurteOpplysningstyper,
@@ -81,9 +88,6 @@ export default function useSendInnSkjema(
     );
     const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
-
-    console.log('Sender inn skjema data:', skjemaData);
-    console.log('Validerte data', validerteData.error);
 
     if (validerteData.success === false) {
       logEvent('skjema validering feilet', {
@@ -104,11 +108,14 @@ export default function useSendInnSkjema(
 
       return false;
     }
+
+    const harRefusjonEndringerStatus = formData.refusjon?.harEndringer;
+
     const errors = checkCommonValidations(
       fullLonnIArbeidsgiverPerioden,
       harForespurtArbeidsgiverperiode,
       lonnISykefravaeret,
-      harRefusjonEndringer,
+      harRefusjonEndringerStatus,
       opplysningerBekreftet,
       validerteData as SafeParseMinimal<MinimalData>
     );

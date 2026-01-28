@@ -131,13 +131,43 @@ function traverseNode(
   traverseObject(node, visited, compositeErrors, depth);
 }
 
-function cloneErrors(errors: any): any {
-  try {
-    return structuredClone(errors);
-  } catch {
-    console.warn('transformErrors: Could not clone errors, working with original');
+function cloneErrors(errors: any, visited = new WeakMap()): any {
+  if (errors === null || typeof errors !== 'object') {
     return errors;
   }
+
+  // Handle non-cloneable types (DOM elements, functions, etc.)
+  if (errors instanceof Element || errors instanceof Node || typeof errors === 'function') {
+    return errors;
+  }
+
+  // Handle circular references
+  if (visited.has(errors)) {
+    return visited.get(errors);
+  }
+
+  if (Array.isArray(errors)) {
+    const arrCopy: any[] = [];
+    visited.set(errors, arrCopy);
+    for (let i = 0; i < errors.length; i++) {
+      arrCopy[i] = cloneErrors(errors[i], visited);
+    }
+    return arrCopy;
+  }
+
+  const objCopy: Record<string, any> = {};
+  visited.set(errors, objCopy);
+
+  for (const key of Object.keys(errors)) {
+    // Skip 'ref' property which often contains DOM elements
+    if (key === 'ref') {
+      objCopy[key] = errors[key];
+    } else {
+      objCopy[key] = cloneErrors(errors[key], visited);
+    }
+  }
+
+  return objCopy;
 }
 
 function filterNumericKeys(obj: any): Record<string, any> {
