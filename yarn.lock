@@ -8233,7 +8233,7 @@ __metadata:
     react-dom: "npm:19.2.3"
     react-hook-form: "npm:7.71.1"
     swr: "npm:2.3.8"
-    timezone-mock: "npm:^1.3.6"
+    timezone-mock: "npm:^1.4.0"
     typescript: "npm:5.9.3"
     vite: "npm:^7.3.1"
     vite-tsconfig-paths: "npm:^6.0.4"
@@ -8614,10 +8614,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"timezone-mock@npm:^1.3.6":
-  version: 1.3.6
-  resolution: "timezone-mock@npm:1.3.6"
-  checksum: 10c0/7e554f9378531258330ada94bc4101bb4ece6e501f9e210652fb57751cf2e5d4aeab3dd9fd840a6534316db757ac6bb39338730c5d3f72dcbd4cb315ea482101
+"timezone-mock@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "timezone-mock@npm:1.4.0"
+  checksum: 10c0/c3617b36a8d59c9aa18c89bf5c9479325e3830c5098ce973817b84a65f63b5bcc16f63534569359fffd25e0fd24a3c744a83df2fd2421f97d0481ff9bdc82d1d
   languageName: node
   linkType: hard
 
