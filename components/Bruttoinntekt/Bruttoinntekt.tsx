@@ -81,8 +81,6 @@ export default function Bruttoinntekt({
 
   const harTidligereInntekt = sisteTreMndTidligereinntekt && sisteTreMndTidligereinntekt.size > 0;
 
-  const erBlanktSkjema = false;
-
   useEffect(() => {
     if (sbBruttoinntekt !== undefined) {
       setBareNyMaanedsinntekt(sbBruttoinntekt);
@@ -119,11 +117,11 @@ export default function Bruttoinntekt({
         </>
       )}
       <AvvikAdvarselInntekt tidligereInntekter={sisteTreMndTidligereinntekt} />
-      {!endreMaanedsinntekt && !erBlanktSkjema && (
+      {!endreMaanedsinntekt && (
         <TextLabel className={lokalStyles.tbmargin}>Dette gir en beregnet månedslønn på:</TextLabel>
       )}
       <div className={lokalStyles.beloepwrapper}>
-        {!endreMaanedsinntekt && !erBlanktSkjema && (
+        {!endreMaanedsinntekt && (
           <>
             <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
               {formatCurrency(gjennomsnittligInntekt ?? 0)} kr/måned
@@ -135,14 +133,14 @@ export default function Bruttoinntekt({
             />
           </>
         )}
-        {(endreMaanedsinntekt || erBlanktSkjema) && (
+        {endreMaanedsinntekt && (
           <Aarsaksvelger
             bruttoinntekt={bruttoinntekt}
             visFeilmeldingTekst={visFeilmeldingTekst}
             bestemmendeFravaersdag={bestemmendeFravaersdag}
             nyInnsending={nyInnsending && skjemastatus !== 'SELVBESTEMT'}
             handleResetMaanedsinntekt={handleResetMaanedsinntekt}
-            kanIkkeTilbakestilles={erBlanktSkjema}
+            kanIkkeTilbakestilles={false}
           />
         )}
       </div>

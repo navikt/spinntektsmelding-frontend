@@ -21,6 +21,8 @@ import {
 } from './sendInnCommon';
 import { ValiderTekster } from './validerInntektsmelding';
 
+type Skjema = z.infer<typeof HovedskjemaSchema>;
+
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
   amplitudeComponent: string
@@ -31,11 +33,8 @@ export default function useSendInnSkjema(
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
   const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const errorResponse = useErrorRespons();
   const router = useRouter();
-
-  type Skjema = z.infer<typeof HovedskjemaSchema>;
 
   // Helpers
   const showErrors = (errors: Array<ErrorResponse | ValiderTekster>) => {
@@ -101,11 +100,14 @@ export default function useSendInnSkjema(
 
       return false;
     }
+
+    const harRefusjonEndringerStatus = formData.refusjon?.harEndringer;
+
     const errors = checkCommonValidations(
       fullLonnIArbeidsgiverPerioden,
       harForespurtArbeidsgiverperiode,
       lonnISykefravaeret,
-      harRefusjonEndringer,
+      harRefusjonEndringerStatus,
       opplysningerBekreftet,
       validerteData as SafeParseMinimal<MinimalData>
     );
