@@ -52,7 +52,7 @@ RUN --mount=type=cache,target=/app/.next/cache \
     yarn build && rm -f .npmrc
 
 # Production image, copy all the files and run next
-FROM gcr.io/distroless/nodejs24-debian12@sha256:aa9ea28c521590ff497a06449109f26582ca9fa7eacfe8b169fec24399c1bd8a AS runner
+FROM gcr.io/distroless/nodejs24-debian12@sha256:b35a10df56aa17825e81e836ff70fe3c27002809dd94e6bfd655ed05bac52230 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
