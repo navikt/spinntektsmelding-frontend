@@ -74,7 +74,7 @@ describe('RefusjonArbeidsgiver', () => {
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
-      <TestWrapper defaultValues={{ agp: { fullLonn: 'Nei' } }}>
+      <TestWrapper defaultValues={{ fullLonn: 'Nei' }}>
         <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} inntekt={1000} />
       </TestWrapper>
     );
@@ -89,7 +89,9 @@ describe('RefusjonArbeidsgiver', () => {
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
-      <TestWrapper defaultValues={{ agp: { fullLonn: 'Nei', begrunnelse: 'BetvilerArbeidsufoerhet' } }}>
+      <TestWrapper
+        defaultValues={{ fullLonn: 'Nei', agp: { redusertLoennIAgp: { begrunnelse: 'BetvilerArbeidsufoerhet' } } }}
+      >
         <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} inntekt={1234} />
       </TestWrapper>
     );
@@ -102,7 +104,7 @@ describe('RefusjonArbeidsgiver', () => {
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
-      <TestWrapper defaultValues={{ agp: { fullLonn: 'Nei' } }}>
+      <TestWrapper defaultValues={{ fullLonn: 'Nei' }}>
         <RefusjonArbeidsgiver inntekt={25000} skalViseArbeidsgiverperiode />
       </TestWrapper>
     );
