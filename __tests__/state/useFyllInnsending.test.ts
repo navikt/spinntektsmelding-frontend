@@ -2,7 +2,6 @@ import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import useFyllInnsending, {
-  formaterRedusertLoennIAgp,
   mapEgenmeldingsperioder,
   mapNaturalytelserToData,
   concatPerioder,
@@ -16,7 +15,6 @@ import mottattKvittering from '../../mockdata/kvittering.json';
 import inntektData from '../../mockdata/inntektData.json';
 import delvisRefusjon from '../../mockdata/kvittering-delvis-refusjon.json';
 import useKvitteringInit from '../../state/useKvitteringInit';
-import { LonnIArbeidsgiverperioden } from '../../state/state';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
 import { z } from 'zod/v4';
 
@@ -47,6 +45,7 @@ function fetchMock(url, suffix = '') {
 
 const skjemaData: Skjema = {
   bekreft_opplysninger: true,
+  kreverRefusjon: 'Ja',
   inntekt: {
     beloep: 12345,
     endringAarsaker: null,
@@ -102,24 +101,21 @@ describe('useFyllInnsending', () => {
       innsending = fyllInnsending(
         '8d50ef20-37b5-4829-ad83-56219e70b375',
         ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
-        skjemaData
+        skjemaData,
+        false
       );
     });
 
     if (innsending) {
-      // expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
-      // expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
-
       expect(innsending.agp?.egenmeldinger).toEqual([
         {
           fom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].fom,
           tom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].tom
         }
       ]);
-      // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
+
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
       expect(innsending.inntekt?.beloep).toBe(12345);
-      // expect(innsending.inntekt.bekreftet).toBeTruthy();
     }
   });
 
@@ -174,21 +170,12 @@ describe('useFyllInnsending', () => {
       innsending = fyllInnsending(
         '8d50ef20-37b5-4829-ad83-56219e70b375',
         ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
-        skjemaData
+        skjemaData,
+        false
       );
     });
 
     if (innsending) {
-      // expect(innsending.identitetsnummer).toEqual(mottattKvittering.identitetsnummer);
-      // expect(innsending.orgnrUnderenhet).toEqual(mottattKvittering.orgnrUnderenhet);
-
-      // expect(innsending.agp.egenmeldinger).toEqual([
-      //   {
-      //     fom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].fom,
-      //     tom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].tom
-      //   }
-      // ]);
-      // expect(innsending.refusjon.utbetalerHeleEllerDeler).toBeTruthy();
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
       expect(innsending.refusjon?.sluttdato).toBeNull();
       expect(innsending.refusjon?.endringer).toEqual([
@@ -200,78 +187,9 @@ describe('useFyllInnsending', () => {
         }
       ]);
       expect(innsending.inntekt?.beloep).toBe(12345);
-      // expect(innsending.inntekt.bekreftet).toBeTruthy();
     } else {
       expect(innsending).toBeTruthy();
     }
-  });
-});
-
-describe('formaterRedusertLoennIAgp', () => {
-  it('should return a formatted json', async () => {
-    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
-      status: 'Nei',
-      begrunnelse: 'ArbeidOpphoert',
-      utbetalt: 1234
-    };
-
-    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toEqual({
-      begrunnelse: 'ArbeidOpphoert',
-      beloep: 1234
-    });
-  });
-
-  it('should return a formatted json, when utbetalt = undefined', async () => {
-    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
-      status: 'Nei',
-      begrunnelse: 'ArbeidOpphoert',
-      utbetalt: undefined
-    };
-
-    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toEqual({
-      begrunnelse: 'ArbeidOpphoert',
-      beloep: 0
-    });
-  });
-
-  it('should return null, when status = Ja', async () => {
-    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
-      status: 'Ja',
-      begrunnelse: 'ArbeidOpphoert',
-      utbetalt: undefined
-    };
-
-    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
-  });
-
-  it('should return null, when status = Ja', async () => {
-    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
-      status: 'Ja',
-      begrunnelse: 'ArbeidOpphoert',
-      utbetalt: 1234
-    };
-
-    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
-  });
-
-  it('should return null, when begrunnelse is empty string', async () => {
-    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
-      status: 'Nei',
-      begrunnelse: '',
-      utbetalt: 1234
-    };
-
-    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
-  });
-
-  it('should return null, when begrunnelse is undefined', async () => {
-    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
-      status: 'Nei',
-      begrunnelse: undefined,
-      utbetalt: 1234
-    };
-
-    expect(formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)).toBeNull();
   });
 });
 
