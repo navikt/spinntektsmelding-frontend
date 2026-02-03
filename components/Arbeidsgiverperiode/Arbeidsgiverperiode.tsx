@@ -1,7 +1,7 @@
 import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
-import { Alert, BodyLong, Button, Checkbox } from '@navikt/ds-react';
+import { Alert, BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
@@ -25,6 +25,8 @@ import { finnSammenhengendePeriode } from '../../utils/finnBestemmendeFravaersda
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { useShallow } from 'zustand/react/shallow';
 import NumberField from '../NumberField/NumberField';
+import { Controller, useFormContext } from 'react-hook-form';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -86,16 +88,24 @@ export default function Arbeidsgiverperiode({
     }))
   );
 
+  const {
+    watch,
+    control,
+    register,
+    setValue,
+    formState: { errors }
+  } = useFormContext();
+
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
 
   const amplitudeComponent = 'Arbeidsgiverperiode';
 
-  const addIsDirtyForm = (func: (event: React.ChangeEvent<HTMLInputElement>) => void) => {
-    return (event: React.ChangeEvent<HTMLInputElement>) => {
-      setIsDirtyForm(true);
-      func(event);
-    };
-  };
+  // const addIsDirtyForm = (func: (event: React.ChangeEvent<HTMLInputElement>) => void) => {
+  //   return (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     setIsDirtyForm(true);
+  //     func(event);
+  //   };
+  // };
 
   const antallDagerIArbeidsgiverperioderManuellJustering = (perioder: Array<Periode> | undefined) => {
     if (perioder === undefined) {
@@ -201,11 +211,14 @@ export default function Arbeidsgiverperiode({
     setArbeidsgiverperiodeDisabled(event.target.checked);
 
     if (event.target.checked === true) {
-      setBeloepUtbetaltUnderArbeidsgiverperioden('0');
-      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
+      setValue('fullLonn', 'Nei');
+      setValue('agp.redusertLoennIAgp.beloep', 0);
+      // setBeloepUtbetaltUnderArbeidsgiverperioden('0');
+      // arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       slettAlleArbeidsgiverperioder();
     } else {
-      setBeloepUtbetaltUnderArbeidsgiverperioden(undefined);
+      setValue('fullLonn', undefined);
+      setValue('agp.redusertLoennIAgp.beloep', undefined);
       slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       setArbeidsgiverperiodeDisabled(false);
       if (skjemastatus !== SkjemaStatus.SELVBESTEMT) tilbakestillArbeidsgiverperiode();
@@ -214,10 +227,10 @@ export default function Arbeidsgiverperiode({
     setIsDirtyForm(true);
   };
 
-  const setBegrunnelseRedusertUtbetaling = (begrunnelse: string | undefined) => {
-    begrunnelseRedusertUtbetaling(begrunnelse);
-    setIsDirtyForm(true);
-  };
+  // const setBegrunnelseRedusertUtbetaling = (begrunnelse: string | undefined) => {
+  //   begrunnelseRedusertUtbetaling(begrunnelse);
+  //   setIsDirtyForm(true);
+  // };
 
   const antallDager = useMemo(
     () =>
@@ -238,6 +251,7 @@ export default function Arbeidsgiverperiode({
       : '';
 
   const onArbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useEffectEvent((value: YesNo) => {
+    setValue('fullLonn', value);
     arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(value);
   });
 
@@ -250,6 +264,7 @@ export default function Arbeidsgiverperiode({
   });
 
   const onSetArbeidsgiverperiodeDisabled = useEffectEvent((disabled: boolean) => {
+    setValue('fullLonn', disabled ? 'Nei' : undefined);
     setArbeidsgiverperiodeDisabled(disabled);
   });
 
@@ -467,23 +482,23 @@ export default function Arbeidsgiverperiode({
       {advarselKortPeriode.length > 0 && !arbeidsgiverperiodeDisabled && (
         <>
           <div className={lokalStyles.wrapperUtbetaling}>
-            <NumberField
+            <TextField
               className={lokalStyles.refusjonBeloep}
               label='Utbetalt under arbeidsgiverperiode'
-              onChange={addIsDirtyForm((event) => setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value))}
+              {...register('agp.redusertLoennIAgp.beloep', { valueAsNumber: true })}
               id={ensureValidHtmlId('agp.redusertLoennIAgp.beloep')}
-              error={visFeilmeldingTekst('agp.redusertLoennIAgp.beloep')}
-              defaultValue={
-                !fullLonnIArbeidsgiverPerioden || Number.isNaN(fullLonnIArbeidsgiverPerioden?.utbetalt)
-                  ? ''
-                  : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
-              }
+              error={findErrorInRHFErrors('agp.redusertLoennIAgp.beloep', errors)}
             />
-            <SelectBegrunnelseKortArbeidsgiverperiode
-              onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
-              defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-              error={visFeilmeldingTekst('agp.redusertLoennIAgp.begrunnelse')}
-              ikkeAgp={arbeidsgiverperiodeDisabled}
+            <Controller
+              name='agp.redusertLoennIAgp.begrunnelse'
+              control={control}
+              render={({ field }) => (
+                <SelectBegrunnelseKortArbeidsgiverperiode
+                  onChangeBegrunnelse={field.onChange}
+                  value={field.value}
+                  error={findErrorInRHFErrors('agp.redusertLoennIAgp.begrunnelse', errors)}
+                />
+              )}
             />
           </div>
           {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
@@ -500,12 +515,18 @@ export default function Arbeidsgiverperiode({
           </Checkbox>
           {arbeidsgiverperiodeDisabled && (
             <>
-              <SelectBegrunnelseKortArbeidsgiverperiode
-                onChangeBegrunnelse={setBegrunnelseRedusertUtbetaling}
-                defaultValue={fullLonnIArbeidsgiverPerioden?.begrunnelse}
-                error={visFeilmeldingTekst('agp.redusertLoennIAgp.begrunnelse')}
-                label='Velg begrunnelse'
-                ikkeAgp={arbeidsgiverperiodeDisabled}
+              <Controller
+                name='agp.redusertLoennIAgp.begrunnelse'
+                control={control}
+                render={({ field }) => (
+                  <SelectBegrunnelseKortArbeidsgiverperiode
+                    onChangeBegrunnelse={field.onChange}
+                    value={field.value}
+                    error={findErrorInRHFErrors('agp.redusertLoennIAgp.begrunnelse', errors)}
+                    label='Velg begrunnelse'
+                    ikkeAgp={arbeidsgiverperiodeDisabled}
+                  />
+                )}
               />
               {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
             </>

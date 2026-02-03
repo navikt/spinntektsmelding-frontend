@@ -20,6 +20,7 @@ import {
   SafeParseMinimal
 } from './sendInnCommon';
 import { ValiderTekster } from './validerInntektsmelding';
+import { LonnIArbeidsgiverperioden } from '../state/state';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -31,7 +32,7 @@ export default function useSendInnSkjema(
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllInnsending();
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
-  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  // const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const errorResponse = useErrorRespons();
   const router = useRouter();
@@ -80,7 +81,7 @@ export default function useSendInnSkjema(
     );
     const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
-
+    console.log('Validerte data ved innsending: ', validerteData);
     if (validerteData.success === false) {
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',
@@ -101,7 +102,13 @@ export default function useSendInnSkjema(
       return false;
     }
 
+    // debugger;
     const harRefusjonEndringerStatus = formData.refusjon?.harEndringer;
+    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
+      status: formData.fullLonn ? formData.fullLonn : undefined,
+      utbetalt: formData.agp?.redusertLoennIAgp?.beloep,
+      begrunnelse: formData.agp?.redusertLoennIAgp?.begrunnelse
+    };
 
     const errors = checkCommonValidations(
       fullLonnIArbeidsgiverPerioden,
@@ -119,6 +126,7 @@ export default function useSendInnSkjema(
     }
 
     if (!isValidUUID(pathSlug)) {
+      console.log('Ugyldig UUID ved innsending: ', pathSlug);
       const errors: Array<ErrorResponse> = [
         {
           value: 'Innsending av skjema feilet',

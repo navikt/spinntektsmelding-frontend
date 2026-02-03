@@ -2,7 +2,7 @@ import { isValid } from 'date-fns';
 import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
-import { Begrunnelse, LonnIArbeidsgiverperioden, Naturalytelse, Periode, YesNo } from './state';
+import { LonnIArbeidsgiverperioden, Naturalytelse, Periode, YesNo } from './state';
 import useBoundStore from './useBoundStore';
 import forespoerselType from '../config/forespoerselType';
 import parseIsoDate from '../utils/parseIsoDate';
@@ -23,12 +23,8 @@ export default function useFyllInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
-  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
@@ -115,9 +111,12 @@ export default function useFyllInnsending() {
     const innsendingSkjema: FullInnsending = {
       forespoerselId,
       agp: {
-        perioder: mapArbeidsgiverPerioder(fullLonnIArbeidsgiverPerioden, arbeidsgiverperioder),
+        perioder: mapArbeidsgiverPerioder(
+          skjemaData.agp?.redusertLoennIAgp as LonnIArbeidsgiverperioden,
+          arbeidsgiverperioder
+        ),
         egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
-        redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
+        redusertLoennIAgp: skjemaData.agp?.redusertLoennIAgp ?? null
       },
       inntekt: harForespurtInntekt
         ? {
@@ -127,7 +126,7 @@ export default function useFyllInnsending() {
           }
         : null,
       refusjon:
-        lonnISykefravaeret?.status === 'Ja'
+        skjemaData?.kreverRefusjon === 'Ja'
           ? {
               beloepPerMaaned: skjemaData.refusjon?.beloepPerMaaned,
               sluttdato: null,
@@ -281,17 +280,4 @@ export function konverterRefusjonEndringer(
   } else {
     return [];
   }
-}
-
-export function formaterRedusertLoennIAgp(
-  fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden | undefined
-): { beloep: number; begrunnelse: Begrunnelse } | null {
-  return fullLonnIArbeidsgiverPerioden?.begrunnelse !== undefined &&
-    (fullLonnIArbeidsgiverPerioden?.begrunnelse as string) !== '' &&
-    fullLonnIArbeidsgiverPerioden?.status === 'Nei'
-    ? {
-        beloep: fullLonnIArbeidsgiverPerioden.utbetalt ?? 0,
-        begrunnelse: fullLonnIArbeidsgiverPerioden.begrunnelse
-      }
-    : null;
 }

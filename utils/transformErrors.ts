@@ -82,6 +82,10 @@ function traverseArray(node: any[], visited: WeakSet<object>, compositeErrors: a
 function traverseObject(node: any, visited: WeakSet<object>, compositeErrors: any[], depth: number): void {
   const keys = Object.keys(node);
   for (const k of keys) {
+    // Skip 'ref' property which often contains DOM elements and can cause circular references
+    if (k === 'ref') {
+      continue;
+    }
     try {
       traverseNode(node[k], node, k, visited, compositeErrors, depth + 1);
     } catch (error) {

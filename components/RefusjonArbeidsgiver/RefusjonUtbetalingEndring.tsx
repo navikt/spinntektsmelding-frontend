@@ -71,7 +71,6 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
           </RadioGroup>
         )}
       />
-      {harRefusjonEndringer}
       {harRefusjonEndringer === 'Ja' && (
         <>
           <Alert variant='info' className={lokalStyles.alertBox}>

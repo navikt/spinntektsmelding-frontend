@@ -120,22 +120,24 @@ export const InnsendingSchema = z.object({
           });
         }
       }),
-      redusertLoennIAgp: z.nullable(
-        z.object({
-          beloep: z
-            .number({
+      redusertLoennIAgp: z
+        .nullable(
+          z.object({
+            beloep: z
+              .number({
+                error: (issue) =>
+                  issue.input === undefined ? 'Beløp utbetalt under arbeidsgiverperioden mangler.' : undefined
+              })
+              .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.'),
+            begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
               error: (issue) =>
-                issue.input === undefined ? 'Beløp utbetalt under arbeidsgiverperioden mangler.' : undefined
+                issue.input === undefined
+                  ? 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
+                  : undefined
             })
-            .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.'),
-          begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
-            error: (issue) =>
-              issue.input === undefined
-                ? 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
-                : undefined
           })
-        })
-      )
+        )
+        .or(z.undefined())
     })
     .nullable()
     .superRefine((val, ctx) => {
@@ -164,7 +166,7 @@ export const InnsendingSchema = z.object({
       ) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Angi årsak til forkortet arbeidsgiverperiode.',
+          error: 'Angi årsak til forkortet arbeidsgiverperiode...',
           path: ['redusertLoennIAgp', 'begrunnelse'],
           input: ''
         });
@@ -173,7 +175,7 @@ export const InnsendingSchema = z.object({
 
       if (
         perioderErUnder16dagerTotalt(val.perioder) &&
-        !val.redusertLoennIAgp &&
+        !val.redusertLoennIAgp?.begrunnelse &&
         !perioderErSannsynligvisBehandlingsdager(val.perioder)
       ) {
         ctx.issues.push({

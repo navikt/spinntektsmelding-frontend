@@ -16,6 +16,7 @@ import {
   MinimalData,
   SafeParseMinimal
 } from './sendInnCommon';
+import { LonnIArbeidsgiverperioden } from '../state/state';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -25,7 +26,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  // const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
@@ -61,6 +62,18 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         }))
       );
     }
+    console.log('validerteData', validerteData);
+    console.log(validerteData);
+
+    const formData = validerteData.success ? validerteData.data : {};
+
+    const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
+      status: formData.fullLonn ? formData.fullLonn : undefined,
+      utbetalt: formData.agp?.redusertLoennIAgp?.beloep,
+      begrunnelse: formData.agp?.redusertLoennIAgp?.begrunnelse
+    };
+
+    console.log('fullLonnIArbeidsgiverPerioden', fullLonnIArbeidsgiverPerioden);
 
     const harForespurtArbeidsgiverperiode = true; // Alltid true for selvbestemt
     errors.push(
@@ -87,7 +100,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       tittel: 'Har trykket send',
       component: amplitudeComponent
     });
-
+    console.log('Sender inn arbeidsgiver-initiert skjema...', skjemaData);
+    console.log(skjemaData);
     if (!isDirtyForm) {
       logEvent('skjema fullført', {
         tittel: 'Innsending uten endringer i skjema',
@@ -101,7 +115,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     }
 
     const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
-
+    console.log('Validerte data ved innsending: ', JSON.stringify(validerteData));
     const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
 
     setSkalViseFeilmeldinger(true);

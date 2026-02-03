@@ -1,4 +1,4 @@
-import React, { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
+import React, { use, useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -159,6 +159,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         isEditing: false,
         harEndringer: undefined,
         endringer: refusjonEndringer && refusjonEndringer.length > 0 ? refusjonEndringer : []
+      },
+      kreverRefusjon: undefined,
+      fullLonn: undefined,
+      opplysningstyper: opplysningstyper,
+      agp: {
+        redusertLoennIAgp: null
       }
     }
   });
@@ -246,12 +252,15 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     onInntektChange();
   }, [inntektBeloep]); // Kun trigger på inntektBeloep-endringer
 
+  useEffect(() => {
+    setValue('opplysningstyper', opplysningstyper);
+  }, [opplysningstyper, setValue]);
+
   const onSubmitError = (validationErrors: any) => {
     console.log('Validering feilet!');
-    console.log(JSON.stringify(validationErrors, null, 2));
-
+    // console.log(JSON.stringify(validationErrors, null, 2));
     console.log('Nåværende form-verdier:');
-    console.log(JSON.stringify(methods.getValues(), null, 2));
+    // console.log(JSON.stringify(methods.getValues(), null, 2));
   };
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
@@ -363,6 +372,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
   const sbTidligereInntekt = !error && data?.historikk ? data?.historikk : undefined;
+  console.log(memoErrors);
 
   return (
     <div className={styles.container}>
@@ -377,11 +387,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         <FormProvider {...methods}>
           <form className={styles.padded} onSubmit={handleSubmit(submitForm, onSubmitError)}>
             <Person />
-
             <Skillelinje />
-
             <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
-
             <Skillelinje />
             {skalViseEgenmelding && !behandlingsdagerInnsending && (
               <>
@@ -418,9 +425,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 </Button>
               </>
             )}
-
             <Skillelinje />
-
             {harForespurtInntekt && (
               <Bruttoinntekt
                 bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
@@ -435,18 +440,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 <BodyLong>Vi trenger ikke informasjon om inntekt for dette sykefraværet.</BodyLong>
               </>
             )}
-
             <Skillelinje />
             <RefusjonArbeidsgiver
-              setIsDirtyForm={setIsDirtyForm}
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
               inntekt={inntektBeloep!}
               behandlingsdager={behandlingsdagerInnsending}
             />
-
             <Skillelinje />
             <Naturalytelser />
-
             <Skillelinje />
             <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
               Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.

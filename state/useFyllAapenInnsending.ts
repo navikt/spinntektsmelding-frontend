@@ -7,7 +7,6 @@ import {
   SendtPeriode,
   concatPerioder,
   finnInnsendbareArbeidsgiverperioder,
-  formaterRedusertLoennIAgp,
   konverterPerioderFraMottattTilInterntFormat,
   konverterRefusjonEndringer,
   mapEgenmeldingsperioder,
@@ -25,8 +24,7 @@ export default function useFyllAapenInnsending() {
 
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
-  const [fullLonnIArbeidsgiverPerioden, setInnsenderTelefon, initNaturalytelser] = useBoundStore((state) => [
-    state.fullLonnIArbeidsgiverPerioden,
+  const [setInnsenderTelefon, initNaturalytelser] = useBoundStore((state) => [
     state.setInnsenderTelefon,
     state.initNaturalytelser
   ]);
@@ -107,7 +105,7 @@ export default function useFyllAapenInnsending() {
       agp: {
         perioder: formattedAgpPerioder,
         egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
-        redusertLoennIAgp: formaterRedusertLoennIAgp(fullLonnIArbeidsgiverPerioden)
+        redusertLoennIAgp: skjemaData.agp?.redusertLoennIAgp ?? null
       },
       inntekt: {
         beloep: skjemaData.inntekt?.beloep ?? 0,

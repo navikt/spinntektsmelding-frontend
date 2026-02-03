@@ -44,6 +44,8 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
       );
 
       await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Nei');
+      // Vent på at feltet for beløp blir synlig før vi klikker Send
+      await formPage.assertVisibleTextAtLeastOnce('Utbetalt under arbeidsgiverperiode');
       await formPage.clickButton('Send');
       await formPage.assertVisibleTextAtLeastOnce('Beløp utbetalt i arbeidsgiverperioden må fylles ut.');
       await formPage.assertVisibleTextAtLeastOnce(

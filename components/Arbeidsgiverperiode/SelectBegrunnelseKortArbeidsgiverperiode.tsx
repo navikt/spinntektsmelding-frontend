@@ -7,7 +7,7 @@ import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface SelectBegrunnelseKortArbeidsgiverperiodeProps {
   onChangeBegrunnelse: (verdi: string) => void;
-  defaultValue?: string;
+  value?: string;
   error?: React.ReactNode;
   label?: string;
   ikkeAgp?: boolean;
@@ -37,7 +37,7 @@ export default function SelectBegrunnelseKortArbeidsgiverperiode(
       onChange={(event) => props.onChangeBegrunnelse(event.target.value)}
       id={ensureValidHtmlId('agp.redusertLoennIAgp.begrunnelse')}
       className={localStyles.selectbegrunnelse}
-      defaultValue={props.defaultValue}
+      value={props.value ?? ''}
       error={props.error}
     >
       <option value=''>Velg begrunnelse</option>

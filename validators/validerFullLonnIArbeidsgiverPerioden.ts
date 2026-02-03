@@ -8,13 +8,13 @@ export enum FullLonnIArbeidsgiverPerioden {
 
 export default function validerFullLonnIArbeidsgiverPerioden(lonn: LonnIArbeidsgiverperioden): Array<ValiderResultat> {
   const feilkoder: Array<ValiderResultat> = [];
-  if (!lonn.status) {
-    feilkoder.push({
-      felt: '',
-      code: FullLonnIArbeidsgiverPerioden.MANGLER_VALG_AV_LONN_I_ARBEIDSGIVERPERIODEN,
-      text: 'Valg av lønn i arbeidsgiverperioden må fylles ut'
-    });
-  }
+  // if (!lonn.status) {
+  //   feilkoder.push({
+  //     felt: '',
+  //     code: FullLonnIArbeidsgiverPerioden.MANGLER_VALG_AV_LONN_I_ARBEIDSGIVERPERIODEN,
+  //     text: 'Valg av lønn i arbeidsgiverperioden må fylles ut'
+  //   });
+  // }
 
   if (lonn.status === 'Nei' && (!lonn.begrunnelse || lonn.begrunnelse.length === 0)) {
     feilkoder.push({

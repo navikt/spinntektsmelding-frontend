@@ -71,7 +71,17 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
         aktivBruttoinntekt: bruttoinntekt,
         aktivBestemmendeFravaersdag: bestemmendeFravaersdag,
         aktiveNaturalytelser: naturalytelser,
-        aktivFullLonnIArbeidsgiverPerioden: fullLonnIArbeidsgiverPerioden,
+        aktivFullLonnIArbeidsgiverPerioden: kvitteringData?.agp?.redusertLoennIAgp
+          ? {
+              status:
+                kvitteringData?.agp?.redusertLoennIAgp?.beloep === undefined ||
+                kvitteringData?.agp?.redusertLoennIAgp?.beloep === null
+                  ? 'Ja'
+                  : 'Nei',
+              begrunnelse: kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse,
+              utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep
+            }
+          : fullLonnIArbeidsgiverPerioden,
         aktivLonnISykefravaeret: {
           status:
             kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
