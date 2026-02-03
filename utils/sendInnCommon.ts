@@ -60,13 +60,6 @@ export function checkCommonValidations<D extends MinimalData, R extends SafePars
 ): FeltFeil[] {
   const errors: FeltFeil[] = [];
 
-  // if (!fullLonnIArbeidsgiverPerioden?.status && harForespurtArbeidsgiverperiode) {
-  //   errors.push({
-  //     text: feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN, // 'Velg om full lønn betales i arbeidsgiverperioden.'
-  //     felt: 'lia-radio'
-  //   });
-  // }
-
   if (fullLonnIArbeidsgiverPerioden) {
     const valErrors = validerFullLonnIArbeidsgiverPerioden(fullLonnIArbeidsgiverPerioden);
 
@@ -80,13 +73,6 @@ export function checkCommonValidations<D extends MinimalData, R extends SafePars
 
     errors.push(...mapValErrors);
   }
-
-  // if (!lonnISykefravaeret?.status) {
-  //   errors.push({
-  //     text: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden.',
-  //     felt: 'lus-radio'
-  //   });
-  // }
 
   if (lonnISykefravaeret?.status === 'Ja' && !harRefusjonEndringer) {
     errors.push({

@@ -62,24 +62,12 @@ describe('mapValidationErrors', () => {
 });
 
 describe('checkCommonValidations', () => {
-  it('feil når fullLonnIArbeidsgiverPerioden mangler og forespørsel krever den', () => {
-    (validerFullLonnIArbeidsgiverPerioden as any).mockReturnValue([]);
-    const result = checkCommonValidations(undefined, true, LONN_SYKE_JA, 'Nei', true, zodSuccess({ agp: {} }));
-    expect(result.some((f) => f.text === feiltekster.INGEN_FULL_LONN_I_ARBEIDSGIVERPERIODEN)).toBe(true);
-  });
-
   it('inkluderer validator-feil fra validerFullLonnIArbeidsgiverPerioden', () => {
     (validerFullLonnIArbeidsgiverPerioden as any).mockReturnValue([
       { code: 'INGEN_FRAVAERSPERIODER', felt: 'x', text: 'original' }
     ]);
     const result = checkCommonValidations(FULL_LONN_NEI, true, LONN_SYKE_NEI, 'Nei', true, zodSuccess({ agp: {} }));
     expect(result.some((f) => f.felt === 'x')).toBe(true);
-  });
-
-  it('feil når lonnISykefravaeret ikke angitt', () => {
-    (validerFullLonnIArbeidsgiverPerioden as any).mockReturnValue([]);
-    const result = checkCommonValidations(FULL_LONN_NEI, true, undefined, 'Nei', true, zodSuccess({ agp: {} }));
-    expect(result.some((f) => f.felt === 'lus-radio')).toBe(true);
   });
 
   it('feil når status=Ja og harRefusjonEndringer er falsy (ikke valgt)', () => {
