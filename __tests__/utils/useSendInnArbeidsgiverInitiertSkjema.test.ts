@@ -105,7 +105,18 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   it('should handle successful submission', async () => {
     setupMockStore();
-    (useFyllAapenInnsending as Mock).mockReturnValue(vi.fn().mockReturnValue({ success: true }));
+    (useFyllAapenInnsending as Mock).mockReturnValue(
+      vi.fn().mockReturnValue({
+        success: true,
+        data: {
+          fullLonn: 'Ja',
+          agp: null,
+          inntekt: { beloep: 50000 },
+          refusjon: null,
+          avsenderTlf: '12345678'
+        }
+      })
+    );
 
     const { result } = renderHook(() =>
       useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
@@ -127,7 +138,18 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   it('should handle server error 500', async () => {
     setupMockStore();
-    (useFyllAapenInnsending as Mock).mockReturnValue(vi.fn().mockReturnValue({ success: true }));
+    (useFyllAapenInnsending as Mock).mockReturnValue(
+      vi.fn().mockReturnValue({
+        success: true,
+        data: {
+          fullLonn: 'Ja',
+          agp: null,
+          inntekt: { beloep: 50000 },
+          refusjon: null,
+          avsenderTlf: '12345678'
+        }
+      })
+    );
 
     const { result } = renderHook(() =>
       useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
@@ -152,7 +174,18 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   it('should handle unauthorized error 401', async () => {
     setupMockStore();
-    (useFyllAapenInnsending as Mock).mockReturnValue(vi.fn().mockReturnValue({ success: true }));
+    (useFyllAapenInnsending as Mock).mockReturnValue(
+      vi.fn().mockReturnValue({
+        success: true,
+        data: {
+          fullLonn: 'Ja',
+          agp: null,
+          inntekt: { beloep: 50000 },
+          refusjon: null,
+          avsenderTlf: '12345678'
+        }
+      })
+    );
 
     const { result } = renderHook(() =>
       useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
