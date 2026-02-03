@@ -28,7 +28,13 @@ const mockSkjema: SkjemaData = {
     endringAarsaker: [{ aarsak: 'Bonus' }]
   },
   avsenderTlf: '12345678',
-  aarsakInnsending: 'Ny'
+  aarsakInnsending: 'Ny',
+  agp: {
+    redusertLoennIAgp: {
+      beloep: 99999,
+      begrunnelse: 'StreikEllerLockout'
+    }
+  }
 };
 
 const initialState = useBoundStore.getState();
