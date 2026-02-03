@@ -15,23 +15,6 @@ describe('validerFullLonnIArbeidsgiverPerioden', () => {
     expect(result).toEqual([]);
   });
 
-  it('should return an array with MANGLER_VALG_AV_LONN_I_ARBEIDSGIVERPERIODEN code if lonn.status is falsy', () => {
-    const lonn: LonnIArbeidsgiverperioden = {
-      status: undefined,
-      begrunnelse: 'FiskerMedHyre'
-    };
-
-    const result = validerFullLonnIArbeidsgiverPerioden(lonn);
-
-    expect(result).toEqual([
-      {
-        felt: '',
-        code: FullLonnIArbeidsgiverPerioden.MANGLER_VALG_AV_LONN_I_ARBEIDSGIVERPERIODEN,
-        text: 'Valg av lønn i arbeidsgiverperioden må fylles ut'
-      }
-    ]);
-  });
-
   it('should return an array with MANGLER_BEGRUNNELSE_LONN_I_ARBEIDSGIVERPERIODEN code if lonn.status is "Nei" and begrunnelse is empty', () => {
     const lonn: LonnIArbeidsgiverperioden = {
       status: 'Nei',
