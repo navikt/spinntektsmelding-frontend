@@ -5,7 +5,6 @@ import { NaturalytelserFeilkoder } from '../validators/validerNaturalytelser';
 import { LonnIArbeidsgiverperiodenFeilkode } from '../validators/validerLonnIArbeidsgiverperioden';
 import { LonnUnderSykefravaeretFeilkode } from '../validators/validerLonnUnderSykefravaeret';
 import { PeriodeEgenmeldingFeilkode } from '../validators/validerPeriodeEgenmelding';
-import { BekreftOpplysningerFeilkoder } from '../validators/validerBekreftOpplysninger';
 import { EndringAvMaanedslonnFeilkode } from '../validators/validerEndringAvMaanedslonn';
 import { TelefonFeilkode } from '../validators/validerTelefon';
 import { PeriodeFravaerFeilkode } from '../validators/validerPeriodeFravaer';
@@ -37,7 +36,6 @@ type codeUnion =
   | NaturalytelserFeilkoder
   | LonnIArbeidsgiverperiodenFeilkode
   | LonnUnderSykefravaeretFeilkode
-  | BekreftOpplysningerFeilkoder
   | EndringAvMaanedslonnFeilkode
   | PeriodeEgenmeldingFeilkode
   | PeriodeFravaerFeilkode
