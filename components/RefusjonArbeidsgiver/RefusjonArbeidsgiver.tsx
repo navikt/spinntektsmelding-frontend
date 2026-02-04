@@ -1,4 +1,4 @@
-import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { BodyLong, Radio, RadioGroup } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
 
 import useBoundStore from '../../state/useBoundStore';
@@ -14,6 +14,7 @@ import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { useEffect, useMemo } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import NumberField from '../NumberField/NumberField';
 
 interface RefusjonArbeidsgiverProps {
   skalViseArbeidsgiverperiode?: boolean;
@@ -33,7 +34,6 @@ export default function RefusjonArbeidsgiver({
     formState: { errors }
   } = useFormContext();
 
-  // Zustand state som fortsatt trengs for data (ikke form state)
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
   const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
@@ -41,7 +41,6 @@ export default function RefusjonArbeidsgiver({
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
 
-  // react-hook-form values
   const agpFullLonn = watch('fullLonn');
   const agpBegrunnelse = watch('agp.redusertLoennIAgp.begrunnelse');
   const kreverRefusjon = watch('kreverRefusjon');
@@ -109,7 +108,7 @@ export default function RefusjonArbeidsgiver({
                 {agpFullLonn === 'Nei' && (
                   <>
                     <div className={localStyles.wrapperUtbetaling}>
-                      <TextField
+                      <NumberField
                         className={localStyles.refusjonBeloep}
                         label='Utbetalt under arbeidsgiverperiode'
                         {...register('agp.redusertLoennIAgp.beloep', { valueAsNumber: true })}

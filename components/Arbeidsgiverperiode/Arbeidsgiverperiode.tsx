@@ -1,7 +1,7 @@
 import formatDate from '../../utils/formatDate';
 
 import TextLabel from '../TextLabel';
-import { Alert, BodyLong, Button, Checkbox, TextField } from '@navikt/ds-react';
+import { Alert, BodyLong, Button, Checkbox } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
@@ -17,7 +17,6 @@ import { addDays, differenceInCalendarDays, differenceInDays } from 'date-fns';
 import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
-import formatCurrency from '../../utils/formatCurrency';
 import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import perioderInneholderHelgeopphold from '../../utils/perioderInneholderHelgeopphold';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
@@ -53,7 +52,6 @@ export default function Arbeidsgiverperiode({
     visFeilmelding,
     tilbakestillArbeidsgiverperiode,
     slettAlleArbeidsgiverperioder,
-    setBeloepUtbetaltUnderArbeidsgiverperioden,
     begrunnelseRedusertUtbetaling,
     arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
     slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
@@ -74,7 +72,6 @@ export default function Arbeidsgiverperiode({
       visFeilmelding: state.visFeilmelding,
       tilbakestillArbeidsgiverperiode: state.tilbakestillArbeidsgiverperiode,
       slettAlleArbeidsgiverperioder: state.slettAlleArbeidsgiverperioder,
-      setBeloepUtbetaltUnderArbeidsgiverperioden: state.setBeloepUtbetaltUnderArbeidsgiverperioden,
       begrunnelseRedusertUtbetaling: state.begrunnelseRedusertUtbetaling,
       arbeidsgiverBetalerFullLonnIArbeidsgiverperioden: state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
       slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden:
@@ -89,7 +86,6 @@ export default function Arbeidsgiverperiode({
   );
 
   const {
-    watch,
     control,
     register,
     setValue,
@@ -99,13 +95,6 @@ export default function Arbeidsgiverperiode({
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
 
   const amplitudeComponent = 'Arbeidsgiverperiode';
-
-  // const addIsDirtyForm = (func: (event: React.ChangeEvent<HTMLInputElement>) => void) => {
-  //   return (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     setIsDirtyForm(true);
-  //     func(event);
-  //   };
-  // };
 
   const antallDagerIArbeidsgiverperioderManuellJustering = (perioder: Array<Periode> | undefined) => {
     if (perioder === undefined) {
@@ -213,8 +202,6 @@ export default function Arbeidsgiverperiode({
     if (event.target.checked === true) {
       setValue('fullLonn', 'Nei');
       setValue('agp.redusertLoennIAgp.beloep', 0);
-      // setBeloepUtbetaltUnderArbeidsgiverperioden('0');
-      // arbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       slettAlleArbeidsgiverperioder();
     } else {
       setValue('fullLonn', undefined);
@@ -226,11 +213,6 @@ export default function Arbeidsgiverperiode({
     }
     setIsDirtyForm(true);
   };
-
-  // const setBegrunnelseRedusertUtbetaling = (begrunnelse: string | undefined) => {
-  //   begrunnelseRedusertUtbetaling(begrunnelse);
-  //   setIsDirtyForm(true);
-  // };
 
   const antallDager = useMemo(
     () =>
@@ -482,7 +464,7 @@ export default function Arbeidsgiverperiode({
       {advarselKortPeriode.length > 0 && !arbeidsgiverperiodeDisabled && (
         <>
           <div className={lokalStyles.wrapperUtbetaling}>
-            <TextField
+            <NumberField
               className={lokalStyles.refusjonBeloep}
               label='Utbetalt under arbeidsgiverperiode'
               {...register('agp.redusertLoennIAgp.beloep', { valueAsNumber: true })}

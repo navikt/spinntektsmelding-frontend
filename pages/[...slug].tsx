@@ -1,4 +1,4 @@
-import React, { use, useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -239,7 +239,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   });
 
   const onInntektChange = useEffectEvent(() => {
-    // Her har du tilgang til de siste verdiene
     if (inntektBeloep !== undefined && endringerAvRefusjon !== 'Ja') {
       beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
     }
@@ -250,18 +249,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   useEffect(() => {
     onInntektChange();
-  }, [inntektBeloep]); // Kun trigger på inntektBeloep-endringer
+  }, [inntektBeloep]);
 
   useEffect(() => {
     setValue('opplysningstyper', opplysningstyper);
   }, [opplysningstyper, setValue]);
-
-  const onSubmitError = (validationErrors: any) => {
-    console.log('Validering feilet!');
-    // console.log(JSON.stringify(validationErrors, null, 2));
-    console.log('Nåværende form-verdier:');
-    // console.log(JSON.stringify(methods.getValues(), null, 2));
-  };
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
@@ -348,9 +340,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         fetchInntektsdata(environment.inntektsdataUrl, slug, inntektsdato)
           .then((inntektSisteTreMnd) => {
             const tidligereInntekt = new Map<string, number>(inntektSisteTreMnd.data.historikk);
+            const tidligereInntektRecord = Object.fromEntries(tidligereInntekt) as Record<string, number | null>;
 
-            setTidligereInntekter(tidligereInntekt);
-            initBruttoinntekt(inntektSisteTreMnd.data.gjennomsnitt, tidligereInntekt, inntektsdato);
+            setTidligereInntekter(tidligereInntektRecord);
+            initBruttoinntekt(inntektSisteTreMnd.data.gjennomsnitt, tidligereInntektRecord, inntektsdato);
           })
           .catch((error) => {
             logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema' + JSON.stringify(error));
@@ -360,6 +353,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, skjemastatus, inntektsdato, sykmeldingsperioder]);
 
@@ -384,7 +378,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <PageContent title='Inntektsmelding'>
         <FormProvider {...methods}>
-          <form className={styles.padded} onSubmit={handleSubmit(submitForm, onSubmitError)}>
+          <form className={styles.padded} onSubmit={handleSubmit(submitForm)}>
             <Person />
             <Skillelinje />
             <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />

@@ -40,7 +40,6 @@ import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import PersonVisning from '../../components/Person/PersonVisning';
 import { EndringAarsak } from '../../validators/validerAapenInnsending';
-// import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
 import useKvitteringInit, { MottattKvittering } from '../../state/useKvitteringInit';
 import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
 import { getKvitteringServerSideProps } from '../../utils/getKvitteringServerSideProps';
@@ -75,10 +74,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
-  // const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const kvitteringData = useBoundStore((state) => state.kvitteringData);
-
-  // const refusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
 
   const onSetSkjemaFeilet = useEffectEvent(() => {
     setSkjemaFeilet();
