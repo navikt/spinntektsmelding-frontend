@@ -81,7 +81,7 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
               begrunnelse: kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse,
               utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep
             }
-          : fullLonnIArbeidsgiverPerioden,
+          : { status: 'Ja', begrunnelse: undefined, utbetalt: undefined },
         aktivLonnISykefravaeret: {
           status:
             kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
