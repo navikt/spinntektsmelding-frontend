@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import trengerDelvis from '../mockdata/trenger-delvis-uten-bfd.json';
 import { FormPage } from './utils/formPage';
 
 test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skjæringstidspunkt)', () => {

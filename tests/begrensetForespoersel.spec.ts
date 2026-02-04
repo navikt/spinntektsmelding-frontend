@@ -79,7 +79,6 @@ test.describe('Begrenset forespørsel', () => {
     expect(body).toEqual({
       forespoerselId: '52ce04ad-0919-49ee-86f0-40c0e040dc0e',
       agp: {
-        egenmeldinger: [],
         perioder: [
           {
             fom: '2023-02-20',

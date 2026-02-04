@@ -111,15 +111,15 @@ export const InnsendingSchema = z.object({
           });
         }
       }),
-      egenmeldinger: z.union([z.array(ApiPeriodeSchema), z.tuple([])]).superRefine((val, ctx) => {
-        if (perioderHarOverlapp(val)) {
-          ctx.issues.push({
-            code: 'custom',
-            error: 'Det kan ikke være overlapp mellom egenmeldingsperiodene.',
-            input: ''
-          });
-        }
-      }),
+      // egenmeldinger: z.union([z.array(ApiPeriodeSchema), z.tuple([])]).superRefine((val, ctx) => {
+      //   if (perioderHarOverlapp(val)) {
+      //     ctx.issues.push({
+      //       code: 'custom',
+      //       error: 'Det kan ikke være overlapp mellom egenmeldingsperiodene.',
+      //       input: ''
+      //     });
+      //   }
+      // }),
       redusertLoennIAgp: z
         .nullable(
           z.object({

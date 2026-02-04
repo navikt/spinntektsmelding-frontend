@@ -76,7 +76,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
 
       await formPage.assertVisibleTextAtLeastOnce('Vennligst angi om det er endringer i refusjonsbeløpet i perioden.');
 
-      await formPage.clickButton('Endre', 3);
+      await formPage.clickButton('Endre', 2);
       await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '500000');
       await formPage.clickButton('Send');
 
@@ -125,12 +125,6 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
       const body = JSON.parse(req.request().postData()!);
       expect(body).toEqual({
         agp: {
-          egenmeldinger: [
-            {
-              fom: '2023-02-01',
-              tom: '2023-02-03'
-            }
-          ],
           perioder: [
             {
               fom: '2023-02-01',

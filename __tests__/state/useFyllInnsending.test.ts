@@ -107,13 +107,6 @@ describe('useFyllInnsending', () => {
     });
 
     if (innsending) {
-      expect(innsending.agp?.egenmeldinger).toEqual([
-        {
-          fom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].fom,
-          tom: mottattKvittering.kvitteringNavNo.skjema.agp.egenmeldinger[0].tom
-        }
-      ]);
-
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
       expect(innsending.inntekt?.beloep).toBe(12345);
     }
@@ -190,33 +183,6 @@ describe('useFyllInnsending', () => {
     } else {
       expect(innsending).toBeTruthy();
     }
-  });
-});
-
-describe('mapEgenmeldingsperioder', () => {
-  it('should return empty array when egenmeldingsperioder is undefined', () => {
-    expect(mapEgenmeldingsperioder(undefined)).toEqual([]);
-  });
-
-  it('should map periods correctly', () => {
-    const perioder = [
-      { fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' },
-      { fom: new Date('2023-01-10'), tom: new Date('2023-01-15'), id: '2' }
-    ];
-    const result = mapEgenmeldingsperioder(perioder);
-    expect(result).toEqual([
-      { fom: '2023-01-01', tom: '2023-01-05' },
-      { fom: '2023-01-10', tom: '2023-01-15' }
-    ]);
-  });
-
-  it('should filter out periods without dates', () => {
-    const perioder = [
-      { fom: new Date('2023-01-01'), tom: new Date('2023-01-05'), id: '1' },
-      { fom: undefined, tom: undefined, id: '2' }
-    ];
-    const result = mapEgenmeldingsperioder(perioder);
-    expect(result).toHaveLength(1);
   });
 });
 

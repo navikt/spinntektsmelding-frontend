@@ -47,7 +47,6 @@ test.describe('Utfylling og innsending av skjema – to arbeidsforhold', () => {
       forespoerselId: uuid,
       agp: {
         perioder: [{ fom: '2023-09-04', tom: '2023-09-19' }],
-        egenmeldinger: [],
         redusertLoennIAgp: null
       },
       inntekt: {

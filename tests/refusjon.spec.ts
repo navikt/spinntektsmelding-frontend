@@ -60,7 +60,6 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       forespoerselId: uuid,
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
-        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
         redusertLoennIAgp: null
       },
       inntekt: {
@@ -128,7 +127,6 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       forespoerselId: uuid,
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
-        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
         redusertLoennIAgp: null
       },
       inntekt: {
@@ -196,7 +194,6 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       forespoerselId: uuid,
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
-        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
         redusertLoennIAgp: null
       },
       inntekt: {
