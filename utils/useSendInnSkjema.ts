@@ -32,14 +32,11 @@ export default function useSendInnSkjema(
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllInnsending();
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
-  // const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
-  // Helpers
   const showErrors = (errors: Array<ErrorResponse | ValiderTekster>) => {
-    // Reset then set
     fyllFeilmeldinger([]);
     errorResponse(errors as Array<ErrorResponse>);
     setSkalViseFeilmeldinger(true);
@@ -101,7 +98,6 @@ export default function useSendInnSkjema(
       return false;
     }
 
-    // debugger;
     const harRefusjonEndringerStatus = formData.refusjon?.harEndringer;
     const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
       status: formData.fullLonn ? formData.fullLonn : undefined,

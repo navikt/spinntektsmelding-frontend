@@ -26,7 +26,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  // const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
   const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
@@ -36,9 +35,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
 
-  // Helpers
   const showErrors = (errors: Array<ErrorResponse | ValiderTekster>) => {
-    // Reset then set
     fyllFeilmeldinger([]);
     errorResponse(errors as Array<ErrorResponse>);
     setSkalViseFeilmeldinger(true);
@@ -63,12 +60,12 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       );
     }
 
-    const formData = validerteData.success ? validerteData.data : {};
+    const formData: typeof validerteData.data | {} = validerteData.success ? validerteData.data : {};
 
     const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
-      status: formData.fullLonn ? formData.fullLonn : undefined,
-      utbetalt: formData.agp?.redusertLoennIAgp?.beloep,
-      begrunnelse: formData.agp?.redusertLoennIAgp?.begrunnelse
+      status: 'fullLonn' in formData && formData.fullLonn ? formData.fullLonn : undefined,
+      utbetalt: 'agp' in formData ? formData.agp?.redusertLoennIAgp?.beloep : undefined,
+      begrunnelse: 'agp' in formData ? formData.agp?.redusertLoennIAgp?.begrunnelse : undefined
     };
 
     const harForespurtArbeidsgiverperiode = true; // Alltid true for selvbestemt
