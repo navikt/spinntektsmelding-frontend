@@ -83,6 +83,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
+  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
 
   const [
     hentPaakrevdOpplysningstyper,
@@ -152,7 +153,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         naturalytelser: naturalytelser ?? [],
         harBortfallAvNaturalytelser: false
       },
-      avsenderTlf: avsender.tlf
+      avsenderTlf: avsender.tlf,
+      refusjon: {
+        beloepPerMaaned: bruttoinntekt.bruttoInntekt,
+        isEditing: false,
+        harEndringer: undefined,
+        endringer: refusjonEndringer && refusjonEndringer.length > 0 ? refusjonEndringer : []
+      },
+      kreverRefusjon: undefined,
+      fullLonn: undefined,
+      opplysningstyper: opplysningstyper,
+      agp: {
+        redusertLoennIAgp: null
+      }
     }
   });
 
@@ -190,9 +203,21 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   }, [naturalytelser, setValue]);
 
+  const isEditingRefusjonBeloep = useWatch({
+    control,
+    name: 'refusjon.isEditing'
+  });
+
+  const onIsEditingRefusjonBeloep = useEffectEvent(() => {
+    return isEditingRefusjonBeloep;
+  });
+
   useEffect(() => {
     if (bruttoinntekt.bruttoInntekt !== undefined) {
       setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+      if (!onIsEditingRefusjonBeloep()) {
+        setValue('refusjon.beloepPerMaaned', bruttoinntekt.bruttoInntekt);
+      }
     }
   }, [bruttoinntekt.bruttoInntekt, setValue]);
 
@@ -209,19 +234,29 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [avsender.tlf, setValue]);
 
   const inntektBeloep = useWatch({
-    control: control,
+    control,
     name: 'inntekt.beloep'
   });
 
-  useEffect(() => {
+  const onInntektChange = useEffectEvent(() => {
     if (inntektBeloep !== undefined && endringerAvRefusjon !== 'Ja') {
       beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
     }
-  }, [beloepArbeidsgiverBetalerISykefravaeret, inntektBeloep, endringerAvRefusjon]);
+    if (!isEditingRefusjonBeloep) {
+      setValue('refusjon.beloepPerMaaned', inntektBeloep || 0);
+    }
+  });
+
+  useEffect(() => {
+    onInntektChange();
+  }, [inntektBeloep]);
+
+  useEffect(() => {
+    setValue('opplysningstyper', opplysningstyper);
+  }, [opplysningstyper, setValue]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
-
     if (selvbestemtInnsending) {
       sendInnArbeidsgiverInitiertSkjema(true, slug, isDirtyForm || isDirty, formData, begrensetForespoersel).finally(
         () => {
@@ -237,7 +272,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
       setPaakrevdeOpplysninger(opplysningstyper);
     } else if (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode)) {
-      opplysningstyper.splice(opplysningstyper.indexOf(forespoerselType.arbeidsgiverperiode), 1);
+      opplysningstyper = opplysningstyper.filter((t) => t !== forespoerselType.arbeidsgiverperiode);
 
       setPaakrevdeOpplysninger(opplysningstyper);
     }
@@ -305,9 +340,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         fetchInntektsdata(environment.inntektsdataUrl, slug, inntektsdato)
           .then((inntektSisteTreMnd) => {
             const tidligereInntekt = new Map<string, number>(inntektSisteTreMnd.data.historikk);
+            const tidligereInntektRecord = Object.fromEntries(tidligereInntekt) as Record<string, number | null>;
 
-            setTidligereInntekter(tidligereInntekt);
-            initBruttoinntekt(inntektSisteTreMnd.data.gjennomsnitt, tidligereInntekt, inntektsdato);
+            setTidligereInntekter(tidligereInntektRecord);
+            initBruttoinntekt(inntektSisteTreMnd.data.gjennomsnitt, tidligereInntektRecord, inntektsdato);
           })
           .catch((error) => {
             logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema' + JSON.stringify(error));
@@ -317,6 +353,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, skjemastatus, inntektsdato, sykmeldingsperioder]);
 
@@ -343,11 +380,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         <FormProvider {...methods}>
           <form className={styles.padded} onSubmit={handleSubmit(submitForm)}>
             <Person />
-
             <Skillelinje />
-
             <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
-
             <Skillelinje />
             {skalViseEgenmelding && !behandlingsdagerInnsending && (
               <>
@@ -384,9 +418,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 </Button>
               </>
             )}
-
             <Skillelinje />
-
             {harForespurtInntekt && (
               <Bruttoinntekt
                 bestemmendeFravaersdag={beregnetBestemmendeFraværsdag}
@@ -401,18 +433,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 <BodyLong>Vi trenger ikke informasjon om inntekt for dette sykefraværet.</BodyLong>
               </>
             )}
-
             <Skillelinje />
             <RefusjonArbeidsgiver
-              setIsDirtyForm={setIsDirtyForm}
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
               inntekt={inntektBeloep!}
               behandlingsdager={behandlingsdagerInnsending}
             />
-
             <Skillelinje />
             <Naturalytelser />
-
             <Skillelinje />
             <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
               Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.

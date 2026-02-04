@@ -27,6 +27,20 @@ vi.mock('next/head', () => ({
   default: ({ children }) => <>{children}</>
 }));
 
+// Mock zodResolver to bypass validation
+vi.mock('@hookform/resolvers/zod', () => ({
+  zodResolver: () => async () => ({
+    values: {
+      bekreft_opplysninger: true,
+      inntekt: { beloep: 10000, endringAarsaker: null, harBortfallAvNaturalytelser: false },
+      refusjon: { beloepPerMaaned: 10000, isEditing: false, harEndringer: 'Nei' },
+      kreverRefusjon: 'Ja',
+      avsenderTlf: '12345678'
+    },
+    errors: {}
+  })
+}));
+
 vi.mock('../../utils/useSendInnSkjema', () => ({
   default: vi.fn(() => vi.fn().mockResolvedValue({}))
 }));

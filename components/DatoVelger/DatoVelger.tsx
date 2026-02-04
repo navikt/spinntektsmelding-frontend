@@ -114,6 +114,7 @@ export default function DatoVelger({
           hideLabel={hideLabel}
           disabled={disabled}
           error={error}
+          aria-label={label}
         />
       </DatePicker>
     </div>

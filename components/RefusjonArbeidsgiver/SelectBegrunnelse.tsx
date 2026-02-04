@@ -4,7 +4,7 @@ import localStyles from './RefusjonArbeidsgiver.module.css';
 
 interface SelectBegrunnelseProps {
   onChangeBegrunnelse: (verdi: string) => void;
-  defaultValue?: string;
+  value?: string;
   error?: React.ReactNode;
   label?: string;
 }
@@ -18,7 +18,7 @@ export default function SelectBegrunnelse(props: Readonly<SelectBegrunnelseProps
       onChange={(event) => props.onChangeBegrunnelse(event.target.value)}
       id={'agp.redusertLoennIAgp.begrunnelse'}
       className={localStyles.selectbegrunnelse}
-      defaultValue={props.defaultValue}
+      value={props.value ?? ''}
       error={props.error}
     >
       <option value=''>Velg begrunnelse</option>

@@ -1,68 +1,52 @@
-import { BodyLong, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { BodyLong, Radio, RadioGroup } from '@navikt/ds-react';
 import Heading3 from '../Heading3';
 
 import useBoundStore from '../../state/useBoundStore';
 import SelectBegrunnelse from './SelectBegrunnelse';
 import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
 import localStyles from './RefusjonArbeidsgiver.module.css';
-import formatCurrency from '../../utils/formatCurrency';
-import RefusjonUtbetalingEndring, { EndringsBeloep } from './RefusjonUtbetalingEndring';
+import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { addDays } from 'date-fns';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
-import { useCallback, useMemo } from 'react';
-import { YesNo } from '../../state/state';
+import { useEffect, useMemo } from 'react';
+import { useFormContext, Controller } from 'react-hook-form';
+import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import NumberField from '../NumberField/NumberField';
 
 interface RefusjonArbeidsgiverProps {
-  setIsDirtyForm: (dirty: boolean) => void;
   skalViseArbeidsgiverperiode?: boolean;
   inntekt: number;
   behandlingsdager?: boolean;
 }
 
 export default function RefusjonArbeidsgiver({
-  setIsDirtyForm,
   skalViseArbeidsgiverperiode,
   inntekt,
   behandlingsdager
 }: Readonly<RefusjonArbeidsgiverProps>) {
-  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
+  const {
+    watch,
+    control,
+    register,
+    formState: { errors }
+  } = useFormContext();
+
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-
-  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
-
-  const arbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useBoundStore(
-    (state) => state.arbeidsgiverBetalerFullLonnIArbeidsgiverperioden
-  );
-  const arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret = useBoundStore(
-    (state) => state.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret
-  );
-  const begrunnelseRedusertUtbetaling = useBoundStore((state) => state.begrunnelseRedusertUtbetaling);
-  const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
-
-  const beloepArbeidsgiverBetalerISykefravaeret = useBoundStore(
-    (state) => state.beloepArbeidsgiverBetalerISykefravaeret
-  );
-
-  const setBeloepUtbetaltUnderArbeidsgiverperioden = useBoundStore(
-    (state) => state.setBeloepUtbetaltUnderArbeidsgiverperioden
-  );
   const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
   const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
-  const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
-  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
-  const oppdaterRefusjonEndringer = useBoundStore((state) => state.oppdaterRefusjonEndringer);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
+  const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
+
+  const agpFullLonn = watch('fullLonn');
+  const agpBegrunnelse = watch('agp.redusertLoennIAgp.begrunnelse');
+  const kreverRefusjon = watch('kreverRefusjon');
 
   const fravaer = sykmeldingsperioder ? sykmeldingsperioder.concat(egenmeldingsperioder ?? []) : [];
-
   const fravaerSortert = [...fravaer].sort(sorterFomStigende);
-
   const foersteFravaersdag = fravaerSortert[0]?.fom;
 
   const sisteArbeidsgiverperiode =
@@ -70,7 +54,7 @@ export default function RefusjonArbeidsgiver({
       ? [...arbeidsgiverperioder].sort(sorterFomStigende)
       : arbeidsgiverperioder;
 
-  const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
+  const betvilerArbeidsevne = agpBegrunnelse === 'BetvilerArbeidsufoerhet';
   const sisteDagIArbeidsgiverperioden = sisteArbeidsgiverperiode ? sisteArbeidsgiverperiode?.[0]?.tom : new Date();
 
   const foersteMuligeRefusjonOpphoer = sisteDagIArbeidsgiverperioden
@@ -87,66 +71,13 @@ export default function RefusjonArbeidsgiver({
     [arbeidsgiverperiodeKort, behandlingsdager]
   );
 
-  // Stable callbacks - lages kun én gang eller når dependencies endres
-  const handleArbeidsgiverBetalerFullLonn = useCallback(
-    (status: YesNo) => {
-      setIsDirtyForm(true);
-      arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(status);
-    },
-    [setIsDirtyForm, arbeidsgiverBetalerFullLonnIArbeidsgiverperioden]
-  );
-
-  const handleBeloepUtbetaltChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setIsDirtyForm(true);
-      setBeloepUtbetaltUnderArbeidsgiverperioden(event.target.value);
-    },
-    [setIsDirtyForm, setBeloepUtbetaltUnderArbeidsgiverperioden]
-  );
-
-  const handleBegrunnelseChange = useCallback(
-    (begrunnelse: string) => {
-      setIsDirtyForm(true);
-      begrunnelseRedusertUtbetaling(begrunnelse);
-    },
-    [setIsDirtyForm, begrunnelseRedusertUtbetaling]
-  );
-
-  const handleRefusjonStatusChange = useCallback(
-    (status: YesNo) => {
-      setIsDirtyForm(true);
-      arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret(status, inntekt);
-    },
-    [setIsDirtyForm, arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret, inntekt]
-  );
-
-  const handleBelopUpdate = useCallback(
-    (belop: string) => {
-      setIsDirtyForm(true);
-      beloepArbeidsgiverBetalerISykefravaeret(belop);
-    },
-    [setIsDirtyForm, beloepArbeidsgiverBetalerISykefravaeret]
-  );
-
-  const handleHarRefusjonEndringer = useCallback(
-    (harEndringer: YesNo) => {
-      setIsDirtyForm(true);
-      setHarRefusjonEndringer(harEndringer);
-    },
-    [setIsDirtyForm, setHarRefusjonEndringer]
-  );
-
-  const handleOppdaterRefusjonEndringer = useCallback(
-    (endringer: Array<EndringsBeloep>) => {
-      setIsDirtyForm(true);
-      oppdaterRefusjonEndringer(endringer);
-    },
-    [setIsDirtyForm, oppdaterRefusjonEndringer]
-  );
-
-  const handleEditerbarChange = useCallback(() => {
-    setEndringerAvRefusjon('Ja');
-  }, [setEndringerAvRefusjon]);
+  // Synkroniser refusjon.isEditing med Zustand
+  const isEditing = watch('refusjon.isEditing');
+  useEffect(() => {
+    if (isEditing) {
+      setEndringerAvRefusjon('Ja');
+    }
+  }, [isEditing, setEndringerAvRefusjon]);
 
   return (
     <>
@@ -154,43 +85,46 @@ export default function RefusjonArbeidsgiver({
       <div>
         {skalViseArbeidsgiverperiode && (
           <>
-            <RadioGroup
-              legend={betalerArbeidsgiverFullLonnLegend}
-              className={localStyles.radiobuttonWrapper}
-              id={'lia-radio'}
-              error={visFeilmeldingTekst('lia-radio')}
-              onChange={handleArbeidsgiverBetalerFullLonn}
-              value={fullLonnIArbeidsgiverPerioden?.status ?? null}
-              disabled={arbeidsgiverperiodeDisabled || (arbeidsgiverperiodeKort && !behandlingsdager)}
-            >
-              <Radio value='Ja' name='fullLonnIArbeidsgiverPerioden'>
-                Ja
-              </Radio>
-              <Radio value='Nei' name='fullLonnIArbeidsgiverPerioden'>
-                Nei
-              </Radio>
-            </RadioGroup>
+            <Controller
+              name='fullLonn'
+              control={control}
+              render={({ field }) => (
+                <RadioGroup
+                  legend={betalerArbeidsgiverFullLonnLegend}
+                  className={localStyles.radiobuttonWrapper}
+                  id={ensureValidHtmlId('fullLonn')}
+                  error={findErrorInRHFErrors('fullLonn', errors)}
+                  onChange={field.onChange}
+                  value={field.value ?? ''}
+                  disabled={arbeidsgiverperiodeDisabled || (arbeidsgiverperiodeKort && !behandlingsdager)}
+                >
+                  <Radio value='Ja'>Ja</Radio>
+                  <Radio value='Nei'>Nei</Radio>
+                </RadioGroup>
+              )}
+            />
             {!arbeidsgiverperiodeDisabled && !arbeidsgiverperiodeKort && (
               <>
-                {fullLonnIArbeidsgiverPerioden?.status === 'Nei' && (
+                {agpFullLonn === 'Nei' && (
                   <>
                     <div className={localStyles.wrapperUtbetaling}>
-                      <TextField
+                      <NumberField
                         className={localStyles.refusjonBeloep}
                         label='Utbetalt under arbeidsgiverperiode'
-                        onChange={handleBeloepUtbetaltChange}
+                        {...register('agp.redusertLoennIAgp.beloep', { valueAsNumber: true })}
                         id={ensureValidHtmlId('agp.redusertLoennIAgp.beloep')}
-                        error={visFeilmeldingTekst('agp.redusertLoennIAgp.beloep')}
-                        defaultValue={
-                          Number.isNaN(fullLonnIArbeidsgiverPerioden.utbetalt)
-                            ? ''
-                            : formatCurrency(fullLonnIArbeidsgiverPerioden.utbetalt)
-                        }
+                        error={findErrorInRHFErrors('agp.redusertLoennIAgp.beloep', errors)}
                       />
-                      <SelectBegrunnelse
-                        onChangeBegrunnelse={handleBegrunnelseChange}
-                        defaultValue={fullLonnIArbeidsgiverPerioden.begrunnelse}
-                        error={visFeilmeldingTekst('agp.redusertLoennIAgp.begrunnelse')}
+                      <Controller
+                        name='agp.redusertLoennIAgp.begrunnelse'
+                        control={control}
+                        render={({ field }) => (
+                          <SelectBegrunnelse
+                            onChangeBegrunnelse={field.onChange}
+                            value={field.value}
+                            error={findErrorInRHFErrors('agp.redusertLoennIAgp.begrunnelse', errors)}
+                          />
+                        )}
                       />
                     </div>
                     {betvilerArbeidsevne && <AlertBetvilerArbeidsevne />}
@@ -201,46 +135,39 @@ export default function RefusjonArbeidsgiver({
           </>
         )}
 
-        <RadioGroup
-          legend={betalerArbeidsgiverEtterAgpLegend}
-          className={localStyles.radiobuttonInnerWrapper}
-          id={'lus-radio'}
-          error={visFeilmeldingTekst('lus-radio')}
-          onChange={handleRefusjonStatusChange}
-          defaultValue={lonnISykefravaeret?.status}
-        >
-          <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>
-            Arbeidsgiver kan velge mellom to alternativer. Betale lønn til den sykemeldte og få dette refundert fra Nav,
-            eller at Nav betaler sykepengene direkte til den sykemeldte. Dette gjelder ikke under arbeidsgiverperiode.{' '}
-            <LenkeEksternt href='https://www.nav.no/arbeidsgiver/forskuttere-sykepenger'>
-              Les mer om refusjon
-            </LenkeEksternt>
-            .
-          </BodyLong>
-          <div className={localStyles.radiobuttonButtonWrapper}>
-            <Radio value='Ja'>Ja</Radio>
-            <Radio value='Nei'>Nei</Radio>
-          </div>
-        </RadioGroup>
-        {lonnISykefravaeret?.status === 'Ja' && (
+        <Controller
+          name='kreverRefusjon'
+          control={control}
+          render={({ field }) => (
+            <RadioGroup
+              legend={betalerArbeidsgiverEtterAgpLegend}
+              className={localStyles.radiobuttonInnerWrapper}
+              id={ensureValidHtmlId('kreverRefusjon')}
+              error={findErrorInRHFErrors('kreverRefusjon', errors)}
+              onChange={field.onChange}
+              value={field.value ?? ''}
+            >
+              <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>
+                Arbeidsgiver kan velge mellom to alternativer. Betale lønn til den sykemeldte og få dette refundert fra
+                Nav, eller at Nav betaler sykepengene direkte til den sykemeldte. Dette gjelder ikke under
+                arbeidsgiverperiode.{' '}
+                <LenkeEksternt href='https://www.nav.no/arbeidsgiver/forskuttere-sykepenger'>
+                  Les mer om refusjon
+                </LenkeEksternt>
+                .
+              </BodyLong>
+              <div className={localStyles.radiobuttonButtonWrapper}>
+                <Radio value='Ja'>Ja</Radio>
+                <Radio value='Nei'>Nei</Radio>
+              </div>
+            </RadioGroup>
+          )}
+        />
+        {kreverRefusjon === 'Ja' && (
           <>
-            <RefusjonArbeidsgiverBelop
-              bruttoinntekt={lonnISykefravaeret.beloep || 0}
-              onOppdaterBelop={handleBelopUpdate}
-              visFeilmeldingTekst={visFeilmeldingTekst}
-              arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled}
-              onEditerbarChange={handleEditerbarChange}
-            />
+            <RefusjonArbeidsgiverBelop arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled} />
 
-            <RefusjonUtbetalingEndring
-              endringer={refusjonEndringer || []}
-              // maxDate={refusjonskravetOpphoerer?.opphoersdato}
-              minDate={foersteMuligeRefusjonOpphoer}
-              onHarEndringer={handleHarRefusjonEndringer}
-              onOppdaterEndringer={handleOppdaterRefusjonEndringer}
-              harRefusjonEndringer={harRefusjonEndringer}
-              harRefusjonEndringerDefault={harRefusjonEndringer}
-            />
+            <RefusjonUtbetalingEndring minDate={foersteMuligeRefusjonOpphoer} />
           </>
         )}
       </div>

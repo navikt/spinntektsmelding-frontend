@@ -74,6 +74,13 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       await refusjonInput.fill('50000');
     });
 
+    await test.step('Ingen endring av refusjon', async () => {
+      await formPage.checkRadioButton(
+        'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
+        'Nei'
+      );
+    });
+
     await test.step('Send inn og verifiser payload', async () => {
       const reqPromise = page.waitForRequest('**/api/innsendingInntektsmelding');
       await formPage.clickButton('Send');

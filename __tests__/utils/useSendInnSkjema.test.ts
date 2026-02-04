@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, Mock, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { z } from 'zod/v4';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 
@@ -158,7 +158,12 @@ describe('useSendInnSkjema', () => {
       forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
-      refusjon: null,
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [],
+        isEditing: false,
+        harEndringer: 'Nei'
+      },
       avsenderTlf: '12345678'
     };
 
@@ -216,7 +221,12 @@ describe('useSendInnSkjema', () => {
       forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
-      refusjon: null,
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [],
+        isEditing: false,
+        harEndringer: 'Nei'
+      },
       avsenderTlf: '12345678'
     };
 
@@ -270,7 +280,12 @@ describe('useSendInnSkjema', () => {
       forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
-      refusjon: null,
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [],
+        isEditing: false,
+        harEndringer: 'Nei'
+      },
       avsenderTlf: '12345678'
     };
 
@@ -278,7 +293,12 @@ describe('useSendInnSkjema', () => {
       forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: { beloep: 50000 },
-      refusjon: null,
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [],
+        isEditing: false,
+        harEndringer: 'Nei'
+      },
       avsenderTlf: '12345678'
     });
 
@@ -317,8 +337,13 @@ describe('useSendInnSkjema', () => {
     const formData: FullInnsendingType = {
       forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
-      inntekt: null,
-      refusjon: null,
+
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [],
+        isEditing: false,
+        harEndringer: 'Nei'
+      },
       avsenderTlf: '12345678'
     };
 
@@ -378,14 +403,14 @@ describe('useSendInnSkjema', () => {
       if (selectorName.includes('setSkalViseFeilmeldinger')) return mockSetSkalViseFeilmeldinger;
       if (selectorName.includes('setKvitteringInnsendt')) return mockSetKvitteringInnsendt;
       if (selectorName.includes('fullLonnIArbeidsgiverPerioden')) return mockFullLonnIArbeidsgiverPerioden;
-      if (selectorName.includes('lonnISykefravaeret')) return undefined; // This will cause validation error
+      if (selectorName.includes('lonnISykefravaeret')) return undefined;
       if (selectorName.includes('harRefusjonEndringer')) return mockHarRefusjonEndringer;
       return vi.fn();
     });
 
     const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
 
-    const opplysningerBekreftet = true;
+    const opplysningerBekreftet = false; // This will trigger validation error
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
@@ -394,7 +419,8 @@ describe('useSendInnSkjema', () => {
       agp: null,
       inntekt: null,
       refusjon: null,
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      fullLonn: 'Ja'
     };
 
     mockFyllInnsending.mockReturnValue({

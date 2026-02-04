@@ -77,7 +77,12 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
 
     await formPage.fillInput('Dato for endring', '01.06.25');
 
+    await formPage.clickButton('Send');
+    await formPage.assertVisibleTextAtLeastOnce('Refusjonsbeløpet kan ikke være høyere enn inntekten.');
     // submit
+
+    await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '51333');
+    // 51333;
 
     // assert request payload
     const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
@@ -89,7 +94,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       agp: null,
       inntekt: null,
       refusjon: {
-        beloepPerMaaned: 77000,
+        beloepPerMaaned: 51333,
         endringer: [
           {
             beloep: 75000,

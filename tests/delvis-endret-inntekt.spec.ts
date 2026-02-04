@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
 import inntektData from '../mockdata/inntektData.json';
+import { FormPage } from './utils/formPage';
+
+const uuid = 'b24baf59-55c9-48df-b8c1-7d93e098a95d';
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt)', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,16 +19,17 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
       r.fulfill({ status: 201, body: JSON.stringify({ name: 'Nothing' }), contentType: 'application/json' })
     );
     // navigate to receipt page
-    await page.goto('http://localhost:3000/im-dialog/kvittering/b24baf59-55c9-48df-b8c1-7d93e098a95d');
+    await page.goto(`http://localhost:3000/im-dialog/kvittering/${uuid}`);
   });
 
   test('Changes income and submits', async ({ page }) => {
+    const formPage = new FormPage(page);
     // verify on receipt URL
-    await expect(page).toHaveURL(/\/im-dialog\/kvittering\/b24baf59-55c9-48df-b8c1-7d93e098a95d/);
+    await expect(page).toHaveURL(new RegExp(`/im-dialog/kvittering/${uuid}`));
 
     // click first "Endre"
     await page.getByRole('button', { name: 'Endre' }).first().click();
-    await page.waitForURL('**/im-dialog/b24baf59-55c9-48df-b8c1-7d93e098a95d?endre=true');
+    await page.waitForURL(`**/im-dialog/${uuid}?endre=true`);
 
     // adjust income
     const input = page.getByLabel('Månedslønn 02.01.2023');
@@ -37,6 +41,11 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
       .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
+
+    await formPage.checkRadioButton(
+      'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
+      'Nei'
+    );
 
     // confirm phone and checkbox
     await expect(page.getByLabel('Telefon innsender')).toHaveValue('12345678');
@@ -55,7 +64,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
 
     const body = JSON.parse(req.request().postData()!);
     expect(body).toEqual({
-      forespoerselId: 'b24baf59-55c9-48df-b8c1-7d93e098a95d',
+      forespoerselId: uuid,
       agp: null,
       inntekt: {
         beloep: 50000,

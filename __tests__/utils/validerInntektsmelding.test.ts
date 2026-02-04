@@ -1,14 +1,11 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
 import { ErrorCodes, ValiderResultat, ValiderTekster } from '../../utils/validerInntektsmelding';
-// import type { BruttoinntektFeilkode } from '../../utils/validators/validerBruttoinntekt';
 import type { PeriodeFeilkode } from '../../validators/validerPeriode';
 import type { FullLonnIArbeidsgiverPerioden } from '../../validators/validerFullLonnIArbeidsgiverPerioden';
-import type { FullLonnISykefravaeret } from '../../validators/validerLonnISykefravaeret';
 import type { NaturalytelserFeilkoder } from '../../validators/validerNaturalytelser';
 import type { LonnIArbeidsgiverperiodenFeilkode } from '../../validators/validerLonnIArbeidsgiverperioden';
 import type { LonnUnderSykefravaeretFeilkode } from '../../validators/validerLonnUnderSykefravaeret';
 import type { PeriodeEgenmeldingFeilkode } from '../../validators/validerPeriodeEgenmelding';
-import type { BekreftOpplysningerFeilkoder } from '../../validators/validerBekreftOpplysninger';
 import type { EndringAvMaanedslonnFeilkode } from '../../validators/validerEndringAvMaanedslonn';
 import type { TelefonFeilkode } from '../../validators/validerTelefon';
 import type { PeriodeFravaerFeilkode } from '../../validators/validerPeriodeFravaer';
@@ -29,11 +26,9 @@ describe('validerInntektsmelding type contracts', () => {
     expectTypeOf<PeriodeFeilkode>().toExtend<ValiderResultat['code']>();
     expectTypeOf<BruttoinntektFeilkode>().toExtend<ValiderResultat['code']>();
     expectTypeOf<FullLonnIArbeidsgiverPerioden>().toExtend<ValiderResultat['code']>();
-    expectTypeOf<FullLonnISykefravaeret>().toExtend<ValiderResultat['code']>();
     expectTypeOf<NaturalytelserFeilkoder>().toExtend<ValiderResultat['code']>();
     expectTypeOf<LonnIArbeidsgiverperiodenFeilkode>().toExtend<ValiderResultat['code']>();
     expectTypeOf<LonnUnderSykefravaeretFeilkode>().toExtend<ValiderResultat['code']>();
-    expectTypeOf<BekreftOpplysningerFeilkoder>().toExtend<ValiderResultat['code']>();
     expectTypeOf<EndringAvMaanedslonnFeilkode>().toExtend<ValiderResultat['code']>();
     expectTypeOf<PeriodeEgenmeldingFeilkode>().toExtend<ValiderResultat['code']>();
     expectTypeOf<PeriodeFravaerFeilkode>().toExtend<ValiderResultat['code']>();

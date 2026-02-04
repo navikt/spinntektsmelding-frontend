@@ -1,11 +1,34 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
+import { FormProvider, useForm } from 'react-hook-form';
 
 import Arbeidsgiverperiode from '../../../components/Arbeidsgiverperiode';
 import { Periode } from '../../../state/state';
 import { vi, expect, describe } from 'vitest';
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
+
+function TestWrapper({
+  children,
+  defaultValues = {}
+}: {
+  children: React.ReactNode;
+  defaultValues?: Record<string, unknown>;
+}) {
+  const methods = useForm({
+    defaultValues: {
+      agp: {
+        perioder: [],
+        redusertLoennIAgp: {
+          beloep: undefined,
+          begrunnelse: undefined
+        }
+      },
+      ...defaultValues
+    }
+  });
+  return <FormProvider {...methods}>{children}</FormProvider>;
+}
 
 const mockSetIsDirtyForm = vi.fn();
 const mockOnTilbakestillArbeidsgiverperiode = vi.fn();
@@ -19,13 +42,15 @@ describe('TidligereInntekt', () => {
     const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
 
     const { container } = render(
-      <Arbeidsgiverperiode
-        arbeidsgiverperioder={arbeidsgiverperiode}
-        setIsDirtyForm={mockSetIsDirtyForm}
-        skjemastatus={SkjemaStatus.FULL}
-        onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
-        skalViseArbeidsgiverperiode={false}
-      />
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={arbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.FULL}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={false}
+        />
+      </TestWrapper>
     );
 
     const results = await axe(container);
@@ -42,13 +67,15 @@ describe('TidligereInntekt', () => {
     const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
 
     const { container } = render(
-      <Arbeidsgiverperiode
-        arbeidsgiverperioder={arbeidsgiverperiode}
-        setIsDirtyForm={mockSetIsDirtyForm}
-        skjemastatus={SkjemaStatus.FULL}
-        onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
-        skalViseArbeidsgiverperiode={false}
-      />
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={arbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.FULL}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={false}
+        />
+      </TestWrapper>
     );
 
     userEvent.click(screen.getByText('Endre'));
@@ -70,13 +97,15 @@ describe('TidligereInntekt', () => {
     const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 24), id: '123' }];
 
     const { container } = render(
-      <Arbeidsgiverperiode
-        arbeidsgiverperioder={arbeidsgiverperiode}
-        setIsDirtyForm={mockSetIsDirtyForm}
-        skjemastatus={SkjemaStatus.FULL}
-        onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
-        skalViseArbeidsgiverperiode={false}
-      />
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={arbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.FULL}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={false}
+        />
+      </TestWrapper>
     );
 
     const tekst = screen.getByText(
@@ -99,13 +128,15 @@ describe('TidligereInntekt', () => {
     const arbeidsgiverperiode: Array<Periode> = [];
 
     const { container } = render(
-      <Arbeidsgiverperiode
-        arbeidsgiverperioder={arbeidsgiverperiode}
-        setIsDirtyForm={mockSetIsDirtyForm}
-        skjemastatus={SkjemaStatus.FULL}
-        onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
-        skalViseArbeidsgiverperiode={false}
-      />
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={arbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.FULL}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={false}
+        />
+      </TestWrapper>
     );
 
     const tekst = screen.getByText(/Du har lagt inn arbeidsgiverperiode på 0 dager./);
@@ -126,13 +157,15 @@ describe('TidligereInntekt', () => {
     const arbeidsgiverperiode = undefined;
 
     const { container } = render(
-      <Arbeidsgiverperiode
-        arbeidsgiverperioder={arbeidsgiverperiode}
-        setIsDirtyForm={mockSetIsDirtyForm}
-        skjemastatus={SkjemaStatus.FULL}
-        onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
-        skalViseArbeidsgiverperiode={true}
-      />
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={arbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.FULL}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={true}
+        />
+      </TestWrapper>
     );
 
     const tekst = screen.getByText(/Velg begrunnelse for kort arbeidsgiverperiode/);

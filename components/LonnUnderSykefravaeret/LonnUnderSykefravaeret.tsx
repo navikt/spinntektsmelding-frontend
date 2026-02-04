@@ -19,6 +19,7 @@ export default function LonnUnderSykefravaeret({
   refusjonEndringer
 }: Readonly<LonnUnderSykefravaeretProps>) {
   if (!loenn) return null;
+
   if (loenn.status === 'Nei')
     return (
       <>
@@ -40,12 +41,9 @@ export default function LonnUnderSykefravaeret({
         {harGyldigeRefusjonEndringer(refusjonEndringer) && (
           <>
             {harRefusjonEndringer === 'Nei' && (
-              <>
-                <div className={lokalStyle.uthevet}>
-                  Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?
-                </div>
-                <BodyShort>{harRefusjonEndringer}</BodyShort>
-              </>
+              <div className={lokalStyle.uthevet}>
+                Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?
+              </div>
             )}
             {harRefusjonEndringer === 'Ja' && refusjonEndringer!.length > 0 && (
               <table className={lokalStyle.loennTabell}>
