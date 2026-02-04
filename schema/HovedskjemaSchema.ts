@@ -6,6 +6,101 @@ import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSche
 
 const OpplysningstypeSchema = z.enum(['inntekt', 'refusjon', 'arbeidsgiverperiode']);
 
+type HovedskjemaInput = {
+  inntekt?: { beloep?: number };
+  refusjon?: { beloepPerMaaned?: number; harEndringer?: 'Ja' | 'Nei'; endringer?: unknown[] };
+  kreverRefusjon?: 'Ja' | 'Nei';
+  fullLonn?: 'Ja' | 'Nei';
+  agp?: { redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string } };
+  opplysningstyper?: string[];
+};
+
+function validateRefusjonBeloep(val: HovedskjemaInput, ctx: z.RefinementCtx) {
+  if (
+    val.inntekt?.beloep !== undefined &&
+    val.refusjon?.beloepPerMaaned !== undefined &&
+    val.inntekt?.beloep < val.refusjon?.beloepPerMaaned
+  ) {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Refusjonsbeløpet kan ikke være høyere enn inntekten.',
+      path: ['refusjon', 'beloepPerMaaned'],
+      input: val.refusjon?.beloepPerMaaned
+    });
+  }
+}
+
+function validateRefusjonEndringer(val: HovedskjemaInput, ctx: z.RefinementCtx) {
+  if (val.refusjon?.harEndringer === 'Ja' && (!val.refusjon.endringer || val.refusjon.endringer.length === 0)) {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Vennligst legg til minst én endring.',
+      path: ['refusjon', 'endringer'],
+      input: val.refusjon?.endringer
+    });
+  }
+
+  if (val.kreverRefusjon === 'Ja' && val.refusjon?.harEndringer !== 'Ja' && val.refusjon?.harEndringer !== 'Nei') {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
+      path: ['refusjon', 'harEndringer'],
+      input: val.refusjon?.harEndringer
+    });
+  }
+}
+
+function validateKreverRefusjonOgFullLonn(val: HovedskjemaInput, ctx: z.RefinementCtx) {
+  if (val.kreverRefusjon !== 'Ja' && val.kreverRefusjon !== 'Nei') {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden...',
+      path: ['kreverRefusjon'],
+      input: val.kreverRefusjon
+    });
+  }
+
+  if (val.fullLonn !== 'Ja' && val.fullLonn !== 'Nei' && val.opplysningstyper?.includes('arbeidsgiverperiode')) {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Velg om full lønn betales i arbeidsgiverperioden.',
+      path: ['fullLonn'],
+      input: val.fullLonn
+    });
+  }
+}
+
+function validateRedusertLoennIAgp(val: HovedskjemaInput, ctx: z.RefinementCtx) {
+  if (val.fullLonn !== 'Nei') return;
+
+  if (val.agp?.redusertLoennIAgp?.beloep === undefined || val.agp?.redusertLoennIAgp?.beloep === null) {
+    console.log('[DEBUG] beloep is undefined/null, adding error');
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
+      path: ['agp', 'redusertLoennIAgp', 'beloep'],
+      input: val.agp?.redusertLoennIAgp?.beloep
+    });
+  } else if ((val.inntekt?.beloep ?? 0) < val.agp.redusertLoennIAgp.beloep && (val.inntekt?.beloep ?? 0) !== 0) {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
+      path: ['agp', 'redusertLoennIAgp', 'beloep'],
+      input: val.agp?.redusertLoennIAgp?.beloep
+    });
+  }
+
+  if (!val.agp?.redusertLoennIAgp?.begrunnelse) {
+    console.log('[DEBUG] begrunnelse is falsy, adding error');
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Begrunnelse for redusert utbetaling i arbeidsgiverperioden må fylles ut',
+      path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
+      input: val.agp?.redusertLoennIAgp?.begrunnelse
+    });
+  }
+}
+
 export const HovedskjemaSchema = z
   .object({
     bekreft_opplysninger: z.boolean().refine((value) => value === true, {
@@ -113,96 +208,8 @@ export const HovedskjemaSchema = z
     opplysningstyper: z.array(OpplysningstypeSchema).optional()
   })
   .superRefine((val, ctx) => {
-    if (
-      val.inntekt?.beloep !== undefined &&
-      val.refusjon?.beloepPerMaaned !== undefined &&
-      val.inntekt?.beloep < val.refusjon?.beloepPerMaaned
-    ) {
-      ctx.issues.push({
-        code: 'custom',
-        message: 'Refusjonsbeløpet kan ikke være høyere enn inntekten.',
-        path: ['refusjon', 'beloepPerMaaned'],
-        input: val.refusjon?.beloepPerMaaned
-      });
-    }
-
-    if (val.refusjon?.harEndringer === 'Ja' && (!val.refusjon.endringer || val.refusjon.endringer.length === 0)) {
-      ctx.issues.push({
-        code: 'custom',
-        message: 'Vennligst legg til minst én endring.',
-        path: ['refusjon', 'endringer'],
-        input: val.refusjon?.endringer
-      });
-    }
-
-    // Valider at harEndringer er valgt når kreverRefusjon er 'Ja'
-    if (val.kreverRefusjon === 'Ja' && val.refusjon?.harEndringer !== 'Ja' && val.refusjon?.harEndringer !== 'Nei') {
-      ctx.issues.push({
-        code: 'custom',
-        message: 'Vennligst angi om det er endringer i refusjonsbeløpet i perioden.',
-        path: ['refusjon', 'harEndringer'],
-        input: val.refusjon?.harEndringer
-      });
-    }
-
-    if (val.kreverRefusjon !== 'Ja' && val.kreverRefusjon !== 'Nei') {
-      ctx.issues.push({
-        code: 'custom',
-        message: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden...',
-        path: ['kreverRefusjon'],
-        input: val.kreverRefusjon
-      });
-    }
-
-    if (val.fullLonn !== 'Ja' && val.fullLonn !== 'Nei' && val.opplysningstyper?.includes('arbeidsgiverperiode')) {
-      console.log(
-        '[DEBUG] fullLonn validation FAILING - val.fullLonn:',
-        JSON.stringify(val.fullLonn),
-        'type:',
-        typeof val.fullLonn
-      );
-      ctx.issues.push({
-        code: 'custom',
-        message: 'Velg om full lønn betales i arbeidsgiverperioden.',
-        path: ['fullLonn'],
-        input: val.fullLonn
-      });
-    }
-
-    // Valider beloep og begrunnelse når fullLonn er 'Nei'
-    if (val.fullLonn === 'Nei') {
-      console.log(
-        '[DEBUG] fullLonn is Nei, checking agp fields. agp:',
-        JSON.stringify(val.agp),
-        'redusertLoennIAgp:',
-        JSON.stringify(val.agp?.redusertLoennIAgp)
-      );
-      if (val.agp?.redusertLoennIAgp?.beloep === undefined || val.agp?.redusertLoennIAgp?.beloep === null) {
-        console.log('[DEBUG] beloep is undefined/null, adding error');
-        ctx.issues.push({
-          code: 'custom',
-          message: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
-          path: ['agp', 'redusertLoennIAgp', 'beloep'],
-          input: val.agp?.redusertLoennIAgp?.beloep
-        });
-      } else if ((val.inntekt?.beloep ?? 0) < val.agp.redusertLoennIAgp.beloep && (val.inntekt?.beloep ?? 0) !== 0) {
-        // Beløp i arbeidsgiverperioden kan ikke være høyere enn inntekt
-        ctx.issues.push({
-          code: 'custom',
-          message: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
-          path: ['agp', 'redusertLoennIAgp', 'beloep'],
-          input: val.agp?.redusertLoennIAgp?.beloep
-        });
-      }
-
-      if (!val.agp?.redusertLoennIAgp?.begrunnelse) {
-        console.log('[DEBUG] begrunnelse is falsy, adding error');
-        ctx.issues.push({
-          code: 'custom',
-          message: 'Begrunnelse for redusert utbetaling i arbeidsgiverperioden må fylles ut',
-          path: ['agp', 'redusertLoennIAgp', 'begrunnelse'],
-          input: val.agp?.redusertLoennIAgp?.begrunnelse
-        });
-      }
-    }
+    validateRefusjonBeloep(val, ctx);
+    validateRefusjonEndringer(val, ctx);
+    validateKreverRefusjonOgFullLonn(val, ctx);
+    validateRedusertLoennIAgp(val, ctx);
   });
