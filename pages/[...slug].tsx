@@ -385,11 +385,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Skillelinje />
             {skalViseEgenmelding && !behandlingsdagerInnsending && (
               <>
-                <Egenmelding
-                  lasterData={lasterData}
-                  setIsDirtyForm={setIsDirtyForm}
-                  selvbestemtInnsending={selvbestemtInnsending}
-                />
+                <Egenmelding lasterData={lasterData} />
                 <Skillelinje />
               </>
             )}

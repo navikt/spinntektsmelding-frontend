@@ -115,7 +115,7 @@ export default function useFyllInnsending() {
           skjemaData.agp?.redusertLoennIAgp as LonnIArbeidsgiverperioden,
           arbeidsgiverperioder
         ),
-        egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
+        // egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
         redusertLoennIAgp: skjemaData.agp?.redusertLoennIAgp ?? null
       },
       inntekt: harForespurtInntekt

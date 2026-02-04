@@ -1,3 +1,8 @@
 .skeleton {
   min-width: 5rem;
 }
+
+.egenmeldingWrapper {
+  display: flex;
+  flex-direction: row;
+}

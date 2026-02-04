@@ -20,8 +20,13 @@
 
 .endresykemeldingknapper {
   padding-top: 1rem;
-  display: flex;
   justify-content: space-between;
+}
+
+.datowrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 
 @media screen and (max-width: 800px) {
