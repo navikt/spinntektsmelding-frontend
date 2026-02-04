@@ -1,7 +1,6 @@
 import { BruttoinntektFeilkode } from '../validators/validerBruttoinntekt';
 import { PeriodeFeilkode } from '../validators/validerPeriode';
 import { FullLonnIArbeidsgiverPerioden } from '../validators/validerFullLonnIArbeidsgiverPerioden';
-import { FullLonnISykefravaeret } from '../validators/validerLonnISykefravaeret';
 import { NaturalytelserFeilkoder } from '../validators/validerNaturalytelser';
 import { LonnIArbeidsgiverperiodenFeilkode } from '../validators/validerLonnIArbeidsgiverperioden';
 import { LonnUnderSykefravaeretFeilkode } from '../validators/validerLonnUnderSykefravaeret';
@@ -35,7 +34,6 @@ type codeUnion =
   | BruttoinntektFeilkode
   | ErrorCodes
   | FullLonnIArbeidsgiverPerioden
-  | FullLonnISykefravaeret
   | NaturalytelserFeilkoder
   | LonnIArbeidsgiverperiodenFeilkode
   | LonnUnderSykefravaeretFeilkode

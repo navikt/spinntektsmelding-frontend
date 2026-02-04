@@ -3,7 +3,6 @@ import { ErrorCodes, ValiderResultat, ValiderTekster } from '../../utils/valider
 // import type { BruttoinntektFeilkode } from '../../utils/validators/validerBruttoinntekt';
 import type { PeriodeFeilkode } from '../../validators/validerPeriode';
 import type { FullLonnIArbeidsgiverPerioden } from '../../validators/validerFullLonnIArbeidsgiverPerioden';
-import type { FullLonnISykefravaeret } from '../../validators/validerLonnISykefravaeret';
 import type { NaturalytelserFeilkoder } from '../../validators/validerNaturalytelser';
 import type { LonnIArbeidsgiverperiodenFeilkode } from '../../validators/validerLonnIArbeidsgiverperioden';
 import type { LonnUnderSykefravaeretFeilkode } from '../../validators/validerLonnUnderSykefravaeret';
@@ -29,7 +28,6 @@ describe('validerInntektsmelding type contracts', () => {
     expectTypeOf<PeriodeFeilkode>().toExtend<ValiderResultat['code']>();
     expectTypeOf<BruttoinntektFeilkode>().toExtend<ValiderResultat['code']>();
     expectTypeOf<FullLonnIArbeidsgiverPerioden>().toExtend<ValiderResultat['code']>();
-    expectTypeOf<FullLonnISykefravaeret>().toExtend<ValiderResultat['code']>();
     expectTypeOf<NaturalytelserFeilkoder>().toExtend<ValiderResultat['code']>();
     expectTypeOf<LonnIArbeidsgiverperiodenFeilkode>().toExtend<ValiderResultat['code']>();
     expectTypeOf<LonnUnderSykefravaeretFeilkode>().toExtend<ValiderResultat['code']>();
