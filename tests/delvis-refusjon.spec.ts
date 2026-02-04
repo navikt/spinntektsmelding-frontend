@@ -63,10 +63,6 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
 
     await page.getByRole('button', { name: 'Endre' }).nth(1).click();
 
-    // await page.waitForURL('**/im-dialog/**');
-
-    // update income to 50000
-    // await page.getByRole('button', { name: /Endre/ }).nth(1).click();
     await expect(page.locator('label:text("Månedslønn 01.07.2023")')).toHaveValue('26000');
 
     await formPage.fillInput('Månedslønn 01.07.2023', '50000');
@@ -125,18 +121,12 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
 
     await page.getByRole('button', { name: 'Endre' }).nth(1).click();
 
-    // await page.waitForURL('**/im-dialog/**');
-
-    // update income to 50000
-    // await page.getByRole('button', { name: /Endre/ }).nth(1).click();
     await expect(page.locator('label:text("Månedslønn 01.07.2023")')).toHaveValue('26000');
 
     await formPage.fillInput('Månedslønn 01.07.2023', '50000');
 
     await formPage.fillInput('Telefon innsender', '12345678');
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
-
-    // await formPage.clickButton('Send');
 
     // select change reason
     await formPage.selectOption('Velg endringsårsak', 'Bonus');

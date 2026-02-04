@@ -15,10 +15,6 @@ test.describe('Utfylling og innsending av skjema', () => {
         body: JSON.stringify({ name: 'Nothing' })
       })
     );
-    // inject a11y checks
-    // await page.addInitScript(() => {
-    //   // require('@axe-core/playwright').injectAxe();
-    // });
   });
 
   test('should display information on the person and the submitter', async ({ page }) => {
@@ -48,10 +44,10 @@ test.describe('Utfylling og innsending av skjema', () => {
     await expect(page.getByLabel('Telefon innsender')).toHaveValue('12345678');
 
     // Egenmelding periods
-    await expect(page.locator('[data-cy="egenmelding"] .navds-label').first()).toHaveText('Fra');
-    await expect(page.locator('[data-cy="egenmelding"] .navds-label').last()).toHaveText('Til');
-    await expect(page.locator('[data-cy="egenmelding-fra"]')).toHaveText('01.02.2023');
-    await expect(page.locator('[data-cy="egenmelding-til"]')).toHaveText('03.02.2023');
+    await expect(page.locator('[data-cy="egenmelding-0-fra"]').first()).toHaveText('Fra');
+    await expect(page.locator('[data-cy="egenmelding-0-til"]').last()).toHaveText('Til');
+    await expect(page.locator('[data-cy="egenmelding-0-fra-dato"]')).toHaveText('01.02.2023');
+    await expect(page.locator('[data-cy="egenmelding-0-til-dato"]')).toHaveText('03.02.2023');
 
     // Sykmelding periods
     await expect(page.locator('[data-cy="sykmelding-0-fra"]')).toHaveText('Fra');

@@ -7,22 +7,6 @@ const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request }) => {
   const formPage = new FormPage(page);
-  // Intercept API calls
-  // await page.route('*/**/api/hentKvittering/8d50ef20-37b5-4829-ad83-56219e70b375', (route) => {
-  //   route.fulfill({
-  //     status: 404,
-  //     body: JSON.stringify({
-  //       name: 'Nothing'
-  //     })
-  //   });
-  // });
-
-  // await page.route('*/**/api/hent-forespoersel/*', (route) => {
-  //   route.fulfill({
-  //     status: 200,
-  //     body: JSON.stringify(trengerDelvis)
-  //   });
-  // });
 
   await page.route('*/**/api/innsendingInntektsmelding', (route) => {
     route.fulfill({
@@ -85,7 +69,6 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   expect(requestBody).toEqual({
     forespoerselId: uuid,
     agp: {
-      egenmeldinger: [],
       perioder: [
         {
           fom: '2024-12-06',

@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import originalData from '../mockdata/trenger-originalen-16dager.json';
 import inntektData from '../mockdata/inntektData.json';
 import { FormPage } from './utils/formPage';
 
@@ -72,7 +71,6 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
           { fom: '2023-02-20', tom: '2023-03-04' },
           { fom: '2023-03-15', tom: '2023-03-16' }
         ],
-        egenmeldinger: [],
         redusertLoennIAgp: { beloep: 50000, begrunnelse: 'ArbeidOpphoert' }
       },
       inntekt: {

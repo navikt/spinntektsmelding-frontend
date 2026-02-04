@@ -56,7 +56,6 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     // verify navigation and UI
     // await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
-    // await expect(page.getByText('05.12.2024')).toBeVisible();
     await expect(page.locator('text="05.12.2024"')).toBeVisible();
   });
 
@@ -112,11 +111,8 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       naturalytelser: []
     });
 
-    // await expect(page).toHaveURL(/\/im-dialog\/kvittering\/12345678/);
     await formPage.assertVisibleTextAtLeastOnce('Kvittering - innsendt inntektsmelding');
     await formPage.assertVisibleText('Bonus');
     await formPage.assertVisibleText('45 000,00');
-    // await expect(page.getByText('Bonus')).toBeVisible();
-    // await expect(page.getByText('45 000,00')).toBeVisible();
   });
 });

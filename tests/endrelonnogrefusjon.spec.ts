@@ -62,12 +62,12 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     // click første Endre for å legge til periode
     await page.getByRole('button', { name: /Endre/ }).first().click();
 
-    await formPage.clickButton('Legg til periode');
+    // await formPage.clickButton('Legg til periode');
 
     // fill nye periode-datoer
     const skReqPromise = page.waitForRequest('*/**/api/inntektsdata');
-    await page.getByRole('textbox', { name: 'Til' }).nth(1).fill('01.02.23');
-    await page.getByRole('textbox', { name: 'Fra' }).nth(1).fill('30.01.23');
+    await page.getByRole('textbox', { name: 'Fra' }).first().fill('30.01.23');
+    await page.getByRole('textbox', { name: 'Til' }).first().fill('14.02.23');
 
     // capture skjaeringstidspunkt request
     const skReq = await skReqPromise;
@@ -85,10 +85,6 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       forespoerselId: uuid,
       agp: {
         perioder: [{ fom: '2023-01-30', tom: '2023-02-14' }],
-        egenmeldinger: [
-          { fom: '2023-02-02', tom: '2023-02-02' },
-          { fom: '2023-01-30', tom: '2023-02-01' }
-        ],
         redusertLoennIAgp: null
       },
       inntekt: {
@@ -141,7 +137,6 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       forespoerselId: uuid,
       agp: {
         perioder: [{ fom: '2023-02-02', tom: '2023-02-17' }],
-        egenmeldinger: [{ fom: '2023-02-02', tom: '2023-02-02' }],
         redusertLoennIAgp: null
       },
       inntekt: {
@@ -161,26 +156,24 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
   test('refusjon med varig lønnsendring', async ({ page }) => {
     const formPage = new FormPage(page);
 
+    await page.getByRole('button', { name: /Endre/ }).first().click();
+    await page.getByRole('textbox', { name: 'Til' }).first().fill('14.02.23');
+    await page.getByRole('textbox', { name: 'Fra' }).first().fill('30.01.23');
+
+    await page.locator('[data-cy="endre-beloep"]').click();
+    await formPage.fillInput('Månedslønn 30.01.2023', '70000');
+
     await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
+    await page.locator('[data-cy="endre-refusjon-arbeidsgiver-beloep"]').click();
+    await formPage.fillInput('Månedslønn 30.01.2023', '75000');
 
     await formPage.checkRadioButton(
       'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
       'Nei'
     );
 
-    await page.locator('[data-cy="endre-beloep"]').click();
-    const salaryInput = page.locator('[data-cy="inntekt-beloep-input"]');
-    await salaryInput.fill('70000');
-    await page.locator('[data-cy="endre-refusjon-arbeidsgiver-beloep"]').click();
-    await salaryInput.fill('75000');
-
-    // select Varig lønnsendring
-    await page.getByRole('button', { name: /Endre/ }).first().click();
-    await page.getByRole('button', { name: 'Legg til periode' }).click();
-    await page.getByRole('textbox', { name: 'Til' }).nth(1).fill('01.02.23');
-    await page.getByRole('textbox', { name: 'Fra' }).nth(1).fill('30.01.23');
     await page.getByLabel('Velg endringsårsak').selectOption('Varig lønnsendring');
     await page.getByLabel('Lønnsendring gjelder fra').fill('30.12.22');
 
@@ -195,14 +188,10 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       forespoerselId: uuid,
       agp: {
         perioder: [{ fom: '2023-01-30', tom: '2023-02-14' }],
-        egenmeldinger: [
-          { fom: '2023-02-02', tom: '2023-02-02' },
-          { fom: '2023-01-30', tom: '2023-02-01' }
-        ],
         redusertLoennIAgp: null
       },
       inntekt: {
-        beloep: 84333.33,
+        beloep: 75000,
         inntektsdato: '2023-01-30',
         endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2022-12-30' }]
       },

@@ -120,7 +120,6 @@ describe('useFyllAapenInnsending', () => {
       expect(innsending.data).toEqual({
         agp: {
           perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
-          egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
           redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
         },
         inntekt: {
@@ -206,7 +205,6 @@ describe('useFyllAapenInnsending', () => {
       expect(innsending.data).toEqual({
         agp: {
           perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
-          egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
           redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
         },
         inntekt: {
@@ -302,7 +300,6 @@ describe('useFyllAapenInnsending', () => {
       expect(innsending.data).toEqual({
         agp: {
           perioder: [],
-          egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
           redusertLoennIAgp: { beloep: 99999, begrunnelse: 'StreikEllerLockout' }
         },
         inntekt: {

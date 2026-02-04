@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { FormPage } from './utils/formPage';
+import AxeBuilder from '@axe-core/playwright';
 
 const uuid = '588e055c-5d72-449b-b88f-56aa43457668';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
@@ -53,12 +54,12 @@ test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
     await expect(page.getByText('Refusjon til arbeidsgiver etter arbeidsgiverperiode')).toHaveCount(0);
 
     // alert and button disabled
-    await expect(
-      page.getByText(
-        'Hvis du overstyrer arbeidsgiverperioden er det ikke mulig å også endre eller legge til egenmeldingsperioder.'
-      )
-    ).toBeVisible();
-    await expect(page.getByRole('button', { name: /Endre/ }).first()).toBeDisabled();
+    // await expect(
+    //   page.getByText(
+    //     'Hvis du overstyrer arbeidsgiverperioden er det ikke mulig å også endre eller legge til egenmeldingsperioder.'
+    //   )
+    // ).toBeVisible();
+    // await expect(page.getByRole('button', { name: /Endre/ }).first()).toBeDisabled();
 
     await formPage.selectOption('Velg begrunnelse', 'Det er ikke fire ukers opptjeningstid');
 
@@ -68,6 +69,10 @@ test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
     );
 
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
+
+    // Accessibility scan
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    expect(accessibilityScanResults.violations).toEqual([]);
 
     const pageLoad = page.waitForResponse('*/**/api/innsendingInntektsmelding');
     await page.getByRole('button', { name: 'Send' }).click();

@@ -110,10 +110,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
           { fom: '2024-09-06', tom: '2024-09-08' },
           { fom: '2024-09-10', tom: '2024-09-15' }
         ],
-        egenmeldinger: [
-          { fom: '2024-09-06', tom: '2024-09-08' },
-          { fom: '2024-09-10', tom: '2024-09-10' }
-        ],
         redusertLoennIAgp: {
           beloep: 5000,
           begrunnelse: 'ManglerOpptjening'
@@ -147,18 +143,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
   });
 
   test('selvbestemt med varig lønnsendring', async ({ page }) => {
-    // // stub innsending and aktive orgnr
-    // await page.route('*/**/api/selvbestemt-inntektsmelding', (r) =>
-    //   r.fulfill({
-    //     status: 201,
-    //     contentType: 'application/json',
-    //     body: JSON.stringify({ selvbestemtId: '1234-5678-1234-5678-123456789012' })
-    //   })
-    // );
-    // await page.route('*/**/api/aktiveorgnr', (r) =>
-    //   r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(activeOrgnr) })
-    // );
-
     // fill personnummer and next
     const formPage = new FormPage(page);
     await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
@@ -200,10 +184,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         perioder: [
           { fom: '2024-09-06', tom: '2024-09-08' },
           { fom: '2024-09-10', tom: '2024-09-17' }
-        ],
-        egenmeldinger: [
-          { fom: '2024-09-06', tom: '2024-09-08' },
-          { fom: '2024-09-10', tom: '2024-09-10' }
         ],
         redusertLoennIAgp: {
           beloep: 5000,
@@ -288,7 +268,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
           { fom: '2024-09-06', tom: '2024-09-08' },
           { fom: '2024-09-10', tom: '2024-09-17' }
         ],
-        egenmeldinger: [],
         redusertLoennIAgp: {
           beloep: 5000,
           begrunnelse: 'ManglerOpptjening'
@@ -380,7 +359,6 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
           { fom: '2024-09-06', tom: '2024-09-08' },
           { fom: '2024-09-10', tom: '2024-09-17' }
         ],
-        egenmeldinger: [],
         redusertLoennIAgp: {
           beloep: 5000,
           begrunnelse: 'ManglerOpptjening'

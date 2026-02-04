@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-// import hentForespoersel from '../mockdata/trenger-originalen-16dager-innsendt.json';
 import inntektData from '../mockdata/inntektData.json';
 
 test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
@@ -60,7 +59,6 @@ test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
           { fom: '2023-02-20', tom: '2023-03-04' },
           { fom: '2023-03-15', tom: '2023-03-17' }
         ],
-        egenmeldinger: [],
         redusertLoennIAgp: null
       },
       inntekt: {
