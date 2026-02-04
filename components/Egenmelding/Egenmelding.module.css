@@ -3,41 +3,8 @@
   margin-bottom: 1rem;
 }
 
-.sammeperiode {
-  align-self: end;
-  margin-left: 1.05rem;
-}
-
 .datowrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
-}
-
-.datepickerytrewrapper {
-  margin-top: 1rem;
-}
-
-.endresykemeldingknapper {
-  padding-top: 1rem;
-  justify-content: space-between;
-}
-
-.datowrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-}
-
-@media screen and (max-width: 800px) {
-  .sammeperiode {
-    margin-left: 0;
-  }
-}
-
-@media screen and (max-width: 500px) {
-  .endresykemeldingknapper {
-    flex-direction: column;
-    gap: 2rem;
-  }
 }
