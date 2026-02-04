@@ -109,7 +109,7 @@ jobs:
           path: .next/analyze/bundle-stats.json
 
       - name: Download base bundle stats
-        uses: dawidd6/action-download-artifact@0bd50d53a6d7fb5cb921e607957e9cc12b4ce392
+        uses: dawidd6/action-download-artifact@5c98f0b039f36ef966fdb7dfa9779262785ecb05
         if: github.event_name == 'pull_request'
         continue-on-error: true
         with:
