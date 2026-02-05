@@ -136,19 +136,31 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
     set(
       produce((state) => {
         state.refusjonEndringer = endringer;
+        if (endringer?.length > 0) {
+          endringer.forEach((endring, index) => {
+            if (endring.beloep && endring.beloep >= 0) {
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
+            }
+            if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].dato`);
+            }
+          });
+        }
         return state;
       })
     ),
   setHarRefusjonEndringer: (harEndringer: YesNo) =>
     set(
       produce((state) => {
-        if (!state.harRefusjonEndringer) {
-          state.opprinneligHarRefusjonEndringer = harEndringer;
-        }
         state.harRefusjonEndringer = harEndringer;
-        if (harEndringer === 'Ja' && (!state.refusjonEndringer || state.refusjonEndringer.length === 0)) {
+        if (!state.refusjonEndringer) {
           state.refusjonEndringer = [{}];
         }
+
+        state.opprinneligHarRefusjonEndringer ??= harEndringer;
+
+        state.opprinneligRefusjonEndringer ??= [{}];
+
         return state;
       })
     )

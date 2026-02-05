@@ -274,44 +274,33 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
       );
     },
     harArbeidsgiverperiodenBlittEndret: () => {
-      const fravaersperioder = get().fravaersperioder;
+      const opprinnelig = get().opprinneligArbeidsgiverperioder;
       const egenmeldingsperioder = get().egenmeldingsperioder;
-      const arbeidsgiverperioder = get().arbeidsgiverperioder;
-
-      if (!arbeidsgiverperioder) {
-        return;
-      }
-
-      const beregnetArbeidsgiverperiode = finnArbeidsgiverperiode(
-        fravaersperioder,
-        egenmeldingsperioder
-      ) as unknown as Array<Periode>;
-
-      const lengdePeriode = arbeidsgiverperioder?.length ?? 0;
-      const lengdeBeregnet = beregnetArbeidsgiverperiode?.length ?? 0;
-
-      if (lengdePeriode !== lengdeBeregnet) {
-        set(
-          produce((state) => {
-            state.endretArbeidsgiverperiode = true;
+      const sykmeldingsperioder = get().sykmeldingsperioder;
+      set(
+        produce((state) => {
+          if (!opprinnelig) {
             return state;
-          })
-        );
-        return;
-      }
+          }
 
-      arbeidsgiverperioder?.forEach((periode, index) => {
-        const fomMatch = periode.fom?.getTime() === beregnetArbeidsgiverperiode?.[index]?.fom?.getTime();
-        const tomMatch = periode.tom?.getTime() === beregnetArbeidsgiverperiode?.[index]?.tom?.getTime();
-        if (!fomMatch || !tomMatch) {
-          set(
-            produce((state) => {
-              state.endretArbeidsgiverperiode = true;
-              return state;
-            })
+          const perioder = sykmeldingsperioder
+            ? sykmeldingsperioder.concat(egenmeldingsperioder ?? [])
+            : egenmeldingsperioder;
+
+          const agp = perioder ? finnArbeidsgiverperiode(perioder) : [];
+
+          const opprinneligString = JSON.stringify(
+            opprinnelig.map((periode) => ({ fom: periode.fom, tom: periode.tom }))
           );
-        }
-      });
+          const agpString = JSON.stringify(agp.map((periode) => ({ fom: periode.fom, tom: periode.tom })));
+
+          if (opprinneligString !== agpString) {
+            state.endretArbeidsgiverperiode = true;
+          }
+
+          return state;
+        })
+      );
     }
   };
 };
