@@ -1,18 +1,17 @@
 import React from 'react';
 import localStyles from './Egenmelding.module.css';
 import Heading3 from '../Heading3/Heading3';
-import useBoundStore from '../../state/useBoundStore';
 import EgenmeldingLoader from './EgenmeldingLoader';
 import TextLabel from '../TextLabel/TextLabel';
 import formatDate from '../../utils/formatDate';
+import { Periode } from '../../state/state';
 
 interface EgenmeldingProps {
   lasterData?: boolean;
+  egenmeldingsperioder: Array<Periode> | undefined;
 }
 
-export default function Egenmelding({ lasterData }: Readonly<EgenmeldingProps>) {
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-
+export default function Egenmelding({ lasterData, egenmeldingsperioder }: Readonly<EgenmeldingProps>) {
   const ikkeEgenmeldingPerioder = !egenmeldingsperioder || egenmeldingsperioder.length === 0;
 
   return (
