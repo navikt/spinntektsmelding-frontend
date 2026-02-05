@@ -9,7 +9,6 @@ import { subMonths, startOfMonth } from 'date-fns';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 import roundTwoDecimals from '../utils/roundTwoDecimals';
-import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import Router from 'next/router';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 import isValidUUID from '../utils/isValidUUID';
