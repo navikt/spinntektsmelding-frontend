@@ -1,24 +1,18 @@
-import { act, cleanup, render, renderHook, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 
 import Egenmelding from '../../components/Egenmelding';
 import { vi } from 'vitest';
-import useBoundStore from '../../state/useBoundStore';
-
-const initialState = useBoundStore.getState();
+import parseIsoDate from '../../utils/parseIsoDate';
 
 describe('Egenmelding', () => {
-  beforeEach(() => {
-    useBoundStore.setState(initialState, true);
-  });
-
   afterEach(() => {
     vi.resetAllMocks();
     cleanup();
   });
 
   it('should have no violations', async () => {
-    const { container } = render(<Egenmelding />);
+    const { container } = render(<Egenmelding egenmeldingsperioder={undefined} />);
 
     const results = await axe(container);
 
@@ -26,16 +20,13 @@ describe('Egenmelding', () => {
   });
 
   it('should show perioder when egenmeldingsperioder exist', async () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-    act(() => {
-      result.current.initEgenmeldingsperiode([
-        { fom: '2022-06-06', tom: '2022-07-06' },
-        { fom: '2022-08-06', tom: '2022-09-06' },
-        { fom: '2022-10-06', tom: '2022-11-06' }
-      ]);
-    });
+    const perioder = [
+      { fom: parseIsoDate('2022-06-06'), tom: parseIsoDate('2022-07-06'), id: '1' },
+      { fom: parseIsoDate('2022-08-06'), tom: parseIsoDate('2022-09-06'), id: '2' },
+      { fom: parseIsoDate('2022-10-06'), tom: parseIsoDate('2022-11-06'), id: '3' }
+    ];
 
-    const { container } = render(<Egenmelding />);
+    const { container } = render(<Egenmelding egenmeldingsperioder={perioder} />);
 
     expect(screen.getByText('Egenmelding')).toBeInTheDocument();
     expect(screen.getByText('06.06.2022')).toBeInTheDocument();
@@ -51,12 +42,7 @@ describe('Egenmelding', () => {
   });
 
   it('should show message when there are no egenmeldingsperioder', async () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-    act(() => {
-      result.current.initEgenmeldingsperiode(undefined);
-    });
-
-    const { container } = render(<Egenmelding />);
+    const { container } = render(<Egenmelding egenmeldingsperioder={undefined} />);
 
     expect(
       screen.getByText('Den sykmeldte har ikke registrert egenmeldingsperioder for denne sykepengesøknaden.')
@@ -68,12 +54,7 @@ describe('Egenmelding', () => {
   });
 
   it('should show message when egenmeldingsperioder is an empty array', async () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-    act(() => {
-      result.current.initEgenmeldingsperiode([]);
-    });
-
-    const { container } = render(<Egenmelding />);
+    const { container } = render(<Egenmelding egenmeldingsperioder={[]} />);
 
     expect(
       screen.getByText('Den sykmeldte har ikke registrert egenmeldingsperioder for denne sykepengesøknaden.')
@@ -85,7 +66,7 @@ describe('Egenmelding', () => {
   });
 
   it('should show loader when lasterData is true', async () => {
-    const { container } = render(<Egenmelding lasterData={true} />);
+    const { container } = render(<Egenmelding lasterData={true} egenmeldingsperioder={undefined} />);
 
     expect(screen.getByText('Egenmelding')).toBeInTheDocument();
     // EgenmeldingLoader should be rendered, not the perioder or empty message
@@ -99,12 +80,9 @@ describe('Egenmelding', () => {
   });
 
   it('should display Fra and Til labels for each periode', async () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-    act(() => {
-      result.current.initEgenmeldingsperiode([{ fom: '2023-01-01', tom: '2023-01-15' }]);
-    });
+    const perioder = [{ fom: parseIsoDate('2023-01-01'), tom: parseIsoDate('2023-01-15'), id: '1' }];
 
-    render(<Egenmelding />);
+    render(<Egenmelding egenmeldingsperioder={perioder} />);
 
     expect(screen.getByText('Fra')).toBeInTheDocument();
     expect(screen.getByText('Til')).toBeInTheDocument();
@@ -113,15 +91,12 @@ describe('Egenmelding', () => {
   });
 
   it('should show multiple Fra/Til labels for multiple perioder', async () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-    act(() => {
-      result.current.initEgenmeldingsperiode([
-        { fom: '2023-01-01', tom: '2023-01-15' },
-        { fom: '2023-02-01', tom: '2023-02-15' }
-      ]);
-    });
+    const perioder = [
+      { fom: parseIsoDate('2023-01-01'), tom: parseIsoDate('2023-01-15'), id: '1' },
+      { fom: parseIsoDate('2023-02-01'), tom: parseIsoDate('2023-02-15'), id: '2' }
+    ];
 
-    render(<Egenmelding />);
+    render(<Egenmelding egenmeldingsperioder={perioder} />);
 
     const fraLabels = screen.getAllByText('Fra');
     const tilLabels = screen.getAllByText('Til');
