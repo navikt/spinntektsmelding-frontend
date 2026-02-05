@@ -21,12 +21,9 @@ type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
 export interface SkjemadataState {
   nyInnsending: boolean;
   setNyInnsending: (endring: boolean) => void;
-  setHenterInnsending: (henter: boolean) => void;
   setKvitteringInnsendt: (tidspunkt: string | Date) => void;
-  slettKvitteringInnsendt: () => void;
   setSkjemaFeilet: () => void;
   setInngangFraKvittering: () => void;
-  setDirekteInngangKvittering: () => void;
   setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
@@ -72,13 +69,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setHenterInnsending: (henter: boolean) => {
-    set(
-      produce((state: SkjemadataState) => {
-        state.henterInntektsdata = henter;
-      })
-    );
-  },
   setKvitteringInnsendt: (tidspunkt: string | Date) => {
     set(
       produce((state: SkjemadataState) => {
@@ -87,13 +77,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  slettKvitteringInnsendt: () => {
-    set(
-      produce((state: SkjemadataState) => {
-        state.kvitteringInnsendt = undefined;
-      })
-    );
-  },
+
   setSkjemaFeilet: () => {
     set(
       produce((state: SkjemadataState) => {
@@ -105,13 +89,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.inngangFraKvittering = true;
-      })
-    );
-  },
-  setDirekteInngangKvittering: () => {
-    set(
-      produce((state: SkjemadataState) => {
-        state.direkteInngangKvittering = true;
       })
     );
   },

@@ -12,7 +12,6 @@ import { RefusjonArbeidsgiverState } from './useRefusjonArbeidsgiverStore';
 export interface NaturalytelserState {
   naturalytelser?: Array<Naturalytelse>;
   hasBortfallAvNaturalytelser?: YesNo;
-  slettAlleNaturalytelser: () => void;
   initNaturalytelser: (naturalytelser?: Array<Naturalytelse>) => void;
 }
 
@@ -31,15 +30,6 @@ const useNaturalytelserStore: StateCreator<
   naturalytelser: undefined,
   hasBortfallAvNaturalytelser: undefined,
 
-  slettAlleNaturalytelser: () => {
-    set(
-      produce((state) => {
-        state.naturalytelser = undefined;
-
-        return state;
-      })
-    );
-  },
   initNaturalytelser: (naturalytelser) => {
     set(
       produce((state) => {

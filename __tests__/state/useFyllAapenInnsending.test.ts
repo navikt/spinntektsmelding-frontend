@@ -99,8 +99,6 @@ describe('useFyllAapenInnsending', () => {
         status: 'Nei'
       });
 
-      result.current.slettAlleNaturalytelser();
-
       result.current.setBareNyMaanedsinntekt(500000);
     });
 
@@ -177,11 +175,7 @@ describe('useFyllAapenInnsending', () => {
         status: 'Ja'
       });
 
-      result.current.slettAlleNaturalytelser();
-
       result.current.setBareNyMaanedsinntekt(500000);
-
-      result.current.setHarRefusjonEndringer('Ja');
 
       result.current.initRefusjonEndringer([
         { beloep: 1234, dato: parseIsoDate('2023-04-13') },
@@ -275,11 +269,7 @@ describe('useFyllAapenInnsending', () => {
         status: 'Ja'
       });
 
-      result.current.slettAlleNaturalytelser();
-
       result.current.setBareNyMaanedsinntekt(500000);
-
-      result.current.setHarRefusjonEndringer('Ja');
 
       result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
 

@@ -35,20 +35,4 @@ describe('useBoundStore', () => {
     expect(result.current.naturalytelser?.[0].sluttdato).toEqual(new Date(2022, 6, 6));
     expect(result.current.naturalytelser?.length).toBe(4);
   });
-
-  it('should delete all naturalytelser.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initNaturalytelser(inputNaturalytelser);
-    });
-
-    expect(result.current.naturalytelser?.length).toBe(4);
-
-    act(() => {
-      result.current.slettAlleNaturalytelser();
-    });
-
-    expect(result.current.naturalytelser).toBeUndefined();
-  });
 });

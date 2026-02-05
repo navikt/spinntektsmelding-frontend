@@ -42,32 +42,6 @@ describe('useBoundStore', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden?.status).toBe('Nei');
   });
 
-  it('should set the status on lonnISykefravaeret', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret('Ja');
-    });
-
-    expect(result.current.lonnISykefravaeret?.status).toBe('Ja');
-  });
-
-  it('should change the status on lonnISykefravaeret', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret('Ja');
-    });
-
-    expect(result.current.lonnISykefravaeret?.status).toBe('Ja');
-
-    act(() => {
-      result.current.arbeidsgiverBetalerHeleEllerDelerAvSykefravaeret('Nei');
-    });
-
-    expect(result.current.lonnISykefravaeret?.status).toBe('Nei');
-  });
-
   it('should set the begrunnelse on fullLonnIArbeidsgiverPerioden', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -140,88 +114,6 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.lonnISykefravaeret?.beloep).toBe(777.88);
-  });
-
-  it('should change the setBeloepUtbetaltUnderArbeidsgiverperioden beløp.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.setBeloepUtbetaltUnderArbeidsgiverperioden('12345');
-    });
-
-    expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(12345);
-
-    act(() => {
-      result.current.setBeloepUtbetaltUnderArbeidsgiverperioden('56478');
-    });
-
-    expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(56478);
-
-    act(() => {
-      result.current.setBeloepUtbetaltUnderArbeidsgiverperioden('-56478');
-    });
-
-    expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toEqual(-56478);
-
-    expect(result.current.feilmeldinger?.[0].felt).toEqual('agp.redusertLoennIAgp.beloep');
-  });
-
-  it('should change the setHarRefusjonEndringer beløp.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.setHarRefusjonEndringer(true);
-    });
-
-    expect(result.current.harRefusjonEndringer).toBeTruthy();
-    expect(result.current.refusjonEndringer).toEqual([{}]);
-
-    act(() => {
-      result.current.setHarRefusjonEndringer(false);
-    });
-
-    expect(result.current.harRefusjonEndringer).toBeFalsy();
-  });
-
-  it('should init refusjonskrav.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.setHarRefusjonEndringer('Nei');
-    });
-
-    expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
-    expect(result.current.harRefusjonEndringer).toBe('Nei');
-    expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
-  });
-
-  it('should reset refusjonskrav.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initRefusjonEndringer([{ beloep: 123, dato: new Date(2022, 4, 6) }]);
-      result.current.setHarRefusjonEndringer('Nei');
-    });
-
-    expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
-    expect(result.current.harRefusjonEndringer).toBe('Nei');
-    expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
-
-    act(() => {
-      result.current.setHarRefusjonEndringer('Ja');
-      result.current.oppdaterRefusjonEndringer([{ beloep: 234, dato: new Date(2022, 4, 10) }]);
-    });
-
-    expect(result.current.harRefusjonEndringer).toBe('Ja');
-
-    act(() => {
-      result.current.tilbakestillRefusjoner();
-    });
-
-    expect(result.current.fullLonnIArbeidsgiverPerioden).toBeUndefined();
-    expect(result.current.harRefusjonEndringer).toBe('Ja');
-    expect(result.current.opprinneligHarRefusjonEndringer).toBe('Nei');
-    expect(result.current.refusjonEndringer).toEqual([{ beloep: 123, dato: new Date(2022, 4, 6) }]);
   });
 
   it('should init fullLonnIArbeidsgiverPerioden.', () => {

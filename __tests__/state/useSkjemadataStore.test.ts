@@ -28,18 +28,6 @@ describe('useSkjemadataStore', () => {
     expect(result.current.nyInnsending).toBeFalsy();
   });
 
-  it('should set henterInntektsdata.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    expect(result.current.henterInntektsdata).toBeFalsy();
-
-    act(() => {
-      result.current.setHenterInnsending(true);
-    });
-
-    expect(result.current.henterInntektsdata).toBeTruthy();
-  });
-
   it('should set setVedtaksperiodeId.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 

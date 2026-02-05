@@ -31,13 +31,11 @@ export interface ArbeidsgiverperiodeState {
   mottattEksternInntektsdato?: TDateISODate;
   setArbeidsgiverperioder: (arbeidsgiverperioder: Array<Periode> | undefined) => void;
   initArbeidsgiverperioder: (arbeidsgiverperioder: Array<ApiPeriodeSchema> | undefined) => void;
-  setEndringsbegrunnelse: (begrunnelse: string) => void;
   leggTilArbeidsgiverperiode: () => void;
   slettArbeidsgiverperiode: (periodeId: string) => void;
   setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
   setEndreArbeidsgiverperiode: (endre: boolean) => void;
   tilbakestillArbeidsgiverperiode: () => void;
-  harArbeidsgiverperiodenBlittEndret: () => void;
   slettAlleArbeidsgiverperioder: () => void;
   setArbeidsgiverperiodeDisabled: (disabled: boolean) => void;
   setArbeidsgiverperiodeKort: (disabled: boolean) => void;
@@ -46,6 +44,7 @@ export interface ArbeidsgiverperiodeState {
   setSkjaeringstidspunkt: (skjaeringstidspunkt: TDateISODate | Date | null | undefined) => void;
   setMottattBestemmendeFravaersdag: (bestemmendeFravaersdag: TDateISODate) => void;
   setMottattEksternInntektsdato: (bestemmendeFravaersdag: TDateISODate | null) => void;
+  harArbeidsgiverperiodenBlittEndret: () => void;
 }
 
 const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], ArbeidsgiverperiodeState> = (set, get) => {
@@ -181,14 +180,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         })
       );
     },
-    setEndringsbegrunnelse: (begrunnelse) =>
-      set(
-        produce((state) => {
-          state.endringsbegrunnelse = begrunnelse;
-
-          return state;
-        })
-      ),
     tilbakestillArbeidsgiverperiode: () => {
       const opprinnelig = get().opprinneligArbeidsgiverperioder;
       const egenmeldingsperioder = get().egenmeldingsperioder;
@@ -225,35 +216,6 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           slettFeilmeldingFraState(state, 'arbeidsgiverperioder-feil');
 
           state.endretArbeidsgiverperiode = false;
-          return state;
-        })
-      );
-    },
-    harArbeidsgiverperiodenBlittEndret: () => {
-      const opprinnelig = get().opprinneligArbeidsgiverperioder;
-      const egenmeldingsperioder = get().egenmeldingsperioder;
-      const sykmeldingsperioder = get().sykmeldingsperioder;
-      set(
-        produce((state) => {
-          if (!opprinnelig) {
-            return state;
-          }
-
-          const perioder = sykmeldingsperioder
-            ? sykmeldingsperioder.concat(egenmeldingsperioder ?? [])
-            : egenmeldingsperioder;
-
-          const agp = perioder ? finnArbeidsgiverperiode(perioder) : [];
-
-          const opprinneligString = JSON.stringify(
-            opprinnelig.map((periode) => ({ fom: periode.fom, tom: periode.tom }))
-          );
-          const agpString = JSON.stringify(agp.map((periode) => ({ fom: periode.fom, tom: periode.tom })));
-
-          if (opprinneligString !== agpString) {
-            state.endretArbeidsgiverperiode = true;
-          }
-
           return state;
         })
       );
@@ -310,6 +272,46 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
           return state;
         })
       );
+    },
+    harArbeidsgiverperiodenBlittEndret: () => {
+      const fravaersperioder = get().fravaersperioder;
+      const egenmeldingsperioder = get().egenmeldingsperioder;
+      const arbeidsgiverperioder = get().arbeidsgiverperioder;
+
+      if (!arbeidsgiverperioder) {
+        return;
+      }
+
+      const beregnetArbeidsgiverperiode = finnArbeidsgiverperiode(
+        fravaersperioder,
+        egenmeldingsperioder
+      ) as unknown as Array<Periode>;
+
+      const lengdePeriode = arbeidsgiverperioder?.length ?? 0;
+      const lengdeBeregnet = beregnetArbeidsgiverperiode?.length ?? 0;
+
+      if (lengdePeriode !== lengdeBeregnet) {
+        set(
+          produce((state) => {
+            state.endretArbeidsgiverperiode = true;
+            return state;
+          })
+        );
+        return;
+      }
+
+      arbeidsgiverperioder?.forEach((periode, index) => {
+        const fomMatch = periode.fom?.getTime() === beregnetArbeidsgiverperiode?.[index]?.fom?.getTime();
+        const tomMatch = periode.tom?.getTime() === beregnetArbeidsgiverperiode?.[index]?.tom?.getTime();
+        if (!fomMatch || !tomMatch) {
+          set(
+            produce((state) => {
+              state.endretArbeidsgiverperiode = true;
+              return state;
+            })
+          );
+        }
+      });
     }
   };
 };
