@@ -15,15 +15,15 @@ const DECORATOR_DISABLED =
 
 let cachedDecorator: DecoratorComponentsReact | null = null;
 
-let decoratormode = 'ukjent';
+let decoratorMode = 'ukjent';
 
 export async function loadDecorator(): Promise<DecoratorComponentsReact> {
   if (DECORATOR_DISABLED) {
-    decoratormode = 'disabled';
+    decoratorMode = 'disabled';
     return DisabledDecorator;
   }
   if (cachedDecorator) {
-    decoratormode = 'cached';
+    decoratorMode = 'cached';
     return cachedDecorator;
   }
 
@@ -43,10 +43,10 @@ export async function loadDecorator(): Promise<DecoratorComponentsReact> {
     });
 
     cachedDecorator = { Header, Footer, Scripts, HeadAssets };
-    decoratormode = 'cached';
+    decoratorMode = 'cached';
     return cachedDecorator;
   } catch {
-    decoratormode = 'disabled';
+    decoratorMode = 'disabled';
     return DisabledDecorator;
   }
 }
@@ -64,11 +64,7 @@ function CustomDocument(props: Readonly<CustomDocumentProps>) {
       <Head>
         <HeadAssets />
         <meta name='decorator-env' content={process.env.NEXT_PUBLIC_DECORATOR_ENV || ''} />
-        <meta name='decorator-disable' content={process.env.NEXT_PUBLIC_DISABLE_DECORATOR || ''} />
-        <meta name='decorator-disabled' content={process.env.DECORATOR_DISABLED || ''} />
-        <meta name='decorator-disabled-PW' content={process.env.PLAYWRIGHT || ''} />
-        <meta name='decorator-disabled-ENV' content={process.env.NODE_ENV || ''} />
-        <meta name='decorator-mode' content={decoratormode} />
+        <meta name='decorator-mode' content={decoratorMode} />
       </Head>
       <body id='body'>
         <div suppressHydrationWarning>
