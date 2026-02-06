@@ -15,9 +15,17 @@ const DECORATOR_DISABLED =
 
 let cachedDecorator: DecoratorComponentsReact | null = null;
 
+let decoratormode = 'ukjent';
+
 export async function loadDecorator(): Promise<DecoratorComponentsReact> {
-  if (DECORATOR_DISABLED) return DisabledDecorator;
-  if (cachedDecorator) return cachedDecorator;
+  if (DECORATOR_DISABLED) {
+    decoratormode = 'disabled';
+    return DisabledDecorator;
+  }
+  if (cachedDecorator) {
+    decoratormode = 'cached';
+    return cachedDecorator;
+  }
 
   try {
     const { fetchDecoratorReact } = await import('@navikt/nav-dekoratoren-moduler/ssr');
@@ -59,6 +67,7 @@ function CustomDocument(props: Readonly<CustomDocumentProps>) {
         <meta name='decorator-disabled' content={process.env.DECORATOR_DISABLED || ''} />
         <meta name='decorator-disabled-PW' content={process.env.PLAYWRIGHT || ''} />
         <meta name='decorator-disabled-ENV' content={process.env.NODE_ENV || ''} />
+        <meta name='decorator-mode' content={decoratormode} />
       </Head>
       <body id='body'>
         <div suppressHydrationWarning>
