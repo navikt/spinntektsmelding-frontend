@@ -56,6 +56,9 @@ function CustomDocument(props: Readonly<CustomDocumentProps>) {
         <HeadAssets />
         <meta name='decorator-env' content={process.env.NEXT_PUBLIC_DECORATOR_ENV || ''} />
         <meta name='decorator-disable' content={process.env.NEXT_PUBLIC_DISABLE_DECORATOR || ''} />
+        <meta name='decorator-disabled' content={process.env.DECORATOR_DISABLED || ''} />
+        <meta name='decorator-disabled-PW' content={process.env.PLAYWRIGHT || ''} />
+        <meta name='decorator-disabled-ENV' content={process.env.NODE_ENV || ''} />
       </Head>
       <body id='body'>
         <div suppressHydrationWarning>
