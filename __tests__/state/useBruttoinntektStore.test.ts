@@ -41,53 +41,6 @@ describe('useBoundStore', () => {
     expect(result.current.tidligereInntekt?.size).toBe(3);
   });
 
-  it('should set ny maanedsinntekt.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    act(() => {
-      result.current.setNyMaanedsinntektOgRefusjonsbeloep('56000,23');
-    });
-
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(56000.23);
-  });
-
-  it('should return an error when ny maanedsinntekt = -1.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    act(() => {
-      result.current.setNyMaanedsinntektOgRefusjonsbeloep('-1');
-    });
-
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(-1);
-    expect(result.current.feilmeldinger).toContainEqual({
-      felt: 'inntekt.beregnetInntekt',
-      text: feiltekster.BRUTTOINNTEKT_MANGLER
-    });
-  });
-
-  it('should return undefined when ny maanedsinntekt = 0.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    act(() => {
-      result.current.setNyMaanedsinntektOgRefusjonsbeloep('0');
-    });
-
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toBe(0);
-    expect(result.current.feilmeldinger[1]).toBeUndefined();
-  });
-
   it('should return an error when ny maanedsinntekt = 0. Skjema er blankt, ikke preutfylt', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
@@ -145,7 +98,7 @@ describe('useBoundStore', () => {
 
     act(() => {
       result.current.setEndringAarsaker([{ aarsak: 'Bonus' }]);
-      result.current.setNyMaanedsinntektOgRefusjonsbeloep('56000,23');
+      result.current.setBareNyMaanedsinntekt('56000,23');
     });
 
     act(() => {
@@ -484,26 +437,6 @@ describe('useBoundStore', () => {
         ]
       }
     ]);
-  });
-
-  it('should slettBruttoinntekt.', () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
-
-    act(() => {
-      result.current.initBruttoinntekt(inputInntekt, tidligereInntekt, new Date(2002, 10, 11));
-    });
-
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toEqual(40000);
-    expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
-    expect(result.current.tidligereInntekt?.size).toBe(3);
-
-    act(() => {
-      result.current.slettBruttoinntekt();
-    });
-
-    expect(result.current.bruttoinntekt?.bruttoInntekt).toBeUndefined();
-    expect(result.current.bruttoinntekt?.manueltKorrigert).toBeFalsy();
-    expect(result.current.bruttoinntekt?.endringAarsaker).toBeUndefined();
   });
 });
 

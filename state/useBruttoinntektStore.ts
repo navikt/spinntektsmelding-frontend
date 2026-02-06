@@ -9,7 +9,6 @@ import { subMonths, startOfMonth } from 'date-fns';
 import fetchInntektsdata from '../utils/fetchInntektsdata';
 import environment from '../config/environment';
 import roundTwoDecimals from '../utils/roundTwoDecimals';
-import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import Router from 'next/router';
 import { EndringAarsak } from '../validators/validerAapenInnsending';
 import isValidUUID from '../utils/isValidUUID';
@@ -38,7 +37,6 @@ export interface BruttoinntektState {
   opprinneligeInntekt?: HistoriskInntekt;
   sisteLonnshentedato?: Date;
   henterData: boolean;
-  setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => void;
   setBareNyMaanedsinntekt: (beloep: string | number) => void;
   setOpprinneligNyMaanedsinntekt: () => void;
   tilbakestillMaanedsinntekt: () => void;
@@ -49,7 +47,6 @@ export interface BruttoinntektState {
     bestemmendeFravaersdag: Date
   ) => void;
   rekalkulerBruttoinntekt: (bestemmendeFravaersdag: Date) => Promise<void>;
-  slettBruttoinntekt: () => void;
   setEndringAarsaker: (endringAarsaker?: Array<EndringAarsak | ApiEndringAarsak> | null) => void;
 }
 
@@ -68,35 +65,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
   },
   tidligereInntekt: undefined,
   henterData: false,
-  setNyMaanedsinntektOgRefusjonsbeloep: (beloep: string) => {
-    set(
-      produce((state) => {
-        state.bruttoinntekt.bruttoInntekt = stringishToNumber(beloep);
-        if (state.bruttoinntekt.bruttoInntekt !== state.opprinneligbruttoinntekt.bruttoInntekt) {
-          state.bruttoinntekt.manueltKorrigert = true;
-        }
-
-        state = slettFeilmeldingFraState(state, 'inntekt.beregnetInntekt');
-
-        if (ugyldigEllerNegativtTall(state.bruttoinntekt.bruttoInntekt)) {
-          state = leggTilFeilmelding(state, 'inntekt.beregnetInntekt', feiltekster.BRUTTOINNTEKT_MANGLER);
-        }
-
-        if (!state.lonnISykefravaeret) {
-          state.lonnISykefravaeret = { beloep: stringishToNumber(beloep) };
-        } else {
-          state.lonnISykefravaeret.beloep = stringishToNumber(beloep);
-        }
-
-        state = slettFeilmeldingFraState(state, 'refusjon.beloepPerMaaned');
-        if (!beloep || stringishToNumber(beloep)! < 0) {
-          state = leggTilFeilmelding(state, 'refusjon.beloepPerMaaned', feiltekster.LONN_UNDER_SYKEFRAVAERET_BELOP);
-        }
-
-        return state;
-      })
-    );
-  },
   setBareNyMaanedsinntekt: (beloep: string | number) =>
     set(
       produce((state) => {
@@ -269,19 +237,6 @@ const useBruttoinntektStore: StateCreator<CompleteState, [], [], BruttoinntektSt
     set(
       produce((state) => {
         state.opprinneligbruttoinntekt = { ...state.bruttoinntekt };
-        return state;
-      })
-    );
-  },
-  slettBruttoinntekt: () => {
-    set(
-      produce((state) => {
-        state.bruttoinntekt = {
-          bruttoInntekt: undefined,
-          manueltKorrigert: false,
-          endringAarsaker: undefined
-        };
-
         return state;
       })
     );
