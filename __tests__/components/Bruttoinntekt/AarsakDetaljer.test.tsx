@@ -54,7 +54,7 @@ vi.mock('react-hook-form', () => {
 });
 
 vi.mock('../../../components/DatoVelger/DatoVelger.tsx', () => ({
-  default: ({ label }) => <div>Datovelger {label}</div>
+  default: ({ label }: { label: string }) => <div>Datovelger {label}</div>
 }));
 
 const WithFormProvider = ({ children }: { children: React.ReactNode }) => {

@@ -816,7 +816,7 @@ describe('InnsendingSchema', () => {
     ).toBe(true);
   });
 
-  it('should validate InnsendingSchema and fail if 12 dager agp, begrunnelse is missing and not single day agps', () => {
+  it('should validate InnsendingSchema and fail if 12 dager agp, begrunnelse is missing and not single day agp', () => {
     const data = {
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-02-29' }],
@@ -856,7 +856,7 @@ describe('InnsendingSchema', () => {
     ).toBe(true);
   });
 
-  it('should validate InnsendingSchema and not fail if 12 dager agp, begrunnelse is missing and single day agps', () => {
+  it('should validate InnsendingSchema and not fail if 12 dager agp, begrunnelse is missing and single day agp', () => {
     const data = {
       agp: {
         perioder: [
@@ -904,7 +904,7 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).success).toBe(true);
   });
 
-  it('should validate InnsendingSchema and fail if 12 dager agp, begrunnelse is missing and not single day agps, given beloep', () => {
+  it('should validate InnsendingSchema and fail if 12 dager agp, begrunnelse is missing and not single day agp, given beloep', () => {
     const data = {
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-02-29' }],
@@ -943,7 +943,7 @@ describe('InnsendingSchema', () => {
     ).toBe(true);
   });
 
-  it('should validate InnsendingSchema and fail if < 16 dager agp, begrunnelse is missing and not single day agps, given beloep', () => {
+  it('should validate InnsendingSchema and fail if < 16 dager agp, begrunnelse is missing and not single day agp, given beloep', () => {
     const data = {
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-02-30' }],

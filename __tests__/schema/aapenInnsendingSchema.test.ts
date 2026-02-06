@@ -30,7 +30,7 @@ describe('AapenInnsendingSchema', () => {
     expect(AapenInnsendingSchema.safeParse(data).success).toBe(true);
   });
 
-  it('should validate AapenInnsendingSchema with error on avsendertlf', () => {
+  it('should validate AapenInnsendingSchema with error on avsender tlf', () => {
     const data = {
       agp: {
         perioder: [{ fom: '2023-02-17', tom: '2023-03-04' }],
