@@ -11,10 +11,10 @@ import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 function TestWrapper({
   children,
   defaultValues = {}
-}: {
+}: Readonly<{
   children: React.ReactNode;
   defaultValues?: Record<string, unknown>;
-}) {
+}>) {
   const methods = useForm({
     defaultValues: {
       agp: {
