@@ -128,11 +128,12 @@ describe('useFyllInnsending', () => {
       innsending = fyllInnsending(
         '8d50ef20-37b5-4829-ad83-56219e70b375',
         ['inntekt', 'refusjon'], // Uten 'arbeidsgiverperiode'
-        skjemaData
+        skjemaData,
+        false
       );
     });
 
-    if (innsending) {
+    if (innsending!) {
       // AGP skal fortsatt ha perioder, men vil bruke foreslaattBestemmendeFravaersdag
       expect(innsending.inntekt?.beloep).toBe(12345);
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
