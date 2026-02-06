@@ -246,10 +246,6 @@ describe('ApiEndringAarsakSchema', () => {
       aarsak: 'Error'
     };
 
-    const expected = {
-      aarsak: 'Error'
-    };
-
     const parsed = ApiEndringAarsakSchema.safeParse(data);
     expect(parsed.success).toBe(false);
     expect(parsed.data).toBeUndefined();

@@ -10,7 +10,7 @@ interface TestWrapperProps {
   defaultValues?: Record<string, unknown>;
 }
 
-function TestWrapper({ children, defaultValues = {} }: TestWrapperProps) {
+function TestWrapper({ children, defaultValues = {} }: Readonly<TestWrapperProps>) {
   const methods = useForm({
     defaultValues: {
       refusjon: {

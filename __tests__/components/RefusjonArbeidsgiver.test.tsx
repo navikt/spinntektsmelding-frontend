@@ -16,10 +16,10 @@ vi.mock('../../state/useBoundStore', () => ({
 function TestWrapper({
   children,
   defaultValues = {}
-}: {
+}: Readonly<{
   children: React.ReactNode;
   defaultValues?: Record<string, unknown>;
-}) {
+}>) {
   const methods = useForm({
     defaultValues: {
       refusjon: {

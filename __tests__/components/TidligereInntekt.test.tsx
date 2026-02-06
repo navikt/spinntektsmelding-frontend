@@ -122,7 +122,6 @@ describe('TidligereInntekt', () => {
       expect(cells[0]).toHaveTextContent(arrInntekter[index][0]);
       if (index === 0) {
         expect(cells[1]).toHaveTextContent('-');
-        return;
       }
     });
   });

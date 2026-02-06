@@ -182,7 +182,6 @@ describe('sp-soeknader API', () => {
     );
 
     await handler(req, res);
-    // expect(fetch.requests().length).toEqual(2);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(mockJson).toHaveBeenCalledWith([
       {

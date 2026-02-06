@@ -1,4 +1,4 @@
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import Person from '../../components/Person/Person';
 

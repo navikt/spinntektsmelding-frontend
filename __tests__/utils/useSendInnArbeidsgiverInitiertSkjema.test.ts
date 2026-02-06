@@ -4,7 +4,6 @@ import { z } from 'zod/v4';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsgiverInitiertSkjema';
 import logEvent from '../../utils/logEvent';
-// import validerInntektsmelding from '../../utils/validerInntektsmelding';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import useBoundStore from '../../state/useBoundStore';
 import mockRouter from 'next-router-mock';
@@ -15,7 +14,6 @@ vi.mock('../../state/useBoundStore');
 vi.mock('../state/useFyllInnsending');
 vi.mock('../../utils/logEvent', { spy: true });
 vi.mock('../../utils/isValidUUID', () => ({ default: vi.fn().mockReturnValue(true) }));
-// vi.mock('../../utils/validerInntektsmelding', { spy: true });
 vi.mock('./useErrorResponse');
 vi.mock('../schema/FullInnsendingSchema', () => ({
   default: { safeParse: vi.fn().mockReturnValue({ success: true }) }
@@ -72,7 +70,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
     );
 
-    const response = await result.current(true, pathSlug, false, defaultFormData);
+    const response = await result.current(true, pathSlug, false, defaultFormData, false);
 
     expect(response).toBe(false);
     expect(logEvent).toHaveBeenCalled();
@@ -91,10 +89,8 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
     );
 
-    // (validerInntektsmelding as Mock).mockReturnValueOnce({ errorTexts: [{ error: 'test error' }] });
-
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData);
+      await result.current(true, pathSlug, true, defaultFormData, false);
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
@@ -127,10 +123,8 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       json: vi.fn().mockResolvedValue({})
     });
 
-    // (validerInntektsmelding as Mock).mockReturnValueOnce([]);
-
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData);
+      await result.current(true, pathSlug, true, defaultFormData, false);
     });
 
     expect(mockRouter).toMatchObject({ route: `/kvittering/${pathSlug}` });
@@ -160,10 +154,8 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       json: vi.fn().mockResolvedValue({})
     });
 
-    // (validerInntektsmelding as Mock).mockReturnValueOnce([]);
-
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData);
+      await result.current(true, pathSlug, true, defaultFormData, false);
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema innsending feilet', {
@@ -197,7 +189,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData);
+      await result.current(true, pathSlug, true, defaultFormData, false);
     });
 
     expect(innsendingFeiletIngenTilgang).toHaveBeenCalledWith(true);

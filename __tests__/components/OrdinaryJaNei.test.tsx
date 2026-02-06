@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { useForm, FormProvider } from 'react-hook-form';
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
-// import OrdinaryJaNei from './OrdinaryJaNei';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const methods = useForm();

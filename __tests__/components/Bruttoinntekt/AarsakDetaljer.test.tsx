@@ -1,11 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
-// import { FormProvider, useForm } from 'react-hook-form';
 import { vi } from 'vitest';
 import AarsakDetaljer from '../../../components/Bruttoinntekt/AarsakDetaljer';
 const watchMock = vi.fn();
 vi.mock('react-hook-form', () => {
-  // const actual = await importOriginal();
   return {
     // ...actual,
     useFieldArray: () => ({
@@ -60,8 +58,6 @@ vi.mock('../../../components/DatoVelger/DatoVelger.tsx', () => ({
 }));
 
 const WithFormProvider = ({ children }: { children: React.ReactNode }) => {
-  // const methods = useForm();
-  // return <FormProvider {...methods}>{children}</FormProvider>;
   return <div>{children}</div>;
 };
 

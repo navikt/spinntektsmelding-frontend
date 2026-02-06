@@ -85,7 +85,6 @@ describe('Bruttoinntekt', () => {
     );
 
     expect(screen.getByText(/44.*000/)).toBeInTheDocument();
-    //expect(screen.getByText(/45.*000/)).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: /45.*000/ })).toBeInTheDocument();
     expect(screen.getByText(/46.*000/)).toBeInTheDocument();
   });

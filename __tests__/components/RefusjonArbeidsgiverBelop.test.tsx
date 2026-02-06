@@ -1,17 +1,17 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import RefusjonArbeidsgiverBelop from '../../components/RefusjonArbeidsgiver/RefusjonArbeidsgiverBelop';
-import { vi, expect } from 'vitest';
+import { expect } from 'vitest';
 import { FormProvider, useForm } from 'react-hook-form';
 
 // Wrapper-komponent for å gi FormProvider context
 function TestWrapper({
   children,
   defaultValues = {}
-}: {
+}: Readonly<{
   children: React.ReactNode;
   defaultValues?: Record<string, unknown>;
-}) {
+}>) {
   const methods = useForm({
     defaultValues: {
       refusjon: {

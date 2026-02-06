@@ -4,7 +4,6 @@ import { axe } from 'jest-axe';
 import Aarsaksvelger from '../../components/Bruttoinntekt/Aarsaksvelger';
 import { expect, vi } from 'vitest';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { FormProvider, useForm } from 'react-hook-form';
 
 // Mock the ResizeObserver
 const ResizeObserverMock = vi.fn(() => ({
@@ -234,7 +233,6 @@ describe('Aarsaksvelger', () => {
   });
 
   it.skip('calls the setPerioder function when the endringsaarsak is VarigLoennsendring', async () => {
-    const setPerioder = vi.fn();
     const setEndringAarsakGjelderFra = vi.fn();
 
     render(
@@ -314,7 +312,6 @@ describe('Aarsaksvelger', () => {
   });
 
   it.skip('calls the setPerioder function when the endringsaarsak is NyStilling', async () => {
-    const setPerioder = vi.fn();
     const setEndringAarsakGjelderFra = vi.fn();
 
     render(
@@ -387,8 +384,6 @@ describe('Aarsaksvelger', () => {
   });
 
   it('shows an error message', async () => {
-    const setPerioder = vi.fn();
-
     vi.mock('react-hook-form', () => ({
       useController: () => ({
         // field: { value: 'test' },

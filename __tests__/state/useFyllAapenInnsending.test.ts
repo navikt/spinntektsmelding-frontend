@@ -102,8 +102,6 @@ describe('useFyllAapenInnsending', () => {
       result.current.setBareNyMaanedsinntekt(500000);
     });
 
-    const skjemaData = mockSkjema;
-
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());
 
     const fyllInnsending = fyller.current;

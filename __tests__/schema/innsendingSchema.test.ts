@@ -1,16 +1,15 @@
-import { is } from 'date-fns/locale';
 import { InnsendingSchema, superRefineInnsending } from '../../schema/InnsendingSchema';
 
 import { z } from 'zod/v4';
 
 // Helper function to check if error issues contain a specific message
-function hasErrorMessage(issues: z.ZodIssue[] | undefined, message: string): boolean {
+function hasErrorMessage(issues: z.core.$ZodIssue[] | undefined, message: string): boolean {
   if (!issues) return false;
   return issues.some((issue) => {
     if (issue.message === message) return true;
     if ('errors' in issue && Array.isArray(issue.errors)) {
-      return issue.errors.some((errorGroup: z.ZodIssue[]) =>
-        errorGroup.some((err: z.ZodIssue) => err.message === message)
+      return issue.errors.some((errorGroup: z.core.$ZodIssue[]) =>
+        errorGroup.some((err: z.core.$ZodIssue) => err.message === message)
       );
     }
     return false;
