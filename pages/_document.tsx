@@ -43,9 +43,10 @@ export async function loadDecorator(): Promise<DecoratorComponentsReact> {
     });
 
     cachedDecorator = { Header, Footer, Scripts, HeadAssets };
-
+    decoratormode = 'cached';
     return cachedDecorator;
   } catch {
+    decoratormode = 'disabled';
     return DisabledDecorator;
   }
 }
