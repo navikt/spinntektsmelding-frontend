@@ -1,4 +1,4 @@
-import React, { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
+import React, { use, useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 
@@ -96,7 +96,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     naturalytelser,
     behandlingsdager,
     endringerAvRefusjon,
-    selvbestemtType
+    selvbestemtType,
+    kvitteringData
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -108,7 +109,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.naturalytelser,
     state.behandlingsdager,
     state.endringerAvRefusjon,
-    state.selvbestemtType
+    state.selvbestemtType,
+    state.kvitteringData
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -222,6 +224,41 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [bruttoinntekt.bruttoInntekt, setValue]);
 
   useEffect(() => {
+    if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp) {
+      setValue('fullLonn', 'Ja');
+    } else if (kvitteringData?.agp?.redusertLoennIAgp) {
+      setValue('fullLonn', 'Nei');
+      setValue('agp.redusertLoennIAgp.beloep', kvitteringData.agp.redusertLoennIAgp.beloep);
+      setValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
+    }
+  }, [kvitteringData?.agp?.redusertLoennIAgp, setValue, dataFraBackend, kvitteringData?.refusjon?.beloepPerMaaned]);
+
+  useEffect(() => {
+    console.log('[DEBUG] Checking if we should set refusjon.beloepPerMaaned from kvitteringData', { kvitteringData });
+    if (
+      !dataFraBackend &&
+      kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
+      kvitteringData?.refusjon?.beloepPerMaaned !== null
+    ) {
+      setValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
+      setValue('kreverRefusjon', 'Ja');
+      if (kvitteringData?.refusjon?.endringer && kvitteringData.refusjon.endringer.length > 0) {
+        const endringer = kvitteringData.refusjon.endringer.map((endring) => ({
+          beloep: endring.beloep,
+          dato: parseIsoDate(endring.startdato)!
+        }));
+        setValue('refusjon.endringer', endringer);
+        setValue('refusjon.harEndringer', 'Ja');
+      } else {
+        setValue('refusjon.harEndringer', 'Nei');
+      }
+    } else if (!dataFraBackend && !kvitteringData?.refusjon) {
+      setValue('refusjon.beloepPerMaaned', 0);
+      setValue('kreverRefusjon', 'Nei');
+    }
+  }, [kvitteringData?.refusjon?.beloepPerMaaned, setValue, dataFraBackend, kvitteringData]);
+
+  useEffect(() => {
     if (harEndringAarsak(bruttoinntekt.endringAarsaker)) {
       setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
     }
@@ -242,7 +279,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (inntektBeloep !== undefined && endringerAvRefusjon !== 'Ja') {
       beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
     }
-    if (!isEditingRefusjonBeloep) {
+    if (!isEditingRefusjonBeloep && (dataFraBackend || selvbestemtInnsending)) {
       setValue('refusjon.beloepPerMaaned', inntektBeloep || 0);
     }
   });
