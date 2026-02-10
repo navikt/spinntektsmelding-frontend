@@ -234,7 +234,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [kvitteringData?.agp?.redusertLoennIAgp, setValue, dataFraBackend, kvitteringData?.refusjon?.beloepPerMaaned]);
 
   useEffect(() => {
-    console.log('[DEBUG] Checking if we should set refusjon.beloepPerMaaned from kvitteringData', { kvitteringData });
     if (
       !dataFraBackend &&
       kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
@@ -251,6 +250,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         setValue('refusjon.harEndringer', 'Ja');
       } else {
         setValue('refusjon.harEndringer', 'Nei');
+        setValue('refusjon.endringer', []);
       }
     } else if (!dataFraBackend && !kvitteringData?.refusjon) {
       setValue('refusjon.beloepPerMaaned', 0);
