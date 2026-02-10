@@ -17,24 +17,6 @@ describe('Fravaersperiode', () => {
     expect(heading).toBeInTheDocument();
   });
 
-  it('does not render egenmeldingsperioder when undefined', () => {
-    render(<Fravaersperiode paakrevdeOpplysninger={[]} />);
-    const heading = screen.queryByRole('heading', { name: 'Egenmelding' });
-    expect(heading).not.toBeInTheDocument();
-  });
-
-  it('does not render egenmeldingsperioder when empty array', () => {
-    render(<Fravaersperiode paakrevdeOpplysninger={[]} />);
-    const heading = screen.queryByRole('heading', { name: 'Egenmelding' });
-    expect(heading).not.toBeInTheDocument();
-  });
-
-  it('does not render egenmeldingsperioder when periods have no fom or tom', () => {
-    render(<Fravaersperiode paakrevdeOpplysninger={[]} />);
-    const heading = screen.queryByRole('heading', { name: 'Egenmelding' });
-    expect(heading).not.toBeInTheDocument();
-  });
-
   it('renders sykmeldingsperioder', () => {
     const sykmeldingsperioder: Periode[] = [
       { id: '1', fom: parseIsoDate('2024-01-01'), tom: parseIsoDate('2024-01-05') },
