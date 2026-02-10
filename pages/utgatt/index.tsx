@@ -12,11 +12,13 @@ const Utgatt = () => {
                 Saken er utgått
               </Heading>
               <BodyShort>Nav har ikke lenger behov for at du sender inn opplysninger i akkurat denne saken.</BodyShort>
-              <List>
-                <List.Item>
-                  <Link href={environment.saksoversiktUrl}>Gå til saksoversikten for å finne dine saker.</Link>
-                </List.Item>
-              </List>
+              <Box marginBlock='space-16' asChild>
+                <List data-aksel-migrated-v8>
+                  <List.Item>
+                    <Link href={environment.saksoversiktUrl}>Gå til saksoversikten for å finne dine saker.</Link>
+                  </List.Item>
+                </List>
+              </Box>
             </div>
             <Button as='a' href={environment.minSideArbeidsgiver}>
               Gå til Min side
