@@ -336,7 +336,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             {visArbeidsgiverperiode && (
               <Fravaersperiode
                 sykmeldingsperioder={sykmeldingsperioder}
-                // egenmeldingsperioder={egenmeldingsperioder}
                 paakrevdeOpplysninger={paakrevdeOpplysninger}
               />
             )}
