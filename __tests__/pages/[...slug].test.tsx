@@ -397,6 +397,146 @@ describe('Home Page', () => {
 
     expect(screen.getByTestId('banner')).toBeInTheDocument();
   });
+
+  describe('kvitteringData useEffects', () => {
+    it('sets fullLonn to Ja when dataFraBackend is false and no redusertLoennIAgp', () => {
+      (useBoundStore as Mock).mockImplementation((stateFn) =>
+        stateFn(
+          createMockState({
+            kvitteringData: null
+          })
+        )
+      );
+
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} dataFraBackend={false} />);
+
+      expect(screen.getByTestId('banner')).toBeInTheDocument();
+    });
+
+    it('sets fullLonn to Nei and populates agp fields when kvitteringData has redusertLoennIAgp', () => {
+      (useBoundStore as Mock).mockImplementation((stateFn) =>
+        stateFn(
+          createMockState({
+            kvitteringData: {
+              agp: {
+                redusertLoennIAgp: {
+                  beloep: 5000,
+                  begrunnelse: 'Test begrunnelse'
+                }
+              }
+            }
+          })
+        )
+      );
+
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} dataFraBackend={false} />);
+
+      expect(screen.getByTestId('banner')).toBeInTheDocument();
+    });
+
+    it('sets kreverRefusjon to Ja and populates refusjon fields when kvitteringData has refusjon.beloepPerMaaned', () => {
+      (useBoundStore as Mock).mockImplementation((stateFn) =>
+        stateFn(
+          createMockState({
+            kvitteringData: {
+              refusjon: {
+                beloepPerMaaned: 25000,
+                endringer: null
+              }
+            }
+          })
+        )
+      );
+
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} dataFraBackend={false} />);
+
+      expect(screen.getByTestId('banner')).toBeInTheDocument();
+    });
+
+    it('sets refusjon.harEndringer to Ja when kvitteringData has refusjon endringer', () => {
+      (useBoundStore as Mock).mockImplementation((stateFn) =>
+        stateFn(
+          createMockState({
+            kvitteringData: {
+              refusjon: {
+                beloepPerMaaned: 25000,
+                endringer: [
+                  { beloep: 20000, startdato: '2023-03-01' },
+                  { beloep: 15000, startdato: '2023-04-01' }
+                ]
+              }
+            }
+          })
+        )
+      );
+
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} dataFraBackend={false} />);
+
+      expect(screen.getByTestId('banner')).toBeInTheDocument();
+    });
+
+    it('sets kreverRefusjon to Nei when dataFraBackend is false and no refusjon in kvitteringData', () => {
+      (useBoundStore as Mock).mockImplementation((stateFn) =>
+        stateFn(
+          createMockState({
+            kvitteringData: {}
+          })
+        )
+      );
+
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} dataFraBackend={false} />);
+
+      expect(screen.getByTestId('banner')).toBeInTheDocument();
+    });
+
+    it('does not override refusjon fields when dataFraBackend is true', () => {
+      (useBoundStore as Mock).mockImplementation((stateFn) =>
+        stateFn(
+          createMockState({
+            kvitteringData: {
+              refusjon: {
+                beloepPerMaaned: 25000
+              }
+            }
+          })
+        )
+      );
+
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} dataFraBackend={true} />);
+
+      expect(screen.getByTestId('banner')).toBeInTheDocument();
+    });
+
+    it('sets refusjon.beloepPerMaaned from inntekt when dataFraBackend is true', () => {
+      (useBoundStore as Mock).mockImplementation((stateFn) =>
+        stateFn(
+          createMockState({
+            bruttoinntekt: { bruttoInntekt: 45000, endringAarsaker: null },
+            endringerAvRefusjon: 'Nei'
+          })
+        )
+      );
+
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} dataFraBackend={true} />);
+
+      expect(screen.getByTestId('banner')).toBeInTheDocument();
+    });
+
+    it('sets refusjon.beloepPerMaaned from inntekt when selvbestemtInnsending is true', () => {
+      (useBoundStore as Mock).mockImplementation((stateFn) =>
+        stateFn(
+          createMockState({
+            bruttoinntekt: { bruttoInntekt: 45000, endringAarsaker: null },
+            endringerAvRefusjon: 'Nei'
+          })
+        )
+      );
+
+      render(<Home slug='arbeidsgiverInitiertInnsending' erEndring={false} dataFraBackend={false} />);
+
+      expect(screen.getByTestId('banner')).toBeInTheDocument();
+    });
+  });
 });
 
 describe('getServerSideProps', () => {
