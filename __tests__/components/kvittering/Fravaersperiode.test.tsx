@@ -36,22 +36,22 @@ describe('Fravaersperiode', () => {
   });
 
   it('renders sykmeldingsperioder', () => {
-    const sykmeldingsperioder = [
+    const sykmeldingsperioder: Periode[] = [
       { id: '1', fom: parseIsoDate('2024-01-01'), tom: parseIsoDate('2024-01-05') },
       { id: '2', fom: parseIsoDate('2024-01-10'), tom: parseIsoDate('2024-01-15') }
     ];
-    render(<Fravaersperiode paakrevdeOpplysninger={[]} sykmeldingsperioder={sykmeldingsperioder as Periode[]} />);
+    render(<Fravaersperiode paakrevdeOpplysninger={[]} sykmeldingsperioder={sykmeldingsperioder} />);
     const heading = screen.getByRole('heading', { name: 'Sykmelding' });
     expect(heading).toBeInTheDocument();
   });
 
   it('should have no accessibility violations', async () => {
-    const sykmeldingsperioder = [
+    const sykmeldingsperioder: Periode[] = [
       { id: '1', fom: parseIsoDate('2024-01-01'), tom: parseIsoDate('2024-01-05') },
       { id: '2', fom: parseIsoDate('2024-01-10'), tom: parseIsoDate('2024-01-15') }
     ];
     const { container } = render(
-      <Fravaersperiode paakrevdeOpplysninger={[]} sykmeldingsperioder={sykmeldingsperioder as Periode[]} />
+      <Fravaersperiode paakrevdeOpplysninger={[]} sykmeldingsperioder={sykmeldingsperioder} />
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
