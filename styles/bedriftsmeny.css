@@ -1,6 +1,6 @@
 .navbm-bedriftsmeny {
   background-color: var(--ax-bg-default);
-  border-bottom: 0.25rem solid var(--a-border-focus-on-inverted);
+  border-bottom: 0.25rem solid var(--ax-border-accent-subtle);
   padding: 1rem;
 }
 
