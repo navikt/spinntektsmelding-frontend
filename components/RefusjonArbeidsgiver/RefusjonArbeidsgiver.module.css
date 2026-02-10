@@ -79,12 +79,12 @@
 }
 
 .radiobuttonInnerWrapper > div {
-  margin-top: var(--a-spacing-2) !important;
+  margin-top: var(--ax-space-8) !important;
   flex-direction: column;
 }
 
 .radiobuttonWrapper {
-  margin: var(--a-spacing-5) 0;
+  margin: var(--ax-space-20) 0;
 }
 
 .radiobuttonButtonWrapper {

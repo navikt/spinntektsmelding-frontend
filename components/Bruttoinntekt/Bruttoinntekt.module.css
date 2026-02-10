@@ -1,6 +1,6 @@
 .maanedsnavn,
 .maanedsinntekt {
-  font-size: var(--a-font-size-xlarge);
+  font-size: var(--ax-font-size-xlarge);
   min-width: 5rem;
 }
 
@@ -11,7 +11,7 @@
 .maanedsinntekt {
   margin-bottom: auto;
   margin-top: auto;
-  font-weight: var(--a-font-weight-bold);
+  font-weight: var(--ax-font-weight-bold);
 }
 
 .endremaaanedsinntekt,
@@ -39,7 +39,7 @@
 }
 
 .bruttoinntektEndringsBeloep > label {
-  max-height: var(--a-font-line-height-large);
+  max-height: var(--ax-font-line-height-large);
 }
 
 .bruttoinntektEndringsBeloep input {
@@ -56,7 +56,7 @@
 }
 
 .kontrollerknapp {
-  margin-top: calc(var(--a-font-line-height-large) + 0.5rem);
+  margin-top: calc(var(--ax-font-line-height-large) + 0.5rem);
   height: 3rem;
   display: inline-block;
 }
@@ -75,7 +75,7 @@
 
 .bruttoinntektBelopBeskrivelse {
   margin-top: 1rem;
-  font-weight: var(--a-font-weight-bold);
+  font-weight: var(--ax-font-weight-bold);
 }
 
 .inntektsliste {
@@ -123,9 +123,9 @@
     gap: 1rem;
     border: 1px solid darkgray;
     border-radius: 5px;
-    background-color: var(--a-bg-subtle);
+    background-color: var(--ax-bg-neutral-soft);
     padding: 0.5rem;
-    box-shadow: 0.25rem 0.25rem 0.25rem var(--a-bg-subtle);
+    box-shadow: 0.25rem 0.25rem 0.25rem var(--ax-bg-neutral-soft);
     margin: 0.25rem 0;
   }
 

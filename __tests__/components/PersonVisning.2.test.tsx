@@ -77,11 +77,11 @@ describe('Person component', () => {
 
     const { getByTestId } = render(<Person />);
 
-    expect(getByTestId('navn').querySelector('.navds-skeleton')).toBeInTheDocument();
-    expect(getByTestId('identitetsnummer').querySelector('.navds-skeleton')).toBeInTheDocument();
-    expect(getByTestId('virksomhetsnavn').querySelector('.navds-skeleton')).toBeInTheDocument();
-    expect(getByTestId('orgnummer').querySelector('.navds-skeleton')).toBeInTheDocument();
-    expect(getByTestId('innsendernavn').querySelector('.navds-skeleton')).toBeInTheDocument();
+    expect(getByTestId('navn').querySelector('.aksel-skeleton')).toBeInTheDocument();
+    expect(getByTestId('identitetsnummer').querySelector('.aksel-skeleton')).toBeInTheDocument();
+    expect(getByTestId('virksomhetsnavn').querySelector('.aksel-skeleton')).toBeInTheDocument();
+    expect(getByTestId('orgnummer').querySelector('.aksel-skeleton')).toBeInTheDocument();
+    expect(getByTestId('innsendernavn').querySelector('.aksel-skeleton')).toBeInTheDocument();
   });
 
   it('renders error message when data fetching fails', () => {
