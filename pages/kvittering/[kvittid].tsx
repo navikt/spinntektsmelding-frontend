@@ -61,9 +61,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
 
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
-  const fullLonnIArbeidsgiverPerioden = useBoundStore((state) => state.fullLonnIArbeidsgiverPerioden);
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
@@ -158,7 +156,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   // Bruk custom hook for å håndtere data fra enten SSR eller store
   const {
     aktiveSykmeldingsperioder,
-    aktiveEgenmeldinger,
     aktiveArbeidsgiverperioder,
     aktivBruttoinntekt,
     aktivBestemmendeFravaersdag,
@@ -175,9 +172,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     storeData: {
       bruttoinntekt,
       lonnISykefravaeret,
-      fullLonnIArbeidsgiverPerioden,
       sykmeldingsperioder,
-      egenmeldingsperioder,
       naturalytelser,
       arbeidsgiverperioder,
       kvitteringInnsendt,
@@ -223,7 +218,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 {visArbeidsgiverperiode && (
                   <Fravaersperiode
                     sykmeldingsperioder={aktiveSykmeldingsperioder}
-                    egenmeldingsperioder={aktiveEgenmeldinger}
                     paakrevdeOpplysninger={paakrevdeOpplysninger}
                   />
                 )}

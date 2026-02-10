@@ -202,17 +202,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       };
 
   let sykmeldingsperioder: Periode[] = [];
-  let egenmeldingsperioder: Periode[] = [];
+
   if (dataFraBackend) {
     sykmeldingsperioder = mapPerioderTilInterntFormat(kvitteringDokument.sykmeldingsperioder);
-    egenmeldingsperioder = mapPerioderTilInterntFormat(kvitteringDokument.agp.egenmeldinger);
   } else {
     sykmeldingsperioder = kvitteringData?.sykmeldingsperioder
       ? mapPerioderTilInterntFormat(kvitteringData.sykmeldingsperioder)
-      : [];
-
-    egenmeldingsperioder = kvitteringData?.agp?.egenmeldinger
-      ? mapPerioderTilInterntFormat(kvitteringData?.agp?.egenmeldinger)
       : [];
   }
 
@@ -341,7 +336,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             {visArbeidsgiverperiode && (
               <Fravaersperiode
                 sykmeldingsperioder={sykmeldingsperioder}
-                egenmeldingsperioder={egenmeldingsperioder}
                 paakrevdeOpplysninger={paakrevdeOpplysninger}
               />
             )}
