@@ -1,6 +1,6 @@
 import { isValid } from 'date-fns';
 import { useMemo } from 'react';
-import { Periode } from '../state/state';
+import { Begrunnelse, Periode, YesNo } from '../state/state';
 import parseIsoDate from './parseIsoDate';
 import formatDate from './formatDate';
 import formatTime from './formatTime';
@@ -71,9 +71,9 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
               status:
                 kvitteringData?.agp?.redusertLoennIAgp?.beloep === undefined ||
                 kvitteringData?.agp?.redusertLoennIAgp?.beloep === null
-                  ? 'Ja'
-                  : 'Nei',
-              begrunnelse: kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse,
+                  ? ('Ja' as YesNo)
+                  : ('Nei' as YesNo),
+              begrunnelse: kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse as Begrunnelse | undefined,
               utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep
             }
           : { status: 'Ja', begrunnelse: undefined, utbetalt: undefined },
@@ -81,8 +81,8 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
           status:
             kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
             kvitteringData?.refusjon?.beloepPerMaaned !== null
-              ? 'Ja'
-              : 'Nei',
+              ? ('Ja' as YesNo)
+              : ('Nei' as YesNo),
           beloep: kvitteringData?.refusjon?.beloepPerMaaned
         },
         aktivInnsendingTidspunkt: storeInnsendingTidspunkt,
@@ -126,17 +126,17 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
       status:
         ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep === undefined ||
         ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep === null
-          ? 'Ja'
-          : 'Nei',
-      begrunnelse: ssrData?.skjema?.agp?.redusertLoennIAgp?.begrunnelse,
+          ? ('Ja' as YesNo)
+          : ('Nei' as YesNo),
+      begrunnelse: ssrData?.skjema?.agp?.redusertLoennIAgp?.begrunnelse as Begrunnelse | undefined,
       utbetalt: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep
     };
 
     const aktivLonnISykefravaeret = {
       status:
         ssrData?.skjema?.refusjon?.beloepPerMaaned !== undefined && ssrData?.skjema?.refusjon?.beloepPerMaaned !== null
-          ? 'Ja'
-          : 'Nei',
+          ? ('Ja' as YesNo)
+          : ('Nei' as YesNo),
       beloep: ssrData?.skjema?.refusjon?.beloepPerMaaned
     };
 

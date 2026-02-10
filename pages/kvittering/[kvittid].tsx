@@ -282,7 +282,15 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                       <div className={lokalStyles.uthevet}>
                         Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
                       </div>
-                      <FullLonnIArbeidsgiverperioden lonnIPerioden={aktivFullLonnIArbeidsgiverPerioden} />
+                      <FullLonnIArbeidsgiverperioden
+                        lonnIPerioden={
+                          aktivFullLonnIArbeidsgiverPerioden?.status &&
+                          (aktivFullLonnIArbeidsgiverPerioden.status === 'Ja' ||
+                            aktivFullLonnIArbeidsgiverPerioden.status === 'Nei')
+                            ? aktivFullLonnIArbeidsgiverPerioden
+                            : undefined
+                        }
+                      />
                     </>
                   )}
                   <LonnUnderSykefravaeret
