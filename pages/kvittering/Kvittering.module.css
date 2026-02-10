@@ -29,17 +29,6 @@
 
 .buttonWrapper {
   margin-top: 2rem;
-  /* display        : flex;
-  justify-content   : space-between;
-}
-
-.innerbuttonwrapper {
-  display           : flex;
-  gap               : 4rem;*/
-}
-
-.buttonWrapper button {
-  min-width: 10rem;
 }
 
 .skrivutknapp {

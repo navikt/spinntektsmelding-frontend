@@ -418,7 +418,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <HStack justify='space-between' className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
             <HStack gap='space-64'>
               <ButtonEndre onClick={clickEndre} />
-              <Button variant='tertiary' as='a' href={environment.saksoversiktUrl!}>
+              <Button variant='tertiary' as='a' href={environment.saksoversiktUrl}>
                 Lukk
               </Button>
             </HStack>
