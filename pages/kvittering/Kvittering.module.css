@@ -29,13 +29,13 @@
 
 .buttonWrapper {
   margin-top: 2rem;
-  display: flex;
-  justify-content: space-between;
+  /* display        : flex;
+  justify-content   : space-between;
 }
 
 .innerbuttonwrapper {
-  display: flex;
-  gap: 4rem;
+  display           : flex;
+  gap               : 4rem;*/
 }
 
 .buttonWrapper button {
@@ -49,6 +49,8 @@
 .lukkelenke {
   margin-top: auto;
   margin-bottom: auto;
+  color: inherit;
+  text-decoration: none;
 }
 
 @media screen and (max-width: 600px) {
