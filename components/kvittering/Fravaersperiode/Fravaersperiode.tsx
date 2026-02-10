@@ -7,36 +7,20 @@ import lokalStyles from './Fravaersperiode.module.css';
 
 interface FravaersperiodeProps {
   sykmeldingsperioder?: Periode[];
-  egenmeldingsperioder?: Periode[];
   paakrevdeOpplysninger: string[];
 }
 
 export default function Fravaersperiode({
   sykmeldingsperioder,
-  egenmeldingsperioder,
   paakrevdeOpplysninger
 }: Readonly<FravaersperiodeProps>) {
   const classNameHeadingSykmelding = paakrevdeOpplysninger?.includes(forespoerselType.arbeidsgiverperiode)
     ? lokalStyles.sykfravaerstyper
     : '';
-  const harAktiveEgenmeldingsperioder = () => {
-    return egenmeldingsperioder
-      ? egenmeldingsperioder.find((periode) => periode.fom || periode.tom) !== undefined
-      : undefined;
-  };
+
   return (
     <div className={lokalStyles.fravaersperiode}>
       <Heading2>Fraværsperiode</Heading2>
-      {harAktiveEgenmeldingsperioder() && (
-        <div className={lokalStyles.ytterstefravaerwrapper}>
-          <div className={lokalStyles.ytrefravaerswrapper}>
-            <Heading3 className={lokalStyles.sykfravaerstyper}>Egenmelding</Heading3>
-            {egenmeldingsperioder?.map((periode) => (
-              <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={'egenmelding' + periode.id} />
-            ))}
-          </div>
-        </div>
-      )}
       <div className={lokalStyles.ytterstefravaerwrapper}>
         <div className={lokalStyles.ytrefravaerswrapper}>
           <Heading3 className={classNameHeadingSykmelding}>Sykmelding</Heading3>

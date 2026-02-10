@@ -13,9 +13,7 @@ type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 interface StoreData {
   bruttoinntekt: any;
   lonnISykefravaeret: any;
-  fullLonnIArbeidsgiverPerioden: any;
   sykmeldingsperioder: Periode[] | undefined;
-  egenmeldingsperioder: any;
   naturalytelser: any;
   arbeidsgiverperioder: Periode[] | undefined;
   kvitteringInnsendt: Date | undefined;
@@ -45,9 +43,7 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
 
   const {
     bruttoinntekt,
-    fullLonnIArbeidsgiverPerioden,
     sykmeldingsperioder,
-    egenmeldingsperioder,
     naturalytelser,
     arbeidsgiverperioder,
     kvitteringInnsendt,
@@ -66,7 +62,6 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
     if (!dataFraBackend) {
       return {
         aktiveSykmeldingsperioder: sykmeldingsperioder,
-        aktiveEgenmeldinger: egenmeldingsperioder,
         aktiveArbeidsgiverperioder: arbeidsgiverperioder,
         aktivBruttoinntekt: bruttoinntekt,
         aktivBestemmendeFravaersdag: bestemmendeFravaersdag,
@@ -105,8 +100,6 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom)
     })) as Periode[];
-
-    const aktiveEgenmeldinger = ssrData?.skjema?.agp?.egenmeldinger;
 
     const aktiveArbeidsgiverperioder = ssrData?.skjema?.agp?.perioder?.map((p: any, i: number) => ({
       fom: parseIsoDate(p.fom),
@@ -155,7 +148,6 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
     const aktivRefusjonEndringer = ssrData?.skjema?.refusjon?.endringer || [];
     return {
       aktiveSykmeldingsperioder,
-      aktiveEgenmeldinger,
       aktiveArbeidsgiverperioder,
       aktivBruttoinntekt,
       aktivBestemmendeFravaersdag,
@@ -172,12 +164,10 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
     ssrData,
     kvitteringData,
     sykmeldingsperioder,
-    egenmeldingsperioder,
     arbeidsgiverperioder,
     bruttoinntekt,
     bestemmendeFravaersdag,
     naturalytelser,
-    fullLonnIArbeidsgiverPerioden,
     storeInnsendingTidspunkt
   ]);
 }
