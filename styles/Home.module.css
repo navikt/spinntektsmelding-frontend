@@ -29,7 +29,7 @@
 
 .datepickerlabel {
   display: inline-block;
-  margin-bottom: var(--a-spacing-2);
+  margin-bottom: var(--ax-space-8);
 }
 
 .datepickerEscape input {
@@ -90,7 +90,7 @@
 }
 
 .radiobuttonWrapper {
-  margin: var(--a-spacing-5) 0;
+  margin: var(--ax-space-20) 0;
 }
 
 .opphrefkravperiode {
@@ -100,7 +100,7 @@
 .naturalytelser {
   display: flex;
   gap: 2rem;
-  margin-bottom: var(--a-spacing-2);
+  margin-bottom: var(--ax-space-8);
 }
 
 .confirmationPanel {
@@ -148,6 +148,6 @@
 }
 
 .container {
-  background-color: var(--a-bg-subtle);
+  background-color: var(--ax-bg-neutral-soft);
   padding-bottom: 1rem;
 }
