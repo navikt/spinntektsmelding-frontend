@@ -171,9 +171,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
 
     await test.step('Verifiser kvittering', async () => {
       await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
-      await formPage.assertVisibleTextAtLeastOnce(
-        'Husk å kontroller at du har rapportert inn korrekt kontonummer til Altinn'
-      );
+      await formPage.assertVisibleTextAtLeastOnce('Husk å kontroller at du har rapportert inn korrekt kontonummer');
 
       await formPage.assertVisibleTextAtLeastOnce('Ansatt har ikke hatt fravær fra jobb');
       await formPage.assertVisibleTextAtLeastOnce('04.04.2023');

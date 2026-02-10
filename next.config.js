@@ -58,8 +58,7 @@ const nextConfig = {
       '@navikt/nav-dekoratoren-moduler',
       'date-fns',
       '@grafana/faro-web-sdk'
-    ],
-    turbopackFileSystemCacheForDev: true
+    ]
   },
   env: {
     NEXT_PUBLIC_APP_VERSION: version
