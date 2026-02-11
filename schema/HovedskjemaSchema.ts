@@ -168,8 +168,7 @@ export const HovedskjemaSchema = z
             dato: z.date({ error: 'Vennligst fyll inn gyldig dato for endring av refusjon.' })
           })
         )
-        .optional(),
-      kravetOpphopieroerer: z.date().optional()
+        .optional()
     }),
     kreverRefusjon: z
       .enum(['Ja', 'Nei'], {
@@ -179,8 +178,6 @@ export const HovedskjemaSchema = z
     fullLonn: z.enum(['Ja', 'Nei'], { error: 'Velg om full lønn betales i arbeidsgiverperioden....' }).optional(),
     agp: z
       .object({
-        // utbetalt: z.number({ error: 'Vennligst angi beløp utbetalt under arbeidsgiverperioden' }).min(0),
-        // begrunnelse: z.string({ error: 'Vennligst velg begrunnelse' }),
         redusertLoennIAgp: z
           .nullable(
             z.object({
