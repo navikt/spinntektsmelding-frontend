@@ -275,7 +275,8 @@ export function finnAktuelleInntekter(tidligereInntekt: HistoriskInntekt | null,
   return aktuelleInntekter;
 }
 
-function normaliserEndringAarsak(endringAarsak: EndringAarsak | ApiEndringAarsak): EndringAarsak {
+function normaliserEndringAarsak(input: EndringAarsak | ApiEndringAarsak): EndringAarsak {
+  const endringAarsak = { ...input } as EndringAarsak;
   if (endringAarsak?.aarsak) {
     switch (endringAarsak.aarsak) {
       case 'Ferie': {
@@ -337,7 +338,7 @@ function normaliserEndringAarsak(endringAarsak: EndringAarsak | ApiEndringAarsak
       }
     }
   }
-  return endringAarsak as EndringAarsak;
+  return endringAarsak;
 }
 
 function konverterTilDate(dato: string | Date) {

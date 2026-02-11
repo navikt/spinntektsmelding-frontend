@@ -74,13 +74,6 @@ describe('useKvitteringInit', () => {
     expect(result.current.avsender.orgNavn).toEqual(mottattKvittering.kvitteringNavNo.avsender.orgNavn);
 
     expect(result.current.harRefusjonEndringer).toBe('Ja');
-    expect(result.current.egenmeldingsperioder).toEqual([
-      {
-        fom: parseIsoDate(skjema.agp.egenmeldinger[0].fom),
-        id: 'uuid',
-        tom: parseIsoDate(skjema.agp.egenmeldinger[0].tom)
-      }
-    ]);
   });
 
   it('should fill the state with other stuff', async () => {
@@ -106,8 +99,6 @@ describe('useKvitteringInit', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toBe(30000);
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Tariffendring');
-    // expect(result.current.bruttoinntekt.manueltKorrigert).toBeTruthy();
-    expect(result.current.egenmeldingsperioder).toEqual([]);
     expect(result.current.harRefusjonEndringer).toBe('Ja');
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].gjelderFra).toEqual(parseIsoDate('2023-02-24'));
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].bleKjent).toEqual(parseIsoDate('2023-03-31'));
@@ -304,10 +295,11 @@ describe('useKvitteringInit', () => {
 
     const kvitteringInit = resp.current;
 
-    kvitteringMedRefusjonSluttdato.kvitteringNavNo.skjema.refusjon.endringer = [];
+    const kvitteringUtenEndringer = structuredClone(kvitteringMedRefusjonSluttdato);
+    kvitteringUtenEndringer.kvitteringNavNo.skjema.refusjon.endringer = [];
 
     act(() => {
-      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+      kvitteringInit(kvitteringUtenEndringer as unknown as KvitteringInit);
     });
 
     expect(result.current.refusjonEndringer).toEqual([
@@ -340,7 +332,8 @@ describe('useKvitteringInit', () => {
 
     const kvitteringInit = resp.current;
 
-    kvitteringMedRefusjonSluttdato.kvitteringNavNo.skjema.refusjon = {
+    const kvitteringMedEndringer = structuredClone(kvitteringMedRefusjonSluttdato);
+    kvitteringMedEndringer.kvitteringNavNo.skjema.refusjon = {
       beloepPerMaaned: 0.0,
       endringer: [
         {
@@ -351,7 +344,7 @@ describe('useKvitteringInit', () => {
     };
 
     act(() => {
-      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+      kvitteringInit(kvitteringMedEndringer as unknown as KvitteringInit);
     });
 
     expect(result.current.harRefusjonEndringer).toBe('Ja');
@@ -361,7 +354,7 @@ describe('useKvitteringInit', () => {
         dato: parseIsoDate('2024-08-05')
       }
     ]);
-    expect(result.current.lonnISykefravaeret.beloep).toBe(0.0);
+    expect(result.current.lonnISykefravaeret?.beloep).toBe(0.0);
   });
 
   it('should set the refusjon to No if there are no endringer', async () => {
@@ -371,18 +364,19 @@ describe('useKvitteringInit', () => {
 
     const kvitteringInit = resp.current;
 
-    kvitteringMedRefusjonSluttdato.kvitteringNavNo.skjema.refusjon = {
+    const kvitteringUtenEndringer = structuredClone(kvitteringMedRefusjonSluttdato);
+    kvitteringUtenEndringer.kvitteringNavNo.skjema.refusjon = {
       beloepPerMaaned: 0.0,
       endringer: []
     };
 
     act(() => {
-      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+      kvitteringInit(kvitteringUtenEndringer as unknown as KvitteringInit);
     });
 
     expect(result.current.harRefusjonEndringer).toBe('Nei');
     expect(result.current.refusjonEndringer).toEqual([]);
-    expect(result.current.lonnISykefravaeret.beloep).toBe(0.0);
+    expect(result.current.lonnISykefravaeret?.beloep).toBe(0.0);
   });
 
   it('should set naturalytelser when present in kvittering', async () => {
@@ -523,7 +517,7 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.naturalytelser).toHaveLength(1);
-    expect(result.current.naturalytelser[0]).toEqual({
+    expect(result.current.naturalytelser?.[0]).toEqual({
       naturalytelse: 'KOSTDOEGN',
       verdiBeloep: 1500,
       sluttdato: parseIsoDate('2023-04-01')
@@ -614,8 +608,8 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.naturalytelser).toHaveLength(17);
-    expect(result.current.naturalytelser[0].naturalytelse).toBe('ELEKTRONISKKOMMUNIKASJON');
-    expect(result.current.naturalytelser[16].naturalytelse).toBe('ANNET');
+    expect(result.current.naturalytelser?.[0].naturalytelse).toBe('ELEKTRONISKKOMMUNIKASJON');
+    expect(result.current.naturalytelser?.[16].naturalytelse).toBe('ANNET');
   });
 
   describe('handleInntekt - endringAarsaker', () => {

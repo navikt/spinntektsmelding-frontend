@@ -436,7 +436,12 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
     skjema: {
       agp: kvitteringData.agp ?? null,
       inntekt: { ...kvitteringData.inntekt },
-      refusjon: kvitteringData.refusjon ?? null,
+      refusjon: kvitteringData.refusjon
+        ? {
+            ...kvitteringData.refusjon,
+            endringer: kvitteringData.refusjon.endringer ? [...kvitteringData.refusjon.endringer] : undefined
+          }
+        : null,
       naturalytelser: kvitteringData.naturalytelser ?? null
     },
     mottatt: kvitteringData.tidspunkt

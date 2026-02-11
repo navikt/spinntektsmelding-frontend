@@ -1,4 +1,5 @@
-import { cleanup, render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import Kvittering, { getServerSideProps } from '../../../pages/kvittering/agi/[kvittid]';
 import { expect, vi, describe, it, beforeAll, beforeEach, afterEach } from 'vitest';
 import useBoundStore from '../../../state/useBoundStore';
@@ -39,8 +40,10 @@ vi.mock('../../../utils/redirectTilLogin', () => ({
   redirectTilLogin: vi.fn(() => ({ redirect: { destination: '/login', permanent: false } }))
 }));
 
-const mockPush = vi.fn();
-const mockGet = vi.fn();
+const { mockPush, mockGet } = vi.hoisted(() => ({
+  mockPush: vi.fn((url) => console.log('mockPush called with:', url)),
+  mockGet: vi.fn()
+}));
 
 vi.mock('next/navigation', () => ({
   default: {},
@@ -52,12 +55,12 @@ const initialState = useBoundStore.getState();
 
 describe('Kvittering', () => {
   beforeAll(() => {
-    // Suppress uncaught exceptions in this test file
+    // Log uncaught exceptions for debugging
     process.on('uncaughtException', (err) => {
-      // ignore
+      console.error('!!! Uncaught exception:', err?.message, err);
     });
-    process.on('unhandledRejection', (err) => {
-      // ignore
+    process.on('unhandledRejection', (err: any) => {
+      console.error('!!! Unhandled rejection:', err?.message, err);
     });
   });
 
@@ -172,19 +175,45 @@ describe('Kvittering', () => {
   });
 
   it('renders Endre button and navigates on click', async () => {
-    render(
+    const user = userEvent.setup();
+
+    // Create a completely fresh and mutable copy of the mock data
+    const source = kvitteringsdata.selvbestemtInntektsmelding;
+    const kvitteringData = {
+      ...source,
+      sykmeldt: { ...source.sykmeldt },
+      avsender: { ...source.avsender },
+      sykmeldingsperioder: source.sykmeldingsperioder.map((p) => ({ ...p })),
+      agp: source.agp
+        ? {
+            ...source.agp,
+            perioder: source.agp.perioder?.map((p) => ({ ...p })) ?? [],
+            egenmeldinger: source.agp.egenmeldinger?.map((e) => ({ ...e })) ?? [],
+            redusertLoennIAgp: source.agp.redusertLoennIAgp ? { ...source.agp.redusertLoennIAgp } : null
+          }
+        : null,
+      inntekt: { ...source.inntekt },
+      refusjon: source.refusjon
+        ? {
+            ...source.refusjon,
+            endringer: source.refusjon.endringer?.map((e) => ({ ...e })) ?? []
+          }
+        : null
+    };
+
+    const { container } = render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
+        kvittering={kvitteringData}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
     );
 
-    const endreButtons = screen.getAllByText(/Endre/i);
-    expect(endreButtons.length).toBeGreaterThan(0);
+    const endreButton = screen.getAllByRole('button', { name: /Endre/i })[0];
+    expect(endreButton).toBeInTheDocument();
 
-    fireEvent.click(endreButtons[0]);
+    await user.click(endreButton);
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true');

@@ -77,11 +77,11 @@ describe('useFyllAapenInnsending', () => {
 
       result.current.initBruttoinntekt(
         500000,
-        new Map([
-          ['2022-10', 500000],
-          ['2022-11', 500000],
-          ['2022-12', 500000]
-        ]),
+        {
+          '2022-10': 500000,
+          '2022-11': 500000,
+          '2022-12': 500000
+        },
         new Date()
       );
 
@@ -153,11 +153,11 @@ describe('useFyllAapenInnsending', () => {
 
       result.current.initBruttoinntekt(
         500000,
-        new Map([
-          ['2022-10', 500000],
-          ['2022-11', 500000],
-          ['2022-12', 500000]
-        ]),
+        {
+          '2022-10': 500000,
+          '2022-11': 500000,
+          '2022-12': 500000
+        },
         new Date()
       );
 
@@ -247,11 +247,11 @@ describe('useFyllAapenInnsending', () => {
 
       result.current.initBruttoinntekt(
         500000,
-        new Map([
-          ['2022-10', 500000],
-          ['2022-11', 500000],
-          ['2022-12', 500000]
-        ]),
+        {
+          '2022-10': 500000,
+          '2022-11': 500000,
+          '2022-12': 500000
+        },
         new Date()
       );
 
@@ -283,7 +283,7 @@ describe('useFyllAapenInnsending', () => {
     let innsending: { data: InnsendingSkjema };
 
     act(() => {
-      innsending = fyllInnsending(mockSkjema);
+      innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
     });
 
     if (innsending) {

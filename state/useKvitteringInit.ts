@@ -56,7 +56,9 @@ export default function useKvitteringInit() {
 
     const jsonData: KvitteringNavNoSchema = kvitteringsData.kvitteringNavNo!;
 
-    setKvitteringData(jsonData.skjema);
+    if (jsonData.skjema) {
+      setKvitteringData(jsonData.skjema);
+    }
 
     handleFravaersperiode(jsonData);
     // handleEgenmeldingsperiode(jsonData);
@@ -139,14 +141,16 @@ export default function useKvitteringInit() {
         : 'Nei'
     );
 
+    let refusjonEndringer = jsonData.skjema.refusjon?.endringer ? [...jsonData.skjema.refusjon.endringer] : undefined;
+
     if (jsonData.skjema.refusjon?.sluttdato) {
-      if (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0) {
-        (jsonData.skjema.refusjon.endringer as Array<RefusjonEndring>).push({
+      if (refusjonEndringer && refusjonEndringer.length > 0) {
+        refusjonEndringer.push({
           beloep: 0,
           startdato: jsonData.skjema.refusjon.sluttdato
         });
       } else {
-        jsonData.skjema.refusjon.endringer = [
+        refusjonEndringer = [
           {
             beloep: 0,
             startdato: jsonData.skjema.refusjon?.sluttdato
@@ -155,8 +159,8 @@ export default function useKvitteringInit() {
       }
     }
 
-    if (jsonData.skjema.refusjon?.endringer) {
-      const endringer = jsonData.skjema.refusjon?.endringer.map((endring) => ({
+    if (refusjonEndringer) {
+      const endringer = refusjonEndringer.map((endring) => ({
         beloep: endring.beloep,
         dato: parseIsoDate(endring.startdato)
       }));
