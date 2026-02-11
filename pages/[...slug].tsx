@@ -244,7 +244,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       if (kvitteringData?.refusjon?.endringer && kvitteringData.refusjon.endringer.length > 0) {
         const endringer = kvitteringData.refusjon.endringer.map((endring) => ({
           beloep: endring.beloep,
-          dato: parseIsoDate(endring.startdato)!
+          startdato: parseIsoDate(endring.startdato)!
         }));
         setValue('refusjon.endringer', endringer);
         setValue('refusjon.harEndringer', 'Ja');

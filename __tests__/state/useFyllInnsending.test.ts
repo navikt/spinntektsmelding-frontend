@@ -57,11 +57,11 @@ const skjemaData: Skjema = {
     beloepPerMaaned: 80666.66666666667,
     isEditing: false,
     endringer: [
-      { beloep: 1234, dato: parseIsoDate('2023-04-13')! },
-      { beloep: 12345, dato: parseIsoDate('2023-04-20')! },
+      { beloep: 1234, startdato: parseIsoDate('2023-04-13')! },
+      { beloep: 12345, startdato: parseIsoDate('2023-04-20')! },
       {
         beloep: 0,
-        dato: parseIsoDate('2023-04-19')!
+        startdato: parseIsoDate('2023-04-19')!
       }
     ],
     harEndringer: 'Ja'
@@ -282,8 +282,8 @@ describe('konverterRefusjonEndringer', () => {
 
   it('should convert refusjon endringer correctly', () => {
     const endringer = [
-      { beloep: 1000, dato: new Date('2023-06-01') },
-      { beloep: 2000, dato: new Date('2023-07-01') }
+      { beloep: 1000, startdato: new Date('2023-06-01') },
+      { beloep: 2000, startdato: new Date('2023-07-01') }
     ];
     const result = konverterRefusjonEndringer('Ja', endringer);
     expect(result).toEqual([

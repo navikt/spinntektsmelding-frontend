@@ -625,12 +625,13 @@ describe('HovedskjemaSchema', () => {
         isEditing: false,
         beloepPerMaaned: 3000,
         harEndringer: 'Ja',
-        endringer: [{ beloep: 2000, dato: new Date('2024-01-15') }]
+        endringer: [{ beloep: 2000, startdato: new Date('2024-01-15') }]
       },
       kreverRefusjon: 'Ja',
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.error).toBeUndefined();
     expect(result.success).toBe(true);
   });
 
@@ -689,7 +690,7 @@ describe('HovedskjemaSchema', () => {
         isEditing: false,
         beloepPerMaaned: 3000,
         harEndringer: 'Ja',
-        endringer: [{ beloep: 2000, dato: 'invalid-date' }]
+        endringer: [{ beloep: 2000, startdato: 'invalid-date' }]
       },
       kreverRefusjon: 'Ja',
       avsenderTlf: '12345678'

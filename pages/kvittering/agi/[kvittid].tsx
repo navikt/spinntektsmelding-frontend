@@ -52,14 +52,15 @@ import { getKvitteringServerSideProps } from '../../../utils/getKvitteringServer
 import { z } from 'zod';
 import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import { EndringAarsak } from '../../../validators/validerAapenInnsending';
-import { EndringsBeloep } from '../../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
-import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
 import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 import { useShallow } from 'zustand/react/shallow';
 import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema';
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
 import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
+import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
+
+type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
 type PersonData = {
   navn: string;
@@ -254,14 +255,14 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   if (dataFraBackend) {
     refusjonEndringer = kvitteringDokument?.refusjon?.endringer?.map(
       (endring: z.infer<typeof RefusjonEndringSchema>) => ({
-        dato: parseIsoDate(endring.startdato),
+        startdato: parseIsoDate(endring.startdato),
         beloep: endring.beloep
       })
     );
   } else {
     refusjonEndringer = kvitteringData?.refusjon?.endringer
       ? kvitteringData?.refusjon?.endringer.map((endring) => ({
-          dato: parseIsoDate(endring.startdato),
+          startdato: parseIsoDate(endring.startdato),
           beloep: endring.beloep
         }))
       : [];
@@ -271,13 +272,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     if (kvitteringDokument?.refusjon?.sluttdato) {
       refusjonEndringer.push({
         beloep: 0,
-        dato: parseIsoDate(kvitteringDokument.refusjon?.sluttdato)
+        startdato: parseIsoDate(kvitteringDokument.refusjon?.sluttdato)
       });
     }
   } else if (kvitteringData?.refusjon?.sluttdato) {
     refusjonEndringer.push({
       beloep: 0,
-      dato: parseIsoDate(kvitteringData?.refusjon?.sluttdato)
+      startdato: parseIsoDate(kvitteringData?.refusjon?.sluttdato)
     });
   }
   const innsendtRefusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();

@@ -8,11 +8,6 @@ import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 
-export interface EndringsBeloep {
-  beloep?: number;
-  dato?: Date;
-}
-
 interface RefusjonUtbetalingEndringProps {
   minDate?: Date;
   maxDate?: Date;
@@ -89,7 +84,7 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
                 className={lokalStyles.endringsboks}
               />
               <Controller
-                name={`refusjon.endringer.${index}.dato`}
+                name={`refusjon.endringer.${index}.startdato`}
                 control={control}
                 render={({ field: dateField }) => (
                   <Datovelger
@@ -98,7 +93,7 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
                     onDateChange={dateField.onChange}
                     id={ensureValidHtmlId(`refusjon.endringer.${index}.startdato`)}
                     label='Dato for endring'
-                    error={findErrorInRHFErrors(`refusjon.endringer.${index}.dato`, errors)}
+                    error={findErrorInRHFErrors(`refusjon.endringer.${index}.startdato`, errors)}
                     defaultSelected={dateField.value}
                   />
                 )}

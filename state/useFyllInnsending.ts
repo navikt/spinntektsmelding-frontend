@@ -1,5 +1,5 @@
 import { isValid } from 'date-fns';
-import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+// import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { LonnIArbeidsgiverperioden, Naturalytelse, Periode, YesNo } from './state';
@@ -16,8 +16,11 @@ import { NaturalytelseEnumSchema } from '../schema/NaturalytelseEnumSchema';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
+import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
 
 export type SendtPeriode = z.infer<typeof ApiPeriodeSchema>;
+
+type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
 export default function useFyllInnsending() {
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
@@ -115,7 +118,6 @@ export default function useFyllInnsending() {
           skjemaData.agp?.redusertLoennIAgp as LonnIArbeidsgiverperioden,
           arbeidsgiverperioder
         ),
-        // egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
         redusertLoennIAgp: skjemaData.agp?.redusertLoennIAgp ?? null
       },
       inntekt: harForespurtInntekt
@@ -158,14 +160,6 @@ function mapArbeidsgiverPerioder(
         fom: formatIsoDate(periode.fom)!,
         tom: formatIsoDate(periode.tom)!
       }))
-    : [];
-}
-
-export function mapEgenmeldingsperioder(egenmeldingsperioder: Periode[] | undefined) {
-  return egenmeldingsperioder
-    ? egenmeldingsperioder
-        .filter((periode) => periode.fom || periode.tom)
-        .map((periode) => ({ fom: formatIsoDate(periode.fom), tom: formatIsoDate(periode.tom) }))
     : [];
 }
 
@@ -271,7 +265,7 @@ export function konverterRefusjonEndringer(
     harRefusjonEndringer === 'Ja' && refusjonEndringer
       ? refusjonEndringer.map((endring) => ({
           beloep: endring.beloep!,
-          startdato: formatIsoDate(endring.dato)!
+          startdato: formatIsoDate(endring.startdato)!
         }))
       : [];
 
