@@ -41,7 +41,7 @@ vi.mock('../../../utils/redirectTilLogin', () => ({
 }));
 
 const { mockPush, mockGet } = vi.hoisted(() => ({
-  mockPush: vi.fn((url) => console.log('mockPush called with:', url)),
+  mockPush: vi.fn(),
   mockGet: vi.fn()
 }));
 
@@ -54,16 +54,6 @@ vi.mock('next/navigation', () => ({
 const initialState = useBoundStore.getState();
 
 describe('Kvittering', () => {
-  beforeAll(() => {
-    // Log uncaught exceptions for debugging
-    process.on('uncaughtException', (err) => {
-      console.error('!!! Uncaught exception:', err?.message, err);
-    });
-    process.on('unhandledRejection', (err: any) => {
-      console.error('!!! Unhandled rejection:', err?.message, err);
-    });
-  });
-
   beforeEach(() => {
     const spy = vi.spyOn(window, 'print');
     vi.spyOn(env, 'saksoversiktUrl', 'get').mockReturnValue('https://mocked.nav.no');
@@ -201,7 +191,7 @@ describe('Kvittering', () => {
         : null
     };
 
-    const { container } = render(
+    render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
         kvittering={kvitteringData}
@@ -313,7 +303,7 @@ describe('getServerSideProps', () => {
 
   it('returns props in development mode', async () => {
     process.env.NODE_ENV = 'development';
-    const hentKvitteringsdataAgiSSR = await import('../../../utils/hentKvitteringsdataAgiSSR');
+
     const context = {
       query: { kvittid: '8d50ef20-37b5-4829-ad83-56219e70b375' },
       req: {}

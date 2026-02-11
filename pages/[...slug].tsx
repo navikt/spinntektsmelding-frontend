@@ -252,7 +252,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         setValue('refusjon.harEndringer', 'Nei');
         setValue('refusjon.endringer', []);
       }
-    } else if (!dataFraBackend && !kvitteringData?.refusjon && !kvitteringData?.refusjon?.endringer) {
+    } else if (!dataFraBackend && !kvitteringData?.refusjon?.endringer) {
       setValue('refusjon.beloepPerMaaned', 0);
       setValue('kreverRefusjon', 'Nei');
     }
