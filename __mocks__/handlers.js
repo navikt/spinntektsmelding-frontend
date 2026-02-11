@@ -15,7 +15,8 @@ const kvitteringMockdataMap = {
   'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-eksternt-system',
   'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63': 'kvittering-delvis',
   'b24baf59-55c9-48df-b8c1-7d93e098a95d': 'kvittering-delvis-endret-inntekt',
-  '66f1188a-5cb7-4741-bd60-c9070835633c': 'kvittering-eksternt-system'
+  '66f1188a-5cb7-4741-bd60-c9070835633c': 'kvittering-eksternt-system',
+  '52ce04ad-0919-49ee-86f0-40c0e040dc0e': 'kvittering-agp-endringer'
 };
 
 const kvitteringAgiMockdataMap = {

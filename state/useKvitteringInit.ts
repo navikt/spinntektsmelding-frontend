@@ -19,7 +19,7 @@ type RefusjonEndring = z.infer<typeof RefusjonEndringSchema>;
 
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
-  const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
+  // const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
 
   const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
@@ -44,6 +44,7 @@ export default function useKvitteringInit() {
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
+  const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
 
   return (kvitteringsData: MottattKvittering) => {
     if (!kvitteringsData) return;
@@ -55,8 +56,10 @@ export default function useKvitteringInit() {
 
     const jsonData: KvitteringNavNoSchema = kvitteringsData.kvitteringNavNo!;
 
+    setKvitteringData(jsonData.skjema);
+
     handleFravaersperiode(jsonData);
-    handleEgenmeldingsperiode(jsonData);
+    // handleEgenmeldingsperiode(jsonData);
     handlePaakrevdeOpplysninger(jsonData);
     handlePerson(jsonData);
     handleBestemmendeFravaersdag(jsonData);
@@ -73,10 +76,10 @@ export default function useKvitteringInit() {
     initFravaersperiode(jsonData.sykmeldingsperioder);
   }
 
-  function handleEgenmeldingsperiode(jsonData: KvitteringNavNoSchema) {
-    if (jsonData.skjema.agp?.egenmeldinger)
-      initEgenmeldingsperiode(jsonData.skjema.agp.egenmeldinger as MottattPeriode[]);
-  }
+  // function handleEgenmeldingsperiode(jsonData: KvitteringNavNoSchema) {
+  //   if (jsonData.skjema.agp?.egenmeldinger)
+  //     initEgenmeldingsperiode(jsonData.skjema.agp.egenmeldinger as MottattPeriode[]);
+  // }
 
   function handlePaakrevdeOpplysninger(jsonData: KvitteringNavNoSchema) {
     const paakrevdeOpplysninger: Array<Opplysningstype> = finnPakrevdeOpplysninger(jsonData);

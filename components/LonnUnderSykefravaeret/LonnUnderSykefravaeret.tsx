@@ -6,6 +6,7 @@ import { EndringsBeloep } from '../RefusjonArbeidsgiver/RefusjonUtbetalingEndrin
 import lokalStyle from './LonnUnderSykefravaeret.module.css';
 import lokalStyles from '../../pages/kvittering/Kvittering.module.css';
 import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 interface LonnUnderSykefravaeretProps {
   loenn: LonnISykefravaeret;
@@ -59,8 +60,8 @@ export default function LonnUnderSykefravaeret({
                 </thead>
                 <tbody>
                   {refusjonEndringer?.map((endring) => (
-                    <tr key={endring.dato?.toString()}>
-                      <td>{formatDate(endring.dato)}</td>
+                    <tr key={endring.dato?.toString() ?? endring.startdato?.toString()}>
+                      <td>{formatDate(endring.dato ?? parseIsoDate(endring.startdato))}</td>
                       <td>{formatCurrency(endring.beloep)}</td>
                     </tr>
                   ))}

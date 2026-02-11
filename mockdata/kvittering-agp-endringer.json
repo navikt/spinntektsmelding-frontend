@@ -1,0 +1,41 @@
+{
+  "kvitteringNavNo": {
+    "sykmeldt": { "fnr": "08907299776", "navn": "UROLIG ESKE" },
+    "avsender": {
+      "orgnr": "315609267",
+      "orgNavn": "UKJENT ARBEIDSGIVER",
+      "navn": "FRYKTSOM RADIOSTASJON",
+      "tlf": "95039233"
+    },
+    "sykmeldingsperioder": [
+      { "fom": "2025-09-30", "tom": "2025-10-15" },
+      { "fom": "2025-10-16", "tom": "2025-10-31" }
+    ],
+    "skjema": {
+      "forespoerselId": "a0c81a62-e2df-4760-bbfb-4fea28d60274",
+      "avsenderTlf": "95039233",
+      "agp": {
+        "perioder": [{ "fom": "2025-09-30", "tom": "2025-10-15" }],
+        "redusertLoennIAgp": { "beloep": 0, "begrunnelse": "ArbeidOpphoert" }
+      },
+      "inntekt": { "beloep": 16000, "inntektsdato": "2025-09-30", "endringAarsaker": [{ "aarsak": "Nyansatt" }] },
+      "naturalytelser": [
+        { "naturalytelse": "FRITRANSPORT", "verdiBeloep": 2000, "sluttdato": "2025-11-01" },
+        { "naturalytelse": "KOSTBESPARELSEIHJEMMET", "verdiBeloep": 1000, "sluttdato": "2025-11-01" },
+        { "naturalytelse": "BOLIG", "verdiBeloep": 5000, "sluttdato": "2025-11-01" },
+        { "naturalytelse": "LOSJI", "verdiBeloep": 1234, "sluttdato": "2025-11-01" },
+        { "naturalytelse": "KOSTDAGER", "verdiBeloep": 1500, "sluttdato": "2025-11-01" }
+      ],
+      "refusjon": {
+        "beloepPerMaaned": 8000,
+        "endringer": [
+          { "beloep": 0, "startdato": "2025-12-10" },
+          { "beloep": 11234, "startdato": "2025-12-12" },
+          { "beloep": 0, "startdato": "2025-12-14" }
+        ]
+      }
+    },
+    "mottatt": "2026-01-08T15:11:45.219002+01:00"
+  },
+  "kvitteringEkstern": null
+}

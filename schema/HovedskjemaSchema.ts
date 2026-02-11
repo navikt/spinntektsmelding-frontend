@@ -74,7 +74,6 @@ function validateRedusertLoennIAgp(val: HovedskjemaInput, ctx: z.RefinementCtx) 
   if (val.fullLonn !== 'Nei') return;
 
   if (val.agp?.redusertLoennIAgp?.beloep === undefined || val.agp?.redusertLoennIAgp?.beloep === null) {
-    console.log('[DEBUG] beloep is undefined/null, adding error');
     ctx.issues.push({
       code: 'custom',
       message: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
@@ -91,7 +90,6 @@ function validateRedusertLoennIAgp(val: HovedskjemaInput, ctx: z.RefinementCtx) 
   }
 
   if (!val.agp?.redusertLoennIAgp?.begrunnelse) {
-    console.log('[DEBUG] begrunnelse is falsy, adding error');
     ctx.issues.push({
       code: 'custom',
       message: 'Begrunnelse for redusert utbetaling i arbeidsgiverperioden må fylles ut',
