@@ -5,11 +5,6 @@ import { Periode } from './state';
 import parseIsoDate from '../utils/parseIsoDate';
 import { MottattPeriode } from '../schema/ForespurtDataSchema';
 import { CompleteState } from './useBoundStore';
-import { PeriodeParam } from '../components/Bruttoinntekt/Periodevelger';
-import finnArbeidsgiverperiode from '../utils/finnArbeidsgiverperiode';
-import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
-import { finnAktuelleInntekter } from './useBruttoinntektStore';
-import PeriodeType from '../config/PeriodeType';
 import sorterFomStigende from '../utils/sorterFomStigende';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
 
@@ -17,120 +12,13 @@ export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;
   opprinneligEgenmeldingsperiode?: Array<Periode>;
   kanEndreEgenmeldingPeriode: boolean;
-  setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => void;
-  slettEgenmeldingsperiode: (periodeId: string) => void;
-  leggTilEgenmeldingsperiode: () => void;
-  setEndreEgenmelding: (status: boolean) => void;
-  tilbakestillEgenmelding: () => void;
   initEgenmeldingsperiode: (egenmeldingsperioder: Array<MottattPeriode>) => void;
 }
 
 const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState> = (set, get) => ({
   egenmeldingsperioder: undefined,
   kanEndreEgenmeldingPeriode: false,
-  setEgenmeldingDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
-    const skjaeringstidspunkt = get().skjaeringstidspunkt;
-    const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
-    const sykmeldingsperioder = get().sykmeldingsperioder;
-    const egenmeldingsperioder = get().egenmeldingsperioder;
-    set(
-      produce((state) => {
-        if (periodeId === PeriodeType.NY_PERIODE) {
-          const hasSetDateValue = dateValue && (dateValue.fom || dateValue?.tom);
 
-          if (hasSetDateValue) {
-            state.egenmeldingsperioder = [{ ...dateValue, id: nanoid() }];
-          }
-        } else {
-          const oppdatertEgenmeldingsperiode = updateDateValue(egenmeldingsperioder, periodeId, dateValue);
-
-          state.egenmeldingsperioder = oppdatertEgenmeldingsperiode;
-          oppdaterOgRekalkulerInntekt(
-            state,
-            skjaeringstidspunkt,
-            arbeidsgiverKanFlytteSkjæringstidspunkt,
-            sykmeldingsperioder,
-            oppdatertEgenmeldingsperiode
-          );
-        }
-        return state;
-      })
-    );
-  },
-  slettEgenmeldingsperiode: (periodeId: string) => {
-    const skjaeringstidspunkt = get().skjaeringstidspunkt;
-    const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
-    const sykmeldingsperioder = get().sykmeldingsperioder;
-    const egenmeldingsperioder = get().egenmeldingsperioder;
-    set(
-      produce((state) => {
-        const tomPeriode = [{ id: nanoid() }];
-        const nyePerioder = egenmeldingsperioder
-          ? egenmeldingsperioder.filter((periode: Periode) => periode.id !== periodeId)
-          : tomPeriode;
-        const oppdatertePerioder = nyePerioder.length === 0 ? tomPeriode : nyePerioder;
-        state.egenmeldingsperioder = oppdatertePerioder;
-
-        oppdaterOgRekalkulerInntekt(
-          state,
-          skjaeringstidspunkt,
-          arbeidsgiverKanFlytteSkjæringstidspunkt,
-          sykmeldingsperioder,
-          oppdatertePerioder
-        );
-
-        return state;
-      })
-    );
-  },
-  leggTilEgenmeldingsperiode: () => {
-    set(
-      produce((state) => {
-        const nyEgenmeldingsperiode: Periode = { id: nanoid() };
-        if (state.egenmeldingsperioder && state.egenmeldingsperioder.length > 0) {
-          state.egenmeldingsperioder.push(nyEgenmeldingsperiode);
-        } else {
-          state.egenmeldingsperioder = [nyEgenmeldingsperiode, { id: nanoid() }];
-        }
-        return state;
-      })
-    );
-  },
-
-  setEndreEgenmelding: (status: boolean) => {
-    set(
-      produce((state) => {
-        state.kanEndreEgenmeldingPeriode = status;
-
-        return state;
-      })
-    );
-  },
-  tilbakestillEgenmelding: () => {
-    const clonedEgenmelding = structuredClone(get().opprinneligEgenmeldingsperiode);
-    const skjaeringstidspunkt = get().skjaeringstidspunkt;
-    const arbeidsgiverKanFlytteSkjæringstidspunkt = get().arbeidsgiverKanFlytteSkjæringstidspunkt;
-    const sykmeldingsperioder = get().sykmeldingsperioder;
-    set(
-      produce((state) => {
-        state.egenmeldingsperioder = clonedEgenmelding;
-
-        if (clonedEgenmelding && clonedEgenmelding.length > 0 && clonedEgenmelding[0].fom && clonedEgenmelding[0].tom) {
-          state.kanEndreEgenmeldingPeriode = false;
-        }
-
-        oppdaterOgRekalkulerInntekt(
-          state,
-          skjaeringstidspunkt,
-          arbeidsgiverKanFlytteSkjæringstidspunkt,
-          sykmeldingsperioder,
-          clonedEgenmelding
-        );
-
-        return state;
-      })
-    );
-  },
   initEgenmeldingsperiode: (egenmeldingsperioder: Array<MottattPeriode>) => {
     set(
       produce((state) => {
@@ -155,46 +43,6 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
 });
 
 export default useEgenmeldingStore;
-
-function oppdaterOgRekalkulerInntekt(
-  state: any,
-  skjaeringstidspunkt: Date | undefined,
-  arbeidsgiverKanFlytteSkjæringstidspunkt: () => boolean,
-  sykmeldingsperioder: Array<Periode>,
-  egenmeldingsperioder: Array<Periode>
-) {
-  const fPerioder = finnFravaersperioder(sykmeldingsperioder, egenmeldingsperioder);
-  if (fPerioder) {
-    const agp = finnArbeidsgiverperiode([...fPerioder].sort(sorterFomStigende));
-    state.arbeidsgiverperioder = agp;
-    const bestemmende = finnBestemmendeFravaersdag(
-      fPerioder,
-      agp,
-      skjaeringstidspunkt,
-      arbeidsgiverKanFlytteSkjæringstidspunkt()
-    );
-    if (bestemmende) {
-      state.rekalkulerBruttoinntekt(parseIsoDate(bestemmende));
-      state.tidligereInntekt = finnAktuelleInntekter(state.opprinneligeInntekt, parseIsoDate(bestemmende)!);
-    }
-  }
-}
-
-function updateDateValue(egenmeldingsperioder?: Periode[], periodeId?: string, dateValue?: PeriodeParam | undefined) {
-  if (!egenmeldingsperioder) return [];
-  if (!periodeId || !dateValue) return egenmeldingsperioder;
-  const oppdatertEgenmeldingPerioder = egenmeldingsperioder.map((periode: Periode) => {
-    if (periode.id === periodeId) {
-      const nyPeriode = { ...periode };
-      nyPeriode.tom = dateValue?.tom;
-      nyPeriode.fom = dateValue?.fom;
-      return nyPeriode;
-    }
-    return periode;
-  });
-
-  return oppdatertEgenmeldingPerioder;
-}
 
 export function finnFravaersperioder<T extends TidPeriode>(
   sykmeldingsperioder?: Array<T>,
