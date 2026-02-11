@@ -7,8 +7,11 @@ import { leggTilFeilmelding, slettFeilmeldingFraState } from './useFeilmeldinger
 
 import feiltekster from '../utils/feiltekster';
 import { CompleteState } from './useBoundStore';
-import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
+import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
+import z from 'zod';
+
+type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
 export interface RefusjonArbeidsgiverState {
   fullLonnIArbeidsgiverPerioden?: LonnIArbeidsgiverperioden;
@@ -94,8 +97,8 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
             if (endring.beloep && endring.beloep >= 0) {
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
-            if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
-              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].dato`);
+            if (endring.startdato && endring.startdato >= state.bestemmendeFravaersdag) {
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].startdato`);
             }
           });
         }
@@ -142,7 +145,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
             if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
-              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].dato`);
+              slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].startdato`);
             }
           });
         }

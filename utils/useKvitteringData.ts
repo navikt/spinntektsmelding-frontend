@@ -91,7 +91,7 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
         aktivRefusjonEndringer:
           kvitteringData?.refusjon?.endringer?.map((endring: any) => ({
             beloep: endring.beloep,
-            dato: parseIsoDate(endring.dato) ?? parseIsoDate(endring.startdato)
+            startdato: parseIsoDate(endring.startdato)
           })) || []
       };
     }
@@ -145,7 +145,12 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
       ? ` - ${formatDate(new Date(mottatt))} kl. ${formatTime(new Date(mottatt))}`
       : '';
 
-    const aktivRefusjonEndringer = ssrData?.skjema?.refusjon?.endringer || [];
+    const aktivRefusjonEndringer = ssrData?.skjema?.refusjon?.endringer
+      ? ssrData?.skjema?.refusjon?.endringer.map((endringer) => ({
+          beloep: endringer.beloep,
+          startdato: parseIsoDate(endringer.startdato)
+        }))
+      : [];
     return {
       aktiveSykmeldingsperioder,
       aktiveArbeidsgiverperioder,

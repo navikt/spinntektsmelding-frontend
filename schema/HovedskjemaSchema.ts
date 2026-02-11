@@ -3,6 +3,7 @@ import { EndringAarsakSchema } from './EndringAarsakSchema';
 import NaturalytelserSchema from './NaturalytelserSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
 import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSchema';
+import { RefusjonEndringSchema } from './RefusjonEndringSchema';
 
 const OpplysningstypeSchema = z.enum(['inntekt', 'refusjon', 'arbeidsgiverperiode']);
 
@@ -161,14 +162,7 @@ export const HovedskjemaSchema = z
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
       isEditing: z.boolean(),
       harEndringer: z.enum(['Ja', 'Nei']).or(z.undefined()),
-      endringer: z
-        .array(
-          z.object({
-            beloep: z.number({ error: 'Vennligst fyll inn beløpet for endret refusjon.' }).min(0),
-            dato: z.date({ error: 'Vennligst fyll inn gyldig dato for endring av refusjon.' })
-          })
-        )
-        .optional()
+      endringer: z.array(RefusjonEndringSchema).optional()
     }),
     kreverRefusjon: z
       .enum(['Ja', 'Nei'], {

@@ -102,8 +102,6 @@ describe('useFyllAapenInnsending', () => {
       result.current.setBareNyMaanedsinntekt(500000);
     });
 
-    const skjemaData = mockSkjema;
-
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());
 
     const fyllInnsending = fyller.current;
@@ -166,8 +164,8 @@ describe('useFyllAapenInnsending', () => {
       result.current.setInnsenderTelefon('12345678');
       result.current.setVedtaksperiodeId('8d50ef20-37b5-4829-ad83-56219e70b375');
       result.current.initRefusjonEndringer([
-        { beloep: 1234, dato: parseIsoDate('2023-04-13') },
-        { beloep: 12345, dato: parseIsoDate('2023-04-20') }
+        { beloep: 1234, startdato: parseIsoDate('2023-04-13') },
+        { beloep: 12345, startdato: parseIsoDate('2023-04-20') }
       ]);
 
       result.current.initLonnISykefravaeret({
@@ -178,8 +176,8 @@ describe('useFyllAapenInnsending', () => {
       result.current.setBareNyMaanedsinntekt(500000);
 
       result.current.initRefusjonEndringer([
-        { beloep: 1234, dato: parseIsoDate('2023-04-13') },
-        { beloep: 12345, dato: parseIsoDate('2023-04-20') }
+        { beloep: 1234, startdato: parseIsoDate('2023-04-13') },
+        { beloep: 12345, startdato: parseIsoDate('2023-04-20') }
       ]);
 
       result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
@@ -260,8 +258,8 @@ describe('useFyllAapenInnsending', () => {
       result.current.setInnsenderTelefon('12345678');
       result.current.setVedtaksperiodeId('8d50ef20-37b5-4829-ad83-56219e70b375');
       result.current.initRefusjonEndringer([
-        { beloep: 1234, dato: parseIsoDate('2023-04-13') },
-        { beloep: 12345, dato: parseIsoDate('2023-04-20') }
+        { beloep: 1234, startdato: parseIsoDate('2023-04-13') },
+        { beloep: 12345, startdato: parseIsoDate('2023-04-20') }
       ]);
 
       result.current.initLonnISykefravaeret({

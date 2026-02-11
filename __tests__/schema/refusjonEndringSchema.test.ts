@@ -7,14 +7,9 @@ describe('RefusjonEndringSchema', () => {
       beloep: 1000
     };
 
-    const expected = {
-      startdato: '2021-01-01',
-      beloep: 1000
-    };
-
     const parsed = RefusjonEndringSchema.safeParse(data);
     expect(parsed.success).toBe(true);
-    expect(parsed.data).toEqual(expected);
+    expect(parsed.data).toEqual(data);
   });
 
   it('should invalidate RefusjonEndringSchema', () => {

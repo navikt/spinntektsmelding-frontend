@@ -9,7 +9,6 @@ import {
   finnInnsendbareArbeidsgiverperioder,
   konverterPerioderFraMottattTilInterntFormat,
   konverterRefusjonEndringer,
-  // mapEgenmeldingsperioder,
   mapNaturalytelserToData
 } from './useFyllInnsending';
 import { KonverterEndringAarsakSchema } from '../schema/KonverterEndringAarsakSchema';
@@ -104,7 +103,6 @@ export default function useFyllAapenInnsending() {
         .map((periode) => ({ fom: formatDateForSubmit(periode.fom), tom: formatDateForSubmit(periode.tom) })),
       agp: {
         perioder: formattedAgpPerioder,
-        // egenmeldinger: mapEgenmeldingsperioder(egenmeldingsperioder),
         redusertLoennIAgp: skjemaData.agp?.redusertLoennIAgp ?? null
       },
       inntekt: {

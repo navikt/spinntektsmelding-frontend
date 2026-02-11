@@ -2,11 +2,14 @@ import { Alert, BodyShort, Link } from '@navikt/ds-react';
 import { LonnISykefravaeret, YesNo } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
-import { EndringsBeloep } from '../RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import lokalStyle from './LonnUnderSykefravaeret.module.css';
 import lokalStyles from '../../pages/kvittering/Kvittering.module.css';
 import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
 import parseIsoDate from '../../utils/parseIsoDate';
+import z from 'zod';
+import { RefusjonEndringSchema } from '../../schema/RefusjonEndringSchema';
+
+type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
 interface LonnUnderSykefravaeretProps {
   loenn: LonnISykefravaeret;
@@ -60,8 +63,8 @@ export default function LonnUnderSykefravaeret({
                 </thead>
                 <tbody>
                   {refusjonEndringer?.map((endring) => (
-                    <tr key={endring.dato?.toString() ?? endring.startdato?.toString()}>
-                      <td>{formatDate(endring.dato ?? parseIsoDate(endring.startdato))}</td>
+                    <tr key={endring.startdato?.toString() + endring.beloep.toString()}>
+                      <td>{formatDate(parseIsoDate(endring.startdato))}</td>
                       <td>{formatCurrency(endring.beloep)}</td>
                     </tr>
                   ))}
