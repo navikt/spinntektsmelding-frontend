@@ -74,7 +74,6 @@ function validateRedusertLoennIAgp(val: HovedskjemaInput, ctx: z.RefinementCtx) 
   if (val.fullLonn !== 'Nei') return;
 
   if (val.agp?.redusertLoennIAgp?.beloep === undefined || val.agp?.redusertLoennIAgp?.beloep === null) {
-    console.log('[DEBUG] beloep is undefined/null, adding error');
     ctx.issues.push({
       code: 'custom',
       message: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
@@ -91,7 +90,6 @@ function validateRedusertLoennIAgp(val: HovedskjemaInput, ctx: z.RefinementCtx) 
   }
 
   if (!val.agp?.redusertLoennIAgp?.begrunnelse) {
-    console.log('[DEBUG] begrunnelse is falsy, adding error');
     ctx.issues.push({
       code: 'custom',
       message: 'Begrunnelse for redusert utbetaling i arbeidsgiverperioden må fylles ut',
@@ -170,8 +168,7 @@ export const HovedskjemaSchema = z
             dato: z.date({ error: 'Vennligst fyll inn gyldig dato for endring av refusjon.' })
           })
         )
-        .optional(),
-      kravetOpphopieroerer: z.date().optional()
+        .optional()
     }),
     kreverRefusjon: z
       .enum(['Ja', 'Nei'], {
@@ -181,8 +178,6 @@ export const HovedskjemaSchema = z
     fullLonn: z.enum(['Ja', 'Nei'], { error: 'Velg om full lønn betales i arbeidsgiverperioden....' }).optional(),
     agp: z
       .object({
-        // utbetalt: z.number({ error: 'Vennligst angi beløp utbetalt under arbeidsgiverperioden' }).min(0),
-        // begrunnelse: z.string({ error: 'Vennligst velg begrunnelse' }),
         redusertLoennIAgp: z
           .nullable(
             z.object({

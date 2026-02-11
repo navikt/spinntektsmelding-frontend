@@ -1,5 +1,5 @@
 import parseIsoDate from '../utils/parseIsoDate';
-import { MottattPeriode, Opplysningstype } from '../schema/ForespurtDataSchema';
+import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import useBoundStore from './useBoundStore';
 
 import { MottattKvitteringSchema, KvitteringNavNoSchema } from '../schema/MottattKvitteringSchema';
@@ -19,7 +19,6 @@ type RefusjonEndring = z.infer<typeof RefusjonEndringSchema>;
 
 export default function useKvitteringInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
-  const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const initPerson = useBoundStore((state) => state.initPerson);
 
   const setBareNyMaanedsinntekt = useBoundStore((state) => state.setBareNyMaanedsinntekt);
@@ -44,6 +43,7 @@ export default function useKvitteringInit() {
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
+  const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
 
   return (kvitteringsData: MottattKvittering) => {
     if (!kvitteringsData) return;
@@ -55,8 +55,11 @@ export default function useKvitteringInit() {
 
     const jsonData: KvitteringNavNoSchema = kvitteringsData.kvitteringNavNo!;
 
+    if (jsonData.skjema) {
+      setKvitteringData(jsonData.skjema);
+    }
+
     handleFravaersperiode(jsonData);
-    handleEgenmeldingsperiode(jsonData);
     handlePaakrevdeOpplysninger(jsonData);
     handlePerson(jsonData);
     handleBestemmendeFravaersdag(jsonData);
@@ -71,11 +74,6 @@ export default function useKvitteringInit() {
 
   function handleFravaersperiode(jsonData: KvitteringNavNoSchema) {
     initFravaersperiode(jsonData.sykmeldingsperioder);
-  }
-
-  function handleEgenmeldingsperiode(jsonData: KvitteringNavNoSchema) {
-    if (jsonData.skjema.agp?.egenmeldinger)
-      initEgenmeldingsperiode(jsonData.skjema.agp.egenmeldinger as MottattPeriode[]);
   }
 
   function handlePaakrevdeOpplysninger(jsonData: KvitteringNavNoSchema) {
@@ -136,14 +134,16 @@ export default function useKvitteringInit() {
         : 'Nei'
     );
 
+    let refusjonEndringer = jsonData.skjema.refusjon?.endringer ? [...jsonData.skjema.refusjon.endringer] : undefined;
+
     if (jsonData.skjema.refusjon?.sluttdato) {
-      if (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0) {
-        (jsonData.skjema.refusjon.endringer as Array<RefusjonEndring>).push({
+      if (refusjonEndringer && refusjonEndringer.length > 0) {
+        refusjonEndringer.push({
           beloep: 0,
           startdato: jsonData.skjema.refusjon.sluttdato
         });
       } else {
-        jsonData.skjema.refusjon.endringer = [
+        refusjonEndringer = [
           {
             beloep: 0,
             startdato: jsonData.skjema.refusjon?.sluttdato
@@ -152,8 +152,8 @@ export default function useKvitteringInit() {
       }
     }
 
-    if (jsonData.skjema.refusjon?.endringer) {
-      const endringer = jsonData.skjema.refusjon?.endringer.map((endring) => ({
+    if (refusjonEndringer) {
+      const endringer = refusjonEndringer.map((endring) => ({
         beloep: endring.beloep,
         dato: parseIsoDate(endring.startdato)
       }));
