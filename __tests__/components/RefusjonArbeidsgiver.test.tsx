@@ -48,7 +48,6 @@ function buildState(overrides: Partial<Record<string, any>> = {}) {
     ],
     arbeidsgiverperiodeDisabled: false,
     arbeidsgiverperiodeKort: false,
-    setEndringerAvRefusjon: vi.fn(),
     sykmeldingsperioder: [],
     egenmeldingsperioder: [],
     ...overrides

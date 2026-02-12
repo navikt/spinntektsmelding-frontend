@@ -1,7 +1,6 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { YesNo } from './state';
 import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
 import z from 'zod';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
@@ -24,7 +23,6 @@ export interface SkjemadataState {
   setKvitteringInnsendt: (tidspunkt: string | Date) => void;
   setSkjemaFeilet: () => void;
   setInngangFraKvittering: () => void;
-  setEndringerAvRefusjon: (endring: YesNo) => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setSelvbestemtType: (type: SelvbestemtType) => void;
@@ -39,7 +37,6 @@ export interface SkjemadataState {
   skjemaType?: Array<Opplysningstype>;
   inngangFraKvittering: boolean;
   direkteInngangKvittering: boolean;
-  endringerAvRefusjon?: YesNo;
   kvitteringEksterntSystem?: KvitteringEkstern;
   skjemastatus: SkjemaStatus;
   kvitteringData?: KvitteringFullInnsending | KvitteringSelvbestemtInnsending;
@@ -89,13 +86,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.inngangFraKvittering = true;
-      })
-    );
-  },
-  setEndringerAvRefusjon: (endring: YesNo) => {
-    set(
-      produce((state: SkjemadataState) => {
-        state.endringerAvRefusjon = endring;
       })
     );
   },

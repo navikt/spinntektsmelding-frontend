@@ -42,7 +42,6 @@ export default function useKvitteringInit() {
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
-  const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
 
   return (kvitteringsData: MottattKvittering) => {
@@ -127,26 +126,24 @@ export default function useKvitteringInit() {
       beloep: jsonData.skjema.refusjon?.beloepPerMaaned
     });
 
-    setEndringerAvRefusjon(
-      jsonData.skjema.refusjon?.beloepPerMaaned !== jsonData.skjema.inntekt?.beloep ||
-        (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0)
-        ? 'Ja'
-        : 'Nei'
-    );
-
-    let refusjonEndringer = jsonData.skjema.refusjon?.endringer ? [...jsonData.skjema.refusjon.endringer] : undefined;
+    let refusjonEndringer = jsonData.skjema.refusjon?.endringer
+      ? [...jsonData.skjema.refusjon.endringer].map((endring) => ({
+          beloep: endring.beloep,
+          startdato: parseIsoDate(endring.startdato)
+        }))
+      : undefined;
 
     if (jsonData.skjema.refusjon?.sluttdato) {
       if (refusjonEndringer && refusjonEndringer.length > 0) {
         refusjonEndringer.push({
           beloep: 0,
-          startdato: jsonData.skjema.refusjon.sluttdato
+          startdato: parseIsoDate(jsonData.skjema.refusjon.sluttdato)!
         });
       } else {
         refusjonEndringer = [
           {
             beloep: 0,
-            startdato: jsonData.skjema.refusjon?.sluttdato
+            startdato: parseIsoDate(jsonData.skjema.refusjon?.sluttdato)!
           }
         ] as Array<RefusjonEndring>;
       }
@@ -155,7 +152,7 @@ export default function useKvitteringInit() {
     if (refusjonEndringer) {
       const endringer = refusjonEndringer.map((endring) => ({
         beloep: endring.beloep,
-        dato: parseIsoDate(endring.startdato)
+        startdato: parseIsoDate(endring.startdato)!
       }));
       oppdaterRefusjonEndringer(endringer);
     }

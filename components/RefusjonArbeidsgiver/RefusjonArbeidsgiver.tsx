@@ -11,7 +11,7 @@ import { addDays } from 'date-fns';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import sorterFomStigende from '../../utils/sorterFomStigende';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import NumberField from '../NumberField/NumberField';
@@ -39,7 +39,6 @@ export default function RefusjonArbeidsgiver({
   const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const setEndringerAvRefusjon = useBoundStore((state) => state.setEndringerAvRefusjon);
 
   const agpFullLonn = watch('fullLonn');
   const agpBegrunnelse = watch('agp.redusertLoennIAgp.begrunnelse');
@@ -70,14 +69,6 @@ export default function RefusjonArbeidsgiver({
         : 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?',
     [arbeidsgiverperiodeKort, behandlingsdager]
   );
-
-  // Synkroniser refusjon.isEditing med Zustand
-  const isEditing = watch('refusjon.isEditing');
-  useEffect(() => {
-    if (isEditing) {
-      setEndringerAvRefusjon('Ja');
-    }
-  }, [isEditing, setEndringerAvRefusjon]);
 
   return (
     <>

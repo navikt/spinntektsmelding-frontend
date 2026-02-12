@@ -95,7 +95,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sykmeldt,
     naturalytelser,
     behandlingsdager,
-    endringerAvRefusjon,
     selvbestemtType,
     kvitteringData
   ] = useBoundStore((state) => [
@@ -108,7 +107,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.sykmeldt,
     state.naturalytelser,
     state.behandlingsdager,
-    state.endringerAvRefusjon,
     state.selvbestemtType,
     state.kvitteringData
   ]);
@@ -210,6 +208,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     name: 'refusjon.isEditing'
   });
 
+  const harRefusjonEndringer = useWatch({
+    control,
+    name: 'refusjon.harEndringer'
+  });
+
   const onIsEditingRefusjonBeloep = useEffectEvent(() => {
     return isEditingRefusjonBeloep;
   });
@@ -276,7 +279,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   });
 
   const onInntektChange = useEffectEvent(() => {
-    if (inntektBeloep !== undefined && endringerAvRefusjon !== 'Ja') {
+    if (inntektBeloep !== undefined && harRefusjonEndringer !== 'Ja' && !isEditingRefusjonBeloep) {
       beloepArbeidsgiverBetalerISykefravaeret(inntektBeloep);
     }
     if (!isEditingRefusjonBeloep && (dataFraBackend || selvbestemtInnsending)) {

@@ -273,17 +273,11 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.refusjonEndringer).toEqual([
-      {
-        beloep: 1234,
-        dato: parseIsoDate('2023-04-13')
-      },
-      {
-        beloep: 12345,
-        dato: parseIsoDate('2023-04-20')
-      },
+      { beloep: 1234, startdato: parseIsoDate('2023-04-13') },
+      { beloep: 12345, startdato: parseIsoDate('2023-04-20') },
       {
         beloep: 0,
-        dato: parseIsoDate('2023-04-19')
+        startdato: parseIsoDate('2023-04-19')
       }
     ]);
   });
@@ -305,7 +299,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.refusjonEndringer).toEqual([
       {
         beloep: 0,
-        dato: parseIsoDate('2023-04-19')
+        startdato: parseIsoDate('2023-04-19')
       }
     ]);
   });
@@ -351,7 +345,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.refusjonEndringer).toEqual([
       {
         beloep: 41000.4,
-        dato: parseIsoDate('2024-08-05')
+        startdato: parseIsoDate('2024-08-05')
       }
     ]);
     expect(result.current.lonnISykefravaeret?.beloep).toBe(0.0);
