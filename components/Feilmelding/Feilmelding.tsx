@@ -12,9 +12,9 @@ export default function Feilmelding({ children, id }: Readonly<FeilmeldingProps>
       id={ensureValidHtmlId('fieldset-error-rd')}
       aria-relevant='additions removals'
       aria-live='polite'
-      className='navds-fieldset__error'
+      className='aksel-fieldset__error'
     >
-      <p className='navds-error-message navds-label navds-error-message--show-icon' id={ensureValidHtmlId(id)}>
+      <p className='aksel-error-message aksel-label aksel-error-message--show-icon' id={ensureValidHtmlId(id)}>
         <ExclamationmarkTriangleFillIcon aria-hidden />
         {children}
       </p>
