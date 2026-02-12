@@ -1,4 +1,14 @@
 {
-  "ignore": ["next-logger.config.js", "__mocks__/**", "components/FlexJarResponse", "mockdata/**", ".yarn/**"],
+  "ignore": [
+    "next-logger.config.js",
+    "__mocks__/**",
+    "components/FlexJarResponse",
+    "mockdata/**",
+    ".yarn/**",
+    "__tests__/mock-dekoratoren-moduler.ts",
+    "__tests__/setup.ts",
+    "tests/utils/formPage.ts",
+    "__tests__/mock-decoratoren-moduler.ts"
+  ],
   "ignoreDependencies": ["@eslint/eslintrc", "@navikt/aksel"]
 }
