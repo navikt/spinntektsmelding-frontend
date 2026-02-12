@@ -144,7 +144,7 @@ const useRefusjonArbeidsgiverStore: StateCreator<CompleteState, [], [], Refusjon
             if (endring.beloep && endring.beloep >= 0) {
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].beløp`);
             }
-            if (endring.dato && endring.dato >= state.bestemmendeFravaersdag) {
+            if (endring.startdato && endring.startdato >= state.bestemmendeFravaersdag) {
               slettFeilmeldingFraState(state, `refusjon.refusjonEndringer[${index}].startdato`);
             }
           });
