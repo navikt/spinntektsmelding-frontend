@@ -1,7 +1,6 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { YesNo } from './state';
 import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
 import z from 'zod';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
