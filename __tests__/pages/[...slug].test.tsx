@@ -93,7 +93,6 @@ const createMockState = (overrides = {}) => ({
   naturalytelser: [],
   forespurtData: null,
   behandlingsdager: [],
-  endringerAvRefusjon: 'Nei',
   selvbestemtType: null,
   begrensetForespoersel: false,
   ...overrides
@@ -511,8 +510,7 @@ describe('Home Page', () => {
       (useBoundStore as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
-            bruttoinntekt: { bruttoInntekt: 45000, endringAarsaker: null },
-            endringerAvRefusjon: 'Nei'
+            bruttoinntekt: { bruttoInntekt: 45000, endringAarsaker: null }
           })
         )
       );
@@ -526,8 +524,7 @@ describe('Home Page', () => {
       (useBoundStore as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
-            bruttoinntekt: { bruttoInntekt: 45000, endringAarsaker: null },
-            endringerAvRefusjon: 'Nei'
+            bruttoinntekt: { bruttoInntekt: 45000, endringAarsaker: null }
           })
         )
       );
