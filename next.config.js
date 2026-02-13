@@ -3,10 +3,10 @@ const { buildCspHeader } = require('@navikt/nav-dekoratoren-moduler/ssr');
 const { version } = require('./package.json');
 
 const appDirectives = {
-  'connect-src': ["'self'", process.env.NEXT_PUBLIC_TELEMETRY_URL, 'https://www.nav.no'],
+  'connect-src': ["'self'", process.env.NEXT_PUBLIC_TELEMETRY_URL],
   'font-src': [],
-  'script-src': ['https://www.nav.no'],
-  'script-src-elem': ["'self'", 'https://www.nav.no'],
+  'script-src': [],
+  'script-src-elem': ["'self'"],
   'style-src-elem': ["'self'"],
   'img-src': ["'self'", 'data:', 'blob:']
 };
