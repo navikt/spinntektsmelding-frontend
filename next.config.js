@@ -6,7 +6,7 @@ const appDirectives = {
   'connect-src': ["'self'", process.env.NEXT_PUBLIC_TELEMETRY_URL],
   'font-src': [],
   'script-src': ['www.nav.no'],
-  'script-src-elem': ["'self'"],
+  'script-src-elem': ["'self'", 'www.nav.no'],
   'style-src-elem': ["'self'"],
   'img-src': ["'self'", 'data:', 'blob:']
 };
