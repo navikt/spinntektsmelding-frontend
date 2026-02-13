@@ -1,5 +1,5 @@
 import Document, { Html, Head, Main, NextScript, DocumentContext, type DocumentInitialProps } from 'next/document';
-import { DecoratorComponentsReact } from '@navikt/nav-dekoratoren-moduler/ssr';
+import { DecoratorComponentsReact, fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr';
 
 const DisabledDecorator: DecoratorComponentsReact = {
   Header: () => null,
@@ -13,43 +13,7 @@ const DECORATOR_DISABLED =
   process.env.PLAYWRIGHT === 'true' ||
   process.env.NODE_ENV === 'test';
 
-let cachedDecorator: DecoratorComponentsReact | null = null;
-
 let decoratorMode = 'ukjent';
-
-export async function loadDecorator(): Promise<DecoratorComponentsReact> {
-  if (DECORATOR_DISABLED) {
-    decoratorMode = 'disabled';
-    return DisabledDecorator;
-  }
-  if (cachedDecorator) {
-    decoratorMode = 'cached';
-    return cachedDecorator;
-  }
-
-  try {
-    const { fetchDecoratorReact } = await import('@navikt/nav-dekoratoren-moduler/ssr');
-
-    const env =
-      process.env.NEXT_PUBLIC_DECORATOR_ENV ?? (process.env.NAIS_CLUSTER_NAME === 'prod-gcp' ? 'prod' : 'dev');
-
-    const { Header, Footer, Scripts, HeadAssets } = await fetchDecoratorReact({
-      env,
-      params: {
-        context: 'arbeidsgiver',
-        chatbot: false,
-        feedback: false
-      }
-    });
-
-    cachedDecorator = { Header, Footer, Scripts, HeadAssets };
-    decoratorMode = 'cached';
-    return cachedDecorator;
-  } catch {
-    decoratorMode = 'disabledByError';
-    return DisabledDecorator;
-  }
-}
 
 interface CustomDocumentProps extends DocumentInitialProps {
   decorator: DecoratorComponentsReact;
@@ -95,7 +59,13 @@ function CustomDocument(props: Readonly<CustomDocumentProps>) {
 // Fetch initial props (Next still requires using Document.getInitialProps)
 CustomDocument.getInitialProps = async (ctx: DocumentContext): Promise<CustomDocumentProps> => {
   const initial = await Document.getInitialProps(ctx);
-  const decorator = await loadDecorator();
+  const decorator = DECORATOR_DISABLED
+    ? DisabledDecorator
+    : await fetchDecoratorReact({
+        env: 'prod',
+        params: { language: 'no', context: 'arbeidsgiver' }
+      });
+
   return {
     ...initial,
     decorator
