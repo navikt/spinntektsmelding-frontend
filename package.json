@@ -3,7 +3,7 @@
   "version": "0.4.4",
   "private": true,
   "resolutions": {
-    "jsdom": "28.0.0"
+    "jsdom": "27.4.0"
   },
   "scripts": {
     "dev:decorator": "next dev --webpack | pino-pretty --messageKey=message",
@@ -33,7 +33,7 @@
     "date-fns": "4.1.0",
     "html-react-parser": "^5.2.17",
     "immer": "11.1.4",
-    "jsdom": "28.0.0",
+    "jsdom": "27.4.0",
     "nanoid": "5.1.6",
     "next": "^16.1.5",
     "next-http-proxy-middleware": "1.2.7",
