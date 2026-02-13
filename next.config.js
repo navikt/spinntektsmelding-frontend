@@ -65,14 +65,14 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_APP_VERSION: version
-  },
-  webpack: (config) => {
-    const existingExternals = config.externals ?? [];
-    config.externals = Array.isArray(existingExternals)
-      ? [...existingExternals, 'jsdom']
-      : [existingExternals, 'jsdom'];
-    return config;
   }
+  // webpack: (config) => {
+  //   const existingExternals = config.externals ?? [];
+  //   config.externals = Array.isArray(existingExternals)
+  //     ? [...existingExternals, 'jsdom']
+  //     : [existingExternals, 'jsdom'];
+  //   return config;
+  // }
   // modularizeImports: {
   //   '@navikt/ds-react': {
   //     transform: '@navikt/ds-react/esm/{{lowerCase member}}/index.js',
