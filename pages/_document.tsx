@@ -46,7 +46,7 @@ export async function loadDecorator(): Promise<DecoratorComponentsReact> {
     decoratorMode = 'cached';
     return cachedDecorator;
   } catch {
-    decoratorMode = 'disabled';
+    decoratorMode = 'disabledByError';
     return DisabledDecorator;
   }
 }
