@@ -6,10 +6,10 @@
     "jsdom": "28.0.0"
   },
   "scripts": {
-    "dev:decorator": "next dev --turbopack | pino-pretty --messageKey=message",
-    "dev:decoratorless": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --turbopack | pino-pretty",
-    "dev": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --turbopack | pino-pretty",
-    "build": "NODE_ENV=production next build",
+    "dev:decorator": "next dev --webpack | pino-pretty --messageKey=message",
+    "dev:decoratorless": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --webpack | pino-pretty",
+    "dev": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --webpack | pino-pretty",
+    "build": "NODE_ENV=production next build --webpack",
     "start": "next start",
     "lint": "eslint . --cache --cache-location node_modules/.cache/eslint/",
     "test": "vitest run --coverage",

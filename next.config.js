@@ -39,9 +39,6 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   output: 'standalone',
-  outputFileTracingIncludes: {
-    '/**/*': ['node_modules/jsdom/lib/jsdom/browser/default-stylesheet.css']
-  },
   basePath: '/im-dialog',
   typescript: {
     // !! WARN !!
@@ -55,24 +52,18 @@ const nextConfig = {
   //   defaultLocale: 'no'
   // },
   experimental: {
-    optimizePackageImports: [
-      '@navikt/aksel-icons',
-      '@navikt/ds-react',
-      '@navikt/nav-dekoratoren-moduler',
-      'date-fns',
-      '@grafana/faro-web-sdk'
-    ]
+    optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-react', 'date-fns', '@grafana/faro-web-sdk']
   },
   env: {
     NEXT_PUBLIC_APP_VERSION: version
+  },
+  webpack: (config) => {
+    const existingExternals = config.externals ?? [];
+    config.externals = Array.isArray(existingExternals)
+      ? [...existingExternals, 'canvas', 'jsdom']
+      : [existingExternals, 'canvas', 'jsdom'];
+    return config;
   }
-  // webpack: (config) => {
-  //   const existingExternals = config.externals ?? [];
-  //   config.externals = Array.isArray(existingExternals)
-  //     ? [...existingExternals, 'jsdom']
-  //     : [existingExternals, 'jsdom'];
-  //   return config;
-  // }
   // modularizeImports: {
   //   '@navikt/ds-react': {
   //     transform: '@navikt/ds-react/esm/{{lowerCase member}}/index.js',
