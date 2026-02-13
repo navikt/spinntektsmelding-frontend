@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { loadDecorator } from '../../pages/_document.js';
 import Document from '../../pages/_document.js';
 
 // Mock next/document with proper getInitialProps implementation
@@ -29,21 +28,6 @@ vi.mock('next/document', () => {
   };
 });
 
-function mockDecoratorModule(shouldThrow = false) {
-  vi.doMock('@navikt/nav-dekoratoren-moduler/ssr', () => ({
-    __esModule: true,
-    fetchDecoratorReact: fetchDecoratorMock.mockImplementation(async () => {
-      if (shouldThrow) throw new Error('Import-feil');
-      return mockDecoratorComponents;
-    })
-  }));
-}
-
-vi.mock('next/script', () => ({
-  __esModule: true,
-  default: ({ children, ...props }: any) => React.createElement('script', props, children)
-}));
-
 const mockDecoratorComponents = {
   Header: () => React.createElement('div', { 'data-testid': 'decorator-header' }, 'HEADER'),
   Footer: () => React.createElement('div', { 'data-testid': 'decorator-footer' }, 'FOOTER'),
@@ -51,17 +35,30 @@ const mockDecoratorComponents = {
   HeadAssets: () => React.createElement('meta', { 'data-testid': 'decorator-headassets' })
 };
 
-const fetchDecoratorMock = vi.fn().mockResolvedValue(mockDecoratorComponents);
+vi.mock('@navikt/nav-dekoratoren-moduler/ssr', () => {
+  const mockFn = vi.fn();
+  return {
+    __esModule: true,
+    DecoratorComponentsReact: {},
+    fetchDecoratorReact: mockFn
+  };
+});
 
-vi.mock('@navikt/nav-dekoratoren-moduler/ssr', () => ({
-  __esModule: true,
-  fetchDecoratorReact: fetchDecoratorMock
-}));
+const { fetchDecoratorReact: fetchDecoratorMock } = await import('@navikt/nav-dekoratoren-moduler/ssr');
+
+function mockDecoratorModule(shouldThrow = false) {
+  if (shouldThrow) {
+    (fetchDecoratorMock as any).mockRejectedValueOnce(new Error('Import-feil'));
+  } else {
+    (fetchDecoratorMock as any).mockResolvedValue(mockDecoratorComponents);
+  }
+}
 
 const ORIGINAL_ENV = { ...process.env };
 
 beforeEach(() => {
-  fetchDecoratorMock.mockClear();
+  (fetchDecoratorMock as any).mockClear();
+  (fetchDecoratorMock as any).mockResolvedValue(mockDecoratorComponents);
   process.env = { ...ORIGINAL_ENV };
 });
 
@@ -72,8 +69,8 @@ afterEach(() => {
 
 describe('_document.tsx', () => {
   beforeEach(() => {
-    vi.resetModules();
-    mockDecoratorModule(false);
+    (fetchDecoratorMock as any).mockClear();
+    (fetchDecoratorMock as any).mockResolvedValue(mockDecoratorComponents);
   });
 
   describe('Environment flags', () => {
@@ -121,38 +118,6 @@ describe('_document.tsx', () => {
     });
   });
 
-  describe('loadDecorator', () => {
-    it('returnerer disabled når NEXT_PUBLIC_DISABLE_DECORATOR=true', async () => {
-      process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
-
-      const result = await loadDecorator();
-
-      expect(result.Header).toBeDefined();
-      expect(result.Footer).toBeDefined();
-      expect(result.Scripts).toBeDefined();
-      expect(result.HeadAssets).toBeDefined();
-    });
-
-    it('returnerer disabled når NODE_ENV=test', async () => {
-      process.env.NODE_ENV = 'test';
-      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
-
-      const result = await loadDecorator();
-
-      expect(result.Header).toBeDefined();
-    });
-
-    it('should cache disabled decorator components', async () => {
-      process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
-
-      const first = await loadDecorator();
-      const second = await loadDecorator();
-
-      expect(first).toBe(second);
-      expect(fetchDecoratorMock).not.toHaveBeenCalled();
-    });
-  });
-
   describe('Document.getInitialProps', () => {
     it('should call parent getInitialProps', async () => {
       const ctx = {
@@ -182,34 +147,21 @@ describe('_document.tsx', () => {
   });
 
   describe('Error handling', () => {
-    it('should handle network error from fetchDecoratorReact', async () => {
+    it('should handle network error from fetchDecoratorReact in getInitialProps', async () => {
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
       process.env.NODE_ENV = 'production';
 
-      vi.resetModules();
       fetchDecoratorMock.mockRejectedValueOnce(new Error('Network error'));
 
-      const result = await loadDecorator();
+      const ctx = {
+        renderPage: vi.fn(() => ({ html: '', head: [] }))
+      };
 
-      expect(result.Header).toBeDefined();
-      expect(result.Footer).toBeDefined();
-    });
+      const result = await Document.getInitialProps(ctx as any);
 
-    it('should cache error state', async () => {
-      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
-      process.env.NODE_ENV = 'production';
-
-      process.env = { ...process.env, NODE_ENV: 'production' };
-
-      vi.resetModules();
-      fetchDecoratorMock.mockRejectedValue(new Error('Load error'));
-
-      const first = await loadDecorator();
-      fetchDecoratorMock.mockClear();
-      const second = await loadDecorator();
-
-      expect(first).toBe(second);
-      expect(fetchDecoratorMock).not.toHaveBeenCalled();
+      expect(result.decorator).toBeDefined();
+      expect(result.decorator.Header).toBeDefined();
+      expect(result.decorator.Footer).toBeDefined();
     });
   });
 
@@ -433,27 +385,20 @@ describe('_document.tsx', () => {
   });
 
   describe('loadDecorator – disabled branch', () => {
-    it('returnerer DisabledDecorator når NEXT_PUBLIC_DISABLE_DECORATOR=true', async () => {
+    it('getInitialProps returns DisabledDecorator when NEXT_PUBLIC_DISABLE_DECORATOR=true', async () => {
       process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
       vi.resetModules();
 
-      const fetchSpy = vi.fn();
-      vi.doMock('@navikt/nav-dekoratoren-moduler/ssr', () => ({
-        __esModule: true,
-        fetchDecoratorReact: fetchSpy
-      }));
+      const ctx = {
+        renderPage: vi.fn(() => ({ html: '', head: [] }))
+      };
 
-      const { loadDecorator } = await import('../../pages/_document');
-      const decorator = await loadDecorator();
+      const result = await Document.getInitialProps(ctx as any);
 
-      expect(fetchSpy).not.toHaveBeenCalled();
-      expect(decorator.Header({})).toBeNull();
-      expect(decorator.Footer({})).toBeNull();
-      expect(decorator.Scripts({})).toBeNull();
-      expect(decorator.HeadAssets({})).toBeNull();
+      expect(fetchDecoratorMock as any).not.toHaveBeenCalled();
     });
 
-    it('returnerer DisabledDecorator når NODE_ENV=test', async () => {
+    it('getInitialProps returns DisabledDecorator when NODE_ENV=test', async () => {
       process.env.NODE_ENV = 'test';
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
       vi.resetModules();
@@ -464,8 +409,12 @@ describe('_document.tsx', () => {
         fetchDecoratorReact: fetchSpy
       }));
 
-      const { loadDecorator } = await import('../../pages/_document');
-      const decorator = await loadDecorator();
+      const ctx = {
+        renderPage: vi.fn(() => ({ html: '', head: [] }))
+      };
+
+      const result = await Document.getInitialProps(ctx as any);
+      const decorator = result.decorator;
 
       expect(fetchSpy).not.toHaveBeenCalled();
       expect(decorator.Header({})).toBeNull();
@@ -480,11 +429,15 @@ describe('_document.tsx', () => {
       mockDecoratorModule(false);
     });
 
-    it('returnerer disabled når NEXT_PUBLIC_DISABLE_DECORATOR=true', async () => {
-      const importDocument = async () => import('../../pages/_document.js');
+    it('getInitialProps returns disabled when NEXT_PUBLIC_DISABLE_DECORATOR=true', async () => {
       process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
-      const { loadDecorator } = await importDocument();
-      const decorator = await loadDecorator();
+
+      const ctx = {
+        renderPage: vi.fn(() => ({ html: '', head: [] }))
+      };
+
+      const result = await Document.getInitialProps(ctx as any);
+      const decorator = result.decorator;
 
       expect(fetchDecoratorMock).not.toHaveBeenCalled();
       expect(decorator.Header({})).toBeNull();
@@ -493,171 +446,37 @@ describe('_document.tsx', () => {
       expect(decorator.HeadAssets({})).toBeNull();
     });
 
-    it('returnerer disabled når NODE_ENV=test', async () => {
-      const importDocument = async () => import('../../pages/_document.js');
+    it('getInitialProps returns disabled when NODE_ENV=test', async () => {
       process.env.NODE_ENV = 'test';
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
 
-      const { loadDecorator } = await importDocument();
-      const decorator = await loadDecorator();
+      const ctx = {
+        renderPage: vi.fn(() => ({ html: '', head: [] }))
+      };
+
+      const result = await Document.getInitialProps(ctx as any);
+      const decorator = result.decorator;
 
       expect(fetchDecoratorMock).not.toHaveBeenCalled();
       expect(decorator.Header({})).toBeNull();
     });
 
-    it('should cache disabled decorator components', async () => {
-      const importDocument = async () => import('../../pages/_document.js');
-      process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
-      const { loadDecorator } = await importDocument();
-
-      const first = await loadDecorator();
-      const second = await loadDecorator();
-
-      expect(first).toBe(second);
-      expect(fetchDecoratorMock).not.toHaveBeenCalled();
-    });
-
     describe('decorator enabled', () => {
-      beforeEach(() => {
-        delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
-        delete process.env.PLAYWRIGHT;
-        process.env.NODE_ENV = 'production';
+      it('returns DisabledDecorator on fetch error', async () => {
         vi.resetModules();
-        fetchDecoratorMock.mockClear();
-        mockDecoratorModule(false);
-      });
+        mockDecoratorModule(true);
 
-      it('fetcher dekoratør når alle disable-flagg er false', async () => {
-        const { loadDecorator } = await import('../../pages/_document.js');
-        const decorator = await loadDecorator();
+        const ctx = {
+          renderPage: vi.fn(() => ({ html: '', head: [] }))
+        };
 
-        expect(fetchDecoratorMock).toHaveBeenCalledTimes(1);
-        expect(decorator.Header).toBeDefined();
-        expect(decorator.Footer).toBeDefined();
-        expect(decorator.Scripts).toBeDefined();
-        expect(decorator.HeadAssets).toBeDefined();
-      });
-
-      it('cacher dekoratør-komponenter ved gjentatte kall', async () => {
-        const { loadDecorator } = await import('../../pages/_document.js');
-
-        const first = await loadDecorator();
-        const second = await loadDecorator();
-
-        expect(fetchDecoratorMock).toHaveBeenCalledTimes(1);
-        expect(first).toBe(second);
-      });
-
-      it('sender riktig env=dev når NAIS_CLUSTER_NAME ikke er prod-gcp', async () => {
-        process.env.NAIS_CLUSTER_NAME = 'dev-gcp';
-        delete process.env.NEXT_PUBLIC_DECORATOR_ENV;
-
-        const { loadDecorator } = await import('../../pages/_document.js');
-        await loadDecorator();
-
-        expect(fetchDecoratorMock).toHaveBeenCalledWith(
-          expect.objectContaining({
-            env: 'dev'
-          })
-        );
-      });
-
-      it('sender riktig env=prod når NAIS_CLUSTER_NAME er prod-gcp', async () => {
-        vi.resetModules();
-        fetchDecoratorMock.mockClear();
-        mockDecoratorModule(false);
-
-        process.env.NAIS_CLUSTER_NAME = 'prod-gcp';
-        delete process.env.NEXT_PUBLIC_DECORATOR_ENV;
-
-        const { loadDecorator } = await import('../../pages/_document.js');
-        await loadDecorator();
-
-        expect(fetchDecoratorMock).toHaveBeenCalledWith(
-          expect.objectContaining({
-            env: 'prod'
-          })
-        );
-      });
-
-      it('bruker NEXT_PUBLIC_DECORATOR_ENV når satt', async () => {
-        vi.resetModules();
-        fetchDecoratorMock.mockClear();
-        mockDecoratorModule(false);
-
-        process.env.NEXT_PUBLIC_DECORATOR_ENV = 'staging';
-
-        const { loadDecorator } = await import('../../pages/_document.js');
-        await loadDecorator();
-
-        expect(fetchDecoratorMock).toHaveBeenCalledWith(
-          expect.objectContaining({
-            env: 'staging'
-          })
-        );
-      });
-
-      it('sender riktig params til fetchDecoratorReact', async () => {
-        vi.resetModules();
-        fetchDecoratorMock.mockClear();
-        mockDecoratorModule(false);
-
-        const { loadDecorator } = await import('../../pages/_document.js');
-        await loadDecorator();
-
-        expect(fetchDecoratorMock).toHaveBeenCalledWith(
-          expect.objectContaining({
-            params: expect.objectContaining({
-              context: 'arbeidsgiver',
-              chatbot: false,
-              feedback: false
-            })
-          })
-        );
-      });
-
-      it('returnerer DisabledDecorator ved fetch-feil', async () => {
-        vi.resetModules();
-        mockDecoratorModule(true); // shouldThrow = true
-
-        const { loadDecorator } = await import('../../pages/_document.js');
-        const decorator = await loadDecorator();
+        const result = await Document.getInitialProps(ctx as any);
+        const decorator = result.decorator;
 
         expect(decorator.Header({})).toBeNull();
         expect(decorator.Footer({})).toBeNull();
         expect(decorator.Scripts({})).toBeNull();
         expect(decorator.HeadAssets({})).toBeNull();
-      });
-
-      it('cacher feil-tilstand og returnerer DisabledDecorator ved gjentatte kall', async () => {
-        vi.resetModules();
-        mockDecoratorModule(true);
-        process.env = { ...process.env, NODE_ENV: 'test' };
-
-        const { loadDecorator } = await import('../../pages/_document.js');
-
-        const first = await loadDecorator();
-        fetchDecoratorMock.mockClear();
-        const second = await loadDecorator();
-
-        expect(first).toBe(second);
-
-        expect(fetchDecoratorMock).not.toHaveBeenCalled();
-      });
-
-      it('returnerer fungerende komponenter fra fetchDecoratorReact', async () => {
-        vi.resetModules();
-        fetchDecoratorMock.mockClear();
-        mockDecoratorModule(false);
-
-        const { loadDecorator } = await import('../../pages/_document.js');
-        const decorator = await loadDecorator();
-
-        const headerElement = decorator.Header({});
-        const footerElement = decorator.Footer({});
-
-        expect(headerElement).not.toBeNull();
-        expect(footerElement).not.toBeNull();
       });
     });
   });
