@@ -15,7 +15,6 @@ vi.mock('@navikt/nav-dekoratoren-moduler', () => ({
   init: vi.fn(() => ({ on: vi.fn(), setParams: vi.fn() })),
   decoratorParamsFromEnv: vi.fn(() => ({}) as any),
   fetchDecoratorHtml: vi.fn(async () => ({ headTags: '', body: '', footer: '', scripts: '' })),
-  logAmplitudeEvent: vi.fn(() => Promise.resolve()),
   trackEvent: vi.fn(),
   withNavContext: (component: any) => component,
   setBreadcrumbs: vi.fn(),

@@ -94,7 +94,7 @@ export default function Arbeidsgiverperiode({
 
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
 
-  const amplitudeComponent = 'Arbeidsgiverperiode';
+  const analyticsComponent = 'Arbeidsgiverperiode';
 
   const antallDagerIArbeidsgiverperioderManuellJustering = (perioder: Array<Periode> | undefined) => {
     if (perioder === undefined) {
@@ -147,7 +147,7 @@ export default function Arbeidsgiverperiode({
   const clickSlettArbeidsgiverperiode = (periode: string) => {
     logEvent('knapp klikket', {
       tittel: 'Slett arbeidsgiverperiode',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
     setIsDirtyForm(true);
     slettArbeidsgiverperiode(periode);
@@ -158,7 +158,7 @@ export default function Arbeidsgiverperiode({
 
     logEvent('knapp klikket', {
       tittel: 'Legg til arbeidsgiverperiode',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
 
     leggTilArbeidsgiverperiode();
@@ -170,7 +170,7 @@ export default function Arbeidsgiverperiode({
 
     logEvent('knapp klikket', {
       tittel: 'Endre arbeidsgiverperiode',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
 
     setEndreArbeidsgiverperiode(!endretArbeidsgiverperiode);
@@ -181,7 +181,7 @@ export default function Arbeidsgiverperiode({
 
     logEvent('knapp klikket', {
       tittel: 'Tilbakestill arbeidsgiverperiode',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
     if (skalViseArbeidsgiverperiode) {
       onTilbakestillArbeidsgiverperiode();

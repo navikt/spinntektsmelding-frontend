@@ -69,7 +69,7 @@ vi.mock('../../schema/FullInnsendingSchema', { spy: true });
 
 describe('useSendInnSkjema', () => {
   const innsendingFeiletIngenTilgang = vi.fn();
-  const amplitudeComponent = 'testComponent';
+  const analyticsComponent = 'testComponent';
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,7 +80,7 @@ describe('useSendInnSkjema', () => {
   });
 
   it('should log event and return false if form is not dirty', async () => {
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
@@ -103,13 +103,13 @@ describe('useSendInnSkjema', () => {
     expect(response).toBe(false);
     expect(logEvent).toHaveBeenCalledWith('skjema fullført', {
       tittel: 'Innsending uten endringer i skjema',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
     expect(mockErrorResponse).toHaveBeenCalled();
   });
 
   it('should handle validation errors from FullInnsendingSchema', async () => {
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
@@ -126,7 +126,7 @@ describe('useSendInnSkjema', () => {
 
     expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
       tittel: 'Validering feilet',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
     expect(mockFyllFeilmeldinger).toHaveBeenCalled();
   });
@@ -148,7 +148,7 @@ describe('useSendInnSkjema', () => {
     const isValidUUID = await import('../../utils/isValidUUID');
     (isValidUUID.default as Mock).mockReturnValueOnce(false);
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
@@ -190,7 +190,7 @@ describe('useSendInnSkjema', () => {
     expect(response).toBe(false);
     expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
       tittel: 'Ugyldig UUID ved innsending',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
     expect(mockErrorResponse).toHaveBeenCalled();
   });
@@ -211,7 +211,7 @@ describe('useSendInnSkjema', () => {
 
     vi.mocked(postInnsending).mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
@@ -244,7 +244,7 @@ describe('useSendInnSkjema', () => {
 
     expect(postInnsending).toHaveBeenCalledWith(
       expect.objectContaining({
-        amplitudeComponent: 'testComponent',
+        analyticsComponent: 'testComponent',
         body: expect.objectContaining({
           forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         })
@@ -270,7 +270,7 @@ describe('useSendInnSkjema', () => {
       await options.onSuccess(null);
     });
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
@@ -328,7 +328,7 @@ describe('useSendInnSkjema', () => {
       options.onUnauthorized();
     });
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
@@ -363,7 +363,7 @@ describe('useSendInnSkjema', () => {
   });
 
   it('should log initial event when form is submitted', async () => {
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];
@@ -377,7 +377,7 @@ describe('useSendInnSkjema', () => {
 
     expect(logEvent).toHaveBeenCalledWith('skjema fullført', {
       tittel: 'Har trykket send',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
   });
 
@@ -408,7 +408,7 @@ describe('useSendInnSkjema', () => {
       return vi.fn();
     });
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = false; // This will trigger validation error
     const forespurteOpplysningstyper: Opplysningstype[] = [];
@@ -448,7 +448,7 @@ describe('useSendInnSkjema', () => {
   });
 
   it('should clear and show errors when form is not dirty', async () => {
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, amplitudeComponent));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = true;
     const forespurteOpplysningstyper: Opplysningstype[] = [];

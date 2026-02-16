@@ -11,8 +11,8 @@ interface PostInnsendingOptions<B, S> {
   url: string;
   /** Request body (serialiseres som JSON) */
   body: B;
-  /** Amplitude/umami komponentnavn for logging */
-  amplitudeComponent: string;
+  /** Analytics/umami komponentnavn for logging */
+  analyticsComponent: string;
   /** Kalles ved HTTP 401 */
   onUnauthorized: () => void;
   /** Kalles ved 200/201. Får parsede JSON-data eller null dersom parsing feilet / ingen body. */
@@ -32,7 +32,7 @@ interface PostInnsendingOptions<B, S> {
 export async function postInnsending<B = unknown, S = unknown>({
   url,
   body,
-  amplitudeComponent,
+  analyticsComponent,
   onUnauthorized,
   onSuccess,
   mapValidationErrors,
@@ -69,7 +69,7 @@ export async function postInnsending<B = unknown, S = unknown>({
           setErrorResponse(errors);
           logEvent('skjema innsending feilet', {
             tittel: 'Innsending feilet - serverfeil',
-            component: amplitudeComponent
+            component: analyticsComponent
           });
           logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(await safeText(data)));
           break;
@@ -89,7 +89,7 @@ export async function postInnsending<B = unknown, S = unknown>({
         case 401: {
           logEvent('skjema innsending feilet', {
             tittel: 'Innsending feilet - ingen tilgang',
-            component: amplitudeComponent
+            component: analyticsComponent
           });
           onUnauthorized();
           break;
@@ -100,7 +100,7 @@ export async function postInnsending<B = unknown, S = unknown>({
             const resultat = (await data.json()) as unknown;
             logEvent('skjema innsending feilet', {
               tittel: 'Innsending feilet',
-              component: amplitudeComponent
+              component: analyticsComponent
             });
             if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
               const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);

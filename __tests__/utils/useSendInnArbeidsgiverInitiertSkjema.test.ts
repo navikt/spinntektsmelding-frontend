@@ -27,7 +27,7 @@ vi.mock('../../state/useFyllAapenInnsending');
 
 describe('useSendInnArbeidsgiverInitiertSkjema', () => {
   const innsendingFeiletIngenTilgang = vi.fn();
-  const amplitudeComponent = 'testComponent';
+  const analyticsComponent = 'testComponent';
   const defaultFormData = {} as z.infer<typeof HovedskjemaSchema>;
   const pathSlug = 'arbeidsgiverInitiertInnsending';
 
@@ -69,7 +69,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     (useFyllAapenInnsending as Mock).mockReturnValue(vi.fn().mockReturnValue({ success: true }));
 
     const { result } = renderHook(() =>
-      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
+      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
     );
 
     const response = await result.current(true, pathSlug, false, defaultFormData);
@@ -88,7 +88,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     );
 
     const { result } = renderHook(() =>
-      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
+      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
     );
 
     // (validerInntektsmelding as Mock).mockReturnValueOnce({ errorTexts: [{ error: 'test error' }] });
@@ -99,7 +99,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
     expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
       tittel: 'Validering feilet',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
   });
 
@@ -119,7 +119,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     );
 
     const { result } = renderHook(() =>
-      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
+      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
     );
 
     global.fetch = vi.fn().mockResolvedValue({
@@ -152,7 +152,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     );
 
     const { result } = renderHook(() =>
-      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
+      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
     );
 
     global.fetch = vi.fn().mockResolvedValue({
@@ -168,7 +168,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
     expect(logEvent).toHaveBeenCalledWith('skjema innsending feilet', {
       tittel: 'Innsending feilet - serverfeil',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
   });
 
@@ -188,7 +188,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     );
 
     const { result } = renderHook(() =>
-      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, amplitudeComponent, SkjemaStatus.FULL)
+      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
     );
 
     global.fetch = vi.fn().mockResolvedValue({

@@ -20,7 +20,7 @@ import { LonnIArbeidsgiverperioden } from '../state/state';
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
-  amplitudeComponent: string,
+  analyticsComponent: string,
   skjemastatus: SkjemaStatus
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
@@ -91,13 +91,13 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   ) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
 
     if (!isDirtyForm) {
       logEvent('skjema fullført', {
         tittel: 'Innsending uten endringer i skjema',
-        component: amplitudeComponent
+        component: analyticsComponent
       });
 
       logger.info('Innsending uten endringer i skjema');
@@ -116,7 +116,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       logger.warn(
         `Feil ved validering av skjema - Åpen innsending ${JSON.stringify(validerteData.error)} ${JSON.stringify(errors)}`
       );
-      logEvent('skjema validering feilet', { tittel: 'Validering feilet', component: amplitudeComponent });
+      logEvent('skjema validering feilet', { tittel: 'Validering feilet', component: analyticsComponent });
       return false;
     }
 
@@ -134,7 +134,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     return postInnsending<typeof innsending, SuccessBody>({
       url: URI,
       body: innsending,
-      amplitudeComponent,
+      analyticsComponent,
       onUnauthorized: () => innsendingFeiletIngenTilgang(true),
       onSuccess: async (body) => {
         if (body?.selvbestemtId) pathSlug = body.selvbestemtId;

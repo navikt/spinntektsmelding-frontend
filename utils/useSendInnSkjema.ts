@@ -26,7 +26,7 @@ type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
-  amplitudeComponent: string
+  analyticsComponent: string
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
@@ -52,13 +52,13 @@ export default function useSendInnSkjema(
   ) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
 
     if (!isDirtyForm) {
       logEvent('skjema fullført', {
         tittel: 'Innsending uten endringer i skjema',
-        component: amplitudeComponent
+        component: analyticsComponent
       });
 
       logger.info('Innsending uten endringer i skjema');
@@ -81,7 +81,7 @@ export default function useSendInnSkjema(
     if (validerteData.success === false) {
       logEvent('skjema validering feilet', {
         tittel: 'Validering feilet',
-        component: amplitudeComponent
+        component: analyticsComponent
       });
 
       logger.warn(
@@ -132,7 +132,7 @@ export default function useSendInnSkjema(
 
       logEvent('skjema validering feilet', {
         tittel: 'Ugyldig UUID ved innsending',
-        component: amplitudeComponent
+        component: analyticsComponent
       });
       errorResponse(errors);
 
@@ -142,7 +142,7 @@ export default function useSendInnSkjema(
     return postInnsending<typeof skjemaData, null>({
       url: `${environment.innsendingUrl}`,
       body: skjemaData,
-      amplitudeComponent,
+      analyticsComponent,
       onUnauthorized: () => innsendingFeiletIngenTilgang(true),
       onSuccess: async () => {
         setKvitteringInnsendt(new Date());
