@@ -66,7 +66,7 @@ CustomDocument.getInitialProps = async (ctx: DocumentContext): Promise<CustomDoc
     ? DisabledDecorator
     : await fetchDecoratorReact({
         env,
-        params: { language: 'no', context: 'arbeidsgiver' }
+        params: { language: 'nb', context: 'arbeidsgiver' }
       });
 
   return {
