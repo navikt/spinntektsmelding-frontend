@@ -48,7 +48,7 @@ describe('postInnsending', () => {
     await postInnsending({
       url,
       body,
-      amplitudeComponent: 'comp',
+      analyticsComponent: 'comp',
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
@@ -66,7 +66,7 @@ describe('postInnsending', () => {
     await postInnsending({
       url,
       body,
-      amplitudeComponent: 'comp',
+      analyticsComponent: 'comp',
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
@@ -84,7 +84,7 @@ describe('postInnsending', () => {
     await postInnsending({
       url,
       body,
-      amplitudeComponent: 'comp',
+      analyticsComponent: 'comp',
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
@@ -109,7 +109,7 @@ describe('postInnsending', () => {
     await postInnsending({
       url,
       body,
-      amplitudeComponent: 'comp',
+      analyticsComponent: 'comp',
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
@@ -128,7 +128,7 @@ describe('postInnsending', () => {
     await postInnsending({
       url,
       body,
-      amplitudeComponent: 'comp',
+      analyticsComponent: 'comp',
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
@@ -151,7 +151,7 @@ describe('postInnsending', () => {
     await postInnsending({
       url,
       body,
-      amplitudeComponent: 'comp',
+      analyticsComponent: 'comp',
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
@@ -168,7 +168,7 @@ describe('postInnsending', () => {
     await postInnsending({
       url,
       body,
-      amplitudeComponent: 'comp',
+      analyticsComponent: 'comp',
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,
@@ -192,7 +192,7 @@ describe('postInnsending', () => {
     await postInnsending({
       url,
       body,
-      amplitudeComponent: 'comp',
+      analyticsComponent: 'comp',
       onUnauthorized: unauthorized,
       onSuccess: success,
       mapValidationErrors,

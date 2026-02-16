@@ -38,7 +38,7 @@ export default function Bruttoinntekt({
   const nyInnsending = useBoundStore((state) => state.nyInnsending);
   const skjemastatus = useBoundStore((state) => state.skjemastatus);
   const henterData = useBoundStore((state) => state.henterData);
-  const amplitudeComponent = 'BeregnetMånedslønn';
+  const analyticsComponent = 'BeregnetMånedslønn';
 
   const { watch, setValue } = useFormContext();
   const feilHentingAvInntektsdata = tidligereinntekt === null;
@@ -52,7 +52,7 @@ export default function Bruttoinntekt({
 
     logEvent('knapp klikket', {
       tittel: 'Tilbakestill beregnet månedsinntekt',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
 
     setRequestEndreMaanedsinntekt(false);
@@ -67,7 +67,7 @@ export default function Bruttoinntekt({
 
     logEvent('knapp klikket', {
       tittel: 'Endre beregnet månedsinntekt',
-      component: amplitudeComponent
+      component: analyticsComponent
     });
     setRequestEndreMaanedsinntekt(true);
   };

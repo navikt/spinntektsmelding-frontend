@@ -21,7 +21,7 @@ const env = {
   hentBehandlingsdagerUrl: '/im-dialog/api/sp-behandlingsdager',
   mineTilgangerUrl: '/im-dialog/api/mine-tilganger',
 
-  amplitudeEnabled: true
+  analyticsEnabled: true
 } as const;
 
 export default env;

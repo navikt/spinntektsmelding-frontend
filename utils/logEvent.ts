@@ -22,7 +22,7 @@ type validEventNames =
 
 export default function logEvent(eventName: validEventNames, eventData: Record<string, string | boolean>) {
   if (globalThis.window !== undefined) {
-    if (env.amplitudeEnabled) {
+    if (env.analyticsEnabled) {
       const umami: any = (globalThis.window as any).umami;
       if (!umami || typeof umami.track !== 'function') {
         logger.warn('Umami eller umami.track ikke tilgjengelig på window');

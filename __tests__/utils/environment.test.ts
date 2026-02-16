@@ -140,8 +140,8 @@ describe('Environment', () => {
       expect(env.initierBlankSkjemaUrl).toBe('/im-dialog/api/aktiveorgnr');
     });
 
-    it('should have amplitudeEnabled set to true', () => {
-      expect(env.amplitudeEnabled).toBe(true);
+    it('should have analyticsEnabled set to true', () => {
+      expect(env.analyticsEnabled).toBe(true);
     });
 
     it('should have correct innsendingAGInitiertUrl', () => {

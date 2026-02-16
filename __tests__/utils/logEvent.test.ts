@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import logEvent from '../../utils/logEvent';
 
-// Mock environment so we can toggle amplitudeEnabled
+// Mock environment so we can toggle analyticsEnabled
 vi.mock('../../config/environment', () => ({
-  default: { amplitudeEnabled: true }
+  default: { analyticsEnabled: true }
 }));
 import env from '../../config/environment';
 
@@ -33,9 +33,9 @@ describe('logEvent (umami)', () => {
     if (window) delete (window as any).umami;
   });
 
-  it('kaller umami.track når amplitudeEnabled=true og umami er tilgjengelig', () => {
+  it('kaller umami.track når analyticsEnabled=true og umami er tilgjengelig', () => {
     // @ts-ignore mutate mocked env
-    env.amplitudeEnabled = true;
+    env.analyticsEnabled = true;
     const track = vi.fn();
     // @ts-ignore
     window.umami = { track };
@@ -52,7 +52,7 @@ describe('logEvent (umami)', () => {
 
   it('logger warning og avbryter når umami.track mangler', () => {
     // @ts-ignore
-    env.amplitudeEnabled = true;
+    env.analyticsEnabled = true;
     // @ts-ignore
     window.umami = {}; // mangler track
 
@@ -61,9 +61,9 @@ describe('logEvent (umami)', () => {
     expect(warnSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('bruker console.log fallback når amplitudeEnabled=false', () => {
+  it('bruker console.log fallback når analyticsEnabled=false', () => {
     // @ts-ignore
-    env.amplitudeEnabled = false;
+    env.analyticsEnabled = false;
     const track = vi.fn();
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     // @ts-ignore
