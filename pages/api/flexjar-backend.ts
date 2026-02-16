@@ -4,6 +4,7 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 
 import handleProxyInit from '../../utils/api/handleProxyInit';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
+import { logger } from '@navikt/next-logger';
 
 const basePath = 'http://' + globalThis.process.env.FLEXJAR_URL + '/api/v1/feedback';
 
@@ -18,26 +19,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
     setTimeout(() => {
-      return res.status(201);
+      return res.status(201).end();
     }, 100);
   } else if (env === 'production') {
     const token = getToken(req);
     if (!token) {
       /* håndter manglende token */
-      console.error('Mangler token i header');
+      logger.info('Mangler token i header');
       return res.status(401);
     }
 
     const validation = await validateToken(token);
     if (!validation.ok) {
-      console.log('Validering feilet: ', validation.error);
+      logger.info('Validering feilet: ' + JSON.stringify(validation.error));
       return res.status(401);
     }
 
     const obo = await requestOboToken(token, process.env.FLEXJAR_BACKEND_CLIENT_ID!);
     if (!obo.ok) {
       /* håndter obo-feil */
-      console.error('OBO-feil: ', obo.error);
+      logger.info('OBO-feil: ' + JSON.stringify(obo.error));
       return res.status(401);
     }
 

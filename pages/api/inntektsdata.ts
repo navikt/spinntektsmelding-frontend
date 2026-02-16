@@ -4,6 +4,14 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 import handleProxyInit from '../../utils/api/handleProxyInit';
 import fs from 'node:fs';
 import path from 'node:path';
+import { logger } from '@navikt/next-logger';
+
+type InntektsData = {
+  gjennomsnitt: number;
+  historikk: Record<string, number>;
+};
+
+type InntektsdataResponse = InntektsData | { error: string };
 
 const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNTEKTSDATA_API;
 
@@ -14,7 +22,7 @@ export const config = {
   }
 };
 
-const handler = (req: NextApiRequest, res: NextApiResponse<any>) => {
+const handler = (req: NextApiRequest, res: NextApiResponse<InntektsdataResponse>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
     const mockdata = 'inntektData';
@@ -25,7 +33,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<any>) => {
     }
 
     const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    console.log('data', data);
+    logger.info('inntektsdata mock data loaded');
     return res.status(200).json(data);
   } else if (env === 'production') {
     return httpProxyMiddleware(req, res, {
