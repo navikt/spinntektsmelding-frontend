@@ -17,13 +17,13 @@ export const config = {
 
 const handler = (req: NextApiRequest, res: NextApiResponse<FeilRespons>) => {
   const env = process.env.NODE_ENV;
-  if (env == 'development') {
+  if (env === 'development') {
     setTimeout(() => {
       return res.status(201).json({
         status: 'OK'
       });
     }, 100);
-  } else if (env == 'production') {
+  } else if (env === 'production') {
     return httpProxyMiddleware(req, res, {
       target: basePath,
       onProxyInit: handleProxyInit,

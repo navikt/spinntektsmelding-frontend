@@ -16,7 +16,7 @@ export const config = {
 
 const handler = (req: NextApiRequest, res: NextApiResponse<any>) => {
   const env = process.env.NODE_ENV;
-  if (env == 'development') {
+  if (env === 'development') {
     const mockdata = 'inntektData';
     const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
@@ -26,7 +26,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<any>) => {
 
     const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     return res.status(200).json(data);
-  } else if (env == 'production') {
+  } else if (env === 'production') {
     return httpProxyMiddleware(req, res, {
       target: basePath,
       onProxyInit: handleProxyInit,

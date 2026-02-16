@@ -16,11 +16,11 @@ export const config = {
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
-  if (env == 'development') {
+  if (env === 'development') {
     setTimeout(() => {
       return res.status(201);
     }, 100);
-  } else if (env == 'production') {
+  } else if (env === 'production') {
     const token = getToken(req);
     if (!token) {
       /* håndter manglende token */
