@@ -13,8 +13,6 @@ const DECORATOR_DISABLED =
   process.env.PLAYWRIGHT === 'true' ||
   process.env.NODE_ENV === 'test';
 
-let decoratorMode = 'ukjent';
-
 interface CustomDocumentProps extends DocumentInitialProps {
   decorator: DecoratorComponentsReact;
 }

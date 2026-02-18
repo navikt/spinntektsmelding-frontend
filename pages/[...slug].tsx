@@ -1,5 +1,5 @@
 import React, { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
-import type { InferGetServerSidePropsType, NextPage } from 'next';
+import type { InferGetServerSidePropsType, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
 import { z } from 'zod';
@@ -507,7 +507,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
 export default Home;
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
   const { slug, endre } = context.query;
   const uuid = slug[0];
   const isDevelopment = process.env.NODE_ENV === 'development';
@@ -533,12 +533,13 @@ export async function getServerSideProps(context: any) {
 
     try {
       forespurt = await hentForespoerselSSR(uuid, token);
-    } catch (error: any) {
-      console.error('Error fetching forespurt:', error);
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.error('Error fetching forespurt:', err);
       forespurt = { data: null };
-      forespurtStatus = error.status || 500;
+      forespurtStatus = err instanceof Error && 'status' in err ? (err as any).status : 500;
 
-      if (error.status === 404) {
+      if (err instanceof Error && 'status' in err && (err as any).status === 404) {
         return {
           notFound: true
         };

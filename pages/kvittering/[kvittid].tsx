@@ -1,4 +1,4 @@
-import { InferGetServerSidePropsType, NextPage } from 'next';
+import { InferGetServerSidePropsType, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -342,7 +342,7 @@ function harGyldigeArbeidsgiverperioder(arbeidsgiverperioder: Periode[] | undefi
     : false;
 }
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext<{ kvittid: string }>) {
   return getKvitteringServerSideProps<MottattKvittering>({
     context,
     fetchKvittering: hentKvitteringsdataSSR,

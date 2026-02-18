@@ -7,6 +7,7 @@ import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepen
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
+import { logger } from '@navikt/next-logger';
 
 type forespoerselIdListeEnhet = {
   vedtaksperiodeId: string;
@@ -43,13 +44,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const token = getToken(req);
   if (!token) {
-    console.error('Mangler token i header');
+    logger.info('Mangler token i header');
     return res.status(401);
   }
 
   const validation = await validateToken(token);
   if (!validation.ok) {
-    console.log('Validering feilet: ', validation.error);
+    logger.info('Validering feilet: ' + JSON.stringify(validation.error));
     return res.status(401);
   }
 
@@ -57,7 +58,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const orgnr = requestBody.orgnummer;
 
   if (!isMod11Number(orgnr)) {
-    console.error('Ugyldig orgnr: ', orgnr);
+    logger.info('Ugyldig orgnr: ' + orgnr);
     return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
   }
 
@@ -70,13 +71,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!tokenResponse.ok) {
-    console.error('Feil ved kontroll av tilgang: ', tokenResponse.statusText);
+    logger.info('Feil ved kontroll av tilgang: ' + tokenResponse.statusText);
     return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
   }
 
   const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
   if (!obo.ok) {
-    console.error('OBO-feil: ', obo.error);
+    logger.info('OBO-feil: ' + JSON.stringify(obo.error));
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -94,7 +95,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!soeknadResponse.ok) {
-    console.error('Feil ved henting av sykepengesøknader ', soeknadResponse.statusText);
+    logger.error('Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
     return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
   }
 
@@ -116,7 +117,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!forespoerselIdListe.ok) {
-    console.error('Feil ved henting av forespørselIder ', forespoerselIdListe.statusText);
+    logger.error('Feil ved henting av forespørselIder ' + forespoerselIdListe.statusText);
     return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
   }
 

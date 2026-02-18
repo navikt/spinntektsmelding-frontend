@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerSchema';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
+import { logger } from '@navikt/next-logger';
 
 const basePath = 'http://' + globalThis.process.env.FAGER_TILGANG_INGRESS + globalThis.process.env.FAGER_TILGANG_URL;
 
@@ -46,21 +47,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const token = getToken(req);
   if (!token) {
-    console.error('Mangler token i header');
+    logger.info('Mangler token i header');
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  console.error('Fant token i header');
-
   const validation = await validateToken(token);
   if (!validation.ok) {
-    console.log('Validering feilet: ', validation.error);
+    logger.info('Validering feilet: ' + JSON.stringify(validation.error));
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const obo = await requestOboToken(token, process.env.FAGER_TILGANG_CLIENT_ID!);
   if (!obo.ok) {
-    console.error('OBO-feil: ', obo.error);
+    logger.info('OBO-feil: ' + JSON.stringify(obo.error));
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -79,7 +78,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!accessResponse.ok) {
-    console.error('Feil ved henting av tilganger ', accessResponse.statusText);
+    logger.info('Feil ved henting av tilganger ' + accessResponse.statusText);
     return res.status(accessResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
   }
 
