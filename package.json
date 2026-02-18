@@ -19,8 +19,8 @@
     "bundleanalyze": "ANALYZE=true yarn build --webpack"
   },
   "dependencies": {
-    "@grafana/faro-web-sdk": "2.2.3",
-    "@grafana/faro-web-tracing": "2.2.3",
+    "@grafana/faro-web-sdk": "2.2.4",
+    "@grafana/faro-web-tracing": "2.2.4",
     "@hookform/resolvers": "5.2.2",
     "@navikt/aksel-icons": "^8.5.0",
     "@navikt/ds-css": "^8.5.0",
