@@ -1,6 +1,6 @@
 {
   "name": "spinntektsmelding-frontend",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "private": true,
   "resolutions": {
     "jsdom": "28.1.0"
