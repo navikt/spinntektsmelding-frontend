@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useEffectEvent } from 'react';
-import { InferGetServerSidePropsType, NextPage } from 'next';
+import { InferGetServerSidePropsType, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
 import BannerUtenVelger from '../../../components/BannerUtenVelger/BannerUtenVelger';
@@ -429,7 +429,7 @@ export default Kvittering;
 
 type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
 
-function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
+function prepareForInitiering(kvitteringData: unknown): KvitteringNavNoSchema {
   const kvittering: KvitteringNavNoSchema = {
     sykmeldt: kvitteringData.sykmeldt,
     avsender: kvitteringData.avsender,
@@ -451,7 +451,7 @@ function prepareForInitiering(kvitteringData: any): KvitteringNavNoSchema {
   return kvittering;
 }
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext<{ kvittid: string }>) {
   const result = await getKvitteringServerSideProps<SelvbestemtKvittering>({
     context,
     fetchKvittering: hentKvitteringsdataAgiSSR,

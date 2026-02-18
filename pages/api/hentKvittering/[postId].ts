@@ -14,7 +14,7 @@ export const config = {
   }
 };
 
-const handler = (req: NextApiRequest, res: NextApiResponse<any>) => {
+const handler = (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
     const mockdata = 'kvittering';
