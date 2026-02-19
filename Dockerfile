@@ -2,6 +2,7 @@
 FROM node:25-bookworm-slim@sha256:32f45869cf02c26971de72c383d5f99cab002905ed8b515b56df925007941782 AS deps
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y corepack && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 
 # Copy only dependency-related files for better layer caching
