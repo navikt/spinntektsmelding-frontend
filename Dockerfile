@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:24@sha256:20988bcdc6dc76690023eb2505dd273bdeefddcd0bde4bfd1efe4ebf8707f747 AS deps
+FROM node:25-bookworm-slim@sha256:32f45869cf02c26971de72c383d5f99cab002905ed8b515b56df925007941782 AS deps
 WORKDIR /app
 
 RUN corepack enable
@@ -15,7 +15,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     yarn install --immutable
 
 # Rebuild the source code only when needed
-FROM node:24@sha256:20988bcdc6dc76690023eb2505dd273bdeefddcd0bde4bfd1efe4ebf8707f747 AS builder
+FROM node:25-bookworm-slim@sha256:32f45869cf02c26971de72c383d5f99cab002905ed8b515b56df925007941782 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/.yarn ./.yarn
