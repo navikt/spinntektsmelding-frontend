@@ -30,10 +30,7 @@ export default function useFyllAapenInnsending() {
 
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
-  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const vedtaksperiodeId = useBoundStore((state) => state.vedtaksperiodeId);
   const [setEndringAarsaker, setBareNyMaanedsinntekt] = useBoundStore((state) => [
     state.setEndringAarsaker,
@@ -113,11 +110,12 @@ export default function useFyllAapenInnsending() {
         endringAarsaker: endringAarsakerParsed ?? []
       },
       refusjon:
-        lonnISykefravaeret?.status === 'Ja'
+        skjemaData?.kreverRefusjon === 'Ja'
           ? {
-              beloepPerMaaned: lonnISykefravaeret.beloep!,
+              beloepPerMaaned: skjemaData.refusjon?.beloepPerMaaned,
               sluttdato: null,
-              endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
+
+              endringer: konverterRefusjonEndringer(skjemaData.refusjon?.harEndringer, skjemaData.refusjon?.endringer)
             }
           : null,
       arbeidsforholdType: arbeidsforholdType,
