@@ -1,8 +1,7 @@
 # Install dependencies only when needed
-FROM node:25-bookworm-slim@sha256:32f45869cf02c26971de72c383d5f99cab002905ed8b515b56df925007941782 AS deps
+FROM node:25-bookworm@sha256:7a78e83b764befdf57c544b4770f688e5b4e2a8eefcf96481ab3c32e6ec5d986 AS deps
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y corepack && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 
 # Copy only dependency-related files for better layer caching
@@ -16,7 +15,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     yarn install --immutable
 
 # Rebuild the source code only when needed
-FROM node:25-bookworm-slim@sha256:32f45869cf02c26971de72c383d5f99cab002905ed8b515b56df925007941782 AS builder
+FROM node:25-bookworm@sha256:7a78e83b764befdf57c544b4770f688e5b4e2a8eefcf96481ab3c32e6ec5d986 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/.yarn ./.yarn
