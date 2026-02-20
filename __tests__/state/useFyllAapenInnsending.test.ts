@@ -187,10 +187,29 @@ describe('useFyllAapenInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
+    const mockSkjemaUtenAgp = {
+      ...mockSkjema,
+      kreverRefusjon: 'Ja',
+      refusjon: {
+        beloepPerMaaned: 5000,
+        harEndringer: 'Ja',
+        endringer: [
+          {
+            beloep: 1234,
+            startdato: parseIsoDate('2023-04-13')
+          },
+          {
+            beloep: 12345,
+            startdato: parseIsoDate('2023-04-20')
+          }
+        ]
+      }
+    };
+
     let innsending: { data: InnsendingSkjema };
 
     act(() => {
-      innsending = fyllInnsending(mockSkjema);
+      innsending = fyllInnsending(mockSkjemaUtenAgp, 'MedArbeidsforhold', false);
     });
 
     if (innsending) {
@@ -240,6 +259,25 @@ describe('useFyllAapenInnsending', () => {
 
     const kvitteringInit = kvittInit.current;
 
+    const mockSkjemaUtenAgp = {
+      ...mockSkjema,
+      kreverRefusjon: 'Ja',
+      refusjon: {
+        beloepPerMaaned: 5000,
+        harEndringer: 'Ja',
+        endringer: [
+          {
+            beloep: 1234,
+            startdato: parseIsoDate('2023-04-13')
+          },
+          {
+            beloep: 12345,
+            startdato: parseIsoDate('2023-04-20')
+          }
+        ]
+      }
+    };
+
     act(() => {
       kvitteringInit(mottattKvittering as unknown as KvitteringData);
 
@@ -281,7 +319,7 @@ describe('useFyllAapenInnsending', () => {
     let innsending: { data: InnsendingSkjema };
 
     act(() => {
-      innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
+      innsending = fyllInnsending(mockSkjemaUtenAgp, 'MedArbeidsforhold', false);
     });
 
     if (innsending) {
