@@ -113,11 +113,12 @@ export default function useFyllAapenInnsending() {
         endringAarsaker: endringAarsakerParsed ?? []
       },
       refusjon:
-        lonnISykefravaeret?.status === 'Ja'
+        skjemaData?.kreverRefusjon === 'Ja'
           ? {
-              beloepPerMaaned: lonnISykefravaeret.beloep!,
+              beloepPerMaaned: skjemaData.refusjon?.beloepPerMaaned,
               sluttdato: null,
-              endringer: konverterRefusjonEndringer(harRefusjonEndringer, refusjonEndringer)
+
+              endringer: konverterRefusjonEndringer(skjemaData.refusjon?.harEndringer, skjemaData.refusjon?.endringer)
             }
           : null,
       arbeidsforholdType: arbeidsforholdType,

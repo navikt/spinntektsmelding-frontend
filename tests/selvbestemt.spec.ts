@@ -391,4 +391,91 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
   });
+
+  test('selvbestemt med refusjon', async ({ page }) => {
+    const formPage = new FormPage(page);
+    // select fødselsnummer and next
+    await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
+    await formPage.checkRadioButton('Årsak til at du vil opprette inntektsmelding.', 'Annen årsak');
+
+    await formPage.clickButton('Neste');
+    await page.waitForURL('**/im-dialog/initieringAnnet');
+
+    // choose period with ferie dager
+    await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
+    await formPage.clickButton('Neste');
+
+    // fill utbetalt under AGP
+    await page.getByLabel('Utbetalt under arbeidsgiverperiode').fill('5000');
+    // choose kort AGP begrunnelse
+    await page
+      .getByLabel('Velg begrunnelse for kort arbeidsgiverperiode')
+      .selectOption({ label: 'Det er ikke fire ukers opptjeningstid' });
+    // click last Endre to change inntekt
+    await page.getByRole('button', { name: 'Endre' }).last().click();
+
+    // clear and fill new inntekt
+    await page.getByLabel('Månedslønn 10.09.2024').fill('7500');
+    // select endringsårsak Ferie
+    await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Ferie' });
+    // fill ferie-perioder
+    await formPage.fillInputLast('Ferie til', '07.07.24');
+    await formPage.fillInputLast('Ferie fra', '01.07.24');
+    // select refusjon under sykefraværet = Ja
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
+
+    await formPage.checkRadioButton(
+      'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
+      'Nei'
+    );
+    // fill phone and confirm
+    await formPage.fillInputLast('Telefon innsender', '12345678');
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
+    // send
+
+    // assert payload
+    const reqPromise = page.waitForRequest('*/**/api/selvbestemt-inntektsmelding');
+    await formPage.clickButton('Send');
+    const req = await reqPromise;
+    expect(JSON.parse(req.postData()!)).toEqual({
+      agp: {
+        perioder: [
+          { fom: '2024-09-06', tom: '2024-09-08' },
+          { fom: '2024-09-10', tom: '2024-09-15' }
+        ],
+        redusertLoennIAgp: {
+          beloep: 5000,
+          begrunnelse: 'ManglerOpptjening'
+        }
+      },
+      inntekt: {
+        beloep: 7500,
+        inntektsdato: '2024-09-10',
+        endringAarsaker: [
+          {
+            aarsak: 'Ferie',
+            ferier: [{ fom: '2024-07-01', tom: '2024-07-07' }]
+          }
+        ]
+      },
+      refusjon: {
+        beloepPerMaaned: 7500,
+        endringer: [],
+        sluttdato: null
+      },
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '810007842', tlf: '12345678' },
+      sykmeldingsperioder: [{ fom: '2024-09-11', tom: '2024-09-15' }],
+      selvbestemtId: null,
+      arbeidsforholdType: {
+        type: 'MedArbeidsforhold',
+        vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
+      },
+      naturalytelser: []
+    });
+
+    // confirm receipt page
+    await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
+    await expect(page).toHaveURL('/im-dialog/kvittering/agi/f32852af-888e-4d0c-ad67-081f22ee5c12');
+  });
 });
