@@ -2,7 +2,7 @@
 FROM node:25-bookworm-slim@sha256:32f45869cf02c26971de72c383d5f99cab002905ed8b515b56df925007941782 AS deps
 WORKDIR /app
 
-RUN npm install -g corepack && corepack enable
+RUN npm install -g --force corepack && corepack enable
 
 # Copy only dependency-related files for better layer caching
 COPY package.json yarn.lock .yarnrc.yml .npmrc ./
