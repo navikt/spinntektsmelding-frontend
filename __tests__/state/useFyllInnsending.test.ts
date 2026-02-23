@@ -2,7 +2,6 @@ import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import useFyllInnsending, {
-  mapEgenmeldingsperioder,
   mapNaturalytelserToData,
   concatPerioder,
   konverterPerioderFraMottattTilInterntFormat,
@@ -81,7 +80,7 @@ describe('useFyllInnsending', () => {
     cleanup();
   });
   it('should fill the state stuff', async () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
+    renderHook(() => useBoundStore((state) => state));
 
     const { result: kvittInit } = renderHook(() => useKvitteringInit());
 
@@ -143,7 +142,7 @@ describe('useFyllInnsending', () => {
   });
 
   it('should fill the state stuff - delvis', async () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
+    renderHook(() => useBoundStore((state) => state));
 
     const { result: kvittInit } = renderHook(() => useKvitteringInit());
 
