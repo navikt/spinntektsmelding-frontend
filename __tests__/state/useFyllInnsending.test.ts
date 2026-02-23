@@ -17,7 +17,7 @@ import useKvitteringInit from '../../state/useKvitteringInit';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
 import { z } from 'zod/v4';
 
-import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
+import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
 
