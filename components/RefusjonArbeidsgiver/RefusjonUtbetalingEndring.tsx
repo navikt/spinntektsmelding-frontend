@@ -33,7 +33,11 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
     if (harRefusjonEndringer === 'Ja' && fields.length === 0) {
       append({ beloep: undefined, dato: undefined });
     }
-  }, [harRefusjonEndringer, fields.length, append]);
+
+    if (harRefusjonEndringer === 'Nei') {
+      remove();
+    }
+  }, [harRefusjonEndringer, fields.length, append, remove]);
 
   const handleLeggTilPeriode = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
