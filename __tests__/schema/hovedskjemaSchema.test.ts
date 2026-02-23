@@ -328,8 +328,6 @@ describe('HovedskjemaSchema', () => {
         path: ['inntekt', 'endringAarsaker']
       }
     ]);
-    // expect(result.error?.errors[0].message).toBe('Invalid input');
-    // expect(result.error?.errors[0].path).toEqual(['inntekt', 'endringAarsaker']);
   });
 
   it('should fail validation when the endringAarsaker aarsak is undefined.', () => {

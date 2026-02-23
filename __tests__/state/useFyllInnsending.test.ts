@@ -2,7 +2,6 @@ import { vi, expect } from 'vitest';
 import useBoundStore from '../../state/useBoundStore';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import useFyllInnsending, {
-  mapEgenmeldingsperioder,
   mapNaturalytelserToData,
   concatPerioder,
   konverterPerioderFraMottattTilInterntFormat,
@@ -18,7 +17,7 @@ import useKvitteringInit from '../../state/useKvitteringInit';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
 import { z } from 'zod/v4';
 
-import MottattKvitteringSchema from '../../schema/MottattKvitteringSchema';
+import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
 
@@ -81,7 +80,7 @@ describe('useFyllInnsending', () => {
     cleanup();
   });
   it('should fill the state stuff', async () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
+    renderHook(() => useBoundStore((state) => state));
 
     const { result: kvittInit } = renderHook(() => useKvitteringInit());
 
@@ -143,7 +142,7 @@ describe('useFyllInnsending', () => {
   });
 
   it('should fill the state stuff - delvis', async () => {
-    const { result } = renderHook(() => useBoundStore((state) => state));
+    renderHook(() => useBoundStore((state) => state));
 
     const { result: kvittInit } = renderHook(() => useKvitteringInit());
 
