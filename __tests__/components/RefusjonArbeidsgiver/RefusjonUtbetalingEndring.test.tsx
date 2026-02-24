@@ -79,6 +79,30 @@ describe('RefusjonUtbetalingEndring', () => {
     expect(beloepInput).toBeInTheDocument();
   });
 
+  it('should remove periods when Nei is clicked and restore one when Ja is clicked', async () => {
+    render(
+      <TestWrapper defaultValues={{ refusjon: { harEndringer: 'Ja', endringer: [{}] } }}>
+        <RefusjonUtbetalingEndring />
+      </TestWrapper>
+    );
+
+    expect(screen.getAllByLabelText(/Endret beløp\/måned/i)).toHaveLength(1);
+
+    const NeiButton = screen.getByText(/Nei/i);
+    fireEvent.click(NeiButton);
+
+    await waitFor(() => {
+      expect(screen.queryAllByLabelText(/Endret beløp\/måned/i)).toHaveLength(0);
+    });
+
+    const JaButton = screen.getByText(/Ja/i);
+    fireEvent.click(JaButton);
+
+    await waitFor(() => {
+      expect(screen.getAllByLabelText(/Endret beløp\/måned/i)).toHaveLength(1);
+    });
+  });
+
   it('should delete periode when "Slett" is clicked', async () => {
     render(
       <TestWrapper
