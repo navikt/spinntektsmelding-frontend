@@ -34,7 +34,7 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
       append({ beloep: undefined, dato: undefined });
     }
 
-    if (harRefusjonEndringer === 'Nei') {
+    if (harRefusjonEndringer === 'Nei' && fields.length > 0) {
       remove();
     }
   }, [harRefusjonEndringer, fields.length, append, remove]);
