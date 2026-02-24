@@ -5,24 +5,21 @@ WORKDIR /app
 RUN npm install -g --force corepack && corepack enable
 
 # Copy only dependency-related files for better layer caching
-COPY package.json yarn.lock .yarnrc.yml .npmrc ./
-COPY .yarn ./.yarn
+COPY package.json pnpm-lock.yaml .npmrc ./
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
-    --mount=type=cache,target=/app/.yarn/cache \
+    --mount=type=cache,target=/root/.pnpm-store \
     echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc && \
     export NPM_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) && \
-    yarn install --immutable
+    pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM node:25-bookworm-slim@sha256:32f45869cf02c26971de72c383d5f99cab002905ed8b515b56df925007941782 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/.yarn ./.yarn
-COPY --from=deps /app/.yarnrc.yml ./
 
 # Copy source files (tests excluded via .dockerignore)
-COPY package.json yarn.lock next.config.js tsconfig.json ./
+COPY package.json pnpm-lock.yaml next.config.js tsconfig.json ./
 COPY public ./public
 COPY pages ./pages
 COPY components ./components
@@ -48,8 +45,10 @@ RUN echo "BUILDMODE" "${BUILDMODE}"
 
 COPY ${BUILDMODE}.env .env
 
+RUN corepack enable
+
 RUN --mount=type=cache,target=/app/.next/cache \
-    yarn build && rm -f .npmrc
+    pnpm build && rm -f .npmrc
 
 # Production image, copy all the files and run next
 FROM gcr.io/distroless/nodejs24-debian12@sha256:aad62f814208ec57ff3a67a9ca8764b0bfa0f7af9809008a04aada96f6987dab AS runner
