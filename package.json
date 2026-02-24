@@ -17,7 +17,7 @@
     "test:watch": "vitest",
     "prepare": "husky install",
     "knip": "knip --no-exit-code --reporter json",
-    "bundleanalyze": "ANALYZE=true yarn build --webpack"
+    "bundleanalyze": "ANALYZE=true pnpm build --webpack"
   },
   "dependencies": {
     "@grafana/faro-web-sdk": "2.2.4",
@@ -83,6 +83,5 @@
     "vitest": "^4.0.18",
     "vitest-fetch-mock": "^0.4.5",
     "vitest-sonar-reporter": "^3.0.0"
-  },
-  "packageManager": "yarn@4.12.0"
+  }
 }
