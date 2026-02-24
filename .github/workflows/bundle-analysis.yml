@@ -31,31 +31,33 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
 
-      - name: Enable corepack (Yarn 2+)
-        run: corepack enable
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
 
-      - name: Cache Yarn 2 files
+      - name: Cache pnpm files
         uses: actions/cache@v5
         with:
           path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
+            ~/.pnpm-store
+            
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn2-
+            ${{ runner.os }}-pnpm-
 
-      - run: yarn install --immutable --inline-builds
+      - run: pnpm install --frozen-lockfile
 
       - name: Cache Next.js build cache
         uses: actions/cache@v5
         with:
           path: .next/cache
-          key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock', 'next.config.js', 'tsconfig.json') }}
+          key: ${{ runner.os }}-next-cache-${{ hashFiles('pnpm-lock.yaml', 'next.config.js', 'tsconfig.json') }}
           restore-keys: |
             ${{ runner.os }}-next-cache-
 
       - name: Build with stats
-        run: yarn build
+        run: pnpm build
         env:
           ANALYZE: true
 

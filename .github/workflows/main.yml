@@ -25,28 +25,30 @@ jobs:
         with:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
-      - name: Enable corepack (Yarn 2+)
-        run: corepack enable
-      - name: Cache Yarn 2 files
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+      - name: Cache pnpm files
         uses: actions/cache@v5
         with:
           path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
+            ~/.pnpm-store
+            
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn2-
+            ${{ runner.os }}-pnpm-
       - name: Install dependencies
-        run: yarn install --immutable --inline-builds
+        run: pnpm install --frozen-lockfile
       - name: Cache Vitest
         uses: actions/cache@v5
         with:
           path: node_modules/.vitest
-          key: ${{ runner.os }}-vitest-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-vitest-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-vitest-
       - name: Run tests
-        run: yarn test
+        run: pnpm test
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
         uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9
@@ -64,27 +66,29 @@ jobs:
         with:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
-      - name: Enable corepack (Yarn 2+)
-        run: corepack enable
-      - name: Cache Yarn 2 files
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+      - name: Cache pnpm files
         uses: actions/cache@v5
         with:
           path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
+            ~/.pnpm-store
+            
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn2-
+            ${{ runner.os }}-pnpm-
       - name: Install dependencies
-        run: yarn install --immutable --inline-builds
+        run: pnpm install --frozen-lockfile
       - name: Cache ESLint
         uses: actions/cache@v5
         with:
           path: node_modules/.cache/eslint
-          key: ${{ runner.os }}-eslint-${{ hashFiles('yarn.lock', '.eslintrc*') }}
+          key: ${{ runner.os }}-eslint-${{ hashFiles('pnpm-lock.yaml', '.eslintrc*') }}
           restore-keys: |
             ${{ runner.os }}-eslint-
-      - run: yarn lint
+      - run: pnpm lint
 
   build_and_deploy:
     needs: [Kodekvalitet, Eslint]
