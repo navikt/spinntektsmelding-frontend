@@ -1190,4 +1190,80 @@ describe('InnsendingSchema', () => {
       hasErrorMessage(result.error?.issues, 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.')
     ).toBe(true);
   });
+
+  it('should pass validation when inntekt is 0 and refusjon beloepPerMaaned is higher', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 0, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 0,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsaker: null
+      },
+      refusjon: {
+        beloepPerMaaned: 50000,
+        endringer: [],
+        sluttdato: '2023-03-31'
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ],
+      naturalytelser: []
+    };
+
+    const mockAddIssue = vi.fn();
+    const mockCtx = { addIssue: mockAddIssue, issues: [] };
+
+    superRefineInnsending(data as any, mockCtx as any);
+
+    // Should not have issues related to refusjon > inntekt when inntekt is 0
+    expect(mockCtx.issues.filter((issue: any) => issue.path[0] === 'refusjon')).toHaveLength(0);
+  });
+
+  it('should pass validation when inntekt is 0 and refusjon endringer beloep is higher', () => {
+    const data = {
+      agp: {
+        perioder: [{ fom: '2023-02-17', tom: '2023-03-01' }],
+        egenmeldinger: [{ fom: '2023-02-17', tom: '2023-02-19' }],
+        redusertLoennIAgp: { beloep: 0, begrunnelse: 'StreikEllerLockout' }
+      },
+      inntekt: {
+        beloep: 0,
+        inntektsdato: '2023-02-14',
+        naturalytelser: [],
+        endringAarsaker: null
+      },
+      refusjon: {
+        beloepPerMaaned: 10000,
+        endringer: [{ startdato: '2023-03-25', beloep: 50000 }],
+        sluttdato: null
+      },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ],
+      naturalytelser: []
+    };
+
+    const mockAddIssue = vi.fn();
+    const mockCtx = { addIssue: mockAddIssue, issues: [] };
+
+    superRefineInnsending(data as any, mockCtx as any);
+
+    // Should not have issues related to refusjon endringer > inntekt when inntekt is 0
+    expect(
+      mockCtx.issues.filter((issue: any) => issue.path[0] === 'refusjon' && issue.path[1] === 'endringer')
+    ).toHaveLength(0);
+  });
 });

@@ -223,7 +223,12 @@ export const InnsendingSchema = z.object({
 type TInnsendingSchema = z.infer<typeof InnsendingSchema>;
 
 export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementCtx) {
-  if (val.inntekt?.beloep && val.refusjon?.beloepPerMaaned && val.inntekt?.beloep < val.refusjon?.beloepPerMaaned) {
+  if (
+    val.inntekt?.beloep &&
+    val.refusjon?.beloepPerMaaned &&
+    val.inntekt?.beloep < val.refusjon?.beloepPerMaaned &&
+    val.inntekt?.beloep !== 0
+  ) {
     ctx.issues.push({
       code: 'custom',
       message: 'Refusjonsbeløpet kan ikke være høyere enn inntekten.',
@@ -253,7 +258,7 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
   if (val.refusjon) {
     const agpSluttdato = val.agp?.perioder?.[val.agp.perioder.length - 1]?.tom ?? undefined;
     val?.refusjon?.endringer?.forEach((endring, index) => {
-      if (endring.beloep > (val.inntekt?.beloep ?? endring.beloep)) {
+      if (endring.beloep > (val.inntekt?.beloep ?? endring.beloep) && (val.inntekt?.beloep ?? 0) !== 0) {
         ctx.issues.push({
           code: 'custom',
           message: 'Refusjon kan ikke være høyere enn beregnet månedslønn.',
