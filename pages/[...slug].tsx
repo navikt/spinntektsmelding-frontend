@@ -533,6 +533,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
 
     try {
       forespurt = await hentForespoerselSSR(uuid, token);
+
+      if (forespurt.data?.erBesvart) {
+        const ingress = context.req.headers.host + environment.baseUrl;
+        const destination = `https://${ingress}/skjema/kvittering/${uuid}`;
+        return {
+          redirect: {
+            destination: destination,
+            permanent: false
+          }
+        };
+      }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       console.error('Error fetching forespurt:', err);
