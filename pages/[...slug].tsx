@@ -239,9 +239,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   useEffect(() => {
     if (
       !dataFraBackend &&
-      kvitteringData &&
-      kvitteringData.refusjon?.beloepPerMaaned !== undefined &&
-      kvitteringData.refusjon?.beloepPerMaaned !== null
+      kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
+      kvitteringData?.refusjon?.beloepPerMaaned !== null
     ) {
       setValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
       setValue('kreverRefusjon', 'Ja');
@@ -260,7 +259,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       setValue('refusjon.beloepPerMaaned', 0);
       setValue('kreverRefusjon', 'Nei');
     }
-  }, [kvitteringData?.refusjon?.beloepPerMaaned, setValue, dataFraBackend, kvitteringData]);
+  }, [kvitteringData, setValue, dataFraBackend]);
 
   useEffect(() => {
     if (harEndringAarsak(bruttoinntekt.endringAarsaker)) {
