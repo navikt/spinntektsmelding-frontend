@@ -488,6 +488,20 @@ describe('Home Page', () => {
       expect(screen.getByTestId('banner')).toBeInTheDocument();
     });
 
+    it('does not set refusjon fields when dataFraBackend is false and kvitteringData is null', () => {
+      (useBoundStore as Mock).mockImplementation((stateFn) =>
+        stateFn(
+          createMockState({
+            kvitteringData: null
+          })
+        )
+      );
+
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} dataFraBackend={false} />);
+
+      expect(screen.getByTestId('banner')).toBeInTheDocument();
+    });
+
     it('does not override refusjon fields when dataFraBackend is true', () => {
       (useBoundStore as Mock).mockImplementation((stateFn) =>
         stateFn(
