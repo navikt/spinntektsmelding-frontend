@@ -536,7 +536,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
 
       if (forespurt.data?.erBesvart) {
         const ingress = context.req.headers.host + environment.baseUrl;
-        const destination = `https://${ingress}/skjema/kvittering/${uuid}`;
+        const destination = `https://${ingress}/kvittering/${uuid}`;
         return {
           redirect: {
             destination: destination,

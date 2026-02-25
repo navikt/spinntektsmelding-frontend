@@ -676,4 +676,30 @@ describe('getServerSideProps', () => {
     expect(result).toHaveProperty('props');
     expect(result.props.forespurtStatus).toBe(500);
   });
+
+  it('redirects to kvittering when forespurt.data.erBesvart is true', async () => {
+    const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+    vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce({
+      data: { erBesvart: true }
+    });
+
+    const context = {
+      query: {
+        slug: ['550e8400-e29b-41d4-a716-446655440000']
+      },
+      req: {
+        headers: {
+          host: 'localhost:3000'
+        }
+      }
+    } as any;
+
+    const result = await getServerSideProps(context);
+
+    expect(result).toHaveProperty('redirect');
+    expect((result as any).redirect.destination).toBe(
+      'https://localhost:3000/im-dialog/kvittering/550e8400-e29b-41d4-a716-446655440000'
+    );
+    expect((result as any).redirect.permanent).toBe(false);
+  });
 });
