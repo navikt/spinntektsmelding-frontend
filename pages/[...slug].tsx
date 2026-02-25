@@ -513,6 +513,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   const isDevelopment = process.env.NODE_ENV === 'development';
   let forespurt = null;
   let forespurtStatus = null;
+  const overskriv = slug[1] && slug[1] === 'overskriv';
 
   if (isValidUUID(uuid) && !endre) {
     forespurtStatus = 200;
@@ -533,6 +534,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
 
     try {
       forespurt = await hentForespoerselSSR(uuid, token);
+
+      if (forespurt.data?.erBesvart && !overskriv) {
+        const ingress = context.req.headers.host + environment.baseUrl;
+        const destination = `https://${ingress}/kvittering/${uuid}`;
+        return {
+          redirect: {
+            destination: destination,
+            permanent: false
+          }
+        };
+      }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       console.error('Error fetching forespurt:', err);
