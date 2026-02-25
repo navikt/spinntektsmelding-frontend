@@ -8,7 +8,6 @@ import ButtonEndre from '../ButtonEndre';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import NumberField from '../NumberField/NumberField';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
-import stringishToNumber from '../../utils/stringishToNumber';
 
 interface RefusjonArbeidsgiverBelopProps {
   arbeidsgiverperiodeDisabled?: boolean;
@@ -19,6 +18,7 @@ export default function RefusjonArbeidsgiverBelop({
 }: Readonly<RefusjonArbeidsgiverBelopProps>) {
   const {
     control,
+    register,
     setValue,
     watch,
     formState: { errors }
@@ -42,14 +42,6 @@ export default function RefusjonArbeidsgiverBelop({
       setValue('refusjon.isEditing', true);
     },
     [setValue]
-  );
-
-  const handleBeloepChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      field.onChange(value === '' ? undefined : stringishToNumber(value));
-    },
-    [field]
   );
 
   if (!isEditing) {
@@ -80,10 +72,11 @@ export default function RefusjonArbeidsgiverBelop({
         <NumberField
           className={localStyles.refusjonBeloep}
           label='Oppgi refusjonsbeløpet per måned'
-          {...field}
-          onChange={handleBeloepChange}
           id={ensureValidHtmlId('refusjon.beloepPerMaaned')}
           error={error}
+          {...register(`refusjon.beloepPerMaaned`, {
+            valueAsNumber: true
+          })}
         />
         <span className={localStyles.alert_span}>
           Selv om arbeidstakeren har inntekt over 6G skal arbeidsgiver ikke redusere beløpet. Dette gjør Nav. Nav vil
