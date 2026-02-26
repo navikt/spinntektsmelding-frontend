@@ -11,7 +11,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     --mount=type=cache,target=/root/.pnpm-store \
     echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc && \
     export NPM_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) && \
-    pnpm install --frozen-lockfile
+    pnpm install --frozen-lockfile  --ignore-scripts
 
 # Rebuild the source code only when needed
 FROM node:25-bookworm-slim@sha256:32f45869cf02c26971de72c383d5f99cab002905ed8b515b56df925007941782 AS builder

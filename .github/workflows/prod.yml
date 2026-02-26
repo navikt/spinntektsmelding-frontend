@@ -34,7 +34,7 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}-prod
           restore-keys: |
             ${{ runner.os }}-pnpm-
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache Vitest
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
@@ -70,7 +70,7 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}-prod
           restore-keys: |
             ${{ runner.os }}-pnpm-
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache ESLint
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:

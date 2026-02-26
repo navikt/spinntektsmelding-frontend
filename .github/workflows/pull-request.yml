@@ -37,7 +37,7 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache Next.js build cache
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
@@ -74,7 +74,7 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache Vitest
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
@@ -111,7 +111,7 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache ESLint
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
@@ -148,5 +148,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
       - uses: codex-/knip-reporter@398e656c485dd1649f06631a4cd2e602c6ccc4f1
