@@ -33,8 +33,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
-        with:
-          version: 10.30.2
 
       - name: Cache pnpm files
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
