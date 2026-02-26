@@ -24,20 +24,20 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
         with:
           version: 10.30.2
 
       - name: Cache pnpm files
-        uses: actions/cache@v5
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
           path: |
             ~/.pnpm-store
@@ -49,7 +49,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Cache Next.js build cache
-        uses: actions/cache@v5
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('pnpm-lock.yaml', 'next.config.js', 'tsconfig.json') }}
@@ -105,7 +105,7 @@ jobs:
           EOF
 
       - name: Upload bundle stats
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: bundle-stats
           path: .next/analyze/bundle-stats.json

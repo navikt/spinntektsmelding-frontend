@@ -12,7 +12,7 @@ updates:
     open-pull-requests-limit: 20
     ignore:
       - dependency-name: 'eslint'
-        versions: ['9.x']
+        versions: ['9.x', '10.x']
     schedule:
       interval: 'daily'
     groups:
