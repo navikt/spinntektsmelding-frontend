@@ -89,7 +89,7 @@ devDependencies:
     specifier: ^4.11.1
     version: 4.11.1(playwright-core@1.58.2)
   '@eslint/eslintrc':
-    specifier: ^3.3.3
+    specifier: ^3.3.4
     version: 3.3.4
   '@navikt/aksel':
     specifier: ^8.5.2
@@ -149,8 +149,8 @@ devDependencies:
     specifier: 10.0.0
     version: 10.0.0
   knip:
-    specifier: 5.84.1
-    version: 5.84.1(@types/node@22.19.11)(typescript@5.9.3)
+    specifier: 5.85.0
+    version: 5.85.0(@types/node@22.19.11)(typescript@5.9.3)
   lint-staged:
     specifier: 16.2.7
     version: 16.2.7
@@ -1549,6 +1549,9 @@ packages:
       '@types/react': ^17.0.30 || ^18 || ^19
       react: ^17 || ^18 || ^19
       react-dom: ^17 || ^18 || ^19
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
     dependencies:
       '@floating-ui/react': 0.27.8(react-dom@19.2.4)(react@19.2.4)
       '@floating-ui/react-dom': 2.1.7(react-dom@19.2.4)(react@19.2.4)
@@ -1576,6 +1579,9 @@ packages:
       html-react-parser: '>=5.x'
       jsdom: 28.1.0
       react: '>=17.x'
+    peerDependenciesMeta:
+      react:
+        optional: true
     dependencies:
       csp-header: 6.3.0
       html-react-parser: 5.2.17(@types/react@19.2.14)(react@19.2.4)
@@ -5452,8 +5458,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /knip@5.84.1(@types/node@22.19.11)(typescript@5.9.3):
-    resolution: {integrity: sha512-F1+yACEsSapAwmQLzfD4i9uPsnI82P4p5ABpNQ9pcc4fpQtjHEX34XDtNl5863I4O6SCECpymylcWDHI3ouhQQ==}
+  /knip@5.85.0(@types/node@22.19.11)(typescript@5.9.3):
+    resolution: {integrity: sha512-V2kyON+DZiYdNNdY6GALseiNCwX7dYdpz9Pv85AUn69Gk0UKCts+glOKWfe5KmaMByRjM9q17Mzj/KinTVOyxg==}
     engines: {node: '>=18.18.0'}
     hasBin: true
     peerDependencies:
