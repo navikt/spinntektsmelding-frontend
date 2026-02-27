@@ -6,9 +6,8 @@ README.md
 .next
 .git
 
-# Yarn 2 cache
-.yarn/cache
-.yarn/install-state.gz
+# pnpm store
+.pnpm-store
 
 # Local env and logs
 .env

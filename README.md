@@ -5,23 +5,15 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 First, install dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
-
-**Important:** Due to security hardening (enableScripts: false in .yarnrc.yml), Git hooks are not installed automatically. After your first install, run:
-
-```bash
-yarn husky install
-```
-
-This sets up Git hooks for code quality checks (linting, formatting) before commits.
 
 Then, run the development server:
 
 ```bash
 npm run dev
 # or
-yarn dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

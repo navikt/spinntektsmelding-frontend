@@ -24,38 +24,38 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
 
-      - name: Enable corepack (Yarn 2+)
-        run: corepack enable
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
 
-      - name: Cache Yarn 2 files
-        uses: actions/cache@v5
+      - name: Cache pnpm files
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
           path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn2-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn2-
+            ~/.pnpm-store
 
-      - run: yarn install --immutable --inline-builds
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Cache Next.js build cache
-        uses: actions/cache@v5
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
           path: .next/cache
-          key: ${{ runner.os }}-next-cache-${{ hashFiles('yarn.lock', 'next.config.js', 'tsconfig.json') }}
+          key: ${{ runner.os }}-next-cache-${{ hashFiles('pnpm-lock.yaml', 'next.config.js', 'tsconfig.json') }}
           restore-keys: |
             ${{ runner.os }}-next-cache-
 
       - name: Build with stats
-        run: yarn build
+        run: pnpm build
         env:
           ANALYZE: true
 
@@ -103,7 +103,7 @@ jobs:
           EOF
 
       - name: Upload bundle stats
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: bundle-stats
           path: .next/analyze/bundle-stats.json

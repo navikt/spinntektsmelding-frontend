@@ -5,14 +5,14 @@
 
 version: 2
 updates:
-  # Maintain dependencies for Yarn
+  # Maintain dependencies for pnpm
   - package-ecosystem: 'npm' # See documentation for possible values
     directory: '/' # Location of package manifests
     registries: '*'
     open-pull-requests-limit: 20
     ignore:
       - dependency-name: 'eslint'
-        versions: ['9.x']
+        versions: ['9.x', '10.x']
     schedule:
       interval: 'daily'
     groups:
