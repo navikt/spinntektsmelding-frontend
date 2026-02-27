@@ -21,13 +21,13 @@ importers:
         specifier: 5.2.2
         version: 5.2.2(react-hook-form@7.71.1(react@19.2.4))
       '@navikt/aksel-icons':
-        specifier: ^8.5.2
+        specifier: ^8.6.0
         version: 8.6.0
       '@navikt/ds-css':
-        specifier: ^8.5.2
+        specifier: ^8.6.0
         version: 8.6.0
       '@navikt/ds-react':
-        specifier: ^8.5.2
+        specifier: ^8.6.0
         version: 8.6.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@navikt/fnrvalidator':
         specifier: 2.2.1
@@ -94,7 +94,7 @@ importers:
         specifier: ^3.3.4
         version: 3.3.4
       '@navikt/aksel':
-        specifier: ^8.5.2
+        specifier: ^8.6.0
         version: 8.6.0
       '@next/bundle-analyzer':
         specifier: ^16.1.6
@@ -998,6 +998,9 @@ packages:
       html-react-parser: '>=5.x'
       jsdom: 28.1.0
       react: '>=17.x'
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   '@navikt/next-logger@4.5.1':
     resolution: {integrity: sha512-qfiBT/kPK92sCVKGHlUeD2N9vDvJzEFpjn2qRVZiatQivD9IE+qRZwsdCpuvdU1Hylsc/fcF9/i03YQzXBf0iQ==, tarball: https://npm.pkg.github.com/download/@navikt/next-logger/4.5.1/e8c32873a7931396b0871c77b94673cbfb12d376}
@@ -5237,6 +5240,7 @@ snapshots:
       html-react-parser: 5.2.17(@types/react@19.2.14)(react@19.2.4)
       js-cookie: 3.0.5
       jsdom: 28.1.0
+    optionalDependencies:
       react: 19.2.4
 
   '@navikt/next-logger@4.5.1(next@16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(pino@10.3.1)':
