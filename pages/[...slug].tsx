@@ -126,7 +126,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   );
 
   let opplysningstyper = hentPaakrevdOpplysningstyper();
-  const skalViseEgenmelding = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
+  const skalViseEgenmelding = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend;
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
 
@@ -439,6 +439,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 skjemastatus={skjemastatus}
                 skalViseArbeidsgiverperiode={overstyrSkalViseAgp}
                 onTilbakestillArbeidsgiverperiode={() => setOverstyrSkalViseAgp(false)}
+                skalViseEgenmelding={skalViseEgenmelding}
               />
             )}
             {!skalViseArbeidsgiverperiode && (

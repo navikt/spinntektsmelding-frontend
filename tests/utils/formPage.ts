@@ -114,4 +114,9 @@ export class FormPage {
     await expect(checkbox).toBeVisible();
     await expect(checkbox).toBeChecked();
   }
+
+  async assertNotVisibleText(text: string): Promise<void> {
+    const el = this.page.getByText(text, { exact: false });
+    await expect(el).not.toBeVisible();
+  }
 }

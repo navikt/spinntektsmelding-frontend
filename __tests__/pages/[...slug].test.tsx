@@ -301,7 +301,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home slug='123' erEndring={false} />);
+    render(<Home slug='123' erEndring={false} dataFraBackend={true} />);
 
     // Egenmelding component should be rendered
     expect(screen.getByText('Egenmelding Component')).toBeInTheDocument();

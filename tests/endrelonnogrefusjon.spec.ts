@@ -203,5 +203,12 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
     // await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
     await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
+
+    await formPage.clickButton('Endre', 1);
+
+    await formPage.assertNotVisibleText('Egenmelding');
+    await formPage.assertNotVisibleText(
+      'Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode'
+    );
   });
 });
