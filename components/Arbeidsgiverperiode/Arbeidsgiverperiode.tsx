@@ -33,6 +33,7 @@ interface ArbeidsgiverperiodeProps {
   skjemastatus: SkjemaStatus;
   onTilbakestillArbeidsgiverperiode: () => void;
   skalViseArbeidsgiverperiode: boolean;
+  skalViseEgenmelding: boolean;
 }
 
 export default function Arbeidsgiverperiode({
@@ -40,7 +41,8 @@ export default function Arbeidsgiverperiode({
   setIsDirtyForm,
   skjemastatus,
   onTilbakestillArbeidsgiverperiode,
-  skalViseArbeidsgiverperiode
+  skalViseArbeidsgiverperiode,
+  skalViseEgenmelding
 }: Readonly<ArbeidsgiverperiodeProps>) {
   const {
     leggTilArbeidsgiverperiode,
@@ -318,8 +320,12 @@ export default function Arbeidsgiverperiode({
       </Heading3>
       {!skalViseArbeidsgiverperiode && (
         <BodyLong>
-          Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode. Hvis dette er feil må
-          du endre perioden.{' '}
+          {skalViseEgenmelding && (
+            <>
+              Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode. Hvis dette er feil
+              må du endre perioden.{' '}
+            </>
+          )}
           <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-i-arbeidsgiverperioden#arbeidsgiverperioden'>
             Les mer om arbeidsgiverperiode og hvordan denne beregnes.
           </LenkeEksternt>
