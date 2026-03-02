@@ -49,6 +49,7 @@ describe('TidligereInntekt', () => {
           skjemastatus={SkjemaStatus.FULL}
           onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
           skalViseArbeidsgiverperiode={false}
+          skalViseEgenmelding={true}
         />
       </TestWrapper>
     );
@@ -74,6 +75,7 @@ describe('TidligereInntekt', () => {
           skjemastatus={SkjemaStatus.FULL}
           onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
           skalViseArbeidsgiverperiode={false}
+          skalViseEgenmelding={true}
         />
       </TestWrapper>
     );
@@ -104,6 +106,7 @@ describe('TidligereInntekt', () => {
           skjemastatus={SkjemaStatus.FULL}
           onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
           skalViseArbeidsgiverperiode={false}
+          skalViseEgenmelding={true}
         />
       </TestWrapper>
     );
@@ -135,6 +138,7 @@ describe('TidligereInntekt', () => {
           skjemastatus={SkjemaStatus.FULL}
           onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
           skalViseArbeidsgiverperiode={false}
+          skalViseEgenmelding={true}
         />
       </TestWrapper>
     );
@@ -164,6 +168,7 @@ describe('TidligereInntekt', () => {
           skjemastatus={SkjemaStatus.FULL}
           onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
           skalViseArbeidsgiverperiode={true}
+          skalViseEgenmelding={false}
         />
       </TestWrapper>
     );
@@ -180,5 +185,95 @@ describe('TidligereInntekt', () => {
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
+  });
+
+  it('should show egenmelding text when skalViseEgenmelding is true and skalViseArbeidsgiverperiode is false', async () => {
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+
+    render(
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={arbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.FULL}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={false}
+          skalViseEgenmelding={true}
+        />
+      </TestWrapper>
+    );
+
+    const egenmeldingTekst = screen.getByText(
+      /Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode/
+    );
+
+    expect(egenmeldingTekst).toBeInTheDocument();
+  });
+
+  it('should not show egenmelding text when skalViseEgenmelding is false', async () => {
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+
+    render(
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={arbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.FULL}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={false}
+          skalViseEgenmelding={false}
+        />
+      </TestWrapper>
+    );
+
+    const egenmeldingTekst = screen.queryByText(
+      /Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode/
+    );
+
+    expect(egenmeldingTekst).not.toBeInTheDocument();
+  });
+
+  it('should not show egenmelding text when skalViseArbeidsgiverperiode is true regardless of skalViseEgenmelding', async () => {
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+
+    render(
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={arbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.FULL}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={true}
+          skalViseEgenmelding={true}
+        />
+      </TestWrapper>
+    );
+
+    const egenmeldingTekst = screen.queryByText(
+      /Vi har brukt egenmeldinger og sykmeldingsperiode til å foreslå en arbeidsgiverperiode/
+    );
+
+    expect(egenmeldingTekst).not.toBeInTheDocument();
+  });
+
+  it('should always show external link when arbeidsgiverperiode is not shown', async () => {
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+
+    render(
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={arbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.FULL}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={false}
+          skalViseEgenmelding={false}
+        />
+      </TestWrapper>
+    );
+
+    const eksternLink = screen.getByText('Les mer om arbeidsgiverperiode og hvordan denne beregnes.');
+
+    expect(eksternLink).toBeInTheDocument();
   });
 });
