@@ -45,7 +45,7 @@ RUN echo "BUILDMODE" "${BUILDMODE}"
 
 COPY ${BUILDMODE}.env .env
 
-RUN npm install -g --force corepack && corepack enable
+RUN npm install -g --force --ignore-scripts corepack && corepack enable
 
 RUN --mount=type=cache,target=/app/.next/cache \
     pnpm build && rm -f .npmrc
