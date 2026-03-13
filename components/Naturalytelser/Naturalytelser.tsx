@@ -57,7 +57,7 @@ export default function Naturalytelser() {
   return (
     <>
       <Heading3>Naturalytelser</Heading3>
-      <CheckboxGroup legend='Naturalytelser' hideLegend>
+      <CheckboxGroup legend='Bortfall av naturalytelser' hideLegend>
         <Checkbox {...register('inntekt.harBortfallAvNaturalytelser')}>
           Har den ansatte naturalytelser som faller bort under sykefraværet?
         </Checkbox>
