@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { BodyLong, Button, Checkbox, Link } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox, CheckboxGroup, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
 
@@ -450,7 +450,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                   forlengelse av en tidligere sykefraværsperiode. Hvis du mener at det skal være arbeidsgiverperiode kan
                   du endre dette.
                 </BodyLong>
-                <Button variant='tertiary' onClick={() => setOverstyrSkalViseAgp(true)}>
+                <Button type='button' variant='tertiary' onClick={() => setOverstyrSkalViseAgp(true)}>
                   Endre
                 </Button>
               </>
@@ -479,12 +479,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Skillelinje />
             <Naturalytelser />
             <Skillelinje />
-            <Checkbox id='bekreft-opplysninger' {...register('bekreft_opplysninger')}>
-              Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
-            </Checkbox>
-            {errors.bekreft_opplysninger && (
-              <Feilmelding id='errors.bekreft_opplysninger'>{errors.bekreft_opplysninger.message}</Feilmelding>
-            )}
+            <CheckboxGroup
+              legend='Bekreftelse'
+              hideLegend
+              id='bekreft-opplysninger'
+              error={errors.bekreft_opplysninger?.message}
+            >
+              <Checkbox {...register('bekreft_opplysninger')}>
+                Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.
+              </Checkbox>
+            </CheckboxGroup>
             <Feilsammendrag skjemafeil={memoErrors} />
             <div className={styles.outerButtonWrapper}>
               <div className={styles.buttonWrapper}>
