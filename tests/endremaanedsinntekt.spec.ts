@@ -24,7 +24,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
     // klikk for å endre inntekt
     await page.locator('[data-cy="endre-beloep"]').click();
     // bekreft opplysninger
-    await page.locator('#bekreft-opplysninger').check();
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
     // skriv ugyldig beløp
 

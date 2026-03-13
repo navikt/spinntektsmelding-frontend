@@ -437,7 +437,12 @@ const InitieringAnnet: NextPage = () => {
                 </Alert>
               )}
               <div className={lokalStyles.knapperad}>
-                <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
+                <Button
+                  type='button'
+                  variant='tertiary'
+                  className={lokalStyles.primaryKnapp}
+                  onClick={() => history.back()}
+                >
                   Tilbake
                 </Button>
                 <Button

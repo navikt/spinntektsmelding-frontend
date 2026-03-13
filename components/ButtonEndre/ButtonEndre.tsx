@@ -5,6 +5,7 @@ interface ButtonEndreProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
 export default function ButtonEndre(props: ButtonEndreProps) {
   return (
     <Button
+      type='button'
       variant='secondary'
       {...props}
       className={[lokalStyles.endrebutton, props.className].filter(Boolean).join(' ')}

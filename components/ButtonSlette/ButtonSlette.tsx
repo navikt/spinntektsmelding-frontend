@@ -11,6 +11,7 @@ export default function ButtonSlette(props: Readonly<ButtonSletteProps>) {
 
   return (
     <Button
+      type='button'
       className={props.className}
       onClick={props.onClick}
       variant='tertiary'
