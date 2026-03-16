@@ -514,11 +514,11 @@ export default Home;
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
   const { slug, endre } = context.query;
-  const uuid = slug[0];
+  const uuid = slug?.[0];
   const isDevelopment = process.env.NODE_ENV === 'development';
   let forespurt = null;
   let forespurtStatus = null;
-  const overskriv = slug[1] && slug[1] === 'overskriv';
+  const overskriv = slug?.[1] && slug?.[1] === 'overskriv';
 
   if (isValidUUID(uuid) && !endre) {
     forespurtStatus = 200;
@@ -530,7 +530,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       return redirectTilLogin(context);
     }
 
-    const validation = await validateToken(token);
+    const validation = await validateToken(token ?? '');
     if (!validation.ok && !isDevelopment) {
       /* håndter valideringsfeil */
       console.error('Validering av token feilet');
@@ -538,7 +538,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     }
 
     try {
-      forespurt = await hentForespoerselSSR(uuid, token);
+      forespurt = await hentForespoerselSSR(uuid, token ?? '');
 
       if (forespurt.data?.erBesvart && !overskriv) {
         const ingress = context.req.headers.host + environment.baseUrl;
@@ -566,8 +566,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
 
   return {
     props: {
-      slug: slug[0],
-      erEndring: Boolean(slug[1] && slug[1] === 'overskriv'),
+      slug: slug?.[0],
+      erEndring: Boolean(slug?.[1] && slug?.[1] === 'overskriv'),
       forespurt: forespurt,
       forespurtStatus: forespurtStatus,
       dataFraBackend: !!forespurt && !endre
