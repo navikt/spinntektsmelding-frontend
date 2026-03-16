@@ -419,4 +419,20 @@ describe('InitieringAnnet page', () => {
       ).toBeInTheDocument()
     );
   });
+
+  it('"Tilbake"-knappen har type="button" for å unngå utilsiktet skjemainnsending', async () => {
+    const arbData = {
+      fulltNavn: 'OLA NORDMANN',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Test AS' }],
+      perioder: [{ id: 'a', fom: '2023-01-01', tom: '2023-01-10' }]
+    };
+    (useArbeidsforhold as Mock).mockReturnValue({ data: arbData, error: undefined });
+    (useSykepengesoeknader as Mock).mockReturnValue({ data: [], error: undefined, isLoading: false });
+
+    render(<InitieringAnnet />);
+
+    await waitFor(() => screen.getByRole('button', { name: 'Tilbake' }));
+    expect(screen.getByRole('button', { name: 'Tilbake' })).toHaveAttribute('type', 'button');
+  });
 });

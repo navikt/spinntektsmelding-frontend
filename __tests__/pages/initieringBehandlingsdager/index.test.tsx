@@ -157,4 +157,10 @@ describe('InitieringBehandlingsdager', () => {
 
     expect(setSelvbestemtType).toHaveBeenCalledWith('Behandlingsdager');
   });
+
+  it('"Tilbake"-knappen har type="button" for å unngå utilsiktet skjemainnsending', async () => {
+    render(<InitieringBehandlingsdager />);
+    await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
+    expect(screen.getByRole('button', { name: 'Tilbake' })).toHaveAttribute('type', 'button');
+  });
 });

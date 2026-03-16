@@ -14,6 +14,11 @@ describe('ButtonSlette', () => {
     expect(buttonTitle).toBeInTheDocument();
   });
 
+  it('has type="button" to prevent accidental form submission', () => {
+    render(<ButtonSlette title='Slette' />);
+    expect(screen.getByRole('button')).toHaveAttribute('type', 'button');
+  });
+
   it('uses "Slette" as icon title when title is empty', () => {
     render(<ButtonSlette title='' />);
 

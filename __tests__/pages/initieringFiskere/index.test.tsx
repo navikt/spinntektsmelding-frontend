@@ -131,4 +131,11 @@ describe('InitieringFiskere page', () => {
     expect(tilbakestillArbeidsgiverperiode).toHaveBeenCalled();
     expect(setSelvbestemtType).toHaveBeenCalledWith('Fisker');
   });
+
+  it('"Tilbake"-knappen har type="button" for å unngå utilsiktet skjemainnsending', async () => {
+    (useMineTilganger as Mock).mockReturnValue({ data: [], error: undefined });
+    render(<InitieringFritatt />);
+    await waitFor(() => screen.getByRole('button', { name: 'Tilbake' }));
+    expect(screen.getByRole('button', { name: 'Tilbake' })).toHaveAttribute('type', 'button');
+  });
 });

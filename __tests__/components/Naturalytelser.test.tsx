@@ -70,6 +70,11 @@ describe('Naturalytelser', () => {
     ).toBeInTheDocument();
   });
 
+  it('checkbox group has legend "Bortfall av naturalytelser"', () => {
+    render(<Naturalytelser />);
+    expect(screen.getByText('Bortfall av naturalytelser')).toBeInTheDocument();
+  });
+
   it.skip('adds a naturalytelse when checkbox is checked', () => {
     vi.mock('react-hook-form', () => ({
       useController: () => ({
