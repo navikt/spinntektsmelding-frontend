@@ -183,10 +183,9 @@ describe('Home Page', () => {
     expect(screen.getByText('Send')).toBeInTheDocument();
   });
 
-  it('renders confirmation checkbox inside a CheckboxGroup', () => {
+  it('renders confirmation checkbox', () => {
     render(<Home slug='123' erEndring={false} />);
 
-    expect(screen.getByText('Bekreftelse')).toBeInTheDocument();
     expect(
       screen.getByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.')
     ).toBeInTheDocument();

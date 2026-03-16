@@ -1,4 +1,4 @@
-import { Button, Checkbox, CheckboxGroup } from '@navikt/ds-react';
+import { Button, Checkbox } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
@@ -57,11 +57,9 @@ export default function Naturalytelser() {
   return (
     <>
       <Heading3>Naturalytelser</Heading3>
-      <CheckboxGroup legend='Bortfall av naturalytelser' hideLegend>
-        <Checkbox {...register('inntekt.harBortfallAvNaturalytelser')}>
-          Har den ansatte naturalytelser som faller bort under sykefraværet?
-        </Checkbox>
-      </CheckboxGroup>
+      <Checkbox {...register('inntekt.harBortfallAvNaturalytelser')}>
+        Har den ansatte naturalytelser som faller bort under sykefraværet?
+      </Checkbox>
       {harBortfallAvNaturalytelser && (
         <>
           <table className={lokalStyles.tablenaturalytelse}>

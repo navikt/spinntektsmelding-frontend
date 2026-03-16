@@ -72,7 +72,7 @@ describe('Naturalytelser', () => {
 
   it('checkbox group has legend "Bortfall av naturalytelser"', () => {
     render(<Naturalytelser />);
-    expect(screen.getByText('Bortfall av naturalytelser')).toBeInTheDocument();
+    expect(screen.queryByText('Bortfall av naturalytelser')).not.toBeInTheDocument();
   });
 
   it.skip('adds a naturalytelse when checkbox is checked', () => {
