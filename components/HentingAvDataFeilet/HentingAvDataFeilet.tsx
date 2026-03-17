@@ -1,5 +1,5 @@
 import { ExclamationmarkTriangleIcon } from '@navikt/aksel-icons';
-import { Alert, BodyLong, Button, Modal } from '@navikt/ds-react';
+import { Alert, BodyLong, Button, Dialog } from '@navikt/ds-react';
 
 interface HentingAvDataFeiletProps {
   handleCloseModal: () => void;
@@ -18,27 +18,24 @@ export default function HentingAvDataFeilet({
   const visningTitle = title ?? 'Henting av data til inntektsmeldingen feilet.';
 
   return (
-    <Modal
-      open={open}
-      aria-label={visningAriaLabel}
-      onClose={handleCloseModal}
-      header={{
-        heading: visningTitle,
-        size: 'medium',
-        icon: <ExclamationmarkTriangleIcon title='Advarsel' fontSize='1.5rem' />
-      }}
-    >
-      <Modal.Body>
-        <Alert variant='error'>
-          <BodyLong>Noe gikk galt under henting av data.</BodyLong>
-          <BodyLong>Vennligst prøv igjen ved en senere anledning.</BodyLong>
-        </Alert>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant='primary' onClick={handleCloseModal}>
-          Lukk
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && handleCloseModal()}>
+      <Dialog.Popup aria-label={visningAriaLabel}>
+        <Dialog.Header>
+          <ExclamationmarkTriangleIcon title='Advarsel' fontSize='1.5rem' />
+          <Dialog.Title>{visningTitle}</Dialog.Title>
+        </Dialog.Header>
+        <Dialog.Body>
+          <Alert variant='error'>
+            <BodyLong>Noe gikk galt under henting av data.</BodyLong>
+            <BodyLong>Vennligst prøv igjen ved en senere anledning.</BodyLong>
+          </Alert>
+        </Dialog.Body>
+        <Dialog.Footer>
+          <Button variant='primary' onClick={handleCloseModal}>
+            Lukk
+          </Button>
+        </Dialog.Footer>
+      </Dialog.Popup>
+    </Dialog>
   );
 }
