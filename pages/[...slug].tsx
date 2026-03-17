@@ -55,6 +55,7 @@ import useStateInit from '../state/useStateInit';
 import { getToken, validateToken } from '@navikt/oasis';
 import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
+import FaisuDialog from '../components/FaisuDialog/FaisuDialog';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -503,6 +504,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         </FormProvider>
         <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
         <HentingAvDataFeilet open={skjemaFeilet} handleCloseModal={lukkHentingFeiletModal} />
+        <FaisuDialog open={true} handleCloseDialog={() => {}} />
       </PageContent>
     </div>
   );
