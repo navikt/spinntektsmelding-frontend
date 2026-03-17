@@ -183,6 +183,14 @@ describe('Home Page', () => {
     expect(screen.getByText('Send')).toBeInTheDocument();
   });
 
+  it('renders confirmation checkbox', () => {
+    render(<Home slug='123' erEndring={false} />);
+
+    expect(
+      screen.getByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.')
+    ).toBeInTheDocument();
+  });
+
   it('submits the form when confirmed', async () => {
     const mockSendInnSkjema = vi.fn().mockResolvedValue({});
     (useSendInnSkjema as Mock).mockReturnValue(mockSendInnSkjema);

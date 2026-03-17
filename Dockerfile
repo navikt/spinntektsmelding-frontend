@@ -8,9 +8,7 @@ RUN npm install -g --force corepack && corepack enable
 COPY package.json pnpm-lock.yaml .npmrc ./
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
-    --mount=type=cache,target=/root/.pnpm-store \
-    echo '//npm.pkg.github.com/:_authToken='$(cat /run/secrets/NODE_AUTH_TOKEN) >> .npmrc && \
-    export NPM_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) && \
+    NODE_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) \
     pnpm install --frozen-lockfile  --ignore-scripts
 
 # Rebuild the source code only when needed
@@ -48,7 +46,7 @@ COPY ${BUILDMODE}.env .env
 RUN npm install -g --force --ignore-scripts corepack && corepack enable
 
 RUN --mount=type=cache,target=/app/.next/cache \
-    pnpm build && rm -f .npmrc
+    pnpm build
 
 # Production image, copy all the files and run next
 FROM gcr.io/distroless/nodejs24-debian12@sha256:61f4f4341db81820c24ce771b83d202eb6452076f58628cd536cc7d94a10978b AS runner
@@ -58,14 +56,14 @@ ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nonroot:nonroot --chmod=0555 /app/public ./public
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nonroot:nonroot --chmod=0555 /app/.next/standalone ./
+COPY --from=builder --chown=nonroot:nonroot --chmod=0555 /app/.next/static ./.next/static
 
-USER nextjs
+USER nonroot
 
 EXPOSE 3000
 

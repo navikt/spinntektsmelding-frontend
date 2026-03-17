@@ -13,6 +13,11 @@ describe('ButtonTilbakestill', () => {
     expect(buttonTitle).toBeInTheDocument();
   });
 
+  it('has type="button" to prevent accidental form submission', () => {
+    render(<ButtonTilbakestill />);
+    expect(screen.getByRole('button')).toHaveAttribute('type', 'button');
+  });
+
   it('should have no violations', async () => {
     const { container } = render(<ButtonTilbakestill />);
 

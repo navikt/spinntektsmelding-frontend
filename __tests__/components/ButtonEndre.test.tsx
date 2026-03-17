@@ -12,6 +12,11 @@ describe('ButtonEndre', () => {
     expect(buttonTitle).toBeInTheDocument();
   });
 
+  it('has type="button" to prevent accidental form submission', () => {
+    render(<ButtonEndre />);
+    expect(screen.getByRole('button')).toHaveAttribute('type', 'button');
+  });
+
   it('should have no violations', async () => {
     const { container } = render(<ButtonEndre />);
     const results = await axe(container);
