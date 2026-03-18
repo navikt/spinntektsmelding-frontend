@@ -9,14 +9,16 @@ interface IngenTilgangProps {
 
 export default function IngenTilgang({ handleCloseModal, open }: Readonly<IngenTilgangProps>) {
   return (
-    <Dialog open={open} onOpenChange={(nextOpen) => {
-      if (!nextOpen) {
-        handleCloseModal();
-      }
-    }}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          handleCloseModal();
+        }
+      }}
+    >
       <Dialog.Popup>
         <Dialog.Header>
-          <ExclamationmarkTriangleIcon title='Advarsel' fontSize='1.5rem' />
           <Dialog.Title>Du er blitt logget ut, følg instruksjonene for ikke å miste data</Dialog.Title>
         </Dialog.Header>
         <Dialog.Body>
