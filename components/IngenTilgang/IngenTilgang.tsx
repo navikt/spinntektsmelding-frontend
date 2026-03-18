@@ -1,6 +1,5 @@
 import { Alert, Dialog, Link } from '@navikt/ds-react';
 import env from '../../config/environment';
-import { ExclamationmarkTriangleIcon } from '@navikt/aksel-icons';
 
 interface IngenTilgangProps {
   handleCloseModal: () => void;
@@ -8,15 +7,14 @@ interface IngenTilgangProps {
 }
 
 export default function IngenTilgang({ handleCloseModal, open }: Readonly<IngenTilgangProps>) {
+  const onOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      handleCloseModal();
+    }
+  };
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(nextOpen) => {
-        if (!nextOpen) {
-          handleCloseModal();
-        }
-      }}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <Dialog.Popup>
         <Dialog.Header>
           <Dialog.Title>Du er blitt logget ut, følg instruksjonene for ikke å miste data</Dialog.Title>

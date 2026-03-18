@@ -17,8 +17,14 @@ export default function HentingAvDataFeilet({
   const visningTitle = title ?? 'Henting av data til inntektsmeldingen feilet.';
   const visningAriaLabel = ariaLabel ?? visningTitle;
 
+  const onOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      handleCloseModal();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && handleCloseModal()}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <Dialog.Popup aria-label={visningAriaLabel}>
         <Dialog.Header>
           <ExclamationmarkTriangleIcon title='Advarsel' fontSize='1.5rem' />
