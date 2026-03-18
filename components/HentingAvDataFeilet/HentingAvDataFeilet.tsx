@@ -14,8 +14,8 @@ export default function HentingAvDataFeilet({
   title,
   ariaLabel
 }: Readonly<HentingAvDataFeiletProps>) {
-  const visningAriaLabel = ariaLabel ?? 'Henting av skjemadata feilet';
   const visningTitle = title ?? 'Henting av data til inntektsmeldingen feilet.';
+  const visningAriaLabel = ariaLabel ?? visningTitle;
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && handleCloseModal()}>
