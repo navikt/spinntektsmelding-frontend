@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Alert, BodyLong } from '@navikt/ds-react';
 import { useFormContext, useController } from 'react-hook-form';
+import stringishToNumber from '../../utils/stringishToNumber';
 import formatCurrency from '../../utils/formatCurrency';
 import TextLabel from '../TextLabel';
 import localStyles from './RefusjonArbeidsgiver.module.css';
@@ -75,7 +76,7 @@ export default function RefusjonArbeidsgiverBelop({
           id={ensureValidHtmlId('refusjon.beloepPerMaaned')}
           error={error}
           {...register(`refusjon.beloepPerMaaned`, {
-            valueAsNumber: true
+            setValueAs: stringishToNumber
           })}
         />
         <span className={localStyles.alert_span}>
