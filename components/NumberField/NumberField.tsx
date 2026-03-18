@@ -5,14 +5,14 @@ const sanitizeToSingleComma = (value: string): string => {
   return parts[0] + (parts.length > 1 ? ',' + parts.slice(1).join('') : '');
 };
 
-const toDisplayValue = (val: string | number | readonly string[] | undefined): string => {
-  if (val === undefined || val === null) return '';
+const toDisplayValue = (val: string | number | readonly string[] | undefined | null): string => {
+  if (val == null) return '';
   if (typeof val === 'number') return isNaN(val) ? '' : String(val).replaceAll('.', ',');
   return sanitizeToSingleComma(String(val).replaceAll('.', ','));
 };
 
 export default function NumberField({ ...props }: React.ComponentProps<typeof TextField>) {
-  const isControlled = props.value !== undefined;
+  const isControlled = props.value != null;
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const sanitizedComma = sanitizeToSingleComma(e.target.value.replaceAll(/[^0-9,]/g, ''));
