@@ -7,7 +7,7 @@ const sanitizeToSingleComma = (value: string): string => {
 
 const toDisplayValue = (val: string | number | readonly string[] | undefined | null): string => {
   if (val == null) return '';
-  if (typeof val === 'number') return isNaN(val) ? '' : String(val).replaceAll('.', ',');
+  if (typeof val === 'number') return Number.isNaN(val) ? '' : String(val).replaceAll('.', ',');
   return sanitizeToSingleComma(String(val).replaceAll('.', ','));
 };
 
