@@ -1,4 +1,5 @@
 import formatDate from '../../utils/formatDate';
+import stringishToNumber from '../../utils/stringishToNumber';
 
 import TextLabel from '../TextLabel';
 import { Alert, BodyLong, Button, Checkbox } from '@navikt/ds-react';
@@ -473,7 +474,7 @@ export default function Arbeidsgiverperiode({
             <NumberField
               className={lokalStyles.refusjonBeloep}
               label='Utbetalt under arbeidsgiverperiode'
-              {...register('agp.redusertLoennIAgp.beloep', { valueAsNumber: true })}
+              {...register('agp.redusertLoennIAgp.beloep', { setValueAs: stringishToNumber })}
               id={ensureValidHtmlId('agp.redusertLoennIAgp.beloep')}
               error={findErrorInRHFErrors('agp.redusertLoennIAgp.beloep', errors)}
             />

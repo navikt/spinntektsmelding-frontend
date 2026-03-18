@@ -29,6 +29,18 @@ describe.concurrent('stringishToNumber', () => {
     expect(stringishToNumber('12 345.12')).toBe(12345.12);
   });
 
+  it('should return undefined when input is a lone comma', () => {
+    expect(stringishToNumber(',')).toBeUndefined();
+  });
+
+  it('should return undefined when input normalizes to a lone dot', () => {
+    expect(stringishToNumber('.')).toBeUndefined();
+  });
+
+  it('should return undefined when input is NaN as number', () => {
+    expect(stringishToNumber(NaN)).toBeUndefined();
+  });
+
   it('should return a number when input is string big number with dot and no space', () => {
     expect(stringishToNumber('12345.12')).toBe(12345.12);
   });

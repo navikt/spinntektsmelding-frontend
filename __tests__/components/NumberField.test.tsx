@@ -50,6 +50,43 @@ describe('NumberField', () => {
     expect(handleChange).toHaveBeenCalled();
   });
 
+  it('passes dot-formatted value to onChange handler for uncontrolled input', () => {
+    let receivedValue: string | undefined;
+    const handleChange = vi.fn((e: React.ChangeEvent<HTMLInputElement>) => {
+      receivedValue = e.target.value;
+    });
+    render(<NumberField label='Beløp' onChange={handleChange} />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    fireEvent.change(input, { target: { value: '123,45' } });
+
+    expect(receivedValue).toBe('123.45');
+  });
+
+  it('displays Norwegian comma format after onChange handler runs (uncontrolled)', () => {
+    const handleChange = vi.fn();
+    render(<NumberField label='Beløp' onChange={handleChange} />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    fireEvent.change(input, { target: { value: '123,45' } });
+
+    expect(input).toHaveValue('123,45');
+  });
+
+  it('passes integer value as dot-formatted string to onChange handler', () => {
+    let receivedValue: string | undefined;
+    const handleChange = vi.fn((e: React.ChangeEvent<HTMLInputElement>) => {
+      receivedValue = e.target.value;
+    });
+    render(<NumberField label='Beløp' onChange={handleChange} />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    fireEvent.change(input, { target: { value: '50000' } });
+
+    expect(receivedValue).toBe('50000');
+    expect(input).toHaveValue('50000');
+  });
+
   it('removes letters and special characters from input', async () => {
     const handleChange = vi.fn();
     render(<NumberField label='Beløp' onChange={handleChange} />);

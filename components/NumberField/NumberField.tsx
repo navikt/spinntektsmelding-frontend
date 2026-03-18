@@ -5,28 +5,29 @@ const sanitizeToSingleComma = (value: string): string => {
   return parts[0] + (parts.length > 1 ? ',' + parts.slice(1).join('') : '');
 };
 
-const formatToNorwegianNumber = (val: string | number): string => {
-  const str = String(val).replaceAll('.', ',');
-  return sanitizeToSingleComma(str);
+const toDisplayValue = (val: string | number | readonly string[] | undefined | null): string => {
+  if (val == null) return '';
+  if (typeof val === 'number') return Number.isNaN(val) ? '' : String(val).replaceAll('.', ',');
+  return sanitizeToSingleComma(String(val).replaceAll('.', ','));
 };
 
 export default function NumberField({ ...props }: React.ComponentProps<typeof TextField>) {
+  const isControlled = props.value != null;
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-
-    const sanitizedValue = sanitizeToSingleComma(value.replaceAll(/[^0-9,]/g, ''));
-
-    e.target.value = sanitizedValue;
+    const sanitizedComma = sanitizeToSingleComma(e.target.value.replaceAll(/[^0-9,]/g, ''));
+    e.target.value = sanitizedComma.replaceAll(',', '.');
 
     if (props.onChange) {
       props.onChange(e);
     }
+
+    if (!isControlled) {
+      e.target.value = sanitizedComma;
+    }
   };
 
-  const formattedValue =
-    typeof props.value === 'string' || typeof props.value === 'number'
-      ? formatToNorwegianNumber(props.value)
-      : props.value;
+  const formattedValue = isControlled ? toDisplayValue(props.value) : undefined;
 
   return <TextField inputMode='decimal' {...props} value={formattedValue} onChange={onChange} />;
 }
