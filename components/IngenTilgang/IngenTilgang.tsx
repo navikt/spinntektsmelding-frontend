@@ -9,7 +9,11 @@ interface IngenTilgangProps {
 
 export default function IngenTilgang({ handleCloseModal, open }: Readonly<IngenTilgangProps>) {
   return (
-    <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && handleCloseModal()}>
+    <Dialog open={open} onOpenChange={(nextOpen) => {
+      if (!nextOpen) {
+        handleCloseModal();
+      }
+    }}>
       <Dialog.Popup>
         <Dialog.Header>
           <ExclamationmarkTriangleIcon title='Advarsel' fontSize='1.5rem' />
