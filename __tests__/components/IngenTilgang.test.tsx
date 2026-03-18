@@ -5,6 +5,10 @@ import IngenTilgang from '../../components/IngenTilgang';
 import { vi } from 'vitest';
 
 describe('IngenTilgang', () => {
+  beforeEach(() => {
+    document.body.id = 'body';
+  });
+
   it('should have no violations and show some text', async () => {
     const handleCloseModal = vi.fn();
     const { container } = render(
