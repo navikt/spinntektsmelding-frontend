@@ -1,0 +1,29 @@
+{
+  "success": {
+    "selvbestemtInntektsmelding": {
+      "id": "16ee30ca-b665-4893-93ca-4bcf1c5287f8",
+      "type": { "type": "Fisker", "id": "5d838203-9697-4294-8e78-d1d5ee00400d" },
+      "sykmeldt": { "fnr": "17488920561", "navn": "Ukjent navn" },
+      "avsender": {
+        "orgnr": "315609267",
+        "orgNavn": "UKJENT ARBEIDSGIVER",
+        "navn": "FRYKTSOM RADIOSTASJON",
+        "tlf": "+4755553336"
+      },
+      "sykmeldingsperioder": [{ "fom": "2026-02-02", "tom": "2026-03-11" }],
+      "agp": {
+        "perioder": [],
+        "redusertLoennIAgp": { "beloep": 0, "begrunnelse": "ManglerOpptjening" }
+      },
+      "inntekt": {
+        "beloep": 0,
+        "inntektsdato": "2026-02-02",
+        "endringAarsaker": []
+      },
+      "naturalytelser": [],
+      "refusjon": { "beloepPerMaaned": 0, "endringer": [] },
+      "aarsakInnsending": "Ny",
+      "mottatt": "2026-03-11T11:28:32.009284470+01:00"
+    }
+  }
+}

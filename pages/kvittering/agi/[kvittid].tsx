@@ -111,7 +111,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     setBehandlingsdager,
     sykmeldt,
     avsender,
-    gammeltSkjaeringstidspunkt
+    gammeltSkjaeringstidspunkt,
+    setArbeidsgiverperiodeDisabled
   ] = useBoundStore(
     useShallow((state) => [
       state.kvitteringData,
@@ -123,7 +124,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       state.setBehandlingsdager,
       state.sykmeldt,
       state.avsender,
-      state.gammeltSkjaeringstidspunkt
+      state.gammeltSkjaeringstidspunkt,
+      state.setArbeidsgiverperiodeDisabled
     ])
   );
   const kvitteringInit = useKvitteringInit();
@@ -161,7 +163,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     const kvittering = prepareForInitiering(input);
     kvitteringInit({ kvitteringNavNo: kvittering, kvitteringDokument: null, kvitteringEkstern: null });
     // Må lagre data som kan endres i hovedskjema - Slutt
-
+    if (ingenArbeidsgiverperioder) {
+      setArbeidsgiverperiodeDisabled(true);
+    }
     if (input?.agp?.perioder) {
       setBehandlingsdager(input.agp.perioder.map((periode: MottattPeriode) => periode.fom));
     }

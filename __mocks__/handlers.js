@@ -21,7 +21,8 @@ const kvitteringMockdataMap = {
 
 const kvitteringAgiMockdataMap = {
   '8d50ef20-37b5-4829-ad83-56219e70b375': 'kvittering-selvbestemt-format',
-  'f32852af-888e-4d0c-ad67-081f22ee5c12': 'kvittering-selvbestemt-format'
+  'f32852af-888e-4d0c-ad67-081f22ee5c12': 'kvittering-selvbestemt-format',
+  'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-selvbestemt-ingen-agp'
   // 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-eksternt-system',
   // 'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63': 'kvittering-delvis',
   // 'b24baf59-55c9-48df-b8c1-7d93e098a95d': 'kvittering-delvis-endret-inntekt',
@@ -68,7 +69,7 @@ export const handlers = [
 
   http.get('*/api/v1/selvbestemt-inntektsmelding/:foresporselid', ({ params }) => {
     const { foresporselid } = params;
-    const mockdataFile = kvitteringAgiMockdataMap[foresporselid] || 'kvittering-bug-endre';
+    const mockdataFile = kvitteringAgiMockdataMap[foresporselid] || 'kvittering-selvbestemt-ingen-agp';
     const data = readMockdata(mockdataFile);
 
     if (data) {
