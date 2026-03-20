@@ -155,7 +155,7 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
             skjaeringstidspunkt,
             arbeidsgiverKanFlytteSkjæringstidspunkt()
           );
-          if (bestemmendeFravaersdag) state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
+
           if (bestemmendeFravaersdag) {
             state.rekalkulerBruttoinntekt(parseIsoDate(bestemmendeFravaersdag));
             state.bestemmendeFravaersdag = parseIsoDate(bestemmendeFravaersdag);
