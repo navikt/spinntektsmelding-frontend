@@ -16,7 +16,7 @@ export interface ValiderTekster {
 }
 
 export interface ValiderResultat {
-  error?: any;
+  error?: unknown;
   felt: string;
   code: codeUnion;
   text?: string;

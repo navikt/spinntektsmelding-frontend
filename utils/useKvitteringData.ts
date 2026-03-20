@@ -7,8 +7,9 @@ import formatTime from './formatTime';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import z from 'zod';
 import { MottattKvittering } from '../state/useKvitteringInit';
-import { KvitteringEksterntSystem } from '../schema/KvitteringEksterntSystemSchema';
+import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
 
+export type KvitteringEksterntSystem = z.infer<typeof KvitteringEksternSchema>;
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 
 interface StoreData {
