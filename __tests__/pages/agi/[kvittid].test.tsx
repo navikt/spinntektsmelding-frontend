@@ -291,6 +291,42 @@ describe('Kvittering', () => {
     const kvitteringHeadings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
     expect(kvitteringHeadings.length).toBeGreaterThan(0);
   });
+
+  it('setter arbeidsgiverperiodeDisabled til true når Endre klikkes og AGP ikke har perioder', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={{ ...kvitteringsdataUtenAgp.selvbestemtInntektsmelding }}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const endreButton = screen.getAllByRole('button', { name: /Endre/i })[0];
+    await user.click(endreButton);
+
+    expect(useBoundStore.getState().arbeidsgiverperiodeDisabled).toBe(true);
+  });
+
+  it('setter ikke arbeidsgiverperiodeDisabled når Endre klikkes og AGP har gyldige perioder', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const endreButton = screen.getAllByRole('button', { name: /Endre/i })[0];
+    await user.click(endreButton);
+
+    expect(useBoundStore.getState().arbeidsgiverperiodeDisabled).toBe(false);
+  });
 });
 
 describe('getServerSideProps', () => {
