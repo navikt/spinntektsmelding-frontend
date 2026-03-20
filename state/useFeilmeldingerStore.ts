@@ -4,24 +4,24 @@ import { ValiderResultat, ValiderTekster } from '../utils/validerInntektsmelding
 import { CompleteState } from './useBoundStore';
 import feiltekster from '../utils/feiltekster';
 
-export function slettFeilmeldingFraState(state: any, felt: string) {
+export function slettFeilmeldingFraState(state: CompleteState, felt: string) {
   state.feilmeldinger = state.feilmeldinger.filter((element: ValiderTekster) => element.felt !== felt);
 
   return state;
 }
 
-export function leggTilFeilmelding(state: any, felt: string, melding: string) {
+export function leggTilFeilmelding(state: CompleteState, felt: string, melding: string) {
   state.feilmeldinger.push({
     felt: felt,
     text: melding
-  });
+  } as ValiderTekster);
 
   return state;
 }
 
 export interface FeilmeldingerState {
   skalViseFeilmeldinger: boolean;
-  feilmeldinger: Array<ValiderTekster> | [];
+  feilmeldinger: Array<ValiderTekster>;
   visFeilmeldingTekst: (feilmelding: string) => string;
   visFeilmelding: (feilmelding: string | undefined) => boolean;
   leggTilFeilmelding: (felt: string, melding: string) => void;

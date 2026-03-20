@@ -548,7 +548,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error('Error fetching forespurt data:' + err.message);
+      logger.error('Error fetching forespurt data: %j', err);
       forespurt = { data: null };
       forespurtStatus = err instanceof Error && 'status' in err ? (err as any).status : 500;
 
