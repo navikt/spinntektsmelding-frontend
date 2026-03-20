@@ -61,7 +61,8 @@ const feiltekster = {
   TELEFON_MANGLER: 'Telefonnummer mangler',
   PERIODE_OVERLAPPER: 'Arbeidsgiverperiodene kan ikke overlappe',
   INNTEKT_UNDER_REFUSJON: 'Utbetalingen under arbeidsgiverperioden kan ikke være høyere enn beregnet månedslønn.',
-  ENDRING_DATO_ETTER_SLUTTDATO: 'Dato er etter siste dag det kreves refusjon for'
+  ENDRING_DATO_ETTER_SLUTTDATO: 'Dato er etter siste dag det kreves refusjon for',
+  MANGLER_PERIODE: 'Du må legge til minst en periode.'
 };
 
 export default feiltekster;

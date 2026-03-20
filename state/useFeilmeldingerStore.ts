@@ -104,11 +104,9 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
       (melding: ValiderTekster) => Array.isArray(melding.felt) && !melding.felt.startsWith(prefix)
     );
 
-    const feilmeldingtekster = feilmeldinger.map((error: any) => ({
+    const feilmeldingtekster = feilmeldinger.map((error: ValiderResultat) => ({
       felt: error.felt,
-
-      // @ts-ignore
-      text: error.code && feiltekster[[error.code]] ? (feiltekster[[error.code]] as string) : error.code
+      text: (feiltekster as Record<string, string | undefined>)[error.code] ?? error.code
     }));
 
     return rensedeFeilmeldinger.concat(feilmeldingtekster);
