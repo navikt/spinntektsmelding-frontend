@@ -56,7 +56,7 @@ export const KvitteringNavNoSchema = z.object({
 export const KvitteringEksternSchema = z.object({
   avsenderSystem: z.string(),
   referanse: z.string(),
-  tidspunkt: z.date()
+  tidspunkt: z.iso.datetime()
 });
 
 export const MottattKvitteringSchema = z.object({

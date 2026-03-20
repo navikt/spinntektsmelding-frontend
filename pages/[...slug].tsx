@@ -524,14 +524,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     const token = getToken(context.req);
     if (!token && !isDevelopment) {
       /* håndter manglende token */
-      console.error('Mangler token i header');
+      logger.warn('Mangler token i header ved innhenting av forespurt data');
       return redirectTilLogin(context);
     }
 
     const validation = await validateToken(token ?? '');
     if (!validation.ok && !isDevelopment) {
       /* håndter valideringsfeil */
-      console.error('Validering av token feilet');
+      logger.warn('Validering av token feilet ved innhenting av forespurt data');
       return redirectTilLogin(context);
     }
 
@@ -550,7 +550,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
-      console.error('Error fetching forespurt:', err);
+      logger.error('Error fetching forespurt data: %j', err);
       forespurt = { data: null };
       forespurtStatus = err instanceof Error && 'status' in err ? (err as any).status : 500;
 

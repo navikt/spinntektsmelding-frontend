@@ -4,24 +4,24 @@ import { ValiderResultat, ValiderTekster } from '../utils/validerInntektsmelding
 import { CompleteState } from './useBoundStore';
 import feiltekster from '../utils/feiltekster';
 
-export function slettFeilmeldingFraState(state: any, felt: string) {
+export function slettFeilmeldingFraState(state: CompleteState, felt: string) {
   state.feilmeldinger = state.feilmeldinger.filter((element: ValiderTekster) => element.felt !== felt);
 
   return state;
 }
 
-export function leggTilFeilmelding(state: any, felt: string, melding: string) {
+export function leggTilFeilmelding(state: CompleteState, felt: string, melding: string) {
   state.feilmeldinger.push({
     felt: felt,
     text: melding
-  });
+  } as ValiderTekster);
 
   return state;
 }
 
 export interface FeilmeldingerState {
   skalViseFeilmeldinger: boolean;
-  feilmeldinger: Array<ValiderTekster> | [];
+  feilmeldinger: Array<ValiderTekster>;
   visFeilmeldingTekst: (feilmelding: string) => string;
   visFeilmelding: (feilmelding: string | undefined) => boolean;
   leggTilFeilmelding: (felt: string, melding: string) => void;
@@ -101,14 +101,12 @@ const useFeilmeldingerStore: StateCreator<CompleteState, [], [], FeilmeldingerSt
   oppdaterFeilmeldinger: (feilmeldinger: Array<ValiderResultat>, prefix: string): Array<ValiderTekster> => {
     const gamleFeilmeldinger = get().feilmeldinger;
     const rensedeFeilmeldinger = gamleFeilmeldinger.filter(
-      (melding: ValiderTekster) => Array.isArray(melding.felt) && !melding.felt.startsWith(prefix)
+      (melding: ValiderTekster) => !melding.felt.startsWith(prefix)
     );
 
-    const feilmeldingtekster = feilmeldinger.map((error: any) => ({
+    const feilmeldingtekster = feilmeldinger.map((error: ValiderResultat) => ({
       felt: error.felt,
-
-      // @ts-ignore
-      text: error.code && feiltekster[[error.code]] ? (feiltekster[[error.code]] as string) : error.code
+      text: (feiltekster as Record<string, string | undefined>)[error.code] ?? error.code
     }));
 
     return rensedeFeilmeldinger.concat(feilmeldingtekster);

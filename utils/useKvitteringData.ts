@@ -1,23 +1,25 @@
 import { isValid } from 'date-fns';
 import { useMemo } from 'react';
-import { Begrunnelse, Periode, YesNo } from '../state/state';
+import { Begrunnelse, Inntekt, LonnISykefravaeret, Naturalytelse, Periode, YesNo } from '../state/state';
 import parseIsoDate from './parseIsoDate';
 import formatDate from './formatDate';
 import formatTime from './formatTime';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import z from 'zod';
 import { MottattKvittering } from '../state/useKvitteringInit';
+import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
 
+type KvitteringEksterntSystem = z.infer<typeof KvitteringEksternSchema>;
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 
 interface StoreData {
-  bruttoinntekt: any;
-  lonnISykefravaeret: any;
+  bruttoinntekt: Inntekt;
+  lonnISykefravaeret: LonnISykefravaeret | undefined;
   sykmeldingsperioder: Periode[] | undefined;
-  naturalytelser: any;
+  naturalytelser?: Array<Naturalytelse>;
   arbeidsgiverperioder: Periode[] | undefined;
   kvitteringInnsendt: Date | undefined;
-  kvitteringEksterntSystem: any;
+  kvitteringEksterntSystem: KvitteringEksterntSystem | undefined;
   gammeltSkjaeringstidspunkt: Date | undefined;
   kvitteringData: any;
 }
@@ -28,7 +30,10 @@ interface UseKvitteringDataParams {
   storeData: StoreData;
 }
 
-function getStoreInnsendingTidspunkt(kvitteringEksterntSystem: any, kvitteringInnsendt: Date | undefined): string {
+function getStoreInnsendingTidspunkt(
+  kvitteringEksterntSystem: KvitteringEksterntSystem | undefined,
+  kvitteringInnsendt: Date | undefined
+): string {
   if (kvitteringEksterntSystem?.tidspunkt) {
     const tidspunkt = new Date(kvitteringEksterntSystem.tidspunkt);
     return tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
@@ -65,7 +70,7 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
         aktiveArbeidsgiverperioder: arbeidsgiverperioder,
         aktivBruttoinntekt: bruttoinntekt,
         aktivBestemmendeFravaersdag: bestemmendeFravaersdag,
-        aktiveNaturalytelser: naturalytelser,
+        aktiveNaturalytelser: naturalytelser ?? [],
         aktivFullLonnIArbeidsgiverPerioden: kvitteringData?.agp?.redusertLoennIAgp
           ? {
               status:
@@ -76,7 +81,7 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
               begrunnelse: kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse as Begrunnelse | undefined,
               utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep
             }
-          : { status: 'Ja', begrunnelse: undefined, utbetalt: undefined },
+          : { status: 'Ja' as YesNo, begrunnelse: undefined, utbetalt: undefined },
         aktivLonnISykefravaeret: {
           status:
             kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
@@ -101,10 +106,10 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
       tom: parseIsoDate(periode.tom)
     })) as Periode[];
 
-    const aktiveArbeidsgiverperioder = ssrData?.skjema?.agp?.perioder?.map((p: any, i: number) => ({
-      fom: parseIsoDate(p.fom),
-      tom: parseIsoDate(p.tom),
-      id: `agp-${i}`
+    const aktiveArbeidsgiverperioder = ssrData?.skjema?.agp?.perioder?.map((periode, index) => ({
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom),
+      id: `agp-${index}`
     }));
 
     const aktivBruttoinntekt = {
@@ -114,12 +119,14 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
 
     const aktivBestemmendeFravaersdag = parseIsoDate(ssrData?.skjema?.inntekt?.inntektsdato);
 
-    const aktiveNaturalytelser =
+    const aktiveNaturalytelser: Naturalytelse[] =
       ssrData?.skjema?.naturalytelser && Array.isArray(ssrData.skjema.naturalytelser)
-        ? (ssrData.skjema.naturalytelser as any[]).map((ytelse) => ({
-            ...ytelse,
-            sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
-          }))
+        ? ssrData.skjema.naturalytelser
+            .map((ytelse) => ({
+              ...ytelse,
+              sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
+            }))
+            .filter((ytelse): ytelse is Naturalytelse => ytelse.sluttdato instanceof Date)
         : [];
 
     const aktivFullLonnIArbeidsgiverPerioden = {
