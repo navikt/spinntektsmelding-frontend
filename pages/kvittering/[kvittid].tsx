@@ -72,6 +72,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const kvitteringData = useBoundStore((state) => state.kvitteringData);
+  const setArbeidsgiverperiodeDisabled = useBoundStore((state) => state.setArbeidsgiverperiodeDisabled);
 
   const onSetSkjemaFeilet = useEffectEvent(() => {
     setSkjemaFeilet();
@@ -85,19 +86,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       }
     }
   }, [kvitteringStatus, sykmeldingsperioder]);
-
-  // Initialiser Zustand-store med SSR-data ved første klient-render
-  // Dette sikrer at store har data selv ved page refresh
-  const onKvitteringInit = useEffectEvent(() => {
-    if (dataFraBackend && kvittering && !storeInitialized.current) {
-      kvitteringInit(kvittering);
-      storeInitialized.current = true;
-    }
-  });
-
-  useEffect(() => {
-    onKvitteringInit();
-  }, []);
 
   const onSetNyInnsending = useEffectEvent((endring: boolean) => {
     setNyInnsending(endring);
@@ -182,6 +170,23 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   });
 
   const ingenAktiveArbeidsgiverperioder = !harGyldigeArbeidsgiverperioder(aktiveArbeidsgiverperioder);
+
+  // Initialiser Zustand-store med SSR-data ved første klient-render
+  // Dette sikrer at store har data selv ved page refresh
+  const onKvitteringInit = useEffectEvent(() => {
+    if (dataFraBackend && kvittering && !storeInitialized.current) {
+      kvitteringInit(kvittering);
+      storeInitialized.current = true;
+
+      if (ingenAktiveArbeidsgiverperioder) {
+        setArbeidsgiverperiodeDisabled(true);
+      }
+    }
+  });
+
+  useEffect(() => {
+    onKvitteringInit();
+  }, []);
 
   return (
     <div className={styles.container}>

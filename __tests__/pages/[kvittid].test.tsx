@@ -285,6 +285,50 @@ describe('kvittering', () => {
 
     expect(screen.getByText(/Henting av kvitteringen feilet/i)).toBeInTheDocument();
   });
+
+  it('setter arbeidsgiverperiodeDisabled til true når dataFraBackend er true og AGP ikke har perioder', async () => {
+    const kvitteringData = {
+      kvitteringNavNo: {
+        sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-15' }],
+        skjema: {
+          mottatt: '2023-01-20T10:00:00Z',
+          inntekt: { beloep: 50000, inntektsdato: '2023-01-01' },
+          agp: { perioder: [] },
+          refusjon: { beloepPerMaaned: 50000 }
+        },
+        avsender: { orgnr: '123456789', tlf: '12345678' },
+        sykmeldt: { fnr: '12345678910', navn: 'Test Person' }
+      }
+    };
+
+    await act(async () => {
+      render(<Kvittering kvittid='test-uuid' kvittering={kvitteringData} dataFraBackend={true} />);
+    });
+
+    expect(useBoundStore.getState().arbeidsgiverperiodeDisabled).toBe(true);
+  });
+
+  it('setter ikke arbeidsgiverperiodeDisabled når dataFraBackend er true og AGP har gyldige perioder', async () => {
+    const kvitteringData = {
+      kvitteringNavNo: {
+        sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-15' }],
+        skjema: {
+          mottatt: '2023-01-20T10:00:00Z',
+          inntekt: { beloep: 50000, inntektsdato: '2023-01-01' },
+          agp: { perioder: [{ fom: '2023-01-01', tom: '2023-01-16' }] },
+          refusjon: { beloepPerMaaned: 50000 }
+        },
+        avsender: { orgnr: '123456789', tlf: '12345678' },
+        sykmeldt: { fnr: '12345678910', navn: 'Test Person' }
+      }
+    };
+
+    await act(async () => {
+      render(<Kvittering kvittid='test-uuid' kvittering={kvitteringData} dataFraBackend={true} />);
+    });
+
+    expect(useBoundStore.getState().arbeidsgiverperiodeDisabled).toBe(false);
+  });
 });
 
 describe('getServerSideProps', () => {
