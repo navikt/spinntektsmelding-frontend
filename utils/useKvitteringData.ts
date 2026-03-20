@@ -14,7 +14,7 @@ type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 
 interface StoreData {
   bruttoinntekt: Inntekt;
-  lonnISykefravaeret: LonnISykefravaeret;
+  lonnISykefravaeret: LonnISykefravaeret | undefined;
   sykmeldingsperioder: Periode[] | undefined;
   naturalytelser?: Array<Naturalytelse>;
   arbeidsgiverperioder: Periode[] | undefined;
@@ -81,7 +81,7 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
               begrunnelse: kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse as Begrunnelse | undefined,
               utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep
             }
-          : { status: 'Ja', begrunnelse: undefined, utbetalt: undefined },
+          : { status: 'Ja' as YesNo, begrunnelse: undefined, utbetalt: undefined },
         aktivLonnISykefravaeret: {
           status:
             kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&

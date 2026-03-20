@@ -268,12 +268,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <Heading2>Beregnet månedslønn</Heading2>
                   <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
                   <BodyShort>{formatCurrency(aktivBruttoinntekt?.bruttoInntekt)} kr/måned</BodyShort>
-                  {aktivBruttoinntekt?.endringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
+                  {aktivBruttoinntekt?.endringAarsaker?.map((endring, endringIndex) => (
                     <Fragment key={endring.aarsak + endringIndex}>
                       <div className={lokalStyles.uthevet}>Endret med årsak</div>
 
                       {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
-                      <EndringAarsakVisning endringAarsak={endring} />
+                      <EndringAarsakVisning endringAarsak={endring as EndringAarsak} />
                     </Fragment>
                   ))}
                 </>
