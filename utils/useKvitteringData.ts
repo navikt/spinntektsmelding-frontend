@@ -9,7 +9,7 @@ import z from 'zod';
 import { MottattKvittering } from '../state/useKvitteringInit';
 import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
 
-export type KvitteringEksterntSystem = z.infer<typeof KvitteringEksternSchema>;
+type KvitteringEksterntSystem = z.infer<typeof KvitteringEksternSchema>;
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 
 interface StoreData {
@@ -70,7 +70,7 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
         aktiveArbeidsgiverperioder: arbeidsgiverperioder,
         aktivBruttoinntekt: bruttoinntekt,
         aktivBestemmendeFravaersdag: bestemmendeFravaersdag,
-        aktiveNaturalytelser: naturalytelser,
+        aktiveNaturalytelser: naturalytelser ?? [],
         aktivFullLonnIArbeidsgiverPerioden: kvitteringData?.agp?.redusertLoennIAgp
           ? {
               status:
@@ -119,12 +119,14 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
 
     const aktivBestemmendeFravaersdag = parseIsoDate(ssrData?.skjema?.inntekt?.inntektsdato);
 
-    const aktiveNaturalytelser =
+    const aktiveNaturalytelser: Naturalytelse[] =
       ssrData?.skjema?.naturalytelser && Array.isArray(ssrData.skjema.naturalytelser)
-        ? ssrData.skjema.naturalytelser.map((ytelse) => ({
-            ...ytelse,
-            sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
-          }))
+        ? ssrData.skjema.naturalytelser
+            .map((ytelse) => ({
+              ...ytelse,
+              sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
+            }))
+            .filter((ytelse): ytelse is Naturalytelse => ytelse.sluttdato instanceof Date)
         : [];
 
     const aktivFullLonnIArbeidsgiverPerioden = {
