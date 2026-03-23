@@ -36,7 +36,7 @@
     "immer": "11.1.4",
     "jsdom": "28.1.0",
     "nanoid": "5.1.6",
-    "next": "^16.1.5",
+    "next": "^16.2.0",
     "next-http-proxy-middleware": "1.2.7",
     "pino": "10.3.1",
     "react": "19.2.4",
