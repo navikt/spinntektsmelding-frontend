@@ -52,10 +52,12 @@ import { SelvbestemtTypeConst } from '../schema/konstanter/selvbestemtType';
 import transformErrors from '../utils/transformErrors';
 import hentForespoerselSSR from '../utils/hentForespoerselSSR';
 import useStateInit from '../state/useStateInit';
-import { getToken, validateToken } from '@navikt/oasis';
+import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
 import FaisuDialog from '../components/FaisuDialog/FaisuDialog';
+import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
+import hentSykmeldingsgradSSR from '../utils/hentSykmeldingsgradSSR';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -537,8 +539,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       return redirectTilLogin(context);
     }
 
+    const oboSykmeldingGrad = await requestOboToken(token as string, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
+    if (!oboSykmeldingGrad.ok) {
+      logger.warn('OBO-feil: %j', oboSykmeldingGrad.error);
+      return redirectTilLogin(context);
+    }
+
     try {
-      forespurt = await hentForespoerselSSR(uuid, token ?? '');
+      const [forespurt, arbeidsforhold, sykmeldingsgrad] = await Promise.all([
+        hentForespoerselSSR(uuid, token ?? ''),
+        hentArbeidsforholdSSR(uuid, token ?? ''), // Hent arbeidsforhold fra aaregisteret
+        hentSykmeldingsgradSSR(uuid, token ?? '') // Hent sykmeldingsgrad og faktisk sykmeldingsgrad fra sykmeldingen (flex)
+      ]);
 
       if (forespurt.data?.erBesvart && !overskriv) {
         const ingress = context.req.headers.host + environment.baseUrl;
