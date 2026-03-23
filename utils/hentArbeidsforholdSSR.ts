@@ -1,10 +1,10 @@
-import { MottattData } from '../schema/MottattDataSchema';
+import { MottattKvittering } from '../state/useKvitteringInit';
 import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
 
-export default function hentForespoerselSSR(
+export default function hentArbeidsforholdSSR(
   pathSlug?: string | Array<string>,
   token?: string
-): Promise<{ data: MottattData | null }> {
+): Promise<{ data: MottattKvittering | null }> {
   if (Array.isArray(pathSlug)) {
     return Promise.resolve({ data: null });
   }
