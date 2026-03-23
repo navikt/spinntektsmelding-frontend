@@ -536,6 +536,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     try {
       forespurt = await hentForespoerselSSR(uuid, token ?? '');
 
+      devTestFaisuApi(uuid, token ?? '')
+
       if (forespurt.data?.erBesvart && !overskriv) {
         const ingress = context.req.headers.host + environment.baseUrl;
         const destination = `https://${ingress}/kvittering/${uuid}`;
@@ -570,3 +572,51 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     }
   };
 }
+
+function devTestFaisuApi(uuid: string, token: string) {
+    
+
+
+  fetch(`http://${globalThis.process.env.IM_API_URI}/api/v1/hent-aareg/${uuid}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then((res) => {
+      if (!res.ok) {
+        const fetchError = new NetworkError('[AAREG data] An error occurred while fetching the FAISU data.');
+        // Attach extra info to the error object.
+        try {
+          fetchError.info = res;
+        } catch (error) {
+          fetchError.info = { error };
+        }
+        fetchError.status = res.status;
+        console.error('Error fetching FAISU data:', fetchError);
+        throw fetchError;
+      }
+
+      return res
+        .json()
+        .then((data) => {
+          console.log(`[AAREG data] ${res.status}:`, data);
+        })
+        .catch((error) => {
+          const jsonError = new NetworkError('An error occurred while decoding the data.');
+          // Attach extra info to the error object.
+
+          jsonError.status = error.status;
+          throw jsonError;
+        });
+    })
+    .catch((error) => {
+      const networkError = new NetworkError(error.message ?? 'An error occurred while fetching the data...');
+      networkError.status = error.status;
+      networkError.info = error;
+      console.error('[AAREG data] Error fetching FAISU data:', networkError);
+      throw networkError;
+    });
+}
+
