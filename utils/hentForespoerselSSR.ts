@@ -4,9 +4,9 @@ import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
 export default function hentForespoerselSSR(
   pathSlug?: string | Array<string>,
   token?: string
-): Promise<{ data: MottattData | null }> {
+): Promise<{ status: number; data: MottattData | null }> {
   if (Array.isArray(pathSlug)) {
-    return Promise.resolve({ data: null });
+    return Promise.resolve({ status: 400, data: null });
   }
 
   if (pathSlug) {
@@ -16,5 +16,5 @@ export default function hentForespoerselSSR(
       token
     );
   }
-  return Promise.resolve({ data: null });
+  return Promise.resolve({ status: 400, data: null });
 }
