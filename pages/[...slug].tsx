@@ -585,30 +585,27 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
           logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad.error);
           return redirectTilLogin(context);
         }
+        try {
+          const sykmeldingsgrad = await hentSykmeldingsgradSSR(
+            oboSykmeldingGrad.token ?? '',
+            forespurt?.data?.avsender.orgnr,
+            forespurt?.data?.sykmeldt.fnr,
+            forespurt?.data?.bestemmendeFravaersdag
+          );
 
-        const sykmeldingsgrad = hentSykmeldingsgradSSR(
-          uuid,
-          oboSykmeldingGrad.token ?? '',
-          forespurt?.data?.avsender.orgnr,
-          forespurt?.data?.sykmeldt.fnr,
-          forespurt?.data?.bestemmendeFravaersdag
-        );
+          logger.info('Innhenting av sykmeldingsgrad for uuid %s fullført.', uuid);
+          logger.info('Sykmeldingsgrad data: %j', sykmeldingsgrad);
+          const aktuellSykmeldingsgrad = sykmeldingsgrad.find(
+            (sykmelding: EndepunktSykepengesoeknad) => sykmelding.vedtaksperiodeId === uuid
+          );
 
-        logger.info(
-          'Innhenting av sykmeldingsgrad for uuid %s fullført. Sykmeldingsgrad status: %s',
-          uuid,
-          sykmeldingsgrad.status
-        );
-        logger.info('Sykmeldingsgrad data: %j', sykmeldingsgrad);
-
-        const aktuellSykmeldingsgrad = sykmeldingsgrad?.data?.find(
-          (sykmelding: EndepunktSykepengesoeknad) => sykmelding.vedtaksperiodeId === uuid
-        );
-
-        harGradertSykmelding =
-          aktuellSykmeldingsgrad?.soknadsperioder?.some(
-            (periode) => periode.grad < 100 || (periode.faktiskGrad && periode.faktiskGrad > 0)
-          ) ?? false;
+          harGradertSykmelding =
+            aktuellSykmeldingsgrad?.soknadsperioder?.some(
+              (periode) => periode.grad < 100 || (periode.faktiskGrad && periode.faktiskGrad > 0)
+            ) ?? false;
+        } catch (error) {
+          logger.warn('Feil ved innhenting av sykmeldingsgrad: %j', error);
+        }
       }
 
       if (forespurt.data?.erBesvart && !overskriv) {
