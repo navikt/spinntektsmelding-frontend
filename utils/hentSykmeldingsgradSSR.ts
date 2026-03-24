@@ -1,20 +1,17 @@
-import { MottattKvittering } from '../state/useKvitteringInit';
-import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
+import { EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknaderSchema';
+import hentSykepengesoeknader from './hentSykepengesoeknader';
 
 export default function hentSykmeldingsgradSSR(
-  pathSlug?: string | Array<string>,
-  token?: string
-): Promise<{ data: MottattKvittering | null }> {
-  if (Array.isArray(pathSlug)) {
-    return Promise.resolve({ data: null });
-  }
-
-  if (pathSlug) {
-    return fetchKvitteringsdataSSR(
-      `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}`,
-      pathSlug,
-      token
-    );
-  }
-  return Promise.resolve({ data: null });
+  token?: string,
+  orgnr?: string,
+  fnr?: string,
+  eldsteFom?: string
+): Promise<EndepunktSykepengesoeknader> {
+  return hentSykepengesoeknader(
+    `http://${globalThis.process.env.IM_API_URI}${process.env.FLEX_SYKEPENGESOEKNAD_URL}`,
+    token,
+    orgnr,
+    fnr,
+    eldsteFom
+  );
 }
