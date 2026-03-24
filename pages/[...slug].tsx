@@ -58,6 +58,7 @@ import { redirectTilLogin } from '../utils/redirectTilLogin';
 import FaisuDialog from '../components/FaisuDialog/FaisuDialog';
 import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
 import hentSykmeldingsgradSSR from '../utils/hentSykmeldingsgradSSR';
+import { EndepunktSykepengesoeknad } from '../schema/EndepunktSykepengesoeknaderSchema';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -506,7 +507,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         </FormProvider>
         <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
         <HentingAvDataFeilet open={skjemaFeilet} handleCloseModal={lukkHentingFeiletModal} />
-        <FaisuDialog open={true} handleCloseDialog={() => {}} />
       </PageContent>
     </div>
   );
@@ -521,6 +521,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   let forespurt = null;
   let forespurtStatus = null;
   const overskriv = slug?.[1] && slug?.[1] === 'overskriv';
+  let harGradertSykmelding = false;
+  let arbeidsforhold = null;
 
   if (isValidUUID(uuid) && !endre) {
     forespurtStatus = 200;
@@ -539,18 +541,77 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       return redirectTilLogin(context);
     }
 
-    const oboSykmeldingGrad = await requestOboToken(token as string, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
-    if (!oboSykmeldingGrad.ok) {
-      logger.warn('OBO-feil: %j', oboSykmeldingGrad.error);
-      return redirectTilLogin(context);
-    }
-
     try {
-      const [forespurt, arbeidsforhold, sykmeldingsgrad] = await Promise.all([
+      const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
         hentForespoerselSSR(uuid, token ?? ''),
-        hentArbeidsforholdSSR(uuid, token ?? ''), // Hent arbeidsforhold fra aaregisteret
-        hentSykmeldingsgradSSR(uuid, token ?? '') // Hent sykmeldingsgrad og faktisk sykmeldingsgrad fra sykmeldingen (flex)
+        hentArbeidsforholdSSR(uuid, token ?? '') // Hent arbeidsforhold fra aaregisteret
       ]);
+
+      arbeidsforhold = arbeidsforholdResult.status === 'fulfilled' ? arbeidsforholdResult.value : { data: null };
+      forespurt = forespurtResult.status === 'fulfilled' ? forespurtResult.value : null;
+
+      if (forespurtResult.status === 'fulfilled') {
+        forespurtStatus = forespurtResult.value?.status;
+      }
+
+      logger.info(
+        'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
+        uuid,
+        forespurtResult.status,
+        arbeidsforholdResult.status
+      );
+
+      logger.info('Forespurt data: %j', forespurt);
+
+      if (arbeidsforholdResult.status === 'rejected') {
+        logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
+      }
+
+      if (forespurtResult.status === 'rejected') {
+        logger.warn('Feil ved innhenting av forespurt data: %j', forespurtResult.reason);
+      } else if (forespurtResult.status === 'fulfilled' && forespurtResult.value?.status === 404) {
+        logger.warn('Forespurt data ikke funnet for uuid: %s', uuid);
+        return {
+          notFound: true
+        };
+      }
+
+      // BARE FOR TESTING - Sjekk om det finnes flere ansettelsesperioder, og hent sykmeldingsgrad hvis det gjør det
+      arbeidsforhold = { data: { ansettelsesperioder: [1, 2] } };
+
+      if (arbeidsforhold.data?.ansettelsesperioder && arbeidsforhold.data?.ansettelsesperioder.length > 1) {
+        logger.info('Forespurt data inneholder flere ansettelsesperioder: %j', arbeidsforhold.data.ansettelsesperioder);
+
+        const oboSykmeldingGrad = await requestOboToken(token!, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
+        if (!oboSykmeldingGrad.ok) {
+          logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad.error);
+          return redirectTilLogin(context);
+        }
+
+        const sykmeldingsgrad = hentSykmeldingsgradSSR(
+          uuid,
+          oboSykmeldingGrad.token ?? '',
+          forespurt?.data?.avsender.orgnr,
+          forespurt?.data?.sykmeldt.fnr,
+          forespurt?.data?.bestemmendeFravaersdag
+        );
+
+        logger.info(
+          'Innhenting av sykmeldingsgrad for uuid %s fullført. Sykmeldingsgrad status: %s',
+          uuid,
+          sykmeldingsgrad.status
+        );
+        logger.info('Sykmeldingsgrad data: %j', sykmeldingsgrad);
+
+        const aktuellSykmeldingsgrad = sykmeldingsgrad?.data?.find(
+          (sykmelding: EndepunktSykepengesoeknad) => sykmelding.vedtaksperiodeId === uuid
+        );
+
+        harGradertSykmelding =
+          aktuellSykmeldingsgrad?.soknadsperioder?.some(
+            (periode) => periode.grad < 100 || (periode.faktiskGrad && periode.faktiskGrad > 0)
+          ) ?? false;
+      }
 
       if (forespurt.data?.erBesvart && !overskriv) {
         const ingress = context.req.headers.host + environment.baseUrl;
@@ -564,15 +625,20 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
+      if (forespurt?.status === 404) {
+        logger.warn('Forespurt data ikke funnet for uuid: %s', uuid);
+      }
       logger.error('Error fetching forespurt data: %j', err);
+      logger.error('Error stack: %s', err.message);
+
       forespurt = { data: null };
       forespurtStatus = err instanceof Error && 'status' in err ? (err as any).status : 500;
 
-      if (err instanceof Error && 'status' in err && (err as any).status === 404) {
-        return {
-          notFound: true
-        };
-      }
+      // if (err instanceof Error && 'status' in err && (err as any).status === 404) {
+      //   return {
+      //     notFound: true
+      //   };
+      // }
     }
   }
 
@@ -582,7 +648,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       erEndring: Boolean(slug?.[1] && slug?.[1] === 'overskriv'),
       forespurt: forespurt,
       forespurtStatus: forespurtStatus,
-      dataFraBackend: !!forespurt && !endre
+      dataFraBackend: !!forespurt && !endre,
+      harGradertSykmelding
     }
   };
 }
