@@ -582,7 +582,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       if (arbeidsforhold.data?.ansettelsesperioder && arbeidsforhold.data?.ansettelsesperioder.length > 1) {
         logger.info('Forespurt data inneholder flere ansettelsesperioder: %j', arbeidsforhold.data.ansettelsesperioder);
 
-        const oboSykmeldingGrad = await requestOboToken(token!, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
+        const oboSykmeldingGrad = await requestOboToken(token ?? '', process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID ?? '');
         if (!oboSykmeldingGrad.ok) {
           logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad.error);
           return redirectTilLogin(context);
