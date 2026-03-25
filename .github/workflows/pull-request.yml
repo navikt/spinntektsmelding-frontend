@@ -29,7 +29,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
       - name: Cache pnpm files
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
           path: |
             ~/.pnpm-store
@@ -39,7 +39,7 @@ jobs:
             ${{ runner.os }}-pnpm-
       - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache Next.js build cache
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('pnpm-lock.yaml', 'next.config.js', 'tsconfig.json') }}
@@ -66,7 +66,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
       - name: Cache pnpm files
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
           path: |
             ~/.pnpm-store
@@ -76,7 +76,7 @@ jobs:
             ${{ runner.os }}-pnpm-
       - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache Vitest
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
           path: node_modules/.cache/vite/vitest
           key: ${{ runner.os }}-vitest-${{ hashFiles('pnpm-lock.yaml') }}
@@ -103,7 +103,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
       - name: Cache pnpm files
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
           path: |
             ~/.pnpm-store
@@ -113,7 +113,7 @@ jobs:
             ${{ runner.os }}-pnpm-
       - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache ESLint
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
           path: node_modules/.cache/eslint
           key: ${{ runner.os }}-eslint-${{ hashFiles('pnpm-lock.yaml', 'eslint.config.mjs') }}
@@ -139,7 +139,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
       - name: Cache pnpm files
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
           path: |
             ~/.pnpm-store
