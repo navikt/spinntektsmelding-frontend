@@ -575,7 +575,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       }
 
       // BARE FOR TESTING - Sjekk om det finnes flere ansettelsesperioder, og hent sykmeldingsgrad hvis det gjør det
-      arbeidsforhold = { data: { ansettelsesperioder: [1, 2] } };
+      // arbeidsforhold = { data: { ansettelsesperioder: [1, 2] } };
 
       if (arbeidsforhold.data?.ansettelsesperioder && arbeidsforhold.data?.ansettelsesperioder.length > 1) {
         logger.info('Forespurt data inneholder flere ansettelsesperioder: %j', arbeidsforhold.data.ansettelsesperioder);
