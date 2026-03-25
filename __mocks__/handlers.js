@@ -41,7 +41,30 @@ const forespoerselMockdataMap = {
   'b24baf59-55c9-48df-b8c1-7d93e098a95d': 'trenger-delvis-besvart',
   '8d1b4043-5a9e-4225-9ba8-5dc22f515796': 'trenger-forhaandsutfyll',
   '342dfa81-c05e-4477-9214-d007c403b60a': 'trenger-to-arbeidsforhold',
-  '66f1188a-5cb7-4741-bd60-c9070835633c': 'trenger-originalen-16dager-innsendt'
+  '66f1188a-5cb7-4741-bd60-c9070835633c': 'trenger-originalen-16dager-innsendt',
+  '8f2c7a9d-3e1b-4d6f-a2c8-7b95e13f4c0a': 'trenger-originalen-16dager'
+};
+
+const arbeidsforholdMockdataMap = {
+  '8d50ef20-37b5-4829-ad83-56219e70b375': 'ansettelsesforhold-en-periode',
+  // 'f32852af-888e-4d0c-ad67-081f22ee5c12': 'kvittering-selvbestemt-format',
+  // 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-selvbestemt-ingen-agp'
+  // 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-eksternt-system',
+  // 'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63': 'kvittering-delvis',
+  // 'b24baf59-55c9-48df-b8c1-7d93e098a95d': 'kvittering-delvis-endret-inntekt',
+  // '66f1188a-5cb7-4741-bd60-c9070835633c': 'kvittering-eksternt-system'
+  '8f2c7a9d-3e1b-4d6f-a2c8-7b95e13f4c0a': 'ansettelsesforhold-to-perioder'
+};
+
+const soeknaderMockdataMap = {
+  25087327879: 'soeknader'
+  // 'f32852af-888e-4d0c-ad67-081f22ee5c12': 'kvittering-selvbestemt-format',
+  // 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-selvbestemt-ingen-agp'
+  // 'f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91': 'kvittering-eksternt-system',
+  // 'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63': 'kvittering-delvis',
+  // 'b24baf59-55c9-48df-b8c1-7d93e098a95d': 'kvittering-delvis-endret-inntekt',
+  // '66f1188a-5cb7-4741-bd60-c9070835633c': 'kvittering-eksternt-system'
+  // '8f2c7a9d-3e1b-4d6f-a2c8-7b95e13f4c0a': 'soeknader'
 };
 
 export const handlers = [
@@ -58,7 +81,7 @@ export const handlers = [
 
   http.get('*/api/v1/hent-forespoersel/:foresporselid', ({ params }) => {
     const { foresporselid } = params;
-    const mockdataFile = forespoerselMockdataMap[foresporselid] || 'kvittering-bug-endre';
+    const mockdataFile = forespoerselMockdataMap[foresporselid];
     const data = readMockdata(mockdataFile);
 
     if (data) {
@@ -70,6 +93,30 @@ export const handlers = [
   http.get('*/api/v1/selvbestemt-inntektsmelding/:foresporselid', ({ params }) => {
     const { foresporselid } = params;
     const mockdataFile = kvitteringAgiMockdataMap[foresporselid] || 'kvittering-selvbestemt-ingen-agp';
+    const data = readMockdata(mockdataFile);
+
+    if (data) {
+      return HttpResponse.json(data);
+    }
+    return new HttpResponse(null, { status: 404 });
+  }),
+
+  http.get('*/api/v1/arbeidsforhold/:foresporselid', ({ params }) => {
+    const { foresporselid } = params;
+    const mockdataFile = arbeidsforholdMockdataMap[foresporselid];
+    const data = readMockdata(mockdataFile);
+
+    if (data) {
+      return HttpResponse.json(data);
+    }
+    return new HttpResponse(null, { status: 404 });
+  }),
+
+  http.post('*/api/v1/arbeidsgiver/soknader', ({ body }) => {
+    // const { foresporselid } = params;
+
+    // const mockdataFile = 'soeknader';
+    const mockdataFile = soeknaderMockdataMap[body?.fnr] || 'soeknader';
     const data = readMockdata(mockdataFile);
 
     if (data) {
