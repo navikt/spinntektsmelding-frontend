@@ -11,7 +11,11 @@ export default function hentSykepengesoeknader(
   identitetsnummer?: string,
   eldsteFom?: string
 ): Promise<EndepunktSykepengesoeknader> {
-  if (!url || !identitetsnummer || !orgNummer || !eldsteFom || orgNummer === '-') return Promise.resolve([]);
+  if (!url || !identitetsnummer || !orgNummer || !eldsteFom || orgNummer === '-') {
+    const error = new NetworkError('Ugyldige parametere for å hente sykepengesøknader');
+    error.status = 400;
+    throw error;
+  }
 
   return fetch(url, {
     method: 'POST',

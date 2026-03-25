@@ -55,10 +55,15 @@ import useStateInit from '../state/useStateInit';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
-import FaisuDialog from '../components/FaisuDialog/FaisuDialog';
 import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
 import hentSykmeldingsgradSSR from '../utils/hentSykmeldingsgradSSR';
-import { EndepunktSykepengesoeknad } from '../schema/EndepunktSykepengesoeknaderSchema';
+import { EndepunktSykepengesoeknad, EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknaderSchema';
+
+const RequestStatus = {
+  fulfilled: 'fulfilled',
+  rejected: 'rejected',
+  pending: 'pending'
+};
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -67,7 +72,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   erEndring,
   forespurt,
   forespurtStatus,
-  dataFraBackend
+  dataFraBackend,
+  harGradertSykmelding,
+  harFlereArbeidsforhold
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const lasterData = false;
@@ -189,8 +196,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const onForespurtInit = useEffectEvent(() => {
     if (dataFraBackend && forespurt && !storeInitialized.current) {
-      if (forespurt.data !== null) {
-        initState(forespurt.data);
+      if (forespurt !== null) {
+        initState(forespurt);
       }
 
       removeQueryParam('fromSubmit');
@@ -481,6 +488,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
               inntekt={inntektBeloep!}
               behandlingsdager={behandlingsdagerInnsending}
+              harGradertSykmeldingOgFlereArbeidsforhold={harGradertSykmelding && harFlereArbeidsforhold}
             />
             <Skillelinje />
             <Naturalytelser />
@@ -517,136 +525,135 @@ export default Home;
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
   const { slug, endre } = context.query;
   const uuid = slug?.[0];
+  const action = slug?.[1];
+  const erEndring = action === 'overskriv';
+  const hasEndreQuery = Boolean(endre);
   const isDevelopment = process.env.NODE_ENV === 'development';
   let forespurt = null;
-  let forespurtStatus = null;
-  const overskriv = slug?.[1] && slug?.[1] === 'overskriv';
+  let forespurtStatus;
+  const overskriv = erEndring;
   let harGradertSykmelding = false;
   let arbeidsforhold = null;
+  let harFlereArbeidsforhold = false;
 
-  if (isValidUUID(uuid) && !endre) {
+  if (!isValidUUID(uuid) || hasEndreQuery) {
+    return {
+      props: {
+        slug: uuid,
+        erEndring,
+        forespurt,
+        forespurtStatus: 404,
+        dataFraBackend: false,
+        harGradertSykmelding,
+        harFlereArbeidsforhold
+      }
+    };
+  }
+
+  const token = getToken(context.req);
+  if (!token && !isDevelopment) {
+    /* håndter manglende token */
+    logger.warn('Mangler token i header ved innhenting av forespurt data');
+    return redirectTilLogin(context);
+  }
+
+  const validation = await validateToken(token ?? '');
+  if (!validation.ok && !isDevelopment) {
+    /* håndter valideringsfeil */
+    logger.warn('Validering av token feilet ved innhenting av forespurt data');
+    return redirectTilLogin(context);
+  }
+
+  const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
+    hentForespoerselSSR(uuid, token ?? ''),
+    hentArbeidsforholdSSR(uuid, token ?? '') // Hent arbeidsforhold fra aaregisteret
+  ]);
+
+  arbeidsforhold = arbeidsforholdResult.status === 'fulfilled' ? arbeidsforholdResult.value : null;
+  forespurt = forespurtResult.status === 'fulfilled' ? forespurtResult.value : null;
+
+  if (forespurtResult.status === 'fulfilled') {
     forespurtStatus = 200;
+  } else {
+    logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.response?.status);
+    forespurtStatus = forespurtResult.reason?.response?.status || 500;
+  }
 
-    const token = getToken(context.req);
-    if (!token && !isDevelopment) {
-      /* håndter manglende token */
-      logger.warn('Mangler token i header ved innhenting av forespurt data');
+  logger.info(
+    'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
+    uuid,
+    forespurtResult.status,
+    arbeidsforholdResult.status
+  );
+
+  logger.info('Forespurt data: %j', forespurt);
+
+  if (arbeidsforholdResult.status === RequestStatus.rejected) {
+    logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
+  }
+
+  if (forespurtResult.status === RequestStatus.rejected) {
+    logger.warn('Feil ved innhenting av forespurt data: %j', forespurtResult.reason);
+    if (forespurtResult.reason?.status === 401) {
       return redirectTilLogin(context);
     }
+    if (forespurtResult.reason?.status === 404) {
+      return {
+        notFound: true
+      };
+    }
+  }
 
-    const validation = await validateToken(token ?? '');
-    if (!validation.ok && !isDevelopment) {
-      /* håndter valideringsfeil */
-      logger.warn('Validering av token feilet ved innhenting av forespurt data');
+  if (arbeidsforhold?.ansettelsesperioder && arbeidsforhold.ansettelsesperioder.length > 1) {
+    logger.info('Forespurt data inneholder flere ansettelsesperioder: %j', arbeidsforhold.ansettelsesperioder);
+    harFlereArbeidsforhold = true;
+
+    const oboSykmeldingGrad = await requestOboToken(token ?? '', process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID ?? '');
+    if (!oboSykmeldingGrad.ok && !isDevelopment) {
+      logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad.error);
       return redirectTilLogin(context);
     }
-
+    let sykmeldingsgrad: EndepunktSykepengesoeknader[] = [];
     try {
-      const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
-        hentForespoerselSSR(uuid, token ?? ''),
-        hentArbeidsforholdSSR(uuid, token ?? '') // Hent arbeidsforhold fra aaregisteret
-      ]);
-
-      arbeidsforhold = arbeidsforholdResult.status === 'fulfilled' ? arbeidsforholdResult.value : { data: null };
-      forespurt = forespurtResult.status === 'fulfilled' ? forespurtResult.value : null;
-
-      if (forespurtResult.status === 'fulfilled') {
-        forespurtStatus = forespurtResult.value?.status;
-      }
-
-      logger.info(
-        'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
-        uuid,
-        forespurtResult.status,
-        arbeidsforholdResult.status
+      sykmeldingsgrad = await hentSykmeldingsgradSSR(
+        oboSykmeldingGrad.token ?? '',
+        forespurt?.avsender.orgnr,
+        forespurt?.sykmeldt.fnr,
+        forespurt?.bestemmendeFravaersdag
       );
-
-      logger.info('Forespurt data: %j', forespurt);
-
-      if (arbeidsforholdResult.status === 'rejected') {
-        logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
-      }
-
-      if (forespurtResult.status === 'rejected') {
-        logger.warn('Feil ved innhenting av forespurt data: %j', forespurtResult.reason);
-      } else if (forespurtResult.status === 'fulfilled' && forespurtResult.value?.status === 404) {
-        logger.warn('Forespurt data ikke funnet for uuid: %s', uuid);
-        return {
-          notFound: true
-        };
-      }
-
-      // BARE FOR TESTING - Sjekk om det finnes flere ansettelsesperioder, og hent sykmeldingsgrad hvis det gjør det
-      // arbeidsforhold = { data: { ansettelsesperioder: [1, 2] } };
-
-      if (arbeidsforhold.data?.ansettelsesperioder && arbeidsforhold.data?.ansettelsesperioder.length > 1) {
-        logger.info('Forespurt data inneholder flere ansettelsesperioder: %j', arbeidsforhold.data.ansettelsesperioder);
-
-        const oboSykmeldingGrad = await requestOboToken(token ?? '', process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID ?? '');
-        if (!oboSykmeldingGrad.ok) {
-          logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad.error);
-          return redirectTilLogin(context);
-        }
-        try {
-          const sykmeldingsgrad = await hentSykmeldingsgradSSR(
-            oboSykmeldingGrad.token ?? '',
-            forespurt?.data?.avsender.orgnr,
-            forespurt?.data?.sykmeldt.fnr,
-            forespurt?.data?.bestemmendeFravaersdag
-          );
-
-          logger.info('Innhenting av sykmeldingsgrad for uuid %s fullført.', uuid);
-          logger.info('Sykmeldingsgrad data: %j', sykmeldingsgrad);
-          const aktuellSykmeldingsgrad = sykmeldingsgrad.find(
-            (sykmelding: EndepunktSykepengesoeknad) => sykmelding.vedtaksperiodeId === uuid
-          );
-
-          harGradertSykmelding =
-            aktuellSykmeldingsgrad?.soknadsperioder?.some(
-              (periode) => periode.grad < 100 || (periode.faktiskGrad && periode.faktiskGrad > 0)
-            ) ?? false;
-        } catch (error) {
-          logger.warn('Feil ved innhenting av sykmeldingsgrad: %j', error);
-        }
-      }
-
-      if (forespurt.data?.erBesvart && !overskriv) {
-        const ingress = context.req.headers.host + environment.baseUrl;
-        const destination = `https://${ingress}/kvittering/${uuid}`;
-        return {
-          redirect: {
-            destination: destination,
-            permanent: false
-          }
-        };
-      }
     } catch (error) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      if (forespurt?.status === 404) {
-        logger.warn('Forespurt data ikke funnet for uuid: %s', uuid);
-      }
-      logger.error('Error fetching forespurt data: %j', err);
-      logger.error('Error stack: %s', err.message);
-
-      forespurt = { data: null };
-      forespurtStatus = err instanceof Error && 'status' in err ? (err as any).status : 500;
-
-      // if (err instanceof Error && 'status' in err && (err as any).status === 404) {
-      //   return {
-      //     notFound: true
-      //   };
-      // }
+      logger.warn('Feil ved innhenting av sykmeldingsgrad: %j', error);
     }
+    logger.info('Innhenting av sykmeldingsgrad for uuid %s fullført.', uuid);
+    logger.info('Sykmeldingsgrad data: %j', sykmeldingsgrad);
+    const aktuellSykmeldingsgrad = sykmeldingsgrad.find((sykmelding) => sykmelding.vedtaksperiodeId === uuid);
+
+    harGradertSykmelding =
+      aktuellSykmeldingsgrad?.soknadsperioder?.some(
+        (periode) => periode.grad < 100 || (periode.faktiskGrad && periode.faktiskGrad > 0)
+      ) ?? false;
+  }
+
+  if (forespurt?.erBesvart && !overskriv) {
+    const ingress = context.req.headers.host + environment.baseUrl;
+    const destination = `https://${ingress}/kvittering/${uuid}`;
+    return {
+      redirect: {
+        destination: destination,
+        permanent: false
+      }
+    };
   }
 
   return {
     props: {
-      slug: slug?.[0],
-      erEndring: Boolean(slug?.[1] && slug?.[1] === 'overskriv'),
+      slug: uuid,
+      erEndring,
       forespurt: forespurt,
       forespurtStatus: forespurtStatus,
-      dataFraBackend: !!forespurt && !endre,
-      harGradertSykmelding
+      dataFraBackend: !!forespurt && !hasEndreQuery,
+      harGradertSykmelding,
+      harFlereArbeidsforhold
     }
   };
 }
