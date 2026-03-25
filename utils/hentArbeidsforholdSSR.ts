@@ -1,3 +1,4 @@
+import { logger } from '@navikt/next-logger';
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
 import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
 
@@ -10,8 +11,11 @@ export default function hentArbeidsforholdSSR(
   }
 
   if (pathSlug) {
+    logger.info(
+      `Henter arbeidsforhold for: http://${globalThis.process.env.IM_API_URI}${globalThis.process.env.ARBEIDSFORHOLD_API}`
+    );
     return fetchKvitteringsdataSSR(
-      `http://${globalThis.process.env.IM_API_URI}${process.env.ARBEIDSFORHOLD_API}`,
+      `http://${globalThis.process.env.IM_API_URI}${globalThis.process.env.ARBEIDSFORHOLD_API}`,
       pathSlug,
       token
     );
