@@ -20,12 +20,14 @@ interface RefusjonArbeidsgiverProps {
   skalViseArbeidsgiverperiode?: boolean;
   inntekt: number;
   behandlingsdager?: boolean;
+  harGradertSykmeldingOgFlereArbeidsforhold?: boolean;
 }
 
 export default function RefusjonArbeidsgiver({
   skalViseArbeidsgiverperiode,
   inntekt,
-  behandlingsdager
+  behandlingsdager,
+  harGradertSykmeldingOgFlereArbeidsforhold
 }: Readonly<RefusjonArbeidsgiverProps>) {
   const {
     watch,
@@ -159,6 +161,26 @@ export default function RefusjonArbeidsgiver({
             <RefusjonArbeidsgiverBelop arbeidsgiverperiodeDisabled={arbeidsgiverperiodeDisabled} />
 
             <RefusjonUtbetalingEndring minDate={foersteMuligeRefusjonOpphoer} />
+          </>
+        )}
+        {harGradertSykmeldingOgFlereArbeidsforhold && (
+          <>
+            <RadioGroup legend='Den sykmeldte har gradert sykmelding og flere arbeidsforhold.'>
+              <Radio value='Ja'>
+                Den ansatte har samme timeslønn i alle arbeidsforhold, og det er ikke nødvendig å spesifisere hvordan
+                lønnen skal fordeles mellom de ulike arbeidsforholdene.
+              </Radio>
+              <Radio value='Nei'>
+                Den ansatte har ulik timeslønn i de ulike arbeidsforholdene, og det er nødvendig å spesifisere hvordan
+                lønnen skal fordeles mellom de ulike arbeidsforholdene.
+              </Radio>
+            </RadioGroup>
+            <NumberField
+              label='Prosentvis fordeling av lønn mellom arbeidsforholdene'
+              {...register('fordelingProsent', { valueAsNumber: true })}
+              id={ensureValidHtmlId('fordelingProsent')}
+              error={findErrorInRHFErrors('fordelingProsent', errors)}
+            />
           </>
         )}
       </div>

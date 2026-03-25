@@ -1,0 +1,28 @@
+[
+  {
+    "sykepengesoknadUuid": "4cbcfc09-98db-3e3c-bf67-a4a91fb98959",
+    "fom": "2025-09-01",
+    "tom": "2025-09-14",
+    "sykmeldingId": "7450ad70-81cb-457f-ab6a-1a1f38b704e7",
+    "status": "SENDT",
+    "startSykeforlop": "2025-09-01",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": "8f2c7a9d-3e1b-4d6f-a2c8-7b95e13f4c0a",
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2025-09-01",
+        "tom": "2025-09-07",
+        "grad": 50,
+        "faktiskGrad": 75
+      },
+      {
+        "fom": "2025-09-08",
+        "tom": "2025-09-14",
+        "grad": 100,
+        "faktiskGrad": null
+      }
+    ]
+  }
+]

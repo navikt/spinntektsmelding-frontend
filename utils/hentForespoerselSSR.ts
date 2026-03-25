@@ -1,20 +1,17 @@
 import { MottattData } from '../schema/MottattDataSchema';
-import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
+import fetchDataSSR from './fetchDataSSR';
 
-export default function hentForespoerselSSR(
-  pathSlug?: string | Array<string>,
-  token?: string
-): Promise<{ status: number; data: MottattData | null }> {
+export default function hentForespoerselSSR(pathSlug?: string | Array<string>, token?: string): Promise<MottattData> {
   if (Array.isArray(pathSlug)) {
-    return Promise.resolve({ status: 400, data: null });
+    throw new TypeError('Ugyldig pathSlug: må være en streng, ikke en array');
   }
 
   if (pathSlug) {
-    return fetchKvitteringsdataSSR(
+    return fetchDataSSR(
       `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}`,
       pathSlug,
       token
     );
   }
-  return Promise.resolve({ status: 400, data: null });
+  throw new TypeError('Ugyldig pathSlug: må være en streng, ikke en array');
 }
