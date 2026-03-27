@@ -179,6 +179,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       opplysningstyper: opplysningstyper,
       agp: {
         redusertLoennIAgp: null
+      },
+      faisu: {
+        harLikLonn: undefined,
+        sykmeldtFraAlleArbeidsforhold: undefined,
+        arbeidsforhold: []
       }
     }
   });
