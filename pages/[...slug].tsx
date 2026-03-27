@@ -58,6 +58,7 @@ import { redirectTilLogin } from '../utils/redirectTilLogin';
 import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
 import hentSykmeldingsgradSSR from '../utils/hentSykmeldingsgradSSR';
 import { EndepunktSykepengesoeknad, EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknaderSchema';
+import Faisu from '../components/Faisu/Faisu';
 
 const RequestStatus = {
   fulfilled: 'fulfilled',
@@ -477,6 +478,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 sbTidligereInntekt={sbTidligereInntekt}
               />
             )}
+            <Faisu harGradertSykmeldingOgFlereArbeidsforhold={harGradertSykmelding && harFlereArbeidsforhold} />
             {!harForespurtInntekt && (
               <>
                 <Heading3 unPadded>Beregnet månedslønn</Heading3>
@@ -488,7 +490,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
               inntekt={inntektBeloep!}
               behandlingsdager={behandlingsdagerInnsending}
-              harGradertSykmeldingOgFlereArbeidsforhold={harGradertSykmelding && harFlereArbeidsforhold}
             />
             <Skillelinje />
             <Naturalytelser />

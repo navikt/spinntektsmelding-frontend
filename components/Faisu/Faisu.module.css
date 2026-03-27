@@ -1,0 +1,19 @@
+.radiobuttonWrapper > div {
+  display: flex;
+}
+
+.radiobuttonWrapper > div {
+  gap: 1rem;
+}
+
+.radiobuttonWrapper {
+  margin: var(--ax-space-20) 0;
+}
+
+.inputInntekt {
+  padding-top: 1rem;
+}
+
+.inputInntekt > input {
+  max-width: 10rem;
+}
