@@ -1,4 +1,4 @@
-import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
+import { Alert, BodyLong, BodyShort, Radio, RadioGroup } from '@navikt/ds-react';
 import { useEffect, useMemo, useState } from 'react';
 import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import useBoundStore from '../../state/useBoundStore';
