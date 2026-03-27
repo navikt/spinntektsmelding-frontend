@@ -13,6 +13,11 @@ type HovedskjemaInput = {
   kreverRefusjon?: 'Ja' | 'Nei';
   fullLonn?: 'Ja' | 'Nei';
   agp?: { redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string } };
+  faisu?: {
+    harLikLonn?: 'Ja' | 'Nei';
+    sykmeldtFraAlleArbeidsforhold?: 'Ja' | 'Nei';
+    arbeidsforhold?: Array<{ arbeidsforholdId?: string; maanedslonn?: number }>;
+  };
   opplysningstyper?: string[];
 };
 
@@ -99,6 +104,91 @@ function validateRedusertLoennIAgp(val: HovedskjemaInput, ctx: z.RefinementCtx) 
       input: val.agp?.redusertLoennIAgp?.begrunnelse
     });
   }
+}
+
+function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
+  if (!val.faisu) return;
+
+  if (val.faisu.harLikLonn !== 'Ja' && val.faisu.harLikLonn !== 'Nei') {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Vennligst svar på om den ansatte har lik eller tilnærmet lik lønn i arbeidsforholdene.',
+      path: ['faisu', 'harLikLonn'],
+      input: val.faisu.harLikLonn
+    });
+    return;
+  }
+
+  if (val.faisu.harLikLonn === 'Ja') {
+    return;
+  }
+
+  if (val.faisu.sykmeldtFraAlleArbeidsforhold !== 'Ja' && val.faisu.sykmeldtFraAlleArbeidsforhold !== 'Nei') {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Vennligst svar på om personen er sykmeldt fra alle arbeidsforhold.',
+      path: ['faisu', 'sykmeldtFraAlleArbeidsforhold'],
+      input: val.faisu.sykmeldtFraAlleArbeidsforhold
+    });
+    return;
+  }
+
+  if (val.faisu.sykmeldtFraAlleArbeidsforhold === 'Ja') {
+    return;
+  }
+
+  const arbeidsforhold = val.faisu.arbeidsforhold ?? [];
+
+  if (arbeidsforhold.length === 0) {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Vennligst velg minst ett arbeidsforhold.',
+      path: ['faisu', 'arbeidsforhold'],
+      input: arbeidsforhold
+    });
+    return;
+  }
+
+  const arbeidsforholdIder = arbeidsforhold.map((item) => item.arbeidsforholdId);
+  const unikeArbeidsforholdIder = new Set(arbeidsforholdIder);
+  if (unikeArbeidsforholdIder.size !== arbeidsforholdIder.length) {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Arbeidsforhold kan ikke velges flere ganger.',
+      path: ['faisu', 'arbeidsforhold'],
+      input: arbeidsforhold
+    });
+  }
+
+  arbeidsforhold.forEach((item, index) => {
+    if (!item.arbeidsforholdId) {
+      ctx.issues.push({
+        code: 'custom',
+        message: 'Arbeidsforhold mangler.',
+        path: ['faisu', 'arbeidsforhold', index, 'arbeidsforholdId'],
+        input: item.arbeidsforholdId
+      });
+    }
+
+    if (item.maanedslonn === undefined || item.maanedslonn === null) {
+      ctx.issues.push({
+        code: 'custom',
+        message: 'Vennligst oppgi spesifisert månedslønn.',
+        path: ['faisu', 'arbeidsforhold', index, 'maanedslonn'],
+        input: item.maanedslonn
+      });
+      return;
+    }
+
+    if (item.maanedslonn < 0) {
+      ctx.issues.push({
+        code: 'custom',
+        message: 'Månedslønn må være større enn eller lik 0.',
+        path: ['faisu', 'arbeidsforhold', index, 'maanedslonn'],
+        input: item.maanedslonn
+      });
+    }
+  });
 }
 
 export const HovedskjemaSchema = z
@@ -194,6 +284,25 @@ export const HovedskjemaSchema = z
       })
       .or(z.object({}))
       .or(z.undefined()),
+    faisu: z
+      .object({
+        harLikLonn: z.enum(['Ja', 'Nei']).or(z.undefined()),
+        sykmeldtFraAlleArbeidsforhold: z.enum(['Ja', 'Nei']).or(z.undefined()),
+        arbeidsforhold: z
+          .array(
+            z.object({
+              arbeidsforholdId: z.string(),
+              maanedslonn: z
+                .number({
+                  error: (issue) => (issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined)
+                })
+                .min(0, 'Månedslønn må være større enn eller lik 0.')
+                .or(z.undefined())
+            })
+          )
+          .or(z.undefined())
+      })
+      .or(z.undefined()),
     avsenderTlf: TelefonNummerSchema,
     opplysningstyper: z.array(OpplysningstypeSchema).optional()
   })
@@ -202,4 +311,5 @@ export const HovedskjemaSchema = z
     validateRefusjonEndringer(val, ctx);
     validateKreverRefusjonOgFullLonn(val, ctx);
     validateRedusertLoennIAgp(val, ctx);
+    validateFaisu(val, ctx);
   });
