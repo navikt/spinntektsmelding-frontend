@@ -20,11 +20,11 @@ export const EndepunktSykepengesoeknadSchema = z.object({
   sykmeldingId: z.uuid(),
   status: soeknadStatus,
   startSykeforlop: isoDate,
-  egenmeldingsdagerFraSykmelding: z.array(isoDate).or(z.tuple([])),
+  egenmeldingsdagerFraSykmelding: z.array(isoDate),
   vedtaksperiodeId: z.uuid().nullable(),
   forespoerselId: z.uuid().optional(),
   soknadstype: z.string().optional(),
-  behandlingsdager: z.array(isoDate).or(z.tuple([])).optional(),
+  behandlingsdager: z.array(isoDate).optional(),
   soknadsperioder: z
     .array(
       z.object({
@@ -37,4 +37,4 @@ export const EndepunktSykepengesoeknadSchema = z.object({
     .optional()
 });
 
-export const EndepunktSykepengesoeknaderSchema = z.array(EndepunktSykepengesoeknadSchema).or(z.tuple([]));
+export const EndepunktSykepengesoeknaderSchema = z.array(EndepunktSykepengesoeknadSchema);

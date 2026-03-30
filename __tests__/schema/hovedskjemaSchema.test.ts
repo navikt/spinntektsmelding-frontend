@@ -41,7 +41,8 @@ describe('HovedskjemaSchema', () => {
     expect(result.success).toBe(false);
     expect(result.error?.issues).toEqual([
       {
-        code: 'custom',
+        code: 'invalid_value',
+        values: [true],
         message: 'Du må bekrefte at opplysningene er riktige før du kan sende inn.',
         path: ['bekreft_opplysninger']
       },
