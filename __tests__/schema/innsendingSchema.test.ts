@@ -200,7 +200,7 @@ describe('InnsendingSchema', () => {
       {
         code: 'invalid_type',
         expected: 'string',
-        message: 'Vennligst fyll inn til dato',
+        message: 'Ugyldig til dato',
         path: ['agp', 'perioder', 1, 'tom']
       }
     ]);
@@ -236,11 +236,11 @@ describe('InnsendingSchema', () => {
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
-      {
-        code: 'custom',
-        message: 'Ugyldig dato',
+      expect.objectContaining({
+        code: 'invalid_format',
+        message: 'Ugyldig til dato',
         path: ['agp', 'perioder', 1, 'tom']
-      }
+      })
     ]);
   });
 
@@ -277,7 +277,7 @@ describe('InnsendingSchema', () => {
       {
         code: 'invalid_type',
         expected: 'string',
-        message: 'Vennligst fyll inn fra dato',
+        message: 'Ugyldig fra dato',
         path: ['agp', 'perioder', 1, 'fom']
       }
     ]);
@@ -313,11 +313,11 @@ describe('InnsendingSchema', () => {
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
-      {
-        code: 'custom',
-        message: 'Ugyldig dato',
+      expect.objectContaining({
+        code: 'invalid_format',
+        message: 'Ugyldig fra dato',
         path: ['agp', 'perioder', 1, 'fom']
-      }
+      })
     ]);
   });
 
