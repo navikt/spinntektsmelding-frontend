@@ -103,7 +103,7 @@ function validateRedusertLoennIAgp(val: HovedskjemaInput, ctx: z.RefinementCtx) 
 
 export const HovedskjemaSchema = z
   .object({
-    bekreft_opplysninger: z.boolean().refine((value) => value === true, {
+    bekreft_opplysninger: z.literal(true, {
       error: 'Du må bekrefte at opplysningene er riktige før du kan sende inn.'
     }),
     inntekt: z.optional(

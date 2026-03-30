@@ -45,7 +45,7 @@ export const KvitteringNavNoSchema = z.object({
         sluttdato: z.iso.date({
           error: (issue) => (issue.input === undefined ? 'Sluttdato mangler' : 'Ugyldig sluttdato')
         }),
-        endringer: z.union([z.array(RefusjonEndringSchema), z.tuple([])])
+        endringer: z.array(RefusjonEndringSchema)
       })
       .nullable(),
     naturalytelser: ApiNaturalytelserSchema
