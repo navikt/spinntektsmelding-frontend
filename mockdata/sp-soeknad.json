@@ -7,7 +7,8 @@
     "status": "NY",
     "startSykeforlop": "2024-08-06",
     "egenmeldingsdagerFraSykmelding": ["2024-08-08", "2024-08-07", "2024-08-06"],
-    "vedtaksperiodeId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e"
+    "vedtaksperiodeId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
+    "soknadsperioder": [{ "fom": "2026-02-01", "tom": "2026-02-08", "grad": 100, "faktiskGrad": 50 }]
   },
   {
     "sykepengesoknadUuid": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
@@ -28,6 +29,7 @@
     "status": "NY",
     "startSykeforlop": "2024-09-16",
     "egenmeldingsdagerFraSykmelding": [],
-    "vedtaksperiodeId": "8396932c-9656-3f65-96b2-3e37eacff584"
+    "vedtaksperiodeId": "8396932c-9656-3f65-96b2-3e37eacff584",
+    "soknadsperioder": [{ "fom": "2026-02-01", "tom": "2026-02-08", "grad": 100, "faktiskGrad": null }]
   }
 ]
