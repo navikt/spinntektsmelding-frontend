@@ -27,7 +27,7 @@ COPY validators ./validators
 COPY schema ./schema
 COPY config ./config
 COPY styles ./styles
-COPY next-logger.config.js next-env.d.ts ./
+COPY next-logger.config.js ./
 
 ARG BUILDMODE
 ENV BUILDMODE=${BUILDMODE}
