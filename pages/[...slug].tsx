@@ -43,7 +43,7 @@ import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import Heading3 from '../components/Heading3';
 import forespoerselType from '../config/forespoerselType';
-import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import { HovedskjemaSchema, createHovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
@@ -158,8 +158,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
+  const schema = useMemo(
+    () => createHovedskjemaSchema(harGradertSykmelding && harFlereArbeidsforhold),
+    [harGradertSykmelding, harFlereArbeidsforhold]
+  );
+
   const methods = useForm<Skjema>({
-    resolver: zodResolver(HovedskjemaSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
@@ -542,7 +547,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   let arbeidsforhold = null;
   let harFlereArbeidsforhold = false;
 
-  if (!isValidUUID(uuid) || hasEndreQuery) {
+  if (
+    (!isValidUUID(uuid) || hasEndreQuery) &&
+    uuid !== 'arbeidsgiverInitiertInnsending' &&
+    uuid !== 'behandlingsdager'
+  ) {
     return {
       props: {
         slug: uuid,

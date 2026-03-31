@@ -191,125 +191,132 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
   });
 }
 
-export const HovedskjemaSchema = z
-  .object({
-    bekreft_opplysninger: z.literal(true, {
-      error: 'Du må bekrefte at opplysningene er riktige før du kan sende inn.'
-    }),
-    inntekt: z.optional(
-      z.object({
-        beloep: z
-          .number({
-            error: (issue) =>
-              issue.input === undefined
-                ? 'Vennligst fyll inn beløpet for inntekt.'
-                : 'Vennligst angi bruttoinntekt på formatet 1234,50'
-          })
-          .min(0),
-        endringAarsaker: z
-          .union([z.array(EndringAarsakSchema), z.null('Vennligst angi årsak til endringen.')])
-          .superRefine((val, ctx) => {
-            if (JSON.stringify(val) === JSON.stringify([{}])) {
-              ctx.issues.push({
-                code: 'custom',
-                message: 'Vennligst angi årsak til endringen.',
-                path: ['0', 'aarsak'],
-                fatal: true,
-                input: ''
-              });
-              return z.NEVER;
-            }
-            const aarsaker = val?.map((v) => v.aarsak);
-            const uniqueAarsaker = new Set(aarsaker);
-            if (aarsaker && aarsaker.length > 0 && uniqueAarsaker.size !== aarsaker.length) {
-              ctx.issues.push({
-                code: 'custom',
-                message: 'Det kan ikke være flere like begrunnelser.',
-                path: ['root'],
-                fatal: true,
-                input: ''
-              });
-              return z.NEVER;
-            }
-            val?.forEach((v, index) => {
-              if (v.aarsak === '' || v.aarsak === undefined) {
+export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
+  return z
+    .object({
+      bekreft_opplysninger: z.literal(true, {
+        error: 'Du må bekrefte at opplysningene er riktige før du kan sende inn.'
+      }),
+      inntekt: z.optional(
+        z.object({
+          beloep: z
+            .number({
+              error: (issue) =>
+                issue.input === undefined
+                  ? 'Vennligst fyll inn beløpet for inntekt.'
+                  : 'Vennligst angi bruttoinntekt på formatet 1234,50'
+            })
+            .min(0),
+          endringAarsaker: z
+            .union([z.array(EndringAarsakSchema), z.null('Vennligst angi årsak til endringen.')])
+            .superRefine((val, ctx) => {
+              if (JSON.stringify(val) === JSON.stringify([{}])) {
                 ctx.issues.push({
                   code: 'custom',
                   message: 'Vennligst angi årsak til endringen.',
-                  path: [index, 'aarsak'],
+                  path: ['0', 'aarsak'],
                   fatal: true,
                   input: ''
                 });
+                return z.NEVER;
               }
-            });
-          }),
-        harBortfallAvNaturalytelser: z.boolean(),
-        naturalytelser: z.array(NaturalytelserSchema).optional()
-      })
-    ),
-    refusjon: z.object({
-      beloepPerMaaned: z
-        .number({ error: 'Vennligst angi hvor mye som refunderes per måned.' })
-        .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-      isEditing: z.boolean(),
-      harEndringer: z.enum(['Ja', 'Nei']).or(z.undefined()),
-      endringer: z.array(RefusjonEndringSchema).optional()
-    }),
-    kreverRefusjon: z
-      .enum(['Ja', 'Nei'], {
-        error: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden...'
-      })
-      .optional(),
-    fullLonn: z.enum(['Ja', 'Nei'], { error: 'Velg om full lønn betales i arbeidsgiverperioden....' }).optional(),
-    agp: z
-      .object({
-        redusertLoennIAgp: z
-          .nullable(
-            z.object({
-              beloep: z
-                .number({
+              const aarsaker = val?.map((v) => v.aarsak);
+              const uniqueAarsaker = new Set(aarsaker);
+              if (aarsaker && aarsaker.length > 0 && uniqueAarsaker.size !== aarsaker.length) {
+                ctx.issues.push({
+                  code: 'custom',
+                  message: 'Det kan ikke være flere like begrunnelser.',
+                  path: ['root'],
+                  fatal: true,
+                  input: ''
+                });
+                return z.NEVER;
+              }
+              val?.forEach((v, index) => {
+                if (v.aarsak === '' || v.aarsak === undefined) {
+                  ctx.issues.push({
+                    code: 'custom',
+                    message: 'Vennligst angi årsak til endringen.',
+                    path: [index, 'aarsak'],
+                    fatal: true,
+                    input: ''
+                  });
+                }
+              });
+            }),
+          harBortfallAvNaturalytelser: z.boolean(),
+          naturalytelser: z.array(NaturalytelserSchema).optional()
+        })
+      ),
+      refusjon: z.object({
+        beloepPerMaaned: z
+          .number({ error: 'Vennligst angi hvor mye som refunderes per måned.' })
+          .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
+        isEditing: z.boolean(),
+        harEndringer: z.enum(['Ja', 'Nei']).or(z.undefined()),
+        endringer: z.array(RefusjonEndringSchema).optional()
+      }),
+      kreverRefusjon: z
+        .enum(['Ja', 'Nei'], {
+          error: 'Vennligst angi om det betales lønn og kreves refusjon etter arbeidsgiverperioden...'
+        })
+        .optional(),
+      fullLonn: z.enum(['Ja', 'Nei'], { error: 'Velg om full lønn betales i arbeidsgiverperioden....' }).optional(),
+      agp: z
+        .object({
+          redusertLoennIAgp: z
+            .nullable(
+              z.object({
+                beloep: z
+                  .number({
+                    error: (issue) =>
+                      issue.input === undefined ? 'Beløp utbetalt under arbeidsgiverperioden mangler.' : undefined
+                  })
+                  .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.'),
+                begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
                   error: (issue) =>
-                    issue.input === undefined ? 'Beløp utbetalt under arbeidsgiverperioden mangler.' : undefined
+                    issue.input === undefined
+                      ? 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
+                      : undefined
                 })
-                .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.'),
-              begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
-                error: (issue) =>
-                  issue.input === undefined
-                    ? 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
-                    : undefined
               })
-            })
-          )
-          .or(z.undefined())
-      })
-      .or(z.object({}))
-      .or(z.undefined()),
-    faisu: z
-      .object({
-        harLikLonn: z.enum(['Ja', 'Nei']).or(z.undefined()),
-        sykmeldtFraAlleArbeidsforhold: z.enum(['Ja', 'Nei']).or(z.undefined()),
-        arbeidsforhold: z
-          .array(
-            z.object({
-              arbeidsforholdId: z.string(),
-              maanedslonn: z
-                .number({
-                  error: (issue) => (issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined)
-                })
-                .min(0, 'Månedslønn må være større enn eller lik 0.')
-                .or(z.undefined())
-            })
-          )
-          .or(z.undefined())
-      })
-      .or(z.undefined()),
-    avsenderTlf: TelefonNummerSchema,
-    opplysningstyper: z.array(OpplysningstypeSchema).optional()
-  })
-  .superRefine((val, ctx) => {
-    validateRefusjonBeloep(val, ctx);
-    validateRefusjonEndringer(val, ctx);
-    validateKreverRefusjonOgFullLonn(val, ctx);
-    validateRedusertLoennIAgp(val, ctx);
-    validateFaisu(val, ctx);
-  });
+            )
+            .or(z.undefined())
+        })
+        .or(z.object({}))
+        .or(z.undefined()),
+      faisu: z
+        .object({
+          harLikLonn: z.enum(['Ja', 'Nei']).or(z.undefined()),
+          sykmeldtFraAlleArbeidsforhold: z.enum(['Ja', 'Nei']).or(z.undefined()),
+          arbeidsforhold: z
+            .array(
+              z.object({
+                arbeidsforholdId: z.string(),
+                maanedslonn: z
+                  .number({
+                    error: (issue) =>
+                      issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
+                  })
+                  .min(0, 'Månedslønn må være større enn eller lik 0.')
+                  .or(z.undefined())
+              })
+            )
+            .or(z.undefined())
+        })
+        .or(z.undefined()),
+      avsenderTlf: TelefonNummerSchema,
+      opplysningstyper: z.array(OpplysningstypeSchema).optional()
+    })
+    .superRefine((val, ctx) => {
+      validateRefusjonBeloep(val, ctx);
+      validateRefusjonEndringer(val, ctx);
+      validateKreverRefusjonOgFullLonn(val, ctx);
+      validateRedusertLoennIAgp(val, ctx);
+      if (skalValidereFaisu) {
+        validateFaisu(val, ctx);
+      }
+    });
+}
+
+export const HovedskjemaSchema = createHovedskjemaSchema(true);
