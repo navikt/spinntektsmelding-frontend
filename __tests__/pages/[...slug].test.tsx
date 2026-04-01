@@ -702,8 +702,8 @@ describe('getServerSideProps', () => {
   it('redirects to kvittering when forespurt.data.erBesvart is true', async () => {
     const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
     vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce({
-      data: { erBesvart: true }
-    });
+      erBesvart: true
+    } as any);
 
     const context = {
       query: {
@@ -728,8 +728,8 @@ describe('getServerSideProps', () => {
   it('does not redirect to kvittering when erBesvart is true but overskriv slug exists', async () => {
     const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
     vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce({
-      data: { erBesvart: true }
-    });
+      erBesvart: true
+    } as any);
 
     const context = {
       query: {

@@ -29,7 +29,7 @@ import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
 import formatIsoDate from '../../utils/formatIsoDate';
 import {
   EndepunktSykepengesoeknaderSchema,
-  EndepunktSykepengesoeknadSchema
+  type EndepunktSykepengesoeknad
 } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
 import { logger } from '@navikt/next-logger';
@@ -60,8 +60,6 @@ type SykepengePeriode = {
     tom: Date;
   }[];
 };
-
-type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
 
 function addForlengelseAvInfo(perioder: SykepengePeriode[]): SykepengePeriode[] {
   return perioder.reduce((acc, current) => {
