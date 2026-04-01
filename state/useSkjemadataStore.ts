@@ -31,6 +31,7 @@ export interface SkjemadataState {
   setAarsakSelvbestemtInnsending: (aarsak: string) => void;
   setBehandlingsdager: (behandlingsdager: string[]) => void;
   setBegrensetForespoersel: (begrenset: boolean) => void;
+  setHarGradertSykmelding: (harGradertSykmelding: boolean) => void;
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
@@ -45,6 +46,7 @@ export interface SkjemadataState {
   behandlingsdager?: string[];
   selvbestemtType: SelvbestemtType;
   begrensetForespoersel: boolean;
+  harGradertSykmelding: boolean;
 }
 
 const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> = (set) => ({
@@ -59,6 +61,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   behandlingsdager: undefined,
   selvbestemtType: 'MedArbeidsforhold',
   begrensetForespoersel: false,
+  harGradertSykmelding: false,
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
@@ -142,6 +145,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.begrensetForespoersel = begrenset;
+      })
+    );
+  },
+  setHarGradertSykmelding: (harGradertSykmelding: boolean) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.harGradertSykmelding = harGradertSykmelding;
       })
     );
   }

@@ -90,6 +90,7 @@ const InitieringAnnet: NextPage = () => {
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
   const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
+  const setHarGradertSykmelding = useBoundStore((state) => state.setHarGradertSykmelding);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -357,6 +358,10 @@ const InitieringAnnet: NextPage = () => {
     tilbakestillArbeidsgiverperiode();
     setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
     setSelvbestemtType(SelvbestemtTypeConst.MedArbeidsforhold);
+    const harGradert = sykmeldingsperiode.some((periode: EndepunktSykepengesoeknad) =>
+      periode.soknadsperioder?.some((sp) => sp.grad < 100 || (sp.faktiskGrad != null && sp.faktiskGrad > 0))
+    );
+    setHarGradertSykmelding(harGradert);
     router.push('/arbeidsgiverInitiertInnsending');
   };
 

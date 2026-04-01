@@ -108,7 +108,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     naturalytelser,
     behandlingsdager,
     selvbestemtType,
-    kvitteringData
+    kvitteringData,
+    harGradertSykmeldingStore
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -120,7 +121,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.naturalytelser,
     state.behandlingsdager,
     state.selvbestemtType,
-    state.kvitteringData
+    state.kvitteringData,
+    state.harGradertSykmelding
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -158,9 +160,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
+  const effektivHarGradertSykmelding = selvbestemtInnsending ? harGradertSykmeldingStore : harGradertSykmelding;
+
   const schema = useMemo(
-    () => createHovedskjemaSchema(harGradertSykmelding && harFlereArbeidsforhold),
-    [harGradertSykmelding, harFlereArbeidsforhold]
+    () => createHovedskjemaSchema(effektivHarGradertSykmelding && harFlereArbeidsforhold),
+    [effektivHarGradertSykmelding, harFlereArbeidsforhold]
   );
 
   const methods = useForm<Skjema>({
@@ -488,7 +492,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 sbTidligereInntekt={sbTidligereInntekt}
               />
             )}
-            <Faisu harGradertSykmeldingOgFlereArbeidsforhold={harGradertSykmelding && harFlereArbeidsforhold} />
+            <Faisu harGradertSykmeldingOgFlereArbeidsforhold={effektivHarGradertSykmelding && harFlereArbeidsforhold} />
             {!harForespurtInntekt && (
               <>
                 <Heading3 unPadded>Beregnet månedslønn</Heading3>
@@ -577,6 +581,20 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     /* håndter valideringsfeil */
     logger.warn('Validering av token feilet ved innhenting av forespurt data');
     return redirectTilLogin(context);
+  }
+
+  if (uuid === 'arbeidsgiverInitiertInnsending' || uuid === 'behandlingsdager') {
+    return {
+      props: {
+        slug: uuid,
+        erEndring: false,
+        forespurt: null,
+        forespurtStatus: null,
+        dataFraBackend: false,
+        harGradertSykmelding: false,
+        harFlereArbeidsforhold: true
+      }
+    };
   }
 
   const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
