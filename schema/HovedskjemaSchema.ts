@@ -12,7 +12,7 @@ type HovedskjemaInput = {
   refusjon?: { beloepPerMaaned?: number; harEndringer?: 'Ja' | 'Nei'; endringer?: unknown[] };
   kreverRefusjon?: 'Ja' | 'Nei';
   fullLonn?: 'Ja' | 'Nei';
-  agp?: { redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string } };
+  agp?: { redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string } | null };
   faisu?: {
     harLikLonn?: 'Ja' | 'Nei';
     sykmeldtFraAlleArbeidsforhold?: 'Ja' | 'Nei';
@@ -233,7 +233,7 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                 return z.NEVER;
               }
               val?.forEach((v, index) => {
-                if (v.aarsak === '' || v.aarsak === undefined) {
+                if (v.aarsak === undefined) {
                   ctx.issues.push({
                     code: 'custom',
                     message: 'Vennligst angi årsak til endringen.',

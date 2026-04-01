@@ -2,7 +2,7 @@ import { logger } from '@navikt/next-logger';
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
 import fetchDataSSR from './fetchDataSSR';
 
-export default function hentArbeidsforholdSSR(
+export default async function hentArbeidsforholdSSR(
   pathSlug?: string | Array<string>,
   token?: string
 ): Promise<Ansettelsesforhold> {

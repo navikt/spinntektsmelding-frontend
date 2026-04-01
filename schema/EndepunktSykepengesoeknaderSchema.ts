@@ -38,3 +38,6 @@ export const EndepunktSykepengesoeknadSchema = z.object({
 });
 
 export const EndepunktSykepengesoeknaderSchema = z.array(EndepunktSykepengesoeknadSchema);
+
+export type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
+export type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;

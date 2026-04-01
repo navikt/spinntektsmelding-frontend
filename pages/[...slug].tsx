@@ -57,7 +57,7 @@ import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
 import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
 import hentSykmeldingsgradSSR from '../utils/hentSykmeldingsgradSSR';
-import { EndepunktSykepengesoeknad, EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknaderSchema';
+import { EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknaderSchema';
 import Faisu from '../components/Faisu/Faisu';
 
 const RequestStatus = {
@@ -628,7 +628,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad.error);
       return redirectTilLogin(context);
     }
-    let sykmeldingsgrad: EndepunktSykepengesoeknader[] = [];
+    let sykmeldingsgrad: EndepunktSykepengesoeknader = [];
     try {
       sykmeldingsgrad = await hentSykmeldingsgradSSR(
         oboSykmeldingGrad.token ?? '',
