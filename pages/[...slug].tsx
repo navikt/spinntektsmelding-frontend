@@ -139,10 +139,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
+<<<<<<< HEAD
   let opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
+=======
+  // let opplysningstyper = hentPaakrevdOpplysningstyper();
+  let opplysningstyper = useMemo(() => hentPaakrevdOpplysningstyper(), [hentPaakrevdOpplysningstyper]);
+  const skalViseEgenmelding = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend;
+>>>>>>> ea7381c4 (Fisker)
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
 
@@ -152,7 +158,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   };
 
-  const selvbestemtInnsending = slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
+  const selvbestemtInnsending =
+    slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT || slug === 'Fisker';
 
   const behandlingsdagerInnsending =
     slug === 'behandlingsdager' || selvbestemtType === SelvbestemtTypeConst.Behandlingsdager;
@@ -161,6 +168,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
   const effektivHarGradertSykmelding = selvbestemtInnsending ? harGradertSykmeldingStore : harGradertSykmelding;
+
+  console.log('effektivHarGradertSykmelding', effektivHarGradertSykmelding);
 
   const schema = useMemo(
     () => createHovedskjemaSchema(effektivHarGradertSykmelding && harFlereArbeidsforhold),
@@ -273,10 +282,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       setValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
       setValue('kreverRefusjon', 'Ja');
       if (kvitteringData?.refusjon?.endringer && kvitteringData.refusjon.endringer.length > 0) {
-        const endringer = kvitteringData.refusjon.endringer.map((endring) => ({
-          beloep: endring.beloep,
-          startdato: parseIsoDate(endring.startdato)!
-        }));
+        const endringer = kvitteringData.refusjon.endringer
+          .map((endring) => {
+            const startdato = parseIsoDate(endring.startdato);
+            return startdato ? { beloep: endring.beloep, startdato } : null;
+          })
+          .filter((endring): endring is { startdato: Date; beloep: number } => endring !== null);
         setValue('refusjon.endringer', endringer);
         setValue('refusjon.harEndringer', 'Ja');
       } else {
@@ -348,7 +359,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sendInnSkjema(
       true,
       opplysningstyper,
-      slug,
+      slug ?? '',
       isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
       formData,
       begrensetForespoersel
@@ -405,7 +416,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(slug)) {
         onSetHentInntektEnGang(false);
 
-        fetchInntektsdata(environment.inntektsdataUrl, slug, inntektsdato)
+        fetchInntektsdata(environment.inntektsdataUrl, slug ?? '', inntektsdato)
           .then((inntektSisteTreMnd) => {
             const tidligereInntekt = new Map<string, number>(inntektSisteTreMnd.data.historikk);
             const tidligereInntektRecord = Object.fromEntries(tidligereInntekt) as Record<string, number | null>;
@@ -418,17 +429,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           });
       }
       setSisteInntektsdato(inntektsdato);
+      setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
-
-    setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, skjemastatus, inntektsdato, sykmeldingsperioder]);
 
   const { data, error } = useTidligereInntektsdata(
-    sykmeldt.fnr!,
-    avsender.orgnr!,
-    inntektsdato!,
+    sykmeldt.fnr ?? '',
+    avsender.orgnr ?? '',
+    inntektsdato,
     skjemastatus === SkjemaStatus.SELVBESTEMT && Boolean(inntektsdato)
   );
 
@@ -502,7 +512,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Skillelinje />
             <RefusjonArbeidsgiver
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
-              inntekt={inntektBeloep!}
+              inntekt={inntektBeloep ?? 0}
               behandlingsdager={behandlingsdagerInnsending}
             />
             <Skillelinje />
@@ -554,7 +564,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   if (
     (!isValidUUID(uuid) || hasEndreQuery) &&
     uuid !== 'arbeidsgiverInitiertInnsending' &&
-    uuid !== 'behandlingsdager'
+    uuid !== 'behandlingsdager' &&
+    uuid !== 'Fisker'
   ) {
     return {
       props: {
@@ -583,7 +594,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     return redirectTilLogin(context);
   }
 
-  if (uuid === 'arbeidsgiverInitiertInnsending' || uuid === 'behandlingsdager') {
+  if (uuid === 'arbeidsgiverInitiertInnsending' || uuid === 'behandlingsdager' || uuid === 'Fisker') {
     return {
       props: {
         slug: uuid,
@@ -592,7 +603,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
         forespurtStatus: null,
         dataFraBackend: false,
         harGradertSykmelding: false,
-        harFlereArbeidsforhold: true
+        harFlereArbeidsforhold: false
       }
     };
   }
