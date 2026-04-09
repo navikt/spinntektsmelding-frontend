@@ -79,9 +79,9 @@ export const handlers = [
     return new HttpResponse(null, { status: 404 });
   }),
 
-  http.get('*/api/v1/hent-forespoersel/:foresporselid', ({ params }) => {
-    const { foresporselid } = params;
-    const mockdataFile = forespoerselMockdataMap[foresporselid];
+  http.get('*/api/v1/hent-forespoersel/:forespoerselId', ({ params }) => {
+    const { forespoerselId } = params;
+    const mockdataFile = forespoerselMockdataMap[forespoerselId];
     const data = readMockdata(mockdataFile);
 
     if (data) {
@@ -90,9 +90,9 @@ export const handlers = [
     return new HttpResponse(null, { status: 404 });
   }),
 
-  http.get('*/api/v1/selvbestemt-inntektsmelding/:foresporselid', ({ params }) => {
-    const { foresporselid } = params;
-    const mockdataFile = kvitteringAgiMockdataMap[foresporselid] || 'kvittering-selvbestemt-ingen-agp';
+  http.get('*/api/v1/selvbestemt-inntektsmelding/:forespoerselId', ({ params }) => {
+    const { forespoerselId } = params;
+    const mockdataFile = kvitteringAgiMockdataMap[forespoerselId] || 'kvittering-selvbestemt-ingen-agp';
     const data = readMockdata(mockdataFile);
 
     if (data) {
@@ -101,9 +101,9 @@ export const handlers = [
     return new HttpResponse(null, { status: 404 });
   }),
 
-  http.get('*/api/v1/arbeidsforhold/:foresporselid', ({ params }) => {
-    const { foresporselid } = params;
-    const mockdataFile = arbeidsforholdMockdataMap[foresporselid];
+  http.get('*/api/v1/arbeidsforhold/:forespoerselId', ({ params }) => {
+    const { forespoerselId } = params;
+    const mockdataFile = arbeidsforholdMockdataMap[forespoerselId];
     const data = readMockdata(mockdataFile);
 
     if (data) {
@@ -113,9 +113,6 @@ export const handlers = [
   }),
 
   http.post('*/api/v1/arbeidsgiver/soknader', ({ body }) => {
-    // const { foresporselid } = params;
-
-    // const mockdataFile = 'soeknader';
     const mockdataFile = soeknaderMockdataMap[body?.fnr] || 'soeknader';
     const data = readMockdata(mockdataFile);
 

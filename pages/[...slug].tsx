@@ -43,7 +43,7 @@ import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import Heading3 from '../components/Heading3';
 import forespoerselType from '../config/forespoerselType';
-import { HovedskjemaSchema, createHovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
@@ -57,7 +57,7 @@ import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
 import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
 import hentSykmeldingsgradSSR from '../utils/hentSykmeldingsgradSSR';
-import { EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknaderSchema';
+import { EndepunktSykepengesoeknad, EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknaderSchema';
 import Faisu from '../components/Faisu/Faisu';
 
 const RequestStatus = {
@@ -139,16 +139,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
-<<<<<<< HEAD
-  let opplysningstyper = hentPaakrevdOpplysningstyper();
+  let opplysningstyper = useMemo(() => hentPaakrevdOpplysningstyper(), [hentPaakrevdOpplysningstyper]);
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
-=======
-  // let opplysningstyper = hentPaakrevdOpplysningstyper();
-  let opplysningstyper = useMemo(() => hentPaakrevdOpplysningstyper(), [hentPaakrevdOpplysningstyper]);
-  const skalViseEgenmelding = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend;
->>>>>>> ea7381c4 (Fisker)
+
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
 
@@ -158,8 +153,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   };
 
-  const selvbestemtInnsending =
-    slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT || slug === 'Fisker';
+  const selvbestemtInnsending = slug === 'arbeidsgiverInitiertInnsending' || skjemastatus === SkjemaStatus.SELVBESTEMT;
 
   const behandlingsdagerInnsending =
     slug === 'behandlingsdager' || selvbestemtType === SelvbestemtTypeConst.Behandlingsdager;
@@ -167,17 +161,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
-  const effektivHarGradertSykmelding = selvbestemtInnsending ? harGradertSykmeldingStore : harGradertSykmelding;
-
-  console.log('effektivHarGradertSykmelding', effektivHarGradertSykmelding);
-
-  const schema = useMemo(
-    () => createHovedskjemaSchema(effektivHarGradertSykmelding && harFlereArbeidsforhold),
-    [effektivHarGradertSykmelding, harFlereArbeidsforhold]
-  );
-
   const methods = useForm<Skjema>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(HovedskjemaSchema),
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
@@ -197,11 +182,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       opplysningstyper: opplysningstyper,
       agp: {
         redusertLoennIAgp: null
-      },
-      faisu: {
-        harLikLonn: undefined,
-        sykmeldtFraAlleArbeidsforhold: undefined,
-        arbeidsforhold: []
       }
     }
   });
@@ -282,12 +262,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       setValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
       setValue('kreverRefusjon', 'Ja');
       if (kvitteringData?.refusjon?.endringer && kvitteringData.refusjon.endringer.length > 0) {
-        const endringer = kvitteringData.refusjon.endringer
-          .map((endring) => {
-            const startdato = parseIsoDate(endring.startdato);
-            return startdato ? { beloep: endring.beloep, startdato } : null;
-          })
-          .filter((endring): endring is { startdato: Date; beloep: number } => endring !== null);
+        const endringer = kvitteringData.refusjon.endringer.map((endring) => ({
+          beloep: endring.beloep,
+          startdato: parseIsoDate(endring.startdato)!
+        }));
         setValue('refusjon.endringer', endringer);
         setValue('refusjon.harEndringer', 'Ja');
       } else {
@@ -359,7 +337,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     sendInnSkjema(
       true,
       opplysningstyper,
-      slug ?? '',
+      slug,
       isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
       formData,
       begrensetForespoersel
@@ -416,7 +394,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(slug)) {
         onSetHentInntektEnGang(false);
 
-        fetchInntektsdata(environment.inntektsdataUrl, slug ?? '', inntektsdato)
+        fetchInntektsdata(environment.inntektsdataUrl, slug, inntektsdato)
           .then((inntektSisteTreMnd) => {
             const tidligereInntekt = new Map<string, number>(inntektSisteTreMnd.data.historikk);
             const tidligereInntektRecord = Object.fromEntries(tidligereInntekt) as Record<string, number | null>;
@@ -429,8 +407,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           });
       }
       setSisteInntektsdato(inntektsdato);
-      setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
     }
+
+    setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, skjemastatus, inntektsdato, sykmeldingsperioder]);
@@ -444,6 +423,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
   const sbTidligereInntekt = !error && data?.historikk ? data?.historikk : undefined;
+
+  const aktivHarGradertSykmelding = harGradertSykmeldingStore || harGradertSykmelding;
 
   return (
     <div className={styles.container}>
@@ -502,18 +483,21 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 sbTidligereInntekt={sbTidligereInntekt}
               />
             )}
-            <Faisu harGradertSykmeldingOgFlereArbeidsforhold={effektivHarGradertSykmelding && harFlereArbeidsforhold} />
             {!harForespurtInntekt && (
               <>
                 <Heading3 unPadded>Beregnet månedslønn</Heading3>
                 <BodyLong>Vi trenger ikke informasjon om inntekt for dette sykefraværet.</BodyLong>
               </>
             )}
+
+            <Faisu harGradertSykmeldingOgFlereArbeidsforhold={aktivHarGradertSykmelding && harFlereArbeidsforhold} />
+
             <Skillelinje />
             <RefusjonArbeidsgiver
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
-              inntekt={inntektBeloep ?? 0}
+              inntekt={inntektBeloep!}
               behandlingsdager={behandlingsdagerInnsending}
+              harGradertSykmeldingOgFlereArbeidsforhold={aktivHarGradertSykmelding && harFlereArbeidsforhold}
             />
             <Skillelinje />
             <Naturalytelser />
@@ -561,12 +545,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   let arbeidsforhold = null;
   let harFlereArbeidsforhold = false;
 
-  if (
-    (!isValidUUID(uuid) || hasEndreQuery) &&
-    uuid !== 'arbeidsgiverInitiertInnsending' &&
-    uuid !== 'behandlingsdager' &&
-    uuid !== 'Fisker'
-  ) {
+  if (!isValidUUID(uuid) || hasEndreQuery) {
     return {
       props: {
         slug: uuid,
@@ -592,20 +571,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     /* håndter valideringsfeil */
     logger.warn('Validering av token feilet ved innhenting av forespurt data');
     return redirectTilLogin(context);
-  }
-
-  if (uuid === 'arbeidsgiverInitiertInnsending' || uuid === 'behandlingsdager' || uuid === 'Fisker') {
-    return {
-      props: {
-        slug: uuid,
-        erEndring: false,
-        forespurt: null,
-        forespurtStatus: null,
-        dataFraBackend: false,
-        harGradertSykmelding: false,
-        harFlereArbeidsforhold: false
-      }
-    };
   }
 
   const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
@@ -657,7 +622,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad.error);
       return redirectTilLogin(context);
     }
-    let sykmeldingsgrad: EndepunktSykepengesoeknader = [];
+    let sykmeldingsgrad: EndepunktSykepengesoeknader[] = [];
     try {
       sykmeldingsgrad = await hentSykmeldingsgradSSR(
         oboSykmeldingGrad.token ?? '',

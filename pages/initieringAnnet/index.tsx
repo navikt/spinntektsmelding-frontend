@@ -131,6 +131,7 @@ const InitieringAnnet: NextPage = () => {
     const mottatteData = EndepunktArbeidsforholdSchema.safeParse(data);
 
     if (mottatteData.success) {
+      console.log('Mottatte data om arbeidsforhold:', mottatteData.data);
       fulltNavn = mottatteData.data.fulltNavn;
 
       arbeidsforhold =
@@ -359,7 +360,7 @@ const InitieringAnnet: NextPage = () => {
     setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
     setSelvbestemtType(SelvbestemtTypeConst.MedArbeidsforhold);
     const harGradert = sykmeldingsperiode.some((periode: EndepunktSykepengesoeknad) =>
-      periode.soknadsperioder?.some((sp) => sp.grad < 100 || (sp.faktiskGrad != null && sp.faktiskGrad > 0))
+      periode?.soknadsperioder?.some((sp) => sp.grad < 100 || (sp.faktiskGrad != null && sp.faktiskGrad > 0))
     );
     setHarGradertSykmelding(harGradert);
     router.push('/arbeidsgiverInitiertInnsending');
