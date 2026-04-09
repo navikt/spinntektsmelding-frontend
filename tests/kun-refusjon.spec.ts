@@ -23,7 +23,6 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
 
     await formPage.fillInput('Telefon innsender', '12345678');
 
-    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
     // select refusjon under sykefravær
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
 

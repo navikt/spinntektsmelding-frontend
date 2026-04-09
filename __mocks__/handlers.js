@@ -98,9 +98,9 @@ export const handlers = [
     return new HttpResponse(null, { status: 404 });
   }),
 
-  http.get('*/api/v1/hent-forespoersel/:foresporselid', ({ params }) => {
-    const { foresporselid } = params;
-    const mockdataFile = forespoerselMockdataMap[foresporselid];
+  http.get('*/api/v1/hent-forespoersel/:forespoerselId', ({ params }) => {
+    const { forespoerselId } = params;
+    const mockdataFile = forespoerselMockdataMap[forespoerselId];
     const data = readMockdata(mockdataFile);
 
     if (foresporselid === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
@@ -113,9 +113,9 @@ export const handlers = [
     return new HttpResponse(null, { status: 404 });
   }),
 
-  http.get('*/api/v1/arbeidsforhold/:foresporselid', ({ params }) => {
-    const { foresporselid } = params;
-    const mockdataFile = arbeidsforholdMockdataMap[foresporselid];
+  http.get('*/api/v1/arbeidsforhold/:forespoerselId', ({ params }) => {
+    const { forespoerselId } = params;
+    const mockdataFile = arbeidsforholdMockdataMap[forespoerselId];
     const data = readMockdata(mockdataFile);
 
     if (data) {
@@ -125,9 +125,6 @@ export const handlers = [
   }),
 
   http.post('*/api/v1/arbeidsgiver/soknader', ({ body }) => {
-    // const { foresporselid } = params;
-
-    // const mockdataFile = 'soeknader';
     const mockdataFile = soeknaderMockdataMap[body?.fnr] || 'soeknader';
     const data = readMockdata(mockdataFile);
 

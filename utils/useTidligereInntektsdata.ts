@@ -10,10 +10,9 @@ function useTidligereInntektsdata(
   skalHenteInntektsdata?: boolean
 ) {
   return useSWRImmutable(
-    skalHenteInntektsdata
-      ? [environment.inntektsdataSelvbestemtUrl, identitetsnummer, orgnrUnderenhet, inntektsdato]
-      : null,
-    ([url, idToken, orgnr, dato]) => fetcherInntektsdataSelvbestemt(url, idToken, orgnr, dato),
+    [environment.inntektsdataSelvbestemtUrl, identitetsnummer, orgnrUnderenhet, inntektsdato],
+    ([url, idToken, orgnr, dato]) =>
+      fetcherInntektsdataSelvbestemt(skalHenteInntektsdata ? url : null, idToken, orgnr, dato),
     {
       onError: (err) => {
         console.error('Kunne ikke hente arbeidsforhold', err);
