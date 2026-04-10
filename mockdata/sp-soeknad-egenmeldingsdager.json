@@ -1,0 +1,34 @@
+[
+  {
+    "sykepengesoknadUuid": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
+    "fom": "2026-01-07",
+    "tom": "2026-01-09",
+    "sykmeldingId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
+    "status": "NY",
+    "startSykeforlop": "2026-01-07",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
+    "soknadsperioder": [{ "fom": "2026-01-07", "tom": "2026-01-09", "grad": 100, "faktiskGrad": null }]
+  },
+  {
+    "sykepengesoknadUuid": "550e8400-e29b-41d4-a716-446655440000",
+    "fom": "2026-01-16",
+    "tom": "2026-01-22",
+    "sykmeldingId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
+    "status": "NY",
+    "startSykeforlop": "2026-01-16",
+    "egenmeldingsdagerFraSykmelding": ["2026-01-14", "2026-01-15"],
+    "vedtaksperiodeId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e"
+  },
+  {
+    "sykepengesoknadUuid": "4009c928-d13b-45f9-90e4-1c98a421f464",
+    "fom": "2026-02-13",
+    "tom": "2026-02-13",
+    "sykmeldingId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
+    "status": "NY",
+    "startSykeforlop": "2026-02-13",
+    "egenmeldingsdagerFraSykmelding": ["2026-02-07"],
+    "vedtaksperiodeId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
+    "soknadsperioder": [{ "fom": "2026-02-13", "tom": "2026-02-13", "grad": 100, "faktiskGrad": null }]
+  }
+]
