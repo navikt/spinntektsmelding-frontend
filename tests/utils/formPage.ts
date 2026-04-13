@@ -1,7 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 
 export class FormPage {
-  private page: Page;
+  private readonly page: Page;
 
   constructor(page: Page) {
     this.page = page;
@@ -23,21 +23,19 @@ export class FormPage {
     await radioButton.uncheck();
   }
 
-  async getInput(label: string): Promise<Locator> {
-    // const input = this.page.getByLabel(label).nth(0);
-    const input = this.page.getByRole('textbox', { name: label });
-    // await expect(input).toBeVisible();
-    return input;
+  async getInput(label: string | RegExp): Promise<Locator> {
+    return this.page.getByRole('textbox', { name: label }).first();
   }
 
-  async fillInput(label: string, value: string): Promise<void> {
+  async fillInput(label: string | RegExp, value: string): Promise<void> {
     const input = await this.getInput(label);
-    // await input.fill('');
+    await expect(input).toBeVisible();
     await input.fill(value);
   }
 
-  async fillInputLast(label: string, value: string): Promise<void> {
-    const input = await this.page.getByRole('textbox', { name: label }).last();
+  async fillInputLast(label: string | RegExp, value: string): Promise<void> {
+    const input = this.page.getByRole('textbox', { name: label }).last();
+    await expect(input).toBeVisible();
     await input.fill('');
     await input.fill(value);
   }
@@ -47,6 +45,12 @@ export class FormPage {
     const button = index > 0 ? buttons.nth(index) : buttons.first();
     await expect(button).toBeVisible();
     await button.click();
+  }
+
+  async clickByDataCy(value: string): Promise<void> {
+    const element = this.page.locator(`[data-cy="${value}"]`).first();
+    await expect(element).toBeVisible();
+    await element.click();
   }
 
   async getInputValue(label: string): Promise<string> {
@@ -72,13 +76,13 @@ export class FormPage {
     await checkbox.uncheck();
   }
 
-  async selectOption(label: string, value: string): Promise<void> {
+  async selectOption(label: string | RegExp, value: string): Promise<void> {
     const select = this.page.getByRole('combobox', { name: label });
     await expect(select).toBeVisible();
     await select.selectOption(value);
   }
 
-  async getSelectedOption(label: string): Promise<string> {
+  async getSelectedOption(label: string | RegExp): Promise<string> {
     const select = this.page.getByRole('combobox', { name: label });
     await expect(select).toBeVisible();
     return await select.inputValue();
@@ -88,7 +92,7 @@ export class FormPage {
     return this.page.locator(`text="${text}"`);
   }
 
-  async assertInputValue(label: string, expected: string): Promise<void> {
+  async assertInputValue(label: string | RegExp, expected: string): Promise<void> {
     const input = await this.getInput(label);
     await expect(input).toHaveValue(expected);
   }
@@ -99,8 +103,27 @@ export class FormPage {
   }
 
   async assertVisibleTextAtLeastOnce(text: string): Promise<void> {
-    const el = this.page.getByText(text, { exact: false }).first();
-    await expect(el).toBeVisible();
+    const matches = this.page.getByText(text, { exact: false });
+
+    await expect
+      .poll(async () => {
+        const count = await matches.count();
+
+        for (let index = 0; index < count; index += 1) {
+          if (await matches.nth(index).isVisible()) {
+            return true;
+          }
+        }
+
+        return false;
+      })
+      .toBe(true);
+  }
+
+  async assertInputVisible(label: string | RegExp): Promise<void> {
+    const textbox = this.page.getByRole('textbox', { name: label });
+    const combobox = this.page.getByRole('combobox', { name: label });
+    await expect(textbox.or(combobox).first()).toBeVisible();
   }
 
   async assertSelectedOption(label: string, expected: string): Promise<void> {

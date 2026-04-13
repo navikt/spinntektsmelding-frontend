@@ -29,23 +29,17 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
 
   test('can check the radioboxes for refusjon and submit', async ({ page }) => {
     const formPage = new FormPage(page);
-    // click første "Endre"
-    await page.getByRole('button', { name: /Endre/ }).first().click();
 
-    // endre siste "Til"-dato
-    // await page.getByLabel('Til').nth(1).fill('16.03.23');
-    const TilFelt = await formPage.getInput('Til');
-    await expect(TilFelt.last()).toBeVisible();
-    await TilFelt.last().fill('');
-    await TilFelt.last().fill('16.03.23');
+    await formPage.clickByDataCy('endre-arbeidsgiverperiode');
+    await formPage.fillInputLast('Til', '16.03.23');
 
     // endre utbetalt beløp under arbeidsgiverperiode
+    await formPage.assertInputVisible('Utbetalt under arbeidsgiverperiode');
     await formPage.fillInput('Utbetalt under arbeidsgiverperiode', '50000');
 
     // velg begrunnelse for kort arbeidsgiverperiode
-    await page.getByLabel('Velg begrunnelse for kort arbeidsgiverperiode').selectOption({
-      label: 'Arbeidsforholdet er avsluttet'
-    });
+    await formPage.assertInputVisible('Velg begrunnelse for kort arbeidsgiverperiode');
+    await formPage.selectOption('Velg begrunnelse for kort arbeidsgiverperiode', 'Arbeidsforholdet er avsluttet');
 
     // velg "Nei" for refusjon under sykefraværet
     await page

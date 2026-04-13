@@ -56,8 +56,8 @@ type SykepengePeriode = {
   forespoerselId?: string;
   forlengelseAv?: string;
   egenmeldingsperiode?: {
-    fom: TDateISODate;
-    tom: TDateISODate;
+    fom: Date;
+    tom: Date;
   }[];
 };
 
@@ -99,9 +99,6 @@ const InitieringAnnet: NextPage = () => {
 
   let fulltNavn = '';
   let orgnrUnderenhet: string | undefined = undefined;
-  let antallDagerMellomSykmeldingsperioder = 0;
-  let blokkerInnsending = false;
-
   const skjemaSchema = SkjemaInitieringSchema.safeExtend({
     sykepengePeriodeId: z.array(z.uuid()).optional()
   });
@@ -127,33 +124,31 @@ const InitieringAnnet: NextPage = () => {
 
   const { data, error } = useArbeidsforhold(sykmeldt.fnr, setError);
   let orgNavnMangler = false;
+
   const handleSykepengePeriodeIdRadio = (value: any) => {
     setValue('sykepengePeriodeId', value);
   };
-
   if (data) {
     const mottatteData = EndepunktArbeidsforholdSchema.safeParse(data);
 
     if (mottatteData.success) {
       fulltNavn = mottatteData.data.fulltNavn;
 
-      if (mottatteData.success) {
-        arbeidsforhold =
-          mottatteData?.data?.underenheter && mottatteData.data.underenheter.length > 0 && !error
-            ? mottatteData.data.underenheter.map((arbeidsgiver: any) => {
-                if (arbeidsgiver.orgnrUnderenhet === null) {
-                  orgNavnMangler = true;
-                }
-                return {
-                  orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet,
-                  virksomhetsnavn: arbeidsgiver.virksomhetsnavn
-                };
-              })
-            : [];
+      arbeidsforhold =
+        mottatteData?.data?.underenheter && mottatteData.data.underenheter.length > 0 && !error
+          ? mottatteData.data.underenheter.map((arbeidsgiver: any) => {
+              if (arbeidsgiver.orgnrUnderenhet === null) {
+                orgNavnMangler = true;
+              }
+              return {
+                orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet,
+                virksomhetsnavn: arbeidsgiver.virksomhetsnavn
+              };
+            })
+          : [];
 
-        if (mottatteData?.data?.underenheter?.length === 1) {
-          orgnrUnderenhet = mottatteData?.data?.underenheter[0]?.orgnrUnderenhet;
-        }
+      if (mottatteData?.data?.underenheter?.length === 1) {
+        orgnrUnderenhet = mottatteData?.data?.underenheter[0]?.orgnrUnderenhet;
       }
     }
   }
@@ -264,17 +259,11 @@ const InitieringAnnet: NextPage = () => {
 
   const valgtePerioder = valgteUnikeSykepengePerioder.map((periode) => ({ fom: periode.fom, tom: periode.tom }));
 
-  antallDagerMellomSykmeldingsperioder = finnAntallDagerMellomSykmeldingsperioder(
+  const antallDagerMellomSykmeldingsperioder = finnAntallDagerMellomSykmeldingsperioder(
     valgtePerioder.concat(egenmeldingsPerioder ?? [])
   );
 
-  console.log('antallDagerMellomSykmeldingsperioder', antallDagerMellomSykmeldingsperioder);
-  console.log('valgteUnikeSykepengePerioder', valgteUnikeSykepengePerioder.concat(egenmeldingsPerioder));
-  console.log('egenmeldingsPerioder', egenmeldingsPerioder);
-
-  if (antallDagerMellomSykmeldingsperioder > 16) {
-    blokkerInnsending = true;
-  }
+  const blokkerInnsending = antallDagerMellomSykmeldingsperioder > 16;
 
   const harValgtPeriodeMedForlengelse =
     !!valgteUnikeSykepengePerioder && valgteUnikeSykepengePerioder.some((periode) => !!periode.forlengelseAv);
