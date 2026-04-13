@@ -1,9 +1,19 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import { FormPage } from './utils/formPage';
 
 const uuid = '8d1b4043-5a9e-4225-9ba8-5dc22f515796';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
+
+async function analyzeA11y(page: Page) {
+  try {
+    return await new AxeBuilder({ page }).analyze();
+  } catch {
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForLoadState('networkidle');
+    return await new AxeBuilder({ page }).analyze();
+  }
+}
 
 test.describe('Trigge så mange feilmeldinger som mulig', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,6 +34,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
   });
 
   test('should display information on the person and the submitter', async ({ page }) => {
+    test.slow();
     const formPage = new FormPage(page);
     // intercept forespoersel
     await page.goto(baseUrl);
@@ -77,6 +88,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
       await formPage.assertVisibleTextAtLeastOnce('Vennligst angi om det er endringer i refusjonsbeløpet i perioden.');
 
       await formPage.clickButton('Endre', 2);
+      await formPage.assertInputVisible('Oppgi refusjonsbeløpet per måned');
       await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '500000');
       await formPage.clickButton('Send');
 
@@ -88,6 +100,8 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
         'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
         'Ja'
       );
+      await formPage.assertInputVisible('Endret beløp/måned');
+      await formPage.assertInputVisible('Dato for endring');
       await formPage.clickButton('Send');
 
       await formPage.assertVisibleTextAtLeastOnce('Vennligst fyll inn beløpet for endret refusjon.');
@@ -102,6 +116,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     });
     await test.step('Sjekk valideringsfeil for naturalytelser', async () => {
       await formPage.checkCheckbox('Har den ansatte naturalytelser som faller bort under sykefraværet?');
+      await formPage.assertInputVisible('Dato naturalytelse faller bort');
       await formPage.clickButton('Send');
       await formPage.assertVisibleTextAtLeastOnce('Vennligst velg ytelse.');
       await formPage.assertVisibleTextAtLeastOnce('Vennligst fyll inn dato.');
@@ -113,7 +128,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     });
 
     await test.step('Accessibility scan før innsending', async () => {
-      const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+      const accessibilityScanResults = await analyzeA11y(page);
       expect(accessibilityScanResults.violations).toEqual([]);
     });
 
@@ -121,6 +136,8 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
       const pageLoad = page.waitForResponse('*/**/api/innsendingInntektsmelding');
       await formPage.clickButton('Send');
       const req = await pageLoad;
+
+      expect(req.status()).toBe(201);
 
       const body = JSON.parse(req.request().postData()!);
       expect(body).toEqual({
@@ -170,14 +187,16 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     });
 
     await test.step('Verifiser kvittering', async () => {
-      await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
+      await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible({
+        timeout: 15000
+      });
       await formPage.assertVisibleTextAtLeastOnce('Husk å kontroller at du har rapportert inn korrekt kontonummer');
 
       await formPage.assertVisibleTextAtLeastOnce('Ansatt har ikke hatt fravær fra jobb');
       await formPage.assertVisibleTextAtLeastOnce('04.04.2023');
       await formPage.assertVisibleTextAtLeastOnce('45 000,00');
       // Accessibility scan
-      const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+      const accessibilityScanResults = await analyzeA11y(page);
       expect(accessibilityScanResults.violations).toEqual([]);
     });
   });

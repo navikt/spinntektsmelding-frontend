@@ -1,6 +1,6 @@
 import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box } from '@navikt/ds-react';
 import { NextPage } from 'next';
-import { z } from 'zod';
+import { z, ZodSafeParseResult } from 'zod';
 import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -45,6 +45,8 @@ import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingspe
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import { finnAntallDagerMellomSykmeldingsperioder } from '../../utils/finnAntallDagerMellomSykmeldingsperioder';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
+import { differenceInDays } from 'date-fns/differenceInDays';
+import { isValid } from 'date-fns/isValid';
 
 type SykepengePeriode = {
   id: string;
@@ -53,6 +55,10 @@ type SykepengePeriode = {
   antallEgenmeldingsdager: number;
   forespoerselId?: string;
   forlengelseAv?: string;
+  egenmeldingsperiode?: {
+    fom: Date;
+    tom: Date;
+  }[];
 };
 
 type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
@@ -93,9 +99,6 @@ const InitieringAnnet: NextPage = () => {
 
   let fulltNavn = '';
   let orgnrUnderenhet: string | undefined = undefined;
-  let antallDagerMellomSykmeldingsperioder = 0;
-  let blokkerInnsending = false;
-
   const skjemaSchema = SkjemaInitieringSchema.safeExtend({
     sykepengePeriodeId: z.array(z.uuid()).optional()
   });
@@ -121,33 +124,31 @@ const InitieringAnnet: NextPage = () => {
 
   const { data, error } = useArbeidsforhold(sykmeldt.fnr, setError);
   let orgNavnMangler = false;
+
   const handleSykepengePeriodeIdRadio = (value: any) => {
     setValue('sykepengePeriodeId', value);
   };
-
   if (data) {
     const mottatteData = EndepunktArbeidsforholdSchema.safeParse(data);
 
     if (mottatteData.success) {
       fulltNavn = mottatteData.data.fulltNavn;
 
-      if (mottatteData.success) {
-        arbeidsforhold =
-          mottatteData?.data?.underenheter && mottatteData.data.underenheter.length > 0 && !error
-            ? mottatteData.data.underenheter.map((arbeidsgiver: any) => {
-                if (arbeidsgiver.orgnrUnderenhet === null) {
-                  orgNavnMangler = true;
-                }
-                return {
-                  orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet,
-                  virksomhetsnavn: arbeidsgiver.virksomhetsnavn
-                };
-              })
-            : [];
+      arbeidsforhold =
+        mottatteData?.data?.underenheter && mottatteData.data.underenheter.length > 0 && !error
+          ? mottatteData.data.underenheter.map((arbeidsgiver: any) => {
+              if (arbeidsgiver.orgnrUnderenhet === null) {
+                orgNavnMangler = true;
+              }
+              return {
+                orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet,
+                virksomhetsnavn: arbeidsgiver.virksomhetsnavn
+              };
+            })
+          : [];
 
-        if (mottatteData?.data?.underenheter?.length === 1) {
-          orgnrUnderenhet = mottatteData?.data?.underenheter[0]?.orgnrUnderenhet;
-        }
+      if (mottatteData?.data?.underenheter?.length === 1) {
+        orgnrUnderenhet = mottatteData?.data?.underenheter[0]?.orgnrUnderenhet;
       }
     }
   }
@@ -175,13 +176,48 @@ const InitieringAnnet: NextPage = () => {
 
     let perioder =
       mottatteSykepengesoknader.data.length > 0
-        ? mottatteSykepengesoknader.data.map((periode) => ({
-            fom: new Date(periode.fom),
-            tom: new Date(periode.tom),
-            id: periode.sykepengesoknadUuid,
-            antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length,
-            forespoerselId: periode.forespoerselId
-          }))
+        ? mottatteSykepengesoknader.data.map((periode) => {
+            const sorterteEgenmeldingsdager =
+              Array.isArray(periode.egenmeldingsdagerFraSykmelding) && periode.egenmeldingsdagerFraSykmelding.length > 0
+                ? [...periode.egenmeldingsdagerFraSykmelding].sort(
+                    (a, b) => new Date(a).getTime() - new Date(b).getTime()
+                  )
+                : [];
+
+            const egenmeldingsperiode =
+              sorterteEgenmeldingsdager.length === 0
+                ? []
+                : sorterteEgenmeldingsdager
+                    .reduce(
+                      (accumulator: any, currentValue: any) => {
+                        const tom = new Date(currentValue);
+                        const currentTom = new Date(accumulator[accumulator.length - 1].tom);
+
+                        if (differenceInDays(tom, currentTom) <= 1) {
+                          accumulator[accumulator.length - 1].tom = new Date(currentValue);
+                        } else {
+                          accumulator.push({ fom: new Date(currentValue), tom: new Date(currentValue) });
+                        }
+                        return accumulator;
+                      },
+                      [
+                        {
+                          fom: new Date(sorterteEgenmeldingsdager[0]),
+                          tom: new Date(sorterteEgenmeldingsdager[0])
+                        }
+                      ]
+                    )
+                    .filter((element: any) => isValid(element.fom) && isValid(element.tom));
+
+            return {
+              fom: new Date(periode.fom),
+              tom: new Date(periode.tom),
+              id: periode.sykepengesoknadUuid,
+              antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length,
+              forespoerselId: periode.forespoerselId,
+              egenmeldingsperiode: egenmeldingsperiode
+            };
+          })
         : [];
 
     return addForlengelseAvInfo(perioder);
@@ -214,14 +250,22 @@ const InitieringAnnet: NextPage = () => {
   }
 
   const valgteUnikeSykepengePerioder = finnSammenhengendePeriodeManuellJustering(
-    finnSorterteUnikePerioder(mergedSykmeldingsperioder)
+    finnSorterteUnikePerioder(
+      mergedSykmeldingsperioder.filter((periode) => !!periode && isValid(periode.fom) && isValid(periode.tom))
+    )
   ).filter((periode) => !!periode);
 
-  antallDagerMellomSykmeldingsperioder = finnAntallDagerMellomSykmeldingsperioder(valgteUnikeSykepengePerioder);
+  const egenmeldingsPerioder = valgteUnikeSykepengePerioder
+    .flatMap((periode) => periode.egenmeldingsperiode ?? [])
+    .filter((periode) => !!periode && isValid(periode.fom) && isValid(periode.tom));
 
-  if (antallDagerMellomSykmeldingsperioder > 16) {
-    blokkerInnsending = true;
-  }
+  const valgtePerioder = valgteUnikeSykepengePerioder.map((periode) => ({ fom: periode.fom, tom: periode.tom }));
+
+  const antallDagerMellomSykmeldingsperioder = finnAntallDagerMellomSykmeldingsperioder(
+    valgtePerioder.concat(egenmeldingsPerioder ?? [])
+  );
+
+  const blokkerInnsending = antallDagerMellomSykmeldingsperioder > 16;
 
   const harValgtPeriodeMedForlengelse =
     !!valgteUnikeSykepengePerioder && valgteUnikeSykepengePerioder.some((periode) => !!periode.forlengelseAv);
@@ -271,9 +315,7 @@ const InitieringAnnet: NextPage = () => {
 
   const getSykmeldingsperiode = (
     formData: Skjema,
-    mottatteSykepengesoeknader:
-      | SafeParseReturnType<EndepunktSykepengesoeknad[], EndepunktSykepengesoeknad[]>
-      | undefined
+    mottatteSykepengesoeknader: ZodSafeParseResult<EndepunktSykepengesoeknad[]> | undefined
   ) => {
     const sykmeldingsperiode: EndepunktSykepengesoeknad[] = [];
     for (const id of formData.sykepengePeriodeId || []) {
@@ -303,7 +345,10 @@ const InitieringAnnet: NextPage = () => {
     return sykmeldingsperiode;
   };
 
-  const handleValidFormData = (validerteData: any, sykmeldingsperiode: any) => {
+  const handleValidFormData = (
+    validerteData: z.infer<typeof InitieringSchema>,
+    sykmeldingsperiode: EndepunktSykepengesoeknad[]
+  ): void => {
     const orgNavn = arbeidsforhold.find(
       (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
     )?.virksomhetsnavn!;
@@ -312,7 +357,7 @@ const InitieringAnnet: NextPage = () => {
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
     initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
-    setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId);
+    setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
     setSelvbestemtType(SelvbestemtTypeConst.MedArbeidsforhold);
     router.push('/arbeidsgiverInitiertInnsending');
   };

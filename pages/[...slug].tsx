@@ -126,7 +126,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   );
 
   let opplysningstyper = hentPaakrevdOpplysningstyper();
-  const skalViseEgenmelding = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend;
+  const skalViseEgenmelding =
+    (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
+    skjemastatus === SkjemaStatus.SELVBESTEMT;
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
 
