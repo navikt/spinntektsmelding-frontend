@@ -184,27 +184,30 @@ const InitieringAnnet: NextPage = () => {
                   )
                 : [];
 
-            const egenmeldingsperiode = sorterteEgenmeldingsdager
-              .reduce(
-                (accumulator: any, currentValue: any) => {
-                  const tom = new Date(currentValue);
-                  const currentTom = new Date(accumulator[accumulator.length - 1].tom);
+            const egenmeldingsperiode =
+              sorterteEgenmeldingsdager.length === 0
+                ? []
+                : sorterteEgenmeldingsdager
+                    .reduce(
+                      (accumulator: any, currentValue: any) => {
+                        const tom = new Date(currentValue);
+                        const currentTom = new Date(accumulator[accumulator.length - 1].tom);
 
-                  if (differenceInDays(tom, currentTom) <= 1) {
-                    accumulator[accumulator.length - 1].tom = new Date(currentValue);
-                  } else {
-                    accumulator.push({ fom: new Date(currentValue), tom: new Date(currentValue) });
-                  }
-                  return accumulator;
-                },
-                [
-                  {
-                    fom: new Date(sorterteEgenmeldingsdager[0]),
-                    tom: new Date(sorterteEgenmeldingsdager[0])
-                  }
-                ]
-              )
-              .filter((element: any) => !!element.fom && !!element.tom);
+                        if (differenceInDays(tom, currentTom) <= 1) {
+                          accumulator[accumulator.length - 1].tom = new Date(currentValue);
+                        } else {
+                          accumulator.push({ fom: new Date(currentValue), tom: new Date(currentValue) });
+                        }
+                        return accumulator;
+                      },
+                      [
+                        {
+                          fom: new Date(sorterteEgenmeldingsdager[0]),
+                          tom: new Date(sorterteEgenmeldingsdager[0])
+                        }
+                      ]
+                    )
+                    .filter((element: any) => isValid(element.fom) && isValid(element.tom));
 
             return {
               fom: new Date(periode.fom),
