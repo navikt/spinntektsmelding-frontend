@@ -256,8 +256,7 @@ const InitieringAnnet: NextPage = () => {
   ).filter((periode) => !!periode);
 
   const egenmeldingsPerioder = valgteUnikeSykepengePerioder
-    .map((periode) => periode.egenmeldingsperiode ?? [])
-    .flat()
+    .flatMap((periode) => periode.egenmeldingsperiode ?? [])
     .filter((periode) => !!periode && isValid(periode.fom) && isValid(periode.tom));
 
   const valgtePerioder = valgteUnikeSykepengePerioder.map((periode) => ({ fom: periode.fom, tom: periode.tom }));
