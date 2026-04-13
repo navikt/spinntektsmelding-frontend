@@ -79,7 +79,12 @@ export class FormPage {
   async selectOption(label: string | RegExp, value: string): Promise<void> {
     const select = this.page.getByRole('combobox', { name: label });
     await expect(select).toBeVisible();
-    await select.selectOption(value);
+
+    try {
+      await select.selectOption({ label: value });
+    } catch {
+      await select.selectOption({ value });
+    }
   }
 
   async getSelectedOption(label: string | RegExp): Promise<string> {
