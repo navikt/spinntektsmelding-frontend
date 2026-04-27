@@ -1,6 +1,12 @@
 {
   "ansettelsesperioder": [
-    { "fom": "2006-02-24", "tom": null },
-    { "fom": "2006-02-24", "tom": null }
+    { "fom": "2006-02-24", "tom": null, "yrkeskode": "123456", "yrkestittel": "RENHOLDER", "arbeidsforholdId": "1" },
+    {
+      "fom": "2006-02-24",
+      "tom": null,
+      "yrkeskode": "123457",
+      "yrkestittel": "RENHOLDSINSPEKTØR",
+      "arbeidsforholdId": "2"
+    }
   ]
 }

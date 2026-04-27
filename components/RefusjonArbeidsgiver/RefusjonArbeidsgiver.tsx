@@ -18,16 +18,12 @@ import NumberField from '../NumberField/NumberField';
 
 interface RefusjonArbeidsgiverProps {
   skalViseArbeidsgiverperiode?: boolean;
-  inntekt: number;
   behandlingsdager?: boolean;
-  harGradertSykmeldingOgFlereArbeidsforhold?: boolean;
 }
 
 export default function RefusjonArbeidsgiver({
   skalViseArbeidsgiverperiode,
-  inntekt,
-  behandlingsdager,
-  harGradertSykmeldingOgFlereArbeidsforhold
+  behandlingsdager
 }: Readonly<RefusjonArbeidsgiverProps>) {
   const {
     watch,

@@ -31,7 +31,7 @@ type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
-    const mockdata = 'sp-soeknad';
+    const mockdata = 'ansettelsesforhold-to-perioder';
     const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
     if (!fs.existsSync(filePath)) {

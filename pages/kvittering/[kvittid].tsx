@@ -43,6 +43,7 @@ import useKvitteringInit, { MottattKvittering } from '../../state/useKvitteringI
 import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
 import { getKvitteringServerSideProps } from '../../utils/getKvitteringServerSideProps';
 import { useKvitteringData } from '../../utils/useKvitteringData';
+import FaisuKvittering from '../../components/FaisuKvittering/FaisuKvittering';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -278,6 +279,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   ))}
                 </>
               )}
+              <FaisuKvittering arbeidsforhold={kvitteringData?.faisu} />
               {(visRefusjon || visFullLonnIArbeidsgiverperioden) && (
                 <>
                   <Skillelinje />

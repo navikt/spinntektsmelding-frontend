@@ -1,9 +1,9 @@
-.naturalytelser {
+.table {
   margin-top: var(--ax-space-16);
   width: 100%;
 }
 
-.naturalytelser td,
-.naturalytelser th {
+.table th,
+.table td {
   text-align: left;
 }

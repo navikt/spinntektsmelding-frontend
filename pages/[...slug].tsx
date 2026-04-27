@@ -57,14 +57,16 @@ import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
 import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
 import hentSykmeldingsgradSSR from '../utils/hentSykmeldingsgradSSR';
-import { EndepunktSykepengesoeknad, EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknaderSchema';
+import { EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknaderSchema';
 import Faisu from '../components/Faisu/Faisu';
+import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
+import fetchArbeidsforhold from '../utils/fetchArbeidsforhold';
 
 const RequestStatus = {
   fulfilled: 'fulfilled',
   rejected: 'rejected',
   pending: 'pending'
-};
+} as const;
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -75,13 +77,15 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   forespurtStatus,
   dataFraBackend,
   harGradertSykmelding,
-  harFlereArbeidsforhold
+  harFlereArbeidsforhold: harFlereArbeidsforholdInitial,
+  ansettelsesforhold
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const lasterData = false;
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
+  const [harFlereArbeidsforhold, setHarFlereArbeidsforhold] = useState<boolean>(harFlereArbeidsforholdInitial);
 
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
@@ -243,6 +247,56 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   }, [bruttoinntekt.bruttoInntekt, setValue]);
 
+  const avsenderOrgnummer = useEffectEvent(() => {
+    return avsender.orgnr;
+  });
+
+  const sykmeldtFnr = useEffectEvent(() => {
+    return sykmeldt.fnr;
+  });
+
+  useEffect(() => {
+    if (!dataFraBackend && harGradertSykmeldingStore) {
+      fetchArbeidsforhold(
+        avsenderOrgnummer() ?? '',
+        sykmeldtFnr() ?? '',
+        sykmeldingsperioder?.at(0)?.fom,
+        sykmeldingsperioder?.at(-1)?.tom
+      ).then((response) => {
+        setHarFlereArbeidsforhold(response.ansettelsesperioder != null && response.ansettelsesperioder.length > 1);
+
+        const arbeidsforhold = response.ansettelsesperioder?.map((periode) => ({
+          arbeidsforholdId: periode.arbeidsforholdId,
+          maanedsloenn: undefined,
+          yrkeskode: periode.yrkeskode,
+          yrkestittel: periode.yrkestittel,
+          stillingsprosent: periode.stillingsprosent
+        }));
+        setValue('faisu.arbeidsforhold', arbeidsforhold, {
+          shouldDirty: true,
+          shouldValidate: true
+        });
+      });
+    }
+  }, [harGradertSykmeldingStore, setValue, dataFraBackend, sykmeldingsperioder]);
+
+  useEffect(() => {
+    if (ansettelsesforhold) {
+      setHarFlereArbeidsforhold(ansettelsesforhold.ansettelsesperioder.length > 1);
+      const arbeidsforhold = ansettelsesforhold.ansettelsesperioder.map((periode) => ({
+        arbeidsforholdId: periode.arbeidsforholdId,
+        maanedsloenn: undefined,
+        yrkeskode: periode.yrkeskode,
+        yrkestittel: periode.yrkestittel,
+        stillingsprosent: periode.stillingsprosent
+      }));
+      setValue('faisu.arbeidsforhold', arbeidsforhold, {
+        shouldDirty: true,
+        shouldValidate: true
+      });
+    }
+  }, [ansettelsesforhold, setValue]);
+
   useEffect(() => {
     if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp) {
       setValue('fullLonn', 'Ja');
@@ -262,10 +316,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       setValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
       setValue('kreverRefusjon', 'Ja');
       if (kvitteringData?.refusjon?.endringer && kvitteringData.refusjon.endringer.length > 0) {
-        const endringer = kvitteringData.refusjon.endringer.map((endring) => ({
-          beloep: endring.beloep,
-          startdato: parseIsoDate(endring.startdato)!
-        }));
+        const endringer = kvitteringData.refusjon.endringer
+          .map((endring) => {
+            const startdato = parseIsoDate(endring.startdato);
+            if (!startdato) {
+              return null;
+            }
+
+            return {
+              beloep: endring.beloep,
+              startdato
+            };
+          })
+          .filter((endring): endring is { beloep: number; startdato: Date } => endring !== null);
         setValue('refusjon.endringer', endringer);
         setValue('refusjon.harEndringer', 'Ja');
       } else {
@@ -424,7 +487,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const sbBruttoinntekt = !error && !inngangFraKvittering ? data?.gjennomsnitt : undefined;
   const sbTidligereInntekt = !error && data?.historikk ? data?.historikk : undefined;
 
-  const aktivHarGradertSykmelding = harGradertSykmeldingStore || harGradertSykmelding;
+  const aktivHarGradertSykmelding = harGradertSykmelding || harGradertSykmeldingStore;
 
   return (
     <div className={styles.container}>
@@ -495,9 +558,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <Skillelinje />
             <RefusjonArbeidsgiver
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
-              inntekt={inntektBeloep!}
               behandlingsdager={behandlingsdagerInnsending}
-              harGradertSykmeldingOgFlereArbeidsforhold={aktivHarGradertSykmelding && harFlereArbeidsforhold}
             />
             <Skillelinje />
             <Naturalytelser />
@@ -534,7 +595,7 @@ export default Home;
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
   const { slug, endre } = context.query;
-  const uuid = slug?.[0];
+  const uuid = slug?.[0] ?? '';
   const action = slug?.[1];
   const erEndring = action === 'overskriv';
   const hasEndreQuery = Boolean(endre);
@@ -545,6 +606,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   let harGradertSykmelding = false;
   let arbeidsforhold = null;
   let harFlereArbeidsforhold = false;
+  let ansettelsesforhold: Ansettelsesforhold | null;
 
   if (!isValidUUID(uuid) || hasEndreQuery) {
     return {
@@ -555,7 +617,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
         forespurtStatus: 404,
         dataFraBackend: false,
         harGradertSykmelding,
-        harFlereArbeidsforhold
+        harFlereArbeidsforhold,
+        ansettelsesforhold: null
       }
     };
   }
@@ -569,7 +632,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
 
   const validation = await validateToken(token ?? '');
   if (!validation.ok && !isDevelopment) {
-    /* håndter valideringsfeil */
     logger.warn('Validering av token feilet ved innhenting av forespurt data');
     return redirectTilLogin(context);
   }
@@ -579,12 +641,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     hentArbeidsforholdSSR(uuid, token ?? '') // Hent arbeidsforhold fra aaregisteret
   ]);
 
-  arbeidsforhold = arbeidsforholdResult.status === 'fulfilled' ? arbeidsforholdResult.value : null;
-  forespurt = forespurtResult.status === 'fulfilled' ? forespurtResult.value : null;
+  arbeidsforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
+  forespurt = forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null;
 
-  if (forespurtResult.status === 'fulfilled') {
+  if (forespurtResult.status === RequestStatus.fulfilled) {
     forespurtStatus = 200;
-  } else {
+  } else if (forespurtResult.status === RequestStatus.rejected) {
     logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.response?.status);
     forespurtStatus = forespurtResult.reason?.response?.status || 500;
   }
@@ -613,6 +675,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       };
     }
   }
+  ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
 
   if (arbeidsforhold?.ansettelsesperioder && arbeidsforhold.ansettelsesperioder.length > 1) {
     logger.info('Forespurt data inneholder flere ansettelsesperioder: %j', arbeidsforhold.ansettelsesperioder);
@@ -623,25 +686,32 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad.error);
       return redirectTilLogin(context);
     }
-    let sykmeldingsgrad: EndepunktSykepengesoeknader[] = [];
-    try {
-      sykmeldingsgrad = await hentSykmeldingsgradSSR(
-        oboSykmeldingGrad.token ?? '',
-        forespurt?.avsender.orgnr,
-        forespurt?.sykmeldt.fnr,
-        forespurt?.bestemmendeFravaersdag
-      );
-    } catch (error) {
-      logger.warn('Feil ved innhenting av sykmeldingsgrad: %j', error);
-    }
-    logger.info('Innhenting av sykmeldingsgrad for uuid %s fullført.', uuid);
-    logger.info('Sykmeldingsgrad data: %j', sykmeldingsgrad);
-    const aktuellSykmeldingsgrad = sykmeldingsgrad.find((sykmelding) => sykmelding.vedtaksperiodeId === uuid);
+    let sykmeldingsgrad: EndepunktSykepengesoeknader;
+    if (oboSykmeldingGrad.ok || isDevelopment) {
+      try {
+        sykmeldingsgrad = await hentSykmeldingsgradSSR(
+          oboSykmeldingGrad.token ?? '',
+          forespurt?.avsender.orgnr ?? '',
+          forespurt?.sykmeldt.fnr,
+          forespurt?.bestemmendeFravaersdag
+        );
+        logger.info('Innhenting av sykmeldingsgrad for uuid %s fullført.', uuid);
+        logger.info('Sykmeldingsgrad data: %j', sykmeldingsgrad);
+        const aktuellSykmeldingsgrad = sykmeldingsgrad.find((sykmelding) => sykmelding.vedtaksperiodeId === uuid);
 
-    harGradertSykmelding =
-      aktuellSykmeldingsgrad?.soknadsperioder?.some(
-        (periode) => periode.grad < 100 || (periode.faktiskGrad && periode.faktiskGrad > 0)
-      ) ?? false;
+        harGradertSykmelding =
+          aktuellSykmeldingsgrad?.soknadsperioder?.some(
+            (periode) => periode.grad < 100 || (periode.faktiskGrad && periode.faktiskGrad > 0)
+          ) ?? false;
+      } catch (error) {
+        logger.warn(
+          'Feil ved innhenting av sykmeldingsgrad: %j',
+          error instanceof Error ? { message: error.message } : null
+        );
+      }
+    } else {
+      logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad);
+    }
   }
 
   if (forespurt?.erBesvart && !overskriv) {
@@ -663,7 +733,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       forespurtStatus: forespurtStatus,
       dataFraBackend: !!forespurt && !hasEndreQuery,
       harGradertSykmelding,
-      harFlereArbeidsforhold
+      harFlereArbeidsforhold,
+      ansettelsesforhold: ansettelsesforhold ?? null
     }
   };
 }

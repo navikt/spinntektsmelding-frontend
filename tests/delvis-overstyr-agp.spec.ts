@@ -33,8 +33,8 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   const endreKnapp2 = page.locator('button:has-text("Endre")').nth(0);
   await endreKnapp2.click();
 
-  const maanedslonn = page.locator('label:has-text("Månedslønn 06.12.2024")');
-  await expect(maanedslonn).toHaveValue('36000');
+  const maanedsloenn = page.locator('label:has-text("Månedslønn 06.12.2024")');
+  await expect(maanedsloenn).toHaveValue('36000');
 
   await formPage.fillInput('Månedslønn 06.12.2024', '50000');
 

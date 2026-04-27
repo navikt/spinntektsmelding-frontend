@@ -119,7 +119,8 @@ export default function useFyllAapenInnsending() {
             }
           : null,
       arbeidsforholdType: arbeidsforholdType,
-      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser)
+      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
+      faisu: skjemaData?.faisu?.arbeidsforhold?.map((forhold) => ({ ...forhold }))
     });
 
     return innsending;

@@ -137,7 +137,8 @@ export default function useFyllInnsending() {
             }
           : null,
       avsenderTlf: skjemaData.avsenderTlf ?? '',
-      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser)
+      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
+      faisu: skjemaData?.faisu?.arbeidsforhold?.map((forhold) => ({ ...forhold }))
     };
 
     if (!harForespurtArbeidsgiverperiode) {

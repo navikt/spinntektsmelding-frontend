@@ -2,13 +2,13 @@ import { logger } from '@navikt/next-logger';
 import NetworkError from './NetworkError';
 import isValidUUID from './isValidUUID';
 
-const fetchKvitteringsdataSSR = (url: string, forespoerselId: string, token?: string) => {
+const fetchDataSSR = (url: string, forespoerselId: string, token?: string) => {
   if (isValidUUID(forespoerselId) === false) {
     logger.warn(`Ugyldig forespørselId: ${forespoerselId} - må være en gyldig UUID`);
     return Promise.resolve({ status: 404, data: {} });
   }
 
-  logger.info(`Henter kvitteringsdata for forespørselId: ${forespoerselId} fra url: ${url}`);
+  logger.info(`Henter data for forespørselId: ${forespoerselId} fra url: ${url}`);
 
   return fetch(`${url}/${forespoerselId}`, {
     method: 'GET',
@@ -51,4 +51,4 @@ const fetchKvitteringsdataSSR = (url: string, forespoerselId: string, token?: st
     });
 };
 
-export default fetchKvitteringsdataSSR;
+export default fetchDataSSR;

@@ -14,9 +14,9 @@ type HovedskjemaInput = {
   fullLonn?: 'Ja' | 'Nei';
   agp?: { redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string } | null };
   faisu?: {
-    harLikLonn?: 'Ja' | 'Nei';
+    harLikLoenn?: 'Ja' | 'Nei';
     sykmeldtFraAlleArbeidsforhold?: 'Ja' | 'Nei';
-    arbeidsforhold?: Array<{ arbeidsforholdId?: string; maanedslonn?: number }>;
+    arbeidsforhold?: Array<{ arbeidsforholdId?: string; maanedsloenn?: number; stillingsprosent?: number }>;
   };
   opplysningstyper?: string[];
 };
@@ -109,17 +109,17 @@ function validateRedusertLoennIAgp(val: HovedskjemaInput, ctx: z.RefinementCtx) 
 function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
   if (!val.faisu) return;
 
-  if (val.faisu.harLikLonn !== 'Ja' && val.faisu.harLikLonn !== 'Nei') {
+  if (val.faisu.harLikLoenn !== 'Ja' && val.faisu.harLikLoenn !== 'Nei') {
     ctx.issues.push({
       code: 'custom',
       message: 'Vennligst svar på om den ansatte har lik eller tilnærmet lik lønn i arbeidsforholdene.',
-      path: ['faisu', 'harLikLonn'],
-      input: val.faisu.harLikLonn
+      path: ['faisu', 'harLikLoenn'],
+      input: val.faisu.harLikLoenn
     });
     return;
   }
 
-  if (val.faisu.harLikLonn === 'Ja') {
+  if (val.faisu.harLikLoenn === 'Ja') {
     return;
   }
 
@@ -170,25 +170,63 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
       });
     }
 
-    if (item.maanedslonn === undefined || item.maanedslonn === null) {
+    if (item.maanedsloenn === undefined || item.maanedsloenn === null) {
       ctx.issues.push({
         code: 'custom',
         message: 'Vennligst oppgi spesifisert månedslønn.',
-        path: ['faisu', 'arbeidsforhold', index, 'maanedslonn'],
-        input: item.maanedslonn
+        path: ['faisu', 'arbeidsforhold', index, 'maanedsloenn'],
+        input: item.maanedsloenn
       });
       return;
     }
 
-    if (item.maanedslonn < 0) {
+    if (item.maanedsloenn < 0) {
       ctx.issues.push({
         code: 'custom',
         message: 'Månedslønn må være større enn eller lik 0.',
-        path: ['faisu', 'arbeidsforhold', index, 'maanedslonn'],
-        input: item.maanedslonn
+        path: ['faisu', 'arbeidsforhold', index, 'maanedsloenn'],
+        input: item.maanedsloenn
+      });
+    }
+
+    if (item.stillingsprosent === undefined || item.stillingsprosent === null) {
+      ctx.issues.push({
+        code: 'custom',
+        message: 'Vennligst oppgi spesifisert stillingsprosent.',
+        path: ['faisu', 'arbeidsforhold', index, 'stillingsprosent'],
+        input: item.stillingsprosent
+      });
+      return;
+    }
+
+    if (item.stillingsprosent < 0) {
+      ctx.issues.push({
+        code: 'custom',
+        message: 'Stillingsprosent må være større enn eller lik 0.',
+        path: ['faisu', 'arbeidsforhold', index, 'stillingsprosent'],
+        input: item.stillingsprosent
       });
     }
   });
+
+  if (val.inntekt?.beloep !== undefined) {
+    const totalMaanedsloenn = arbeidsforhold.reduce((sum, item) => {
+      if (item.maanedsloenn === undefined || item.maanedsloenn === null) {
+        return sum;
+      }
+
+      return sum + item.maanedsloenn;
+    }, 0);
+
+    if (totalMaanedsloenn > val.inntekt.beloep) {
+      ctx.issues.push({
+        code: 'custom',
+        message: 'Summen av månedslønn i arbeidsforholdene kan ikke være høyere enn beregnet månedslønn.',
+        path: ['faisu', 'arbeidsforhold'],
+        input: totalMaanedsloenn
+      });
+    }
+  }
 }
 
 export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
@@ -287,19 +325,28 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
         .or(z.undefined()),
       faisu: z
         .object({
-          harLikLonn: z.enum(['Ja', 'Nei']).or(z.undefined()),
+          harLikLoenn: z.enum(['Ja', 'Nei']).or(z.undefined()),
           sykmeldtFraAlleArbeidsforhold: z.enum(['Ja', 'Nei']).or(z.undefined()),
           arbeidsforhold: z
             .array(
               z.object({
                 arbeidsforholdId: z.string(),
-                maanedslonn: z
+                maanedsloenn: z
                   .number({
                     error: (issue) =>
                       issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
                   })
                   .min(0, 'Månedslønn må være større enn eller lik 0.')
-                  .or(z.undefined())
+                  .or(z.undefined()),
+                stillingsprosent: z
+                  .number({
+                    error: (issue) =>
+                      issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
+                  })
+                  .min(0, 'Stillingsprosent må være større enn eller lik 0.')
+                  .or(z.undefined()),
+                yrkeskode: z.string().or(z.undefined()),
+                yrkestittel: z.string().or(z.undefined())
               })
             )
             .or(z.undefined())
