@@ -1,14 +1,13 @@
 import { z } from 'zod';
 
 const AnsettelsesforholdSchema = z.object({
-  ansettelsesperioder: z.array(
+  ansettelsesforhold: z.array(
     z.object({
-      fom: z.string().min(1),
-      tom: z.string().nullable(),
-      arbeidsforholdId: z.string().min(1),
-      yrkeskode: z.string().min(1),
-      yrkestittel: z.string().min(1).optional(),
-      stillingsprosent: z.number().min(0).max(100).optional()
+      startdato: z.iso.date(),
+      sluttdato: z.iso.date().nullable(),
+      yrkesKode: z.string().min(1),
+      yrkesBeskrivelse: z.string().min(1),
+      stillingsprosent: z.number().min(0).max(100)
     })
   )
 });

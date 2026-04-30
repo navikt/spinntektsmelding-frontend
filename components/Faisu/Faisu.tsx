@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { BodyLong, Checkbox, CheckboxGroup, Radio, RadioGroup } from '@navikt/ds-react';
 import Heading1 from '../Heading1/Heading1';
 import Skillelinje from '../Skillelinje/Skillelinje';
@@ -6,13 +6,14 @@ import localStyles from './Faisu.module.css';
 import NumberField from '../NumberField/NumberField';
 import { Controller, FieldErrors, useFormContext, useWatch } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import formatCurrency from '../../utils/formatCurrency';
 
 interface FaisuArbeidsforholdSkjema {
-  arbeidsforholdId: string;
   maanedsloenn?: number;
   stillingsprosent?: number;
-  yrkeskode?: string;
-  yrkestittel?: string;
+  yrkesKode?: string;
+  yrkesBeskrivelse?: string;
+  aktivtSykefravaer?: boolean;
 }
 
 interface FaisuSkjema {
@@ -40,7 +41,18 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     [rawArbeidsforholdListe]
   );
 
-  const [checkedArbeidsforholdIder, setCheckedArbeidsforholdIder] = useState<string[]>([]);
+  const originalArbeidsforhold = useRef<FaisuArbeidsforholdSkjema[]>([]);
+  useEffect(() => {
+    if (arbeidsforholdListe.length > 0 && originalArbeidsforhold.current.length === 0) {
+      originalArbeidsforhold.current = arbeidsforholdListe;
+    }
+  }, [arbeidsforholdListe]);
+
+  const checkedArbeidsforholdIder = useMemo(
+    () =>
+      arbeidsforholdListe.map((af, index) => (af.aktivtSykefravaer ? String(index) : null)).filter((v) => v !== null),
+    [arbeidsforholdListe]
+  );
 
   if (!harGradertSykmeldingOgFlereArbeidsforhold) {
     return null;
@@ -58,11 +70,18 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     setValue('faisu.sykmeldtFraAlleArbeidsforhold', value, { shouldDirty: true, shouldValidate: true });
     if (value === 'Ja') {
       setValue('faisu.arbeidsforhold', [], { shouldDirty: true, shouldValidate: true });
+    } else {
+      setValue('faisu.arbeidsforhold', originalArbeidsforhold.current, { shouldDirty: true, shouldValidate: true });
     }
   };
 
   const handleArbeidsforholdCheckboxCheck = (values: string[]) => {
-    setCheckedArbeidsforholdIder(values);
+    arbeidsforholdListe.forEach((_, index) => {
+      setValue(`faisu.arbeidsforhold.${index}.aktivtSykefravaer` as any, values.includes(String(index)), {
+        shouldDirty: true,
+        shouldValidate: true
+      });
+    });
   };
 
   const parseNumberInput = (rawValue: string): number | undefined => {
@@ -75,11 +94,17 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     return Number.isNaN(parsedValue) ? undefined : parsedValue;
   };
 
-  const handleFeltChange = (arbeidsforholdId: string, felt: 'maanedsloenn' | 'stillingsprosent', rawValue: string) => {
+  const handleFeltChange = (index: number, felt: 'maanedsloenn' | 'stillingsprosent', rawValue: string) => {
     const parsedValue = parseNumberInput(rawValue);
-    const valgtIndex = arbeidsforholdListe.findIndex((af) => af.arbeidsforholdId === arbeidsforholdId);
 
-    setValue(`faisu.arbeidsforhold.${valgtIndex}.${felt}` as any, parsedValue, {
+    setValue(`faisu.arbeidsforhold.${index}.${felt}` as any, parsedValue, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+  };
+
+  const handleCheckboxChange = (index: number, value: boolean) => {
+    setValue(`faisu.arbeidsforhold.${index}.aktivtSykefravaer` as any, value, {
       shouldDirty: true,
       shouldValidate: true
     });
@@ -127,56 +152,71 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
             )}
           />
           {sykmeldtFraAlleArbeidsforhold === 'Nei' && (
-            <Controller
-              name='faisu.arbeidsforhold'
-              control={control}
-              render={({ fieldState }) => (
-                <CheckboxGroup
-                  legend='Hvilket arbeidsforhold gjelder sykefraværet for?'
-                  onChange={handleArbeidsforholdCheckboxCheck}
-                  value={checkedArbeidsforholdIder}
-                  error={fieldState.error?.message}
-                >
-                  <div className={localStyles.feltOverskrifter}>
-                    <span className={localStyles.tomtFelt} />
-                    <BodyLong>Månedslønn av beregnet inntekt</BodyLong>
-                    <BodyLong>Stillingsprosent i beregningsperioden</BodyLong>
-                  </div>
-                  {arbeidsforholdListe.map((arbeidsforhold, index) => {
-                    const label = arbeidsforhold.yrkestittel ?? arbeidsforhold.yrkeskode;
+            <>
+              <Controller
+                name='faisu.arbeidsforhold'
+                control={control}
+                render={({ fieldState }) => (
+                  <CheckboxGroup
+                    legend='Hvilket arbeidsforhold gjelder sykefraværet for?'
+                    onChange={handleArbeidsforholdCheckboxCheck}
+                    value={checkedArbeidsforholdIder}
+                    error={fieldState.error?.message}
+                  >
+                    <div className={localStyles.feltOverskrifter}>
+                      <BodyLong>Aktive arbeidsforhold</BodyLong>
+                      <BodyLong>Månedslønn av beregnet inntekt</BodyLong>
+                      <BodyLong>Stillingsprosent i beregningsperioden</BodyLong>
+                    </div>
+                    {arbeidsforholdListe.map((arbeidsforhold, index) => {
+                      const label = arbeidsforhold.yrkesBeskrivelse ?? arbeidsforhold.yrkesKode;
 
-                    return (
-                      <div key={arbeidsforhold.arbeidsforholdId} className={localStyles.arbeidsforholdRad}>
-                        <Checkbox
-                          className={localStyles.arbeidsforholdCheckbox}
-                          value={arbeidsforhold.arbeidsforholdId}
-                        >
-                          {label}
-                        </Checkbox>
-                        <NumberField
-                          className={localStyles.inputInntekt}
-                          label={`Månedslønn for ${label}`}
-                          value={arbeidsforhold.maanedsloenn}
-                          error={fieldStateErrorMessage(errors, `faisu.arbeidsforhold.${index}.maanedsloenn`)}
-                          onChange={(event) => {
-                            handleFeltChange(arbeidsforhold.arbeidsforholdId, 'maanedsloenn', event.target.value);
-                          }}
-                        />
-                        <NumberField
-                          className={localStyles.inputInntekt}
-                          label={`Stillingsprosent for ${label}`}
-                          value={arbeidsforhold.stillingsprosent}
-                          error={fieldStateErrorMessage(errors, `faisu.arbeidsforhold.${index}.stillingsprosent`)}
-                          onChange={(event) => {
-                            handleFeltChange(arbeidsforhold.arbeidsforholdId, 'stillingsprosent', event.target.value);
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-                </CheckboxGroup>
-              )}
-            />
+                      return (
+                        <div key={'yk' + index} className={localStyles.arbeidsforholdRad}>
+                          <Checkbox
+                            className={localStyles.arbeidsforholdCheckbox}
+                            value={String(index)}
+                            onChange={(e) => handleCheckboxChange(index, e.target.checked)}
+                          >
+                            {label}
+                          </Checkbox>
+                          <NumberField
+                            className={localStyles.inputInntekt}
+                            label={`Månedslønn for ${label}`}
+                            value={arbeidsforhold.maanedsloenn}
+                            error={fieldStateErrorMessage(errors, `faisu.arbeidsforhold.${index}.maanedsloenn`)}
+                            onChange={(event) => {
+                              handleFeltChange(index, 'maanedsloenn', event.target.value);
+                            }}
+                          />
+                          <NumberField
+                            className={localStyles.inputInntekt}
+                            label={`Stillingsprosent for ${label}`}
+                            value={arbeidsforhold.stillingsprosent}
+                            error={fieldStateErrorMessage(errors, `faisu.arbeidsforhold.${index}.stillingsprosent`)}
+                            onChange={(event) => {
+                              handleFeltChange(index, 'stillingsprosent', event.target.value);
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </CheckboxGroup>
+                )}
+              />
+              <div className={localStyles.arbeidsforholdRad}>
+                <div className={localStyles.arbeidsforholdCheckbox}></div>
+                <div className={localStyles.outputInntekt}>
+                  {formatCurrency(
+                    arbeidsforholdListe.reduce((acc, arbeidsforhold) => acc + (arbeidsforhold.maanedsloenn ?? 0), 0)
+                  )}
+                </div>
+                <div className={localStyles.outputInntekt}>
+                  {arbeidsforholdListe.reduce((acc, arbeidsforhold) => acc + (arbeidsforhold.stillingsprosent ?? 0), 0)}{' '}
+                  %
+                </div>
+              </div>
+            </>
           )}
         </>
       )}

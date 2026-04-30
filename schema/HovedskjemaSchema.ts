@@ -16,7 +16,7 @@ type HovedskjemaInput = {
   faisu?: {
     harLikLoenn?: 'Ja' | 'Nei';
     sykmeldtFraAlleArbeidsforhold?: 'Ja' | 'Nei';
-    arbeidsforhold?: Array<{ arbeidsforholdId?: string; maanedsloenn?: number; stillingsprosent?: number }>;
+    arbeidsforhold?: Array<{ maanedsloenn?: number; stillingsprosent?: number; aktivtSykefravaer?: boolean }>;
   };
   opplysningstyper?: string[];
 };
@@ -139,7 +139,7 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
 
   const arbeidsforhold = val.faisu.arbeidsforhold ?? [];
 
-  if (arbeidsforhold.length === 0) {
+  if (!arbeidsforhold.some((item) => item.aktivtSykefravaer)) {
     ctx.issues.push({
       code: 'custom',
       message: 'Vennligst velg minst ett arbeidsforhold.',
@@ -149,27 +149,19 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
     return;
   }
 
-  const arbeidsforholdIder = arbeidsforhold.map((item) => item.arbeidsforholdId);
-  const unikeArbeidsforholdIder = new Set(arbeidsforholdIder);
-  if (unikeArbeidsforholdIder.size !== arbeidsforholdIder.length) {
+  if (arbeidsforhold.every((item) => item.aktivtSykefravaer)) {
     ctx.issues.push({
       code: 'custom',
-      message: 'Arbeidsforhold kan ikke velges flere ganger.',
+      message: 'Du svart "Nei" på om personen er sykmeldt fra alle arbeidsforhold. ',
       path: ['faisu', 'arbeidsforhold'],
       input: arbeidsforhold
     });
+    return;
   }
 
-  arbeidsforhold.forEach((item, index) => {
-    if (!item.arbeidsforholdId) {
-      ctx.issues.push({
-        code: 'custom',
-        message: 'Arbeidsforhold mangler.',
-        path: ['faisu', 'arbeidsforhold', index, 'arbeidsforholdId'],
-        input: item.arbeidsforholdId
-      });
-    }
+  const valgteArbeidsforhold = arbeidsforhold.filter((item) => item.aktivtSykefravaer);
 
+  valgteArbeidsforhold.forEach((item, index) => {
     if (item.maanedsloenn === undefined || item.maanedsloenn === null) {
       ctx.issues.push({
         code: 'custom',
@@ -218,10 +210,10 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
       return sum + item.maanedsloenn;
     }, 0);
 
-    if (totalMaanedsloenn > val.inntekt.beloep) {
+    if (totalMaanedsloenn !== val.inntekt.beloep) {
       ctx.issues.push({
         code: 'custom',
-        message: 'Summen av månedslønn i arbeidsforholdene kan ikke være høyere enn beregnet månedslønn.',
+        message: 'Summen av månedslønn i arbeidsforholdene må være lik beregnet månedslønn.',
         path: ['faisu', 'arbeidsforhold'],
         input: totalMaanedsloenn
       });
@@ -323,35 +315,37 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
         })
         .or(z.object({}))
         .or(z.undefined()),
-      faisu: z
-        .object({
-          harLikLoenn: z.enum(['Ja', 'Nei']).or(z.undefined()),
-          sykmeldtFraAlleArbeidsforhold: z.enum(['Ja', 'Nei']).or(z.undefined()),
-          arbeidsforhold: z
-            .array(
-              z.object({
-                arbeidsforholdId: z.string(),
-                maanedsloenn: z
-                  .number({
-                    error: (issue) =>
-                      issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
+      faisu: skalValidereFaisu
+        ? z
+            .object({
+              harLikLoenn: z.enum(['Ja', 'Nei']).or(z.undefined()),
+              sykmeldtFraAlleArbeidsforhold: z.enum(['Ja', 'Nei']).or(z.undefined()),
+              arbeidsforhold: z
+                .array(
+                  z.object({
+                    maanedsloenn: z
+                      .number({
+                        error: (issue) =>
+                          issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
+                      })
+                      .min(0, 'Månedslønn må være større enn eller lik 0.')
+                      .or(z.undefined()),
+                    stillingsprosent: z
+                      .number({
+                        error: (issue) =>
+                          issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
+                      })
+                      .min(0, 'Stillingsprosent må være større enn eller lik 0.')
+                      .or(z.undefined()),
+                    yrkesKode: z.string().or(z.undefined()),
+                    yrkesBeskrivelse: z.string().or(z.undefined()),
+                    aktivtSykefravaer: z.boolean().optional()
                   })
-                  .min(0, 'Månedslønn må være større enn eller lik 0.')
-                  .or(z.undefined()),
-                stillingsprosent: z
-                  .number({
-                    error: (issue) =>
-                      issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
-                  })
-                  .min(0, 'Stillingsprosent må være større enn eller lik 0.')
-                  .or(z.undefined()),
-                yrkeskode: z.string().or(z.undefined()),
-                yrkestittel: z.string().or(z.undefined())
-              })
-            )
+                )
+                .or(z.undefined())
+            })
             .or(z.undefined())
-        })
-        .or(z.undefined()),
+        : z.any(),
       avsenderTlf: TelefonNummerSchema,
       opplysningstyper: z.array(OpplysningstypeSchema).optional()
     })

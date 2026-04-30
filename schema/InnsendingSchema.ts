@@ -221,7 +221,6 @@ export const InnsendingSchema = z.object({
   faisu: z
     .array(
       z.object({
-        arbeidsforholdId: z.string(),
         maanedsloenn: z
           .number({
             error: (issue) => (issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined)
@@ -234,9 +233,9 @@ export const InnsendingSchema = z.object({
           })
           .min(0, 'Stillingsprosent må være større enn eller lik 0.')
           .or(z.undefined()),
-        yrkeskode: z.string().or(z.undefined()),
-        yrkestittel: z.string().or(z.undefined()),
-        stillingsprosent: z.number().min(0).max(100).or(z.undefined())
+        yrkesKode: z.string().or(z.undefined()),
+        yrkesBeskrivelse: z.string().or(z.undefined()),
+        aktivtSykefravaer: z.boolean().optional()
       })
     )
     .or(z.undefined())

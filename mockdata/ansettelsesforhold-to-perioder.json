@@ -1,12 +1,18 @@
 {
-  "ansettelsesperioder": [
-    { "fom": "2006-02-24", "tom": null, "yrkeskode": "123456", "yrkestittel": "RENHOLDER", "arbeidsforholdId": "1" },
+  "ansettelsesforhold": [
     {
-      "fom": "2006-02-24",
-      "tom": null,
-      "yrkeskode": "123457",
-      "yrkestittel": "RENHOLDSINSPEKTØR",
-      "arbeidsforholdId": "2"
+      "startdato": "2006-02-24",
+      "sluttdato": null,
+      "yrkesKode": "123456",
+      "yrkesBeskrivelse": "RENHOLDER",
+      "stillingsprosent": 50.0
+    },
+    {
+      "startdato": "2006-02-24",
+      "sluttdato": null,
+      "yrkesKode": "123457",
+      "yrkesBeskrivelse": "RENHOLDSINSPEKTØR",
+      "stillingsprosent": 50.0
     }
   ]
 }

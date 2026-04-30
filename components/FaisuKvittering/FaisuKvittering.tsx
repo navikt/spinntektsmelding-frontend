@@ -2,9 +2,10 @@ import localStyles from './FaisuKvittering.module.css';
 
 type FaisuArbeidsforhold = {
   arbeidsforholdId: string;
-  yrkestittel?: string;
+  yrkesBeskrivelse?: string;
   maanedsloenn?: number;
   stillingsprosent?: number;
+  aktivtSykefravaer?: boolean;
 };
 
 type FaisuKvitteringProps = {
@@ -20,16 +21,18 @@ export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitte
     <table className={localStyles.table}>
       <thead>
         <tr>
+          <th>Syk</th>
           <th>Yrkestittel</th>
           <th>Månedslønn</th>
           <th>Stillingsprosent</th>
         </tr>
       </thead>
       <tbody>
-        {arbeidsforhold.map((forhold) => {
+        {arbeidsforhold.map((forhold, index) => {
           return (
-            <tr key={forhold.arbeidsforholdId}>
-              <td>{forhold.yrkestittel}</td>
+            <tr key={'fk' + index}>
+              <td>{forhold.aktivtSykefravaer ? 'Ja' : 'Nei'}</td>
+              <td>{forhold.yrkesBeskrivelse}</td>
               <td>{forhold.maanedsloenn}</td>
               <td>{forhold.stillingsprosent} %</td>
             </tr>

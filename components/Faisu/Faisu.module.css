@@ -39,6 +39,10 @@
   margin-top: 1.05rem;
 }
 
+.outputInntekt {
+  margin-left: var(--ax-space-12);
+}
+
 @media (min-width: 769px) {
   .arbeidsforholdRad :global(.aksel-form-field__label) {
     display: none;

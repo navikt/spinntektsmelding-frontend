@@ -43,7 +43,7 @@ import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import Heading3 from '../components/Heading3';
 import forespoerselType from '../config/forespoerselType';
-import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import { HovedskjemaSchema, createHovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
@@ -129,6 +129,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.harGradertSykmelding
   ]);
 
+  console.log('forespurt', forespurt);
+  console.log(JSON.stringify(forespurt, null, 2));
+
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
   const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
 
@@ -143,10 +146,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
-  let opplysningstyper = useMemo(() => hentPaakrevdOpplysningstyper(), [hentPaakrevdOpplysningstyper]);
+  let opplysningstyper = useMemo(
+    () => hentPaakrevdOpplysningstyper(forespurt),
+    [hentPaakrevdOpplysningstyper, forespurt]
+  );
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
+  console.log('opplysningstyper', opplysningstyper);
 
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
@@ -164,9 +171,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
+  console.log('skalViseArbeidsgiverperiode', skalViseArbeidsgiverperiode);
+  console.log('harForespurtArbeidsgiverperiode', harForespurtArbeidsgiverperiode);
+  console.log('overstyrSkalViseAgp', overstyrSkalViseAgp);
+
+  const skalValidereFaisu = (harGradertSykmelding || harGradertSykmeldingStore) && harFlereArbeidsforhold;
 
   const methods = useForm<Skjema>({
-    resolver: zodResolver(HovedskjemaSchema),
+    resolver: zodResolver(createHovedskjemaSchema(skalValidereFaisu)),
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
@@ -263,14 +275,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         sykmeldingsperioder?.at(0)?.fom,
         sykmeldingsperioder?.at(-1)?.tom
       ).then((response) => {
-        setHarFlereArbeidsforhold(response.ansettelsesperioder != null && response.ansettelsesperioder.length > 1);
+        setHarFlereArbeidsforhold(response.ansettelsesforhold != null && response.ansettelsesforhold.length > 1);
 
-        const arbeidsforhold = response.ansettelsesperioder?.map((periode) => ({
-          arbeidsforholdId: periode.arbeidsforholdId,
+        const arbeidsforhold = response.ansettelsesforhold?.map((periode) => ({
           maanedsloenn: undefined,
-          yrkeskode: periode.yrkeskode,
-          yrkestittel: periode.yrkestittel,
-          stillingsprosent: periode.stillingsprosent
+          yrkesKode: periode.yrkesKode,
+          yrkesBeskrivelse: periode.yrkesBeskrivelse,
+          stillingsprosent: periode.stillingsprosent,
+          aktivtSykefravaer: undefined
         }));
         setValue('faisu.arbeidsforhold', arbeidsforhold, {
           shouldDirty: true,
@@ -282,13 +294,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   useEffect(() => {
     if (ansettelsesforhold) {
-      setHarFlereArbeidsforhold(ansettelsesforhold.ansettelsesperioder.length > 1);
-      const arbeidsforhold = ansettelsesforhold.ansettelsesperioder.map((periode) => ({
-        arbeidsforholdId: periode.arbeidsforholdId,
+      setHarFlereArbeidsforhold(ansettelsesforhold.ansettelsesforhold.length > 1);
+      const arbeidsforhold = ansettelsesforhold.ansettelsesforhold.map((periode) => ({
         maanedsloenn: undefined,
-        yrkeskode: periode.yrkeskode,
-        yrkestittel: periode.yrkestittel,
-        stillingsprosent: periode.stillingsprosent
+        yrkesKode: periode.yrkesKode,
+        yrkesBeskrivelse: periode.yrkesBeskrivelse,
+        stillingsprosent: periode.stillingsprosent,
+        aktivtSykefravaer: undefined
       }));
       setValue('faisu.arbeidsforhold', arbeidsforhold, {
         shouldDirty: true,
@@ -389,11 +401,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     if (skalViseArbeidsgiverperiode) {
       opplysningstyper = [...opplysningstyper, forespoerselType.arbeidsgiverperiode];
-
+      console.log('opplysningstyper ved submit', opplysningstyper);
       setPaakrevdeOpplysninger(opplysningstyper);
     } else if (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode)) {
       opplysningstyper = opplysningstyper.filter((t) => t !== forespoerselType.arbeidsgiverperiode);
-
+      console.log('opplysningstyper ved submit 2', opplysningstyper);
       setPaakrevdeOpplysninger(opplysningstyper);
     }
 
@@ -471,7 +483,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       }
       setSisteInntektsdato(inntektsdato);
     }
-
+    console.log('setPaakrevdeOpplysninger', hentPaakrevdOpplysningstyper());
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -500,7 +512,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <PageContent title='Inntektsmelding'>
         <FormProvider {...methods}>
-          <form className={styles.padded} onSubmit={handleSubmit(submitForm)}>
+          <form
+            className={styles.padded}
+            onSubmit={handleSubmit(submitForm, (errors) => console.log('Submit feil:', errors))}
+          >
             <Person />
             <Skillelinje />
             <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
@@ -552,9 +567,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 <BodyLong>Vi trenger ikke informasjon om inntekt for dette sykefraværet.</BodyLong>
               </>
             )}
-
             <Faisu harGradertSykmeldingOgFlereArbeidsforhold={aktivHarGradertSykmelding && harFlereArbeidsforhold} />
-
             <Skillelinje />
             <RefusjonArbeidsgiver
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
@@ -608,7 +621,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   let harFlereArbeidsforhold = false;
   let ansettelsesforhold: Ansettelsesforhold | null;
 
-  if (!isValidUUID(uuid) || hasEndreQuery) {
+  if (!isValidUUID(uuid)) {
     return {
       props: {
         slug: uuid,
@@ -677,8 +690,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   }
   ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
 
-  if (arbeidsforhold?.ansettelsesperioder && arbeidsforhold.ansettelsesperioder.length > 1) {
-    logger.info('Forespurt data inneholder flere ansettelsesperioder: %j', arbeidsforhold.ansettelsesperioder);
+  if (arbeidsforhold?.ansettelsesforhold && arbeidsforhold.ansettelsesforhold.length > 1) {
+    logger.info('Forespurt data inneholder flere ansettelsesforhold: %j', arbeidsforhold.ansettelsesforhold);
     harFlereArbeidsforhold = true;
 
     const oboSykmeldingGrad = await requestOboToken(token ?? '', process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID ?? '');
@@ -714,9 +727,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     }
   }
 
-  if (forespurt?.erBesvart && !overskriv) {
+  if (forespurt?.erBesvart && !overskriv && !hasEndreQuery) {
     const ingress = context.req.headers.host + environment.baseUrl;
-    const destination = `https://${ingress}/kvittering/${uuid}`;
+    const isLocalhost =
+      context.req.headers.host?.startsWith('localhost') || context.req.headers.host?.startsWith('127.0.0.1');
+    const protocol = isLocalhost ? 'http' : 'https';
+    const destination = `${protocol}://${ingress}/kvittering/${uuid}`;
     return {
       redirect: {
         destination: destination,
@@ -729,12 +745,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     props: {
       slug: uuid,
       erEndring,
-      forespurt: forespurt,
+      forespurt: hasEndreQuery ? null : forespurt,
       forespurtStatus: forespurtStatus,
       dataFraBackend: !!forespurt && !hasEndreQuery,
       harGradertSykmelding,
       harFlereArbeidsforhold,
-      ansettelsesforhold: ansettelsesforhold ?? null
+      ansettelsesforhold: harFlereArbeidsforhold && ansettelsesforhold ? ansettelsesforhold : null
     }
   };
 }
