@@ -720,9 +720,44 @@ describe('getServerSideProps', () => {
 
     expect(result).toHaveProperty('redirect');
     expect((result as any).redirect.destination).toBe(
-      'https://localhost:3000/im-dialog/kvittering/550e8400-e29b-41d4-a716-446655440000'
+      'http://localhost:3000/im-dialog/kvittering/550e8400-e29b-41d4-a716-446655440000'
     );
     expect((result as any).redirect.permanent).toBe(false);
+  });
+
+  it('redirects to kvittering with https when erBesvart is true in production environment', async () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+
+    const { getToken, validateToken } = await import('@navikt/oasis');
+    vi.mocked(getToken).mockReturnValueOnce('mock-token');
+    vi.mocked(validateToken).mockResolvedValueOnce({ ok: true });
+
+    const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+    vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce({
+      erBesvart: true
+    } as any);
+
+    const context = {
+      query: {
+        slug: ['550e8400-e29b-41d4-a716-446655440000']
+      },
+      req: {
+        headers: {
+          host: 'arbeidsgiver.nav.no'
+        }
+      }
+    } as any;
+
+    const result = await getServerSideProps(context);
+
+    expect(result).toHaveProperty('redirect');
+    expect((result as any).redirect.destination).toBe(
+      'https://arbeidsgiver.nav.no/im-dialog/kvittering/550e8400-e29b-41d4-a716-446655440000'
+    );
+    expect((result as any).redirect.permanent).toBe(false);
+
+    process.env.NODE_ENV = originalEnv;
   });
 
   it('does not redirect to kvittering when erBesvart is true but overskriv slug exists', async () => {
