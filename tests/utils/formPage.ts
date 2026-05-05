@@ -65,13 +65,13 @@ export class FormPage {
   }
 
   async checkCheckbox(label: string): Promise<void> {
-    const checkbox = this.page.getByLabel(label);
+    const checkbox = this.page.getByLabel(label, { exact: true });
     await expect(checkbox).toBeVisible();
     await checkbox.check();
   }
 
   async uncheckCheckbox(label: string): Promise<void> {
-    const checkbox = this.page.getByLabel(label);
+    const checkbox = this.page.getByLabel(label, { exact: true });
     await expect(checkbox).toBeVisible();
     await checkbox.uncheck();
   }
