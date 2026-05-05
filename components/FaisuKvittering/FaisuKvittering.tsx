@@ -2,7 +2,7 @@ import localStyles from './FaisuKvittering.module.css';
 
 type FaisuArbeidsforhold = {
   arbeidsforholdId: string;
-  yrkesBeskrivelse?: string;
+  yrkesbeskrivelse?: string;
   maanedsloenn?: number;
   stillingsprosent?: number;
   aktivtSykefravaer?: boolean;
@@ -32,7 +32,7 @@ export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitte
           return (
             <tr key={'fk' + index}>
               <td>{forhold.aktivtSykefravaer ? 'Ja' : 'Nei'}</td>
-              <td>{forhold.yrkesBeskrivelse}</td>
+              <td>{forhold.yrkesbeskrivelse}</td>
               <td>{forhold.maanedsloenn}</td>
               <td>{forhold.stillingsprosent} %</td>
             </tr>

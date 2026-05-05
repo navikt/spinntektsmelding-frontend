@@ -280,7 +280,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         const arbeidsforhold = response.ansettelsesforhold?.map((periode) => ({
           maanedsloenn: undefined,
           yrkesKode: periode.yrkesKode,
-          yrkesBeskrivelse: periode.yrkesBeskrivelse,
+          yrkesbeskrivelse: periode.yrkesbeskrivelse,
           stillingsprosent: periode.stillingsprosent,
           aktivtSykefravaer: undefined
         }));
@@ -298,7 +298,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       const arbeidsforhold = ansettelsesforhold.ansettelsesforhold.map((periode) => ({
         maanedsloenn: undefined,
         yrkesKode: periode.yrkesKode,
-        yrkesBeskrivelse: periode.yrkesBeskrivelse,
+        yrkesbeskrivelse: periode.yrkesbeskrivelse,
         stillingsprosent: periode.stillingsprosent,
         aktivtSykefravaer: undefined
       }));

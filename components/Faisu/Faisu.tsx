@@ -12,7 +12,7 @@ interface FaisuArbeidsforholdSkjema {
   maanedsloenn?: number;
   stillingsprosent?: number;
   yrkesKode?: string;
-  yrkesBeskrivelse?: string;
+  yrkesbeskrivelse?: string;
   aktivtSykefravaer?: boolean;
 }
 
@@ -169,7 +169,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
                       <BodyLong>Stillingsprosent i beregningsperioden</BodyLong>
                     </div>
                     {arbeidsforholdListe.map((arbeidsforhold, index) => {
-                      const label = arbeidsforhold.yrkesBeskrivelse ?? arbeidsforhold.yrkesKode;
+                      const label = arbeidsforhold.yrkesbeskrivelse ?? arbeidsforhold.yrkesKode;
 
                       return (
                         <div key={'yk' + index} className={localStyles.arbeidsforholdRad}>

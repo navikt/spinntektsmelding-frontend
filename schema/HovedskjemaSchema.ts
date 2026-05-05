@@ -338,7 +338,7 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                       .min(0, 'Stillingsprosent må være større enn eller lik 0.')
                       .or(z.undefined()),
                     yrkesKode: z.string().or(z.undefined()),
-                    yrkesBeskrivelse: z.string().or(z.undefined()),
+                    yrkesbeskrivelse: z.string().or(z.undefined()),
                     aktivtSykefravaer: z.boolean().optional()
                   })
                 )
