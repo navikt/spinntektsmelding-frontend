@@ -93,7 +93,8 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
       ]
     },
     avsenderTlf: '12345678',
-    naturalytelser: []
+    naturalytelser: [],
+    flereArbeidsforhold: null
   });
 
   // Check final page

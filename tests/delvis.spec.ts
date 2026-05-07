@@ -50,7 +50,8 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       },
       refusjon: null,
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // verify navigation and UI
@@ -108,7 +109,8 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
         endringer: [{ beloep: 45000, startdato: '2025-09-30' }]
       },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     await formPage.assertVisibleTextAtLeastOnce('Kvittering - innsendt inntektsmelding');

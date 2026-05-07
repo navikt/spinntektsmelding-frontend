@@ -134,7 +134,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         type: 'MedArbeidsforhold',
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // confirm receipt page
@@ -207,7 +208,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         type: 'MedArbeidsforhold',
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
@@ -295,7 +297,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       arbeidsforholdType: {
         type: 'Fisker'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
@@ -386,7 +389,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       arbeidsforholdType: {
         type: 'UtenArbeidsforhold'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
@@ -471,7 +475,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         type: 'MedArbeidsforhold',
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // confirm receipt page

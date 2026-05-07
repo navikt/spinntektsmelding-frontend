@@ -94,7 +94,8 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       },
       refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // confirm receipt page
@@ -146,7 +147,8 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       },
       refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
@@ -197,7 +199,8 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       },
       refusjon: { beloepPerMaaned: 70000, sluttdato: null, endringer: [] },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);

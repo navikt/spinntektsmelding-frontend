@@ -73,7 +73,8 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
       },
       refusjon: { beloepPerMaaned: 50000, sluttdato: null, endringer: [] },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // confirm receipt page

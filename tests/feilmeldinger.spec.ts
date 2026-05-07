@@ -182,7 +182,8 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
             sluttdato: '2023-05-01',
             verdiBeloep: 45000
           }
-        ]
+        ],
+        flereArbeidsforhold: null
       });
     });
 

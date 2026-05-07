@@ -42,7 +42,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       inntekt: null,
       refusjon: null,
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // verify receipt page
@@ -104,7 +105,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
         sluttdato: null
       },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // verify receipt page
@@ -161,7 +163,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
         sluttdato: null
       },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // verify receipt page
@@ -218,7 +221,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
         sluttdato: null
       },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // verify receipt page

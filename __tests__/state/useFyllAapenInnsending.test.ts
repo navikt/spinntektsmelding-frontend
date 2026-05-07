@@ -134,7 +134,8 @@ describe('useFyllAapenInnsending', () => {
           type: 'MedArbeidsforhold',
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         },
-        naturalytelser: []
+        naturalytelser: [],
+        flereArbeidsforhold: null
       });
     }
   });
@@ -247,7 +248,8 @@ describe('useFyllAapenInnsending', () => {
           type: 'MedArbeidsforhold',
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         },
-        naturalytelser: []
+        naturalytelser: [],
+        flereArbeidsforhold: null
       });
     }
   });
@@ -357,7 +359,8 @@ describe('useFyllAapenInnsending', () => {
           type: 'MedArbeidsforhold',
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         },
-        naturalytelser: []
+        naturalytelser: [],
+        flereArbeidsforhold: null
       });
     }
   });

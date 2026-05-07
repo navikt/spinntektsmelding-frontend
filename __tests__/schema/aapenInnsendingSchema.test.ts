@@ -14,7 +14,6 @@ describe('AapenInnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -27,7 +26,8 @@ describe('AapenInnsendingSchema', () => {
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
       arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(AapenInnsendingSchema.safeParse(data).success).toBe(true);
@@ -43,7 +43,6 @@ describe('AapenInnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -55,7 +54,8 @@ describe('AapenInnsendingSchema', () => {
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
       arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const result = AapenInnsendingSchema.safeParse(data);
@@ -93,7 +93,8 @@ describe('AapenInnsendingSchema', () => {
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
       arbeidsforholdType: { type: 'MedArbeidsforhold', vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375' },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
     const result = AapenInnsendingSchema.safeParse(data);
     expect(result.success).toBe(false);

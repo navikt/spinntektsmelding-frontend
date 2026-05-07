@@ -86,7 +86,8 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
           endringer: []
         },
         avsenderTlf: '12345678',
-        naturalytelser: []
+        naturalytelser: [],
+        flereArbeidsforhold: null
       });
     });
 

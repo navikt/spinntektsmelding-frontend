@@ -98,7 +98,8 @@ test.describe('Begrenset forespørsel', () => {
       },
       refusjon: null,
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();

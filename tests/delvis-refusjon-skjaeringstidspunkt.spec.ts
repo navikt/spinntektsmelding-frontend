@@ -53,7 +53,8 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       },
       refusjon: null,
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
     // confirmation page
     await page.waitForURL('/im-dialog/kvittering/60c85231-d13c-49a2-bef3-1cb493d33f3b?fromSubmit=true');
@@ -111,7 +112,8 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       },
       refusjon: { beloepPerMaaned: 55000, sluttdato: null, endringer: [] },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
     // final confirmation
 

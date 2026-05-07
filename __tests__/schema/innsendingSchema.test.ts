@@ -27,7 +27,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -39,7 +38,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(true);
@@ -55,7 +55,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 50000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -67,7 +66,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const result = InnsendingSchema.safeParse(data);
@@ -96,7 +96,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -108,7 +107,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -135,7 +135,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -147,7 +146,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -180,7 +180,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -192,7 +191,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -219,7 +219,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -231,7 +230,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -257,7 +257,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -269,7 +268,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -296,7 +296,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -308,7 +307,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -334,7 +334,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -346,7 +345,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -370,7 +370,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -382,7 +381,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -403,7 +403,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -415,7 +414,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -435,7 +435,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -447,7 +446,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(true);
@@ -464,7 +464,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -483,7 +482,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const mockAddIssue = vi.fn();
@@ -524,7 +524,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -543,7 +542,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -569,7 +569,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -615,7 +614,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 1500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -661,7 +659,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 750000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -707,7 +704,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 750000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -746,7 +742,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 750000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -786,7 +781,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 750000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -805,7 +799,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -826,7 +821,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 750000,
         inntektsdato: '2023-02-17',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -845,7 +839,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -879,7 +874,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 750000,
         inntektsdato: '2023-02-17',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -898,7 +892,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(true);
@@ -914,7 +909,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 750000,
         inntektsdato: '2023-02-17',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -933,9 +927,9 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
-
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
     const result = InnsendingSchema.safeParse(data);
     expect(
@@ -953,7 +947,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 750000,
         inntektsdato: '2023-02-17',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -972,7 +965,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -986,7 +980,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsaker: null
       },
       refusjon: null,
@@ -997,7 +990,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const result = InnsendingSchema.safeParse(data);
@@ -1010,7 +1004,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsaker: null
       },
       refusjon: {
@@ -1027,7 +1020,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const mockAddIssue = vi.fn();
@@ -1048,7 +1042,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: -500000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -1060,7 +1053,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     expect(InnsendingSchema.safeParse(data).success).toBe(false);
@@ -1087,7 +1081,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 50000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -1099,7 +1092,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const result = InnsendingSchema.safeParse(data);
@@ -1133,7 +1127,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 50000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -1145,7 +1138,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const result = InnsendingSchema.safeParse(data);
@@ -1167,7 +1161,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 50000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
@@ -1179,7 +1172,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const result = InnsendingSchema.safeParse(data);
@@ -1201,7 +1195,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 0,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsaker: null
       },
       refusjon: {
@@ -1216,7 +1209,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const mockAddIssue = vi.fn();
@@ -1238,7 +1232,6 @@ describe('InnsendingSchema', () => {
       inntekt: {
         beloep: 0,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsaker: null
       },
       refusjon: {
@@ -1253,7 +1246,8 @@ describe('InnsendingSchema', () => {
         { fom: '2023-02-20', tom: '2023-03-03' },
         { fom: '2023-03-05', tom: '2023-03-06' }
       ],
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     };
 
     const mockAddIssue = vi.fn();
@@ -1265,5 +1259,130 @@ describe('InnsendingSchema', () => {
     expect(
       mockCtx.issues.filter((issue: any) => issue.path[0] === 'refusjon' && issue.path[1] === 'endringer')
     ).toHaveLength(0);
+  });
+
+  it('should validate InnsendingSchema with valid flereArbeidsforhold', () => {
+    const data = {
+      agp: null,
+      inntekt: { beloep: 500000, inntektsdato: '2023-02-14', endringAarsaker: null },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [{ fom: '2023-02-20', tom: '2023-03-03' }],
+      naturalytelser: [],
+      flereArbeidsforhold: {
+        harLikLoenn: false,
+        erSykmeldtFraAlle: true,
+        arbeidsforhold: [
+          { inntekt: 50000, stillingsprosent: 100, yrkesbeskrivelse: 'Sykepleier', inkludertISykefravaer: true }
+        ]
+      }
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('should validate InnsendingSchema with flereArbeidsforhold null', () => {
+    const data = {
+      agp: null,
+      inntekt: { beloep: 500000, inntektsdato: '2023-02-14', endringAarsaker: null },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [{ fom: '2023-02-20', tom: '2023-03-03' }],
+      naturalytelser: [],
+      flereArbeidsforhold: null
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('should fail validation when flereArbeidsforhold arbeidsforhold inntekt is negative', () => {
+    const data = {
+      agp: null,
+      inntekt: { beloep: 500000, inntektsdato: '2023-02-14', endringAarsaker: null },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [{ fom: '2023-02-20', tom: '2023-03-03' }],
+      naturalytelser: [],
+      flereArbeidsforhold: {
+        harLikLoenn: false,
+        erSykmeldtFraAlle: true,
+        arbeidsforhold: [{ inntekt: -1000, stillingsprosent: 100, yrkesbeskrivelse: 'Sykepleier' }]
+      }
+    };
+
+    const result = InnsendingSchema.safeParse(data);
+    expect(result.success).toBe(false);
+    expect(hasErrorMessage(result.error?.issues, 'Månedslønn må være større enn eller lik 0.')).toBe(true);
+  });
+
+  it('should fail validation when flereArbeidsforhold arbeidsforhold stillingsprosent is negative', () => {
+    const data = {
+      agp: null,
+      inntekt: { beloep: 500000, inntektsdato: '2023-02-14', endringAarsaker: null },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [{ fom: '2023-02-20', tom: '2023-03-03' }],
+      naturalytelser: [],
+      flereArbeidsforhold: {
+        harLikLoenn: false,
+        erSykmeldtFraAlle: true,
+        arbeidsforhold: [{ inntekt: 50000, stillingsprosent: -10, yrkesbeskrivelse: 'Sykepleier' }]
+      }
+    };
+
+    const result = InnsendingSchema.safeParse(data);
+    expect(result.success).toBe(false);
+    expect(hasErrorMessage(result.error?.issues, 'Stillingsprosent må være større enn eller lik 0.')).toBe(true);
+  });
+
+  it('should pass validation when flereArbeidsforhold arbeidsforhold inntekt and stillingsprosent are undefined', () => {
+    const data = {
+      agp: null,
+      inntekt: { beloep: 500000, inntektsdato: '2023-02-14', endringAarsaker: null },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [{ fom: '2023-02-20', tom: '2023-03-03' }],
+      naturalytelser: [],
+      flereArbeidsforhold: {
+        harLikLoenn: true,
+        erSykmeldtFraAlle: false,
+        arbeidsforhold: [{ inntekt: undefined, stillingsprosent: undefined, yrkesbeskrivelse: undefined }]
+      }
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('should pass validation when flereArbeidsforhold has multiple arbeidsforhold with zero values', () => {
+    const data = {
+      agp: null,
+      inntekt: { beloep: 500000, inntektsdato: '2023-02-14', endringAarsaker: null },
+      refusjon: null,
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [{ fom: '2023-02-20', tom: '2023-03-03' }],
+      naturalytelser: [],
+      flereArbeidsforhold: {
+        harLikLoenn: false,
+        erSykmeldtFraAlle: false,
+        arbeidsforhold: [
+          { inntekt: 0, stillingsprosent: 0, yrkesbeskrivelse: 'Lege', inkludertISykefravaer: false },
+          { inntekt: 50000, stillingsprosent: 50, yrkesbeskrivelse: 'Konsulent', inkludertISykefravaer: true }
+        ]
+      }
+    };
+
+    expect(InnsendingSchema.safeParse(data).success).toBe(true);
   });
 });
