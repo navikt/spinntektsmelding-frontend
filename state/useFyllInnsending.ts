@@ -111,7 +111,9 @@ export default function useFyllInnsending() {
     setInnsenderTelefon(skjemaData.avsenderTlf);
 
     initNaturalytelser(skjemaData.inntekt?.naturalytelser);
-
+    const sykmeldtfraFlereArbeidsforhold =
+      skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Nei' &&
+      skjemaData.flereArbeidsforhold?.harLikLoenn === 'Nei';
     const innsendingSkjema: FullInnsending = {
       forespoerselId,
       agp: {
@@ -139,16 +141,18 @@ export default function useFyllInnsending() {
           : null,
       avsenderTlf: skjemaData.avsenderTlf ?? '',
       naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
-      flereArbeidsforhold: {
-        harLikLoenn: skjemaData.flereArbeidsforhold?.harLikLoenn === 'Ja',
-        erSykmeldtFraAlle: skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Ja',
-        arbeidsforhold: skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
-          inntekt: forhold.inntekt,
-          yrkesbeskrivelse: forhold.yrkesbeskrivelse,
-          inkludertISykefravaer: forhold.inkludertISykefravaer,
-          stillingsprosent: forhold.stillingsprosent
-        }))
-      }
+      flereArbeidsforhold: sykmeldtfraFlereArbeidsforhold
+        ? {
+            harLikLoenn: skjemaData.flereArbeidsforhold?.harLikLoenn === 'Ja',
+            erSykmeldtFraAlle: skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Ja',
+            arbeidsforhold: skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
+              inntekt: forhold.inntekt,
+              yrkesbeskrivelse: forhold.yrkesbeskrivelse,
+              inkludertISykefravaer: forhold.inkludertISykefravaer,
+              stillingsprosent: forhold.stillingsprosent
+            }))
+          }
+        : null
     };
 
     if (!harForespurtArbeidsgiverperiode) {
