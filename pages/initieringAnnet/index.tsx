@@ -131,7 +131,6 @@ const InitieringAnnet: NextPage = () => {
     const mottatteData = EndepunktArbeidsforholdSchema.safeParse(data);
 
     if (mottatteData.success) {
-      console.log('Mottatte data om arbeidsforhold:', mottatteData.data);
       fulltNavn = mottatteData.data.fulltNavn;
 
       arbeidsforhold =

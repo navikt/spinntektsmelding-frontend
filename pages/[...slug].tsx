@@ -129,9 +129,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.harGradertSykmelding
   ]);
 
-  console.log('forespurt', forespurt);
-  console.log(JSON.stringify(forespurt, null, 2));
-
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
   const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
 
@@ -153,7 +150,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
-  console.log('opplysningstyper', opplysningstyper);
 
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
@@ -171,9 +167,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
-  console.log('skalViseArbeidsgiverperiode', skalViseArbeidsgiverperiode);
-  console.log('harForespurtArbeidsgiverperiode', harForespurtArbeidsgiverperiode);
-  console.log('overstyrSkalViseAgp', overstyrSkalViseAgp);
 
   const skalValidereFaisu = (harGradertSykmelding || harGradertSykmeldingStore) && harFlereArbeidsforhold;
 
@@ -278,13 +271,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         setHarFlereArbeidsforhold(response.ansettelsesforhold != null && response.ansettelsesforhold.length > 1);
 
         const arbeidsforhold = response.ansettelsesforhold?.map((periode) => ({
-          maanedsloenn: undefined,
+          inntekt: undefined,
           yrkesKode: periode.yrkesKode,
           yrkesbeskrivelse: periode.yrkesbeskrivelse,
           stillingsprosent: periode.stillingsprosent,
-          aktivtSykefravaer: undefined
+          inkludertISykefravaer: undefined
         }));
-        setValue('faisu.arbeidsforhold', arbeidsforhold, {
+        setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
           shouldDirty: true,
           shouldValidate: true
         });
@@ -296,13 +289,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (ansettelsesforhold) {
       setHarFlereArbeidsforhold(ansettelsesforhold.ansettelsesforhold.length > 1);
       const arbeidsforhold = ansettelsesforhold.ansettelsesforhold.map((periode) => ({
-        maanedsloenn: undefined,
+        inntekt: undefined,
         yrkesKode: periode.yrkesKode,
         yrkesbeskrivelse: periode.yrkesbeskrivelse,
         stillingsprosent: periode.stillingsprosent,
-        aktivtSykefravaer: undefined
+        inkludertISykefravaer: undefined
       }));
-      setValue('faisu.arbeidsforhold', arbeidsforhold, {
+      setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
         shouldDirty: true,
         shouldValidate: true
       });
@@ -401,11 +394,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     if (skalViseArbeidsgiverperiode) {
       opplysningstyper = [...opplysningstyper, forespoerselType.arbeidsgiverperiode];
-      console.log('opplysningstyper ved submit', opplysningstyper);
       setPaakrevdeOpplysninger(opplysningstyper);
     } else if (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode)) {
       opplysningstyper = opplysningstyper.filter((t) => t !== forespoerselType.arbeidsgiverperiode);
-      console.log('opplysningstyper ved submit 2', opplysningstyper);
       setPaakrevdeOpplysninger(opplysningstyper);
     }
 
@@ -483,7 +474,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       }
       setSisteInntektsdato(inntektsdato);
     }
-    console.log('setPaakrevdeOpplysninger', hentPaakrevdOpplysningstyper());
+
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -279,7 +279,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   ))}
                 </>
               )}
-              <FaisuKvittering arbeidsforhold={kvitteringData?.faisu} />
+              <FaisuKvittering arbeidsforhold={kvitteringData?.flereArbeidsforhold} />
               {(visRefusjon || visFullLonnIArbeidsgiverperioden) && (
                 <>
                   <Skillelinje />

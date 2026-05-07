@@ -160,7 +160,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const clickEndre = () => {
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
-    console.log('input', input);
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input, personData);
     kvitteringInit({ kvitteringNavNo: kvittering, kvitteringDokument: null, kvitteringEkstern: null });
@@ -397,7 +396,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <EndringAarsakVisning endringAarsak={endring} />
             </Fragment>
           ))}
-          <FaisuKvittering arbeidsforhold={kvitteringData?.faisu} />
+          <FaisuKvittering arbeidsforhold={kvitteringData?.flereArbeidsforhold} />
           <Skillelinje />
           <Heading2>Refusjon</Heading2>
           {visFullLonnIArbeidsgiverperioden && (
@@ -484,9 +483,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ kv
   });
 
   const props = { ...result.props, kvittering: result.props?.kvittering?.success?.selvbestemtInntektsmelding ?? null };
-
-  console.log('Server side props', props);
-  console.log('Server side props - result', result);
 
   return { ...result, props };
 }

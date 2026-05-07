@@ -9,16 +9,16 @@ import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import formatCurrency from '../../utils/formatCurrency';
 
 interface FaisuArbeidsforholdSkjema {
-  maanedsloenn?: number;
+  inntekt?: number;
   stillingsprosent?: number;
   yrkesKode?: string;
   yrkesbeskrivelse?: string;
-  aktivtSykefravaer?: boolean;
+  inkludertISykefravaer?: boolean;
 }
 
 interface FaisuSkjema {
   harLikLoenn?: 'Ja' | 'Nei';
-  sykmeldtFraAlleArbeidsforhold?: 'Ja' | 'Nei';
+  erSykmeldtFraAlle?: 'Ja' | 'Nei';
   arbeidsforhold?: Array<FaisuArbeidsforholdSkjema>;
 }
 
@@ -31,11 +31,14 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     control,
     setValue,
     formState: { errors }
-  } = useFormContext<{ faisu?: FaisuSkjema }>();
+  } = useFormContext<{ flereArbeidsforhold?: FaisuSkjema }>();
 
-  const harLikLoenn = useWatch({ control, name: 'faisu.harLikLoenn' });
-  const sykmeldtFraAlleArbeidsforhold = useWatch({ control, name: 'faisu.sykmeldtFraAlleArbeidsforhold' });
-  const rawArbeidsforholdListe = useWatch({ control, name: 'faisu.arbeidsforhold' });
+  const harLikLoenn = useWatch({ control, name: 'flereArbeidsforhold.harLikLoenn' });
+  const erSykmeldtFraAlle = useWatch({
+    control,
+    name: 'flereArbeidsforhold.erSykmeldtFraAlle'
+  });
+  const rawArbeidsforholdListe = useWatch({ control, name: 'flereArbeidsforhold.arbeidsforhold' });
   const arbeidsforholdListe = useMemo<FaisuArbeidsforholdSkjema[]>(
     () => rawArbeidsforholdListe ?? [],
     [rawArbeidsforholdListe]
@@ -50,7 +53,9 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
 
   const checkedArbeidsforholdIder = useMemo(
     () =>
-      arbeidsforholdListe.map((af, index) => (af.aktivtSykefravaer ? String(index) : null)).filter((v) => v !== null),
+      arbeidsforholdListe
+        .map((af, index) => (af.inkludertISykefravaer ? String(index) : null))
+        .filter((v) => v !== null),
     [arbeidsforholdListe]
   );
 
@@ -59,28 +64,38 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
   }
 
   const handleLikInntektCheckboxChange = (value: 'Ja' | 'Nei') => {
-    setValue('faisu.harLikLoenn', value, { shouldDirty: true, shouldValidate: true });
+    setValue('flereArbeidsforhold.harLikLoenn', value, { shouldDirty: true, shouldValidate: true });
     if (value === 'Ja') {
-      setValue('faisu.sykmeldtFraAlleArbeidsforhold', undefined, { shouldDirty: true, shouldValidate: true });
-      setValue('faisu.arbeidsforhold', [], { shouldDirty: true, shouldValidate: true });
+      setValue('flereArbeidsforhold.erSykmeldtFraAlle', undefined, {
+        shouldDirty: true,
+        shouldValidate: true
+      });
+      setValue('flereArbeidsforhold.arbeidsforhold', [], { shouldDirty: true, shouldValidate: true });
     }
   };
 
   const handleAlleArbeidsforholdCheckboxChange = (value: 'Ja' | 'Nei') => {
-    setValue('faisu.sykmeldtFraAlleArbeidsforhold', value, { shouldDirty: true, shouldValidate: true });
+    setValue('flereArbeidsforhold.erSykmeldtFraAlle', value, { shouldDirty: true, shouldValidate: true });
     if (value === 'Ja') {
-      setValue('faisu.arbeidsforhold', [], { shouldDirty: true, shouldValidate: true });
+      setValue('flereArbeidsforhold.arbeidsforhold', [], { shouldDirty: true, shouldValidate: true });
     } else {
-      setValue('faisu.arbeidsforhold', originalArbeidsforhold.current, { shouldDirty: true, shouldValidate: true });
+      setValue('flereArbeidsforhold.arbeidsforhold', originalArbeidsforhold.current, {
+        shouldDirty: true,
+        shouldValidate: true
+      });
     }
   };
 
   const handleArbeidsforholdCheckboxCheck = (values: string[]) => {
     arbeidsforholdListe.forEach((_, index) => {
-      setValue(`faisu.arbeidsforhold.${index}.aktivtSykefravaer` as any, values.includes(String(index)), {
-        shouldDirty: true,
-        shouldValidate: true
-      });
+      setValue(
+        `flereArbeidsforhold.arbeidsforhold.${index}.inkludertISykefravaer` as any,
+        values.includes(String(index)),
+        {
+          shouldDirty: true,
+          shouldValidate: true
+        }
+      );
     });
   };
 
@@ -94,17 +109,17 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     return Number.isNaN(parsedValue) ? undefined : parsedValue;
   };
 
-  const handleFeltChange = (index: number, felt: 'maanedsloenn' | 'stillingsprosent', rawValue: string) => {
+  const handleFeltChange = (index: number, felt: 'inntekt' | 'stillingsprosent', rawValue: string) => {
     const parsedValue = parseNumberInput(rawValue);
 
-    setValue(`faisu.arbeidsforhold.${index}.${felt}` as any, parsedValue, {
+    setValue(`flereArbeidsforhold.arbeidsforhold.${index}.${felt}` as any, parsedValue, {
       shouldDirty: true,
       shouldValidate: true
     });
   };
 
   const handleCheckboxChange = (index: number, value: boolean) => {
-    setValue(`faisu.arbeidsforhold.${index}.aktivtSykefravaer` as any, value, {
+    setValue(`flereArbeidsforhold.arbeidsforhold.${index}.inkludertISykefravaer` as any, value, {
       shouldDirty: true,
       shouldValidate: true
     });
@@ -116,7 +131,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
       <Heading1>Månedslønn - Flere arbeidsforhold</Heading1>
       <BodyLong>Det er registrert flere arbeidsforhold i samme underenhet og Nav trenger ekstra informasjon.</BodyLong>
       <Controller
-        name='faisu.harLikLoenn'
+        name='flereArbeidsforhold.harLikLoenn'
         control={control}
         defaultValue={undefined}
         render={({ field }) => (
@@ -125,7 +140,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
             className={localStyles.radiobuttonWrapper}
             onChange={(value) => handleLikInntektCheckboxChange(value as 'Ja' | 'Nei')}
             value={field.value ?? ''}
-            error={fieldStateErrorMessage(errors, 'faisu.harLikLoenn')}
+            error={fieldStateErrorMessage(errors, 'flereArbeidsforhold.harLikLoenn')}
           >
             <Radio value='Ja'>Ja</Radio>
             <Radio value='Nei'>Nei</Radio>
@@ -135,7 +150,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
       {harLikLoenn === 'Nei' && (
         <>
           <Controller
-            name='faisu.sykmeldtFraAlleArbeidsforhold'
+            name='flereArbeidsforhold.erSykmeldtFraAlle'
             control={control}
             defaultValue={undefined}
             render={({ field }) => (
@@ -144,17 +159,17 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
                 className={localStyles.radiobuttonWrapper}
                 onChange={(value) => handleAlleArbeidsforholdCheckboxChange(value as 'Ja' | 'Nei')}
                 value={field.value ?? ''}
-                error={fieldStateErrorMessage(errors, 'faisu.sykmeldtFraAlleArbeidsforhold')}
+                error={fieldStateErrorMessage(errors, 'flereArbeidsforhold.erSykmeldtFraAlle')}
               >
                 <Radio value='Ja'>Ja</Radio>
                 <Radio value='Nei'>Nei</Radio>
               </RadioGroup>
             )}
           />
-          {sykmeldtFraAlleArbeidsforhold === 'Nei' && (
+          {erSykmeldtFraAlle === 'Nei' && (
             <>
               <Controller
-                name='faisu.arbeidsforhold'
+                name='flereArbeidsforhold.arbeidsforhold'
                 control={control}
                 render={({ fieldState }) => (
                   <CheckboxGroup
@@ -183,17 +198,23 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
                           <NumberField
                             className={localStyles.inputInntekt}
                             label={`Månedslønn for ${label}`}
-                            value={arbeidsforhold.maanedsloenn}
-                            error={fieldStateErrorMessage(errors, `faisu.arbeidsforhold.${index}.maanedsloenn`)}
+                            value={arbeidsforhold.inntekt}
+                            error={fieldStateErrorMessage(
+                              errors,
+                              `flereArbeidsforhold.arbeidsforhold.${index}.inntekt`
+                            )}
                             onChange={(event) => {
-                              handleFeltChange(index, 'maanedsloenn', event.target.value);
+                              handleFeltChange(index, 'inntekt', event.target.value);
                             }}
                           />
                           <NumberField
                             className={localStyles.inputInntekt}
                             label={`Stillingsprosent for ${label}`}
                             value={arbeidsforhold.stillingsprosent}
-                            error={fieldStateErrorMessage(errors, `faisu.arbeidsforhold.${index}.stillingsprosent`)}
+                            error={fieldStateErrorMessage(
+                              errors,
+                              `flereArbeidsforhold.arbeidsforhold.${index}.stillingsprosent`
+                            )}
                             onChange={(event) => {
                               handleFeltChange(index, 'stillingsprosent', event.target.value);
                             }}
@@ -208,7 +229,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
                 <div className={localStyles.arbeidsforholdCheckbox}></div>
                 <div className={localStyles.outputInntekt}>
                   {formatCurrency(
-                    arbeidsforholdListe.reduce((acc, arbeidsforhold) => acc + (arbeidsforhold.maanedsloenn ?? 0), 0)
+                    arbeidsforholdListe.reduce((acc, arbeidsforhold) => acc + (arbeidsforhold.inntekt ?? 0), 0)
                   )}
                 </div>
                 <div className={localStyles.outputInntekt}>

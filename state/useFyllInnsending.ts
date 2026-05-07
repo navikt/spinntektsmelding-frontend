@@ -17,6 +17,7 @@ import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
+import arbeidsforhold from '../pages/api/arbeidsforhold';
 
 export type SendtPeriode = z.infer<typeof ApiPeriodeSchema>;
 
@@ -138,7 +139,16 @@ export default function useFyllInnsending() {
           : null,
       avsenderTlf: skjemaData.avsenderTlf ?? '',
       naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
-      faisu: skjemaData?.faisu?.arbeidsforhold?.map((forhold) => ({ ...forhold }))
+      flereArbeidsforhold: {
+        harLikLoenn: skjemaData.flereArbeidsforhold?.harLikLoenn === 'Ja',
+        erSykmeldtFraAlle: skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Ja',
+        arbeidsforhold: skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
+          inntekt: forhold.inntekt,
+          yrkesbeskrivelse: forhold.yrkesbeskrivelse,
+          inkludertISykefravaer: forhold.inkludertISykefravaer,
+          stillingsprosent: forhold.stillingsprosent
+        }))
+      }
     };
 
     if (!harForespurtArbeidsgiverperiode) {

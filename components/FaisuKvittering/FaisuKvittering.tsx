@@ -1,18 +1,19 @@
 import localStyles from './FaisuKvittering.module.css';
 
 type FaisuArbeidsforhold = {
-  arbeidsforholdId: string;
   yrkesbeskrivelse?: string;
-  maanedsloenn?: number;
+  inntekt?: number;
   stillingsprosent?: number;
-  aktivtSykefravaer?: boolean;
+  inkludertISykefravaer?: boolean;
 };
 
 type FaisuKvitteringProps = {
+  harLikLoenn: boolean;
+  erSykmeldtFraAlle: boolean;
   arbeidsforhold?: FaisuArbeidsforhold[];
 };
 
-export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitteringProps>) {
+export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitteringProps | null>) {
   if (!arbeidsforhold) {
     return null;
   }
@@ -28,12 +29,12 @@ export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitte
         </tr>
       </thead>
       <tbody>
-        {arbeidsforhold.map((forhold, index) => {
+        {arbeidsforhold.arbeidsforhold.map((forhold, index) => {
           return (
             <tr key={'fk' + index}>
-              <td>{forhold.aktivtSykefravaer ? 'Ja' : 'Nei'}</td>
+              <td>{forhold.inkludertISykefravaer ? 'Ja' : 'Nei'}</td>
               <td>{forhold.yrkesbeskrivelse}</td>
-              <td>{forhold.maanedsloenn}</td>
+              <td>{forhold.inntekt}</td>
               <td>{forhold.stillingsprosent} %</td>
             </tr>
           );
