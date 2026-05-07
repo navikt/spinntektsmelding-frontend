@@ -53,7 +53,8 @@ const arbeidsforholdMockdataMap = {
   // 'b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63': 'kvittering-delvis',
   // 'b24baf59-55c9-48df-b8c1-7d93e098a95d': 'kvittering-delvis-endret-inntekt',
   // '66f1188a-5cb7-4741-bd60-c9070835633c': 'kvittering-eksternt-system'
-  '8f2c7a9d-3e1b-4d6f-a2c8-7b95e13f4c0a': 'ansettelsesforhold-to-perioder'
+  '8f2c7a9d-3e1b-4d6f-a2c8-7b95e13f4c0a': 'ansettelsesforhold-to-perioder',
+  'f32852af-888e-4d0c-ad67-081f22ee5c12': 'ansettelsesforhold-to-perioder'
 };
 
 const soeknaderMockdataMap = {
