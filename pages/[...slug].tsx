@@ -298,6 +298,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [opplysningstyper, setValue]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
+    console.log('Form data ved innsending:');
+    console.log(formData);
     setSenderInn(true);
     if (selvbestemtInnsending) {
       sendInnArbeidsgiverInitiertSkjema(true, slug, isDirtyForm || isDirty, formData, begrensetForespoersel).finally(

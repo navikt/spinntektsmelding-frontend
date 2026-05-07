@@ -149,18 +149,18 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       }
     : {
         navn: sykmeldt.navn,
-        identitetsnummer: kvitteringData?.sykmeldtFnr,
-        orgnrUnderenhet: kvitteringData?.avsender.orgnr,
+        identitetsnummer: sykmeldt?.fnr,
+        orgnrUnderenhet: avsender.orgnr,
         virksomhetNavn: avsender.orgNavn,
         innsenderNavn: avsender.navn,
-        innsenderTelefonNr: kvitteringData?.avsender.tlf
+        innsenderTelefonNr: avsender.tlf
       };
 
   const clickEndre = () => {
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
 
     // Må lagre data som kan endres i hovedskjema - Start
-    const kvittering = prepareForInitiering(input);
+    const kvittering = prepareForInitiering(input, personData);
     kvitteringInit({ kvitteringNavNo: kvittering, kvitteringDokument: null, kvitteringEkstern: null });
     // Må lagre data som kan endres i hovedskjema - Slutt
     if (ingenArbeidsgiverperioder) {
@@ -433,10 +433,15 @@ export default Kvittering;
 
 type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
 
-function prepareForInitiering(kvitteringData: unknown): KvitteringNavNoSchema {
+function prepareForInitiering(kvitteringData: unknown, personData: PersonData): KvitteringNavNoSchema {
   const kvittering: KvitteringNavNoSchema = {
-    sykmeldt: kvitteringData.sykmeldt,
-    avsender: kvitteringData.avsender,
+    sykmeldt: { navn: personData.navn, fnr: personData.identitetsnummer },
+    avsender: {
+      orgnr: personData.orgnrUnderenhet,
+      orgNavn: personData.virksomhetNavn,
+      navn: personData.innsenderNavn,
+      tlf: personData.innsenderTelefonNr
+    },
     sykmeldingsperioder: kvitteringData.sykmeldingsperioder ?? [],
     skjema: {
       agp: kvitteringData.agp ?? null,
