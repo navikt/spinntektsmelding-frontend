@@ -1,7 +1,4 @@
-import { vendored } from 'next/dist/server/route-modules/pages/module.compiled';
 import AapenInnsendingSchema from '../../schema/AapenInnsendingSchema';
-
-import { z } from 'zod/v4';
 
 describe('AapenInnsendingSchema', () => {
   it('should validate AapenInnsendingSchema', () => {
@@ -80,7 +77,6 @@ describe('AapenInnsendingSchema', () => {
       inntekt: {
         beloep: 50000,
         inntektsdato: '2023-02-14',
-        naturalytelser: [],
         endringAarsak: { aarsak: 'Bonus' },
         endringAarsaker: [{ aarsak: 'Bonus' }]
       },
