@@ -1,4 +1,5 @@
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
+import environment from '../config/environment';
 import formatIsoDate from './formatIsoDate';
 import NetworkError from './NetworkError';
 
@@ -20,9 +21,7 @@ export default function fetchArbeidsforhold(
     throw fetchError;
   }
 
-  const fullUrl = 'http://' + process.env.NEXT_PUBLIC_IM_API_URI + '/api/v1/arbeidsforhold';
-
-  return fetch(fullUrl, {
+  return fetch(environment.hentAnsettelsesforholdUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

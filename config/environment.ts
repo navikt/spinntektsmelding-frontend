@@ -17,6 +17,7 @@ const env = {
   hentArbeidsgivereUrl: '/im-dialog/api/arbeidsgivere',
   initierBlankSkjemaUrl: '/im-dialog/api/aktiveorgnr',
   innsendingAGInitiertUrl: '/im-dialog/api/selvbestemt-inntektsmelding',
+  hentAnsettelsesforholdUrl: '/im-dialog/api/ansettelsesforhold',
   hentSykepengesoknaderUrl: '/im-dialog/api/sp-soeknader',
   hentBehandlingsdagerUrl: '/im-dialog/api/sp-behandlingsdager',
   mineTilgangerUrl: '/im-dialog/api/mine-tilganger',
