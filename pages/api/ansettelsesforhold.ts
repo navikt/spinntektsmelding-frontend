@@ -5,7 +5,7 @@ import handleProxyInit from '../../utils/api/handleProxyInit';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.ARBEIDSFORHOLD_API;
+const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.ARBEIDSFORHOLD_SELVBESTEMT_API;
 
 export const config = {
   api: {
