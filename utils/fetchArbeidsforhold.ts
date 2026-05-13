@@ -20,7 +20,7 @@ export default function fetchArbeidsforhold(
     throw fetchError;
   }
 
-  const fullUrl = 'http://' + process.env.NEXT_PUBLIC_IM_API_URI + '/im-dialog/api/arbeidsforhold';
+  const fullUrl = 'http://' + process.env.NEXT_PUBLIC_IM_API_URI + '/api/v1/arbeidsforhold';
 
   return fetch(fullUrl, {
     method: 'POST',
