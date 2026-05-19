@@ -36,7 +36,11 @@ describe('VelgAarsak', () => {
     expect(screen.getByRole('group', { name: legend })).toBeInTheDocument();
 
     // Each radio option by its label
-    expect(screen.getByLabelText(/Unntatt registrering i Aa-registeret/)).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(
+        /Ansatte som ikke er registrert i Aa-registeret, eller ikke kan sende digital søknad om sykepenger/
+      )
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(/Fisker med hyre/)).toBeInTheDocument();
     expect(screen.getByLabelText(/Annen årsak/)).toBeInTheDocument();
     expect(screen.getByLabelText(/Enkeltstående behandlingsdager/)).toBeInTheDocument();

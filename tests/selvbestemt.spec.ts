@@ -307,7 +307,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
     await formPage.checkRadioButton(
       'Årsak til at du vil opprette inntektsmelding.',
-      'Unntatt registrering i Aa-registeret'
+      'Ansatte som ikke er registrert i Aa-registeret, eller ikke kan sende digital søknad om sykepenger'
     );
     await page.getByRole('button', { name: 'Neste' }).click();
 
