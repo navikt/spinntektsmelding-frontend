@@ -36,7 +36,7 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
                 </span>{' '}
                 <span>
                   Inneholder arbeidsgiverperioden en kombinasjon av behandlingsdager og annet sykefravær slik at den
-                  varer i 16 dager, må du velge <i>Annen årsak</i> og knytte inntektsmeldingen til søknaden for det
+                  varer i 16 dager, må du velge <em>Annen årsak</em> og knytte inntektsmeldingen til søknaden for det
                   ordinære sykefraværet og legge til behandlingsdagene og eventuelle egenmeldingsdager i
                   arbeidsgiverperioden.
                 </span>
