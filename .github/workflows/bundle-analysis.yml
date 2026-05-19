@@ -32,7 +32,7 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+        uses: pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e
 
       - name: Cache pnpm files
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
