@@ -55,6 +55,8 @@ import useStateInit from '../state/useStateInit';
 import { getToken, validateToken } from '@navikt/oasis';
 import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
+import useBehandlingsdager from '../utils/useBehandlingsdager';
+import { toLocalIso } from '../utils/toLocalIso';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -96,7 +98,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     naturalytelser,
     behandlingsdager,
     selvbestemtType,
-    kvitteringData
+    kvitteringData,
+    setBehandlingsdager
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -108,7 +111,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.naturalytelser,
     state.behandlingsdager,
     state.selvbestemtType,
-    state.kvitteringData
+    state.kvitteringData,
+    state.setBehandlingsdager
   ]);
 
   const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
@@ -174,6 +178,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const {
     register,
     setValue,
+    setError,
     control,
     handleSubmit,
     formState: { errors, isDirty, dirtyFields }
@@ -193,6 +198,30 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       storeInitialized.current = true;
     }
   });
+
+  const {
+    data: spData,
+    error: spError,
+    isLoading: spIsLoading
+  } = useBehandlingsdager(
+    behandlingsdagerInnsending && slug !== 'behandlingsdager' ? sykmeldt.fnr : undefined,
+    avsender.orgnr || '',
+    sykmeldingsperioder?.[0]?.fom ? toLocalIso(sykmeldingsperioder[0].fom) : undefined,
+    setError
+  );
+
+  useEffect(() => {
+    if (spData && !spError && !spIsLoading) {
+      const fomDate = sykmeldingsperioder?.[0]?.fom;
+      const dager = spData.flatMap((periode) => {
+        if (fomDate && periode.fom === toLocalIso(fomDate)) {
+          return periode.behandlingsdager;
+        }
+        return [];
+      });
+      setBehandlingsdager(dager.filter((dag) => dag !== undefined));
+    }
+  }, [spData, spError, spIsLoading, sykmeldingsperioder, setBehandlingsdager]);
 
   useEffect(() => {
     onForespurtInit();

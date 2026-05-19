@@ -4,8 +4,9 @@ import styling from './Behandlingsdager.module.css';
 import { Periode } from '../../state/state';
 import { Checkbox, CheckboxGroup } from '@navikt/ds-react';
 import { useController, useFormContext, useWatch } from 'react-hook-form';
-import { useEffect, useEffectEvent, useRef } from 'react';
+import { use, useEffect, useEffectEvent, useRef } from 'react';
 import useBoundStore from '../../state/useBoundStore';
+import Feilmelding from '../Feilmelding';
 
 interface BehandlingsdagerProps {
   behandlingsdager?: string[];
@@ -13,7 +14,11 @@ interface BehandlingsdagerProps {
 }
 
 export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Readonly<BehandlingsdagerProps>) {
-  const { control } = useFormContext();
+  const {
+    control,
+    formState: { errors },
+    setError
+  } = useFormContext();
 
   const agpDatoer = arbeidsgiverperioder?.flatMap((periode) => periode.fom);
   const sorterteDager = [...(behandlingsdager ?? [])].sort((a, b) => a.localeCompare(b));
@@ -44,6 +49,13 @@ export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Rea
     }
   }, [agpFraSkjema]);
 
+  useEffect(() => {
+    if (agpFraSkjema && agpFraSkjema.length !== 12) {
+      const feil = 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.';
+      setError('agp.perioder', { type: 'manual', message: feil });
+    }
+  }, [agpFraSkjema, setError]);
+
   if (!behandlingsdager || behandlingsdager.length === 0) {
     return null;
   }
@@ -66,6 +78,7 @@ export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Rea
           ))}
         </div>
       </CheckboxGroup>
+      {errors.agp?.perioder && <Feilmelding id='behandlingsdager-feil'>{errors.agp?.perioder?.message}</Feilmelding>}
     </div>
   );
 }
