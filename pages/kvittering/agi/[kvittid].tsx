@@ -59,6 +59,7 @@ import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
 import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
+import HentingAvDataFeilet from '../../../components/HentingAvDataFeilet';
 
 type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
@@ -316,6 +317,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     onsetSkjemaStatus();
   }, []);
 
+  const lukkHentingFeiletModal = () => {
+    if (environment.saksoversiktUrl !== undefined && globalThis.window?.location !== undefined) {
+      globalThis.window.location.href = environment.saksoversiktUrl;
+    }
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -424,6 +431,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </HStack>
         </div>
+        <HentingAvDataFeilet open={kvitteringStatus === 500} handleCloseModal={lukkHentingFeiletModal} />
       </PageContent>
     </div>
   );
