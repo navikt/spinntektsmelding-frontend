@@ -1,5 +1,5 @@
 import { Button } from '@navikt/ds-react';
-import lokalStyles from './ButtonTilbakestill.module.css';
+import lokalStyling from './ButtonTilbakestill.module.css';
 
 interface ButtonTilbakestillProps extends React.HTMLProps<HTMLButtonElement> {}
 
@@ -8,7 +8,7 @@ export default function ButtonTilbakestill(props: ButtonTilbakestillProps) {
     <Button
       type='button'
       variant='tertiary'
-      className={props.className + ' ' + lokalStyles.buttontilbakestill}
+      className={props.className + ' ' + lokalStyling.buttontilbakestill}
       onClick={props.onClick}
       disabled={props.disabled}
     >

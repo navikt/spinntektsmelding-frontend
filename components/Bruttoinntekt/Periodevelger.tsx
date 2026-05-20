@@ -1,4 +1,4 @@
-import lokalStyles from './Bruttoinntekt.module.css';
+import lokalStyling from './Bruttoinntekt.module.css';
 import { Periode } from '../../state/state';
 import ButtonSlette from '../ButtonSlette';
 import Datovelger from '../Datovelger';
@@ -65,7 +65,7 @@ export default function Periodevelger({
   defaultMonth ??= new Date();
 
   return (
-    <div className={lokalStyles.endremaaanedsinntekt}>
+    <div className={lokalStyling.endremaaanedsinntekt}>
       <Datovelger
         fromDate={fromDate}
         toDate={toDate}
@@ -92,7 +92,7 @@ export default function Periodevelger({
         <ButtonSlette
           title='Slett periode'
           onClick={onSlettClick}
-          className={lokalStyles.sletteknapp}
+          className={lokalStyling.sletteknapp}
           disabled={disabled}
         />
       )}

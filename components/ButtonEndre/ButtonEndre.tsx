@@ -1,5 +1,5 @@
 import { Button } from '@navikt/ds-react';
-import lokalStyles from './ButtonEndre.module.css';
+import lokalStyling from './ButtonEndre.module.css';
 
 interface ButtonEndreProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 export default function ButtonEndre(props: ButtonEndreProps) {
@@ -8,7 +8,7 @@ export default function ButtonEndre(props: ButtonEndreProps) {
       type='button'
       variant='secondary'
       {...props}
-      className={[lokalStyles.endrebutton, props.className].filter(Boolean).join(' ')}
+      className={[lokalStyling.endrebutton, props.className].filter(Boolean).join(' ')}
     >
       Endre
     </Button>

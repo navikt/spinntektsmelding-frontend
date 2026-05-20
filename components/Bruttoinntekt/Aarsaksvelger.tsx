@@ -1,4 +1,4 @@
-import lokalStyles from './Bruttoinntekt.module.css';
+import lokalStyling from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
 import { Button } from '@navikt/ds-react';
@@ -60,24 +60,24 @@ export default function Aarsaksvelger({
     }
   }, [fields.length, initialiserEndringsaarsaker]);
   return (
-    <div className={lokalStyles.endremaaanedsinntektwrapper}>
+    <div className={lokalStyling.endremaaanedsinntektwrapper}>
       {fields?.map((aarsak, key) => (
         <Fragment key={aarsak.id}>
-          <div className={lokalStyles.endremaaanedsinntekt}>
+          <div className={lokalStyling.endremaaanedsinntekt}>
             {key === 0 && (
               <NumberField
                 label={`Månedslønn ${formatDate(bestemmendeFravaersdag)}`}
                 defaultValue={bruttoinntekt?.bruttoInntekt ? formatCurrency(bruttoinntekt.bruttoInntekt) : ''}
                 id={ensureValidHtmlId('inntekt.beregnetInntekt')}
                 error={beloepError}
-                className={lokalStyles.bruttoinntektendringsbeloep}
+                className={lokalStyling.bruttoinntektendringsbeloep}
                 data-cy='inntekt-beloep-input'
                 {...register('inntekt.beloep', {
                   setValueAs: (value) => stringishToNumber(value)
                 })}
               />
             )}
-            <div className={lokalStyles.selectEndringBruttoinntektWrapper}>
+            <div className={lokalStyling.selectEndringBruttoinntektWrapper}>
               <SelectEndringBruttoinntekt
                 id={`inntekt.endringAarsaker.${key}.aarsak`}
                 nyInnsending={nyInnsending}
@@ -87,21 +87,21 @@ export default function Aarsaksvelger({
 
             <div>
               <ButtonSlette
-                className={lokalStyles.kontrollerknapp}
+                className={lokalStyling.kontrollerknapp}
                 onClick={() => slettEndringsaarsak(key)}
                 title={'Slett'}
               />
             </div>
             {!kanIkkeTilbakestilles && key === 0 && (
               <div>
-                <ButtonTilbakestill className={lokalStyles.kontrollerknapp} onClick={handleResetMaanedsinntekt} />
+                <ButtonTilbakestill className={lokalStyling.kontrollerknapp} onClick={handleResetMaanedsinntekt} />
               </div>
             )}
           </div>
           <AarsakDetaljer bestemmendeFravaersdag={bestemmendeFravaersdag} id={key.toString()} />
         </Fragment>
       ))}
-      <Button variant='secondary' onClick={handleLeggTilEndringAarsak} className={lokalStyles.leggTilAarsak}>
+      <Button variant='secondary' onClick={handleLeggTilEndringAarsak} className={lokalStyling.leggTilAarsak}>
         Legg til annen endringsårsak
       </Button>
     </div>

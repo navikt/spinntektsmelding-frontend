@@ -8,7 +8,7 @@ import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import styles from '../../styles/Home.module.css';
-import lokalStyles from '../initieringAnnet/initiering.module.css';
+import lokalStyling from '../initieringAnnet/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -135,10 +135,10 @@ const InitieringFritatt: NextPage = () => {
         <div className={styles.padded}>
           <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
           <FormProvider {...methods}>
-            <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
+            <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm)}>
               <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
-              <div className={lokalStyles.persondata}>
-                {/* <div className={lokalStyles.navn}>
+              <div className={lokalStyling.persondata}>
+                {/* <div className={lokalStyling.navn}>
                   <TextLabel>Navn</TextLabel>
                   <p>{fulltNavn}</p>
                 </div> */}
@@ -161,13 +161,13 @@ const InitieringFritatt: NextPage = () => {
                 </div>
               )}
 
-              <div className={lokalStyles.knapperad}>
-                <Button variant='tertiary' className={lokalStyles.primaryKnapp} onClick={() => history.back()}>
+              <div className={lokalStyling.knapperad}>
+                <Button variant='tertiary' className={lokalStyling.primaryKnapp} onClick={() => history.back()}>
                   Tilbake
                 </Button>
                 <Button
                   variant='primary'
-                  className={lokalStyles.primaryKnapp}
+                  className={lokalStyling.primaryKnapp}
                   loading={isLoading}
                   disabled={blokkerInnsending}
                 >

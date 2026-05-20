@@ -1,6 +1,6 @@
 import { Alert, BodyLong } from '@navikt/ds-react';
 import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
-import lokalStyles from './AvvikAdvarselInntekt.module.css';
+import lokalStyling from './AvvikAdvarselInntekt.module.css';
 
 interface AvvikAdvarselInntektProps {
   tidligereInntekter?: Map<string, number | null>;
@@ -29,14 +29,14 @@ const AvvikAdvarselInntekt: React.FunctionComponent<AvvikAdvarselInntektProps> =
         </BodyLong>
       )}
       {harTidligereInntekt && manglendeEller0FraAmeldingen && (
-        <Alert variant='warning' className={lokalStyles.feriealert}>
+        <Alert variant='warning' className={lokalStyling.feriealert}>
           Lønnsopplysningene inneholder måneder uten rapportert inntekt. Vi estimerer beregnet månedslønn til et snitt
           av innrapportert inntekt for de tre siste månedene. Hvis du ser at det skal være en annen beregnet månedslønn
           må du endre dette manuelt.
         </Alert>
       )}
       {erFeriemaaneder && (
-        <Alert variant='warning' className={lokalStyles.feriealert}>
+        <Alert variant='warning' className={lokalStyling.feriealert}>
           Lønnsopplysningene kan inneholde feriepenger. Hvis det er utbetalt feriepenger eller avviklet ferie uten lønn,
           skal beregnet månedslønn settes til den ordinære lønnen.
         </Alert>

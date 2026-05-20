@@ -4,7 +4,7 @@ import Head from 'next/head';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import PageContent from '../../components/PageContent/PageContent';
 
-import lokalStyles from './Kvittering.module.css';
+import lokalStyling from './Kvittering.module.css';
 import styles from '../../styles/Home.module.css';
 
 import Heading2 from '../../components/Heading2/Heading2';
@@ -137,8 +137,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     kvitteringData?.refusjon?.beloepPerMaaned !== undefined;
   const visRefusjon = paakrevdeOpplysninger?.includes(forespoerselType.refusjon);
 
-  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyles.fravaerswrapperwrapper : '';
-  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyles.infoboks : '';
+  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyling.fravaerswrapperwrapper : '';
+  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyling.infoboks : '';
 
   // Bruk custom hook for å håndtere data fra enten SSR eller store
   const {
@@ -227,13 +227,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 )}
 
                 <div className={classNameWrapperSkjaeringstidspunkt}>
-                  <div className={lokalStyles.ytterstefravaerwrapper}>
+                  <div className={lokalStyling.ytterstefravaerwrapper}>
                     {harForespurtInntekt && (
-                      <div className={lokalStyles.ytrefravaerswrapper}>
-                        <Heading2 className={lokalStyles.fravaerstyper}>Bestemmende fraværsdag</Heading2>
+                      <div className={lokalStyling.ytrefravaerswrapper}>
+                        <Heading2 className={lokalStyling.fravaerstyper}>Bestemmende fraværsdag</Heading2>
                         <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
-                        <div className={lokalStyles.fravaerwrapper}>
-                          <div className={lokalStyles.fravaertid}>Dato</div>
+                        <div className={lokalStyling.fravaerwrapper}>
+                          <div className={lokalStyling.fravaertid}>Dato</div>
                           <div data-cy='bestemmendefravaersdag'>
                             {aktivBestemmendeFravaersdag ? (
                               formatDate(aktivBestemmendeFravaersdag)
@@ -245,8 +245,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                       </div>
                     )}
                     {visArbeidsgiverperiode && (
-                      <div className={lokalStyles.arbeidsgiverperiode}>
-                        <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
+                      <div className={lokalStyling.arbeidsgiverperiode}>
+                        <Heading2 className={lokalStyling.fravaerstyper}>Arbeidsgiverperiode</Heading2>
                         {!ingenAktiveArbeidsgiverperioder && (
                           <BodyLong>
                             Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
@@ -266,11 +266,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 <>
                   <Skillelinje />
                   <Heading2>Beregnet månedslønn</Heading2>
-                  <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
+                  <BodyShort className={lokalStyling.uthevet}>Registrert inntekt</BodyShort>
                   <BodyShort>{formatCurrency(aktivBruttoinntekt?.bruttoInntekt)} kr/måned</BodyShort>
                   {aktivBruttoinntekt?.endringAarsaker?.map((endring, endringIndex) => (
                     <Fragment key={endring.aarsak + endringIndex}>
-                      <div className={lokalStyles.uthevet}>Endret med årsak</div>
+                      <div className={lokalStyling.uthevet}>Endret med årsak</div>
 
                       {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
                       <EndringAarsakVisning endringAarsak={endring as EndringAarsak} />
@@ -284,7 +284,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <Heading2>Refusjon</Heading2>
                   {visFullLonnIArbeidsgiverperioden && (
                     <>
-                      <div className={lokalStyles.uthevet}>
+                      <div className={lokalStyling.uthevet}>
                         Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
                       </div>
                       <FullLonnIArbeidsgiverperioden
@@ -316,14 +316,14 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             </>
           )}
           <BodyShort>Kvittering - innsendt inntektsmelding{aktivInnsendingTidspunkt}</BodyShort>
-          <HStack justify='space-between' className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
+          <HStack justify='space-between' className={lokalStyling.buttonWrapper + ' skjul-fra-print'}>
             <HStack gap='space-64'>
               {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}
               <Button variant='tertiary' as='a' href={env.saksoversiktUrl}>
                 Lukk
               </Button>
             </HStack>
-            <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
+            <ButtonPrint className={lokalStyling.skrivutknapp}>Skriv ut</ButtonPrint>
           </HStack>
         </div>
         <HentingAvDataFeilet
