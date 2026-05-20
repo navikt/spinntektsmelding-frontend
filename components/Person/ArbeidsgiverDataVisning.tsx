@@ -1,7 +1,7 @@
 import Heading3 from '../Heading3';
 import { SkeletonLoader } from '../SkeletonLoader/SkeletonLoader';
 import TextLabel from '../TextLabel';
-import lokalStyles from './Person.module.css';
+import lokalStyling from './Person.module.css';
 
 interface Arbeidsgiver {
   orgNavn?: string;
@@ -24,36 +24,36 @@ export default function ArbeidsgiverDataVisning({
     <div>
       <Heading3>Arbeidsgiveren</Heading3>
 
-      <div className={lokalStyles.arbeidsgiverWrapper}>
+      <div className={lokalStyling.arbeidsgiverWrapper}>
         {!hentingAvArbeidsgiverdataFeilet && (
-          <div className={lokalStyles.virksomhetsnavnWrapper}>
+          <div className={lokalStyling.virksomhetsnavnWrapper}>
             <TextLabel>Virksomhetsnavn</TextLabel>
-            <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
+            <div className={lokalStyling.virksomhetsnavn} data-cy='virksomhetsnavn'>
               <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={avsender.orgNavn} />
             </div>
           </div>
         )}
         {hentingAvArbeidsgiverdataFeilet && (
-          <div className={lokalStyles.virksomhetsnavnWrapper}>
+          <div className={lokalStyling.virksomhetsnavnWrapper}>
             <TextLabel>&nbsp;</TextLabel>
-            <div className={lokalStyles.virksomhetsnavn} data-cy='virksomhetsnavn'>
+            <div className={lokalStyling.virksomhetsnavn} data-cy='virksomhetsnavn'>
               &nbsp;
             </div>
           </div>
         )}
-        <div className={lokalStyles.orgnrNavnWrapper}>
+        <div className={lokalStyling.orgnrNavnWrapper}>
           <TextLabel>Orgnr. for underenhet</TextLabel>
           <div data-cy='orgnummer'>
             <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={avsender.orgnr} />
           </div>
         </div>
-        <div className={lokalStyles.innsenderNavnWrapper}>
+        <div className={lokalStyling.innsenderNavnWrapper}>
           <TextLabel>Innsender</TextLabel>
-          <div className={lokalStyles.virksomhetsnavn} data-cy='innsendernavn'>
+          <div className={lokalStyling.virksomhetsnavn} data-cy='innsendernavn'>
             <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={avsender.navn} />
           </div>
         </div>
-        <div className={lokalStyles.telefonWrapper}>{children}</div>
+        <div className={lokalStyling.telefonWrapper}>{children}</div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import TariffendringDato from './TariffendringDato';
-import lokalStyles from './Bruttoinntekt.module.css';
+import lokalStyling from './Bruttoinntekt.module.css';
 import parseIsoDate from '../../utils/parseIsoDate';
 import begrunnelseEndringBruttoinntekt from './begrunnelseEndringBruttoinntekt';
 
@@ -19,7 +19,7 @@ export default function AarsakDetaljer({ bestemmendeFravaersdag, id }: Readonly<
   return (
     <>
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Tariffendring && (
-        <div className={lokalStyles.endremaaanedsinntekt}>
+        <div className={lokalStyling.endremaaanedsinntekt}>
           <TariffendringDato
             defaultEndringsdato={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
             defaultKjentDato={parseIsoDate(defaultEndringAarsak?.bleKjent)}
@@ -29,7 +29,7 @@ export default function AarsakDetaljer({ bestemmendeFravaersdag, id }: Readonly<
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Ferie && (
-        <div className={lokalStyles.endreperiodeliste}>
+        <div className={lokalStyling.endreperiodeliste}>
           <PeriodeListevelger
             fomTekst='Ferie fra'
             tomTekst='Ferie til'
@@ -40,7 +40,7 @@ export default function AarsakDetaljer({ bestemmendeFravaersdag, id }: Readonly<
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.VarigLoennsendring && (
-        <div className={lokalStyles.endremaaanedsinntekt}>
+        <div className={lokalStyling.endremaaanedsinntekt}>
           <DatoVelger
             label='Lønnsendring gjelder fra'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
@@ -51,7 +51,7 @@ export default function AarsakDetaljer({ bestemmendeFravaersdag, id }: Readonly<
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permisjon && (
-        <div className={lokalStyles.endreperiodeliste}>
+        <div className={lokalStyling.endreperiodeliste}>
           <PeriodeListevelger
             fomTekst='Permisjon fra'
             tomTekst='Permisjon til'
@@ -62,7 +62,7 @@ export default function AarsakDetaljer({ bestemmendeFravaersdag, id }: Readonly<
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Permittering && (
-        <div className={lokalStyles.endreperiodeliste}>
+        <div className={lokalStyling.endreperiodeliste}>
           <PeriodeListevelger
             fomTekst='Permittering fra'
             tomTekst='Permittering til'
@@ -73,7 +73,7 @@ export default function AarsakDetaljer({ bestemmendeFravaersdag, id }: Readonly<
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStilling && (
-        <div className={lokalStyles.endremaaanedsinntekt}>
+        <div className={lokalStyling.endremaaanedsinntekt}>
           <DatoVelger
             label='Ny stilling fra'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
@@ -84,7 +84,7 @@ export default function AarsakDetaljer({ bestemmendeFravaersdag, id }: Readonly<
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.NyStillingsprosent && (
-        <div className={lokalStyles.endremaaanedsinntekt}>
+        <div className={lokalStyling.endremaaanedsinntekt}>
           <DatoVelger
             label='Ny stillingsprosent fra'
             defaultSelected={parseIsoDate(defaultEndringAarsak?.gjelderFra)}
@@ -95,7 +95,7 @@ export default function AarsakDetaljer({ bestemmendeFravaersdag, id }: Readonly<
         </div>
       )}
       {defaultEndringAarsak?.aarsak === begrunnelseEndringBruttoinntekt.Sykefravaer && (
-        <div className={lokalStyles.endreperiodeliste}>
+        <div className={lokalStyling.endreperiodeliste}>
           <PeriodeListevelger
             fomTekst='Sykefravær fra'
             tomTekst='Sykefravær til'

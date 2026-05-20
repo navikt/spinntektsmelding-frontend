@@ -1,6 +1,6 @@
 import formatCurrency from '../../utils/formatCurrency';
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';
-import lokalStyles from './Bruttoinntekt.module.css';
+import lokalStyling from './Bruttoinntekt.module.css';
 import { Skeleton } from '@navikt/ds-react';
 import ugyldigEllerNegativtTall from '../../utils/ugyldigEllerNegativtTall';
 
@@ -41,7 +41,7 @@ export default function TidligereInntekt({ tidligereinntekt, henterData }: Reado
 
   return (
     <table
-      className={lokalStyles.inntektsliste}
+      className={lokalStyling.inntektsliste}
       data-cy='tidligereinntekt'
       summary='Oversikt over inntekter oppgitt i A-meldingen, for de siste tre måneder.'
     >
@@ -56,10 +56,10 @@ export default function TidligereInntekt({ tidligereinntekt, henterData }: Reado
           <>
             {lasterDataPlaceholder.map((inntekt) => (
               <tr key={inntekt.maaned}>
-                <td className={lokalStyles.maanedsnavn}>
+                <td className={lokalStyling.maanedsnavn}>
                   <Skeleton />:
                 </td>
-                <td className={lokalStyles.maanedsinntekt}>
+                <td className={lokalStyling.maanedsinntekt}>
                   <Skeleton />
                 </td>
               </tr>
@@ -70,8 +70,8 @@ export default function TidligereInntekt({ tidligereinntekt, henterData }: Reado
           <>
             {inntekter.map((inntekt) => (
               <tr key={inntekt[0]}>
-                <td className={lokalStyles.maanedsnavn}>{formatMaanedsnavn(inntekt[0])}:</td>
-                <td className={lokalStyles.maanedsinntekt}>
+                <td className={lokalStyling.maanedsnavn}>{formatMaanedsnavn(inntekt[0])}:</td>
+                <td className={lokalStyling.maanedsinntekt}>
                   {ugyldigEllerNegativtTall(inntekt[1]) && '-'}
                   {!ugyldigEllerNegativtTall(inntekt[1]) && <>{formatCurrency(inntekt[1])} kr</>}
                 </td>

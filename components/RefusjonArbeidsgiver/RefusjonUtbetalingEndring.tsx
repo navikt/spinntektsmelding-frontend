@@ -1,6 +1,6 @@
 import { Alert, Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
 import { MouseEvent, useEffect } from 'react';
-import lokalStyles from './RefusjonArbeidsgiver.module.css';
+import lokalStyling from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
 import ButtonSlette from '../ButtonSlette';
 import Datovelger from '../Datovelger';
@@ -72,12 +72,12 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
       />
       {harRefusjonEndringer === 'Ja' && (
         <>
-          <Alert variant='info' className={lokalStyles.alertBox}>
+          <Alert variant='info' className={lokalStyling.alertBox}>
             Skal arbeidsgiver slutte å forskuttere lønn så kan du sette refusjonen til 0 kr fra den datoen Nav skal ta
             over utbetalingen til den ansatte.
           </Alert>
           {fields.map((field, index) => (
-            <div key={field.id} className={lokalStyles.beloepperiode}>
+            <div key={field.id} className={lokalStyling.beloepperiode}>
               <TextField
                 label='Endret beløp/måned'
                 {...register(`refusjon.endringer.${index}.beloep`, {
@@ -85,7 +85,7 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
                 })}
                 id={ensureValidHtmlId(`refusjon.endringer.${index}.beloep`)}
                 error={findErrorInRHFErrors(`refusjon.endringer.${index}.beloep`, errors)}
-                className={lokalStyles.endringsboks}
+                className={lokalStyling.endringsboks}
               />
               <Controller
                 name={`refusjon.endringer.${index}.startdato`}
@@ -105,7 +105,7 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
               <ButtonSlette
                 title='Slett periode'
                 onClick={(e) => onSlettClick(index, e)}
-                className={lokalStyles.sletteknapp}
+                className={lokalStyling.sletteknapp}
               />
             </div>
           ))}
@@ -115,7 +115,7 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
       {harRefusjonEndringer === 'Ja' && (
         <Button
           variant='secondary'
-          className={lokalStyles.legtilbutton}
+          className={lokalStyling.legtilbutton}
           onClick={(event) => handleLeggTilPeriode(event)}
         >
           Legg til periode

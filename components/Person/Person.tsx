@@ -1,6 +1,6 @@
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
-import lokalStyles from './Person.module.css';
+import lokalStyling from './Person.module.css';
 import { TextField } from '@navikt/ds-react';
 import Heading2 from '../Heading2/Heading2';
 import Skillelinje from '../Skillelinje/Skillelinje';
@@ -35,7 +35,7 @@ export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
 
       <DelvisInnsendingInfo erDelvisInnsending={erDelvisInnsending} />
 
-      <div className={lokalStyles.personInfoWrapper}>
+      <div className={lokalStyling.personInfoWrapper}>
         <AnsattDataVisning sykmeldt={sykmeldt} />
 
         <ArbeidsgiverDataVisning avsender={avsender}>

@@ -4,7 +4,7 @@ import Heading3 from '../Heading3';
 import useBoundStore from '../../state/useBoundStore';
 import SelectBegrunnelse from './SelectBegrunnelse';
 import RefusjonArbeidsgiverBelop from './RefusjonArbeidsgiverBelop';
-import localStyles from './RefusjonArbeidsgiver.module.css';
+import lokalStyling from './RefusjonArbeidsgiver.module.css';
 import RefusjonUtbetalingEndring from './RefusjonUtbetalingEndring';
 import AlertBetvilerArbeidsevne from '../AlertBetvilerArbeidsevne/AlertBetvilerArbeidsevne';
 import { addDays } from 'date-fns';
@@ -82,7 +82,7 @@ export default function RefusjonArbeidsgiver({
               render={({ field }) => (
                 <RadioGroup
                   legend={betalerArbeidsgiverFullLonnLegend}
-                  className={localStyles.radiobuttonWrapper}
+                  className={lokalStyling.radiobuttonWrapper}
                   id={ensureValidHtmlId('fullLonn')}
                   error={findErrorInRHFErrors('fullLonn', errors)}
                   onChange={field.onChange}
@@ -98,9 +98,9 @@ export default function RefusjonArbeidsgiver({
               <>
                 {agpFullLonn === 'Nei' && (
                   <>
-                    <div className={localStyles.wrapperUtbetaling}>
+                    <div className={lokalStyling.wrapperUtbetaling}>
                       <NumberField
-                        className={localStyles.refusjonBeloep}
+                        className={lokalStyling.refusjonBeloep}
                         label='Utbetalt under arbeidsgiverperiode'
                         {...register('agp.redusertLoennIAgp.beloep', { valueAsNumber: true })}
                         id={ensureValidHtmlId('agp.redusertLoennIAgp.beloep')}
@@ -132,13 +132,13 @@ export default function RefusjonArbeidsgiver({
           render={({ field }) => (
             <RadioGroup
               legend={betalerArbeidsgiverEtterAgpLegend}
-              className={localStyles.radiobuttonInnerWrapper}
+              className={lokalStyling.radiobuttonInnerWrapper}
               id={ensureValidHtmlId('kreverRefusjon')}
               error={findErrorInRHFErrors('kreverRefusjon', errors)}
               onChange={field.onChange}
               value={field.value ?? ''}
             >
-              <BodyLong className={localStyles.radiobuttonDescriptionWrapper}>
+              <BodyLong className={lokalStyling.radiobuttonDescriptionWrapper}>
                 Arbeidsgiver kan velge mellom to alternativer. Betale lønn til den sykemeldte og få dette refundert fra
                 Nav, eller at Nav betaler sykepengene direkte til den sykemeldte. Dette gjelder ikke under
                 arbeidsgiverperiode.{' '}
@@ -147,7 +147,7 @@ export default function RefusjonArbeidsgiver({
                 </LenkeEksternt>
                 .
               </BodyLong>
-              <div className={localStyles.radiobuttonButtonWrapper}>
+              <div className={lokalStyling.radiobuttonButtonWrapper}>
                 <Radio value='Ja'>Ja</Radio>
                 <Radio value='Nei'>Nei</Radio>
               </div>

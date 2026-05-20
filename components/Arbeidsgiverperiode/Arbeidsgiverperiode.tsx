@@ -8,7 +8,7 @@ import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
 import { Periode, YesNo } from '../../state/state';
 import Heading3 from '../Heading3';
-import lokalStyles from './Arbeidsgiverperiode.module.css';
+import lokalStyling from './Arbeidsgiverperiode.module.css';
 import Feilmelding from '../Feilmelding';
 import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
@@ -339,7 +339,7 @@ export default function Arbeidsgiverperiode({
             av en tidligere sykeperiode. Hvis du mener dette er feil og at det skal være arbeidsgiverperiode kan du
             endre dette.
           </BodyLong>
-          <Alert variant='info' className={lokalStyles.infoAlert}>
+          <Alert variant='info' className={lokalStyling.infoAlert}>
             <p>
               Arbeidsgiverperiode skal fylles ut hvis sykmeldt har arbeidet i sykmeldingsperioden slik at første dag med
               sykefravær er mer enn 16 dager etter forrige sykefravær.
@@ -352,10 +352,10 @@ export default function Arbeidsgiverperiode({
         </>
       )}
       {arbeidsgiverperioder?.map((periode, periodeIndex) => (
-        <div key={periode.id} className={lokalStyles.dateWrapper}>
+        <div key={periode.id} className={lokalStyling.dateWrapper}>
           {!endretArbeidsgiverperiode && (
-            <div className={lokalStyles.endrearbeidsgiverperiode}>
-              <div className={lokalStyles.datepickerEscape}>
+            <div className={lokalStyling.endrearbeidsgiverperiode}>
+              <div className={lokalStyling.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-fra`}>Fra</TextLabel>
                 <div
                   data-cy={`arbeidsgiverperiode-${periodeIndex}-fra-dato`}
@@ -364,7 +364,7 @@ export default function Arbeidsgiverperiode({
                   {formatDate(periode.fom)}
                 </div>
               </div>
-              <div className={lokalStyles.datepickerEscape}>
+              <div className={lokalStyling.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-${periodeIndex}-til`}>Til</TextLabel>
                 <div
                   data-cy={`arbeidsgiverperiode-${periodeIndex}-til-dato`}
@@ -402,14 +402,14 @@ export default function Arbeidsgiverperiode({
       {(!arbeidsgiverperioder || arbeidsgiverperioder?.length === 0) && (
         <>
           {!endretArbeidsgiverperiode && (
-            <div className={lokalStyles.endrearbeidsgiverperiode}>
-              <div className={lokalStyles.datepickerEscape}>
+            <div className={lokalStyling.endrearbeidsgiverperiode}>
+              <div className={lokalStyling.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-1-fra`}>Fra</TextLabel>
                 <div data-cy={`arbeidsgiverperiode-1-fra-dato`} id={ensureValidHtmlId(`arbeidsgiverperioder[1].fom`)}>
                   -
                 </div>
               </div>
-              <div className={lokalStyles.datepickerEscape}>
+              <div className={lokalStyling.datepickerEscape}>
                 <TextLabel data-cy={`arbeidsgiverperiode-1-til`}>Til</TextLabel>
                 <div data-cy={`arbeidsgiverperiode-1-til-dato`} id={ensureValidHtmlId(`arbeidsgiverperioder[1].tom`)}>
                   -
@@ -440,7 +440,7 @@ export default function Arbeidsgiverperiode({
         </>
       )}
       {!endretArbeidsgiverperiode && (
-        <div className={lokalStyles.endreknapp}>
+        <div className={lokalStyling.endreknapp}>
           <ButtonEndre
             onClick={(event) => clickEndreArbeidsgiverperiodeHandler(event)}
             data-cy='endre-arbeidsgiverperiode'
@@ -464,15 +464,15 @@ export default function Arbeidsgiverperiode({
         <Feilmelding id={ensureValidHtmlId('agp.perioder')}>{visFeilmeldingTekst('agp.perioder')}</Feilmelding>
       )}
       {advarselKortPeriode.length > 0 && (
-        <span className={lokalStyles.arbeidsgiverKortPeriode} id={ensureValidHtmlId('arbeidsgiverperiode-kort-feil')}>
+        <span className={lokalStyling.arbeidsgiverKortPeriode} id={ensureValidHtmlId('arbeidsgiverperiode-kort-feil')}>
           {advarselKortPeriode}
         </span>
       )}
       {advarselKortPeriode.length > 0 && !arbeidsgiverperiodeDisabled && (
         <>
-          <div className={lokalStyles.wrapperUtbetaling}>
+          <div className={lokalStyling.wrapperUtbetaling}>
             <NumberField
-              className={lokalStyles.refusjonBeloep}
+              className={lokalStyling.refusjonBeloep}
               label='Utbetalt under arbeidsgiverperiode'
               {...register('agp.redusertLoennIAgp.beloep', { setValueAs: stringishToNumber })}
               id={ensureValidHtmlId('agp.redusertLoennIAgp.beloep')}
@@ -524,10 +524,10 @@ export default function Arbeidsgiverperiode({
       )}
 
       {endretArbeidsgiverperiode && (
-        <div className={lokalStyles.endreknapper}>
+        <div className={lokalStyling.endreknapper}>
           <Button
             variant='secondary'
-            className={lokalStyles.leggTilKnapp}
+            className={lokalStyling.leggTilKnapp}
             onClick={(event) => clickLeggTilArbeidsgiverperiodeHandler(event)}
           >
             Legg til periode

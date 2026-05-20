@@ -3,7 +3,7 @@ import { LonnISykefravaeret, YesNo } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
 import lokalStyle from './LonnUnderSykefravaeret.module.css';
-import lokalStyles from '../../pages/kvittering/Kvittering.module.css';
+import lokalStyling from '../../pages/kvittering/Kvittering.module.css';
 import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
 import parseIsoDate from '../../utils/parseIsoDate';
 import z from 'zod';
@@ -27,13 +27,13 @@ export default function LonnUnderSykefravaeret({
   if (loenn.status === 'Nei')
     return (
       <>
-        <div className={lokalStyles.uthevet}>Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?</div>
+        <div className={lokalStyling.uthevet}>Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?</div>
         <div className={lokalStyle.wrapper}>Nei</div>
       </>
     );
   return (
     <>
-      <div className={lokalStyles.uthevet}>Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?</div>
+      <div className={lokalStyling.uthevet}>Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?</div>
       <div className={lokalStyle.oppsummering}>
         <BodyShort>Ja</BodyShort>
         {loenn?.status === 'Ja' && (
