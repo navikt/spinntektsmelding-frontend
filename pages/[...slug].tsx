@@ -651,7 +651,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     forespurtStatus = 200;
   } else if (forespurtResult.status === RequestStatus.rejected) {
     logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.response?.status);
-    forespurtStatus = forespurtResult.reason?.response?.status || 500;
+    forespurtStatus = forespurtResult.reason?.response?.status || (hasEndreQuery ? 200 : 500);
   }
 
   logger.info(
