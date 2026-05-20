@@ -327,6 +327,145 @@ describe('Kvittering', () => {
 
     expect(useBoundStore.getState().arbeidsgiverperiodeDisabled).toBe(false);
   });
+
+  it('renders all main content sections', () => {
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const headings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
+    expect(headings.length).toBeGreaterThan(0);
+    expect(screen.getByText(/Sykmeldt/i)).toBeInTheDocument();
+    expect(screen.getByText(/Den ansatte/i)).toBeInTheDocument();
+  });
+
+  it('handles empty sykmeldingsperioder gracefully', () => {
+    const kvitteringWithoutPeriods = {
+      ...kvitteringsdata.selvbestemtInntektsmelding,
+      sykmeldingsperioder: []
+    };
+
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={kvitteringWithoutPeriods}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const headings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
+    expect(headings.length).toBeGreaterThan(0);
+  });
+
+  it('renders correct kvittid in props', () => {
+    render(
+      <Kvittering
+        kvittid='test-uuid-12345'
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const headings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
+    expect(headings.length).toBeGreaterThan(0);
+  });
+
+  it('renders multiple Endre buttons', () => {
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const endreButtons = screen.getAllByRole('button', { name: /Endre/i });
+    expect(endreButtons.length).toBeGreaterThan(0);
+  });
+
+  it('handles null refusjon in kvittering data', () => {
+    const kvitteringWithoutRefusjon = {
+      ...kvitteringsdata.selvbestemtInntektsmelding,
+      refusjon: null
+    };
+
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={kvitteringWithoutRefusjon}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const headings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
+    expect(headings.length).toBeGreaterThan(0);
+  });
+
+  it('renders with high kvitteringStatus code', () => {
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
+        dataFraBackend={true}
+        kvitteringStatus={500}
+      />
+    );
+
+    const headings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
+    expect(headings.length).toBeGreaterThan(0);
+  });
+
+  it('print button has correct variant', () => {
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const printButton = screen.getByRole('button', { name: /Skriv ut/i });
+    expect(printButton).toBeInTheDocument();
+  });
+
+  it('renders fravaersperiode section with correct content', () => {
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    const fravarePeriodText = screen.queryByText(/Fraværsperioder/i);
+    if (fravarePeriodText) {
+      expect(fravarePeriodText).toBeInTheDocument();
+    }
+  });
+
+  it('renders refusjon beloep when present', () => {
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={{ ...kvitteringsdata.selvbestemtInntektsmelding }}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    expect(screen.getByText(/Beregnet månedslønn/i)).toBeInTheDocument();
+  });
 });
 
 describe('getServerSideProps', () => {

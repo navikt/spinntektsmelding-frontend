@@ -50,6 +50,25 @@ export const handlers = [
     const mockdataFile = kvitteringMockdataMap[kvittid] || 'kvittering-bug-endre';
     const data = readMockdata(mockdataFile);
 
+    if (kvittid === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
+      return new HttpResponse(null, { status: 500 });
+    }
+
+    if (data) {
+      return HttpResponse.json(data);
+    }
+    return new HttpResponse(null, { status: 404 });
+  }),
+
+  http.get('*/api/v1/selvbestemt-inntektsmelding/:kvittid', ({ params }) => {
+    const { kvittid } = params;
+    const mockdataFile = kvitteringMockdataMap[kvittid] || 'kvittering-bug-endre';
+    const data = readMockdata(mockdataFile);
+
+    if (kvittid === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
+      return new HttpResponse(null, { status: 500 });
+    }
+
     if (data) {
       return HttpResponse.json(data);
     }
@@ -61,16 +80,9 @@ export const handlers = [
     const mockdataFile = forespoerselMockdataMap[foresporselid] || 'kvittering-bug-endre';
     const data = readMockdata(mockdataFile);
 
-    if (data) {
-      return HttpResponse.json(data);
+    if (foresporselid === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
+      return new HttpResponse(null, { status: 500 });
     }
-    return new HttpResponse(null, { status: 404 });
-  }),
-
-  http.get('*/api/v1/selvbestemt-inntektsmelding/:foresporselid', ({ params }) => {
-    const { foresporselid } = params;
-    const mockdataFile = kvitteringAgiMockdataMap[foresporselid] || 'kvittering-selvbestemt-ingen-agp';
-    const data = readMockdata(mockdataFile);
 
     if (data) {
       return HttpResponse.json(data);
