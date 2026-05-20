@@ -104,7 +104,7 @@ export const handlers = [
     const mockdataFile = forespoerselMockdataMap[forespoerselId];
     const data = readMockdata(mockdataFile);
 
-    if (foresporselid === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
+    if (forespoerselId === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
       return new HttpResponse(null, { status: 500 });
     }
 

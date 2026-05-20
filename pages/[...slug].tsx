@@ -589,7 +589,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         </FormProvider>
         <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
         <HentingAvDataFeilet open={skjemaFeilet || forespurtStatus === 500} handleCloseModal={lukkHentingFeiletModal} />
-        <FaisuDialog open={true} handleCloseDialog={() => {}} />
       </PageContent>
     </div>
   );
