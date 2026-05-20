@@ -80,6 +80,10 @@ export const handlers = [
     const mockdataFile = kvitteringAgiMockdataMap[foresporselid] || 'kvittering-selvbestemt-ingen-agp';
     const data = readMockdata(mockdataFile);
 
+    if (foresporselid === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
+      return new HttpResponse(null, { status: 500 });
+    }
+
     if (data) {
       return HttpResponse.json(data);
     }
