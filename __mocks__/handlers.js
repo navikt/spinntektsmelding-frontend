@@ -50,6 +50,10 @@ export const handlers = [
     const mockdataFile = kvitteringMockdataMap[kvittid] || 'kvittering-bug-endre';
     const data = readMockdata(mockdataFile);
 
+    if (foresporselid === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
+      return new HttpResponse(null, { status: 500 });
+    }
+
     if (data) {
       return HttpResponse.json(data);
     }
@@ -60,6 +64,10 @@ export const handlers = [
     const { foresporselid } = params;
     const mockdataFile = forespoerselMockdataMap[foresporselid] || 'kvittering-bug-endre';
     const data = readMockdata(mockdataFile);
+
+    if (foresporselid === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
+      return new HttpResponse(null, { status: 500 });
+    }
 
     if (data) {
       return HttpResponse.json(data);
