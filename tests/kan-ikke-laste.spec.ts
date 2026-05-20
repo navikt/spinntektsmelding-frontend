@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import { AxeBuilder } from '@axe-core/playwright';
+import { test } from '@playwright/test';
 import { FormPage } from './utils/formPage';
 
 const uuid = '46B02DA3-ACA1-4133-9594-7C9B1B361357';

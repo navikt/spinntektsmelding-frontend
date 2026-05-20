@@ -327,7 +327,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           </HStack>
         </div>
         <HentingAvDataFeilet
-          open={skjemaFeilet}
+          open={skjemaFeilet || kvitteringStatus === 500}
           handleCloseModal={lukkHentingFeiletModal}
           title='Henting av kvitteringen feilet'
           ariaLabel='Henting av kvittering feilet'

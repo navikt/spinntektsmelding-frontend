@@ -431,7 +431,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
           </HStack>
         </div>
-        <HentingAvDataFeilet open={kvitteringStatus === 500} handleCloseModal={lukkHentingFeiletModal} />
+        <HentingAvDataFeilet
+          open={kvitteringStatus === 500}
+          handleCloseModal={lukkHentingFeiletModal}
+          title='Henting av kvitteringen feilet'
+          ariaLabel='Henting av kvittering feilet'
+        />
       </PageContent>
     </div>
   );
