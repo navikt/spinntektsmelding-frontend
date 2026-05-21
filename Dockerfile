@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:26-bookworm-slim@sha256:d2ec0a1766c01dad04a185c2d5558b0adace167a7f1758ce80f0017698431d06 AS deps
+FROM node:26-bookworm-slim@sha256:8c676dbdbfc322815df09c910e80685fc5de08baa21c3b6189627e302b1bf131 AS deps
 WORKDIR /app
 
 RUN npm install -g --force corepack && corepack enable
@@ -12,7 +12,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     pnpm install --frozen-lockfile  --ignore-scripts
 
 # Rebuild the source code only when needed
-FROM node:26-bookworm-slim@sha256:d2ec0a1766c01dad04a185c2d5558b0adace167a7f1758ce80f0017698431d06 AS builder
+FROM node:26-bookworm-slim@sha256:8c676dbdbfc322815df09c910e80685fc5de08baa21c3b6189627e302b1bf131 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
