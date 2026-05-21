@@ -113,7 +113,7 @@ export default function useFyllInnsending() {
           skjemaData.agp?.redusertLoennIAgp as LonnIArbeidsgiverperioden,
           arbeidsgiverperioder
         ),
-        redusertLoennIAgp: skjemaData.fullLonn === 'Ja' ? null : skjemaData.agp?.redusertLoennIAgp
+        redusertLoennIAgp: skjemaData.fullLonn === 'Ja' ? null : (skjemaData.agp?.redusertLoennIAgp ?? null)
       },
       inntekt: harForespurtInntekt
         ? {
