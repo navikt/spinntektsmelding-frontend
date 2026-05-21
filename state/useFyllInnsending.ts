@@ -49,9 +49,6 @@ export default function useFyllInnsending() {
   return (forespoerselId: string, skjemaData: Skjema, erBegrensetForespoersel: boolean): FullInnsending => {
     setSkalViseFeilmeldinger(true);
 
-    console.log('Fyller innsending med data fra skjema: ');
-    console.log(JSON.stringify(skjemaData, null, 2));
-
     const harForespurtArbeidsgiverperiode = Boolean(
       skjemaData.opplysningstyper?.includes(forespoerselType.arbeidsgiverperiode)
     );
@@ -141,7 +138,7 @@ export default function useFyllInnsending() {
     if (!harForespurtArbeidsgiverperiode) {
       innsendingSkjema.agp = null;
     }
-    console.log('InnsendingSkjema fylt ut: ', innsendingSkjema);
+
     setKvitteringData(innsendingSkjema);
 
     return innsendingSkjema;

@@ -243,7 +243,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp) {
       onSetValue('fullLonn', 'Ja');
     } else if (kvitteringData?.agp?.redusertLoennIAgp) {
-      console.log('Setter fullLonn til Nei og fyller ut redusert lønn i AGP basert på kvitteringsdata');
       onSetValue('fullLonn', 'Nei');
       onSetValue('agp.redusertLoennIAgp.beloep', kvitteringData.agp.redusertLoennIAgp.beloep);
       onSetValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
@@ -321,7 +320,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       return;
     }
 
-    console.log('skalViseArbeidsgiverperiode:', skalViseArbeidsgiverperiode);
     if (skalViseArbeidsgiverperiode) {
       opplysningstyper = Array.from(new Set([...opplysningstyper, forespoerselType.arbeidsgiverperiode]));
       formData.opplysningstyper = opplysningstyper;
@@ -333,8 +331,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       setValue('opplysningstyper', Array.from(new Set([...opplysningstyper])));
       setPaakrevdeOpplysninger(opplysningstyper);
     }
-    console.log('Sender inn skjema med data: ');
-    console.log(JSON.stringify(formData, null, 2));
+
     sendInnSkjema(
       true,
       slug,
