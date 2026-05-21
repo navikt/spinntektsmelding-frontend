@@ -64,7 +64,8 @@ const skjemaData: Skjema = {
       }
     ],
     harEndringer: 'Ja'
-  }
+  },
+  opplysningstyper: ['refusjon', 'inntekt', 'arbeidsgiverperiode']
 };
 
 describe('useFyllInnsending', () => {
@@ -97,12 +98,7 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(
-        '8d50ef20-37b5-4829-ad83-56219e70b375',
-        ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
-        skjemaData,
-        false
-      );
+      innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaData, false);
     });
 
     if (innsending) {
@@ -127,11 +123,7 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(
-        '8d50ef20-37b5-4829-ad83-56219e70b375',
-        ['inntekt', 'refusjon'], // Uten 'arbeidsgiverperiode'
-        skjemaData
-      );
+      innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaData, false);
     });
 
     if (innsending) {
@@ -159,12 +151,7 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema = {} as InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(
-        '8d50ef20-37b5-4829-ad83-56219e70b375',
-        ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
-        skjemaData,
-        false
-      );
+      innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaData, false);
     });
 
     if (innsending) {
