@@ -9,7 +9,6 @@ import { logger } from '@navikt/next-logger';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
-import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import forespoerselType from '../config/forespoerselType';
 import { postInnsending } from './postInnsending';
 import {

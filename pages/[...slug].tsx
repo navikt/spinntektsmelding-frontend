@@ -9,9 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { BodyLong, Button, Checkbox, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
-
 import Skillelinje from '../components/Skillelinje/Skillelinje';
-
 import styles from '../styles/Home.module.css';
 
 import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
@@ -165,7 +163,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       },
       kreverRefusjon: undefined,
       fullLonn: undefined,
-      opplysningstyper: Array.from(new Set([...opplysningstyper])),
+      opplysningstyper: Array.from(new Set(opplysningstyper)),
       agp: {
         redusertLoennIAgp: null
       }
@@ -305,7 +303,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [inntektBeloep]);
 
   useEffect(() => {
-    onSetValue('opplysningstyper', Array.from(new Set([...opplysningstyper])));
+    onSetValue('opplysningstyper', Array.from(new Set(opplysningstyper)));
   }, [opplysningstyper]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
@@ -324,11 +322,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       opplysningstyper = Array.from(new Set([...opplysningstyper, forespoerselType.arbeidsgiverperiode]));
       formData.opplysningstyper = opplysningstyper;
       setPaakrevdeOpplysninger(opplysningstyper);
-      setValue('opplysningstyper', Array.from(new Set([...opplysningstyper])));
+      setValue('opplysningstyper', Array.from(new Set(opplysningstyper)));
     } else if (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode)) {
       opplysningstyper = opplysningstyper.filter((type) => type !== forespoerselType.arbeidsgiverperiode);
       formData.opplysningstyper = opplysningstyper;
-      setValue('opplysningstyper', Array.from(new Set([...opplysningstyper])));
+      setValue('opplysningstyper', Array.from(new Set(opplysningstyper)));
       setPaakrevdeOpplysninger(opplysningstyper);
     }
 
