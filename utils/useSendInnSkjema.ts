@@ -44,7 +44,6 @@ export default function useSendInnSkjema(
 
   return async (
     opplysningerBekreftet: boolean,
-    forespurteOpplysningstyper: Opplysningstype[],
     pathSlug: string,
     isDirtyForm: boolean,
     formData: Skjema,
@@ -70,13 +69,8 @@ export default function useSendInnSkjema(
 
     type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
-    const skjemaData: FullInnsending = fyllInnsending(
-      pathSlug,
-      forespurteOpplysningstyper,
-      formData,
-      erBegrensetForespoersel
-    );
-    const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
+    const skjemaData: FullInnsending = fyllInnsending(pathSlug, formData, erBegrensetForespoersel);
+    const harForespurtArbeidsgiverperiode = formData.opplysningstyper!.includes(forespoerselType.arbeidsgiverperiode);
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
     if (validerteData.success === false) {
       logEvent('skjema validering feilet', {

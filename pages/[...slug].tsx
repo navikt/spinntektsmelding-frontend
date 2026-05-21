@@ -115,6 +115,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
 
   const storeInitialized = useRef(false);
+  const agpValuesInitialized = useRef(false);
 
   const initState = useStateInit();
 
@@ -164,7 +165,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       },
       kreverRefusjon: undefined,
       fullLonn: undefined,
-      opplysningstyper: opplysningstyper,
+      opplysningstyper: Array.from(new Set([...opplysningstyper])),
       agp: {
         redusertLoennIAgp: null
       }
@@ -219,24 +220,35 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     return isEditingRefusjonBeloep;
   });
 
-  useEffect(() => {
-    if (bruttoinntekt.bruttoInntekt !== undefined) {
-      setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
-      if (!onIsEditingRefusjonBeloep()) {
-        setValue('refusjon.beloepPerMaaned', bruttoinntekt.bruttoInntekt);
-      }
-    }
-  }, [bruttoinntekt.bruttoInntekt, setValue]);
+  const onSetValue = useEffectEvent((...args: Parameters<typeof setValue>) => {
+    setValue(...args);
+  });
 
   useEffect(() => {
-    if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp) {
-      setValue('fullLonn', 'Ja');
-    } else if (kvitteringData?.agp?.redusertLoennIAgp) {
-      setValue('fullLonn', 'Nei');
-      setValue('agp.redusertLoennIAgp.beloep', kvitteringData.agp.redusertLoennIAgp.beloep);
-      setValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
+    if (bruttoinntekt.bruttoInntekt !== undefined) {
+      onSetValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+      if (!onIsEditingRefusjonBeloep()) {
+        onSetValue('refusjon.beloepPerMaaned', bruttoinntekt.bruttoInntekt);
+      }
     }
-  }, [kvitteringData?.agp?.redusertLoennIAgp, setValue, dataFraBackend, kvitteringData?.refusjon?.beloepPerMaaned]);
+  }, [bruttoinntekt.bruttoInntekt]);
+
+  useEffect(() => {
+    if (agpValuesInitialized.current) {
+      return;
+    }
+
+    agpValuesInitialized.current = true;
+
+    if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp) {
+      onSetValue('fullLonn', 'Ja');
+    } else if (kvitteringData?.agp?.redusertLoennIAgp) {
+      console.log('Setter fullLonn til Nei og fyller ut redusert lønn i AGP basert på kvitteringsdata');
+      onSetValue('fullLonn', 'Nei');
+      onSetValue('agp.redusertLoennIAgp.beloep', kvitteringData.agp.redusertLoennIAgp.beloep);
+      onSetValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
+    }
+  }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend]);
 
   useEffect(() => {
     if (
@@ -244,36 +256,36 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
       kvitteringData?.refusjon?.beloepPerMaaned !== null
     ) {
-      setValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
-      setValue('kreverRefusjon', 'Ja');
+      onSetValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
+      onSetValue('kreverRefusjon', 'Ja');
       if (kvitteringData?.refusjon?.endringer && kvitteringData.refusjon.endringer.length > 0) {
         const endringer = kvitteringData.refusjon.endringer.map((endring) => ({
           beloep: endring.beloep,
           startdato: parseIsoDate(endring.startdato)!
         }));
-        setValue('refusjon.endringer', endringer);
-        setValue('refusjon.harEndringer', 'Ja');
+        onSetValue('refusjon.endringer', endringer);
+        onSetValue('refusjon.harEndringer', 'Ja');
       } else {
-        setValue('refusjon.harEndringer', 'Nei');
-        setValue('refusjon.endringer', []);
+        onSetValue('refusjon.harEndringer', 'Nei');
+        onSetValue('refusjon.endringer', []);
       }
     } else if (!dataFraBackend && kvitteringData && !kvitteringData.refusjon?.endringer) {
-      setValue('refusjon.beloepPerMaaned', 0);
-      setValue('kreverRefusjon', 'Nei');
+      onSetValue('refusjon.beloepPerMaaned', 0);
+      onSetValue('kreverRefusjon', 'Nei');
     }
-  }, [kvitteringData, setValue, dataFraBackend]);
+  }, [kvitteringData, dataFraBackend]);
 
   useEffect(() => {
     if (harEndringAarsak(bruttoinntekt.endringAarsaker)) {
-      setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
+      onSetValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
     }
-  }, [bruttoinntekt.endringAarsaker, setValue]);
+  }, [bruttoinntekt.endringAarsaker]);
 
   useEffect(() => {
     if (avsender.tlf !== undefined) {
-      setValue('avsenderTlf', avsender.tlf);
+      onSetValue('avsenderTlf', avsender.tlf);
     }
-  }, [avsender.tlf, setValue]);
+  }, [avsender.tlf]);
 
   const inntektBeloep = useWatch({
     control,
@@ -294,8 +306,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [inntektBeloep]);
 
   useEffect(() => {
-    setValue('opplysningstyper', opplysningstyper);
-  }, [opplysningstyper, setValue]);
+    onSetValue('opplysningstyper', Array.from(new Set([...opplysningstyper])));
+  }, [opplysningstyper]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
@@ -309,19 +321,22 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       return;
     }
 
+    console.log('skalViseArbeidsgiverperiode:', skalViseArbeidsgiverperiode);
     if (skalViseArbeidsgiverperiode) {
-      opplysningstyper = [...opplysningstyper, forespoerselType.arbeidsgiverperiode];
-
+      opplysningstyper = Array.from(new Set([...opplysningstyper, forespoerselType.arbeidsgiverperiode]));
+      formData.opplysningstyper = opplysningstyper;
       setPaakrevdeOpplysninger(opplysningstyper);
+      setValue('opplysningstyper', Array.from(new Set([...opplysningstyper])));
     } else if (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode)) {
-      opplysningstyper = opplysningstyper.filter((t) => t !== forespoerselType.arbeidsgiverperiode);
-
+      opplysningstyper = opplysningstyper.filter((type) => type !== forespoerselType.arbeidsgiverperiode);
+      formData.opplysningstyper = opplysningstyper;
+      setValue('opplysningstyper', Array.from(new Set([...opplysningstyper])));
       setPaakrevdeOpplysninger(opplysningstyper);
     }
-
+    console.log('Sender inn skjema med data: ');
+    console.log(JSON.stringify(formData, null, 2));
     sendInnSkjema(
       true,
-      opplysningstyper,
       slug,
       isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
       formData,
