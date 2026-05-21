@@ -69,7 +69,9 @@ export default function useSendInnSkjema(
     type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
     const skjemaData: FullInnsending = fyllInnsending(pathSlug, formData, erBegrensetForespoersel);
-    const harForespurtArbeidsgiverperiode = formData.opplysningstyper!.includes(forespoerselType.arbeidsgiverperiode);
+    const harForespurtArbeidsgiverperiode = (formData.opplysningstyper ?? []).includes(
+      forespoerselType.arbeidsgiverperiode
+    );
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
     if (validerteData.success === false) {
       logEvent('skjema validering feilet', {
