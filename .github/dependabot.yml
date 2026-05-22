@@ -8,8 +8,12 @@ updates:
   # Maintain dependencies for pnpm
   - package-ecosystem: 'npm' # See documentation for possible values
     directory: '/' # Location of package manifests
-    registries: '*'
+    registries:
+      - npm-github
     open-pull-requests-limit: 20
+    allow:
+      - dependency-type: direct
+      - dependency-type: indirect
     ignore:
       - dependency-name: 'eslint'
         versions: ['9.x', '10.x']
