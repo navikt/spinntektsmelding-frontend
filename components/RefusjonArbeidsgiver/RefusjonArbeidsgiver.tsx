@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import NumberField from '../NumberField/NumberField';
+import stringishToNumber from '../../utils/stringishToNumber';
 
 interface RefusjonArbeidsgiverProps {
   skalViseArbeidsgiverperiode?: boolean;
@@ -100,7 +101,7 @@ export default function RefusjonArbeidsgiver({
                       <NumberField
                         className={lokalStyling.refusjonBeloep}
                         label='Utbetalt under arbeidsgiverperiode'
-                        {...register('agp.redusertLoennIAgp.beloep', { valueAsNumber: true })}
+                        {...register('agp.redusertLoennIAgp.beloep', { setValueAs: stringishToNumber })}
                         id={ensureValidHtmlId('agp.redusertLoennIAgp.beloep')}
                         error={findErrorInRHFErrors('agp.redusertLoennIAgp.beloep', errors)}
                       />

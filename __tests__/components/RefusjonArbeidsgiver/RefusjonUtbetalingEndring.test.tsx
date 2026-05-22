@@ -5,6 +5,8 @@ import RefusjonUtbetalingEndring from '../../../components/RefusjonArbeidsgiver/
 import { FormProvider, useForm } from 'react-hook-form';
 import React from 'react';
 
+let getFormValues: ReturnType<typeof useForm>['getValues'];
+
 interface TestWrapperProps {
   children: React.ReactNode;
   defaultValues?: Record<string, unknown>;
@@ -20,6 +22,9 @@ function TestWrapper({ children, defaultValues = {} }: TestWrapperProps) {
       ...defaultValues
     }
   });
+
+  getFormValues = methods.getValues;
+
   return <FormProvider {...methods}>{children}</FormProvider>;
 }
 
@@ -138,6 +143,23 @@ describe('RefusjonUtbetalingEndring', () => {
     });
 
     expect(Input).toHaveValue('1234');
+  });
+
+  it('should convert norwegian decimal input for beløp', async () => {
+    render(
+      <TestWrapper defaultValues={{ refusjon: { harEndringer: 'Ja', endringer: [{}] } }}>
+        <RefusjonUtbetalingEndring />
+      </TestWrapper>
+    );
+
+    const Input = screen.getByLabelText(/Endret beløp\/måned/i);
+
+    fireEvent.change(Input, {
+      target: { value: '123,45' }
+    });
+
+    expect(Input).toHaveValue('123,45');
+    expect(getFormValues('refusjon.endringer.0.beloep')).toBe(123.45);
   });
 
   it('should update dato when value is changed', async () => {

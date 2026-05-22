@@ -6,6 +6,8 @@ import RefusjonArbeidsgiver from '../../components/RefusjonArbeidsgiver';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { FormProvider, useForm } from 'react-hook-form';
 
+let getFormValues: ReturnType<typeof useForm>['getValues'];
+
 vi.mock('../../state/useBoundStore', () => ({
   __esModule: true,
   default: vi.fn(),
@@ -37,6 +39,9 @@ function TestWrapper({
       ...defaultValues
     }
   });
+
+  getFormValues = methods.getValues;
+
   return <FormProvider {...methods}>{children}</FormProvider>;
 }
 
@@ -112,6 +117,23 @@ describe('RefusjonArbeidsgiver', () => {
     fireEvent.change(belopInput, { target: { value: '12345' } });
 
     expect(belopInput).toHaveValue('12345');
+  });
+
+  it('should convert norwegian decimal input for utbetalt field', () => {
+    const state = buildState();
+    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+
+    render(
+      <TestWrapper defaultValues={{ fullLonn: 'Nei' }}>
+        <RefusjonArbeidsgiver inntekt={25000} skalViseArbeidsgiverperiode />
+      </TestWrapper>
+    );
+
+    const belopInput = screen.getByLabelText(/Utbetalt under arbeidsgiverperiode/i);
+    fireEvent.change(belopInput, { target: { value: '123,45' } });
+
+    expect(belopInput).toHaveValue('123,45');
+    expect(getFormValues('agp.redusertLoennIAgp.beloep')).toBe(123.45);
   });
 
   it('handles agp.fullLonn = Ja path without showing utbetalt field', () => {

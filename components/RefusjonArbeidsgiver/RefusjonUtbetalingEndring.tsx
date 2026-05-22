@@ -7,6 +7,7 @@ import Datovelger from '../Datovelger';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import stringishToNumber from '../../utils/stringishToNumber';
 
 interface RefusjonUtbetalingEndringProps {
   minDate?: Date;
@@ -81,7 +82,7 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
               <TextField
                 label='Endret beløp/måned'
                 {...register(`refusjon.endringer.${index}.beloep`, {
-                  valueAsNumber: true
+                  setValueAs: stringishToNumber
                 })}
                 id={ensureValidHtmlId(`refusjon.endringer.${index}.beloep`)}
                 error={findErrorInRHFErrors(`refusjon.endringer.${index}.beloep`, errors)}
