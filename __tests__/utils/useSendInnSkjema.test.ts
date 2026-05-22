@@ -90,14 +90,7 @@ describe('useSendInnSkjema', () => {
 
     let response: boolean | undefined;
     await act(async () => {
-      response = await result.current(
-        opplysningerBekreftet,
-        forespurteOpplysningstyper,
-        pathSlug,
-        isDirtyForm,
-        formData,
-        false
-      );
+      response = await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
     expect(response).toBe(false);
@@ -115,13 +108,15 @@ describe('useSendInnSkjema', () => {
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = true;
-    const formData = {} as z.infer<typeof HovedskjemaSchema>;
+    const formData = {
+      opplysningstyper: forespurteOpplysningstyper
+    } as z.infer<typeof HovedskjemaSchema>;
 
     // Mock fyllInnsending to return invalid data
     mockFyllInnsending.mockReturnValue({});
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, forespurteOpplysningstyper, pathSlug, isDirtyForm, formData, false);
+      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
@@ -164,7 +159,8 @@ describe('useSendInnSkjema', () => {
         isEditing: false,
         harEndringer: 'Nei'
       },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      opplysningstyper: forespurteOpplysningstyper
     };
 
     mockFyllInnsending.mockReturnValue({
@@ -177,14 +173,7 @@ describe('useSendInnSkjema', () => {
 
     let response: boolean | undefined;
     await act(async () => {
-      response = await result.current(
-        opplysningerBekreftet,
-        forespurteOpplysningstyper,
-        pathSlug,
-        isDirtyForm,
-        formData,
-        false
-      );
+      response = await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
     expect(response).toBe(false);
@@ -227,7 +216,8 @@ describe('useSendInnSkjema', () => {
         isEditing: false,
         harEndringer: 'Nei'
       },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      opplysningstyper: forespurteOpplysningstyper
     };
 
     mockFyllInnsending.mockReturnValue({
@@ -239,7 +229,7 @@ describe('useSendInnSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, forespurteOpplysningstyper, pathSlug, isDirtyForm, formData, false);
+      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
     expect(postInnsending).toHaveBeenCalledWith(
@@ -286,7 +276,8 @@ describe('useSendInnSkjema', () => {
         isEditing: false,
         harEndringer: 'Nei'
       },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      opplysningstyper: forespurteOpplysningstyper
     };
 
     mockFyllInnsending.mockReturnValue({
@@ -303,7 +294,7 @@ describe('useSendInnSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, forespurteOpplysningstyper, pathSlug, isDirtyForm, formData, false);
+      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
     expect(mockSetKvitteringInnsendt).toHaveBeenCalled();
@@ -344,7 +335,8 @@ describe('useSendInnSkjema', () => {
         isEditing: false,
         harEndringer: 'Nei'
       },
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      opplysningstyper: forespurteOpplysningstyper
     };
 
     mockFyllInnsending.mockReturnValue({
@@ -352,11 +344,12 @@ describe('useSendInnSkjema', () => {
       agp: null,
       inntekt: { beloep: 50000 },
       refusjon: null,
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      opplysningstyper: forespurteOpplysningstyper
     });
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, forespurteOpplysningstyper, pathSlug, isDirtyForm, formData, false);
+      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
     expect(innsendingFeiletIngenTilgang).toHaveBeenCalledWith(true);
@@ -366,13 +359,12 @@ describe('useSendInnSkjema', () => {
     const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 
     const opplysningerBekreftet = true;
-    const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = false;
     const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, forespurteOpplysningstyper, pathSlug, isDirtyForm, formData, false);
+      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema fullført', {
@@ -420,7 +412,8 @@ describe('useSendInnSkjema', () => {
       inntekt: null,
       refusjon: null,
       avsenderTlf: '12345678',
-      fullLonn: 'Ja'
+      fullLonn: 'Ja',
+      opplysningstyper: forespurteOpplysningstyper
     };
 
     mockFyllInnsending.mockReturnValue({
@@ -433,14 +426,7 @@ describe('useSendInnSkjema', () => {
 
     let response: boolean | undefined;
     await act(async () => {
-      response = await result.current(
-        opplysningerBekreftet,
-        forespurteOpplysningstyper,
-        pathSlug,
-        isDirtyForm,
-        formData,
-        false
-      );
+      response = await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
     expect(response).toBe(false);
@@ -457,7 +443,7 @@ describe('useSendInnSkjema', () => {
     const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, forespurteOpplysningstyper, pathSlug, isDirtyForm, formData, false);
+      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
     // Verify that fyllFeilmeldinger was called to clear errors first

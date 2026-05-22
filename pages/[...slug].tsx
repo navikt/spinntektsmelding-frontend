@@ -9,9 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { BodyLong, Button, Checkbox, Link } from '@navikt/ds-react';
 
 import PageContent from '../components/PageContent/PageContent';
-
 import Skillelinje from '../components/Skillelinje/Skillelinje';
-
 import styles from '../styles/Home.module.css';
 
 import Fravaersperiode from '../components/Fravaersperiode/Fravaersperiode';
@@ -133,6 +131,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
 
   const storeInitialized = useRef(false);
+  const agpValuesInitialized = useRef(false);
 
   const initState = useStateInit();
 
@@ -188,7 +187,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       },
       kreverRefusjon: undefined,
       fullLonn: undefined,
-      opplysningstyper: opplysningstyper,
+      opplysningstyper: Array.from(new Set(opplysningstyper)),
       agp: {
         redusertLoennIAgp: null
       }
@@ -243,14 +242,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     return isEditingRefusjonBeloep;
   });
 
-  useEffect(() => {
-    if (bruttoinntekt.bruttoInntekt !== undefined) {
-      setValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
-      if (!onIsEditingRefusjonBeloep()) {
-        setValue('refusjon.beloepPerMaaned', bruttoinntekt.bruttoInntekt);
-      }
-    }
-  }, [bruttoinntekt.bruttoInntekt, setValue]);
+  const onSetValue = useEffectEvent((...args: Parameters<typeof setValue>) => {
+    setValue(...args);
+  });
 
   const avsenderOrgnummer = useEffectEvent(() => {
     return avsender.orgnr;
@@ -303,14 +297,29 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [ansettelsesforhold, setValue]);
 
   useEffect(() => {
-    if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp) {
-      setValue('fullLonn', 'Ja');
-    } else if (kvitteringData?.agp?.redusertLoennIAgp) {
-      setValue('fullLonn', 'Nei');
-      setValue('agp.redusertLoennIAgp.beloep', kvitteringData.agp.redusertLoennIAgp.beloep);
-      setValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
+    if (bruttoinntekt.bruttoInntekt !== undefined) {
+      onSetValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
+      if (!onIsEditingRefusjonBeloep()) {
+        onSetValue('refusjon.beloepPerMaaned', bruttoinntekt.bruttoInntekt);
+      }
     }
-  }, [kvitteringData?.agp?.redusertLoennIAgp, setValue, dataFraBackend, kvitteringData?.refusjon?.beloepPerMaaned]);
+  }, [bruttoinntekt.bruttoInntekt]);
+
+  useEffect(() => {
+    if (agpValuesInitialized.current) {
+      return;
+    }
+
+    agpValuesInitialized.current = true;
+
+    if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp) {
+      onSetValue('fullLonn', 'Ja');
+    } else if (kvitteringData?.agp?.redusertLoennIAgp) {
+      onSetValue('fullLonn', 'Nei');
+      onSetValue('agp.redusertLoennIAgp.beloep', kvitteringData.agp.redusertLoennIAgp.beloep);
+      onSetValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
+    }
+  }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend]);
 
   useEffect(() => {
     if (
@@ -318,8 +327,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
       kvitteringData?.refusjon?.beloepPerMaaned !== null
     ) {
-      setValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
-      setValue('kreverRefusjon', 'Ja');
+      onSetValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
+      onSetValue('kreverRefusjon', 'Ja');
       if (kvitteringData?.refusjon?.endringer && kvitteringData.refusjon.endringer.length > 0) {
         const endringer = kvitteringData.refusjon.endringer
           .map((endring) => {
@@ -337,26 +346,26 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         setValue('refusjon.endringer', endringer);
         setValue('refusjon.harEndringer', 'Ja');
       } else {
-        setValue('refusjon.harEndringer', 'Nei');
-        setValue('refusjon.endringer', []);
+        onSetValue('refusjon.harEndringer', 'Nei');
+        onSetValue('refusjon.endringer', []);
       }
     } else if (!dataFraBackend && kvitteringData && !kvitteringData.refusjon?.endringer) {
-      setValue('refusjon.beloepPerMaaned', 0);
-      setValue('kreverRefusjon', 'Nei');
+      onSetValue('refusjon.beloepPerMaaned', 0);
+      onSetValue('kreverRefusjon', 'Nei');
     }
-  }, [kvitteringData, setValue, dataFraBackend]);
+  }, [kvitteringData, dataFraBackend]);
 
   useEffect(() => {
     if (harEndringAarsak(bruttoinntekt.endringAarsaker)) {
-      setValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
+      onSetValue('inntekt.endringAarsaker', bruttoinntekt.endringAarsaker ?? null);
     }
-  }, [bruttoinntekt.endringAarsaker, setValue]);
+  }, [bruttoinntekt.endringAarsaker]);
 
   useEffect(() => {
     if (avsender.tlf !== undefined) {
-      setValue('avsenderTlf', avsender.tlf);
+      onSetValue('avsenderTlf', avsender.tlf);
     }
-  }, [avsender.tlf, setValue]);
+  }, [avsender.tlf]);
 
   const inntektBeloep = useWatch({
     control,
@@ -377,8 +386,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [inntektBeloep]);
 
   useEffect(() => {
-    setValue('opplysningstyper', opplysningstyper);
-  }, [opplysningstyper, setValue]);
+    onSetValue('opplysningstyper', Array.from(new Set(opplysningstyper)));
+  }, [opplysningstyper]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
@@ -393,16 +402,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
 
     if (skalViseArbeidsgiverperiode) {
-      opplysningstyper = [...opplysningstyper, forespoerselType.arbeidsgiverperiode];
+      opplysningstyper = Array.from(new Set([...opplysningstyper, forespoerselType.arbeidsgiverperiode]));
+      formData.opplysningstyper = opplysningstyper;
       setPaakrevdeOpplysninger(opplysningstyper);
+      setValue('opplysningstyper', Array.from(new Set(opplysningstyper)));
     } else if (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode)) {
-      opplysningstyper = opplysningstyper.filter((t) => t !== forespoerselType.arbeidsgiverperiode);
+      opplysningstyper = opplysningstyper.filter((type) => type !== forespoerselType.arbeidsgiverperiode);
+      formData.opplysningstyper = opplysningstyper;
+      setValue('opplysningstyper', Array.from(new Set(opplysningstyper)));
       setPaakrevdeOpplysninger(opplysningstyper);
     }
 
     sendInnSkjema(
       true,
-      opplysningstyper,
       slug,
       isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
       formData,
@@ -711,6 +723,35 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
           'Feil ved innhenting av sykmeldingsgrad: %j',
           error instanceof Error ? { message: error.message } : null
         );
+      }
+      try {
+        forespurt = await hentForespoerselSSR(uuid, token ?? '');
+
+        if (forespurt.data?.erBesvart && !overskriv) {
+          const ingress = context.req.headers.host + environment.baseUrl;
+          const destination = `https://${ingress}/kvittering/${uuid}`;
+          return {
+            redirect: {
+              destination: destination,
+              permanent: false
+            }
+          };
+        }
+      } catch (error) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error('Error fetching forespurt data: %j', err);
+        forespurt = { data: null };
+
+        const hasErrorStatus = err instanceof Error && 'status' in err;
+        const defaultStatusCode = endre ? 200 : 500;
+        const statusCode = hasErrorStatus ? (err as any).status : defaultStatusCode;
+        forespurtStatus = statusCode;
+
+        if (err instanceof Error && 'status' in err && (err as any).status === 404) {
+          return {
+            notFound: true
+          };
+        }
       }
     } else {
       logger.warn('OBO-feil-sykmeldingsgrad: %j', oboSykmeldingGrad);

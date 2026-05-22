@@ -1,5 +1,4 @@
 import { isValid } from 'date-fns';
-// import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { LonnIArbeidsgiverperioden, Naturalytelse, Periode, YesNo } from './state';
@@ -15,7 +14,6 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { NaturalytelseEnumSchema } from '../schema/NaturalytelseEnumSchema';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
-import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
 import arbeidsforhold from '../pages/api/arbeidsforhold';
 
@@ -49,16 +47,13 @@ export default function useFyllInnsending() {
   type FullInnsending = z.infer<typeof FullInnsendingSchema>;
   type Skjema = z.infer<typeof HovedskjemaSchema>;
 
-  return (
-    forespoerselId: string,
-    forespurteOpplysningstyper: Opplysningstype[],
-    skjemaData: Skjema,
-    erBegrensetForespoersel: boolean
-  ): FullInnsending => {
+  return (forespoerselId: string, skjemaData: Skjema, erBegrensetForespoersel: boolean): FullInnsending => {
     setSkalViseFeilmeldinger(true);
 
-    const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
-    const harForespurtInntekt = forespurteOpplysningstyper.includes(forespoerselType.inntekt);
+    const harForespurtArbeidsgiverperiode = Boolean(
+      skjemaData.opplysningstyper?.includes(forespoerselType.arbeidsgiverperiode)
+    );
+    const harForespurtInntekt = Boolean(skjemaData.opplysningstyper?.includes(forespoerselType.inntekt));
 
     const perioder = concatPerioder(sykmeldingsperioder, egenmeldingsperioder);
 
@@ -121,7 +116,7 @@ export default function useFyllInnsending() {
           skjemaData.agp?.redusertLoennIAgp as LonnIArbeidsgiverperioden,
           arbeidsgiverperioder
         ),
-        redusertLoennIAgp: skjemaData.agp?.redusertLoennIAgp ?? null
+        redusertLoennIAgp: skjemaData.fullLonn === 'Ja' ? null : (skjemaData.agp?.redusertLoennIAgp ?? null)
       },
       inntekt: harForespurtInntekt
         ? {
