@@ -8,6 +8,8 @@ updates:
   # Maintain public npm dependencies for pnpm
   - package-ecosystem: 'npm' # See documentation for possible values
     directory: '/' # Location of package manifests
+    registries:
+      - npm-github
     open-pull-requests-limit: 20
     allow:
       - dependency-type: direct
