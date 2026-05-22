@@ -65,4 +65,5 @@ registries:
   npm-github:
     type: npm-registry
     url: https://npm.pkg.github.com
+    replaces-base: false
     token: ${{ secrets.READER_TOKEN }}
