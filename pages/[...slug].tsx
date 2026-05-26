@@ -59,6 +59,7 @@ import { EndepunktSykepengesoeknader } from '../schema/EndepunktSykepengesoeknad
 import Faisu from '../components/Faisu/Faisu';
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
 import fetchArbeidsforhold from '../utils/fetchArbeidsforhold';
+import hentForespoerselIdSSR from '../utils/hentForespoerselIdSSR';
 
 const RequestStatus = {
   fulfilled: 'fulfilled',
@@ -712,7 +713,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
         );
         logger.info('Innhenting av sykmeldingsgrad for uuid %s fullført.', uuid);
         logger.info('Sykmeldingsgrad data: %j', sykmeldingsgrad);
-        const aktuellSykmeldingsgrad = sykmeldingsgrad.find((sykmelding) => sykmelding.vedtaksperiodeId === uuid);
+
+        const vedtaksperiodeIDListe = sykmeldingsgrad.soknadsperioder.map((periode) => periode.vedtaksperiodeId);
+
+        const koblingsliste = await hentForespoerselIdSSR(vedtaksperiodeIDListe);
+
+        const vedtaksperiodeId = koblingsliste.find((kobling) => kobling.forespoerselId === uuid)?.vedtaksperiodeId;
+
+        const aktuellSykmeldingsgrad = sykmeldingsgrad.find(
+          (sykmelding) => sykmelding.vedtaksperiodeId === vedtaksperiodeId
+        );
 
         harGradertSykmelding =
           aktuellSykmeldingsgrad?.soknadsperioder?.some(
