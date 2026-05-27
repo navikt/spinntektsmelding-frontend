@@ -8,6 +8,7 @@
   },
   "pnpm": {
     "overrides": {
+      "js-cookie": "3.0.7",
       "protobufjs": "8.4.2"
     },
     "onlyBuiltDependencies": [

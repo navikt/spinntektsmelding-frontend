@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  js-cookie: 3.0.7
   jsdom: 28.1.0
   protobufjs: 8.4.2
 
@@ -3134,8 +3135,8 @@ packages:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
 
-  js-cookie@3.0.5:
-    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+  js-cookie@3.0.7:
+    resolution: {integrity: sha512-z/wZZgDrkNV1eA0ULjM/F9/50Ya8fbzgKneSpoPsXSGd0KnpdtHfOZWK+GcwLk+EZbS4F9RBhU+K2RgzuDaItw==}
     engines: {node: '>=14'}
 
   js-tokens@10.0.0:
@@ -5311,7 +5312,7 @@ snapshots:
     dependencies:
       csp-header: 6.3.1
       html-react-parser: 5.2.17(@types/react@19.2.15)(react@19.2.4)
-      js-cookie: 3.0.5
+      js-cookie: 3.0.7
     optionalDependencies:
       react: 19.2.4
 
@@ -7511,7 +7512,7 @@ snapshots:
 
   joycon@3.1.1: {}
 
-  js-cookie@3.0.5: {}
+  js-cookie@3.0.7: {}
 
   js-tokens@10.0.0: {}
 
