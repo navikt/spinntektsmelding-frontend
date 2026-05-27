@@ -9,7 +9,13 @@
   "pnpm": {
     "overrides": {
       "protobufjs": "8.4.2"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "msw",
+      "protobufjs",
+      "unrs-resolver"
+    ]
   },
   "scripts": {
     "dev:decorator": "next dev --webpack | pino-pretty --messageKey=message",
