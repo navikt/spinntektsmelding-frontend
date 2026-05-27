@@ -8,7 +8,15 @@ export class FormPage {
   }
 
   async getRadioButton(groupName: string | RegExp, optionLabel: string | RegExp): Promise<Locator> {
-    return this.page.getByRole('group', { name: groupName }).getByLabel(optionLabel);
+    const radioInRadiogroup = this.page.getByRole('radiogroup', { name: groupName }).getByRole('radio', {
+      name: optionLabel
+    });
+
+    if ((await radioInRadiogroup.count()) > 0) {
+      return radioInRadiogroup.first();
+    }
+
+    return this.page.getByRole('group', { name: groupName }).getByLabel(optionLabel).first();
   }
 
   async checkRadioButton(groupName: string | RegExp, optionLabel: string | RegExp): Promise<void> {

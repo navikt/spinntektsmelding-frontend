@@ -7,6 +7,7 @@ import useSendInnSkjema from '../../utils/useSendInnSkjema';
 import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsgiverInitiertSkjema';
 import useBoundStore from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
+import forespoerselType from '../../config/forespoerselType';
 
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
@@ -231,6 +232,39 @@ describe('Home Page', () => {
     await waitFor(() => {
       expect(mockSendInnArbeidsgiverInitiertSkjema).toHaveBeenCalled();
     });
+  });
+
+  it('adds arbeidsgiverperiode to opplysningstyper when overstyrt and submits updated payload', async () => {
+    const mockSendInnSkjema = vi.fn().mockResolvedValue({});
+    const mockSetPaakrevdeOpplysninger = vi.fn();
+
+    (useSendInnSkjema as Mock).mockReturnValue(mockSendInnSkjema);
+    (useBoundStore as Mock).mockImplementation((stateFn) =>
+      stateFn(
+        createMockState({
+          hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue([forespoerselType.inntekt]),
+          setPaakrevdeOpplysninger: mockSetPaakrevdeOpplysninger
+        })
+      )
+    );
+
+    render(<Home slug='123' erEndring={false} />);
+
+    fireEvent.click(screen.getByText('Endre'));
+    fireEvent.click(screen.getByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'));
+    fireEvent.click(screen.getByText('Send'));
+
+    await waitFor(() => {
+      expect(mockSendInnSkjema).toHaveBeenCalled();
+    });
+
+    const submittedFormData = mockSendInnSkjema.mock.calls[0][3];
+    expect(submittedFormData.opplysningstyper).toEqual(
+      expect.arrayContaining([forespoerselType.inntekt, forespoerselType.arbeidsgiverperiode])
+    );
+    expect(mockSetPaakrevdeOpplysninger).toHaveBeenCalledWith(
+      expect.arrayContaining([forespoerselType.inntekt, forespoerselType.arbeidsgiverperiode])
+    );
   });
 
   it('renders Behandlingsdager component when slug is behandlingsdager', () => {

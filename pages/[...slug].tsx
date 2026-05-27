@@ -109,8 +109,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.kvitteringData
   ]);
 
-  const [sisteInntektsdato, setSisteInntektsdato] = useState<Date | undefined>(undefined);
-  const [hentInntektEnGang, setHentInntektEnGang] = useState<boolean>(inngangFraKvittering);
+  const sisteInntektsdatoRef = useRef<Date | undefined>(undefined);
+  const hentInntektEnGangRef = useRef(inngangFraKvittering);
 
   const storeInitialized = useRef(false);
   const agpValuesInitialized = useRef(false);
@@ -124,7 +124,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
-  let opplysningstyper = hentPaakrevdOpplysningstyper();
+  const opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
@@ -318,17 +318,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       return;
     }
 
+    let nesteOpplysningstyper = opplysningstyper;
+
     if (skalViseArbeidsgiverperiode) {
-      opplysningstyper = Array.from(new Set([...opplysningstyper, forespoerselType.arbeidsgiverperiode]));
-      formData.opplysningstyper = opplysningstyper;
-      setPaakrevdeOpplysninger(opplysningstyper);
-      setValue('opplysningstyper', Array.from(new Set(opplysningstyper)));
+      nesteOpplysningstyper = Array.from(new Set([...opplysningstyper, forespoerselType.arbeidsgiverperiode]));
     } else if (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode)) {
-      opplysningstyper = opplysningstyper.filter((type) => type !== forespoerselType.arbeidsgiverperiode);
-      formData.opplysningstyper = opplysningstyper;
-      setValue('opplysningstyper', Array.from(new Set(opplysningstyper)));
-      setPaakrevdeOpplysninger(opplysningstyper);
+      nesteOpplysningstyper = opplysningstyper.filter((type) => type !== forespoerselType.arbeidsgiverperiode);
     }
+
+    formData.opplysningstyper = nesteOpplysningstyper;
+    setPaakrevdeOpplysninger(nesteOpplysningstyper);
+    setValue('opplysningstyper', Array.from(new Set(nesteOpplysningstyper)));
 
     sendInnSkjema(
       true,
@@ -373,10 +373,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     return beregnetBestemmendeFraværsdag ? startOfMonth(beregnetBestemmendeFraværsdag) : undefined;
   }, [beregnetBestemmendeFraværsdag]);
 
-  const onSetHentInntektEnGang = useEffectEvent((status: boolean) => {
-    setHentInntektEnGang(status);
-  });
-
   useEffect(() => {
     if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
       return;
@@ -385,9 +381,13 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       return;
     }
 
+    const sisteInntektsdato = sisteInntektsdatoRef.current;
+
     if (sykmeldingsperioder && sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-      if (inntektsdato && (harForespurtArbeidsgiverperiode || hentInntektEnGang) && isValidUUID(slug)) {
-        onSetHentInntektEnGang(false);
+      const skalHenteEnGang = hentInntektEnGangRef.current;
+
+      if (inntektsdato && (harForespurtArbeidsgiverperiode || skalHenteEnGang) && isValidUUID(slug)) {
+        hentInntektEnGangRef.current = false;
 
         fetchInntektsdata(environment.inntektsdataUrl, slug, inntektsdato)
           .then((inntektSisteTreMnd) => {
@@ -401,7 +401,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema' + JSON.stringify(error));
           });
       }
-      setSisteInntektsdato(inntektsdato);
+      sisteInntektsdatoRef.current = inntektsdato;
     }
 
     setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());

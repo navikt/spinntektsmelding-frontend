@@ -30,7 +30,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     const formPage = new FormPage(page);
     // select "Nei" for refusjon
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Nei')
       .check();
     // fill phone + confirm
@@ -83,7 +83,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     // select årsak + refusjon = Ja
     await formPage.selectOption('Velg endringsårsak', 'Bonus');
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
     // click second "Endre" again to set refusjonsbeløp
@@ -91,7 +91,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     await page.getByLabel('Oppgi refusjonsbeløpet per måned').fill('55000');
     // choose "Nei" for endringer opphør
     await page
-      .getByRole('group', {
+      .getByRole('radiogroup', {
         name: 'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?'
       })
       .getByLabel('Nei')
