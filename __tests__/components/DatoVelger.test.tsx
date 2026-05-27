@@ -7,8 +7,12 @@ const mockReset = vi.fn();
 const mockUseDatepicker = vi.fn();
 
 vi.mock('@navikt/ds-react', () => {
-  const DatePicker = ({ children }) => <div>{children}</div>;
-  DatePicker.Input = (props) => <input {...props} />;
+  const DatePicker = function MockDatePicker({ children }) {
+    return <div>{children}</div>;
+  };
+  DatePicker.Input = function MockDatePickerInput(props) {
+    return <input {...props} />;
+  };
 
   return {
     DatePicker,
