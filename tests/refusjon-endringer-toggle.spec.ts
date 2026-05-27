@@ -96,18 +96,18 @@ test.describe('Refusjon endringer toggle Ja/Nei', () => {
   test('selecting Nei allows submission without periode fields', async ({ page }) => {
     // select full lønn in AGP
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .getByLabel('Ja')
       .check();
 
     // select refusjon under sykefravær
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
 
     // select "Nei" for changes in refusjon (no need to select Ja first)
-    const refusjonGroup = page.getByRole('group', {
+    const refusjonGroup = page.getByRole('radiogroup', {
       name: /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/
     });
     await refusjonGroup.getByRole('radio', { name: 'Nei' }).check();

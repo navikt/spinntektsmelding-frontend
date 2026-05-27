@@ -24,12 +24,12 @@ test.describe('Utfylling og innsending av skjema – to arbeidsforhold', () => {
 
     // select full lønn under AGP
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .getByLabel('Ja')
       .check();
     // select refusjon under sykefravær = Nei
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Nei')
       .check();
 

@@ -38,7 +38,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
 
     // select refusjon=yes
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
 
