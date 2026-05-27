@@ -6,6 +6,11 @@
   "resolutions": {
     "jsdom": "28.1.0"
   },
+  "pnpm": {
+    "overrides": {
+      "protobufjs": "8.4.2"
+    }
+  },
   "scripts": {
     "dev:decorator": "next dev --webpack | pino-pretty --messageKey=message",
     "dev:decoratorless": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --webpack | pino-pretty",
