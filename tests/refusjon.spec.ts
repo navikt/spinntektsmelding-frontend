@@ -30,18 +30,18 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
   test('can check radios for refusjon and submit', async ({ page }) => {
     // select full lønn in AGP
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .getByLabel('Ja')
       .check();
 
     // select refusjon under sykefravær
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
 
     // select "Nei" for changes in refusjon
-    const refusjonGroup = page.getByRole('group', {
+    const refusjonGroup = page.getByRole('radiogroup', {
       name: /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/
     });
     await refusjonGroup.getByRole('radio', { name: 'Nei' }).check();
@@ -84,18 +84,18 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     // select full lønn in AGP
     const formPage = new FormPage(page);
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .getByLabel('Ja')
       .check();
 
     // select refusjon under sykefravær
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
 
     // select "Nei" for changes in refusjon
-    const refusjonGroup = page.getByRole('group', {
+    const refusjonGroup = page.getByRole('radiogroup', {
       name: /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/
     });
     await refusjonGroup.getByRole('radio', { name: 'Ja' }).check();
@@ -152,18 +152,18 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     // select full lønn in AGP
     const formPage = new FormPage(page);
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
       .getByLabel('Ja')
       .check();
 
     // select refusjon under sykefravær
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
 
     // select "Nei" for changes in refusjon
-    const refusjonGroup = page.getByRole('group', {
+    const refusjonGroup = page.getByRole('radiogroup', {
       name: /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/
     });
     await refusjonGroup.getByRole('radio', { name: 'Ja' }).check();

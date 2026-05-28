@@ -14,7 +14,7 @@ test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
     const formPage = new FormPage(page);
     // select “Ja” under sykefravær
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
     // initial refund texts
@@ -33,21 +33,21 @@ test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
     // full lønn radio disabled
     await expect(
       page
-        .getByRole('group', { name: /Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden/ })
+        .getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden/ })
         .getByRole('radio', { name: 'Ja' })
     ).toBeDisabled();
 
     // refund groups
     await expect(
-      page.getByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon under sykefraværet/ })
+      page.getByRole('radiogroup', { name: /Betaler arbeidsgiver lønn og krever refusjon under sykefraværet/ })
     ).toBeVisible();
     await expect(
-      page.getByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden/ })
+      page.getByRole('radiogroup', { name: /Betaler arbeidsgiver lønn og krever refusjon etter arbeidsgiverperioden/ })
     ).toHaveCount(0);
 
     // re-enable sykefraværsrefund
     await page
-      .getByRole('group', { name: /Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?/ })
+      .getByRole('radiogroup', { name: /Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?/ })
       .getByLabel('Ja')
       .click();
     await expect(page.getByText('Refusjon til arbeidsgiver i sykefraværet')).toBeVisible();

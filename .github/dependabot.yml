@@ -15,12 +15,15 @@ updates:
       - dependency-type: direct
       - dependency-type: indirect
     ignore:
-      - dependency-name: '@navikt/*'
       - dependency-name: 'eslint'
         versions: ['9.x', '10.x']
     schedule:
       interval: 'daily'
     groups:
+      aksel:
+        patterns:
+          - '@navikt/ds*'
+          - '@navikt/aksel*'
       vitest:
         patterns:
           - 'vitest'
@@ -46,22 +49,6 @@ updates:
           - '@next/*'
           - 'eslint-config-next'
 
-  # Maintain @navikt packages from GitHub Packages
-  - package-ecosystem: 'npm'
-    directory: '/'
-    registries:
-      - npm-github
-    open-pull-requests-limit: 10
-    allow:
-      - dependency-name: '@navikt/*'
-    schedule:
-      interval: 'daily'
-    groups:
-      aksel:
-        patterns:
-          - '@navikt/ds*'
-          - '@navikt/aksel*'
-
   # Maintain dependencies for Docker
   - package-ecosystem: 'docker' # See documentation for possible values
     directory: '/' # Location of package manifests
@@ -78,4 +65,5 @@ registries:
   npm-github:
     type: npm-registry
     url: https://npm.pkg.github.com
+    replaces-base: false
     token: ${{ secrets.READER_TOKEN }}
