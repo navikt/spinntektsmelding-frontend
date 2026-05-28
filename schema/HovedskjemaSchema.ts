@@ -101,6 +101,17 @@ function validateRedusertLoennIAgp(val: HovedskjemaInput, ctx: z.RefinementCtx) 
   }
 }
 
+function validateInntektBeloep(val: HovedskjemaInput, ctx: z.RefinementCtx) {
+  if (val.opplysningstyper?.includes('inntekt') && val.inntekt?.beloep === undefined) {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Vennligst fyll inn beløpet for inntekt.',
+      path: ['inntekt', 'beloep'],
+      input: val.inntekt?.beloep
+    });
+  }
+}
+
 export const HovedskjemaSchema = z
   .object({
     bekreft_opplysninger: z.literal(true, {
@@ -115,7 +126,8 @@ export const HovedskjemaSchema = z
                 ? 'Vennligst fyll inn beløpet for inntekt.'
                 : 'Vennligst angi bruttoinntekt på formatet 1234,50'
           })
-          .min(0),
+          .min(0)
+          .optional(),
         endringAarsaker: z
           .union([z.array(EndringAarsakSchema), z.null('Vennligst angi årsak til endringen.')])
           .superRefine((val, ctx) => {
@@ -198,6 +210,7 @@ export const HovedskjemaSchema = z
     opplysningstyper: z.array(OpplysningstypeSchema).optional()
   })
   .superRefine((val, ctx) => {
+    validateInntektBeloep(val, ctx);
     validateRefusjonBeloep(val, ctx);
     validateRefusjonEndringer(val, ctx);
     validateKreverRefusjonOgFullLonn(val, ctx);

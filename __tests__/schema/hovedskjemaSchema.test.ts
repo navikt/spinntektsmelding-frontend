@@ -55,34 +55,48 @@ describe('HovedskjemaSchema', () => {
     ]);
   });
 
-  it('should fail validation when beloep is missing', () => {
+  it('should fail validation when beloep is missing and opplysningstyper includes inntekt', () => {
     const schemaData = {
       bekreft_opplysninger: true,
       inntekt: {
-        endringAarsaker: null
+        endringAarsaker: null,
+        harBortfallAvNaturalytelser: false
       },
+      opplysningstyper: ['inntekt'],
       refusjon: {
         isEditing: false,
-        beloepPerMaaned: 1234.5
+        beloepPerMaaned: 1234.5,
+        harEndringer: 'Nei'
       },
+      kreverRefusjon: 'Ja',
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
-    expect(result.error?.issues).toEqual([
-      {
-        code: 'invalid_type',
-        expected: 'number',
+    expect(result.error?.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'custom',
         message: 'Vennligst fyll inn beløpet for inntekt.',
         path: ['inntekt', 'beloep']
+      })
+    );
+  });
+
+  it('should pass validation when beloep is missing and opplysningstyper does not include inntekt', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 1234.5,
+        harEndringer: 'Nei'
       },
-      {
-        code: 'invalid_type',
-        expected: 'boolean',
-        message: 'Invalid input: expected boolean, received undefined',
-        path: ['inntekt', 'harBortfallAvNaturalytelser']
-      }
-    ]);
+      kreverRefusjon: 'Ja',
+      opplysningstyper: ['refusjon'],
+      avsenderTlf: '12345678'
+    };
+
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(true);
   });
 
   it('should fail validation when beloep is negative', () => {
