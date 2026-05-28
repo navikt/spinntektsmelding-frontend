@@ -1,4 +1,8 @@
 allowBuilds:
   esbuild: true
   msw: true
+  protobufjs: true
+  sharp: true
   unrs-resolver: true
+overrides:
+  'protobufjs': '8.4.2'
