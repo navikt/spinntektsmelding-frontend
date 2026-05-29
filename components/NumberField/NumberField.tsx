@@ -61,7 +61,7 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
       value={formattedValue}
       defaultValue={formattedDefaultValue}
       onChange={onChange}
-      className={lokalStyling.numberField}
+      className={[props.className, lokalStyling.numberField].filter(Boolean).join(' ')}
     />
   );
 }
