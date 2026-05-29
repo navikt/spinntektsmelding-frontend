@@ -23,7 +23,8 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     if (typeof props.id === 'string') {
       input = document.getElementById(props.id) as HTMLInputElement | null;
     } else if (typeof props.name === 'string') {
-      input = document.querySelector<HTMLInputElement>(`input[name="${props.name}"]`);
+      const namedElements = document.getElementsByName(props.name);
+      input = namedElements.length > 0 ? (namedElements[0] as HTMLInputElement) : null;
     }
 
     if (!input) return;
