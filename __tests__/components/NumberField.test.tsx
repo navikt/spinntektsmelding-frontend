@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { axe } from 'jest-axe';
+import { FormProvider, useForm } from 'react-hook-form';
 import NumberField from '../../components/NumberField/NumberField';
 
 describe('NumberField', () => {
@@ -38,6 +39,43 @@ describe('NumberField', () => {
     expect(input).toHaveValue('12,3456');
   });
 
+  it('converts dot to comma in displayed defaultValue (uncontrolled)', () => {
+    render(<NumberField label='Beløp' defaultValue='1234.56' />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    expect(input).toHaveValue('1234,56');
+  });
+
+  it('displays defaultValue with just one comma', () => {
+    render(<NumberField label='Beløp' defaultValue='12,34,56' />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    expect(input).toHaveValue('12,3456');
+  });
+
+  it('formats value from react-hook-form register defaultValues', () => {
+    const TestComponent = () => {
+      const methods = useForm({
+        defaultValues: {
+          inntekt: {
+            beloep: 1234.56
+          }
+        }
+      });
+
+      return (
+        <FormProvider {...methods}>
+          <NumberField label='Beløp' {...methods.register('inntekt.beloep')} />
+        </FormProvider>
+      );
+    };
+
+    render(<TestComponent />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    expect(input).toHaveValue('1234,56');
+  });
+
   it('allows only numbers and comma in input', async () => {
     const handleChange = vi.fn();
     render(<NumberField label='Beløp' onChange={handleChange} />);
@@ -56,6 +94,19 @@ describe('NumberField', () => {
       receivedValue = e.target.value;
     });
     render(<NumberField label='Beløp' onChange={handleChange} />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    fireEvent.change(input, { target: { value: '123,45' } });
+
+    expect(receivedValue).toBe('123.45');
+  });
+
+  it('passes dot-formatted value to onChange handler for controlled input', () => {
+    let receivedValue: string | undefined;
+    const handleChange = vi.fn((e: React.ChangeEvent<HTMLInputElement>) => {
+      receivedValue = e.target.value;
+    });
+    render(<NumberField label='Beløp' value='1,00' onChange={handleChange} />);
 
     const input = screen.getByLabelText(/Beløp/i);
     fireEvent.change(input, { target: { value: '123,45' } });
