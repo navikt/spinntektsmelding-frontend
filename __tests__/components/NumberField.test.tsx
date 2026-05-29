@@ -76,6 +76,13 @@ describe('NumberField', () => {
     expect(input).toHaveValue('1234,56');
   });
 
+  it('formats uncontrolled value when only name is set and name contains special characters', () => {
+    render(<NumberField label='Beløp' name={String.raw`felt"med\tegn`} defaultValue='1234.56' />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    expect(input).toHaveValue('1234,56');
+  });
+
   it('allows only numbers and comma in input', async () => {
     const handleChange = vi.fn();
     render(<NumberField label='Beløp' onChange={handleChange} />);
@@ -183,7 +190,7 @@ describe('NumberField', () => {
   });
 
   it('handles numeric value', () => {
-    render(<NumberField label='Beløp' value={1234.56 as unknown as string} />);
+    render(<NumberField label='Beløp' value={1234.56} />);
 
     const input = screen.getByLabelText(/Beløp/i);
     expect(input).toHaveValue('1234,56');
