@@ -20,10 +20,8 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     if (isControlled) return;
 
     let input: HTMLInputElement | null = null;
-    if (typeof props.id === 'string') {
-      input = document.getElementById(props.id) as HTMLInputElement | null;
     } else if (typeof props.name === 'string') {
-      input = document.querySelector<HTMLInputElement>(`input[name="${props.name}"]`);
+      input = (document.getElementsByName(props.name)[0] as HTMLInputElement | undefined) ?? null;
     }
 
     if (!input) return;
