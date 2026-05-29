@@ -1,4 +1,4 @@
-import { Alert, Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { Alert, Button, Radio, RadioGroup } from '@navikt/ds-react';
 import { MouseEvent, useEffect } from 'react';
 import lokalStyling from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
