@@ -159,6 +159,11 @@ vi.mock('../../components/Heading3', () => ({
   default: ({ children }: { children: React.ReactNode }) => <h3 data-testid='heading3'>{children}</h3>
 }));
 
+vi.mock('../../components/Faisu/Faisu', () => ({
+  __esModule: true,
+  default: () => <div data-testid='faisu'>Faisu Component</div>
+}));
+
 vi.mock('../../utils/fetchInntektsdata', () => ({
   default: vi.fn(() =>
     Promise.resolve({

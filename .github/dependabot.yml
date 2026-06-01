@@ -13,8 +13,8 @@ updates:
     open-pull-requests-limit: 20
     allow:
       - dependency-type: direct
-      - dependency-type: indirect
     ignore:
+      - dependency-name: '@rollup/*'
       - dependency-name: 'eslint'
         versions: ['9.x', '10.x']
     schedule:
@@ -67,3 +67,4 @@ registries:
     url: https://npm.pkg.github.com
     replaces-base: false
     token: ${{ secrets.READER_TOKEN }}
+
