@@ -5,7 +5,7 @@ WORKDIR /app
 RUN npm install -g --force corepack && corepack enable
 
 # Copy only dependency-related files for better layer caching
-COPY package.json pnpm-lock.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     NODE_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) \
@@ -17,7 +17,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy source files (tests excluded via .dockerignore)
-COPY package.json pnpm-lock.yaml next.config.js tsconfig.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml next.config.js tsconfig.json ./
 COPY public ./public
 COPY pages ./pages
 COPY components ./components

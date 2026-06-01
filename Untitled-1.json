@@ -1,0 +1,182 @@
+[
+  {
+    "sykepengesoknadUuid": "23f59cf0-9374-3278-9f71-38c9c2f51e96",
+    "fom": "2026-04-14",
+    "tom": "2026-04-17",
+    "sykmeldingId": "662f5075-8081-4115-a461-6a2ad917feda",
+    "status": "SENDT",
+    "startSykeforlop": "2025-08-04",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": null,
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2026-04-14",
+        "tom": "2026-04-17",
+        "grad": 100,
+        "faktiskGrad": null
+      }
+    ]
+  },
+  {
+    "sykepengesoknadUuid": "ee64e987-facc-4e9d-b6bb-86c497746306",
+    "fom": "2026-04-18",
+    "tom": "2026-04-25",
+    "sykmeldingId": "a6eb3a87-a924-4d86-a901-7ba9bf53b410",
+    "status": "SENDT",
+    "startSykeforlop": "2026-04-08",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": "8c11ef22-2714-4737-b478-5d8fee407926",
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2026-04-18",
+        "tom": "2026-04-25",
+        "grad": 100,
+        "faktiskGrad": null
+      }
+    ]
+  },
+  {
+    "sykepengesoknadUuid": "1bcb8ed9-2707-3790-ab76-9fcda5d21177",
+    "fom": "2026-04-18",
+    "tom": "2026-04-25",
+    "sykmeldingId": "662f5075-8081-4115-a461-6a2ad917feda",
+    "status": "SENDT",
+    "startSykeforlop": "2025-08-04",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": null,
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2026-04-18",
+        "tom": "2026-04-25",
+        "grad": 100,
+        "faktiskGrad": null
+      }
+    ]
+  },
+  {
+    "sykepengesoknadUuid": "247b2b8b-386d-38f3-8c9a-4840f697f013",
+    "fom": "2026-04-26",
+    "tom": "2026-05-05",
+    "sykmeldingId": "662f5075-8081-4115-a461-6a2ad917feda",
+    "status": "SENDT",
+    "startSykeforlop": "2025-08-04",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": null,
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2026-04-26",
+        "tom": "2026-05-05",
+        "grad": 100,
+        "faktiskGrad": null
+      }
+    ]
+  },
+  {
+    "sykepengesoknadUuid": "154a5945-ccda-3943-a27e-f8d3cec55086",
+    "fom": "2026-04-29",
+    "tom": "2026-05-05",
+    "sykmeldingId": "a268551a-c4ef-4c79-a34f-891fc60d4572",
+    "status": "SENDT",
+    "startSykeforlop": "2025-08-04",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": null,
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2026-04-29",
+        "tom": "2026-05-05",
+        "grad": 100,
+        "faktiskGrad": null
+      }
+    ]
+  },
+  {
+    "sykepengesoknadUuid": "4d184304-6bc8-3c44-978d-2956d841bf39",
+    "fom": "2026-05-06",
+    "tom": "2026-05-12",
+    "sykmeldingId": "504617b9-149c-44bc-8d5a-4a4e16c6083c",
+    "status": "SENDT",
+    "startSykeforlop": "2025-08-04",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": null,
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2026-05-06",
+        "tom": "2026-05-12",
+        "grad": 80,
+        "faktiskGrad": null
+      }
+    ]
+  },
+  {
+    "sykepengesoknadUuid": "58c8ac9b-0e3e-3ba1-adef-fdb4b00bdedb",
+    "fom": "2026-05-06",
+    "tom": "2026-05-06",
+    "sykmeldingId": "662f5075-8081-4115-a461-6a2ad917feda",
+    "status": "SENDT",
+    "startSykeforlop": "2025-08-04",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": null,
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2026-05-06",
+        "tom": "2026-05-06",
+        "grad": 100,
+        "faktiskGrad": null
+      }
+    ]
+  },
+  {
+    "sykepengesoknadUuid": "c0711cbf-6d40-3f9c-9a75-f2109aa3d086",
+    "fom": "2026-05-13",
+    "tom": "2026-05-19",
+    "sykmeldingId": "bfc4afce-4655-43bf-9517-60080de636e3",
+    "status": "SENDT",
+    "startSykeforlop": "2025-08-04",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": null,
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2026-05-13",
+        "tom": "2026-05-19",
+        "grad": 100,
+        "faktiskGrad": null
+      }
+    ]
+  },
+  {
+    "sykepengesoknadUuid": "ae575ca6-41b0-331f-a53c-fbaa58b53057",
+    "fom": "2026-05-13",
+    "tom": "2026-05-19",
+    "sykmeldingId": "3b8e844a-69ab-4388-ab90-591fed2b53dc",
+    "status": "SENDT",
+    "startSykeforlop": "2025-08-04",
+    "egenmeldingsdagerFraSykmelding": [],
+    "vedtaksperiodeId": null,
+    "soknadstype": "ARBEIDSTAKERE",
+    "behandlingsdager": [],
+    "soknadsperioder": [
+      {
+        "fom": "2026-05-13",
+        "tom": "2026-05-19",
+        "grad": 100,
+        "faktiskGrad": null
+      }
+    ]
+  }
+]

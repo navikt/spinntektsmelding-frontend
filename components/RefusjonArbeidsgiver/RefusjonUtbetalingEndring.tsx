@@ -1,4 +1,4 @@
-import { Alert, Button, Radio, RadioGroup, TextField } from '@navikt/ds-react';
+import { Alert, Button, Radio, RadioGroup } from '@navikt/ds-react';
 import { MouseEvent, useEffect } from 'react';
 import lokalStyling from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
@@ -7,6 +7,7 @@ import Datovelger from '../Datovelger';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import NumberField from '../NumberField/NumberField';
 import stringishToNumber from '../../utils/stringishToNumber';
 
 interface RefusjonUtbetalingEndringProps {
@@ -79,10 +80,10 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
           </Alert>
           {fields.map((field, index) => (
             <div key={field.id} className={lokalStyling.beloepperiode}>
-              <TextField
+              <NumberField
                 label='Endret beløp/måned'
                 {...register(`refusjon.endringer.${index}.beloep`, {
-                  setValueAs: stringishToNumber
+                  setValueAs: (value) => stringishToNumber(value)
                 })}
                 id={ensureValidHtmlId(`refusjon.endringer.${index}.beloep`)}
                 error={findErrorInRHFErrors(`refusjon.endringer.${index}.beloep`, errors)}

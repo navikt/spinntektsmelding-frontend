@@ -62,6 +62,11 @@ vi.mock('../../utils/useTidligereInntektsdata', () => ({
   default: vi.fn(() => ({ data: null, error: null }))
 }));
 
+vi.mock('../../utils/fetchArbeidsforhold', () => ({
+  __esModule: true,
+  default: vi.fn(() => Promise.resolve({ ansettelsesforhold: [] }))
+}));
+
 vi.mock('../../state/useBoundStore', () => ({
   __esModule: true,
   default: vi.fn(),
@@ -74,7 +79,7 @@ const createMockState = (overrides = {}) => ({
   slettFeilmelding: vi.fn(),
   leggTilFeilmelding: vi.fn(),
   foreslaattBestemmendeFravaersdag: '2023-01-01',
-  sykmeldingsperioder: [],
+  sykmeldingsperioder: [{ id: 'periode-1', fom: parseIsoDate('2023-02-20'), tom: parseIsoDate('2023-03-03') }],
   egenmeldingsperioder: [],
   skjemaFeilet: false,
   skjemastatus: SkjemaStatus.UNDER_UTFYLLING,

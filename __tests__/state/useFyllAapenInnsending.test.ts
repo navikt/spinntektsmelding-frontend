@@ -102,6 +102,19 @@ describe('useFyllAapenInnsending', () => {
       result.current.setBareNyMaanedsinntekt(500000);
     });
 
+    act(() => {
+      result.current.initFravaersperiode([
+        {
+          fom: '2023-02-20',
+          tom: '2023-03-03'
+        },
+        {
+          fom: '2023-03-05',
+          tom: '2023-03-06'
+        }
+      ]);
+    });
+
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());
 
     const fyllInnsending = fyller.current;

@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { TextField } from '@navikt/ds-react';
+import { useCallback, useEffect } from 'react';
+import lokalStyling from './NumberField.module.css';
 
 const sanitizeToSingleComma = (value: string): string => {
   const parts = value.split(',');
@@ -28,6 +30,29 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     }
   }, [props.value]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const formatInputDisplayIfNeeded = useCallback(() => {
+    if (isControlled) return;
+
+    let input: HTMLInputElement | null = null;
+    if (typeof props.id === 'string') {
+      input = document.getElementById(props.id) as HTMLInputElement | null;
+    } else if (typeof props.name === 'string') {
+      const namedElements = document.getElementsByName(props.name);
+      input = namedElements.length > 0 ? (namedElements[0] as HTMLInputElement) : null;
+    }
+
+    if (!input) return;
+
+    const formatted = toDisplayValue(input.value);
+    if (formatted !== input.value) {
+      input.value = formatted;
+    }
+  }, [isControlled, props.id, props.name]);
+
+  useEffect(() => {
+    formatInputDisplayIfNeeded();
+  }, [formatInputDisplayIfNeeded, props.defaultValue]);
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const sanitizedComma = sanitizeToSingleComma(e.target.value.replaceAll(/[^0-9,]/g, ''));
     e.target.value = sanitizedComma.replaceAll(',', '.');
@@ -46,7 +71,17 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     }
   };
 
-  const formattedValue = isControlled ? displayValue : undefined;
+  const formattedValue = isControlled ? toDisplayValue(props.value) : undefined;
+  const formattedDefaultValue = isControlled ? undefined : toDisplayValue(props.defaultValue);
 
-  return <TextField inputMode='decimal' {...props} value={formattedValue} onChange={onChange} />;
+  return (
+    <TextField
+      inputMode='decimal'
+      {...props}
+      value={formattedValue}
+      defaultValue={formattedDefaultValue}
+      onChange={onChange}
+      className={[props.className, lokalStyling.numberField].filter(Boolean).join(' ')}
+    />
+  );
 }

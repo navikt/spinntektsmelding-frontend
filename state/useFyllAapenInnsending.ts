@@ -46,6 +46,7 @@ export default function useFyllAapenInnsending() {
 
   return (skjemaData: SkjemaData, selvbestemtType: SelvbestemtType, erBegrensetForespoersel: boolean) => {
     const perioder = concatPerioder(sykmeldingsperioder, egenmeldingsperioder);
+
     const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(
       arbeidsgiverperioder,
       true
