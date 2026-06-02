@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { TextField } from '@navikt/ds-react';
-import { useCallback, useEffect } from 'react';
 import lokalStyling from './NumberField.module.css';
 
 const sanitizeToSingleComma = (value: string): string => {
@@ -28,7 +27,7 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
       setDisplayValue(newDisplay);
       displayValueRef.current = newDisplay;
     }
-  }, [props.value]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [props.value]);
 
   const formatInputDisplayIfNeeded = useCallback(() => {
     if (isControlled) return;
@@ -71,7 +70,7 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     }
   };
 
-  const formattedValue = isControlled ? toDisplayValue(props.value) : undefined;
+  const formattedValue = isControlled ? displayValue : undefined;
   const formattedDefaultValue = isControlled ? undefined : toDisplayValue(props.defaultValue);
 
   return (

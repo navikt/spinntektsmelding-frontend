@@ -7,14 +7,18 @@ type FaisuArbeidsforhold = {
   inkludertISykefravaer?: boolean;
 };
 
-type FaisuKvitteringProps = {
+type FlereArbeidsforhold = {
   harLikLoenn: boolean;
   erSykmeldtFraAlle: boolean;
   arbeidsforhold?: FaisuArbeidsforhold[];
 };
 
-export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitteringProps | null>) {
-  if (!arbeidsforhold) {
+type FaisuKvitteringProps = {
+  arbeidsforhold?: FlereArbeidsforhold;
+};
+
+export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitteringProps>) {
+  if (!arbeidsforhold?.arbeidsforhold) {
     return null;
   }
 

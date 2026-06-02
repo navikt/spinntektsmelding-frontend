@@ -55,7 +55,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     () =>
       arbeidsforholdListe
         .map((af, index) => (af.inkludertISykefravaer ? String(index) : null))
-        .filter((v) => v !== null),
+        .filter((value): value is string => value !== null),
     [arbeidsforholdListe]
   );
 

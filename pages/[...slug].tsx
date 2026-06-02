@@ -64,6 +64,136 @@ const RequestStatus = {
   pending: 'pending'
 } as const;
 
+function createInvalidUuidProps(uuid: string, erEndring: boolean) {
+  return {
+    props: {
+      slug: uuid,
+      erEndring,
+      forespurt: null,
+      forespurtStatus: 404,
+      dataFraBackend: false,
+      harGradertSykmelding: false,
+      harFlereArbeidsforhold: false,
+      ansettelsesforhold: null
+    }
+  };
+}
+
+function resolveForespurtStatus(
+  forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
+  hasEndreQuery: boolean
+) {
+  if (forespurtResult.status === RequestStatus.fulfilled) {
+    return 200;
+  }
+
+  if (forespurtResult.status === RequestStatus.rejected) {
+    logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.response?.status);
+    return forespurtResult.reason?.response?.status || (hasEndreQuery ? 200 : 500);
+  }
+
+  return undefined;
+}
+
+function handleRejectedForespurtResult(
+  forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
+  context: GetServerSidePropsContext<{ slug: string[] }>
+) {
+  if (forespurtResult.status !== RequestStatus.rejected) {
+    return null;
+  }
+
+  logger.warn('Feil ved innhenting av forespurt data: %j', forespurtResult.reason);
+
+  if (forespurtResult.reason?.status === 401) {
+    return redirectTilLogin(context);
+  }
+
+  if (forespurtResult.reason?.status === 404) {
+    return {
+      notFound: true
+    };
+  }
+
+  return null;
+}
+
+function createKvitteringRedirect(context: GetServerSidePropsContext<{ slug: string[] }>, uuid: string) {
+  const ingress = context.req.headers.host + environment.baseUrl;
+  const isLocalhost =
+    context.req.headers.host?.startsWith('localhost') || context.req.headers.host?.startsWith('127.0.0.1');
+  const protocol = isLocalhost ? 'http' : 'https';
+  const destination = `${protocol}://${ingress}/kvittering/${uuid}`;
+
+  return {
+    redirect: {
+      destination,
+      permanent: false
+    }
+  };
+}
+
+async function getValidatedTokenOrRedirect(
+  context: GetServerSidePropsContext<{ slug: string[] }>,
+  isDevelopment: boolean
+) {
+  const token = getToken(context.req);
+
+  if (!token && !isDevelopment) {
+    logger.warn('Mangler token i header ved innhenting av forespurt data');
+    return {
+      token: null,
+      redirect: redirectTilLogin(context)
+    };
+  }
+
+  const validation = await validateToken(token ?? '');
+  if (!validation.ok && !isDevelopment) {
+    logger.warn('Validering av token feilet ved innhenting av forespurt data');
+    return {
+      token: null,
+      redirect: redirectTilLogin(context)
+    };
+  }
+
+  return {
+    token: token ?? '',
+    redirect: null
+  };
+}
+
+function hasMultipleArbeidsforhold(arbeidsforhold: Ansettelsesforhold | null) {
+  return Boolean(arbeidsforhold?.ansettelsesforhold && arbeidsforhold.ansettelsesforhold.length > 1);
+}
+
+function shouldRedirectToKvittering(
+  forespurt: { erBesvart?: boolean } | null,
+  overskriv: boolean,
+  hasEndreQuery: boolean
+) {
+  return Boolean(forespurt?.erBesvart && !overskriv && !hasEndreQuery);
+}
+
+function logFetchResults(
+  uuid: string,
+  forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
+  arbeidsforholdResult: PromiseSettledResult<Awaited<ReturnType<typeof hentArbeidsforholdSSR>>>,
+  forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null
+) {
+  logger.info(
+    'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
+    uuid,
+    forespurtResult.status,
+    arbeidsforholdResult.status
+  );
+
+  logger.info('Forespurt data: %j', forespurt);
+
+  if (arbeidsforholdResult.status === RequestStatus.rejected) {
+    logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
+  }
+}
+
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
@@ -137,10 +267,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
-  let opplysningstyper = useMemo(
-    () => hentPaakrevdOpplysningstyper(forespurt),
-    [hentPaakrevdOpplysningstyper, forespurt]
-  );
+  let opplysningstyper = useMemo(() => hentPaakrevdOpplysningstyper(), [hentPaakrevdOpplysningstyper]);
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
@@ -261,7 +388,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
         const arbeidsforhold = response.ansettelsesforhold?.map((periode) => ({
           inntekt: undefined,
-          yrkesKode: periode.yrkesKode,
           yrkesbeskrivelse: periode.yrkesbeskrivelse,
           stillingsprosent: periode.stillingsprosent,
           inkludertISykefravaer: undefined
@@ -276,10 +402,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   useEffect(() => {
     if (ansettelsesforhold) {
-      setHarFlereArbeidsforhold(ansettelsesforhold.ansettelsesforhold.length > 1);
       const arbeidsforhold = ansettelsesforhold.ansettelsesforhold.map((periode) => ({
         inntekt: undefined,
-        yrkesKode: periode.yrkesKode,
         yrkesbeskrivelse: periode.yrkesbeskrivelse,
         stillingsprosent: periode.stillingsprosent,
         inkludertISykefravaer: undefined
@@ -338,8 +462,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             };
           })
           .filter((endring): endring is { beloep: number; startdato: Date } => endring !== null);
-        setValue('refusjon.endringer', endringer);
-        setValue('refusjon.harEndringer', 'Ja');
+        onSetValue('refusjon.endringer', endringer);
+        onSetValue('refusjon.harEndringer', 'Ja');
       } else {
         onSetValue('refusjon.harEndringer', 'Nei');
         onSetValue('refusjon.endringer', []);
@@ -608,100 +732,47 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   const erEndring = action === 'overskriv';
   const hasEndreQuery = Boolean(endre);
   const isDevelopment = process.env.NODE_ENV === 'development';
-  let forespurt = null;
-  let forespurtStatus;
+  let forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null = null;
+  let forespurtStatus: number | undefined;
   const overskriv = erEndring;
   let harGradertSykmelding = false;
-  let arbeidsforhold = null;
-  let harFlereArbeidsforhold = false;
-  let ansettelsesforhold: Ansettelsesforhold | null;
+  let ansettelsesforhold: Ansettelsesforhold | null = null;
 
   if (!isValidUUID(uuid)) {
-    return {
-      props: {
-        slug: uuid,
-        erEndring,
-        forespurt,
-        forespurtStatus: 404,
-        dataFraBackend: false,
-        harGradertSykmelding,
-        harFlereArbeidsforhold,
-        ansettelsesforhold: null
-      }
-    };
+    return createInvalidUuidProps(uuid, erEndring);
   }
 
-  const token = getToken(context.req);
-  if (!token && !isDevelopment) {
-    /* håndter manglende token */
-    logger.warn('Mangler token i header ved innhenting av forespurt data');
-    return redirectTilLogin(context);
-  }
-
-  const validation = await validateToken(token ?? '');
-  if (!validation.ok && !isDevelopment) {
-    logger.warn('Validering av token feilet ved innhenting av forespurt data');
-    return redirectTilLogin(context);
+  const auth = await getValidatedTokenOrRedirect(context, isDevelopment);
+  if (auth.redirect) {
+    return auth.redirect;
   }
 
   const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
-    hentForespoerselSSR(uuid, token ?? ''),
-    hentArbeidsforholdSSR(uuid, token ?? '') // Hent arbeidsforhold fra aaregisteret
+    hentForespoerselSSR(uuid, auth.token),
+    hentArbeidsforholdSSR(uuid, auth.token)
   ]);
 
-  arbeidsforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
   forespurt = forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null;
-
-  if (forespurtResult.status === RequestStatus.fulfilled) {
-    forespurtStatus = 200;
-  } else if (forespurtResult.status === RequestStatus.rejected) {
-    logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.response?.status);
-    forespurtStatus = forespurtResult.reason?.response?.status || (hasEndreQuery ? 200 : 500);
-  }
-
-  logger.info(
-    'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
-    uuid,
-    forespurtResult.status,
-    arbeidsforholdResult.status
-  );
-
-  logger.info('Forespurt data: %j', forespurt);
-
-  if (arbeidsforholdResult.status === RequestStatus.rejected) {
-    logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
-  }
-
-  if (forespurtResult.status === RequestStatus.rejected) {
-    logger.warn('Feil ved innhenting av forespurt data: %j', forespurtResult.reason);
-    if (forespurtResult.reason?.status === 401) {
-      return redirectTilLogin(context);
-    }
-    if (forespurtResult.reason?.status === 404) {
-      return {
-        notFound: true
-      };
-    }
-  }
   ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
 
-  if (arbeidsforhold?.ansettelsesforhold && arbeidsforhold.ansettelsesforhold.length > 1) {
-    logger.info('Forespurt data inneholder flere ansettelsesforhold: %j', arbeidsforhold.ansettelsesforhold);
-    harFlereArbeidsforhold = true;
+  forespurtStatus = resolveForespurtStatus(forespurtResult, hasEndreQuery);
+  logFetchResults(uuid, forespurtResult, arbeidsforholdResult, forespurt);
+
+  const rejectedForespurtResponse = handleRejectedForespurtResult(forespurtResult, context);
+  if (rejectedForespurtResponse) {
+    return rejectedForespurtResponse;
   }
 
-  if (forespurt?.erBesvart && !overskriv && !hasEndreQuery) {
-    const ingress = context.req.headers.host + environment.baseUrl;
-    const isLocalhost =
-      context.req.headers.host?.startsWith('localhost') || context.req.headers.host?.startsWith('127.0.0.1');
-    const protocol = isLocalhost ? 'http' : 'https';
-    const destination = `${protocol}://${ingress}/kvittering/${uuid}`;
-    return {
-      redirect: {
-        destination: destination,
-        permanent: false
-      }
-    };
+  const harFlereArbeidsforhold = hasMultipleArbeidsforhold(ansettelsesforhold);
+  if (harFlereArbeidsforhold) {
+    logger.info(
+      'Forespurt data inneholder flere ansettelsesforhold: %j',
+      ansettelsesforhold?.ansettelsesforhold ?? null
+    );
+  }
+
+  if (shouldRedirectToKvittering(forespurt, overskriv, hasEndreQuery)) {
+    return createKvitteringRedirect(context, uuid);
   }
 
   return {

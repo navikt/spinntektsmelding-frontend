@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -119,6 +120,32 @@ describe('NumberField', () => {
     fireEvent.change(input, { target: { value: '123,45' } });
 
     expect(receivedValue).toBe('123.45');
+  });
+
+  it('preserves trailing comma while typing in controlled mode', () => {
+    const ControlledField = () => {
+      const [value, setValue] = useState('123');
+
+      return (
+        <NumberField
+          label='Beløp'
+          value={value}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            if (nextValue !== '123.') {
+              setValue(nextValue);
+            }
+          }}
+        />
+      );
+    };
+
+    render(<ControlledField />);
+
+    const input = screen.getByLabelText(/Beløp/i);
+    fireEvent.change(input, { target: { value: '123,' } });
+
+    expect(input).toHaveValue('123,');
   });
 
   it('displays Norwegian comma format after onChange handler runs (uncontrolled)', () => {

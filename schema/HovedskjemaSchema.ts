@@ -261,7 +261,7 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                 ctx.issues.push({
                   code: 'custom',
                   message: 'Vennligst angi årsak til endringen.',
-                  path: ['0', 'aarsak'],
+                  path: [0, 'aarsak'],
                   fatal: true,
                   input: ''
                 });
@@ -284,7 +284,7 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                   ctx.issues.push({
                     code: 'custom',
                     message: 'Vennligst angi årsak til endringen.',
-                    path: ['0', 'aarsak'],
+                    path: [index, 'aarsak'],
                     fatal: true,
                     input: ''
                   });
