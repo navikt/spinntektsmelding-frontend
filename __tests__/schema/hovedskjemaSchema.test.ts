@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
+import { HovedskjemaSchema, createHovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 
 describe('HovedskjemaSchema', () => {
   it('should pass validation when all fields are correct', () => {
@@ -817,6 +817,157 @@ describe('HovedskjemaSchema', () => {
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(true);
+  });
+
+  it('should fail validation when harLikLoenn is missing and Faisu validation is enabled', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 5000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 3000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Ja',
+      fullLonn: 'Ja',
+      avsenderTlf: '12345678',
+      flereArbeidsforhold: {}
+    };
+
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'custom',
+        message: 'Vennligst svar på om den ansatte har lik eller tilnærmet lik lønn i arbeidsforholdene.',
+        path: ['flereArbeidsforhold', 'harLikLoenn']
+      })
+    );
+  });
+
+  it('should fail validation when no arbeidsforhold is selected in Faisu', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 5000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 3000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Ja',
+      fullLonn: 'Ja',
+      avsenderTlf: '12345678',
+      flereArbeidsforhold: {
+        harLikLoenn: 'Nei',
+        erSykmeldtFraAlle: 'Nei',
+        arbeidsforhold: [
+          {
+            inntekt: 2500,
+            stillingsprosent: 100,
+            inkludertISykefravaer: false,
+            yrkesbeskrivelse: 'Utvikler'
+          },
+          {
+            inntekt: 2500,
+            stillingsprosent: 100,
+            inkludertISykefravaer: false,
+            yrkesbeskrivelse: 'Designer'
+          }
+        ]
+      }
+    };
+
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'custom',
+        message: 'Vennligst velg minst ett arbeidsforhold.',
+        path: ['flereArbeidsforhold', 'arbeidsforhold']
+      })
+    );
+  });
+
+  it('should fail validation when sum of arbeidsforhold inntekt differs from beregnet inntekt in Faisu', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 5000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 3000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Ja',
+      fullLonn: 'Ja',
+      avsenderTlf: '12345678',
+      flereArbeidsforhold: {
+        harLikLoenn: 'Nei',
+        erSykmeldtFraAlle: 'Nei',
+        arbeidsforhold: [
+          {
+            inntekt: 2000,
+            stillingsprosent: 100,
+            inkludertISykefravaer: true,
+            yrkesbeskrivelse: 'Utvikler'
+          },
+          {
+            inntekt: 500,
+            stillingsprosent: 100,
+            inkludertISykefravaer: false,
+            yrkesbeskrivelse: 'Designer'
+          }
+        ]
+      }
+    };
+
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'custom',
+        message: 'Summen av månedslønn i arbeidsforholdene må være lik beregnet månedslønn.',
+        path: ['flereArbeidsforhold', 'arbeidsforhold']
+      })
+    );
+  });
+
+  it('should skip Faisu validation when createHovedskjemaSchema is used with false', () => {
+    const schemaWithoutFaisuValidation = createHovedskjemaSchema(false);
+
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 5000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 3000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Ja',
+      fullLonn: 'Ja',
+      avsenderTlf: '12345678',
+      flereArbeidsforhold: {
+        arbeidsforhold: []
+      }
+    };
+
+    const result = schemaWithoutFaisuValidation.safeParse(schemaData);
     expect(result.success).toBe(true);
   });
 });
