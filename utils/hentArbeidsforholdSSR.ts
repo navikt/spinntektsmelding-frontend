@@ -7,7 +7,7 @@ export default async function hentArbeidsforholdSSR(
   token?: string
 ): Promise<Ansettelsesforhold> {
   if (Array.isArray(pathSlug)) {
-    throw new Error('Ugyldig pathSlug: må være en streng, ikke en array');
+    throw new TypeError('Ugyldig pathSlug: må være en streng, ikke en array');
   }
 
   if (pathSlug) {

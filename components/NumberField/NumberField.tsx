@@ -20,8 +20,8 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
 
   useEffect(() => {
     const newDisplay = toDisplayValue(props.value);
-    const newNumeric = parseFloat(newDisplay.replace(',', '.'));
-    const currentNumeric = parseFloat(displayValueRef.current.replace(',', '.'));
+    const newNumeric = Number.parseFloat(newDisplay.replace(',', '.'));
+    const currentNumeric = Number.parseFloat(displayValueRef.current.replace(',', '.'));
 
     if (newNumeric !== currentNumeric || (isNaN(newNumeric) && newDisplay !== displayValueRef.current)) {
       setDisplayValue(newDisplay);
