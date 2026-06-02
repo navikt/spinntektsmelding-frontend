@@ -8,6 +8,7 @@ import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
+import isFnrNumber from '../../utils/isFnrNumber';
 
 type forespoerselIdListeEnhet = {
   vedtaksperiodeId: string;
@@ -79,6 +80,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   if (!obo.ok) {
     logger.info('OBO-feil: ' + JSON.stringify(obo.error));
     return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const fnr = requestBody.fnr;
+  const eldsteFom = requestBody.eldsteFom;
+
+  if (!isFnrNumber(fnr)) {
+    logger.info('Ugyldig fnr: ' + fnr);
+    return res.status(400).json({ error: 'Ugyldig fødselsnummer' });
+  }
+
+  if (Number.isNaN(Date.parse(eldsteFom))) {
+    logger.info('Ugyldig dato: ' + eldsteFom);
+    return res.status(400).json({ error: 'Ugyldig dato' });
   }
 
   const soeknadResponse = await fetch(basePath, {
