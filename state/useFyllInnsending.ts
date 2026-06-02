@@ -15,7 +15,6 @@ import { NaturalytelseEnumSchema } from '../schema/NaturalytelseEnumSchema';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
 import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
-import arbeidsforhold from '../pages/api/arbeidsforhold';
 
 export type SendtPeriode = z.infer<typeof ApiPeriodeSchema>;
 
