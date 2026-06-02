@@ -38,6 +38,11 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
 
     // select refusjon=yes
     await page
+      .getByRole('radiogroup', { name: 'Har ansatt lik eller tilnærmet lik lønn i arbeidsforholdene (timelønn)?' })
+      .getByLabel('Ja')
+      .check();
+
+    await page
       .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();

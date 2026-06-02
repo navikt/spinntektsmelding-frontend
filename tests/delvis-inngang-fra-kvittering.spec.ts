@@ -41,6 +41,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
     await test.step('Velg endringsårsak og refusjon', async () => {
       await formPage.selectOption('Velg endringsårsak', 'Bonus');
+      await formPage.checkRadioButton('Har ansatt lik eller tilnærmet lik lønn i arbeidsforholdene (timelønn)?', 'Ja');
       await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
     });
 

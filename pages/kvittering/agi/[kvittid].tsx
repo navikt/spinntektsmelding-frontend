@@ -14,7 +14,7 @@ import { BodyLong, BodyShort, Button, HStack } from '@navikt/ds-react';
 import Skillelinje from '../../../components/Skillelinje/Skillelinje';
 import PeriodeFraTil from '../../../components/PeriodeFraTil/PeriodeFraTil';
 import formatCurrency from '../../../utils/formatCurrency';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import BortfallNaturalytelser from '../../../components/BortfallNaturalytelser/BortfallNaturalytelser';
 import FullLonnIArbeidsgiverperioden from '../../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 import LonnUnderSykefravaeret from '../../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
@@ -101,7 +101,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   dataFraBackend = false
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [
     kvitteringData,
@@ -195,7 +194,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   useEffect(() => {
     onSetNyInnsending();
-  }, [searchParams]);
+  }, [router.asPath]);
 
   const visNaturalytelser = true;
   const visArbeidsgiverperiode = true;

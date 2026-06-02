@@ -57,6 +57,10 @@ const arbeidsforholdMockdataMap = {
   'f32852af-888e-4d0c-ad67-081f22ee5c12': 'ansettelsesforhold-to-perioder'
 };
 
+const ansettelsesforholdByFnrMap = {
+  25087327879: 'ansettelsesforhold-to-perioder'
+};
+
 const soeknaderMockdataMap = {
   25087327879: 'soeknader'
   // 'f32852af-888e-4d0c-ad67-081f22ee5c12': 'kvittering-selvbestemt-format',
@@ -117,6 +121,24 @@ export const handlers = [
   http.get('*/api/v1/arbeidsforhold/:forespoerselId', ({ params }) => {
     const { forespoerselId } = params;
     const mockdataFile = arbeidsforholdMockdataMap[forespoerselId];
+    const data = readMockdata(mockdataFile);
+
+    if (data) {
+      return HttpResponse.json(data);
+    }
+    return new HttpResponse(null, { status: 404 });
+  }),
+
+  http.post('*/api/ansettelsesforhold', async ({ request }) => {
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      body = null;
+    }
+
+    const sykmeldtFnr = typeof body?.sykmeldtFnr === 'string' ? body.sykmeldtFnr : undefined;
+    const mockdataFile = (sykmeldtFnr && ansettelsesforholdByFnrMap[sykmeldtFnr]) || 'ansettelsesforhold-en-periode';
     const data = readMockdata(mockdataFile);
 
     if (data) {
