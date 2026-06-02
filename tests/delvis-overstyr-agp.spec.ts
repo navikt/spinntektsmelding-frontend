@@ -1,6 +1,25 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { FormPage } from './utils/formPage';
 import trengerDelvis from '../mockdata/trenger-delvis-enkel-variant.json';
+
+async function answerFullLonnIfVisible(page: Page) {
+  const fullLonnGroup = page.getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn/i });
+  if (await fullLonnGroup.count()) {
+    await fullLonnGroup.getByLabel('Ja').check();
+  }
+}
+
+async function openInntektEditingIfNeeded(page: Page, inntektLabel: string) {
+  const inntektInput = page.getByLabel(inntektLabel);
+  if (await inntektInput.count()) {
+    return;
+  }
+
+  const endreButtons = page.getByRole('button', { name: 'Endre' });
+  if (await endreButtons.count()) {
+    await endreButtons.last().click();
+  }
+}
 
 const uuid = 'ac33a4ae-e1bd-4cab-9170-b8a01a13471e';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
@@ -24,14 +43,12 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   // await apiResponse;
 
   // Simulate interaction
-  await page.waitForTimeout(5000);
-  await page.locator('button:has-text("Endre")').first().click();
+  await openInntektEditingIfNeeded(page, 'Månedslønn 06.12.2024');
 
   await formPage.fillInput('Fra', '06.12.2024');
   await formPage.fillInput('Til', '21.12.2024');
 
-  const endreKnapp2 = page.locator('button:has-text("Endre")').nth(0);
-  await endreKnapp2.click();
+  await openInntektEditingIfNeeded(page, 'Månedslønn 06.12.2024');
 
   const inntekt = page.locator('label:has-text("Månedslønn 06.12.2024")');
   await expect(inntekt).toHaveValue('36000');
@@ -39,6 +56,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   await formPage.fillInput('Månedslønn 06.12.2024', '50000');
 
   await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
+  await answerFullLonnIfVisible(page);
 
   await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
 

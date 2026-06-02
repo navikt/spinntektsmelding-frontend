@@ -50,12 +50,10 @@ Object.defineProperty(global.window, 'location', {
 
 // vi.mock('next/router', () => require('next-router-mock'));
 const mockPush = vi.fn();
-const mockGet = vi.fn();
 
-vi.mock('next/navigation', () => ({
+vi.mock('next/router', () => ({
   default: {},
-  useRouter: () => ({ push: mockPush }),
-  useSearchParams: () => ({ get: mockGet })
+  useRouter: () => ({ push: mockPush, asPath: '/test' })
 }));
 
 const initialState = useBoundStore.getState();

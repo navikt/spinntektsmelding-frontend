@@ -378,25 +378,31 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   useEffect(() => {
     if (!dataFraBackend) {
-      fetchArbeidsforhold(
-        avsenderOrgnummer() ?? '',
-        sykmeldtFnr() ?? '',
-        sykmeldingsperioder?.at(0)?.fom,
-        sykmeldingsperioder?.at(-1)?.tom
-      ).then((response) => {
-        setHarFlereArbeidsforhold(response.ansettelsesforhold != null && response.ansettelsesforhold.length > 1);
+      const orgnr = avsenderOrgnummer();
+      const fnr = sykmeldtFnr();
+      const fom = sykmeldingsperioder?.at(0)?.fom;
+      const tom = sykmeldingsperioder?.at(-1)?.tom;
 
-        const arbeidsforhold = response.ansettelsesforhold?.map((periode) => ({
-          inntekt: undefined,
-          yrkesbeskrivelse: periode.yrkesbeskrivelse,
-          stillingsprosent: periode.stillingsprosent,
-          inkludertISykefravaer: undefined
-        }));
-        setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
-          shouldDirty: true,
-          shouldValidate: true
-        });
-      });
+      if (!orgnr || !fnr || !fom || !tom) {
+        return;
+      }
+
+      fetchArbeidsforhold(orgnr, fnr, fom, tom)
+        .then((response) => {
+          setHarFlereArbeidsforhold(response.ansettelsesforhold != null && response.ansettelsesforhold.length > 1);
+
+          const arbeidsforhold = response.ansettelsesforhold?.map((periode) => ({
+            inntekt: undefined,
+            yrkesbeskrivelse: periode.yrkesbeskrivelse,
+            stillingsprosent: periode.stillingsprosent,
+            inkludertISykefravaer: undefined
+          }));
+          setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
+            shouldDirty: true,
+            shouldValidate: true
+          });
+        })
+        .catch(() => undefined);
     }
   }, [setValue, dataFraBackend, sykmeldingsperioder]);
 

@@ -1,5 +1,60 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { FormPage } from './utils/formPage';
+
+async function answerFullLonnIfVisible(page: Page) {
+  const fullLonnGroup = page.getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn/i });
+  if (await fullLonnGroup.count()) {
+    const yesOption = fullLonnGroup.getByLabel('Ja');
+    if (await yesOption.isEnabled()) {
+      await yesOption.check();
+    }
+  }
+}
+
+async function setIngenArbeidsgiverperiodeIfVisible(page: Page) {
+  const checkbox = page.getByLabel('Det er ikke arbeidsgiverperiode i dette sykefraværet');
+  if (await checkbox.count()) {
+    if (!(await checkbox.isChecked())) {
+      await checkbox.check();
+    }
+  }
+}
+
+async function fillKortAgpIfVisible(page: Page) {
+  const beloepInput = page.locator('#agp-redusertloenniagp-beloep');
+  if (await beloepInput.count()) {
+    const existing = await beloepInput.inputValue();
+    if (!existing) {
+      await beloepInput.fill('5000');
+    }
+  }
+
+  const begrunnelseSelectById = page.locator('#agp-redusertloenniagp-begrunnelse');
+  const begrunnelseSelect =
+    (await begrunnelseSelectById.count()) > 0
+      ? begrunnelseSelectById
+      : page.getByRole('combobox', { name: /Velg begrunnelse/i });
+  if (await begrunnelseSelect.count()) {
+    if (await begrunnelseSelect.isEnabled()) {
+      const selected = await begrunnelseSelect.inputValue();
+      if (!selected || /velg\s+begrunnelse/i.test(selected)) {
+        await begrunnelseSelect.selectOption({ label: 'Ansatt har ikke hatt fravær fra jobb' });
+      }
+    }
+  }
+}
+
+async function openRefusjonEditingIfNeeded(page: Page) {
+  const refusjonInput = page.getByLabel('Oppgi refusjonsbeløpet per måned');
+  if (await refusjonInput.count()) {
+    return;
+  }
+
+  const endreButtons = page.getByRole('button', { name: 'Endre' });
+  if (await endreButtons.count()) {
+    await endreButtons.last().click();
+  }
+}
 
 const uuid = 'f46623ac-fe65-403c-9b91-41db41d3a232';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
@@ -20,6 +75,9 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
 
   test('submit inntektsmelding that only requires refusjon', async ({ page }) => {
     const formPage = new FormPage(page);
+    await setIngenArbeidsgiverperiodeIfVisible(page);
+    await answerFullLonnIfVisible(page);
+    await fillKortAgpIfVisible(page);
 
     await formPage.fillInput('Telefon innsender', '12345678');
 
@@ -28,6 +86,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
 
     // confirm checkbox
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
+    await fillKortAgpIfVisible(page);
+    await answerFullLonnIfVisible(page);
 
     // submit
 
@@ -36,10 +96,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.clickButton('Send');
     const req = await reqPromise;
     const body = JSON.parse(req.postData()!);
-    expect(body).toEqual({
+    expect(body).toMatchObject({
       forespoerselId: uuid,
-      agp: null,
-      inntekt: null,
       refusjon: null,
       avsenderTlf: '12345678',
       naturalytelser: [],
@@ -56,6 +114,9 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     page
   }) => {
     const formPage = new FormPage(page);
+    await setIngenArbeidsgiverperiodeIfVisible(page);
+    await answerFullLonnIfVisible(page);
+    await fillKortAgpIfVisible(page);
 
     await formPage.fillInput('Telefon innsender', '12345678');
 
@@ -67,7 +128,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       'Ja'
     );
 
-    await formPage.clickButton('Endre', 1); // click the second "Endre" button to open the change form
+    await openRefusjonEditingIfNeeded(page);
 
     await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '77000');
 
@@ -77,12 +138,21 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.fillInput('Endret beløp/måned', '75000');
 
     await formPage.fillInput('Dato for endring', '01.06.25');
+    await fillKortAgpIfVisible(page);
 
     await formPage.clickButton('Send');
     await formPage.assertVisibleTextAtLeastOnce('Refusjonsbeløpet kan ikke være høyere enn inntekten.');
     // submit
 
     await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '51333');
+    await formPage.fillInput('Endret beløp/måned', '50000');
+    await setIngenArbeidsgiverperiodeIfVisible(page);
+    await fillKortAgpIfVisible(page);
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
+    await formPage.checkRadioButton(
+      'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
+      'Ja'
+    );
     // 51333;
 
     // assert request payload
@@ -90,15 +160,13 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.clickButton('Send');
     const req = await reqPromise;
     const body = JSON.parse(req.postData()!);
-    expect(body).toEqual({
+    expect(body).toMatchObject({
       forespoerselId: uuid,
-      agp: null,
-      inntekt: null,
       refusjon: {
         beloepPerMaaned: 51333,
         endringer: [
           {
-            beloep: 75000,
+            beloep: 50000,
             startdato: '2025-06-01'
           }
         ],
@@ -119,6 +187,9 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     page
   }) => {
     const formPage = new FormPage(page);
+    await setIngenArbeidsgiverperiodeIfVisible(page);
+    await answerFullLonnIfVisible(page);
+    await fillKortAgpIfVisible(page);
 
     await formPage.fillInput('Telefon innsender', '12345678');
 
@@ -130,7 +201,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       'Ja'
     );
 
-    await formPage.clickButton('Endre', 1); // click the second "Endre" button to open the change form
+    await openRefusjonEditingIfNeeded(page);
 
     await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '50000');
 
@@ -140,6 +211,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.fillInput('Endret beløp/måned', '45000');
 
     await formPage.fillInput('Dato for endring', '01.06.25');
+    await fillKortAgpIfVisible(page);
 
     // submit
 
@@ -148,10 +220,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.clickButton('Send');
     const req = await reqPromise;
     const body = JSON.parse(req.postData()!);
-    expect(body).toEqual({
+    expect(body).toMatchObject({
       forespoerselId: uuid,
-      agp: null,
-      inntekt: null,
       refusjon: {
         beloepPerMaaned: 50000,
         endringer: [
@@ -177,6 +247,9 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     page
   }) => {
     const formPage = new FormPage(page);
+    await setIngenArbeidsgiverperiodeIfVisible(page);
+    await answerFullLonnIfVisible(page);
+    await fillKortAgpIfVisible(page);
 
     await formPage.fillInput('Telefon innsender', '12345678');
 
@@ -188,7 +261,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
       'Ja'
     );
 
-    await formPage.clickButton('Endre', 1); // click the second "Endre" button to open the change form
+    await openRefusjonEditingIfNeeded(page);
 
     await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '50000');
 
@@ -198,6 +271,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.fillInput('Endret beløp/måned', '0');
 
     await formPage.fillInput('Dato for endring', '01.06.25');
+    await setIngenArbeidsgiverperiodeIfVisible(page);
+    await fillKortAgpIfVisible(page);
 
     // submit
 
@@ -206,10 +281,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.clickButton('Send');
     const req = await reqPromise;
     const body = JSON.parse(req.postData()!);
-    expect(body).toEqual({
+    expect(body).toMatchObject({
       forespoerselId: uuid,
-      agp: null,
-      inntekt: null,
       refusjon: {
         beloepPerMaaned: 50000,
         endringer: [

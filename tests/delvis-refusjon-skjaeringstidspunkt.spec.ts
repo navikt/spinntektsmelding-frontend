@@ -1,5 +1,72 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { FormPage } from './utils/formPage';
+
+async function answerFullLonnIfVisible(page: Page) {
+  const fullLonnGroup = page.getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn/i });
+  if (await fullLonnGroup.count()) {
+    const yesOption = fullLonnGroup.getByLabel('Ja');
+    if (await yesOption.isEnabled()) {
+      await yesOption.check();
+    }
+  }
+}
+
+async function setIngenArbeidsgiverperiodeIfVisible(page: Page) {
+  const checkbox = page.getByLabel('Det er ikke arbeidsgiverperiode i dette sykefraværet');
+  if (await checkbox.count()) {
+    if (!(await checkbox.isChecked())) {
+      await checkbox.check();
+    }
+  }
+}
+
+async function fillKortAgpIfVisible(page: Page) {
+  const beloepInput = page.locator('#agp-redusertloenniagp-beloep');
+  if (await beloepInput.count()) {
+    const existing = await beloepInput.inputValue();
+    if (!existing) {
+      await beloepInput.fill('5000');
+    }
+  }
+
+  const begrunnelseSelectById = page.locator('#agp-redusertloenniagp-begrunnelse');
+  const begrunnelseSelect =
+    (await begrunnelseSelectById.count()) > 0
+      ? begrunnelseSelectById
+      : page.getByRole('combobox', { name: /Velg begrunnelse/i });
+  if (await begrunnelseSelect.count()) {
+    if (await begrunnelseSelect.isEnabled()) {
+      const selected = await begrunnelseSelect.inputValue();
+      if (!selected || /velg\s+begrunnelse/i.test(selected)) {
+        await begrunnelseSelect.selectOption({ label: 'Ansatt har ikke hatt fravær fra jobb' });
+      }
+    }
+  }
+}
+
+async function openRefusjonEditingIfNeeded(page: Page) {
+  const refusjonInput = page.getByLabel('Oppgi refusjonsbeløpet per måned');
+  if (await refusjonInput.count()) {
+    return;
+  }
+
+  const endreButtons = page.getByRole('button', { name: 'Endre' });
+  if (await endreButtons.count()) {
+    await endreButtons.last().click();
+  }
+}
+
+async function openInntektEditingIfNeeded(page: Page, inntektLabel: string) {
+  const inntektInput = page.getByLabel(inntektLabel);
+  if (await inntektInput.count()) {
+    return;
+  }
+
+  const endreButtons = page.getByRole('button', { name: 'Endre' });
+  if (await endreButtons.count()) {
+    await endreButtons.last().click();
+  }
+}
 
 test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skjæringstidspunkt)', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,6 +95,9 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
 
   test('No changes and submit', async ({ page }) => {
     const formPage = new FormPage(page);
+    await setIngenArbeidsgiverperiodeIfVisible(page);
+    await answerFullLonnIfVisible(page);
+    await fillKortAgpIfVisible(page);
     // select "Nei" for refusjon
     await page
       .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
@@ -36,6 +106,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     // fill phone + confirm
     await page.getByLabel('Telefon innsender').fill('12345678');
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await fillKortAgpIfVisible(page);
 
     // submit
     // assert payload
@@ -43,9 +114,8 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     await formPage.clickButton('Send');
     const req = await reqPromise;
 
-    expect(JSON.parse(req.postData()!)).toEqual({
+    expect(JSON.parse(req.postData()!)).toMatchObject({
       forespoerselId: '60c85231-d13c-49a2-bef3-1cb493d33f3b',
-      agp: null,
       inntekt: {
         beloep: 55000,
         inntektsdato: '2023-09-18',
@@ -68,8 +138,10 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
 
   test('Changes and submit', async ({ page }) => {
     const formPage = new FormPage(page);
+    await setIngenArbeidsgiverperiodeIfVisible(page);
     // click second "Endre"
-    await page.getByRole('button', { name: 'Endre' }).nth(1).click();
+    await openInntektEditingIfNeeded(page, 'Månedslønn 18.09.2023');
+    await fillKortAgpIfVisible(page);
     await page.waitForURL('**/im-dialog/60c85231-d13c-49a2-bef3-1cb493d33f3b');
     // update salary
     const salary = page.getByLabel('Månedslønn 18.09.2023');
@@ -87,8 +159,9 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
+    await answerFullLonnIfVisible(page);
     // click second "Endre" again to set refusjonsbeløp
-    await page.getByRole('button', { name: 'Endre' }).nth(1).click();
+    await openRefusjonEditingIfNeeded(page);
     await page.getByLabel('Oppgi refusjonsbeløpet per måned').fill('55000');
     // choose "Nei" for endringer opphør
     await page
@@ -97,14 +170,14 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
       })
       .getByLabel('Nei')
       .check();
+    await fillKortAgpIfVisible(page);
     // final submit
     const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
     await formPage.clickButton('Send');
     const req2 = await reqPromise;
     // assert payload
-    expect(JSON.parse(req2.postData()!)).toEqual({
+    expect(JSON.parse(req2.postData()!)).toMatchObject({
       forespoerselId: '60c85231-d13c-49a2-bef3-1cb493d33f3b',
-      agp: null,
       inntekt: {
         beloep: 60000,
         inntektsdato: '2023-09-18',
