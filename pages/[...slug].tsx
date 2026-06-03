@@ -204,7 +204,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   forespurtStatus,
   dataFraBackend,
   harFlereArbeidsforhold: harFlereArbeidsforholdInitial,
-  ansettelsesforhold
+  ansettelsesforhold,
+  faisuEnabled
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const lasterData = false;
@@ -261,7 +262,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const initState = useStateInit();
 
-  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema', faisuEnabled);
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
     setIngenTilgangOpen,
     'HovedskjemaArbeidsgiverInitiert',
