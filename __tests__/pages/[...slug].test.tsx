@@ -9,6 +9,15 @@ import useBoundStore from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import forespoerselType from '../../config/forespoerselType';
 
+vi.mock('@unleash/nextjs', () => ({
+  getDefinitions: vi.fn(() => Promise.resolve({})),
+  evaluateFlags: vi.fn(() => ({ toggles: {} })),
+  flagsClient: vi.fn(() => ({
+    isEnabled: vi.fn((flagName: string) => flagName === 'faisu-inntektsmelding'),
+    sendMetrics: vi.fn(() => Promise.resolve())
+  }))
+}));
+
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
   getToken: vi.fn(() => 'mock-token'),
@@ -17,6 +26,10 @@ vi.mock('@navikt/oasis', () => ({
 
 vi.mock('../../utils/hentForespoerselSSR', () => ({
   default: vi.fn(() => Promise.resolve({ data: { some: 'data' } }))
+}));
+
+vi.mock('../../utils/hentArbeidsforholdSSR', () => ({
+  default: vi.fn(() => Promise.resolve(null))
 }));
 
 vi.mock('../../utils/redirectTilLogin', () => ({
@@ -174,6 +187,29 @@ vi.mock('../../utils/fetchInntektsdata', () => ({
     })
   )
 }));
+
+function createServerSideContext(overrides: any = {}) {
+  const { query, req, res, ...rest } = overrides;
+
+  return {
+    query: {
+      slug: ['550e8400-e29b-41d4-a716-446655440000'],
+      ...query
+    },
+    req: {
+      cookies: {},
+      headers: {
+        host: 'localhost:3000'
+      },
+      ...req
+    },
+    res: {
+      setHeader: vi.fn(),
+      ...res
+    },
+    ...rest
+  };
+}
 
 describe('Home Page', () => {
   beforeEach(() => {
@@ -608,12 +644,7 @@ describe('getServerSideProps', () => {
   });
 
   it('returns props with valid UUID slug', async () => {
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -623,12 +654,11 @@ describe('getServerSideProps', () => {
   });
 
   it('returns erEndring true when slug[1] is overskriv', async () => {
-    const context = {
+    const context = createServerSideContext({
       query: {
         slug: ['550e8400-e29b-41d4-a716-446655440000', 'overskriv']
-      },
-      req: {}
-    };
+      }
+    });
 
     const result = await getServerSideProps(context);
 
@@ -636,12 +666,11 @@ describe('getServerSideProps', () => {
   });
 
   it('returns props without fetching when UUID is invalid', async () => {
-    const context = {
+    const context = createServerSideContext({
       query: {
         slug: ['invalid-slug']
-      },
-      req: {}
-    };
+      }
+    });
 
     const result = await getServerSideProps(context);
 
@@ -650,13 +679,12 @@ describe('getServerSideProps', () => {
   });
 
   it('returns props without fetching when endre is set', async () => {
-    const context = {
+    const context = createServerSideContext({
       query: {
         slug: ['550e8400-e29b-41d4-a716-446655440000'],
         endre: 'true'
-      },
-      req: {}
-    };
+      }
+    });
 
     const result = await getServerSideProps(context);
 
@@ -670,12 +698,7 @@ describe('getServerSideProps', () => {
     const { getToken } = await import('@navikt/oasis');
     vi.mocked(getToken).mockReturnValueOnce(null as unknown as string);
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -692,12 +715,7 @@ describe('getServerSideProps', () => {
     vi.mocked(getToken).mockReturnValueOnce('mock-token');
     vi.mocked(validateToken).mockResolvedValueOnce({ ok: false });
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -712,12 +730,7 @@ describe('getServerSideProps', () => {
     (error as Error & { status: number }).status = 404;
     vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(error);
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -730,12 +743,7 @@ describe('getServerSideProps', () => {
     (error as Error & { status: number }).status = 500;
     vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(error);
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -749,16 +757,13 @@ describe('getServerSideProps', () => {
       erBesvart: true
     } as any);
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
+    const context = createServerSideContext({
       req: {
         headers: {
           host: 'localhost:3000'
         }
       }
-    } as any;
+    });
 
     const result = await getServerSideProps(context);
 
@@ -782,16 +787,13 @@ describe('getServerSideProps', () => {
       erBesvart: true
     } as any);
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
+    const context = createServerSideContext({
       req: {
         headers: {
           host: 'arbeidsgiver.nav.no'
         }
       }
-    } as any;
+    });
 
     const result = await getServerSideProps(context);
 
@@ -810,7 +812,7 @@ describe('getServerSideProps', () => {
       erBesvart: true
     } as any);
 
-    const context = {
+    const context = createServerSideContext({
       query: {
         slug: ['550e8400-e29b-41d4-a716-446655440000', 'overskriv']
       },
@@ -819,7 +821,7 @@ describe('getServerSideProps', () => {
           host: 'localhost:3000'
         }
       }
-    } as any;
+    });
 
     const result = await getServerSideProps(context);
 

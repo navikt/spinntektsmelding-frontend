@@ -25,7 +25,8 @@ type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
-  analyticsComponent: string
+  analyticsComponent: string,
+  faisuEnabled: boolean
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
@@ -68,7 +69,7 @@ export default function useSendInnSkjema(
 
     type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
-    const skjemaData: FullInnsending = fyllInnsending(pathSlug, formData, erBegrensetForespoersel);
+    const skjemaData: FullInnsending = fyllInnsending(pathSlug, formData, erBegrensetForespoersel, faisuEnabled);
     const harForespurtArbeidsgiverperiode = (formData.opplysningstyper ?? []).includes(
       forespoerselType.arbeidsgiverperiode
     );

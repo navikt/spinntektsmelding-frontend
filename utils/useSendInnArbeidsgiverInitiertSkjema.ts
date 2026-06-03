@@ -87,7 +87,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     pathSlug: string,
     isDirtyForm: boolean,
     skjemaData: any,
-    erBegrensetForespoersel: boolean
+    erBegrensetForespoersel: boolean,
+    faisuEnabled: boolean
   ) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
@@ -129,6 +130,10 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       : { ...validerteData.data, selvbestemtId: null };
 
     const URI = environment.innsendingAGInitiertUrl;
+
+    if (!faisuEnabled) {
+      delete innsending.flereArbeidsforhold;
+    }
 
     type SuccessBody = { selvbestemtId?: string } | null;
     return postInnsending<typeof innsending, SuccessBody>({

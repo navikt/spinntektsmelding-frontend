@@ -243,6 +243,7 @@ export const InnsendingSchema = z.object({
       )
     })
     .or(z.null())
+    .optional()
 });
 
 type TInnsendingSchema = z.infer<typeof InnsendingSchema>;

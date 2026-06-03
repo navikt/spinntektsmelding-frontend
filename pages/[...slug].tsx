@@ -733,8 +733,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 export default Home;
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
+  const sessionId = context.req.cookies['unleash-session-id'] || `${Math.floor(Math.random() * 1_000_000_000)}`;
+  context.res.setHeader('set-cookie', `unleash-session-id=${sessionId}; path=/;`);
   const definitions = await getDefinitions();
-  const unleashContext = {};
+  const unleashContext = { sessionId };
   const { toggles } = evaluateFlags(definitions, unleashContext);
   const flags = flagsClient(toggles);
 
@@ -799,7 +801,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       dataFraBackend: !!forespurt && !hasEndreQuery,
       harGradertSykmelding,
       harFlereArbeidsforhold,
-      ansettelsesforhold: harFlereArbeidsforhold && ansettelsesforhold ? ansettelsesforhold : null
+      ansettelsesforhold: harFlereArbeidsforhold && ansettelsesforhold ? ansettelsesforhold : null,
+      faisuEnabled
     }
   };
 }
