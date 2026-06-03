@@ -584,10 +584,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [beregnetBestemmendeFraværsdag]);
 
   useEffect(() => {
-    if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      return;
-    }
-    if (!isValidUUID(slug)) {
+    if (!isValidUUID(slug) && !selvbestemtInnsending) {
       return;
     }
 
@@ -734,22 +731,26 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 export default Home;
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
-  const sessionId = context.req.cookies['unleash-session-id'] || `${Math.floor(Math.random() * 1_000_000_000)}`;
-  context.res.setHeader('set-cookie', `unleash-session-id=${sessionId}; path=/;`);
-  const definitions = await getDefinitions();
-  const unleashContext = { sessionId };
-  const { toggles } = evaluateFlags(definitions, unleashContext);
-  const flags = flagsClient(toggles);
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  let faisuEnabled = true;
 
-  const faisuEnabled = flags.isEnabled('faisu-inntektsmelding');
-  flags.sendMetrics().catch(() => {});
+  if (!isDevelopment) {
+    const sessionId = context.req.cookies['unleash-session-id'] || `${Math.floor(Math.random() * 1_000_000_000)}`;
+    context.res.setHeader('set-cookie', `unleash-session-id=${sessionId}; path=/;`);
+    const definitions = await getDefinitions();
+    const unleashContext = { sessionId };
+    const { toggles } = evaluateFlags(definitions, unleashContext);
+    const flags = flagsClient(toggles);
+
+    faisuEnabled = flags.isEnabled('faisu-inntektsmelding');
+    flags.sendMetrics().catch(() => {});
+  }
 
   const { slug, endre } = context.query;
   const uuid = slug?.[0] ?? '';
   const action = slug?.[1];
   const erEndring = action === 'overskriv';
   const hasEndreQuery = Boolean(endre);
-  const isDevelopment = process.env.NODE_ENV === 'development';
   let forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null = null;
   let forespurtStatus: number | undefined;
   const overskriv = erEndring;
