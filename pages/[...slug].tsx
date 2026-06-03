@@ -1,4 +1,5 @@
 import React, { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
+import { evaluateFlags, flagsClient, getDefinitions } from '@unleash/nextjs';
 import type { InferGetServerSidePropsType, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
@@ -732,6 +733,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 export default Home;
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
+  const definitions = await getDefinitions();
+  const unleashContext = {};
+  const { toggles } = evaluateFlags(definitions, unleashContext);
+  const flags = flagsClient(toggles);
+
+  const faisuEnabled = flags.isEnabled('faisu-inntektsmelding');
+  flags.sendMetrics().catch(() => {});
+
   const { slug, endre } = context.query;
   const uuid = slug?.[0] ?? '';
   const action = slug?.[1];
@@ -769,7 +778,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     return rejectedForespurtResponse;
   }
 
-  const harFlereArbeidsforhold = hasMultipleArbeidsforhold(ansettelsesforhold);
+  const harFlereArbeidsforhold = faisuEnabled && hasMultipleArbeidsforhold(ansettelsesforhold);
   if (harFlereArbeidsforhold) {
     logger.info(
       'Forespurt data inneholder flere ansettelsesforhold: %j',

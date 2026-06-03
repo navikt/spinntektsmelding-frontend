@@ -30,6 +30,7 @@
     "@navikt/nav-dekoratoren-moduler": "^3.7.1",
     "@navikt/next-logger": "4.5.1",
     "@navikt/oasis": "^4.1.4",
+    "@unleash/nextjs": "^1.6.4",
     "date-fns": "4.1.0",
     "html-react-parser": "^5.2.17",
     "immer": "11.1.4",
