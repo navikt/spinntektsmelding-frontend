@@ -1,6 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
 import { FormPage } from './utils/formPage';
-import trengerDelvis from '../mockdata/trenger-delvis-enkel-variant.json';
 
 async function answerFullLonnIfVisible(page: Page) {
   const fullLonnGroup = page.getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn/i });
@@ -9,16 +8,30 @@ async function answerFullLonnIfVisible(page: Page) {
   }
 }
 
-async function openInntektEditingIfNeeded(page: Page, inntektLabel: string) {
-  const inntektInput = page.getByLabel(inntektLabel);
-  if (await inntektInput.count()) {
+async function openArbeidsgiverperiodeIfNeeded(page: Page) {
+  const fraInput = page.getByRole('textbox', { name: 'Fra' }).first();
+
+  if (await fraInput.isVisible().catch(() => false)) {
+    return;
+  }
+
+  const endreButton = page.getByRole('button', { name: 'Endre' }).first();
+  await expect(endreButton).toBeVisible();
+  await endreButton.click();
+  await expect(fraInput).toBeVisible();
+}
+
+async function openInntektEditingIfNeeded(page: Page) {
+  const inntektInput = page.getByLabel(/Månedslønn \d{2}\.\d{2}\.\d{4}/).first();
+
+  if (await inntektInput.isVisible().catch(() => false)) {
     return;
   }
 
   const endreButtons = page.getByRole('button', { name: 'Endre' });
-  if (await endreButtons.count()) {
-    await endreButtons.last().click();
-  }
+  await expect(endreButtons.first()).toBeVisible();
+  await endreButtons.last().click();
+  await expect(inntektInput).toBeVisible();
 }
 
 const uuid = 'ac33a4ae-e1bd-4cab-9170-b8a01a13471e';
@@ -40,20 +53,18 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   // const apiResponse = page.waitForResponse('*/**/api/hent-forespoersel/*');
   // Visit the page
   await page.goto(baseUrl);
-  // await apiResponse;
 
   // Simulate interaction
-  await openInntektEditingIfNeeded(page, 'Månedslønn 06.12.2024');
+  await openArbeidsgiverperiodeIfNeeded(page);
 
   await formPage.fillInput('Fra', '06.12.2024');
   await formPage.fillInput('Til', '21.12.2024');
 
-  await openInntektEditingIfNeeded(page, 'Månedslønn 06.12.2024');
+  await openInntektEditingIfNeeded(page);
 
-  const inntekt = page.locator('label:has-text("Månedslønn 06.12.2024")');
+  const inntekt = page.getByLabel(/Månedslønn \d{2}\.\d{2}\.\d{4}/).first();
   await expect(inntekt).toHaveValue('36000');
-
-  await formPage.fillInput('Månedslønn 06.12.2024', '50000');
+  await inntekt.fill('50000');
 
   await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
   await answerFullLonnIfVisible(page);
