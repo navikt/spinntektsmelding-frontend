@@ -75,7 +75,8 @@ function createInvalidUuidProps(uuid: string, erEndring: boolean) {
       dataFraBackend: false,
       harGradertSykmelding: false,
       harFlereArbeidsforhold: false,
-      ansettelsesforhold: null
+      ansettelsesforhold: null,
+      faisuEnabled: true
     }
   };
 }
@@ -521,11 +522,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
     if (selvbestemtInnsending) {
-      sendInnArbeidsgiverInitiertSkjema(true, slug, isDirtyForm || isDirty, formData, begrensetForespoersel).finally(
-        () => {
-          setSenderInn(false);
-        }
-      );
+      sendInnArbeidsgiverInitiertSkjema(
+        true,
+        slug,
+        isDirtyForm || isDirty,
+        formData,
+        begrensetForespoersel,
+        faisuEnabled
+      ).finally(() => {
+        setSenderInn(false);
+      });
 
       return;
     }
