@@ -117,7 +117,7 @@ jobs:
           sarif_file: "trivy-results.sarif"
 
       - name: Deploy to Nais
-        uses: nais/deploy/actions/deploy@d57354b433c8d6847ab092467d9fe976a3d008aa
+        uses: nais/deploy/actions/deploy@c55d6073d913975d2dada508bdfefc6427d39867
         env:
           CLUSTER: prod-gcp
           RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.
