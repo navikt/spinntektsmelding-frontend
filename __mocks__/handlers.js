@@ -42,7 +42,8 @@ const forespoerselMockdataMap = {
   '8d1b4043-5a9e-4225-9ba8-5dc22f515796': 'trenger-forhaandsutfyll',
   '342dfa81-c05e-4477-9214-d007c403b60a': 'trenger-to-arbeidsforhold',
   '66f1188a-5cb7-4741-bd60-c9070835633c': 'trenger-originalen-16dager-innsendt',
-  '8f2c7a9d-3e1b-4d6f-a2c8-7b95e13f4c0a': 'trenger-originalen-16dager'
+  '8f2c7a9d-3e1b-4d6f-a2c8-7b95e13f4c0a': 'trenger-originalen-16dager',
+  '003E69AE-EAA6-4E97-BACD-CD8194BB2828': 'trenger-ikke-lonn'
 };
 
 const arbeidsforholdMockdataMap = {

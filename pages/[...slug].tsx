@@ -269,13 +269,15 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
-  let opplysningstyper = useMemo(() => hentPaakrevdOpplysningstyper(), [hentPaakrevdOpplysningstyper]);
+  let opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
 
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
+
+  console.log('opplysningstyper status:', opplysningstyper);
 
   const lukkHentingFeiletModal = () => {
     if (environment.saksoversiktUrl !== undefined && globalThis.window?.location !== undefined) {
