@@ -65,7 +65,7 @@ const RequestStatus = {
   pending: 'pending'
 } as const;
 
-function createInvalidUuidProps(uuid: string, erEndring: boolean) {
+function createInvalidUuidProps(uuid: string, erEndring: boolean, faisuEnabled: boolean) {
   return {
     props: {
       slug: uuid,
@@ -76,7 +76,7 @@ function createInvalidUuidProps(uuid: string, erEndring: boolean) {
       harGradertSykmelding: false,
       harFlereArbeidsforhold: false,
       ansettelsesforhold: null,
-      faisuEnabled: true
+      faisuEnabled
     }
   };
 }
@@ -766,7 +766,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   let ansettelsesforhold: Ansettelsesforhold | null = null;
 
   if (!isValidUUID(uuid)) {
-    return createInvalidUuidProps(uuid, erEndring);
+    return createInvalidUuidProps(uuid, erEndring, faisuEnabled);
   }
 
   const auth = await getValidatedTokenOrRedirect(context, isDevelopment);
