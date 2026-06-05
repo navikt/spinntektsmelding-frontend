@@ -1,3 +1,4 @@
+import formatCurrency from '../../utils/formatCurrency';
 import localStyles from './FaisuKvittering.module.css';
 
 type FaisuArbeidsforhold = {
@@ -38,7 +39,7 @@ export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitte
             <tr key={'fk' + index}>
               <td>{forhold.inkludertISykefravaer ? 'Ja' : 'Nei'}</td>
               <td>{forhold.yrkesbeskrivelse}</td>
-              <td>{forhold.inntekt}</td>
+              <td>{formatCurrency(forhold.inntekt)}</td>
               <td>{forhold.stillingsprosent} %</td>
             </tr>
           );

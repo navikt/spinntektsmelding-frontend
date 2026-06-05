@@ -8,17 +8,12 @@ import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
+import { requireEnv } from '../../utils/api/validateEnv';
 
 type forespoerselIdListeEnhet = {
   vedtaksperiodeId: string;
   forespoerselId: string;
 };
-
-const basePath =
-  'http://' + globalThis.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + globalThis.process.env.FLEX_SYKEPENGESOEKNAD_URL;
-const authApi = 'http://' + globalThis.process.env.IM_API_URI + globalThis.process.env.AUTH_SYKEPENGESOEKNAD_API;
-const forespoerselIdListeApi =
-  'http://' + globalThis.process.env.IM_API_URI + globalThis.process.env.FORESPOERSEL_ID_LISTE_API;
 
 export const config = {
   api: {
@@ -54,6 +49,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(401);
   }
 
+  const basePath = 'http://' + requireEnv('FLEX_SYKEPENGESOEKNAD_INGRESS') + requireEnv('FLEX_SYKEPENGESOEKNAD_URL');
+  const authApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('AUTH_SYKEPENGESOEKNAD_API');
+  const forespoerselIdListeApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('FORESPOERSEL_ID_LISTE_API');
+  const clientId = process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID;
+
   const requestBody = await req.body;
   const orgnr = requestBody.orgnummer;
 
@@ -75,7 +75,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
   }
 
-  const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
+  const obo = await requestOboToken(token, clientId);
   if (!obo.ok) {
     logger.info('OBO-feil: ' + JSON.stringify(obo.error));
     return res.status(401).json({ error: 'Unauthorized' });
