@@ -320,6 +320,36 @@ describe('Home Page', () => {
     });
   });
 
+  it('calls setArbeidsgiverperiodeDisabled(false) and shows Arbeidsgiverperiode when Endre button is clicked', async () => {
+    const mockSetArbeidsgiverperiodeDisabled = vi.fn();
+
+    (useBoundStore as Mock).mockImplementation((stateFn) =>
+      stateFn(
+        createMockState({
+          hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt']),
+          setArbeidsgiverperiodeDisabled: mockSetArbeidsgiverperiodeDisabled
+        })
+      )
+    );
+
+    render(<Home slug='123' erEndring={false} />);
+
+    // Verify the "Endre" button is visible when arbeidsgiverperiode is not required
+    expect(screen.getByText('Endre')).toBeInTheDocument();
+
+    // Click the "Endre" button
+    const endreButton = screen.getByText('Endre');
+    fireEvent.click(endreButton);
+
+    // Verify that setArbeidsgiverperiodeDisabled(false) was called
+    expect(mockSetArbeidsgiverperiodeDisabled).toHaveBeenCalledWith(false);
+
+    // Verify that Arbeidsgiverperiode component is now shown
+    await waitFor(() => {
+      expect(screen.getByTestId('arbeidsgiverperiode')).toBeInTheDocument();
+    });
+  });
+
   it('shows info text when inntekt is not required', () => {
     (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn(
