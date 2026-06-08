@@ -176,7 +176,7 @@ export default function Arbeidsgiverperiode({
       component: analyticsComponent
     });
 
-    setEndreArbeidsgiverperiode(!endretArbeidsgiverperiode);
+    setEndreArbeidsgiverperiode(true);
   };
 
   const clickTilbakestillArbeidsgiverperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -522,7 +522,6 @@ export default function Arbeidsgiverperiode({
           )}
         </>
       )}
-
       {endretArbeidsgiverperiode && (
         <div className={lokalStyling.endreknapper}>
           <Button

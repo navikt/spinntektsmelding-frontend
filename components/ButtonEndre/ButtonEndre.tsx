@@ -2,7 +2,7 @@ import { Button } from '@navikt/ds-react';
 import lokalStyling from './ButtonEndre.module.css';
 
 interface ButtonEndreProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
-export default function ButtonEndre(props: ButtonEndreProps) {
+export default function ButtonEndre(props: Readonly<ButtonEndreProps>) {
   return (
     <Button
       type='button'
