@@ -96,6 +96,7 @@ const createMockState = (overrides = {}) => ({
   behandlingsdager: [],
   selvbestemtType: null,
   begrensetForespoersel: false,
+  setArbeidsgiverperiodeDisabled: vi.fn(),
   ...overrides
 });
 
