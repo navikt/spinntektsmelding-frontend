@@ -294,7 +294,7 @@ describe('API Route: /api/mine-tilganger', () => {
       expect(body).toEqual({
         filter: {
           altinn2Tilganger: ['4936:1'],
-          altinn3Tilganger: []
+          altinn3Tilganger: ['nav_sykepenger_inntektsmelding']
         }
       });
     });
