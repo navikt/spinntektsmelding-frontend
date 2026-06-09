@@ -79,7 +79,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     body: JSON.stringify({
       filter: {
         altinn2Tilganger: ['4936:1'],
-        altinn3Tilganger: []
+        altinn3Tilganger: ['nav_sykepenger_inntektsmelding']
       }
     })
   });
