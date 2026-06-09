@@ -240,7 +240,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     naturalytelser,
     behandlingsdager,
     selvbestemtType,
-    kvitteringData
+    kvitteringData,
+    setArbeidsgiverperiodeDisabled
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -252,7 +253,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.naturalytelser,
     state.behandlingsdager,
     state.selvbestemtType,
-    state.kvitteringData
+    state.kvitteringData,
+    state.setArbeidsgiverperiodeDisabled
   ]);
 
   const sisteInntektsdatoRef = useRef<Date | undefined>(undefined);
@@ -671,7 +673,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 setIsDirtyForm={setIsDirtyForm}
                 skjemastatus={skjemastatus}
                 skalViseArbeidsgiverperiode={overstyrSkalViseAgp}
-                onTilbakestillArbeidsgiverperiode={() => setOverstyrSkalViseAgp(false)}
+                onTilbakestillArbeidsgiverperiode={() => {
+                  setOverstyrSkalViseAgp(false);
+                }}
                 skalViseEgenmelding={skalViseEgenmelding}
               />
             )}
@@ -683,7 +687,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                   forlengelse av en tidligere sykefraværsperiode. Hvis du mener at det skal være arbeidsgiverperiode kan
                   du endre dette.
                 </BodyLong>
-                <Button type='button' variant='tertiary' onClick={() => setOverstyrSkalViseAgp(true)}>
+                <Button
+                  type='button'
+                  variant='tertiary'
+                  onClick={() => {
+                    setArbeidsgiverperiodeDisabled(false);
+                    setOverstyrSkalViseAgp(true);
+                  }}
+                >
                   Endre
                 </Button>
               </>
